@@ -12,6 +12,10 @@ import  EtpContractMain   from './components/Home/Etp/Contract/EtpContractMain.v
 import  EtpInfoMain   from './components/Home/MarketInfo/EtpInfoMain.vue'
 // TODAY
 import  Today1Main   from './components/Home/Today/Today1Main.vue'
+
+
+import  testMain   from '@/components/Home/Index/Manage/test.vue'
+
 // 관리자
 export const routes = [
   {
@@ -48,6 +52,9 @@ export const routes = [
         },
         {   path : 'info/indexinfo',
             component: Today1Main,
+        },
+        {   path : 'index/test',
+            component: testMain,
         },
     ]
   },

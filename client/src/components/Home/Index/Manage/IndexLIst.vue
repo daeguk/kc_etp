@@ -68,7 +68,7 @@ export default {
       this.$EventBus.$off('closeIndexInfoModal');
   },    
   mounted: function() {
-      this.getInfoOpenReqList();
+      //this.getInfoOpenReqList();
   },
   methods: {
     getIndexInfoManageList: function() {

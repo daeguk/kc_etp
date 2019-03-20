@@ -10,6 +10,8 @@ var config = require('./mysql_config');
 // database 객체에 db, schema, model 모두 추가
 var mydb = {};
 
+
+
 mydb.init = function(app) {
 	console.log('init() 호출됨.');
 	
@@ -26,7 +28,7 @@ mydb.init = function(app) {
             console.error('mysql connection error :' + err);
         } else {
             console.info('mysql is connected successfully.');
-        }
+        } 
     })
 
     var modelLen = config.db_model.length;
@@ -46,3 +48,4 @@ mydb.init = function(app) {
 
 // database 객체를 module.exports에 할당
 module.exports = mydb;
+

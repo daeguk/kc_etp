@@ -1,40 +1,50 @@
+
 <template>
-    <v-data-table
-      :headers="headers"
-      :items="desserts"
-      class="elevation-1"
-    >
-      <template slot="items" slot-scope="props">
-        <td>{{ props.item.name }}</td>
-        <td class="text-xs-right">{{ props.item.calories }}</td>
-        <td class="text-xs-right">{{ props.item.fat }}</td>
-        <td class="text-xs-right">{{ props.item.carbs }}</td>
-        <td class="text-xs-right">{{ props.item.protein }}</td>
-        <td class="text-xs-right">{{ props.item.iron }}</td>
-        <td class="text-xs-right"><v-btn to="/index/test">test</v-btn></td>
-      </template>
-    </v-data-table>
+  <v-data-table 
+    :headers="headers"
+    :items="desserts"
+    disable-initial-sort
+  >
+    <template slot="items" slot-scope="props">
+      <td class="text-xs-center">{{ props.item.name }}</td>
+      <td class="text-xs-center">{{ props.item.calories }}</td>
+      <td class="text-xs-center">{{ props.item.fat }}</td>
+      <td class="text-xs-center">{{ props.item.name }}</td>
+      <td class="text-xs-center">{{ props.item.name }}</td>
+      <td class="text-xs-center">{{ props.item.name }}</td>
+      <td class="text-xs-center">3</td>
+      <td class="text-xs-center">
+<!--        
+        <v-btn color="primary" dark @click.stop="showIndexInfoModal()">
+          <v-icon>equalizer</v-icon>
+        </v-btn>
+-->        
+        <v-icon @click.stop="showIndexInfoModal(pros.item)">equalizer</v-icon>
+      </td>
+    </template>
+  </v-data-table>
+
+    
 </template>
+
 
 <script>
 
 export default {
-        
-        props: [],
-        data() {
-            return {
-              headers: [
-        {
-          text: 'Dessert (100g serving)',
-          align: 'left',
-          sortable: false,
-          value: 'name'
-        },
-        { text: 'Calories', value: 'calories' },
-        { text: 'Fat (g)', value: 'fat' },
-        { text: 'Carbs (g)', value: 'carbs' },
-        { text: 'Protein (g)', value: 'protein' },
-        { text: 'Iron (%)', value: 'iron' }
+  props: [],
+  data() {
+    return {
+      results: [],
+      rowsPerPageItems: [20, 10, 30, 50],
+      headers: [
+        {text: 'ID', align:"center", sortable: false, value: 'id' },
+        {text: '지수명', align:"center", sortable: false, value: 'inst_name'},
+        {text: '등록일', align:"center", sortable: false, value: 'user_name'},
+        {text: '발표여부', align:"center", value: 'idx_nm' },
+        {text: '산출타입', align:"center", value: 'idx_sym_code' },
+        {text: 'ETP', align:"center", value: 'req_date' },
+        {text: '정보조회기관', align:"center", value: 'req_process' },
+        {text: '', align:"center", value: 'index_info' },
       ],
       desserts: [
         {
@@ -118,28 +128,9 @@ export default {
           iron: '6%'
         }
       ],
-            };
-        },
-        components: {
-            
-        },
-        computed:{
-
-        },
-        created: function() {
-            
-        },
-        beforeDestroy() {
-            
-        },
-        mounted: function() {
-            
-        },
-        methods: {
-            
-        }
-    }
+      modalFlag: false,
+    };
+  },
+  
+}
 </script>
-<style scoped>
-
-</style>

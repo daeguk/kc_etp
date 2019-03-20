@@ -24,6 +24,9 @@
                 <v-tab-item>
                     <IndexDetail></IndexDetail>
                 </v-tab-item>
+                <v-tab-item>
+                    <IndexTest></IndexTest>
+                </v-tab-item>
         </v-tabs-items>    
       </v-flex>
     </v-layout> 
@@ -33,18 +36,20 @@
 import Summary   from  './Summary.vue'
 import IndexList   from  './IndexList.vue'
 import IndexDetail   from  './IndexDetail.vue'
+import IndexTest   from  './test.vue'
 
 export default {
         data() {
             return {
                 tab: null,
-                items: ['Summary', '관리지수목록', '지수종목상세'],
+                items: ['Summary', '관리지수목록', '지수종목상세', 'TEST'],
     	};
     },    
     components: {
         Summary     : Summary,
         IndexList     : IndexList,
         IndexDetail     : IndexDetail,
+        IndexTest     : IndexTest,
     },
     created: function() {
     },

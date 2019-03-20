@@ -7,6 +7,7 @@
     },
     "dependencies": {
         "async": "^2.6.0",
+        "bluebird": "^3.5.3",
         "body-parser": "^1.15.2",
         "connect-flash": "^0.1.1",
         "cookie-parser": "^1.4.3",
@@ -21,7 +22,8 @@
         "node-cron": "^2.0.1",
         "passport": "^0.3.2",
         "passport-local": "^1.0.0",
-        "serve-static": "^1.11.2"
+        "serve-static": "^1.11.2",
+        "util": "^0.11.1"
     },
     "description": "Created with [Nodeclipse](https://github.com/Nodeclipse/nodeclipse-1)\r  ([Eclipse Marketplace](http://marketplace.eclipse.org/content/nodeclipse), [site](http://www.nodeclipse.org))",
     "main": "app.js",
