@@ -36,8 +36,17 @@ var mydb = require('./database/mysql_con');
 // 모듈로 분리한 라우팅 파일 불러오기
 var route_loader = require('./routes/route_loader');
 
+// connectionPool 객체
+const Pool = require("./database/pool");
+const pool = new Pool();
+
+
 // 익스프레스 객체 생성
 var app = express();
+
+app.set("pool", pool);
+
+app.set("stmt", pool.getStmts());
 
 //===== 서버 변수 설정  =====//
 console.log('config.server_port : %d', config.server_port);
@@ -119,4 +128,5 @@ var server = http.createServer(app).listen(app.get('port'), function(req, res) {
     console.log('서버가 시작되었습니다. 포트 : ' + app.get('port'));
     // MYSQL 초기화
     mydb.init(app);
+
 });

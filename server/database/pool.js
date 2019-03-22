@@ -8,7 +8,7 @@ const mysql = require('mysql');
 const config = require('./mysql_config');
 const Promise = require("bluebird");
 const util = require("util");
-
+var etpStmts = [];
 
 Promise.promisifyAll(mysql);
 Promise.promisifyAll(require("mysql/lib/Connection").prototype);
@@ -21,8 +21,9 @@ const DB_INFO = {
     password: config.password,
     database: config.database,
     multipleStatements: true,
+    connectionLimit:25,
     waitForConnections:false
-}
+};
 
 module.exports = class {
     constructor(dbinfo) {
@@ -43,7 +44,28 @@ module.exports = class {
                 util.log("ERR pool ending!!");
         }); 
     }
-}
+
+    getStmts() {
+        console.log('getStmts() 호출됨.');
+        
+        var modelLen = config.db_model.length;
+        console.log('설정에 정의된 모델의 수 : %d', modelLen);
+        
+        for (var i = 0; i < modelLen; i++) {
+            var curItem = config.db_model[i];
+            
+            // database 객체에 속성으로 추가
+            etpStmts[curItem.modelName] = require(curItem.file);
+            console.log('[MYSQL] 모델 이름 [%s] 이 mydb 객체의 속성으로 추가됨.', curItem.modelName);
+        }
+        
+        console.log('[MYSQL]mydb 객체가 app 객체의 속성으로 추가됨.');
+
+        return etpStmts;
+    };
+};
+
+
 
 
 

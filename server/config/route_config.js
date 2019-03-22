@@ -55,5 +55,9 @@ module.exports = {
         { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getetfforlist', method: 'getEtfForList', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getetnkorlist', method: 'getEtnKorList', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getetnforlist', method: 'getEtnForList', session: 'uncheck', type: 'get' },
+
+        //풀 테스트 
+
+        { file: './user/index/bluebirdTest', path: '/user/index/getBluelist', method: 'getBlueList', session: 'uncheck', type: 'get' },
     ]
 }

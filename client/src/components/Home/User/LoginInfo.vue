@@ -87,7 +87,7 @@
 export default {
     data() {
         return {
-            loginDialog: false,
+            loginDialog: true,
             signupDialog: false,
         };
     },

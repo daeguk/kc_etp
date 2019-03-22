@@ -1,13 +1,6 @@
 const util = require("util");
-const Pormise = require("bluebird");
-
-const Pool = require("../pool");
-
-const sql1 = "select * from user";
-const sql2 = "select * from user";
-
-const pool = new Pool();
-
+const Promise = require("bluebird");
+/*
 // auto commit;
 Promise.using(pool.connect(), conn => {
     conn.queryAsync(sql1)
@@ -52,4 +45,40 @@ Promise.using(pool.connect(), conn => {
         });
     })
 })
+
+*/
+
+var getBlueList = function(req, res) {
+
+    pool = req.app.get("pool");
+
+    console.log('indexmanage 모듈 안에 있는 getBlueList 호출됨.');
+  
+    var etpStmts = req.app.get("stmt");
+    
+    var options = {id:'admin'};
+    var options = {};
+    var stmt = etpStmts.IndexManage.selectIndexInfoOpenReqList(options);
+
+    console.log(stmt);
+    
+
+    Promise.using(pool.connect(), conn => {
+        conn.queryAsync(stmt).then(ret => {
+                util.log("sql1" == ret.affectedRows)
+                res.json({ success: true, results: ret });
+                res.end();
+            }).catch(err => {
+                util.log("err", err);
+                console.log('Error while performing Query.', err);
+                res.json({ success: false, message: {code:999} });
+                res.end();
+            });
+    
+       
+    });
+
+};
+
+module.exports.getBlueList = getBlueList;
 

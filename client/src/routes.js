@@ -15,6 +15,8 @@ import  Today1Main   from './components/Home/Today/Today1Main.vue'
 
 
 import  testMain   from '@/components/Home/Index/Manage/test.vue'
+import  Login      from '@/components/Home/User/LoginInfo.vue'
+
 
 // 관리자
 export const routes = [
