@@ -39,6 +39,7 @@ export default {
             { title: '지수관리', link: '/index/manage' },
             { title: '지수등록', link: '/index/register'  },
             { title: '지수개발', link: '/index/develop'  },
+            { title: 'Vue Table 테스트', link: '/index/vueTableTest'  },
             { title: 'Toast Grid 테스트', link: '/index/toastGridTest'  }
           ],
         },
