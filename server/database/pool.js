@@ -70,6 +70,7 @@ module.exports = class {
 
 
 /*
+//auto commit
 Promise.using(pool.connect(), conn => {
     conn.queryAsync(sql1, (err, ret) => {
         util.log("sql1=", ret.affectedRows);
@@ -80,6 +81,7 @@ Promise.using(pool.connect(), conn => {
     });
 });
 
+//auto commit
 Promise.using(pool.connect(), conn => {
     Promise.all([
         conn.queryAsync(sql1),
@@ -91,6 +93,7 @@ Promise.using(pool.connect(), conn => {
     })
 });
 
+// transaction
 Promise.using(pool.connect(), conn => {
     conn.beginTransaction(txerr => {
         Promise.all([
