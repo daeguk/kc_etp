@@ -10,6 +10,7 @@
         "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
     },
     "dependencies": {
+        "@toast-ui/vue-grid": "^1.0.4",
         "date-input-polyfill": "^2.14.0",
         "es6-promise": "^4.2.4",
         "font-awesome": "^4.7.0",

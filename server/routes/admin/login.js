@@ -6,24 +6,33 @@
  */
 var crypto = require('crypto');
 var config = require('../../config/config');
+var util = require("util");
+var Promise = require("bluebird");
 
 var checkLoginTest = function(req, res) {
     console.log('users 모듈 안에 있는 checkLogin1 호출됨.');
 
-    var mydb = req.app.get('mydb');
+    var pool = req.app.get("pool");
+    var etpStmts = req.app.get("stmt");
+
     var options = {id:'admin'};
-    var stmt = mydb.UserMember.selectUserList(options);
+    var stmt = etpStmts.UserMember.selectUserList(options);
     console.log(stmt);
     
-    mydb.db.query(stmt, function(err, rows, fields) {
-      if (!err){
-        console.log('The solution is: ', rows);
-        res.json({ success: false, message: rows });
-        res.end();
-      }else{
-        console.log('Error while performing Query.', err);
-      }        
+
+    Promise.using(pool.connect(), conn => {
+        conn.queryAsync(stmt).then(rows => {
+                util.log("sql1" == rows.affectedRows)
+                res.json({ success: false, message: rows });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                console.log('Error while performing Query.', err);              
+            });
+    
+       
     });
+
 };
 
 //로그인
