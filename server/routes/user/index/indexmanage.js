@@ -62,5 +62,10 @@ var getIndexSummaryHist = function(req, res) {
   });
 };
 
+var getIndexToastGridTestList = function(req, res) {
+  console.log('indexmanage 모듈 안에 있는 getIndexToastGridTestList 호출됨.');
+};
+
 module.exports.getInfoOpenReqList = getInfoOpenReqList;
 module.exports.getIndexSummaryHist = getIndexSummaryHist;
+module.exports.getIndexToastGridTestList = getIndexToastGridTestList;
