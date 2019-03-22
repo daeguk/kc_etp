@@ -4,6 +4,8 @@ import  Home        from './components/Home/Home.vue'
 import  IndexManageMain   from './components/Home/Index/Manage/IndexManageMain.vue'
 import  IndexRegisterMain   from './components/Home/Index/Register/IndexRegisterMain.vue'
 import  IndexDevelopMain   from './components/Home/Index/Develop/IndexDevelopMain.vue'
+import  IndexToastGridTestMain   from './components/Home/Index/ToastGridTest/IndexToastGridTestMain.vue'
+
 // ETP
 import  EtpManageMain   from './components/Home/Etp/Manage/EtpManageMain.vue'
 import  EtpRegisterMain   from './components/Home/Etp/Register/EtpRegisterMain.vue'
@@ -34,6 +36,10 @@ export const routes = [
         {   path : 'index/develop',
             component: IndexDevelopMain,
         },
+        {   path : '/index/toastGridTest',
+            component: IndexToastGridTestMain,
+        }, 
+        
         // ETP
         {   path : 'etp/manage',
             component: EtpManageMain,

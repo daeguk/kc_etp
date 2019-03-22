@@ -38,7 +38,8 @@ export default {
           subitems: [
             { title: '지수관리', link: '/index/manage' },
             { title: '지수등록', link: '/index/register'  },
-            { title: '지수개발', link: '/index/develop'  }
+            { title: '지수개발', link: '/index/develop'  },
+            { title: 'Toast Grid 테스트', link: '/index/toastGridTest'  }
           ],
         },
         {
