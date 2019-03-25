@@ -12,8 +12,6 @@ import Config from "@/js/config.js"
 import 'tui-grid/dist/tui-grid.css'
 import { Grid } from '@toast-ui/vue-grid'
 
-var startDt, endDt;
-
 export default {
   props: [],
  
@@ -44,16 +42,22 @@ export default {
   mounted: function() {
 //    startDt = new Date().getTime();
 
-    console.time("## 측정 ##");
+    console.time("## Toast rendering 측정 ##");
     new Promise( (resolve) => {
       this.getIndexToastGridTestList();
     }).then( (data) => {
-      console.log(">>>>>>>>>>>");
+      console.log(">>>>>>>>>>> then");
 //    endDt = new Date().getTime();
 
-    console.timeEnd("## 측정 ##");
+    console.timeEnd("## Toast rendering 측정 ##");
 //    console.log( "소요시간=[" + ( ( endDt - startDt ) / 1000 ) + "]" );      
-    })    
+    }).finally( (data) => {
+      console.log(">>>>>>>>>>> finally ");
+      console.timeEnd("## Toast rendering 측정 ##");
+    });
+
+    console.log(">>>>>>>>>>> 종료 ");
+    console.timeEnd("## Toast rendering 측정 ##");
   },
   created: function() {
 
