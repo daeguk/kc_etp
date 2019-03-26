@@ -6,7 +6,7 @@
           left
         >
           <template v-slot:badge>
-            <span>0</span>
+            <span>{{badgeCnt}}</span>
           </template>
           <v-icon
             large
@@ -23,8 +23,12 @@ export default {
     
     data() {
         return {
-            show : true
+                show : true
+            ,   badgeCnt : 0
         };
+    },
+    created : function() {
+        console.log( ">>>>>> badgeCnt=[" + this.badgeCnt + "]" );
     },
     methods: {
 
