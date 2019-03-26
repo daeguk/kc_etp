@@ -5,6 +5,7 @@
         <router-link class="routerlink" :to="`${homeUrl}`">ETP PLATFORM</router-link>
     </v-toolbar-title>
     <v-spacer></v-spacer>
+    <Badge></Badge>
     <UserInfo v-if="loginFlag"></UserInfo>
     <LoginInfo v-if="!loginFlag"></LoginInfo>
 </v-toolbar>
@@ -14,6 +15,8 @@
 import UserInfo          from './User/UserInfo.vue';
 import LoginInfo          from './User/LoginInfo.vue';
 import LoginModal          from './User/LoginModal.vue';
+import Badge          from './Badge.vue';
+
 import Config       from "@/js/config.js";
 import Constant     from '@/store/store_constant.js';
 
@@ -31,7 +34,8 @@ export default {
     components: {
         UserInfo: UserInfo,
         LoginInfo: LoginInfo,
-        LoginModal: LoginModal
+        LoginModal: LoginModal,
+        Badge : Badge
     },
     created: function() {
         this.$EventBus.$on('closeLoginModal', this.closeLoginModal);
