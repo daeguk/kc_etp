@@ -97,6 +97,12 @@ var errorHandler = expressErrorHandler({
 app.use(expressErrorHandler.httpError(404));
 app.use(errorHandler);
 
+
+app.use(function(req, res, next) {
+    console.log("intercept============================");
+
+    next();
+});
 // cron 작업 등록
 cron.init(app);
 
