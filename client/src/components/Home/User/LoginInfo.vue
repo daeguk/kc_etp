@@ -84,15 +84,38 @@
 </template>
 
 <script>
+import Config       from "@/js/config.js"
 export default {
+    
     data() {
         return {
-            loginDialog: false,
+            loginDialog: true,
             signupDialog: false,
         };
     },
     methods: {
+        Login: function() {
+            console.log('Login');
+            var vm = this;
 
+            console.log(vm.Email);
+            axios.get(Config.base_url+'/logintest', {
+                
+                params: {
+                    "id": vm.email,
+                    "pass":vm.pass                }
+            }).then(function(response) {
+                // console.log(response);
+                if(response.data.success == false){
+                    alert("해당 신청현황이 없습니다");
+                }else {
+                    var items = response.data.results;
+                    var tcount   = response.data.count;
+                    vm.results = items;
+                    vm.count = tcount;
+                }
+            });
+        }
     }
 }
 </script>

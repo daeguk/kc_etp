@@ -15,7 +15,11 @@ var checkLoginTest = function(req, res) {
     var pool = req.app.get("pool");
     var etpStmts = req.app.get("stmt");
 
-    var options = {id:'admin'};
+    var pass = "test";
+    var options = {id:'admin', pass:''};
+
+    options.pass = crypto.createHash('sha256', config.pwd_salt).update(password).digest('base64');
+
     var stmt = etpStmts.UserMember.selectUserList(options);
     console.log(stmt);
     
@@ -23,7 +27,9 @@ var checkLoginTest = function(req, res) {
     Promise.using(pool.connect(), conn => {
         conn.queryAsync(stmt).then(rows => {
                 util.log("sql1" == rows.affectedRows)
+                makeSessionKey(req, options.id + options.pass);
                 res.json({ success: false, message: rows });
+                res.redirect("/index/home");
                 res.end();
             }).catch(err => {
                 util.log("Error while performing Query.", err);

@@ -15,6 +15,8 @@ import  EtpInfoMain   from './components/Home/MarketInfo/EtpInfoMain.vue'
 // TODAY
 import  Today1Main   from './components/Home/Today/Today1Main.vue'
 
+import  Login   from '@/components/Home/User/LoginInfo'
+
 
 import  testMain   from '@/components/Home/Index/Manage/test.vue'
 
@@ -22,8 +24,11 @@ import  testMain   from '@/components/Home/Index/Manage/test.vue'
 export const routes = [
   {
     path : '/', 
-    component: Home,
+    component: Login,
     children: [
+        {   path : 'index/home',
+            component: Home,
+        },
         // INDEX
         {   path : 'index/manage',
             component: IndexManageMain,

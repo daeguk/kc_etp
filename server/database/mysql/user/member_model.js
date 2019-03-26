@@ -10,10 +10,10 @@ var model = {};
 model.selectUserList = function(options) {
 	console.log('selectUserList');
 
-    var stmt = 'SELECT * from etp_test WHERE 1=1';
+    var stmt = 'SELECT * from tm_domain_mast WHERE 1=1';
     
-    if(options.id != null) {
-        stmt += ` AND ID = \'${options.id}\'`;
+    if(options.domain != null) {
+        stmt += ` AND domain = \'${options.domain}\' AND inst_cd`;
     }
     return stmt;
 }
