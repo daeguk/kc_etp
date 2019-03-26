@@ -37,4 +37,13 @@ model.selectIndexSummaryHist = function(options) {
     return stmt;
 }
 
+model.getIndexToastGridTestList = function(options) {
+    console.log('indexmanage_model.js -> getIndexToastGridTestList');
+
+    var stmt = 'SELECT * from index_hist a WHERE 1=1';
+    stmt += ` ORDER BY a.trd_dd DESC`;
+    stmt += ` limit 5000`;
+    return stmt;
+}
+
 module.exports = model;
