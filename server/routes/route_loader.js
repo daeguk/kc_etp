@@ -14,8 +14,8 @@ var config = require('../config/route_config');
 route_loader.sessionCheckRegister = function(app) {
 	console.log('route_loader.sessionCheckRegister 호출됨.');
 	var infoLen = config.route_info.length;
-	// console.log('설정에 정의된 라우팅 모듈의 수 : %d', infoLen);
- 
+	console.log('설정에 정의된 라우팅 모듈의 수 : %d', infoLen);
+         
 	for (var i = 0; i < infoLen; i++) {
 		var curItem = config.route_info[i];
 
@@ -38,6 +38,7 @@ route_loader.sessionCheckRegister = function(app) {
 			});
 		}
 	}
+
 };
 
 route_loader.routerInit = function(app, router) {
@@ -69,7 +70,7 @@ function initRoutes(app, router) {
 	}
 
     // 라우터 객체 등록
-    app.use('/', router);
+	app.use('/', router);
 }
 
 module.exports = route_loader;

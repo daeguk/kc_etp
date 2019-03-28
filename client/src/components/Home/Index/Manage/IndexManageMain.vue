@@ -23,10 +23,7 @@
                 </v-tab-item>
                 <v-tab-item>
                     <IndexDetail></IndexDetail>
-                </v-tab-item>
-                <v-tab-item>
-                    <IndexTest></IndexTest>
-                </v-tab-item>
+                </v-tab-item>               
         </v-tabs-items>    
       </v-flex>
     </v-layout> 
@@ -36,7 +33,6 @@
 import Summary   from  './Summary.vue'
 import IndexList   from  './IndexList.vue'
 import IndexDetail   from  './IndexDetail.vue'
-import IndexTest   from  './test.vue'
 
 export default {
         data() {
@@ -48,8 +44,7 @@ export default {
     components: {
         Summary     : Summary,
         IndexList     : IndexList,
-        IndexDetail     : IndexDetail,
-        IndexTest     : IndexTest,
+        IndexDetail     : IndexDetail
     },
     created: function() {
     },

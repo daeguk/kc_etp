@@ -10,14 +10,14 @@ var util = require("util");
 var Promise = require("bluebird");
 
 var checkLoginTest = function(req, res) {
-    console.log('users 모듈 안에 있는 checkLoginTest 호출됨.' + req.query.id);
+    console.log('users 모듈 안에 있는 checkLoginTest 호출됨.');
 
     var pool = req.app.get("pool");
     var etpStmts = req.app.get("stmt");
 
-    var pass = crypto.createHash('sha256', config.pwd_salt).update(req.query.pass).digest('base64')
+    var pass = crypto.createHash('sha256', config.pwd_salt).update(req.body.pass).digest('base64')
 
-    var options = {id:req.query.id, pass:pass};
+    var options = {id:req.body.id, pass:pass};
 
     var stmt = etpStmts.UserMember.selectUserList(options);
     console.log(stmt);
@@ -28,7 +28,12 @@ var checkLoginTest = function(req, res) {
                 
                 req.session.loginkey = options.id;
                 req.session.save();
-                res.json({success:true, message:1023});
+
+                res.redirect("/index/manager");
+                console.log("session loginkey: " + req.session.loginkey);
+
+                
+                //res.json({success:true, message:1023});
                 res.end();
             }).catch(err => {
                 util.log("Error while performing Query.", err);

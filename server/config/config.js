@@ -7,7 +7,7 @@
 
 module.exports = {
     runenv: "dev",
-    // runenv: "prod",
+    //runenv: "prod",
     server_port: 8024,
     base_url: "http://127.0.0.1:8024",
     // base_url: "http://etptest.koscom.co.kr",
