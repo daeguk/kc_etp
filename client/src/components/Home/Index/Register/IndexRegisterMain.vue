@@ -1,103 +1,96 @@
 <template>
-	<v-form
-	    ref="form"
-	    v-model="valid"
-	    lazy-validation
-	>
-		<v-text-field
-		    v-model="name"
-		    :counter="2"
-		    :rules="nameRules"
-		     label="Name"
-		     required
-		></v-text-field>
+<v-container >
+ <v-layout row>
+      <v-flex grow ma-3>
+        <v-card flat lite  pb-0>
+          <v-card-title primary-title><h3 class="headline" pb-0>신규 지수 등록 
+          <span class="grey--text"> 지수의 기본정보 및 소급지수를 등록합니다.</span></h3></v-card-title>
+          <registration></registration>
+        </v-card>
+      </v-flex>
+      <v-flex shrink>
+          <v-card flat class="right_menu_w" > 
+          <v-navigation-drawer 
+          clipped
+          width="250" class="drawer-style"
+          mini-variant-width="50"
+            v-model="drawer"
+            :mini-variant.sync="mini"
+             app
+             right
+            >
+             <v-toolbar flat class="transparent">
+                <v-list class="pa-0">
+                    <v-list-tile avatar>
+                    <v-list-tile-avatar class="right_menu_t_i">
+                      <v-btn icon >
+                        <v-icon>add</v-icon> 
+                     </v-btn>
+                    </v-list-tile-avatar>
+                 <v-list-tile-content>
+                    <v-list-tile-title ><h6> Quick Menu</h6> </v-list-tile-title>
+                  </v-list-tile-content>
+            <v-list-tile-action>
+            <v-btn
+              icon
+              @click.stop="mini = !mini"
+            >
+              <v-icon>chevron_right</v-icon>
+            </v-btn>
+          </v-list-tile-action>
+        </v-list-tile>
+      </v-list>
+    </v-toolbar>
+     
+    <v-list class="pt-0" dense>
+      <v-divider></v-divider>
+       <v-list-tile  class="right_menu_newbtn">
+         <v-list-tile-content >
+           <v-btn nomal  depressed color="#ff821d" dark >신규지수등록</v-btn>
+        </v-list-tile-content>
+       </v-list-tile>
+       <quickmenucon></quickmenucon>
+       </v-list>
+  </v-navigation-drawer>
+  </v-card>
 
-		<v-text-field
-		    v-model="email"
-		    :rules="emailRules"
-		    label="E-mail"
-		    required
-		></v-text-field>
 
-		<v-select
-		    v-model="select"
-		    :items="items"
-		    :rules="[v => !!v || 'Item is required']"
-		    label="Item"
-		     required
-		></v-select>
-
-		<v-checkbox
-		    v-model="checkbox"
-		    :rules="[v => !!v || 'You must agree to continue!']"
-		    label="Do you agree?"
-		    required
-		></v-checkbox>
-
-		<v-btn
-		    :disabled="!valid"
-		    color="success"
-		    @click="validate"
-		>
-		  Validate
-		</v-btn>
-
-		<v-btn
-		    color="error"
-		    @click="reset"
-		>
-		    Reset Form
-		</v-btn>
-
-		<v-btn
-		    color="warning"
-		    @click="resetValidation"
-		>
-		    Reset Validation
-		</v-btn>
-	</v-form>
+      </v-flex>
+    </v-layout>
+  </v-container>  
 </template>
 
 
 <script>
-	export default {
-		data: () => ({
-		    valid: true,
-		    name: '',
-		    nameRules: [
-			    v => !!v || 'Name is required',
-			    v => (v && v.length <= 10) || 'Name must be less than 10 characters'
-		    ],
-		    email: '',
-		    emailRules: [
-			    v => !!v || 'E-mail is required',
-			    v => /.+@.+/.test(v) || 'E-mail must be valid'
-		    ],
-		    select: null,
-		    items: [
-                'Item 1',
-			    'Item 2',
-			    'Item 3',
-			    'Item 4'
-		    ],
-		    checkbox: false
-        }),
 
+import registration   from  './registration.vue'
+import quickmenucon   from  './quickmenucon.vue'
 
-        methods: {
-            validate () {
-                if (this.$refs.form.validate()) {
-                    this.snackbar = true
-                }
-            },
-            reset () {
-                this.$refs.form.reset()
-            },
-            resetValidation () {
-                this.$refs.form.resetValidation()
-            }
-        }
-	}
+  export default {
+    data () {
+      return {
+        value: 0,
+        fruits: 0,
+        ticksLabels: [
+          '등록완료',
+          '연동신청',
+          '연동완료'
+        ],
+        drawer: true,
+        items: [
+          { title: 'Home', icon: 'dashboard' },
+          { title: 'About', icon: 'question_answer' }
+        ],
+        mini: false,
+        right: null
+      }
+    },
+    components: {
+    registration: registration,
+    quickmenucon: quickmenucon,
+    }
+  }
+  
 
 </script>
 

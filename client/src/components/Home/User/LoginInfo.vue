@@ -1,7 +1,9 @@
 <template>
 <div>
-<v-dialog v-model="loginDialog" persistent max-width="400">
-    <v-btn slot="activator" outline color="primary" dark>Login</v-btn>
+<v-dialog v-model="loginDialog" persistent max-width="400px">
+    <v-btn  class="login_btn"
+       slot="activator" flat><v-icon left dark>power_settings_new</v-icon>LOGIN</v-btn>
+
     <v-card>
         <v-card-text>
         <v-container grid-list-md>
