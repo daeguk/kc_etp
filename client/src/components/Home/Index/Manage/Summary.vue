@@ -1,7 +1,6 @@
 <template>
-<div>
-  <v-container fluid grid-list-md pa-0 mt-4 mb-4>
-  <v-layout row wrap>
+  <v-container grid-list-md  >
+  <v-layout row wrap mx-3  mt-3>
     <v-flex md4> 
         <IndexSummaryCard :item="cardItem1" :chartItem="chartItem1"></IndexSummaryCard>
     </v-flex>
@@ -12,7 +11,7 @@
         <IndexSummaryCard :item="cardItem3" :chartItem="chartItem3"></IndexSummaryCard>
     </v-flex>
   </v-layout>
-  <v-layout row wrap>
+  <v-layout row wrap mx-3 mt-1>
     <v-flex md3> 
       <IndexSummaryBox :item="boxItem1"></IndexSummaryBox>
     </v-flex>
@@ -26,9 +25,13 @@
       <IndexSummaryBox :item="boxItem4"></IndexSummaryBox>
     </v-flex>
   </v-layout>
+    <v-layout row wrap mx-3 mt-1 mb-3>
+       <v-flex md12> 
+         <InfoOpenReq></InfoOpenReq>
+       </v-flex>
+    </v-layout>
   </v-container>
-  <InfoOpenReq></InfoOpenReq>
-</div>    
+   
 </template>
 
 <script>

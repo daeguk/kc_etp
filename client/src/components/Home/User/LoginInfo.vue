@@ -1,7 +1,8 @@
 <template>
 <div>
 <v-dialog v-model="loginDialog" persistent max-width="400px">
-    <v-btn slot="activator" outline color="primary" dark>Login</v-btn>
+    <v-btn  class="login_btn"
+       slot="activator" flat><v-icon left dark>power_settings_new</v-icon>LOGIN</v-btn>
     <v-card>
         <v-card-text>
         <v-container grid-list-md>
@@ -23,7 +24,7 @@
     </v-card>
 </v-dialog>
 <v-dialog v-model="signupDialog" persistent max-width="600px">
-    <v-btn slot="activator" outline color="warning" dark>SingUp</v-btn>
+    <v-btn class="login_btn" slot="activator" flat><v-icon left dark>perm_identity</v-icon>SingUp</v-btn>
     <v-card>
         <v-card-title>
         <span class="headline">User Profile</span>
@@ -89,7 +90,7 @@ export default {
     
     data() {
         return {
-            loginDialog: true,
+            loginDialog: false,
             signupDialog: false,
         };
     },
