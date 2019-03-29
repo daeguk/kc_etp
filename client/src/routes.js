@@ -26,7 +26,7 @@ import  testMain   from '@/components/Home/Index/Manage/test.vue'
 export const routes = [
   {
     path : '/', 
-    component: Login,
+    component: Home,
     children: [
         {   path : 'index/home',
             component: Home,
