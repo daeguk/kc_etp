@@ -41,7 +41,8 @@ export default {
             { title: '지수개발', link: '/index/develop'  },
             { title: 'datepicker 테스트', link: '/index/datepickerTest'  },
             { title: 'Vue Table 테스트', link: '/index/vueTableTest'  },
-            { title: 'Toast Grid 테스트', link: '/index/toastGridTest'  }           { title: 'Toast Grid 테스트', link: '/index/toastGridTest'  }>>>>>>> d6bd177fb5b5b163b0f8e03fb883443f4f72efad
+            { title: 'Toast Grid 테스트', link: '/index/toastGridTest'  },
+            { title: 'Toast Grid 테스트', link: '/index/toastGridTest'  }
           ],
         },
         {
