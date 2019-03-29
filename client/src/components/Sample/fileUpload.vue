@@ -56,7 +56,8 @@
 <template>
   <div id="file-drag-drop">
     <form ref="fileform">
-      <span class="drop-files">Drop the files here!</span>
+      <input type="file" name="file" ref="file" style="display:none;">
+      <a class="drop-files" v-on:click="file_click();">Drop the files here!</a>
     </form>
 
     <progress max="100" :value.prop="uploadPercentage"></progress>
@@ -85,6 +86,7 @@ import Config       from "@/js/config.js"
       return {
         dragAndDropCapable: false,
         files: [],
+        file: '',
         uploadPercentage: 0
       }
     },
@@ -129,6 +131,21 @@ import Config       from "@/js/config.js"
           }
         }.bind(this));
       }
+
+
+      this.$refs.file.addEventListener('change', function(evt){
+          if (this.$refs.file.files[0].name) {
+            this.files.push(this.$refs.file.files[0]);
+
+            this.getImagePreviews();
+
+            this.$refs.fileform.addEventListener(evt, function(e){
+              e.preventDefault();
+              e.stopPropagation();
+            }.bind(this), false);
+          }
+
+        }.bind(this));
     },
 
     methods: {
@@ -193,7 +210,7 @@ import Config       from "@/js/config.js"
               We do the next tick so the reference is bound and we can access it.
             */
             this.$nextTick(function(){
-              this.$refs['preview'+parseInt( i )][0].src = '/assets/img/avatar.png';
+              this.$refs['preview'+parseInt( i )][0].src = '/assets/img/file.jpg';
             });
           }
         }
@@ -212,19 +229,21 @@ import Config       from "@/js/config.js"
           Iteate over any file sent over appending the files
           to the form data.
         */
+
+        
         for( var i = 0; i < this.files.length; i++ ){
           let file = this.files[i];
-
           formData.append('files', file);
         }
 
+        /*
         for (var key of formData.keys()) {
           console.log(key);
         }
         for (var value of formData.values()) {
           console.log(value);
         }
-
+        */
         /*
           Make the request to the POST /file-drag-drop URL
         */
@@ -253,6 +272,12 @@ import Config       from "@/js/config.js"
       */
       removeFile( key ){
         this.files.splice( key, 1 );
+      },
+
+
+      file_click: function() {
+        this.$refs.file.click();
+        
       }
     }
   }

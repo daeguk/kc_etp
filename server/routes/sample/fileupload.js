@@ -16,12 +16,15 @@ var fileupload = function (req, res) {
   
       // 서버에 저장할 파일 명
       filename: function (req, file, cb) {
-        console.log("filename="+file.fieldname);
+        
+        console.log("file"+JSON.stringify(file));
+
          file.uploadedFile = {
-          name: req.params.filename,
-          ext: file.mimetype.split('/')[1]
+          name: file.originalname
         };
-        cb(null, file.uploadedFile.name + '.' + file.uploadedFile.ext);
+
+        console.log("filename="+file.uploadedFile.name);
+        cb(null, file.uploadedFile.name);
       }
     });
 
