@@ -10,15 +10,14 @@ var util = require("util");
 var Promise = require("bluebird");
 
 var checkLoginTest = function(req, res) {
-    console.log('users 모듈 안에 있는 checkLogin1 호출됨.');
+    console.log('users 모듈 안에 있는 checkLoginTest 호출됨.');
 
     var pool = req.app.get("pool");
     var etpStmts = req.app.get("stmt");
 
-    var pass = "test";
-    var options = {id:'admin', pass:''};
+    var pass = crypto.createHash('sha256', config.pwd_salt).update(req.body.pass).digest('base64')
 
-    options.pass = crypto.createHash('sha256', config.pwd_salt).update(password).digest('base64');
+    var options = {id:req.body.id, pass:pass};
 
     var stmt = etpStmts.UserMember.selectUserList(options);
     console.log(stmt);
@@ -26,19 +25,23 @@ var checkLoginTest = function(req, res) {
 
     Promise.using(pool.connect(), conn => {
         conn.queryAsync(stmt).then(rows => {
-                util.log("sql1" == rows.affectedRows)
-                makeSessionKey(req, options.id + options.pass);
-                res.json({ success: false, message: rows });
-                res.redirect("/index/home");
+                
+                req.session.loginkey = options.id;
+                req.session.save();
+
+                res.redirect("/index/manager");
+                console.log("session loginkey: " + req.session.loginkey);
+
+                
+                //res.json({success:true, message:1023});
                 res.end();
             }).catch(err => {
                 util.log("Error while performing Query.", err);
-                console.log('Error while performing Query.', err);              
             });
     
        
     });
-
+    
 };
 
 //로그인

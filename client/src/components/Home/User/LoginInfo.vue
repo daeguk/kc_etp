@@ -1,24 +1,23 @@
 <template>
 <div>
-<v-dialog v-model="loginDialog" persistent max-width="400px">
-    <v-btn  class="login_btn"
-       slot="activator" flat><v-icon left dark>power_settings_new</v-icon>LOGIN</v-btn>
+<v-dialog v-model="loginDialog" persistent max-width="400">
+    <v-btn slot="activator" outline color="primary" dark>Login</v-btn>
     <v-card>
         <v-card-text>
         <v-container grid-list-md>
             <v-layout wrap>
             <v-flex xs12>
-                <v-text-field label="Email"></v-text-field>
+                <v-text-field label="Email" v-model="txt_email"></v-text-field>
             </v-flex>
             <v-flex xs12>
-                <v-text-field label="Password" type="password"></v-text-field>
+                <v-text-field label="Password" v-model="txt_pass" type="password"></v-text-field>
             </v-flex>
             </v-layout>
         </v-container>
         </v-card-text>
         <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" flat @click="loginDialog = false">LOGIN</v-btn>
+        <v-btn color="blue darken-1" flat @click="Login()">LOGIN</v-btn>
         <v-btn color="blue darken-1" flat @click="loginDialog = false">CLOSE</v-btn>
         </v-card-actions>
     </v-card>
@@ -92,29 +91,24 @@ export default {
         return {
             loginDialog: false,
             signupDialog: false,
+            txt_email: '', 
+            txt_pass:''
         };
     },
     methods: {
         Login: function() {
-            console.log('Login');
             var vm = this;
-
-            console.log(vm.Email);
-            axios.get(Config.base_url+'/logintest', {
+            console.log('Login' + vm.txt_email);
+            
+            axios.post(Config.base_url+'/logintest', {
                 
-                params: {
-                    "id": vm.email,
-                    "pass":vm.pass                }
+                    "id": vm.txt_email,
+                    "pass": vm.txt_pass               
+              
             }).then(function(response) {
-                // console.log(response);
-                if(response.data.success == false){
-                    alert("해당 신청현황이 없습니다");
-                }else {
-                    var items = response.data.results;
-                    var tcount   = response.data.count;
-                    vm.results = items;
-                    vm.count = tcount;
-                }
+                console.log(response.data.message);
+                vm.loginDialog = false;
+                
             });
         }
     }

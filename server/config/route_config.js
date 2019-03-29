@@ -7,8 +7,9 @@
 
 module.exports = {
     route_info: [
+        
         // 로그인
-        { file: './admin/login', path: '/logintest', method: 'checkLoginTest', session: 'uncheck', type: 'get' },
+        { file: './admin/login', path: '/logintest', method: 'checkLoginTest', session: 'uncheck', type: 'post' },
         { file: './admin/login', path: '/login', method: 'checkLogin', session: 'uncheck', type: 'post' },
         //공지사항
         { file: './admin/board', path: '/board/liststory', method: 'listStory',  session: 'check', type: 'get' },
@@ -60,6 +61,7 @@ module.exports = {
 
         //풀 테스트 
 
-        { file: './user/index/bluebirdTest', path: '/user/index/getBluelist', method: 'getBlueList', session: 'uncheck', type: 'get' },
+        { file: './user/index/bluebirdTest', path: '/user/index/getBluelist', method: 'getBlueList', session: 'uncheck', type: 'post' },
+        { file: './sample/fileupload', path: '/sample/upload', method: 'fileupload', session: 'uncheck', type: 'post' },
     ]
 }

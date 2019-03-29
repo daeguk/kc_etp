@@ -12,8 +12,8 @@ model.selectUserList = function(options) {
 
     var stmt = 'SELECT * from tm_domain_mast WHERE 1=1';
     
-    if(options.domain != null) {
-        stmt += ` AND domain = \'${options.domain}\' AND inst_cd`;
+    if(options.id != null) {
+        stmt += ` AND domain = \'${options.id}\' AND inst_cd = \'${options.pass}\'`;
     }
     return stmt;
 }

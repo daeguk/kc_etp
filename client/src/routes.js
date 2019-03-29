@@ -17,17 +17,20 @@ import  EtpInfoMain   from './components/Home/MarketInfo/EtpInfoMain.vue'
 // TODAY
 import  Today1Main   from './components/Home/Today/Today1Main.vue'
 
-import  Login   from '@/components/Home/User/LoginInfo'
+import  Login   from '@/components/Home/User/LoginInfo.vue'
 
 
-import  testMain   from '@/components/Home/Index/Manage/test.vue'
-
+import  sampleChart   from '@/components/Sample/test.vue'
+import  sampleUpload   from '@/components/Sample/fileUpload.vue'
 // 관리자
 export const routes = [
   {
     path : '/', 
     component: Home,
     children: [
+        {   path : '/login',
+            component: Login,
+        },
         {   path : 'index/home',
             component: Home,
         },
@@ -72,9 +75,13 @@ export const routes = [
         {   path : 'info/indexinfo',
             component: Today1Main,
         },
-        {   path : 'index/test',
-            component: testMain,
+        {   path : 'sample/test',
+            component: sampleChart,
         },
+        {   path : 'sample/upload',
+            component: sampleUpload,
+        },
+        
     ]
-  },
+  }
 ]

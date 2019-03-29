@@ -22,7 +22,7 @@ export default {
     data() {
         return {
             showModal: false,
-            showFull: true,
+            showFull: true
         };
     },
     components: {

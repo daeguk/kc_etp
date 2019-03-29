@@ -42,7 +42,7 @@ model.getIndexToastGridTestList = function(options) {
 
     var stmt = 'SELECT * from index_hist a WHERE 1=1';
     stmt += ` ORDER BY a.trd_dd DESC`;
-    stmt += ` limit 5000`;
+    stmt += ` limit 500`;
     return stmt;
 }
 

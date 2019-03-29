@@ -18,11 +18,7 @@
             <td class="text-xs-center">{{ props.item.req_date }}</td>
             <td class="text-xs-center">3</td>
             <td class="text-xs-center">
-      <!--        
-              <v-btn color="primary" dark @click.stop="showIndexInfoModal()">
-                <v-icon>equalizer</v-icon>
-              </v-btn>
-      -->        
+ 
               <v-icon @click.stop="showIndexInfoModal(pros.item)">equalizer</v-icon>
             </td>
           </template>
@@ -35,7 +31,6 @@
     </v-flex>
   </v-layout>
   </v-container>
-  <InfoOpenReq></InfoOpenReq>
 </div>    
 </template>
 
@@ -45,10 +40,6 @@
 
 <script>
 import Config       from "@/js/config.js"
-
-
-
-
 export default {
   props: [],
   data() {
@@ -70,9 +61,31 @@ export default {
   },
   mounted: function() {
       this.getBluList();
+      this.chartTest();
+  },
+  methods: {
+    getBluList: function() {
+      console.log('getBluList');
+      var vm = this;
 
-      
-// Load the Visualization API and the corechart package.
+      axios.post(Config.base_url+'/user/index/getBlueList', {
+          
+              "instCd": "FNGUIDE"
+          
+      }).then(function(response) {
+          // console.log(response);
+          if(response.data.success == false){
+              alert("해당 신청현황이 없습니다");
+          }else {
+            var items = response.data.results;
+            var tcount   = response.data.count;
+            vm.results = items;
+            vm.count = tcount;
+          }
+      });
+    },
+    chartTest: function() {
+      // Load the Visualization API and the corechart package.
       google.charts.load('current', {'packages':['corechart']});
 
       // Set a callback to run when the Google Visualization API is loaded.
@@ -104,27 +117,6 @@ export default {
         var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
         chart.draw(data, options);
       }
-  },
-  methods: {
-    getBluList: function() {
-      console.log('getBluList');
-      var vm = this;
-
-      axios.get(Config.base_url+'/user/index/getBlueList', {
-          params: {
-              "instCd": "FNGUIDE"
-          }
-      }).then(function(response) {
-          // console.log(response);
-          if(response.data.success == false){
-              alert("해당 신청현황이 없습니다");
-          }else {
-            var items = response.data.results;
-            var tcount   = response.data.count;
-            vm.results = items;
-            vm.count = tcount;
-          }
-      });
     }
   },
   showIndexInfoModal: function(item) {
