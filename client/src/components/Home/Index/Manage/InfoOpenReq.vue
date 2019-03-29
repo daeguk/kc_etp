@@ -1,6 +1,7 @@
 <template>
-<div>
-  <v-card flat>
+<v-container>
+<v-card>
+  <v-card  flat>
     <v-card-title primary-title>
       <div>
         <h3 class="headline mb-0">정보공개 요청처리</h3>
@@ -8,7 +9,7 @@
       </div>
     </v-card-title>
   </v-card>
-  <v-data-table 
+  <v-data-table class="table_top_line"
     :headers="headers"
     :items="results"
     :rows-per-page-items="rowsPerPageItems"
@@ -22,17 +23,18 @@
       <td class="text-xs-center">{{ props.item.idx_sym_code }}</td>
       <td class="text-xs-center">{{ props.item.req_date }}</td>
       <td class="text-xs-center">
-        <v-btn small color="green" class="white--text">
+        <v-btn small depressed color="primary" class="white--text">
           <v-icon dark>thumb_up_alt</v-icon>
           Yes
       </v-btn>
-      <v-btn small color="blue-grey" class="white--text">
+      <v-btn small depressed color="grey" class="white--text">
         <v-icon dark>thumb_down_alt</v-icon>
         No
       </v-btn></td>
     </template>
   </v-data-table>
-</div>    
+</v-card>
+</v-container> 
 </template>
 
 <script>

@@ -39,6 +39,9 @@ export default {
             { title: '지수관리', link: '/index/manage' },
             { title: '지수등록', link: '/index/register'  },
             { title: '지수개발', link: '/index/develop'  },
+            { title: 'datepicker 테스트', link: '/index/datepickerTest'  },
+            { title: 'Vue Table 테스트', link: '/index/vueTableTest'  },
+            { title: 'Toast Grid 테스트', link: '/index/toastGridTest'  }
           ],
         },
         {
@@ -120,6 +123,25 @@ export default {
 <style scoped>
 #style-1::-webkit-scrollbar {
     width: 6px;
+    background-color: #fff;
+  }
+
+  #style-1::-webkit-scrollbar-thumb {
+    background-color: #e5e5e5; 
+
+  }
+
+  #style-1::-webkit-scrollbar-track {
+    /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);*/
+    background-color: #fff;
+  }
+</style>
+
+
+<!--
+<style scoped>
+#style-1::-webkit-scrollbar {
+    width: 6px;
     background-color: #F5F5F5;
   }
 
@@ -139,3 +161,4 @@ export default {
     background-color: #F5F5F5;
   }
 </style>
+-->

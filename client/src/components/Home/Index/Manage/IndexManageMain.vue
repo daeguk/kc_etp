@@ -4,10 +4,11 @@
             <v-tabs
             slot="extension"
             dark
+            color="#3158a1"
             v-model="tab"
             align-with-title
             >
-            <v-tabs-slider color="yellow"></v-tabs-slider>
+            <v-tabs-slider color="#ff821d"></v-tabs-slider>
     
             <v-tab v-for="item in items" :key="item">
                 {{ item }}

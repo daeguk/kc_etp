@@ -1,22 +1,21 @@
 <template>
-<v-toolbar fixed app light clipped-left color="white" class="elevation-0">
+<v-toolbar fixed app  clipped-left clipped-right dark color="#42a4e1" class="elevation-0">
     <v-toolbar-side-icon @click="menuClick"></v-toolbar-side-icon>
     <v-toolbar-title>
-        <router-link class="routerlink" :to="`${homeUrl}`">ETP PLATFORM</router-link>
+        <router-link class="routerlink logo" :to="`${homeUrl}`">ETP PLATFORM</router-link>
     </v-toolbar-title>
     <v-spacer></v-spacer>
-    <Badge></Badge>
     <UserInfo v-if="loginFlag"></UserInfo>
     <LoginInfo v-if="!loginFlag"></LoginInfo>
+
 </v-toolbar>
+
 </template>
 
 <script>
 import UserInfo          from './User/UserInfo.vue';
 import LoginInfo          from './User/LoginInfo.vue';
 import LoginModal          from './User/LoginModal.vue';
-import Badge          from './Badge.vue';
-
 import Config       from "@/js/config.js";
 import Constant     from '@/store/store_constant.js';
 
@@ -34,8 +33,7 @@ export default {
     components: {
         UserInfo: UserInfo,
         LoginInfo: LoginInfo,
-        LoginModal: LoginModal,
-        Badge : Badge
+        LoginModal: LoginModal
     },
     created: function() {
         this.$EventBus.$on('closeLoginModal', this.closeLoginModal);

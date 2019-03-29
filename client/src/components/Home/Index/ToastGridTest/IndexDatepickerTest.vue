@@ -90,6 +90,9 @@
       menu: false,
       modal: false,
       menu2: false
-    })
+    }),
+    created : function() {
+        console.log( ">>>>>> 배지 건수 반영 위해 서버 호출" );
+    },    
   }
 </script>
