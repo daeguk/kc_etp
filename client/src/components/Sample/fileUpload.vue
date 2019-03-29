@@ -74,6 +74,9 @@
 </template>
 
 <script>
+
+import Config       from "@/js/config.js"
+
   export default {
     /*
       Variables used by the drag and drop component
@@ -212,13 +215,20 @@
         for( var i = 0; i < this.files.length; i++ ){
           let file = this.files[i];
 
-          formData.append('files[' + i + ']', file);
+          formData.append('files', file);
+        }
+
+        for (var key of formData.keys()) {
+          console.log(key);
+        }
+        for (var value of formData.values()) {
+          console.log(value);
         }
 
         /*
           Make the request to the POST /file-drag-drop URL
         */
-        axios.post( '/file-drag-drop',
+        axios.post(Config.base_url + '/sample/upload',
           formData,
           {
             headers: {
@@ -234,6 +244,8 @@
         .catch(function(){
           console.log('FAILURE!!');
         });
+
+        
       },
 
       /*

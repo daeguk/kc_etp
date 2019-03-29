@@ -22,7 +22,6 @@ import  Login   from '@/components/Home/User/LoginInfo.vue'
 
 import  sampleChart   from '@/components/Sample/test.vue'
 import  sampleUpload   from '@/components/Sample/fileUpload.vue'
-
 // 관리자
 export const routes = [
   {
@@ -82,6 +81,7 @@ export const routes = [
         {   path : 'sample/upload',
             component: sampleUpload,
         },
+        
     ]
   }
 ]
