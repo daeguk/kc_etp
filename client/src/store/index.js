@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state: {
-        user: [{ userid: "", username: "", user_level: "", comp_no: 0, comp_name: "" }]
+        user: [{ userid: "", username: "", user_level: "", comp_no: 0, comp_name: "" }],
     },
     mutations: {
         [Constant.ADD_USER]: (state, payload) => {

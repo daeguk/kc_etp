@@ -5,7 +5,7 @@
  */
 
 // Express 기본 모듈 불러오기
-var express = require('express'),
+const express = require('express'),
     http = require('http'),
     path = require('path');
 
@@ -21,6 +21,7 @@ var expressErrorHandler = require('express-error-handler');
 
 // Session 미들웨어 불러오기
 var expressSession = require('express-session');
+
 
 // connect-flash 미들웨어 불러오기
 var flash = require('connect-flash');
@@ -53,7 +54,14 @@ console.log('config.server_port : %d', config.server_port);
 app.set('port', config.server_port); //8021
 
 //Cross Origin Resource Sharing
-app.use(cors());
+app.all("*", function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With");
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST");
+    return next();
+});
+
+//app.use(cors(corsOptions));
 // app.options('*', cors());
 
 // body-parser를 이용해 application/x-www-form-urlencoded 파싱
@@ -76,9 +84,10 @@ app.use(expressSession({
 app.use(static(path.join(__dirname, 'public')));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
+
 //라우팅에 대한 사전 세션체크 (개발시 체크 하지 않음)
 if (config.runenv == "dev") {
-    // route_loader.sessionCheckRegister(app);
+    route_loader.sessionCheckRegister(app);
 } else {
     route_loader.sessionCheckRegister(app);
 }
@@ -98,11 +107,6 @@ app.use(expressErrorHandler.httpError(404));
 app.use(errorHandler);
 
 
-app.use(function(req, res, next) {
-    console.log("intercept============================");
-
-    next();
-});
 // cron 작업 등록
 cron.init(app);
 
@@ -132,7 +136,10 @@ app.on('close', function() {
 // 시작된 서버 객체를 리턴받도록 합니다. 
 var server = http.createServer(app).listen(app.get('port'), function(req, res) {
     console.log('서버가 시작되었습니다. 포트 : ' + app.get('port'));
+
+    
     // MYSQL 초기화
     //mydb.init(app);
 
 });
+

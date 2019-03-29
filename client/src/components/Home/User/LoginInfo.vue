@@ -1,5 +1,6 @@
 <template>
 <div>
+    Login
 <v-dialog v-model="loginDialog" persistent max-width="400">
     <v-btn slot="activator" outline color="primary" dark>Login</v-btn>
     <v-card>
@@ -89,7 +90,7 @@ export default {
     
     data() {
         return {
-            loginDialog: true,
+            loginDialog: false,
             signupDialog: false,
             txt_email: '', 
             txt_pass:''
@@ -100,12 +101,11 @@ export default {
             var vm = this;
             console.log('Login' + vm.txt_email);
             
-            axios.get(Config.base_url+'/logintest', {
+            axios.post(Config.base_url+'/logintest', {
                 
-                params: {
                     "id": vm.txt_email,
                     "pass": vm.txt_pass               
-                }
+              
             }).then(function(response) {
                 console.log(response.data.message);
                 vm.loginDialog = false;

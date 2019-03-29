@@ -39,9 +39,6 @@ export default {
             { title: '지수관리', link: '/index/manage' },
             { title: '지수등록', link: '/index/register'  },
             { title: '지수개발', link: '/index/develop'  },
-            { title: 'datepicker 테스트', link: '/index/datepickerTest'  },
-            { title: 'Vue Table 테스트', link: '/index/vueTableTest'  },
-            { title: 'Toast Grid 테스트', link: '/index/toastGridTest'  }
           ],
         },
         {
@@ -94,6 +91,19 @@ export default {
             { title: 'ETP관리', link: '/index/develop'  },
           ],
         },
+        {
+          action: 'sample',
+          title: 'SAMPLE',
+          active: true,
+          subitems: [
+            { title: 'datepicker 테스트', link: '/index/datepickerTest'  },
+            { title: 'Vue Table 테스트', link: '/index/vueTableTest'  },
+            { title: 'Toast Grid 테스트', link: '/index/toastGridTest'  },
+            { title: 'chart and grid', link: '/sample/test'  },
+            { title: 'upload', link: '/sample/upload'  },
+          ],
+        },
+        
       ] //item
     }; // return
   },
