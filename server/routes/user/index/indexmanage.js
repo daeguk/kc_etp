@@ -117,7 +117,53 @@ var getIndexToastGridTestList = function(req, res) {
   });  
 };
 
+/* 
+  * 이미 등록된 지수ID 가 존재하는지 확인한다.
+  * 2019-04-02  bkLove(촤병국)
+*/
+var getJisuDuplCheck = function(req, res) {
+  console.log('indexmanage -> getJisuDuplCheck 호출됨.');
+
+  var pool = req.app.get("pool");
+  var etpStmts = req.app.get("stmt");
+  var result = false;
+
+  /* 1. body.data 값이 있는지 체크 */
+  if( !req.body.data ) {
+    console.log( "[error] indexmanage -> getJisuDuplCheck  req.body.data no data." );
+    console.log( req.body.data );
+    res.json({ success: false, result: result });
+    return ;
+  }
+
+  var options = JSON.parse( JSON.stringify(req.body.data) );
+
+  /* 2. 이미 등록된 지수ID 가 존재하는지 확인 */
+  var stmt = etpStmts.IndexManage.getJisuDuplCheck( options) ;
+  console.log(stmt);
+  
+  Promise.using(pool.connect(), conn => {
+    conn.queryAsync(stmt).then(rows => {
+
+          /* 3. cnt 가 0보다 큰 경우 데이터가 존재 */
+          if(     rows 
+              &&  rows[0].cnt > 0 )  {
+                result  = true;
+          }
+
+          console.log("indexmanage -> getJisuDuplCheck  result=[" + result + "]");
+          res.json({ success: true, result: result });
+          res.end();
+      }).catch(err => {
+          console.log("[error] indexmanage -> getJisuDuplCheck Error while performing Query.", err);
+          res.json({ success: false, message: err, result: result });
+          res.end();
+      });
+  });  
+};
+
 module.exports.getInfoOpenReqList = getInfoOpenReqList;
 module.exports.getIndexSummaryHist = getIndexSummaryHist;
 module.exports.getIndexVueTableTestList = getIndexVueTableTestList;
 module.exports.getIndexToastGridTestList = getIndexToastGridTestList;
+module.exports.getJisuDuplCheck = getJisuDuplCheck;

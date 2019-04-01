@@ -46,4 +46,17 @@ model.getIndexToastGridTestList = function(options) {
     return stmt;
 }
 
+/* 
+  * 이미 등록된 지수ID 가 존재하는지 확인한다.
+  * 2019-04-02  bkLove(촤병국)
+*/
+model.getJisuDuplCheck = function(options) {
+    console.log('indexmanage_model.js -> getJisuDuplCheck');
+
+    var stmt = `SELECT	COUNT(1)   AS  cnt \n`;
+    stmt    += `  FROM	tm_jisu_mast \n`;
+    stmt    += ` WHERE	tm_jisu_mast.jisu_id    =    \'${options.jisu_id}\' \n`;
+    return stmt;
+}
+
 module.exports = model;
