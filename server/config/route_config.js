@@ -53,6 +53,7 @@ module.exports = {
         { file: './user/index/indexmanage', path: '/user/index/getindexsummaryhist', method: 'getIndexSummaryHist', session: 'uncheck', type: 'get' },
         { file: './user/index/indexmanage', path: '/user/index/getIndexVueTableTestList', method: 'getIndexVueTableTestList', session: 'uncheck', type: 'get' },
         { file: './user/index/indexmanage', path: '/user/index/getIndexToastGridTestList', method: 'getIndexToastGridTestList', session: 'uncheck', type: 'get' },
+        { file: './user/index/indexmanage', path: '/user/index/getJisuDuplCheck', method: 'getJisuDuplCheck', session: 'uncheck', type: 'post' },
         //일반 MARKET INFO
         { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getetfkorlist', method: 'getEtfKorList', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getetfforlist', method: 'getEtfForList', session: 'uncheck', type: 'get' },
@@ -61,7 +62,7 @@ module.exports = {
 
         //풀 테스트 
 
-        { file: './sample/bluebirdTest', path: '/sample/getBluelist', method: 'getBlueList', session: 'uncheck', type: 'post' },
+        { file: './user/index/bluebirdTest', path: '/user/index/getBluelist', method: 'getBlueList', session: 'uncheck', type: 'post' },
         { file: './sample/fileupload', path: '/sample/upload', method: 'fileupload', session: 'uncheck', type: 'post' },
     ]
 }
