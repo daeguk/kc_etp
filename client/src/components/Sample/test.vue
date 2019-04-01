@@ -68,7 +68,7 @@ export default {
       console.log('getBluList');
       var vm = this;
 
-      axios.post(Config.base_url+'/user/index/getBlueList', {
+      axios.post(Config.base_url+'/sample/getBlueList', {
           
               "instCd": "FNGUIDE"
           

@@ -61,7 +61,7 @@ module.exports = {
 
         //풀 테스트 
 
-        { file: './user/index/bluebirdTest', path: '/user/index/getBluelist', method: 'getBlueList', session: 'uncheck', type: 'post' },
+        { file: './sample/bluebirdTest', path: '/sample/getBluelist', method: 'getBlueList', session: 'uncheck', type: 'post' },
         { file: './sample/fileupload', path: '/sample/upload', method: 'fileupload', session: 'uncheck', type: 'post' },
     ]
 }

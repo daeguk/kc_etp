@@ -79,9 +79,6 @@
 import Config       from "@/js/config.js"
 
   export default {
-    /*
-      Variables used by the drag and drop component
-    */
     data(){
       return {
         dragAndDropCapable: false,
@@ -132,7 +129,7 @@ import Config       from "@/js/config.js"
         }.bind(this));
       }
 
-
+      /* file input에서 선택된 파일이 있으면 이벤트 실행 */
       this.$refs.file.addEventListener('change', function(evt){
           if (this.$refs.file.files[0].name) {
             this.files.push(this.$refs.file.files[0]);
