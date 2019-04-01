@@ -106,6 +106,8 @@
                     label="기준지수"
                     value="e.g.FDL001"
                     outline
+                    v-model="form.base_jisu"
+                    :rules="rules.base_jisu"                    
                   ></v-text-field>
                 </v-flex>
               </v-layout>
@@ -120,7 +122,7 @@
                 <v-flex xs4>
                   <!--달력-->
                   <v-layout row wrap>
-                    <v-flex xs12 sm6 md4>
+                    <v-flex xs12 sm6 md6>
                       <v-menu
                         ref="menu"
                         v-model="menu"
@@ -478,7 +480,7 @@
 
         <!---특정기관과 공유 end-->
         <div class="text-xs-center">
-          <v-btn depressed large color="#3158a1" dark>등록</v-btn>
+          <v-btn depressed large color="#3158a1" dark @click="this.fn_save">등록</v-btn>
         </div>
 
       </v-container>
@@ -513,14 +515,18 @@
                 jisu_summary : [
                     v => !!v || '[지수 개요] is required',
                     v => (v && v.length <= 2000) || '[지수 개요] must be less than 2000 characters'
-                ],              
+                ],
+                base_jisu : [
+                    v => !!v || '[기준 지수] is required',
+                    v => (v && v.length <= 17) || '[기준 지수]] must be less than 17 characters'
+                ],     
               }
           }
       },
       methods: {
         /* 
-          * 이미 등록된 지수ID 가 존재하는지 확인한다.
-          * 2019-04-02  bkLove(촤병국)
+        * 이미 등록된 지수ID 가 존재하는지 확인한다.
+        * 2019-04-02  bkLove(촤병국)
         */
         fn_jisuDuplCheck() {
           var vm = this;
@@ -534,7 +540,25 @@
           }).then(function(response) {
               console.log( response);
           });  
-        }   
+        },
+
+        /* 
+        * 등록 버튼 클릭시
+        * 2019-04-02  bkLove(촤병국)
+        */
+        fn_save() {
+          var vm = this;
+
+          if( !this.$refs.form.validate( this.rules.jisu_id ) ) {
+            return  false;
+          }
+
+          axios.post(Config.base_url+'/user/index/save', {
+            data : this.from
+          }).then(function(response) {
+              console.log( response);
+          });  
+        }        
       }
   }
 

@@ -47,8 +47,8 @@ model.getIndexToastGridTestList = function(options) {
 }
 
 /* 
-  * 이미 등록된 지수ID 가 존재하는지 확인한다.
-  * 2019-04-02  bkLove(촤병국)
+* 이미 등록된 지수ID 가 존재하는지 확인한다.
+* 2019-04-02  bkLove(촤병국)
 */
 model.getJisuDuplCheck = function(options) {
     console.log('indexmanage_model.js -> getJisuDuplCheck');
