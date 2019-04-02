@@ -29,6 +29,7 @@
 
 
 <!-- 지수 ID-->
+
               <v-layout row>
                 <v-flex xs2>
                   <v-subheader>지수ID</v-subheader>
@@ -531,7 +532,7 @@
         fn_jisuDuplCheck() {
           var vm = this;
 
-          if( !this.$refs.form.validate( this.rules.jisu_id ) ) {
+          if( !this.$refs.form.validate() ) {
             return  false;
           }
 
