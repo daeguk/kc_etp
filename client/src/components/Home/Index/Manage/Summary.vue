@@ -1,6 +1,7 @@
 <template>
-  <v-container grid-list-md  >
-  <v-layout row wrap mx-3  mt-3>
+<div class="content_margin">
+  <v-container class="summary_card_pad">
+  <v-layout row wrap>
     <v-flex md4> 
         <IndexSummaryCard :item="cardItem1" :chartItem="chartItem1"></IndexSummaryCard>
     </v-flex>
@@ -11,7 +12,7 @@
         <IndexSummaryCard :item="cardItem3" :chartItem="chartItem3"></IndexSummaryCard>
     </v-flex>
   </v-layout>
-  <v-layout row wrap mx-3 mt-1>
+  <v-layout row wrap mt-1>
     <v-flex md3> 
       <IndexSummaryBox :item="boxItem1"></IndexSummaryBox>
     </v-flex>
@@ -25,13 +26,13 @@
       <IndexSummaryBox :item="boxItem4"></IndexSummaryBox>
     </v-flex>
   </v-layout>
-    <v-layout row wrap mx-3 mt-1 mb-3>
+    <v-layout row wrap my-1>
        <v-flex md12> 
          <InfoOpenReq></InfoOpenReq>
        </v-flex>
     </v-layout>
   </v-container>
-   
+</div> 
 </template>
 
 <script>
