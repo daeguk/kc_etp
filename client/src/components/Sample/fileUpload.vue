@@ -118,6 +118,11 @@ import Config       from "@/js/config.js"
           Add an event listener for drop to the form
         */
         this.$refs.fileform.addEventListener('drop', function(e){
+
+            if( this.files.length > 0 ) {
+                alert( "1개만 등록하실수 있습니다.");
+                return false;
+            }
           /*
             Capture the files from the drop event and add them to our local files
             array.

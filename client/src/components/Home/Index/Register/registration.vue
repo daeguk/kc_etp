@@ -214,8 +214,8 @@
                                     <v-subheader>소급지수</v-subheader>
                                 </v-flex>
 
-                                <v-flex xs4>
-                                    <v-layout flat class="drag_box">
+                                <v-flex xs4 id="file-drag-drop">
+                                    <v-layout flat class="drag_box" ref="fileform">
                                         <v-layout class="jumsun" align-center justify-center column>
                                             <v-layout justify-space-around>
                                                 <v-icon large color="#c9c9c9">cloud_upload</v-icon>
@@ -245,6 +245,20 @@
                                         <br>
                                         <span class="info_text">price: ####,##</span>
                                     </p>
+                                </v-flex>
+
+                                <v-flex>
+                                    <v-data-table
+                                        :headers="headers"
+                                        :items="desserts"
+                                        class="elevation-1"
+                                    >
+                                        <template v-slot:items="props">
+                                            <td>{{ props.item.name }}</td>
+                                            <td class="text-xs-right">{{ props.item.calories }}</td>
+                                            <td class="text-xs-right">{{ props.item.fat }}</td>
+                                        </template>
+                                    </v-data-table>
                                 </v-flex>
                             </v-layout>
 
@@ -533,21 +547,29 @@ export default {
     data: () => {
         return {
             valid: true,
+
+            dragAndDropCapable: false,
+            files: [],
+            file: "",
+            uploadPercentage: 0,
+            desserts : [],
+            headers : [],
+
             //            , date: new Date().toISOString().substr(0, 10)
             menu: false,
             dialog: false,
             dialog2: false,
             ex4: null,
             form: {
-                    duplCheckResult :   false
+                duplCheckResult: false,
 
-                ,   jisu_id         :   ''
-                ,   jisu_kor_nm     :   ''
-                ,   jisu_eng_nm     :   ''
-                ,   jisu_summary    :   ''
-                ,   base_jisu       :   ''
-                ,   base_date       :   ''
-                ,   req_content     :   ''
+                jisu_id: "",
+                jisu_kor_nm: "",
+                jisu_eng_nm: "",
+                jisu_summary: "",
+                base_jisu: "",
+                base_date: "",
+                req_content: ""
             },
             rules: {
                 jisu_kor_nm: [
@@ -572,6 +594,70 @@ export default {
             }
         };
     },
+
+    mounted() {
+        /*
+        Determine if drag and drop functionality is capable in the browser
+      */
+        this.dragAndDropCapable = this.determineDragAndDropCapable();
+
+        /*
+        If drag and drop capable, then we continue to bind events to our elements.
+      */
+        if (this.dragAndDropCapable) {
+            /*
+          Listen to all of the drag events and bind an event listener to each
+          for the fileform.
+        */
+            [
+                "drag",
+                "dragstart",
+                "dragend",
+                "dragover",
+                "dragenter",
+                "dragleave",
+                "drop"
+            ].forEach(
+                function(evt) {
+                    /*
+            For each event add an event listener that prevents the default action
+            (opening the file in the browser) and stop the propagation of the event (so
+            no other elements open the file in the browser)
+          */
+                    this.$refs.fileform.addEventListener(
+                        evt,
+                        function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                        }.bind(this),
+                        false
+                    );
+                }.bind(this)
+            );
+
+            this.$refs.fileform.addEventListener(
+                "drop",
+                function(e) {
+                    let formData = new FormData();
+                    formData.append("files", e.dataTransfer.files[0]);
+
+                    axios
+                        .post(Config.base_url + "/sample/fileuploadSingle", formData, {
+                            headers: {
+                                "Content-Type": "multipart/form-data"
+                            },
+                        })
+                        .then(function() {
+                            console.log("SUCCESS!!");
+                        })
+                        .catch(function() {
+                            console.log("FAILURE!!");
+                        });      
+                }.bind(this)
+            );
+        }
+    },
+
     methods: {
         /*
          * 이미 등록된 지수ID 가 존재하는지 확인한다.
@@ -639,6 +725,33 @@ export default {
                 .then(function(response) {
                     console.log(response);
                 });
+        },
+
+        /*
+        Determines if the drag and drop functionality is in the
+        window
+      */
+        determineDragAndDropCapable() {
+            /*
+          Create a test element to see if certain events
+          are present that let us do drag and drop.
+        */
+            var div = document.createElement("div");
+
+            /*
+          Check to see if the `draggable` event is in the element
+          or the `ondragstart` and `ondrop` events are in the element. If
+          they are, then we have what we need for dragging and dropping files.
+
+          We also check to see if the window has `FormData` and `FileReader` objects
+          present so we can do our AJAX uploading
+        */
+            return (
+                ("draggable" in div ||
+                    ("ondragstart" in div && "ondrop" in div)) &&
+                "FormData" in window &&
+                "FileReader" in window
+            );
         }
     }
 };

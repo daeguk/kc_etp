@@ -81,9 +81,6 @@ Promise.using(pool.connect(), conn => {
     });
 });
 
-
-
-
 //auto commit
 Promise.using(pool.connect(), conn => {
     Promise.all([
@@ -118,17 +115,3 @@ Promise.using(pool.connect(), conn => {
     })
 })
 */
-
-
-Promise.using(pool.connect(), conn => {
-    conn.queryAsync(sql1, (err, ret) => {
-        util.log("sql1=", ret.affectedRows);
-
-        conn.queryAsync(sql2, (err, ret2) => {
-            util.log("sql2=", ret2.affectedRows);
-
-
-        })
-
-    });
-});
