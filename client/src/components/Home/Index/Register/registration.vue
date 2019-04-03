@@ -664,19 +664,6 @@ export default {
          * 2019-04-02  bkLove(촤병국)
          */
         fn_jisuDuplCheck() {
-<<<<<<< HEAD
-          var vm = this;
-
-          if( !this.$refs.form.validate() ) {
-            return  false;
-          }
-
-          axios.post(Config.base_url+'/user/index/getJisuDuplCheck', {
-            data : { jisu_id : this.form.jisu_id }
-          }).then(function(response) {
-              console.log( response);
-          });  
-=======
             var vm = this;
 
             /* 1. 지수 ID 필수 체크 */
@@ -711,7 +698,6 @@ export default {
                         }
                     }
                 });
->>>>>>> 7e4602242da3b7bf3259c8bbb6e754a8f18a7842
         },
 
         /*
