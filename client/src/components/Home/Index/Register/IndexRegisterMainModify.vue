@@ -1,11 +1,10 @@
 <template>
-<v-container>
- <v-layout row class="content_margin">
-      <v-flex grow>
+<v-container >
+ <v-layout row>
+      <v-flex grow ma-3>
         <v-card flat lite  pb-0>
-          <v-card-title primary-title><h3 class="headline" pb-0>신규 지수 등록 
-          <span class="grey--text"> 지수의 기본정보 및 소급지수를 등록합니다.</span></h3></v-card-title>
-          <!--registrationModify></registrationModify-->
+          <v-card-title primary-title><h3 class="headline" pb-0>등록지수변경 
+          <span class="grey--text"> 등록지수 정보 변경, 지수 삭제 및 플랫폼 연동을 신청합니다.</span></h3></v-card-title>
           <registration></registration>
         </v-card>
       </v-flex>
@@ -66,7 +65,6 @@
 
 import registration   from  './registration.vue'
 import quickmenucon   from  './quickmenucon.vue'
-import registrationModify   from  './registrationModify.vue'
 
   export default {
     data () {
@@ -90,7 +88,6 @@ import registrationModify   from  './registrationModify.vue'
     components: {
     registration: registration,
     quickmenucon: quickmenucon,
-    registrationModify: registrationModify,
     }
   }
   
