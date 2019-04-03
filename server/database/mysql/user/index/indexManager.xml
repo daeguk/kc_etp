@@ -31,4 +31,19 @@
         limit 0, 1
 
   </select>
+
+  <select id="indexReqList">
+      SELECT BAS.*
+            ,REQ.INST_NAME
+            ,REQ.REG_TIME
+            ,REQ.REQ_FLAG
+            ,REQ.REG_ID
+        FROM td_index_basic BAS, 
+            (SELECT A.*, B.INST_NAME 
+          FROM tm_index_req A,
+                    tm_domain_mast B
+          WHERE A.INST_CD = B.INST_CD) REQ	
+      WHERE BAS.F16013 = REQ.JISU_ID; 
+
+  </select>
 </mapper>
