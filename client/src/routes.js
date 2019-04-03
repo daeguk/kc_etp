@@ -7,6 +7,7 @@ import  IndexDevelopMain   from './components/Home/Index/Develop/IndexDevelopMai
 import  IndexDatepickerTestMain   from './components/Home/Index/ToastGridTest/IndexDatepickerTestMain.vue'
 import  IndexVueTableTestMain   from './components/Home/Index/ToastGridTest/IndexVueTableTestMain.vue'
 import  IndexToastGridTestMain   from './components/Home/Index/ToastGridTest/IndexToastGridTestMain.vue'
+import  IndexListdetail   from './components/Home/Index/Manage/IndexListdetail.vue'
 
 // ETP
 import  EtpManageMain   from './components/Home/Etp/Manage/EtpManageMain.vue'
@@ -52,6 +53,9 @@ export const routes = [
         },
         {   path : '/index/toastGridTest',
             component: IndexToastGridTestMain,
+        },
+        {   path : '/index/manage/IndexListdetail',
+        component: IndexListdetail,
         },
         
         // ETP
