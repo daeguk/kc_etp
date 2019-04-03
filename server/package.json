@@ -26,7 +26,8 @@
         "passport": "^0.3.2",
         "passport-local": "^1.0.0",
         "serve-static": "^1.11.2",
-        "util": "^0.11.1"
+        "util": "^0.11.1",
+        "xlsx": "^0.14.2"
     },
     "description": "Created with [Nodeclipse](https://github.com/Nodeclipse/nodeclipse-1)\r  ([Eclipse Marketplace](http://marketplace.eclipse.org/content/nodeclipse), [site](http://www.nodeclipse.org))",
     "main": "app.js",

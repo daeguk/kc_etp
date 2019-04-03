@@ -1,5 +1,5 @@
 /*
- * INDEX SUMMARY 함수 정의
+ * ETP REGISTER 위한 라우팅 함수 정의
  *
  * @date 2019-02-08
  * @author ThreeOn
@@ -7,51 +7,13 @@
 var config = require('../../../config/config');
 var util = require("util");
 var Promise = require("bluebird");
+
 var util = require("util");
 var multer = require('multer');
+var xlsx = require('xlsx');
+var fs = require('fs');
 
-
-/*최근지수, 성과지수, ETP 규모가 가장 큰지수 정보 
-  1. 최근지수: 지수코드가 가장 큰 지수 중 최근지수
-  2. 성과지수: 지수정보에서 1년전 현재가와 현재가 등락률을 계산하여 가장큰 등락률을 가지는 지수
-  3. ETP규모: 지수코드별 ETP종목 시가총액이 제일 큰것
-*/
-
-var getIndexSummary = function(req, res) {
-    console.log("indexmanager=> getIndexSummary 호출됨");
-    var pool = req.app.get("pool");
-    var mapper = req.app.get("mapper");
-
-    console.log("req.body.param=" + JSON.stringify(req.body.params));
-
-    var stmt = mapper.getStatement('index', 'indexSummaryLately', req.body.params, {language:'sql', indent: '  '});
-    console.log(stmt);
-
-    Promise.using(pool.connect(), conn => {
-        conn.queryAsync(stmt).then(rows => {
-            util.log("sql1" == rows.affectedRows);
-            
-            res.json({
-                success: true,
-                results: rows
-            });
-            res.end();
-        }).catch(err => {
-            util.log("Error while performing Query.", err);
-            res.json({
-                success: false,
-                message: err
-            });
-            res.end();
-        });
-
-
-    });
-}
-
-
-
-var getInfoOpenReqList = function(req, res) {
+var getInfoOpenReqList = function (req, res) {
     console.log('indexmanage 모듈 안에 있는 getInfoOpenReqList 호출됨.');
 
     var pool = req.app.get("pool");
@@ -83,7 +45,7 @@ var getInfoOpenReqList = function(req, res) {
     });
 };
 
-var getIndexSummaryHist = function(req, res) {
+var getIndexSummaryHist = function (req, res) {
     console.log('indexmanage 모듈 안에 있는 getindexsummaryhist 호출됨.');
 
     var pool = req.app.get("pool");
@@ -119,7 +81,7 @@ var getIndexSummaryHist = function(req, res) {
     });
 };
 
-var getIndexVueTableTestList = function(req, res) {
+var getIndexVueTableTestList = function (req, res) {
     console.log('indexmanage 모듈 안에 있는 getIndexVueTableTestList 호출됨.');
     var pool = req.app.get("pool");
     var etpStmts = req.app.get("stmt");
@@ -153,7 +115,7 @@ var getIndexVueTableTestList = function(req, res) {
     });
 };
 
-var getIndexToastGridTestList = function(req, res) {
+var getIndexToastGridTestList = function (req, res) {
     console.log('indexmanage 모듈 안에 있는 getIndexToastGridTestList 호출됨.');
 
     var pool = req.app.get("pool");
@@ -192,7 +154,7 @@ var getIndexToastGridTestList = function(req, res) {
  * 이미 등록된 지수ID 가 존재하는지 확인한다.
  * 2019-04-02  bkLove(촤병국)
  */
-var getJisuDuplCheck = function(req, res) {
+var getJisuDuplCheck = function (req, res) {
     console.log('indexmanage.getJisuDuplCheck 호출됨.');
 
     var pool = req.app.get("pool");
@@ -247,61 +209,75 @@ var getJisuDuplCheck = function(req, res) {
  * 소급지수 파일을 업로드 한다.
  * 2019-04-02  bkLove(촤병국)
  */
-var fileuploadSingle = function(req, res) {
+var fileuploadSingle = function (req, res) {
     console.log('indexmanage.fileuploadSingle 호출됨.');
 
     var pool = req.app.get("pool");
     var etpStmts = req.app.get("stmt");
     var resultMsg = {};
+    var uploadFolder    =   "d:\\test";
 
     var storage = multer.diskStorage({
 
         // 서버에 저장할 폴더
         destination: function (req, file, cb) {
 
-            console.log( "#1 destination start" );
+            console.log("#1 destination start");
 
-            cb(null, "d:\\test");
+            cb(null, uploadFolder );
 
-            console.log( "#2 destination end" );
+            console.log("#2 destination end");
         },
 
         // 서버에 저장할 파일 명
         filename: function (req, file, cb) {
 
-            console.log( "#3 filename start" );
+            console.log("#3 filename start");
 
             console.log("file" + JSON.stringify(file));
 
-            file.uploadedFile = {
-                name: file.originalname
-            };
+            var fileLen = file.originalname.length;
+            var lastDot = file.originalname.lastIndexOf(".");
+            var fileName = file.originalname.substring(0, lastDot);
+            var fileExt = file.originalname
+                .substring(lastDot, fileLen)
+                .toLowerCase();
+            var saveFileName = fileName + "_" + Date.now() + "" + fileExt;
 
-            console.log("filename=" + file.uploadedFile.name);
-            cb(null, file.uploadedFile.name);
+            console.log("saveFileName=" + saveFileName);
+            cb(null, saveFileName);
 
-            console.log( "#4 filename end" );
+            console.log("#4 filename end");
         }
     });
 
-    console.log( "#5 multer start" );
+    console.log("#5 multer start");
 
     var upload = multer({ storage: storage }).single('files');
 
     upload(req, res, function (err) {
 
-        console.log( "#6 upload start" );
+        console.log("#6 upload start");
 
         if (err) {
             console.log("File Upload Err" + err);
         }
 
-        console.log( "#7 upload end" );
+        var workbook = xlsx.readFile( uploadFolder + "/" + req.file.filename);
+        var sheet_name_list = workbook.SheetNames;
+        var dataLists = xlsx.utils.sheet_to_json( workbook.Sheets[sheet_name_list[0]], { header: ["col1", "col2", "col3"], range: 2 } );
+
+        console.log("#7 upload end");
+
+        for( var i=0; i < dataLists.length; i++ ) {
+            var row =   dataLists[i];
+            console.log( row );
+        }
 
         res.end();
     });
 
-    console.log( "#8 multer end" );
+    console.log("#8 multer end");
 };
 
 
@@ -309,7 +285,7 @@ var fileuploadSingle = function(req, res) {
  * 지수정보를 등록한다.
  * 2019-04-02  bkLove(촤병국)
  */
-var save = function(req, res) {
+var save = function (req, res) {
     console.log('indexmanage.save 호출됨.');
 
     var pool = req.app.get("pool");
@@ -406,4 +382,3 @@ module.exports.getIndexToastGridTestList = getIndexToastGridTestList;
 module.exports.getJisuDuplCheck = getJisuDuplCheck;
 module.exports.fileuploadSingle = fileuploadSingle;
 module.exports.save = save;
-module.exports.getIndexSummary = getIndexSummary;
