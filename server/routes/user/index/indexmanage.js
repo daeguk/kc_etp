@@ -8,6 +8,9 @@ var config = require('../../../config/config');
 var util = require("util");
 var Promise = require("bluebird");
 
+var util = require("util");
+var multer = require('multer');
+
 var getInfoOpenReqList = function(req, res) {
     console.log('indexmanage 모듈 안에 있는 getInfoOpenReqList 호출됨.');
 
@@ -200,7 +203,69 @@ var getJisuDuplCheck = function(req, res) {
     });
 };
 
-/* 
+/*
+ * 소급지수 파일을 업로드 한다.
+ * 2019-04-02  bkLove(촤병국)
+ */
+var fileuploadSingle = function(req, res) {
+    console.log('indexmanage.fileuploadSingle 호출됨.');
+
+    var pool = req.app.get("pool");
+    var etpStmts = req.app.get("stmt");
+    var resultMsg = {};
+
+    var storage = multer.diskStorage({
+
+        // 서버에 저장할 폴더
+        destination: function (req, file, cb) {
+
+            console.log( "#1 destination start" );
+
+            cb(null, "d:\\test");
+
+            console.log( "#2 destination end" );
+        },
+
+        // 서버에 저장할 파일 명
+        filename: function (req, file, cb) {
+
+            console.log( "#3 filename start" );
+
+            console.log("file" + JSON.stringify(file));
+
+            file.uploadedFile = {
+                name: file.originalname
+            };
+
+            console.log("filename=" + file.uploadedFile.name);
+            cb(null, file.uploadedFile.name);
+
+            console.log( "#4 filename end" );
+        }
+    });
+
+    console.log( "#5 multer start" );
+
+    var upload = multer({ storage: storage }).single('files');
+
+    upload(req, res, function (err) {
+
+        console.log( "#6 upload start" );
+
+        if (err) {
+            console.log("File Upload Err" + err);
+        }
+
+        console.log( "#7 upload end" );
+
+        res.end();
+    });
+
+    console.log( "#8 multer end" );
+};
+
+
+/*
  * 지수정보를 등록한다.
  * 2019-04-02  bkLove(촤병국)
  */
@@ -299,4 +364,5 @@ module.exports.getIndexSummaryHist = getIndexSummaryHist;
 module.exports.getIndexVueTableTestList = getIndexVueTableTestList;
 module.exports.getIndexToastGridTestList = getIndexToastGridTestList;
 module.exports.getJisuDuplCheck = getJisuDuplCheck;
+module.exports.fileuploadSingle = fileuploadSingle;
 module.exports.save = save;
