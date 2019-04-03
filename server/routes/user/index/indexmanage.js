@@ -247,6 +247,10 @@ var fileuploadSingle = function (req, res) {
             console.log("saveFileName=" + saveFileName);
             cb(null, saveFileName);
 
+
+
+
+
             console.log("#4 filename end");
         }
     });
