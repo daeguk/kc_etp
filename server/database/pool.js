@@ -8,6 +8,8 @@ const mysql = require('mysql');
 const config = require('./mysql_config');
 const Promise = require("bluebird");
 const util = require("util");
+const ibatisMapper = require("mybatis-mapper");
+
 var etpStmts = [];
 
 Promise.promisifyAll(mysql);
@@ -63,6 +65,12 @@ module.exports = class {
 
         return etpStmts;
     };
+
+    getMapper() {
+        ibatisMapper.createMapper(['./database/mysql/user/index/indexManager.xml']);
+
+        return ibatisMapper;
+    }
 };
 
 

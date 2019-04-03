@@ -7,6 +7,41 @@
  */
 var model = {};
 
+model.selectIndexSummaryHist = function(options) {
+    console.log("selectIndexSummaryHist");
+    
+    var stmt = '';
+/*
+    stmt = 'SELECT BAS.F16013
+    stmt +=        ,BAS.F16002
+    stmt +=        ,BAS.F16004
+    stmt +=        ,BAS.LARGE_TYPE
+    stmt +=        ,BAS.MIDDLE_TYPE
+    stmt +=        ,HIS.F16013
+    stmt +=        ,HIS.F12506
+    stmt +=        ,HIS.F15009
+    stmt +=         ,HIS.F15010
+    stmt +=        ,HIS.F15011
+    stmt +=        ,HIS.F15001
+    stmt +=        ,HIS.F15472
+    stmt +=        ,HIS.F15006
+    stmt +=        ,HIS.F15004
+    stmt +=        ,HIS.F15015
+    stmt +=        ,HIS.F15023 
+    stmt +=    FROM (SELECT * 
+    stmt +=            FROM kc_etp.td_index_basic
+    stmt +=            WHERE F16013 = (SELECT MAX(F16013)
+    stmt +=                            FROM kc_etp.td_index_basic
+    stmt +=                            WHERE large_type='FNGUIDE'
+    stmt +=                            )
+    stmt +=        ) BAS,
+    stmt +=        kc_etp.td_index_history HIS
+    stmt +=    WHERE BAS.F16013 = HIS.F16013
+    stmt +=    ORDER BY HIS.F12506 DESC
+    stmt +=    limit 0, 1;
+    */
+}
+
 model.selectIndexInfoOpenReqList = function(options) {
         console.log('selectIndexInfoOpenReqList');
 

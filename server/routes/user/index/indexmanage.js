@@ -1,5 +1,5 @@
 /*
- * ETP REGISTER 위한 라우팅 함수 정의
+ * INDEX SUMMARY 함수 정의
  *
  * @date 2019-02-08
  * @author ThreeOn
@@ -7,9 +7,49 @@
 var config = require('../../../config/config');
 var util = require("util");
 var Promise = require("bluebird");
-
 var util = require("util");
 var multer = require('multer');
+
+
+/*최근지수, 성과지수, ETP 규모가 가장 큰지수 정보 
+  1. 최근지수: 지수코드가 가장 큰 지수 중 최근지수
+  2. 성과지수: 지수정보에서 1년전 현재가와 현재가 등락률을 계산하여 가장큰 등락률을 가지는 지수
+  3. ETP규모: 지수코드별 ETP종목 시가총액이 제일 큰것
+*/
+
+var getIndexSummary = function(req, res) {
+    console.log("indexmanager=> getIndexSummary 호출됨");
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+
+    console.log("req.body.param=" + JSON.stringify(req.body.params));
+
+    var stmt = mapper.getStatement('index', 'indexSummaryLately', req.body.params, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+        conn.queryAsync(stmt).then(rows => {
+            util.log("sql1" == rows.affectedRows);
+            
+            res.json({
+                success: true,
+                results: rows
+            });
+            res.end();
+        }).catch(err => {
+            util.log("Error while performing Query.", err);
+            res.json({
+                success: false,
+                message: err
+            });
+            res.end();
+        });
+
+
+    });
+}
+
+
 
 var getInfoOpenReqList = function(req, res) {
     console.log('indexmanage 모듈 안에 있는 getInfoOpenReqList 호출됨.');
@@ -366,3 +406,4 @@ module.exports.getIndexToastGridTestList = getIndexToastGridTestList;
 module.exports.getJisuDuplCheck = getJisuDuplCheck;
 module.exports.fileuploadSingle = fileuploadSingle;
 module.exports.save = save;
+module.exports.getIndexSummary = getIndexSummary;

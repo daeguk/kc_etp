@@ -93,6 +93,7 @@ export default {
 
   },
   mounted: function() {
+    this.getIndexSummaryInfo();
   },
   created: function() {
       
@@ -101,6 +102,29 @@ export default {
       
   },
   methods: {
+    getIndexSummaryInfo() {
+      var vm = this;
+      
+      axios.post(Config.base_url + "/user/index/getIndexSummaryInfo", {
+          params: {
+          }
+      }).then(function(response) {
+          // console.log(response);
+          if (response.data.success == false) {
+              alert("해당 신청현황이 없습니다");
+          } else {
+              console.log(response.data.results);
+              console.log(response.data.results[0].F16002);
+
+              vm.cardItem1.name = response.data.results[0].F16002;
+              vm.cardItem1.subTitle = response.data.results[0].F16004;
+              vm.cardItem1.close_idx = response.data.results[0].F15001;
+              vm.cardItem1.fluc_idx = response.data.results[0].F15472;
+              vm.cardItem1.fluc_rate = response.data.results[0].F15004;
+              
+          }
+      });
+    },
   }
 }
 </script>
