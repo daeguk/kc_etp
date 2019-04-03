@@ -32,22 +32,6 @@
             <template v-slot:activator="{ on }">
             <v-btn small  depressed color="primary" dark  >중복확인</v-btn>
             </template>
-          <v-card>
-            <h5>
-              <v-card-title ma-0>ID중복확인
-              <v-spacer></v-spacer>
-              <v-btn icon @click="dialog = false">
-                  <v-icon>close</v-icon>
-                </v-btn>
-              </v-card-title>
-             </h5>
-              <v-card-text>Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.</v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                  <v-btn color="green darken-1" flat @click="dialog = false">Disagree</v-btn>
-                  <v-btn color="green darken-1" flat @click="dialog = false">Agree</v-btn>
-              </v-card-actions>
-              </v-card>
            </v-dialog>
           </v-layout>
       </v-flex>
