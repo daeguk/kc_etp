@@ -216,13 +216,19 @@
 
                                 <v-flex xs4 id="file-drag-drop">
                                     <v-layout flat class="drag_box" ref="fileform">
+                                        <input type="file" name="file" ref="file" style="display:none;">
+
                                         <v-layout class="jumsun" align-center justify-center column>
                                             <v-layout justify-space-around>
                                                 <v-icon large color="#c9c9c9">cloud_upload</v-icon>
                                             </v-layout>
 
                                             <v-layout xs12>
-                                                <p class="text-xs-center">업로드 할 소급지수 파일을 드래그 해주세요.</p>
+                                                <a class="drop-files" v-on:click="file_click();">
+                                                    <p
+                                                        class="text-xs-center"
+                                                    >업로드 할 소급지수 파일을 드래그 해주세요.</p>
+                                                </a>
                                             </v-layout>
                                         </v-layout>
                                     </v-layout>
@@ -552,8 +558,8 @@ export default {
             files: [],
             file: "",
             uploadPercentage: 0,
-            desserts : [],
-            headers : [],
+            desserts: [],
+            headers: [],
 
             //            , date: new Date().toISOString().substr(0, 10)
             menu: false,
@@ -619,11 +625,6 @@ export default {
                 "drop"
             ].forEach(
                 function(evt) {
-                    /*
-            For each event add an event listener that prevents the default action
-            (opening the file in the browser) and stop the propagation of the event (so
-            no other elements open the file in the browser)
-          */
                     this.$refs.fileform.addEventListener(
                         evt,
                         function(e) {
@@ -638,24 +639,61 @@ export default {
             this.$refs.fileform.addEventListener(
                 "drop",
                 function(e) {
+                    let file = e.dataTransfer.files[0];
+
+                    if( !this.fn_checkFile( file ) ) {
+                        return  false;
+                    }
+
                     let formData = new FormData();
-                    formData.append("files", e.dataTransfer.files[0]);
+                    formData.append("files", file);
 
                     axios
-                        .post(Config.base_url + "/sample/fileuploadSingle", formData, {
-                            headers: {
-                                "Content-Type": "multipart/form-data"
-                            },
-                        })
+                        .post(
+                            Config.base_url + "/user/index/fileuploadSingle",
+                            formData,
+                            {
+                                headers: {
+                                    "Content-Type": "multipart/form-data"
+                                }
+                            }
+                        )
                         .then(function() {
                             console.log("SUCCESS!!");
                         })
                         .catch(function() {
                             console.log("FAILURE!!");
-                        });      
+                        });
                 }.bind(this)
             );
         }
+
+        /* file input에서 선택된 파일이 있으면 이벤트 실행 */
+        this.$refs.file.addEventListener(
+            "change",
+            function(evt) {
+
+                let file    =   this.$refs.file.files[0];
+
+                if( !this.fn_checkFile( file ) ) {
+                    return  false;
+                }
+
+                let formData = new FormData();
+                formData.append("files", file);
+
+                this.$refs.fileform.addEventListener(
+                    evt,
+                    function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        alert();
+                    }.bind(this),
+                    false
+                );
+            }.bind(this)
+        );
     },
 
     methods: {
@@ -752,6 +790,34 @@ export default {
                 "FormData" in window &&
                 "FileReader" in window
             );
+        },
+        file_click: function() {
+            this.$refs.file.click();
+        },
+
+        fn_checkFile : function( file ) {
+
+            var fileLen = file.name.length;
+            var lastDot = file.name.lastIndexOf(".");
+
+            /* 1. 확장자가 존재하지 않는지 확인 */
+            if (lastDot == -1) {
+                alert("엑셀유형의 파일인지 확인 해 주세요.");
+                return false;
+            }
+
+            var fileExt = file.name
+                .substring(lastDot + 1, fileLen)
+                .toLowerCase();
+            var allowExt = ["xls", "xlsx", "csv"];
+
+            /* 2. 허용되는 확장자에 포함되는지 확인 */
+            if (!allowExt.includes(fileExt)) {
+                alert("엑셀유형의 파일인지 확인 해 주세요.");
+                return false;
+            }
+
+            return  true;    
         }
     }
 };

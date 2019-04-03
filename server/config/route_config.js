@@ -54,6 +54,7 @@ module.exports = {
         { file: './user/index/indexmanage', path: '/user/index/getIndexVueTableTestList', method: 'getIndexVueTableTestList', session: 'uncheck', type: 'get' },
         { file: './user/index/indexmanage', path: '/user/index/getIndexToastGridTestList', method: 'getIndexToastGridTestList', session: 'uncheck', type: 'get' },
         { file: './user/index/indexmanage', path: '/user/index/getJisuDuplCheck', method: 'getJisuDuplCheck', session: 'uncheck', type: 'post' },
+        { file: './user/index/indexmanage', path: '/user/index/fileuploadSingle', method: 'fileuploadSingle', session: 'uncheck', type: 'post' },
         { file: './user/index/indexmanage', path: '/user/index/save', method: 'save', session: 'uncheck', type: 'post' },
         //일반 MARKET INFO
         { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getetfkorlist', method: 'getEtfKorList', session: 'uncheck', type: 'get' },
