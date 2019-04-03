@@ -18,23 +18,17 @@ import  EtpInfoMain   from './components/Home/MarketInfo/EtpInfoMain.vue'
 // TODAY
 import  Today1Main   from './components/Home/Today/Today1Main.vue'
 
-import  Login   from '@/components/Home/User/LoginInfo.vue'
-
 
 import  sampleChart   from '@/components/Sample/test.vue'
 import  sampleUpload   from '@/components/Sample/fileUpload.vue'
+import  sampleLoginTest   from '@/components/Sample/loginTest.vue'
+
 // 관리자
 export const routes = [
   {
     path : '/', 
     component: Home,
-    children: [
-        {   path : '/login',
-            component: Login,
-        },
-        {   path : 'index/home',
-            component: Home,
-        },
+    children: [        
         // INDEX
         {   path : 'index/manage',
             component: IndexManageMain,
@@ -85,7 +79,12 @@ export const routes = [
         {   path : 'sample/upload',
             component: sampleUpload,
         },
-        
+        {   path : 'login',
+            component: sampleLoginTest,
+        },
     ]
   }
 ]
+
+
+

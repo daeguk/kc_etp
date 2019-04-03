@@ -29,6 +29,9 @@
     <v-flex md3> 
       <div id="chart_div"></div>
     </v-flex>
+    <v-flex md3> 
+      <div id="area_div"></div>
+    </v-flex>
   </v-layout>
   </v-container>
 </div>    
@@ -62,13 +65,14 @@ export default {
   mounted: function() {
       this.getBluList();
       this.chartTest();
+      this.areaChart();
   },
   methods: {
     getBluList: function() {
       console.log('getBluList');
       var vm = this;
 
-      axios.post(Config.base_url+'/user/index/getBlueList', {
+      axios.post(Config.base_url+'/sample/getBlueList', {
           
               "instCd": "FNGUIDE"
           
@@ -115,6 +119,55 @@ export default {
 
         // Instantiate and draw our chart, passing in some options.
         var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    },
+    areaChart: function() {
+      // Load the Visualization API and the corechart package.
+      google.charts.load('current', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(drawChart);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart() {
+
+        // Create the data table.
+        var data = google.visualization.arrayToDataTable([
+          ['Year', 'Sales'],
+          ['2013',  1000],
+          ['2014',  1170],
+          ['2015',  660],
+          ['2016',  1030],
+          ['2017',  1000],
+          ['2018',  1170],
+          ['2019',  660],
+          ['2020',  1030],
+           ['2021',  1000],
+          ['2022',  1170],
+          ['2023',  660],
+          ['2024',  1030],
+           ['2025',  1000],
+          ['2026',  1170],
+          ['2027',  660],
+          ['2028',  1030],
+           ['2029',  1000],
+          ['2030',  1170],
+          ['2031',  660],
+          ['2032',  1030],
+        ]);
+
+        // Set chart options
+        var options = {
+          title: 'Company Performance',
+          hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
+          vAxis: {minValue: 0}
+        };
+
+        // Instantiate and draw our chart, passing in some options.
+        var chart = new google.visualization.AreaChart(document.getElementById('area_div'));
         chart.draw(data, options);
       }
     }

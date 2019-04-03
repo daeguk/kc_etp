@@ -8,9 +8,9 @@
 var model = {};
 
 model.selectIndexInfoOpenReqList = function(options) {
-    console.log('selectIndexInfoOpenReqList');
+        console.log('selectIndexInfoOpenReqList');
 
-    /*
+        /*
     var stmt = 'SELECT b.inst_name, a.isu_kor_nm, a.req_date, a.kor_for_type, \
         ifnull(a.ridx_dist_sym_code, a.idx_sym_code) as basic_idx, \
         a.isu_eng_nm \
@@ -23,19 +23,19 @@ model.selectIndexInfoOpenReqList = function(options) {
         stmt += ` AND ID = \'${options.id}\'`;
     }
 */
-    var stmt = 'SELECT * from info_open_req a WHERE 1=1';
-    stmt += ` ORDER BY a.req_date DESC`
-    return stmt;
-},
+        var stmt = 'SELECT * from info_open_req a WHERE 1=1';
+        stmt += ` ORDER BY a.req_date DESC`
+        return stmt;
+    },
 
-model.selectIndexSummaryHist = function(options) {
-    console.log('selectIndexInfoOpenReqList');
+    model.selectIndexSummaryHist = function(options) {
+        console.log('selectIndexInfoOpenReqList');
 
-    var stmt = 'SELECT trd_dd, close_idx from index_hist a WHERE 1=1';
-    stmt += ` AND index_cd = \'${options.index_cd}\'`;
-    // stmt += ` limit 200`
-    return stmt;
-}
+        var stmt = 'SELECT trd_dd, close_idx from index_hist a WHERE 1=1';
+        stmt += ` AND index_cd = \'${options.index_cd}\'`;
+        // stmt += ` limit 200`
+        return stmt;
+    }
 
 model.getIndexToastGridTestList = function(options) {
     console.log('indexmanage_model.js -> getIndexToastGridTestList');
@@ -45,5 +45,64 @@ model.getIndexToastGridTestList = function(options) {
     stmt += ` limit 500`;
     return stmt;
 }
+
+/* 
+ * 이미 등록된 지수ID 가 존재하는지 확인한다.
+ * 2019-04-02  bkLove(촤병국)
+ */
+model.getJisuDuplCheck = function(options) {
+    console.log('/* indexmanage_model.getJisuDuplCheck */');
+
+    var stmt =  ``
+    stmt    +=  `SELECT	COUNT(1)   AS  cnt \n`;
+    stmt    +=  `  FROM	tm_jisu_mast \n`;
+    stmt    +=  ` WHERE	tm_jisu_mast.jisu_id    =    \'${options.jisu_id}\' \n`;
+    return stmt;
+}
+
+/* 
+ * tm_jisu_mast 지수 마스터 테이블에 저장한다.
+ * 2019-04-02  bkLove(촤병국)
+ */
+model.saveTmJisuMast = function(options) {
+    console.log('/* indexmanage_model.saveTmJisuMast */');
+
+    var stmt =  ``;
+    stmt    +=  `INSERT  INTO    tm_jisu_mast \n`;
+    stmt    +=  `( \n`;
+    stmt    +=  `        jisu_id \n`;
+
+    stmt    +=  `    ,   jisu_kor_nm \n`;
+    stmt    +=  `    ,   jisu_eng_nm \n`;
+    stmt    +=  `    ,   jisu_summary \n`;
+    stmt    +=  `    ,   base_jisu \n`;
+    stmt    +=  `    ,   base_date \n`;
+    stmt    +=  `    ,   req_content \n`;
+
+    stmt    +=  `    ,   reg_id \n`;
+    stmt    +=  `    ,   reg_time \n`;
+    stmt    +=  `    ,   upd_id \n`;
+    stmt    +=  `    ,   upd_time \n`;
+    stmt    +=  `) \n`;
+    stmt    +=  `VALUES \n`;
+    stmt    +=  `( \n`;
+    stmt    +=  `        \'${options.jisu_id}\'  \n`;
+
+    stmt    +=  `    ,   \'${options.jisu_kor_nm}\' \n`;
+    stmt    +=  `    ,   \'${options.jisu_eng_nm}\' \n`;
+    stmt    +=  `    ,   \'${options.jisu_summary}\' \n`;
+    stmt    +=  `    ,   \'${options.base_jisu}\' \n`;
+    stmt    +=  `    ,   REPLACE( \'${options.base_date}\', '-', '' ) \n`;
+    stmt    +=  `    ,   \'${options.req_content}\' \n`;
+
+    stmt    +=  `    ,   \'${options.user_id}\' \n`;
+    stmt    +=  `    ,   now() \n`;
+    stmt    +=  `    ,   \'${options.user_id}\' \n`;
+    stmt    +=  `    ,   now() \n`;
+    stmt    +=  `) \n`;
+
+    return stmt;
+}
+
 
 module.exports = model;

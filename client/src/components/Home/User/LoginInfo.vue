@@ -3,7 +3,6 @@
 <v-dialog v-model="loginDialog" persistent max-width="400px">
     <v-btn  class="login_btn"
        slot="activator" flat><v-icon left dark>power_settings_new</v-icon>LOGIN</v-btn>
-
     <v-card>
         <v-card-text>
         <v-container grid-list-md>
@@ -113,7 +112,16 @@ export default {
                 
             });
         }
-    }
+    },
+    created: function() {
+        this.$EventBus.$on('loginClose', data => {
+            console.log("data==="+ data);
+            this.loginDialog = data;
+        });
+    },
+    beforeDestroy() {
+        this.$EventBus.$off('loginClose');
+    },    
 }
 </script>
 

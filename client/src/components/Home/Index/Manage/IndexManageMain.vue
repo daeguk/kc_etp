@@ -39,7 +39,7 @@ export default {
         data() {
             return {
                 tab: null,
-                items: ['Summary', '관리지수목록', '지수종목상세', 'TEST'],
+                items: ['Summary', '관리지수목록', '지수종목상세'],
     	};
     },    
     components: {
