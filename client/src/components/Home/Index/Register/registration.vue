@@ -256,13 +256,16 @@
                                 <v-flex>
                                     <v-data-table
                                         :headers="headers"
-                                        :items="desserts"
+                                        :items="jisuDataList"
+                                        :rows-per-page-items="rowsPerPage"
                                         class="elevation-1"
                                     >
                                         <template v-slot:items="props">
-                                            <td>{{ props.item.name }}</td>
-                                            <td class="text-xs-right">{{ props.item.calories }}</td>
-                                            <td class="text-xs-right">{{ props.item.fat }}</td>
+                                            <td>{{ props.item.file_id }}</td>
+                                            <td class="text-xs-right">{{ props.item.row_no }}</td>
+                                            <td class="text-xs-right">{{ props.item.col01 }}</td>
+                                            <td class="text-xs-right">{{ props.item.col02 }}</td>
+                                            <td class="text-xs-right">{{ props.item.col03 }}</td>
                                         </template>
                                     </v-data-table>
                                 </v-flex>
@@ -558,10 +561,19 @@ export default {
             files: [],
             file: "",
             uploadPercentage: 0,
-            desserts: [],
-            headers: [],
 
-            //            , date: new Date().toISOString().substr(0, 10)
+
+            headers: [
+                { text: '파일ID'     , value: 'file_id' , align:"center", sortable: false,},
+                { text: '행번호'     , value: 'row_no'  , align:"left",  sortable: true },
+                { text: 'col01'     , value: 'col01'    , align:"left",  sortable: true },
+                { text: 'col02'     , value: 'col02'    , align:"left",  sortable: true },
+                { text: 'col03'     , value: 'col03'    , align:"left",  sortable: true }
+            ],    
+            jisuDataList : [],
+            rowsPerPage : 10,
+
+//            , date: new Date().toISOString().substr(0, 10)
             menu: false,
             dialog: false,
             dialog2: false,
@@ -639,6 +651,7 @@ export default {
             this.$refs.fileform.addEventListener(
                 "drop",
                 function(e) {
+                    var vm   =   this;
                     let file = e.dataTransfer.files[0];
 
                     if( !this.fn_checkFile( file ) ) {
@@ -648,22 +661,31 @@ export default {
                     let formData = new FormData();
                     formData.append("files", file);
 
-                    axios
-                        .post(
-                            Config.base_url + "/user/index/fileuploadSingle",
-                            formData,
-                            {
-                                headers: {
-                                    "Content-Type": "multipart/form-data"
-                                }
+                    axios.post(
+                        Config.base_url + "/user/index/fileuploadSingle",
+                        formData,
+                        {
+                            headers: {
+                                "Content-Type": "multipart/form-data"
                             }
-                        )
-                        .then(function() {
-                            console.log("SUCCESS!!");
-                        })
-                        .catch(function() {
-                            console.log("FAILURE!!");
-                        });
+                        }
+                    ).then(function(response) {
+                        console.log( response );
+
+                        if( response.data ) {
+                            if( !response.data.result ) {
+                                alert( response.data.msg );
+
+                                return false;
+                            }
+
+                            if( response.data.result ) {
+                                vm.jisuDataList = response.data.dataList;
+                            }
+                        }
+                    }).catch(function(response) {
+                        console.log( response );
+                    });
                 }.bind(this)
             );
         }
@@ -672,7 +694,7 @@ export default {
         this.$refs.file.addEventListener(
             "change",
             function(evt) {
-
+                var vm      =   this;
                 let file    =   this.$refs.file.files[0];
 
                 if( !this.fn_checkFile( file ) ) {
@@ -721,21 +743,19 @@ export default {
             }
 
             /* 2. 지수 ID 중복 체크 */
-            axios
-                .post(Config.base_url + "/user/index/getJisuDuplCheck", {
-                    data: { jisu_id: this.form.jisu_id }
-                })
-                .then(function(response) {
-                    if (response && response.data) {
-                        if (response.data.result == true) {
-                            alert("해당 [지수 ID] 는 이미 존재합니다.");
-                            vm.form.duplCheckResult = false;
-                        } else {
-                            alert("해당 [지수 ID] 는 사용 가능합니다.");
-                            vm.form.duplCheckResult = true;
-                        }
+            axios.post(Config.base_url + "/user/index/getJisuDuplCheck", {
+                data: { jisu_id: this.form.jisu_id }
+            }).then(function(response) {
+                if (response && response.data) {
+                    if (response.data.result == true) {
+                        alert("해당 [지수 ID] 는 이미 존재합니다.");
+                        vm.form.duplCheckResult = false;
+                    } else {
+                        alert("해당 [지수 ID] 는 사용 가능합니다.");
+                        vm.form.duplCheckResult = true;
                     }
-                });
+                }
+            });
         },
 
         /*
@@ -756,34 +776,17 @@ export default {
                 return false;
             }
 
-            axios
-                .post(Config.base_url + "/user/index/save", {
+            axios.post(Config.base_url + "/user/index/save", {
                     data: this.form
-                })
-                .then(function(response) {
+                }).then(function(response) {
                     console.log(response);
                 });
         },
 
-        /*
-        Determines if the drag and drop functionality is in the
-        window
-      */
         determineDragAndDropCapable() {
-            /*
-          Create a test element to see if certain events
-          are present that let us do drag and drop.
-        */
+
             var div = document.createElement("div");
 
-            /*
-          Check to see if the `draggable` event is in the element
-          or the `ondragstart` and `ondrop` events are in the element. If
-          they are, then we have what we need for dragging and dropping files.
-
-          We also check to see if the window has `FormData` and `FileReader` objects
-          present so we can do our AJAX uploading
-        */
             return (
                 ("draggable" in div ||
                     ("ondragstart" in div && "ondrop" in div)) &&
@@ -806,10 +809,8 @@ export default {
                 return false;
             }
 
-            var fileExt = file.name
-                .substring(lastDot + 1, fileLen)
-                .toLowerCase();
-            var allowExt = ["xls", "xlsx", "csv"];
+            var fileExt     =   file.name.substring(lastDot + 1, fileLen).toLowerCase();
+            var allowExt    =   ["xls", "xlsx", "csv"];
 
             /* 2. 허용되는 확장자에 포함되는지 확인 */
             if (!allowExt.includes(fileExt)) {

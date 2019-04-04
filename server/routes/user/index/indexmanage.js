@@ -28,6 +28,7 @@ var getIndexVueTableTestList = function (req, res) {
 
     Promise.using(pool.connect(), conn => {
         conn.queryAsync(stmt).then(rows => {
+
             util.log("sql1" == rows.affectedRows)
             res.json({
                 success: true,
@@ -82,6 +83,8 @@ var getIndexToastGridTestList = function (req, res) {
 
     });
 };
+
+
 
 /* 
  * 이미 등록된 지수ID 가 존재하는지 확인한다.
@@ -139,6 +142,8 @@ var getJisuDuplCheck = function (req, res) {
     });
 };
 
+
+
 /*
  * 소급지수 파일을 업로드 한다.
  * 2019-04-02  bkLove(촤병국)
@@ -160,18 +165,11 @@ var fileuploadSingle = function (req, res) {
 
         // 서버에 저장할 폴더
         destination: function (req, file, cb) {
-
-            console.log("#1 destination start");
-
             cb(null, reqParam.uploadFolder);
-
-            console.log("#2 destination end");
         },
 
-        // 서버에 저장할 파일명
+        /* 서버에 저장 */
         filename: function (req, file, cb) {
-
-            console.log("#3 filename start");
 
             console.log("file" + JSON.stringify(file));
 
@@ -183,8 +181,6 @@ var fileuploadSingle = function (req, res) {
             reqParam.save_file_name = fileName + "_" + Date.now() + "" + fileExt;
 
             cb(null, reqParam.save_file_name);
-
-            console.log("#4 filename end");
         }
     });
 
@@ -200,72 +196,163 @@ var fileuploadSingle = function (req, res) {
             console.log("File Upload Err" + err);
         }
 
-        reqParam.org_file_name = req.file.originalname;
-        reqParam.mime_type = req.file.mimetype;
-        reqParam.file_size = req.file.size;
+        try{
+            reqParam.org_file_name = req.file.originalname;
+            reqParam.mime_type = req.file.mimetype;
+            reqParam.file_size = req.file.size;
 
-        console.log( JSON.stringify(reqParam) );  
-
-        var workbook = xlsx.readFile(reqParam.uploadFolder + "/" + req.file.filename);
-        var sheet_name_list = workbook.SheetNames;
-        var dataLists = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { header: ["col1", "col2", "col3"], range: 2 });
-
-        console.log("#7 upload end");
-
-        console.log(reqParam);
+            console.log( JSON.stringify(reqParam) );  
 
 
-        var format = { language: 'sql', indent: '' };
-        Promise.using(pool.connect(), conn => {
-            conn.beginTransaction(txerr => {
+            /* 1. 엑셀파일을 파싱한다. */
+            var workbook = xlsx.readFile(reqParam.uploadFolder + "/" + req.file.filename);
+            var sheet_name_list = workbook.SheetNames;
+            var dataLists = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { header: ["col01", "col02", "col03"], range: 2 });
 
-                reqParam.gubun = "002";      /* 소급 지수 */
 
-                /* 1. [saveTmJisuFile] 테이블에 저장한다. */
-                var stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
-                console.log(stmt);
+            /* 2. 엑셀 건수 체크 */
+            if( dataLists.length == 0 ) {
+                resultMsg.result = false;
+                resultMsg.msg = "소급지수 건수는 1건 이상 존재해야 합니다.";
 
-                conn.queryAsync(stmt).then(rows => {
+                res.json(resultMsg);
+                res.end();  
 
-                    console.log( "insertId=>" + rows.insertId );
+                throw resultMsg;
+            }
 
-                    for (var i = 0; i < dataLists.length; i++) {
-                        var data = dataLists[i];
-                        
-                        data.file_id = rows.insertId;
-                        data.row_no = i+1;
-                        data.user_id = reqParam.user_id;
-                    }
 
-                    reqParam.dataLists  =   dataLists;
+            /* 3. 엑셀 데이터 사이즈 체크 */
+            var check = true;
+            for (var i = 0; i < dataLists.length; i++) {
+                var data = dataLists[i];
 
-                    console.log( reqParam );
-                    /* 2. [tm_jisu_temp_upload] 저장 쿼리문 조회 */                   
-                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuTempUpload', reqParam, format);
+                if( data.col01.length > 100 ) {
+                    check = false;
+
+                    resultMsg.result = false;
+                    resultMsg.msg = "[" + (i+1) + " 행] 첫번째 컬럼이 100자리 이내여야 합니다."
+                    
+                    break;
+                }
+
+                else if( data.col02.length > 100 ) {
+                    check = false;
+
+                    resultMsg.result = false;
+                    resultMsg.msg = "[" + (i+1) + " 행] 두번째 컬럼이 100자리 이내여야 합니다."
+                    
+                    break;
+                }
+
+                else if( data.col03.length > 100 ) {
+                    check = false;
+
+                    resultMsg.result = false;
+                    resultMsg.msg = "[" + (i+1) + " 행] 세번째 컬럼이 100자리 이내여야 합니다."
+                    
+                    break;
+                }
+
+                data.row_no = i+1;
+
+                if( !data.col04 ) {
+                    data.col04 = "";
+                }
+
+                if( !data.col05 ) {
+                    data.col05 = "";
+                }                     
+            }
+
+            if( !check ) {
+                res.json(resultMsg);
+                res.end();
+
+                throw resultMsg;
+            }
+
+
+            var format = { language: 'sql', indent: '' };
+            Promise.using(pool.connect(), conn => {
+                conn.beginTransaction(txerr => {
+
+                    reqParam.gubun = "002";      /* 소급 지수 */
+
+
+                    /* 4. [saveTmJisuFile] 테이블에 저장한다. */
+                    var stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
                     console.log(stmt);
 
                     conn.queryAsync(stmt).then(rows => {
 
-                        conn.commit();
+                        reqParam.file_id    =   rows.insertId;
+                        reqParam.dataLists  =   dataLists;
+
+
+                        /* 5. [tm_jisu_temp_upload] 저장 쿼리문 조회 */                   
+                        stmt = mapper.getStatement('indexRegister', 'saveTmJisuTempUpload', reqParam, format);
+                        console.log(stmt);
+
+                        conn.queryAsync(stmt).then(rows => {
+
+                            conn.commit();
+
+
+                            /* 6. [tm_jisu_temp_upload] 쿼리문 조회 */
+                            var stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', reqParam, format);
+                            console.log(stmt);
+
+                            conn.queryAsync(stmt).then(rows => {
+
+                                resultMsg.result = true;
+                                resultMsg.dataList = rows;
+
+                                res.json(resultMsg);
+                                res.end();
+                            }).catch(err => {
+
+                                console.log(err);
+
+                                resultMsg.result = false;
+                                resultMsg.msg = "처리중 오류가 발생하였습니다.";
+
+                                res.json(resultMsg);
+                                res.end();
+                            });                    
+
+                        }).catch(err => {
+
+                            console.log(err);
+                            conn.rollback();
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "처리중 오류가 발생하였습니다.";
+
+                            res.json(resultMsg);
+                            res.end();
+                        });
+
                     }).catch(err => {
 
                         console.log(err);
                         conn.rollback();
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "처리중 오류가 발생하였습니다.";
+
+                        res.json(resultMsg);
+                        res.end();
                     });
-
-                }).catch(err => {
-
-                    console.log(err);
-                    conn.rollback();
                 });
             });
-        });
-
-        res.end();
+        }catch( e ) {
+            console.log( e );
+        }
     });
-
-    console.log("#8 multer end");
 };
+
+
 
 
 /*
