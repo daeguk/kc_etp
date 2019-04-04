@@ -208,7 +208,7 @@ var fileuploadSingle = function (req, res) {
 
         var workbook = xlsx.readFile(reqParam.uploadFolder + "/" + req.file.filename);
         var sheet_name_list = workbook.SheetNames;
-        var dataLists = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { header: ["col1", "col2", "col3"], range: 2 });
+        var dataLists = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { header: ["col01", "col02", "col03"], range: 2 });
 
         console.log("#7 upload end");
 
@@ -225,21 +225,30 @@ var fileuploadSingle = function (req, res) {
                 var stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
                 console.log(stmt);
 
+
+
                 conn.queryAsync(stmt).then(rows => {
 
-                    console.log( "insertId=>" + rows.insertId );
-
+                    reqParam.file_id    =   rows.insertId;
                     for (var i = 0; i < dataLists.length; i++) {
                         var data = dataLists[i];
                         
                         data.file_id = rows.insertId;
                         data.row_no = i+1;
                         data.user_id = reqParam.user_id;
+
+                        if( !data.col04 ) {
+                            data.col04 = "";
+                        }
+
+                        if( !data.col05 ) {
+                            data.col05 = "";
+                        }                        
                     }
 
                     reqParam.dataLists  =   dataLists;
 
-                    console.log( reqParam );
+
                     /* 2. [tm_jisu_temp_upload] 저장 쿼리문 조회 */                   
                     stmt = mapper.getStatement('indexRegister', 'saveTmJisuTempUpload', reqParam, format);
                     console.log(stmt);
@@ -247,21 +256,64 @@ var fileuploadSingle = function (req, res) {
                     conn.queryAsync(stmt).then(rows => {
 
                         conn.commit();
+
+                        /* 3. [tm_jisu_temp_upload] 쿼리문 조회 */
+                        var stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', reqParam, format);
+                        console.log(stmt);
+
+                        conn.queryAsync(stmt).then(rows => {
+
+                            resultMsg.result = true;
+                            resultMsg.dataList = rows;
+
+                            res.json(resultMsg);
+                            res.end();                            
+
+                            console.log(">>>>>>>>>>>>>>>> #1");
+                            console.log( rows );
+
+                        }).catch(err => {
+
+                            console.log(err);
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "처리중 오류가 발생하였습니다.";
+
+                            res.json(resultMsg);
+                            res.end();                            
+
+                            console.log(">>>>>>>>>>>>>>>> #2");             
+                        });                    
+
                     }).catch(err => {
 
                         console.log(err);
                         conn.rollback();
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "처리중 오류가 발생하였습니다.";
+
+                        res.json(resultMsg);
+                        res.end();                        
+
+                        console.log(">>>>>>>>>>>>>>>> #3");
                     });
 
                 }).catch(err => {
 
                     console.log(err);
                     conn.rollback();
+
+                    resultMsg.result = false;
+                    resultMsg.msg = "처리중 오류가 발생하였습니다.";
+
+                    res.json(resultMsg);
+                    res.end();
+
+                    console.log(">>>>>>>>>>>>>>>> #4");
                 });
             });
         });
-
-        res.end();
     });
 
     console.log("#8 multer end");

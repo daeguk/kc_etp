@@ -14,6 +14,24 @@
     </select>
 
     <!--
+    * [tm_jisu_temp_upload] 데이터를 조회한다.
+    * 2019-04-02  bkLove(촤병국)
+    -->
+    <select id="getTmJisuTempUpload">
+        SELECT      tm_jisu_temp_upload.file_id     AS  file_id
+                ,   tm_jisu_temp_upload.row_no      AS  row_no
+
+                ,   tm_jisu_temp_upload.col01       AS  col01
+                ,   tm_jisu_temp_upload.col02       AS  col02
+                ,   tm_jisu_temp_upload.col03       AS  col03
+                ,   tm_jisu_temp_upload.col04       AS  col04
+                ,   tm_jisu_temp_upload.col05       AS  col05
+
+          FROM  tm_jisu_temp_upload
+         WHERE  tm_jisu_temp_upload.file_id     =   #{file_id}
+    </select>    
+
+    <!--
     * [tm_jisu_file] 테이블에 저장한다.
     * 2019-04-02  bkLove(촤병국)
     -->
