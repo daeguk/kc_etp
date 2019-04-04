@@ -1,58 +1,43 @@
 <template>
-<v-container fluid grid-list-md pa-0 mb-4>
-  <v-layout row wrap>
-    <v-flex md12> 
-      <indexinfo3box :item="boxItem3"></indexinfo3box>
-    </v-flex>
-  </v-layout>
-
-
-    <v-layout row wrap>
-    <v-flex md6> 
-      <indexinfo1box :item="boxItem1"></indexinfo1box>
-    </v-flex>
-    <v-flex md6>
-      <indexinfo2box :item="boxItem2"></indexinfo2box>
-    </v-flex>
-  </v-layout>
-  </v-container>
-
+    <v-container fluid grid-list-md pa-0 mb-4>
+        <v-layout row wrap>
+            <v-flex md12>
+                <indexinfotab2box1 :item="boxItem3"></indexinfotab2box1>
+            </v-flex>
+        </v-layout>
+    </v-container>
 </template>
 
 
 <script>
-import Config       from "@/js/config.js"
-import indexinfo1box   from  './indexinfo1box.vue'
-import indexinfo2box   from  './indexinfo2box.vue'
-import indexinfo3box   from  './indexinfo3box.vue'
-
+import indexinfotab2box1 from "./indexinfotab2box1.vue";
 
 export default {
-  props: [],
-  data() {
-    return {
-      boxItem1: {title:"Index Info", count: 120, subTitle: '회원사/벤더로 분배되는 지수', updateDate: '25/02/19'},
-      boxItem2: {title:"산출지수", count: 156, subTitle: '미발표 지수를 포함한 플랫폼에서 산출중인 지수', updateDate: '25/02/19'},
-    };
-  },
-  components: {
-    indexinfo1box: indexinfo1box,
-    indexinfo2box: indexinfo2box,
-    indexinfo3box: indexinfo3box,
-  },
-  computed:{
-
-  },
-  mounted: function() {
-  },
-  created: function() {
-      
-  },
-  beforeDestroy() {
-      
-  },
-  methods: {
-  }
+    props: [],
+    data() {
+        return {
+            boxItem1: {
+                title: "Index Info",
+                count: 120,
+                subTitle: "회원사/벤더로 분배되는 지수",
+                updateDate: "25/02/19"
+            },
+            boxItem2: {
+                title: "산출지수",
+                count: 156,
+                subTitle: "미발표 지수를 포함한 플랫폼에서 산출중인 지수",
+                updateDate: "25/02/19"
+            }
+        };
+    },
+    components: {
+        indexinfotab2box1: indexinfotab2box1
+    },
+    computed: {},
+    mounted: function() {},
+    created: function() {},
+    beforeDestroy() {},
+    methods: {}
 }
 </script>
 <style scoped>

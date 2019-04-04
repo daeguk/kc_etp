@@ -157,7 +157,9 @@ export default {
             axios.post(Confg.base_url + '/user/index/updateOpenYn', {
                 params : {
                     flag : flag,
-                    reqFlag : reqFlag
+                    reqFlag : reqFlag,
+                    JISU_ID : jisu_id,
+                    INST_CD : inst_cd
                 }
             }).then(function(response) {
                 alert("승인처리 되었습니다.");
