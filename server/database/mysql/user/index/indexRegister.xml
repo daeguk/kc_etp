@@ -82,7 +82,7 @@
         VALUES 
         <foreach    collection="dataLists"   item="data"     separator="," >
         ( 
-                ${data.file_id}
+                ${file_id}
             ,   ${data.row_no}
 
             ,   #{data.col01}
@@ -91,7 +91,7 @@
             ,   #{data.col04}
             ,   #{data.col05}
 
-            ,   #{data.user_id}
+            ,   #{user_id}
             ,   now() 
         )            
         </foreach>
