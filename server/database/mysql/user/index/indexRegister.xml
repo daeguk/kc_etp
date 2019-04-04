@@ -1,51 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="index">  
-  <select id="indexSummaryLately">
-      SELECT BAS.F16013
-            ,BAS.F16002
-            ,BAS.LARGE_TYPE
-            ,BAS.MIDDLE_TYPE
-            ,HIS.F16013
-            ,HIS.F12506
-            ,HIS.F15009
-            ,HIS.F15010
-            ,HIS.F15011
-            ,HIS.F15001
-            ,HIS.F15472
-            ,HIS.F15006
-            ,HIS.F15004
-            ,HIS.F15015
-            ,HIS.F15023 
-        FROM (SELECT * 
-                FROM kc_etp.td_index_basic
-                WHERE F16013 = (SELECT MAX(F16013)
-                                    FROM kc_etp.td_index_basic
-                                    WHERE large_type='FNGUIDE'
-                                )
-                ) BAS,
-                kc_etp.td_index_history HIS
-        WHERE BAS.F16013 = HIS.F16013
-        ORDER BY HIS.F12506 DESC
-        limit 0, 1
 
-  </select>
-
-  <select id="indexReqList">
-      SELECT BAS.F16002
-            ,BAS.F16013  
-            ,REQ.INST_NAME
-            ,date_format(REQ.REG_TIME, '%Y-%m-%d') REG_TIME
-            ,REQ.REQ_FLAG
-            ,REQ.REG_ID
-        FROM td_index_basic BAS, 
-            (SELECT A.*, B.INST_NAME 
-          FROM tm_index_req A,
-                    tm_domain_mast B
-          WHERE A.INST_CD = B.INST_CD) REQ	
-      WHERE BAS.F16013 = REQ.JISU_ID
-        AND REQ.REQ_FLAG = '1'  
-  </select>
+<mapper namespace="indexRegister">  
 
     <!--
     * 이미 등록된 지수ID 가 존재하는지 확인한다.
