@@ -46,4 +46,116 @@
       WHERE BAS.F16013 = REQ.JISU_ID
         AND REQ.REQ_FLAG = '1'  
   </select>
+
+    <!--
+    * 이미 등록된 지수ID 가 존재하는지 확인한다.
+    * 2019-04-02  bkLove(촤병국)
+    -->
+    <select id="getJisuDuplCheck">
+        SELECT  COUNT(1)   AS  cnt
+          FROM  tm_jisu_mast
+         WHERE  tm_jisu_mast.jisu_id    =   #{jisu_id}
+    </select>
+
+    <!--
+    * [tm_jisu_file] 테이블에 저장한다.
+    * 2019-04-02  bkLove(촤병국)
+    -->
+    <insert     id="saveTmJisuFile">
+        INSERT  INTO    tm_jisu_file 
+        ( 
+                org_file_name
+            ,   save_file_name
+            ,   file_size
+            ,   mime_type
+            ,   gubun
+
+            ,   reg_id 
+            ,   reg_time 
+        ) 
+        VALUES 
+        ( 
+                #{org_file_name}
+            ,   #{save_file_name}
+            ,   #{file_size}
+            ,   #{mime_type}
+            ,   #{gubun}
+
+            ,   #{user_id}
+            ,   now() 
+        )
+    </insert>
+
+    <!--
+    * [tm_jisu_temp_upload] 테이블에 저장한다.
+    * 2019-04-02  bkLove(촤병국)
+    -->
+    <insert     id="saveTmJisuTempUpload">
+        INSERT  INTO    tm_jisu_temp_upload 
+        ( 
+                file_id
+            ,   row_no
+            ,   col01
+            ,   col02
+            ,   col03
+            ,   col04
+            ,   col05
+
+            ,   reg_id 
+            ,   reg_time 
+        ) 
+        VALUES 
+        ( 
+                #{file_id}
+            ,   #{row_no}
+            ,   #{col01}
+            ,   #{col02}
+            ,   #{col03}
+            ,   #{col04}
+            ,   #{col05}
+
+            ,   #{user_id}
+            ,   now() 
+        )
+    </insert>    
+
+    <!--
+    * [tm_jisu_mast] 테이블에 저장한다.
+    * 2019-04-02  bkLove(촤병국)
+    -->
+    <insert     id="saveTmJisuMast">
+        INSERT  INTO    tm_jisu_mast 
+        ( 
+                jisu_id 
+
+            ,   jisu_kor_nm 
+            ,   jisu_eng_nm 
+            ,   jisu_summary 
+            ,   base_jisu 
+            ,   base_date 
+            ,   req_content 
+
+            ,   reg_id 
+            ,   reg_time 
+            ,   upd_id 
+            ,   upd_time 
+        ) 
+        VALUES 
+        ( 
+                #{jisu_id}
+
+            ,   #{jisu_kor_nm}
+            ,   #{jisu_eng_nm}
+            ,   #{jisu_summary}
+            ,   #{base_jisu}
+            ,   REPLACE( #{base_date}, '-', '' ) 
+            ,   #{req_content}
+
+            ,   #{user_id}
+            ,   now() 
+            ,   #{user_id}
+            ,   now() 
+        )
+    </insert>
+
 </mapper>
