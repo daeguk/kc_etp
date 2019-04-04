@@ -175,7 +175,7 @@ var getJisuDuplCheck = function (req, res) {
 
     /* 2. 이미 등록된 지수ID 가 존재하는지 확인 */
     var format = { language: 'sql', indent: '' };
-    var stmt = mapper.getStatement('index', 'getJisuDuplCheck', paramData, format);
+    var stmt = mapper.getStatement('indexRegister', 'getJisuDuplCheck', paramData, format);
     console.log(stmt);
 
     Promise.using(pool.connect(), conn => {
@@ -244,9 +244,7 @@ var fileuploadSingle = function (req, res) {
             var fileLen = file.originalname.length;
             var lastDot = file.originalname.lastIndexOf(".");
             var fileName = file.originalname.substring(0, lastDot);
-            var fileExt = file.originalname
-                .substring(lastDot, fileLen)
-                .toLowerCase();
+            var fileExt = file.originalname.substring(lastDot, fileLen).toLowerCase();
 
             reqParam.save_file_name = fileName + "_" + Date.now() + "" + fileExt;
 
@@ -290,7 +288,7 @@ var fileuploadSingle = function (req, res) {
                 reqParam.gubun = "002";      /* 소급 지수 */
 
                 /* 1. [saveTmJisuFile] 테이블에 저장한다. */
-                var stmt = mapper.getStatement('index', 'saveTmJisuFile', reqParam, format);
+                var stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
                 console.log(stmt);
 
                 conn.queryAsync(stmt).then(rows => {
@@ -305,8 +303,9 @@ var fileuploadSingle = function (req, res) {
                         data.user_id = reqParam.user_id;
                     }
 
+                    console.log( dataLists );
                     /* 2. [tm_jisu_temp_upload] 저장 쿼리문 조회 */                   
-                    stmt = mapper.getStatement('index', 'saveTmJisuTempUpload', dataLists, format);
+                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuTempUpload', dataLists, format);
                     console.log(stmt);
 
                     conn.queryAsync(stmt).then(rows => {
@@ -368,7 +367,7 @@ var save = function (req, res) {
         conn.beginTransaction(txerr => {
 
             /* 2. [지수ID] 가 존재하는지 쿼리문 조회 */
-            var stmt = mapper.getStatement('index', 'getJisuDuplCheck', paramData, format);
+            var stmt = mapper.getStatement('indexRegister', 'getJisuDuplCheck', paramData, format);
             console.log(stmt);
 
             conn.queryAsync(stmt).then(rows => {
@@ -383,7 +382,7 @@ var save = function (req, res) {
                 }
 
                 /* 4. [tm_jisu_mast] 저장 쿼리문 조회 */
-                stmt = mapper.getStatement('index', 'saveTmJisuMast', paramData, format);
+                stmt = mapper.getStatement('indexRegister', 'saveTmJisuMast', paramData, format);
                 console.log(stmt);
 
                 conn.queryAsync(stmt).then(rows => {
