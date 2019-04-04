@@ -4,7 +4,6 @@
   <select id="indexSummaryLately">
       SELECT BAS.F16013
             ,BAS.F16002
-            ,BAS.F16004
             ,BAS.LARGE_TYPE
             ,BAS.MIDDLE_TYPE
             ,HIS.F16013
@@ -33,9 +32,10 @@
   </select>
 
   <select id="indexReqList">
-      SELECT BAS.*
+      SELECT BAS.F16002
+            ,BAS.F16013  
             ,REQ.INST_NAME
-            ,REQ.REG_TIME
+            ,date_format(REQ.REG_TIME, '%Y-%m-%d') REG_TIME
             ,REQ.REQ_FLAG
             ,REQ.REG_ID
         FROM td_index_basic BAS, 
@@ -43,7 +43,7 @@
           FROM tm_index_req A,
                     tm_domain_mast B
           WHERE A.INST_CD = B.INST_CD) REQ	
-      WHERE BAS.F16013 = REQ.JISU_ID; 
-
+      WHERE BAS.F16013 = REQ.JISU_ID
+        AND REQ.REQ_FLAG = '1'  
   </select>
 </mapper>
