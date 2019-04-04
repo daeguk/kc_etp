@@ -214,7 +214,7 @@
                                     <v-subheader>소급지수</v-subheader>
                                 </v-flex>
 
-                                <v-flex xs4 id="file-drag-drop">
+                                <v-flex xs4 id="file-drag-drop" v-show="!jisuUploadResult">
                                     <v-layout flat class="drag_box" ref="fileform">
                                         <input type="file" name="file" ref="file" style="display:none;">
 
@@ -234,7 +234,7 @@
                                     </v-layout>
                                 </v-flex>
 
-                                <v-flex xs4 ml-3>
+                                <v-flex xs4 ml-3 v-show="!jisuUploadResult">
                                     <p>
                                         <v-icon color="#1976d2">check</v-icon>
                                         <b>허용되는 확장자</b>
@@ -253,11 +253,15 @@
                                     </p>
                                 </v-flex>
 
-                                <v-flex>
+                                <v-flex mb-3 v-show="!!jisuUploadResult">
+
+                                    <v-flex>
+                                        <v-btn @click="jisuUploadResult = false">X</v-btn>
+                                    </v-flex>
+
                                     <v-data-table
                                         :headers="headers"
                                         :items="jisuDataList"
-                                        :rows-per-page-items="rowsPerPage"
                                         class="elevation-1"
                                     >
                                         <template v-slot:items="props">
@@ -571,13 +575,14 @@ export default {
                 { text: 'col03'     , value: 'col03'    , align:"left",  sortable: true }
             ],    
             jisuDataList : [],
-            rowsPerPage : 10,
+            jisuUploadResult : false,
 
 //            , date: new Date().toISOString().substr(0, 10)
             menu: false,
             dialog: false,
             dialog2: false,
             ex4: null,
+
             form: {
                 duplCheckResult: false,
 
@@ -651,41 +656,16 @@ export default {
             this.$refs.fileform.addEventListener(
                 "drop",
                 function(e) {
-                    var vm   =   this;
-                    let file = e.dataTransfer.files[0];
+
+                    var selfThis    =   this;
+                    let file        =   e.dataTransfer.files[0];
 
                     if( !this.fn_checkFile( file ) ) {
                         return  false;
                     }
 
-                    let formData = new FormData();
-                    formData.append("files", file);
+                    this.jisuFileUpload( file, selfThis );
 
-                    axios.post(
-                        Config.base_url + "/user/index/fileuploadSingle",
-                        formData,
-                        {
-                            headers: {
-                                "Content-Type": "multipart/form-data"
-                            }
-                        }
-                    ).then(function(response) {
-                        console.log( response );
-
-                        if( response.data ) {
-                            if( !response.data.result ) {
-                                alert( response.data.msg );
-
-                                return false;
-                            }
-
-                            if( response.data.result ) {
-                                vm.jisuDataList = response.data.dataList;
-                            }
-                        }
-                    }).catch(function(response) {
-                        console.log( response );
-                    });
                 }.bind(this)
             );
         }
@@ -694,23 +674,20 @@ export default {
         this.$refs.file.addEventListener(
             "change",
             function(evt) {
-                var vm      =   this;
-                let file    =   this.$refs.file.files[0];
+                var selfThis    =   this;
+                let file        =   this.$refs.file.files[0];
 
                 if( !this.fn_checkFile( file ) ) {
                     return  false;
                 }
 
-                let formData = new FormData();
-                formData.append("files", file);
+                this.jisuFileUpload( file, selfThis );
 
                 this.$refs.fileform.addEventListener(
                     evt,
                     function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-
-                        alert();
                     }.bind(this),
                     false
                 );
@@ -798,6 +775,7 @@ export default {
             this.$refs.file.click();
         },
 
+        /* 엑셀 유형인지 파일을 체크한다. */
         fn_checkFile : function( file ) {
 
             var fileLen = file.name.length;
@@ -819,7 +797,43 @@ export default {
             }
 
             return  true;    
-        }
+        },
+
+        /* 소급지수 파일을 업로드한다. */
+        jisuFileUpload : function( file, selfThis ){
+
+            let formData = new FormData();
+            formData.append("files", file);
+
+            axios.post(
+                Config.base_url + "/user/index/fileuploadSingle",
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
+                }
+            ).then(function(response) {
+                console.log( response );
+
+                if( response.data ) {
+
+                    selfThis.jisuUploadResult = response.data.result;
+                    
+                    if( !response.data.result ) {
+                        alert( response.data.msg );
+
+                        return false;
+                    }
+
+                    if( response.data.result ) {
+                        selfThis.jisuDataList = response.data.dataList;
+                    }
+                }
+            }).catch(function(response) {
+                console.log( response );
+            });    
+        }    
     }
 };
 </script>
