@@ -41,7 +41,7 @@
          <v-flex>
               <v-dialog
         v-model="dialog"
-        max-width="350"
+        max-width="450"
       >
         <v-card>
           <v-card-title class="headline">정보 공개 요청 {{message}} 하시겠습니까?</v-card-title>
@@ -53,7 +53,7 @@
             <v-btn
               color="green darken-1"
               flat="flat"
-              @click="dialog = false"
+              @click="updateOpenYn('1');"
             >
               예
             </v-btn>
@@ -61,7 +61,7 @@
             <v-btn
               color="green darken-1"
               flat="flat"
-              @click="dialog = false"
+              @click="updateOpenYn('1');"
             >
               아니요
             </v-btn>
@@ -85,6 +85,7 @@ export default {
         return {
             dialog: false,
             message: '승인',
+            reqFlag: true,
             results: [],
             rowsPerPageItems: [10, 20, 30, 50],
             headers: [
@@ -140,16 +141,27 @@ export default {
                 });
         }, 
         dialogOpen: function(flag) {
-            var vm = this;
             if (flag == '1') {
-                vm.message = '승인';
+                this.message = '승인';
+                this.reqFlag = true;
             } else {
-                vm.message = '거절';
+                this.message = '거절';
+                this.reqFlag = false;
             }
-            vm.dialog = true;
+            this.dialog = true;
         },
         updateOpenYn: function(flag) {
-            alert(flag);
+            this.dialog = false;
+
+            
+            axios.post(Confg.base_url + '/user/index/updateOpenYn', {
+                params : {
+                    flag : flag,
+                    reqFlag : reqFlag
+                }
+            }).then(function(response) {
+                alert("승인처리 되었습니다.");
+            })
         }
     }
 };
