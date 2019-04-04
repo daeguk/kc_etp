@@ -50,7 +50,7 @@ module.exports = {
         { file: './user/etp/etpregister', path: '/user/etp/getetpapplylist', method: 'getEtpApplyList', session: 'uncheck', type: 'get' },
         //일반 INDEX register
 
-        { file: './user/index/indexmanage', path: '/user/index/getIndexSummaryInfo', method: 'getIndexSummary', session: 'uncheck', type: 'post' },        
+//        { file: './user/index/indexmanage', path: '/user/index/getIndexSummaryInfo', method: 'getIndexSummary', session: 'uncheck', type: 'post' },        
         { file: './user/index/indexmanage', path: '/user/index/getinfoopenreqlist', method: 'getInfoOpenReqList', session: 'uncheck', type: 'get' },        
         { file: './user/index/indexmanage', path: '/user/index/getindexsummaryhist', method: 'getIndexSummaryHist', session: 'uncheck', type: 'get' },
         { file: './user/index/indexmanage', path: '/user/index/getIndexVueTableTestList', method: 'getIndexVueTableTestList', session: 'uncheck', type: 'get' },
