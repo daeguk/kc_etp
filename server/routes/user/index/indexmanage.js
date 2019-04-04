@@ -17,11 +17,10 @@ var getInfoOpenReqList = function (req, res) {
     console.log('indexmanage 모듈 안에 있는 getInfoOpenReqList 호출됨.');
 
     var pool = req.app.get("pool");
-    var etpStmts = req.app.get("stmt");
+    var mapper = req.app.get("mapper");
 
-    // var options = {id:'admin'};
-    var options = {};
-    var stmt = etpStmts.IndexManage.selectIndexInfoOpenReqList(options);
+    var stmt = mapper.getStatement('index', 'indexReqList', req.query.params, {language:'sql', indent: '  '});
+
     console.log(stmt);
 
     Promise.using(pool.connect(), conn => {
@@ -158,7 +157,7 @@ var getJisuDuplCheck = function (req, res) {
     console.log('indexmanage.getJisuDuplCheck 호출됨.');
 
     var pool = req.app.get("pool");
-    var etpStmts = req.app.get("stmt");
+    var mapper = req.app.get("mapper");
     var result = false;
 
     /* 1. body.data 값이 있는지 체크 */
@@ -172,10 +171,11 @@ var getJisuDuplCheck = function (req, res) {
         return;
     }
 
-    var options = JSON.parse(JSON.stringify(req.body.data));
+    var paramData = JSON.parse(JSON.stringify(req.body.data));
 
     /* 2. 이미 등록된 지수ID 가 존재하는지 확인 */
-    var stmt = etpStmts.IndexManage.getJisuDuplCheck(options);
+    var format = { language: 'sql', indent: '' };
+    var stmt = mapper.getStatement('indexRegister', 'getJisuDuplCheck', paramData, format);
     console.log(stmt);
 
     Promise.using(pool.connect(), conn => {
@@ -213,9 +213,14 @@ var fileuploadSingle = function (req, res) {
     console.log('indexmanage.fileuploadSingle 호출됨.');
 
     var pool = req.app.get("pool");
-    var etpStmts = req.app.get("stmt");
+    var mapper = req.app.get("mapper");
     var resultMsg = {};
-    var uploadFolder    =   "d:\\test";
+    var reqParam = {
+            uploadFolder: "d:\\test"
+        ,   save_file_name: ''
+            /* TODO: 추후 세션의 사용자 ID 로 변경 필요. */
+        ,   user_id : 'test01'
+    };
 
     var storage = multer.diskStorage({
 
@@ -224,12 +229,12 @@ var fileuploadSingle = function (req, res) {
 
             console.log("#1 destination start");
 
-            cb(null, uploadFolder );
+            cb(null, reqParam.uploadFolder);
 
             console.log("#2 destination end");
         },
 
-        // 서버에 저장할 파일 명
+        // 서버에 저장할 파일명
         filename: function (req, file, cb) {
 
             console.log("#3 filename start");
@@ -239,17 +244,11 @@ var fileuploadSingle = function (req, res) {
             var fileLen = file.originalname.length;
             var lastDot = file.originalname.lastIndexOf(".");
             var fileName = file.originalname.substring(0, lastDot);
-            var fileExt = file.originalname
-                .substring(lastDot, fileLen)
-                .toLowerCase();
-            var saveFileName = fileName + "_" + Date.now() + "" + fileExt;
+            var fileExt = file.originalname.substring(lastDot, fileLen).toLowerCase();
 
-            console.log("saveFileName=" + saveFileName);
-            cb(null, saveFileName);
+            reqParam.save_file_name = fileName + "_" + Date.now() + "" + fileExt;
 
-
-
-
+            cb(null, reqParam.save_file_name);
 
             console.log("#4 filename end");
         }
@@ -267,16 +266,64 @@ var fileuploadSingle = function (req, res) {
             console.log("File Upload Err" + err);
         }
 
-        var workbook = xlsx.readFile( uploadFolder + "/" + req.file.filename);
+        reqParam.org_file_name = req.file.originalname;
+        reqParam.mime_type = req.file.mimetype;
+        reqParam.file_size = req.file.size;
+
+        console.log( JSON.stringify(reqParam) );  
+
+        var workbook = xlsx.readFile(reqParam.uploadFolder + "/" + req.file.filename);
         var sheet_name_list = workbook.SheetNames;
-        var dataLists = xlsx.utils.sheet_to_json( workbook.Sheets[sheet_name_list[0]], { header: ["col1", "col2", "col3"], range: 2 } );
+        var dataLists = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { header: ["col1", "col2", "col3"], range: 2 });
 
         console.log("#7 upload end");
 
-        for( var i=0; i < dataLists.length; i++ ) {
-            var row =   dataLists[i];
-            console.log( row );
-        }
+        console.log(reqParam);
+
+
+        var format = { language: 'sql', indent: '' };
+        Promise.using(pool.connect(), conn => {
+            conn.beginTransaction(txerr => {
+
+                reqParam.gubun = "002";      /* 소급 지수 */
+
+                /* 1. [saveTmJisuFile] 테이블에 저장한다. */
+                var stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
+                console.log(stmt);
+
+                conn.queryAsync(stmt).then(rows => {
+
+                    console.log( "insertId=>" + rows.insertId );
+
+                    for (var i = 0; i < dataLists.length; i++) {
+                        var data = dataLists[i];
+                        
+                        data.file_id = rows.insertId;
+                        data.row_no = i+1;
+                        data.user_id = reqParam.user_id;
+                    }
+
+                    console.log( dataLists );
+                    /* 2. [tm_jisu_temp_upload] 저장 쿼리문 조회 */                   
+                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuTempUpload', dataLists, format);
+                    console.log(stmt);
+
+                    conn.queryAsync(stmt).then(rows => {
+
+                        conn.commit();
+                    }).catch(err => {
+
+                        console.log(err);
+                        conn.rollback();
+                    });
+
+                }).catch(err => {
+
+                    console.log(err);
+                    conn.rollback();
+                });
+            });
+        });
 
         res.end();
     });
@@ -293,7 +340,7 @@ var save = function (req, res) {
     console.log('indexmanage.save 호출됨.');
 
     var pool = req.app.get("pool");
-    var etpStmts = req.app.get("stmt");
+    var mapper = req.app.get("mapper");
     var resultMsg = {};
 
     /* 1. body.data 값이 있는지 체크 */
@@ -308,18 +355,19 @@ var save = function (req, res) {
         return;
     }
 
-    var options = JSON.parse(JSON.stringify(req.body.data));
+    var paramData = JSON.parse(JSON.stringify(req.body.data));
 
     /* TODO: 추후 세션의 사용자 ID 로 변경 필요. */
-    options.user_id = 'test01';
+    paramData.user_id = 'test01';
 
 
+    var format = { language: 'sql', indent: '' };
     Promise.using(pool.connect(), conn => {
 
         conn.beginTransaction(txerr => {
 
             /* 2. [지수ID] 가 존재하는지 쿼리문 조회 */
-            var stmt = etpStmts.IndexManage.getJisuDuplCheck(options);
+            var stmt = mapper.getStatement('indexRegister', 'getJisuDuplCheck', paramData, format);
             console.log(stmt);
 
             conn.queryAsync(stmt).then(rows => {
@@ -334,7 +382,7 @@ var save = function (req, res) {
                 }
 
                 /* 4. [tm_jisu_mast] 저장 쿼리문 조회 */
-                stmt = etpStmts.IndexManage.saveTmJisuMast(options);
+                stmt = mapper.getStatement('indexRegister', 'saveTmJisuMast', paramData, format);
                 console.log(stmt);
 
                 conn.queryAsync(stmt).then(rows => {

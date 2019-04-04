@@ -2,10 +2,10 @@
   <v-container fluid grid-list-md pa-0 mb-4>
   <v-layout row wrap>
     <v-flex md6> 
-      <indexinfo1box :item="boxItem1"></indexinfo1box>
+      <indexinfotab1box1 :item="boxItem1"></indexinfotab1box1>
     </v-flex>
     <v-flex md6>
-      <indexinfo2box :item="boxItem2"></indexinfo2box>
+      <indexinfotab1box2 :item="boxItem2"></indexinfotab1box2>
     </v-flex>
   </v-layout>
   </v-container>
@@ -14,8 +14,8 @@
 
 <script>
 import Config       from "@/js/config.js"
-import indexinfo1box   from  './indexinfo1box.vue'
-import indexinfo2box   from  './indexinfo2box.vue'
+import indexinfotab1box1   from  './indexinfotab1box1.vue'
+import indexinfotab1box2   from  './indexinfotab1box2.vue'
 
 
 export default {
@@ -27,8 +27,8 @@ export default {
     };
   },
   components: {
-    indexinfo1box: indexinfo1box,
-    indexinfo2box: indexinfo2box,
+    indexinfotab1box1: indexinfotab1box1,
+    indexinfotab1box2: indexinfotab1box2,
   },
   computed:{
 

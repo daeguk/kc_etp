@@ -31,10 +31,10 @@
         <div class="graph_01_w">
           <div class="sub_title_num">1273.46 
             <span>+23 21(0.9%)</span>
-            <p>Last Updated : 2019.3.20</p>
+            <p>Last Updated : 2019.3.20 09:40:20</p>
           </div>
-          <div class="graph_01" style="height:100px;">
-            <div class="g_w">그래프들어갑니다</div></div>
+          <div class="graph_01" style="height:100px;background-color:#f6f6f6;">
+              그래프들어갑니다</div>
         </div>
         
   
@@ -76,23 +76,6 @@
 </template>
 
 
-<script>
-
-  export default {
-    data: () => ({
-      value: [
-        423,
-        446,
-        675,
-        510,
-        590,
-        610,
-        760
-      ]
-    })
-  }
-  
-</script>
 <script>
 
 import indexinfotab1   from  './indexinfotab1.vue'

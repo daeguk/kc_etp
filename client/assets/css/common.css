@@ -21,10 +21,11 @@ li {
 .text_color_blue{color:#1976d2}
 
 h3 span{font-size:14px; width:100%;}
-h5{font-size:18px; border-bottom:2px solid #42a4e1; }
+h5{font-size:18px; border-bottom:0px solid #42a4e1; background:#234e68; color:#ffffff; }
 h5 .v-card__title{padding:8px 8px 0px 24px;}
 h6{font-size:16px;}
 .pop_btn_w{border-top:1px solid #dddddd !important; padding:5px 0 10px 0;}
+.pop_bot_h{height:20px;}
 
 
 
@@ -32,6 +33,11 @@ h6{font-size:16px;}
 
 .table_line1{border:1px solid #dcdcdc;border-top:2px solid #808080;}
 .table_line2{border-top:1px solid #808080;}
+.table_line3{border-top:0px;}
+.table_line4{border-top:1px solid #808080;}
+
+
+
 
 .content_margin{margin:16px;}
 .img_align{vertical-align: middle;}
@@ -57,8 +63,7 @@ h3 span{font-size:14px; width:100%;}
 .graph_01_w .sub_title_num{font-size:30px;  font-weight:bold; color:#101010;}
 .graph_01_w .sub_title_num span{font-size:14px; color:red;}
 .graph_01_w .sub_title_num p{font-size: 14px; color:#9e9e9e; }
-.graph_01_w .graph_01{ background-color:#f6f6f6;width:100%;}
-.graph_01_w .graph_01 .g_w{width:800px; margin:0 auto;}
+.graph_01_w .graph_01{width:100%;}
 
 .graph_02_w{ padding:0; background-color:#f6f6f6;width:100%;}
 
@@ -69,6 +74,7 @@ h3 span{font-size:14px; width:100%;}
 .indexinfo_box01 table.v-table th, .indexinfo_box01 table.v-table tbody td{ height:35px;}
 .indexinfo_box01 table.v-table tbody td{ font-size:14px; color:#101010;}
 
+
 .indexinfo_box02.a1 table.v-datatable thead th{font-size:14px;  color:red;}
 .indexinfo_box02 table.v-table tbody td{ height:35px;}
 
@@ -76,8 +82,12 @@ h3 span{font-size:14px; width:100%;}
 .indexinfo_box02.a2 table.v-datatable thead th{font-size:14px;  color:#ff8400;}
 .indexinfo_box02.a3 table.v-datatable thead th{font-size:14px;  color:#2f4cac;}
 
+.indexinfo_table01 table.v-table tbody td:first-child{padding:0px !important}
+.indexinfo_table01 img{ padding-right:0px; height:100%;}
 
-.indexinfo_table01 img{ padding-right:8px; height:100%;}
+.index3pop2_con .theme--light.v-list{background: #fff;}
+.index3pop2_con .v-list__tile__title{width:30%;padding-left:10px; color:#234e68; font-weight: 600;}
+.index3pop2_con .v-list--two-line .v-list__tile{padding-top:8px;height:40px;}
 
 
 /*summary*/
