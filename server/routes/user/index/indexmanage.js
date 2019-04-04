@@ -339,9 +339,11 @@ var fileuploadSingle = function (req, res) {
                         data.user_id = reqParam.user_id;
                     }
 
-                    console.log( dataLists );
+                    reqParam.dataLists  =   dataLists;
+
+                    console.log( reqParam );
                     /* 2. [tm_jisu_temp_upload] 저장 쿼리문 조회 */                   
-                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuTempUpload', dataLists, format);
+                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuTempUpload', reqParam, format);
                     console.log(stmt);
 
                     conn.queryAsync(stmt).then(rows => {

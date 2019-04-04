@@ -51,6 +51,7 @@
         ( 
                 file_id
             ,   row_no
+
             ,   col01
             ,   col02
             ,   col03
@@ -61,18 +62,21 @@
             ,   reg_time 
         ) 
         VALUES 
+        <foreach    collection="dataLists"   item="data"     separator="," >
         ( 
-                #{file_id}
-            ,   #{row_no}
-            ,   #{col01}
-            ,   #{col02}
-            ,   #{col03}
-            ,   #{col04}
-            ,   #{col05}
+                ${data.file_id}
+            ,   ${data.row_no}
 
-            ,   #{user_id}
+            ,   #{data.col01}
+            ,   #{data.col02}
+            ,   #{data.col03}
+            ,   #{data.col04}
+            ,   #{data.col05}
+
+            ,   #{data.user_id}
             ,   now() 
-        )
+        )            
+        </foreach>
     </insert>    
 
     <!--
@@ -96,7 +100,7 @@
             ,   upd_id 
             ,   upd_time 
         ) 
-        VALUES 
+        VALUES    
         ( 
                 #{jisu_id}
 
