@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="index">  
-  <!--
+    <!--
     * 가장 최근 지수 정보
-  -->
-  <select id="indexSummaryLately">
+    -->
+    <select id="indexSummaryLately">
       SELECT BAS.F16013
             ,BAS.F16002
             ,BAS.LARGE_TYPE
@@ -32,38 +32,69 @@
         ORDER BY HIS.F12506 DESC
         limit 0, 1
 
-  </select>
+    </select>
   
-  <!--
+    <!--
     * 지수 정보 공개 요청 리스트
-  -->
-  <select id="indexReqList">
+    -->
+    <select id="indexReqList">
       SELECT BAS.F16002
             ,BAS.F16013  
+            ,REQ.INST_CD
             ,REQ.INST_NAME
             ,date_format(REQ.REG_TIME, '%Y-%m-%d') REG_TIME
             ,REQ.REQ_FLAG
             ,REQ.REG_ID
         FROM td_index_basic BAS, 
-            (SELECT A.*, B.INST_NAME 
+            (SELECT A.INST_CD
+				   ,A.REG_TIME
+                   ,A.REQ_FLAG
+                   ,A.REG_ID
+                   ,A.JISU_ID
+                   ,B.INST_NAME 
           FROM tm_index_req A,
                     tm_domain_mast B
           WHERE A.INST_CD = B.INST_CD) REQ	
       WHERE BAS.F16013 = REQ.JISU_ID
-        AND REQ.REQ_FLAG = '1'  
-  </select>
+        AND REQ.REQ_FLAG = '1' OR  REQ.REQ_FLAG = '0'
+    </select>
 
-  <!--
+    <!--
     * 지수 정보 공개 요청 처리 
-  -->
-  <update id="updateOpenYn">
+    -->
+    <update id="updateIndexOpenYn">
       UPDATE tm_index_req 
-         SET REQ_FLAG = #{flag}
+         <set>
+             REQ_FLAG = #{FLAG}
+             ,UPD_ID = #{UPD_ID}
+             ,UPD_TIME = NOW() 
+         </set>
        WHERE JISU_ID = #{JISU_ID}
          AND INST_CD = #{INST_CD}
-         AND UPD_ID = #{UPD_ID}
-         AND UPD_TIME = NOW()
-  </update>
+    </update>
 
+    <select id="getIndexList">
+        SELECT A.JISU_CD
+              ,A.JISU_NM
+              ,date_format(A.IP_DT, '%Y-%m-%d') IP_DT
+              ,if(A.ANNO_DATE is null, '미발표', '발표') ANNO_YN
+              ,A.INDEX_CAL_METHOD
+              ,A.MARKET_ID
+              ,A.ETP_MARKET_ID
+              ,A.INST_CNT
+        FROM (SELECT BAS.F16013 JISU_CD
+                    ,BAS.F16002 JISU_NM
+                    ,BAS.F12506 IP_DT
+                    ,BAS.ANNO_DATE
+                    ,BAS.INDEX_CAL_METHOD
+                    ,BAS.MARKET_ID
+                    ,CAST(substr(BAS.MARKET_ID, 2) AS SIGNED) ETP_MARKET_ID
+                    ,(SELECT COUNT(*) FROM kc_etp.tm_index_req
+                        WHERE JISU_ID = BAS.F16013
+                        AND REQ_FLAG = '2') INST_CNT
+                FROM td_index_basic BAS) A;
+         
+    </select>
 
+    
 </mapper>

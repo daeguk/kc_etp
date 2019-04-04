@@ -15,7 +15,7 @@ var fs = require('fs');
 
 
 var getIndexSummaryInfo = function (req, res) {
-    console.log('indexmanage 모듈 안에 있는 getInfoOpenReqList 호출됨.');
+    console.log('indexSummary=>getInfoOpenReqList 호출됨.');
 
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
@@ -26,7 +26,6 @@ var getIndexSummaryInfo = function (req, res) {
 
     Promise.using(pool.connect(), conn => {
         conn.queryAsync(stmt).then(rows => {
-            util.log("sql1" == rows.affectedRows)
             res.json({
                 success: true,
                 results: rows
@@ -46,7 +45,7 @@ var getIndexSummaryInfo = function (req, res) {
 };
 
 var getInfoOpenReqList = function (req, res) {
-    console.log('indexmanage 모듈 안에 있는 getInfoOpenReqList 호출됨.');
+    console.log('indexSummary=>getInfoOpenReqList 호출됨.');
 
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
@@ -57,7 +56,6 @@ var getInfoOpenReqList = function (req, res) {
 
     Promise.using(pool.connect(), conn => {
         conn.queryAsync(stmt).then(rows => {
-            util.log("sql1" == rows.affectedRows)
             res.json({
                 success: true,
                 results: rows
@@ -76,8 +74,102 @@ var getInfoOpenReqList = function (req, res) {
     });
 };
 
+
+
+var updateIndexOpenYn = function(req, res) {
+    
+    try {
+        console.log('indexSummary=>updateIndexOpenYn 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+
+        var params = {
+            JISU_ID : req.body.params.JISU_ID,
+            INST_CD : req.body.params.INST_CD
+        }
+
+        // 세션 로그인키 바인딩
+        if (req.session.loginkey) {
+            params.UPD_ID = req.session.loginkey;
+        } else {
+            params.UPD_ID = 'system';
+        }
+
+        // 공개 처리 플래그
+        if (req.body.params.reqFlag == true) {
+            params.FLAG = '2';
+        } else {
+            params.FLAG = '0';
+        }
+
+        util.log("req.body.params.reqFlag", JSON.stringify(params));
+        
+        
+        var stmt = mapper.getStatement('index', 'updateIndexOpenYn', params, {language:'sql', indent: '  '});
+    
+        console.log(stmt);
+
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+
+        });
+    } catch(err) {
+        util.log("err=>", err);
+    }    
+}
+
+
+/*
+* 관리지 목록
+*/
+var getInfoIndexList = function (req, res) {
+    console.log('indexSummary=>getInfoOpenReqList 호출됨.');
+
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+
+    var stmt = mapper.getStatement('index', 'getIndexList', req.query.params, {language:'sql', indent: '  '});
+
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+        conn.queryAsync(stmt).then(rows => {
+            res.json({
+                success: true,
+                results: rows
+            });
+            res.end();
+        }).catch(err => {
+            util.log("Error while performing Query.", err);
+            res.json({
+                success: false,
+                message: err
+            });
+            res.end();
+        });
+
+
+    });
+};
+
+
 var getIndexSummaryHist = function (req, res) {
-    console.log('indexmanage 모듈 안에 있는 getindexsummaryhist 호출됨.');
+    console.log('indexSummary=>getindexsummaryhist 호출됨.');
 
     var pool = req.app.get("pool");
     var etpStmts = req.app.get("stmt");
@@ -112,46 +204,12 @@ var getIndexSummaryHist = function (req, res) {
     });
 };
 
-var updateOpenYn = function(req, res) {
-
-}
-
-var getIndexVueTableTestList = function (req, res) {
-    console.log('indexmanage 모듈 안에 있는 getIndexVueTableTestList 호출됨.');
-    var pool = req.app.get("pool");
-    var etpStmts = req.app.get("stmt");
-
-    // var options = {id:'admin'};
-    console.log("req.query");
-    console.log(req.query);
-    var options = {};
-    var stmt = etpStmts.IndexManage.getIndexToastGridTestList(options);
-    console.log(stmt);
-
-    Promise.using(pool.connect(), conn => {
-        conn.queryAsync(stmt).then(rows => {
-            util.log("sql1" == rows.affectedRows)
-            res.json({
-                success: true,
-                results: rows,
-                count: rows.length
-            });
-            res.end();
-        }).catch(err => {
-            util.log("Error while performing Query.", err);
-            res.json({
-                success: false,
-                message: err
-            });
-            res.end();
-        });
 
 
-    });
-};
 
 
 module.exports.getIndexSummaryInfo = getIndexSummaryInfo;
 module.exports.getInfoOpenReqList = getInfoOpenReqList;
-module.exports.updateOpenYn = updateOpenYn;
+module.exports.updateIndexOpenYn = updateIndexOpenYn;
+module.exports.getInfoIndexList = getInfoIndexList;
 module.exports.getIndexSummaryHist = getIndexSummaryHist;

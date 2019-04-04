@@ -27,10 +27,10 @@
                     <td class="text-xs-center">{{ props.item.F16013 }}</td>
                     <td class="text-xs-center">{{ props.item.REG_TIME }}</td>
                     <td class="text-xs-center">
-                        <v-btn small depressed color="primary" class="white--text" @click.stop="dialogOpen('1');">
+                        <v-btn small depressed color="primary" class="white--text" @click.stop="dialogOpen('1', props.item);">
                             <v-icon dark>thumb_up_alt</v-icon>Yes
                         </v-btn>
-                        <v-btn small depressed color="grey" class="white--text" @click.stop="dialogOpen('2');">
+                        <v-btn small depressed color="grey" class="white--text" @click.stop="dialogOpen('2', props.item);">
                             <v-icon dark>thumb_down_alt</v-icon>No 
                         </v-btn>
                     </td>
@@ -53,7 +53,7 @@
             <v-btn
               color="green darken-1"
               flat="flat"
-              @click="updateOpenYn('1');"
+              @click="updateIndexOpenYn('Y');"
             >
               예
             </v-btn>
@@ -61,7 +61,7 @@
             <v-btn
               color="green darken-1"
               flat="flat"
-              @click="updateOpenYn('1');"
+              @click="updateIndexOpenYn('N');"
             >
               아니요
             </v-btn>
@@ -83,6 +83,7 @@ export default {
     props: [],
     data() {
         return {
+            selected: [],
             dialog: false,
             message: '승인',
             reqFlag: true,
@@ -118,8 +119,7 @@ export default {
             console.log("getInfoOpenReqList");
             var vm = this;
 
-            axios
-                .get(Config.base_url + "/user/index/getinfoopenreqlist", {
+            axios.get(Config.base_url + "/user/index/getinfoopenreqlist", {
                     params: {
                         // "bbs_id" : vm.bbs_id,
                         // "seloption" : vm.seloption,
@@ -127,20 +127,20 @@ export default {
                         // "curPage": vm.curPage,
                         // "perPage": vm.perPage
                     }
-                })
-                .then(function(response) {
+                }).then(response => {
                     // console.log(response);
                     if (response.data.success == false) {
                         alert("해당 신청현황이 없습니다");
                     } else {
                         var items = response.data.results;
                         
-                        console.log("response=" + JSON.stringify(items));
+                        //console.log("response=" + JSON.stringify(items));
                         vm.results = items;
                     }
                 });
         }, 
-        dialogOpen: function(flag) {
+        dialogOpen: function(flag, item) {
+            this.selected = item;
             if (flag == '1') {
                 this.message = '승인';
                 this.reqFlag = true;
@@ -150,20 +150,23 @@ export default {
             }
             this.dialog = true;
         },
-        updateOpenYn: function(flag) {
+        updateIndexOpenYn: function(flag) {
             this.dialog = false;
 
-            
-            axios.post(Confg.base_url + '/user/index/updateOpenYn', {
-                params : {
-                    flag : flag,
-                    reqFlag : reqFlag,
-                    JISU_ID : jisu_id,
-                    INST_CD : inst_cd
-                }
-            }).then(function(response) {
-                alert("승인처리 되었습니다.");
-            })
+            if(flag == 'Y') {
+                console.log("JISU_ID="+this.selected.F16013);
+                axios.post(Config.base_url + '/user/index/updateIndexOpenYn', {
+                    params : {
+                        flag : flag,
+                        reqFlag : this.reqFlag,
+                        JISU_ID : this.selected.F16013,
+                        INST_CD : this.selected.INST_CD
+                    }
+                }).then(response => {
+                  
+                    this.getInfoOpenReqList();
+                })
+            }
         }
     }
 };
