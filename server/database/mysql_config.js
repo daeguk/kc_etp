@@ -6,7 +6,7 @@
  */
 
 module.exports = {
-    host: "127.0.0.1",
+    host: "10.98.3.63",
     port: 3306,
     user: "kc_etp",
     password: "kc_etp",
