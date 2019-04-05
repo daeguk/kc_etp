@@ -143,6 +143,72 @@ var getJisuDuplCheck = function (req, res) {
 };
 
 
+/* 
+ * 기관정보를 조회한다.
+ * 2019-04-02  bkLove(촤병국)
+ */
+var getDomainInst = function(req, res) {
+    console.log('indexmanage.getDomainInst 호출됨.');
+
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    var result = false;
+
+    var paramData = {};
+
+    /* 1. 기관정보를 조회한다. */
+    var format = { language: 'sql', indent: '' };
+    var stmt = mapper.getStatement('indexRegister', 'getDomainInst', paramData, format);
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+        conn.queryAsync(stmt).then(rows => {
+
+            if ( rows ) {
+
+                var     dataList = [];
+                for( var i=0, inx=0; i < rows.length; i=i+3 ) {
+                    var data    =   rows[i];
+                    var groupData = {};
+
+                    groupData.one = data;
+                    console.log( "i=[" + i + "]=" + JSON.stringify(data) );                    
+
+                    groupData.two = {};
+                    if( i+1 < rows.length ) {
+                        data = rows[i+1];
+                        groupData.two = data;
+                        console.log( "i+1=[" + (i+1) + "]=" + JSON.stringify(data) );
+                    }
+
+                    groupData.three = {};
+                    if( i+2 < rows.length ) {
+                        data = rows[i+2];
+                        groupData.three = data;
+                        console.log( "i+2=[" + (i+2) + "]=" + JSON.stringify(data) );
+                    }
+
+                    dataList[inx++] = groupData;
+                }
+
+                res.json({
+                      dataGroupList: dataList
+                    , dataList : rows
+                });
+                res.end();
+            }
+
+        }).catch(err => {
+            console.log("[error] indexmanage.getDomainInst Error while performing Query.", err);
+            res.json({
+                dataList: []
+            });
+            res.end();
+        });
+    });
+}
+
+
 
 /*
  * 소급지수 파일을 업로드 한다.
@@ -454,5 +520,6 @@ var save = function (req, res) {
 module.exports.getIndexVueTableTestList = getIndexVueTableTestList;
 module.exports.getIndexToastGridTestList = getIndexToastGridTestList;
 module.exports.getJisuDuplCheck = getJisuDuplCheck;
+module.exports.getDomainInst = getDomainInst;
 module.exports.fileuploadSingle = fileuploadSingle;
 module.exports.save = save;

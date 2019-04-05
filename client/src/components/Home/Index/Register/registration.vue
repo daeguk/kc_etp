@@ -396,133 +396,33 @@
                                                 justify-space-around
                                                 row
                                                 fill-height
+
+                                                v-for="(item, index) in arr_group_inst"
                                             >
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="ex4"
-                                                        label="삼성자산운용"
+                                                        v-model="arr_show_inst"
+                                                        :label="item.one.inst_name"
                                                         color="primary"
-                                                        value="삼성자산운용"
+                                                        :value="item.one.inst_cd"
                                                         hide-details
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="ex4"
-                                                        label="미래에셋자산운용"
+                                                        v-model="arr_show_inst"
+                                                        :label="item.two.inst_name"
                                                         color="primary"
-                                                        value="미래에셋자산운용"
+                                                        :value="item.two.inst_cd"
                                                         hide-details
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="ex4"
-                                                        label="KB자산운용"
+                                                        v-model="arr_show_inst"
+                                                        :label="item.three.inst_name"
                                                         color="primary"
-                                                        value="KB자산운용"
-                                                        hide-details
-                                                    ></v-checkbox>
-                                                </v-flex>
-                                            </v-layout>
-                                            <v-layout
-                                                align-center
-                                                justify-space-around
-                                                row
-                                                fill-height
-                                            >
-                                                <v-flex xs3>
-                                                    <v-checkbox
-                                                        v-model="ex4"
-                                                        label="한국투자신탁"
-                                                        color="primary"
-                                                        value="한국투자신탁"
-                                                        hide-details
-                                                    ></v-checkbox>
-                                                </v-flex>
-                                                <v-flex xs3>
-                                                    <v-checkbox
-                                                        v-model="ex4"
-                                                        label="키움자산운용"
-                                                        color="primary"
-                                                        value="키움자산운용"
-                                                        hide-details
-                                                    ></v-checkbox>
-                                                </v-flex>
-                                                <v-flex xs3>
-                                                    <v-checkbox
-                                                        v-model="ex4"
-                                                        label="교보악사자산운용"
-                                                        color="primary"
-                                                        value="교보악사자산운용"
-                                                        hide-details
-                                                    ></v-checkbox>
-                                                </v-flex>
-                                            </v-layout>
-                                            <v-layout
-                                                align-center
-                                                justify-space-around
-                                                row
-                                                fill-height
-                                            >
-                                                <v-flex xs3>
-                                                    <v-checkbox
-                                                        v-model="ex4"
-                                                        label="삼성증권"
-                                                        color="primary"
-                                                        value="삼성증권"
-                                                        hide-details
-                                                    ></v-checkbox>
-                                                </v-flex>
-                                                <v-flex xs3>
-                                                    <v-checkbox
-                                                        v-model="ex4"
-                                                        label="대신증권"
-                                                        color="primary"
-                                                        value="대신증권"
-                                                        hide-details
-                                                    ></v-checkbox>
-                                                </v-flex>
-                                                <v-flex xs3>
-                                                    <v-checkbox
-                                                        v-model="ex4"
-                                                        label="NH투자증권"
-                                                        color="primary"
-                                                        value="NH투자증권"
-                                                        hide-details
-                                                    ></v-checkbox>
-                                                </v-flex>
-                                            </v-layout>
-                                            <v-layout
-                                                align-center
-                                                justify-space-around
-                                                row
-                                                fill-height
-                                            >
-                                                <v-flex xs3>
-                                                    <v-checkbox
-                                                        v-model="ex4"
-                                                        label="미래에셋대우"
-                                                        color="primary"
-                                                        value="미래에셋대우"
-                                                        hide-details
-                                                    ></v-checkbox>
-                                                </v-flex>
-                                                <v-flex xs3>
-                                                    <v-checkbox
-                                                        v-model="ex4"
-                                                        label="예탁결제원"
-                                                        color="primary"
-                                                        value="예탁결제원"
-                                                        hide-details
-                                                    ></v-checkbox>
-                                                </v-flex>
-                                                <v-flex xs3>
-                                                    <v-checkbox
-                                                        v-model="ex4"
-                                                        label="KRX"
-                                                        color="primary"
-                                                        value="KRX"
+                                                        :value="item.three.inst_cd"
                                                         hide-details
                                                     ></v-checkbox>
                                                 </v-flex>
@@ -533,7 +433,7 @@
                                             <v-btn
                                                 depressed
                                                 color="primary"
-                                                @click="dialog2 = false"
+                                                @click="fn_instShare"
                                             >공유하기</v-btn>
                                         </v-card>
                                     </v-card>
@@ -583,7 +483,10 @@ export default {
             menu: false,
             dialog: false,
             dialog2: false,
-            ex4: null,
+            ex4: [],
+            arr_inst : [],
+            arr_group_inst : [],
+            arr_show_inst : [],
 
             form: {
                 duplCheckResult: false,
@@ -596,7 +499,9 @@ export default {
                 base_date: "",
                 method_file_id : -1,
                 jisu_file_id : -1,
-                req_content: ""
+                req_content: "",
+
+                arr_jisu_inst : []
             },
             rules: {
                 jisu_kor_nm: [
@@ -623,19 +528,10 @@ export default {
     },
 
     mounted() {
-        /*
-        Determine if drag and drop functionality is capable in the browser
-      */
+
         this.dragAndDropCapable = this.determineDragAndDropCapable();
 
-        /*
-        If drag and drop capable, then we continue to bind events to our elements.
-      */
         if (this.dragAndDropCapable) {
-            /*
-          Listen to all of the drag events and bind an event listener to each
-          for the fileform.
-        */
             [
                 "drag",
                 "dragstart",
@@ -697,6 +593,8 @@ export default {
                 );
             }.bind(this)
         );
+
+        this.fn_getDomainInst();
     },
 
     methods: {
@@ -708,7 +606,6 @@ export default {
             var vm = this;
 
             /* 1. 지수 ID 필수 체크 */
-
             if (!this.form.jisu_id) {
                 alert("[지수 ID] is required");
                 this.$refs.jisu_id.focus();
@@ -775,6 +672,7 @@ export default {
                 "FileReader" in window
             );
         },
+
         file_click: function() {
             this.$refs.file.click();
         },
@@ -838,7 +736,68 @@ export default {
             }).catch(function(response) {
                 console.log( response );
             });    
-        }    
+        },
+
+        /* 기관정보를 조회한다. */
+        fn_getDomainInst() {
+            var selfThis = this;
+
+            /* 1. 기관정보를 조회한다. */
+            axios.post(Config.base_url + "/user/index/getDomainInst", {
+                data: {}
+            }).then(function(response) {
+                if (response && response.data) {
+                    selfThis.arr_group_inst = response.data.dataGroupList;
+                    selfThis.arr_list = response.data.dataList;
+                }
+            });
+        },
+
+        fn_instShare() {
+            this.dialog2 = false;
+
+            var  dataList = [];
+            for( var i=0, inx=0; i < this.arr_show_inst.length; i=i+3 ) {
+                var data    =   this.arr_show_inst[i];
+                var groupData = {};
+
+                groupData.one = this.fn_getInstName( data );
+
+                groupData.two = {};
+                if( i+1 < this.arr_show_inst.length ) {
+                    data = this.arr_show_inst[i+1];
+                    groupData.two   =   this.fn_getInstName( data );
+                }
+
+                groupData.three = {};
+                if( i+2 < this.arr_show_inst.length ) {
+                    data = this.arr_show_inst[i+2];
+                    groupData.three =   this.fn_getInstName( data );
+                }
+
+                dataList[inx++] = groupData;
+            }
+
+            console.log( dataList );
+            this.form.arr_jisu_inst = dataList;
+        },
+
+        fn_getInstName( instCd ) {
+            
+            var returnData = {};
+            if( this.arr_list && this.arr_list.length > 0 ) {
+                for( var i=0; i < this.arr_list.length; i++ ) {
+                    var data = this.arr_list[i];
+
+                    if( data.inst_cd == instCd ) {
+                        returnData = data;
+                        break;
+                    }
+                }
+            }
+
+            return returnData;
+        }
     }
 };
 </script>

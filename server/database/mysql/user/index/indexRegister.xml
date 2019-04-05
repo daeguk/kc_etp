@@ -28,8 +28,19 @@
                 ,   tm_jisu_temp_upload.col05       AS  col05
 
           FROM  tm_jisu_temp_upload
-         WHERE  tm_jisu_temp_upload.file_id     =   #{file_id}
-    </select>    
+         WHERE  tm_jisu_temp_upload.file_id         =   #{file_id}
+    </select>
+
+    <!--
+    * 기관정보를 조회한다.
+    * 2019-04-02  bkLove(촤병국)
+    -->
+    <select id="getDomainInst">
+        SELECT	    tm_domain_mast.inst_cd		    AS  inst_cd
+                ,   tm_domain_mast.inst_name		AS  inst_name
+        FROM	tm_domain_mast
+        WHERE	tm_domain_mast.inst_type_name       =   'ETF발행사'
+    </select>
 
     <!--
     * [tm_jisu_file] 테이블에 저장한다.
@@ -129,8 +140,8 @@
             ,   #{jisu_summary}
             ,   #{base_jisu}
             ,   REPLACE( #{base_date}, '-', '' ) 
-            ,   #{method_file_id}
-            ,   #{jisu_file_id}
+            ,   ${method_file_id}
+            ,   ${jisu_file_id}
             ,   #{req_content}
 
             ,   #{user_id}
