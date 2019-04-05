@@ -206,7 +206,7 @@ var getIndexSummaryHist = function (req, res) {
 
 
 
-
+ 
 
 module.exports.getIndexSummaryInfo = getIndexSummaryInfo;
 module.exports.getInfoOpenReqList = getInfoOpenReqList;

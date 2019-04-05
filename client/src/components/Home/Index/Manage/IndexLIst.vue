@@ -16,13 +16,13 @@
                     <template slot="items" slot-scope="props">
                         <td class="text-xs-center">{{ props.item.JISU_CD }}</td>
                         <td class="text-xs-center">{{ props.item.JISU_NM }}</td>
-                        <td class="text-xs-center">{{ props.item.IP_DT }}</td>
+                        <td class="text-xs-center">{{ props.item.IP_DT }}</td> 
                         <td class="text-xs-center">{{ props.item.ANNO_YN }}</td>
                         <td class="text-xs-center">{{ props.item.INDEX_CAL_METHOD }}</td>
-                        <td class="text-xs-center">{{ props.item.MARKET_ID }}</td>
+                        <td class="text-xs-left"><p v-html="getReplace(props.item.ETP_NM)"></v-html></p></td>
                         <td class="text-xs-center">{{ props.item.INST_CNT }}</td>
                         <td class="text-xs-center">
-                            <v-flex xs12 sm3 center>
+                            <v-flex xs12 sm3 center> 
                                 <v-tooltip top>
                                     <template v-slot:activator="{ on }">
                                         <v-btn
@@ -65,7 +65,7 @@ export default {
                 { text: "요청일", value: "IP_DT" },
                 { text: "발표여부", value: "ANNO_YN" },
                 { text: "산출타입", value: "INDEX_CAL_METHOD" },
-                { text: "ETP", value: "MARKET_ID" },
+                { text: "ETP", value: "ETP_NM" },
                 { text: "정보조회기관", value: "INST_CNT" },
                 { text: "", value: "iron" }
             ],
@@ -91,7 +91,7 @@ export default {
                 }).then(response => {
                     // console.log(response);
                     if (response.data.success == false) {
-                        alert("해당 신청현황이 없습니다");
+                        alert("관리지수 목록이 없습니다");
                     } else {
                         var items = response.data.results;
                         
@@ -101,6 +101,11 @@ export default {
                     }
                 });
         }, 
+        getReplace: function(text) {
+            if (text) {
+                return text.replace(/,/gi,"</br>");
+            }
+        }
     }
 };
 </script>

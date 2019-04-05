@@ -109,7 +109,7 @@ app.use(errorHandler);
 
 
 // cron 작업 등록
-cron.init(app);
+cron.init(app); 
 
 //===== 서버 시작 =====//
 

@@ -74,6 +74,7 @@
     </update>
 
     <select id="getIndexList">
+        <![CDATA[  
         SELECT A.JISU_CD
               ,A.JISU_NM
               ,date_format(A.IP_DT, '%Y-%m-%d') IP_DT
@@ -82,6 +83,10 @@
               ,A.MARKET_ID
               ,A.ETP_MARKET_ID
               ,A.INST_CNT
+              ,(SELECT GROUP_CONCAT(F16002)
+                  FROM td_etp_basic
+		         WHERE F34239 = A.ETP_MARKET_ID
+	               AND F16257 = A.JISU_CD) as ETP_NM
         FROM (SELECT BAS.F16013 JISU_CD
                     ,BAS.F16002 JISU_NM
                     ,BAS.F12506 IP_DT
@@ -93,7 +98,7 @@
                         WHERE JISU_ID = BAS.F16013
                         AND REQ_FLAG = '2') INST_CNT
                 FROM td_index_basic BAS) A;
-         
+        ]]> 
     </select>
 
     
