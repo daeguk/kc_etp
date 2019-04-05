@@ -1,145 +1,162 @@
 <template>
-    <v-data-table
-      :headers="headers"
-      :items="desserts"
-      class="elevation-1"
-    >
-      <template slot="items" slot-scope="props">
-        <td>{{ props.item.name }}</td>
-        <td class="text-xs-right">{{ props.item.calories }}</td>
-        <td class="text-xs-right">{{ props.item.fat }}</td>
-        <td class="text-xs-right">{{ props.item.carbs }}</td>
-        <td class="text-xs-right">{{ props.item.protein }}</td>
-        <td class="text-xs-right">{{ props.item.iron }}</td>
-        <td class="text-xs-right"><v-btn to="/index/test">test</v-btn></td>
-      </template>
-    </v-data-table>
+    <v-container>
+        <v-layout row  wrap class="content_margin">
+            <v-flex grow>
+                <v-card flat>
+                    <v-card-title primary-title>
+                        <h3 class="headline subtit" pb-0>
+                            DBF Biotech Index |
+                            <span class="grey--text">DBF134</span>
+                            <p>
+                                기준일 :2018.10.20
+                            </p>
+                            <!--오른쪽 메뉴 종목으로 찾기 검색 후 
+                            <p class="text_result">
+                                6 results
+                            </p--->
+                            <p class="sub_txt">Last Updated : 2019.3.20 09:40:20</p>
+                        </h3>
+                    </v-card-title>
+                        <v-data-table
+                            :headers="headers"
+                            :items="desserts"
+                            class="table_line1"
+                            hide-actions="pagination"
+                        >
+                            <template slot="items" slot-scope="props">
+                                <td>{{ props.item.name }}</td>
+                                <td class="text-xs-left">{{ props.item.calories }}</td>
+                                <td class="text-xs-right">{{ props.item.fat }}</td>
+                                <td class="text-xs-right">{{ props.item.carbs }}</td>
+                                <td class="text-xs-right">{{ props.item.protein }}</td>
+                                <td class="text-xs-right">{{ props.item.iron }}</td>
+                                <td class="text-xs-right">{{ props.item.last }}</td>
+                            </template>
+                        </v-data-table>
+                    <indexDetailcon></indexDetailcon>
+                </v-card>
+            </v-flex>
+        </v-layout>
+    </v-container>
 </template>
 
+
 <script>
+import indexDetailcon from "./indexDetailcon.vue";
 
 export default {
-        
-        props: [],
-        data() {
-            return {
-              headers: [
-        {
-          text: 'Dessert (100g serving)',
-          align: 'left',
-          sortable: false,
-          value: 'name'
-        },
-        { text: 'Calories', value: 'calories' },
-        { text: 'Fat (g)', value: 'fat' },
-        { text: 'Carbs (g)', value: 'carbs' },
-        { text: 'Protein (g)', value: 'protein' },
-        { text: 'Iron (%)', value: 'iron' }
-      ],
-      desserts: [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          iron: '1%'
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          iron: '1%'
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          iron: '7%'
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          iron: '8%'
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          iron: '16%'
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          iron: '0%'
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          iron: '2%'
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          iron: '45%'
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          iron: '22%'
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          iron: '6%'
-        }
-      ],
-            };
-        },
-        components: {
-            
-        },
-        computed:{
-
-        },
-        created: function() {
-            
-        },
-        beforeDestroy() {
-            
-        },
-        mounted: function() {
-            
-        },
-        methods: {
-            
-        }
+    components: {
+        indexDetailcon: indexDetailcon
+    },
+    data() {
+        return {
+            headers: [
+                {
+                    text: "Code",
+                    align: "left",
+                    value: "name"
+                },
+                { text: "name", value: "calories" },
+                { text: "Fat (g)", value: "fat", align:"right" },
+                { text: "Carbs (g)", value: "carbs", align:"right" },
+                { text: "Protein (g)", value: "protein", align:"right" },
+                { text: "Iron (%)", value: "iron", align:"right" },
+                { text: "Factor rto", value: "last", align:"right" },
+            ],
+            desserts: [
+                {
+                    name: "000100",
+                    calories: "유한양행",
+                    fat: 190000,
+                    carbs: 12209354,
+                    protein: 0.65,
+                    iron: "1",
+                    last:0.5,
+                },
+               {
+                    name: "000090",
+                    calories: "유한양행",
+                    fat: 190000,
+                    carbs: 12209354,
+                    protein: 0.65,
+                    iron: "1",
+                    last:0.5,
+                },
+                {
+                    name: "000108",
+                    calories: "유한양행",
+                    fat: 190000,
+                    carbs: 12209354,
+                    protein: 0.65,
+                    iron: "1",
+                    last:0.5,
+                },
+                {
+                    name: "002100",
+                    calories: "유한양행",
+                    fat: 190000,
+                    carbs: 12209354,
+                    protein: 0.65,
+                    iron: "1",
+                    last:0.5,
+                },
+                {
+                    name: "100100",
+                    calories: "유한양행",
+                    fat: 190000,
+                    carbs: 12209354,
+                    protein: 0.65,
+                    iron: "1",
+                    last:0.5,
+                },
+                {
+                    name: "000100",
+                    calories: "유한양행",
+                    fat: 190000,
+                    carbs: 12209354,
+                    protein: 0.65,
+                    iron: "1",
+                    last:0.5,
+                },
+                {
+                    name: "000100",
+                    calories: "유한양행",
+                    fat: 190000,
+                    carbs: 12209354,
+                    protein: 0.65,
+                    iron: "1",
+                    last:0.5,
+                },
+                {
+                    name: "000100",
+                    calories: "유한양행",
+                    fat: 190000,
+                    carbs: 12209354,
+                    protein: 0.65,
+                    iron: "1",
+                    last:0.5,
+                },
+                {
+                    name: "000100",
+                    calories: "유한양행",
+                    fat: 190000,
+                    carbs: 12209354,
+                    protein: 0.65,
+                    iron: "1",
+                    last:0.5,
+                },
+                {
+                    name: "000100",
+                    calories: "유한양행",
+                    fat: 190000,
+                    carbs: 12209354,
+                    protein: 0.65,
+                    iron: "1",
+                    last:0.5,
+                }
+            ]
+        };
     }
+};
 </script>
-<style scoped>
 
-</style>

@@ -43,24 +43,31 @@
         v-model="dialog"
         max-width="450"
       >
-        <v-card>
-          <v-card-title class="headline">정보 공개 요청 {{message}} 하시겠습니까?</v-card-title>
+        <v-card class="pop_alert">
+        <h6><v-icon class="confirm">help</v-icon> Confirm</h6>
+        <!--h6><v-icon class="warning_1">warning</v-icon> Warning</h6>
+        <h6><v-icon class="error_1">error</v-icon> Error</h6-->
+          <v-card-title>정보 공개 요청 {{message}} 하시겠습니까?</v-card-title>
   
          
           <v-card-actions>
             <v-spacer></v-spacer>
   
             <v-btn
-              color="green darken-1"
-              flat="flat"
+              class="pop_alret_yesbtn"
+              depressed
+              dark
+              small
               @click="updateIndexOpenYn('Y');"
             >
               예
             </v-btn>
   
             <v-btn
-              color="green darken-1"
-              flat="flat"
+              class="pop_alret_nobtn"
+              depressed
+              dark
+              small
               @click="updateIndexOpenYn('N');"
             >
               아니요
