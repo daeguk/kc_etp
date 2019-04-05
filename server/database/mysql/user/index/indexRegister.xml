@@ -111,6 +111,8 @@
             ,   jisu_summary 
             ,   base_jisu 
             ,   base_date 
+            ,   method_file_id
+            ,   jisu_file_id
             ,   req_content 
 
             ,   reg_id 
@@ -127,6 +129,8 @@
             ,   #{jisu_summary}
             ,   #{base_jisu}
             ,   REPLACE( #{base_date}, '-', '' ) 
+            ,   #{method_file_id}
+            ,   #{jisu_file_id}
             ,   #{req_content}
 
             ,   #{user_id}
