@@ -113,14 +113,20 @@ export default {
           if (response.data.success == false) {
               alert("해당 신청현황이 없습니다");
           } else {
-              console.log(response.data.results);
-              console.log(response.data.results[0].F16002);
+              console.log(response.data.results1);
+              console.log(response.data.results1[0].F16002);
 
-              vm.cardItem1.name = response.data.results[0].F16002;
+              vm.cardItem1.name = response.data.results1[0].F16002;
               //vm.cardItem1.subTitle = response.data.results[0].F16004;
-              vm.cardItem1.close_idx = response.data.results[0].F15001;
-              vm.cardItem1.fluc_idx = response.data.results[0].F15472;
-              vm.cardItem1.fluc_rate = response.data.results[0].F15004;
+              vm.cardItem1.close_idx = response.data.results1[0].F15001;
+              vm.cardItem1.fluc_idx = response.data.results1[0].F15472;
+              vm.cardItem1.fluc_rate = response.data.results1[0].F15004;
+
+              vm.cardItem2.name = response.data.results2[0].F16002;
+              //vm.cardItem2.subTitle = response.data.results[0].F16004;
+              vm.cardItem2.close_idx = response.data.results2[0].F15001;
+              vm.cardItem2.fluc_idx = response.data.results2[0].F15472;
+              vm.cardItem2.fluc_rate = response.data.results2[0].F15004;
               
           }
       });

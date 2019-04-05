@@ -52,7 +52,7 @@
                    ,A.REG_ID
                    ,A.JISU_ID
                    ,B.INST_NAME 
-          FROM tm_index_req A,
+          FROM tm_jisu_share_req A,
                     tm_domain_mast B
           WHERE A.INST_CD = B.INST_CD) REQ	
       WHERE BAS.F16013 = REQ.JISU_ID
@@ -63,7 +63,7 @@
     * 지수 정보 공개 요청 처리 
     -->
     <update id="updateIndexOpenYn">
-      UPDATE tm_index_req 
+      UPDATE tm_jisu_share_req 
          <set>
              REQ_FLAG = #{FLAG}
              ,UPD_ID = #{UPD_ID}
@@ -94,12 +94,72 @@
                     ,BAS.INDEX_CAL_METHOD
                     ,BAS.MARKET_ID
                     ,CAST(substr(BAS.MARKET_ID, 2) AS SIGNED) ETP_MARKET_ID
-                    ,(SELECT COUNT(*) FROM kc_etp.tm_index_req
+                    ,(SELECT COUNT(*) FROM kc_etp.tm_jisu_share_req
                         WHERE JISU_ID = BAS.F16013
                         AND REQ_FLAG = '2') INST_CNT
                 FROM td_index_basic BAS) A;
         ]]> 
     </select>
 
+
+    <select id="indexSummaryResult">
+      WITH  JISU AS
+      (SELECT  A.F16013
+        FROM (SELECT basic.F16013, 
+                    (select b.F15001 
+                                from (select MIN(F12506) as F12506, F16013 from td_index_history
+                                WHERE F12506 >= date_format(DATE_SUB(now(), INTERVAL 1 YEAR), '%Y%m%d')
+                                GROUP BY F16013) a
+                                left join td_index_history b
+                                on a.F16013 = b.F16013
+                                and a.F12506 = b.F12506
+                                where a.F16013 = basic.F16013
+                                and b.F15001 is not null
+                        ) minData,  
+                        (select b.F15001 
+                                from (select MAX(F12506) as F12506, F16013 from td_index_history
+                                        WHERE F12506 >= date_format(DATE_SUB(now(), INTERVAL 1 YEAR), '%Y%m%d')
+                                        GROUP BY F16013) a
+                                    left join td_index_history b
+                                        on a.F16013 = b.F16013
+                                        and a.F12506 = b.F12506
+                                    where a.F16013 = basic.F16013
+                                        and b.F15001 is not null
+                        ) maxData
+                FROM td_index_basic basic
+                ) A
+            group by F16013
+            order by max(ifnull(A.maxData/A.minData, 0)) desc
+        limit 0, 1)
+        SELECT BAS.F16013
+                    ,BAS.F16002
+                    ,BAS.LARGE_TYPE
+                    ,BAS.MIDDLE_TYPE
+                    ,HIS.F16013
+                    ,HIS.F12506
+                    ,HIS.F15009
+                    ,HIS.F15010
+                    ,HIS.F15011
+                    ,HIS.F15001
+                    ,HIS.F15472
+                    ,HIS.F15006
+                    ,HIS.F15004
+                    ,HIS.F15015
+                    ,HIS.F15023 
+                FROM (SELECT A.F16013
+                            ,A.F16002
+                            ,A.LARGE_TYPE
+                            ,A.MIDDLE_TYPE
+                        FROM kc_etp.td_index_basic A,
+                            JISU B
+                        WHERE A.F16013 = B.F16013
+                        ) BAS,
+                        kc_etp.td_index_history HIS
+                WHERE BAS.F16013 = HIS.F16013
+                ORDER BY HIS.F12506 DESC
+                limit 0, 1; 
+
+    </select>
+  
     
 </mapper>
