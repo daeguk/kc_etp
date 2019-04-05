@@ -184,7 +184,6 @@ var fileuploadSingle = function (req, res) {
         }
     });
 
-    console.log("#5 multer start");
 
     var upload = multer({ storage: storage }).single('files');
 
@@ -306,6 +305,7 @@ var fileuploadSingle = function (req, res) {
                             conn.queryAsync(stmt).then(rows => {
 
                                 resultMsg.result = true;
+                                resultMsg.jisu_file_id = reqParam.file_id;
                                 resultMsg.dataList = rows;
 
                                 res.json(resultMsg);

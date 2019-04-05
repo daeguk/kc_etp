@@ -234,6 +234,7 @@
                                     </v-layout>
                                 </v-flex>
 
+
                                 <v-flex xs4 ml-3 v-show="!jisuUploadResult">
                                     <p>
                                         <v-icon color="#1976d2">check</v-icon>
@@ -253,10 +254,11 @@
                                     </p>
                                 </v-flex>
 
+
                                 <v-flex mb-3 v-show="!!jisuUploadResult">
 
                                     <v-flex>
-                                        <v-btn @click="jisuUploadResult = false">X</v-btn>
+                                        <v-btn @click="jisuUploadResult = false;form.jisu_file_id='';">X</v-btn>
                                     </v-flex>
 
                                     <v-data-table
@@ -265,11 +267,11 @@
                                         class="elevation-1"
                                     >
                                         <template v-slot:items="props">
-                                            <td>{{ props.item.file_id }}</td>
-                                            <td class="text-xs-right">{{ props.item.row_no }}</td>
-                                            <td class="text-xs-right">{{ props.item.col01 }}</td>
-                                            <td class="text-xs-right">{{ props.item.col02 }}</td>
-                                            <td class="text-xs-right">{{ props.item.col03 }}</td>
+                                            <td class="text-xs-center">{{ props.item.file_id }}</td>
+                                            <td class="text-xs-center">{{ props.item.row_no }}</td>
+                                            <td class="text-xs-left">{{ props.item.col01 }}</td>
+                                            <td class="text-xs-leftt">{{ props.item.col02 }}</td>
+                                            <td class="text-xs-left">{{ props.item.col03 }}</td>
                                         </template>
                                     </v-data-table>
                                 </v-flex>
@@ -568,11 +570,11 @@ export default {
 
 
             headers: [
-                { text: '파일ID'     , value: 'file_id' , align:"center", sortable: false,},
-                { text: '행번호'     , value: 'row_no'  , align:"left",  sortable: true },
-                { text: 'col01'     , value: 'col01'    , align:"left",  sortable: true },
-                { text: 'col02'     , value: 'col02'    , align:"left",  sortable: true },
-                { text: 'col03'     , value: 'col03'    , align:"left",  sortable: true }
+                { text: '파일ID'     , value: 'file_id' , align:"center",  sortable: false,},
+                { text: '행번호'     , value: 'row_no'  , align:"center",  sortable: false },
+                { text: 'col01'     , value: 'col01'    , align:"center",  sortable: false },
+                { text: 'col02'     , value: 'col02'    , align:"center",  sortable: false },
+                { text: 'col03'     , value: 'col03'    , align:"center",  sortable: false }
             ],    
             jisuDataList : [],
             jisuUploadResult : false,
@@ -592,6 +594,8 @@ export default {
                 jisu_summary: "",
                 base_jisu: "",
                 base_date: "",
+                method_file_id : -1,
+                jisu_file_id : -1,
                 req_content: ""
             },
             rules: {
@@ -817,7 +821,6 @@ export default {
                 console.log( response );
 
                 if( response.data ) {
-
                     selfThis.jisuUploadResult = response.data.result;
                     
                     if( !response.data.result ) {
@@ -827,9 +830,11 @@ export default {
                     }
 
                     if( response.data.result ) {
+                        selfThis.form.jisu_file_id = response.data.jisu_file_id;
                         selfThis.jisuDataList = response.data.dataList;
                     }
                 }
+
             }).catch(function(response) {
                 console.log( response );
             });    
