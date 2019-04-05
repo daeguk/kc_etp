@@ -106,7 +106,38 @@
             ,   now() 
         )            
         </foreach>
-    </insert>    
+    </insert>
+
+    <!--
+    * [tm_jisu_share_req] 테이블에 저장한다.
+    * 2019-04-02  bkLove(촤병국)
+    -->
+    <insert     id="saveTmJisuShareReq">
+        INSERT  INTO    tm_jisu_share_req
+        ( 
+                jisu_id
+            ,   inst_cd
+
+            ,   req_flag
+            ,   reg_id 
+            ,   reg_time
+            ,   upd_id
+            ,   upd_time
+        ) 
+        VALUES 
+        <foreach    collection="arr_jisu_inst"   item="item"    index="index"   separator="," >
+        ( 
+                #{jisu_id}
+            ,   #{item}
+
+            ,   #{req_flag}
+            ,   #{user_id}
+            ,   now()
+            ,   #{user_id}
+            ,   now()
+        )            
+        </foreach>
+    </insert>        
 
     <!--
     * [tm_jisu_mast] 테이블에 저장한다.

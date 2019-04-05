@@ -308,63 +308,32 @@
                         </h4>
 
                         <v-container fluid>
-                            <v-layout>
-                                <v-flex xs3>
+                            <v-layout v-for="(item, index) in arr_show_inst">
+                                <v-flex xs3 v-if="Object.keys(item.one).length > 0">
                                     <v-icon color="#1976d2">near_me</v-icon>
-                                    <b>삼성자산운용</b>
-                                    <v-btn flat icon color="#c2c2c2">
+                                    <b>{{item.one.inst_name}}</b>
+                                    <v-btn flat icon color="#c2c2c2" @click="fn_deleteInst( item.one )">
                                         <v-icon>clear</v-icon>
                                     </v-btn>
                                 </v-flex>
-                                <v-flex xs3>
+                                <v-flex xs3 v-if="Object.keys(item.two).length > 0">
                                     <v-icon color="#1976d2">near_me</v-icon>
-                                    <b>미래에셋자산운용</b>
-                                    <v-btn flat icon color="#c2c2c2">
+                                    <b>{{item.two.inst_name}}</b>
+                                    <v-btn flat icon color="#c2c2c2" @click="fn_deleteInst( item.two )">
                                         <v-icon>clear</v-icon>
                                     </v-btn>
                                 </v-flex>
-                                <v-flex xs3>
+                                <v-flex xs3 v-if="Object.keys(item.three).length > 0">
                                     <v-icon color="#1976d2">near_me</v-icon>
-                                    <b>KB자산운용</b>
-                                    <v-btn flat icon color="#c2c2c2">
+                                    <b>{{item.three.inst_name}}</b>
+                                    <v-btn flat icon color="#c2c2c2" @click="fn_deleteInst( item.three )">
                                         <v-icon>clear</v-icon>
                                     </v-btn>
                                 </v-flex>
-                                <v-flex xs3>
+                                <v-flex xs3 v-if="Object.keys(item.four).length > 0">
                                     <v-icon color="#1976d2">near_me</v-icon>
-                                    <b>한국투자신탁</b>
-                                    <v-btn flat icon color="#c2c2c2">
-                                        <v-icon>clear</v-icon>
-                                    </v-btn>
-                                </v-flex>
-                            </v-layout>
-
-                            <v-layout>
-                                <v-flex xs3>
-                                    <v-icon color="#1976d2">near_me</v-icon>
-                                    <b>삼성자산운용</b>
-                                    <v-btn flat icon color="#c2c2c2">
-                                        <v-icon>clear</v-icon>
-                                    </v-btn>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-icon color="#1976d2">near_me</v-icon>
-                                    <b>미래에셋자산운용</b>
-                                    <v-btn flat icon color="#c2c2c2">
-                                        <v-icon>clear</v-icon>
-                                    </v-btn>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-icon color="#1976d2">near_me</v-icon>
-                                    <b>KB자산운용</b>
-                                    <v-btn flat icon color="#c2c2c2">
-                                        <v-icon>clear</v-icon>
-                                    </v-btn>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-icon color="#1976d2">near_me</v-icon>
-                                    <b>한국투자신탁</b>
-                                    <v-btn flat icon color="#c2c2c2">
+                                    <b>{{item.four.inst_name}}</b>
+                                    <v-btn flat icon color="#c2c2c2" @click="fn_deleteInst( item.four )">
                                         <v-icon>clear</v-icon>
                                     </v-btn>
                                 </v-flex>
@@ -401,7 +370,7 @@
                                             >
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="arr_show_inst"
+                                                        v-model="form.arr_jisu_inst"
                                                         :label="item.one.inst_name"
                                                         color="primary"
                                                         :value="item.one.inst_cd"
@@ -410,7 +379,7 @@
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="arr_show_inst"
+                                                        v-model="form.arr_jisu_inst"
                                                         :label="item.two.inst_name"
                                                         color="primary"
                                                         :value="item.two.inst_cd"
@@ -419,7 +388,7 @@
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="arr_show_inst"
+                                                        v-model="form.arr_jisu_inst"
                                                         :label="item.three.inst_name"
                                                         color="primary"
                                                         :value="item.three.inst_cd"
@@ -483,10 +452,10 @@ export default {
             menu: false,
             dialog: false,
             dialog2: false,
-            ex4: [],
-            arr_inst : [],
-            arr_group_inst : [],
-            arr_show_inst : [],
+
+            arr_org_inst : [],          /* 기관정보 원본 목록정보 */
+            arr_group_inst : [],        /* 3개를 1개로 그룹핑한 기관정보 ( 기관정보 팝업창에 노출 ) */
+            arr_show_inst : [],         /* 4개를 1개로 그룹핑한 기관정보 ( 팝업창에서 선택된 기관정보 노출 ) */     
 
             form: {
                 duplCheckResult: false,
@@ -501,7 +470,7 @@ export default {
                 jisu_file_id : -1,
                 req_content: "",
 
-                arr_jisu_inst : []
+                arr_jisu_inst : []      /* 선택된 기관 정보 */
             },
             rules: {
                 jisu_kor_nm: [
@@ -748,46 +717,52 @@ export default {
             }).then(function(response) {
                 if (response && response.data) {
                     selfThis.arr_group_inst = response.data.dataGroupList;
-                    selfThis.arr_list = response.data.dataList;
+                    selfThis.arr_org_inst = response.data.dataList;
                 }
             });
         },
 
+        /* 팝업창에서 선택된 기관정보를 화면에 노출한다. */
         fn_instShare() {
             this.dialog2 = false;
 
             var  dataList = [];
-            for( var i=0, inx=0; i < this.arr_show_inst.length; i=i+3 ) {
-                var data    =   this.arr_show_inst[i];
+            for( var i=0, inx=0; i < this.form.arr_jisu_inst.length; i=i+4 ) {
+                var data    =   this.form.arr_jisu_inst[i];
                 var groupData = {};
 
                 groupData.one = this.fn_getInstName( data );
 
                 groupData.two = {};
-                if( i+1 < this.arr_show_inst.length ) {
-                    data = this.arr_show_inst[i+1];
+                if( i+1 < this.form.arr_jisu_inst.length ) {
+                    data = this.form.arr_jisu_inst[i+1];
                     groupData.two   =   this.fn_getInstName( data );
                 }
 
                 groupData.three = {};
-                if( i+2 < this.arr_show_inst.length ) {
-                    data = this.arr_show_inst[i+2];
+                if( i+2 < this.form.arr_jisu_inst.length ) {
+                    data = this.form.arr_jisu_inst[i+2];
                     groupData.three =   this.fn_getInstName( data );
                 }
+
+                groupData.four = {};
+                if( i+3 < this.form.arr_jisu_inst.length ) {
+                    data = this.form.arr_jisu_inst[i+3];
+                    groupData.four =   this.fn_getInstName( data );
+                }                
 
                 dataList[inx++] = groupData;
             }
 
-            console.log( dataList );
-            this.form.arr_jisu_inst = dataList;
+            this.arr_show_inst = dataList;
         },
 
         fn_getInstName( instCd ) {
             
             var returnData = {};
-            if( this.arr_list && this.arr_list.length > 0 ) {
-                for( var i=0; i < this.arr_list.length; i++ ) {
-                    var data = this.arr_list[i];
+            if( this.arr_org_inst && this.arr_org_inst.length > 0 ) {
+                for( var i=0; i < this.arr_org_inst.length; i++ ) {
+                    var data = this.arr_org_inst[i];
 
                     if( data.inst_cd == instCd ) {
                         returnData = data;
@@ -797,6 +772,24 @@ export default {
             }
 
             return returnData;
+        },
+
+        /* 선택한 기관 정보를 삭제한다. */
+        fn_deleteInst( item ) {
+
+            var   arrTemp = [];
+            for( var i=this.form.arr_jisu_inst.length-1; i >= 0 ; i-- ) {
+                var data = this.form.arr_jisu_inst[i];
+
+                if( data == item.inst_cd ) {
+                    continue;
+                }
+
+                arrTemp.push( data );
+            }
+
+            this.form.arr_jisu_inst =   arrTemp;
+            this.fn_instShare();
         }
     }
 };

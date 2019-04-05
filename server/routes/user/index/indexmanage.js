@@ -476,13 +476,39 @@ var save = function (req, res) {
 
                 conn.queryAsync(stmt).then(rows => {
 
-                    conn.commit();
+                    paramData.req_flag    =   "0";       /* 공개여부 0:비공개, 1:공개요청, 2:공개 */
 
-                    resultMsg.result = true;
-                    resultMsg.msg = "성공적으로 저장하였습니다.";
+console.log( paramData );
 
-                    res.json(resultMsg);
-                    res.end();
+                    /* 5. [tm_jisu_share_req] 저장 쿼리문 조회 */
+                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuShareReq', paramData, format);
+                    console.log(stmt);
+
+                    conn.queryAsync(stmt).then(rows => {
+
+                        conn.commit();
+
+                        resultMsg.result = true;
+                        resultMsg.msg = "성공적으로 저장하였습니다.";
+
+                        res.json(resultMsg);
+                        res.end();
+
+                    }).catch(err => {
+
+                        console.log(err);
+
+                        if (!err.msg) {
+                            resultMsg.result = false;
+                            resultMsg.msg = "indexmanage.saveTmJisuShareReq 오류 발생.";
+                        }
+
+                        res.json(resultMsg);
+                        res.end();
+
+                        conn.rollback();
+                    });
+
                 }).catch(err => {
 
                     console.log(err);
