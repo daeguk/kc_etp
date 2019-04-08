@@ -41,6 +41,10 @@ h6{font-size:16px;}
 .text_info1 .theme--light.v-icon{color:#ff821d;}
 
 
+.v-subheader.subheader_r{display: inherit !important; text-align: right; padding-top:5px; padding-right:15px; margin-right:10px}
+.v-subheader.subheader_r.essen{ background: url("../img/essential.png") no-repeat right top; }
+
+
 /*알럿창*/
 .pop_alert h6{font-size: 20px; height: 45px; font-weight: 600; color: #101010; padding:10px 0 5px 24px; border-bottom:1px solid #d8d8d8}
 .pop_alert .v-card__title{font-size: 16px; font-weight: 600;}
@@ -128,6 +132,7 @@ h3.subtit p.sub_txt{font-size:14px; font-weight: normal;}
 .right_menu_w .v-list__tile{padding:0px;}
 .right_menu{border-left:1px solid #e6e6e6; height:100%; margin-top:64px;}
 .right_menu_w2 .rightmenu_tit{padding-left:16px; font-size:16px; width:100%;}
+.right_menu_w2 .v-list--dense .v-subheader{padding:0px;}
 .right_menu_w2 .v-list__tile--avatar{height: 40px;}
 .right_menu_w2 .v-list__tile{padding:0px;}
 .right_menu_w2 .rightmenu_line{border-top:1px solid #d4d4d4;}
@@ -139,6 +144,7 @@ h3.subtit p.sub_txt{font-size:14px; font-weight: normal;}
 .right_menu_w2 .v-text-field.v-text-field--enclosed .v-input__append-inner{margin-top:7px;}
 .right_menu_w2 .rightmenu_con.ver2{border-top:1px dashed #e6e6e6 ; border-bottom:1px dashed #e6e6e6;}
 .right_menu_w2 .rightmenu_con.ver2 p{padding:3px 0 0 12px; color:#606060;margin-bottom:0px; font-size: 13px;}
+
 .right_menu_w3 a{height:55px !important; border-bottom:1px solid #e6e6e6}
 .right_menu_w4 .v-list{border-top:1px solid #d0d7e3;border-bottom:1px solid #d0d7e3;}
 .right_menu_w4 .v-list .v-subheader{height:30px; padding-top:10px;}
@@ -200,3 +206,13 @@ input[type='file']{
     margin-bottom:20px;
 }
 
+
+
+/*EPT신청현황*/
+
+.etp_new .v-stepper, .v-stepper__header{box-shadow: none !important;}
+/*.etp_new h4{font-size: 18px; width:100%;  border-top:2px solid #1976d2; padding-bottom:15px;}*/
+
+.etp_new .register_wrap{border-top:3px solid #a1dbff; width:100%;}
+.etp_new .register_wrap h4{border-top:3px solid #a1dbff; width:100%; padding:10px 0; font-size:16px;}
+.etp_new .v-stepper__content{padding-top:0px;}
