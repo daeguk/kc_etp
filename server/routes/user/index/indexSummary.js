@@ -15,33 +15,60 @@ var fs = require('fs');
 
 
 var getIndexSummaryInfo = function (req, res) {
-    console.log('indexSummary=>getInfoOpenReqList 호출됨.');
+    try {
+        console.log('indexSummary=>getInfoOpenReqList 호출됨.');
 
-    var pool = req.app.get("pool");
-    var mapper = req.app.get("mapper");
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
 
-    var stmt = mapper.getStatement('index', 'indexSummaryLately', req.body.params, {language:'sql', indent: '  '});
+        var stmt1 = mapper.getStatement('index', 'indexSummaryLately', req.body.params, {language:'sql', indent: '  '});
+        var stmt2 = mapper.getStatement('index', 'indexSummaryResult', req.body.params, {language:'sql', indent: '  '});
 
-    console.log(stmt);
+        console.log(stmt1);
+        console.log(stmt2);
 
-    Promise.using(pool.connect(), conn => {
-        conn.queryAsync(stmt).then(rows => {
-            res.json({
-                success: true,
-                results: rows
+        Promise.using(pool.connect(), conn => {
+
+            Promise.all([
+                conn.queryAsync(stmt1),
+                conn.queryAsync(stmt2)
+            ]).then( rows => {
+                res.json({
+                    success: true,
+                    results1: rows[0],
+                    results2: rows[1],
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
             });
-            res.end();
-        }).catch(err => {
-            util.log("Error while performing Query.", err);
-            res.json({
-                success: false,
-                message: err
-            });
-            res.end();
+
+
+            /*conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });*/
+
+
         });
-
-
-    });
+    } catch (exception) {
+        util.log("err==>", exception);
+    }    
 };
 
 var getInfoOpenReqList = function (req, res) {
@@ -169,39 +196,42 @@ var getInfoIndexList = function (req, res) {
 
 
 var getIndexSummaryHist = function (req, res) {
-    console.log('indexSummary=>getindexsummaryhist 호출됨.');
+    try {
+        console.log('indexSummary=>getindexsummaryhist 호출됨.');
 
-    var pool = req.app.get("pool");
-    var etpStmts = req.app.get("stmt");
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        // var options = {id:'admin'};
+        console.log("req.query");
+        console.log(req.query);
+        var options = {
+            JISU_ID: req.query.jisu_id
+        };
 
-    // var options = {id:'admin'};
-    console.log("req.query");
-    console.log(req.query);
-    var options = {
-        index_cd: req.query.idx_cd
-    };
-    var stmt = etpStmts.IndexManage.selectIndexSummaryHist(options);
-    console.log(stmt);
+        var stmt = mapper.getStatement('index', 'selectIndexSummaryHist', options, {language:'sql', indent: '  '});
+        console.log(stmt);
 
-    Promise.using(pool.connect(), conn => {
-        conn.queryAsync(stmt).then(rows => {
-            util.log("sql1" == rows.affectedRows)
-            res.json({
-                success: true,
-                results: rows
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
             });
-            res.end();
-        }).catch(err => {
-            util.log("Error while performing Query.", err);
-            res.json({
-                success: false,
-                message: err
-            });
-            res.end();
+
+
         });
-
-
-    });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
 };
 
 

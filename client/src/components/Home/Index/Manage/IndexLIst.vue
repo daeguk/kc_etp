@@ -14,7 +14,7 @@
                 </v-card>
                 <v-data-table :headers="headers" :items="results" :rows-per-page-items="rowsPerPageItems" class="table_line1">
                     <template slot="items" slot-scope="props">
-                        <td class="text-xs-center">{{ props.item.JISU_CD }}</td>
+                        <td class="text-xs-left">{{ props.item.JISU_CD }}</td>
                         <td class="text-xs-center">{{ props.item.JISU_NM }}</td>
                         <td class="text-xs-center">{{ props.item.IP_DT }}</td> 
                         <td class="text-xs-center">{{ props.item.ANNO_YN }}</td>
@@ -53,7 +53,7 @@ export default {
 
     data() {
         return {
-            rowsPerPageItems: [500, 1000],
+            rowsPerPageItems: [500, 1000, 1500],
             headers: [
                 {
                     text: "ID",
@@ -61,7 +61,7 @@ export default {
                     sortable: false,
                     value: "JISU_CD"
                 },
-                { text: "지수명", value: "JISU_NM" },
+                { text: "지수명", value: "JISU_NM", align: "left"},
                 { text: "요청일", value: "IP_DT" },
                 { text: "발표여부", value: "ANNO_YN" },
                 { text: "산출타입", value: "INDEX_CAL_METHOD" },

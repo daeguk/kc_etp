@@ -33,34 +33,42 @@ export default {
         AreaChart: AreaChart,
     },
     created: function() {
+        this.$EventBus.$on('getIndexSummaryHist', data => {
+            this.getIndexSummaryHist();
+        });
     },
+    beforeDestroy() {
+        this.$EventBus.$off('getIndexSummaryHist');
+    },  
     mounted: function() {
-      this.getIndexSummaryHist();
+      //this.getIndexSummaryHist();
     },
+
     methods: {
         getIndexSummaryHist: function() {
-            console.log('getIndexSummaryHist');
             var vm = this;
+            console.log('getIndexSummaryHist');
+            setTimeout(() => {
+                axios.get(Config.base_url+'/user/index/getindexsummaryhist', {
+                    params: {
+                        "jisu_id" : vm.chartItem.code
+                    }
+                }).then(function(response) {
+                    // console.log(response);
+                    if(response.data.success == false){
+                        alert("데이터가 없습니다");
+                    }else {
+                        var items = response.data.results;
+                        var close_idx = 0.0;
+                        items.forEach(function(item, index) {
+                            close_idx = parseFloat(item.close_idx);
+                            vm.dataSet.push([item.trd_dd, close_idx]);
+                        });
 
-            axios.get(Config.base_url+'/user/index/getindexsummaryhist', {
-                params: {
-                    "idx_cd" : vm.chartItem.code,
-                }
-            }).then(function(response) {
-                // console.log(response);
-                if(response.data.success == false){
-                    alert("데이터가 없습니다");
-                }else {
-                    var items = response.data.results;
-                    var close_idx = 0.0;
-                    items.forEach(function(item, index) {
-                        close_idx = parseFloat(item.close_idx);
-                        vm.dataSet.push([item.trd_dd, close_idx]);
-                    });
-
-                    vm.chartLoadFlag = true;
-                }
-            });
+                        vm.chartLoadFlag = true;
+                    }
+                });
+            }, 1000);
         },
     }
 }

@@ -28,6 +28,7 @@ h6{font-size:16px;}
 .pop_bot_h{height:20px;}
 
 
+.w100{width:100%;}
 
 .login_btn .v-icon--left{margin-right: 5px !important;}
 
@@ -35,8 +36,19 @@ h6{font-size:16px;}
 .table_line2{border-top:1px solid #808080;}
 .table_line3{border-top:0px;}
 .table_line4{border-top:1px solid #808080;}
+.text_result{color:#1976d2 !important;}
+.text_info1{color:#ff821d; font-weight: 600;}
+.text_info1 .theme--light.v-icon{color:#ff821d;}
 
 
+/*알럿창*/
+.pop_alert h6{font-size: 20px; height: 45px; font-weight: 600; color: #101010; padding:10px 0 5px 24px; border-bottom:1px solid #d8d8d8}
+.pop_alert .v-card__title{font-size: 16px; font-weight: 600;}
+.pop_alert .theme--light.v-icon.confirm{color:#1976d2}
+.pop_alert .theme--light.v-icon.warning_1{color:red;}
+.pop_alert .theme--light.v-icon.error_1{color:#ff821d;}
+.pop_alert .pop_alret_yesbtn{background-color:#1976d2 !important;}
+.pop_alert .pop_alret_nobtn{background-color: #9e9e9e !important;}
 
 
 .content_margin{margin:16px;}
@@ -44,6 +56,9 @@ h6{font-size:16px;}
 
 /*지수정보 조회페이지 2019.03.20*/
 h3 span{font-size:14px; width:100%;}
+h3.subtit p{font-size: 16px; color: grey; margin: 0px;}
+h3.subtit p span{padding-left:20px;}
+h3.subtit p.sub_txt{font-size:14px; font-weight: normal;}
 
 .summary_card_pad .flex.md4{padding-right:6px; padding-bottom:6px}
 .summary_card_pad .flex.md3{padding-right:6px; padding-bottom:6px;padding-top:5px;}
@@ -64,6 +79,10 @@ h3 span{font-size:14px; width:100%;}
 .graph_01_w .sub_title_num span{font-size:14px; color:red;}
 .graph_01_w .sub_title_num p{font-size: 14px; color:#9e9e9e; }
 .graph_01_w .graph_01{width:100%;}
+.graph_toggle .v-btn-toggle{border:1px solid #c9c9c9;}
+.graph_toggle .v-btn-toggle--selected{ box-shadow: none !important; }
+.graph_toggle .v-btn-toggle .v-btn.v-btn--active{background-color:#1976d2; color:#ffffff; border-right:1px solid #1976d2; }
+.graph_toggle .v-btn-toggle .v-btn{padding:0 15px; opacity: 0.7; }
 
 .graph_02_w{ padding:0; background-color:#f6f6f6;width:100%;}
 
@@ -89,6 +108,8 @@ h3 span{font-size:14px; width:100%;}
 .index3pop2_con .v-list__tile__title{width:30%;padding-left:10px; color:#234e68; font-weight: 600;}
 .index3pop2_con .v-list--two-line .v-list__tile{padding-top:8px;height:40px;}
 
+.list_boder .v-list-tile{border-bottom:1px solid #cbe2f0}
+
 
 /*summary*/
 .summary_title .v-toolbar__content{background-color: #ffffff; padding:0px !important;height:40px !important;}
@@ -106,6 +127,26 @@ h3 span{font-size:14px; width:100%;}
 .right_menu_w{height:100%;}
 .right_menu_w .v-list__tile{padding:0px;}
 .right_menu{border-left:1px solid #e6e6e6; height:100%; margin-top:64px;}
+.right_menu_w2 .rightmenu_tit{padding-left:16px; font-size:16px; width:100%;}
+.right_menu_w2 .v-list__tile--avatar{height: 40px;}
+.right_menu_w2 .v-list__tile{padding:0px;}
+.right_menu_w2 .rightmenu_line{border-top:1px solid #d4d4d4;}
+.right_menu_w2 .rightmenu_con{padding:15px 16px; font-size: 14px; font-weight: 600; color:#606060;}
+.right_menu_w2 .v-input input{max-height: 20px; font-size: 14px;}
+.right_menu_w2 .v-input label{display: none;}
+.right_menu_w2 .v-text-field--outline>.v-input__control>.v-input__slot{min-height: 20px;}
+.right_menu_w2 .v-text-field--outline input{margin-top:7px;}
+.right_menu_w2 .v-text-field.v-text-field--enclosed .v-input__append-inner{margin-top:7px;}
+.right_menu_w2 .rightmenu_con.ver2{border-top:1px dashed #e6e6e6 ; border-bottom:1px dashed #e6e6e6;}
+.right_menu_w2 .rightmenu_con.ver2 p{padding:3px 0 0 12px; color:#606060;margin-bottom:0px; font-size: 13px;}
+.right_menu_w3 a{height:55px !important; border-bottom:1px solid #e6e6e6}
+.right_menu_w4 .v-list{border-top:1px solid #d0d7e3;border-bottom:1px solid #d0d7e3;}
+.right_menu_w4 .v-list .v-subheader{height:30px; padding-top:10px;}
+.right_menu_w4 .theme--light.v-list{background-color: #e9edf4;}
+.right_menu_w4 .v-list .v-list__tile__title{font-size: 14px;text-align: right;}
+.right_menu_w4 .v-list .v-list__tile__sub-title{color:#101010 !important; font-weight: 600;font-size: 16px !important;text-align: right;}
+.right_menu_w4 .v-list .v-list__tile__sub-title p{height: 25px; color:#1976d2 !important;}
+
 
 .drag_box_w{margin-bottom:24px;}
 .drag_box{border:1px solid #c6c6c6 !important; border-radius: 2px; margin-bottom:24px; height:150px;}

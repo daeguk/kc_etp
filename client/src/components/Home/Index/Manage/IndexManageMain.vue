@@ -7,6 +7,9 @@
             color="#3158a1"
             v-model="tab"
             align-with-title
+            app
+            fixed
+            clipped-right
             >
             <v-tabs-slider color="#ff821d"></v-tabs-slider>
     
@@ -31,21 +34,24 @@
 </template>
 
 <script>
-import Summary   from  './Summary.vue'
-import IndexList   from  './IndexList.vue'
-import IndexDetail   from  './IndexDetail.vue'
+import Summary   from  './Summary.vue';
+import IndexList   from  './IndexList.vue';
+import IndexDetail   from  './IndexDetail.vue';
+//import indexDetailrtmenu from "./indexDetailrtmenu.vue";
 
 export default {
         data() {
             return {
                 tab: null,
                 items: ['Summary', '관리지수목록', '지수종목상세'],
+                
     	};
     },    
     components: {
         Summary     : Summary,
         IndexList     : IndexList,
-        IndexDetail     : IndexDetail
+        IndexDetail     : IndexDetail,
+        //indexDetailrtmenu   :indexDetailrtmenu,
     },
     created: function() {
     },

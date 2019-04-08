@@ -452,6 +452,7 @@
 </div>
 <!---특정기관과 공유 end-->
 <div class="text-xs-center">
+    <p class="text_info1"><v-icon small>priority_high</v-icon> 플랫폼 연동이 완료된 상태이므로 일부 정보에 한해 변경이 가능합니다.</p>
     <v-btn depressed large  color="primary" dark>저장</v-btn>
     <v-btn depressed large color="#3158a1" dark>등록</v-btn>
     <v-btn depressed large color="#9e9e9e" dark>삭제</v-btn>
