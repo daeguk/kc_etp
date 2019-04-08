@@ -122,4 +122,36 @@ Promise.using(pool.connect(), conn => {
         });
     })
 })
+
+
+connection.beginTransaction(function(err) {
+    if (err) { throw err; }
+    connection.query('INSERT INTO names SET name=?', "sameer", function(err, result) {
+      if (err) { 
+        connection.rollback(function() {
+          throw err;
+        });
+      }
+   
+      var log = result.insertId;
+   
+      connection.query('INSERT INTO log SET logid=?', log, function(err, result) {
+        if (err) { 
+          connection.rollback(function() {
+            throw err;
+          });
+        }  
+        connection.commit(function(err) {
+          if (err) { 
+            connection.rollback(function() {
+              throw err;
+            });
+          }
+          console.log('Transaction Complete.');
+          connection.end();
+        });
+      });
+    });
+  });
+
 */
