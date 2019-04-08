@@ -571,9 +571,6 @@ export default {
 
                     this.showMethodFile = file.name;
 
-                    this.formData   =   new FormData();
-                    this.formData.append( "files", file );
-
                 }.bind(this)
             );            
         }
@@ -610,9 +607,6 @@ export default {
                 let file        =   this.$refs.methodFile.files[0];
 
                 this.showMethodFile = file.name;
-
-                this.formData   =   new FormData();
-                this.formData.append( "files", file );
 
                 this.$refs.methodForm.addEventListener(
                     evt,
@@ -686,6 +680,8 @@ export default {
             }
 
 
+            this.formData = new FormData();
+            this.formData.append( "files", this.$refs.methodFile.files[0] );
             this.formData.append( "data", JSON.stringify(this.form) );
 
             axios.post(

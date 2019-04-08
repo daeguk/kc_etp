@@ -68,9 +68,9 @@
 
                                     <v-list class="pt-0" dense>
                                         <v-list-tile-content class="rightmenu_con rightmenu_line">
-                                            <v-text-title>
+                                            <v-subheader>
                                                 <v-icon small color="primary">flash_on</v-icon>종목으로 찾기
-                                            </v-text-title>
+                                            </v-subheader>
                                             <v-text-field
                                                 v-model="search"
                                                 append-icon="search"
@@ -81,8 +81,8 @@
                                             ></v-text-field>
                                         </v-list-tile-content>
                                         <v-list-tile-content class="rightmenu_con ver2">
-                                            <v-text-title>
-                                                <v-icon small color="primary">feedback</v-icon>지수 조치 현황
+                                            <v-subheader>
+                                                <v-icon small color="primary">feedback</v-icon> 지수 조치 현황
                                                 <v-dialog
                                                     v-model="dialog"
                                                     persistent
@@ -123,7 +123,7 @@
                                                         <v-card class="pop_bot_h"></v-card>
                                                     </v-card>
                                                 </v-dialog>
-                                            </v-text-title>
+                                            </v-subheader>
                                             <p>
                                                 <v-icon small color="primary">arrow_right</v-icon>기준시가 총액변동
                                             </p>
@@ -173,7 +173,7 @@
                                                     </v-card>
                                                 </v-flex>
                                             </v-layout>
-                                             <!--오른쪽 메뉴 하단 리스트 영역end--->
+                                             <!--오른쪽 메뉴 하단 리스트 영역--->
                                         </v-list-tile-content>
                                     </v-list>
                                 </v-navigation-drawer>

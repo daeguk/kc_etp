@@ -1,49 +1,268 @@
 <template>
-  <v-container fluid grid-list-md pa-0 mb-4>
-  <v-layout row wrap>
-    <v-flex md6> 
-      <indexinfotab1box1 :item="boxItem1"></indexinfotab1box1>
-    </v-flex>
-    <v-flex md6>
-      <indexinfotab1box2 :item="boxItem2"></indexinfotab1box2>
-    </v-flex>
-  </v-layout>
-  </v-container>
+    <v-container fluid grid-list-md pa-0 mb-4>
+        <v-layout row wrap>
+            <v-flex md6>
+                <!--table1-->
+                <div class="indexinfo_box01">
+                    <h4 class="mb-0">Index Info</h4>
+                    <v-data-table
+                        :headers="headers1"
+                        :items="desserts1"
+                        disable-initial-sort
+                        hide-actions
+                        hide-headers
+                    >
+                        <template slot="items" slot-scope="props">
+                            <td class="text-xs-left">{{ props.item.name }}</td>
+                            <td class="text-xs-right">{{ props.item.calories }}</td>
+                        </template>
+                    </v-data-table>
+                </div>
+                <!--table1 end--->
+            </v-flex>
+            <v-flex md6>
+                <!---table2--->
+                <v-container fluid grid-list-md pa-0 mb-4>
+                    <v-layout row wrap>
+                        <v-flex xs12>
+                            <!---table2_1--->
+                            <div class="indexinfo_box02 a1">
+                                <h4 class="mb-0">ETP Info</h4>
+                                <v-data-table
+                                    :headers="headers2"
+                                    :items="desserts2"
+                                    disable-initial-sort
+                                    hide-actions
+                                >
+                                    <template slot="items" slot-scope="props">
+                                        <td class="text-xs-left">{{ props.item.name }}</td>
+                                        <td class="text-xs-right">{{ props.item.calories }}</td>
+                                    </template>
+                                </v-data-table>
+                            </div>
+                        </v-flex>
+                        <v-flex xs12>
+                            <!---table2_2--->
+                            <div class="indexinfo_box02 a2">
+                                <v-data-table
+                                    :headers="headers3"
+                                    :items="desserts3"
+                                    disable-initial-sort
+                                    hide-actions
+                                >
+                                    <template slot="items" slot-scope="props">
+                                        <td class="text-xs-left">{{ props.item.name }}</td>
+                                        <td class="text-xs-right">{{ props.item.calories }}</td>
+                                    </template>
+                                </v-data-table>
+                            </div>
+                        </v-flex>
+                        <v-flex xs12>
+                             <!---table2_3--->
+                            <div class="indexinfo_box02 a3">
+                                <v-data-table
+                                    :headers="headers4"
+                                    :items="desserts4"
+                                    disable-initial-sort
+                                    hide-actions
+                                >
+                                    <template slot="items" slot-scope="props">
+                                        <td class="text-xs-left">{{ props.item.name }}</td>
+                                        <td class="text-xs-right">{{ props.item.calories }}</td>
+                                    </template>
+                                </v-data-table>
+                            </div>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+                <!---table2 end--->
+            </v-flex>
+        </v-layout>
+    </v-container>
 </template>
 
 
 <script>
-import Config       from "@/js/config.js"
-import indexinfotab1box1   from  './indexinfotab1box1.vue'
-import indexinfotab1box2   from  './indexinfotab1box2.vue'
-
 
 export default {
-  props: [],
-  data() {
-    return {
-      boxItem1: {title:"Index Info", count: 120, subTitle: '회원사/벤더로 분배되는 지수', updateDate: '25/02/19'},
-      boxItem2: {title:"산출지수", count: 156, subTitle: '미발표 지수를 포함한 플랫폼에서 산출중인 지수', updateDate: '25/02/19'},
-    };
-  },
-  components: {
-    indexinfotab1box1: indexinfotab1box1,
-    indexinfotab1box2: indexinfotab1box2,
-  },
-  computed:{
-
-  },
-  mounted: function() {
-  },
-  created: function() {
-      
-  },
-  beforeDestroy() {
-      
-  },
-  methods: {
-  }
-}
+    props: [],
+    data() {
+        return {
+            results: [],
+            rowsPerPageItems: [50, 50],
+            headers1: [
+                { text: "ID", align: "center", sortable: false, value: "id" },
+                {
+                    text: "지수명",
+                    align: "center",
+                    sortable: false,
+                    value: "inst_name"
+                }
+            ],
+            desserts1: [
+                {
+                    name: "Frozen Yogurt",
+                    calories: 159
+                },
+                {
+                    name: "Ice cream sandwich",
+                    calories: 237
+                },
+                {
+                    name: "Eclair",
+                    calories: 262
+                },
+                {
+                    name: "Cupcake",
+                    calories: 305
+                },
+                {
+                    name: "Gingerbread",
+                    calories: 356
+                },
+                {
+                    name: "Jelly bean",
+                    calories: 375
+                },
+                {
+                    name: "Lollipop",
+                    calories: 392
+                },
+                {
+                    name: "Honeycomb",
+                    calories: 408
+                },
+                {
+                    name: "Donut",
+                    calories: 452
+                },
+                {
+                    name: "KitKat",
+                    calories: 518
+                }
+            ],
+            headers2: [
+                {
+                    text: "● KODEX DB 500 ETF(05320)",
+                    align: "left",
+                    sortable: false,
+                    value: "id"
+                },
+                {
+                    text: "",
+                    align: "center",
+                    sortable: false,
+                    value: "inst_name"
+                }
+            ],
+            desserts2: [
+                {
+                    name: "Frozen Yogurt",
+                    calories: 159
+                },
+                {
+                    name: "Ice cream sandwich",
+                    calories: 237
+                },
+                {
+                    name: "Eclair",
+                    calories: 262
+                },
+                {
+                    name: "Cupcake",
+                    calories: 305
+                },
+                {
+                    name: "Gingerbread",
+                    calories: 356
+                },
+                {
+                    name: "Jelly bean",
+                    calories: 375
+                }
+            ],
+            headers3: [
+                {
+                    text: "● KODEX DB 500 ETF(05320)",
+                    align: "left",
+                    sortable: false,
+                    value: "id"
+                },
+                {
+                    text: "",
+                    align: "center",
+                    sortable: false,
+                    value: "inst_name"
+                }
+            ],
+            desserts3: [
+                {
+                    name: "Frozen Yogurt",
+                    calories: 159
+                },
+                {
+                    name: "Ice cream sandwich",
+                    calories: 237
+                },
+                {
+                    name: "Eclair",
+                    calories: 262
+                },
+                {
+                    name: "Cupcake",
+                    calories: 305
+                },
+                {
+                    name: "Gingerbread",
+                    calories: 356
+                },
+                {
+                    name: "Jelly bean",
+                    calories: 375
+                }
+            ],
+            headers4: [
+                {
+                    text: "● KODEX DB 500 ETF(05320)",
+                    align: "left",
+                    sortable: false,
+                    value: "id"
+                },
+                {
+                    text: "",
+                    align: "center",
+                    sortable: false,
+                    value: "inst_name"
+                }
+            ],
+            desserts4: [
+                {
+                    name: "Frozen Yogurt",
+                    calories: 159
+                },
+                {
+                    name: "Ice cream sandwich",
+                    calories: 237
+                },
+                {
+                    name: "Eclair",
+                    calories: 262
+                },
+                {
+                    name: "Cupcake",
+                    calories: 305
+                },
+                {
+                    name: "Gingerbread",
+                    calories: 356
+                },
+                {
+                    name: "Jelly bean",
+                    calories: 375
+                }
+            ],
+            modalFlag: false
+        };
+    }
+};
 </script>
-<style scoped>
-</style>

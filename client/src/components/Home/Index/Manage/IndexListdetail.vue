@@ -61,7 +61,6 @@
                             <v-flex xs12>
                                 <v-tabs
                                     fixed-tabs
-                                    slot="extension"
                                     light
                                     v-model="tab"
                                     align-with-title
@@ -86,7 +85,6 @@
                         </v-layout>
                     </div>
                 </v-card>
-                
             </v-flex>
         </v-layout>
     </div>
@@ -94,9 +92,9 @@
 
 
 <script>
-//import indexinfotab1 from "./indexinfotab1.vue";
-//import indexinfotab2 from "./indexinfotab2.vue";
-//import indexinfotab3 from "./indexinfotab3.vue";
+import indexinfotab1 from "./indexinfotab1.vue";
+import indexinfotab2 from "./indexinfotab2.vue";
+import indexinfotab3 from "./indexinfotab3.vue";
 
 export default {
     data() {
@@ -111,9 +109,9 @@ export default {
         };
     },
     components: {
-       // indexinfotab1: indexinfotab1,
-       // indexinfotab2: indexinfotab2,
-       // indexinfotab3: indexinfotab3
+        indexinfotab1: indexinfotab1,
+        indexinfotab2: indexinfotab2,
+        indexinfotab3: indexinfotab3
     }
 };
 </script>
