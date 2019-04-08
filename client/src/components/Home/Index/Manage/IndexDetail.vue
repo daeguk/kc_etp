@@ -233,12 +233,12 @@ export default {
                     align: "left",
                     value: "name"
                 },
-                { text: "name", value: "calories" },
-                { text: "Fat (g)", value: "fat", align: "right" },
-                { text: "Carbs (g)", value: "carbs", align: "right" },
-                { text: "Protein (g)", value: "protein", align: "right" },
-                { text: "Iron (%)", value: "iron", align: "right" },
-                { text: "Factor rto", value: "last", align: "right" }
+                { text: "name", value: "name" },
+                { text: "BasePrc", value: "BasePrc", align: "right" },
+                { text: "Shrs", value: "Shrs", align: "right" },
+                { text: "Float rto", value: "FloatRto", align: "right" },
+                { text: "Ceiling rto", value: "CeilingRto", align: "right" },
+                { text: "Factor rto", value: "FactorRto", align: "right" }
             ],
             desserts: [
                 
