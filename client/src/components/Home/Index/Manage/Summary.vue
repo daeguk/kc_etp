@@ -97,7 +97,7 @@ export default {
     created: function() {},
     beforeDestroy() {},
     methods: {
-        getIndexSummaryInfo: function() {
+        getIndexSummaryInfo: function() { 
             var vm = this;
 
             axios.post(Config.base_url + "/user/index/getIndexSummaryInfo", {

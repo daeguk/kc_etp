@@ -41,7 +41,7 @@
                         :value="true"
                         color="error"
                         icon="warning"
-                    >Your search for "{{ search }}" found no results.</v-alert>
+                    >Your search for  found no results.</v-alert>
                 </v-data-table>
                 </v-card>
                 <!--종목편출입 테이블 end-->
@@ -69,7 +69,7 @@
                         :value="true"
                         color="error"
                         icon="warning"
-                    >Your search for "{{ search }}" found no results.</v-alert>
+                    >Your search for  found no results.</v-alert>
                 </v-data-table>
             </v-card>
         </v-flex>

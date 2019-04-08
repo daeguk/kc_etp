@@ -109,6 +109,96 @@
     </insert>
 
     <!--
+    * [tm_jisu_upload] 테이블에 저장한다.
+    * 2019-04-02  bkLove(촤병국)
+    -->
+    <insert     id="saveTmJisuUpload">
+        INSERT  INTO    tm_jisu_upload 
+        ( 
+                jisu_id
+            ,   row_no
+
+            ,   jisu_file_id
+            ,   col01
+            ,   col02
+            ,   col03
+            ,   col04
+            ,   col05
+
+            ,   reg_id 
+            ,   reg_time 
+        ) 
+        VALUES 
+        <foreach    collection="dataLists"   item="data"     separator="," >
+        ( 
+                #{jisu_id}
+            ,   ${data.row_no}
+
+            ,   ${jisu_file_id}
+            ,   #{data.col01}
+            ,   #{data.col02}
+            ,   #{data.col03}
+            ,   #{data.col04}
+            ,   #{data.col05}
+
+            ,   #{user_id}
+            ,   now() 
+        )            
+        </foreach>
+    </insert>
+
+    <!--
+    * 지수ID 별 최신 이력번호를 조회한다.
+    * 2019-04-02  bkLove(촤병국)
+    -->
+    <select id="getHistNoByTmJisuUploadHist">
+        SELECT	IFNULL( MAX( HIST_NO ), 0 ) + 1     AS  hist_no
+        FROM	tm_jisu_upload_hist
+        WHERE	tm_jisu_upload_hist.jisu_id         =   #{jisu_id}#
+    </select>    
+
+    <!--
+    * [tm_jisu_upload_hist] 테이블에 저장한다.
+    * 2019-04-02  bkLove(촤병국)
+    -->
+    <insert     id="saveTmJisuUploadHist">
+        INSERT  INTO    tm_jisu_upload_hist
+        ( 
+                hist_no
+            ,   jisu_id
+            ,   row_no
+
+            ,   jisu_file_id
+            ,   col01
+            ,   col02
+            ,   col03
+            ,   col04
+            ,   col05
+
+            ,   reg_id 
+            ,   reg_time 
+        ) 
+        VALUES 
+        <foreach    collection="dataLists"   item="data"     separator="," >
+        ( 
+                ${hist_no}
+            ,   #{jisu_id}
+            ,   ${data.row_no}
+
+            ,   ${file_id}
+            ,   #{data.col01}
+            ,   #{data.col02}
+            ,   #{data.col03}
+            ,   #{data.col04}
+            ,   #{data.col05}
+
+            ,   #{user_id}
+            ,   now() 
+        )            
+        </foreach>
+    </insert>    
+
+    <!--
     * [tm_jisu_share_req] 테이블에 저장한다.
     * 2019-04-02  bkLove(촤병국)
     -->

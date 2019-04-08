@@ -68,7 +68,7 @@ export default {
                         vm.chartLoadFlag = true;
                     }
                 });
-            }, 1000);
+            }, 500);
         },
     }
 }

@@ -198,7 +198,8 @@ export default {
     data() {
         return {
             dialog: false,
-            drawer: true,
+            drawer: false,
+            search: "", 
             items: [
                 { title: "Home", icon: "dashboard" },
                 { title: "About", icon: "question_answer" }
@@ -240,98 +241,20 @@ export default {
                 { text: "Factor rto", value: "last", align: "right" }
             ],
             desserts: [
-                {
-                    name: "000100",
-                    calories: "유한양행",
-                    fat: 190000,
-                    carbs: 12209354,
-                    protein: 0.65,
-                    iron: "1",
-                    last: 0.5
-                },
-                {
-                    name: "000090",
-                    calories: "유한양행",
-                    fat: 190000,
-                    carbs: 12209354,
-                    protein: 0.65,
-                    iron: "1",
-                    last: 0.5
-                },
-                {
-                    name: "000108",
-                    calories: "유한양행",
-                    fat: 190000,
-                    carbs: 12209354,
-                    protein: 0.65,
-                    iron: "1",
-                    last: 0.5
-                },
-                {
-                    name: "002100",
-                    calories: "유한양행",
-                    fat: 190000,
-                    carbs: 12209354,
-                    protein: 0.65,
-                    iron: "1",
-                    last: 0.5
-                },
-                {
-                    name: "100100",
-                    calories: "유한양행",
-                    fat: 190000,
-                    carbs: 12209354,
-                    protein: 0.65,
-                    iron: "1",
-                    last: 0.5
-                },
-                {
-                    name: "000100",
-                    calories: "유한양행",
-                    fat: 190000,
-                    carbs: 12209354,
-                    protein: 0.65,
-                    iron: "1",
-                    last: 0.5
-                },
-                {
-                    name: "000100",
-                    calories: "유한양행",
-                    fat: 190000,
-                    carbs: 12209354,
-                    protein: 0.65,
-                    iron: "1",
-                    last: 0.5
-                },
-                {
-                    name: "000100",
-                    calories: "유한양행",
-                    fat: 190000,
-                    carbs: 12209354,
-                    protein: 0.65,
-                    iron: "1",
-                    last: 0.5
-                },
-                {
-                    name: "000100",
-                    calories: "유한양행",
-                    fat: 190000,
-                    carbs: 12209354,
-                    protein: 0.65,
-                    iron: "1",
-                    last: 0.5
-                },
-                {
-                    name: "000100",
-                    calories: "유한양행",
-                    fat: 190000,
-                    carbs: 12209354,
-                    protein: 0.65,
-                    iron: "1",
-                    last: 0.5
-                }
+                
             ]
         };
+    },
+    mounted : function() {
+       
+    }, 
+    created : function() {
+        this.$EventBus.$on("LeftControlBoxDraw", draw => {
+            this.drawer = draw;
+        });
+    },
+    beforeDestory : function() {
+        this.$EventBus.$off("LeftControlBoxDraw");
     }
 };
 </script>
