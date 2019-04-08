@@ -431,8 +431,6 @@ var save = function (req, res) {
     var mapper = req.app.get("mapper");
     var resultMsg = {};
 
-    console.log( req.body.formData );
-
 
     var resultMsg = {};
     var reqParam = {
@@ -481,7 +479,7 @@ var save = function (req, res) {
             reqParam.mime_type = req.file.mimetype;
             reqParam.file_size = req.file.size;
 
-            console.log( req.body.data.jisu_id );
+            console.log( req.body.test );
 
         }catch( e ) {
             console.log( e );

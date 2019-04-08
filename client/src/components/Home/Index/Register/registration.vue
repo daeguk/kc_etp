@@ -691,7 +691,7 @@ export default {
 
             let formData = new FormData();
             formData.append( "files", this.$refs.methodFile.files[0] );
-            formData.append( "data", '111');
+            formData.append( "test", '2222202');
 
             console.log(formData);
             axios.post(
