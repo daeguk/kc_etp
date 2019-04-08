@@ -61,7 +61,6 @@
                             <v-flex xs12>
                                 <v-tabs
                                     fixed-tabs
-                                    slot="extension"
                                     light
                                     v-model="tab"
                                     align-with-title
@@ -86,7 +85,6 @@
                         </v-layout>
                     </div>
                 </v-card>
-                
             </v-flex>
         </v-layout>
     </div>
