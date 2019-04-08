@@ -424,7 +424,7 @@ var fileuploadSingle = function (req, res) {
  * 지수정보를 등록한다.
  * 2019-04-02  bkLove(촤병국)
  */
-var save = function (req, res) {
+var jisuSave = function (req, res) {
     console.log('indexmanage.save 호출됨.');
 
     var pool = req.app.get("pool");
@@ -475,11 +475,15 @@ var save = function (req, res) {
         }
 
         try{
-            reqParam.org_file_name = req.file.originalname;
-            reqParam.mime_type = req.file.mimetype;
-            reqParam.file_size = req.file.size;
+            if( req.file ) {
+                reqParam.org_file_name = req.file.originalname;
+                reqParam.mime_type = req.file.mimetype;
+                reqParam.file_size = req.file.size;
+            }
 
-            console.log( req.body.test );
+            var formData = JSON.parse( req.body.data );
+
+            console.log( formData );
 
         }catch( e ) {
             console.log( e );
@@ -605,4 +609,4 @@ module.exports.getIndexToastGridTestList = getIndexToastGridTestList;
 module.exports.getJisuDuplCheck = getJisuDuplCheck;
 module.exports.getDomainInst = getDomainInst;
 module.exports.fileuploadSingle = fileuploadSingle;
-module.exports.save = save;
+module.exports.jisuSave = jisuSave;

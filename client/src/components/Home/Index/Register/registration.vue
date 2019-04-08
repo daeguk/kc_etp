@@ -685,18 +685,12 @@ export default {
                 return false;
             }
 
-            var param = {
-                data : this.form
-            }
 
-            let formData = new FormData();
-            formData.append( "files", this.$refs.methodFile.files[0] );
-            formData.append( "test", '2222202');
+            this.formData.append( "data", JSON.stringify(this.form) );
 
-            console.log(formData);
             axios.post(
-                Config.base_url + "/user/index/save",
-                formData,
+                Config.base_url + "/user/index/jisuSave",
+                this.formData,
                 {
                     headers: {
                         "Content-Type": "multipart/form-data"
