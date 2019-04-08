@@ -8,7 +8,6 @@ var config = require('../../../config/config');
 var util = require("util");
 var Promise = require("bluebird");
 
-var util = require("util");
 var multer = require('multer');
 var xlsx = require('xlsx');
 var fs = require('fs'); 
@@ -432,6 +431,66 @@ var save = function (req, res) {
     var mapper = req.app.get("mapper");
     var resultMsg = {};
 
+    console.log( req.body.formData );
+
+
+    var resultMsg = {};
+    var reqParam = {
+            uploadFolder: "d:\\test"
+        ,   save_file_name: ''
+            /* TODO: 추후 세션의 사용자 ID 로 변경 필요. */
+        ,   user_id : 'test01'
+    };
+
+    var storage = multer.diskStorage({
+
+        // 서버에 저장할 폴더
+        destination: function (req, file, cb) {
+            cb(null, reqParam.uploadFolder);
+        },
+
+        /* 서버에 저장 */
+        filename: function (req, file, cb) {
+
+            console.log("file" + JSON.stringify(file));
+
+            var fileLen = file.originalname.length;
+            var lastDot = file.originalname.lastIndexOf(".");
+            var fileName = file.originalname.substring(0, lastDot);
+            var fileExt = file.originalname.substring(lastDot, fileLen).toLowerCase();
+
+            reqParam.save_file_name = "method_" + fileName + "_" + Date.now() + "" + fileExt;
+
+            cb(null, reqParam.save_file_name);
+        }
+    });
+
+
+    var upload = multer({ storage: storage }).single('files');
+
+    upload(req, res, function (err) {
+
+        console.log("upload start");
+
+        if (err) {
+            console.log("File Upload Err" + err);
+        }
+
+        try{
+            reqParam.org_file_name = req.file.originalname;
+            reqParam.mime_type = req.file.mimetype;
+            reqParam.file_size = req.file.size;
+
+            console.log( req.body.data.jisu_id );
+
+        }catch( e ) {
+            console.log( e );
+        }
+    });
+
+
+
+
     /* 1. body.data 값이 있는지 체크 */
     if (!req.body.data) {
         console.log("indexmanage.save  req.body.data no data.");
@@ -441,6 +500,7 @@ var save = function (req, res) {
         resultMsg.msg = "입력값이 유효하지 않습니다.";
 
         res.json(resultMsg);
+        res.end();
         return;
     }
 
@@ -478,7 +538,6 @@ var save = function (req, res) {
 
                     paramData.req_flag    =   "0";       /* 공개여부 0:비공개, 1:공개요청, 2:공개 */
 
-console.log( paramData );
 
                     /* 5. [tm_jisu_share_req] 저장 쿼리문 조회 */
                     stmt = mapper.getStatement('indexRegister', 'saveTmJisuShareReq', paramData, format);

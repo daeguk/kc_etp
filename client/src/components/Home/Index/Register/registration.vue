@@ -183,29 +183,30 @@
                             <v-layout row>
                                 <v-flex xs2>
                                     <v-subheader>지수방법론</v-subheader>
-                                </v-flex>
+                                </v-flex>                              
 
                                 <v-flex xs4>
-                                    <input
-                                        type="text"
-                                        class="upload-name"
-                                        id="upload-name"
-                                        disabled
-                                    >
-                                    <!--v-text-field
-                    file
-                    label=""
-                    value="dbfn"
-                    outline
-                    readonly
-                    append-icon="create_new_folder"
-                                    ></v-text-field-->
+                                    <input type='text' class='upload-name' id='showMethodFile' v-model="showMethodFile" disabled />
+
+                                    <v-layout id="file-drag-drop"  ref="methodForm" class="drag_box">
+                                        <input type="file" name="methodFile" ref="methodFile" style="display:none;">
+
+                                        <v-layout class="jumsun" align-center justify-center column>
+                                            <v-layout justify-space-around>
+                                                <v-icon large color="#c9c9c9">cloud_upload</v-icon>
+                                            </v-layout>
+
+                                            <v-layout xs12>
+                                                <a class="drop-files" v-on:click="file_click( 'methodFile' )">
+                                                    <p
+                                                        class="text-xs-center"
+                                                    >업로드 할 지수방법론 파일을 드래그 해주세요.</p>
+                                                </a>
+                                            </v-layout>
+                                        </v-layout>                                        
+                                    </v-layout>
                                 </v-flex>
 
-                                <v-flex xs4>
-                                    <label for="upload" class="upload-hidden">업로드</label>
-                                    <input type="file" id="upload" name="upload">
-                                </v-flex>
                             </v-layout>
 
                             <!-- 소급지수 -->
@@ -224,7 +225,7 @@
                                             </v-layout>
 
                                             <v-layout xs12>
-                                                <a class="drop-files" v-on:click="file_click();">
+                                                <a class="drop-files" v-on:click="file_click( 'file' )">
                                                     <p
                                                         class="text-xs-center"
                                                     >업로드 할 소급지수 파일을 드래그 해주세요.</p>
@@ -435,6 +436,7 @@ export default {
             dragAndDropCapable: false,
             files: [],
             file: "",
+            showMethodFile : "",
             uploadPercentage: 0,
 
 
@@ -455,8 +457,10 @@ export default {
 
             arr_org_inst : [],          /* 기관정보 원본 목록정보 */
             arr_group_inst : [],        /* 3개를 1개로 그룹핑한 기관정보 ( 기관정보 팝업창에 노출 ) */
-            arr_show_inst : [],         /* 4개를 1개로 그룹핑한 기관정보 ( 팝업창에서 선택된 기관정보 노출 ) */     
+            arr_show_inst : [],         /* 4개를 1개로 그룹핑한 기관정보 ( 팝업창에서 선택된 기관정보 노출 ) */
 
+
+            formData : new FormData(),
             form: {
                 duplCheckResult: false,
 
@@ -519,8 +523,29 @@ export default {
                         }.bind(this),
                         false
                     );
-                }.bind(this)
+                }.bind(this)              
             );
+
+            [
+                "drag",
+                "dragstart",
+                "dragend",
+                "dragover",
+                "dragenter",
+                "dragleave",
+                "drop"
+            ].forEach(
+                function(evt) {
+                    this.$refs.methodForm.addEventListener(
+                        evt,
+                        function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                        }.bind(this),
+                        false
+                    );
+                }.bind(this)              
+            );            
 
             this.$refs.fileform.addEventListener(
                 "drop",
@@ -537,6 +562,20 @@ export default {
 
                 }.bind(this)
             );
+
+            this.$refs.methodForm.addEventListener(
+                "drop",
+                function(e) {
+                    var selfThis    =   this;
+                    let file        =   e.dataTransfer.files[0];
+
+                    this.showMethodFile = file.name;
+
+                    this.formData   =   new FormData();
+                    this.formData.append( "files", file );
+
+                }.bind(this)
+            );            
         }
 
         /* file input에서 선택된 파일이 있으면 이벤트 실행 */
@@ -562,6 +601,29 @@ export default {
                 );
             }.bind(this)
         );
+
+        /* file input에서 선택된 파일이 있으면 이벤트 실행 */
+        /*this.$refs.methodFile.addEventListener(
+            "change",
+            function(evt) {
+                var selfThis    =   this;
+                let file        =   this.$refs.methodFile.files[0];
+
+                this.showMethodFile = file.name;
+
+                this.formData   =   new FormData();
+                this.formData.append( "files", file );
+
+                this.$refs.methodForm.addEventListener(
+                    evt,
+                    function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }.bind(this),
+                    false
+                );
+            }.bind(this)
+        );     */   
 
         this.fn_getDomainInst();
     },
@@ -623,8 +685,22 @@ export default {
                 return false;
             }
 
-            axios.post(Config.base_url + "/user/index/save", {
-                    data: this.form
+            var param = {
+                data : this.form
+            }
+
+            let formData = new FormData();
+            formData.append( "files", this.$refs.methodFile.files[0] );
+            formData.append( "data", '111');
+
+            console.log(formData);
+            axios.post(
+                Config.base_url + "/user/index/save",
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
                 }).then(function(response) {
                     console.log(response);
                 });
@@ -642,8 +718,13 @@ export default {
             );
         },
 
-        file_click: function() {
-            this.$refs.file.click();
+        file_click: function( gubun ) {
+
+            if( gubun == "file" ) {
+                this.$refs.file.click();
+            }else{
+                this.$refs.methodFile.click();
+            }
         },
 
         /* 엑셀 유형인지 파일을 체크한다. */
@@ -675,7 +756,7 @@ export default {
 
             let formData = new FormData();
             formData.append("files", file);
-
+            
             axios.post(
                 Config.base_url + "/user/index/fileuploadSingle",
                 formData,
