@@ -34,10 +34,10 @@
 </template>
 
 <script>
-import Summary   from  './Summary.vue'
-import IndexList   from  './IndexList.vue'
-import IndexDetail   from  './IndexDetail.vue'
-import indexDetailrtmenu from "./indexDetailrtmenu.vue";
+import Summary   from  './Summary.vue';
+import IndexList   from  './IndexList.vue';
+import IndexDetail   from  './IndexDetail.vue';
+//import indexDetailrtmenu from "./indexDetailrtmenu.vue";
 
 export default {
         data() {
@@ -51,7 +51,7 @@ export default {
         Summary     : Summary,
         IndexList     : IndexList,
         IndexDetail     : IndexDetail,
-        indexDetailrtmenu   :indexDetailrtmenu,
+        //indexDetailrtmenu   :indexDetailrtmenu,
     },
     created: function() {
     },

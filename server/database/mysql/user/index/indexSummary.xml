@@ -9,7 +9,6 @@
             ,BAS.F16002
             ,BAS.LARGE_TYPE
             ,BAS.MIDDLE_TYPE
-            ,HIS.F16013
             ,HIS.F12506
             ,HIS.F15009
             ,HIS.F15010
@@ -103,6 +102,7 @@
 
 
     <select id="indexSummaryResult">
+    <![CDATA[
       WITH  JISU AS
       (SELECT  A.F16013
         FROM (SELECT basic.F16013, 
@@ -135,7 +135,6 @@
                     ,BAS.F16002
                     ,BAS.LARGE_TYPE
                     ,BAS.MIDDLE_TYPE
-                    ,HIS.F16013
                     ,HIS.F12506
                     ,HIS.F15009
                     ,HIS.F15010
@@ -158,8 +157,15 @@
                 WHERE BAS.F16013 = HIS.F16013
                 ORDER BY HIS.F12506 DESC
                 limit 0, 1; 
-
+    ]]>
     </select>
   
-    
+    <select id="selectIndexSummaryHist">
+    <![CDATA[
+        SELECT F12506 as trd_dd, F15009 as close_idx
+          FROM TD_INDEX_HISTORY
+         WHERE F12506 >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 YEAR), '%Y%M%D')
+           AND F16013 = #{JISU_ID}
+    ]]>
+    </select>
 </mapper>
