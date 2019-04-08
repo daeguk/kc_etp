@@ -13,10 +13,8 @@
             >
             <v-tabs-slider color="#ff821d"></v-tabs-slider>
     
-            <v-tab v-for="(item, index) in items" :key="item">
-  
-              <div v-if="index == 2" v-on:click="setLeftControlBoxDraw(true)">{{ item }} </div>
-              <div v-else-if="index != 2" v-on:click="setLeftControlBoxDraw(false)"> {{ item }} </div>
+            <v-tab v-for="(item, index) in items" :key="item"  v-on:click="setLeftControlBoxDraw(index)">
+              {{ item }}
             </v-tab>
             </v-tabs>
 
@@ -24,10 +22,10 @@
                 <v-tab-item>
                     <Summary></Summary>
                 </v-tab-item>
-                <v-tab-item >
+                <v-tab-item>
                     <IndexList></IndexList>
                 </v-tab-item>
-                <v-tab-item >
+                <v-tab-item>
                     <IndexDetail></IndexDetail>
                 </v-tab-item>               
         </v-tabs-items>    
@@ -59,7 +57,11 @@ export default {
     },
     methods: {
         setLeftControlBoxDraw : function(draw) {
-            this.$EventBus.$emit("LeftControlBoxDraw", draw); 
+            if (draw != 2) {
+                this.$EventBus.$emit("LeftControlBoxDraw", false); 
+            } else {
+                this.$EventBus.$emit("LeftControlBoxDraw", true); 
+            }
         }
     }
 
