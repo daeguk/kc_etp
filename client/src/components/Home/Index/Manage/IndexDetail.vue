@@ -199,6 +199,7 @@ export default {
         return {
             dialog: false,
             drawer: true,
+            search: "", 
             items: [
                 { title: "Home", icon: "dashboard" },
                 { title: "About", icon: "question_answer" }
