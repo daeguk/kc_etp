@@ -33,7 +33,7 @@
                                 <td class="text-xs-right">{{ props.item.last }}</td>
                             </template>
                         </v-data-table>
-                   
+                    <indexDetailcon></indexDetailcon>
                 </v-card>
             </v-flex>
         </v-layout>
@@ -64,7 +64,6 @@ export default {
                 { text: "Iron (%)", value: "iron", align:"right" },
                 { text: "Factor rto", value: "last", align:"right" },
             ],
-            
             desserts: [
                 {
                     name: "000100",
