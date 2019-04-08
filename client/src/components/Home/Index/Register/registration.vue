@@ -603,7 +603,7 @@ export default {
         );
 
         /* file input에서 선택된 파일이 있으면 이벤트 실행 */
-        /*this.$refs.methodFile.addEventListener(
+        this.$refs.methodFile.addEventListener(
             "change",
             function(evt) {
                 var selfThis    =   this;
@@ -623,7 +623,7 @@ export default {
                     false
                 );
             }.bind(this)
-        );     */   
+        ); 
 
         this.fn_getDomainInst();
     },
