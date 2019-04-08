@@ -153,7 +153,7 @@ export default {
                 this.reqFlag = true;
             } else {
                 this.message = '거절';
-                this.reqFlag = false;
+                this.reqFlag = false; 
             }
             this.dialog = true;
         },
