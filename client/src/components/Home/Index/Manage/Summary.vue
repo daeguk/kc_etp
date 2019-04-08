@@ -115,14 +115,14 @@ export default {
 
                     vm.cardItem1.name = response.data.results1[0].F16002;              
                     vm.chartItem1.code = response.data.results1[0].F16013;            
-                    vm.cardItem1.subTitle = response.data.results1[0].F16004;
+                    vm.cardItem1.subTitle = response.data.results1[0].F16002;
                     vm.cardItem1.close_idx = response.data.results1[0].F15001;
                     vm.cardItem1.fluc_idx = response.data.results1[0].F15472;
                     vm.cardItem1.fluc_rate = response.data.results1[0].F15004;
 
                     vm.cardItem2.name = response.data.results2[0].F16002;
                     vm.chartItem2.code = response.data.results2[0].F16013;
-                    vm.cardItem2.subTitle = response.data.results2[0].F16004;
+                    vm.cardItem2.subTitle = response.data.results2[0].F16002;
                     vm.cardItem2.close_idx = response.data.results2[0].F15001;
                     vm.cardItem2.fluc_idx = response.data.results2[0].F15472;
                     vm.cardItem2.fluc_rate = response.data.results2[0].F15004;

@@ -20,8 +20,8 @@
                         <v-data-table
                             :headers="headers"
                             :items="desserts"
+                            :rows-per-page-items="rowsPerPageItems"
                             class="table_line1"
-                            hide-actions="pagination"
                         >
                             <template slot="items" slot-scope="props">
                                 <td>{{ props.item.name }}</td>
@@ -33,7 +33,7 @@
                                 <td class="text-xs-right">{{ props.item.last }}</td>
                             </template>
                         </v-data-table>
-                    <indexDetailcon></indexDetailcon>
+                   
                 </v-card>
             </v-flex>
         </v-layout>
@@ -50,6 +50,7 @@ export default {
     },
     data() {
         return {
+            rowsPerPageItems: [10, 20, 30, 50],
             headers: [
                 {
                     text: "Code",
@@ -63,6 +64,7 @@ export default {
                 { text: "Iron (%)", value: "iron", align:"right" },
                 { text: "Factor rto", value: "last", align:"right" },
             ],
+            
             desserts: [
                 {
                     name: "000100",
