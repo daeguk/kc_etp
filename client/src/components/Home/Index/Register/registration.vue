@@ -286,7 +286,7 @@
                                 </v-flex>
 
                                 <v-flex xs10>
-                                    <v-textarea outline color="blue" height="80px">
+                                    <v-textarea outline color="blue" height="80px"  v-model="form.req_content" :rules="[rules.req_content]">
                                         <template v-slot:label>
                                             <div>
                                                 Bio
@@ -496,7 +496,14 @@ export default {
                         (v && v.length <= 10) ||
                         "[기준 지수]] 10자리 이하로 입력해 주세요."
                 ],
-                base_date: [v => !!v || "[기준일] is required"]
+                base_date: [v => !!v || "[기준일] is required"],
+                req_content(value) {
+                    if( !value || ( value.length > 0 && value.length <= 2000 ) ) {
+                        return true;
+                    }
+
+                    return "[요청사항] 2000자리 이하로 입력해 주세요.";
+                }
             }
         };
     },

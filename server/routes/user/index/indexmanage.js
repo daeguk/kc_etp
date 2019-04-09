@@ -514,7 +514,6 @@ var jisuSave = function (req, res) {
 
 console.log( paramData );
 
-
             var format = { language: 'sql', indent: '' };
             Promise.using(pool.connect(), conn => {
 
@@ -546,9 +545,10 @@ console.log( paramData );
                             /* 3. [saveTmJisuFile] 테이블에 저장한다. */
                             var stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
                             console.log(stmt);
-console.log( "####1" );
+
+console.log( "#### saveTmJisuFile start" );
                             conn.queryAsync(stmt).then(rows => {
-console.log( "####2" );
+console.log( "#### saveTmJisuFile end" );
                                 paramData.method_file_id        =   rows.insertId;
                                 paramData.status                =   "01";       // 상태 (01: 등록완료, 02:연동신청, 03: 연동완료 )
 
@@ -556,28 +556,33 @@ console.log( "####2" );
                                 stmt = mapper.getStatement('indexRegister', 'saveTmJisuMast', paramData, format);
                                 console.log(stmt);
 
+console.log( "#### saveTmJisuMast start" );
                                 conn.queryAsync(stmt).then(rows => {
 
+console.log( "#### saveTmJisuMast end" );
+
                                     if( rows.affectedRows > 0 ) {
-console.log( "####4" );
+
                                         /* 4. [tm_jisu_share_req] 저장  */
                                         if( paramData.arr_jisu_inst && paramData.arr_jisu_inst.length > 0  ) {
-console.log( "####5" );
+
                                             paramData.req_flag    =   "0";       /* 공개여부 0:비공개, 1:공개요청, 2:공개 */
 
                                             stmt = mapper.getStatement('indexRegister', 'saveTmJisuShareReq', paramData, format);
                                             console.log(stmt);
 
+console.log( "#### saveTmJisuShareReq start" );
                                             conn.queryAsync(stmt).then(rows => {
-
+console.log( "#### saveTmJisuShareReq end" );
                                                 paramData.file_id  =    paramData.jisu_file_id;
 
                                                 /* 5. [tm_jisu_temp_upload] 조회 */
                                                 var stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
                                                 console.log(stmt);
 
+console.log( "#### getTmJisuTempUpload start" );
                                                 conn.queryAsync(stmt).then(rows => {
-console.log( "####6" );
+console.log( "#### getTmJisuTempUpload end" );
                                                     if( rows && rows.length > 0 ) {
 
                                                         paramData.dataLists =   rows;
@@ -585,15 +590,16 @@ console.log( "####6" );
                                                         /* 6. [tm_jisu_upload] 저장 */
                                                         stmt = mapper.getStatement('indexRegister', 'saveTmJisuUpload', paramData, format);
                                                         console.log(stmt);
-console.log( "####6-1" );
+console.log( "#### saveTmJisuUpload start" );
                                                         conn.queryAsync(stmt).then(rows => {
-
+console.log( "#### saveTmJisuUpload end" );
                                                             /* 7. 지수별 최신 이력번호 조회 */
                                                             stmt = mapper.getStatement('indexRegister', 'getHistNoByTmJisuUploadHist', paramData, format);
                                                             console.log(stmt);
 
+console.log( "#### getHistNoByTmJisuUploadHist start" );
                                                             conn.queryAsync(stmt).then(rows => {
-
+console.log( "#### getHistNoByTmJisuUploadHist end" );
                                                                 if( rows && rows[0].hist_no ) {
                                                                     paramData.hist_no   =   rows[0].hist_no;
 
@@ -664,10 +670,8 @@ console.log( "####6-1" );
 
                                                             res.json(resultMsg);
                                                             res.end();
-                                                        });                                 
-console.log( "####8" );
+                                                        });
                                                     }else{
-console.log( "####8-1" );                                                        
                                                         conn.commit();
 
                                                         resultMsg.result = true;
@@ -679,8 +683,8 @@ console.log( "####8-1" );
 
                                                 }).catch(err => {
                                                     console.log(err);
-                                                });                                                
-console.log( "####9" );
+                                                });
+
                                             }).catch(err => {
 
                                                 console.log(err);
@@ -695,18 +699,18 @@ console.log( "####9" );
 
                                                 conn.rollback();
                                             });
-console.log( "####10" );
                                         }
                                         else{
-console.log( "####11" );
+
                                             paramData.file_id  =    paramData.jisu_file_id;
 
                                             /* 5. [tm_jisu_temp_upload] 조회 */
                                             var stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
                                             console.log(stmt);
 
+console.log( "####1 getTmJisuTempUpload start" );
                                             conn.queryAsync(stmt).then(rows => {
-console.log( "####12" );
+console.log( "####1 getTmJisuTempUpload end" );
                                                 if( rows && rows.length > 0 ) {
 
                                                     paramData.dataLists =   rows;
@@ -715,8 +719,9 @@ console.log( "####12" );
                                                     stmt = mapper.getStatement('indexRegister', 'saveTmJisuUpload', paramData, format);
                                                     console.log(stmt);
 
+console.log( "####1 saveTmJisuUpload start" );
                                                     conn.queryAsync(stmt).then(rows => {
-console.log( "####13" );
+console.log( "####1 saveTmJisuUpload end" );
                                                         conn.commit();
 
                                                         resultMsg.result = true;
@@ -739,9 +744,9 @@ console.log( "####13" );
                                                         res.json(resultMsg);
                                                         res.end();
                                                     });                                 
-console.log( "####14" );
+
                                                 }else{
-console.log( "####15" );
+
                                                     conn.commit();
 
                                                     resultMsg.result = true;
@@ -750,15 +755,14 @@ console.log( "####15" );
                                                     res.json(resultMsg);
                                                     res.end();      
                                                 }                                              
-console.log( "####16" );
+
                                             }).catch(err => {
                                                 console.log(err);
                                             });
 
                                         }
                                     }
-                       
-console.log( "####17" );
+
                                 }).catch(err => {
 
                                     console.log(err);
@@ -773,7 +777,7 @@ console.log( "####17" );
 
                                     conn.rollback();
                                 });
-console.log( "####18" );                                
+                  
                             }).catch(err => {
 
                                 console.log(err);
@@ -785,7 +789,7 @@ console.log( "####18" );
                                 res.json(resultMsg);
                                 res.end();
                             });
-console.log( "####19" );                            
+
                         }else{
 
                             paramData.status                =   "01";       // 상태 (01: 등록완료, 02:연동신청, 03: 연동완료 )
@@ -794,28 +798,32 @@ console.log( "####19" );
                             stmt = mapper.getStatement('indexRegister', 'saveTmJisuMast', paramData, format);
                             console.log(stmt);
 
+console.log( "####2 saveTmJisuMast start" );
                             conn.queryAsync(stmt).then(rows => {
+console.log( "####2 saveTmJisuMast end" );
 
                                 if( rows.affectedRows > 0 ) {
-console.log( "####20" );
+
                                     /* 4. [tm_jisu_share_req] 저장  */
                                     if( paramData.arr_jisu_inst && paramData.arr_jisu_inst.length > 0  ) {
-console.log( "####21" );
+
                                         paramData.req_flag    =   "0";       /* 공개여부 0:비공개, 1:공개요청, 2:공개 */
 
                                         stmt = mapper.getStatement('indexRegister', 'saveTmJisuShareReq', paramData, format);
                                         console.log(stmt);
 
+console.log( "####2 saveTmJisuShareReq start" );
                                         conn.queryAsync(stmt).then(rows => {
-
+console.log( "####2 saveTmJisuShareReq end" );
                                             paramData.file_id  =    paramData.jisu_file_id;
 
                                             /* 5. [tm_jisu_temp_upload] 조회 */
                                             var stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
                                             console.log(stmt);
 
+console.log( "####2 getTmJisuTempUpload start" );
                                             conn.queryAsync(stmt).then(rows => {
-console.log( "####22" );
+console.log( "####2 getTmJisuTempUpload end" );
                                                 if( rows && rows.length > 0 ) {
 
                                                     paramData.dataLists =   rows;
@@ -824,8 +832,9 @@ console.log( "####22" );
                                                     stmt = mapper.getStatement('indexRegister', 'saveTmJisuUpload', paramData, format);
                                                     console.log(stmt);
 
+console.log( "####2 saveTmJisuUpload start" );
                                                     conn.queryAsync(stmt).then(rows => {
-console.log( "####23" );
+console.log( "####2 saveTmJisuUpload end" );
                                                         conn.commit();
 
                                                         resultMsg.result = true;
@@ -848,9 +857,9 @@ console.log( "####23" );
                                                         res.json(resultMsg);
                                                         res.end();
                                                     });                                 
-console.log( "####24" );
+
                                                 }else{
-console.log( "####25" );                                                        
+
                                                     conn.commit();
 
                                                     resultMsg.result = true;
@@ -863,7 +872,7 @@ console.log( "####25" );
                                             }).catch(err => {
                                                 console.log(err);
                                             });                                                
-console.log( "####26" );
+
                                         }).catch(err => {
 
                                             console.log(err);
@@ -878,18 +887,20 @@ console.log( "####26" );
 
                                             conn.rollback();
                                         });
-console.log( "####27" );
+
                                     }
                                     else{
-console.log( "####28" );
+
                                         paramData.file_id  =    paramData.jisu_file_id;
 
                                         /* 5. [tm_jisu_temp_upload] 조회 */
                                         var stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
                                         console.log(stmt);
 
+console.log( "####3 getTmJisuTempUpload start" );
                                         conn.queryAsync(stmt).then(rows => {
-console.log( "####29" );
+console.log( "####3 getTmJisuTempUpload end" );
+
                                             if( rows && rows.length > 0 ) {
 
                                                 paramData.dataLists =   rows;
@@ -898,8 +909,9 @@ console.log( "####29" );
                                                 stmt = mapper.getStatement('indexRegister', 'saveTmJisuUpload', paramData, format);
                                                 console.log(stmt);
 
+console.log( "####3 saveTmJisuUpload start" );
                                                 conn.queryAsync(stmt).then(rows => {
-console.log( "####30" );
+console.log( "####3 saveTmJisuUpload end" );
                                                     conn.commit();
 
                                                     resultMsg.result = true;
@@ -922,9 +934,9 @@ console.log( "####30" );
                                                     res.json(resultMsg);
                                                     res.end();
                                                 });                                 
-console.log( "####31" );
+
                                             }else{
-console.log( "####32" );
+
                                                 conn.commit();
 
                                                 resultMsg.result = true;
@@ -933,15 +945,14 @@ console.log( "####32" );
                                                 res.json(resultMsg);
                                                 res.end();      
                                             }                                              
-console.log( "####33" );
+
                                         }).catch(err => {
                                             console.log(err);
                                         });
 
                                     }
                                 }
-                    
-console.log( "####34" );
+
                             }).catch(err => {
 
                                 console.log(err);
