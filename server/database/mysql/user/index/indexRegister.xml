@@ -246,6 +246,7 @@
             ,   method_file_id
             ,   jisu_file_id
             ,   req_content 
+            ,   status
 
             ,   reg_id 
             ,   reg_time 
@@ -264,6 +265,7 @@
             ,   ${method_file_id}
             ,   ${jisu_file_id}
             ,   #{req_content}
+            ,   #{status}
 
             ,   #{user_id}
             ,   now() 

@@ -118,7 +118,9 @@ process.on('uncaughtException', function(err) {
     console.log('uncaughtException 발생함 : ' + err);
     console.log('서버 프로세스 종료하지 않고 유지함.');
 
-    console.log(err.stack);
+    if( err && err.stack ) {
+        console.log(err.stack);
+    }
 });
 
 // 프로세스 종료 시에 데이터베이스 연결 해제
