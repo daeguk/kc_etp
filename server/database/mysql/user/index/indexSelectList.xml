@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="indexSelectList">  
+
+    <!--
+    * 코드 상세정보를 조회한다.
+    * 2019-04-10  bkLove(촤병국)
+    -->
+    <select id="getCodeDtl">
+        SELECT      tm_code_dtl.com_mst_cd          AS  com_mst_cd
+                ,   tm_code_dtl.com_dtl_cd          AS  com_dtl_cd
+                
+                ,   tm_code_dtl.com_dtl_name        AS  com_dtl_name
+                ,   tm_code_dtl.com_val01           AS  com_val01
+                ,   tm_code_dtl.com_val02           AS  com_val02
+                ,   tm_code_dtl.com_val03           AS  com_val03
+
+          FROM          tm_code_mast
+         INNER  JOIN    tm_code_dtl
+
+                ON      tm_code_mast.com_mst_cd     =   tm_code_dtl.com_mst_cd
+
+         WHERE  tm_code_mast.use_yn                 =   '1'
+           AND  tm_code_dtl.use_yn                  =   '1'
+           AND  tm_code_mast.com_mst_cd             =   #{com_mst_cd}
+    </select>
+
+    <!--
+    * [tm_jisu_mast] 데이터를 조회한다.
+    * 2019-04-10  bkLove(촤병국)
+    -->
+    <select id="getJisuMast">
+        SELECT      tm_jisu_mast.jisu_id            AS  jisu_id
+
+                ,   tm_jisu_mast.jisu_kor_nm        AS  jisu_kor_nm
+                ,   tm_jisu_mast.jisu_eng_nm        AS  jisu_eng_nm
+                ,   tm_jisu_mast.jisu_summary       AS  jisu_summary
+                ,   tm_jisu_mast.base_jisu          AS  base_jisu
+                ,   tm_jisu_mast.base_date          AS  base_date
+                ,   tm_jisu_mast.method_file_id     AS  method_file_id
+                ,   tm_jisu_mast.jisu_file_id       AS  jisu_file_id
+                ,   tm_jisu_mast.req_content        AS  req_content
+                ,   tm_jisu_mast.status             AS  status
+
+                ,   (
+                        SELECT  tm_code_dtl.com_dtl_name
+                          FROM  tm_code_dtl
+                         WHERE  tm_code_dtl.com_mst_cd  =   'COM001'
+                           AND  tm_code_dtl.status      =   tm_jisu_mast.status
+                    )                               AS  status_nm
+
+          FROM  tm_jisu_mast
+         WHERE  tm_jisu_mast.reg_id                 =   #{user_id}
+    </select>
+
+</mapper>
