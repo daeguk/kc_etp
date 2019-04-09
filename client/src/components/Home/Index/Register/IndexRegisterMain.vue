@@ -51,7 +51,7 @@
                             <v-divider></v-divider>
                             <v-list-tile class="right_menu_newbtn">
                                 <v-list-tile-content>
-                                    <v-btn nomal depressed color="#ff821d" dark>신규지수등록</v-btn>
+                                    <v-btn nomal depressed color="#ff821d" dark  @click="fn_jisuRegister()">신규지수등록</v-btn>
                                 </v-list-tile-content>
                             </v-list-tile>
                             <quickmenucon></quickmenucon>
@@ -65,6 +65,8 @@
 
 
 <script>
+import Config from "@/js/config.js";
+
 import registration from "./registration.vue";
 import quickmenucon from "./quickmenucon.vue";
 import registrationModify from "./registrationModify.vue";
@@ -77,10 +79,24 @@ export default {
             mini: false
         };
     },
+    
     components: {
         registration: registration,
         quickmenucon: quickmenucon,
         registrationModify: registrationModify
+    },
+
+    methods: {
+
+        /*
+         * Quick Menu -> [신규지수등록] 버튼 클릭시 registration.vue 화면을 호출한다.
+         * 2019-04-10  bkLove(촤병국)
+         */
+        fn_jisuRegister() {
+            var vm = this;
+
+            vm.$EventBus.$emit( "indexRegisterMain_clear_call", "clear" );
+        }
     }
 };
 </script>

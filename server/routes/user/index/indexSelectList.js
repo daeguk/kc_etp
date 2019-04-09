@@ -14,7 +14,7 @@ var fs = require('fs');
 
 
 /* 
- * 기관정보를 조회한다.
+ * 지수등록 상태정보를 조회한다.
  * 2019-04-10  bkLove(촤병국)
  */
 var getStatusList = function(req, res) {
@@ -38,7 +38,7 @@ var getStatusList = function(req, res) {
 
         var paramData = JSON.parse( JSON.stringify(req.body.data) );
 
-        /* 2. 상태정보를 조회한다. */
+        /* 2. 지수 등록 상태정보를 조회한다. */
         var format = { language: 'sql', indent: '' };
         var stmt = mapper.getStatement('indexSelectList', 'getCodeDtl', paramData, format);
         console.log(stmt);
@@ -46,11 +46,22 @@ var getStatusList = function(req, res) {
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
 
+                var     arrList = [];
+                if ( rows ) {
+
+                    for( var i=0; i < rows.length; i++ ) {
+                        var data    =   rows[i];
+
+                        arrList.push( data.com_dtl_name );
+                    }
+                }
+
                 resultMsg.result = true;
                 resultMsg.msg    = "";
                 res.json({
-                    resultMsg: resultMsg,
-                    dataList: []
+                        resultMsg: resultMsg
+                    ,   arrList: arrList
+                    ,   dataList : rows
                 });
                 res.end();
 
@@ -73,8 +84,9 @@ var getStatusList = function(req, res) {
         }
 
         res.json({
-            resultMsg: resultMsg,
-            dataList: []
+                resultMsg: resultMsg
+            ,   arrList : []
+            ,   dataList: []
         });
         res.end();        
     }
@@ -86,68 +98,79 @@ var getStatusList = function(req, res) {
 */
 
 /* 
- * 기관정보를 조회한다.
+ * 등록된 지수정보를 조회한다.
  * 2019-04-10  bkLove(촤병국)
  */
 var getIndexSelectList = function(req, res) {
-    console.log('indexSelectList.getIndexSelectList 호출됨.');
+    
+    try{
+        console.log('indexSelectList.getIndexSelectList 호출됨.');
 
-    var pool = req.app.get("pool");
-    var mapper = req.app.get("mapper");
-    var result = false;
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
 
-    var paramData = {};
 
-    /* 1. 기관정보를 조회한다. */
-    var format = { language: 'sql', indent: '' };
-    var stmt = mapper.getStatement('indexSelectList', 'getJisuMast', paramData, format);
-    console.log(stmt);
+        var paramData = {};
+        if ( req.body.data ) {
+            JSON.parse( JSON.stringify(req.body.data) );
+        }
 
-    Promise.using(pool.connect(), conn => {
-        conn.queryAsync(stmt).then(rows => {
+        /* TODO: 추후 세션의 사용자 ID 로 변경 필요. */
+        paramData.user_id = 'test01';
 
-            if ( rows ) {
+        /* 1. 기관정보를 조회한다. */
+        var format = { language: 'sql', indent: '' };
+        var stmt = mapper.getStatement('indexSelectList', 'getJisuMast', paramData, format);
+        console.log(stmt);
 
-                var     dataList = [];
-                for( var i=0, inx=0; i < rows.length; i=i+3 ) {
-                    var data    =   rows[i];
-                    var groupData = {};
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
 
-                    groupData.one = data;
-                    console.log( "i=[" + i + "]=" + JSON.stringify(data) );                    
+                if ( rows ) {
 
-                    groupData.two = {};
-                    if( i+1 < rows.length ) {
-                        data = rows[i+1];
-                        groupData.two = data;
-                        console.log( "i+1=[" + (i+1) + "]=" + JSON.stringify(data) );
+                    for( var i=0; i < rows.length; i++ ) {
+                        var data        =   rows[i];
+                        var status_pos  =   parseInt( data.status_position );
+
+                        data.arr_status_position  =   [];
+                        data.arr_status_position.push( 0 );
+                        data.arr_status_position.push( status_pos );
                     }
-
-                    groupData.three = {};
-                    if( i+2 < rows.length ) {
-                        data = rows[i+2];
-                        groupData.three = data;
-                        console.log( "i+2=[" + (i+2) + "]=" + JSON.stringify(data) );
-                    }
-
-                    dataList[inx++] = groupData;
                 }
 
+                resultMsg.result = true;
+                resultMsg.msg    = "";
                 res.json({
-                      dataGroupList: dataList
-                    , dataList : rows
+                        resultMsg: resultMsg
+                    ,   dataList: rows
                 });
                 res.end();
-            }
 
-        }).catch(err => {
-            console.log("[error] indexSelectList.getIndexSelectList Error while performing Query.", err);
-            res.json({
-                dataList: []
+            }).catch(err => {
+                console.log("[error] indexSelectList.getIndexSelectList Error while performing Query.", err);
+
+                resultMsg.result = false;
+                resultMsg.msg    = "[error] indexSelectList.getIndexSelectList Error while performing Query";
+                
+                throw resultMsg;
             });
-            res.end();
         });
-    });
+
+    } catch(expetion) {
+        console.log(expetion);
+
+        if( resultMsg && !resultMsg.msg ) {
+            resultMsg.result = false;
+            resultMsg.msg    = "[error] indexSelectList.getIndexSelectList 오류가 발생하였습니다.";
+        }
+
+        res.json({
+                resultMsg: resultMsg
+            ,   dataList : []
+        });
+        res.end();        
+    }
 }
 
 

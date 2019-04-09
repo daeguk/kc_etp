@@ -95,9 +95,9 @@ var getDomainInst = function(req, res) {
     Promise.using(pool.connect(), conn => {
         conn.queryAsync(stmt).then(rows => {
 
+            var     dataList = [];
             if ( rows ) {
 
-                var     dataList = [];
                 for( var i=0, inx=0; i < rows.length; i=i+3 ) {
                     var data    =   rows[i];
                     var groupData = {};
@@ -121,13 +121,13 @@ var getDomainInst = function(req, res) {
 
                     dataList[inx++] = groupData;
                 }
-
-                res.json({
-                      dataGroupList: dataList
-                    , dataList : rows
-                });
-                res.end();
             }
+
+            res.json({
+                    dataGroupList: dataList
+                ,   dataList : rows
+            });
+            res.end();
 
         }).catch(err => {
             console.log("[error] indexRegister.getDomainInst Error while performing Query.", err);
