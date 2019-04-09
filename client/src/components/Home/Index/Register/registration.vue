@@ -508,7 +508,10 @@ export default {
 
     created() {
 
-        /* indexRegisterMain -> 신규지수등록 버튼 클릭시 clear 호출 */
+        /*
+         * indexRegisterMain -> 신규지수등록 버튼 클릭시 clear 호출
+         * 2019-04-10  bkLove(촤병국)
+         */        
         this.$EventBus.$on( "indexRegisterMain_clear_call", res => {
 
             var vm  = this;
