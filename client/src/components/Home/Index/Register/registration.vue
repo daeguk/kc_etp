@@ -117,6 +117,7 @@
                                     <!--달력-->
                                     <v-layout row wrap>
                                         <v-flex xs12 sm6 md6>
+                                            
                                             <v-menu
                                                 ref="menu"
                                                 v-model="menu"
@@ -450,7 +451,6 @@ export default {
             jisuDataList : [],
             jisuUploadResult : false,
 
-//            , date: new Date().toISOString().substr(0, 10)
             menu: false,
             dialog: false,
             dialog2: false,
@@ -481,19 +481,20 @@ export default {
                     v => !!v || "[지수 한글명] is required",
                     v =>
                         (v && v.length <= 50) ||
-                        "[지수 한글명] must be less than 50 characters"
+                        "[지수 한글명] 50자 까지만 입력가능합니다."
                 ],
                 jisu_summary: [
                     v => !!v || "[지수 개요] is required",
                     v =>
                         (v && v.length <= 2000) ||
-                        "[지수 개요] must be less than 2000 characters"
+                        "[지수 개요] 2000자 까지만 입력가능합니다."
                 ],
                 base_jisu: [
                     v => !!v || "[기준 지수] is required",
+                    v => /^([0-9]*)[\.]?([0-9]{3})?$/.test( v ) || "[기준지수] 숫자형만 입력가능합니다.(소수점 3자리까지만)",
                     v =>
-                        (v && v.length <= 17) ||
-                        "[기준 지수]] must be less than 17 characters"
+                        (v && v.length <= 10) ||
+                        "[기준 지수]] 10자리 이하로 입력해 주세요."
                 ],
                 base_date: [v => !!v || "[기준일] is required"]
             }
@@ -629,6 +630,7 @@ export default {
          */
         fn_jisuDuplCheck() {
             var vm = this;
+            var regType = /^[A-Za-z0-9+]*$/;
 
             /* 1. 지수 ID 필수 체크 */
             if (!this.form.jisu_id) {
@@ -638,7 +640,19 @@ export default {
 
                 return false;
             } else if (this.form.jisu_id.length > 10) {
-                alert("[기준 ID] must be less than 10 characters");
+                alert("[기준 ID] 10자리 까지만 입력 가능합니다.");
+                this.$refs.jisu_id.focus();
+                vm.form.duplCheckResult = false;
+
+                return false;
+            } else if (this.form.jisu_id.length < 5) {
+                alert("[기준 ID] 5자리 이상 입력해 주세요.");
+                this.$refs.jisu_id.focus();
+                vm.form.duplCheckResult = false;
+
+                return false;
+            } else if( !regType.test( this.form.jisu_id ) ) {
+                alert("[기준 ID] 숫자와 영문자만 가능합니다.");
                 this.$refs.jisu_id.focus();
                 vm.form.duplCheckResult = false;
 
@@ -692,7 +706,15 @@ export default {
                         "Content-Type": "multipart/form-data"
                     }
                 }).then(function(response) {
-                    console.log(response);
+                    if( response.data ) {
+
+                        var resultData = response.data;
+
+                        alert( resultData.msg );
+                        if( !resultData.result ) {
+                            
+                        }
+                    }
                 });
         },
 

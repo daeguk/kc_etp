@@ -549,7 +549,8 @@ console.log( paramData );
 console.log( "####1" );
                             conn.queryAsync(stmt).then(rows => {
 console.log( "####2" );
-                                paramData.method_file_id     =   rows.insertId;
+                                paramData.method_file_id        =   rows.insertId;
+                                paramData.status                =   "01";       // 상태 (01: 등록완료, 02:연동신청, 03: 연동완료 )
 
                                 /* 4. [tm_jisu_mast] 저장  */
                                 stmt = mapper.getStatement('indexRegister', 'saveTmJisuMast', paramData, format);
@@ -786,6 +787,8 @@ console.log( "####18" );
                             });
 console.log( "####19" );                            
                         }else{
+
+                            paramData.status                =   "01";       // 상태 (01: 등록완료, 02:연동신청, 03: 연동완료 )
 
                             /* 4. [tm_jisu_mast] 저장  */
                             stmt = mapper.getStatement('indexRegister', 'saveTmJisuMast', paramData, format);
