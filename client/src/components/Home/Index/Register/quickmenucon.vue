@@ -13,7 +13,7 @@
                     <v-toolbar-title>{{item.jisu_kor_nm}}</v-toolbar-title>
                     <v-spacer></v-spacer>
                     <v-btn icon @click>
-                        <v-icon color="primary">edit</v-icon>
+                        <v-icon color="primary" @click="fn_showJisuEdit(item.jisu_id)">edit</v-icon>
                     </v-btn>
                 </v-toolbar>
                 <v-range-slider
@@ -95,7 +95,7 @@ export default {
         /*
          * 등록된 인덱스 목록을 조회한다.
          * 2019-04-10  bkLove(촤병국)
-         */        
+         */
         fn_getIndexSelectList() {
 
             var vm = this;
@@ -107,6 +107,14 @@ export default {
                     vm.indexSelectList   = response.data.dataList;
                 }
             });
+        },
+
+        /*
+         * 선택된 지수 정보를 조회한다.
+         * 2019-04-10  bkLove(촤병국)
+         */
+        fn_showJisuEdit( jisu_id ) {
+            alert( jisu_id );
         }
     }
 };

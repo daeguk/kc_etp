@@ -87,9 +87,14 @@ export default {
     },
 
     methods: {
+
+        /*
+         * Quick Menu -> [신규지수등록] 버튼 클릭시 registration.vue 화면을 호출한다.
+         * 2019-04-10  bkLove(촤병국)
+         */
         fn_jisuRegister() {
             var vm = this;
-            
+
             vm.$EventBus.$emit( "indexRegisterMain_clear_call", "clear" );
         }
     }
