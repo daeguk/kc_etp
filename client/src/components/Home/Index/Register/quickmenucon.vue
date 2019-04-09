@@ -7,81 +7,18 @@
         </v-list-tile>
 
 
-        <v-list-tile class="right_menu_con_w">
+        <v-list-tile class="right_menu_con_w" v-for="(item, index) in indexSelectList">
             <v-list-tile-content class="w_1">
                 <v-toolbar flat>
-                    <v-toolbar-title>DBfn 전기자동차 지수</v-toolbar-title>
+                    <v-toolbar-title>{{item.jisu_kor_nm}}</v-toolbar-title>
                     <v-spacer></v-spacer>
                     <v-btn icon @click>
                         <v-icon color="primary">edit</v-icon>
                     </v-btn>
                 </v-toolbar>
                 <v-range-slider
-                    :tick-labels="seasons"
-                    :value="[0, 0]"
-                    always-dirty
-                    min="0"
-                    max="2"
-                    ticks="always"
-                    readonly
-                ></v-range-slider>
-            </v-list-tile-content>
-        </v-list-tile>
-
-        <v-list-tile class="right_menu_con_w">
-            <v-list-tile-content class="w_1">
-                <v-toolbar flat>
-                    <v-toolbar-title>DBfn 전기자동차 지수</v-toolbar-title>
-                    <v-spacer></v-spacer>
-                    <v-btn icon @click>
-                        <v-icon color="primary">edit</v-icon>
-                    </v-btn>
-                </v-toolbar>
-                <v-range-slider
-                    :tick-labels="seasons"
-                    :value="[0, 1]"
-                    always-dirty
-                    min="0"
-                    max="2"
-                    ticks="always"
-                    readonly
-                ></v-range-slider>
-            </v-list-tile-content>
-        </v-list-tile>
-
-        <v-list-tile class="right_menu_con_w">
-            <v-list-tile-content class="w_1">
-                <v-toolbar flat>
-                    <v-toolbar-title>DBfn 전기자동차 지수</v-toolbar-title>
-                    <v-spacer></v-spacer>
-                    <v-btn icon @click>
-                        <v-icon color="primary">edit</v-icon>
-                    </v-btn>
-                </v-toolbar>
-                <v-range-slider
-                    :tick-labels="seasons"
-                    :value="[0, 2]"
-                    always-dirty
-                    min="0"
-                    max="2"
-                    ticks="always"
-                    readonly
-                ></v-range-slider>
-            </v-list-tile-content>
-        </v-list-tile>
-
-        <v-list-tile class="right_menu_con_w">
-            <v-list-tile-content class="w_1">
-                <v-toolbar flat>
-                    <v-toolbar-title>DBfn 전기자동차 지수</v-toolbar-title>
-                    <v-spacer></v-spacer>
-                    <v-btn icon @click>
-                        <v-icon color="primary">edit</v-icon>
-                    </v-btn>
-                </v-toolbar>
-                <v-range-slider
-                    :tick-labels="seasons"
-                    :value="[0, 2]"
+                    :tick-labels="statusList"
+                    :value="item.arr_status_position"
                     always-dirty
                     min="0"
                     max="2"
@@ -100,7 +37,7 @@ import Config from "@/js/config.js";
 export default {
 
     data: () => ({
-        seasons: [ "등록완료", "연동신청", "연동완료" ],
+//        seasons: [ "등록완료", "연동신청", "연동완료" ],
         drawer: true,
         items: [
             { title: "Home", icon: "dashboard" },
@@ -109,8 +46,8 @@ export default {
         mini: false,
         right: null,
 
-        statusList : [],
-        indexSelectList : []
+        statusList : [],            /* 등록상태명 배열정보 */
+        indexSelectList : []        /* 등록된 지수목록 */
     }),
 
     created() {
@@ -141,10 +78,16 @@ export default {
          */
         fn_getStatusList() {
 
+            var vm = this;
+
             axios.post(Config.base_url + "/user/index/getStatusList", {
                 data: { com_mst_cd: "COM001" }
             }).then(function(response) {
+
                 if (response && response.data) {
+                    vm.statusList   = response.data.arrList;
+
+                    vm.fn_getIndexSelectList();
                 }
             });
         },
@@ -155,10 +98,13 @@ export default {
          */        
         fn_getIndexSelectList() {
 
+            var vm = this;
+
             axios.post(Config.base_url + "/user/index/getIndexSelectList", {
                 data: {  }
             }).then(function(response) {
                 if (response && response.data) {
+                    vm.indexSelectList   = response.data.dataList;
                 }
             });
         }
