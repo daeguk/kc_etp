@@ -511,7 +511,24 @@
           },
          ]
       }
-    }
+    },
+
+    created() {
+
+        /*
+         * quickmenucon -> 수정버튼 버튼 클릭시 이벤트를 수신한다.
+         * 2019-04-10  bkLove(촤병국)
+         */        
+        this.$EventBus.$on( "quickmenucon_edit_call", res => {
+
+            var vm  = this;
+            console.log( ">> val=[" + res + "]");
+        });
+    },
+
+    beforeDestory : function() {
+        this.$EventBus.$off("indexRegisterMain_clear_call");
+    }    
   }
 
 </script>

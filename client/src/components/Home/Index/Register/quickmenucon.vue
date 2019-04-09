@@ -114,7 +114,9 @@ export default {
          * 2019-04-10  bkLove(촤병국)
          */
         fn_showJisuEdit( jisu_id ) {
-            alert( jisu_id );
+            var vm = this;
+
+            vm.$EventBus.$emit( "quickmenucon_edit_call", {jisu_id : jisu_id} );
         }
     }
 };
