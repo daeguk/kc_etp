@@ -630,11 +630,6 @@ export default {
         this.fn_getDomainInst();
     },
 
-    created() {
-        console.log( "eventBus emit >> ");
-        this.$EventBus.$emit( "test", "xxxxtest" );
-    },
-
     methods: {
         /*
          * 이미 등록된 지수ID 가 존재하는지 확인한다.
@@ -723,8 +718,10 @@ export default {
                         var resultData = response.data;
 
                         alert( resultData.msg );
-                        if( !resultData.result ) {
-                            
+                        if( resultData.result ) {
+//                          console.log( "eventBus emit >> ");
+//                          vm.$EventBus.$emit( "test", "xxxxtest" );
+                            vm.$router.push( "/index/manage" );                            
                         }
                     }
                 });
