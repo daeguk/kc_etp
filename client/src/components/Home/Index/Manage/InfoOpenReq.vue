@@ -21,7 +21,7 @@
                 disable-initial-sort
             >
                 <template slot="items" slot-scope="props">
-                    <td class="text-xs-center">{{ props.item.reg_id }}</td>
+                    <td class="text-xs-center">{{ props.item.REG_ID }}</td>
                     <td class="text-xs-center">{{ props.item.INST_NAME }}</td>
                     <td class="text-xs-center">{{ props.item.F16002 }}</td>
                     <td class="text-xs-center">{{ props.item.F16013 }}</td>
@@ -101,7 +101,7 @@ export default {
                     text: "reqID",
                     align: "center",
                     sortable: false,
-                    value: "reg_id"
+                    value: "REG_ID"
                 },
                 {
                     text: "신청기관",
