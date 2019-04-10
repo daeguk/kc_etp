@@ -312,7 +312,7 @@
                         </h4>
 
                         <v-container fluid>
-                            <v-layout v-for="(item, index) in arr_show_inst">
+                            <v-layout v-for="(item, index) in arr_show_inst" :key="index">
                                 <v-flex xs3 v-if="Object.keys(item.one).length > 0">
                                     <v-icon color="#1976d2">near_me</v-icon>
                                     <b>{{item.one.inst_name}}</b>
@@ -370,7 +370,7 @@
                                                 row
                                                 fill-height
 
-                                                v-for="(item, index) in arr_group_inst"
+                                                v-for="(item, index) in arr_group_inst" :key="index"
                                             >
                                                 <v-flex xs3>
                                                     <v-checkbox
@@ -449,13 +449,13 @@ export default {
             pagination : {
                 rowsPerPage : 5
             },
-
-            menu: false,
-            dialog: false,
-            dialog2: false,
-
             jisuDataList : [],          /* 소급지수 업로드 후 목록정보 */
             jisuUploadResult : false,   /* 소급지수 업로드 결과 여부 */
+
+
+            menu: false,                /* 기준일 달력 메뉴 */
+            dialog: false,
+            dialog2: false,
 
             arr_org_inst : [],          /* (원본) 기관정보 원본 목록정보 */
             arr_group_inst : [],        /* (원본) 3개를 1개로 그룹핑한 기관정보 ( 기관정보 팝업창에 노출 ) */

@@ -7,7 +7,7 @@
         </v-list-tile>
 
 
-        <v-list-tile class="right_menu_con_w" v-for="(item, index) in indexSelectList">
+        <v-list-tile class="right_menu_con_w" v-for="(item, index) in indexSelectList" :key="index">
             <v-list-tile-content class="w_1">
                 <v-toolbar flat>
                     <v-toolbar-title>{{item.jisu_kor_nm}}</v-toolbar-title>

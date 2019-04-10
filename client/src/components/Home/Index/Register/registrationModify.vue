@@ -462,7 +462,7 @@
 
 <script>
 export default {
-    props: ["editData"],
+    props: [ "editData" ],
     data() {
         return {
             date: new Date().toISOString().substr(0, 10),
