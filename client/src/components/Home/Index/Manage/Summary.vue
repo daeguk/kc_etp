@@ -24,7 +24,7 @@
 
             <v-tabs-items v-model="activeTab">
                 <v-tab-item v-for="tab of tabs"  :key="tab.id" :to="tab.route" >
-                  
+                    
                 </v-tab-item>
             </v-tabs-items>    
         
