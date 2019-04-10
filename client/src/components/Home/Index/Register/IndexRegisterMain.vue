@@ -10,7 +10,7 @@
                         </h3>
                     </v-card-title>
                     <registrationModify v-if="editYn" :editData="editData"></registrationModify>
-                    <registration v-if="!editYn"></registration>
+                    <registration v-show="!editYn"></registration>
                 </v-card>
             </v-flex>
             <v-flex shrink>
@@ -18,7 +18,7 @@
                     <v-navigation-drawer
                         clipped
                         width="250"
-                        class="drawer-style"
+                        class="drawer-style" 
                         mini-variant-width="50"
                         v-model="drawer"
                         :mini-variant.sync="mini"
@@ -79,7 +79,7 @@ export default {
             mini: false,
 
             editYn : false,
-            editData : {},
+            editData : {}
         };
     },
     
@@ -98,8 +98,8 @@ export default {
             var vm = this;
             
             if( res && res.jisu_id ) {
-                vm.editYn = true;
-                vm.editData = { 'jisu_id': res.jisu_id} ;
+                vm.editYn   = true;
+                vm.editData = { 'jisu_id': res.jisu_id };
             }
         });
     }, 
@@ -107,13 +107,14 @@ export default {
     methods: {
 
         /*
-         * Quick Menu -> [신규지수등록] 버튼 클릭시 registration.vue 화면을 호출한다.
+         * Quick Menu -> [신규지수등록] 버튼 클릭시 신규지수등록 화면을 호출한다.
          * 2019-04-10  bkLove(촤병국)
          */
         fn_jisuRegister() {
             var vm = this;
 
-            vm.$EventBus.$emit( "indexRegisterMain_clear_call", "clear" );
+            vm.editYn = false;
+            vm.$EventBus.$emit( "indexRegisterMain_registration_call", "clear" );
         }
     }
 };

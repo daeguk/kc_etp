@@ -34,6 +34,8 @@
                     </h4>
 
                     <v-container fluid>
+
+                        <!-- 지수 산출기관 -->
                         <v-layout row>
                             <v-flex xs2>
                                 <v-subheader>지수산출기관</v-subheader>
@@ -44,6 +46,7 @@
                             </v-flex>
                         </v-layout>
 
+                        <!-- 지수 ID-->
                         <v-layout row>
                             <v-flex xs2>
                                 <v-subheader>지수ID</v-subheader>
@@ -59,36 +62,12 @@
                                         <template v-slot:activator="{ on }">
                                             <v-btn small depressed color="primary" dark>중복확인</v-btn>
                                         </template>
-                                        <v-card>
-                                            <h5>
-                                                <v-card-title ma-0>
-                                                    ID중복확인
-                                                    <v-spacer></v-spacer>
-                                                    <v-btn icon @click="dialog = false">
-                                                        <v-icon>close</v-icon>
-                                                    </v-btn>
-                                                </v-card-title>
-                                            </h5>
-                                            <v-card-text>Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.</v-card-text>
-                                            <v-card-actions>
-                                                <v-spacer></v-spacer>
-                                                <v-btn
-                                                    color="green darken-1"
-                                                    flat
-                                                    @click="dialog = false"
-                                                >Disagree</v-btn>
-                                                <v-btn
-                                                    color="green darken-1"
-                                                    flat
-                                                    @click="dialog = false"
-                                                >Agree</v-btn>
-                                            </v-card-actions>
-                                        </v-card>
                                     </v-dialog>
                                 </v-layout>
                             </v-flex>
                         </v-layout>
 
+                        <!-- 지수한글명-->
                         <v-layout row>
                             <v-flex xs2>
                                 <v-subheader>지수한글명</v-subheader>
@@ -99,6 +78,7 @@
                             </v-flex>
                         </v-layout>
 
+                        <!-- 지수개요 -->
                         <v-layout row>
                             <v-flex xs2>
                                 <v-subheader>지수개요</v-subheader>
@@ -108,6 +88,7 @@
                             </v-flex>
                         </v-layout>
 
+                        <!-- 기준지수 -->
                         <v-layout row>
                             <v-flex xs2>
                                 <v-subheader>기준지수</v-subheader>
@@ -117,6 +98,7 @@
                             </v-flex>
                         </v-layout>
 
+                        <!-- 기준일 -->
                         <v-layout row>
                             <v-flex xs2>
                                 <v-subheader>기준일</v-subheader>
@@ -184,6 +166,8 @@
                         </span>
                     </h4>
                     <v-container fluid>
+
+                        <!-- 지수방법론 -->
                         <v-layout row>
                             <v-flex xs2>
                                 <v-subheader>지수방법론</v-subheader>
@@ -197,6 +181,7 @@
                             </v-flex>
                         </v-layout>
 
+                        <!-- 소급지수 -->
                         <v-layout row>
                             <v-flex xs2>
                                 <v-subheader>소급지수</v-subheader>
@@ -219,6 +204,7 @@
                             </v-flex>
                         </v-layout>
 
+                        <!-- 요청사항 -->
                         <v-layout row>
                             <v-flex xs2>
                                 <v-subheader>요청사항</v-subheader>
@@ -283,12 +269,15 @@
 
                         <v-layout>
                             <v-flex xs12 class="add_btn">
+
                                 <v-dialog v-model="dialog2" persistent max-width="700">
+
                                     <template v-slot:activator="{ on }">
                                         <v-btn flat icon color="#888888" dark v-on="on">
                                             <v-icon>add_circle_outline</v-icon>
                                         </v-btn>
                                     </template>
+
                                     <!---특정기관과의 공유 팝업-->
                                     <v-card>
                                         <h5>
@@ -473,9 +462,8 @@
 
 <script>
 export default {
-    props: [ "editData" ],
+    props: ["editData"],
     data() {
-        
         return {
             date: new Date().toISOString().substr(0, 10),
             menu: false,
@@ -524,8 +512,7 @@ export default {
         };
     },
     mounted: function() {
-
-      alert( ">>>>" + this.editData.jisu_id );
+        alert(">>>>" + this.editData.jisu_id);
     }
 };
 </script>

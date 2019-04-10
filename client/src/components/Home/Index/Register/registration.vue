@@ -10,6 +10,7 @@
                         </h4>
 
                         <v-container fluid>
+
                             <!-- 지수 산출기관 -->
                             <v-layout row>
                                 <v-flex xs2>
@@ -512,14 +513,15 @@ export default {
          * indexRegisterMain -> 신규지수등록 버튼 클릭시 이벤트를 수신한다.
          * 2019-04-10  bkLove(촤병국)
          */
-        this.$EventBus.$on( "indexRegisterMain_clear_call", res => {
+        this.$EventBus.$on( "indexRegisterMain_registration_call", res => {
 
             var vm  = this;
 
-            console.log( ">> val=[" + res + "]");
+            console.log( ">> registration val=[" + res + "]");
 
             switch( res ) {
                 case    "clear" :
+
                         vm.$refs.form.reset();
 
                         vm.formData                 =   new FormData(); /* 지수방법론 파일 선택시 */
@@ -549,7 +551,7 @@ export default {
          * indexRegisterMain -> 신규지수등록 버튼 클릭시 이벤트를 제거한다.
          * 2019-04-10  bkLove(촤병국)
          */
-        this.$EventBus.$off("indexRegisterMain_clear_call");
+        this.$EventBus.$off("indexRegisterMain_registration_call");
     },
 
     mounted() {
