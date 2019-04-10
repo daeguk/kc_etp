@@ -267,6 +267,7 @@
                                     <v-data-table
                                         :headers="headers"
                                         :items="jisuDataList"
+                                        :pagination.sync="pagination"
                                         class="elevation-1"
                                     >
                                         <template v-slot:items="props">
@@ -444,7 +445,10 @@ export default {
                 { text: 'col01'     , value: 'col01'    , align:"center",  sortable: false },
                 { text: 'col02'     , value: 'col02'    , align:"center",  sortable: false },
                 { text: 'col03'     , value: 'col03'    , align:"center",  sortable: false }
-            ],    
+            ],
+            pagination : {
+                rowsPerPage : 5
+            },
 
             menu: false,
             dialog: false,
@@ -539,6 +543,8 @@ export default {
                         vm.$refs.file.value         =   null;           /* 수급지수 파일정보 */
 
                         vm.form.req_content         =   "";             /* 요청사항 */
+
+                        vm.pagination.rowsPerPage   =   5;
 
                         break;
             }     
