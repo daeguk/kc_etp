@@ -9,8 +9,8 @@
                             <span class="grey--text">지수의 기본정보 및 소급지수를 등록합니다.</span>
                         </h3>
                     </v-card-title>
-                    <!--registrationModify></registrationModify-->
-                    <registration></registration>
+                    <registrationModify v-if="editYn" :editData="editData"></registrationModify>
+                    <registration v-if="!editYn"></registration>
                 </v-card>
             </v-flex>
             <v-flex shrink>
@@ -76,7 +76,10 @@ export default {
         return {
             ticksLabels: ["등록완료", "연동신청", "연동완료"],
             drawer: true,
-            mini: false
+            mini: false,
+
+            editYn : false,
+            editData : {},
         };
     },
     
@@ -85,6 +88,21 @@ export default {
         quickmenucon: quickmenucon,
         registrationModify: registrationModify
     },
+
+    created() {
+        /*
+         * quickmenucon -> 수정버튼 버튼 클릭시 이벤트를 수신한다.
+         * 2019-04-10  bkLove(촤병국)
+         */
+        this.$EventBus.$on("quickmenucon_edit_call", res => {
+            var vm = this;
+            
+            if( res && res.jisu_id ) {
+                vm.editYn = true;
+                vm.editData = { 'jisu_id': res.jisu_id} ;
+            }
+        });
+    }, 
 
     methods: {
 

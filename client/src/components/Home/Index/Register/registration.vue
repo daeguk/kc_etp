@@ -511,7 +511,7 @@ export default {
         /*
          * indexRegisterMain -> 신규지수등록 버튼 클릭시 이벤트를 수신한다.
          * 2019-04-10  bkLove(촤병국)
-         */        
+         */
         this.$EventBus.$on( "indexRegisterMain_clear_call", res => {
 
             var vm  = this;
@@ -544,6 +544,11 @@ export default {
     },
 
     beforeDestory : function() {
+
+        /*
+         * indexRegisterMain -> 신규지수등록 버튼 클릭시 이벤트를 제거한다.
+         * 2019-04-10  bkLove(촤병국)
+         */
         this.$EventBus.$off("indexRegisterMain_clear_call");
     },
 
