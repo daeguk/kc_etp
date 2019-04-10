@@ -63,10 +63,15 @@ module.exports = {
 
         { file: './user/index/indexmanage', path: '/user/index/getIndexVueTableTestList', method: 'getIndexVueTableTestList', session: 'uncheck', type: 'get' },
         { file: './user/index/indexmanage', path: '/user/index/getIndexToastGridTestList', method: 'getIndexToastGridTestList', session: 'uncheck', type: 'get' },
-        { file: './user/index/indexmanage', path: '/user/index/getJisuDuplCheck', method: 'getJisuDuplCheck', session: 'uncheck', type: 'post' },
-        { file: './user/index/indexmanage', path: '/user/index/getDomainInst', method: 'getDomainInst', session: 'uncheck', type: 'post' },
-        { file: './user/index/indexmanage', path: '/user/index/fileuploadSingle', method: 'fileuploadSingle', session: 'uncheck', type: 'post' },
-        { file: './user/index/indexmanage', path: '/user/index/jisuSave', method: 'jisuSave', session: 'uncheck', type: 'post' },
+        
+        { file: './user/index/indexRegister', path: '/user/index/getJisuDuplCheck', method: 'getJisuDuplCheck', session: 'uncheck', type: 'post' },
+        { file: './user/index/indexRegister', path: '/user/index/getDomainInst', method: 'getDomainInst', session: 'uncheck', type: 'post' },
+        { file: './user/index/indexRegister', path: '/user/index/fileuploadSingle', method: 'fileuploadSingle', session: 'uncheck', type: 'post' },
+        { file: './user/index/indexRegister', path: '/user/index/jisuSave', method: 'jisuSave', session: 'uncheck', type: 'post' },
+
+        { file: './user/index/indexSelectList', path: '/user/index/getStatusList', method: 'getStatusList', session: 'uncheck', type: 'post' },
+        { file: './user/index/indexSelectList', path: '/user/index/getIndexSelectList', method: 'getIndexSelectList', session: 'uncheck', type: 'post' },
+
         //일반 MARKET INFO
         { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getetfkorlist', method: 'getEtfKorList', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getetfforlist', method: 'getEtfForList', session: 'uncheck', type: 'get' },

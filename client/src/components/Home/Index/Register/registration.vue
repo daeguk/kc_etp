@@ -435,11 +435,7 @@ export default {
             valid: true,
 
             dragAndDropCapable: false,
-            files: [],
-            file: "",
-            showMethodFile : "",
-            uploadPercentage: 0,
-
+            
 
             headers: [
                 { text: '파일ID'     , value: 'file_id' , align:"center",  sortable: false,},
@@ -448,19 +444,21 @@ export default {
                 { text: 'col02'     , value: 'col02'    , align:"center",  sortable: false },
                 { text: 'col03'     , value: 'col03'    , align:"center",  sortable: false }
             ],    
-            jisuDataList : [],
-            jisuUploadResult : false,
 
             menu: false,
             dialog: false,
             dialog2: false,
 
-            arr_org_inst : [],          /* 기관정보 원본 목록정보 */
-            arr_group_inst : [],        /* 3개를 1개로 그룹핑한 기관정보 ( 기관정보 팝업창에 노출 ) */
-            arr_show_inst : [],         /* 4개를 1개로 그룹핑한 기관정보 ( 팝업창에서 선택된 기관정보 노출 ) */
+            jisuDataList : [],          /* 소급지수 업로드 후 목록정보 */
+            jisuUploadResult : false,   /* 소급지수 업로드 결과 여부 */
 
+            arr_org_inst : [],          /* (원본) 기관정보 원본 목록정보 */
+            arr_group_inst : [],        /* (원본) 3개를 1개로 그룹핑한 기관정보 ( 기관정보 팝업창에 노출 ) */
+            arr_show_inst : [],         /* (사용자가 선택) 4개를 1개로 그룹핑한 기관정보 ( 팝업창에서 선택된 기관정보 노출 ) */
 
-            formData : new FormData(),
+            formData : new FormData(),  /* 지수방법론 파일 선택시 */
+            showMethodFile : "",        /* 지수방법론 파일명 */
+
             form: {
                 duplCheckResult: false,
 
@@ -506,6 +504,47 @@ export default {
                 }
             }
         };
+    },
+
+    created() {
+
+        /*
+         * indexRegisterMain -> 신규지수등록 버튼 클릭시 이벤트를 수신한다.
+         * 2019-04-10  bkLove(촤병국)
+         */        
+        this.$EventBus.$on( "indexRegisterMain_clear_call", res => {
+
+            var vm  = this;
+
+            console.log( ">> val=[" + res + "]");
+
+            switch( res ) {
+                case    "clear" :
+                        vm.$refs.form.reset();
+
+                        vm.formData                 =   new FormData(); /* 지수방법론 파일 선택시 */
+                        vm.$refs.methodFile.value   =   null;           /* 지수방법론 파일정보 */
+                        vm.showMethodFile           =   null;           /* 지수방법론 파일명 */
+
+                        vm.form.duplCheckResult     =   false;
+                        vm.method_file_id           =   -1;
+                        vm.jisu_file_id             =   -1;
+                        vm.arr_jisu_inst            =   [];             /* 선택된 기관 정보 */
+                        vm.arr_show_inst            =   [];             /* (사용자가 선택) 4개를 1개로 그룹핑한 기관정보 ( 팝업창에서 선택된 기관정보 노출 ) */
+
+                        vm.jisuDataList             =   [];             /* 소급지수 업로드 후 목록정보 */
+                        vm.jisuUploadResult         =   false;          /* 소급지수 업로드 결과 여부 */
+                        vm.$refs.file.value         =   null;           /* 수급지수 파일정보 */
+
+                        vm.form.req_content         =   "";             /* 요청사항 */
+
+                        break;
+            }     
+        })
+    },
+
+    beforeDestory : function() {
+        this.$EventBus.$off("indexRegisterMain_clear_call");
     },
 
     mounted() {
@@ -718,8 +757,8 @@ export default {
                         var resultData = response.data;
 
                         alert( resultData.msg );
-                        if( !resultData.result ) {
-                            
+                        if( resultData.result ) {
+                            vm.$router.push( "/index/manage" );
                         }
                     }
                 });
