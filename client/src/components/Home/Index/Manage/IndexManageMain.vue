@@ -1,4 +1,5 @@
 <template>
+<div id="app">
     <v-layout row wrap>
         <v-flex xs12>
             <v-tabs
@@ -19,12 +20,13 @@
             </v-tabs>
 
             <v-tabs-items v-model="activeTab">
-                <v-tab-item v-for="tab of tabs"  :key="tab.id" :to="tab.route" >                    
+                <v-tab-item v-for="tab of tabs"  :key="tab.id" :to="tab.route" >
+                     <router-view />    
                 </v-tab-item>
-            </v-tabs-items>    
-        
+            </v-tabs-items>
       </v-flex>
     </v-layout> 
+</div>
 </template>
 
 <script>
@@ -34,6 +36,7 @@
 //import indexDetailrtmenu from "./indexDetailrtmenu.vue";
 
 export default {
+    name: 'app',
     data() {
         return {
             activeTab: '/index/manage/indexSummary',
@@ -51,6 +54,8 @@ export default {
         //indexDetailrtmenu   :indexDetailrtmenu,
     },
     mounted: function() {
+        //this.$router.push("/index/manage/indexSummary");
+
         if (this.$route.query.tab !== undefined) {
             this.tab = this.$route.query.tab;
             setLeftControlBoxDraw(1);

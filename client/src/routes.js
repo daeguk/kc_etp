@@ -37,7 +37,7 @@ export const routes = [
     children: [        
         // INDEX
         {   path : 'index/manage',
-            component: IndexManageMain,           
+            component: IndexManageMain,
         },
         {
             path : 'index/manage/indexSummary',

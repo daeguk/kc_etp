@@ -36,7 +36,7 @@ export default {
           title: 'INDEX',
           active: true,
           subitems: [
-            { title: '지수관리', link: '/index/manage' },
+            { title: '지수관리', link: '/index/manage/indexSummary' },
             { title: '지수등록', link: '/index/register'  },
             { title: '지수개발', link: '/index/develop'  }
           ],
