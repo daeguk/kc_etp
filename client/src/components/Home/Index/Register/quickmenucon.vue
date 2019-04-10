@@ -116,7 +116,12 @@ export default {
         fn_showJisuEdit( jisu_id ) {
             var vm = this;
 
-            vm.$EventBus.$emit( "quickmenucon_edit_call", {jisu_id : jisu_id} );
+            if( jisu_id ) {
+                /*
+                * quickmenucon -> 수정버튼 버튼 클릭시 이벤트를 호출한다.
+                */
+                vm.$EventBus.$emit( "quickmenucon_edit_call", {jisu_id : jisu_id} );
+            }
         }
     }
 };
