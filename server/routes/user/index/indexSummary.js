@@ -326,6 +326,50 @@ var getIndexEtpHistoryData = function (req, res) {
 
 
 
+/*
+* 지수에 속한 ETP 정보
+*/
+var getIndexInEtpInfo = function (req, res) {
+    try {
+        console.log('indexSummary=>getIndexInEtpInfo 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        // var options = {id:'admin'};
+        
+        var options = {
+            jisu_cd: req.query.jisu_cd,
+            market_id: req.query.market_id
+        };
+
+        util.log("options", JSON.stringify(options));
+
+        var stmt = mapper.getStatement('index', 'getIndexInEtpInfo', options, {language:'sql', indent: '  '});
+     
+
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
+
+
  
 
 module.exports.getIndexSummaryInfo = getIndexSummaryInfo;
@@ -335,3 +379,4 @@ module.exports.getInfoIndexList = getInfoIndexList;
 module.exports.getIndexSummaryHist = getIndexSummaryHist;
 module.exports.getIndexBaseInfo = getIndexBaseInfo;
 module.exports.getIndexEtpHistoryData = getIndexEtpHistoryData;
+module.exports.getIndexInEtpInfo = getIndexInEtpInfo;
