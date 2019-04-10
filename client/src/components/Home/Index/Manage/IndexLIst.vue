@@ -29,7 +29,7 @@
                                             flat
                                             icon
                                             color="blue"
-                                            to="/index/manage/IndexListdetail"
+                                            :to="{path: '/index/manage/IndexListdetail', query :{'jisu_cd':props.item.JISU_CD, 'market_id':props.item.MARKET_ID}}"
                                              dark v-on="on"
                                         >
                                             <v-icon>equalizer</v-icon>

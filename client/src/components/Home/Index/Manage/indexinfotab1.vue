@@ -6,8 +6,8 @@
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">Index Info</h4>
                     <v-data-table
-                        :headers="headers1"
-                        :items="desserts1"
+                        :headers="headers"
+                        :items="indexInfo"
                         disable-initial-sort
                         hide-actions
                         hide-headers
@@ -85,60 +85,52 @@
 <script>
 
 export default {
-    props: [],
+    props: ["index_item"],
     data() {
         return {
             results: [],
             rowsPerPageItems: [50, 50],
-            headers1: [
+            headers: [
                 { text: "ID", align: "center", sortable: false, value: "id" },
                 {
                     text: "지수명",
                     align: "center",
-                    sortable: false,
+                    sortable: false, 
                     value: "inst_name"
                 }
             ],
-            desserts1: [
+            indexInfo: [
                 {
-                    name: "Frozen Yogurt",
-                    calories: 159
+                    name: "기준지수",
+                    calories: this.index_item.STD_INDEX
                 },
                 {
-                    name: "Ice cream sandwich",
-                    calories: 237
+                    name: "기준일",
+                    calories: this.index_item.STD_DATE
                 },
                 {
-                    name: "Eclair",
-                    calories: 262
+                    name: "발표일",
+                    calories: this.index_item.ANNO_DATE
                 },
                 {
-                    name: "Cupcake",
-                    calories: 305
+                    name: "지수산출방식",
+                    calories: this.index_item.INDEX_CAL_METHOD
                 },
                 {
-                    name: "Gingerbread",
-                    calories: 356
+                    name: "기준시가총액",
+                    calories: this.index_item.STD_CAPITAL
                 },
                 {
-                    name: "Jelly bean",
-                    calories: 375
+                    name: "비교시가총액",
+                    calories: this.index_item.STD_CAPITAL
                 },
                 {
-                    name: "Lollipop",
-                    calories: 392
+                    name: "고정현금",
+                    calories: this.index_item.FIXED_CASH
                 },
                 {
-                    name: "Honeycomb",
-                    calories: 408
-                },
-                {
-                    name: "Donut",
-                    calories: 452
-                },
-                {
-                    name: "KitKat",
-                    calories: 518
+                    name: "유동비율적용여부",
+                    calories: this.index_item.FLOWRATE_YN
                 }
             ],
             headers2: [

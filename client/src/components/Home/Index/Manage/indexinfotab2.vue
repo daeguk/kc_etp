@@ -194,6 +194,7 @@ export default {
             dialog: false,
             dialog2: false,
             results: [],
+            search:"",
             headers: [
                 {
                     text: "",

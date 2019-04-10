@@ -7,14 +7,14 @@
                         <v-card-title primary-title>
                             <div class="title_wrap01">
                                 <h3 class="headline mb-0">
-                                    TIGER 미국달러선물레버리지
-                                    <span class="grey--text">261110</span>
+                                   {{this.results.F16002}}
+                                    <span class="grey--text">{{results.F16013}}</span> 
                                 </h3>
                                 <div class="right_btn">
                                     <v-layout align-right>
                                         <v-flex xs12 sm4 text-xs-center>
                                             <div class="btn_r">
-                                                <v-btn outline color="indigo" small>목록으로 돌아가기</v-btn>
+                                                <v-btn outline color="indigo" small :to="{path:'/index/manage', query:{tab:1}}">목록으로 돌아가기</v-btn>
                                             </div>
                                         </v-flex>
                                     </v-layout>
@@ -33,13 +33,13 @@
                     </div>
                     <div class="graph_01_w">
                         <div class="sub_title_num">
-                            1273.46
-                            <span>+23 21(0.9%)</span>
-                            <p>Last Updated : 2019.3.20 09:40:20</p>
+                            {{results.F15001}}
+                            <span>{{results.F15472}}({{results.F15004}})</span>
+                            <p>Last Updated : {{results.F12506}}</p>
                         </div>
                         <v-card flat class="graph_toggle">
                             <v-flex xs12 sm6 class="py-2">
-                                <v-btn-toggle v-model="text" class="toggle_01">
+                                <v-btn-toggle v-model="toggle_one" class="toggle_01">
                                     <v-btn flat value="1D">1D</v-btn>
                                     <v-btn flat value="1W">1W</v-btn>
                                     <v-btn flat value="1M">1M</v-btn>
@@ -51,9 +51,10 @@
                             </v-flex>
                         </v-card>
                         <div
+                            id="index_chart_div"
                             class="graph_01"
-                            style="height:100px;background-color:#f6f6f6;"
-                        >그래프들어갑니다</div>
+                            style="height:300px;background-color:#f6f6f6;"
+                        ></div>
                     </div>
 
                     <div class="tab2_w">
@@ -72,10 +73,10 @@
 
                                 <v-tabs-items v-model="tab">
                                     <v-tab-item>
-                                        <indexinfotab1></indexinfotab1>
+                                        <indexinfotab1 :index_item="results"></indexinfotab1>
                                     </v-tab-item>
                                     <v-tab-item>
-                                        <indexinfotab2></indexinfotab2>
+                                        <!--indexinfotab2></indexinfotab2-->
                                     </v-tab-item>
                                     <v-tab-item>
                                         <indexinfotab3></indexinfotab3>
@@ -96,22 +97,114 @@ import indexinfotab1 from "./indexinfotab1.vue";
 import indexinfotab2 from "./indexinfotab2.vue";
 import indexinfotab3 from "./indexinfotab3.vue";
 
+import Config from "@/js/config.js";
 export default {
     data() {
         return {
             text: "center",
             toggle_none: null,
-            toggle_one: 0,
+            toggle_one: '1D',
             toggle_exclusive: 2,
             toggle_multiple: [0, 1, 2],
             tab: null,
-            items: ["기본정보", "분석정보", "정보공개 목록"]
+            items: ["기본정보", "분석정보", "정보공개 목록"],
+            results:{}
         };
     },
     components: {
         indexinfotab1: indexinfotab1,
-        indexinfotab2: indexinfotab2,
+        //indexinfotab2: indexinfotab2,
         indexinfotab3: indexinfotab3
-    }
+    }, 
+    computed: {},
+    created: function() {},
+    beforeDestroy() {},
+    mounted: function() {
+        this.getIndexBaseInfo();
+        this.Indexchart();
+    },
+    methods: {
+        getIndexBaseInfo: function() {
+            var vm = this;
+            console.log("getIndexBaseInfo");
+            
+            axios.get(Config.base_url + "/user/index/getIndexBaseInfo", {
+                    params: {
+                        jisu_cd : vm.$route.query.jisu_cd,
+                        market_id : vm.$route.query.market_id
+                        
+                    }
+                }).then(response => {
+                    // console.log(response);
+                    if (response.data.success == false) {
+                        alert("지수정보가 없습니다.");
+                    } else {
+                        var items = response.data.results;
+                        vm.results = items[0];
+                        console.log("response=" + JSON.stringify(vm.results));
+                        //this.list_cnt = this.results.length;
+                    }
+                });
+        },         
+        Indexchart: function() {
+            // Load the Visualization API and the corechart package.
+            google.charts.load('current', {'packages':['corechart']});
+
+            // Set a callback to run when the Google Visualization API is loaded.
+            google.charts.setOnLoadCallback(drawChart(this.$route.query.jisu_cd, this.$route.query.market_id));
+
+            // Callback that creates and populates a data table,
+            // instantiates the pie chart, passes in the data and
+            // draws it.
+      
+            function drawChart(jisu_cd, market_id) {
+                
+                
+                // Create the data table.
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', 'date');
+                data.addColumn('number', 'DBF 500 Index');
+
+                // Set chart options
+                var options = {'title':' ',
+                            'width':'100%',
+                            'height':'300px',
+                            'hAxis':{format:'yyyy-MM-dd HH:mm:ss'}};
+ 
+                
+                axios.get(Config.base_url + "/user/index/getIndexEtpHistoryData", {                    
+                    params: {
+                        jisu_cd : jisu_cd,
+                        market_id : market_id
+                        
+                    }
+                }).then(response => {
+                    // console.log(response);
+                    if (response.data.success == false) {
+                        alert("지수정보가 없습니다.2"); 
+                    } else {
+                        var items = [] 
+
+                        for (let item of response.data.results) {
+                            items.push([item.trd_dd, item.close_idx]);
+                        }
+
+                        data.addRows(
+                            items
+                        );
+
+                        // Instantiate and draw our chart, passing in some options.
+                        var chart = new google.visualization.LineChart(document.getElementById('index_chart_div'));
+                        chart.draw(data, options);
+                    }
+                });
+
+
+                
+                
+            }
+        },
+    } 
+
 };
 </script>

@@ -72,6 +72,7 @@
          AND INST_CD = #{INST_CD}
     </update>
 
+    <!-- 지수 목록 정보-->
     <select id="getIndexList">
         <![CDATA[  
         SELECT A.JISU_CD
@@ -101,6 +102,7 @@
     </select>
 
 
+    <!-- 성과가 가장 좋은 지수-->
     <select id="indexSummaryResult">
     <![CDATA[
       WITH  JISU AS
@@ -160,12 +162,59 @@
     ]]>
     </select>
   
+    <!-- 1년간 지수 정보(그래프정보)-->
     <select id="selectIndexSummaryHist">
     <![CDATA[
         SELECT F12506 as trd_dd, F15009 as close_idx
           FROM TD_INDEX_HISTORY
-         WHERE F12506 >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 YEAR), '%Y%M%D')
+         WHERE F12506 >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 YEAR), '%Y%m%d')
            AND F16013 = #{JISU_ID}
+    ]]>
+    </select>
+
+    <!-- 인덱스 기본정보-->
+    <select id="getIndexBaseInfo">
+    <![CDATA[
+        SELECT date_format(BAS.F12506, "%Y.%m.%d") F12506
+              ,BAS.F16013
+              ,BAS.F16002
+              ,BAS.F15009
+              ,BAS.F15010
+              ,BAS.F15011
+              ,format(BAS.F15001, '###,###,###') F15001
+              ,format(BAS.F15007, '###,###,###') F15007
+              ,format(BAS.F15015, '###,###,###') F15015
+              ,format(BAS.F15023, '###,###,###') F15023
+              ,BAS.F15472
+              ,BAS.F15004
+              ,BAS.F15006
+              ,format(BAS.F15028, '###,###,###') F15028
+              ,BAS.LARGE_TYPE
+              ,BAS.MIDDLE_TYPE
+              ,BAS.MARKET_ID
+              ,BAS.STD_INDEX
+              ,date_format(BAS.STD_DATE, "%Y.%m.%d") STD_DATE
+              ,date_format(BAS.ANNO_DATE, "%Y.%m.%d") ANNO_DATE
+              ,BAS.INDEX_CAL_METHOD
+              ,BAS.STD_CAPITAL
+              ,BAS.FIXED_CASH
+              ,BAS.FLOWRATE_YN
+        FROM KC_ETP.TD_INDEX_BASIC BAS
+        WHERE BAS.F16013 = #{jisu_cd}
+          and BAS.MARKET_ID = #{market_id}
+    ]]>
+    </select>
+
+    <!-- 1년간 지수와 ETP 정보(그래프정보)-->
+    <select id="getIndexEtpHistoryData">
+    <![CDATA[
+        SELECT date_format(B.F12506, "%Y.%m.%d") as trd_dd, B.F15001 as close_idx
+          FROM td_index_basic A, 
+               td_index_history B
+         WHERE A.F16013 = B.F16013
+           AND A.F16013 = #{jisu_cd}
+           AND A.MARKET_ID = #{market_id}
+           AND B.F12506 >= date_format(DATE_SUB(now(), INTERVAL 1 YEAR), '%Y%m%d')
     ]]>
     </select>
 </mapper>

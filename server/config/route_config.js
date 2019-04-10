@@ -50,11 +50,17 @@ module.exports = {
         { file: './user/etp/etpregister', path: '/user/etp/getetpapplylist', method: 'getEtpApplyList', session: 'uncheck', type: 'get' },
         //일반 INDEX register
 
+        // 지수 요약 정보
         { file: './user/index/indexSummary', path: '/user/index/getIndexSummaryInfo', method: 'getIndexSummaryInfo', session: 'uncheck', type: 'post' },   
         { file: './user/index/indexSummary', path: '/user/index/getinfoopenreqlist', method: 'getInfoOpenReqList', session: 'uncheck', type: 'get' },   
         { file: './user/index/indexSummary', path: '/user/index/getindexsummaryhist', method: 'getIndexSummaryHist', session: 'uncheck', type: 'get' },
         { file: './user/index/indexSummary', path: '/user/index/updateIndexOpenYn', method: 'updateIndexOpenYn', session: 'uncheck', type: 'post' },
         { file: './user/index/indexSummary', path: '/user/index/getInfoIndexList', method: 'getInfoIndexList', session: 'uncheck', type: 'get' },   
+        { file: './user/index/indexSummary', path: '/user/index/getIndexBaseInfo', method: 'getIndexBaseInfo', session: 'uncheck', type: 'get' },   
+        { file: './user/index/indexSummary', path: '/user/index/getIndexEtpHistoryData', method: 'getIndexEtpHistoryData', session: 'uncheck', type: 'get' },   
+
+
+
         { file: './user/index/indexmanage', path: '/user/index/getIndexVueTableTestList', method: 'getIndexVueTableTestList', session: 'uncheck', type: 'get' },
         { file: './user/index/indexmanage', path: '/user/index/getIndexToastGridTestList', method: 'getIndexToastGridTestList', session: 'uncheck', type: 'get' },
         { file: './user/index/indexmanage', path: '/user/index/getJisuDuplCheck', method: 'getJisuDuplCheck', session: 'uncheck', type: 'post' },

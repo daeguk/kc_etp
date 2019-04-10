@@ -48,7 +48,7 @@ export default {
         getIndexSummaryHist: function() {
             var vm = this;
             console.log('getIndexSummaryHist');
-            setTimeout(() => {
+            
                 axios.get(Config.base_url+'/user/index/getindexsummaryhist', {
                     params: {
                         "jisu_id" : vm.chartItem.code
@@ -68,7 +68,7 @@ export default {
                         vm.chartLoadFlag = true;
                     }
                 });
-            }, 500);
+           
         },
     }
 }

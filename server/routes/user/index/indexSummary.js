@@ -194,7 +194,9 @@ var getInfoIndexList = function (req, res) {
     });
 };
 
-
+/*
+* 지수 요약정보 그래프 데이터
+*/
 var getIndexSummaryHist = function (req, res) {
     try {
         console.log('indexSummary=>getindexsummaryhist 호출됨.');
@@ -234,6 +236,94 @@ var getIndexSummaryHist = function (req, res) {
     }
 };
 
+/*
+* 지수 기본 정보 
+*/
+var getIndexBaseInfo = function (req, res) {
+    try {
+        console.log('indexSummary=>getIndexBaseInfo 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        // var options = {id:'admin'};
+        
+        var options = {
+            jisu_cd: req.query.jisu_cd,
+            market_id: req.query.market_id
+        };
+
+        util.log("options", JSON.stringify(options));
+
+        var stmt = mapper.getStatement('index', 'getIndexBaseInfo', options, {language:'sql', indent: '  '});
+     
+
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
+
+/*
+* 지수 기본 정보 그래프 데이터
+*/
+var getIndexEtpHistoryData = function (req, res) {
+    try {
+        console.log('indexSummary=>getIndexEtpHistoryData 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        // var options = {id:'admin'};
+        
+        var options = {
+            jisu_cd: req.query.jisu_cd,
+            market_id: req.query.market_id
+        };
+
+        util.log("options", JSON.stringify(options));
+
+        var stmt = mapper.getStatement('index', 'getIndexEtpHistoryData', options, {language:'sql', indent: '  '});
+     
+
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
+
 
 
  
@@ -243,3 +333,5 @@ module.exports.getInfoOpenReqList = getInfoOpenReqList;
 module.exports.updateIndexOpenYn = updateIndexOpenYn;
 module.exports.getInfoIndexList = getInfoIndexList;
 module.exports.getIndexSummaryHist = getIndexSummaryHist;
+module.exports.getIndexBaseInfo = getIndexBaseInfo;
+module.exports.getIndexEtpHistoryData = getIndexEtpHistoryData;

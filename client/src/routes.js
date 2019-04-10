@@ -2,6 +2,12 @@
 import  Home        from './components/Home/Home.vue'
 // INDEX
 import  IndexManageMain   from './components/Home/Index/Manage/IndexManageMain.vue'
+
+import IndexMainSummary   from  '@/components/Home/Index/Manage/Summary.vue';
+import IndexMainIndexList   from  '@/components/Home/Index/Manage/IndexList.vue';
+import IndexMainIndexDetail   from  '@/components/Home/Index/Manage/IndexDetail.vue';
+
+
 import  IndexRegisterMain   from './components/Home/Index/Register/IndexRegisterMain.vue'
 import  IndexDevelopMain   from './components/Home/Index/Develop/IndexDevelopMain.vue'
 import  IndexDatepickerTestMain   from './components/Home/Index/ToastGridTest/IndexDatepickerTestMain.vue'
@@ -31,8 +37,20 @@ export const routes = [
     children: [        
         // INDEX
         {   path : 'index/manage',
-            component: IndexManageMain,
+            component: IndexManageMain,           
         },
+        {
+            path : 'index/manage/indexSummary',
+            component: IndexMainSummary
+        }, 
+        {
+            path : 'index/manage/indexList',
+            component: IndexMainIndexList
+        }, 
+        {
+            path : 'index/manage/indexDetail',
+            component: IndexMainIndexDetail
+        }, 
         {   path : 'index/register',
             component: IndexRegisterMain,
         },
