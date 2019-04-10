@@ -291,12 +291,9 @@ export default {
        
     }, 
     created : function() {
-        this.$EventBus.$on("LeftControlBoxDraw", draw => {
-            this.drawer = draw;
-        });
     },
     beforeDestory : function() {
-        this.$EventBus.$off("LeftControlBoxDraw");
+       
     }
 };
 </script>

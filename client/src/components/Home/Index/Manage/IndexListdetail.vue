@@ -14,7 +14,7 @@
                                     <v-layout align-right>
                                         <v-flex xs12 sm4 text-xs-center>
                                             <div class="btn_r">
-                                                <v-btn outline color="indigo" small :to="{path:'/index/manage', query:{tab:1}}">목록으로 돌아가기</v-btn>
+                                                <v-btn outline color="indigo" small :to="{path:'/index/manage/indexList'}">목록으로 돌아가기</v-btn>
                                             </div>
                                         </v-flex>
                                     </v-layout>

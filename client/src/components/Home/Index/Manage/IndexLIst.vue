@@ -39,7 +39,8 @@
                         </div>
                     </v-card-title>
                 </v-card>
-                <v-data-table :headers="headers" :items="results" :rows-per-page-items="rowsPerPageItems" class="table_line1">
+                <v-data-table :headers="headers" :items="results" :rows-per-page-items="rowsPerPageItems" :loading="loadingbar"  class="table_line1">
+                    <v-progress-circular slot="progress" color="blue" indeterminate></v-progress-circular>
                     <template slot="items" slot-scope="props">
                         <td class="text-xs-left">{{ props.item.JISU_CD }}</td>
                         <td class="text-xs-center">{{ props.item.JISU_NM }}</td>
@@ -112,6 +113,7 @@ export default {
             ],
 
             results: [],
+            loadingbar: false,
             list_cnt: 0
         };
     },
@@ -125,7 +127,7 @@ export default {
     methods: {
         getInfoIndexList: function() {
             console.log("getInfoIndexList");
-
+            this.loadingbar = true;
             axios.get(Config.base_url + "/user/index/getInfoIndexList", {
                     params: {
                     }
@@ -140,6 +142,7 @@ export default {
                         this.results = items;
                         this.list_cnt = this.results.length;
                     }
+                    this.loadingbar = false;
                 });
         }, 
         getReplace: function(text) {
