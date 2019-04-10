@@ -1,7 +1,34 @@
 <template>
 <div class="content_margin">
+
   <v-container class="summary_card_pad">
+        
   <v-layout row wrap>
+      <v-flex xs12>
+            <v-tabs
+            slot="extension"
+            dark
+            color="#3158a1"
+            v-model="activeTab"
+            align-with-title
+            app
+            fixed
+            clipped-right
+            >
+            <v-tabs-slider color="#ff821d"></v-tabs-slider>
+    
+            <v-tab v-for="tab of tabs"  :key="tab.id" :to="tab.route"  v-on:click="setLeftControlBoxDraw(index)">
+              {{ tab.name }}
+            </v-tab>
+            </v-tabs>
+
+            <v-tabs-items v-model="activeTab">
+                <v-tab-item v-for="tab of tabs"  :key="tab.id" :to="tab.route" >
+                  
+                </v-tab-item>
+            </v-tabs-items>    
+        
+      </v-flex> 
     <v-flex md4> 
         <IndexSummaryCard :item="cardItem1" :chartItem="chartItem1"></IndexSummaryCard>
     </v-flex>
@@ -32,7 +59,7 @@
        </v-flex>
     </v-layout>
   </v-container>
-</div> 
+</div>
 </template>
 
 
@@ -47,6 +74,12 @@ export default {
     props: [],
     data() {
         return {
+            activeTab: '/index/manage/indexSummary',
+            tabs: [
+                { id: 1, name: "Summary", route: '/index/manage/indexSummary' },
+                { id: 2, name: "관리지수목록", route: '/index/manage/indexList' },
+                { id: 3, name: "지수종목상세", route: '/index/manage/indexDetail' }
+            ],
             cardItem1: {
                 name:  "DBF 2차 산업혁명 지수",
                 subTitle: "the Newest Index",
