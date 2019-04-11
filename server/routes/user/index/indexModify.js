@@ -14,13 +14,58 @@ var fs = require('fs');
 
 
 /* 
- * 등록된 지수정보를 수정한다.
- * 2019-04-10  bkLove(촤병국)
+ * 등록된 지수정보를 조회한다.
+ * 2019-04-11  bkLove(촤병국)
+ */
+var getRegistedJisuData = function(req, res) {
+
+    var resultMsg = {};
+    
+    try{
+        console.log('indexModify.getRegistedJisuData 호출됨.');
+
+        resultMsg.result = true;
+        resultMsg.msg    = "";
+        res.json({
+                resultMsg: resultMsg
+            ,   dataList: []
+        });
+        res.end();        
+
+    } catch(expetion) {
+        console.log(expetion);
+
+        if( resultMsg && !resultMsg.msg ) {
+            resultMsg.result = false;
+            resultMsg.msg    = "[error] indexSelectList.getRegistedJisuData 오류가 발생하였습니다.";
+        }
+
+        res.json({
+                resultMsg: resultMsg
+            ,   dataList : []
+        });
+        res.end();   
+    }
+}
+
+/* 
+ * 지수 정보를 수정한다.
+ * 2019-04-11  bkLove(촤병국)
  */
 var modifyJisu = function(req, res) {
+
+    var resultMsg = {};
     
     try{
         console.log('indexModify.modifyJisu 호출됨.');
+
+        resultMsg.result = true;
+        resultMsg.msg    = "";
+        res.json({
+                resultMsg: resultMsg
+            ,   dataList: []
+        });
+        res.end();        
 
     } catch(expetion) {
         console.log(expetion);
@@ -39,5 +84,6 @@ var modifyJisu = function(req, res) {
 }
 
 
+module.exports.getRegistedJisuData = getRegistedJisuData;
 module.exports.modifyJisu = modifyJisu;
 

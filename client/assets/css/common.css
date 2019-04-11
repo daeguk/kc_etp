@@ -42,7 +42,7 @@ h6{font-size:16px;}
 
 
 .v-subheader.subheader_r{display: inherit !important; text-align: right; padding-top:5px; padding-right:15px; margin-right:10px}
-.v-subheader.subheader_r.essen{ background: url("../img/essential.png") no-repeat right top; }
+.v-subheader.subheader_r.essen{ background: url("../img/essential.png") no-repeat right 11px; }
 
 
 /*알럿창*/
@@ -90,20 +90,33 @@ h3.subtit p.sub_txt{font-size:14px; font-weight: normal;}
 
 .graph_02_w{ padding:0; background-color:#f6f6f6;width:100%;}
 
-.indexinfo_box01{ width:100%;padding:16px 24px 0 24px; margin-top:10px;}
-.indexinfo_box02{ width:100%;padding:16px 24px 0 0px; margin-top:10px;}
+
+
+.indexlist_ww .flex{padding:0 !important;}
+.indexinfo_box01{ width:100%;padding:12px 28px 0 24px; margin-top:10px;}
+.indexinfo_box01 .indexinfo_list_table{border-top:1px solid #9e9e9e;}
+.indexinfo_box02{ width:100%;padding:16px 28px 0 0px; margin-top:10px;}
+.indexinfo_box02.a2 .indexinfo_list_table{border-top:1px solid #9e9e9e;}
+.indexinfo_box02.a3 .indexinfo_list_table{border-top:1px solid #9e9e9e;}
 .indexinfo_box01 h4, .indexinfo_box02 h4{border-top:2px solid #9e9e9e;border-bottom:1px solid #9e9e9e; font-size: 18px; padding:10px;}
 .indexinfo_box01 table.v-table, .indexinfo_box02 table.v-table{border-bottom:2px solid #9e9e9e;}
 .indexinfo_box01 table.v-table th, .indexinfo_box01 table.v-table tbody td{ height:35px;}
 .indexinfo_box01 table.v-table tbody td{ font-size:14px; color:#101010;}
 
+.indexinfo_list_table .layout{border-bottom:1px solid #e0e0e0; padding:12px;}
+.indexinfo_list_table .layout .flex{font-size: 13px;}
+.indexinfo_list_table .layout .flex.text_r{text-align: right;}
+.indexinfo_list_table .v-list__tile{font-size: 13px !important;border-bottom:1px solid #e0e0e0; padding:12px 16px;width:100%;}
+.indexinfo_list_table .v-list__tile__content{font-size:13px !important; height:35px !important; justify-content: flex-end;}
+.indexinfo_list_table .v-list{padding:0px 0 !important;}
 
-.indexinfo_box02.a1 table.v-datatable thead th{font-size:14px;  color:red;}
-.indexinfo_box02 table.v-table tbody td{ height:35px;}
+.indexinfo_box02 .indexinfo_list_table .v-card__title{font-weight: 600; border-bottom:1px solid #9e9e9e;padding:12px;border-bottom:1px solid #9e9e9e;}
+.indexinfo_box02.a1 .indexinfo_list_table .v-card__title{font-size:14px;  color:red;}
+.indexinfo_box02.a2 .indexinfo_list_table .v-card__title{font-size:14px;  color:#ff8400;}
+.indexinfo_box02.a3 .indexinfo_list_table .v-card__title{font-size:14px;  color:#2f4cac;}
 
 .indexinfo_box02.a2, .indexinfo_box02.a3{margin-top:0;padding-top:0;}
-.indexinfo_box02.a2 table.v-datatable thead th{font-size:14px;  color:#ff8400;}
-.indexinfo_box02.a3 table.v-datatable thead th{font-size:14px;  color:#2f4cac;}
+
 
 .indexinfo_table01 table.v-table tbody td:first-child{padding:0px !important}
 .indexinfo_table01 img{ padding-right:0px; height:100%;}
@@ -125,6 +138,7 @@ h3.subtit p.sub_txt{font-size:14px; font-weight: normal;}
 .wrap001 .v-card__title{padding:24px 16px 0px 16px;}
 .register_wrap{border-top:3px solid #a1dbff; width:100%;}
 .register_wrap h4{padding:10px 0; font-size:16px;}
+.register_wrap h4 span{ color:#ff821d; font-size:14px;}
 .regi_status{ border-top:1px solid #9bc6e0 !important;border-bottom:1px solid #cbe2f0 !important; background-color: #f4fbff !important; padding-left:16px; margin-bottom:20px;}
 .regi_status span{padding-left:10px; font-weight: 600;}
 
@@ -214,5 +228,13 @@ input[type='file']{
 /*.etp_new h4{font-size: 18px; width:100%;  border-top:2px solid #1976d2; padding-bottom:15px;}*/
 
 .etp_new .register_wrap{border-top:3px solid #a1dbff; width:100%;}
-.etp_new .register_wrap h4{border-top:3px solid #a1dbff; width:100%; padding:10px 0; font-size:16px;}
+.etp_new .register_wrap h4{border-top:3px solid #a1dbff; width:100%; padding:10px 0 20px 0px; font-size:16px;}
 .etp_new .v-stepper__content{padding-top:0px;}
+
+.etp_apply_w{ height:35apply_prepx; text-align: center}
+.etp_apply_w .v-card{padding:15px 0; border-radius: 3px;}
+.etp_apply_w .v-icon{padding-right:5px;}
+.etp_apply_ta .theme--light.v-stepper{background:transparent;}
+.etp_apply_ta .v-stepper, .v-stepper__header{box-shadow:none;}
+.etp_apply_ta .theme--light.v-stepper .v-stepper__header .v-divider.divider_on{border:1px dashed #1976d2}
+.checkbox_w .v-input--selection-controls{margin-top:0px;}

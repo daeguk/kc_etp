@@ -116,8 +116,7 @@ var getIndexSelectList = function(req, res) {
             JSON.parse( JSON.stringify(req.body.data) );
         }
 
-        /* TODO: 추후 세션의 사용자 ID 로 변경 필요. */
-        paramData.user_id = 'test01';
+        paramData.user_id = req.session.user_id;
 
         /* 1. 기관정보를 조회한다. */
         var format = { language: 'sql', indent: '' };
