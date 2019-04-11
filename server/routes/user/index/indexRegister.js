@@ -483,6 +483,8 @@ console.log( "#### saveTmJisuMast end" );
 
                                     if( rows.affectedRows > 0 ) {
 
+                                        paramData.jisu_seq      =   rows.insertId;      /* 지수 시퀀스 */
+
                                         /* 4. [tm_jisu_share_req] 저장  */
                                         if( paramData.arr_jisu_inst && paramData.arr_jisu_inst.length > 0  ) {
 
@@ -723,6 +725,8 @@ console.log( "####2 saveTmJisuMast start" );
 console.log( "####2 saveTmJisuMast end" );
 
                                 if( rows.affectedRows > 0 ) {
+
+                                    paramData.jisu_seq      =   rows.insertId;      /* 지수 시퀀스 */
 
                                     /* 4. [tm_jisu_share_req] 저장  */
                                     if( paramData.arr_jisu_inst && paramData.arr_jisu_inst.length > 0  ) {

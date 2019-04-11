@@ -13,7 +13,7 @@
                     <v-toolbar-title>{{item.jisu_kor_nm}}</v-toolbar-title>
                     <v-spacer></v-spacer>
                     <v-btn icon @click>
-                        <v-icon color="primary" @click="fn_showJisuEdit(item.jisu_id)">edit</v-icon>
+                        <v-icon color="primary" @click="fn_showJisuEdit({ 'jisu_id' : item.jisu_id, 'jisu_seq' : item.jisu_seq } )">edit</v-icon>
                     </v-btn>
                 </v-toolbar>
                 <v-range-slider
@@ -113,14 +113,14 @@ export default {
          * 선택된 지수 정보를 조회한다.
          * 2019-04-10  bkLove(촤병국)
          */
-        fn_showJisuEdit( jisu_id ) {
+        fn_showJisuEdit( param ) {
             var vm = this;
 
-            if( jisu_id ) {
+            if( param ) {
                 /*
                 * quickmenucon -> 수정버튼 버튼 클릭시 이벤트를 호출한다.
                 */
-                vm.$EventBus.$emit( "quickmenucon_edit_call", {jisu_id : jisu_id} );
+                vm.$EventBus.$emit( "quickmenucon_IndexRegisterMain_call", param );
             }
         }
     }

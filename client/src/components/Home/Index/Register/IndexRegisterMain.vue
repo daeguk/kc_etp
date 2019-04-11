@@ -94,12 +94,12 @@ export default {
          * quickmenucon -> 수정버튼 버튼 클릭시 이벤트를 수신한다.
          * 2019-04-10  bkLove(촤병국)
          */
-        this.$EventBus.$on("quickmenucon_edit_call", res => {
+        this.$EventBus.$on("quickmenucon_IndexRegisterMain_call", res => {
             var vm = this;
             
             if( res && res.jisu_id ) {
                 vm.editYn   = true;
-                vm.editData = { 'jisu_id': res.jisu_id };
+                vm.editData = res;
             }
         });
     }, 

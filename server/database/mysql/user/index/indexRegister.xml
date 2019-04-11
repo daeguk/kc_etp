@@ -10,7 +10,7 @@
     <select id="getJisuDuplCheck">
         SELECT  COUNT(1)   AS  cnt
           FROM  tm_jisu_mast
-         WHERE  tm_jisu_mast.jisu_id    =   #{jisu_id}
+         WHERE  tm_jisu_mast.jisu_id                =   #{jisu_id}
     </select>
 
     <!--
@@ -115,7 +115,7 @@
     <insert     id="saveTmJisuUpload">
         INSERT  INTO    tm_jisu_upload 
         ( 
-                jisu_id
+                jisu_seq
             ,   row_no
 
             ,   jisu_file_id
@@ -131,7 +131,7 @@
         VALUES 
         <foreach    collection="dataLists"   item="data"     separator="," >
         ( 
-                #{jisu_id}
+                #{jisu_seq}
             ,   ${data.row_no}
 
             ,   ${jisu_file_id}
@@ -148,13 +148,13 @@
     </insert>
 
     <!--
-    * 지수ID 별 최신 이력번호를 조회한다.
+    * 지수 시퀀스 별 최신 이력번호를 조회한다.
     * 2019-04-02  bkLove(촤병국)
     -->
     <select id="getHistNoByTmJisuUploadHist">
         SELECT	IFNULL( MAX( HIST_NO ), 0 ) + 1     AS  hist_no
         FROM	tm_jisu_upload_hist
-        WHERE	tm_jisu_upload_hist.jisu_id         =   #{jisu_id}#
+        WHERE	tm_jisu_upload_hist.jisu_seq        =   #{jisu_seq}#
     </select>    
 
     <!--
@@ -165,7 +165,7 @@
         INSERT  INTO    tm_jisu_upload_hist
         ( 
                 hist_no
-            ,   jisu_id
+            ,   jisu_seq
             ,   row_no
 
             ,   jisu_file_id
@@ -182,7 +182,7 @@
         <foreach    collection="dataLists"   item="data"     separator="," >
         ( 
                 ${hist_no}
-            ,   #{jisu_id}
+            ,   #{jisu_seq}
             ,   ${data.row_no}
 
             ,   ${file_id}
@@ -205,9 +205,10 @@
     <insert     id="saveTmJisuShareReq">
         INSERT  INTO    tm_jisu_share_req
         ( 
-                jisu_id
+                jisu_seq
             ,   inst_cd
 
+            ,   jisu_id
             ,   req_flag
             ,   reg_id 
             ,   reg_time
@@ -217,9 +218,10 @@
         VALUES 
         <foreach    collection="arr_jisu_inst"   item="item"    index="index"   separator="," >
         ( 
-                #{jisu_id}
+                #{jisu_seq}
             ,   #{item}
 
+            ,   #{jisu_id}
             ,   #{req_flag}
             ,   #{user_id}
             ,   now()
@@ -237,7 +239,6 @@
         INSERT  INTO    tm_jisu_mast 
         ( 
                 jisu_id 
-
             ,   jisu_kor_nm 
             ,   jisu_eng_nm 
             ,   jisu_summary 
@@ -256,7 +257,6 @@
         VALUES    
         ( 
                 #{jisu_id}
-
             ,   #{jisu_kor_nm}
             ,   #{jisu_eng_nm}
             ,   #{jisu_summary}
