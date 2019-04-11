@@ -230,7 +230,7 @@
                                         type="text"
                                         class="upload-name"
                                         id="showMethodFile"
-                                        v-model="showMethodFile"
+                                        v-model="modForm.showMethodFile"
                                         disabled
                                     >
 
@@ -575,7 +575,6 @@ export default {
 
             /* 지수 방법론 관련 정보 */
             formData : new FormData(),  /* 지수방법론 파일 선택시 */
-            showMethodFile : "",        /* 지수방법론 파일명 */
 
 
             /* 입력값 관련 정보 */
@@ -591,6 +590,7 @@ export default {
                 method_file_id : -1,
                 jisu_file_id : -1,
                 req_content: "",
+                showMethodFile : "",
 
                 prev_jisu_id : "",
                 prev_mothod_file_id : -1,
@@ -652,19 +652,19 @@ export default {
 
                         vm.formData                 =   new FormData(); /* 지수방법론 파일 선택시 */
                         vm.$refs.methodFile.value   =   null;           /* 지수방법론 파일정보 */
-                        vm.showMethodFile           =   null;           /* 지수방법론 파일명 */
+                        vm.modForm.showMethodFile   =   null;           /* 지수방법론 파일명 */
+                        vm.modForm.method_file_id   =   -1;             /* 지수방법론 파일 ID */
 
-                        vm.modForm.duplCheckResult  =   false;
-                        vm.method_file_id           =   -1;
-                        vm.jisu_file_id             =   -1;
-                        vm.arr_jisu_inst            =   [];             /* 선택된 기관 정보 */
+                        vm.modForm.duplCheckResult  =   false;          /* 중복체크 결과 */
+                        vm.modForm.req_content      =   "";             /* 요청사항 */
+
+                        vm.modForm.arr_jisu_inst    =   [];             /* 선택된 기관 정보 */
                         vm.arr_show_inst            =   [];             /* (사용자가 선택) 4개를 1개로 그룹핑한 기관정보 ( 팝업창에서 선택된 기관정보 노출 ) */
 
+                        vm.modForm.jisu_file_id     =   -1;             /* 소급지수 파일 ID */
                         vm.jisuDataList             =   [];             /* 소급지수 업로드 후 목록정보 */
                         vm.jisuUploadResult         =   false;          /* 소급지수 업로드 결과 여부 */
                         vm.$refs.file.value         =   null;           /* 수급지수 파일정보 */
-
-                        vm.modForm.req_content      =   "";             /* 요청사항 */
 
                         vm.pagination.rowsPerPage   =   5;
 
@@ -755,7 +755,7 @@ export default {
                     var selfThis    =   this;
                     let file        =   e.dataTransfer.files[0];
 
-                    this.showMethodFile = file.name;
+                    this.modForm.showMethodFile = file.name;
 
                 }.bind(this)
             );            
@@ -792,7 +792,7 @@ export default {
                 var selfThis    =   this;
                 let file        =   this.$refs.methodFile.files[0];
 
-                this.showMethodFile = file.name;
+                this.modForm.showMethodFile = file.name;
 
                 this.$refs.methodForm.addEventListener(
                     evt,
@@ -868,7 +868,7 @@ export default {
          * 등록 버튼 클릭시
          * 2019-04-02  bkLove(촤병국)
          */
-        fn_save() {
+        fn_modifyJisu() {
             var vm = this;
 
             if (!this.modForm.duplCheckResult) {
@@ -888,7 +888,7 @@ export default {
             this.formData.append( "data", JSON.stringify(this.modForm) );
 
             axios.post(
-                Config.base_url + "/user/index/jisuSave",
+                Config.base_url + "/user/index/modifyJisu",
                 this.formData,
                 {
                     headers: {
@@ -1127,10 +1127,23 @@ export default {
             }).then(function(response) {
                 if (response && response.data) {
 
-debugger;
+                    if( response.data.modForm ) {
+                        selfThis.modForm = response.data.modForm;
+                        selfThis.modForm.duplCheckResult  =   true;
+                    }
 
-                    selfThis.arr_group_inst = response.data.dataGroupList;
-                    selfThis.arr_org_inst = response.data.dataList;
+                    if( response.data.arr_jisu_inst ) {
+                        selfThis.modForm.arr_jisu_inst  =   response.data.arr_jisu_inst;        /* 선택된 기관 정보 */
+                    }
+
+                    if( response.data.arr_show_inst ) {
+                        selfThis.arr_show_inst              =   response.data.arr_show_inst;    /* (사용자가 선택) 4개를 1개로 그룹핑한 기관정보 ( 팝업창에서 선택된 기관정보 노출 ) */
+                    }
+
+                    if( response.data.jisuDataList ) {
+                        selfThis.jisuDataList               =   response.data.jisuDataList;     /* 소급지수 업로드 후 목록정보 */
+                        selfThis.jisuUploadResult           =   true;                           /* 소급지수 업로드 결과 여부 */
+                    }
                 }
             });            
         }

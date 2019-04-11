@@ -361,7 +361,7 @@ var fileuploadSingle = function (req, res) {
  * 지수정보를 등록한다.
  * 2019-04-02  bkLove(촤병국)
  */
-var jisuSave = function (req, res) {
+var registerJisu = function (req, res) {
     console.log('indexRegister.save 호출됨.');
 
     var pool = req.app.get("pool");
@@ -918,4 +918,4 @@ console.log( "####3 saveTmJisuUpload end" );
 module.exports.getJisuDuplCheck = getJisuDuplCheck;
 module.exports.getDomainInst = getDomainInst;
 module.exports.fileuploadSingle = fileuploadSingle;
-module.exports.jisuSave = jisuSave;
+module.exports.registerJisu = registerJisu;

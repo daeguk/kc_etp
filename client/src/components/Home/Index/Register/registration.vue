@@ -188,7 +188,7 @@
                                 </v-flex>                              
 
                                 <v-flex xs4>
-                                    <input type='text' class='upload-name' id='showMethodFile' v-model="showMethodFile" disabled />
+                                    <input type='text' class='upload-name' id='showMethodFile' v-model="form.showMethodFile" disabled />
 
                                     <v-layout id="file-drag-drop"  ref="methodForm" class="drag_box">
                                         <input type="file" name="methodFile" ref="methodFile" style="display:none;">
@@ -474,7 +474,6 @@ export default {
 
             /* 지수 방법론 관련 정보 */
             formData : new FormData(),  /* 지수방법론 파일 선택시 */
-            showMethodFile : "",        /* 지수방법론 파일명 */
 
 
             /* 입력값 관련 정보 */
@@ -490,6 +489,7 @@ export default {
                 method_file_id : -1,
                 jisu_file_id : -1,
                 req_content: "",
+                showMethodFile : "",
 
                 arr_jisu_inst : []      /* 선택된 기관 정보 */
             },
@@ -547,21 +547,22 @@ export default {
 
                         vm.formData                 =   new FormData(); /* 지수방법론 파일 선택시 */
                         vm.$refs.methodFile.value   =   null;           /* 지수방법론 파일정보 */
-                        vm.showMethodFile           =   null;           /* 지수방법론 파일명 */
+                        vm.form.showMethodFile      =   null;           /* 지수방법론 파일명 */
+                        vm.form.method_file_id      =   -1;             /* 지수방법론 파일 ID */
 
-                        vm.form.duplCheckResult     =   false;
-                        vm.method_file_id           =   -1;
-                        vm.jisu_file_id             =   -1;
-                        vm.arr_jisu_inst            =   [];             /* 선택된 기관 정보 */
+                        vm.form.duplCheckResult     =   false;          /* 중복체크 결과 */
+                        vm.form.req_content         =   "";             /* 요청사항 */
+
+                        vm.form.arr_jisu_inst       =   [];             /* 선택된 기관 정보 */
                         vm.arr_show_inst            =   [];             /* (사용자가 선택) 4개를 1개로 그룹핑한 기관정보 ( 팝업창에서 선택된 기관정보 노출 ) */
 
+                        vm.form.jisu_file_id        =   -1;             /* 소급지수 파일 ID */
                         vm.jisuDataList             =   [];             /* 소급지수 업로드 후 목록정보 */
                         vm.jisuUploadResult         =   false;          /* 소급지수 업로드 결과 여부 */
                         vm.$refs.file.value         =   null;           /* 수급지수 파일정보 */
 
-                        vm.form.req_content         =   "";             /* 요청사항 */
-
                         vm.pagination.rowsPerPage   =   5;
+
 
                         break;
             }     
@@ -650,7 +651,7 @@ export default {
                     var selfThis    =   this;
                     let file        =   e.dataTransfer.files[0];
 
-                    this.showMethodFile = file.name;
+                    this.form.showMethodFile = file.name;
 
                 }.bind(this)
             );            
@@ -688,7 +689,7 @@ export default {
                 var selfThis    =   this;
                 let file        =   this.$refs.methodFile.files[0];
 
-                this.showMethodFile = file.name;
+                this.form.showMethodFile = file.name;
 
                 this.$refs.methodForm.addEventListener(
                     evt,
