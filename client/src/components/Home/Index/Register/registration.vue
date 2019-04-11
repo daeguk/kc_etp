@@ -701,6 +701,7 @@ export default {
             }.bind(this)
         ); 
 
+        /* 팝업창에 노출할 전체 기관정보 조회 */
         this.fn_getDomainInst();
     },
 
@@ -908,7 +909,7 @@ export default {
         },
 
         /*
-         * 기관정보를 조회한다.
+         * 팝업창에 노출할 전체 기관정보 조회를 조회한다.
          * 2019-04-02  bkLove(촤병국)
          */
         fn_getDomainInst() {

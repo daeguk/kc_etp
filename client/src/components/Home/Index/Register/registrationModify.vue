@@ -250,7 +250,7 @@
                                             <v-layout xs12>
                                                 <a
                                                     class="drop-files"
-                                                    v-on:click="file_click( 'methodFile' )"
+                                                    v-on:click="fn_fileClick( 'methodFile' )"
                                                 >
                                                     <p
                                                         class="text-xs-center"
@@ -289,7 +289,7 @@
                                             <v-layout xs12>
                                                 <a
                                                     class="drop-files"
-                                                    v-on:click="file_click( 'file' )"
+                                                    v-on:click="fn_fileClick( 'file' )"
                                                 >
                                                     <p
                                                         class="text-xs-center"
@@ -322,7 +322,7 @@
                                 <v-flex mb-3 v-show="!!jisuUploadResult">
                                     <v-flex>
                                         <v-btn
-                                            @click="jisuUploadResult = false;modForm.jisu_file_id='';"
+                                            @click="fn_clearFile()"
                                         >X</v-btn>
                                     </v-flex>
 
@@ -731,6 +731,7 @@ export default {
                 }.bind(this)              
             );            
 
+            /* 소급지수 파일 영역 */
             this.$refs.fileform.addEventListener(
                 "drop",
                 function(e) {
@@ -747,6 +748,7 @@ export default {
                 }.bind(this)
             );
 
+            /* 지수방법론 파일 영역 */
             this.$refs.methodForm.addEventListener(
                 "drop",
                 function(e) {
@@ -759,7 +761,7 @@ export default {
             );            
         }
 
-        /* file input에서 선택된 파일이 있으면 이벤트 실행 */
+        /* 소급지수 파일 영역 */
         this.$refs.file.addEventListener(
             "change",
             function(evt) {
@@ -783,7 +785,7 @@ export default {
             }.bind(this)
         );
 
-        /* file input에서 선택된 파일이 있으면 이벤트 실행 */
+        /* 지수방법론 파일 영역 */
         this.$refs.methodFile.addEventListener(
             "change",
             function(evt) {
@@ -803,9 +805,11 @@ export default {
             }.bind(this)
         ); 
 
+        /* 팝업창에 노출할 전체 기관정보 조회 */
         this.fn_getDomainInst();
 
-        alert(">>>>" + this.editData.jisu_seq);
+        /* 등록된 지수정보 조회 */
+        this.fn_getRegistedJisuData();
     },
 
     methods: {
@@ -919,13 +923,29 @@ export default {
          * 파일 선택시
          * 2019-04-02  bkLove(촤병국)
          */
-        file_click: function( gubun ) {
+        fn_fileClick: function( gubun ) {
 
+            /* 소급지수 파일 클릭시 */
             if( gubun == "file" ) {
                 this.$refs.file.click();
-            }else{
+            }
+            /* 지수 방법론 파일 클릭시 */
+            else{
                 this.$refs.methodFile.click();
             }
+        },
+
+        /*
+         * 소급지수 파일 초기화 버튼 클릭시
+         * 2019-04-02  bkLove(촤병국)
+         */
+        fn_clearFile : function() {
+            var vm = this;
+
+            vm.jisuUploadResult         =   false;
+            
+            vm.modForm.jisu_file_id     =   '';
+            vm.$refs.file.value         =   null;
         },
 
         /*
@@ -996,7 +1016,7 @@ export default {
         },
 
         /*
-         * 기관정보를 조회한다.
+         * 팝업창에 노출할 전체 기관정보 조회를 조회한다.
          * 2019-04-02  bkLove(촤병국)
          */
         fn_getDomainInst() {
@@ -1091,7 +1111,26 @@ export default {
 
             this.modForm.arr_jisu_inst =   arrTemp;
             this.fn_instShare();
-        }      
+        },
+
+        /*
+         * 등록된 지수정보를 조회한다.
+         * 2019-04-11  bkLove(촤병국)
+         */        
+        fn_getRegistedJisuData() {
+
+            var selfThis = this;
+
+            /* 1. 기관정보를 조회한다. */
+            axios.post(Config.base_url + "/user/index/getRegistedJisuData", {
+                data: selfThis.editData
+            }).then(function(response) {
+                if (response && response.data) {
+                    selfThis.arr_group_inst = response.data.dataGroupList;
+                    selfThis.arr_org_inst = response.data.dataList;
+                }
+            });            
+        }
     }
 };
 </script>
