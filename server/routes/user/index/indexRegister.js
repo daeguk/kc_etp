@@ -157,8 +157,7 @@ var fileuploadSingle = function (req, res) {
     var reqParam = {
             uploadFolder: "d:\\test"
         ,   save_file_name: ''
-            /* TODO: 추후 세션의 사용자 ID 로 변경 필요. */
-        ,   user_id : 'test01'
+        ,   user_id : req.session.user_id,
     };
 
     var storage = multer.diskStorage({
@@ -374,8 +373,7 @@ var jisuSave = function (req, res) {
     var reqParam = {
             uploadFolder: "d:\\test"
         ,   save_file_name: ''
-            /* TODO: 추후 세션의 사용자 ID 로 변경 필요. */
-        ,   user_id : 'test01'
+        ,   user_id : req.session.user_id
     };
 
     var storage = multer.diskStorage({
@@ -429,8 +427,8 @@ var jisuSave = function (req, res) {
 
             var paramData = JSON.parse( req.body.data );
 
-            /* TODO: 추후 세션의 사용자 ID 로 변경 필요. */
-            paramData.user_id = 'test01';
+
+            paramData.user_id = reqParam.user_id;
 
 console.log( paramData );
 

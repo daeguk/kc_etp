@@ -420,7 +420,7 @@
 
                 <!---특정기관과 공유 end-->
                 <div class="text-xs-center">
-                    <v-btn depressed large color="#3158a1" dark @click="this.fn_registerJisu()">등록</v-btn>
+                    <v-btn depressed large color="#3158a1" dark @click="this.fn_registerJisu">등록</v-btn>
                 </div>
             </v-container>
         </v-form>
