@@ -1,22 +1,44 @@
 <template>
-    <v-container fluid grid-list-md pa-0 mb-4>
-        <v-layout row wrap>
+    <v-container fluid grid-list-md pa-2 mb-4>
+        <v-layout row wrap class="indexlist_ww">
             <v-flex md6>
                 <!--table1-->
                 <div class="indexinfo_box01">
-                    <h4 class="mb-0">Index Info</h4>
-                    <v-data-table
-                        :headers="headers"
-                        :items="indexInfo"
-                        disable-initial-sort
-                        hide-actions
-                        hide-headers
-                    >
-                        <template slot="items" slot-scope="props">
-                            <td class="text-xs-left">{{ props.item.name }}</td>
-                            <td class="text-xs-right">{{ props.item.calories }}</td>
-                        </template>
-                    </v-data-table>
+                    <h4 class="mb-0">INDEX Info</h4>
+                    <v-card flat class="indexinfo_list_table">
+                        <v-layout row>
+                            <v-flex xs6>기준지수</v-flex>
+                            <v-flex xs6 class="text_r">1000</v-flex>
+                        </v-layout>
+                        <v-layout row>
+                            <v-flex xs6>기준일</v-flex>
+                            <v-flex xs6 class="text_r">2010.01.02</v-flex>
+                        </v-layout>
+                        <v-layout row>
+                            <v-flex xs6>발표일</v-flex>
+                            <v-flex xs6 class="text_r">2015.07.22</v-flex>
+                        </v-layout>
+                        <v-layout row>
+                            <v-flex xs6>지수산출방식</v-flex>
+                            <v-flex xs6 class="text_r">시가총액방식</v-flex>
+                        </v-layout>
+                        <v-layout row>
+                            <v-flex xs6>기준시가총액</v-flex>
+                            <v-flex xs6 class="text_r">325455545541521</v-flex>
+                        </v-layout>
+                        <v-layout row>
+                            <v-flex xs6>비교시가총액</v-flex>
+                            <v-flex xs6 class="text_r">22257777777777777777</v-flex>
+                        </v-layout>
+                        <v-layout row>
+                            <v-flex xs6>고정현금</v-flex>
+                            <v-flex xs6 class="text_r">0</v-flex>
+                        </v-layout>
+                        <v-layout row>
+                            <v-flex xs6>유동비율적용여부</v-flex>
+                            <v-flex xs6 class="text_r">N</v-flex>
+                        </v-layout>
+                    </v-card>
                 </div>
                 <!--table1 end--->
             </v-flex>
@@ -28,49 +50,73 @@
                             <!---table2_1--->
                             <div class="indexinfo_box02 a1">
                                 <h4 class="mb-0">ETP Info</h4>
-                                <v-data-table 
-                                    :headers="headers2"
-                                    :items="desserts2"
-                                    disable-initial-sort
-                                    hide-actions
-                                >
-                                    <template slot="items" slot-scope="props">
-                                        <td class="text-xs-left">{{ props.item.name }}</td>
-                                        <td class="text-xs-right">{{ props.item.calories }}</td>
-                                    </template>
-                                </v-data-table>
+                                <v-card flat class="indexinfo_list_table">
+                                    <v-card-title>● KODEX DB 500 ETF(05320)</v-card-title>
+                                    <v-layout row>
+                                        <v-flex xs6>추격배수</v-flex>
+                                        <v-flex xs6 class="text_r">159</v-flex>
+                                    </v-layout>
+                                    <v-layout row>
+                                        <v-flex xs6>시가총액</v-flex>
+                                        <v-flex xs6 class="text_r">24552</v-flex>
+                                    </v-layout>
+                                    <v-layout row>
+                                        <v-flex xs6>최종NAV</v-flex>
+                                        <v-flex xs6 class="text_r">14242</v-flex>
+                                    </v-layout>
+                                    <v-layout row>
+                                        <v-flex xs6>추적오차율</v-flex>
+                                        <v-flex xs6 class="text_r">2424242</v-flex>
+                                    </v-layout>
+                                </v-card>
                             </div>
                         </v-flex>
                         <v-flex xs12>
                             <!---table2_2--->
                             <div class="indexinfo_box02 a2">
-                                <v-data-table
-                                    :headers="headers3"
-                                    :items="desserts3"
-                                    disable-initial-sort
-                                    hide-actions
-                                >
-                                    <template slot="items" slot-scope="props">
-                                        <td class="text-xs-left">{{ props.item.name }}</td>
-                                        <td class="text-xs-right">{{ props.item.calories }}</td>
-                                    </template>
-                                </v-data-table>
+                                <v-card flat class="indexinfo_list_table">
+                                    <v-card-title>● KODEX DB 500 ETF(05320)</v-card-title>
+                                    <v-layout row>
+                                        <v-flex xs6>추격배수</v-flex>
+                                        <v-flex xs6 class="text_r">159</v-flex>
+                                    </v-layout>
+                                    <v-layout row>
+                                        <v-flex xs6>시가총액</v-flex>
+                                        <v-flex xs6 class="text_r">24552</v-flex>
+                                    </v-layout>
+                                    <v-layout row>
+                                        <v-flex xs6>최종NAV</v-flex>
+                                        <v-flex xs6 class="text_r">14242</v-flex>
+                                    </v-layout>
+                                    <v-layout row>
+                                        <v-flex xs6>추적오차율</v-flex>
+                                        <v-flex xs6 class="text_r">2424242</v-flex>
+                                    </v-layout>
+                                </v-card>
                             </div>
                         </v-flex>
                         <v-flex xs12>
-                             <!---table2_3--->
+                            <!---table2_3--->
                             <div class="indexinfo_box02 a3">
-                                <v-data-table
-                                    :headers="headers4"
-                                    :items="desserts4"
-                                    disable-initial-sort
-                                    hide-actions
-                                >
-                                    <template slot="items" slot-scope="props">
-                                        <td class="text-xs-left">{{ props.item.name }}</td>
-                                        <td class="text-xs-right">{{ props.item.calories }}</td>
-                                    </template>
-                                </v-data-table>
+                                <v-card flat class="indexinfo_list_table">
+                                    <v-card-title>● KODEX DB 500 ETF(05320)</v-card-title>
+                                    <v-layout row>
+                                        <v-flex xs6>추격배수</v-flex>
+                                        <v-flex xs6 class="text_r">159</v-flex>
+                                    </v-layout>
+                                    <v-layout row>
+                                        <v-flex xs6>시가총액</v-flex>
+                                        <v-flex xs6 class="text_r">24552</v-flex>
+                                    </v-layout>
+                                    <v-layout row>
+                                        <v-flex xs6>최종NAV</v-flex>
+                                        <v-flex xs6 class="text_r">14242</v-flex>
+                                    </v-layout>
+                                    <v-layout row>
+                                        <v-flex xs6>추적오차율</v-flex>
+                                        <v-flex xs6 class="text_r">2424242</v-flex>
+                                    </v-layout>
+                                </v-card>
                             </div>
                         </v-flex>
                     </v-layout>
@@ -83,7 +129,6 @@
 
 
 <script>
-
 export default {
     props: ["index_item", "etp_items"],
     data() {
@@ -95,7 +140,7 @@ export default {
                 {
                     text: "지수명",
                     align: "center",
-                    sortable: false, 
+                    sortable: false,
                     value: "inst_name"
                 }
             ],
