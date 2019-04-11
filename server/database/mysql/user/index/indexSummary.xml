@@ -46,8 +46,7 @@
             ,date_format(REQ.REG_TIME, '%Y-%m-%d') REG_TIME
             ,REQ.REQ_FLAG
             ,REQ.REG_ID
-        FROM td_index_basic BAS, 
-            (SELECT A.INST_CD
+        FROM (SELECT A.INST_CD
 				   ,A.REG_TIME
                    ,A.REQ_FLAG
                    ,A.REG_ID
@@ -55,12 +54,47 @@
                    ,B.INST_NAME 
           FROM tm_jisu_share_req A,
                     tm_domain_mast B
-          WHERE A.INST_CD = B.INST_CD) REQ	
+          WHERE A.INST_CD = B.INST_CD) REQ
+         LEFT OUTER JOIN td_index_basic BAS	
+           ON BAS.F16013 = REQ.JISU_ID
       WHERE BAS.F16013 = REQ.JISU_ID
         AND BAS.large_type = #{large_type}
-        AND REQ.REQ_FLAG = '1' OR  REQ.REQ_FLAG = '0'
+    <if test="jisu_cd != null and jisu_cd !=''">
+        AND BAS.F16013 = #{jisu_cd}
+    </if>
+        AND (REQ.REQ_FLAG = '1' OR  REQ.REQ_FLAG = '0')
     </select>
 
+
+    <!--
+    * 지수 정보 구독현황 리스트
+    -->
+    <select id="getindexSubscribeList">
+      SELECT BAS.F16002
+            ,BAS.F16013  
+            ,REQ.INST_CD
+            ,REQ.INST_NAME
+            ,date_format(REQ.REG_TIME, '%Y-%m-%d') REG_TIME
+            ,REQ.REQ_FLAG
+            ,REQ.REG_ID
+        FROM (SELECT A.INST_CD
+				   ,A.REG_TIME
+                   ,A.REQ_FLAG
+                   ,A.REG_ID
+                   ,A.JISU_ID
+                   ,B.INST_NAME 
+          FROM tm_jisu_share_req A,
+                    tm_domain_mast B
+          WHERE A.INST_CD = B.INST_CD) REQ
+         LEFT OUTER JOIN td_index_basic BAS	
+           ON BAS.F16013 = REQ.JISU_ID
+      WHERE BAS.F16013 = REQ.JISU_ID
+        AND BAS.large_type = #{large_type}
+    <if test="jisu_cd != null and jisu_cd !=''">
+        AND BAS.F16013 = #{jisu_cd}
+    </if>
+        AND REQ.REQ_FLAG = '2'
+    </select>
     <!--
     * 지수 정보 공개 요청 처리 
     -->

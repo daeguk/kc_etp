@@ -14,7 +14,7 @@
                     >
                         <template slot="items" slot-scope="props">
                             <td class="text-xs-left">{{ props.item.name }}</td>
-                            <td class="text-xs-right">{{ props.item.calories }}</td>
+                            <td class="text-xs-right">{{ props.item.value }}</td>
                         </template>
                     </v-data-table>
                 </div>
@@ -28,49 +28,19 @@
                             <!---table2_1--->
                             <div class="indexinfo_box02 a1">
                                 <h4 class="mb-0">ETP Info</h4>
-                                <v-data-table 
-                                    :headers="headers2"
-                                    :items="desserts2"
-                                    disable-initial-sort
-                                    hide-actions
-                                >
-                                    <template slot="items" slot-scope="props">
-                                        <td class="text-xs-left">{{ props.item.name }}</td>
-                                        <td class="text-xs-right">{{ props.item.calories }}</td>
-                                    </template>
-                                </v-data-table>
-                            </div>
-                        </v-flex>
-                        <v-flex xs12>
-                            <!---table2_2--->
-                            <div class="indexinfo_box02 a2">
-                                <v-data-table
-                                    :headers="headers3"
-                                    :items="desserts3"
-                                    disable-initial-sort
-                                    hide-actions
-                                >
-                                    <template slot="items" slot-scope="props">
-                                        <td class="text-xs-left">{{ props.item.name }}</td>
-                                        <td class="text-xs-right">{{ props.item.calories }}</td>
-                                    </template>
-                                </v-data-table>
-                            </div>
-                        </v-flex>
-                        <v-flex xs12>
-                             <!---table2_3--->
-                            <div class="indexinfo_box02 a3">
-                                <v-data-table
-                                    :headers="headers4"
-                                    :items="desserts4"
-                                    disable-initial-sort
-                                    hide-actions
-                                >
-                                    <template slot="items" slot-scope="props">
-                                        <td class="text-xs-left">{{ props.item.name }}</td>
-                                        <td class="text-xs-right">{{ props.item.calories }}</td>
-                                    </template>
-                                </v-data-table>
+                                <v-card v-for="etp_item of etp_items" :key="etp_item.F16013">
+                                   
+                                    <v-card-title primary-title> 
+                                    <div>
+                                        <div class="headline">● KODEX DB 500 ETF(05320)</div>
+                                    </div>
+                                    </v-card-title>
+                                    <v-slide-y-transition>
+                                    <v-card-text>
+                                        <span  style='text-align:left;left-margin:50px;'>추격배수</span><span style='align:right'>159</span>                     
+                                    </v-card-text>
+                                    </v-slide-y-transition>
+                                </v-card>
                             </div>
                         </v-flex>
                     </v-layout>
@@ -83,12 +53,13 @@
 
 
 <script>
+import Config from '@/js/config.js';
 
 export default {
-    props: ["index_item", "etp_items"],
+    props: [""],
     data() {
         return {
-            results: [],
+            index_item: {},
             rowsPerPageItems: [50, 50],
             headers: [
                 { text: "ID", align: "center", sortable: false, value: "id" },
@@ -100,137 +71,100 @@ export default {
                 }
             ],
             indexInfo: [
-                {
+             /*   {
                     name: "기준지수",
-                    calories: this.index_item.STD_INDEX
+                    value: index_item.STD_INDEX
                 },
                 {
                     name: "기준일",
-                    calories: this.index_item.STD_DATE
+                    value: index_item.STD_DATE
                 },
                 {
                     name: "발표일",
-                    calories: this.index_item.ANNO_DATE
+                    value: index_item.ANNO_DATE
                 },
                 {
                     name: "지수산출방식",
-                    calories: this.index_item.INDEX_CAL_METHOD
+                    value: index_item.INDEX_CAL_METHOD
                 },
                 {
                     name: "기준시가총액",
-                    calories: this.index_item.STD_CAPITAL
+                    value: index_item.STD_CAPITAL
                 },
                 {
                     name: "비교시가총액",
-                    calories: this.index_item.STD_CAPITAL
+                    value: index_item.STD_CAPITAL
                 },
                 {
                     name: "고정현금",
-                    calories: this.index_item.FIXED_CASH
+                    value: index_item.FIXED_CASH
                 },
                 {
                     name: "유동비율적용여부",
-                    calories: this.index_item.FLOWRATE_YN
-                }
+                    value: index_item.FLOWRATE_YN
+                }*/
             ],
-            headers2: [
-                {
-                    text: "● KODEX DB 500 ETF(05320)",
-                    align: "left",
-                    sortable: false,
-                    value: "id"
-                },
-                {
-                    text: "",
-                    align: "center",
-                    sortable: false,
-                    value: "inst_name"
-                }
-            ],
-            desserts2: [
-                {
-                    name: "추격배수",
-                    calories: 159
-                },
-                {
-                    name: "시가총액",
-                    calories: 237
-                },
-                {
-                    name: "최종 NAV",
-                    calories: 262
-                },
-                {
-                    name: "추격오차률",
-                    calories: 305
-                }
-            ],
-            headers3: [
-                {
-                    text: "● KODEX DB 500 ETF(05320)",
-                    align: "left",
-                    sortable: false,
-                    value: "id"
-                },
-                {
-                    text: "",
-                    align: "center",
-                    sortable: false,
-                    value: "inst_name"
-                }
-            ],
-            desserts3: [
-                {
-                    name: "추격배수",
-                    calories: 159
-                },
-                {
-                    name: "시가총액",
-                    calories: 237
-                },
-                {
-                    name: "최종 NAV",
-                    calories: 262
-                },
-                {
-                    name: "추격오차률",
-                    calories: 305
-                }
-            ],
-            headers4: [
-                {
-                    text: "● KODEX DB 500 ETF(05320)",
-                    align: "left",
-                    sortable: false,
-                    value: "id"
-                },
-                {
-                    text: "",
-                    align: "center",
-                    sortable: false,
-                    value: "inst_name"
-                }
-            ],
-            desserts4: [
-                {
-                    name: "추격배수",
-                    calories: 159
-                },
-                {
-                    name: "시가총액",
-                    calories: 237
-                },
-                {
-                    name: "최종 NAV",
-                    calories: 262
-                },
-                {
-                    name: "추격오차률",
-                    calories: 305
-                }
-            ],
-            modalFlag: false
+            etp_items : [],
         };
+    },
+    computed: {
+
+    },
+    created: function() {
+
+    },
+    beforeDestroy() {
+
+    },
+    mounted: function() {
+        this.getIndexBaseInfo();
+        this.getIndexInEtpInfo();
+    },
+    methods: {
+        getIndexBaseInfo: function() {
+            var vm = this;
+            console.log("getIndexBaseInfo");
+            
+            axios.get(Config.base_url + "/user/index/getIndexBaseInfo", {
+                    params: {
+                        jisu_cd : vm.$route.query.jisu_cd,
+                        market_id : vm.$route.query.market_id
+                        
+                    }
+            }).then(response => {
+                // console.log(response);
+                if (response.data.success == false) {
+                    alert("지수정보가 없습니다.");
+                } else {
+                    var items = response.data.results;
+                    vm.index_item = items[0];
+                    console.log("response=" + JSON.stringify(vm.index_item));
+                    //this.list_cnt = this.results.length;
+                }
+            });
+
+        },   
+        getIndexInEtpInfo: function() {
+            var vm = this;
+
+            axios.get(Config.base_url + "/user/index/getIndexInEtpInfo", {
+                    params: {
+                        jisu_cd : vm.$route.query.jisu_cd,
+                        market_id : vm.$route.query.market_id
+                        
+                    }
+            }).then(response => { 
+                // console.log(response);
+                if (response.data.success == false) {
+                    alert("지수정보가 없습니다.1");
+                } else {
+                    var items = response.data.results;
+                    vm.etp_items = items;
+                    console.log("etp_response=" + JSON.stringify(vm.etp_items));
+                    //this.list_cnt = this.results.length;
+                }
+            });
+        },    
     }
 };
 </script>

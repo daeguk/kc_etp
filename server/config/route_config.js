@@ -59,6 +59,7 @@ module.exports = {
         { file: './user/index/indexSummary', path: '/user/index/getIndexBaseInfo', method: 'getIndexBaseInfo', session: 'check', type: 'get' },   
         { file: './user/index/indexSummary', path: '/user/index/getIndexEtpHistoryData', method: 'getIndexEtpHistoryData', session: 'check', type: 'get' },   
         { file: './user/index/indexSummary', path: '/user/index/getIndexInEtpInfo', method: 'getIndexInEtpInfo', session: 'check', type: 'get' },   
+        { file: './user/index/indexSummary', path: '/user/index/getindexSubscribeList', method: 'getindexSubscribeList', session: 'check', type: 'get' },   
         
 
 

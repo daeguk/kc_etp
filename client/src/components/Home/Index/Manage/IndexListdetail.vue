@@ -73,10 +73,10 @@
 
                                 <v-tabs-items v-model="tab">
                                     <v-tab-item>
-                                        <indexinfotab1 :index_item="results" :etp_items="etpInfos"></indexinfotab1>
+                                        <indexinfotab1></indexinfotab1>
                                     </v-tab-item>
                                     <v-tab-item>
-                                        <!--indexinfotab2></indexinfotab2-->
+                                        <indexinfotab2></indexinfotab2>
                                     </v-tab-item>
                                     <v-tab-item>
                                         <indexinfotab3></indexinfotab3>
@@ -114,7 +114,7 @@ export default {
     },
     components: {
         indexinfotab1: indexinfotab1,
-        //indexinfotab2: indexinfotab2,
+        indexinfotab2: indexinfotab2,
         indexinfotab3: indexinfotab3
     }, 
     computed: {},
@@ -122,7 +122,6 @@ export default {
     beforeDestroy() {},
     mounted: function() {
         this.getIndexBaseInfo();
-        this.getIndexInEtpInfo();
         this.Indexchart();
     },
     methods: {
@@ -148,28 +147,8 @@ export default {
                 }
             });
 
-        },     
-        getIndexInEtpInfo: function() {
-            var vm = this;
-
-            axios.get(Config.base_url + "/user/index/getIndexInEtpInfo", {
-                    params: {
-                        jisu_cd : vm.$route.query.jisu_cd,
-                        market_id : vm.$route.query.market_id
-                        
-                    }
-            }).then(response => {
-                // console.log(response);
-                if (response.data.success == false) {
-                    alert("지수정보가 없습니다.");
-                } else {
-                    var items = response.data.results;
-                    vm.etpInfos = items;
-                    console.log("etp_response=" + JSON.stringify(vm.results));
-                    //this.list_cnt = this.results.length;
-                }
-            });
-        },    
+        },   
+        
         Indexchart: function() {
             // Load the Visualization API and the corechart package.
             google.charts.load('current', {'packages':['corechart']});

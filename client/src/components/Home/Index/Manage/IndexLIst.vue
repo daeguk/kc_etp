@@ -56,7 +56,7 @@ export default {
     data() {
         return {
            
-            rowsPerPageItems: [500, 1000, 1500],
+            rowsPerPageItems: [10, 20, 30],
             headers: [
                 {
                     text: "ID",

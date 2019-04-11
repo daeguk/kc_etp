@@ -27,6 +27,7 @@
                     <td class="text-xs-center">{{ props.item.F16013 }}</td>
                     <td class="text-xs-center">{{ props.item.REG_TIME }}</td>
                     <td class="text-xs-center">
+                        
                         <v-btn small depressed color="primary" class="white--text" @click.stop="dialogOpen('1', props.item);">
                             <v-icon dark>thumb_up_alt</v-icon>Yes
                         </v-btn>
