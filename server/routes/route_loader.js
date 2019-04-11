@@ -34,7 +34,7 @@ route_loader.sessionCheckRegister = function(app) {
                req.session.loginkey = "test@fnguide.com";
                req.session.inst_cd = "06485";
                req.session.inst_type_cd = "0003";
-               req.session.large_teype = "FNGUIDE";
+               req.session.large_type = "FNGUIDE";
                req.session.save();
                console.log("loginkey : " + req.session.loginkey);
                 /*===================================*/

@@ -23,11 +23,13 @@
                 FROM kc_etp.td_index_basic
                 WHERE F16013 = (SELECT MAX(F16013)
                                     FROM kc_etp.td_index_basic
-                                    WHERE large_type='FNGUIDE'
+                                    WHERE large_type=#{large_type}
                                 )
                 ) BAS,
                 kc_etp.td_index_hist HIS
         WHERE BAS.F16013 = HIS.F16013
+          AND BAS.LARGE_TYPE = #{large_type}
+          AND BAS.MARKET_ID = HIS.MARKET_ID
         ORDER BY HIS.F12506 DESC
         limit 0, 1
 
@@ -55,6 +57,7 @@
                     tm_domain_mast B
           WHERE A.INST_CD = B.INST_CD) REQ	
       WHERE BAS.F16013 = REQ.JISU_ID
+        AND BAS.large_type = #{large_type}
         AND REQ.REQ_FLAG = '1' OR  REQ.REQ_FLAG = '0'
     </select>
 
@@ -98,7 +101,7 @@
                         WHERE JISU_ID = BAS.F16013
                         AND REQ_FLAG = '2') INST_CNT
                 FROM td_index_basic BAS
-               WHERE large_type = 'FNGUIDE') A;
+               WHERE large_type = #{large_type}) A;
         ]]> 
     </select>
 
@@ -130,6 +133,7 @@
                                         and b.F15001 is not null
                         ) maxData
                 FROM td_index_basic basic
+               WHERE basic.large_type=#{large_type}
                 ) A
             group by F16013
             order by max(ifnull(A.maxData/A.minData, 0)) desc
@@ -152,12 +156,15 @@
                             ,A.F16002
                             ,A.LARGE_TYPE
                             ,A.MIDDLE_TYPE
+                            ,A.MARKET_ID
                         FROM kc_etp.td_index_basic A,
                             JISU B
                         WHERE A.F16013 = B.F16013
                         ) BAS,
                         kc_etp.td_index_hist HIS
                 WHERE BAS.F16013 = HIS.F16013
+                  AND BAS.MARKET_ID = HIS.MARKET_ID
+                  AND BAS.large_type=#{large_type}
                 ORDER BY HIS.F12506 DESC
                 limit 0, 1; 
     ]]>
@@ -166,10 +173,14 @@
     <!-- 1년간 지수 정보(그래프정보)-->
     <select id="selectIndexSummaryHist">
     <![CDATA[
-        SELECT F12506 as trd_dd, F15009 as close_idx
-          FROM td_index_hist
-         WHERE F12506 >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 YEAR), '%Y%m%d')
-           AND F16013 = #{JISU_ID}
+        SELECT a.F12506 as trd_dd, a.F15009 as close_idx
+          FROM td_index_hist a
+         INNER JOIN td_index_basic b
+           on  a.F16013 = b.F16013
+		  and  a.market_id = b.market_id
+          and  b.large_type = #{large_type}
+         WHERE a.F12506 >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 YEAR), '%Y%m%d')
+           AND a.F16013 = #{JISU_ID}
     ]]>
     </select>
 
@@ -203,6 +214,7 @@
         FROM KC_ETP.TD_INDEX_BASIC BAS
         WHERE BAS.F16013 = #{jisu_cd}
           and BAS.MARKET_ID = #{market_id}
+          AND BAS.large_type = #{large_type}
     ]]>
     </select>
 
@@ -213,8 +225,10 @@
           FROM td_index_basic A, 
                td_index_hist B
          WHERE A.F16013 = B.F16013
+           AND A.MARKET_ID = B.MARKET_ID
            AND A.F16013 = #{jisu_cd}
            AND A.MARKET_ID = #{market_id}
+           AND A.large_type = #{large_type}
            AND B.F12506 >= date_format(DATE_SUB(now(), INTERVAL 2 MONTH), '%Y%m%d')
     ]]>
     </select>

@@ -16,17 +16,20 @@ var fs = require('fs');
 
 var getIndexSummaryInfo = function (req, res) {
     try {
-        console.log('indexSummary=>getInfoOpenReqList 호출됨.');
+        console.log('indexSummary=>getIndexSummaryInfo 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
+       
+        var params = {
+            large_type : req.session.large_type,
+        };
 
-        var stmt1 = mapper.getStatement('index', 'indexSummaryLately', req.body.params, {language:'sql', indent: '  '});
-        var stmt2 = mapper.getStatement('index', 'indexSummaryResult', req.body.params, {language:'sql', indent: '  '});
 
-        console.log(stmt1);
-        console.log(stmt2);
+        var stmt1 = mapper.getStatement('index', 'indexSummaryLately', params, {language:'sql', indent: '  '});
+        var stmt2 = mapper.getStatement('index', 'indexSummaryResult', params, {language:'sql', indent: '  '});
 
+        
         Promise.using(pool.connect(), conn => {
 
             Promise.all([
@@ -72,33 +75,41 @@ var getIndexSummaryInfo = function (req, res) {
 };
 
 var getInfoOpenReqList = function (req, res) {
-    console.log('indexSummary=>getInfoOpenReqList 호출됨.');
+    try {
+        console.log('indexSummary=>getInfoOpenReqList 호출됨.');
 
-    var pool = req.app.get("pool");
-    var mapper = req.app.get("mapper");
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
 
-    var stmt = mapper.getStatement('index', 'indexReqList', req.query.params, {language:'sql', indent: '  '});
+        var params = {
+            large_type : req.session.large_type,
+        };
 
-    console.log(stmt);
+        var stmt = mapper.getStatement('index', 'indexReqList', params, {language:'sql', indent: '  '});
 
-    Promise.using(pool.connect(), conn => {
-        conn.queryAsync(stmt).then(rows => {
-            res.json({
-                success: true,
-                results: rows
+        console.log(stmt);
+
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
             });
-            res.end();
-        }).catch(err => {
-            util.log("Error while performing Query.", err);
-            res.json({
-                success: false,
-                message: err
-            });
-            res.end();
+
+
         });
-
-
-    });
+    } catch(exception) {
+        util.log("err", exception);
+    }
 };
 
 
@@ -170,7 +181,11 @@ var getInfoIndexList = function (req, res) {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
 
-    var stmt = mapper.getStatement('index', 'getIndexList', req.query.params, {language:'sql', indent: '  '});
+    var params = {
+        large_type : req.session.large_type,
+    };
+
+    var stmt = mapper.getStatement('index', 'getIndexList', params, {language:'sql', indent: '  '});
 
     console.log(stmt);
 
@@ -207,7 +222,8 @@ var getIndexSummaryHist = function (req, res) {
         console.log("req.query");
         console.log(req.query);
         var options = {
-            JISU_ID: req.query.jisu_id
+            large_type : req.session.large_type,
+            JISU_ID: req.query.jisu_id,
         };
 
         var stmt = mapper.getStatement('index', 'selectIndexSummaryHist', options, {language:'sql', indent: '  '});
@@ -248,6 +264,7 @@ var getIndexBaseInfo = function (req, res) {
         // var options = {id:'admin'};
         
         var options = {
+            large_type : req.session.large_type,
             jisu_cd: req.query.jisu_cd,
             market_id: req.query.market_id
         };
@@ -292,6 +309,7 @@ var getIndexEtpHistoryData = function (req, res) {
         // var options = {id:'admin'};
         
         var options = {
+            large_type : req.session.large_type,
             jisu_cd: req.query.jisu_cd,
             market_id: req.query.market_id
         };
@@ -338,6 +356,7 @@ var getIndexInEtpInfo = function (req, res) {
         // var options = {id:'admin'};
         
         var options = {
+            large_type : req.session.large_type,
             jisu_cd: req.query.jisu_cd,
             market_id: req.query.market_id
         };
