@@ -17,18 +17,18 @@ var fs = require('fs');
  * 등록된 지수정보를 조회한다.
  * 2019-04-11  bkLove(촤병국)
  */
-var fn_getRegistedJisuData = function(req, res) {
+var getRegistedJisuData = function(req, res) {
 
     var resultMsg = {};
     
     try{
-        console.log('indexModify.fn_getRegistedJisuData 호출됨.');
+        console.log('indexModify.getRegistedJisuData 호출됨.');
 
         resultMsg.result = true;
         resultMsg.msg    = "";
         res.json({
                 resultMsg: resultMsg
-            ,   dataList: rows
+            ,   dataList: []
         });
         res.end();        
 
@@ -37,7 +37,7 @@ var fn_getRegistedJisuData = function(req, res) {
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result = false;
-            resultMsg.msg    = "[error] indexSelectList.fn_getRegistedJisuData 오류가 발생하였습니다.";
+            resultMsg.msg    = "[error] indexSelectList.getRegistedJisuData 오류가 발생하였습니다.";
         }
 
         res.json({
@@ -63,7 +63,7 @@ var modifyJisu = function(req, res) {
         resultMsg.msg    = "";
         res.json({
                 resultMsg: resultMsg
-            ,   dataList: rows
+            ,   dataList: []
         });
         res.end();        
 
@@ -84,6 +84,6 @@ var modifyJisu = function(req, res) {
 }
 
 
-module.exports.fn_getRegistedJisuData = fn_getRegistedJisuData;
+module.exports.getRegistedJisuData = getRegistedJisuData;
 module.exports.modifyJisu = modifyJisu;
 

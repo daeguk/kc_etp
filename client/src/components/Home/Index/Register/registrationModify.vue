@@ -1126,6 +1126,9 @@ export default {
                 data: selfThis.editData
             }).then(function(response) {
                 if (response && response.data) {
+
+debugger;
+
                     selfThis.arr_group_inst = response.data.dataGroupList;
                     selfThis.arr_org_inst = response.data.dataList;
                 }

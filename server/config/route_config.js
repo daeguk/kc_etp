@@ -73,7 +73,7 @@ module.exports = {
         { file: './user/index/indexSelectList', path: '/user/index/getStatusList', method: 'getStatusList', session: 'check', type: 'post' },
         { file: './user/index/indexSelectList', path: '/user/index/getIndexSelectList', method: 'getIndexSelectList', session: 'check', type: 'post' },
 
-        { file: './user/index/indexModify', path: '/user/index/fn_getRegistedJisuData', method: 'fn_getRegistedJisuData', session: 'check', type: 'post' },
+        { file: './user/index/indexModify', path: '/user/index/getRegistedJisuData', method: 'getRegistedJisuData', session: 'check', type: 'post' },
         { file: './user/index/indexModify', path: '/user/index/modifyJisu', method: 'modifyJisu', session: 'check', type: 'post' },
         
 
