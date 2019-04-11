@@ -34,7 +34,6 @@
                     </h4>
 
                     <v-container fluid>
-
                         <!-- 지수 산출기관 -->
                         <v-layout row>
                             <v-flex xs2>
@@ -62,6 +61,37 @@
                                         <template v-slot:activator="{ on }">
                                             <v-btn small depressed color="primary" dark>중복확인</v-btn>
                                         </template>
+
+<!--                                         <v-card class="pop_alert">
+                                            <h6>
+                                                <v-icon class="confirm">help</v-icon>Confirm
+                                            </h6>
+                                            <h6><v-icon class="warning_1">warning</v-icon> Warning</h6>
+                                            <h6><v-icon class="error_1">error</v-icon> Error</h6>
+                                            <v-card-title>정보 공개 요청 {{message}} 하시겠습니까?</v-card-title>
+
+                                            <v-card-actions>
+                                                <v-spacer></v-spacer>
+
+                                                <v-btn
+                                                    class="pop_alret_yesbtn"
+                                                    depressed
+                                                    dark
+                                                    small
+                                                    @click="updateIndexOpenYn('Y');"
+                                                >예</v-btn>
+
+                                                <v-btn
+                                                    class="pop_alret_nobtn"
+                                                    depressed
+                                                    dark
+                                                    small
+                                                    @click="updateIndexOpenYn('N');"
+                                                >아니요</v-btn>
+                                            </v-card-actions>
+                                        </v-card> 
+-->
+                                        
                                     </v-dialog>
                                 </v-layout>
                             </v-flex>
@@ -166,7 +196,6 @@
                         </span>
                     </h4>
                     <v-container fluid>
-
                         <!-- 지수방법론 -->
                         <v-layout row>
                             <v-flex xs2>
@@ -269,9 +298,7 @@
 
                         <v-layout>
                             <v-flex xs12 class="add_btn">
-
                                 <v-dialog v-model="dialog2" persistent max-width="700">
-
                                     <template v-slot:activator="{ on }">
                                         <v-btn flat icon color="#888888" dark v-on="on">
                                             <v-icon>add_circle_outline</v-icon>
@@ -462,7 +489,7 @@
 
 <script>
 export default {
-    props: [ "editData" ],
+    props: ["editData"],
     data() {
         return {
             date: new Date().toISOString().substr(0, 10),

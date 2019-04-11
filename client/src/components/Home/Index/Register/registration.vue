@@ -434,11 +434,14 @@ import Config from "@/js/config.js";
 export default {
     data: () => {
         return {
-            valid: true,
 
             dragAndDropCapable: false,
-            
 
+            menu: false,                /* 기준일 달력 메뉴 */
+            dialog: false,
+            dialog2: false,            
+            
+            /* 소급지수 관련 정보 */
             headers: [
                 { text: '파일ID'     , value: 'file_id' , align:"center",  sortable: false,},
                 { text: '행번호'     , value: 'row_no'  , align:"center",  sortable: false },
@@ -453,17 +456,28 @@ export default {
             jisuUploadResult : false,   /* 소급지수 업로드 결과 여부 */
 
 
-            menu: false,                /* 기준일 달력 메뉴 */
-            dialog: false,
-            dialog2: false,
+            /* 모달관련 정보 */
+            modal: {
+                openYn: false,
+                titleConfirmYn: false,
+                titleWarningYn: false,
+                titleErrorYn: false,
 
+                message: ""
+            },            
+
+            /* 기관 관련 정보 */
             arr_org_inst : [],          /* (원본) 기관정보 원본 목록정보 */
             arr_group_inst : [],        /* (원본) 3개를 1개로 그룹핑한 기관정보 ( 기관정보 팝업창에 노출 ) */
             arr_show_inst : [],         /* (사용자가 선택) 4개를 1개로 그룹핑한 기관정보 ( 팝업창에서 선택된 기관정보 노출 ) */
 
+
+            /* 지수 방법론 관련 정보 */
             formData : new FormData(),  /* 지수방법론 파일 선택시 */
             showMethodFile : "",        /* 지수방법론 파일명 */
 
+
+            /* 입력값 관련 정보 */
             form: {
                 duplCheckResult: false,
 
@@ -479,6 +493,9 @@ export default {
 
                 arr_jisu_inst : []      /* 선택된 기관 정보 */
             },
+
+            /* 저장시 rules 관련 정보 */
+            valid: true,
             rules: {
                 jisu_kor_nm: [
                     v => !!v || "[지수 한글명] is required",
@@ -551,6 +568,7 @@ export default {
         })
     },
 
+
     beforeDestory : function() {
 
         /*
@@ -559,6 +577,7 @@ export default {
          */
         this.$EventBus.$off("indexRegisterMain_registration_call");
     },
+
 
     mounted() {
 
@@ -618,7 +637,7 @@ export default {
                         return  false;
                     }
 
-                    this.jisuFileUpload( file, selfThis );
+                    this.fn_jisuFileUpload( file, selfThis );
 
                 }.bind(this)
             );
@@ -646,7 +665,7 @@ export default {
                     return  false;
                 }
 
-                this.jisuFileUpload( file, selfThis );
+                this.fn_jisuFileUpload( file, selfThis );
 
                 this.$refs.fileform.addEventListener(
                     evt,
@@ -789,6 +808,10 @@ export default {
             );
         },
 
+        /*
+         * 파일 선택시
+         * 2019-04-02  bkLove(촤병국)
+         */
         file_click: function( gubun ) {
 
             if( gubun == "file" ) {
@@ -798,7 +821,10 @@ export default {
             }
         },
 
-        /* 엑셀 유형인지 파일을 체크한다. */
+        /*
+         * 엑셀 유형인지 파일을 체크한다.
+         * 2019-04-02  bkLove(촤병국)
+         */
         fn_checkFile : function( file ) {
 
             var fileLen = file.name.length;
@@ -822,8 +848,11 @@ export default {
             return  true;    
         },
 
-        /* 소급지수 파일을 업로드한다. */
-        jisuFileUpload : function( file, selfThis ){
+        /*
+         * 소급지수 파일을 업로드한다.
+         * 2019-04-02  bkLove(촤병국)
+         */
+        fn_jisuFileUpload : function( file, selfThis ){
 
             let formData = new FormData();
             formData.append("files", file);
@@ -859,7 +888,10 @@ export default {
             });    
         },
 
-        /* 기관정보를 조회한다. */
+        /*
+         * 기관정보를 조회한다.
+         * 2019-04-02  bkLove(촤병국)
+         */
         fn_getDomainInst() {
             var selfThis = this;
 
@@ -874,7 +906,10 @@ export default {
             });
         },
 
-        /* 팝업창에서 선택된 기관정보를 화면에 노출한다. */
+        /*
+         * 팝업창에서 선택된 기관정보를 화면에 노출한다.
+         * 2019-04-02  bkLove(촤병국)
+         */
         fn_instShare() {
             this.dialog2 = false;
 
@@ -909,6 +944,10 @@ export default {
             this.arr_show_inst = dataList;
         },
 
+        /*
+         * 선택된 기관코드에 대한 기관코드명을 반환한다.
+         * 2019-04-02  bkLove(촤병국)
+         */
         fn_getInstName( instCd ) {
             
             var returnData = {};
@@ -926,7 +965,10 @@ export default {
             return returnData;
         },
 
-        /* 선택한 기관 정보를 삭제한다. */
+        /*
+         * 선택한 기관 정보를 삭제한다.
+         * 2019-04-02  bkLove(촤병국)
+         */
         fn_deleteInst( item ) {
 
             var   arrTemp = [];
@@ -942,7 +984,7 @@ export default {
 
             this.form.arr_jisu_inst =   arrTemp;
             this.fn_instShare();
-        }
+        }      
     }
 };
 </script>
