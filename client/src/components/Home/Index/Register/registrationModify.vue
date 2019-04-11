@@ -8,7 +8,7 @@
                             <v-subheader>Register ID</v-subheader>
                         </v-flex>
                         <v-flex xs4 mt-3 mb-2>
-                            <span>regdafi1234</span>
+                            <span>{{ modForm.reg_id }}</span>
                         </v-flex>
                     </v-layout>
 
@@ -19,8 +19,8 @@
 
                         <v-flex xs4 mt-3 mb-2>
                             <span class="text_color_blue">등록완료 ></span>
-                            <span>연동신청 ></span>
-                            <span>연동완료</span>
+                            <span v-bind:class="{ 'text_color_blue' : modForm.status >= '02'}">연동신청 ></span>
+                            <span v-bind:class="{ 'text_color_blue' : modForm.status >= '03'}">연동완료</span>
                         </v-flex>
                     </v-layout>
                 </v-card>
@@ -53,7 +53,15 @@
                                 </v-flex>
 
                                 <v-flex xs4>
-                                    <v-text-field label="ID" value="e.g.FDL001" outline></v-text-field>
+                                    <v-text-field                                         
+                                        ref="jisu_id"
+                                        label="지수ID"
+                                        value="e.g.FDL001"
+                                        outline
+                                        v-model="modForm.jisu_id"
+                                        :rules="rules.jisu_id"
+                                        @keyup="modForm.duplCheckResult=false"
+                                    ></v-text-field>
                                 </v-flex>
 
                                 <v-flex xs4 class="text-xs-left">
@@ -160,7 +168,7 @@
                                 <v-flex xs4>
                                     <!--달력-->
                                     <v-layout row wrap>
-                                        <v-flex xs12 sm6 md4>
+                                        <v-flex xs12 sm6 md6>
                                             <v-menu
                                                 ref="menu"
                                                 v-model="menu"
@@ -175,7 +183,6 @@
                                             >
                                                 <template v-slot:activator="{ on }">
                                                     <v-text-field
-                                                        v-model="modForm.base_date"
                                                         label="Picker in menu"
                                                         append-icon="event"
                                                         box
@@ -183,9 +190,11 @@
                                                         outline
                                                         v-on="on"
                                                         widh="100%"
+                                                        v-model="modForm.base_date"
                                                         :rules="rules.base_date"
                                                     ></v-text-field>
                                                 </template>
+
                                                 <v-date-picker v-model="modForm.base_date" no-title scrollable>
                                                     <v-spacer></v-spacer>
                                                     <v-btn
@@ -229,8 +238,8 @@
                                     <input
                                         type="text"
                                         class="upload-name"
-                                        id="showMethodFile"
-                                        v-model="modForm.showMethodFile"
+                                        id="show_method_file"
+                                        v-model="modForm.show_method_file"
                                         disabled
                                     >
 
@@ -326,7 +335,7 @@
                                         >X</v-btn>
                                     </v-flex>
 
-                                    <v-flex xs4 class="drag_box_w">
+                                    <v-flex xs16 class="drag_box_w">
                                         <v-layout flat class="drag_box list">
                                             <v-data-table
                                                 :headers="headers"
@@ -464,8 +473,8 @@
                                                 justify-space-around
                                                 row
                                                 fill-height
-                                                v-for="(item, index) in arr_group_inst"
-                                                :key="index"
+
+                                                v-for="(item, index) in arr_group_inst" :key="index"
                                             >
                                                 <v-flex xs3>
                                                     <v-checkbox
@@ -473,7 +482,7 @@
                                                         :label="item.one.inst_name"
                                                         color="primary"
                                                         :value="item.one.inst_cd"
-                                                        hide-details
+                                                 
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
@@ -482,7 +491,7 @@
                                                         :label="item.two.inst_name"
                                                         color="primary"
                                                         :value="item.two.inst_cd"
-                                                        hide-details
+                                                  
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
@@ -491,7 +500,7 @@
                                                         :label="item.three.inst_name"
                                                         color="primary"
                                                         :value="item.three.inst_cd"
-                                                        hide-details
+                                                 
                                                     ></v-checkbox>
                                                 </v-flex>
                                             </v-layout>
@@ -532,7 +541,8 @@
 import Config from "@/js/config.js";
 
 export default {
-    props: ["editData"],
+    props: [ "editData" ],
+
     data() {
         return {
 
@@ -590,7 +600,8 @@ export default {
                 method_file_id : -1,
                 jisu_file_id : -1,
                 req_content: "",
-                showMethodFile : "",
+                show_method_file : "",
+                reg_id : "",
 
                 prev_jisu_id : "",
                 prev_mothod_file_id : -1,
@@ -618,8 +629,8 @@ export default {
                     v => !!v || "[기준 지수] is required",
                     v => /^([0-9]*)[\.]?([0-9]{3})?$/.test( v ) || "[기준지수] 숫자형만 입력가능합니다.(소수점 3자리까지만)",
                     v =>
-                        (v && v.length <= 10) ||
-                        "[기준 지수]] 10자리 이하로 입력해 주세요."
+                        (v && v.toString().length <= 10) ||
+                        "[기준 지수] 10자리 이하로 입력해 주세요."
                 ],
                 base_date: [v => !!v || "[기준일] is required"],
                 req_content(value) {
@@ -632,57 +643,6 @@ export default {
             }
         };
     },
-
-    created() {
-
-        /*
-         * indexRegisterMain -> 신규지수등록 버튼 클릭시 이벤트를 수신한다.
-         * 2019-04-10  bkLove(촤병국)
-         */
-        this.$EventBus.$on( "indexRegisterMain_registration_call", res => {
-
-            var vm  = this;
-
-            console.log( ">> registration val=[" + res + "]");
-
-            switch( res ) {
-                case    "clear" :
-
-                        vm.$refs.modForm.reset();
-
-                        vm.formData                 =   new FormData(); /* 지수방법론 파일 선택시 */
-                        vm.$refs.methodFile.value   =   null;           /* 지수방법론 파일정보 */
-                        vm.modForm.showMethodFile   =   null;           /* 지수방법론 파일명 */
-                        vm.modForm.method_file_id   =   -1;             /* 지수방법론 파일 ID */
-
-                        vm.modForm.duplCheckResult  =   false;          /* 중복체크 결과 */
-                        vm.modForm.req_content      =   "";             /* 요청사항 */
-
-                        vm.modForm.arr_jisu_inst    =   [];             /* 선택된 기관 정보 */
-                        vm.arr_show_inst            =   [];             /* (사용자가 선택) 4개를 1개로 그룹핑한 기관정보 ( 팝업창에서 선택된 기관정보 노출 ) */
-
-                        vm.modForm.jisu_file_id     =   -1;             /* 소급지수 파일 ID */
-                        vm.jisuDataList             =   [];             /* 소급지수 업로드 후 목록정보 */
-                        vm.jisuUploadResult         =   false;          /* 소급지수 업로드 결과 여부 */
-                        vm.$refs.file.value         =   null;           /* 수급지수 파일정보 */
-
-                        vm.pagination.rowsPerPage   =   5;
-
-                        break;
-            }     
-        })
-    },
-
-
-    beforeDestory : function() {
-
-        /*
-         * indexRegisterMain -> 신규지수등록 버튼 클릭시 이벤트를 제거한다.
-         * 2019-04-10  bkLove(촤병국)
-         */
-        this.$EventBus.$off("indexRegisterMain_registration_call");
-    },
-
 
     mounted() {
 
@@ -755,7 +715,7 @@ export default {
                     var selfThis    =   this;
                     let file        =   e.dataTransfer.files[0];
 
-                    this.modForm.showMethodFile = file.name;
+                    this.modForm.show_method_file   =   file.name;
 
                 }.bind(this)
             );            
@@ -792,7 +752,7 @@ export default {
                 var selfThis    =   this;
                 let file        =   this.$refs.methodFile.files[0];
 
-                this.modForm.showMethodFile = file.name;
+                this.modForm.show_method_file   =   file.name;
 
                 this.$refs.methodForm.addEventListener(
                     evt,
@@ -1039,7 +999,7 @@ export default {
          */
         fn_instShare() {
             this.dialog2 = false;
-
+debugger;
             var  dataList = [];
             for( var i=0, inx=0; i < this.modForm.arr_jisu_inst.length; i=i+4 ) {
                 var data    =   this.modForm.arr_jisu_inst[i];
@@ -1125,15 +1085,16 @@ export default {
             axios.post(Config.base_url + "/user/index/getRegistedJisuData", {
                 data: selfThis.editData
             }).then(function(response) {
-                if (response && response.data) {
 
-                    if( response.data.modForm ) {
-                        selfThis.modForm = response.data.modForm;
-                        selfThis.modForm.duplCheckResult  =   true;
+                if (response && response.data) {
+                    if( response.data.jisuInfo ) {
+                        selfThis.modForm = response.data.jisuInfo;
+                        selfThis.modForm.duplCheckResult    =   true;
                     }
 
                     if( response.data.arr_jisu_inst ) {
-                        selfThis.modForm.arr_jisu_inst  =   response.data.arr_jisu_inst;        /* 선택된 기관 정보 */
+                        selfThis.modForm.arr_jisu_inst      =   response.data.arr_jisu_inst;    /* 선택된 기관 정보 */
+debugger;                        
                     }
 
                     if( response.data.arr_show_inst ) {

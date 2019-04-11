@@ -297,7 +297,7 @@ var fileuploadSingle = function (req, res) {
                             conn.commit();
 
 
-                            /* 6. [tm_jisu_temp_upload] 쿼리문 조회 */
+                            /* 6. [tm_jisu_temp_upload] 조회 쿼리문 조회 */
                             var stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', reqParam, format);
                             console.log(stmt);
 
