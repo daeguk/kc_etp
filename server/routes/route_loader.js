@@ -25,7 +25,19 @@ route_loader.sessionCheckRegister = function(app) {
 		if(curItem.session == 'check') {
 			console.log("seesionCheck path : [" + curItem.path + "]");
 			app.all(curItem.path, function(req, res, next) {
-				console.log("loginkey : " + req.session.loginkey);
+                console.log("loginkey : " + req.session.loginkey);
+                
+                /*
+                    세션 정보 처리[개발시 사용];
+                    ============================
+                */
+               req.session.loginkey = "test@fnguide.com";
+               req.session.inst_cd = "06485";
+               req.session.inst_type_cd = "0003";
+               req.session.large_teype = "FNGUIDE";
+               req.session.save();
+                /*===================================*/
+
 				if(req.session.loginkey) {
 					console.log("session SUCCESS");
 					next();
