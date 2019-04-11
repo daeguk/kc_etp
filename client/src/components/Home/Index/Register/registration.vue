@@ -199,7 +199,7 @@
                                             </v-layout>
 
                                             <v-layout xs12>
-                                                <a class="drop-files" v-on:click="file_click( 'methodFile' )">
+                                                <a class="drop-files" v-on:click="fn_fileClick( 'methodFile' )">
                                                     <p
                                                         class="text-xs-center"
                                                     >업로드 할 지수방법론 파일을 드래그 해주세요.</p>
@@ -227,7 +227,7 @@
                                             </v-layout>
 
                                             <v-layout xs12>
-                                                <a class="drop-files" v-on:click="file_click( 'file' )">
+                                                <a class="drop-files" v-on:click="fn_fileClick( 'file' )">
                                                     <p
                                                         class="text-xs-center"
                                                     >업로드 할 소급지수 파일을 드래그 해주세요.</p>
@@ -261,7 +261,7 @@
                                 <v-flex mb-3 v-show="!!jisuUploadResult">
 
                                     <v-flex>
-                                        <v-btn @click="jisuUploadResult = false;form.jisu_file_id='';">X</v-btn>
+                                        <v-btn @click="fn_clearFile()">X</v-btn>
                                     </v-flex>
 
                                     <v-data-table
@@ -626,6 +626,7 @@ export default {
                 }.bind(this)              
             );            
 
+            /* 소급지수 파일 영역 */
             this.$refs.fileform.addEventListener(
                 "drop",
                 function(e) {
@@ -642,6 +643,7 @@ export default {
                 }.bind(this)
             );
 
+            /* 지수방법론 파일 영역 */
             this.$refs.methodForm.addEventListener(
                 "drop",
                 function(e) {
@@ -654,10 +656,11 @@ export default {
             );            
         }
 
-        /* file input에서 선택된 파일이 있으면 이벤트 실행 */
+        /* 소급지수 파일 영역 */
         this.$refs.file.addEventListener(
             "change",
             function(evt) {
+
                 var selfThis    =   this;
                 let file        =   this.$refs.file.files[0];
 
@@ -678,7 +681,7 @@ export default {
             }.bind(this)
         );
 
-        /* file input에서 선택된 파일이 있으면 이벤트 실행 */
+        /* 지수방법론 파일 영역 */
         this.$refs.methodFile.addEventListener(
             "change",
             function(evt) {
@@ -812,13 +815,29 @@ export default {
          * 파일 선택시
          * 2019-04-02  bkLove(촤병국)
          */
-        file_click: function( gubun ) {
+        fn_fileClick: function( gubun ) {
 
+            /* 소급지수 파일 클릭시 */
             if( gubun == "file" ) {
                 this.$refs.file.click();
-            }else{
+            }
+            /* 지수 방법론 파일 클릭시 */
+            else{
                 this.$refs.methodFile.click();
             }
+        },
+
+        /*
+         * 소급지수 파일 초기화 버튼 클릭시
+         * 2019-04-02  bkLove(촤병국)
+         */
+        fn_clearFile : function() {
+            var vm = this;
+
+            vm.jisuUploadResult     =   false;
+            
+            vm.form.jisu_file_id    =   '';
+            vm.$refs.file.value     =   null;
         },
 
         /*

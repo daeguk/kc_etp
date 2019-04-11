@@ -227,7 +227,7 @@
             ,   now()
             ,   #{user_id}
             ,   now()
-        )            
+        )
         </foreach>
     </insert>        
 
