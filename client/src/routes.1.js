@@ -38,22 +38,19 @@ export const routes = [
         // INDEX
         {   path : 'index/manage',
             component: IndexManageMain,
-            children: [
-                {
-                    path : 'indexSummary',
-                    component: IndexMainSummary
-                }, 
-                {
-                    path : 'indexList',
-                    component: IndexMainIndexList
-                }, 
-                {
-                    path : 'indexDetail',
-                    component: IndexMainIndexDetail
-                }, 
-            ]
         },
-        
+        {
+            path : 'index/manage/indexSummary',
+            component: IndexMainSummary
+        }, 
+        {
+            path : 'index/manage/indexList',
+            component: IndexMainIndexList
+        }, 
+        {
+            path : 'index/manage/indexDetail',
+            component: IndexMainIndexDetail
+        }, 
         {   path : 'index/register',
             component: IndexRegisterMain,
         },

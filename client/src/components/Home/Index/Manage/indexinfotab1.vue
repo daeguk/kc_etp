@@ -28,7 +28,7 @@
                             <!---table2_1--->
                             <div class="indexinfo_box02 a1">
                                 <h4 class="mb-0">ETP Info</h4>
-                                <v-data-table
+                                <v-data-table 
                                     :headers="headers2"
                                     :items="desserts2"
                                     disable-initial-sort
@@ -85,7 +85,7 @@
 <script>
 
 export default {
-    props: ["index_item"],
+    props: ["index_item", "etp_items"],
     data() {
         return {
             results: [],
@@ -149,28 +149,20 @@ export default {
             ],
             desserts2: [
                 {
-                    name: "Frozen Yogurt",
+                    name: "추격배수",
                     calories: 159
                 },
                 {
-                    name: "Ice cream sandwich",
+                    name: "시가총액",
                     calories: 237
                 },
                 {
-                    name: "Eclair",
+                    name: "최종 NAV",
                     calories: 262
                 },
                 {
-                    name: "Cupcake",
+                    name: "추격오차률",
                     calories: 305
-                },
-                {
-                    name: "Gingerbread",
-                    calories: 356
-                },
-                {
-                    name: "Jelly bean",
-                    calories: 375
                 }
             ],
             headers3: [
@@ -189,28 +181,20 @@ export default {
             ],
             desserts3: [
                 {
-                    name: "Frozen Yogurt",
+                    name: "추격배수",
                     calories: 159
                 },
                 {
-                    name: "Ice cream sandwich",
+                    name: "시가총액",
                     calories: 237
                 },
                 {
-                    name: "Eclair",
+                    name: "최종 NAV",
                     calories: 262
                 },
                 {
-                    name: "Cupcake",
+                    name: "추격오차률",
                     calories: 305
-                },
-                {
-                    name: "Gingerbread",
-                    calories: 356
-                },
-                {
-                    name: "Jelly bean",
-                    calories: 375
                 }
             ],
             headers4: [
@@ -229,28 +213,20 @@ export default {
             ],
             desserts4: [
                 {
-                    name: "Frozen Yogurt",
+                    name: "추격배수",
                     calories: 159
                 },
                 {
-                    name: "Ice cream sandwich",
+                    name: "시가총액",
                     calories: 237
                 },
                 {
-                    name: "Eclair",
+                    name: "최종 NAV",
                     calories: 262
                 },
                 {
-                    name: "Cupcake",
+                    name: "추격오차률",
                     calories: 305
-                },
-                {
-                    name: "Gingerbread",
-                    calories: 356
-                },
-                {
-                    name: "Jelly bean",
-                    calories: 375
                 }
             ],
             modalFlag: false

@@ -1,5 +1,4 @@
 <template>
-<div id="app">
     <v-layout row wrap>
         <v-flex xs12>
             <v-tabs
@@ -14,32 +13,27 @@
             >
             <v-tabs-slider color="#ff821d"></v-tabs-slider>
     
-            <v-tab v-for="tab of tabs"  :key="tab.id" :to="tab.route"  v-on:click="setLeftControlBoxDraw(index)">
+            <v-tab v-for="tab of tabs"  :key="tab.id" @click="pageMove(tab.route)" >
               {{ tab.name }}
             </v-tab>
             </v-tabs>
 
             <v-tabs-items v-model="activeTab">
-                <v-tab-item v-for="tab of tabs"  :key="tab.id" :to="tab.route" >
-                     <router-view />    
+                <v-tab-item v-for="tab of tabs"  :key="tab.id" >
+                      <router-view></router-view>
                 </v-tab-item>
             </v-tabs-items>
+           
       </v-flex>
     </v-layout> 
-</div>
 </template>
 
 <script>
-//import Summary   from  './Summary.vue';
-//import IndexList   from  './IndexList.vue';
-//import IndexDetail   from  './IndexDetail.vue';
-//import indexDetailrtmenu from "./indexDetailrtmenu.vue";
 
 export default {
-    name: 'app',
     data() {
         return {
-            activeTab: '/index/manage/indexSummary',
+            activeTab: 0,
             tabs: [
                 { id: 1, name: "Summary", route: '/index/manage/indexSummary' },
                 { id: 2, name: "관리지수목록", route: '/index/manage/indexList' },
@@ -47,30 +41,24 @@ export default {
             ],
     	};
     },    
-    components: {
-        //Summary     : Summary,
-        //IndexList     : IndexList,
-        //IndexDetail     : IndexDetail,
-        //indexDetailrtmenu   :indexDetailrtmenu,
-    },
+    
     mounted: function() {
-        //this.$router.push("/index/manage/indexSummary");
-
-        if (this.$route.query.tab !== undefined) {
-            this.tab = this.$route.query.tab;
-            setLeftControlBoxDraw(1);
+        if (this.$route.query.activeTab == 2) {
+            this.pageMove('/index/manage/indexList');
+        } else {
+            this.pageMove('/index/manage/indexSummary');
         }
     },
     created: function() {
-       
+        
+    },
+    beforeUpdated: function() {
+    },
+    updated: function() {
     },
     methods: {
-        setLeftControlBoxDraw : function(draw) {
-            if (draw != 2) {
-                this.$EventBus.$emit("LeftControlBoxDraw", false); 
-            } else {
-                this.$EventBus.$emit("LeftControlBoxDraw", true); 
-            }
+        pageMove : function(route) {
+            this.$router.push(route);
         }
     }
 

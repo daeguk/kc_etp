@@ -14,7 +14,7 @@
                                     <v-layout align-right>
                                         <v-flex xs12 sm4 text-xs-center>
                                             <div class="btn_r">
-                                                <v-btn outline color="indigo" small :to="{path:'/index/manage/indexList'}">목록으로 돌아가기</v-btn>
+                                                <v-btn outline color="indigo" small :to="{path:'/index/manage', query:{'activeTab':'2'}}">목록으로 돌아가기</v-btn>
                                             </div>
                                         </v-flex>
                                     </v-layout>
@@ -73,7 +73,7 @@
 
                                 <v-tabs-items v-model="tab">
                                     <v-tab-item>
-                                        <indexinfotab1 :index_item="results"></indexinfotab1>
+                                        <indexinfotab1 :index_item="results" :etp_items="etpInfos"></indexinfotab1>
                                     </v-tab-item>
                                     <v-tab-item>
                                         <!--indexinfotab2></indexinfotab2-->
@@ -108,7 +108,8 @@ export default {
             toggle_multiple: [0, 1, 2],
             tab: null,
             items: ["기본정보", "분석정보", "정보공개 목록"],
-            results:{}
+            results:{},
+            etpInfos:{},
         };
     },
     components: {
@@ -121,6 +122,7 @@ export default {
     beforeDestroy() {},
     mounted: function() {
         this.getIndexBaseInfo();
+        this.getIndexInEtpInfo();
         this.Indexchart();
     },
     methods: {
@@ -134,18 +136,40 @@ export default {
                         market_id : vm.$route.query.market_id
                         
                     }
-                }).then(response => {
-                    // console.log(response);
-                    if (response.data.success == false) {
-                        alert("지수정보가 없습니다.");
-                    } else {
-                        var items = response.data.results;
-                        vm.results = items[0];
-                        console.log("response=" + JSON.stringify(vm.results));
-                        //this.list_cnt = this.results.length;
+            }).then(response => {
+                // console.log(response);
+                if (response.data.success == false) {
+                    alert("지수정보가 없습니다.");
+                } else {
+                    var items = response.data.results;
+                    vm.results = items[0];
+                    console.log("response=" + JSON.stringify(vm.results));
+                    //this.list_cnt = this.results.length;
+                }
+            });
+
+        },     
+        getIndexInEtpInfo: function() {
+            var vm = this;
+
+            axios.get(Config.base_url + "/user/index/getIndexInEtpInfo", {
+                    params: {
+                        jisu_cd : vm.$route.query.jisu_cd,
+                        market_id : vm.$route.query.market_id
+                        
                     }
-                });
-        },         
+            }).then(response => {
+                // console.log(response);
+                if (response.data.success == false) {
+                    alert("지수정보가 없습니다.");
+                } else {
+                    var items = response.data.results;
+                    vm.etpInfos = items;
+                    console.log("etp_response=" + JSON.stringify(vm.results));
+                    //this.list_cnt = this.results.length;
+                }
+            });
+        },    
         Indexchart: function() {
             // Load the Visualization API and the corechart package.
             google.charts.load('current', {'packages':['corechart']});
