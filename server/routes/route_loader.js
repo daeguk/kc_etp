@@ -31,15 +31,15 @@ route_loader.sessionCheckRegister = function(app) {
                     세션 정보 처리[개발시 사용];
                     ============================
                 */
-               req.session.loginkey = "test@fnguide.com";
+               req.session.user_id = "test@fnguide.com";
                req.session.inst_cd = "06485";
                req.session.inst_type_cd = "0003";
                req.session.large_type = "FNGUIDE";
                req.session.save();
-               console.log("loginkey : " + req.session.loginkey);
+               console.log("loginkey : " + req.session.user_id);
                 /*===================================*/
 
-				if(req.session.loginkey) {
+				if(req.session.user_id) {
 					console.log("session SUCCESS");
 					next();
 				}else {
