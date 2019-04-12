@@ -232,7 +232,7 @@ var getInfoIndexList = function (req, res) {
         large_type : req.session.large_type,
     };
 
-    var stmt = mapper.getStatement('index', 'getIndexList', params, {language:'sql', indent: '  '});
+    var stmt = mapper.getStatement('index', 'getInfoIndexList', params, {language:'sql', indent: '  '});
 
     console.log(stmt);
 
@@ -437,6 +437,50 @@ var getIndexInEtpInfo = function (req, res) {
 };
 
 
+
+/*
+* 지수ETP 리스트
+*/
+var getEtpList = function (req, res) {
+    try {
+        console.log('indexSummary=>getEtpList 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        // var options = {id:'admin'};
+        
+        var options = {
+            large_type : req.session.large_type,
+            jisu_cd: req.query.jisu_cd,
+            market_id: req.query.market_id
+        };
+
+        util.log("options", JSON.stringify(options));
+
+        var stmt = mapper.getStatement('index', 'getEtpList', options, {language:'sql', indent: '  '});
+     
+
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
  
 
 module.exports.getIndexSummaryInfo = getIndexSummaryInfo;
@@ -448,3 +492,4 @@ module.exports.getIndexBaseInfo = getIndexBaseInfo;
 module.exports.getIndexEtpHistoryData = getIndexEtpHistoryData;
 module.exports.getIndexInEtpInfo = getIndexInEtpInfo;
 module.exports.getindexSubscribeList = getindexSubscribeList;
+module.exports.getEtpList = getEtpList; 

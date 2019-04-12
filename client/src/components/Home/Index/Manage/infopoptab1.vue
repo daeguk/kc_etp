@@ -3,12 +3,12 @@
     
     
 
-    <table id="jisu_grid" class="display" style="width:100%">
+    <table id="etf_grid" class="display" style="width:100%">
         <thead>
             <tr>
-                <th><input  type='checkbox' class="selectAll"></input></th>
+                <th><input  type='checkbox' class="selectAll select-checkbox"></input></th>
                 <th>ID</th>
-                <th>지수명</th>
+                <th>종목/지수명</th>
             </tr>
         </thead>   
     </table>
@@ -22,7 +22,7 @@ import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 import select from 'datatables.net-select'
 import Config from '@/js/config.js'
-var jisu_grid = null;
+var etf_grid = null;
   export default {
     data () {
       return {
@@ -55,18 +55,17 @@ var jisu_grid = null;
         vm.getInfoIndexList();
 
         $('.selectAll').on('click', function () {
-            alert(this.className)
             if ($(this).is( ":checked" )) {
-                jisu_grid.rows().select();        
+                etf_grid.rows().select();        
             } else {
-                jisu_grid.rows().deselect(); 
+                etf_grid.rows().deselect(); 
             }
         });
     },
     methods: {
         getInfoIndexList: function() {
-            console.log("getInfoIndexList");
-            axios.get(Config.base_url + "/user/index/getInfoIndexList", {
+            console.log("getEtpList");
+            axios.get(Config.base_url + "/user/index/getEtpList", {
                     params: {
                     }
                 }).then(response => {
@@ -79,7 +78,7 @@ var jisu_grid = null;
                         //console.log("response=" + JSON.stringify(items));
                         this.results = items;
 
-                        jisu_grid = $('#jisu_grid').DataTable( {
+                        etf_grid = $('#etf_grid').DataTable( {
                             "processing": true,
                             "serverSide": false,
                             "search": true,
@@ -93,7 +92,7 @@ var jisu_grid = null;
                                 'className': 'select-checkbox',
                             },],
                             select: {
-                                style:    'os',
+                                style:    'multi',
                                 selector: 'td:first-child'
                             },
                             paging: false,
