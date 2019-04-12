@@ -20,9 +20,9 @@
 
             <v-tabs-items v-model="activeTab">
                 <v-tab-item v-for="tab of tabs"  :key="tab.id" >
-                      <router-view></router-view>
                 </v-tab-item>
             </v-tabs-items>
+            <router-view></router-view>
            
       </v-flex>
     </v-layout> 

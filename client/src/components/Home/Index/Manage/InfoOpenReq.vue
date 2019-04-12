@@ -76,8 +76,11 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-         </v-flex>        
+         </v-flex>
+         
         </v-layout>
+
+
              
     </v-container>    
 
@@ -85,6 +88,8 @@
 
 
 <script>
+
+
 import Config from "@/js/config.js";
 
 export default {
@@ -114,13 +119,15 @@ export default {
                 { text: "지수코드", align: "center", value: "F16013" },
                 { text: "요청일자", align: "center", value: "REG_TIME" },
                 { text: "요청처리", align: "center", value: "req_process" }
-            ]
+            ],
+            
         };
     },
     mounted: function() {
         this.getInfoOpenReqList();
     },
-    created: function() {},
+    created: function() {
+    },
     beforeDestroy() {},
     methods: {
         getInfoOpenReqList: function() {
