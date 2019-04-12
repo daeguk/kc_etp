@@ -32,7 +32,7 @@
     * [tm_jisu_mast] 데이터를 조회한다.
     * 2019-04-10  bkLove(촤병국)
     -->
-    <select id="getJisuMast">
+    <select id="getJisuList">
         SELECT      tm_jisu_mast.jisu_seq           AS  jisu_seq
 
                 ,   tm_jisu_mast.jisu_id            AS  jisu_id
@@ -48,6 +48,10 @@
                 
                 ,   tm_code_dtl.com_dtl_name        AS  status_nm
                 ,   tm_code_dtl.com_val01           AS  status_position
+
+                ,   tm_jisu_mast.jisu_id            AS  prev_jisu_id
+                ,   tm_jisu_mast.method_file_id     AS  prev_method_file_id
+                ,   tm_jisu_mast.jisu_file_id       AS  prev_jisu_file_id
 
           FROM  tm_jisu_mast
          INNER  JOIN    tm_code_dtl

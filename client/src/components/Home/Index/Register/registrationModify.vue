@@ -8,7 +8,7 @@
                             <v-subheader>Register ID</v-subheader>
                         </v-flex>
                         <v-flex xs4 mt-3 mb-2>
-                            <span>regdafi1234</span>
+                            <span>{{ modForm.reg_id }}</span>
                         </v-flex>
                     </v-layout>
 
@@ -19,8 +19,8 @@
 
                         <v-flex xs4 mt-3 mb-2>
                             <span class="text_color_blue">등록완료 ></span>
-                            <span>연동신청 ></span>
-                            <span>연동완료</span>
+                            <span v-bind:class="{ 'text_color_blue' : modForm.status >= '02'}">연동신청 ></span>
+                            <span v-bind:class="{ 'text_color_blue' : modForm.status >= '03'}">연동완료</span>
                         </v-flex>
                     </v-layout>
                 </v-card>
@@ -53,7 +53,15 @@
                                 </v-flex>
 
                                 <v-flex xs4>
-                                    <v-text-field label="ID" value="e.g.FDL001" outline></v-text-field>
+                                    <v-text-field                                         
+                                        ref="jisu_id"
+                                        label="지수ID"
+                                        value="e.g.FDL001"
+                                        outline
+                                        v-model="modForm.jisu_id"
+                                        :rules="rules.jisu_id"
+                                        @keyup="modForm.duplCheckResult=false"
+                                    ></v-text-field>
                                 </v-flex>
 
                                 <v-flex xs4 class="text-xs-left">
@@ -160,7 +168,7 @@
                                 <v-flex xs4>
                                     <!--달력-->
                                     <v-layout row wrap>
-                                        <v-flex xs12 sm6 md4>
+                                        <v-flex xs12 sm6 md6>
                                             <v-menu
                                                 ref="menu"
                                                 v-model="menu"
@@ -175,7 +183,6 @@
                                             >
                                                 <template v-slot:activator="{ on }">
                                                     <v-text-field
-                                                        v-model="modForm.base_date"
                                                         label="Picker in menu"
                                                         append-icon="event"
                                                         box
@@ -183,9 +190,11 @@
                                                         outline
                                                         v-on="on"
                                                         widh="100%"
+                                                        v-model="modForm.base_date"
                                                         :rules="rules.base_date"
                                                     ></v-text-field>
                                                 </template>
+
                                                 <v-date-picker v-model="modForm.base_date" no-title scrollable>
                                                     <v-spacer></v-spacer>
                                                     <v-btn
@@ -229,8 +238,8 @@
                                     <input
                                         type="text"
                                         class="upload-name"
-                                        id="showMethodFile"
-                                        v-model="showMethodFile"
+                                        id="show_method_file"
+                                        v-model="modForm.show_method_file"
                                         disabled
                                     >
 
@@ -250,7 +259,7 @@
                                             <v-layout xs12>
                                                 <a
                                                     class="drop-files"
-                                                    v-on:click="file_click( 'methodFile' )"
+                                                    v-on:click="fn_fileClick( 'methodFile' )"
                                                 >
                                                     <p
                                                         class="text-xs-center"
@@ -289,7 +298,7 @@
                                             <v-layout xs12>
                                                 <a
                                                     class="drop-files"
-                                                    v-on:click="file_click( 'file' )"
+                                                    v-on:click="fn_fileClick( 'file' )"
                                                 >
                                                     <p
                                                         class="text-xs-center"
@@ -322,11 +331,11 @@
                                 <v-flex mb-3 v-show="!!jisuUploadResult">
                                     <v-flex>
                                         <v-btn
-                                            @click="jisuUploadResult = false;modForm.jisu_file_id='';"
+                                            @click="fn_clearFile()"
                                         >X</v-btn>
                                     </v-flex>
 
-                                    <v-flex xs4 class="drag_box_w">
+                                    <v-flex xs16 class="drag_box_w">
                                         <v-layout flat class="drag_box list">
                                             <v-data-table
                                                 :headers="headers"
@@ -464,8 +473,8 @@
                                                 justify-space-around
                                                 row
                                                 fill-height
-                                                v-for="(item, index) in arr_group_inst"
-                                                :key="index"
+
+                                                v-for="(item, index) in arr_group_inst" :key="index"
                                             >
                                                 <v-flex xs3>
                                                     <v-checkbox
@@ -473,7 +482,6 @@
                                                         :label="item.one.inst_name"
                                                         color="primary"
                                                         :value="item.one.inst_cd"
-                                                        hide-details
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
@@ -482,7 +490,6 @@
                                                         :label="item.two.inst_name"
                                                         color="primary"
                                                         :value="item.two.inst_cd"
-                                                        hide-details
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
@@ -491,7 +498,6 @@
                                                         :label="item.three.inst_name"
                                                         color="primary"
                                                         :value="item.three.inst_cd"
-                                                        hide-details
                                                     ></v-checkbox>
                                                 </v-flex>
                                             </v-layout>
@@ -515,12 +521,12 @@
                 <!---특정기관과 공유 end-->
 
                 <div class="text-xs-center">
-                    <p class="text_info1">
+                    <p class="text_info1" v-if="modForm.status == '03'">
                         <v-icon small>priority_high</v-icon>플랫폼 연동이 완료된 상태이므로 일부 정보에 한해 변경이 가능합니다.
                     </p>
-                    <v-btn depressed large color="primary" dark>저장</v-btn>
-                    <v-btn depressed large color="#3158a1" dark>등록</v-btn>
-                    <v-btn depressed large color="#9e9e9e" dark>삭제</v-btn>
+                    <v-btn depressed large color="primary" dark @click="fn_modifyJisu()">저장</v-btn>
+                    <v-btn depressed large color="#3158a1" dark v-if="modForm.status == '01'" @click="fn_modifyJisu( '02' )">연동신청</v-btn>
+                    <v-btn depressed large color="#9e9e9e" dark v-if="modForm.status != '03'" @click="fn_deleteJisu()">삭제</v-btn>
                 </div>
             </v-container>
         </v-form>
@@ -532,7 +538,8 @@
 import Config from "@/js/config.js";
 
 export default {
-    props: ["editData"],
+    props: [ "editData" ],
+
     data() {
         return {
 
@@ -575,7 +582,6 @@ export default {
 
             /* 지수 방법론 관련 정보 */
             formData : new FormData(),  /* 지수방법론 파일 선택시 */
-            showMethodFile : "",        /* 지수방법론 파일명 */
 
 
             /* 입력값 관련 정보 */
@@ -591,8 +597,16 @@ export default {
                 method_file_id : -1,
                 jisu_file_id : -1,
                 req_content: "",
+                show_method_file : "",
+                reg_id : "",
+                status : "",
+                modStatus : "",
 
-                arr_jisu_inst : []      /* 선택된 기관 정보 */
+                prev_jisu_id : "",
+                prev_mothod_file_id : -1,
+                prev_jisu_file_id : -1,
+
+                arr_jisu_inst : [] ,     /* 선택된 기관 정보 */
             },
 
             /* 저장시 rules 관련 정보 */
@@ -614,8 +628,8 @@ export default {
                     v => !!v || "[기준 지수] is required",
                     v => /^([0-9]*)[\.]?([0-9]{3})?$/.test( v ) || "[기준지수] 숫자형만 입력가능합니다.(소수점 3자리까지만)",
                     v =>
-                        (v && v.length <= 10) ||
-                        "[기준 지수]] 10자리 이하로 입력해 주세요."
+                        (v && v.toString().length <= 10) ||
+                        "[기준 지수] 10자리 이하로 입력해 주세요."
                 ],
                 base_date: [v => !!v || "[기준일] is required"],
                 req_content(value) {
@@ -628,57 +642,6 @@ export default {
             }
         };
     },
-
-    created() {
-
-        /*
-         * indexRegisterMain -> 신규지수등록 버튼 클릭시 이벤트를 수신한다.
-         * 2019-04-10  bkLove(촤병국)
-         */
-        this.$EventBus.$on( "indexRegisterMain_registration_call", res => {
-
-            var vm  = this;
-
-            console.log( ">> registration val=[" + res + "]");
-
-            switch( res ) {
-                case    "clear" :
-
-                        vm.$refs.modForm.reset();
-
-                        vm.formData                 =   new FormData(); /* 지수방법론 파일 선택시 */
-                        vm.$refs.methodFile.value   =   null;           /* 지수방법론 파일정보 */
-                        vm.showMethodFile           =   null;           /* 지수방법론 파일명 */
-
-                        vm.modForm.duplCheckResult  =   false;
-                        vm.method_file_id           =   -1;
-                        vm.jisu_file_id             =   -1;
-                        vm.arr_jisu_inst            =   [];             /* 선택된 기관 정보 */
-                        vm.arr_show_inst            =   [];             /* (사용자가 선택) 4개를 1개로 그룹핑한 기관정보 ( 팝업창에서 선택된 기관정보 노출 ) */
-
-                        vm.jisuDataList             =   [];             /* 소급지수 업로드 후 목록정보 */
-                        vm.jisuUploadResult         =   false;          /* 소급지수 업로드 결과 여부 */
-                        vm.$refs.file.value         =   null;           /* 수급지수 파일정보 */
-
-                        vm.modForm.req_content      =   "";             /* 요청사항 */
-
-                        vm.pagination.rowsPerPage   =   5;
-
-                        break;
-            }     
-        })
-    },
-
-
-    beforeDestory : function() {
-
-        /*
-         * indexRegisterMain -> 신규지수등록 버튼 클릭시 이벤트를 제거한다.
-         * 2019-04-10  bkLove(촤병국)
-         */
-        this.$EventBus.$off("indexRegisterMain_registration_call");
-    },
-
 
     mounted() {
 
@@ -727,6 +690,7 @@ export default {
                 }.bind(this)              
             );            
 
+            /* 소급지수 파일 영역 */
             this.$refs.fileform.addEventListener(
                 "drop",
                 function(e) {
@@ -743,19 +707,20 @@ export default {
                 }.bind(this)
             );
 
+            /* 지수방법론 파일 영역 */
             this.$refs.methodForm.addEventListener(
                 "drop",
                 function(e) {
                     var selfThis    =   this;
                     let file        =   e.dataTransfer.files[0];
 
-                    this.showMethodFile = file.name;
+                    this.modForm.show_method_file   =   file.name;
 
                 }.bind(this)
             );            
         }
 
-        /* file input에서 선택된 파일이 있으면 이벤트 실행 */
+        /* 소급지수 파일 영역 */
         this.$refs.file.addEventListener(
             "change",
             function(evt) {
@@ -779,14 +744,14 @@ export default {
             }.bind(this)
         );
 
-        /* file input에서 선택된 파일이 있으면 이벤트 실행 */
+        /* 지수방법론 파일 영역 */
         this.$refs.methodFile.addEventListener(
             "change",
             function(evt) {
                 var selfThis    =   this;
                 let file        =   this.$refs.methodFile.files[0];
 
-                this.showMethodFile = file.name;
+                this.modForm.show_method_file   =   file.name;
 
                 this.$refs.methodForm.addEventListener(
                     evt,
@@ -799,9 +764,11 @@ export default {
             }.bind(this)
         ); 
 
+        /* 팝업창에 노출할 전체 기관정보 조회 */
         this.fn_getDomainInst();
 
-        alert(">>>>" + this.editData.jisu_seq);
+        /* 등록된 지수정보 조회 */
+        this.fn_getRegistedJisuData();
     },
 
     methods: {
@@ -857,10 +824,10 @@ export default {
         },
 
         /*
-         * 등록 버튼 클릭시
+         * 저장 버튼 클릭시
          * 2019-04-02  bkLove(촤병국)
          */
-        fn_save() {
+        fn_modifyJisu( modStatus ) {
             var vm = this;
 
             if (!this.modForm.duplCheckResult) {
@@ -874,13 +841,16 @@ export default {
                 return false;
             }
 
+            if( modStatus ) {
+                this.form.modStatus = modStatus;
+            }
 
             this.formData = new FormData();
             this.formData.append( "files", this.$refs.methodFile.files[0] );
             this.formData.append( "data", JSON.stringify(this.modForm) );
 
             axios.post(
-                Config.base_url + "/user/index/jisuSave",
+                Config.base_url + "/user/index/modifyJisu",
                 this.formData,
                 {
                     headers: {
@@ -915,13 +885,29 @@ export default {
          * 파일 선택시
          * 2019-04-02  bkLove(촤병국)
          */
-        file_click: function( gubun ) {
+        fn_fileClick: function( gubun ) {
 
+            /* 소급지수 파일 클릭시 */
             if( gubun == "file" ) {
                 this.$refs.file.click();
-            }else{
+            }
+            /* 지수 방법론 파일 클릭시 */
+            else{
                 this.$refs.methodFile.click();
             }
+        },
+
+        /*
+         * 소급지수 파일 초기화 버튼 클릭시
+         * 2019-04-02  bkLove(촤병국)
+         */
+        fn_clearFile : function() {
+            var vm = this;
+
+            vm.jisuUploadResult         =   false;
+            
+            vm.modForm.jisu_file_id     =   '';
+            vm.$refs.file.value         =   null;
         },
 
         /*
@@ -992,7 +978,7 @@ export default {
         },
 
         /*
-         * 기관정보를 조회한다.
+         * 팝업창에 노출할 전체 기관정보 조회를 조회한다.
          * 2019-04-02  bkLove(촤병국)
          */
         fn_getDomainInst() {
@@ -1087,7 +1073,52 @@ export default {
 
             this.modForm.arr_jisu_inst =   arrTemp;
             this.fn_instShare();
-        }      
+        },
+
+        fn_checkedData( item ) {
+            console.log( item );
+
+            var inx = this.modForm.arr_jisu_inst.indexOf( item );
+            if( inx != -1 ) {
+                this.modForm.arr_jisu_inst.slice( inx, 1);
+            }
+            this.modForm.arr_jisu_inst.push( item );
+        },
+
+        /*
+         * 등록된 지수정보를 조회한다.
+         * 2019-04-11  bkLove(촤병국)
+         */        
+        fn_getRegistedJisuData() {
+
+            var selfThis = this;
+
+            /* 1. 기관정보를 조회한다. */
+            axios.post(Config.base_url + "/user/index/getRegistedJisuData", {
+                data: selfThis.editData
+            }).then(function(response) {
+
+                if (response && response.data) {
+                    if( response.data.jisuInfo ) {
+                        selfThis.modForm = response.data.jisuInfo;
+                        selfThis.modForm.duplCheckResult    =   true;
+                    }
+
+                    if( response.data.arr_jisu_inst ) {
+                        selfThis.modForm.arr_jisu_inst      =   response.data.arr_jisu_inst;    /* 선택된 기관 정보 */
+                    }
+
+                    if( response.data.arr_show_inst ) {
+                        selfThis.arr_show_inst              =   response.data.arr_show_inst;    /* (사용자가 선택) 4개를 1개로 그룹핑한 기관정보 ( 팝업창에서 선택된 기관정보 노출 ) */
+                    }
+
+                    if( response.data.jisuDataList ) {
+                        selfThis.jisuDataList               =   response.data.jisuDataList;     /* 소급지수 업로드 후 목록정보 */
+                        selfThis.jisuUploadResult           =   true;                           /* 소급지수 업로드 결과 여부 */
+                    }
+                }
+            });            
+        }
     }
 };
 </script>

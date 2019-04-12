@@ -10,7 +10,7 @@
                             :headers="headers"
                             :items="desserts"
                             class="table_line2 indexinfo_table01"
-                            hide-actions="pagination"
+                            
                         >
                             <template v-slot:items="props">
                                 <td class="text-xs-right">

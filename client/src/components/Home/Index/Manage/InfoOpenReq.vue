@@ -27,6 +27,7 @@
                     <td class="text-xs-center">{{ props.item.F16013 }}</td>
                     <td class="text-xs-center">{{ props.item.REG_TIME }}</td>
                     <td class="text-xs-center">
+                        
                         <v-btn small depressed color="primary" class="white--text" @click.stop="dialogOpen('1', props.item);">
                             <v-icon dark>thumb_up_alt</v-icon>Yes
                         </v-btn>
@@ -75,8 +76,11 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-         </v-flex>        
+         </v-flex>
+         
         </v-layout>
+
+
              
     </v-container>    
 
@@ -84,6 +88,8 @@
 
 
 <script>
+
+
 import Config from "@/js/config.js";
 
 export default {
@@ -113,13 +119,15 @@ export default {
                 { text: "지수코드", align: "center", value: "F16013" },
                 { text: "요청일자", align: "center", value: "REG_TIME" },
                 { text: "요청처리", align: "center", value: "req_process" }
-            ]
+            ],
+            
         };
     },
     mounted: function() {
         this.getInfoOpenReqList();
     },
-    created: function() {},
+    created: function() {
+    },
     beforeDestroy() {},
     methods: {
         getInfoOpenReqList: function() {

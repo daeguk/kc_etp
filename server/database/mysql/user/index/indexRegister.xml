@@ -38,8 +38,9 @@
     <select id="getDomainInst">
         SELECT	    tm_domain_mast.inst_cd		    AS  inst_cd
                 ,   tm_domain_mast.inst_name		AS  inst_name
-        FROM	tm_domain_mast
-        WHERE	tm_domain_mast.inst_type_name       =   'ETF발행사'
+          FROM	tm_domain_mast
+         WHERE	tm_domain_mast.inst_type_name       =   'ETF발행사'
+         ORDER  BY  tm_domain_mast.inst_cd
     </select>
 
     <!--
@@ -227,7 +228,7 @@
             ,   now()
             ,   #{user_id}
             ,   now()
-        )            
+        )
         </foreach>
     </insert>        
 

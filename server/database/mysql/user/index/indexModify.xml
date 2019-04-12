@@ -1,65 +1,331 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="indexModify">  
+<mapper namespace="indexModify">
 
     <!--
-    * 코드 상세정보를 조회한다.
-    * 2019-04-10  bkLove(촤병국)
-    -->
-    <select id="getCodeDtl">
-        SELECT      tm_code_dtl.com_mst_cd          AS  com_mst_cd
-                ,   tm_code_dtl.com_dtl_cd          AS  com_dtl_cd
-                
-                ,   tm_code_dtl.com_dtl_name        AS  com_dtl_name
-                ,   tm_code_dtl.com_val01           AS  com_val01
-                ,   tm_code_dtl.com_val02           AS  com_val02
-                ,   tm_code_dtl.com_val03           AS  com_val03
-
-          FROM          tm_code_mast
-         INNER  JOIN    tm_code_dtl
-
-                ON      tm_code_mast.com_mst_cd     =   tm_code_dtl.com_mst_cd
-
-         WHERE  tm_code_mast.use_yn                 =   '1'
-           AND  tm_code_dtl.use_yn                  =   '1'
-           AND  tm_code_mast.com_mst_cd             =   #{com_mst_cd}
-         ORDER  BY      tm_code_dtl.com_mst_cd
-                    ,   tm_code_dtl.com_dtl_cd
-    </select>
-
-    <!--
-    * [tm_jisu_mast] 데이터를 조회한다.
-    * 2019-04-10  bkLove(촤병국)
+    * 지수 마스터 데이터를 조회한다.
+    * 2019-04-12  bkLove(촤병국)
     -->
     <select id="getJisuMast">
-        SELECT      tm_jisu_mast.jisu_seq           AS  jisu_seq
+        SELECT      tm_jisu_mast.jisu_seq                               AS  jisu_seq
 
-                ,   tm_jisu_mast.jisu_id            AS  jisu_id
-                ,   tm_jisu_mast.jisu_kor_nm        AS  jisu_kor_nm
-                ,   tm_jisu_mast.jisu_eng_nm        AS  jisu_eng_nm
-                ,   tm_jisu_mast.jisu_summary       AS  jisu_summary
-                ,   tm_jisu_mast.base_jisu          AS  base_jisu
-                ,   tm_jisu_mast.base_date          AS  base_date
-                ,   tm_jisu_mast.method_file_id     AS  method_file_id
-                ,   tm_jisu_mast.jisu_file_id       AS  jisu_file_id
-                ,   tm_jisu_mast.req_content        AS  req_content
-                ,   tm_jisu_mast.status             AS  status
+                ,   tm_jisu_mast.jisu_id                                AS  jisu_id
+                ,   tm_jisu_mast.jisu_kor_nm                            AS  jisu_kor_nm
+                ,   tm_jisu_mast.jisu_eng_nm                            AS  jisu_eng_nm
+                ,   tm_jisu_mast.jisu_summary                           AS  jisu_summary
+                ,   tm_jisu_mast.base_jisu                              AS  base_jisu
+                ,   DATE_FORMAT(tm_jisu_mast.base_date,'%Y-%m-%d')      AS  base_date
+                ,   tm_jisu_mast.method_file_id                         AS  method_file_id
+                ,   tm_jisu_mast.jisu_file_id                           AS  jisu_file_id
+                ,   tm_jisu_mast.req_content                            AS  req_content
+                ,   tm_jisu_mast.status                                 AS  status
+                ,   tm_jisu_mast.reg_id                                 AS  reg_id
                 
-                ,   tm_code_dtl.com_dtl_name        AS  status_nm
-                ,   tm_code_dtl.com_val01           AS  status_position
+                ,   tm_code_dtl.com_dtl_name                            AS  status_nm
+                ,   tm_code_dtl.com_val01                               AS  status_position
+
+                ,   tm_jisu_mast.jisu_id                                AS  prev_jisu_id
+                ,   tm_jisu_mast.method_file_id                         AS  prev_method_file_id
+                ,   tm_jisu_mast.jisu_file_id                           AS  prev_jisu_file_id
+
+                ,   jisu_method.org_file_name                           AS  show_method_file
 
           FROM  tm_jisu_mast
          INNER  JOIN    tm_code_dtl
+                  ON    tm_jisu_mast.status         =   tm_code_dtl.com_dtl_cd
 
-                ON      tm_jisu_mast.status         =   tm_code_dtl.com_dtl_cd
-
+          LEFT  OUTER  
+                 JOIN   tm_jisu_file                jisu_method
+                   ON   (
+                                tm_jisu_mast.method_file_id     =   jisu_method.file_id
+                            AND jisu_method.gubun               =   '001'                   /* 지수 방법론 파일 */
+                        )
          WHERE  1 = 1
 
            AND  tm_code_dtl.use_yn                  =   '1'
            AND  tm_code_dtl.com_mst_cd              =   'COM001'
 
-           AND  tm_jisu_mast.reg_id                 =   #{user_id}
+           AND  tm_jisu_mast.jisu_seq               =   #{jisu_seq}
     </select>
+
+    <!--
+    * 지수정보공개요청 데이터를 조회한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <select id="getJisuShareReq">
+        SELECT      tm_jisu_share_req.inst_cd       AS  inst_cd
+                ,   tm_domain_mast.inst_name        AS  inst_name
+
+          FROM  tm_jisu_share_req
+         INNER  JOIN    tm_domain_mast
+                  ON    (
+                                tm_domain_mast.inst_type_name       =   'ETF발행사'
+                            AND tm_jisu_share_req.inst_cd           =   tm_domain_mast.inst_cd
+                        )
+
+         WHERE  1 = 1
+
+           AND  tm_jisu_share_req.jisu_seq          =   #{jisu_seq}
+         ORDER  BY  tm_jisu_share_req.inst_cd
+    </select>
+
+
+    <!--
+    * 지수 마스터 테이블을 수정한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <insert     id="modifyJisuMast">
+
+        UPDATE      tm_jisu_mast 
+           SET      jisu_id             =   #{jisu_id}
+                ,   jisu_kor_nm         =   #{jisu_kor_nm}
+                ,   jisu_summary        =   #{jisu_summary}
+                ,   base_jisu           =   #{base_jisu}
+                ,   base_date           =   REPLACE( #{base_date}, '-', '' ) 
+
+        <if test= 'method_file_id != null  and  method_file_id != -1' >
+                ,   method_file_id      =    ${method_file_id}
+        </if>
+
+
+        <if test= 'jisu_file_id != null  and  jisu_file_id != -1' >
+                ,   jisu_file_id        =   ${jisu_file_id}
+        </if>
+                ,   req_content         =   #{req_content}
+
+        <if test= 'modStatus != null  and  !modStatus.equals("")' >	
+                ,   status              =   #{modStatus}
+        </if>
+
+                ,   upd_id              =   #{user_id}
+                ,   upd_time            =   now() 
+
+         WHERE  jisu_seq                =   #{jisu_seq}
+
+    </insert>
+
+
+
+
+
+
+    <!--
+    * 지수 파일정보가 존재하는지 확인한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <select id="getExistJisuFile">
+        SELECT  COUNT(1)                            AS  cnt
+          FROM  tm_jisu_file
+         WHERE  tm_jisu_file.file_id                =   #{file_id}
+    </select>
+
+    <!--
+    * 지수 파일정보가 존재하는지 확인한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <select id="getJisuFie">
+        SELECT      tm_jisu_file.file_id            AS  file_id
+                ,   tm_jisu_file.org_file_name      AS  org_file_name
+                ,   tm_jisu_file.save_file_name     AS  save_file_name
+                ,   tm_jisu_file.file_size          AS  file_size
+                ,   tm_jisu_file.mime_type          AS  mime_type
+                ,   tm_jisu_file.gubun              AS  gubun
+
+          FROM  tm_jisu_file
+         WHERE  tm_jisu_file.file_id                =   #{file_id}
+    </select>
+
+    <!--
+    * 지수 마스터가 존재하는지 확인한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <select id="getExistJisuMast">
+        SELECT  COUNT(1)   AS  cnt
+          FROM  tm_jisu_mast
+         WHERE  tm_jisu_mast.jisu_seq               =   #{jisu_seq}
+    </select>
+
+    <!--
+    * 지수 엑셀업로드가 존재하는지 확인한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <select id="getExistJisuUpload">
+        SELECT  COUNT(1)   AS  cnt
+          FROM  tm_jisu_upload
+         WHERE  tm_jisu_upload.jisu_seq             =   #{jisu_seq}
+    </select>
+
+    <!--
+    * 등록할 지수 엑셀업로드 목록을 조회한다. ( 입력할 정보 - 저장된 정보 )
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <select id="getJisuUploadForInsert">
+        WITH    base    AS
+        (
+        <foreach    collection="dataLists"   item="data"     separator=" UNION ALL " >
+            SELECT
+                        #{jisu_seq}         AS  jisu_seq
+                    ,   ${data.row_no}      AS  "data.row_no"
+
+                    ,   ${jisu_file_id}     AS  jisu_file_id
+                    ,   #{data.col01}       AS  "data.col01"
+                    ,   #{data.col02}       AS  "data.col02"
+                    ,   #{data.col03}       AS  "data.col03"
+                    ,   #{data.col04}       AS  "data.col04"
+                    ,   #{data.col05}       AS  "data.col05"
+        </foreach>
+        )
+
+        SELECT      base.jisu_seq           AS  jisu_seq
+                ,   base."data.row_no"      AS  "data.row_no"
+                
+                ,   base.jisu_file_id       AS  jisu_file_id
+                ,   base."data.col01"       AS  "data.col01"
+                ,   base."data.col02"       AS  "data.col02"
+                ,   base."data.col03"       AS  "data.col03"
+                ,   base."data.col04"       AS  "data.col04"
+                ,   base."data.col05"       AS  "data.col05"
+          FROM  base
+         WHERE  (
+                        base.jisu_seq
+                    ,   base."data.row_no"
+                )
+                NOT IN
+                (
+                    SELECT      tm_jisu_upload.jisu_seq
+                            ,   tm_jisu_upload.row_no
+                      FROM  tm_jisu_upload
+                     WHERE  tm_jisu_upload.jisu_seq     =   #{jisu_seq}
+                )
+    </select>
+
+    <!--
+    * 수정할 지수 엑셀업로드 목록을 조회한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <select id="getJisuUploadForUpdate">
+        WITH    base    AS
+        (
+        <foreach    collection="dataLists"   item="data"     separator=" UNION ALL " >
+            SELECT
+                        #{jisu_seq}         AS  jisu_seq
+                    ,   ${data.row_no}      AS  "data.row_no"
+
+                    ,   ${jisu_file_id}     AS  jisu_file_id
+                    ,   #{data.col01}       AS  "data.col01"
+                    ,   #{data.col02}       AS  "data.col02"
+                    ,   #{data.col03}       AS  "data.col03"
+                    ,   #{data.col04}       AS  "data.col04"
+                    ,   #{data.col05}       AS  "data.col05"
+        </foreach>
+        )
+
+        SELECT      base.jisu_seq           AS  jisu_seq
+                ,   base."data.row_no"      AS  "data.row_no"
+                
+                ,   base.jisu_file_id       AS  jisu_file_id
+                ,   base."data.col01"       AS  "data.col01"
+                ,   base."data.col02"       AS  "data.col02"
+                ,   base."data.col03"       AS  "data.col03"
+                ,   base."data.col04"       AS  "data.col04"
+                ,   base."data.col05"       AS  "data.col05"
+          FROM  tm_jisu_upload
+         WHERE  (
+                        tm_jisu_upload.jisu_seq
+                    ,   tm_jisu_upload.row_no
+                )
+                IN
+                (
+                    SELECT      base.jisu_seq
+                            ,   base."data.row_no"
+                      FROM  base
+                )
+    </select>
+
+    <!--
+    * 삭제할 지수 엑셀업로드 목록을 조회한다. ( 저장된 정보 - 입력할 정보 )
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <select id="getJisuUploadForDelete">
+        WITH    base    AS
+        (
+        <foreach    collection="dataLists"   item="data"     separator=" UNION ALL " >
+            SELECT
+                        #{jisu_seq}         AS  jisu_seq
+                    ,   ${data.row_no}      AS  "data.row_no"
+
+                    ,   ${jisu_file_id}     AS  jisu_file_id
+                    ,   #{data.col01}       AS  "data.col01"
+                    ,   #{data.col02}       AS  "data.col02"
+                    ,   #{data.col03}       AS  "data.col03"
+                    ,   #{data.col04}       AS  "data.col04"
+                    ,   #{data.col05}       AS  "data.col05"
+        </foreach>
+        )
+
+        SELECT      base.jisu_seq           AS  jisu_seq
+                ,   base."data.row_no"      AS  "data.row_no"
+                
+                ,   base.jisu_file_id       AS  jisu_file_id
+                ,   base."data.col01"       AS  "data.col01"
+                ,   base."data.col02"       AS  "data.col02"
+                ,   base."data.col03"       AS  "data.col03"
+                ,   base."data.col04"       AS  "data.col04"
+                ,   base."data.col05"       AS  "data.col05"
+          FROM  tm_jisu_upload
+         WHERE  (
+                        tm_jisu_upload.jisu_seq
+                    ,   tm_jisu_upload.row_no
+                )
+                NOT IN
+                (
+                    SELECT      base.jisu_seq
+                            ,   base."data.row_no"
+                      FROM  base
+                )
+    </select>    
+
+    <!--
+    * 지수 파일 ID 에 해당하는 엑셀업로드 정보를 삭제한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <select id="deleteJisuUpload">
+        DELETE
+          FROM  tm_jisu_upload
+         WHERE  tm_jisu_upload.jisu_seq             =   #{jisu_seq}
+           AND  tm_jisu_upload.jisu_file_id         =   #{jisu_file_id}
+    </select>
+
+    <!--
+    * 지수정보 공유 요청 정보가 존재하는지 확인한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <select id="getExistJisuUpload">
+        SELECT  COUNT(1)   AS  cnt
+          FROM  tm_jisu_share_req
+         WHERE  tm_jisu_share_req.jisu_seq          =   #{jisu_seq}
+
+        <if test= 'inst_cd != null  and  !inst_cd.equals("")' >	
+           AND  tm_jisu_share_req.inst_cd           =   #{inst_cd}
+        </if>
+    </select>
+
+    <!--
+    * 기관코드 삭제목록 대상들을 삭제한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <select id="deleteJisuShareReq">
+        DELETE
+          FROM  tm_jisu_share_req
+         WHERE  tm_jisu_share_req.jisu_seq          =   #{jisu_seq}
+        
+           AND  tm_jisu_share_req.inst_cd           IN  
+                (
+        <foreach    collection="arr_jisu_inst"   item="inst_cd"    index="index"   separator="," >
+                    #{inst_cd}
+        </foreach>
+                )
+    </select>    
 
 </mapper>

@@ -188,7 +188,7 @@
                                 </v-flex>                              
 
                                 <v-flex xs4>
-                                    <input type='text' class='upload-name' id='showMethodFile' v-model="showMethodFile" disabled />
+                                    <input type='text' class='upload-name' id='show_method_file' v-model="form.show_method_file" disabled />
 
                                     <v-layout id="file-drag-drop"  ref="methodForm" class="drag_box">
                                         <input type="file" name="methodFile" ref="methodFile" style="display:none;">
@@ -199,7 +199,7 @@
                                             </v-layout>
 
                                             <v-layout xs12>
-                                                <a class="drop-files" v-on:click="file_click( 'methodFile' )">
+                                                <a class="drop-files" v-on:click="fn_fileClick( 'methodFile' )">
                                                     <p
                                                         class="text-xs-center"
                                                     >업로드 할 지수방법론 파일을 드래그 해주세요.</p>
@@ -227,7 +227,7 @@
                                             </v-layout>
 
                                             <v-layout xs12>
-                                                <a class="drop-files" v-on:click="file_click( 'file' )">
+                                                <a class="drop-files" v-on:click="fn_fileClick( 'file' )">
                                                     <p
                                                         class="text-xs-center"
                                                     >업로드 할 소급지수 파일을 드래그 해주세요.</p>
@@ -261,23 +261,28 @@
                                 <v-flex mb-3 v-show="!!jisuUploadResult">
 
                                     <v-flex>
-                                        <v-btn @click="jisuUploadResult = false;form.jisu_file_id='';">X</v-btn>
+                                        <v-btn @click="fn_clearFile()">X</v-btn>
                                     </v-flex>
 
-                                    <v-data-table
-                                        :headers="headers"
-                                        :items="jisuDataList"
-                                        :pagination.sync="pagination"
-                                        class="elevation-1"
-                                    >
-                                        <template v-slot:items="props">
-                                            <td class="text-xs-center">{{ props.item.file_id }}</td>
-                                            <td class="text-xs-center">{{ props.item.row_no }}</td>
-                                            <td class="text-xs-left">{{ props.item.col01 }}</td>
-                                            <td class="text-xs-leftt">{{ props.item.col02 }}</td>
-                                            <td class="text-xs-left">{{ props.item.col03 }}</td>
-                                        </template>
-                                    </v-data-table>
+                                    <v-flex xs16 class="drag_box_w">
+                                        <v-layout flat class="drag_box list">
+
+                                            <v-data-table
+                                                :headers="headers"
+                                                :items="jisuDataList"
+                                                :pagination.sync="pagination"
+                                                class="regist_table"
+                                            >
+                                                <template v-slot:items="props">
+                                                    <td class="text-xs-center">{{ props.item.file_id }}</td>
+                                                    <td class="text-xs-center">{{ props.item.row_no }}</td>
+                                                    <td class="text-xs-left">{{ props.item.col01 }}</td>
+                                                    <td class="text-xs-leftt">{{ props.item.col02 }}</td>
+                                                    <td class="text-xs-left">{{ props.item.col03 }}</td>
+                                                </template>
+                                            </v-data-table>
+                                        </v-layout>
+                                    </v-flex>
                                 </v-flex>
                             </v-layout>
 
@@ -420,7 +425,7 @@
 
                 <!---특정기관과 공유 end-->
                 <div class="text-xs-center">
-                    <v-btn depressed large color="#3158a1" dark @click="this.fn_registerJisu">등록</v-btn>
+                    <v-btn depressed large color="#3158a1" dark @click="fn_registerJisu()">등록</v-btn>
                 </div>
             </v-container>
         </v-form>
@@ -474,7 +479,6 @@ export default {
 
             /* 지수 방법론 관련 정보 */
             formData : new FormData(),  /* 지수방법론 파일 선택시 */
-            showMethodFile : "",        /* 지수방법론 파일명 */
 
 
             /* 입력값 관련 정보 */
@@ -490,6 +494,7 @@ export default {
                 method_file_id : -1,
                 jisu_file_id : -1,
                 req_content: "",
+                show_method_file : "",
 
                 arr_jisu_inst : []      /* 선택된 기관 정보 */
             },
@@ -513,8 +518,8 @@ export default {
                     v => !!v || "[기준 지수] is required",
                     v => /^([0-9]*)[\.]?([0-9]{3})?$/.test( v ) || "[기준지수] 숫자형만 입력가능합니다.(소수점 3자리까지만)",
                     v =>
-                        (v && v.length <= 10) ||
-                        "[기준 지수]] 10자리 이하로 입력해 주세요."
+                        (v && v.toString().length <= 10) ||
+                        "[기준 지수] 10자리 이하로 입력해 주세요."
                 ],
                 base_date: [v => !!v || "[기준일] is required"],
                 req_content(value) {
@@ -547,21 +552,22 @@ export default {
 
                         vm.formData                 =   new FormData(); /* 지수방법론 파일 선택시 */
                         vm.$refs.methodFile.value   =   null;           /* 지수방법론 파일정보 */
-                        vm.showMethodFile           =   null;           /* 지수방법론 파일명 */
+                        vm.form.show_method_file    =   null;           /* 지수방법론 파일명 */
+                        vm.form.method_file_id      =   -1;             /* 지수방법론 파일 ID */
 
-                        vm.form.duplCheckResult     =   false;
-                        vm.method_file_id           =   -1;
-                        vm.jisu_file_id             =   -1;
-                        vm.arr_jisu_inst            =   [];             /* 선택된 기관 정보 */
+                        vm.form.duplCheckResult     =   false;          /* 중복체크 결과 */
+                        vm.form.req_content         =   "";             /* 요청사항 */
+
+                        vm.form.arr_jisu_inst       =   [];             /* 선택된 기관 정보 */
                         vm.arr_show_inst            =   [];             /* (사용자가 선택) 4개를 1개로 그룹핑한 기관정보 ( 팝업창에서 선택된 기관정보 노출 ) */
 
+                        vm.form.jisu_file_id        =   -1;             /* 소급지수 파일 ID */
                         vm.jisuDataList             =   [];             /* 소급지수 업로드 후 목록정보 */
                         vm.jisuUploadResult         =   false;          /* 소급지수 업로드 결과 여부 */
                         vm.$refs.file.value         =   null;           /* 수급지수 파일정보 */
 
-                        vm.form.req_content         =   "";             /* 요청사항 */
-
                         vm.pagination.rowsPerPage   =   5;
+
 
                         break;
             }     
@@ -626,6 +632,7 @@ export default {
                 }.bind(this)              
             );            
 
+            /* 소급지수 파일 영역 */
             this.$refs.fileform.addEventListener(
                 "drop",
                 function(e) {
@@ -642,22 +649,24 @@ export default {
                 }.bind(this)
             );
 
+            /* 지수방법론 파일 영역 */
             this.$refs.methodForm.addEventListener(
                 "drop",
                 function(e) {
                     var selfThis    =   this;
                     let file        =   e.dataTransfer.files[0];
 
-                    this.showMethodFile = file.name;
+                    this.form.show_method_file  =   file.name;
 
                 }.bind(this)
             );            
         }
 
-        /* file input에서 선택된 파일이 있으면 이벤트 실행 */
+        /* 소급지수 파일 영역 */
         this.$refs.file.addEventListener(
             "change",
             function(evt) {
+
                 var selfThis    =   this;
                 let file        =   this.$refs.file.files[0];
 
@@ -678,14 +687,14 @@ export default {
             }.bind(this)
         );
 
-        /* file input에서 선택된 파일이 있으면 이벤트 실행 */
+        /* 지수방법론 파일 영역 */
         this.$refs.methodFile.addEventListener(
             "change",
             function(evt) {
                 var selfThis    =   this;
                 let file        =   this.$refs.methodFile.files[0];
 
-                this.showMethodFile = file.name;
+                this.form.show_method_file  =   file.name;
 
                 this.$refs.methodForm.addEventListener(
                     evt,
@@ -698,6 +707,7 @@ export default {
             }.bind(this)
         ); 
 
+        /* 팝업창에 노출할 전체 기관정보 조회 */
         this.fn_getDomainInst();
     },
 
@@ -812,13 +822,29 @@ export default {
          * 파일 선택시
          * 2019-04-02  bkLove(촤병국)
          */
-        file_click: function( gubun ) {
+        fn_fileClick: function( gubun ) {
 
+            /* 소급지수 파일 클릭시 */
             if( gubun == "file" ) {
                 this.$refs.file.click();
-            }else{
+            }
+            /* 지수 방법론 파일 클릭시 */
+            else{
                 this.$refs.methodFile.click();
             }
+        },
+
+        /*
+         * 소급지수 파일 초기화 버튼 클릭시
+         * 2019-04-02  bkLove(촤병국)
+         */
+        fn_clearFile : function() {
+            var vm = this;
+
+            vm.jisuUploadResult     =   false;
+            
+            vm.form.jisu_file_id    =   '';
+            vm.$refs.file.value     =   null;
         },
 
         /*
@@ -889,7 +915,7 @@ export default {
         },
 
         /*
-         * 기관정보를 조회한다.
+         * 팝업창에 노출할 전체 기관정보 조회를 조회한다.
          * 2019-04-02  bkLove(촤병국)
          */
         fn_getDomainInst() {

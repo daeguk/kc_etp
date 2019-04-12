@@ -80,12 +80,59 @@ var getInfoOpenReqList = function (req, res) {
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
-
+        var jisu_cd = '';
+        if (req.query.jisu_cd) {
+            jisu_cd = req.query.jisu_cd;
+        }
         var params = {
             large_type : req.session.large_type,
+            jisu_cd : jisu_cd,
         };
 
         var stmt = mapper.getStatement('index', 'indexReqList', params, {language:'sql', indent: '  '});
+
+        console.log(stmt);
+
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+
+        });
+    } catch(exception) {
+        util.log("err", exception);
+    }
+};
+
+
+var getindexSubscribeList = function (req, res) {
+    try {
+        console.log('indexSummary=>getindexSubscribeList 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var jisu_cd = '';
+        if (req.query.jisu_cd) {
+            jisu_cd = req.query.jisu_cd;
+        }
+        var params = {
+            large_type : req.session.large_type,
+            jisu_cd : jisu_cd,
+        };
+
+        var stmt = mapper.getStatement('index', 'getindexSubscribeList', params, {language:'sql', indent: '  '});
 
         console.log(stmt);
 
@@ -272,7 +319,8 @@ var getIndexBaseInfo = function (req, res) {
         util.log("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('index', 'getIndexBaseInfo', options, {language:'sql', indent: '  '});
-     
+        
+        util.log("getIndexBaseInfo:" + stmt);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -399,3 +447,4 @@ module.exports.getIndexSummaryHist = getIndexSummaryHist;
 module.exports.getIndexBaseInfo = getIndexBaseInfo;
 module.exports.getIndexEtpHistoryData = getIndexEtpHistoryData;
 module.exports.getIndexInEtpInfo = getIndexInEtpInfo;
+module.exports.getindexSubscribeList = getindexSubscribeList;
