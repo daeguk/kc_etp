@@ -4,6 +4,113 @@
 <mapper namespace="indexModify">
 
     <!--
+    * 지수 마스터 데이터를 조회한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <select id="getJisuMast">
+        SELECT      tm_jisu_mast.jisu_seq                               AS  jisu_seq
+
+                ,   tm_jisu_mast.jisu_id                                AS  jisu_id
+                ,   tm_jisu_mast.jisu_kor_nm                            AS  jisu_kor_nm
+                ,   tm_jisu_mast.jisu_eng_nm                            AS  jisu_eng_nm
+                ,   tm_jisu_mast.jisu_summary                           AS  jisu_summary
+                ,   tm_jisu_mast.base_jisu                              AS  base_jisu
+                ,   DATE_FORMAT(tm_jisu_mast.base_date,'%Y-%m-%d')      AS  base_date
+                ,   tm_jisu_mast.method_file_id                         AS  method_file_id
+                ,   tm_jisu_mast.jisu_file_id                           AS  jisu_file_id
+                ,   tm_jisu_mast.req_content                            AS  req_content
+                ,   tm_jisu_mast.status                                 AS  status
+                ,   tm_jisu_mast.reg_id                                 AS  reg_id
+                
+                ,   tm_code_dtl.com_dtl_name                            AS  status_nm
+                ,   tm_code_dtl.com_val01                               AS  status_position
+
+                ,   tm_jisu_mast.jisu_id                                AS  prev_jisu_id
+                ,   tm_jisu_mast.method_file_id                         AS  prev_method_file_id
+                ,   tm_jisu_mast.jisu_file_id                           AS  prev_jisu_file_id
+
+                ,   jisu_method.org_file_name                           AS  show_method_file
+
+          FROM  tm_jisu_mast
+         INNER  JOIN    tm_code_dtl
+                  ON    tm_jisu_mast.status         =   tm_code_dtl.com_dtl_cd
+
+          LEFT  OUTER  
+                 JOIN   tm_jisu_file                jisu_method
+                   ON   (
+                                tm_jisu_mast.method_file_id     =   jisu_method.file_id
+                            AND jisu_method.gubun               =   '001'                   /* 지수 방법론 파일 */
+                        )
+         WHERE  1 = 1
+
+           AND  tm_code_dtl.use_yn                  =   '1'
+           AND  tm_code_dtl.com_mst_cd              =   'COM001'
+
+           AND  tm_jisu_mast.jisu_seq               =   #{jisu_seq}
+    </select>
+
+    <!--
+    * 지수정보공개요청 데이터를 조회한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <select id="getJisuShareReq">
+        SELECT      tm_jisu_share_req.inst_cd       AS  inst_cd
+                ,   tm_domain_mast.inst_name        AS  inst_name
+
+          FROM  tm_jisu_share_req
+         INNER  JOIN    tm_domain_mast
+                  ON    (
+                                tm_domain_mast.inst_type_name       =   'ETF발행사'
+                            AND tm_jisu_share_req.inst_cd           =   tm_domain_mast.inst_cd
+                        )
+
+         WHERE  1 = 1
+
+           AND  tm_jisu_share_req.jisu_seq          =   #{jisu_seq}
+         ORDER  BY  tm_jisu_share_req.inst_cd
+    </select>
+
+
+    <!--
+    * 지수 마스터 테이블을 수정한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <insert     id="modifyJisuMast">
+
+        UPDATE      tm_jisu_mast 
+           SET      jisu_id             =   #{jisu_id}
+                ,   jisu_kor_nm         =   #{jisu_kor_nm}
+                ,   jisu_summary        =   #{jisu_summary}
+                ,   base_jisu           =   #{base_jisu}
+                ,   base_date           =   REPLACE( #{base_date}, '-', '' ) 
+
+        <if test= 'method_file_id != null  and  method_file_id != -1' >
+                ,   method_file_id      =    ${method_file_id}
+        </if>
+
+
+        <if test= 'jisu_file_id != null  and  jisu_file_id != -1' >
+                ,   jisu_file_id        =   ${jisu_file_id}
+        </if>
+                ,   req_content         =   #{req_content}
+
+        <if test= 'modStatus != null  and  !modStatus.equals("")' >	
+                ,   status              =   #{modStatus}
+        </if>
+
+                ,   upd_id              =   #{user_id}
+                ,   upd_time            =   now() 
+
+         WHERE  jisu_seq                =   #{jisu_seq}
+
+    </insert>
+
+
+
+
+
+
+    <!--
     * 지수 파일정보가 존재하는지 확인한다.
     * 2019-04-12  bkLove(촤병국)
     -->

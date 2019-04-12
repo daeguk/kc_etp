@@ -120,7 +120,7 @@ var getIndexSelectList = function(req, res) {
 
         /* 1. 기관정보를 조회한다. */
         var format = { language: 'sql', indent: '' };
-        var stmt = mapper.getStatement('indexSelectList', 'getJisuMast', paramData, format);
+        var stmt = mapper.getStatement('indexSelectList', 'getJisuList', paramData, format);
         console.log(stmt);
 
         Promise.using(pool.connect(), conn => {
