@@ -30,9 +30,6 @@
                 ,   tm_jisu_mast.jisu_file_id                           AS  prev_jisu_file_id
 
                 ,   jisu_method.org_file_name                           AS  show_method_file
-                ,   jisu_method.save_file_name                          AS  prev_mothod_save_file_name
-
-                ,   jisu_file.save_file_name                            AS  prev_jisu_save_file_name
 
           FROM  tm_jisu_mast
          INNER  JOIN    tm_code_dtl
@@ -43,14 +40,6 @@
                    ON   (
                                 tm_jisu_mast.method_file_id     =   jisu_method.file_id
                             AND jisu_method.gubun               =   '001'                   
-                            
-                        )
-
-          LEFT  OUTER   /* 소급지수 파일 */
-                 JOIN   tm_jisu_file                jisu_file
-                   ON   (
-                                tm_jisu_mast.method_file_id     =   jisu_file.file_id
-                            AND jisu_file.gubun                 =   '002'
                             
                         )
          WHERE  1 = 1
@@ -268,8 +257,10 @@
                 )
     </update>
 
+
+
     <!--
-    * 지수 엑셀업로드를 삭제한다.
+    * [지수 엑셀업로드] 를 삭제한다.
     * 2019-04-12  bkLove(촤병국)
     -->
     <delete id="deleteJisuUpload">
@@ -278,5 +269,113 @@
          WHERE  tm_jisu_upload.jisu_seq             =   #{jisu_seq}
     </delete>
 
+    <!--
+    * [지수 엑셀업로드] 건수를 조회한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <select id="getJisuUploadCnt">
+        SELECT  COUNT(*)                            AS  cnt
+          FROM  tm_jisu_upload
+         WHERE  tm_jisu_upload.jisu_seq             =   #{jisu_seq}
+    </select>
+
+
+
+
+    <!--
+    * [지수정보 공유 요청] 을 삭제한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <delete id="deleteJisuShareReq">
+        DELETE
+          FROM  tm_jisu_share_req
+         WHERE  tm_jisu_share_req.jisu_seq          =   #{jisu_seq}
+    </select>
+
+    <!--
+    * [지수정보 공유 요청] 건수를 조회한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <select id="getJisuShareReqCnt">
+        SELECT  COUNT(*)                            AS  cnt
+          FROM  tm_jisu_share_req
+         WHERE  tm_jisu_share_req.jisu_seq          =   #{jisu_seq}
+    </select>
+    
+
+
+
+
+    <!--
+    * [지수 파일정보] 을 삭제한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <delete id="deleteJisuFile">
+        DELETE
+          FROM  tm_jisu_file
+         WHERE  tm_jisu_file.jisu_seq               =   #{file_id}
+    </delete>
+
+    <!--
+    * [지수 파일정보] 를 조회한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <select id="getJisuFile">
+        SELECT      tm_jisu_file.org_file_name                      AS  org_file_name
+                ,   tm_jisu_file.save_file_name                     AS  save_file_name
+                ,   tm_jisu_file.file_size                          AS  file_size
+                ,   tm_jisu_file.mime_type                          AS  mime_type
+                ,   tm_jisu_file.gubun                              AS  gubun
+
+          FROM  tm_jisu_file
+
+         WHERE  tm_jisu_file.file_id                               =   #{file_id}
+    </select>
+
+
+
+
+    <!--
+    * [지수 파일정보] 를 삭제한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <delete id="deleteJisuMast">
+        DELETE
+          FROM  tm_jisu_mast
+         WHERE  tm_jisu_mast.jisu_seq               =   #{jisu_seq}
+    </delete>
+
+    <!--
+    * [지수 파일정보] 건수를 조회한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <select id="getJisuMastCnt">
+        SELECT  COUNT(*)                            AS  cnt
+          FROM  tm_jisu_mast
+         WHERE  tm_jisu_mast.jisu_seq               =   #{jisu_seq}
+    </select>
+
+
+
+
+    <!--
+    * [지수 저장전 업로드] 를 삭제한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <delete id="deleteJisuTempUpload">
+        DELETE
+          FROM  tm_jisu_temp_upload
+         WHERE  tm_jisu_temp_upload.file_id         =   #{file_id}
+    </delete>
+
+    <!--
+    * [지수 저장전 업로드] 건수를 조회한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <select id="getJisuTempUploadCnt">
+        SELECT  COUNT(*)                            AS  cnt
+          FROM  tm_jisu_temp_upload
+         WHERE  tm_jisu_temp_upload.file_id         =   #{file_id}
+    </select>
 
 </mapper>

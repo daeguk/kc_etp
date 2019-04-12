@@ -609,9 +609,7 @@ export default {
 
                 prev_jisu_id : "",
                 prev_mothod_file_id : -1,
-                prev_mothod_save_file_name : "",
                 prev_jisu_file_id : -1,
-                prev_jisu_save_file_name : "",
                 
 
                 arr_jisu_inst : [] ,     /* 선택된 기관 정보 */

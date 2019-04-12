@@ -77,6 +77,7 @@ module.exports = {
 
         { file: './user/index/indexModify', path: '/user/index/getRegistedJisuData', method: 'getRegistedJisuData', session: 'check', type: 'post' },
         { file: './user/index/indexModify', path: '/user/index/modifyJisu', method: 'modifyJisu', session: 'check', type: 'post' },
+        { file: './user/index/indexModify', path: '/user/index/deleteJisu', method: 'deleteJisu', session: 'check', type: 'post' },
         
 
         //일반 MARKET INFO
