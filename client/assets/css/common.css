@@ -32,13 +32,43 @@ h3 span{font-size:14px; width:100%;}
 h5{font-size:18px; border-bottom:0px solid #42a4e1; background:#234e68; color:#ffffff; }
 h5 .v-card__title{padding:8px 8px 0px 24px;}
 h6{font-size:16px;}
+button:focus { outline: none; }
 .pop_btn_w{border-top:1px solid #dddddd !important; padding:5px 0 10px 0;}
 .pop_bot_h{height:20px;}
+
+
+.btn_icon{width:35px; height:35px;border-radius: 20px; color:#1976d2}
+.btn_icon:hover{align-items: center;
+    border-radius: 20px;
+    background-color:#e5f3fe;
+    transition: .3s cubic-bezier(.25,.8,.5,1);
+    }
+
+/*  Tooltip container  */
+.tooltip {position: relative; display: inline-block;}
+ /* Tooltip text */
+  
+.tooltip .tooltiptext { visibility: hidden; display: inline-block; background-color:#48485e;color: #fff; 
+    text-align: center;padding: 5px 10px; border-radius: 4px; position: absolute; top:-30px;left:50%; z-index: 1; font-size:12px;letter-spacing: -1;
+    transform: translate(-50%, 0);
+    -ms-transform: translate(-50%, 0);
+    -webkit-transform: translate(-50%, 0);
+    opacity: 0;
+ }
+.tooltip:hover  .tooltiptext {visibility: visible; transition: opacity 0.3s ease;
+    -ms-transition: opacity 0.3s ease;
+    -webkit-transition: opacity 0.3s ease;
+    opacity: 1;}
+
 
 
 .w100{width:100%;}
 
 .login_btn .v-icon--left{margin-right: 5px !important;}
+
+table.dataTable.table01_w thead th, table.dataTable thead td{border-bottom:1px solid #d1d1d1 !important;}
+.table01_w{border-top:1px solid #dcdcdc;}
+table.dataTable.table01_w tr td{height:26px !important;}
 
 .table_line1{border:1px solid #dcdcdc;border-top:2px solid #808080;}
 .table_line2{border-top:1px solid #808080;}
@@ -55,7 +85,7 @@ h6{font-size:16px;}
 
 .v-text-field--outline.v-input--is-disabled>.v-input__control>.v-input__slot{background-color:#eeeeee !important;}
 .v-text-field--outline.v-input--is-readonly>.v-input__control>.v-input__slot{background-color:#eeeeee !important;}
-.v-input--selection-controls .v-label{font-s}
+.v-input--selection-controls .v-label{font-size:14px;}
 
 
 /*알럿창*/
@@ -251,3 +281,7 @@ input[type='file']{
 .etp_apply_ta .v-stepper, .v-stepper__header{box-shadow:none;}
 .etp_apply_ta .theme--light.v-stepper .v-stepper__header .v-divider.divider_on{border:1px dashed #1976d2}
 .checkbox_w .v-input--selection-controls{margin-top:0px;}
+
+
+
+

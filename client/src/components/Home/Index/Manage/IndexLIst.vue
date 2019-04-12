@@ -13,6 +13,7 @@
                         </div>
                     </v-card-title>
                 </v-card>
+                <v-card flat>
                 <!--v-data-table :headers="headers" :items="results" :rows-per-page-items="rowsPerPageItems" :loading="loadingbar"  class="table_line1">
                     <v-progress-circular slot="progress" color="blue" indeterminate></v-progress-circular>
                     <template slot="items" slot-scope="props">
@@ -43,7 +44,7 @@
                         </td>
                     </template>
                 </v-data-table-->
-                <table id="example1" class="display" style="width:100%">
+                 <table id="example1" class="display table01_w">
                      <thead>
                         <tr>
                             <th>ID</th>
@@ -56,18 +57,8 @@
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                    </tbody>
-                   
                 </table>
+                </v-card>
             </v-flex>
 
                        
@@ -204,7 +195,7 @@ export default {
                                 { "data": "INDEX_CAL_METHOD", "orderable" : true },
                                 { "data": "ETP_NM", "orderable": true },
                                 { "data": "INST_CNT", "orderable": true },
-                                { "data": null, className: 'checks', defaultContent:"<button type='button' class='btn btn-primary btn-xs'>상세보기</button>" } 
+                                { "data": null, className: 'checks', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:50px;'>지수정보</span></div>" } 
                             ]
                         }); 
                     }
