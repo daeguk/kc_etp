@@ -6,9 +6,9 @@
                 v-model="tab"
                 align-with-title
                 dark
-                color=#333
+                color="#3158a1"
             >
-            <v-tabs-slider color="yellow"></v-tabs-slider>
+            <v-tabs-slider color="#ff821d"></v-tabs-slider>
     
             <v-tab v-for="item in items" :key="item">
                 {{ item }}
