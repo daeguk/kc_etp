@@ -5,7 +5,7 @@
 
     <!--
     * 지수 마스터 데이터를 조회한다.
-    * 2019-04-10  bkLove(촤병국)
+    * 2019-04-12  bkLove(촤병국)
     -->
     <select id="getJisuMast">
         SELECT      tm_jisu_mast.jisu_seq                               AS  jisu_seq
@@ -50,8 +50,8 @@
     </select>
 
     <!--
-    * 지수 마스터 데이터를 조회한다.
-    * 2019-04-10  bkLove(촤병국)
+    * 지수정보공개요청 데이터를 조회한다.
+    * 2019-04-12  bkLove(촤병국)
     -->
     <select id="getJisuShareReq">
         SELECT      tm_jisu_share_req.inst_cd       AS  inst_cd
@@ -68,7 +68,47 @@
 
            AND  tm_jisu_share_req.jisu_seq          =   #{jisu_seq}
          ORDER  BY  tm_jisu_share_req.inst_cd
-    </select>    
+    </select>
+
+
+    <!--
+    * 지수 마스터 테이블을 수정한다.
+    * 2019-04-12  bkLove(촤병국)
+    -->
+    <insert     id="modifyJisuMast">
+
+        UPDATE      tm_jisu_mast 
+           SET      jisu_id             =   #{jisu_id}
+                ,   jisu_kor_nm         =   #{jisu_kor_nm}
+                ,   jisu_summary        =   #{jisu_summary}
+                ,   base_jisu           =   #{base_jisu}
+                ,   base_date           =   REPLACE( #{base_date}, '-', '' ) 
+
+        <if test= 'method_file_id != null  and  method_file_id != -1' >
+                ,   method_file_id      =    ${method_file_id}
+        </if>
+
+
+        <if test= 'jisu_file_id != null  and  jisu_file_id != -1' >
+                ,   jisu_file_id        =   ${jisu_file_id}
+        </if>
+                ,   req_content         =   #{req_content}
+
+        <if test= 'modStatus != null  and  !modStatus.equals("")' >	
+                ,   status              =   #{modStatus}
+        </if>
+
+                ,   upd_id              =   #{user_id}
+                ,   upd_time            =   now() 
+
+         WHERE  jisu_seq                =   #{jisu_seq}
+
+    </insert>
+
+
+
+
+
 
     <!--
     * 지수 파일정보가 존재하는지 확인한다.

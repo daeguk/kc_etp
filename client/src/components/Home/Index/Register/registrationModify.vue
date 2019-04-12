@@ -482,7 +482,6 @@
                                                         :label="item.one.inst_name"
                                                         color="primary"
                                                         :value="item.one.inst_cd"
-                                                 
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
@@ -491,7 +490,6 @@
                                                         :label="item.two.inst_name"
                                                         color="primary"
                                                         :value="item.two.inst_cd"
-                                                  
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
@@ -500,7 +498,6 @@
                                                         :label="item.three.inst_name"
                                                         color="primary"
                                                         :value="item.three.inst_cd"
-                                                 
                                                     ></v-checkbox>
                                                 </v-flex>
                                             </v-layout>
@@ -524,12 +521,12 @@
                 <!---특정기관과 공유 end-->
 
                 <div class="text-xs-center">
-                    <p class="text_info1">
+                    <p class="text_info1" v-if="modForm.status == '03'">
                         <v-icon small>priority_high</v-icon>플랫폼 연동이 완료된 상태이므로 일부 정보에 한해 변경이 가능합니다.
                     </p>
-                    <v-btn depressed large color="primary" dark>저장</v-btn>
-                    <v-btn depressed large color="#3158a1" dark>등록</v-btn>
-                    <v-btn depressed large color="#9e9e9e" dark>삭제</v-btn>
+                    <v-btn depressed large color="primary" dark @click="fn_modifyJisu()">저장</v-btn>
+                    <v-btn depressed large color="#3158a1" dark v-if="modForm.status == '01'" @click="fn_modifyJisu( '02' )">연동신청</v-btn>
+                    <v-btn depressed large color="#9e9e9e" dark v-if="modForm.status != '03'" @click="fn_deleteJisu()">삭제</v-btn>
                 </div>
             </v-container>
         </v-form>
@@ -602,12 +599,14 @@ export default {
                 req_content: "",
                 show_method_file : "",
                 reg_id : "",
+                status : "",
+                modStatus : "",
 
                 prev_jisu_id : "",
                 prev_mothod_file_id : -1,
                 prev_jisu_file_id : -1,
 
-                arr_jisu_inst : []      /* 선택된 기관 정보 */
+                arr_jisu_inst : [] ,     /* 선택된 기관 정보 */
             },
 
             /* 저장시 rules 관련 정보 */
@@ -825,10 +824,10 @@ export default {
         },
 
         /*
-         * 등록 버튼 클릭시
+         * 저장 버튼 클릭시
          * 2019-04-02  bkLove(촤병국)
          */
-        fn_modifyJisu() {
+        fn_modifyJisu( modStatus ) {
             var vm = this;
 
             if (!this.modForm.duplCheckResult) {
@@ -842,6 +841,9 @@ export default {
                 return false;
             }
 
+            if( modStatus ) {
+                this.form.modStatus = modStatus;
+            }
 
             this.formData = new FormData();
             this.formData.append( "files", this.$refs.methodFile.files[0] );
@@ -999,7 +1001,7 @@ export default {
          */
         fn_instShare() {
             this.dialog2 = false;
-debugger;
+
             var  dataList = [];
             for( var i=0, inx=0; i < this.modForm.arr_jisu_inst.length; i=i+4 ) {
                 var data    =   this.modForm.arr_jisu_inst[i];
@@ -1073,6 +1075,16 @@ debugger;
             this.fn_instShare();
         },
 
+        fn_checkedData( item ) {
+            console.log( item );
+
+            var inx = this.modForm.arr_jisu_inst.indexOf( item );
+            if( inx != -1 ) {
+                this.modForm.arr_jisu_inst.slice( inx, 1);
+            }
+            this.modForm.arr_jisu_inst.push( item );
+        },
+
         /*
          * 등록된 지수정보를 조회한다.
          * 2019-04-11  bkLove(촤병국)
@@ -1094,7 +1106,6 @@ debugger;
 
                     if( response.data.arr_jisu_inst ) {
                         selfThis.modForm.arr_jisu_inst      =   response.data.arr_jisu_inst;    /* 선택된 기관 정보 */
-debugger;                        
                     }
 
                     if( response.data.arr_show_inst ) {
