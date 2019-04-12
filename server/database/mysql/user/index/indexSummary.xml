@@ -252,7 +252,7 @@
     ]]>
     </select>
 
-    <!-- 1년간 지수와 ETP 정보(그래프정보)-->
+    <!-- 기간 지수와 ETP 정보(그래프정보)-->
     <select id="getIndexEtpHistoryData">
     <![CDATA[
         SELECT date_format(B.F12506, "%Y.%m.%d") as trd_dd, B.F15001 as close_idx
@@ -263,9 +263,36 @@
            AND A.F16013 = #{jisu_cd}
            AND A.MARKET_ID = #{market_id}
            AND A.large_type = #{large_type}
-           AND B.F12506 >= date_format(DATE_SUB(now(), INTERVAL 2 MONTH), '%Y%m%d')
     ]]>
+    <choose>
+        <when test="term != null and jisu_cd =='1D'">
+            AND B.F12506 >= date_format(DATE_SUB(now(), INTERVAL 1 DAY), '%Y%m%d')
+        </when>
+        <when test="term != null and jisu_cd =='1W'">
+            AND B.F12506 >= date_format(DATE_SUB(now(), INTERVAL 1 WEEK), '%Y%m%d')
+        </when>
+        <when test="term != null and jisu_cd =='1M'">
+            AND B.F12506 >= date_format(DATE_SUB(now(), INTERVAL 1 MONTH), '%Y%m%d')
+        </when>
+        <when test="term != null and jisu_cd =='3M'">
+            AND B.F12506 >= date_format(DATE_SUB(now(), INTERVAL 3 MONTH), '%Y%m%d')
+        </when>
+        <when test="term != null and jisu_cd =='6M'">
+            AND B.F12506 >= date_format(DATE_SUB(now(), INTERVAL 6 MONTH), '%Y%m%d')
+        </when>
+        <when test="term != null and jisu_cd =='1Y'">
+            AND B.F12506 >= date_format(DATE_SUB(now(), INTERVAL 1 YEAR), '%Y%m%d')
+        </when>
+        <when test="term != null and jisu_cd =='TOTAL'">
+            
+        </when>
+        <otherwise>
+            AND B.F12506 >= date_format(DATE_SUB(now(), INTERVAL 1 MONTH), '%Y%m%d')
+        </otherwise>
+    </choose>
     </select>
+
+  
 
 
     <!--지수에 속한 ETP 정보-->
@@ -347,7 +374,7 @@
     </select>
 
     <!--지수에 속한 ETP 리스트-->
-    <select id="getEtpList">
+    <select id="getETFList">
       SELECT base.F12506
             ,base.F16012
             ,base.F16013 as JISU_CD
@@ -420,5 +447,119 @@
             ,base.F33960
             ,base.F33961
         FROM kc_etp.td_etp_basic base
+       where (F16493 = '1' OR F16493 = '2') 
+    </select>
+
+    <!--지수에 속한 ETN 리스트-->
+    <select id="getETNList">
+      SELECT base.F12506
+            ,base.F16012
+            ,base.F16013 as JISU_CD
+            ,base.F16002 as JISU_NM
+            ,base.F16003
+            ,base.F16017
+            ,base.F15001
+            ,base.F15472
+            ,base.F15004
+            ,base.F15006
+            ,base.F15009
+            ,base.F15010
+            ,base.F15011
+            ,base.F15015
+            ,base.F15023
+            ,base.F15028
+            ,base.F15029
+            ,base.F30812
+            ,base.F30813
+            ,base.F18438
+            ,base.F16143
+            ,base.F16073
+            ,base.F15007
+            ,base.F16493
+            ,base.F15301
+            ,base.F15302
+            ,base.F15303
+            ,base.F15304
+            ,base.F15305
+            ,base.F30818
+            ,base.F15318
+            ,base.F16497
+            ,base.F31892
+            ,base.F18450
+            ,base.F18001
+            ,base.F16500
+            ,base.F33307
+            ,base.F33308
+            ,base.F33951
+            ,base.F15319
+            ,base.F30823
+            ,base.F15602
+            ,base.F15631
+            ,base.F15632
+            ,base.F15633
+            ,base.F19288
+            ,base.F34515
+            ,base.F16499
+            ,base.F03329
+            ,base.F18439
+            ,base.F16109
+            ,base.F16257
+            ,base.F34777
+            ,base.F34521
+            ,base.F34776
+            ,base.F34514
+            ,base.F34239
+            ,base.F34241
+            ,base.F34769
+            ,base.F34770
+            ,base.F34771
+            ,base.F34772
+            ,base.F34775
+            ,base.F34778
+            ,base.F34779
+            ,base.F34780
+            ,base.F34781
+            ,base.F34782
+            ,base.F34783
+            ,base.F33960
+            ,base.F33961
+        FROM kc_etp.td_etp_basic base
+       where (F16493 = '3' OR F16493 = '4') 
+    </select>
+
+    <!--비중 정보 리스트-->
+    <select id="getIndexImportanceList">
+        SELECT MAP.ISIN_CODE
+             ,MAP.F16002 JOING_NM
+            ,(COMP.F03003 * COMP.F30812 * COMP.F30813 * (COMP.MAP.CEILING_PERCNT / 100) * (MAP.STYLE_INCLUD_PERCNT/100)) PERCNT
+            ,MAP.GUBUN
+            ,(SELECT F15028 
+                FROM td_index_basic 
+                WHERE F16013 = '60001') F15028
+            FROM (SELECT F12506
+                        , ISIN_CODE
+                        , UP_CODE
+                        , CEILING_PERCNT
+                        , STYLE_INCLUD_PERCNT
+                        , GUBUN
+                        , F16002
+                    FROM (SELECT A.F12506
+                                , A.ISIN_CODE
+                                , A.UP_CODE
+                                , A.CEILING_PERCNT
+                                , A.STYLE_INCLUD_PERCNT
+                                , A.GUBUN
+                                , B.F16002
+                                , ROW_NUMBER() OVER(PARTITION BY A.ISIN_CODE ORDER BY A.F12506 DESC) rn
+                            FROM m168uidxmap A
+                        INNER JOIN TD_KSPJONG_BASIC B
+                            ON A.ISIN_CODE = B.F16012 
+                        ) a
+            WHERE rn = 1
+            AND UP_CODE = CONCAT(IF(substr('60001', 1, 3) = '600', 'MFI', 'WFN'), substr(60001, 3))) MAP
+            INNER JOIN m168uidxcomp COMP
+            ON MAP.F12506 = COMP.F12506
+            AND MAP.ISIN_CODE = COMP.F16013
+            AND MAP.GUBUN = COMP.GUBUN
     </select>
 </mapper>

@@ -359,7 +359,8 @@ var getIndexEtpHistoryData = function (req, res) {
         var options = {
             large_type : req.session.large_type,
             jisu_cd: req.query.jisu_cd,
-            market_id: req.query.market_id
+            market_id: req.query.market_id,
+            term: req.query.term
         };
 
         util.log("options", JSON.stringify(options));
@@ -439,11 +440,11 @@ var getIndexInEtpInfo = function (req, res) {
 
 
 /*
-* 지수ETP 리스트
+* 지수ETF 리스트
 */
-var getEtpList = function (req, res) {
+var getETFList = function (req, res) {
     try {
-        console.log('indexSummary=>getEtpList 호출됨.');
+        console.log('indexSummary=>getETFList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -457,7 +458,7 @@ var getEtpList = function (req, res) {
 
         util.log("options", JSON.stringify(options));
 
-        var stmt = mapper.getStatement('index', 'getEtpList', options, {language:'sql', indent: '  '});
+        var stmt = mapper.getStatement('index', 'getETFList', options, {language:'sql', indent: '  '});
      
 
         Promise.using(pool.connect(), conn => {
@@ -481,7 +482,98 @@ var getEtpList = function (req, res) {
         util.log("err=>", exception);
     }
 };
- 
+
+
+/*
+* 지수ETN 리스트
+*/
+var getETNList = function (req, res) {
+    try {
+        console.log('indexSummary=>getETNList 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        // var options = {id:'admin'};
+        
+        var options = {
+            large_type : req.session.large_type,
+            jisu_cd: req.query.jisu_cd,
+            market_id: req.query.market_id
+        };
+
+        util.log("options", JSON.stringify(options));
+
+        var stmt = mapper.getStatement('index', 'getETNList', options, {language:'sql', indent: '  '});
+     
+
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
+
+
+/*
+* 비중 정보 리스트 
+*/
+var getIndexImportanceList = function (req, res) {
+    try {
+        console.log('indexSummary=>getIndexImportanceList 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        // var options = {id:'admin'};
+        
+        var options = {
+            large_type : req.session.large_type,
+            jisu_cd: req.query.jisu_cd,
+            market_id: req.query.market_id
+        };
+
+        util.log("options", JSON.stringify(options));
+
+        var stmt = mapper.getStatement('index', 'getIndexImportanceList', options, {language:'sql', indent: '  '});
+     
+
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
+
+
 
 module.exports.getIndexSummaryInfo = getIndexSummaryInfo;
 module.exports.getInfoOpenReqList = getInfoOpenReqList;
@@ -492,4 +584,6 @@ module.exports.getIndexBaseInfo = getIndexBaseInfo;
 module.exports.getIndexEtpHistoryData = getIndexEtpHistoryData;
 module.exports.getIndexInEtpInfo = getIndexInEtpInfo;
 module.exports.getindexSubscribeList = getindexSubscribeList;
-module.exports.getEtpList = getEtpList; 
+module.exports.getETFList = getETFList; 
+module.exports.getETNList = getETNList; 
+module.exports.getIndexImportanceList = getIndexImportanceList;

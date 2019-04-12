@@ -64,8 +64,8 @@ var etf_grid = null;
     },
     methods: {
         getInfoIndexList: function() {
-            console.log("getEtpList");
-            axios.get(Config.base_url + "/user/index/getEtpList", {
+            console.log("getEtfList");
+            axios.get(Config.base_url + "/user/index/getETFList", {
                     params: {
                     }
                 }).then(response => {
@@ -108,16 +108,6 @@ var etf_grid = null;
                    
                 });
         }, 
-        getReplace: function(text) {
-            if (text) {
-                return text.replace(/,/gi,"</br>");
-            }
-        },
-        movePage: function(jisu_cd, market_id) {
-            this.$router.push({path: '/index/manage/IndexListdetail', query :{'jisu_cd':jisu_cd, 'market_id':market_id}});
-        }
-
-        
     }
   }
 </script>

@@ -40,13 +40,13 @@
                         <v-card flat class="graph_toggle">
                             <v-flex xs12 sm6 class="py-2">
                                 <v-btn-toggle v-model="toggle_one" class="toggle_01">
-                                    <v-btn flat value="1D">1D</v-btn>
-                                    <v-btn flat value="1W">1W</v-btn>
-                                    <v-btn flat value="1M">1M</v-btn>
-                                    <v-btn flat value="3M">3M</v-btn>
-                                    <v-btn flat value="6M">6M</v-btn>
-                                    <v-btn flat value="1Y">1Y</v-btn>
-                                    <v-btn flat value="Total">Total</v-btn>
+                                    <v-btn flat value="1D" v-on:click="Indexchart('1D')">1D</v-btn>
+                                    <v-btn flat value="1W" v-on:click="Indexchart('1W')">1W</v-btn>
+                                    <v-btn flat value="1M" v-on:click="Indexchart('1M')">1M</v-btn>
+                                    <v-btn flat value="3M" v-on:click="Indexchart('3M')">3M</v-btn>
+                                    <v-btn flat value="6M" v-on:click="Indexchart('6M')">6M</v-btn>
+                                    <v-btn flat value="1Y" v-on:click="Indexchart('1Y')">1Y</v-btn>
+                                    <v-btn flat value="Total" v-on:click="Indexchart('TOTAL')">Total</v-btn>
                                 </v-btn-toggle>
                             </v-flex>
                         </v-card>
@@ -149,9 +149,12 @@ export default {
 
         },   
         
-        Indexchart: function() {
+        Indexchart: function(term) {
             // Load the Visualization API and the corechart package.
             google.charts.load('current', {'packages':['corechart']});
+
+            // 주기 디폴트
+            if (!term) term = '1M';
 
             // Set a callback to run when the Google Visualization API is loaded.
             google.charts.setOnLoadCallback(drawChart(this.$route.query.jisu_cd, this.$route.query.market_id));
@@ -160,7 +163,7 @@ export default {
             // instantiates the pie chart, passes in the data and
             // draws it.
       
-            function drawChart(jisu_cd, market_id) {
+            function drawChart(jisu_cd, market_id, term) {
                 
                 
                 // Create the data table.
@@ -178,8 +181,8 @@ export default {
                 axios.get(Config.base_url + "/user/index/getIndexEtpHistoryData", {                    
                     params: {
                         jisu_cd : jisu_cd,
-                        market_id : market_id
-                        
+                        market_id : market_id,
+                        term : term
                     }
                 }).then(response => {
                     // console.log(response);

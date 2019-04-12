@@ -127,43 +127,27 @@
                                 </h5>
                                 <div class="index3pop2_con">
                                     <v-list subheader two-line>
-                                        <v-list-tile>
+                                        <!--v-list-tile>
                                             <v-list-tile-title>Last Updated</v-list-tile-title>
                                             <v-list-tile-content>Notifications</v-list-tile-content>
-                                        </v-list-tile>
+                                        </v-list-tile-->
                                         <v-list-tile>
                                             <v-list-tile-title>Total</v-list-tile-title>
-                                            <v-list-tile-content>500</v-list-tile-content>
+                                            <v-list-tile-content>{{importance_cnt}}</v-list-tile-content>
                                         </v-list-tile>
                                     </v-list>
                                 </div>
                                 <v-card flat>
-                                    <v-data-table
-                                        :headers="headers2"
-                                        :items="desserts2"
-                                        :search="search"
-                                        hide-actions
-                                        class="elevation-1 table_line4"
-                                    >
-                                        <template v-slot:items="props">
-                                            <td>
-                                                <v-checkbox
-                                                    v-model="props.selected"
-                                                    primary
-                                                    hide-details
-                                                ></v-checkbox>
-                                            </td>
-                                            <td>{{ props.item.name1 }}</td>
-                                            <td class="text-xs-left">{{ props.item.종목지수명 }}</td>
-                                            <td class="text-xs-right">{{ props.item.구분 }}</td>
-                                        </template>
-                                        <v-alert
-                                            v-slot:no-results
-                                            :value="true"
-                                            color="error"
-                                            icon="warning"
-                                        >Your search for "{{ search }}" found no results.</v-alert>
-                                    </v-data-table>
+                                    <table id="importance_grid" class="display" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>CODE</th>
+                                                <th>종목지수명</th>
+                                                <th>비중</th>
+                                                <th>구분</th>
+                                            </tr>
+                                        </thead>   
+                                    </table>
                                 </v-card>
                                 <v-card class="pop_bot_h"></v-card>
                             </v-card>
@@ -185,7 +169,12 @@
 import infopoptab1 from "./infopoptab1.vue";
 import infopoptab2 from "./infopoptab2.vue";
 import infopoptab3 from "./infopoptab3.vue";
-
+import $      from 'jquery'
+import dt      from 'datatables.net'
+import buttons from 'datatables.net-buttons'
+import select from 'datatables.net-select'
+import Config from '@/js/config.js'
+var importance_grid = null;
 export default {
     data() {
         return {
@@ -194,6 +183,7 @@ export default {
             dialog: false,
             dialog2: false,
             results: [],
+            importance_cnt:0,
             search:"",
             headers: [
                 {
@@ -310,6 +300,62 @@ export default {
         infopoptab1: infopoptab1,
         infopoptab2: infopoptab2,
         infopoptab3: infopoptab3
+    },
+    computed: {},
+    created: function() {},
+    beforeDestroy() {},
+    mounted: function() {
+        var vm = this;
+        vm.getIndexImportanceList();
+    },
+    methods: {
+        getIndexImportanceList: function() {
+            console.log("getIndexImportanceList");
+            axios.get(Config.base_url + "/user/index/getIndexImportanceList", {
+                    params: {
+                    }
+                }).then(response => {
+                    // console.log(response);
+                    if (response.data.success == false) {
+                        alert("관리지수 목록이 없습니다");
+                    } else {
+                        var items = response.data.results;
+                        
+                        //console.log("response=" + JSON.stringify(items));
+                        this.results = items;
+                        this.importance_cnt = this.results.length;
+
+                        importance_grid = $('#importance_grid').DataTable( {
+                            "processing": true,
+                            "serverSide": false,
+                            "search": true,
+                            "info": true,   // control table information display field
+                            "stateSave": true,  //restore table state on page reload,
+                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                             "columnDefs": [
+                             {  
+                                'orderable': false,
+                                'targets': 0,
+                                'className': 'select-checkbox',
+                            },],
+                            select: {
+                                style:    'multi',
+                                selector: 'td:first-child'
+                            },
+                            paging: false,
+                            searching: false,
+                            data : this.results,
+                            columns: [
+                                { "data": "ISIN_CODE", "orderable": true},
+                                { "data": "JOING_NM", "orderable": true },
+                                { "data": "PERCNT", "orderable" : true },
+                                { "data": "GUBUN", "orderable" : true },
+                            ]
+                        }); 
+                    }
+                   
+                });
+        }, 
     }
 }
 </script>
