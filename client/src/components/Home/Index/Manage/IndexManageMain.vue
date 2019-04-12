@@ -3,15 +3,14 @@
         <v-flex xs12>
             <v-tabs
             slot="extension"
-            dark
-            color="#3158a1"
+            light
             v-model="activeTab"
             align-with-title
             app
             fixed
             clipped-right
             >
-            <v-tabs-slider color="#ff821d"></v-tabs-slider>
+            <v-tabs-slider color="#35e0e2"></v-tabs-slider>
     
             <v-tab v-for="tab of tabs"  :key="tab.id" @click="pageMove(tab.route)" >
               {{ tab.name }}
