@@ -270,8 +270,7 @@
                                     </v-layout>
                                 </v-flex>
                                 <v-flex xs4>
-                                    <label for="upload" class="upload-hidden">업로드</label>
-                                    <input type="file" id="upload" name="upload">
+                                    <label  class="upload-hidden"  v-on:click="fn_fileClick( 'methodFile' )">업로드</label>
                                 </v-flex>
                             </v-layout>
 
@@ -482,6 +481,8 @@
                                                         :label="item.one.inst_name"
                                                         color="primary"
                                                         :value="item.one.inst_cd"
+                                                        :id="item.one.inst_cd"
+                                                        @change="fn_checkedData( item.one.inst_cd )"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
@@ -490,6 +491,8 @@
                                                         :label="item.two.inst_name"
                                                         color="primary"
                                                         :value="item.two.inst_cd"
+                                                        :id="item.two.inst_cd"
+                                                        @change="fn_checkedData( item.two.inst_cd )"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
@@ -498,6 +501,8 @@
                                                         :label="item.three.inst_name"
                                                         color="primary"
                                                         :value="item.three.inst_cd"
+                                                        :id="item.three.inst_cd"
+                                                        @change="fn_checkedData( item.three.inst_cd )"
                                                     ></v-checkbox>
                                                 </v-flex>
                                             </v-layout>
@@ -558,7 +563,7 @@ export default {
                 { text: 'col03'     , value: 'col03'    , align:"center",  sortable: false }
             ],
             pagination : {
-                rowsPerPage : 5
+                rowsPerPage : -1
             },
             jisuDataList : [],          /* 소급지수 업로드 후 목록정보 */
             jisuUploadResult : false,   /* 소급지수 업로드 결과 여부 */
@@ -604,7 +609,10 @@ export default {
 
                 prev_jisu_id : "",
                 prev_mothod_file_id : -1,
+                prev_mothod_save_file_name : "",
                 prev_jisu_file_id : -1,
+                prev_jisu_save_file_name : "",
+                
 
                 arr_jisu_inst : [] ,     /* 선택된 기관 정보 */
             },
@@ -842,7 +850,7 @@ export default {
             }
 
             if( modStatus ) {
-                this.form.modStatus = modStatus;
+                this.modForm.modStatus = modStatus;
             }
 
             this.formData = new FormData();
@@ -906,7 +914,7 @@ export default {
 
             vm.jisuUploadResult         =   false;
             
-            vm.modForm.jisu_file_id     =   '';
+            vm.modForm.jisu_file_id     =   -1;
             vm.$refs.file.value         =   null;
         },
 
@@ -1077,12 +1085,13 @@ export default {
 
         fn_checkedData( item ) {
             console.log( item );
-
+/*
             var inx = this.modForm.arr_jisu_inst.indexOf( item );
             if( inx != -1 ) {
                 this.modForm.arr_jisu_inst.slice( inx, 1);
             }
-            this.modForm.arr_jisu_inst.push( item );
+            this.modForm.arr_jisu_inst.push( item );     
+*/              
         },
 
         /*
@@ -1104,15 +1113,18 @@ export default {
                         selfThis.modForm.duplCheckResult    =   true;
                     }
 
-                    if( response.data.arr_jisu_inst ) {
+                    selfThis.modForm.arr_jisu_inst          =   [];
+                    if( response.data.arr_jisu_inst && response.data.arr_jisu_inst.length > 0 ) {
                         selfThis.modForm.arr_jisu_inst      =   response.data.arr_jisu_inst;    /* 선택된 기관 정보 */
                     }
 
-                    if( response.data.arr_show_inst ) {
+                    selfThis.modForm.arr_show_inst          =   [];
+                    if( response.data.arr_show_inst && response.data.arr_show_inst.length > 0 ) {
                         selfThis.arr_show_inst              =   response.data.arr_show_inst;    /* (사용자가 선택) 4개를 1개로 그룹핑한 기관정보 ( 팝업창에서 선택된 기관정보 노출 ) */
                     }
 
-                    if( response.data.jisuDataList ) {
+                    selfThis.modForm.jisuDataList           =   [];
+                    if( response.data.jisuDataList && response.data.jisuDataList.length > 0 ) {
                         selfThis.jisuDataList               =   response.data.jisuDataList;     /* 소급지수 업로드 후 목록정보 */
                         selfThis.jisuUploadResult           =   true;                           /* 소급지수 업로드 결과 여부 */
                     }

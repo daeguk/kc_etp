@@ -455,7 +455,7 @@ export default {
                 { text: 'col03'     , value: 'col03'    , align:"center",  sortable: false }
             ],
             pagination : {
-                rowsPerPage : 5
+                rowsPerPage : -1
             },
             jisuDataList : [],          /* 소급지수 업로드 후 목록정보 */
             jisuUploadResult : false,   /* 소급지수 업로드 결과 여부 */
@@ -566,7 +566,7 @@ export default {
                         vm.jisuUploadResult         =   false;          /* 소급지수 업로드 결과 여부 */
                         vm.$refs.file.value         =   null;           /* 수급지수 파일정보 */
 
-                        vm.pagination.rowsPerPage   =   5;
+                        vm.pagination.rowsPerPage   =   -1;
 
 
                         break;
@@ -843,7 +843,7 @@ export default {
 
             vm.jisuUploadResult     =   false;
             
-            vm.form.jisu_file_id    =   '';
+            vm.form.jisu_file_id    =   -1;
             vm.$refs.file.value     =   null;
         },
 
