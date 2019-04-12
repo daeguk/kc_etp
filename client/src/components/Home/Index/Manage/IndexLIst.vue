@@ -57,6 +57,16 @@
                             <th></th>
                         </tr>
                     </thead>
+                    <tbody>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                    </tbody>
                    
                 </table>
             </v-flex>

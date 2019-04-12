@@ -1,3 +1,10 @@
+@media (min-width:960px){
+    body #app{min-width:1200px !important; overflow: hidden !important;}
+}
+
+
+
+
 * {
     /*
     margin: 0;
@@ -15,6 +22,7 @@ li {
     color: black;
 }
 .v-content__wrap .container{padding:0px;}
+.v-form>.container {background:#ffffff !important;}
 
 .logo{color:#ffffff;}
 
@@ -43,6 +51,11 @@ h6{font-size:16px;}
 
 .v-subheader.subheader_r{display: inherit !important; text-align: right; padding-top:5px; padding-right:15px; margin-right:10px}
 .v-subheader.subheader_r.essen{ background: url("../img/essential.png") no-repeat right 11px; }
+
+
+.v-text-field--outline.v-input--is-disabled>.v-input__control>.v-input__slot{background-color:#eeeeee !important;}
+.v-text-field--outline.v-input--is-readonly>.v-input__control>.v-input__slot{background-color:#eeeeee !important;}
+.v-input--selection-controls .v-label{font-s}
 
 
 /*알럿창*/
@@ -136,7 +149,7 @@ h3.subtit p.sub_txt{font-size:14px; font-weight: normal;}
 
 /*지수등록 신규등록*/
 .wrap001 .v-card__title{padding:24px 16px 0px 16px;}
-.register_wrap{border-top:3px solid #a1dbff; width:100%;}
+.register_wrap{border-top:3px solid #a1dbff; width:100%; background:#ffffff;}
 .register_wrap h4{padding:10px 0; font-size:16px;}
 .register_wrap h4 span{ color:#ff821d; font-size:14px;}
 .regi_status{ border-top:1px solid #9bc6e0 !important;border-bottom:1px solid #cbe2f0 !important; background-color: #f4fbff !important; padding-left:16px; margin-bottom:20px;}
