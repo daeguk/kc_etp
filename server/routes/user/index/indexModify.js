@@ -287,8 +287,49 @@ var modifyJisu = function(req, res) {
 
                         async.waterfall([
 
-                            /* 1. 지수방법론을 저장한다. */
+                            /* 1. status 를 조회한다. */
                             function( callback ) {
+
+                                if( paramData.prev_method_file_id != -1 ) {
+
+                                    paramData.file_id   =   paramData.prev_method_file_id;
+
+                                    stmt = mapper.getStatement('indexModify', 'getJisuMast', paramData, format);
+                                    console.log(stmt);
+
+                                    conn.query(stmt, function( err, rows ) {
+
+                                        if( err ) {
+                                            resultMsg.result    =   false;
+                                            resultMsg.msg       =   "[error] indexModify.getJisuMast Error while performing Query";
+                                            resultMsg.err       =   err;
+
+                                            return callback( resultMsg );
+                                        }
+
+                                        if ( rows && rows[0] ) {
+                                            paramData.nowStatus     =   rows[0].status;                                   
+                                        }
+
+                                        if( paramData.nowStatus == "03" ) {
+                                            resultMsg.result    =   false;
+                                            resultMsg.msg       =   "[error] 연동완료 상태입니다. 상태를 확인해 주세요.";
+                                            resultMsg.err       =   err;
+
+                                            return callback( resultMsg );                                         
+                                        }
+
+                                        callback( null, paramData );
+                                    });
+
+                                }else{
+                                    callback( null, paramData );
+                                }
+
+                            },
+
+                            /* 2. 지수방법론을 저장한다. */
+                            function( data, callback ) {
 
                                 /* 지수방법론 파일이 존재하는 경우 */
                                 if( req.file ) {
@@ -321,7 +362,7 @@ var modifyJisu = function(req, res) {
 
                             },
 
-                            /* 2. 기존 지수파일이 바뀐 경우 기준 지수 파일 정보를 조회한다. */
+                            /* 3. 기존 지수파일이 바뀐 경우 기준 지수 파일 정보를 조회한다. */
                             function( data, callback ) {
 
                                 if(     paramData.prev_method_file_id != -1
@@ -354,7 +395,7 @@ var modifyJisu = function(req, res) {
                                 }
                             },                            
 
-                            /* 3. 기존 지수파일이 바뀐 경우 기준 지수 파일을 삭제한다. */
+                            /* 4. 기존 지수파일이 바뀐 경우 기준 지수 파일을 삭제한다. */
                             function( data, callback ) {
 
                                 if(     paramData.prev_method_file_id != -1
@@ -363,8 +404,8 @@ var modifyJisu = function(req, res) {
                                     /* 기준 지수파일 경로가 존재하는 경우 */
                                     if( paramData.prev_mothod_save_file_name ) {
 
-                                        fs.unlink( reqParam.uploadFolder + "\\" + paramData.prev_mothod_save_file_name , function() {
-
+                                        fs.unlink( reqParam.uploadFolder + "\\" + paramData.prev_mothod_save_file_name , function( err ) {
+/*
                                             if( err ) {
                                                 resultMsg.result    =   false;
                                                 resultMsg.msg       =   "[error] 지수파일 삭제 중 오류가 발생하였습니다.";
@@ -372,7 +413,7 @@ var modifyJisu = function(req, res) {
 
                                                 return callback( resultMsg );
                                             }
-
+*/
                                             console.log( reqParam.uploadFolder + "\\" + paramData.prev_save_file_name + " 파일삭제 완료");
 
                                             callback( null, paramData );
@@ -389,7 +430,7 @@ var modifyJisu = function(req, res) {
                             },                            
 
 
-                            /* 4. 지수 마스터를 수정한다. */
+                            /* 5. 지수 마스터를 수정한다. */
                             function( data, callback ) {
 
                                 stmt = mapper.getStatement('indexModify', 'modifyJisuMast', paramData, format);
@@ -413,7 +454,7 @@ var modifyJisu = function(req, res) {
                                 });
                             },
 
-                            /* 5. 삭제할 지수정보공개요청 조회 */
+                            /* 6. 삭제할 지수정보공개요청 조회 */
                             function( data, callback ) {
 
                                 stmt = mapper.getStatement( 'indexModify', 'getJisuShareReqForDelete', paramData, format );
@@ -438,7 +479,7 @@ var modifyJisu = function(req, res) {
                                 });
                             },
 
-                            /* 6. 삭제할 지수정보공개요청 삭제 */
+                            /* 7. 삭제할 지수정보공개요청 삭제 */
                             function( data, callback ) {
 
                                 if( paramData.jisuShareReqDeleteList != null && paramData.jisuShareReqDeleteList.length > 0  ) {
@@ -467,7 +508,7 @@ var modifyJisu = function(req, res) {
                                 }
                             },
 
-                            /* 7. 추가할 지수정보공개요청 목록을 조회한다. */
+                            /* 8. 추가할 지수정보공개요청 목록을 조회한다. */
                             function( data, callback ) {
 
                                 if( paramData.arr_jisu_inst != null && paramData.arr_jisu_inst.length > 0 ) {
@@ -496,7 +537,7 @@ var modifyJisu = function(req, res) {
                                 }
                             },
 
-                            /* 8. 추가할 지수정보공개요청을 저장한다. */
+                            /* 9. 추가할 지수정보공개요청을 저장한다. */
                             function( data, callback ) {
 
                                 if( paramData.jisuShareReqInsertList != null && paramData.jisuShareReqInsertList.length > 0  ) {
@@ -526,7 +567,7 @@ var modifyJisu = function(req, res) {
                                 }
                             },
 
-                            /* 9. 수정할 지수정보공개요청 목록을 조회한다. */
+                            /* 10. 수정할 지수정보공개요청 목록을 조회한다. */
                             function( data, callback ) {
 
                                 if( paramData.arr_jisu_inst != null && paramData.arr_jisu_inst.length > 0 ) {
@@ -555,7 +596,7 @@ var modifyJisu = function(req, res) {
                                 }
                             },
 
-                            /* 10. 수정할 지수정보공개요청을 저장한다. */
+                            /* 11. 수정할 지수정보공개요청을 저장한다. */
                             function( data, callback ) {
 
                                 if( paramData.jisuShareReqUpdateList != null && paramData.jisuShareReqUpdateList.length > 0  ) {
@@ -584,7 +625,7 @@ var modifyJisu = function(req, res) {
                                 }
                             },
 
-                            /* 11. [지수 저장전 업로드] 목록을 조회한다. */
+                            /* 12. [지수 저장전 업로드] 목록을 조회한다. */
                             function( data, callback ) {
 
                                 if( paramData.jisu_file_id != paramData.prev_jisu_file_id ) {
@@ -618,7 +659,7 @@ var modifyJisu = function(req, res) {
                                 }
                             },
 
-                            /* 12. [지수 엑셀 업로드] 데이터를 삭제한다. */
+                            /* 13. [지수 엑셀 업로드] 데이터를 삭제한다. */
                             function( data, callback ) {
 
                                 if( paramData.jisu_file_id != paramData.prev_jisu_file_id ) {
@@ -649,7 +690,7 @@ var modifyJisu = function(req, res) {
                                 }
                             },                            
 
-                            /* 13. [지수 엑셀 업로드] 에 저장한다.  */
+                            /* 14. [지수 엑셀 업로드] 에 저장한다.  */
                             function( data, callback ) {
 
                                 if( paramData.dataLists != null && paramData.dataLists.length > 0  ) {
@@ -678,7 +719,7 @@ var modifyJisu = function(req, res) {
                                 }
                             },
 
-                            /* 14. [지수별 최신 이력번호] 를 조회한다. */
+                            /* 15. [지수별 최신 이력번호] 를 조회한다. */
                             function( data, callback ) {
 
                                 if( paramData.dataLists != null && paramData.dataLists.length > 0  ) {
@@ -707,7 +748,7 @@ var modifyJisu = function(req, res) {
                                 }
                             },
 
-                            /* 15. [지수 엑셀업로드 이력] 테이블에 저장한다. */
+                            /* 16. [지수 엑셀업로드 이력] 테이블에 저장한다. */
                             function( data, callback ) {
 
                                 if( paramData.dataLists != null && paramData.dataLists.length > 0  ) {
@@ -820,7 +861,7 @@ var deleteJisu = function(req, res) {
 
         }else{
 
-            var paramData = JSON.parse( req.body.data );
+            var paramData = req.body.data;
             paramData.user_id = reqParam.user_id;
             console.log( paramData );
 
@@ -835,8 +876,49 @@ var deleteJisu = function(req, res) {
 
                     async.waterfall([
 
-                        /* 1. 지수 방법론 파일정보를 조회한다. */
+                        /* 1. status 를 조회한다. */
                         function( callback ) {
+
+                            if( paramData.prev_method_file_id != -1 ) {
+
+                                paramData.file_id   =   paramData.prev_method_file_id;
+
+                                stmt = mapper.getStatement('indexModify', 'getJisuMast', paramData, format);
+                                console.log(stmt);
+
+                                conn.query(stmt, function( err, rows ) {
+
+                                    if( err ) {
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "[error] indexModify.getJisuMast Error while performing Query";
+                                        resultMsg.err       =   err;
+
+                                        return callback( resultMsg );
+                                    }
+
+                                    if ( rows && rows[0] ) {
+                                        paramData.nowStatus     =   rows[0].status;                                   
+                                    }
+
+                                    if( paramData.nowStatus == "03" ) {
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "[error] 연동완료 상태입니다. 상태를 확인해 주세요.";
+                                        resultMsg.err       =   err;
+
+                                        return callback( resultMsg );                                         
+                                    }
+
+                                    callback( null, paramData );
+                                });
+
+                            }else{
+                                callback( null, paramData );
+                            }
+
+                        },
+
+                        /* 2. 지수 방법론 파일정보를 조회한다. */
+                        function( data, callback ) {
 
                             if( paramData.prev_method_file_id != -1 ) {
 
@@ -868,7 +950,7 @@ var deleteJisu = function(req, res) {
 
                         },
 
-                        /* 2. 지수방법론 파일을 삭제한다. */
+                        /* 3. 지수방법론 파일을 삭제한다. */
                         function( data, callback ) {
 
                             if(  paramData.prev_method_file_id != -1 ) {
@@ -876,16 +958,16 @@ var deleteJisu = function(req, res) {
                                 /* 기준 지수파일 경로가 존재하는 경우 */
                                 if( paramData.prev_mothod_save_file_name ) {
 
-                                    fs.unlink( reqParam.uploadFolder + "\\" + paramData.prev_mothod_save_file_name , function() {
+                                    fs.unlink( reqParam.uploadFolder + "\\" + paramData.prev_mothod_save_file_name , function(err) {
 
-                                        if( err ) {
+/*                                         if( err ) {
                                             resultMsg.result    =   false;
                                             resultMsg.msg       =   "[error] 지수방법론 삭제 중 오류가 발생하였습니다.";
                                             resultMsg.err       =   err;
 
                                             return callback( resultMsg );
                                         }
-
+ */
                                         console.log( reqParam.uploadFolder + "\\" + paramData.prev_save_file_name + " 파일삭제 완료");
 
                                         callback( null, paramData );
@@ -900,7 +982,7 @@ var deleteJisu = function(req, res) {
                             }
                         },
 
-                        /* 3. 지수방법론을 삭제한다. */
+                        /* 4. 지수방법론을 삭제한다. */
                         function( data, callback ) {
 
                             if(  paramData.prev_method_file_id != -1 ) {
@@ -936,8 +1018,8 @@ var deleteJisu = function(req, res) {
                         },
 
 
-                        /* 4. 소급지수 파일 정보를 조회한다. */
-                        function( callback ) {
+                        /* 5. 소급지수 파일 정보를 조회한다. */
+                        function( data, callback ) {
 
                             if( paramData.prev_jisu_file_id != -1 ) {
 
@@ -969,7 +1051,7 @@ var deleteJisu = function(req, res) {
 
                         },
 
-                        /* 5. 소급지수 파일을 삭제한다. */
+                        /* 6. 소급지수 파일을 삭제한다. */
                         function( data, callback ) {
 
                             if(  paramData.prev_jisu_file_id != -1 ) {
@@ -977,8 +1059,8 @@ var deleteJisu = function(req, res) {
                                 /* 기존 지수파일 경로가 존재하는 경우 */
                                 if( paramData.prev_jisu_save_file_name ) {
 
-                                    fs.unlink( reqParam.uploadFolder + "\\" + paramData.prev_jisu_save_file_name , function() {
-
+                                    fs.unlink( reqParam.uploadFolder + "\\" + paramData.prev_jisu_save_file_name , function( err ) {
+/* 
                                         if( err ) {
                                             resultMsg.result    =   false;
                                             resultMsg.msg       =   "[error] 소급 지수파일 삭제 중 오류가 발생하였습니다.";
@@ -986,7 +1068,7 @@ var deleteJisu = function(req, res) {
 
                                             return callback( resultMsg );
                                         }
-
+ */
                                         console.log( reqParam.uploadFolder + "\\" + paramData.prev_jisu_save_file_name + " 파일삭제 완료");
 
                                         callback( null, paramData );
@@ -1001,7 +1083,7 @@ var deleteJisu = function(req, res) {
                             }
                         }, 
 
-                        /* 6. 소급지수 파일정보를 삭제한다. */
+                        /* 7. 소급지수 파일정보를 삭제한다. */
                         function( data, callback ) {
 
                             if(  paramData.prev_jisu_file_id != -1 ) {
@@ -1036,8 +1118,8 @@ var deleteJisu = function(req, res) {
                             }
                         },
 
-                        /* 7. [지수 저장전 업로드 정보] 가 존재하는지 확인한다. */
-                        function( callback ) {
+                        /* 8. [지수 저장전 업로드 정보] 가 존재하는지 확인한다. */
+                        function( data, callback ) {
 
                             if( paramData.prev_jisu_file_id != -1 ) {
 
@@ -1069,8 +1151,8 @@ var deleteJisu = function(req, res) {
 
                         },
 
-                        /* 8. [지수 저장전 업로드 정보] 를 삭제한다. */
-                        function( callback ) {
+                        /* 9. [지수 저장전 업로드 정보] 를 삭제한다. */
+                        function( data, callback ) {
 
                             if( paramData.prev_jisu_file_id != -1 ) {
 
@@ -1101,8 +1183,8 @@ var deleteJisu = function(req, res) {
 
                         },
 
-                        /* 9. [지수 엑셀업로드] 가 존재하는지 확인한다. */
-                        function( callback ) {
+                        /* 10. [지수 엑셀업로드] 가 존재하는지 확인한다. */
+                        function( data, callback ) {
 
                             stmt = mapper.getStatement('indexModify', 'getJisuUploadCnt', paramData, format);
                             console.log(stmt);
@@ -1126,8 +1208,8 @@ var deleteJisu = function(req, res) {
 
                         },
 
-                        /* 10. [지수 엑셀업로드] 를 삭제한다. */
-                        function( callback ) {
+                        /* 11. [지수 엑셀업로드] 를 삭제한다. */
+                        function( data, callback ) {
 
                             if( paramData.exists_jisu_upload == "Y" ) {
 
@@ -1150,8 +1232,8 @@ var deleteJisu = function(req, res) {
 
                         },
 
-                        /* 11. [지수 특정기관공유] 가 존재하는지 확인한다. */
-                        function( callback ) {
+                        /* 12. [지수 특정기관공유] 가 존재하는지 확인한다. */
+                        function( data, callback ) {
 
                             stmt = mapper.getStatement('indexModify', 'getJisuShareReqCnt', paramData, format);
                             console.log(stmt);
@@ -1175,8 +1257,8 @@ var deleteJisu = function(req, res) {
 
                         },
 
-                        /* 12. [지수 특정기관공유] 를 삭제한다. */
-                        function( callback ) {
+                        /* 13. [지수 특정기관공유] 를 삭제한다. */
+                        function( data, callback ) {
 
                             if( paramData.exists_jisu_share_req == "Y" ) {
 
@@ -1199,8 +1281,8 @@ var deleteJisu = function(req, res) {
 
                         },
 
-                        /* 13. [지수 마스터] 가 존재하는지 확인한다. */
-                        function( callback ) {
+                        /* 14. [지수 마스터] 가 존재하는지 확인한다. */
+                        function( data, callback ) {
 
                             stmt = mapper.getStatement('indexModify', 'getJisuMastCnt', paramData, format);
                             console.log(stmt);
@@ -1224,8 +1306,8 @@ var deleteJisu = function(req, res) {
 
                         },
 
-                        /* 14. [지수 마스터] 를 삭제한다. */
-                        function( callback ) {
+                        /* 15. [지수 마스터] 를 삭제한다. */
+                        function( data, callback ) {
 
                             if( paramData.exists_jisu_mast == "Y" ) {
 

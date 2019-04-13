@@ -875,6 +875,25 @@ export default {
                 });
         },
 
+        fn_deleteJisu() {
+            var vm = this;
+
+            axios.post(
+                Config.base_url + "/user/index/deleteJisu",
+                { data : this.modForm }
+            ).then(function(response) {
+                if( response.data ) {
+
+                    var resultData = response.data;
+
+                    alert( resultData.msg );
+                    if( resultData.result ) {
+                        vm.$router.push( "/index/manage" );
+                    }
+                }
+            });
+        },
+
         determineDragAndDropCapable() {
 
             var div = document.createElement("div");

@@ -313,7 +313,7 @@
     <delete id="deleteJisuFile">
         DELETE
           FROM  tm_jisu_file
-         WHERE  tm_jisu_file.jisu_seq               =   #{file_id}
+         WHERE  tm_jisu_file.file_id                =   #{file_id}
     </delete>
 
     <!--
