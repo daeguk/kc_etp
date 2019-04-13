@@ -501,6 +501,7 @@
                                                         color="primary"
                                                         :value="item.one.inst_cd"
                                                         :id="item.one.inst_cd"
+                                                        :key="item.one.inst_cd"
                                                         @change="fn_checkedData( item.one.inst_cd )"
                                                     ></v-checkbox>
                                                 </v-flex>
@@ -511,6 +512,7 @@
                                                         color="primary"
                                                         :value="item.two.inst_cd"
                                                         :id="item.two.inst_cd"
+                                                        :key="item.two.inst_cd"
                                                         @change="fn_checkedData( item.two.inst_cd )"
                                                     ></v-checkbox>
                                                 </v-flex>
@@ -521,6 +523,7 @@
                                                         color="primary"
                                                         :value="item.three.inst_cd"
                                                         :id="item.three.inst_cd"
+                                                        :key="item.three.inst_cd"
                                                         @change="fn_checkedData( item.three.inst_cd )"
                                                     ></v-checkbox>
                                                 </v-flex>
