@@ -9,7 +9,7 @@
                             <span class="grey--text">지수의 기본정보 및 소급지수를 등록합니다.</span>
                         </h3>
                     </v-card-title>
-                    <registrationModify v-if="editYn" :editData="editData"></registrationModify>
+                    <registrationModify v-if="editYn" :editData="editData" :key="editData.jisu_id"></registrationModify>
                     <registration v-show="!editYn"></registration>
                 </v-card>
             </v-flex>
@@ -79,7 +79,7 @@ export default {
             mini: false,
 
             editYn : false,
-            editData : {}
+            editData : { jisu_id: "", jisu_seq : -1 }
         };
     },
     
@@ -96,7 +96,7 @@ export default {
          */
         this.$EventBus.$on("quickmenucon_IndexRegisterMain_call", res => {
             var vm = this;
-            
+
             if( res && res.jisu_id ) {
                 vm.editYn   = true;
                 vm.editData = res;
@@ -105,6 +105,9 @@ export default {
     }, 
 
     methods: {
+
+        forceRerender() {
+        },
 
         /*
          * Quick Menu -> [신규지수등록] 버튼 클릭시 신규지수등록 화면을 호출한다.

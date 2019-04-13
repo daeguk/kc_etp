@@ -311,12 +311,22 @@ var modifyJisu = function(req, res) {
                                             paramData.nowStatus     =   rows[0].status;                                   
                                         }
 
-                                        if( paramData.nowStatus == "03" ) {
+                                        /* 연동신청을 누르는 경우 상태값이 연동 완료된 경우 */
+                                        if( paramData.modStatus == "03" && paramData.nowStatus == "03" ) {
                                             resultMsg.result    =   false;
-                                            resultMsg.msg       =   "[error] 연동완료 상태입니다. 상태를 확인해 주세요.";
+                                            resultMsg.msg       =   "[error] 이미 연동완료된 상태입니다.";
                                             resultMsg.err       =   err;
 
-                                            return callback( resultMsg );                                         
+                                            return callback( resultMsg );
+                                        }
+
+                                        /* 상태가 변경된 경우 */
+                                        if( paramData.nowStatus != paramData.status ) {
+                                            resultMsg.result    =   false;
+                                            resultMsg.msg       =   "[error] 상태가 변경되었습니다. 화면 갱신후 다시 저장해 주세요.";
+                                            resultMsg.err       =   err;
+
+                                            return callback( resultMsg );
                                         }
 
                                         callback( null, paramData );
@@ -794,7 +804,12 @@ var modifyJisu = function(req, res) {
                             }else{
 
                                 resultMsg.result    =   true;
-                                resultMsg.msg       =   "성공적으로 수정하였습니다.";
+
+                                if( paramData.modStatus ) {
+                                    resultMsg.msg       =   "성공적으로 연동신청 하였습니다.";
+                                }else{
+                                    resultMsg.msg       =   "성공적으로 수정 하였습니다.";
+                                }
                                 resultMsg.err       =   null;
 
                                 conn.commit();

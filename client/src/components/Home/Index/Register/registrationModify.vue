@@ -61,6 +61,8 @@
                                         v-model="modForm.jisu_id"
                                         :rules="rules.jisu_id"
                                         @keyup="modForm.duplCheckResult=false"
+
+                                        :disabled="modForm.status == '03'"
                                     ></v-text-field>
                                 </v-flex>
 
@@ -74,6 +76,8 @@
                                                     color="primary"
                                                     dark
                                                     @click="fn_jisuDuplCheck"
+
+                                                    v-if="modForm.status != '03'"
                                                 >중복확인</v-btn>
                                             </template>
 
@@ -123,6 +127,8 @@
                                         outline
                                         v-model="modForm.jisu_kor_nm"
                                         :rules="rules.jisu_kor_nm"
+
+                                        :disabled="modForm.status == '03'"
                                     ></v-text-field>
                                 </v-flex>
                             </v-layout>
@@ -139,6 +145,8 @@
                                         color="blue"
                                         v-model="modForm.jisu_summary"
                                         :rules="rules.jisu_summary"
+
+                                        :disabled="modForm.status == '03'"
                                     ></v-textarea>
                                 </v-flex>
                             </v-layout>
@@ -155,6 +163,8 @@
                                         outline
                                         v-model="modForm.base_jisu"
                                         :rules="rules.base_jisu"
+
+                                        :disabled="modForm.status == '03'"
                                     ></v-text-field>
                                 </v-flex>
                             </v-layout>
@@ -192,6 +202,8 @@
                                                         widh="100%"
                                                         v-model="modForm.base_date"
                                                         :rules="rules.base_date"
+
+                                                        :disabled="modForm.status == '03'"
                                                     ></v-text-field>
                                                 </template>
 
@@ -280,7 +292,7 @@
                                     <v-subheader>소급지수</v-subheader>
                                 </v-flex>
 
-                                <v-flex xs4 id="file-drag-drop" v-show="!jisuUploadResult">
+                                <v-flex xs4 id="file-drag-drop" v-show="!jisuUploadResult" v-if="modForm.status != '03'">
                                     <v-layout flat class="drag_box" ref="fileform">
                                         <input
                                             type="file"
@@ -308,7 +320,7 @@
                                     </v-layout>
                                 </v-flex>
 
-                                <v-flex xs4 ml-3 v-show="!jisuUploadResult">
+                                <v-flex xs4 ml-3 v-show="!jisuUploadResult" v-if="modForm.status != '03'">
                                     <p>
                                         <v-icon color="#1976d2">check</v-icon>
                                         <b>허용되는 확장자</b>
@@ -331,6 +343,8 @@
                                     <v-flex>
                                         <v-btn
                                             @click="fn_clearFile()"
+
+                                            v-if="modForm.status != '03'"
                                         >X</v-btn>
                                     </v-flex>
 
@@ -366,18 +380,15 @@
                                 </v-flex>
                                 <v-flex xs10>
                                     <v-textarea
+                                        label="요청사항"
                                         outline
                                         color="blue"
                                         height="80px"
                                         v-model="modForm.req_content"
                                         :rules="[rules.req_content]"
+
+                                        :disabled="modForm.status == '03'"
                                     >
-                                        <template v-slot:label>
-                                            <div>
-                                                Bio
-                                                <small>(optional)</small>
-                                            </div>
-                                        </template>
                                     </v-textarea>
                                 </v-flex>
                             </v-layout>
@@ -404,6 +415,8 @@
                                         icon
                                         color="#c2c2c2"
                                         @click="fn_deleteInst( item.one )"
+
+                                        v-if="modForm.status != '03'"
                                     >
                                         <v-icon>clear</v-icon>
                                     </v-btn>
@@ -416,6 +429,8 @@
                                         icon
                                         color="#c2c2c2"
                                         @click="fn_deleteInst( item.two )"
+
+                                        v-if="modForm.status != '03'"
                                     >
                                         <v-icon>clear</v-icon>
                                     </v-btn>
@@ -428,6 +443,8 @@
                                         icon
                                         color="#c2c2c2"
                                         @click="fn_deleteInst( item.three )"
+
+                                        v-if="modForm.status != '03'"
                                     >
                                         <v-icon>clear</v-icon>
                                     </v-btn>
@@ -440,13 +457,15 @@
                                         icon
                                         color="#c2c2c2"
                                         @click="fn_deleteInst( item.four )"
+
+                                        v-if="modForm.status != '03'"
                                     >
                                         <v-icon>clear</v-icon>
                                     </v-btn>
                                 </v-flex>
                             </v-layout>
 
-                            <v-flex xs12 class="add_btn">
+                            <v-flex xs12 class="add_btn" v-if="modForm.status != '03'">
                                 <v-dialog v-model="dialog2" persistent max-width="700">
                                     <template v-slot:activator="{ on }">
                                         <v-btn flat icon color="#888888" dark v-on="on">
@@ -527,6 +546,7 @@
 
                 <div class="text-xs-center">
                     <p class="text_info1" v-if="modForm.status == '03'">
+                        <br>
                         <v-icon small>priority_high</v-icon>플랫폼 연동이 완료된 상태이므로 일부 정보에 한해 변경이 가능합니다.
                     </p>
                     <v-btn depressed large color="primary" dark @click="fn_modifyJisu()">저장</v-btn>
@@ -836,19 +856,44 @@ export default {
         fn_modifyJisu( modStatus ) {
             var vm = this;
 
-            if (!this.modForm.duplCheckResult) {
-                alert("[지수 ID] 중복확인을 해주세요.");
-                this.$refs.jisu_id.focus();
+            /* 연동완료 상태가 아닌 경우에만 form 을 체크한다. */
+            if( this.modForm.status != "03" ) {
 
-                return false;
+                if (!this.modForm.duplCheckResult) {
+                    alert("[지수 ID] 중복확인을 해주세요.");
+                    this.$refs.jisu_id.focus();
+
+                    return false;
+                }
+
+                if (!this.$refs.modForm.validate()) {
+                    return false;
+                }
             }
 
-            if (!this.$refs.modForm.validate()) {
-                return false;
-            }
+            /* [연동신청] 또는 [연동신청] 완료된 상태인 경우 */
+            if( modStatus || this.modForm.status == "02"  ) {
 
-            if( modStatus ) {
-                this.modForm.modStatus = modStatus;
+                var msgTitle = "";
+                if( modStatus ) {
+                    this.modForm.modStatus = modStatus;
+
+                    msgTitle = "[연동신청 요청]";
+                }else if( this.modForm.status == "02" ) {
+                    msgTitle = "[연동신청 완료]";
+                }
+
+                if( !this.modForm.show_method_file ) {
+                    alert( msgTitle + " 지수방법론을 필수로 업로드 해주세요.");
+
+                    return false;
+                }
+
+                if( this.modForm.jisu_file_id == -1 ) {
+                    alert( msgTitle + " 소급지수를 필수로 업로드 해주세요.");
+
+                    return false;
+                }
             }
 
             this.formData = new FormData();

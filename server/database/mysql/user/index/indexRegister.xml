@@ -8,9 +8,11 @@
     * 2019-04-02  bkLove(촤병국)
     -->
     <select id="getJisuDuplCheck">
+    <![CDATA[
         SELECT  COUNT(1)   AS  cnt
           FROM  tm_jisu_mast
          WHERE  tm_jisu_mast.jisu_id                =   #{jisu_id}
+    ]]>
     </select>
 
     <!--
@@ -18,6 +20,7 @@
     * 2019-04-02  bkLove(촤병국)
     -->
     <select id="getTmJisuTempUpload">
+    <![CDATA[
         SELECT      tm_jisu_temp_upload.file_id     AS  file_id
                 ,   tm_jisu_temp_upload.row_no      AS  row_no
 
@@ -29,6 +32,7 @@
 
           FROM  tm_jisu_temp_upload
          WHERE  tm_jisu_temp_upload.file_id         =   #{file_id}
+    ]]>
     </select>
 
     <!--
@@ -36,11 +40,13 @@
     * 2019-04-02  bkLove(촤병국)
     -->
     <select id="getDomainInst">
+    <![CDATA[
         SELECT	    tm_domain_mast.inst_cd		    AS  inst_cd
                 ,   tm_domain_mast.inst_name		AS  inst_name
           FROM	tm_domain_mast
          WHERE	tm_domain_mast.inst_type_name       =   'ETF발행사'
          ORDER  BY  tm_domain_mast.inst_cd
+    ]]>
     </select>
 
     <!--
@@ -48,6 +54,7 @@
     * 2019-04-02  bkLove(촤병국)
     -->
     <insert     id="saveTmJisuFile">
+    <![CDATA[
         INSERT  INTO    tm_jisu_file 
         ( 
                 org_file_name
@@ -70,6 +77,7 @@
             ,   #{user_id}
             ,   now() 
         )
+    ]]>
     </insert>
 
     <!--
@@ -77,6 +85,7 @@
     * 2019-04-02  bkLove(촤병국)
     -->
     <insert     id="saveTmJisuTempUpload">
+    <![CDATA[
         INSERT  INTO    tm_jisu_temp_upload 
         ( 
                 file_id
@@ -91,8 +100,10 @@
             ,   reg_id 
             ,   reg_time 
         ) 
-        VALUES 
+    ]]>
+        VALUES
         <foreach    collection="dataLists"   item="data"     separator="," >
+    <![CDATA[        
         ( 
                 ${file_id}
             ,   ${data.row_no}
@@ -105,7 +116,8 @@
 
             ,   #{user_id}
             ,   now() 
-        )            
+        )
+    ]]>
         </foreach>
     </insert>
 
@@ -114,6 +126,7 @@
     * 2019-04-02  bkLove(촤병국)
     -->
     <insert     id="saveTmJisuUpload">
+    <![CDATA[
         INSERT  INTO    tm_jisu_upload 
         ( 
                 jisu_seq
@@ -129,8 +142,10 @@
             ,   reg_id 
             ,   reg_time 
         ) 
+    ]]>
         VALUES 
         <foreach    collection="dataLists"   item="data"     separator="," >
+    <![CDATA[
         ( 
                 #{jisu_seq}
             ,   ${data.row_no}
@@ -144,7 +159,8 @@
 
             ,   #{user_id}
             ,   now() 
-        )            
+        )
+    ]]>
         </foreach>
     </insert>
 
@@ -153,9 +169,11 @@
     * 2019-04-02  bkLove(촤병국)
     -->
     <select id="getHistNoByTmJisuUploadHist">
+    <![CDATA[
         SELECT	IFNULL( MAX( HIST_NO ), 0 ) + 1     AS  hist_no
         FROM	tm_jisu_upload_hist
         WHERE	tm_jisu_upload_hist.jisu_seq        =   #{jisu_seq}#
+    ]]>
     </select>    
 
     <!--
@@ -163,6 +181,7 @@
     * 2019-04-02  bkLove(촤병국)
     -->
     <insert     id="saveTmJisuUploadHist">
+    <![CDATA[
         INSERT  INTO    tm_jisu_upload_hist
         ( 
                 hist_no
@@ -179,8 +198,10 @@
             ,   reg_id 
             ,   reg_time 
         ) 
+    ]]>
         VALUES 
         <foreach    collection="dataLists"   item="data"     separator="," >
+    <![CDATA[
         ( 
                 ${hist_no}
             ,   #{jisu_seq}
@@ -195,7 +216,8 @@
 
             ,   #{user_id}
             ,   now() 
-        )            
+        )
+    ]]>
         </foreach>
     </insert>    
 
@@ -204,6 +226,7 @@
     * 2019-04-02  bkLove(촤병국)
     -->
     <insert     id="saveTmJisuShareReq">
+    <![CDATA[
         INSERT  INTO    tm_jisu_share_req
         ( 
                 jisu_seq
@@ -216,8 +239,10 @@
             ,   upd_id
             ,   upd_time
         ) 
+    ]]>
         VALUES 
         <foreach    collection="arr_jisu_inst"   item="item"    index="index"   separator="," >
+    <![CDATA[
         ( 
                 #{jisu_seq}
             ,   #{item}
@@ -229,6 +254,7 @@
             ,   #{user_id}
             ,   now()
         )
+    ]]>
         </foreach>
     </insert>        
 
@@ -237,6 +263,7 @@
     * 2019-04-02  bkLove(촤병국)
     -->
     <insert     id="saveTmJisuMast">
+    <![CDATA[
         INSERT  INTO    tm_jisu_mast 
         ( 
                 jisu_id 
@@ -273,6 +300,7 @@
             ,   #{user_id}
             ,   now() 
         )
+    ]]>
     </insert>
 
 </mapper>
