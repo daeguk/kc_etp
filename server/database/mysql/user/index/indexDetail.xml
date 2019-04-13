@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="indexDetail">  
+
+    <!--
+    * 지수종목상세 정보를 조회한다. ( 지수관리 -> 지수종목상세 탭 클릭시 )
+    * 2019-04-16  bkLove(촤병국)
+    -->
+    <select id="getJisuJongmokList">
+    <![CDATA[
+        WITH    BASE    AS
+        (
+            SELECT      'code01'                        AS  code
+                    ,   'name01'                        AS  name
+                    
+                    ,   1                               AS  base_prc
+                    ,   2                               AS  shrs
+                    ,   3                               AS  float_rto
+                    ,   4                               AS  ceilling_rto
+                    ,   5                               AS  factor_rto
+
+            UNION   ALL
+
+            SELECT      'code02'                        AS  code
+                    ,   'name02'                        AS  name
+                    
+                    ,   11                              AS  base_prc
+                    ,   22                              AS  shrs
+                    ,   33                              AS  float_rto
+                    ,   44                              AS  ceilling_rto
+                    ,   55                              AS  factor_rto
+        )
+        SELECT      base.code                           AS  code
+                ,   base.name                           AS  name
+
+                ,   base.base_prc                       AS  base_prc
+                ,   base.shrs                           AS  shrs
+                ,   base.float_rto                      AS  float_rto
+                ,   base.ceilling_rto                   AS  ceilling_rto
+                ,   base.factor_rto                     AS  factor_rto
+          FROM  base
+         WHERE  1 = 1
+    ]]>
+        <if test= 'searchData != null  and  searchData != "" ' >
+    <![CDATA[
+           AND  (       base.code               LIKE    #{searchData}
+                    OR  base.name               LIKE    #{searchData}
+                )
+    ]]>
+        </if>
+    </select>
+
+
+    <!--
+    * 검색영역에 일치하는 지수정보를 조회한다. ( 지수관리 -> 지수종목상세 ->  quick 메뉴 -> 검색영역 )
+    * 2019-04-16  bkLove(촤병국)
+    -->
+    <select id="getJisuList">
+    <![CDATA[
+        WITH    BASE    AS
+        (
+            SELECT      'code01'                        AS  code
+                    ,   'name01'                        AS  name
+                    
+                    ,   'feedback'                      AS  icon
+                    ,   'lighten-1 small'               AS  icon_class
+                    ,   'title'                         AS  title
+                    ,   'subtitle'                      AS  subtitle
+
+            UNION   ALL
+
+            SELECT      'code02'                        AS  code
+                    ,   'name02'                        AS  name
+                    
+                    ,   ''                              AS  icon
+                    ,   'lighten-1 white--text'         AS  icon_class
+                    ,   'Recipes'                       AS  title
+                    ,   'Jan 17, 2014'                  AS  subtitle
+
+            UNION   ALL
+
+            SELECT      'code03'                        AS  code
+                    ,   'name03'                        AS  name
+                    
+                    ,   'feedback'                      AS  icon
+                    ,   'lighten-1 small'               AS  icon_class
+                    ,   'Work'                          AS  title
+                    ,   'Jan 28, 2014'                  AS  subtitle                    
+        )
+        SELECT      base.code                           AS  code
+                ,   base.name                           AS  name
+
+                ,   base.icon                           AS  icon
+                ,   base.icon_class                     AS  icon_class
+                ,   base.title                          AS  title
+                ,   base.subtitle                       AS  subtitle
+
+          FROM  base
+         WHERE  1 = 1
+    ]]>
+        <if test= 'searchData != null  and  searchData != "" ' >
+    <![CDATA[
+           AND  (       base.code               LIKE    #{searchData}
+                    OR  base.name               LIKE    #{searchData}
+                )
+    ]]>
+        </if>
+    </select>
+
+</mapper>

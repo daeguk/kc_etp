@@ -1,9 +1,9 @@
 <template>
     <v-container>
-        
         <v-layout row wrap class="content_margin">
             <v-flex grow>
                 <v-card flat>
+
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
                             DBF Biotech Index |
@@ -18,20 +18,22 @@
                     </v-card-title>
                     <v-data-table
                         :headers="headers"
-                        :items="desserts"
-                        :rows-per-page-items="rowsPerPageItems"
+                        :items="jongmokDataList"
+                        :pagination.sync="pagination"
+
                         class="table_line1"
                     >
                         <template slot="items" slot-scope="props">
-                            <td>{{ props.item.name }}</td>
-                            <td class="text-xs-left">{{ props.item.calories }}</td>
-                            <td class="text-xs-right">{{ props.item.fat }}</td>
-                            <td class="text-xs-right">{{ props.item.carbs }}</td>
-                            <td class="text-xs-right">{{ props.item.protein }}</td>
-                            <td class="text-xs-right">{{ props.item.iron }}</td>
-                            <td class="text-xs-right">{{ props.item.last }}</td>
+                            <td>{{ props.item.code }}</td>
+                            <td class="text-xs-left">{{ props.item.name }}</td>
+                            <td class="text-xs-right">{{ props.item.base_prc }}</td>
+                            <td class="text-xs-right">{{ props.item.shrs }}</td>
+                            <td class="text-xs-right">{{ props.item.float_rto }}</td>
+                            <td class="text-xs-right">{{ props.item.ceilling_rto }}</td>
+                            <td class="text-xs-right">{{ props.item.factor_rto }}</td>
                         </template>
                     </v-data-table>
+
                     <v-container>
                         <v-layout row class="content_margin">
                             <v-flex grow>
@@ -83,7 +85,7 @@
                                         </v-list-tile-content>
                                         <v-list-tile-content class="rightmenu_con ver2">
                                             <v-subheader>
-                                                <v-icon small color="primary">feedback</v-icon> 지수 조치 현황
+                                                <v-icon small color="primary">feedback</v-icon>지수 조치 현황
                                                 <v-dialog
                                                     v-model="dialog"
                                                     persistent
@@ -96,6 +98,8 @@
                                                             outline
                                                             color="primary"
                                                             v-on="on"
+
+                                                            @click="fn_openJisuJixPopup()"
                                                         >내역확인</v-btn>
                                                     </template>
                                                     <v-card flat>
@@ -120,7 +124,7 @@
                                                                 </v-list-tile>
                                                             </v-list>
                                                         </div>
-                                                        <indexDetailrtmenupop></indexDetailrtmenupop>
+                                                        <indexDetailrtmenupop  :fixData="fixData"></indexDetailrtmenupop>
                                                         <v-card class="pop_bot_h"></v-card>
                                                     </v-card>
                                                 </v-dialog>
@@ -136,7 +140,6 @@
                                             </p>
                                         </v-list-tile-content>
 
-
                                         <v-list-tile-content class="rightmenu_con">
                                             <v-text-field
                                                 v-model="search"
@@ -145,14 +148,17 @@
                                                 value="e.g.005930, 삼성전자"
                                                 outline
                                                 hide-details
+
+                                                @keyup.enter ="fn_getJisuList()"
                                             ></v-text-field>
                                             <!--오른쪽 메뉴 하단 리스트 영역--->
                                             <v-layout row class="w100 pt-3">
                                                 <v-flex xs12>
                                                     <v-card flat>
                                                         <v-list two-line subheader>
+
                                                             <v-list-tile
-                                                                v-for="item in items2"
+                                                                v-for="item in jisuDataList"
                                                                 :key="item.title"
                                                                 @click
                                                                 class="right_menu_w3"
@@ -166,15 +172,16 @@
 
                                                                 <v-list-tile-avatar>
                                                                     <v-icon
-                                                                        :class="[item.iconClass]"
+                                                                        :class="[item.icon_class]"
                                                                     >{{ item.icon }}</v-icon>
                                                                 </v-list-tile-avatar>
                                                             </v-list-tile>
+
                                                         </v-list>
                                                     </v-card>
                                                 </v-flex>
                                             </v-layout>
-                                             <!--오른쪽 메뉴 하단 리스트 영역--->
+                                            <!--오른쪽 메뉴 하단 리스트 영역--->
                                         </v-list-tile-content>
                                     </v-list>
                                 </v-navigation-drawer>
@@ -190,6 +197,7 @@
 
 
 <script>
+import Config from '@/js/config.js';
 import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
 
 export default {
@@ -197,64 +205,110 @@ export default {
         indexDetailrtmenupop: indexDetailrtmenupop
     },
     data() {
-        
         return {
-           
             dialog: false,
             drawer: true,
-            search: "", 
-            items: [
-                { title: "Home", icon: "dashboard" },
-                { title: "About", icon: "question_answer" }
-            ],
-            items2: [
-                {
-                    icon: "feedback",
-                    iconClass: "lighten-1 small",
-                    title: "DBF 4차산업혁명 지수",
-                    subtitle: "DBF130"
-                },
-                {
-                    icon: "",
-                    iconClass: "lighten-1 white--text",
-                    title: "Recipes",
-                    subtitle: "Jan 17, 2014"
-                },
-                {
-                    icon: "feedback",
-                    iconClass: " lighten-1 small",
-                    title: "Work",
-                    subtitle: "Jan 28, 2014"
-                }
-            ],
+            search: "",
+
             mini: false,
             right: null,
-            rowsPerPageItems: [10, 20, 30, 50],
+
+
+
             headers: [
                 {
                     text: "Code",
                     align: "left",
-                    value: "name"
+                    value: "code"
                 },
                 { text: "name", value: "name" },
-                { text: "BasePrc", value: "BasePrc", align: "right" },
-                { text: "Shrs", value: "Shrs", align: "right" },
-                { text: "Float rto", value: "FloatRto", align: "right" },
-                { text: "Ceiling rto", value: "CeilingRto", align: "right" },
-                { text: "Factor rto", value: "FactorRto", align: "right" }
+                { text: "BasePrc", value: "base_prc", align: "right" },
+                { text: "Shrs", value: "shrs", align: "right" },
+                { text: "Float rto", value: "float_rto", align: "right" },
+                { text: "Ceiling rto", value: "ceilling_rto", align: "right" },
+                { text: "Factor rto", value: "factor_rto", align: "right" }
             ],
-            desserts: [
-                
-            ]
+            pagination : {
+                rowsPerPage : -1
+            },
+            jongmokDataList : [],
+
+
+            jisuHeader: [
+                { title: "Home", icon: "dashboard" },
+                { title: "About", icon: "question_answer" }
+            ],
+            jisuDataList : [],      
+
+
+            fixData : {}
         };
     },
-    mounted : function() {
-       
-    }, 
-    created : function() {
+    mounted () {
+
+        var vm = this;
+        vm.fn_getJisuJongmokList();
+
     },
-    beforeDestory : function() {
-       
+    created: function() {},
+    beforeDestory: function() {},
+
+    methods: {
+
+        /*
+         * 지수종목상세 정보를 조회한다. ( 지수관리 -> 지수종목상세 탭 클릭시 )
+         * 2019-04-16  bkLove(촤병국)
+         */
+        fn_getJisuJongmokList : function() {
+
+            var vm = this;
+
+            axios.post(Config.base_url + "/user/index/getJisuJongmokList", {
+                data: {
+                    searchData : ""
+                }
+            }).then(response => {
+
+                if (response && response.data) {
+                    vm.jongmokDataList = response.data.dataList;
+                }
+
+            });
+
+        },
+
+        /*
+         * 검색영역에 일치하는 지수정보를 조회한다. ( 지수관리 -> 지수종목상세 ->  quick 메뉴 -> 검색영역 )
+         * 2019-04-16  bkLove(촤병국)
+         */
+        fn_getJisuList : function() {
+
+            var vm = this;
+
+            axios.post(Config.base_url + "/user/index/getJisuList", {
+                data: {
+                    searchData : ""
+                }
+            }).then(response => {
+
+                if (response && response.data) {
+                    vm.jisuDataList = response.data.dataList;
+                }
+
+            });
+
+        },
+
+        /*
+         * 지수 조회현황 팝업을 오픈한다.
+         * 2019-04-16  bkLove(촤병국)
+         */
+        fn_openJisuJixPopup : function() {
+            var vm = this;
+
+            vm.fixData = {};
+            vm.dialog = true;
+        },        
     }
 };
 </script>
