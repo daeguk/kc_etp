@@ -11,6 +11,7 @@ var Promise = require("bluebird");
 var multer = require('multer');
 var xlsx = require('xlsx');
 var fs = require('fs'); 
+var async = require('async'); 
 
 
 /* 
@@ -364,55 +365,54 @@ var fileuploadSingle = function (req, res) {
 var registerJisu = function (req, res) {
     console.log('indexRegister.save 호출됨.');
 
-    var pool = req.app.get("pool");
-    var mapper = req.app.get("mapper");
-    var resultMsg = {};
+    try{
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
 
 
-    var resultMsg = {};
-    var reqParam = {
-            uploadFolder: "d:\\test"
-        ,   save_file_name: ''
-        ,   user_id : req.session.user_id
-    };
+        var resultMsg = {};
+        var reqParam = {
+                uploadFolder: "d:\\test"
+            ,   save_file_name: ''
+            ,   user_id : req.session.user_id
+        };
 
-    var storage = multer.diskStorage({
+        var storage = multer.diskStorage({
 
-        // 서버에 저장할 폴더
-        destination: function (req, file, cb) {
-            cb(null, reqParam.uploadFolder);
-        },
+            // 서버에 저장할 폴더
+            destination: function (req, file, cb) {
+                cb(null, reqParam.uploadFolder);
+            },
 
-        /* 서버에 저장 */
-        filename: function (req, file, cb) {
+            /* 서버에 저장 */
+            filename: function (req, file, cb) {
 
-            console.log("file" + JSON.stringify(file));
+                console.log("file" + JSON.stringify(file));
 
-            var fileLen = file.originalname.length;
-            var lastDot = file.originalname.lastIndexOf(".");
-            var fileName = file.originalname.substring(0, lastDot);
-            var fileExt = file.originalname.substring(lastDot, fileLen).toLowerCase();
+                var fileLen = file.originalname.length;
+                var lastDot = file.originalname.lastIndexOf(".");
+                var fileName = file.originalname.substring(0, lastDot);
+                var fileExt = file.originalname.substring(lastDot, fileLen).toLowerCase();
 
-            reqParam.save_file_name = "method_" + fileName + "_" + Date.now() + "" + fileExt;
+                reqParam.save_file_name = "method_" + fileName + "_" + Date.now() + "" + fileExt;
 
-            cb(null, reqParam.save_file_name);
-        }
-    });
+                cb(null, reqParam.save_file_name);
+            }
+        });
 
 
-    var upload = multer({ storage: storage }).single('files');
+        var upload = multer({ storage: storage }).single('files');
 
-    upload(req, res, function (err) {
+        upload(req, res, function (err) {
 
-        console.log("upload start");
+            console.log("upload start");
 
-        if (err) {
-            console.log("File Upload Err" + err);
-        }
+            if (err) {
+                console.log("File Upload Err" + err);
+            }
 
-        try{
-
-            /* 1. body.data 값이 있는지 체크 */
+            /* body.data 값이 있는지 체크 */
             if (!req.body.data) {
                 console.log("indexRegister.save  req.body.data no data.");
                 console.log(req.body.data);
@@ -422,496 +422,301 @@ var registerJisu = function (req, res) {
 
                 res.json(resultMsg);
                 res.end();
-                return;
-            }
+            }else{
 
-            var paramData = JSON.parse( req.body.data );
+                var paramData = JSON.parse( req.body.data );
+                paramData.user_id = reqParam.user_id;
+                console.log( paramData );
 
+                var format = { language: 'sql', indent: '' };
+                var stmt = "";
+                Promise.using(pool.connect(), conn => {
 
-            paramData.user_id = reqParam.user_id;
+                    conn.beginTransaction(txerr => {
 
-console.log( paramData );
-
-            var format = { language: 'sql', indent: '' };
-            Promise.using(pool.connect(), conn => {
-
-                conn.beginTransaction(txerr => {
-
-                    /* 2. [지수ID] 가 중복 체크 */
-                    var stmt = mapper.getStatement('indexRegister', 'getJisuDuplCheck', paramData, format);
-                    console.log(stmt);
-
-                    conn.queryAsync(stmt).then(rows => {
-
-                        if (rows &&
-                            rows[0].cnt > 0) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[지수ID]가 이미 존재합니다.";
-
-                            throw resultMsg;
+                        if( txerr ) {
+                            return console.error( txerr );
                         }
 
+                        async.waterfall([
 
-                        if( req.file ) {
-                            reqParam.org_file_name = req.file.originalname;
-                            reqParam.mime_type = req.file.mimetype;
-                            reqParam.file_size = req.file.size;
-                    
+                            /* 1. [지수ID] 중복을 체크한다. */
+                            function( callback ) {
 
-                            reqParam.gubun = "001";      /* 지수방법론 */
+                                stmt = mapper.getStatement('indexRegister', 'getJisuDuplCheck', paramData, format);
+                                console.log(stmt);
 
-                            /* 3. [saveTmJisuFile] 테이블에 저장한다. */
-                            var stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
-                            console.log(stmt);
+                                conn.query(stmt, function( err, rows ) {
 
-console.log( "#### saveTmJisuFile start" );
-                            conn.queryAsync(stmt).then(rows => {
-console.log( "#### saveTmJisuFile end" );
-                                paramData.method_file_id        =   rows.insertId;
+                                    if( err ) {
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "[error] indexRegister.getJisuDuplCheck Error while performing Query";
+                                        resultMsg.err       =   err;
+
+                                        return callback( resultMsg );
+                                    }
+
+                                    if (rows &&
+                                        rows[0].cnt > 0) {
+
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "[지수ID]가 이미 존재합니다.";
+                                        resultMsg.err       =   err;
+
+                                        return callback( resultMsg );                                        
+                                    }
+                                    
+
+                                    callback( null, paramData );
+                                });
+                            },
+
+
+                            /* 2. 지수방법론을 저장한다. */
+                            function( data, callback ) {
+
+                                /* 지수방법론 파일이 존재하는 경우 */
+                                if( req.file ) {
+                                    reqParam.org_file_name = req.file.originalname;
+                                    reqParam.mime_type = req.file.mimetype;
+                                    reqParam.file_size = req.file.size;
+                                    reqParam.gubun = "001";      /* 지수방법론 */
+
+                                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
+                                    console.log(stmt);
+
+                                    conn.query(stmt, function( err, rows ) {
+
+                                        if( err ) {
+                                            resultMsg.result    =   false;
+                                            resultMsg.msg       =   "[error] indexRegister.saveTmJisuFile Error while performing Query";
+                                            resultMsg.err       =   err;
+
+                                            return callback( resultMsg );
+                                        }
+                                        
+                                        paramData.method_file_id        =   rows.insertId;
+
+                                        callback( null, paramData );
+                                    });
+
+                                }else{
+                                    callback( null, paramData );
+                                }
+                            },
+
+
+                            /* 3. 지수 마스터를 저장한다. */
+                            function( data, callback ) {
+
                                 paramData.status                =   "01";       // 상태 (01: 등록완료, 02:연동신청, 03: 연동완료 )
-
-                                /* 4. [tm_jisu_mast] 저장  */
                                 stmt = mapper.getStatement('indexRegister', 'saveTmJisuMast', paramData, format);
                                 console.log(stmt);
 
-console.log( "#### saveTmJisuMast start" );
-                                conn.queryAsync(stmt).then(rows => {
+                                conn.query(stmt, function( err, rows ) {
 
-console.log( "#### saveTmJisuMast end" );
+                                    if( err ) {
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "[error] indexRegister.saveTmJisuMast Error while performing Query";
+                                        resultMsg.err       =   err;
+
+                                        return callback( resultMsg );
+                                    }
 
                                     if( rows.affectedRows > 0 ) {
-
                                         paramData.jisu_seq      =   rows.insertId;      /* 지수 시퀀스 */
-
-                                        /* 4. [tm_jisu_share_req] 저장  */
-                                        if( paramData.arr_jisu_inst && paramData.arr_jisu_inst.length > 0  ) {
-
-                                            paramData.req_flag    =   "0";       /* 공개여부 0:비공개, 1:공개요청, 2:공개 */
-
-                                            stmt = mapper.getStatement('indexRegister', 'saveTmJisuShareReq', paramData, format);
-                                            console.log(stmt);
-
-console.log( "#### saveTmJisuShareReq start" );
-                                            conn.queryAsync(stmt).then(rows => {
-console.log( "#### saveTmJisuShareReq end" );
-                                                paramData.file_id  =    paramData.jisu_file_id;
-
-                                                /* 5. [tm_jisu_temp_upload] 조회 */
-                                                var stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
-                                                console.log(stmt);
-
-console.log( "#### getTmJisuTempUpload start" );
-                                                conn.queryAsync(stmt).then(rows => {
-console.log( "#### getTmJisuTempUpload end" );
-                                                    if( rows && rows.length > 0 ) {
-
-                                                        paramData.dataLists =   rows;
-
-                                                        /* 6. [tm_jisu_upload] 저장 */
-                                                        stmt = mapper.getStatement('indexRegister', 'saveTmJisuUpload', paramData, format);
-                                                        console.log(stmt);
-console.log( "#### saveTmJisuUpload start" );
-                                                        conn.queryAsync(stmt).then(rows => {
-console.log( "#### saveTmJisuUpload end" );
-                                                            /* 7. 지수별 최신 이력번호 조회 */
-                                                            stmt = mapper.getStatement('indexRegister', 'getHistNoByTmJisuUploadHist', paramData, format);
-                                                            console.log(stmt);
-
-console.log( "#### getHistNoByTmJisuUploadHist start" );
-                                                            conn.queryAsync(stmt).then(rows => {
-console.log( "#### getHistNoByTmJisuUploadHist end" );
-                                                                if( rows && rows[0].hist_no ) {
-                                                                    paramData.hist_no   =   rows[0].hist_no;
-
-                                                                    /* 8. [tm_jisu_upload_hist] 테이블에 저장한다. */
-                                                                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuUploadHist', paramData, format);
-                                                                    console.log(stmt);
-                                                                    
-                                                                    conn.queryAsync(stmt).then(rows => {
-
-                                                                        conn.commit();
-
-                                                                        resultMsg.result = true;
-                                                                        resultMsg.msg = "성공적으로 저장하였습니다.";
-
-                                                                        res.json(resultMsg);
-                                                                        res.end();
-
-                                                                    }).catch(err => {
-
-                                                                        conn.rollback();
-
-                                                                        console.log(err);
-
-                                                                        if (!err.msg) {
-                                                                            resultMsg.result = false;
-                                                                            resultMsg.msg = "indexRegister.saveTmJisuUploadHist 오류 발생.";
-                                                                        }
-
-                                                                        res.json(resultMsg);
-                                                                        res.end();
-                                                                    });
-
-                                                                }else{
-                                                                    conn.commit();
-
-                                                                    resultMsg.result = true;
-                                                                    resultMsg.msg = "성공적으로 저장하였습니다.";
-
-                                                                    res.json(resultMsg);
-                                                                    res.end();
-                                                                }
-
-                                                            }).catch(err => {
-
-                                                                conn.rollback();
-
-                                                                console.log(err);
-
-                                                                if (!err.msg) {
-                                                                    resultMsg.result = false;
-                                                                    resultMsg.msg = "indexRegister.getHistNoByTmJisuUploadHist 오류 발생.";
-                                                                }
-
-                                                                res.json(resultMsg);
-                                                                res.end();
-                                                            });
-
-                                                        }).catch(err => {
-
-                                                            conn.rollback();
-
-                                                            console.log(err);
-
-                                                            if (!err.msg) {
-                                                                resultMsg.result = false;
-                                                                resultMsg.msg = "indexRegister.saveTmJisuUpload 오류 발생.";
-                                                            }
-
-                                                            res.json(resultMsg);
-                                                            res.end();
-                                                        });
-                                                    }else{
-                                                        conn.commit();
-
-                                                        resultMsg.result = true;
-                                                        resultMsg.msg = "성공적으로 저장하였습니다.";
-
-                                                        res.json(resultMsg);
-                                                        res.end();
-                                                    }
-
-                                                }).catch(err => {
-                                                    console.log(err);
-                                                });
-
-                                            }).catch(err => {
-
-                                                console.log(err);
-
-                                                if (!err.msg) {
-                                                    resultMsg.result = false;
-                                                    resultMsg.msg = "indexRegister.saveTmJisuShareReq 오류 발생.";
-                                                }
-
-                                                res.json(resultMsg);
-                                                res.end();
-
-                                                conn.rollback();
-                                            });
-                                        }
-                                        else{
-
-                                            paramData.file_id  =    paramData.jisu_file_id;
-
-                                            /* 5. [tm_jisu_temp_upload] 조회 */
-                                            var stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
-                                            console.log(stmt);
-
-console.log( "####1 getTmJisuTempUpload start" );
-                                            conn.queryAsync(stmt).then(rows => {
-console.log( "####1 getTmJisuTempUpload end" );
-                                                if( rows && rows.length > 0 ) {
-
-                                                    paramData.dataLists =   rows;
-
-                                                    /* 6. [tm_jisu_upload] 저장 */
-                                                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuUpload', paramData, format);
-                                                    console.log(stmt);
-
-console.log( "####1 saveTmJisuUpload start" );
-                                                    conn.queryAsync(stmt).then(rows => {
-console.log( "####1 saveTmJisuUpload end" );
-                                                        conn.commit();
-
-                                                        resultMsg.result = true;
-                                                        resultMsg.msg = "성공적으로 저장하였습니다.";
-
-                                                        res.json(resultMsg);
-                                                        res.end();
-
-                                                    }).catch(err => {
-
-                                                        conn.rollback();
-
-                                                        console.log(err);
-
-                                                        if (!err.msg) {
-                                                            resultMsg.result = false;
-                                                            resultMsg.msg = "indexRegister.saveTmJisuUpload 오류 발생.";
-                                                        }
-
-                                                        res.json(resultMsg);
-                                                        res.end();
-                                                    });                                 
-
-                                                }else{
-
-                                                    conn.commit();
-
-                                                    resultMsg.result = true;
-                                                    resultMsg.msg = "성공적으로 저장하였습니다.";
-
-                                                    res.json(resultMsg);
-                                                    res.end();      
-                                                }                                              
-
-                                            }).catch(err => {
-                                                console.log(err);
-                                            });
-
-                                        }
                                     }
 
-                                }).catch(err => {
-
-                                    console.log(err);
-
-                                    if (!err.msg) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = "indexRegister.saveTmJisuMast 오류 발생.";
-                                    }
-
-                                    res.json(resultMsg);
-                                    res.end();
-
-                                    conn.rollback();
+                                    callback( null, paramData );
                                 });
-                  
-                            }).catch(err => {
+                            },
 
-                                console.log(err);
-                                conn.rollback();
 
-                                resultMsg.result = false;
-                                resultMsg.msg = "indexRegister.saveTmJisuFile 오류 발생.";
+                            /* 4. 지수 정보공개요청 을 저장한다. */
+                            function( data, callback ) {
 
-                                res.json(resultMsg);
-                                res.end();
-                            });
+                                if( paramData.arr_jisu_inst && paramData.arr_jisu_inst.length > 0  ) {
 
-                        }else{
+                                    paramData.req_flag    =   "0";       /* 공개여부 0:비공개, 1:공개요청, 2:공개 */
 
-                            paramData.status                =   "01";       // 상태 (01: 등록완료, 02:연동신청, 03: 연동완료 )
+                                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuShareReq', paramData, format);
+                                    console.log(stmt);
 
-                            /* 4. [tm_jisu_mast] 저장  */
-                            stmt = mapper.getStatement('indexRegister', 'saveTmJisuMast', paramData, format);
-                            console.log(stmt);
+                                    conn.query(stmt, function( err, rows ) {
 
-console.log( "####2 saveTmJisuMast start" );
-                            conn.queryAsync(stmt).then(rows => {
-console.log( "####2 saveTmJisuMast end" );
+                                        if( err ) {
+                                            resultMsg.result    =   false;
+                                            resultMsg.msg       =   "[error] indexRegister.saveTmJisuShareReq Error while performing Query";
+                                            resultMsg.err       =   err;
 
-                                if( rows.affectedRows > 0 ) {
+                                            return callback( resultMsg );
+                                        }
 
-                                    paramData.jisu_seq      =   rows.insertId;      /* 지수 시퀀스 */
+                                        callback( null, paramData );
+                                    });
 
-                                    /* 4. [tm_jisu_share_req] 저장  */
-                                    if( paramData.arr_jisu_inst && paramData.arr_jisu_inst.length > 0  ) {
+                                }else{
+                                    callback( null, paramData );
+                                }
+                            },
 
-                                        paramData.req_flag    =   "0";       /* 공개여부 0:비공개, 1:공개요청, 2:공개 */
 
-                                        stmt = mapper.getStatement('indexRegister', 'saveTmJisuShareReq', paramData, format);
+                            /* 5. [지수 저장전 업로드] 를 조회한다. */
+                            function( data, callback ) {
+
+                                paramData.file_id  =    paramData.jisu_file_id;
+
+                                stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
+                                console.log(stmt);
+
+                                conn.query(stmt, function( err, rows ) {
+
+                                    if( err ) {
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
+                                        resultMsg.err       =   err;
+
+                                        return callback( resultMsg );
+                                    }
+
+                                    if( rows && rows.length > 0 ) {
+                                        paramData.dataLists =   rows;
+                                    }
+
+                                    callback( null, paramData );
+
+                                });
+                            },
+
+
+                            /* 6. [지수 엑셀업로드] 에 저장한다. */
+                            function( data, callback ) {
+
+                                if( paramData.dataLists != null && paramData.dataLists.length > 0  ) {
+
+                                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuUpload', paramData, format);
+                                    console.log(stmt);
+
+                                    conn.query(stmt, function( err, rows ) {
+
+                                        if( err ) {
+                                            resultMsg.result    =   false;
+                                            resultMsg.msg       =   "[error] indexRegister.saveTmJisuUpload Error while performing Query";
+                                            resultMsg.err       =   err;
+
+                                            return callback( resultMsg );
+                                        }
+
+                                        callback( null, paramData );
+                                    });
+
+                                }else{
+                                    callback( null, paramData );
+                                }
+                            },
+
+
+                            /* 7. [지수 엑셀업로드 이력] 에 저장하기 위해 지수별 최신 이력번호를 조회한다. */
+                            function( data, callback ) {
+
+                                if( paramData.dataLists != null && paramData.dataLists.length > 0  ) {
+
+                                    stmt = mapper.getStatement('indexRegister', 'getHistNoByTmJisuUploadHist', paramData, format);
+                                    console.log(stmt);
+
+                                    conn.query(stmt, function( err, rows ) {
+
+                                        if( err ) {
+                                            resultMsg.result    =   false;
+                                            resultMsg.msg       =   "[error] indexRegister.getHistNoByTmJisuUploadHist Error while performing Query";
+                                            resultMsg.err       =   err;
+
+                                            return callback( resultMsg );
+                                        }
+    
+                                        if( rows && rows[0].hist_no ) {
+                                            paramData.hist_no   =   rows[0].hist_no;
+                                        }
+
+                                        callback( null, paramData );
+                                    });
+
+                                }else{
+                                    callback( null, paramData );
+                                }
+                            },
+
+
+                            /* 8. [지수 엑셀업로드 이력] 에 저장한다. */
+                            function( data, callback ) {
+
+                                if( paramData.dataLists != null && paramData.dataLists.length > 0  ) {
+
+                                    if( paramData.hist_no ) {
+
+                                        stmt = mapper.getStatement('indexRegister', 'saveTmJisuUploadHist', paramData, format);
                                         console.log(stmt);
 
-console.log( "####2 saveTmJisuShareReq start" );
-                                        conn.queryAsync(stmt).then(rows => {
-console.log( "####2 saveTmJisuShareReq end" );
-                                            paramData.file_id  =    paramData.jisu_file_id;
+                                        conn.query(stmt, function( err, rows ) {
 
-                                            /* 5. [tm_jisu_temp_upload] 조회 */
-                                            var stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
-                                            console.log(stmt);
+                                            if( err ) {
+                                                resultMsg.result    =   false;
+                                                resultMsg.msg       =   "[error] indexRegister.saveTmJisuUploadHist Error while performing Query";
+                                                resultMsg.err       =   err;
 
-console.log( "####2 getTmJisuTempUpload start" );
-                                            conn.queryAsync(stmt).then(rows => {
-console.log( "####2 getTmJisuTempUpload end" );
-                                                if( rows && rows.length > 0 ) {
+                                                return callback( resultMsg );
+                                            }                                    
 
-                                                    paramData.dataLists =   rows;
-
-                                                    /* 6. [tm_jisu_upload] 저장 */
-                                                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuUpload', paramData, format);
-                                                    console.log(stmt);
-
-console.log( "####2 saveTmJisuUpload start" );
-                                                    conn.queryAsync(stmt).then(rows => {
-console.log( "####2 saveTmJisuUpload end" );
-                                                        conn.commit();
-
-                                                        resultMsg.result = true;
-                                                        resultMsg.msg = "성공적으로 저장하였습니다.";
-
-                                                        res.json(resultMsg);
-                                                        res.end();
-
-                                                    }).catch(err => {
-
-                                                        conn.rollback();
-
-                                                        console.log(err);
-
-                                                        if (!err.msg) {
-                                                            resultMsg.result = false;
-                                                            resultMsg.msg = "indexRegister.saveTmJisuUpload 오류 발생.";
-                                                        }
-
-                                                        res.json(resultMsg);
-                                                        res.end();
-                                                    });                                 
-
-                                                }else{
-
-                                                    conn.commit();
-
-                                                    resultMsg.result = true;
-                                                    resultMsg.msg = "성공적으로 저장하였습니다.";
-
-                                                    res.json(resultMsg);
-                                                    res.end();
-                                                }
-
-                                            }).catch(err => {
-                                                console.log(err);
-                                            });                                                
-
-                                        }).catch(err => {
-
-                                            console.log(err);
-
-                                            if (!err.msg) {
-                                                resultMsg.result = false;
-                                                resultMsg.msg = "indexRegister.saveTmJisuShareReq 오류 발생.";
-                                            }
-
-                                            res.json(resultMsg);
-                                            res.end();
-
-                                            conn.rollback();
+                                            callback( null, paramData );
                                         });
 
+                                    }else{
+                                        callback( null );
                                     }
-                                    else{
 
-                                        paramData.file_id  =    paramData.jisu_file_id;
-
-                                        /* 5. [tm_jisu_temp_upload] 조회 */
-                                        var stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
-                                        console.log(stmt);
-
-console.log( "####3 getTmJisuTempUpload start" );
-                                        conn.queryAsync(stmt).then(rows => {
-console.log( "####3 getTmJisuTempUpload end" );
-
-                                            if( rows && rows.length > 0 ) {
-
-                                                paramData.dataLists =   rows;
-
-                                                /* 6. [tm_jisu_upload] 저장 */
-                                                stmt = mapper.getStatement('indexRegister', 'saveTmJisuUpload', paramData, format);
-                                                console.log(stmt);
-
-console.log( "####3 saveTmJisuUpload start" );
-                                                conn.queryAsync(stmt).then(rows => {
-console.log( "####3 saveTmJisuUpload end" );
-                                                    conn.commit();
-
-                                                    resultMsg.result = true;
-                                                    resultMsg.msg = "성공적으로 저장하였습니다.";
-
-                                                    res.json(resultMsg);
-                                                    res.end();
-
-                                                }).catch(err => {
-
-                                                    conn.rollback();
-
-                                                    console.log(err);
-
-                                                    if (!err.msg) {
-                                                        resultMsg.result = false;
-                                                        resultMsg.msg = "indexRegister.saveTmJisuUpload 오류 발생.";
-                                                    }
-
-                                                    res.json(resultMsg);
-                                                    res.end();
-                                                });                                 
-
-                                            }else{
-
-                                                conn.commit();
-
-                                                resultMsg.result = true;
-                                                resultMsg.msg = "성공적으로 저장하였습니다.";
-
-                                                res.json(resultMsg);
-                                                res.end();      
-                                            }                                              
-
-                                        }).catch(err => {
-                                            console.log(err);
-                                        });
-
-                                    }
+                                }else{
+                                    callback( null );
                                 }
+                            }
 
-                            }).catch(err => {
+                        ], function (err) {
 
-                                console.log(err);
-
-                                if (!err.msg) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = "indexRegister.saveTmJisuMast 오류 발생.";
-                                }
-
-                                res.json(resultMsg);
-                                res.end();
-
+                            if( err ) {
+                                console.log( err );
                                 conn.rollback();
-                            });
-                        }
+                            }else{
 
-                    }).catch(err => {
+                                resultMsg.result    =   true;
+                                resultMsg.msg       =   "성공적으로 저장 하였습니다.";
+                                resultMsg.err       =   null;
 
-                        console.log(err);
+                                conn.commit();
+                            }
 
-                        if (!err.msg) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "indexRegister.getJisuDuplCheck 오류 발생.";
-                        }
+                            res.json( resultMsg );
+                            res.end();
+                        });
 
-                        res.json(resultMsg);
-                        res.end();
-
-                        conn.rollback();
                     });
                 });
-            });
+            }
+        });                        
 
-        }catch( e ) {
-            console.log( e );
+    } catch(expetion) {
+
+        console.log(expetion);
+
+        if( resultMsg && !resultMsg.msg ) {
+            resultMsg.result    =   false;
+            resultMsg.msg       =   "[error] indexRegister.registerJisu 오류가 발생하였습니다.";
+            resultMsg.err       =   expetion;
         }
-    });
+
+        res.json({
+            resultMsg
+        });
+        res.end();        
+    }
 };
 
 

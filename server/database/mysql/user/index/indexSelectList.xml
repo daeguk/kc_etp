@@ -8,6 +8,7 @@
     * 2019-04-10  bkLove(촤병국)
     -->
     <select id="getCodeDtl">
+    <![CDATA[
         SELECT      tm_code_dtl.com_mst_cd          AS  com_mst_cd
                 ,   tm_code_dtl.com_dtl_cd          AS  com_dtl_cd
                 
@@ -26,6 +27,7 @@
            AND  tm_code_mast.com_mst_cd             =   #{com_mst_cd}
          ORDER  BY      tm_code_dtl.com_mst_cd
                     ,   tm_code_dtl.com_dtl_cd
+    ]]>
     </select>
 
     <!--
@@ -33,6 +35,7 @@
     * 2019-04-10  bkLove(촤병국)
     -->
     <select id="getJisuList">
+    <![CDATA[
         SELECT      tm_jisu_mast.jisu_seq           AS  jisu_seq
 
                 ,   tm_jisu_mast.jisu_id            AS  jisu_id
@@ -64,6 +67,7 @@
            AND  tm_code_dtl.com_mst_cd              =   'COM001'
 
            AND  tm_jisu_mast.reg_id                 =   #{user_id}
+    ]]>
     </select>
 
 </mapper>

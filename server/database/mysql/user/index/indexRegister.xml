@@ -142,8 +142,8 @@
             ,   reg_id 
             ,   reg_time 
         ) 
-    ]]>
         VALUES 
+    ]]>
         <foreach    collection="dataLists"   item="data"     separator="," >
     <![CDATA[
         ( 
@@ -198,8 +198,8 @@
             ,   reg_id 
             ,   reg_time 
         ) 
-    ]]>
         VALUES 
+    ]]>
         <foreach    collection="dataLists"   item="data"     separator="," >
     <![CDATA[
         ( 
@@ -239,8 +239,8 @@
             ,   upd_id
             ,   upd_time
         ) 
-    ]]>
         VALUES 
+    ]]>
         <foreach    collection="arr_jisu_inst"   item="item"    index="index"   separator="," >
     <![CDATA[
         ( 

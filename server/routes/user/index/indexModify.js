@@ -277,6 +277,7 @@ var modifyJisu = function(req, res) {
                 console.log( paramData );
 
                 var format = { language: 'sql', indent: '' };
+                var stmt = "";
                 Promise.using(pool.connect(), conn => {
 
                     conn.beginTransaction(txerr => {
@@ -348,7 +349,7 @@ var modifyJisu = function(req, res) {
                                     reqParam.file_size = req.file.size;
                                     reqParam.gubun = "001";      /* 지수방법론 */
 
-                                    var stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
+                                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
                                     console.log(stmt);
 
                                     conn.query(stmt, function( err, rows ) {
