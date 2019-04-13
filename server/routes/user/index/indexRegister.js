@@ -203,151 +203,208 @@ var fileuploadSingle = function (req, res) {
             console.log( JSON.stringify(reqParam) );  
 
 
-            /* 1. 엑셀파일을 파싱한다. */
+            /* 엑셀파일을 파싱한다. */
             var workbook = xlsx.readFile(reqParam.uploadFolder + "/" + req.file.filename);
             var sheet_name_list = workbook.SheetNames;
             var dataLists = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { header: ["col01", "col02", "col03"], range: 2 });
 
 
-            /* 2. 엑셀 건수 체크 */
-            if( dataLists.length == 0 ) {
+            /* 엑셀 건수 체크 */
+            if( dataLists.length == 0 ) {  
                 resultMsg.result = false;
                 resultMsg.msg = "소급지수 건수는 1건 이상 존재해야 합니다.";
 
-                res.json(resultMsg);
-                res.end();  
+            }else{
 
-                throw resultMsg;
+                /* 엑셀 데이터 사이즈 체크 */
+                var check = true;
+                for (var i = 0; i < dataLists.length; i++) {
+                    var data = dataLists[i];
+
+                    if( data.col01.length > 100 ) {
+                        check = false;
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[" + (i+1) + " 행] 첫번째 컬럼이 100자리 이내여야 합니다.";
+                        
+                        break;
+                    }
+
+                    else if( data.col02.length > 100 ) {
+                        check = false;
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[" + (i+1) + " 행] 두번째 컬럼이 100자리 이내여야 합니다.";
+                        
+                        break;
+                    }
+
+                    else if( data.col03.length > 100 ) {
+                        check = false;
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[" + (i+1) + " 행] 세번째 컬럼이 100자리 이내여야 합니다.";
+                        
+                        break;
+                    }
+
+                    data.row_no = i+1;
+
+                    if( !data.col04 ) {
+                        data.col04 = "";
+                    }
+
+                    if( !data.col05 ) {
+                        data.col05 = "";
+                    }                     
+                }
             }
 
-
-            /* 3. 엑셀 데이터 사이즈 체크 */
-            var check = true;
-            for (var i = 0; i < dataLists.length; i++) {
-                var data = dataLists[i];
-
-                if( data.col01.length > 100 ) {
-                    check = false;
-
-                    resultMsg.result = false;
-                    resultMsg.msg = "[" + (i+1) + " 행] 첫번째 컬럼이 100자리 이내여야 합니다."
-                    
-                    break;
-                }
-
-                else if( data.col02.length > 100 ) {
-                    check = false;
-
-                    resultMsg.result = false;
-                    resultMsg.msg = "[" + (i+1) + " 행] 두번째 컬럼이 100자리 이내여야 합니다."
-                    
-                    break;
-                }
-
-                else if( data.col03.length > 100 ) {
-                    check = false;
-
-                    resultMsg.result = false;
-                    resultMsg.msg = "[" + (i+1) + " 행] 세번째 컬럼이 100자리 이내여야 합니다."
-                    
-                    break;
-                }
-
-                data.row_no = i+1;
-
-                if( !data.col04 ) {
-                    data.col04 = "";
-                }
-
-                if( !data.col05 ) {
-                    data.col05 = "";
-                }                     
-            }
 
             if( !check ) {
+
                 res.json(resultMsg);
                 res.end();
 
-                throw resultMsg;
-            }
+            }else{
+
+                var format = { language: 'sql', indent: '' };
+                var stmt = "";
+                Promise.using(pool.connect(), conn => {
+                    conn.beginTransaction(txerr => {
+
+                        if( txerr ) {
+                            return console.error( txerr );
+                        }
+
+                        async.waterfall([
+
+                            /* 1. [지수 파일정보] 테이블에 저장한다. */
+                            function( callback ) {
+
+                                reqParam.gubun = "002";      /* 소급 지수 */
+
+                                stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
+                                console.log(stmt);
+
+                                conn.query(stmt, function( err, rows ) {
+
+                                    if( err ) {
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "[error] indexRegister.saveTmJisuFile Error while performing Query";
+                                        resultMsg.err       =   err;
+
+                                        return callback( resultMsg );
+                                    }
+
+                                    if( rows ) {
+                                        reqParam.file_id    =   rows.insertId;
+                                    }
+
+                                    callback( null, reqParam );
+                                });
+                            },
 
 
-            var format = { language: 'sql', indent: '' };
-            Promise.using(pool.connect(), conn => {
-                conn.beginTransaction(txerr => {
+                            /* 2. [지수 저장전 업로드] 테이블에 저장한다. */
+                            function( data, callback ) {
 
-                    reqParam.gubun = "002";      /* 소급 지수 */
+                                if( reqParam.file_id ) {
 
+                                    reqParam.dataLists  =   dataLists;
+                        
+                                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuTempUpload', reqParam, format);
+                                    console.log(stmt);
 
-                    /* 4. [saveTmJisuFile] 테이블에 저장한다. */
-                    var stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
-                    console.log(stmt);
+                                    conn.query(stmt, function( err, rows ) {
 
-                    conn.queryAsync(stmt).then(rows => {
+                                        if( err ) {
+                                            resultMsg.result    =   false;
+                                            resultMsg.msg       =   "[error] indexRegister.saveTmJisuTempUpload Error while performing Query";
+                                            resultMsg.err       =   err;
 
-                        reqParam.file_id    =   rows.insertId;
-                        reqParam.dataLists  =   dataLists;
+                                            return callback( resultMsg );
+                                        }
 
+                                        callback( null, reqParam );
+                                    });
 
-                        /* 5. [tm_jisu_temp_upload] 저장 쿼리문 조회 */                   
-                        stmt = mapper.getStatement('indexRegister', 'saveTmJisuTempUpload', reqParam, format);
-                        console.log(stmt);
+                                }else{
 
-                        conn.queryAsync(stmt).then(rows => {
+                                    callback( null, reqParam );
+                                }
+                            },
 
-                            conn.commit();
+                            
+                            /* 3. [지수 저장전 업로드] 테이블을 조회한다. */
+                            function( data, callback ) {
 
+                                if( reqParam.file_id ) {
 
-                            /* 6. [tm_jisu_temp_upload] 조회 쿼리문 조회 */
-                            var stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', reqParam, format);
-                            console.log(stmt);
+                                    stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', reqParam, format);
+                                    console.log(stmt);
 
-                            conn.queryAsync(stmt).then(rows => {
+                                    conn.query(stmt, function( err, rows ) {
 
-                                resultMsg.result = true;
-                                resultMsg.jisu_file_id = reqParam.file_id;
-                                resultMsg.dataList = rows;
+                                        if( err ) {
+                                            resultMsg.result    =   false;
+                                            resultMsg.msg       =   "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
+                                            resultMsg.err       =   err;
 
-                                res.json(resultMsg);
-                                res.end();
-                            }).catch(err => {
+                                            return callback( resultMsg );
+                                        }
 
-                                console.log(err);
+                                        if( rows ) {
+                                            resultMsg.result = true;
+                                            resultMsg.jisu_file_id = reqParam.file_id;
+                                            resultMsg.dataList = rows;
+                                        }
 
-                                resultMsg.result = false;
-                                resultMsg.msg = "처리중 오류가 발생하였습니다.";
+                                        callback( null, reqParam );
+                                    });
 
-                                res.json(resultMsg);
-                                res.end();
-                            });
+                                }else{
 
-                        }).catch(err => {
+                                    callback( null, reqParam );
+                                }
+                            }                            
 
-                            console.log(err);
-                            conn.rollback();
+                        ], function (err) {
 
-                            resultMsg.result = false;
-                            resultMsg.msg = "처리중 오류가 발생하였습니다.";
+                            if( err ) {
+                                console.log( err );
+                                conn.rollback();
+                            }else{
 
-                            res.json(resultMsg);
+                                resultMsg.result    =   true;
+                                resultMsg.msg       =   "";
+                                resultMsg.err       =   null;
+
+                                conn.commit();
+                            }
+
+                            res.json( resultMsg );
                             res.end();
                         });
 
-                    }).catch(err => {
-
-                        console.log(err);
-                        conn.rollback();
-
-                        resultMsg.result = false;
-                        resultMsg.msg = "처리중 오류가 발생하였습니다.";
-
-                        res.json(resultMsg);
-                        res.end();
                     });
                 });
+            }
+
+        } catch(expetion) {
+
+            console.log(expetion);
+
+            if( resultMsg && !resultMsg.msg ) {
+                resultMsg.result    =   false;
+                resultMsg.msg       =   "[error] 소급지수 파일 업로드 중 오류가 발생하였습니다.";
+                resultMsg.err       =   expetion;
+            }
+
+            res.json({
+                resultMsg
             });
-        }catch( e ) {
-            console.log( e );
+            res.end();        
         }
     });
 };
