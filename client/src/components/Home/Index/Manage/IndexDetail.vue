@@ -75,7 +75,7 @@
                                                 <v-icon small color="primary">flash_on</v-icon>종목으로 찾기
                                             </v-subheader>
                                             <v-text-field
-                                                v-model="search"
+                                                v-model="form.jongmokSearch"
                                                 append-icon="search"
                                                 placeholder="e.g.005930, 삼성전자"
                                                 value="e.g.005930, 삼성전자"
@@ -142,7 +142,7 @@
 
                                         <v-list-tile-content class="rightmenu_con">
                                             <v-text-field
-                                                v-model="search"
+                                                v-model="form.jisuSearch"
                                                 append-icon="search"
                                                 placeholder="e.g.005930, 삼성전자"
                                                 value="e.g.005930, 삼성전자"
@@ -159,21 +159,19 @@
 
                                                             <v-list-tile
                                                                 v-for="item in jisuDataList"
-                                                                :key="item.title"
+                                                                :key="item.f16002"
                                                                 @click
                                                                 class="right_menu_w3"
                                                             >
                                                                 <v-list-tile-content
                                                                     class="rm_con_h"
                                                                 >
-                                                                    <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                                                                    <v-list-tile-sub-title>{{ item.subtitle }}</v-list-tile-sub-title>
+                                                                    <v-list-tile-title>{{ item.f16002 }}</v-list-tile-title>
+                                                                    <v-list-tile-sub-title>{{ item.f16013 }}</v-list-tile-sub-title>
                                                                 </v-list-tile-content>
 
                                                                 <v-list-tile-avatar>
-                                                                    <v-icon
-                                                                        :class="[item.icon_class]"
-                                                                    >{{ item.icon }}</v-icon>
+                                                                    <v-icon class="lighten-1 white--text">feedback</v-icon>
                                                                 </v-list-tile-avatar>
                                                             </v-list-tile>
 
@@ -208,7 +206,6 @@ export default {
         return {
             dialog: false,
             drawer: true,
-            search: "",
 
             mini: false,
             right: null,
@@ -241,14 +238,18 @@ export default {
             jisuDataList : [],      
 
 
-            fixData : {}
+            fixData : {},
+
+            form: {
+                    jisuSearch: ""
+                ,   jongmokSearch: ""
+            }
         };
     },
     mounted () {
 
         var vm = this;
-        vm.fn_getJisuJongmokList();
-
+        vm.fn_getJisuList();       
     },
     created: function() {},
     beforeDestory: function() {},
@@ -287,12 +288,16 @@ export default {
 
             axios.post(Config.base_url + "/user/index/getJisuList", {
                 data: {
-                    searchData : ""
+                    searchData : vm.form.jisuSearch
                 }
             }).then(response => {
 
                 if (response && response.data) {
                     vm.jisuDataList = response.data.dataList;
+
+                    if( vm.jisuDataList && vm.jisuDataList.length > 0 ) {
+                        vm.fn_getJisuDetail( {  } );
+                    }
                 }
 
             });
