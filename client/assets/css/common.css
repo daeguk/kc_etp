@@ -21,6 +21,8 @@ li {
 .routerlink {
     color: black;
 }
+
+.z-index{z-index: 100;}
 .v-content__wrap .container{padding:0px;}
 .v-form>.container {background:#ffffff !important;}
 
@@ -43,6 +45,23 @@ button:focus { outline: none; }
     background-color:#e5f3fe;
     transition: .3s cubic-bezier(.25,.8,.5,1);
     }
+
+
+.btn_intable_01{color:#1976d2; border-color:#1976d2;}
+
+
+
+/*테이블안 체크박스*/
+input[type="radio"], input[type="checkbox"] { display: inline-block; width: 25px; height: 25px; vertical-align: middle; -webkit-appearance: none; border-radius: 0; border: 0; margin:0; padding:0; cursor: pointer }
+input[type="radio"] { background: url(../img/btn_radio.png) no-repeat 0 0; }
+input[type="checkbox"] { background: url(../img/btn_check.png) no-repeat 0 0; }
+input[type="checkbox"]:checked, input[type="radio"]:checked { background-position: 0 -25px; }
+input[type="checkbox"]:disabled, input[type="radio"]:disabled { background-position: 0 -50px; }
+input[type="checkbox"]:disabled:checked, input[type="radio"]:disabled:checked { background-position: 0 -75px; }
+input:focus { outline: none; }
+.td_in_center{text-align: center;}
+
+
 
 /*  Tooltip container  */
 .tooltip {position: relative; display: inline-block;}
@@ -194,6 +213,7 @@ h3.subtit p.sub_txt{font-size:14px; font-weight: normal;}
 .right_menu_w2 .v-list__tile{padding:0px;}
 .right_menu_w2 .rightmenu_line{border-top:1px solid #d4d4d4;}
 .right_menu_w2 .rightmenu_con{padding:15px 16px; font-size: 14px; font-weight: 600; color:#606060;}
+.right_menu_w2 .rightmenu_con2{padding:10px 16px; font-size: 14px; font-weight: 600; color:#606060;}
 .right_menu_w2 .v-input input{max-height: 20px; font-size: 14px;}
 .right_menu_w2 .v-input label{display: none;}
 .right_menu_w2 .v-text-field--outline>.v-input__control>.v-input__slot{min-height: 20px;}
@@ -284,4 +304,19 @@ input[type='file']{
 
 
 
+/*etp 신청현황 리스트 현황 단계*/
+
+.progress{overflow:hidden;height:25px;background:url(../img/bg_progress.gif);border-right:1px solid #e3e3e3;line-height:14px;letter-spacing:-1px;width:400px;}
+.progress .tit{float:left;position:relative;z-index:1000;width:74px;height:20px;margin:0;padding:0px 0 0;background:url(../img/bg_progress_tit.gif) no-repeat;color:#fff;line-height:14px;text-align:center}
+.progress ol{float:left;margin:0;padding:0}
+.progress li,.progress li span{background:url(../img/bg_progress_item.gif) no-repeat;font-size:14px;white-space:nowrap;}
+.progress li{float:left;margin:0 0 0 -13px;padding:0 0 0 13px;background-position:-287px 0}
+.progress li span{display:inline-block;height:25px;padding:5px 28px 0 13px;background-position:100% top;}
+.progress li span.explain{font-size:12px; color:#42a4e1}
+.progress li.on{position:relative;z-index:10;background-position:0px 100%;color:#fff;}
+.progress li.on span{background:url(../img/bg_progress_item.gif) no-repeat 100% 100%;}
+.progress li.last span{background:none;}
+.progress li.on_last{position:relative;z-index:10;background-position:0px 100%;color:#fff;}
+.progress li.on_last span{background:#20a9e7 url(../img/bg_progress_item2.gif) no-repeat 100% 100%; width:198px;}
+.progress .right{position:absolute;top:6px;right:10px;color:#444}
 

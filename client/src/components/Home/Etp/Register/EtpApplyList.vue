@@ -25,44 +25,317 @@
                             </v-card>
                         </v-flex>
                         <v-flex xs2 ma-2>
-                            <v-card dark flat color="#3158a1">
+                            <v-card dark flat color="#466eb9">
                                 <v-icon>assignment</v-icon>지수분배: 0건
                             </v-card>
                         </v-flex>
                         <v-flex xs2 ma-2>
-                            <v-card dark flat color="#128293">
+                            <v-card dark flat color="#48485e">
                                 <v-icon>insert_drive_file</v-icon>종목코드 신청: 8건
                             </v-card>
                         </v-flex>
                         <v-flex xs2 ma-2>
-                            <v-card dark flat color="#0abcc2">
+                            <v-card dark flat color="#727281">
                                 <v-icon>exposure</v-icon>iNAV산출 :4건
                             </v-card>
                         </v-flex>
                     </v-layout>
                 </v-card>
-                <v-data-table
-                    v-model="selected"
-                    :headers="headers"
-                    :items="results"
-                    :rows-per-page-items="rowsPerPageItems"
-                    light
-                    hide-actions
-                    disable-initial-sort
-                    class="table_line1 etp_apply_ta"
-                >
-                    <template slot="items" slot-scope="props">
-                        <td>
-                            <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
-                        </td>
-                        <td class="text-xs-center">{{ props.index+1 }}</td>
-                        <td class="text-xs-center">
-                            <v-dialog v-model="dialog2" persistent max-width="550">
-                                <template v-slot:activator="{ on }">
-                                    <v-btn v-on="on">한국투자 증권</v-btn>
-                                </template>
-                                <!---발행사 담당자 연락처 팝업 내용-->
-                                <v-card>
+                <!--테이블 td안 참고--->
+                <v-card>
+                    <table id="test" class="display table01_w">
+                       <colgroup>
+                            <col width="5%">
+                            <col width="10%">
+                            <col width="10%">
+                            <col width="10%">
+                            <col width="5%">
+                            <col width="15%">
+                            <col width="15%">
+                            <col width="30%">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>발행사</th>
+                                <th>종목명</th>
+                                <th>신청일</th>
+                                <th>국내/해외</th>
+                                <th>기초지수</th>
+                                <th></th>
+                                <th></th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="checkbox_css">
+                                </td>
+                                <td>
+                                    <a href>한국투자증권</a>
+                                    <!--발행사 담당자 연락처 팝업
+                                        <v-card>
+                                            <h5>
+                                                <v-card-title ma-0>
+                                                    발행사 담당자 연락처
+                                                    <v-spacer></v-spacer>
+                                                    <v-btn icon dark @click="dialog2 = false">
+                                                        <v-icon>close</v-icon>
+                                                    </v-btn>
+                                                </v-card-title>
+                                            </h5>
+                                            <v-card flat>
+                                                <table id="example2" class="display table01_w">
+                                                    <colgroup>
+                                                        <col width="25%">
+                                                        <col width="25%">
+                                                        <col width="25%">
+                                                        <col width="25%">
+                                                    </colgroup>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>담당자</th>
+                                                            <th>전화번호</th>
+                                                            <th>휴대전화</th>
+                                                            <th>이메일</th>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                               </v-card>
+                                            <v-card class="pop_bot_h"></v-card>
+                                        </v-card>
+                                        -->
+                                </td>
+                                <td>TRUE 골드 커버드콜 ETN</td>
+                                <td>2019.01.11</td>
+                                <td>해외</td>
+                                <td>SPCLGCTR</td>
+                                <td>
+                                    <v-dialog v-model="dialog2" persistent max-width="550">
+                                        <template v-slot:activator="{ on }">
+                                            <button
+                                                type="button"
+                                                class="v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01"
+                                                v-on="on"
+                                            >기초지수</button>
+                                        </template>
+                                        <!--기초지수 팝업 내용-->
+                                        <v-card>
+                                            <h5>
+                                                <v-card-title ma-0>
+                                                    기초지수
+                                                    <v-spacer></v-spacer>
+                                                    <v-btn icon dark @click="dialog2 = false">
+                                                        <v-icon>close</v-icon>
+                                                    </v-btn>
+                                                </v-card-title>
+                                            </h5>
+                                            <v-card flat>
+                                                <table id="example2" class="display table01_w">
+                                                    <colgroup>
+                                                        <col width="20%">
+                                                        <col width="20%">
+                                                        <col width="60%">
+                                                    </colgroup>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>심플코드</th>
+                                                            <th>
+                                                                <v-select
+                                                                    :items="items1"
+                                                                    value
+                                                                    placeholder="실시간종가"
+                                                                ></v-select>
+                                                            </th>
+                                                            <th>지수명</th>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                                <table id="example3" class="display table01_w">
+                                                    <colgroup>
+                                                        <col width="50%">
+                                                        <col width="50%">
+                                                    </colgroup>
+                                                     <thead>
+                                                        <tr>
+                                                            <th>일자</th>
+                                                            <th>현재가</th>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </v-card>
+                                            <v-card class="pop_bot_h"></v-card>
+                                        </v-card>
+                                        <!--기초지수 팝업 내용end-->
+                                    </v-dialog>
+                                     <v-dialog v-model="dialog3" persistent max-width="550">
+                                        <template v-slot:activator="{ on }">
+                                            <button
+                                                type="button"
+                                                class="v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01"
+                                                v-on="on"
+                                            >iNAV</button>
+                                        </template>
+                                        <!--iNAV 팝업 내용-->
+                                        <v-card>
+                                            <h5>
+                                                <v-card-title ma-0>
+                                                    iNAV
+                                                    <v-spacer></v-spacer>
+                                                    <v-btn icon dark @click="dialog3 = false">
+                                                        <v-icon>close</v-icon>
+                                                    </v-btn>
+                                                </v-card-title>
+                                            </h5>
+                                            <v-card flat>
+                                                <table id="example2" class="display table01_w">
+                                                    <colgroup>
+                                                        <col width="50%">
+                                                        <col width="50%">
+                                                    </colgroup>
+                                                    <thead>
+                                                        <colgroup>
+                                                        <col width="50%">
+                                                        <col width="50%">
+                                                    </colgroup>
+                                                        <tr>
+                                                            <th>심볼코드</th>
+                                                            <th>ETP 종목명</th>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                               </v-card>
+                                            <v-card>
+                                             <v-card-title class="text-xs-right">기준일자:2019.12.11</v-card-title>
+                                                <table id="example3" class="display table01_w">
+                                                    <colgroup>
+                                                        <col width="50%">
+                                                        <col width="50%">
+                                                    </colgroup>
+                                                     <thead>
+                                                        <tr>
+                                                            <th>일자</th>
+                                                            <th>현재가</th>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                        </v-card>
+                                            <v-card class="pop_bot_h"></v-card>
+                                        </v-card>
+                                        <!--iNAV 내용end-->
+                                    </v-dialog>
+                                </td>
+                                <td>
+                                    <div class="progress">
+                                        <ol>
+                                            <li class="on"><span><b>신청</b> : 담당자 접수중</span></li>
+                                            <li ><span> <b>지수</b></span></li>
+                                            <li ><span> <b>코드</b></span></li>
+                                            <li class="last"><span><b>iNAV</b></span></li>
+                                        </ol>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><div class="progress">
+                                        <ol>
+                                            <li class="on"><span><b>신청</b> </span></li>
+                                            <li class="on" ><span> <b>지수</b> : 담당자 접수중</span></li>
+                                            <li ><span><b>코드</b></span></li>
+                                            <li class="last"><span><b>iNAV</b></span></li>
+                                        </ol>
+                                    </div></td>
+                            </tr>
+                            <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><div class="progress">
+                                        <ol>
+                                            <li class="on"><span><b>신청</b></span></li>
+                                            <li class="on"><span> <b>지수</b></span></li>
+                                            <li class="on"><span><b>코드</b> : 표준코드 입력대기중</span></li>
+                                            <li class="last"><span><b>iNAV</b></span></li>
+                                        </ol>
+                                    </div></td>
+                            </tr>
+
+                            <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                    <div class="progress">
+                                        <ol>
+                                            <li class="on"><span><b>신청</b></span></li>
+                                            <li class="on"><span> <b>지수</b></span></li>
+                                            <li class="on"><span><b>코드</b></span></li>
+                                            <li class="on_last"><span><b>iNAV</b> : 표준코드 입력대기중</span></li>
+                                        </ol>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </v-card>
+                <!---테이블 td안 참고end--->
+                <!---실제적용 테이블--->
+                <v-card flat>
+                    <table id="example1" class="display table01_w">
+                        <colgroup>
+                            <col width="3%">
+                            <col width="13%">
+                            <col width="13%">
+                            <col width="9%">
+                            <col width="7%">
+                            <col width="10%">
+                            <col width="15%">
+                            <col width="30%">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>발행사</th>
+                                <th>종목명</th>
+                                <th>신청일</th>
+                                <th>국내/해외</th>
+                                <th>기초지수</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </v-card>
+                <!---실제적용 테이블end--->
+
+                <template slot="items" slot-scope="props">
+                    <td>
+                        <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
+                    </td>
+                    <td class="text-xs-center">{{ props.index+1 }}</td>
+                    <td class="text-xs-center">
+                        <v-dialog v-model="dialog2" persistent max-width="550">
+                            <template v-slot:activator="{ on }">
+                                <v-btn v-on="on">한국투자 증권</v-btn>
+                            </template>
+                            <!---발행사 담당자 연락처 팝업 내용-->
+                            <v-card>
                                 <h5>
                                     <v-card-title ma-0>
                                         발행사 담당자 연락처
@@ -97,18 +370,18 @@
                                 <v-card class="pop_bot_h"></v-card>
                             </v-card>
                             <!---발행사 담당자 연락처 팝업 내용end-->
-                            </v-dialog>
-                        </td>
-                        <td class="text-xs-left">{{ props.item.isu_kor_nm }}</td>
-                        <td class="text-xs-left">{{ props.item.req_date }}</td>
-                        <td class="text-xs-left">{{ props.item.kor_for_type }}</td>
-                        <td class="text-xs-center">
-                            <v-dialog v-model="dialog3" persistent max-width="550">
-                                <template v-slot:activator="{ on }">
-                            <v-btn small depressed dark color="#1976d2" v-on="on">기초지수</v-btn>
+                        </v-dialog>
+                    </td>
+                    <td class="text-xs-left">{{ props.item.isu_kor_nm }}</td>
+                    <td class="text-xs-left">{{ props.item.req_date }}</td>
+                    <td class="text-xs-left">{{ props.item.kor_for_type }}</td>
+                    <td class="text-xs-center">
+                        <v-dialog v-model="dialog3" persistent max-width="550">
+                            <template v-slot:activator="{ on }">
+                                <v-btn small depressed dark color="#1976d2" v-on="on">기초지수</v-btn>
                             </template>
-                                <!---발행사 담당자 연락처 팝업 내용-->
-                                <v-card>
+                            <!---발행사 담당자 연락처 팝업 내용-->
+                            <v-card>
                                 <h5>
                                     <v-card-title ma-0>
                                         발행사 담당자 연락처
@@ -143,84 +416,14 @@
                                 <v-card class="pop_bot_h"></v-card>
                             </v-card>
                             <!---발행사 담당자 연락처 팝업 내용end-->
-                            </v-dialog>
-                            <v-btn small depressed dark color="#42a4e1">iIV</v-btn>
-                        </td>
-
-                        <!--처리현황 신청일경우-->
-                        <!--td class="text-xs-left">
-                            <v-stepper value="1">
-                                    <v-stepper-header>
-                                        <v-stepper-step step="1">신청
-                                         <small>담당자 접수 중</small></v-stepper-step>
-                                        <v-divider></v-divider>
-                                        <v-stepper-step step="2">지수 </v-stepper-step>
-                                        <v-divider></v-divider>
-                                         <v-stepper-step step="3">코드</v-stepper-step>
-                                        <v-divider></v-divider>
-                                        <v-stepper-step step="4">iNAV </v-stepper-step>
-                                    </v-stepper-header>
-                                </v-stepper>
-                        </td-->
-                        <!-- 처리현황 지수일경우--->
-                        <!--td class="text-xs-left">
-                            <v-stepper value="2">
-                                    <v-stepper-header>
-                                        <v-stepper-step step="1" complete>신청</v-stepper-step>
-                                        <v-divider class="divider_on"></v-divider>
-                                        <v-stepper-step step="2">
-                                            지수
-                                            <small>표준코드 입력 대기중</small>
-                                        </v-stepper-step>
-                                        <v-divider></v-divider>
-                                        <v-stepper-step step="3">코드</v-stepper-step>
-                                        <v-divider></v-divider>
-                                        <v-stepper-step step="4">iNAV </v-stepper-step>
-                                    </v-stepper-header>
-                                </v-stepper>
-                        </td-->
-                        <!-- 처리현황 코드일경우--->
-                        <td class="text-xs-left">
-                            <v-stepper value="3">
-                                <v-stepper-header>
-                                    <v-stepper-step step="1" complete>신청</v-stepper-step>
-                                    <v-divider class="divider_on"></v-divider>
-                                    <v-stepper-step step="2" complete>지수</v-stepper-step>
-                                    <v-divider class="divider_on"></v-divider>
-                                    <v-stepper-step step="3">
-                                        코드
-                                        <small>표준코드 입력 대기중</small>
-                                    </v-stepper-step>
-                                    <v-divider></v-divider>
-                                    <v-stepper-step step="4">iNAV</v-stepper-step>
-                                </v-stepper-header>
-                            </v-stepper>
-                        </td>
-
-                        <!--처리현황 iNAV일경우--->
-                        <!--td class="text-xs-left">
-                            <v-stepper value="4">
-                                    <v-stepper-header>
-                                        <v-stepper-step step="1" complete>신청</v-stepper-step>
-                                        <v-divider class="divider_on"></v-divider>
-                                        <v-stepper-step step="2" complete>
-                                            지수
-                                        
-                                        </v-stepper-step>
-                                        <v-divider class="divider_on">></v-divider>
-                                        <v-stepper-step step="3" complete>코드</v-stepper-step>
-                                        <v-divider class="divider_on"></v-divider>
-                                        <v-stepper-step step="4">iNAV
-                                            <small>iNAV/iV 산출테스트 중</small>
-                                        </v-stepper-step>
-                                    </v-stepper-header>
-                                </v-stepper>
-                        </td-->
+                        </v-dialog>
+                        <v-btn small depressed dark color="#42a4e1">iIV</v-btn>
+                    </td>
                     </template>
-                </v-data-table>
+
                 <div class="text-xs-right my-3">
                     <v-btn depressed color="#9e9e9e" dark>삭제</v-btn>
-                    <v-btn depressed color="#42a4e1" dark>엑셀</v-btn>
+                    <v-btn depressed color="#48485e" dark>엑셀</v-btn>
                 </div>
             </v-flex>
         </v-layout>
@@ -228,137 +431,141 @@
 </template>
 
 <script>
+import $ from "jquery";
+import dt from "datatables.net";
+import buttons from "datatables.net-buttons";
 import Config from "@/js/config.js";
+var table = null;
 
 export default {
     props: [],
+
     data() {
         return {
-            seasons: ["신청", "지수", "코드", "iNAV"],
-            rowsPerPageItems: [20, 10, 30, 50],
-            dialog: false,
+            results: [],
+            loadingbar: false,
+            list_cnt: 0,
             dialog2: false,
             dialog3: false,
-            selected: [],
-            headers: [
-                {
-                    text: "",
-                    align: "center",
-                    sortable: false,
-                    value: "index",
-                    width: "20px"
-                },
-                {
-                    text: "No",
-                    align: "center",
-                    sortable: false,
-                    value: "index"
-                },
-                { text: "발행사", align: "center", value: "inst_name" },
-                { text: "종목명", align: "center", value: "isu_kor_nm" },
-                { text: "신청일", align: "left", value: "req_date" },
-                { text: "국내/해외", align: "left", value: "kor_for_type" },
-                { text: "기초지수", align: "center", value: "basic_idx" },
-                {
-                    text: "처리현황",
-                    align: "center",
-                    value: "isu_eng_nm",
-                    width: "510px"
-                }
-            ],
-            headers2: [
-                {
-                    text: "담당자",
-                    align: "center",
-                    value: "name11",
-                    width: "20px"
-                },
-                {
-                    text: "전화번호",
-                    align: "center",
-                    value: "phone"
-                },
-                { text: "휴대전화", align: "center", value: "phone2" },
-                { text: "이메일", align: "center", value: "email" },
-            ],
-            desserts2: [
-                {
-                    name11: "제가현",
-                    phone: "0-2356-5878",
-                    phone2:"010-222-2222",
-                    email: "7845dsfe@naver.com",
-                },
-                {
-                    name11: "제가현",
-                    phone: "0-2356-5878",
-                    phone2:"010-222-2222",
-                    email: "7845dsfe@naver.com",
-                },
-                {
-                   name11: "제가현",
-                    phone: "0-2356-5878",
-                    phone2:"010-222-2222",
-                    email: "7845dsfe@naver.com",
-                },
-               {
-                   name11: "제가현",
-                    phone: "0-2356-5878",
-                    phone2:"010-222-2222",
-                    email: "7845dsfe@naver.com",
-                }
-            ],
-            results: [
-                {
-                    inst_name: "test",
-                    isu_kor_nm: "11"
-                }
-            ],
-            modalFlag: false
+            items1: ["실시간", "종가"]
         };
     },
     components: {},
     computed: {},
-    mounted: function() {
-        this.getEtpApplyList();
-    },
     created: function() {},
     beforeDestroy() {},
-    methods: {
-        getEtpApplyList: function() {
-            console.log("getEtpApplyList");
-            var vm = this;
+    mounted: function() {
+        var vm = this;
+        vm.getInfoIndexList();
 
-            axios
-                .get(Config.base_url + "/user/etp/getetpapplylist", {
-                    params: {
-                        // "bbs_id" : vm.bbs_id,
-                        // "seloption" : vm.seloption,
-                        // "searchinfo" : vm.searchinfo,
-                        // "curPage": vm.curPage,
-                        // "perPage": vm.perPage
-                    }
+        $("#example1, tbody").on("click", "button", function() {
+            var data = table.row($(this).parents("tr")).data();
+            // alert("Name = " + JSON.stringify(data));
+
+            table.row
+                .add({
+                    JISU_CD: "Tiger Nixon",
+                    JISU_NM: "System Architect",
+                    IP_DT: "$3,120",
+                    ANNO_YN: "2011/04/25",
+                    INDEX_CAL_METHOD: "Edinburgh",
+                    ETP_NM: "5421",
+                    INST_CNT: "5421"
                 })
-                .then(function(response) {
-                    console.log(response);
+                .draw();
+
+            vm.movePage(data.JISU_CD, data.MARKET_ID);
+        });
+
+        $("#example1, tbody").on("click", "tbody tr", function() {
+            var data = table.row($(this).parents("tr")).data();
+            // alert("Name = " + JSON.stringify(data));
+
+            table.row
+                .add({
+                    JISU_CD: "Tiger Nixon",
+                    JISU_NM: "System Architect",
+                    IP_DT: "$3,120",
+                    ANNO_YN: "2011/04/25",
+                    INDEX_CAL_METHOD: "Edinburgh",
+                    ETP_NM: "5421",
+                    INST_CNT: "5421"
+                })
+                .draw();
+        });
+    },
+    methods: {
+        getInfoIndexList: function() {
+            console.log("getInfoIndexList");
+            this.loadingbar = true;
+            axios
+                .get(Config.base_url + "/user/index/getInfoIndexList", {
+                    params: {}
+                })
+                .then(response => {
+                    // console.log(response);
                     if (response.data.success == false) {
-                        alert("해당 신청현황이 없습니다");
+                        alert("관리지수 목록이 없습니다");
                     } else {
                         var items = response.data.results;
-                        var tcount = response.data.count;
-                        items.forEach(function(item, index) {
-                            if (item.kor_for_type == "K") {
-                                item.kor_for_type = "국내";
-                            } else if (item.kor_for_type == "F") {
-                                item.kor_for_type = "해외";
-                            } else {
-                                item.kor_for_type = "";
-                            }
+
+                        //console.log("response=" + JSON.stringify(items));
+                        this.results = items;
+                        this.list_cnt = this.results.length;
+
+                        table = $("#example1").DataTable({
+                            processing: true,
+                            serverSide: false,
+                            info: true, // control table information display field
+                            stateSave: true, //restore table state on page reload,
+                            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                            paging: false,
+                            searching: false,
+                            data: this.results,
+                            columnDefs: [
+                                {
+                                    render: function(data, type, row) {
+                                        if (data) {
+                                            return data.replace(/,/gi, "</br>");
+                                        } else {
+                                            return "";
+                                        }
+                                    },
+                                    targets: 5
+                                }
+                            ],
+                            columns: [
+                                //{ "defaultContent": "<button type='button' class='btn btn-primary btn-xs'>Trial Run</button>" },
+                                {
+                                    data: "null",
+                                    className: "td_in_center",
+                                    defaultContent:
+                                        "<input type='checkbox' color='primary' v-model='selected2' label='' value=''>"
+                                },
+                                { "data": "JISU_NM", "orderable" : true },
+                                { "data": "IP_DT", "orderable" : true },
+                                { "data": "ANNO_YN", "orderable" : true },
+                                { "data": "INDEX_CAL_METHOD", "orderable" : true },
+                                { "data": "ETP_NM", "orderable": true },
+                                { data: null,className: "td_in_center", defaultContent: "<button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='on'>기초지수</button><button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='on'>iNAV</button>"},
+                                { data: null, className: "checks", defaultContent: ""}
+                            ]
                         });
-                        vm.results = items;
-                        vm.count = tcount;
                     }
+                    this.loadingbar = false;
                 });
-        }
+        },
+        getReplace: function(text) {
+            if (text) {
+                return text.replace(/,/gi, "</br>");
+            }
+        },
+        movePage: function(jisu_cd, market_id) {
+            this.$router.push({
+                path: "/index/manage/IndexListdetail",
+                query: { jisu_cd: jisu_cd, market_id: market_id }
+            });
+        },
     }
 };
 </script>

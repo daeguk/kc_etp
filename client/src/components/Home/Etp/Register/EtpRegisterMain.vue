@@ -5,10 +5,9 @@
                 slot="extension"
                 v-model="tab"
                 align-with-title
-                dark
-                color="#3158a1"
+                light
             >
-            <v-tabs-slider color="#ff821d"></v-tabs-slider>
+            <v-tabs-slider color="#35e0e2"></v-tabs-slider>
     
             <v-tab v-for="item in items" :key="item">
                 {{ item }}

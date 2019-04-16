@@ -1,5 +1,5 @@
 <template>
-<v-toolbar fixed app  clipped-left clipped-right dark color="#48485e" class="elevation-0">
+<v-toolbar fixed app  clipped-left clipped-right dark color="#48485e" class="elevation-0"  style="z-index:100;">
     <v-toolbar-side-icon @click="menuClick"></v-toolbar-side-icon>
     <v-toolbar-title>
         <router-link class="routerlink logo" :to="`${homeUrl}`">ETP PLATFORM</router-link>
