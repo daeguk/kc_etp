@@ -7,8 +7,8 @@
  */
 var model = {};
 
-model.selectEtpRegisterList = function(options) {
-    console.log('selectEtpRegisterList');
+model.selectEtpApplyList = function(options) {
+    console.log('selectEtpApplyList');
 
     var stmt = 'SELECT a.*, \
         (select inst_nm from m001uetpinstcode where inst_cd = a.inst_cd limit 1) inst_nm, \
