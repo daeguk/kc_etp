@@ -9,28 +9,6 @@
     -->
     <select id="getJisuJongmokList">
     <![CDATA[
-        WITH    BASE    AS
-        (
-            SELECT      'code01'                        AS  code
-                    ,   'name01'                        AS  name
-                    
-                    ,   1                               AS  base_prc
-                    ,   2                               AS  shrs
-                    ,   3                               AS  float_rto
-                    ,   4                               AS  ceilling_rto
-                    ,   5                               AS  factor_rto
-
-            UNION   ALL
-
-            SELECT      'code02'                        AS  code
-                    ,   'name02'                        AS  name
-                    
-                    ,   11                              AS  base_prc
-                    ,   22                              AS  shrs
-                    ,   33                              AS  float_rto
-                    ,   44                              AS  ceilling_rto
-                    ,   55                              AS  factor_rto
-        )
         SELECT      base.code                           AS  code
                 ,   base.name                           AS  name
 
@@ -39,7 +17,28 @@
                 ,   base.float_rto                      AS  float_rto
                 ,   base.ceilling_rto                   AS  ceilling_rto
                 ,   base.factor_rto                     AS  factor_rto
-          FROM  base
+          FROM  (
+                    SELECT      'code01'                AS  code
+                            ,   'name01'                AS  name
+                            
+                            ,   1                       AS  base_prc
+                            ,   2                       AS  shrs
+                            ,   3                       AS  float_rto
+                            ,   4                       AS  ceilling_rto
+                            ,   5                       AS  factor_rto
+
+                    UNION   ALL
+
+                    SELECT      'code02'                AS  code
+                            ,   'name02'                AS  name
+                            
+                            ,   11                      AS  base_prc
+                            ,   22                      AS  shrs
+                            ,   33                      AS  float_rto
+                            ,   44                      AS  ceilling_rto
+                            ,   55                      AS  factor_rto
+                )       base
+
          WHERE  1 = 1
     ]]>
         <if test= 'searchData != null  and  searchData != "" ' >

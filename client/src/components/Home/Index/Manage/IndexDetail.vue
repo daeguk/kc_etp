@@ -296,7 +296,7 @@ export default {
                     vm.jisuDataList = response.data.dataList;
 
                     if( vm.jisuDataList && vm.jisuDataList.length > 0 ) {
-//                        vm.fn_getJisuDetail( {  } );
+                        vm.fn_getJisuDetail( {  } );
                     }
                 }
 
