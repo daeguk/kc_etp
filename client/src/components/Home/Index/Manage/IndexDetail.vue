@@ -6,34 +6,31 @@
 
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
-                            DBF Biotech Index |
-                            <span class="grey--text">DBF134</span>
-                            <p>기준일 :2018.10.20</p>
+                            {{ indexBasic.f16002 }} |
+                            <span class="grey--text">{{ indexBasic.f16013 }}</span>
+                            <p>기준일 : {{ indexBasic.fmt_f12506 }}</p>
                             <!--오른쪽 메뉴 종목으로 찾기 검색 후 
                             <p class="text_result">
                                 6 results
                             </p--->
-                            <p class="sub_txt">Last Updated : 2019.3.20 09:40:20</p>
+                            <p class="sub_txt">Last Updated : </p>
                         </h3>
                     </v-card-title>
-                    <v-data-table
-                        :headers="headers"
-                        :items="jongmokDataList"
-                        :pagination.sync="pagination"
 
-                        class="table_line1"
-                    >
-                        <template slot="items" slot-scope="props">
-                            <td>{{ props.item.code }}</td>
-                            <td class="text-xs-left">{{ props.item.name }}</td>
-                            <td class="text-xs-right">{{ props.item.base_prc }}</td>
-                            <td class="text-xs-right">{{ props.item.shrs }}</td>
-                            <td class="text-xs-right">{{ props.item.float_rto }}</td>
-                            <td class="text-xs-right">{{ props.item.ceilling_rto }}</td>
-                            <td class="text-xs-right">{{ props.item.factor_rto }}</td>
-                        </template>
-                    </v-data-table>
-
+                    <table id="example1" class="display table01_w">
+                        <thead>
+                            <tr>
+                                <th>code</th>
+                                <th>name</th>
+                                <th>base_prc</th>
+                                <th>shrs</th>
+                                <th>float_rto</th>
+                                <th>ceiling_rto</th>
+                                <th>factor_rto</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    
                     <v-container>
                         <v-layout row class="content_margin">
                             <v-flex grow>
@@ -158,7 +155,7 @@
                                                         <v-list two-line subheader>
 
                                                             <v-list-tile
-                                                                v-for="item in jisuDataList"
+                                                                v-for="item in indexDataList"
                                                                 :key="item.f16002"
                                                                 @click
                                                                 class="right_menu_w3"
@@ -166,7 +163,7 @@
                                                                 <v-list-tile-content
                                                                     class="rm_con_h"
                                                                 >
-                                                                    <v-list-tile-title>{{ item.f16002 }}</v-list-tile-title>
+                                                                    <v-list-tile-title @click="fn_getIndexDetailList(item)">{{ item.f16002 }}</v-list-tile-title>
                                                                     <v-list-tile-sub-title>{{ item.f16013 }}</v-list-tile-sub-title>
                                                                 </v-list-tile-content>
 
@@ -195,8 +192,15 @@
 
 
 <script>
+
+import $      from 'jquery'
+import dt      from 'datatables.net'
+import buttons from 'datatables.net-buttons'
+
 import Config from '@/js/config.js';
 import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
+
+var table = null;
 
 export default {
     components: {
@@ -211,23 +215,21 @@ export default {
             right: null,
 
 
-
+            rowsPerPageItems: [10, 20, 30],
             headers: [
-                {
-                    text: "Code",
-                    align: "left",
-                    value: "code"
-                },
-                { text: "name", value: "name" },
-                { text: "BasePrc", value: "base_prc", align: "right" },
-                { text: "Shrs", value: "shrs", align: "right" },
-                { text: "Float rto", value: "float_rto", align: "right" },
-                { text: "Ceiling rto", value: "ceilling_rto", align: "right" },
-                { text: "Factor rto", value: "factor_rto", align: "right" }
+                { text: "isin_code"     , value: "isin_code"    , align: "left",  sortable: false },        /* 종목코드 */
+                { text: "name"          , value: "f16002"       , align: "left"},                           /* 한글종목명 */
+                { text: "basePrc"       , value: "f03003"               },                                  /* 전일종가 */
+                { text: "shrs"          , value: "f30812"               },                                  /* 상장주식수 */
+                { text: "float rto"     , value: "style_includ_percnt"  },                                  /* 스타일포함비중 */
+                { text: "ceiling rto"   , value: "ceiling_percnt"       },                                  /* CEILING비중 */
+                { text: "factor rto"    , value: "f30813"               },                                  /* 유동주식비율 */
             ],
-            pagination : {
-                rowsPerPage : -1
-            },
+
+            results: [],
+            loadingbar: false,
+
+
             jongmokDataList : [],
 
 
@@ -235,7 +237,10 @@ export default {
                 { title: "Home", icon: "dashboard" },
                 { title: "About", icon: "question_answer" }
             ],
-            jisuDataList : [],      
+            indexDataList : [],
+
+            indexBasic : {},
+            indexDetailList : [],
 
 
             fixData : {},
@@ -243,13 +248,62 @@ export default {
             form: {
                     jisuSearch: ""
                 ,   jongmokSearch: ""
-            }
+            },
         };
     },
     mounted () {
 
+        table = $('#example1').DataTable( {
+            "processing": true,
+            "serverSide": false,
+            "info": true,   // control table information display field
+            "stateSave": true,  //restore table state on page reload,
+            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+            paging: false,
+            searching: false,
+            data : [],
+            "columnDefs": [
+                {  
+                "render": function ( data, type, row ) {
+
+                    if (data) {
+                        return data;                                        
+//                                        return data.replace(/,/gi,"</br>");
+                    } else {
+                        return "";
+                    }
+                },
+                "targets": 5
+            },],
+            columns: [
+                { "data": "isin_code"           ,   "orderable" : true  },      /* 종목코드 */
+                { "data": "f16002"              ,   "orderable" : true  },      /* 한글종목명 */
+                { "data": "f03003"              ,   "orderable" : true  },      /* 전일종가 */
+                { "data": "f30812"              ,   "orderable" : true  },      /* 상장주식수 */
+                { "data": "style_includ_percnt" ,   "orderable" : true  },      /* 스타일포함비중 */
+                { "data": "ceiling_percnt"      ,   "orderable" : true  },      /* CEILING비중 */
+                { "data": "f30813"              ,   "orderable" : true  }       /* 유동주식비율 */
+            ]
+        });
+
+
         var vm = this;
+
+        /* 우측 quick 메뉴의 지수정보에서 첫번째 데이터를 조회하여 지수 및 상세정보를 조회한다. */
+        vm.fn_getIndexListByFirst();
+
+        /* 우측 quick 메뉴의 지수정보를 조회한다. */
         vm.fn_getIndexList();
+
+/*
+        $('#example1, tbody').on('click', 'button', function () {
+            var data = table.row($(this).parents('tr')).data();
+        });
+
+        $('#example1, tbody').on('click', 'tbody tr', function () {
+            var data = table.row($(this).parents('tr')).data();
+        });
+*/        
     },
     created: function() {},
     beforeDestory: function() {},
@@ -279,7 +333,32 @@ export default {
         },
 
         /*
-         * 검색영역에 일치하는 지수정보를 조회한다. ( 지수관리 -> 지수종목상세 ->  quick 메뉴 -> 검색영역 )
+         * 우측 quick 메뉴의 지수정보에서 첫번째 데이터를 조회하여 지수 및 상세정보를 조회한다.
+         * 2019-04-16  bkLove(촤병국)
+         */
+        fn_getIndexListByFirst : function() {
+
+            var vm = this;
+
+            axios.post(Config.base_url + "/user/index/getIndexList", {
+                data: {
+                    firstYn : 'Y'
+                }
+            }).then(response => {
+
+                if (response && response.data) {
+                    var indexDataList = response.data.dataList;
+                    if( indexDataList && indexDataList.length == 1 ) {
+                        var rowData = indexDataList[0];
+
+                        vm.fn_getIndexDetailList( rowData );
+                    }
+                }
+            });
+        },        
+
+        /*
+         * 우측 quick 메뉴의 지수정보를 조회한다. ( 지수관리 -> 지수종목상세 ->  quick 메뉴 -> 검색영역 )
          * 2019-04-16  bkLove(촤병국)
          */
         fn_getIndexList : function() {
@@ -293,15 +372,9 @@ export default {
             }).then(response => {
 
                 if (response && response.data) {
-                    vm.jisuDataList = response.data.dataList;
-
-                    if( vm.jisuDataList && vm.jisuDataList.length > 0 ) {
-                        var rowData = vm.jisuDataList[0];
-                        vm.fn_getIndexDetailList( rowData );
-                    }
+                    vm.indexDataList = response.data.dataList;
                 }
             });
-
         },
 
         /*
@@ -316,9 +389,23 @@ export default {
                 data: rowData
             }).then(response => {
 
+//                vm.table.rows().remove().draw()
                 if (response && response.data) {
 
+                    var indexBasic = response.data.indexBasic;
+                    if( indexBasic ) {
+                        vm.indexBasic   =  indexBasic;
+                    }
+
+                    var indexDetailList = response.data.indexDetailList;
+                    table.clear().draw();
+                    table.rows.add(indexDetailList).draw();
+                    table.draw(indexDetailList);
+                    if( indexDetailList && indexDetailList.length > 0 ) {
+                        vm.indexDetailList  =   indexDetailList;
+                    } 
                 }
+
             });
         },
 
