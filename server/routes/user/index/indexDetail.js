@@ -172,7 +172,6 @@ var getIndexDetailList = function(req, res) {
                 /* 2. 선택된 지수의 상세 목록을 조회한다. */
                 function( data, callback ) {                    
 
-                    paramData.file_id   =  data.jisu_file_id; 
                     stmt = mapper.getStatement('indexDetail', 'getIndexDetailList', paramData, format);
                     console.log(stmt);
 
@@ -192,7 +191,7 @@ var getIndexDetailList = function(req, res) {
 
                         callback( null );
                     });
-                },                
+                },
 
             ], function (err) {
 
@@ -269,29 +268,77 @@ var getIndexFixList = function(req, res) {
 
             async.waterfall([
 
-                /* 1. 지수종목상세 정보를 조회한다. */
+                /* 1. 지수조치 현황의 기본정보를 조회한다. */
                 function( callback ) {
 
-                    stmt = mapper.getStatement('indexDetail', 'getIndexFixList', paramData, format);
+                    stmt = mapper.getStatement('indexDetail', 'getIndexFixData', paramData, format);
                     console.log(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
                         if( err ) {
                             resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] indexDetail.getIndexFixList Error while performing Query";
+                            resultMsg.msg       =   "[error] indexDetail.getIndexFixData Error while performing Query";
+                            resultMsg.err       =   err;
+
+                            return callback( resultMsg );
+                        }
+
+                        if ( rows && rows[0] ) {
+                            resultMsg.indexFixData = rows[0];
+                        }
+
+                        callback( null, paramData );
+                    });
+                },
+
+                /* 2. 지수조치 종목 편출입 정보를 조회한다. */
+                function( data, callback ) {                    
+
+                    stmt = mapper.getStatement('indexDetail', 'getIndexFixJongmokInoutList', paramData, format);
+                    console.log(stmt);
+
+                    conn.query(stmt, function( err, rows ) {
+
+                        if( err ) {
+                            resultMsg.result    =   false;
+                            resultMsg.msg       =   "[error] indexDetail.getIndexFixJongmokInoutList Error while performing Query";
                             resultMsg.err       =   err;
 
                             return callback( resultMsg );
                         }
 
                         if ( rows ) {
-                            resultMsg.dataList = rows;
+                            resultMsg.indexFixJongmokInoutList    =   rows;
                         }
 
                         callback( null, paramData );
                     });
-                }
+                },
+
+                /* 3. 지수채용 주식수 변경 정보를 조회한다. */
+                function( data, callback ) {                    
+
+                    stmt = mapper.getStatement('indexDetail', 'getIndexFixModifyList', paramData, format);
+                    console.log(stmt);
+
+                    conn.query(stmt, function( err, rows ) {
+
+                        if( err ) {
+                            resultMsg.result    =   false;
+                            resultMsg.msg       =   "[error] indexDetail.getIndexFixModifyList Error while performing Query";
+                            resultMsg.err       =   err;
+
+                            return callback( resultMsg );
+                        }
+
+                        if ( rows ) {
+                            resultMsg.indexFixModifyList    =   rows;
+                        }
+
+                        callback( null );
+                    });
+                },                
 
             ], function (err) {
 
@@ -319,7 +366,10 @@ var getIndexFixList = function(req, res) {
             resultMsg.err       =   expetion;
         }
 
-        resultMsg.dataList      =   [];
+        resultMsg.indexFixData                  =   {};
+        resultMsg.indexFixJongmokInoutList      =   [];
+        resultMsg.indexFixModifyList            =   [];
+
         res.json({
             resultMsg
         });

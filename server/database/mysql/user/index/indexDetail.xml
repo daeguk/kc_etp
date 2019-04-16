@@ -230,4 +230,135 @@
 
     </select>
 
+
+    <!--
+    * 지수조치 현황의 기본정보를 조회한다.
+    * 2019-04-16  bkLove(촤병국)
+    -->
+    <select id="getIndexFixData">
+    <![CDATA[
+        SELECT      td_index_basic.f16013                                   AS  f16013                  /* 단축코드 */
+                ,   td_index_basic.f16002                                   AS  f16002                  /* 한글종목명 */
+
+                ,   DATE_FORMAT( now()  , '%Y.%m.%d' )                      AS  fix_date                /* 조치 기준일 */
+
+                ,   DATE_FORMAT( now()  , '%Y.%m.%d' )                      AS  now_date                /* 당일 */
+                ,   1010101010                                              AS  now_date_money          /* 당일 금액 */
+                ,   1111                                                    AS  now_date_change_money   /* 당일 변경 금액 */
+
+                ,   DATE_FORMAT(    DATE_ADD( now()  , interval - 1 day )
+                                ,   '%Y.%m.%d' 
+                    )                                                       AS  oper_date               /* 직전 영업일 */
+                ,   2010101010                                              AS  oper_date_money         /* 직전 영업일 금액 */
+
+          FROM	td_index_basic
+
+         WHERE	td_index_basic.f16013           =   #{f16013}                               /* 단축코드 */
+           AND  td_index_basic.market_id        =   #{market_id}                            /* 시장 ID */
+    ]]>
+    </select>
+
+    <!--
+    * 지수조치 종목 편출입 정보를 조회한다.
+    * 2019-04-16  bkLove(촤병국)
+    -->
+    <select id="getIndexFixJongmokInoutList">
+    <![CDATA[
+        SELECT      base.code                                               AS  code                    /* Code */                                    
+                ,   base.name                                               AS  name                    /* 종목명 */
+                ,   base.gubun                                              AS  gubun                   /* 구분 */
+                ,   CASE    WHEN    base.gubun  =   '1'
+                            THEN    '편입'
+                            ELSE    '편출'
+                    END                                                     AS  gubun_name
+                ,   base.rate                                               AS  rate                    /* 비중 */
+
+          FROM  (
+                    SELECT      '086900'                                    AS  code                    /* Code */
+                            ,   '메디톡스'                                   AS  name                    /* 종목명 */
+                            ,   '1'                                         AS  gubun                   /* 구분 */
+                            ,   '34.21'                                     AS  rate                    /* 비중 */
+                    FROM	dual
+
+                    UNION   ALL
+
+                    SELECT      '09700'                                     AS  code                    /* Code */
+                            ,   '제넥신'                                    AS  name                    /* 종목명 */
+                            ,   '1'                                         AS  gubun                   /* 구분 */
+                            ,   '10.15'                                     AS  rate                    /* 비중 */
+                    FROM	dual
+
+                    UNION   ALL
+
+                    SELECT      '128940'                                    AS  code                    /* Code */
+                            ,   '한미약품'                                  AS  name                    /* 종목명 */
+                            ,   '0'                                         AS  gubun                   /* 구분 */
+                            ,   '34.15'                                     AS  rate                    /* 비중 */
+                            
+                    FROM	dual
+
+                    UNION   ALL
+
+                    SELECT      '028300'                                    AS  code                    /* Code */
+                            ,   '에이치 옐비'                               AS  name                    /* 종목명 */
+                            ,   '0'                                         AS  gubun                   /* 구분 */
+                            ,   '10.35'                                     AS  rate                    /* 비중 */
+                    FROM	dual
+
+                )       base
+    ]]>
+    </select>
+
+    <!--
+    * 지수채용 주식수 변경 정보를 조회한다.
+    * 2019-04-16  bkLove(촤병국)
+    -->
+    <select id="getIndexFixModifyList">
+    <![CDATA[
+        SELECT      base.code                                               AS  code                    /* Code */                                    
+                ,   base.name                                               AS  name                    /* 종목명 */
+                ,   base.now_date_money                                     AS  now_date_money          /* 편입금액 */
+                ,   base.prev_date_money                                    AS  prev_date_money         /* 편출금액 */
+                ,   base.in_out_money                                       AS  in_out_money            /* 변경분 */
+
+          FROM  (
+                    SELECT      '086900'                                    AS  code                    /* Code */
+                            ,   '메디톡스'                                   AS  name                    /* 종목명 */
+                            ,   112233                                      AS  now_date_money          /* 당일 금액 */
+                            ,   3434                                        AS  prev_date_money         /* 전일 금액 */
+                            ,   '+122'                                      AS  in_out_money            /* 변경분 */
+                    FROM	dual
+
+                    UNION   ALL
+
+                    SELECT      '12300'                                     AS  code                    /* Code */
+                            ,   '삼성전자'                                  AS  name                     /* 종목명 */
+                            ,   22333                                       AS  now_date_money          /* 당일 금액 */
+                            ,   33343                                       AS  prev_date_money         /* 전일 금액 */
+                            ,   '+233'                                      AS  in_out_money            /* 변경분 */
+                    FROM	dual
+
+                    UNION   ALL
+
+                    SELECT      '42100'                                     AS  code                    /* Code */
+                            ,   '셀트리온'                                  AS  name                     /* 종목명 */
+                            ,   10022                                       AS  now_date_money          /* 당일 금액 */
+                            ,   4555                                        AS  prev_date_money         /* 전일 금액 */
+                            ,   '+654'                                      AS  in_out_money            /* 변경분 */
+                            
+                    FROM	dual
+
+                    UNION   ALL
+
+                    SELECT      '67779'                                     AS  code                    /* Code */
+                            ,   'NAVER'                                     AS  name                    /* 종목명 */
+                            ,   78933                                       AS  now_date_money          /* 당일 금액 */
+                            ,   6789                                        AS  prev_date_money         /* 전일 금액 */
+                            ,   '+7654'                                     AS  in_out_money            /* 변경분 */
+                    FROM	dual
+
+                )       base
+    ]]>
+    </select>    
+
 </mapper>

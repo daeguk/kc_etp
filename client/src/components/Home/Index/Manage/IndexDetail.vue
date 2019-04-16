@@ -17,7 +17,7 @@
                         </h3>
                     </v-card-title>
 
-                    <table id="example1" class="display table01_w">
+                    <table id="tableIndexList" class="display table01_w">
                         <thead>
                             <tr>
                                 <th>code</th>
@@ -99,10 +99,11 @@
                                                             @click="fn_openJisuJixPopup()"
                                                         >내역확인</v-btn>
                                                     </template>
+
                                                     <v-card flat>
                                                         <h5>
                                                             <v-card-title ma-0>
-                                                                지수조치 현황(DBF 500 Index)
+                                                                지수조치 현황 ( {{ indexFixData.f16002 }} )
                                                                 <v-spacer></v-spacer>
                                                                 <v-btn
                                                                     icon
@@ -117,11 +118,11 @@
                                                             <v-list subheader two-line>
                                                                 <v-list-tile>
                                                                     <v-list-tile-title>조치 기준일</v-list-tile-title>
-                                                                    <v-list-tile-content>2018.10.11</v-list-tile-content>
+                                                                    <v-list-tile-content>{{ indexFixData.fix_date }}</v-list-tile-content>
                                                                 </v-list-tile>
                                                             </v-list>
                                                         </div>
-                                                        <indexDetailrtmenupop  :fixData="fixData"></indexDetailrtmenupop>
+                                                        <indexDetailrtmenupop  :rowData="this.rowData" v-if="dialog"></indexDetailrtmenupop>
                                                         <v-card class="pop_bot_h"></v-card>
                                                     </v-card>
                                                 </v-dialog>
@@ -200,7 +201,7 @@ import buttons from 'datatables.net-buttons'
 import Config from '@/js/config.js';
 import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
 
-var table = null;
+var tableIndexList = null;
 
 export default {
     components: {
@@ -237,23 +238,27 @@ export default {
                 { title: "Home", icon: "dashboard" },
                 { title: "About", icon: "question_answer" }
             ],
-            indexDataList : [],
+            indexDataList : [],                 /* quick Menu 에서 지수목록 데이터 */
 
-            indexBasic : {},
-            indexDetailList : [],
+            indexBasic : {},                    /* 선택된 지수의 마스터 정보 */
+            indexDetailList : [],               /* 선택된 지수의 상세 목록 */
 
 
-            fixData : {},
-
+            /* 지수 조치현황 정보 */
+            indexFixData    :   {},             /* 지수조치 현황의 기본정보 */
+            indexFixJongmokInoutList : [],      /* 지수조치 종목 편출입 정보 */
+            indexFixModifyList      : [],       /* 지수채용 주식수 변경 정보 */
+                    
+            rowData : {},                       /* 지수목록에서 선택된 데이터 */
             form: {
-                    jisuSearch: ""
-                ,   jongmokSearch: ""
+                    jisuSearch: ""              /* quick Menu 에서 지수검색 데이터 */
+                ,   jongmokSearch: ""           /* quick Menu 에서 종목검색 데이터 */
             },
         };
     },
     mounted () {
 
-        table = $('#example1').DataTable( {
+        tableIndexList = $('#tableIndexList').DataTable( {
             "processing": true,
             "serverSide": false,
             "info": true,   // control table information display field
@@ -296,12 +301,12 @@ export default {
         vm.fn_getIndexList();
 
 /*
-        $('#example1, tbody').on('click', 'button', function () {
-            var data = table.row($(this).parents('tr')).data();
+        $('#tableIndexList, tbody').on('click', 'button', function () {
+            var data = tableIndexList.row($(this).parents('tr')).data();
         });
 
-        $('#example1, tbody').on('click', 'tbody tr', function () {
-            var data = table.row($(this).parents('tr')).data();
+        $('#tableIndexList, tbody').on('click', 'tbody tr', function () {
+            var data = tableIndexList.row($(this).parents('tr')).data();
         });
 */        
     },
@@ -349,9 +354,9 @@ export default {
                 if (response && response.data) {
                     var indexDataList = response.data.dataList;
                     if( indexDataList && indexDataList.length == 1 ) {
-                        var rowData = indexDataList[0];
+                        vm.rowData = indexDataList[0];
 
-                        vm.fn_getIndexDetailList( rowData );
+                        vm.fn_getIndexDetailList( vm.rowData );
                     }
                 }
             });
@@ -385,11 +390,12 @@ export default {
 
             var vm = this;
 
+
+            vm.rowData  =   rowData;
             axios.post(Config.base_url + "/user/index/getIndexDetailList", {
-                data: rowData
+                data: vm.rowData
             }).then(response => {
 
-//                vm.table.rows().remove().draw()
                 if (response && response.data) {
 
                     var indexBasic = response.data.indexBasic;
@@ -397,35 +403,16 @@ export default {
                         vm.indexBasic   =  indexBasic;
                     }
 
-                    var indexDetailList = response.data.indexDetailList;
-                    table.clear().draw();
-                    table.rows.add(indexDetailList).draw();
-                    table.draw(indexDetailList);
-                    if( indexDetailList && indexDetailList.length > 0 ) {
-                        vm.indexDetailList  =   indexDetailList;
-                    } 
+                    var indexDetailList =   response.data.indexDetailList;
+                    vm.indexDetailList  =   indexDetailList;
+
+                    tableIndexList.clear().draw();
+                    tableIndexList.rows.add(indexDetailList).draw();
+                    tableIndexList.draw(indexDetailList);
                 }
 
             });
         },
-
-        /*
-         * 선택한 지수 조치내역을 조회한다.
-         * 2019-04-16  bkLove(촤병국)
-         */
-        fn_getIndexFixList : function( rowData ) {
-
-            var vm = this;
-
-            axios.post(Config.base_url + "/user/index/getIndexFixList", {
-                data: rowData
-            }).then(response => {
-
-                if (response && response.data) {
-
-                }
-            });
-        },        
 
         /*
          * 지수 조회현황 팝업을 오픈한다.
@@ -435,7 +422,6 @@ export default {
 
             var vm = this;
 
-            vm.fixData = {};
             vm.dialog = true;
         },        
     }
