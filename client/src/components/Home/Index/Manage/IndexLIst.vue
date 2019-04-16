@@ -14,37 +14,8 @@
                     </v-card-title>
                 </v-card>
                 <v-card flat>
-                <!--v-data-table :headers="headers" :items="results" :rows-per-page-items="rowsPerPageItems" :loading="loadingbar"  class="table_line1">
-                    <v-progress-circular slot="progress" color="blue" indeterminate></v-progress-circular>
-                    <template slot="items" slot-scope="props">
-                        <td class="text-xs-left">{{ props.item.JISU_CD }}</td>
-                        <td class="text-xs-left">{{ props.item.JISU_NM }}</td>
-                        <td class="text-xs-center">{{ props.item.IP_DT }}</td> 
-                        <td class="text-xs-center">{{ props.item.ANNO_YN }}</td>
-                        <td class="text-xs-center">{{ props.item.INDEX_CAL_METHOD }}</td>
-                        <td class="text-xs-left"><p v-html="getReplace(props.item.ETP_NM)"></v-html></p></td>
-                        <td class="text-xs-center">{{ props.item.INST_CNT }}</td>
-                        <td class="text-xs-center">
-                            <v-flex xs12 sm3 center> 
-                                <v-tooltip top>
-                                    <template v-slot:activator="{ on }">
-                                        <v-btn
-                                            flat
-                                            icon
-                                            color="blue"
-                                            :to="{path: '/index/manage/IndexListdetail', query :{'jisu_cd':props.item.JISU_CD, 'market_id':props.item.MARKET_ID}}"
-                                             dark v-on="on"
-                                        >
-                                            <v-icon>equalizer</v-icon>
-                                        </v-btn>
-                                    </template>
-                                    <span>지수정보</span>
-                                </v-tooltip>
-                            </v-flex>
-                        </td>
-                    </template>
-                </v-data-table-->
-                 <table id="example1" class="display table01_w">
+               
+                 <table id="index_table" class="display table01_w">
                      <thead>
                         <tr>
                             <th>ID</th>
@@ -110,39 +81,20 @@ export default {
         var vm = this;
         vm.getInfoIndexList();
 
-        $('#example1, tbody').on('click', 'button', function () {
+        $('#index_table, tbody').on('click', 'button', function () {
             var data = table.row($(this).parents('tr')).data();
            // alert("Name = " + JSON.stringify(data));
 
 
-            table.row.add( {
-                "JISU_CD":       "Tiger Nixon",
-                "JISU_NM":   "System Architect",
-                "IP_DT":     "$3,120",
-                "ANNO_YN": "2011/04/25",
-                "INDEX_CAL_METHOD":     "Edinburgh",
-                "ETP_NM":       "5421",
-                "INST_CNT":       "5421",
-            } ).draw();
             
             vm.movePage(data.JISU_CD, data.MARKET_ID);
         
         });
 
-        $('#example1, tbody').on('click', 'tbody tr', function () {
+        $('#index_table, tbody').on('click', 'tbody tr', function () {
             var data = table.row($(this).parents('tr')).data();
            // alert("Name = " + JSON.stringify(data));
 
-
-            table.row.add( {
-                "JISU_CD":       "Tiger Nixon",
-                "JISU_NM":   "System Architect",
-                "IP_DT":     "$3,120",
-                "ANNO_YN": "2011/04/25",
-                "INDEX_CAL_METHOD":     "Edinburgh",
-                "ETP_NM":       "5421",
-                "INST_CNT":       "5421",
-            } ).draw();
 
            
         });
@@ -166,7 +118,7 @@ export default {
                         this.results = items;
                         this.list_cnt = this.results.length;
 
-                        table = $('#example1').DataTable( {
+                        table = $('#index_table').DataTable( {
                             "processing": true,
                             "serverSide": false,
                             "info": true,   // control table information display field

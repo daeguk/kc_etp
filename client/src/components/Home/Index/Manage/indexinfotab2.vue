@@ -153,7 +153,7 @@
                             </v-card>
                         </v-dialog>
                     </v-subheader>
-                    <div class="graph_02_w" style="height:100px;">파이차트 들어갑니다</div>
+                    <div class="graph_02_w"  id="importance_chart"></div>
                     <v-card flat></v-card>
                 </div>
                 <!---비중정보 팝업end-->
@@ -246,53 +246,7 @@ export default {
                     Year10: "1%"
                 }
             ],
-            headers2: [
-                {
-                    text: "",
-                    align: "left",
-                    sortable: false,
-                    value: "name"
-                },
-                {
-                    text: "CODE",
-                    align: "left",
-                    value: "name1"
-                },
-                { text: "종목지수명", value: "종목지수명" },
-                { text: "구분", value: "구분" }
-            ],
-            desserts2: [
-                {
-                    name1: "000000",
-                    종목지수명: "Kodex일본TOPIX",
-                    구분: 6.0
-                },
-                {
-                    name1: "101280",
-                    종목지수명: "Kodex일본TOPIX",
-                    구분: 6.0
-                },
-                {
-                    name1: "101280",
-                    종목지수명: "Kodex일본TOPIX",
-                    구분: 6.0
-                },
-                {
-                    name1: "101280",
-                    종목지수명: "Kodex일본TOPIX",
-                    구분: 6.0
-                },
-                {
-                    name1: "101280",
-                    종목지수명: "Kodex일본TOPIX",
-                    구분: 6.0
-                },
-                {
-                    name1: "101280",
-                    종목지수명: "Kodex일본TOPIX",
-                    구분: 6.0
-                }
-            ],
+        
             modalFlag: false
         };
     },
@@ -309,15 +263,18 @@ export default {
         vm.getIndexImportanceList();
     },
     methods: {
+
         getIndexImportanceList: function() {
             console.log("getIndexImportanceList");
             axios.get(Config.base_url + "/user/index/getIndexImportanceList", {
                     params: {
+                        jisu_cd : this.$route.query.jisu_cd,
+                        market_id : this.$route.query.market_id
                     }
                 }).then(response => {
                     // console.log(response);
                     if (response.data.success == false) {
-                        alert("관리지수 목록이 없습니다");
+                        alert("비중 목록이 없습니다");
                     } else {
                         var items = response.data.results;
                         
@@ -325,6 +282,9 @@ export default {
                         this.results = items;
                         this.importance_cnt = this.results.length;
 
+                        // 차트 호출
+                        this.importance_chart(items);
+                        
                         importance_grid = $('#importance_grid').DataTable( {
                             "processing": true,
                             "serverSide": false,
@@ -332,12 +292,6 @@ export default {
                             "info": true,   // control table information display field
                             "stateSave": true,  //restore table state on page reload,
                             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                             "columnDefs": [
-                             {  
-                                'orderable': false,
-                                'targets': 0,
-                                'className': 'select-checkbox',
-                            },],
                             select: {
                                 style:    'multi',
                                 selector: 'td:first-child'
@@ -352,10 +306,59 @@ export default {
                                 { "data": "GUBUN", "orderable" : true },
                             ]
                         }); 
+
+                        
                     }
                    
                 });
         }, 
+
+        importance_chart: function(results) {
+            // Load the Visualization API and the corechart package.
+            google.charts.load('current', {'packages':['corechart']});
+
+           
+            // Set a callback to run when the Google Visualization API is loaded.
+            google.charts.setOnLoadCallback(drawChart());
+
+            // Callback that creates and populates a data table,
+            // instantiates the pie chart, passes in the data and
+            // draws it.
+      
+            function drawChart() {
+                
+                
+                // Create the data table.
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', 'JOING_NM');
+                data.addColumn('number', 'PERCNT');
+
+                // Set chart options
+                var options = {'title':' ',
+                            'width':'100%',
+                            'height':'400px'};
+ 
+                
+                
+                var items = [] 
+
+                for (let item of results) {
+                    
+                    if (items.length >= 5) break;
+
+                    items.push([item.JOING_NM, item.PERCNT]);
+
+                }
+
+                data.addRows(
+                    items
+                );
+
+                // Instantiate and draw our chart, passing in some options.
+                var chart = new google.visualization.PieChart(document.getElementById('importance_chart'));
+                chart.draw(data, options);
+            }
+        }
     }
 }
 </script>
