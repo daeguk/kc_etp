@@ -886,6 +886,7 @@ export default {
                     msgTitle = "[연동신청 완료]";
                 }
 
+
                 if( !this.modForm.show_method_file ) {
                     alert( msgTitle + " 지수방법론을 필수로 업로드 해주세요.");
 
