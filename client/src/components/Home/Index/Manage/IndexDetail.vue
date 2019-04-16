@@ -149,7 +149,7 @@
                                                 outline
                                                 hide-details
 
-                                                @keyup.enter ="fn_getJisuList()"
+                                                @keyup.enter ="fn_getIndexList()"
                                             ></v-text-field>
                                             <!--오른쪽 메뉴 하단 리스트 영역--->
                                             <v-layout row class="w100 pt-3">
@@ -249,7 +249,7 @@ export default {
     mounted () {
 
         var vm = this;
-        vm.fn_getJisuList();       
+        vm.fn_getIndexList();
     },
     created: function() {},
     beforeDestory: function() {},
@@ -260,11 +260,11 @@ export default {
          * 지수종목상세 정보를 조회한다. ( 지수관리 -> 지수종목상세 탭 클릭시 )
          * 2019-04-16  bkLove(촤병국)
          */
-        fn_getJisuJongmokList : function() {
+        fn_getIndexJongmokList : function() {
 
             var vm = this;
 
-            axios.post(Config.base_url + "/user/index/getJisuJongmokList", {
+            axios.post(Config.base_url + "/user/index/getIndexJongmokList", {
                 data: {
                     searchData : ""
                 }
@@ -282,11 +282,11 @@ export default {
          * 검색영역에 일치하는 지수정보를 조회한다. ( 지수관리 -> 지수종목상세 ->  quick 메뉴 -> 검색영역 )
          * 2019-04-16  bkLove(촤병국)
          */
-        fn_getJisuList : function() {
+        fn_getIndexList : function() {
 
             var vm = this;
 
-            axios.post(Config.base_url + "/user/index/getJisuList", {
+            axios.post(Config.base_url + "/user/index/getIndexList", {
                 data: {
                     searchData : vm.form.jisuSearch
                 }
@@ -296,19 +296,56 @@ export default {
                     vm.jisuDataList = response.data.dataList;
 
                     if( vm.jisuDataList && vm.jisuDataList.length > 0 ) {
-                        vm.fn_getJisuDetail( {  } );
+                        var rowData = vm.jisuDataList[0];
+                        vm.fn_getIndexDetailList( rowData );
                     }
                 }
-
             });
 
         },
+
+        /*
+         * 지수 목록에서 선택된 데이터를 조회한다.
+         * 2019-04-16  bkLove(촤병국)
+         */
+        fn_getIndexDetailList : function( rowData ) {
+
+            var vm = this;
+
+            axios.post(Config.base_url + "/user/index/getIndexDetailList", {
+                data: rowData
+            }).then(response => {
+
+                if (response && response.data) {
+
+                }
+            });
+        },
+
+        /*
+         * 선택한 지수 조치내역을 조회한다.
+         * 2019-04-16  bkLove(촤병국)
+         */
+        fn_getIndexFixList : function( rowData ) {
+
+            var vm = this;
+
+            axios.post(Config.base_url + "/user/index/getIndexFixList", {
+                data: rowData
+            }).then(response => {
+
+                if (response && response.data) {
+
+                }
+            });
+        },        
 
         /*
          * 지수 조회현황 팝업을 오픈한다.
          * 2019-04-16  bkLove(촤병국)
          */
         fn_openJisuJixPopup : function() {
+
             var vm = this;
 
             vm.fixData = {};

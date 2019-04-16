@@ -7,7 +7,7 @@
     * 지수종목상세 정보를 조회한다. ( 지수관리 -> 지수종목상세 탭 클릭시 )
     * 2019-04-16  bkLove(촤병국)
     -->
-    <select id="getJisuJongmokList">
+    <select id="getIndexJongmokList">
     <![CDATA[
         SELECT      base.code                           AS  code
                 ,   base.name                           AS  name
@@ -55,7 +55,7 @@
     * 검색영역에 일치하는 지수정보를 조회한다. ( 지수관리 -> 지수종목상세 ->  quick 메뉴 -> 검색영역 )
     * 2019-04-16  bkLove(촤병국)
     -->
-    <select id="getJisuList">
+    <select id="getIndexList">
     <![CDATA[
         SELECT      base.f12506                         AS  f12506                  /* 입회일 */
                 ,   base.f16013                         AS  f16013                  /* 단축코드 */
