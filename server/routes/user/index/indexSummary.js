@@ -603,8 +603,8 @@ var getIndexImportanceList = function (req, res) {
 
         util.log("options", JSON.stringify(options));
 
-        var stmt = '';//mapper.getStatement('index', 'getIndexImportanceList', options, {language:'sql', indent: '  '});
-        stmt += "SELECT ITEM.ISIN_CODE ";
+        var stmt = mapper.getStatement('index', 'getIndexImportanceList', options, {language:'sql', indent: '  '});
+       /* stmt += "SELECT ITEM.ISIN_CODE ";
         stmt += " , ITEM.JOING_NM ";
         stmt += " , ITEM.ITEM_AMT/TOT_ITEM.TOT_AMT ";
         stmt += " , ITEM.GUBUN ";  	 
@@ -668,7 +668,7 @@ var getIndexImportanceList = function (req, res) {
         stmt += "         INNER JOIN m168uidxcomp COMP ";
         stmt += "         ON MAP.F12506 = COMP.F12506 ";
         stmt += "         AND MAP.ISIN_CODE = COMP.F16013 ";
-        stmt += "         AND MAP.GUBUN = COMP.GUBUN) TOT_ITEM";
+        stmt += "         AND MAP.GUBUN = COMP.GUBUN) TOT_ITEM";*/
      
         console.log(stmt);
         Promise.using(pool.connect(), conn => {
