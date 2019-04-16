@@ -65,8 +65,11 @@ module.exports = {
         { file: './user/index/indexSummary', path: '/user/index/getIndexImportanceList', method: 'getIndexImportanceList', session: 'check', type: 'get' },
 
 
-        { file: './user/index/indexDetail', path: '/user/index/getJisuJongmokList', method: 'getJisuJongmokList', session: 'check', type: 'post' },
-        { file: './user/index/indexDetail', path: '/user/index/getJisuList', method: 'getJisuList', session: 'check', type: 'post' },
+        { file: './user/index/indexDetail', path: '/user/index/getIndexJongmokList', method: 'getIndexJongmokList', session: 'check', type: 'post' },
+        { file: './user/index/indexDetail', path: '/user/index/getIndexList', method: 'getIndexList', session: 'check', type: 'post' },
+        { file: './user/index/indexDetail', path: '/user/index/getIndexDetailList', method: 'getIndexDetailList', session: 'check', type: 'post' },
+        { file: './user/index/indexDetail', path: '/user/index/getIndexFixList', method: 'getIndexFixList', session: 'check', type: 'post' },
+        
         
         
 

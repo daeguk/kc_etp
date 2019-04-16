@@ -113,14 +113,6 @@
     <select id="getJisuShareReqForDelete">
 
         <if test= 'arr_jisu_inst != null  and  arr_jisu_inst.length > 0' >
-        WITH    base    AS
-        (
-            <foreach    collection="arr_jisu_inst"   item="item"    index="index"   separator=" UNION ALL" > 
-    <![CDATA[
-            SELECT      #{item}  COLLATE utf8_general_ci        AS  inst_cd
-    ]]>
-            </foreach>
-        )
     <![CDATA[
         SELECT      tm_jisu_share_req.jisu_seq                  AS  jisu_seq
                 ,   tm_jisu_share_req.inst_cd                   AS  inst_cd
@@ -133,9 +125,15 @@
                 NOT IN
                 (
                     SELECT  base.inst_cd
-                      FROM  base
-                )
+                      FROM  (
     ]]>
+                        <foreach    collection="arr_jisu_inst"   item="item"    index="index"   separator=" UNION ALL" > 
+                        <![CDATA[
+                                SELECT      #{item}  COLLATE utf8_general_ci        AS  inst_cd
+                        ]]>
+                        </foreach>
+                            )       base
+                )
         </if>
 
 
@@ -163,11 +161,11 @@
     ]]>
            AND  tm_jisu_share_req.inst_cd           IN  
                 (
-        <foreach    collection="jisuShareReqDeleteList"   item="item"    index="index"   separator="," >
-    <![CDATA[
+            <foreach    collection="jisuShareReqDeleteList"   item="item"    index="index"   separator="," >
+            <![CDATA[
                     #{item.inst_cd}
-    ]]>
-        </foreach>
+            ]]>
+            </foreach>
                 )
     </delete>
 
@@ -177,17 +175,18 @@
     * 2019-04-12  bkLove(촤병국)
     -->
     <select id="getJisuShareReqForInsert">
-        WITH    base    AS
-        (
-            <foreach    collection="arr_jisu_inst"   item="item"    index="index"   separator=" UNION ALL" > 
-    <![CDATA[
-            SELECT      #{item}  COLLATE utf8_general_ci        AS  inst_cd
-    ]]>
-            </foreach>
-        )
     <![CDATA[
         SELECT  base.inst_cd                                    AS  inst_cd
-          FROM  base
+          FROM  (
+    ]]>
+            <foreach    collection="arr_jisu_inst"   item="item"    index="index"   separator=" UNION ALL" > 
+            <![CDATA[
+                    SELECT      #{item}  COLLATE utf8_general_ci        AS  inst_cd
+            ]]>
+            </foreach>
+    <![CDATA[
+                )   base
+
          WHERE  1 = 1
            AND  (
                     base.inst_cd
@@ -243,19 +242,20 @@
     * 2019-04-12  bkLove(촤병국)
     -->
     <select id="getJisuShareReqForUpdate">
-        WITH    base    AS
-        (
-            <foreach    collection="arr_jisu_inst"   item="item"    index="index"   separator=" UNION ALL" >
-    <![CDATA[            
-            SELECT      #{item}  COLLATE utf8_general_ci        AS  inst_cd
-    ]]>
-            </foreach>
-        )
     <![CDATA[
         SELECT      tm_jisu_share_req.jisu_seq                  AS  jisu_seq
                 ,   tm_jisu_share_req.inst_cd                   AS  inst_cd
           FROM      tm_jisu_share_req
-                ,   base
+                ,   (
+    ]]>
+                <foreach    collection="arr_jisu_inst"   item="item"    index="index"   separator=" UNION ALL" >
+                <![CDATA[            
+                        SELECT      #{item}  COLLATE utf8_general_ci        AS  inst_cd
+                ]]>
+                </foreach>
+    <![CDATA[
+                    )   base
+
          WHERE  1 = 1
            AND  tm_jisu_share_req.jisu_seq      =   #{jisu_seq}
            AND  tm_jisu_share_req.inst_cd       =   base.inst_cd
