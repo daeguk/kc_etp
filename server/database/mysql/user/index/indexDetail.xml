@@ -57,62 +57,168 @@
     -->
     <select id="getIndexList">
     <![CDATA[
-        SELECT      base.f12506                         AS  f12506                  /* 입회일 */
-                ,   base.f16013                         AS  f16013                  /* 단축코드 */
-                ,   base.f16002                         AS  f16002                  /* 한글종목명 */
-                ,   base.f15009                         AS  f15009                  /* 시가 */
-                ,   base.f15010                         AS  f15010                  /* 고가 */
-                ,   base.f15011                         AS  f15011                  /* 저가 */
-                ,   base.f15001                         AS  f15001                  /* 현재가 */
-                ,   base.f15007                         AS  f15007                  /* 기준가 */
-                ,   base.f15015                         AS  f15015                  /* 거래량 */
-                ,   base.f15023                         AS  f15023                  /* 거래대금 */
-                ,   base.f15472                         AS  f15472                  /* 대비 */
-                ,   base.f15004                         AS  f15004                  /* 등락율 */
-                ,   base.f15006                         AS  f15006                  /* 등락구분(1:상한/2:상승/3:보합/4:하한/5:하락/6:기세상한/7:기세상승/8:기세하한/9:기세하락) */
-                ,   base.f15028                         AS  f15028                  /* 시가총액 */
-                ,   base.large_type                     AS  large_type              /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
-                ,   base.middle_type                    AS  middle_type             /* 지수중분류(FNGUIDE, WISEFN) */
-                ,   base.market_id                      AS  market_id               /* 시장 ID */
-                ,   base.std_index                      AS  std_index               /* 기준지수 */
-                ,   base.std_date                       AS  std_date                /* 기준일 */
-                ,   base.anno_date                      AS  anno_date               /* 발표일 */
-                ,   base.index_cal_method               AS  index_cal_method        /* 지수산출방식 */
-                ,   base.std_capital                    AS  std_capital             /* 기준시가총액 */
-                ,   base.fixed_cash                     AS  fixed_cash              /* 고정현금 */
-                ,   base.flowrate_yn                    AS  flowrate_yn             /* 유동비율적용여부 */
+        SELECT      td_index_basic.f12506                       AS  f12506                  /* 입회일 */
+                ,   td_index_basic.f16013                       AS  f16013                  /* 단축코드 */
+                ,   td_index_basic.f16002                       AS  f16002                  /* 한글종목명 */
+                ,   td_index_basic.f15009                       AS  f15009                  /* 시가 */
+                ,   td_index_basic.f15010                       AS  f15010                  /* 고가 */
+                ,   td_index_basic.f15011                       AS  f15011                  /* 저가 */
+                ,   td_index_basic.f15001                       AS  f15001                  /* 현재가 */
+                ,   td_index_basic.f15007                       AS  f15007                  /* 기준가 */
+                ,   td_index_basic.f15015                       AS  f15015                  /* 거래량 */
+                ,   td_index_basic.f15023                       AS  f15023                  /* 거래대금 */
+                ,   td_index_basic.f15472                       AS  f15472                  /* 대비 */
+                ,   td_index_basic.f15004                       AS  f15004                  /* 등락율 */
+                ,   td_index_basic.f15006                       AS  f15006                  /* 등락구분(1:상한/2:상승/3:보합/4:하한/5:하락/6:기세상한/7:기세상승/8:기세하한/9:기세하락) */
+                ,   td_index_basic.f15028                       AS  f15028                  /* 시가총액 */
+                ,   td_index_basic.large_type                   AS  large_type              /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
+                ,   td_index_basic.middle_type                  AS  middle_type             /* 지수중분류(FNGUIDE, WISEFN) */
+                ,   td_index_basic.market_id                    AS  market_id               /* 시장 ID */
+                ,   td_index_basic.std_index                    AS  std_index               /* 기준지수 */
+                ,   td_index_basic.std_date                     AS  std_date                /* 기준일 */
+                ,   td_index_basic.anno_date                    AS  anno_date               /* 발표일 */
+                ,   td_index_basic.index_cal_method             AS  index_cal_method        /* 지수산출방식 */
+                ,   td_index_basic.std_capital                  AS  std_capital             /* 기준시가총액 */
+                ,   td_index_basic.fixed_cash                   AS  fixed_cash              /* 고정현금 */
+                ,   td_index_basic.flowrate_yn                  AS  flowrate_yn             /* 유동비율적용여부 */
 
-          FROM  (
-                    SELECT      CASE    WHEN    td_index_basic.f16013   LIKE    '60___'                     /* 단축코드 */
-                                        THEN    CONCAT( 'MFI' , SUBSTR( td_index_basic.f16013, -3 ) )
-                                
-                                        WHEN    td_index_basic.f16013   LIKE    '62___'                     /* 단축코드 */
-                                        THEN    CONCAT( 'WFN' , SUBSTR( td_index_basic.f16013, -3 ) )
-                                END                     AS  up_code
-                                
-                            ,   td_index_basic.*
+          FROM	td_index_basic
+         WHERE	1 = 1
 
-                      FROM  td_index_basic
-                    
-                     WHERE  1 = 1
-                       AND  td_index_basic.large_type   =   'FNGUIDE'                       /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
-
-                )       base
-            
-         WHERE	EXISTS
+                /* mapping 테이블에 존재하는 경우에만 지수 마스터 정보 조회 */
+           AND	EXISTS
                 (
                     SELECT	1
-                      FROM  m168uidxmap
-                     WHERE  m168uidxmap.up_code	    =	base.up_code     	    /* 업종코드 */
+                      FROM		    m168uidxmap
+                     INNER  JOIN    m168uidxcomp
+                              ON    (
+                                                m168uidxmap.f12506	    =	m168uidxcomp.f12506
+                                        AND	    m168uidxmap.gubun		=	m168uidxcomp.gubun
+                                        AND	    m168uidxmap.isin_code	=	m168uidxcomp.f16013
+                                    )
+
+                     INNER  JOIN    td_kspjong_basic
+                              ON    (
+                                        td_kspjong_basic.f16012         =   m168uidxmap.isin_code
+                                    )
+
+                     WHERE	1 = 1
+
+                       AND	m168uidxmap.up_code	=	CASE    WHEN    td_index_basic.f16013   LIKE    '60___'                     /* 단축코드 */
+                                                            THEN    CONCAT( 'MFI' , SUBSTR( td_index_basic.f16013, -3 ) )
+                                                        
+                                                            WHEN    td_index_basic.f16013   LIKE    '62___'                     /* 단축코드 */
+                                                            THEN    CONCAT( 'WFN' , SUBSTR( td_index_basic.f16013, -3 ) )
+                                                    END
                 )
     ]]>
         <if test= 'searchData != null  and  searchData != "" ' >                
-              AND	( 		    base.f16013			LIKE	CONCAT( '%' , #{searchData} , '%' )     /* 단축코드 */
-                        OR	    base.f16002         LIKE	CONCAT( '%' , #{searchData} , '%' )     /* 한글종목명 */
+               AND  ( 		    
+                                td_index_basic.f16013       LIKE	CONCAT( '%' , #{searchData} , '%' )     /* 단축코드 */
+                        OR	    td_index_basic.f16002       LIKE	CONCAT( '%' , #{searchData} , '%' )     /* 한글종목명 */
                     )
         </if>
 
-            ORDER	BY	base.f12506	DESC		    /* 입회일 */
+             ORDER  BY      td_index_basic.F16013
+                        ,   td_index_basic.market_id
+
+    </select>
+
+
+    <!--
+    * 지수 기본정보를 조회한다.
+    * 2019-04-16  bkLove(촤병국)
+    -->
+    <select id="getIndexBasicDetail">
+    <![CDATA[
+        SELECT      td_index_basic.f12506                       AS  f12506                  /* 입회일 */
+                ,   td_index_basic.f16013                       AS  f16013                  /* 단축코드 */
+                ,   td_index_basic.f16002                       AS  f16002                  /* 한글종목명 */
+                ,   td_index_basic.f15009                       AS  f15009                  /* 시가 */
+                ,   td_index_basic.f15010                       AS  f15010                  /* 고가 */
+                ,   td_index_basic.f15011                       AS  f15011                  /* 저가 */
+                ,   td_index_basic.f15001                       AS  f15001                  /* 현재가 */
+                ,   td_index_basic.f15007                       AS  f15007                  /* 기준가 */
+                ,   td_index_basic.f15015                       AS  f15015                  /* 거래량 */
+                ,   td_index_basic.f15023                       AS  f15023                  /* 거래대금 */
+                ,   td_index_basic.f15472                       AS  f15472                  /* 대비 */
+                ,   td_index_basic.f15004                       AS  f15004                  /* 등락율 */
+                ,   td_index_basic.f15006                       AS  f15006                  /* 등락구분(1:상한/2:상승/3:보합/4:하한/5:하락/6:기세상한/7:기세상승/8:기세하한/9:기세하락) */
+                ,   td_index_basic.f15028                       AS  f15028                  /* 시가총액 */
+                ,   td_index_basic.large_type                   AS  large_type              /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
+                ,   td_index_basic.middle_type                  AS  middle_type             /* 지수중분류(FNGUIDE, WISEFN) */
+                ,   td_index_basic.market_id                    AS  market_id               /* 시장 ID */
+                ,   td_index_basic.std_index                    AS  std_index               /* 기준지수 */
+                ,   td_index_basic.std_date                     AS  std_date                /* 기준일 */
+                ,   td_index_basic.anno_date                    AS  anno_date               /* 발표일 */
+                ,   td_index_basic.index_cal_method             AS  index_cal_method        /* 지수산출방식 */
+                ,   td_index_basic.std_capital                  AS  std_capital             /* 기준시가총액 */
+                ,   td_index_basic.fixed_cash                   AS  fixed_cash              /* 고정현금 */
+                ,   td_index_basic.flowrate_yn                  AS  flowrate_yn             /* 유동비율적용여부 */
+
+          FROM  td_index_basic
+            
+         WHERE	td_index_basic.f16013           =   #{f16013}                               /* 단축코드 */
+           AND  td_index_basic.market_id        =   #{market_id}                            /* 시장 ID */
+    ]]>
+    </select>
+
+    
+    <!--
+    * 검색영역에 일치하는 지수정보를 조회한다. ( 지수관리 -> 지수종목상세 ->  quick 메뉴 -> 검색영역 )
+    * 2019-04-16  bkLove(촤병국)
+    -->
+    <select id="getIndexDetailList">
+    <![CDATA[
+        SELECT	    m168uidxmap.isin_code
+                ,	m168uidxmap.ceiling_percnt
+                ,   td_kspjong_basic.f16002
+                ,	m168uidxmap.style_includ_percnt
+                ,	m168uidxcomp.f30812
+                ,	m168uidxcomp.f30813
+
+          FROM		    m168uidxmap
+         INNER  JOIN    m168uidxcomp
+                  ON    (
+                                    m168uidxmap.f12506	    =	m168uidxcomp.f12506
+                            AND	    m168uidxmap.gubun		=	m168uidxcomp.gubun
+                            AND	    m168uidxmap.isin_code	=	m168uidxcomp.f16013
+                        )
+
+         INNER  JOIN    td_kspjong_basic
+                  ON    (
+                            td_kspjong_basic.f16012         =   m168uidxmap.isin_code
+                        )
+
+         WHERE  1 = 1
+
+           AND  (
+                        m168uidxmap.up_code
+                    ,   m168uidxmap.f12506
+                )
+                IN
+                (
+                    /* up_code 에서 가장 최근날짜 조회 */
+                    SELECT	    MAX( m168uidxmap.up_code )          AS  up_code
+                            ,   MAX( m168uidxmap.F12506 )			AS	f12506
+                      FROM		    m168uidxmap
+                     INNER  JOIN    m168uidxcomp
+                              ON    (
+                                                m168uidxmap.f12506	    =	m168uidxcomp.f12506
+                                        AND	    m168uidxmap.gubun		=	m168uidxcomp.gubun
+                                        AND	    m168uidxmap.isin_code	=	m168uidxcomp.f16013
+                                    )
+                     WHERE	1 = 1
+
+                       AND	m168uidxmap.up_code	   =    CASE    WHEN    '60001'   LIKE    '60___'                     /* 단축코드 */
+                                                                THEN    CONCAT( 'MFI' , SUBSTR( '60001', -3 ) )
+                                                            
+                                                                WHEN    '60001'   LIKE    '62___'                     /* 단축코드 */
+                                                                THEN    CONCAT( 'WFN' , SUBSTR( '60001', -3 ) )
+                                                        END
+                )
+         ORDER  BY  m168uidxmap.isin_code	    DESC		    /* 입회일 */
+    ]]>
 
     </select>
 
