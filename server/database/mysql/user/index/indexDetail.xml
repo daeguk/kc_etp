@@ -112,7 +112,7 @@
                                                     END
                 )
     ]]>
-        <if test= 'searchData != null  and  searchData != "" ' >                
+        <if test= 'searchData != null  and  searchData != "" ' >
                AND  ( 		    
                                 td_index_basic.f16013       LIKE	CONCAT( '%' , #{searchData} , '%' )     /* 단축코드 */
                         OR	    td_index_basic.f16002       LIKE	CONCAT( '%' , #{searchData} , '%' )     /* 한글종목명 */
@@ -121,6 +121,10 @@
 
              ORDER  BY      td_index_basic.F16013
                         ,   td_index_basic.market_id
+
+        <if test= 'firstYn != null  and  firstYn == "Y" ' >
+             LIMIT  0, 1
+        </if>
 
     </select>
 
@@ -131,30 +135,31 @@
     -->
     <select id="getIndexBasicDetail">
     <![CDATA[
-        SELECT      td_index_basic.f12506                       AS  f12506                  /* 입회일 */
-                ,   td_index_basic.f16013                       AS  f16013                  /* 단축코드 */
-                ,   td_index_basic.f16002                       AS  f16002                  /* 한글종목명 */
-                ,   td_index_basic.f15009                       AS  f15009                  /* 시가 */
-                ,   td_index_basic.f15010                       AS  f15010                  /* 고가 */
-                ,   td_index_basic.f15011                       AS  f15011                  /* 저가 */
-                ,   td_index_basic.f15001                       AS  f15001                  /* 현재가 */
-                ,   td_index_basic.f15007                       AS  f15007                  /* 기준가 */
-                ,   td_index_basic.f15015                       AS  f15015                  /* 거래량 */
-                ,   td_index_basic.f15023                       AS  f15023                  /* 거래대금 */
-                ,   td_index_basic.f15472                       AS  f15472                  /* 대비 */
-                ,   td_index_basic.f15004                       AS  f15004                  /* 등락율 */
-                ,   td_index_basic.f15006                       AS  f15006                  /* 등락구분(1:상한/2:상승/3:보합/4:하한/5:하락/6:기세상한/7:기세상승/8:기세하한/9:기세하락) */
-                ,   td_index_basic.f15028                       AS  f15028                  /* 시가총액 */
-                ,   td_index_basic.large_type                   AS  large_type              /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
-                ,   td_index_basic.middle_type                  AS  middle_type             /* 지수중분류(FNGUIDE, WISEFN) */
-                ,   td_index_basic.market_id                    AS  market_id               /* 시장 ID */
-                ,   td_index_basic.std_index                    AS  std_index               /* 기준지수 */
-                ,   td_index_basic.std_date                     AS  std_date                /* 기준일 */
-                ,   td_index_basic.anno_date                    AS  anno_date               /* 발표일 */
-                ,   td_index_basic.index_cal_method             AS  index_cal_method        /* 지수산출방식 */
-                ,   td_index_basic.std_capital                  AS  std_capital             /* 기준시가총액 */
-                ,   td_index_basic.fixed_cash                   AS  fixed_cash              /* 고정현금 */
-                ,   td_index_basic.flowrate_yn                  AS  flowrate_yn             /* 유동비율적용여부 */
+        SELECT      td_index_basic.f12506                                   AS  f12506                  /* 입회일 */
+                ,   DATE_FORMAT( td_index_basic.f12506, '%Y-%m-%d' )        AS  fmt_f12506              /* 포맷된 입회일 */
+                ,   td_index_basic.f16013                                   AS  f16013                  /* 단축코드 */
+                ,   td_index_basic.f16002                                   AS  f16002                  /* 한글종목명 */
+                ,   td_index_basic.f15009                                   AS  f15009                  /* 시가 */
+                ,   td_index_basic.f15010                                   AS  f15010                  /* 고가 */
+                ,   td_index_basic.f15011                                   AS  f15011                  /* 저가 */
+                ,   td_index_basic.f15001                                   AS  f15001                  /* 현재가 */
+                ,   td_index_basic.f15007                                   AS  f15007                  /* 기준가 */
+                ,   td_index_basic.f15015                                   AS  f15015                  /* 거래량 */
+                ,   td_index_basic.f15023                                   AS  f15023                  /* 거래대금 */
+                ,   td_index_basic.f15472                                   AS  f15472                  /* 대비 */
+                ,   td_index_basic.f15004                                   AS  f15004                  /* 등락율 */
+                ,   td_index_basic.f15006                                   AS  f15006                  /* 등락구분(1:상한/2:상승/3:보합/4:하한/5:하락/6:기세상한/7:기세상승/8:기세하한/9:기세하락) */
+                ,   td_index_basic.f15028                                   AS  f15028                  /* 시가총액 */
+                ,   td_index_basic.large_type                               AS  large_type              /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
+                ,   td_index_basic.middle_type                              AS  middle_type             /* 지수중분류(FNGUIDE, WISEFN) */
+                ,   td_index_basic.market_id                                AS  market_id               /* 시장 ID */
+                ,   td_index_basic.std_index                                AS  std_index               /* 기준지수 */
+                ,   td_index_basic.std_date                                 AS  std_date                /* 기준일 */
+                ,   td_index_basic.anno_date                                AS  anno_date               /* 발표일 */
+                ,   td_index_basic.index_cal_method                         AS  index_cal_method        /* 지수산출방식 */
+                ,   td_index_basic.std_capital                              AS  std_capital             /* 기준시가총액 */
+                ,   td_index_basic.fixed_cash                               AS  fixed_cash              /* 고정현금 */
+                ,   td_index_basic.flowrate_yn                              AS  flowrate_yn             /* 유동비율적용여부 */
 
           FROM  td_index_basic
             
@@ -170,12 +175,15 @@
     -->
     <select id="getIndexDetailList">
     <![CDATA[
-        SELECT	    m168uidxmap.isin_code
-                ,	m168uidxmap.ceiling_percnt
-                ,   td_kspjong_basic.f16002
-                ,	m168uidxmap.style_includ_percnt
-                ,	m168uidxcomp.f30812
-                ,	m168uidxcomp.f30813
+        SELECT	    m168uidxmap.isin_code                                   AS  isin_code               /* 종목코드 */
+                ,	m168uidxmap.ceiling_percnt                              AS  ceiling_percnt          /* CEILING비중 */
+                ,   td_kspjong_basic.f16002                                 AS  f16002                  /* 한글종목명 */
+                ,	m168uidxmap.style_includ_percnt                         AS  style_includ_percnt     /* 스타일포함비중 */
+                ,	m168uidxcomp.f30812                                     AS  f30812                  /* 상장주식수 */
+                ,	m168uidxcomp.f30813                                     AS  f30813                  /* 유동주식비율 */
+
+                ,   m168uidxcomp.f03003                                     AS  f03003                  /* 전일종가 */
+                ,   m168uidxcomp.f34241                                     AS  f34241                  /* 가격산정구분(0:실시간1:종가) */
 
           FROM		    m168uidxmap
          INNER  JOIN    m168uidxcomp
@@ -210,11 +218,11 @@
                                     )
                      WHERE	1 = 1
 
-                       AND	m168uidxmap.up_code	   =    CASE    WHEN    '60001'   LIKE    '60___'                     /* 단축코드 */
-                                                                THEN    CONCAT( 'MFI' , SUBSTR( '60001', -3 ) )
+                       AND	m168uidxmap.up_code	   =    CASE    WHEN    #{f16013}   LIKE    '60___'                     /* 단축코드 */
+                                                                THEN    CONCAT( 'MFI' , SUBSTR( #{f16013}, -3 ) )
                                                             
-                                                                WHEN    '60001'   LIKE    '62___'                     /* 단축코드 */
-                                                                THEN    CONCAT( 'WFN' , SUBSTR( '60001', -3 ) )
+                                                                WHEN    #{f16013}   LIKE    '62___'                     /* 단축코드 */
+                                                                THEN    CONCAT( 'WFN' , SUBSTR( #{f16013}, -3 ) )
                                                         END
                 )
          ORDER  BY  m168uidxmap.isin_code	    DESC		    /* 입회일 */

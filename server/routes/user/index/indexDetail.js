@@ -203,9 +203,6 @@ var getIndexDetailList = function(req, res) {
                     resultMsg.result            =   true;
                     resultMsg.msg               =   "";
                     resultMsg.err               =   null;
-
-                    resultMsg.indexBasic        =   {};
-                    resultMsg.indexDetailList   =   [];
                 }
 
                 res.json( resultMsg );
