@@ -10,45 +10,52 @@
     <select id="getIndexJongmokList">
     <![CDATA[
         SELECT      /* indexDetail.getIndexJongmokList 지수종목상세 정보를 조회한다. */
-                    base.id                             AS  id
-                ,   base.name                           AS  name
 
-                ,   base.in_out_rate                    AS  in_out_rate
-                ,   base.shrs                           AS  shrs
-                ,   base.float_rto                      AS  float_rto
-                ,   base.ceiling_rto                    AS  ceiling_rto
-                ,   base.factor_rto                     AS  factor_rto
-          FROM  (
-                    SELECT      'DBF001'                AS  id
-                            ,   'DBF 500 Index'         AS  name
-                            
-                            ,   4.25                    AS  in_out_rate
-                            ,   111111                  AS  shrs
-                            ,   0.65                    AS  float_rto
-                            ,   1                       AS  ceiling_rto
-                            ,   0.5                     AS  factor_rto
+                    m168uidxmap.isin_code                                   AS  isin_code               /* 종목코드 */
+                ,   td_index_basic.f16002                                   AS  f16002                  /* 한글종목명 */
 
-                    UNION   ALL
+                ,   0                                                       AS  in_out_rate             /* 편입비중 */
+                ,   m168uidxmap.ceiling_percnt                              AS  ceiling_percnt          /* CEILING비중 */
+                ,   m168uidxmap.style_includ_percnt                         AS  style_includ_percnt     /* 스타일포함비중 */
+                ,   m168uidxcomp.f30812                                     AS  f30812                  /* 상장주식수 */
+                ,   m168uidxcomp.f30813                                     AS  f30813                  /* 유동주식비율 */
 
-                    SELECT      'DBF011'                AS  id
-                            ,   'DBF KQ 대형 Index'     AS  name
-                            
-                            ,   14.84                   AS  in_out_rate
-                            ,   22222                   AS  shrs
-                            ,   0.65                    AS  float_rto
-                            ,   1                       AS  ceiling_rto
-                            ,   0.1313                  AS  factor_rto
-                )       base
+                ,   m168uidxcomp.f03003                                     AS  f03003                  /* 전일종가 */
+                ,   m168uidxcomp.f34241                                     AS  f34241                  /* 가격산정구분(0:실시간1:종가) */
+
+          FROM          m168uidxmap
+         INNER  JOIN    m168uidxcomp
+                  ON    (
+                                    m168uidxmap.f12506      =   m168uidxcomp.f12506
+                            AND     m168uidxmap.gubun       =   m168uidxcomp.gubun
+                            AND     m168uidxmap.isin_code   =   m168uidxcomp.f16013
+                        )
+         INNER  JOIN    td_index_basic
+                  ON    m168uidxmap.up_code     =   CASE    WHEN    td_index_basic.f16013   LIKE    '60___'                     /* 단축코드 */
+                                                            THEN    CONCAT( 'MFI' , SUBSTR( td_index_basic.f16013, -3 ) )
+                                                        
+                                                            WHEN    td_index_basic.f16013   LIKE    '62___'                     /* 단축코드 */
+                                                            THEN    CONCAT( 'WFN' , SUBSTR( td_index_basic.f16013, -3 ) )
+                                                    END
 
          WHERE  1 = 1
+
+           AND  EXISTS
+                (
+                    SELECT  1
+                      FROM  td_kspjong_basic
+                     WHERE  td_kspjong_basic.F16012     =   m168uidxmap.isin_code
     ]]>
         <if test= 'searchData != null  and  searchData != "" ' >
     <![CDATA[
-           AND  (       base.id                 LIKE    CONCAT( '%' , #{searchData}, '%' )
-                    OR  base.name               LIKE    CONCAT( '%' , #{searchData}, '%' )
-                )
+                       AND  (
+                                    td_kspjong_basic.F16013     LIKE    CONCAT( '%' , #{searchData}, '%' )
+                                OR  td_kspjong_basic.F16002     LIKE    CONCAT( '%' , #{searchData}, '%' )
+                            )
     ]]>
-        </if>
+        </if>                       
+                )
+         ORDER  BY  m168uidxmap.isin_code       DESC            /* 입회일 */
     </select>
 
 
@@ -84,40 +91,36 @@
                 ,   td_index_basic.fixed_cash                   AS  fixed_cash              /* 고정현금 */
                 ,   td_index_basic.flowrate_yn                  AS  flowrate_yn             /* 유동비율적용여부 */
 
-          FROM	td_index_basic
-         WHERE	1 = 1
+          FROM  td_index_basic
+         WHERE  1 = 1
 
                 /* mapping 테이블에 존재하는 경우에만 지수 마스터 정보 조회 */
-           AND	EXISTS
+           AND  EXISTS
                 (
-                    SELECT	1
-                      FROM		    m168uidxmap
+                    SELECT  1
+                      FROM          m168uidxmap
                      INNER  JOIN    m168uidxcomp
                               ON    (
-                                                m168uidxmap.f12506	    =	m168uidxcomp.f12506
-                                        AND	    m168uidxmap.gubun		=	m168uidxcomp.gubun
-                                        AND	    m168uidxmap.isin_code	=	m168uidxcomp.f16013
+                                                m168uidxmap.f12506      =   m168uidxcomp.f12506
+                                        AND     m168uidxmap.gubun       =   m168uidxcomp.gubun
+                                        AND     m168uidxmap.isin_code   =   m168uidxcomp.f16013
                                     )
 
-                     INNER  JOIN    td_kspjong_basic
-                              ON    (
-                                        td_kspjong_basic.f16012         =   m168uidxmap.isin_code
-                                    )
+                     WHERE  1 = 1
 
-                     WHERE	1 = 1
-
-                       AND	m168uidxmap.up_code	=	CASE    WHEN    td_index_basic.f16013   LIKE    '60___'                     /* 단축코드 */
-                                                            THEN    CONCAT( 'MFI' , SUBSTR( td_index_basic.f16013, -3 ) )
-                                                        
-                                                            WHEN    td_index_basic.f16013   LIKE    '62___'                     /* 단축코드 */
-                                                            THEN    CONCAT( 'WFN' , SUBSTR( td_index_basic.f16013, -3 ) )
-                                                    END
+                       AND  m168uidxmap.up_code     =   CASE    WHEN    td_index_basic.f16013   LIKE    '60___'                     /* 단축코드 */
+                                                                THEN    CONCAT( 'MFI' , SUBSTR( td_index_basic.f16013, -3 ) )
+                                                            
+                                                                WHEN    td_index_basic.f16013   LIKE    '62___'                     /* 단축코드 */
+                                                                THEN    CONCAT( 'WFN' , SUBSTR( td_index_basic.f16013, -3 ) )
+                                                        END
+                     LIMIT  0, 1
                 )
     ]]>
         <if test= 'searchData != null  and  searchData != "" ' >
-               AND  ( 		    
-                                td_index_basic.f16013       LIKE	CONCAT( '%' , #{searchData} , '%' )     /* 단축코드 */
-                        OR	    td_index_basic.f16002       LIKE	CONCAT( '%' , #{searchData} , '%' )     /* 한글종목명 */
+               AND  (           
+                                td_index_basic.f16013       LIKE    CONCAT( '%' , #{searchData} , '%' )     /* 단축코드 */
+                        OR      td_index_basic.f16002       LIKE    CONCAT( '%' , #{searchData} , '%' )     /* 한글종목명 */
                     )
         </if>
 
@@ -166,7 +169,7 @@
 
           FROM  td_index_basic
             
-         WHERE	td_index_basic.f16013           =   #{f16013}                               /* 단축코드 */
+         WHERE  td_index_basic.f16013           =   #{f16013}                               /* 단축코드 */
            AND  td_index_basic.market_id        =   #{market_id}                            /* 시장 ID */
     ]]>
     </select>
@@ -178,60 +181,42 @@
     -->
     <select id="getIndexDetailList">
     <![CDATA[
-        SELECT	    /* indexDetail.getIndexDetailList 검색영역에 일치하는 지수정보를 조회한다. */
+        SELECT      /* indexDetail.getIndexDetailList 검색영역에 일치하는 지수정보를 조회한다. */
                     m168uidxmap.isin_code                                   AS  isin_code               /* 종목코드 */
-                ,	m168uidxmap.ceiling_percnt                              AS  ceiling_percnt          /* CEILING비중 */
-                ,   td_kspjong_basic.f16002                                 AS  f16002                  /* 한글종목명 */
-                ,	m168uidxmap.style_includ_percnt                         AS  style_includ_percnt     /* 스타일포함비중 */
-                ,	m168uidxcomp.f30812                                     AS  f30812                  /* 상장주식수 */
-                ,	m168uidxcomp.f30813                                     AS  f30813                  /* 유동주식비율 */
+                ,   m168uidxmap.ceiling_percnt                              AS  ceiling_percnt          /* CEILING비중 */
+                ,   td_index_basic.f16002                                   AS  f16002                  /* 한글종목명 */
+                ,   m168uidxmap.style_includ_percnt                         AS  style_includ_percnt     /* 스타일포함비중 */
+                ,   m168uidxcomp.f30812                                     AS  f30812                  /* 상장주식수 */
+                ,   m168uidxcomp.f30813                                     AS  f30813                  /* 유동주식비율 */
 
                 ,   m168uidxcomp.f03003                                     AS  f03003                  /* 전일종가 */
                 ,   m168uidxcomp.f34241                                     AS  f34241                  /* 가격산정구분(0:실시간1:종가) */
 
-          FROM		    m168uidxmap
+          FROM          m168uidxmap
          INNER  JOIN    m168uidxcomp
                   ON    (
-                                    m168uidxmap.f12506	    =	m168uidxcomp.f12506
-                            AND	    m168uidxmap.gubun		=	m168uidxcomp.gubun
-                            AND	    m168uidxmap.isin_code	=	m168uidxcomp.f16013
+                                    m168uidxmap.f12506      =   m168uidxcomp.f12506
+                            AND     m168uidxmap.gubun       =   m168uidxcomp.gubun
+                            AND     m168uidxmap.isin_code   =   m168uidxcomp.f16013
                         )
-
-         INNER  JOIN    td_kspjong_basic
-                  ON    (
-                            td_kspjong_basic.f16012         =   m168uidxmap.isin_code
-                        )
-
+         INNER  JOIN    td_index_basic
+                  ON    m168uidxmap.up_code     =   CASE    WHEN    td_index_basic.f16013   LIKE    '60___'                     /* 단축코드 */
+                                                            THEN    CONCAT( 'MFI' , SUBSTR( td_index_basic.f16013, -3 ) )
+                                                        
+                                                            WHEN    td_index_basic.f16013   LIKE    '62___'                     /* 단축코드 */
+                                                            THEN    CONCAT( 'WFN' , SUBSTR( td_index_basic.f16013, -3 ) )
+                                                    END
+                                                
          WHERE  1 = 1
+           AND  m168uidxmap.up_code =   CASE    WHEN    #{f16013}   LIKE    '60___'                     /* 단축코드 */
+                                                THEN    CONCAT( 'MFI' , SUBSTR( #{f16013}, -3 ) )
+                                            
+                                                WHEN    #{f16013}   LIKE    '62___'                     /* 단축코드 */
+                                                THEN    CONCAT( 'WFN' , SUBSTR( #{f16013}, -3 ) )
+                                        END                
 
-           AND  (
-                        m168uidxmap.up_code
-                    ,   m168uidxmap.f12506
-                )
-                IN
-                (
-                    /* up_code 에서 가장 최근날짜 조회 */
-                    SELECT	    MAX( m168uidxmap.up_code )          AS  up_code
-                            ,   MAX( m168uidxmap.F12506 )			AS	f12506
-                      FROM		    m168uidxmap
-                     INNER  JOIN    m168uidxcomp
-                              ON    (
-                                                m168uidxmap.f12506	    =	m168uidxcomp.f12506
-                                        AND	    m168uidxmap.gubun		=	m168uidxcomp.gubun
-                                        AND	    m168uidxmap.isin_code	=	m168uidxcomp.f16013
-                                    )
-                     WHERE	1 = 1
-
-                       AND	m168uidxmap.up_code	   =    CASE    WHEN    #{f16013}   LIKE    '60___'                     /* 단축코드 */
-                                                                THEN    CONCAT( 'MFI' , SUBSTR( #{f16013}, -3 ) )
-                                                            
-                                                                WHEN    #{f16013}   LIKE    '62___'                     /* 단축코드 */
-                                                                THEN    CONCAT( 'WFN' , SUBSTR( #{f16013}, -3 ) )
-                                                        END
-                )
-         ORDER  BY  m168uidxmap.isin_code	    DESC		    /* 입회일 */
+         ORDER  BY  m168uidxmap.isin_code       DESC            /* 입회일 */
     ]]>
-
     </select>
 
 
@@ -256,9 +241,9 @@
                     )                                                       AS  oper_date               /* 직전 영업일 */
                 ,   2010101010                                              AS  oper_date_money         /* 직전 영업일 금액 */
 
-          FROM	td_index_basic
+          FROM  td_index_basic
 
-         WHERE	td_index_basic.f16013           =   #{f16013}                               /* 단축코드 */
+         WHERE  td_index_basic.f16013           =   #{f16013}                               /* 단축코드 */
            AND  td_index_basic.market_id        =   #{market_id}                            /* 시장 ID */
     ]]>
     </select>
@@ -284,7 +269,7 @@
                             ,   '메디톡스'                                   AS  name                    /* 종목명 */
                             ,   '1'                                         AS  gubun                   /* 구분 */
                             ,   '34.21'                                     AS  rate                    /* 비중 */
-                    FROM	dual
+                    FROM    dual
 
                     UNION   ALL
 
@@ -292,7 +277,7 @@
                             ,   '제넥신'                                    AS  name                    /* 종목명 */
                             ,   '1'                                         AS  gubun                   /* 구분 */
                             ,   '10.15'                                     AS  rate                    /* 비중 */
-                    FROM	dual
+                    FROM    dual
 
                     UNION   ALL
 
@@ -301,7 +286,7 @@
                             ,   '0'                                         AS  gubun                   /* 구분 */
                             ,   '34.15'                                     AS  rate                    /* 비중 */
                             
-                    FROM	dual
+                    FROM    dual
 
                     UNION   ALL
 
@@ -309,7 +294,7 @@
                             ,   '에이치 옐비'                               AS  name                    /* 종목명 */
                             ,   '0'                                         AS  gubun                   /* 구분 */
                             ,   '10.35'                                     AS  rate                    /* 비중 */
-                    FROM	dual
+                    FROM    dual
 
                 )       base
     ]]>
@@ -334,7 +319,7 @@
                             ,   112233                                      AS  now_date_money          /* 당일 금액 */
                             ,   3434                                        AS  prev_date_money         /* 전일 금액 */
                             ,   '+122'                                      AS  in_out_money            /* 변경분 */
-                    FROM	dual
+                    FROM    dual
 
                     UNION   ALL
 
@@ -343,7 +328,7 @@
                             ,   22333                                       AS  now_date_money          /* 당일 금액 */
                             ,   33343                                       AS  prev_date_money         /* 전일 금액 */
                             ,   '+233'                                      AS  in_out_money            /* 변경분 */
-                    FROM	dual
+                    FROM    dual
 
                     UNION   ALL
 
@@ -353,7 +338,7 @@
                             ,   4555                                        AS  prev_date_money         /* 전일 금액 */
                             ,   '+654'                                      AS  in_out_money            /* 변경분 */
                             
-                    FROM	dual
+                    FROM    dual
 
                     UNION   ALL
 
@@ -362,7 +347,7 @@
                             ,   78933                                       AS  now_date_money          /* 당일 금액 */
                             ,   6789                                        AS  prev_date_money         /* 전일 금액 */
                             ,   '+7654'                                     AS  in_out_money            /* 변경분 */
-                    FROM	dual
+                    FROM    dual
 
                 )       base
     ]]>

@@ -313,13 +313,13 @@ export default {
                         data : [],
                         "columnDefs": [ {} ],
                         columns: [
-                            { "title"   :   "id"            ,   "data": "id"                    ,   "orderable" : true  },      /* ID */
-                            { "title"   :   "name"          ,   "data": "name"                  ,   "orderable" : true  },      /* 지수명 */
+                            { "title"   :   "id"            ,   "data": "isin_code"             ,   "orderable" : true  },      /* ID */
+                            { "title"   :   "name"          ,   "data": "f16002"                ,   "orderable" : true  },      /* 지수명 */
                             { "title"   :   "편입비중(%)"    ,   "data": "in_out_rate"           ,   "orderable" : true  },      /* 편입비중(%) */
-                            { "title"   :   "shrs"          ,   "data": "shrs"                  ,   "orderable" : true  },      /* shrs */
-                            { "title"   :   "float_rto"     ,   "data": "float_rto"             ,   "orderable" : true  },      /* float_rto */
-                            { "title"   :   "ceiling_rto"   ,   "data": "ceiling_rto"           ,   "orderable" : true  },      /* ceiling_rto */
-                            { "title"   :   "factor_rto"    ,   "data": "factor_rto"            ,   "orderable" : true  }       /* factor_rto */
+                            { "title"   :   "shrs"          ,   "data": "f30812"                ,   "orderable" : true  },      /* shrs */
+                            { "title"   :   "float_rto"     ,   "data": "style_includ_percnt"   ,   "orderable" : true  },      /* float_rto */
+                            { "title"   :   "ceiling_rto"   ,   "data": "ceiling_percnt"        ,   "orderable" : true  },      /* ceiling_rto */
+                            { "title"   :   "factor_rto"    ,   "data": "f30813"                ,   "orderable" : true  }       /* factor_rto */
                         ]
                     });
 
