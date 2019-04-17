@@ -38,6 +38,12 @@ var getStatusList = function(req, res) {
 
         var paramData = JSON.parse( JSON.stringify(req.body.data) );
 
+        paramData.user_id       =   req.session.user_id;
+        paramData.inst_cd       =   req.session.inst_cd;
+        paramData.inst_type_cd  =   req.session.inst_type_cd;
+        paramData.large_type    =   req.session.large_type;        
+
+
         /* 2. 지수 등록 상태정보를 조회한다. */
         var format = { language: 'sql', indent: '' };
         var stmt = mapper.getStatement('indexSelectList', 'getCodeDtl', paramData, format);
@@ -116,7 +122,10 @@ var getIndexSelectList = function(req, res) {
             JSON.parse( JSON.stringify(req.body.data) );
         }
 
-        paramData.user_id = req.session.user_id;
+        paramData.user_id       =   req.session.user_id;
+        paramData.inst_cd       =   req.session.inst_cd;
+        paramData.inst_type_cd  =   req.session.inst_type_cd;
+        paramData.large_type    =   req.session.large_type;        
 
         /* 1. 기관정보를 조회한다. */
         var format = { language: 'sql', indent: '' };

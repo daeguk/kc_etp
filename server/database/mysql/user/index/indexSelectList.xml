@@ -9,7 +9,8 @@
     -->
     <select id="getCodeDtl">
     <![CDATA[
-        SELECT      tm_code_dtl.com_mst_cd          AS  com_mst_cd
+        SELECT      /* indexSelectList.getCodeDtl 코드 상세정보를 조회한다. */
+                    tm_code_dtl.com_mst_cd          AS  com_mst_cd
                 ,   tm_code_dtl.com_dtl_cd          AS  com_dtl_cd
                 
                 ,   tm_code_dtl.com_dtl_name        AS  com_dtl_name
@@ -36,7 +37,8 @@
     -->
     <select id="getJisuList">
     <![CDATA[
-        SELECT      tm_jisu_mast.jisu_seq           AS  jisu_seq
+        SELECT      /* indexSelectList.getJisuList [tm_jisu_mast] 데이터를 조회한다. */
+                    tm_jisu_mast.jisu_seq           AS  jisu_seq
 
                 ,   tm_jisu_mast.jisu_id            AS  jisu_id
                 ,   tm_jisu_mast.jisu_kor_nm        AS  jisu_kor_nm

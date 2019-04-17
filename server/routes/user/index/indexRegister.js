@@ -38,6 +38,12 @@ var getJisuDuplCheck = function (req, res) {
 
     var paramData = JSON.parse(JSON.stringify(req.body.data));
 
+    paramData.user_id       =   req.session.user_id;
+    paramData.inst_cd       =   req.session.inst_cd;
+    paramData.inst_type_cd  =   req.session.inst_type_cd;
+    paramData.large_type    =   req.session.large_type;
+
+
     /* 2. 이미 등록된 지수ID 가 존재하는지 확인 */
     var format = { language: 'sql', indent: '' };
     var stmt = mapper.getStatement('indexRegister', 'getJisuDuplCheck', paramData, format);
@@ -482,7 +488,12 @@ var registerJisu = function (req, res) {
             }else{
 
                 var paramData = JSON.parse( req.body.data );
-                paramData.user_id = reqParam.user_id;
+
+                paramData.user_id       =   req.session.user_id;
+                paramData.inst_cd       =   req.session.inst_cd;
+                paramData.inst_type_cd  =   req.session.inst_type_cd;
+                paramData.large_type    =   req.session.large_type;
+
                 console.log( paramData );
 
                 var format = { language: 'sql', indent: '' };

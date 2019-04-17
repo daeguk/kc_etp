@@ -1,12 +1,9 @@
 <template>
  <v-card flat>
-    
-    
-
-    <table id="etf_grid" class="display" style="width:100%">
+    <table id="etf_grid" class="display" style="width:100%;">
         <thead>
             <tr>
-                <th><input  type='checkbox' class="selectAll select-checkbox"></input></th>
+                <th><input type='checkbox' color='primary' checked="checked" label='' value=''></th>
                 <th>ID</th>
                 <th>종목/지수명</th>
             </tr>
