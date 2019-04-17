@@ -73,6 +73,9 @@ module.exports = class {
         ibatisMapper.createMapper(['./database/mysql/user/index/indexRegister.xml']);
         ibatisMapper.createMapper(['./database/mysql/user/index/indexSelectList.xml']);
         ibatisMapper.createMapper(['./database/mysql/user/index/indexModify.xml']);
+
+        ibatisMapper.createMapper(['./database/mysql/user/etpinfo/etpinfo.xml']);
+
         return ibatisMapper;
     }
 };
