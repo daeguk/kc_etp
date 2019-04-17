@@ -2,6 +2,15 @@
     <v-layout row>
         <v-flex xs12>
             <v-card flat>
+                <div class="index3pop2_con">
+                    <v-list subheader two-line>
+                        <v-list-tile>
+                            <v-list-tile-title>조치 기준일</v-list-tile-title>
+                            <v-list-tile-content>{{ indexFixData.fix_date }}</v-list-tile-content>
+                        </v-list-tile>
+                    </v-list>
+                </div>
+
                 <v-card flat class="right_menu_w4">
                     <v-list subheader two-line>
                         <v-subheader class="subheading">기준시총 변동</v-subheader>
@@ -27,35 +36,14 @@
 
                 <!--종목편출입 테이블-->
                 <v-subheader class="subheading">종목편출입</v-subheader>
-
-                <table id="tableIndexFixJongmokInout" class="display table01_w">
-                    <thead>
-                        <tr>
-                            <th>code</th>
-                            <th>종목명</th>
-                            <th>구분</th>
-                            <th>비중(%)</th>
-                        </tr>
-                    </thead>
-                </table>
+                <table id="tableIndexFixJongmokInout" class="display table01_w"></table>
                 <!--종목편출입 테이블 end-->
 
                 <br>
 
                 <!--지수채용주식수변경테이블-->
                 <v-subheader class="subheading">지수채용주식수변경</v-subheader>
-
-                <table id="tableIndexFixModify" class="display table01_w">
-                    <thead>
-                        <tr>
-                            <th>code</th>
-                            <th>종목명</th>
-                            <th></th>
-                            <th></th>
-                            <th>변경분</th>
-                        </tr>
-                    </thead>
-                </table>
+                <table id="tableIndexFixModify" class="display table01_w"></table>
                 <!--지수채용주식수변경테이블 end-->
                 
             </v-card>
@@ -95,50 +83,9 @@ export default {
 
     mounted() {
 
-        /* 지수조치 종목 편출입 정보 */
-        tableIndexFixJongmokInout = $('#tableIndexFixJongmokInout').DataTable( {
-            "processing": true,
-            "serverSide": false,
-            "info": false,   // control table information display field
-            "stateSave": true,  //restore table state on page reload,
-            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-            paging: false,
-            searching: false,
-            data : [],
-            "columnDefs": [
-                { "targets": 0, className: "dt-center" },
-                { "targets": 2, className: "dt-center" },
-            ],            
-            columns: [
-                { "data": "code"                ,   "orderable" : true  },      /* code */
-                { "data": "name"                ,   "orderable" : true  },      /* 종목명 */
-                { "data": "gubun_name"          ,   "orderable" : true  },      /* 구분 */
-                { "data": "rate"                ,   "orderable" : true  },      /* 비중 */
-            ]
-        });
-
-
-        /* 지수채용 주식수 변경 정보 */
-        tableIndexFixModify = $('#tableIndexFixModify').DataTable( {
-            "processing": true,
-            "serverSide": false,
-            "info": false,   // control table information display field
-            "stateSave": true,  //restore table state on page reload,
-            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-            paging: false,
-            searching: false,
-            data : [],
-           
-            columns: [
-                { "data": "code"                ,   "orderable" : true  },      /* 종목코드 */
-                { "data": "name"                ,   "orderable" : true  },      /* 한글종목명 */
-                { "data": "now_date_money"      ,   "orderable" : true  },      /* 당일 금액 */
-                { "data": "prev_date_money"     ,   "orderable" : true  },      /* 전일 금액 */
-                { "data": "in_out_money"        ,   "orderable" : true  },      /* 변경분 */
-            ]
-        });
-
-        this.fn_getIndexFixList();
+        if( this.rowData ) {
+            this.fn_getIndexFixList();
+        }
     },
 
     methods: {
@@ -160,7 +107,50 @@ export default {
                     var indexFixData                =   response.data.indexFixData;
                     if( indexFixData ) {
                         vm.indexFixData             =   indexFixData;
-                    }                    
+                    }
+
+ /* 지수조치 종목 편출입 정보 */
+                tableIndexFixJongmokInout = $('#tableIndexFixJongmokInout').DataTable( {
+                    "processing": true,
+                    "serverSide": false,
+                    "info": false,   // control table information display field
+                    "stateSave": true,  //restore table state on page reload,
+                    "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                    paging: false,
+                    searching: false,
+                    data : [],
+                    "columnDefs": [
+                        { "targets": 0, className: "dt-center" },
+                        { "targets": 2, className: "dt-center" },
+                    ],            
+                    columns: [
+                        { "title"   :   "code"      ,   "data": "code"           ,   "orderable" : true  },      /* code */
+                        { "title"   :   "종목명"    ,   "data": "name"            ,   "orderable" : true  },      /* 종목명 */
+                        { "title"   :   "구분"      ,   "data": "gubun_name"      ,   "orderable" : true  },      /* 구분 */
+                        { "title"   :   "비중(%)"   ,   "data": "rate"            ,   "orderable" : true  },      /* 비중(%) */
+                    ]
+                });
+
+
+                /* 지수채용 주식수 변경 정보 */
+                tableIndexFixModify = $('#tableIndexFixModify').DataTable( {
+                    "processing": true,
+                    "serverSide": false,
+                    "info": false,   // control table information display field
+                    "stateSave": true,  //restore table state on page reload,
+                    "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                    paging: false,
+                    searching: false,
+                    data : [],
+                
+                    columns: [
+                        { "title"   :   "code"      ,   "data": "code"                ,   "orderable" : true  },      /* 종목코드 */
+                        { "title"   :   "종목명"    ,   "data": "name"                ,   "orderable" : true  },      /* 한글종목명 */
+                        { "title"   :   vm.indexFixData.now_date      ,   "data": "now_date_money"      ,   "orderable" : true  },      /* 당일 금액 */
+                        { "title"   :   vm.indexFixData.oper_date      ,   "data": "prev_date_money"     ,   "orderable" : true  },      /* 전일 금액 */
+                        { "title"   :   "변경분"    ,   "data": "in_out_money"        ,   "orderable" : true  },      /* 변경분 */
+                    ]
+                });                    
 
                     /* 지수조치 종목 편출입 정보 */
                     var indexFixJongmokInoutList    =   response.data.indexFixJongmokInoutList;

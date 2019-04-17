@@ -18,17 +18,6 @@
                     </v-card-title>
 
                     <table id="tableIndexList" class="display table01_w">
-                        <thead>
-                            <tr>
-                                <th>code</th>
-                                <th>name</th>
-                                <th>base_prc</th>
-                                <th>shrs</th>
-                                <th>float_rto</th>
-                                <th>ceiling_rto</th>
-                                <th>factor_rto</th>
-                            </tr>
-                        </thead>
                     </table>
                     
                     <v-container>
@@ -103,7 +92,7 @@
                                                     <v-card flat>
                                                         <h5>
                                                             <v-card-title ma-0>
-                                                                지수조치 현황 ( {{ indexFixData.f16002 }} )
+                                                                지수조치 현황 ( {{ indexBasic.f16002 }} )
                                                                 <v-spacer></v-spacer>
                                                                 <v-btn
                                                                     icon
@@ -114,14 +103,7 @@
                                                                 </v-btn>
                                                             </v-card-title>
                                                         </h5>
-                                                        <div class="index3pop2_con">
-                                                            <v-list subheader two-line>
-                                                                <v-list-tile>
-                                                                    <v-list-tile-title>조치 기준일</v-list-tile-title>
-                                                                    <v-list-tile-content>{{ indexFixData.fix_date }}</v-list-tile-content>
-                                                                </v-list-tile>
-                                                            </v-list>
-                                                        </div>
+
                                                         <indexDetailrtmenupop  :rowData="this.rowData" v-if="dialog"></indexDetailrtmenupop>
                                                         <v-card class="pop_bot_h"></v-card>
                                                     </v-card>
@@ -216,17 +198,6 @@ export default {
             right: null,
 
 
-            rowsPerPageItems: [10, 20, 30],
-            headers: [
-                { text: "isin_code"     , value: "isin_code"    , align: "left",  sortable: false },        /* 종목코드 */
-                { text: "name"          , value: "f16002"       , align: "left"},                           /* 한글종목명 */
-                { text: "basePrc"       , value: "f03003"               },                                  /* 전일종가 */
-                { text: "shrs"          , value: "f30812"               },                                  /* 상장주식수 */
-                { text: "float rto"     , value: "style_includ_percnt"  },                                  /* 스타일포함비중 */
-                { text: "ceiling rto"   , value: "ceiling_percnt"       },                                  /* CEILING비중 */
-                { text: "factor rto"    , value: "f30813"               },                                  /* 유동주식비율 */
-            ],
-
             results: [],
             loadingbar: false,
 
@@ -257,40 +228,6 @@ export default {
         };
     },
     mounted () {
-
-        tableIndexList = $('#tableIndexList').DataTable( {
-            "processing": true,
-            "serverSide": false,
-            "info": true,   // control table information display field
-            "stateSave": true,  //restore table state on page reload,
-            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-            paging: false,
-            searching: false,
-            data : [],
-            "columnDefs": [
-                {  
-                "render": function ( data, type, row ) {
-
-                    if (data) {
-                        return data;                                        
-//                                        return data.replace(/,/gi,"</br>");
-                    } else {
-                        return "";
-                    }
-                },
-                "targets": 5
-            },],
-            columns: [
-                { "data": "isin_code"           ,   "orderable" : true  },      /* 종목코드 */
-                { "data": "f16002"              ,   "orderable" : true  },      /* 한글종목명 */
-                { "data": "f03003"              ,   "orderable" : true  },      /* 전일종가 */
-                { "data": "f30812"              ,   "orderable" : true  },      /* 상장주식수 */
-                { "data": "style_includ_percnt" ,   "orderable" : true  },      /* 스타일포함비중 */
-                { "data": "ceiling_percnt"      ,   "orderable" : true  },      /* CEILING비중 */
-                { "data": "f30813"              ,   "orderable" : true  }       /* 유동주식비율 */
-            ]
-        });
-
 
         var vm = this;
 
@@ -406,9 +343,57 @@ export default {
                     var indexDetailList =   response.data.indexDetailList;
                     vm.indexDetailList  =   indexDetailList;
 
+
+                    if ( $.fn.dataTable.isDataTable( '#tableIndexList' ) ) {
+                        tableIndexList.destroy();
+                    }
+
+                    /* 유형에 따라 컬럼 헤더 변경 */
+                    if( false ) {
+                        tableIndexList = $('#tableIndexList').DataTable( {
+                            "processing": true,
+                            "serverSide": false,
+                            "info": true,   // control table information display field
+                            "stateSave": true,  //restore table state on page reload,
+                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                            paging: false,
+                            searching: false,
+                            data : [],
+                            "columnDefs": [ {} ],
+                            columns: [
+                                { "title"   :   "code"      ,   "data": "isin_code"         ,   "orderable" : true  },      /* 종목코드 */
+                                { "title"   :   "name"      ,   "data": "f16002"            ,   "orderable" : true  },      /* 한글종목명 */
+                                { "title"   :   "base_prc"  ,   "data": "f03003"            ,   "orderable" : true  },      /* 전일종가 */
+                            ]
+                        });
+                    }
+                    else{
+                        tableIndexList = $('#tableIndexList').DataTable( {
+                            "processing": true,
+                            "serverSide": false,
+                            "info": true,   // control table information display field
+                            "stateSave": true,  //restore table state on page reload,
+                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                            paging: false,
+                            searching: false,
+                            data : [],
+                            "columnDefs": [ {} ],
+                            columns: [
+                                { "title"   :   "code"          ,   "data": "isin_code"             ,   "orderable" : true  },      /* 종목코드 */
+                                { "title"   :   "name"          ,   "data": "f16002"                ,   "orderable" : true  },      /* 한글종목명 */
+                                { "title"   :   "base_prc"      ,   "data": "f03003"                ,   "orderable" : true  },      /* 전일종가 */
+                                { "title"   :   "shrs"          ,   "data": "f30812"                ,   "orderable" : true  },      /* 상장주식수 */
+                                { "title"   :   "float_rto"     ,   "data": "style_includ_percnt"   ,   "orderable" : true  },      /* 스타일포함비중 */
+                                { "title"   :   "ceiling_rto"   ,   "data": "ceiling_percnt"        ,   "orderable" : true  },      /* CEILING비중 */
+                                { "title"   :   "factor_rto"    ,   "data": "f30813"                ,   "orderable" : true  }       /* 유동주식비율 */
+                            ]
+                        });
+                    }
+
+
                     tableIndexList.clear().draw();
                     tableIndexList.rows.add(indexDetailList).draw();
-                    tableIndexList.draw(indexDetailList);
+                    tableIndexList.draw();
                 }
 
             });
