@@ -13,30 +13,19 @@
                     </div>
                 </v-card-title>
             </v-card>
-            <v-data-table
-                class="table_line1"
-                :headers="headers"
-                :items="results"
-                :rows-per-page-items="rowsPerPageItems"
-                disable-initial-sort
-            >
-                <template slot="items" slot-scope="props">
-                    <td class="text-xs-center">{{ props.item.REG_ID }}</td>
-                    <td class="text-xs-center">{{ props.item.INST_NAME }}</td>
-                    <td class="text-xs-center">{{ props.item.F16002 }}</td>
-                    <td class="text-xs-center">{{ props.item.F16013 }}</td>
-                    <td class="text-xs-center">{{ props.item.REG_TIME }}</td>
-                    <td class="text-xs-center">
-                        
-                        <v-btn small depressed color="primary" class="white--text" @click.stop="dialogOpen('1', props.item);">
-                            <v-icon dark>thumb_up_alt</v-icon>Yes
-                        </v-btn>
-                        <v-btn small depressed color="grey" class="white--text" @click.stop="dialogOpen('2', props.item);">
-                            <v-icon dark>thumb_down_alt</v-icon>No 
-                        </v-btn>
-                    </td>
-                </template>
-            </v-data-table>            
+
+            <table id="index_table" class="display table01_w">
+                     <thead>
+                        <tr>
+                            <th>reqID</th>
+                            <th>신청기관</th>
+                            <th>지수</th>
+                            <th>지수코드</th>
+                            <th>요청일자</th>
+                            <th>요청처리</th>
+                        </tr>
+                    </thead>
+            </table>
         </v-card> 
          </v-flex>    
          <v-flex>
@@ -89,8 +78,11 @@
 
 <script>
 
-
+import $      from 'jquery'
+import dt      from 'datatables.net'
+import buttons from 'datatables.net-buttons'
 import Config from "@/js/config.js";
+var reqTable;
 
 export default {
     props: [],
@@ -101,30 +93,43 @@ export default {
             message: '승인',
             reqFlag: true,
             results: [],
-            rowsPerPageItems: [10, 20, 30, 50],
-            headers: [
-                {
-                    text: "reqID",
-                    align: "center",
-                    sortable: false,
-                    value: "REG_ID"
-                },
-                {
-                    text: "신청기관",
-                    align: "center",
-                    sortable: false,
-                    value: "INST_NAME"
-                },
-                { text: "지수", align: "center", value: "F16002" },
-                { text: "지수코드", align: "center", value: "F16013" },
-                { text: "요청일자", align: "center", value: "REG_TIME" },
-                { text: "요청처리", align: "center", value: "req_process" }
-            ],
-            
         };
     },
     mounted: function() {
-        this.getInfoOpenReqList();
+        var vm = this;
+         
+         $('#index_table, tbody').on('click', 'button', function () {
+            var data = reqTable.row($(this).parents('tr')).data();
+           // alert("Name = " + JSON.stringify(data));
+            if ($(this).attr('name') == "ok") {
+                vm.dialogOpen('1', data);
+            } else {
+                vm.dialogOpen('2', data);
+            }
+        
+        });
+
+         reqTable = $('#index_table').DataTable( {
+                    "processing": true,
+                    "serverSide": false,
+                    "info": true,   // control table information display field
+                    "stateSave": true,  //restore table state on page reload,
+                    "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                    paging: false,
+                    searching: false,
+                    data : [],
+                            
+                    columns: [
+                        { "data": "REG_ID", "orderable": true },
+                        { "data": "INST_NAME", "orderable" : true },
+                        { "data": "F16002", "orderable" : true },
+                        { "data": "F16013", "orderable" : true },
+                        { "data": "REG_TIME", "orderable" : true },
+                        { "data": null, "align":"center", className: 'dt-body-center', defaultContent:"<div class='tooltip'><button type='button' name='ok' class='btn_icon v-icon material-icons '>thumb_up_alt</button><span class='tooltiptext' style='width:50px;'>승인</span></div><div class='tooltip'><button type='button' name='no' color='grey' class='btn_icon v-icon material-icons grey'>thumb_down_alt</button><span class='tooltiptext' style='width:50px;'>거절</span></div>" } 
+                    ]
+        });
+        
+        vm.getInfoOpenReqList();
     },
     created: function() {
     },
@@ -151,6 +156,9 @@ export default {
                         
                         //console.log("response=" + JSON.stringify(items));
                         vm.results = items;
+                        
+                         reqTable.clear().draw();
+                         reqTable.rows.add(vm.results).draw();
                     }
                 });
         }, 

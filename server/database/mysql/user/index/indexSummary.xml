@@ -591,7 +591,8 @@
                     INNER JOIN m168uidxcomp COMP
                     ON MAP.F12506 = COMP.F12506
                     AND MAP.ISIN_CODE = COMP.F16013
-                    AND MAP.GUBUN = COMP.GUBUN) TOT_ITEM;
+                    AND MAP.GUBUN = COMP.GUBUN) TOT_ITEM
+        order by ITEM.ITEM_AMT/TOT_ITEM.TOT_AMT desc
                     
 
     ]]>
