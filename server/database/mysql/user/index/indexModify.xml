@@ -9,7 +9,8 @@
     -->
     <select id="getJisuMast">
     <![CDATA[
-        SELECT      tm_jisu_mast.jisu_seq                               AS  jisu_seq
+        SELECT      /* indexModify.getJisuMast 지수 마스터 데이터를 조회한다. */
+                    tm_jisu_mast.jisu_seq                               AS  jisu_seq
 
                 ,   tm_jisu_mast.jisu_id                                AS  jisu_id
                 ,   tm_jisu_mast.jisu_kor_nm                            AS  jisu_kor_nm
@@ -58,7 +59,8 @@
     -->
     <select id="getJisuShareReq">
     <![CDATA[
-        SELECT      tm_jisu_share_req.inst_cd       AS  inst_cd
+        SELECT      /* indexModify.getJisuShareReq 지수정보공개요청 데이터를 조회한다. */
+                    tm_jisu_share_req.inst_cd       AS  inst_cd
                 ,   tm_domain_mast.inst_name        AS  inst_name
 
           FROM  tm_jisu_share_req
@@ -82,7 +84,8 @@
     -->
     <update     id="modifyJisuMast">
     <![CDATA[
-        UPDATE      tm_jisu_mast 
+        UPDATE      /* indexModify.modifyJisuMast 지수 마스터 테이블을 수정한다. */
+                    tm_jisu_mast 
            SET      jisu_id             =   #{jisu_id}
                 ,   jisu_kor_nm         =   #{jisu_kor_nm}
                 ,   jisu_summary        =   #{jisu_summary}
@@ -112,6 +115,7 @@
     -->
     <select id="getJisuShareReqForDelete">
 
+        /* indexModify.getJisuShareReqForDelete 삭제할 지수정보공개요청 목록을 조회한다. */
         <if test= 'arr_jisu_inst != null  and  arr_jisu_inst.length > 0' >
     <![CDATA[
         SELECT      tm_jisu_share_req.jisu_seq                  AS  jisu_seq
@@ -156,6 +160,7 @@
     <delete id="deleteJisuShareReqList">
     <![CDATA[
         DELETE
+                /* indexModify.deleteJisuShareReqList 삭제할 지수정보공개요청 목록을 삭제한다. */
           FROM  tm_jisu_share_req
          WHERE  tm_jisu_share_req.jisu_seq          =   #{jisu_seq}
     ]]>
@@ -176,7 +181,8 @@
     -->
     <select id="getJisuShareReqForInsert">
     <![CDATA[
-        SELECT  base.inst_cd                                    AS  inst_cd
+        SELECT  /* indexModify.getJisuShareReqForInsert 추가할 지수정보공개요청 목록을 조회한다. */
+                base.inst_cd                                    AS  inst_cd
           FROM  (
     ]]>
             <foreach    collection="arr_jisu_inst"   item="item"    index="index"   separator=" UNION ALL" > 
@@ -206,7 +212,9 @@
     -->
     <insert id="insertJisuShareReqList">
     <![CDATA[
-        INSERT  INTO    tm_jisu_share_req
+        INSERT  INTO    
+        /* indexModify.insertJisuShareReqList 추가할 지수정보공개요청 목록을 저장한다. */
+        tm_jisu_share_req
         ( 
                 jisu_seq
             ,   inst_cd
@@ -243,7 +251,8 @@
     -->
     <select id="getJisuShareReqForUpdate">
     <![CDATA[
-        SELECT      tm_jisu_share_req.jisu_seq                  AS  jisu_seq
+        SELECT      /* indexModify.getJisuShareReqForUpdate 수정할 지수정보공개요청 목록을 조회한다. */
+                    tm_jisu_share_req.jisu_seq                  AS  jisu_seq
                 ,   tm_jisu_share_req.inst_cd                   AS  inst_cd
           FROM      tm_jisu_share_req
                 ,   (
@@ -268,7 +277,8 @@
     -->
     <update id="updateJisuShareReqList">
     <![CDATA[
-        UPDATE      tm_jisu_share_req
+        UPDATE      /* indexModify.updateJisuShareReqList 수정할 지수정보공개요청 목록을 저장한다. */
+                    tm_jisu_share_req
 
            SET      jisu_id             =   #{jisu_id}
 
@@ -296,6 +306,7 @@
     <delete id="deleteJisuUpload">
     <![CDATA[
         DELETE
+                /* indexModify.deleteJisuUpload [지수 엑셀업로드] 를 삭제한다. */
           FROM  tm_jisu_upload
          WHERE  tm_jisu_upload.jisu_seq             =   #{jisu_seq}
     ]]>
@@ -307,7 +318,8 @@
     -->
     <select id="getJisuUploadCnt">
     <![CDATA[
-        SELECT  COUNT(*)                            AS  cnt
+        SELECT  /* indexModify.getJisuUploadCnt [지수 엑셀업로드] 건수를 조회한다. */
+                COUNT(*)                            AS  cnt
           FROM  tm_jisu_upload
          WHERE  tm_jisu_upload.jisu_seq             =   #{jisu_seq}
     ]]>
@@ -323,6 +335,7 @@
     <delete id="deleteJisuShareReq">
     <![CDATA[
         DELETE
+                /* indexModify.deleteJisuShareReq [지수정보 공유 요청] 을 삭제한다. */
           FROM  tm_jisu_share_req
          WHERE  tm_jisu_share_req.jisu_seq          =   #{jisu_seq}
     ]]>
@@ -334,7 +347,8 @@
     -->
     <select id="getJisuShareReqCnt">
     <![CDATA[
-        SELECT  COUNT(*)                            AS  cnt
+        SELECT  /* indexModify.getJisuShareReqCnt [지수정보 공유 요청] 건수를 조회한다. */
+                COUNT(*)                            AS  cnt
           FROM  tm_jisu_share_req
          WHERE  tm_jisu_share_req.jisu_seq          =   #{jisu_seq}
     ]]>
@@ -351,6 +365,7 @@
     <delete id="deleteJisuFile">
     <![CDATA[
         DELETE
+                /* indexModify.deleteJisuFile [지수 파일정보] 을 삭제한다. */
           FROM  tm_jisu_file
          WHERE  tm_jisu_file.file_id                =   #{file_id}
     ]]>
@@ -362,7 +377,8 @@
     -->
     <select id="getJisuFile">
     <![CDATA[
-        SELECT      tm_jisu_file.org_file_name                      AS  org_file_name
+        SELECT      /* indexModify.getJisuFile [지수 파일정보] 를 조회한다. */
+                    tm_jisu_file.org_file_name                      AS  org_file_name
                 ,   tm_jisu_file.save_file_name                     AS  save_file_name
                 ,   tm_jisu_file.file_size                          AS  file_size
                 ,   tm_jisu_file.mime_type                          AS  mime_type
@@ -384,6 +400,7 @@
     <delete id="deleteJisuMast">
     <![CDATA[
         DELETE
+                /* indexModify.deleteJisuMast [지수 파일정보] 를 삭제한다. */
           FROM  tm_jisu_mast
          WHERE  tm_jisu_mast.jisu_seq               =   #{jisu_seq}
     ]]>
@@ -395,7 +412,8 @@
     -->
     <select id="getJisuMastCnt">
     <![CDATA[
-        SELECT  COUNT(*)                            AS  cnt
+        SELECT  /* indexModify.getJisuMastCnt [지수 파일정보] 건수를 조회한다. */
+                COUNT(*)                            AS  cnt
           FROM  tm_jisu_mast
          WHERE  tm_jisu_mast.jisu_seq               =   #{jisu_seq}
     ]]>
@@ -411,6 +429,7 @@
     <delete id="deleteJisuTempUpload">
     <![CDATA[
         DELETE
+                /* indexModify.deleteJisuTempUpload [지수 저장전 업로드] 를 삭제한다. */
           FROM  tm_jisu_temp_upload
          WHERE  tm_jisu_temp_upload.file_id         =   #{file_id}
     ]]>
@@ -422,7 +441,8 @@
     -->
     <select id="getJisuTempUploadCnt">
     <![CDATA[
-        SELECT  COUNT(*)                            AS  cnt
+        SELECT  /* indexModify.getJisuTempUploadCnt [지수 저장전 업로드] 건수를 조회한다. */
+                COUNT(*)                            AS  cnt
           FROM  tm_jisu_temp_upload
          WHERE  tm_jisu_temp_upload.file_id         =   #{file_id}
     ]]>

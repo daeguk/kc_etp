@@ -9,7 +9,8 @@
     -->
     <select id="getIndexJongmokList">
     <![CDATA[
-        SELECT      base.id                             AS  id
+        SELECT      /* indexDetail.getIndexJongmokList 지수종목상세 정보를 조회한다. */
+                    base.id                             AS  id
                 ,   base.name                           AS  name
 
                 ,   base.in_out_rate                    AS  in_out_rate
@@ -57,7 +58,8 @@
     -->
     <select id="getIndexList">
     <![CDATA[
-        SELECT      td_index_basic.f12506                       AS  f12506                  /* 입회일 */
+        SELECT      /* indexDetail.getIndexList 검색영역에 일치하는 지수정보를 조회한다. */
+                    td_index_basic.f12506                       AS  f12506                  /* 입회일 */
                 ,   td_index_basic.f16013                       AS  f16013                  /* 단축코드 */
                 ,   td_index_basic.f16002                       AS  f16002                  /* 한글종목명 */
                 ,   td_index_basic.f15009                       AS  f15009                  /* 시가 */
@@ -135,7 +137,8 @@
     -->
     <select id="getIndexBasicDetail">
     <![CDATA[
-        SELECT      td_index_basic.f12506                                   AS  f12506                  /* 입회일 */
+        SELECT      /* indexDetail.getIndexBasicDetail 지수 기본정보를 조회한다. */
+                    td_index_basic.f12506                                   AS  f12506                  /* 입회일 */
                 ,   DATE_FORMAT( td_index_basic.f12506, '%Y-%m-%d' )        AS  fmt_f12506              /* 포맷된 입회일 */
                 ,   td_index_basic.f16013                                   AS  f16013                  /* 단축코드 */
                 ,   td_index_basic.f16002                                   AS  f16002                  /* 한글종목명 */
@@ -175,7 +178,8 @@
     -->
     <select id="getIndexDetailList">
     <![CDATA[
-        SELECT	    m168uidxmap.isin_code                                   AS  isin_code               /* 종목코드 */
+        SELECT	    /* indexDetail.getIndexDetailList 검색영역에 일치하는 지수정보를 조회한다. */
+                    m168uidxmap.isin_code                                   AS  isin_code               /* 종목코드 */
                 ,	m168uidxmap.ceiling_percnt                              AS  ceiling_percnt          /* CEILING비중 */
                 ,   td_kspjong_basic.f16002                                 AS  f16002                  /* 한글종목명 */
                 ,	m168uidxmap.style_includ_percnt                         AS  style_includ_percnt     /* 스타일포함비중 */
@@ -237,7 +241,8 @@
     -->
     <select id="getIndexFixData">
     <![CDATA[
-        SELECT      td_index_basic.f16013                                   AS  f16013                  /* 단축코드 */
+        SELECT      /* indexDetail.getIndexFixData 지수조치 현황의 기본정보를 조회한다. */
+                    td_index_basic.f16013                                   AS  f16013                  /* 단축코드 */
                 ,   td_index_basic.f16002                                   AS  f16002                  /* 한글종목명 */
 
                 ,   DATE_FORMAT( now()  , '%Y.%m.%d' )                      AS  fix_date                /* 조치 기준일 */
@@ -264,7 +269,8 @@
     -->
     <select id="getIndexFixJongmokInoutList">
     <![CDATA[
-        SELECT      base.code                                               AS  code                    /* Code */                                    
+        SELECT      /* indexDetail.getIndexFixJongmokInoutList 지수조치 종목 편출입 정보를 조회한다. */
+                    base.code                                               AS  code                    /* Code */                                    
                 ,   base.name                                               AS  name                    /* 종목명 */
                 ,   base.gubun                                              AS  gubun                   /* 구분 */
                 ,   CASE    WHEN    base.gubun  =   '1'
@@ -315,7 +321,8 @@
     -->
     <select id="getIndexFixModifyList">
     <![CDATA[
-        SELECT      base.code                                               AS  code                    /* Code */                                    
+        SELECT      /* indexDetail.getIndexFixModifyList 지수채용 주식수 변경 정보를 조회한다. */
+                    base.code                                               AS  code                    /* Code */                                    
                 ,   base.name                                               AS  name                    /* 종목명 */
                 ,   base.now_date_money                                     AS  now_date_money          /* 편입금액 */
                 ,   base.prev_date_money                                    AS  prev_date_money         /* 편출금액 */

@@ -9,7 +9,8 @@
     -->
     <select id="getJisuDuplCheck">
     <![CDATA[
-        SELECT  COUNT(1)   AS  cnt
+        SELECT  /* indexRegister.getJisuDuplCheck 이미 등록된 지수ID 가 존재하는지 확인한다. */
+                COUNT(1)   AS  cnt
           FROM  tm_jisu_mast
          WHERE  tm_jisu_mast.jisu_id                =   #{jisu_id}
     ]]>
@@ -21,7 +22,8 @@
     -->
     <select id="getTmJisuTempUpload">
     <![CDATA[
-        SELECT      tm_jisu_temp_upload.file_id     AS  file_id
+        SELECT      /* indexRegister.getTmJisuTempUpload [tm_jisu_temp_upload] 데이터를 조회한다. */
+                    tm_jisu_temp_upload.file_id     AS  file_id
                 ,   tm_jisu_temp_upload.row_no      AS  row_no
 
                 ,   tm_jisu_temp_upload.col01       AS  col01
@@ -41,8 +43,10 @@
     -->
     <select id="getDomainInst">
     <![CDATA[
-        SELECT	    tm_domain_mast.inst_cd		    AS  inst_cd
+        SELECT	    /* indexRegister.getDomainInst 기관정보를 조회한다. */
+                    tm_domain_mast.inst_cd		    AS  inst_cd
                 ,   tm_domain_mast.inst_name		AS  inst_name
+
           FROM	tm_domain_mast
          WHERE	tm_domain_mast.inst_type_name       =   'ETF발행사'
          ORDER  BY  tm_domain_mast.inst_cd
@@ -55,7 +59,9 @@
     -->
     <insert     id="saveTmJisuFile">
     <![CDATA[
-        INSERT  INTO    tm_jisu_file 
+        INSERT  INTO    
+        /* indexRegister.saveTmJisuFile [tm_jisu_file] 테이블에 저장한다. */
+        tm_jisu_file 
         ( 
                 org_file_name
             ,   save_file_name
@@ -86,7 +92,9 @@
     -->
     <insert     id="saveTmJisuTempUpload">
     <![CDATA[
-        INSERT  INTO    tm_jisu_temp_upload 
+        INSERT  INTO    
+        /* indexRegister.saveTmJisuTempUpload [tm_jisu_temp_upload] 테이블에 저장한다. */
+        tm_jisu_temp_upload 
         ( 
                 file_id
             ,   row_no
@@ -127,7 +135,9 @@
     -->
     <insert     id="saveTmJisuUpload">
     <![CDATA[
-        INSERT  INTO    tm_jisu_upload 
+        INSERT  INTO    
+        /* indexRegister.saveTmJisuUpload [tm_jisu_upload] 테이블에 저장한다. */
+        tm_jisu_upload 
         ( 
                 jisu_seq
             ,   row_no
@@ -170,7 +180,8 @@
     -->
     <select id="getHistNoByTmJisuUploadHist">
     <![CDATA[
-        SELECT	IFNULL( MAX( HIST_NO ), 0 ) + 1     AS  hist_no
+        SELECT	/* indexRegister.getHistNoByTmJisuUploadHist 지수 시퀀스 별 최신 이력번호를 조회한다. */
+                IFNULL( MAX( HIST_NO ), 0 ) + 1     AS  hist_no
         FROM	tm_jisu_upload_hist
         WHERE	tm_jisu_upload_hist.jisu_seq        =   #{jisu_seq}#
     ]]>
@@ -182,7 +193,9 @@
     -->
     <insert     id="saveTmJisuUploadHist">
     <![CDATA[
-        INSERT  INTO    tm_jisu_upload_hist
+        INSERT  INTO    
+        /* indexRegister.saveTmJisuUploadHist [tm_jisu_upload_hist] 테이블에 저장한다. */
+        tm_jisu_upload_hist
         ( 
                 hist_no
             ,   jisu_seq
@@ -227,7 +240,9 @@
     -->
     <insert     id="saveTmJisuShareReq">
     <![CDATA[
-        INSERT  INTO    tm_jisu_share_req
+        INSERT  INTO    
+        /* indexRegister.saveTmJisuShareReq [tm_jisu_share_req] 테이블에 저장한다. */
+        tm_jisu_share_req
         ( 
                 jisu_seq
             ,   inst_cd
@@ -264,7 +279,9 @@
     -->
     <insert     id="saveTmJisuMast">
     <![CDATA[
-        INSERT  INTO    tm_jisu_mast 
+        INSERT  INTO    
+        /* indexRegister.saveTmJisuMast [tm_jisu_mast] 테이블에 저장한다. */
+        tm_jisu_mast 
         ( 
                 jisu_id 
             ,   jisu_kor_nm 
