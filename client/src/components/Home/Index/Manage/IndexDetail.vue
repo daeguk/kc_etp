@@ -286,7 +286,6 @@ export default {
                 return false;
             }
 
-            vm.form.jisuSearchYn =   "N";
             axios.post(Config.base_url + "/user/index/getIndexJongmokList", {
                 data: {
                     searchData : vm.form.jongmokSearch
@@ -297,6 +296,7 @@ export default {
                     vm.jongmokDataList = response.data.dataList;
                 
 
+                    vm.form.jisuSearchYn =   "N";
                     if ( $.fn.dataTable.isDataTable( '#tableIndexList' ) ) {
                         tableIndexList.destroy();
                     }
@@ -343,7 +343,6 @@ export default {
 
             var vm = this;
 
-            vm.form.jisuSearchYn =   "Y";
             axios.post(Config.base_url + "/user/index/getIndexList", {
                 data: {
                     firstYn : 'Y'
@@ -355,6 +354,7 @@ export default {
                     if( indexDataList && indexDataList.length == 1 ) {
                         vm.rowData = indexDataList[0];
 
+                        vm.form.jisuSearchYn =   "Y";
                         vm.fn_getIndexDetailList( vm.rowData );
                     }
                 }
@@ -369,7 +369,6 @@ export default {
 
             var vm = this;
 
-            vm.form.jisuSearchYn =   "Y";
             axios.post(Config.base_url + "/user/index/getIndexList", {
                 data: {
                     searchData : vm.form.jisuSearch
@@ -392,13 +391,14 @@ export default {
 
 
             vm.rowData      =   rowData;
-            vm.form.jisuSearchYn =   "Y";
 
             axios.post(Config.base_url + "/user/index/getIndexDetailList", {
                 data: vm.rowData
             }).then(response => {
 
                 if (response && response.data) {
+
+                    vm.form.jisuSearchYn =   "Y";
 
                     var indexBasic = response.data.indexBasic;
                     if( indexBasic ) {
