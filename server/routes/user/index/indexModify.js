@@ -33,7 +33,10 @@ var getRegistedJisuData = function(req, res) {
             paramData   =   req.body.data;
         }
 
-        paramData.user_id = req.session.user_id;
+        paramData.user_id       =   req.session.user_id;
+        paramData.inst_cd       =   req.session.inst_cd;
+        paramData.inst_type_cd  =   req.session.inst_type_cd;
+        paramData.large_type    =   req.session.large_type;
 
         console.log( req.body.data );
 
@@ -273,7 +276,12 @@ var modifyJisu = function(req, res) {
             }else{
 
                 var paramData = JSON.parse( req.body.data );
-                paramData.user_id = reqParam.user_id;
+
+                paramData.user_id       =   req.session.user_id;
+                paramData.inst_cd       =   req.session.inst_cd;
+                paramData.inst_type_cd  =   req.session.inst_type_cd;
+                paramData.large_type    =   req.session.large_type;
+
                 console.log( paramData );
 
                 var format = { language: 'sql', indent: '' };
@@ -878,7 +886,12 @@ var deleteJisu = function(req, res) {
         }else{
 
             var paramData = req.body.data;
-            paramData.user_id = reqParam.user_id;
+
+            paramData.user_id       =   req.session.user_id;
+            paramData.inst_cd       =   req.session.inst_cd;
+            paramData.inst_type_cd  =   req.session.inst_type_cd;
+            paramData.large_type    =   req.session.large_type;
+
             console.log( paramData );
 
             var format = { language: 'sql', indent: '' };
