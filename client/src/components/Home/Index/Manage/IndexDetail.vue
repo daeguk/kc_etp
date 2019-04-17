@@ -4,22 +4,33 @@
             <v-flex grow>
                 <v-card flat>
 
-                    <v-card-title primary-title>
+                    
+                    <!-- 지수 찾기 결과 -->
+                    <v-card-title primary-title v-if="form.jisuSearchYn == 'Y'">
                         <h3 class="headline subtit" pb-0>
                             {{ indexBasic.f16002 }} |
                             <span class="grey--text">{{ indexBasic.f16013 }}</span>
                             <p>기준일 : {{ indexBasic.fmt_f12506 }}</p>
-                            <!--오른쪽 메뉴 종목으로 찾기 검색 후 
-                            <p class="text_result">
-                                6 results
-                            </p--->
                             <p class="sub_txt">Last Updated : </p>
                         </h3>
                     </v-card-title>
 
-                    <table id="tableIndexList" class="display table01_w">
-                    </table>
+
+                    <!-- 종목 찾기 결과 -->
+                    <v-card-title primary-title v-if="form.jisuSearchYn == 'N'">
+                        <h3 class="headline subtit" pb-0>
+                            {{ indexBasic.f16002 }} 편입지수 목록
+
+                            <p class="grey--text">{{ form.resultsCnt }} results</p>
+                            <p class="sub_txt">Last Updated : </p>
+                        </h3>
+                    </v-card-title>                    
+
+
+                    <table id="tableIndexList" class="display table01_w"></table>
                     
+
+
                     <v-container>
                         <v-layout row class="content_margin">
                             <v-flex grow>
@@ -56,6 +67,7 @@
                                     </v-list>
 
                                     <v-list class="pt-0" dense>
+
                                         <v-list-tile-content class="rightmenu_con rightmenu_line">
                                             <v-subheader>
                                                 <v-icon small color="primary">flash_on</v-icon>종목으로 찾기
@@ -67,8 +79,12 @@
                                                 value="e.g.005930, 삼성전자"
                                                 outline
                                                 hide-details
+
+                                                @keyup.enter ="fn_getIndexJongmokList()"
                                             ></v-text-field>
                                         </v-list-tile-content>
+
+
                                         <v-list-tile-content class="rightmenu_con ver2">
                                             <v-subheader>
                                                 <v-icon small color="primary">feedback</v-icon>지수 조치 현황
@@ -120,6 +136,8 @@
                                             </p>
                                         </v-list-tile-content>
 
+
+
                                         <v-list-tile-content class="rightmenu_con">
                                             <v-text-field
                                                 v-model="form.jisuSearch"
@@ -165,6 +183,7 @@
                                 </v-navigation-drawer>
                             </v-card>
                             <!--rightmenu end--->
+
                         </v-layout>
                     </v-container>
                 </v-card>
@@ -223,7 +242,9 @@ export default {
             rowData : {},                       /* 지수목록에서 선택된 데이터 */
             form: {
                     jisuSearch: ""              /* quick Menu 에서 지수검색 데이터 */
+                ,   jisuSearchYn : "Y"
                 ,   jongmokSearch: ""           /* quick Menu 에서 종목검색 데이터 */
+                ,   resultsCnt  : 0
             },
         };
     },
@@ -260,16 +281,56 @@ export default {
 
             var vm = this;
 
+            if( vm.form.jongmokSearch.length < 2 ) {
+                alert( "2자 이상 입력해 주세요.");
+                return false;
+            }
+
+            vm.form.jisuSearchYn =   "N";
             axios.post(Config.base_url + "/user/index/getIndexJongmokList", {
                 data: {
-                    searchData : ""
+                    searchData : vm.form.jongmokSearch
                 }
             }).then(response => {
 
                 if (response && response.data) {
                     vm.jongmokDataList = response.data.dataList;
-                }
+                
 
+                    if ( $.fn.dataTable.isDataTable( '#tableIndexList' ) ) {
+                        tableIndexList.destroy();
+                    }
+
+                    /* 유형에 따라 컬럼 헤더 변경 */
+                    tableIndexList = $('#tableIndexList').DataTable( {
+                        "processing": true,
+                        "serverSide": false,
+                        "info": false,   // control table information display field
+                        "stateSave": true,  //restore table state on page reload,
+                        "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                        paging: false,
+                        searching: false,
+                        data : [],
+                        "columnDefs": [ {} ],
+                        columns: [
+                            { "title"   :   "id"            ,   "data": "id"                    ,   "orderable" : true  },      /* ID */
+                            { "title"   :   "name"          ,   "data": "name"                  ,   "orderable" : true  },      /* 지수명 */
+                            { "title"   :   "편입비중(%)"    ,   "data": "in_out_rate"           ,   "orderable" : true  },      /* 편입비중(%) */
+                            { "title"   :   "shrs"          ,   "data": "shrs"                  ,   "orderable" : true  },      /* shrs */
+                            { "title"   :   "float_rto"     ,   "data": "float_rto"             ,   "orderable" : true  },      /* float_rto */
+                            { "title"   :   "ceiling_rto"   ,   "data": "ceiling_rto"           ,   "orderable" : true  },      /* ceiling_rto */
+                            { "title"   :   "factor_rto"    ,   "data": "factor_rto"            ,   "orderable" : true  }       /* factor_rto */
+                        ]
+                    });
+
+                    if( vm.jongmokDataList ) {
+                        tableIndexList.clear().draw();
+                        tableIndexList.rows.add( vm.jongmokDataList ).draw();
+                        tableIndexList.draw();
+
+                        vm.form.resultsCnt  =   vm.jongmokDataList.length;
+                    }
+                }
             });
 
         },
@@ -282,6 +343,7 @@ export default {
 
             var vm = this;
 
+            vm.form.jisuSearchYn =   "Y";
             axios.post(Config.base_url + "/user/index/getIndexList", {
                 data: {
                     firstYn : 'Y'
@@ -307,6 +369,7 @@ export default {
 
             var vm = this;
 
+            vm.form.jisuSearchYn =   "Y";
             axios.post(Config.base_url + "/user/index/getIndexList", {
                 data: {
                     searchData : vm.form.jisuSearch
@@ -328,7 +391,9 @@ export default {
             var vm = this;
 
 
-            vm.rowData  =   rowData;
+            vm.rowData      =   rowData;
+            vm.form.jisuSearchYn =   "Y";
+
             axios.post(Config.base_url + "/user/index/getIndexDetailList", {
                 data: vm.rowData
             }).then(response => {
@@ -349,51 +414,35 @@ export default {
                     }
 
                     /* 유형에 따라 컬럼 헤더 변경 */
-                    if( false ) {
-                        tableIndexList = $('#tableIndexList').DataTable( {
-                            "processing": true,
-                            "serverSide": false,
-                            "info": true,   // control table information display field
-                            "stateSave": true,  //restore table state on page reload,
-                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                            paging: false,
-                            searching: false,
-                            data : [],
-                            "columnDefs": [ {} ],
-                            columns: [
-                                { "title"   :   "code"      ,   "data": "isin_code"         ,   "orderable" : true  },      /* 종목코드 */
-                                { "title"   :   "name"      ,   "data": "f16002"            ,   "orderable" : true  },      /* 한글종목명 */
-                                { "title"   :   "base_prc"  ,   "data": "f03003"            ,   "orderable" : true  },      /* 전일종가 */
-                            ]
-                        });
-                    }
-                    else{
-                        tableIndexList = $('#tableIndexList').DataTable( {
-                            "processing": true,
-                            "serverSide": false,
-                            "info": true,   // control table information display field
-                            "stateSave": true,  //restore table state on page reload,
-                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                            paging: false,
-                            searching: false,
-                            data : [],
-                            "columnDefs": [ {} ],
-                            columns: [
-                                { "title"   :   "code"          ,   "data": "isin_code"             ,   "orderable" : true  },      /* 종목코드 */
-                                { "title"   :   "name"          ,   "data": "f16002"                ,   "orderable" : true  },      /* 한글종목명 */
-                                { "title"   :   "base_prc"      ,   "data": "f03003"                ,   "orderable" : true  },      /* 전일종가 */
-                                { "title"   :   "shrs"          ,   "data": "f30812"                ,   "orderable" : true  },      /* 상장주식수 */
-                                { "title"   :   "float_rto"     ,   "data": "style_includ_percnt"   ,   "orderable" : true  },      /* 스타일포함비중 */
-                                { "title"   :   "ceiling_rto"   ,   "data": "ceiling_percnt"        ,   "orderable" : true  },      /* CEILING비중 */
-                                { "title"   :   "factor_rto"    ,   "data": "f30813"                ,   "orderable" : true  }       /* 유동주식비율 */
-                            ]
-                        });
-                    }
+                    tableIndexList = $('#tableIndexList').DataTable( {
+                        "processing": true,
+                        "serverSide": false,
+                        "info": false,   // control table information display field
+                        "stateSave": true,  //restore table state on page reload,
+                        "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                        paging: false,
+                        searching: false,
+                        data : [],
+                        "columnDefs": [ {} ],
+                        columns: [
+                            { "title"   :   "code"          ,   "data": "isin_code"             ,   "orderable" : true  },      /* 종목코드 */
+                            { "title"   :   "name"          ,   "data": "f16002"                ,   "orderable" : true  },      /* 한글종목명 */
+                            { "title"   :   "base_prc"      ,   "data": "f03003"                ,   "orderable" : true  },      /* 전일종가 */
+                            { "title"   :   "shrs"          ,   "data": "f30812"                ,   "orderable" : true  },      /* 상장주식수 */
+                            { "title"   :   "float_rto"     ,   "data": "style_includ_percnt"   ,   "orderable" : true  },      /* 스타일포함비중 */
+                            { "title"   :   "ceiling_rto"   ,   "data": "ceiling_percnt"        ,   "orderable" : true  },      /* CEILING비중 */
+                            { "title"   :   "factor_rto"    ,   "data": "f30813"                ,   "orderable" : true  }       /* 유동주식비율 */
+                        ]
+                    });
 
 
-                    tableIndexList.clear().draw();
-                    tableIndexList.rows.add(indexDetailList).draw();
-                    tableIndexList.draw();
+                    if( indexDetailList ) {
+                        tableIndexList.clear().draw();
+                        tableIndexList.rows.add(indexDetailList).draw();
+                        tableIndexList.draw();
+                    }
+
+                    vm.form.resultsCnt  =   indexDetailList.length;
                 }
 
             });

@@ -9,42 +9,42 @@
     -->
     <select id="getIndexJongmokList">
     <![CDATA[
-        SELECT      base.code                           AS  code
+        SELECT      base.id                             AS  id
                 ,   base.name                           AS  name
 
-                ,   base.base_prc                       AS  base_prc
+                ,   base.in_out_rate                    AS  in_out_rate
                 ,   base.shrs                           AS  shrs
                 ,   base.float_rto                      AS  float_rto
-                ,   base.ceilling_rto                   AS  ceilling_rto
+                ,   base.ceiling_rto                    AS  ceiling_rto
                 ,   base.factor_rto                     AS  factor_rto
           FROM  (
-                    SELECT      'code01'                AS  code
-                            ,   'name01'                AS  name
+                    SELECT      'DBF001'                AS  id
+                            ,   'DBF 500 Index'         AS  name
                             
-                            ,   1                       AS  base_prc
-                            ,   2                       AS  shrs
-                            ,   3                       AS  float_rto
-                            ,   4                       AS  ceilling_rto
-                            ,   5                       AS  factor_rto
+                            ,   4.25                    AS  in_out_rate
+                            ,   111111                  AS  shrs
+                            ,   0.65                    AS  float_rto
+                            ,   1                       AS  ceiling_rto
+                            ,   0.5                     AS  factor_rto
 
                     UNION   ALL
 
-                    SELECT      'code02'                AS  code
-                            ,   'name02'                AS  name
+                    SELECT      'DBF011'                AS  id
+                            ,   'DBF KQ 대형 Index'     AS  name
                             
-                            ,   11                      AS  base_prc
-                            ,   22                      AS  shrs
-                            ,   33                      AS  float_rto
-                            ,   44                      AS  ceilling_rto
-                            ,   55                      AS  factor_rto
+                            ,   14.84                   AS  in_out_rate
+                            ,   22222                   AS  shrs
+                            ,   0.65                    AS  float_rto
+                            ,   1                       AS  ceiling_rto
+                            ,   0.1313                  AS  factor_rto
                 )       base
 
          WHERE  1 = 1
     ]]>
         <if test= 'searchData != null  and  searchData != "" ' >
     <![CDATA[
-           AND  (       base.code               LIKE    #{searchData}
-                    OR  base.name               LIKE    #{searchData}
+           AND  (       base.id                 LIKE    CONCAT( '%' , #{searchData}, '%' )
+                    OR  base.name               LIKE    CONCAT( '%' , #{searchData}, '%' )
                 )
     ]]>
         </if>
