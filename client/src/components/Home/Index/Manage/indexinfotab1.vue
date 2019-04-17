@@ -1,7 +1,7 @@
 <template>
     <v-container fluid grid-list-md pa-2 mb-4>
         <v-layout row wrap class="indexlist_ww">
-            <v-flex md6>
+            <v-flex class="w50">
                 <!--table1-->
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">INDEX Info</h4>

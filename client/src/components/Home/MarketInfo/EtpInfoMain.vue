@@ -5,10 +5,9 @@
                 slot="extension"
                 v-model="tab"
                 align-with-title
-                dark
-                color=#333
+                light
             >
-            <v-tabs-slider color="yellow"></v-tabs-slider>
+            <v-tabs-slider color="#35e0e2"></v-tabs-slider>
     
             <v-tab v-for="item in items" :key="item">
                 {{ item }}
@@ -42,8 +41,10 @@ import EtnForList   from  './EtnForList.vue'
 export default {
         data() {
             return {
+                mini: false,
+                right: null,
                 tab: null,
-                items: ['ETF 국내', 'ETF 해외', 'ETN 국내', 'ETN 해외'],
+                items: ['전체', '시장대표', '섹터', '전략', '채권', '해외', '혼합', '상품'],
     	};
     },    
     components: {
