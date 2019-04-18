@@ -65,7 +65,7 @@
                                 <v-card flat>
                                     <div class="market_card_w">
                                         <div class="market_card">
-                                            <h6> KRX300 <p>2148.80<span class="text_red">3.84(0.18%)</span></p></h6>
+                                            <h6> KOSPI <p>2148.80<span class="text_red">3.84(0.18%)</span></p></h6>
                                             <ul>
                                                 <li> ETF-1종목<br><span>Total</span> <span class="text_result2">AUM 30,000K</span></li>
                                                
@@ -79,7 +79,7 @@
                     </v-carousel-item>
                 </v-carousel>
             </v-flex>
-
+            <!---테이블1--->
             <v-flex grow xs12 mt-3>
                 <v-card flat>
                     <v-card-title primary-title>
@@ -136,11 +136,71 @@
                             </tbody>
                         </table>
                     </v-card>
-                    <v-layout row>
-                        <v-flex grow>
-                            <v-card flat lite pb-0></v-card>
-                        </v-flex>
-                        <!--rightmenu---->
+                </v-card>
+            </v-flex>
+            <!---테이블1 end--->
+
+             <!---테이블2--->
+             <v-flex grow xs12 mt-3>
+                <v-card flat>
+                    <v-card-title primary-title>
+                        <h3 class="headline subtit" pb-0>
+                            KOSDAQ 150
+                            <p>
+                                Total
+                                <span class="text_result">120</span> results
+                                <span>기준일 :2018.10.20</span>
+                            </p>
+                        </h3>
+                    </v-card-title>
+                    <v-card flat>
+                        <table id class="tbl_type" style="width:100%">
+                            <colgroup>
+                                <col width="20%">
+                                <col width="10%">
+                                <col width="10%">
+                                <col width="10%">
+                                <col width="10%">
+                                <col width="15%">
+                                <col width="10%">
+                                <col width="15%">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>종목</th>
+                                    <th>1-Week</th>
+                                    <th>1-Month비중</th>
+                                    <th>3-Month</th>
+                                    <th>YTD</th>
+                                    <th>1-Year</th>
+                                    <th>3-Year</th>
+                                    <th>5-Year</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="txt_left line2">
+                                        <span>
+                                            <b>KODEX 200</b>
+                                            <br>000100 <span><div class="text_new">new</div></span>
+                                        </span>
+                                    </td>
+                                    <td class="align_r text_blue">277166.42<br><span class="text_S">-0.14%</span></td>
+                                    <td>1.26</td>
+                                    <td>-4.51</td>
+                                    <td>3.52</td>
+                                    <td>3.32</td>
+                                    <td class="align_r text_red">220.22<br><span class="text_S">0.98%</span></td>
+                                    <td><div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>
+                                    <div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>picture_as_pdf</button><span class='tooltiptext' style='width:70px;'>PDF관리</span></div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </v-card>
+                </v-card>
+            </v-flex>
+            <!---테이블2 end--->
+                     <!--rightmenu---->
                         <v-card flat class="right_menu_w2">
                             <v-navigation-drawer
                                 v-model="drawer"
@@ -330,10 +390,7 @@
                                 </v-list>
                             </v-navigation-drawer>
                         </v-card>
-                        <!--rightmenu end--->
-                    </v-layout>
-                </v-card>
-            </v-flex>
+                 <!--rightmenu end--->
         </v-layout>
     </v-container>
 </template>
