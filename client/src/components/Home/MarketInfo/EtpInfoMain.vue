@@ -16,16 +16,28 @@
 
             <v-tabs-items v-model="tab">
                 <v-tab-item>
-                    <EtfKorList></EtfKorList>
+                    <etfkorlist></etfkorlist>
                 </v-tab-item>
                 <v-tab-item>
-                    <EtfForList></EtfForList>
+                    <etfforlist></etfforlist>
                 </v-tab-item>
                 <v-tab-item>
-                    <EtnKorList></EtnKorList>
+                    <etnkorlist></etnkorlist>
                 </v-tab-item>
                 <v-tab-item>
-                    <EtnForList></EtnForList>
+                    <etnforlist></etnforlist>
+                </v-tab-item>
+                <v-tab-item>
+                    <EtpforList5></EtpforList5>
+                </v-tab-item>
+                <v-tab-item>
+                    <EtpforList6></EtpforList6>
+                </v-tab-item>
+                <v-tab-item>
+                    <EtpforList7></EtpforList7>
+                </v-tab-item>
+                <v-tab-item>
+                    <EtpforList8></EtpforList8>
                 </v-tab-item>
         </v-tabs-items>    
       </v-flex>
@@ -37,6 +49,10 @@ import EtfKorList   from  './EtfKorList.vue'
 import EtfForList   from  './EtfForList.vue'
 import EtnKorList   from  './EtnKorList.vue'
 import EtnForList   from  './EtnForList.vue'
+import EtpforList5   from  './EtpforList5.vue'
+import EtpforList6   from  './EtpforList6.vue'
+import EtpforList7   from  './EtpforList7.vue'
+import EtpforList8   from  './EtpforList8.vue'
 
 export default {
         data() {
@@ -52,6 +68,10 @@ export default {
         EtfForList     : EtfForList,
         EtnKorList     : EtnKorList,
         EtnForList     : EtnForList,
+        EtpforList5 : EtpforList5,
+        EtpforList6 : EtpforList6,
+        EtpforList7 : EtpforList7,
+       EtpforList8 : EtpforList8,
     },
     created: function() {
     },

@@ -2,43 +2,33 @@
     <v-container>
         <v-layout row wrap class="content_margin">
             <v-flex xs12>
-                <v-carousel  light hide-delimiters height="250px" interval="10000">
-                    <v-carousel-item  class="bg_W market_layout_w">
+                <v-carousel light hide-delimiters height="250px" interval="10000">
+                    <v-carousel-item class="bg_W market_layout_w">
                         <v-layout class="market_card_layout">
                             <v-flex>
                                 <v-card flat>
                                     <div class="market_card_w line_l">
                                         <div class="market_card">
-                                            <h6> KOSPI <p>2148.80<span class="text_blue">-3.84(0.18%)</span></p></h6>
+                                            <h6>
+                                                KOSPI
+                                                <p>
+                                                    2148.80
+                                                    <span class="text_blue">-3.84(0.18%)</span>
+                                                </p>
+                                            </h6>
                                             <ul>
-                                                <li> ETF-1종목<br><span>Total</span> <span class="text_result2">AUM 30,000K</span></li>
-                                                <li> ETN-2종목 <br><span>Total</span><span class="text_result2">AUM 30,000K</span></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card  flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card">
-                                            <h6> KOSPI200 <p>2148.80<span class="text_red">3.84(0.18%)</span></p></h6>
-                                            <ul>
-                                                <li> ETF-1종목<br><span>Total</span> <span class="text_result2">AUM 30,000K</span></li>
-                                                <li> ETN-2종목 <br><span>Total</span><span class="text_result2">AUM 30,000K</span></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card">
-                                            <h6> KOSPIDAQ <p>2148.80<span class="text_red">3.84(0.18%)</span></p></h6>
-                                            <ul>
-                                                <li> ETF-1종목<br><span>Total</span> <span class="text_result2">AUM 30,000K</span></li>
-                                                <li> ETN-2종목 <br><span>Total</span><span class="text_result2">AUM 30,000K</span></li>
+                                                <li>
+                                                    ETF-1종목
+                                                    <br>
+                                                    <span>Total</span>
+                                                    <span class="text_result2">AUM 30,000K</span>
+                                                </li>
+                                                <li>
+                                                    ETN-2종목
+                                                    <br>
+                                                    <span>Total</span>
+                                                    <span class="text_result2">AUM 30,000K</span>
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
@@ -48,10 +38,78 @@
                                 <v-card flat>
                                     <div class="market_card_w">
                                         <div class="market_card">
-                                            <h6> KOSPIDAQ150 <p>2148.80<span class="text_red">3.84(0.18%)</span></p></h6>
+                                            <h6>
+                                                KOSPI200
+                                                <p>
+                                                    2148.80
+                                                    <span class="text_red">3.84(0.18%)</span>
+                                                </p>
+                                            </h6>
                                             <ul>
-                                                <li> ETF-1종목<br><span>Total</span> <span class="text_result2">AUM 30,000K</span></li>
-                                                
+                                                <li>
+                                                    ETF-1종목
+                                                    <br>
+                                                    <span>Total</span>
+                                                    <span class="text_result2">AUM 30,000K</span>
+                                                </li>
+                                                <li>
+                                                    ETN-2종목
+                                                    <br>
+                                                    <span>Total</span>
+                                                    <span class="text_result2">AUM 30,000K</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </v-card>
+                            </v-flex>
+                            <v-flex>
+                                <v-card flat>
+                                    <div class="market_card_w">
+                                        <div class="market_card">
+                                            <h6>
+                                                KOSPIDAQ
+                                                <p>
+                                                    2148.80
+                                                    <span class="text_red">3.84(0.18%)</span>
+                                                </p>
+                                            </h6>
+                                            <ul>
+                                                <li>
+                                                    ETF-1종목
+                                                    <br>
+                                                    <span>Total</span>
+                                                    <span class="text_result2">AUM 30,000K</span>
+                                                </li>
+                                                <li>
+                                                    ETN-2종목
+                                                    <br>
+                                                    <span>Total</span>
+                                                    <span class="text_result2">AUM 30,000K</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </v-card>
+                            </v-flex>
+                            <v-flex>
+                                <v-card flat>
+                                    <div class="market_card_w">
+                                        <div class="market_card">
+                                            <h6>
+                                                KOSPIDAQ150
+                                                <p>
+                                                    2148.80
+                                                    <span class="text_red">3.84(0.18%)</span>
+                                                </p>
+                                            </h6>
+                                            <ul>
+                                                <li>
+                                                    ETF-1종목
+                                                    <br>
+                                                    <span>Total</span>
+                                                    <span class="text_result2">AUM 30,000K</span>
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
@@ -59,16 +117,26 @@
                             </v-flex>
                         </v-layout>
                     </v-carousel-item>
-                    <v-carousel-item  class="bg_W">
+                    <v-carousel-item class="bg_W">
                         <v-layout class="market_card_layout">
                             <v-flex>
                                 <v-card flat>
-                                    <div class="market_card_w  line_l">
+                                    <div class="market_card_w line_l">
                                         <div class="market_card">
-                                            <h6> KOSPI <p>2148.80<span class="text_red">3.84(0.18%)</span></p></h6>
+                                            <h6>
+                                                KOSPI
+                                                <p>
+                                                    2148.80
+                                                    <span class="text_red">3.84(0.18%)</span>
+                                                </p>
+                                            </h6>
                                             <ul>
-                                                <li> ETF-1종목<br><span>Total</span> <span class="text_result2">AUM 30,000K</span></li>
-                                               
+                                                <li>
+                                                    ETF-1종목
+                                                    <br>
+                                                    <span>Total</span>
+                                                    <span class="text_result2">AUM 30,000K</span>
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
@@ -78,41 +146,71 @@
                                 <v-card flat>
                                     <div class="market_card_w">
                                         <div class="market_card">
-                                            <h6> KOSPI <p>2148.80<span class="text_red">3.84(0.18%)</span></p></h6>
+                                            <h6>
+                                                KOSPI
+                                                <p>
+                                                    2148.80
+                                                    <span class="text_red">3.84(0.18%)</span>
+                                                </p>
+                                            </h6>
                                             <ul>
-                                                <li> ETF-1종목<br><span>Total</span> <span class="text_result2">AUM 30,000K</span></li>
-                                               
+                                                <li>
+                                                    ETF-1종목
+                                                    <br>
+                                                    <span>Total</span>
+                                                    <span class="text_result2">AUM 30,000K</span>
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
                                 </v-card>
-                            </v-flex> 
+                            </v-flex>
                             <v-flex>
                                 <v-card flat>
                                     <div class="market_card_w">
                                         <div class="market_card">
-                                            <h6> KOSPI <p>2148.80<span class="text_red">3.84(0.18%)</span></p></h6>
+                                            <h6>
+                                                KOSPI
+                                                <p>
+                                                    2148.80
+                                                    <span class="text_red">3.84(0.18%)</span>
+                                                </p>
+                                            </h6>
                                             <ul>
-                                                <li> ETF-1종목<br><span>Total</span> <span class="text_result2">AUM 30,000K</span></li>
-                                               
+                                                <li>
+                                                    ETF-1종목
+                                                    <br>
+                                                    <span>Total</span>
+                                                    <span class="text_result2">AUM 30,000K</span>
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
                                 </v-card>
-                            </v-flex> 
+                            </v-flex>
                             <v-flex>
                                 <v-card flat>
                                     <div class="market_card_w">
                                         <div class="market_card">
-                                            <h6> KOSPI <p>2148.80<span class="text_red">3.84(0.18%)</span></p></h6>
+                                            <h6>
+                                                KOSPI
+                                                <p>
+                                                    2148.80
+                                                    <span class="text_red">3.84(0.18%)</span>
+                                                </p>
+                                            </h6>
                                             <ul>
-                                                <li> ETF-1종목<br><span>Total</span> <span class="text_result2">AUM 30,000K</span></li>
-                                               
+                                                <li>
+                                                    ETF-1종목
+                                                    <br>
+                                                    <span>Total</span>
+                                                    <span class="text_result2">AUM 30,000K</span>
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
                                 </v-card>
-                            </v-flex>  
+                            </v-flex>
                         </v-layout>
                     </v-carousel-item>
                 </v-carousel>
@@ -159,17 +257,42 @@
                                     <td class="txt_left line2">
                                         <span>
                                             <b>KODEX 200</b>
-                                            <br>000100 <span><div class="text_new">new</div></span>
+                                            <br>000100
+                                            <span>
+                                                <div class="text_new">new</div>
+                                            </span>
                                         </span>
                                     </td>
-                                    <td class="align_r text_blue">277166.42<br><span class="text_S">-0.14%</span></td>
+                                    <td class="align_r text_blue">
+                                        277166.42
+                                        <br>
+                                        <span class="text_S">-0.14%</span>
+                                    </td>
                                     <td>1.26</td>
                                     <td>-4.51</td>
                                     <td>3.52</td>
                                     <td>3.32</td>
-                                    <td class="align_r text_red">220.22<br><span class="text_S">0.98%</span></td>
-                                    <td><div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>
-                                    <div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>picture_as_pdf</button><span class='tooltiptext' style='width:70px;'>PDF관리</span></div></td>
+                                    <td class="align_r text_red">
+                                        220.22
+                                        <br>
+                                        <span class="text_S">0.98%</span>
+                                    </td>
+                                    <td>
+                                        <div class="tooltip">
+                                            <button
+                                                type="button"
+                                                class="btn_icon v-icon material-icons"
+                                            >equalizer</button>
+                                            <span class="tooltiptext" style="width:70px;">지수정보</span>
+                                        </div>
+                                        <div class="tooltip">
+                                            <button
+                                                type="button"
+                                                class="btn_icon v-icon material-icons"
+                                            >picture_as_pdf</button>
+                                            <span class="tooltiptext" style="width:70px;">PDF관리</span>
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -178,8 +301,8 @@
             </v-flex>
             <!---테이블1 end--->
 
-             <!---테이블2--->
-             <v-flex grow xs12 mt-3>
+            <!---테이블2--->
+            <v-flex grow xs12 mt-3>
                 <v-card flat>
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
@@ -220,17 +343,42 @@
                                     <td class="txt_left line2">
                                         <span>
                                             <b>KODEX 200</b>
-                                            <br>000100 <span><div class="text_new">new</div></span>
+                                            <br>000100
+                                            <span>
+                                                <div class="text_new">new</div>
+                                            </span>
                                         </span>
                                     </td>
-                                    <td class="align_r text_blue">277166.42<br><span class="text_S">-0.14%</span></td>
+                                    <td class="align_r text_blue">
+                                        277166.42
+                                        <br>
+                                        <span class="text_S">-0.14%</span>
+                                    </td>
                                     <td>1.26</td>
                                     <td>-4.51</td>
                                     <td>3.52</td>
                                     <td>3.32</td>
-                                    <td class="align_r text_red">220.22<br><span class="text_S">0.98%</span></td>
-                                    <td><div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>
-                                    <div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>picture_as_pdf</button><span class='tooltiptext' style='width:70px;'>PDF관리</span></div></td>
+                                    <td class="align_r text_red">
+                                        220.22
+                                        <br>
+                                        <span class="text_S">0.98%</span>
+                                    </td>
+                                    <td>
+                                        <div class="tooltip">
+                                            <button
+                                                type="button"
+                                                class="btn_icon v-icon material-icons"
+                                            >equalizer</button>
+                                            <span class="tooltiptext" style="width:70px;">지수정보</span>
+                                        </div>
+                                        <div class="tooltip">
+                                            <button
+                                                type="button"
+                                                class="btn_icon v-icon material-icons"
+                                            >picture_as_pdf</button>
+                                            <span class="tooltiptext" style="width:70px;">PDF관리</span>
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -238,205 +386,186 @@
                 </v-card>
             </v-flex>
             <!---테이블2 end--->
-                     <!--rightmenu---->
-                        <v-card flat class="right_menu_w2">
-                            <v-navigation-drawer
-                                v-model="drawer"
-                                :mini-variant="mini"
-                                app
-                                right
-                                light
-                                clipped
-                                mini-variant-width="50"
-                                width="250"
-                            >
-                                <v-list class="pa-1">
-                                    <v-list-tile v-if="mini">
-                                        <v-list-tile-action>
-                                            <v-btn icon @click.stop="mini = !mini">
-                                                <v-icon>chevron_left</v-icon>
-                                            </v-btn>
-                                        </v-list-tile-action>
-                                    </v-list-tile>
-                                    <v-list-tile avatar tag="div">
-                                        <v-list-tile-content class="rightmenu_tit">Quick Start</v-list-tile-content>
-                                        <v-list-tile-content>
-                                            <v-btn icon @click.stop="mini = !mini">
-                                                <v-icon>chevron_right</v-icon>
-                                            </v-btn>
-                                        </v-list-tile-content>
-                                    </v-list-tile>
-                                </v-list>
+            <!--rightmenu---->
+            <v-card flat class="right_menu_w2">
+                <v-navigation-drawer
+                    v-model="drawer"
+                    :mini-variant="mini"
+                    app
+                    right
+                    light
+                    clipped
+                    mini-variant-width="50"
+                    width="250"
+                >
+                    <v-list class="pa-1">
+                        <v-list-tile v-if="mini">
+                            <v-list-tile-action>
+                                <v-btn icon @click.stop="mini = !mini">
+                                    <v-icon>chevron_left</v-icon>
+                                </v-btn>
+                            </v-list-tile-action>
+                        </v-list-tile>
+                        <v-list-tile avatar tag="div">
+                            <v-list-tile-content class="rightmenu_tit">Quick Start</v-list-tile-content>
+                            <v-list-tile-content>
+                                <v-btn icon @click.stop="mini = !mini">
+                                    <v-icon>chevron_right</v-icon>
+                                </v-btn>
+                            </v-list-tile-content>
+                        </v-list-tile>
+                    </v-list>
 
-                                <v-list class="pt-0" dense>
-                                    <v-list-tile-content class="rightmenu_con2 rightmenu_line">
-                                        <v-layout class="w100">
-                                            <v-flex xs12>
-                                                <v-tabs v-model="tab" centered>
-                                                    <v-tabs-slider color="#1976d2"></v-tabs-slider>
+                    <v-list class="pt-0" dense>
+                        <v-list-tile-content class="rightmenu_con2 rightmenu_line">
+                            <v-layout class="w100">
+                                <v-flex xs12>
+                                    <v-tabs v-model="tab" centered>
+                                        <v-tabs-slider color="#1976d2"></v-tabs-slider>
 
-                                                    <v-tab
-                                                        v-for="item in items1"
-                                                        :key="item"
-                                                    >{{ item }}</v-tab>
-                                                </v-tabs>
+                                        <v-tab v-for="item in items1" :key="item">{{ item }}</v-tab>
+                                    </v-tabs>
 
-                                                <v-tabs-items v-model="tab">
-                                                    <v-tab-item>
-                                                        <!--오른쪽 메뉴 하단 리스트 영역--->
-                                                        <v-layout row class="w100 pt-2">
-                                                            <v-flex xs12>
-                                                                <v-card flat>
-                                                                    <v-list two-line subheader>
-                                                                        <v-list-tile
-                                                                            v-for="item in items2"
-                                                                            :key="item.title"
-                                                                            @click
-                                                                            class="right_menu_w3"
-                                                                        >
-                                                                            <v-list-tile-content
-                                                                                class="rm_con_h"
-                                                                            >
-                                                                                <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                                                                                <v-list-tile-sub-title>{{ item.subtitle }}</v-list-tile-sub-title>
-                                                                            </v-list-tile-content>
-                                                                        </v-list-tile>
-                                                                    </v-list>
-                                                                </v-card>
-                                                            </v-flex>
-                                                        </v-layout>
-                                                        <!--오른쪽 메뉴 하단 리스트 영역--->
-                                                    </v-tab-item>
-                                                    <v-tab-item>
-                                                        <!--오른쪽 메뉴 하단 리스트 영역--->
-                                                        <v-layout row class="w100 pt-2">
-                                                            <v-flex xs12>
-                                                                <v-card flat>
-                                                                    <v-list two-line subheader>
-                                                                        <v-list-tile
-                                                                            v-for="item in items3"
-                                                                            :key="item.title"
-                                                                            @click
-                                                                            class="right_menu_w3"
-                                                                        >
-                                                                            <v-list-tile-content
-                                                                                class="rm_con_h"
-                                                                            >
-                                                                                <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                                                                                <v-list-tile-sub-title>{{ item.subtitle }}</v-list-tile-sub-title>
-                                                                            </v-list-tile-content>
-                                                                        </v-list-tile>
-                                                                    </v-list>
-                                                                </v-card>
-                                                            </v-flex>
-                                                        </v-layout>
-                                                        <!--오른쪽 메뉴 하단 리스트 영역 end--->
-                                                    </v-tab-item>
-                                                </v-tabs-items>
-                                            </v-flex>
-                                        </v-layout>
-                                        <!---자산추가 팝업--->
-                                        <v-layout row>
-                                            <v-flex xs12>
-                                                <v-card flat>
-                                                    <v-dialog
-                                                        v-model="dialog"
-                                                        persistent
-                                                        max-width="500"
-                                                    >
-                                                        <template v-slot:activator="{ on }">
-                                                            <v-btn
-                                                                outline
-                                                                small
-                                                                color="primary"
-                                                                dark
-                                                                v-on="on"
+                                    <v-tabs-items v-model="tab">
+                                        <v-tab-item>
+                                            <!--오른쪽 메뉴 하단 리스트 영역--->
+                                            <v-layout row class="w100 pt-2">
+                                                <v-flex xs12>
+                                                    <v-card flat>
+                                                        <v-list two-line subheader>
+                                                            <v-list-tile
+                                                                v-for="item in items2"
+                                                                :key="item.title"
+                                                                @click
+                                                                class="right_menu_w3"
                                                             >
-                                                                <v-icon small color="primary">add</v-icon>자산추가
-                                                            </v-btn>
-                                                        </template>
-                                                        <v-card>
-                                                            <h5>
-                                                                <v-card-title ma-0>
-                                                                    비교자산추가
-                                                                    <v-spacer></v-spacer>
-                                                                    <v-btn
-                                                                        icon
-                                                                        dark
-                                                                        @click="dialog = false"
-                                                                    >
-                                                                        <v-icon>close</v-icon>
-                                                                    </v-btn>
-                                                                </v-card-title>
-                                                            </h5>
-                                                            <v-card-title>
-                                                                <v-text-field
-                                                                    v-model="search"
-                                                                    append-icon="search"
-                                                                    label="Search"
-                                                                    single-line
-                                                                    hide-details
-                                                                ></v-text-field>
-                                                            </v-card-title>
+                                                                <v-list-tile-content
+                                                                    class="rm_con_h"
+                                                                >
+                                                                    <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                                                                    <v-list-tile-sub-title>{{ item.subtitle }}</v-list-tile-sub-title>
+                                                                </v-list-tile-content>
+                                                            </v-list-tile>
+                                                        </v-list>
+                                                    </v-card>
+                                                </v-flex>
+                                            </v-layout>
+                                            <!--오른쪽 메뉴 하단 리스트 영역--->
+                                        </v-tab-item>
+                                        <v-tab-item>
+                                            <!--오른쪽 메뉴 하단 리스트 영역--->
+                                            <v-layout row class="w100 pt-2">
+                                                <v-flex xs12>
+                                                    <v-card flat>
+                                                        <v-list two-line subheader>
+                                                            <v-list-tile
+                                                                v-for="item in items3"
+                                                                :key="item.title"
+                                                                @click
+                                                                class="right_menu_w3"
+                                                            >
+                                                                <v-list-tile-content
+                                                                    class="rm_con_h"
+                                                                >
+                                                                    <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                                                                    <v-list-tile-sub-title>{{ item.subtitle }}</v-list-tile-sub-title>
+                                                                </v-list-tile-content>
+                                                            </v-list-tile>
+                                                        </v-list>
+                                                    </v-card>
+                                                </v-flex>
+                                            </v-layout>
+                                            <!--오른쪽 메뉴 하단 리스트 영역 end--->
+                                        </v-tab-item>
+                                    </v-tabs-items>
+                                </v-flex>
+                            </v-layout>
+                            <!---자산추가 팝업--->
+                            <v-layout row>
+                                <v-flex xs12>
+                                    <v-card flat>
+                                        <v-dialog v-model="dialog" persistent max-width="500">
+                                            <template v-slot:activator="{ on }">
+                                                <v-btn outline small color="primary" dark v-on="on">
+                                                    <v-icon small color="primary">add</v-icon>자산추가
+                                                </v-btn>
+                                            </template>
+                                            <v-card>
+                                                <h5>
+                                                    <v-card-title ma-0>
+                                                        비교자산추가
+                                                        <v-spacer></v-spacer>
+                                                        <v-btn icon dark @click="dialog = false">
+                                                            <v-icon>close</v-icon>
+                                                        </v-btn>
+                                                    </v-card-title>
+                                                </h5>
+                                                <v-card-title>
+                                                    <v-text-field
+                                                        v-model="search"
+                                                        append-icon="search"
+                                                        label="Search"
+                                                        single-line
+                                                        hide-details
+                                                    ></v-text-field>
+                                                </v-card-title>
 
-                                                            <!--비교자산 탭--->
+                                                <!--비교자산 탭--->
 
-                                                            <v-layout row wrap>
-                                                                <v-flex xs12>
-                                                                    <v-tabs
-                                                                        fixed-tabs
-                                                                        color="cyan"
-                                                                        dark
-                                                                        v-model="tab2"
-                                                                    >
-                                                                        <v-tabs-slider
-                                                                            color="#00fffc"
-                                                                        ></v-tabs-slider>
-                                                                        <v-tab
-                                                                            v-for="item in items4"
-                                                                            :key="item"
-                                                                        >{{ item }}</v-tab>
-                                                                    </v-tabs>
-                                                                    <v-tabs-items v-model="tab2">
-                                                                        <v-tab-item>
-                                                                            <infopoptab1></infopoptab1>
-                                                                        </v-tab-item>
-                                                                        <v-tab-item>
-                                                                            <infopoptab2></infopoptab2>
-                                                                        </v-tab-item>
-                                                                        <v-tab-item>
-                                                                            <infopoptab3></infopoptab3>
-                                                                        </v-tab-item>
-                                                                    </v-tabs-items>
-                                                                </v-flex>
-                                                            </v-layout>
-                                                            <!--비교자산 탭end--->
-                                                        </v-card>
-                                                        <v-card class="pop_btn_w text-xs-center">
-                                                            <v-btn
-                                                                depressed
-                                                                color="primary"
-                                                                @click="dialog = false"
-                                                            >추가하기</v-btn>
-                                                        </v-card>
-                                                    </v-dialog>
-                                                </v-card>
-                                            </v-flex>
-                                        </v-layout>
-                                        <!--자산추가 팝업 end--->
-                                    </v-list-tile-content>
-                                </v-list>
-                            </v-navigation-drawer>
-                        </v-card>
-                 <!--rightmenu end--->
+                                                <v-layout row wrap>
+                                                    <v-flex xs12>
+                                                        <v-tabs
+                                                            fixed-tabs
+                                                            color="cyan"
+                                                            dark
+                                                            v-model="tab2"
+                                                        >
+                                                            <v-tabs-slider color="#00fffc"></v-tabs-slider>
+                                                            <v-tab
+                                                                v-for="item in items4"
+                                                                :key="item"
+                                                            >{{ item }}</v-tab>
+                                                        </v-tabs>
+                                                        <v-tabs-items v-model="tab2">
+                                                            <v-tab-item>
+                                                                <marketinfo1></marketinfo1>
+                                                            </v-tab-item>
+                                                            <v-tab-item>
+                                                                <marketinfo2></marketinfo2>
+                                                            </v-tab-item>
+                                                            <v-tab-item>
+                                                                <marketinfo3></marketinfo3>
+                                                            </v-tab-item>
+                                                        </v-tabs-items>
+                                                    </v-flex>
+                                                </v-layout>
+                                                <!--비교자산 탭end--->
+                                            </v-card>
+                                            <v-card class="pop_btn_w text-xs-center">
+                                                <v-btn
+                                                    depressed
+                                                    color="primary"
+                                                    @click="dialog = false"
+                                                >추가하기</v-btn>
+                                            </v-card>
+                                        </v-dialog>
+                                    </v-card>
+                                </v-flex>
+                            </v-layout>
+                            <!--자산추가 팝업 end--->
+                        </v-list-tile-content>
+                    </v-list>
+                </v-navigation-drawer>
+            </v-card>
+            <!--rightmenu end--->
         </v-layout>
     </v-container>
 </template>
 
 <script>
-import infopoptab1 from "../index/manage/infopoptab1.vue";
-import infopoptab2 from "../index/manage/infopoptab2.vue";
-import infopoptab3 from "../index/manage/infopoptab3.vue";
+import marketinfo1 from "./marketinfo1.vue";
+import marketinfo2 from "./marketinfo2.vue";
+import marketinfo3 from "./marketinfo3.vue";
 import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
@@ -454,6 +583,9 @@ export default {
             results: [],
             tab: null,
             tab2: null,
+            toggle_one: "",
+            search: "",
+            drawer: "",
             items1: ["전체", "시장대표"],
             items: [
                 { title: "Home", icon: "dashboard" },
@@ -495,9 +627,9 @@ export default {
         };
     },
     components: {
-        infopoptab1: infopoptab1,
-        infopoptab2: infopoptab2,
-        infopoptab3: infopoptab3
+        marketinfo1: marketinfo1,
+        marketinfo2: marketinfo2,
+        marketinfo3: marketinfo3
     },
     computed: {},
     mounted: function() {

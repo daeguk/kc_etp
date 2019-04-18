@@ -1,102 +1,133 @@
 <template>
     <v-container>
         <v-layout row wrap class="content_margin">
-            <v-flex grow>
+            <v-flex xs12>
+                <v-card flat height="300px">
+                   map
+                </v-card>
+            </v-flex>
+            <!---테이블1--->
+            <v-flex grow xs12 mt-3>
                 <v-card flat>
-                    <v-layout row>
-                        <v-flex xs12>
-                            <!---content내용--->
-                            <v-card flat ma-3>
-                                <div class="title01_w">
-                                    <v-card-title primary-title>
-                                        <div class="title_wrap01">
-                                            <h3 class="headline mb-0">
-                                                TIGER 미국달러선물레버러지
-                                                <span
-                                                    class="grey--text"
-                                                >261110</span>
-                                            </h3>
-                                            <div class="right_btn">
-                                                <v-layout align-right>
-                                                    <v-flex xs12 sm4 text-xs-center>
-                                                        <div class="btn_r">
-                                                            <v-btn
-                                                                outline
-                                                                color="indigo"
-                                                                small
-                                                                :to="{path:'/index/manage', query:{'activeTab':'2'}}"
-                                                            >목록으로 돌아가기</v-btn>
-                                                        </div>
-                                                    </v-flex>
-                                                </v-layout>
-                                            </div>
-                                        </div>
-                                    </v-card-title>
-                                    <v-card-text>
-                                        <p class="title_ex">
-                                            TIGER 미국달러선물레버리지에 관한 내용이 들어갑니다
-                                            TIGER 미국달러선물레버리지에 관한 내용이 들어갑니다
-                                            TIGER 미국달러선물레버리지에 관한 내용이 들어갑니다
-                                            TIGER 미국달러선물레버리지에 관한 내용이 들어갑니다
-                                            TIGER 미국달러선물레버리지에 관한 내용이 들어갑니다
-                                        </p>
-                                    </v-card-text>
-                                </div>
-                                <div class="graph_01_w">
-                                    <div class="sub_title_num">
-                                        9000
-                                        <span class="text_blue">-25(-0.28%)</span>
-                                        <p>Last Updated : 2018.09.23. 09:40:20</p>
-                                    </div>
-                                    <v-card flat class="graph_toggle">
-                                        <v-flex xs12 sm6 class="py-2">
-                                            <v-btn-toggle v-model="toggle_one" class="toggle_01">
-                                                <v-btn flat value="1D" v-on:click="Indexchart('1D')">1D</v-btn>
-                                                <v-btn flat value="1W" v-on:click="Indexchart('1W')">1W</v-btn>
-                                                <v-btn flat value="1M" v-on:click="Indexchart('1M')">1M</v-btn>
-                                                <v-btn flat value="3M" v-on:click="Indexchart('3M')">3M</v-btn>
-                                                <v-btn flat value="6M" v-on:click="Indexchart('6M')">6M</v-btn>
-                                                <v-btn flat value="1Y" v-on:click="Indexchart('1Y')">1Y</v-btn>
-                                                <v-btn flat value="Total" v-on:click="Indexchart('TOTAL')">Total</v-btn>
-                                        </v-btn-toggle>
-                                        </v-flex>
-                                    </v-card>
-                                    <div
-                                        id="index_chart_div"
-                                        class="graph_01"
-                                        style="height:300px;background-color:#f6f6f6;"
-                                    ></div>
-                                </div>
+                    <v-card-title primary-title>
+                        <h3 class="headline subtit" pb-0>
+                            United States
+                            <p>
+                                Total
+                                <span class="text_result">120</span> results
+                                <span>기준일 :2018.10.20</span>
+                            </p>
+                        </h3>
+                    </v-card-title>
+                    <v-card flat>
+                        <table id class="tbl_type" style="width:100%">
+                            <colgroup>
+                                <col width="20%">
+                                <col width="10%">
+                                <col width="10%">
+                                <col width="10%">
+                                <col width="10%">
+                                <col width="15%">
+                                <col width="10%">
+                                <col width="15%">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>종목</th>
+                                    <th>INAV</th>
+                                    <th>전일최종NAV</th>
+                                    <th>추적오차율</th>
+                                    <th>괴리율</th>
+                                    <th>기초지수</th>
+                                    <th>지수현재가</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="txt_left line2">
+                                        <span>
+                                            <b>KODEX 200</b>
+                                            <br>000100 <span><div class="text_new">new</div></span>
+                                        </span>
+                                    </td>
+                                    <td class="align_r text_blue">277166.42<br><span class="text_S">-0.14%</span></td>
+                                    <td>1.26</td>
+                                    <td>-4.51</td>
+                                    <td>3.52</td>
+                                    <td>3.32</td>
+                                    <td class="align_r text_red">220.22<br><span class="text_S">0.98%</span></td>
+                                    <td><div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>
+                                    <div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>picture_as_pdf</button><span class='tooltiptext' style='width:70px;'>PDF관리</span></div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </v-card>
+                </v-card>
+            </v-flex>
+            <!---테이블1 end--->
+            <!---테이블2--->
+            <v-flex grow xs12 mt-3>
+                <v-card flat>
+                    <v-card-title primary-title>
+                        <h3 class="headline subtit" pb-0>
+                            China
+                            <p>
+                                Total
+                                <span class="text_result">120</span> results
+                                <span>기준일 :2018.10.20</span>
+                            </p>
+                        </h3>
+                    </v-card-title>
+                    <v-card flat>
+                        <table id class="tbl_type" style="width:100%">
+                            <colgroup>
+                                <col width="20%">
+                                <col width="10%">
+                                <col width="10%">
+                                <col width="10%">
+                                <col width="10%">
+                                <col width="15%">
+                                <col width="10%">
+                                <col width="15%">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>종목</th>
+                                    <th>INAV</th>
+                                    <th>전일최종NAV</th>
+                                    <th>추적오차율</th>
+                                    <th>괴리율</th>
+                                    <th>기초지수</th>
+                                    <th>지수현재가</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="txt_left line2">
+                                        <span>
+                                            <b>KODEX 200</b>
+                                            <br>000100 <span><div class="text_new">new</div></span>
+                                        </span>
+                                    </td>
+                                    <td class="align_r text_blue">277166.42<br><span class="text_S">-0.14%</span></td>
+                                    <td>1.26</td>
+                                    <td>-4.51</td>
+                                    <td>3.52</td>
+                                    <td>3.32</td>
+                                    <td class="align_r text_red">220.22<br><span class="text_S">0.98%</span></td>
+                                    <td><div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>
+                                    <div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>picture_as_pdf</button><span class='tooltiptext' style='width:70px;'>PDF관리</span></div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </v-card>
+                </v-card>
+            </v-flex>
+            <!---테이블2 end--->
 
-                                <div class="tab2_w">
-                                    <v-layout row wrap>
-                                        <v-flex xs12>
-                                            <v-tabs
-                                                fixed-tabs
-                                                light
-                                                v-model="tab3"
-                                                align-with-title
-                                            >
-                                                <v-tabs-slider color="#1976d2"></v-tabs-slider>
-
-                                                <v-tab v-for="item in items5" :key="item">{{ item }}</v-tab>
-                                            </v-tabs>
-
-                                            <v-tabs-items v-model="tab3">
-                                                <v-tab-item>
-                                                    <ETPinfotab1></ETPinfotab1>
-                                                </v-tab-item>
-                                                <v-tab-item>
-                                                    <ETPinfotab2></ETPinfotab2>
-                                                </v-tab-item>
-                                            </v-tabs-items>
-                                        </v-flex>
-                                    </v-layout>
-                                </div>
-                            </v-card>
-                            <!---content내용end--->
-                        </v-flex>
-                        <!--rightmenu---->
+                     <!--rightmenu---->
                         <v-card flat class="right_menu_w2">
                             <v-navigation-drawer
                                 v-model="drawer"
@@ -257,13 +288,13 @@
                                                                     </v-tabs>
                                                                     <v-tabs-items v-model="tab2">
                                                                         <v-tab-item>
-                                                                            <!--infopoptab1></infopoptab1-->
+                                                                            <infopoptab1></infopoptab1>
                                                                         </v-tab-item>
                                                                         <v-tab-item>
-                                                                            <!--infopoptab2></infopoptab2-->
+                                                                            <infopoptab2></infopoptab2>
                                                                         </v-tab-item>
                                                                         <v-tab-item>
-                                                                            <!--infopoptab3></infopoptab3-->
+                                                                            <infopoptab3></infopoptab3>
                                                                         </v-tab-item>
                                                                     </v-tabs-items>
                                                                 </v-flex>
@@ -286,20 +317,15 @@
                                 </v-list>
                             </v-navigation-drawer>
                         </v-card>
-                        <!--rightmenu end--->
-                    </v-layout>
-                </v-card>
-            </v-flex>
+                 <!--rightmenu end--->
         </v-layout>
     </v-container>
 </template>
 
 <script>
-import infopoptab1 from "@/components/Home/index/manage/infopoptab1.vue";
-import infopoptab2 from "@/components/Home/index/manage/infopoptab2.vue";
-import infopoptab3 from "@/components/Home/index/manage/infopoptab3.vue";
-import ETPinfotab1 from "@/components/Home/MarketInfo/ETPinfotab1.vue";
-import ETPinfotab2 from "@/components/Home/MarketInfo/ETPinfotab2.vue";
+import infopoptab1 from "../index/manage/infopoptab1.vue";
+import infopoptab2 from "../index/manage/infopoptab2.vue";
+import infopoptab3 from "../index/manage/infopoptab3.vue";
 import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
@@ -317,10 +343,6 @@ export default {
             results: [],
             tab: null,
             tab2: null,
-            tab3: null,
-            toggle_one : "",
-            search : "",
-            drawer : "",
             items1: ["전체", "시장대표"],
             items: [
                 { title: "Home", icon: "dashboard" },
@@ -358,20 +380,17 @@ export default {
                     subtitle: "122630"
                 }
             ],
-            items4: ["ETF", "ETN", "INDEX"],
-            items5: ["기본정보", "분석정보"]
+            items4: ["ETF", "ETN", "INDEX"]
         };
     },
     components: {
         infopoptab1: infopoptab1,
         infopoptab2: infopoptab2,
-        infopoptab3: infopoptab3,
-        ETPinfotab1: ETPinfotab1,
-        ETPinfotab2: ETPinfotab2,
+        infopoptab3: infopoptab3
     },
     computed: {},
     mounted: function() {
-        //this.getEtfKorList(); 
+        this.getEtfKorList();
     },
     created: function() {},
     beforeDestroy() {},
@@ -414,4 +433,3 @@ export default {
     }
 };
 </script>
-
