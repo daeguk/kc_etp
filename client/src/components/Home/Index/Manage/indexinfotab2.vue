@@ -4,9 +4,93 @@
             <v-flex xs12 flat>
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">Performance</h4>
-                    <div class="graph_02_w" style="height:100px;">그래프 들어갑니다</div>
-                    <v-card flat>
-                        <table id="perf_table" class="display table01_w" style="width:100%">
+                    <div class="graph_02_w">
+                        <div class="graph_box" style="width:28%">그래프 라인</div>
+                        <div style="width:8%">1-Week</div>
+                        <div style="width:8%">1-Month비중</div>
+                        <div style="width:8%">1-Month비중</div>
+                        <div style="width:8%">1-Month비중</div>
+                        <div style="width:8%">1-Month비중</div>
+                        <div style="width:8%">1-Month비중</div>
+                        <div style="width:8%">1-Month비중</div>
+                        <div style="width:8%">1-Month비중</div>
+                        <div style="width:8%"></div>
+                    </div>
+                   <v-card flat>
+                     <table id="importance_grid2" class="tbl_type" style="width:100%">
+                         <colgroup>
+                            <col width="28%">
+                             <col width="width:8%">
+                              <col width="width:8%">
+                               <col width="width:8%">
+                                <col width="width:8%">
+                                 <col width="width:8%">
+                                  <col width="width:8%">
+                                   <col width="width:8%">
+                                    <col width="width:8%">
+                                     <col width="width:8%">
+                        </colgroup>
+                         <thead>
+                          <tr>
+                             <th></th>
+                             <th>1-Week</th>
+                             <th>1-Month비중</th>
+                             <th>3-Month</th>
+                             <th>YTD</th>
+                             <th>1-Year</th>
+                             <th>3-Year</th>
+                             <th>5-Year</th>
+                             <th>10-Year</th>
+                             <th></th>
+                           </tr>
+                           </thead>
+                           <tbody>
+                               <tr>
+                               <td class="txt_left line2"><img src="/assets/img/icon_bar01.png">
+                                   <span> TIGER 미국달러선물레버러지 <br>(Price)</span>
+                                </td>
+                                <td>0.30</td>
+                                <td>1.26</td>
+                                <td>-4.51</td>
+                                <td>3.52</td>
+                                <td>3.32</td>
+                                <td>14.23</td>
+                                <td>13.25</td>
+                                <td>-</td>
+                                <td><div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:50px;'>삭제</span></div></td>
+                                </tr>
+                                <tr>
+                               <td class="txt_left line2"><img src="/assets/img/icon_bar02.png">
+                                   <span> TIGER 미국달러선물레버러지 <br>(Price)</span>
+                                </td>
+                                <td>0.30</td>
+                                <td>1.26</td>
+                                <td>-4.51</td>
+                                <td>3.52</td>
+                                <td>3.32</td>
+                                <td>14.23</td>
+                                <td>13.25</td>
+                                <td>-</td>
+                                <td><div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:50px;'>삭제</span></div></td>
+                                </tr>
+                                <tr>
+                               <td class="txt_left line2"><img src="/assets/img/icon_bar03.png">
+                                   <span> F-USDKRW</span>
+                                </td>
+                                <td>0.30</td>
+                                <td>1.26</td>
+                                <td>-4.51</td>
+                                <td>3.52</td>
+                                <td>3.32</td>
+                                <td>14.23</td>
+                                <td>13.25</td>
+                                <td>-</td>
+                                <td><div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:50px;'>삭제</span></div></td>
+                                </tr>
+                           </tbody>  
+                       </table> 
+
+                       <!--table id="perf_table" class="display table01_w" style="width:100%">
                             <thead>
                                 <tr>
                                     <th></th>
@@ -22,8 +106,7 @@
                                     <th></th>
                                 </tr>
                             </thead>
-                        </table>
-                      
+                        </table-->  
                     </v-card>
                     <!---자산추가 팝업--->
                     <v-layout row>
@@ -250,7 +333,7 @@ export default {
                 { "data": "Year3", "orderable": false, className: 'dt-body-right'},
                 { "data": "Year5", "orderable": false, className: 'dt-body-right'},
                 { "data": "Year10", "orderable": false, className: 'dt-body-right'},
-                {"data": null, "align":"center", className: 'dt-body-center', defaultContent:""}
+                {"data": null, "align":"center", className: 'dt-body-center', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:40px;'>삭제</span></div>"}
             ]
         }); 
     
