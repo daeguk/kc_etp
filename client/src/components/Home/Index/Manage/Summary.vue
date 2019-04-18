@@ -86,6 +86,7 @@ export default {
                 marginW: 10,
                 marginH: 20,
                 code: "DBF001",
+                market_id: "M168",
                 chartColor: "#B39DDB"
             },
             chartItem2: {
@@ -95,6 +96,7 @@ export default {
                 marginW: 10,
                 marginH: 20,
                 code: "DBF002",
+                market_id: "M168",
                 chartColor: "#9FA8DA"
             },
             chartItem3: {
@@ -104,6 +106,7 @@ export default {
                 marginW: 10,
                 marginH: 20,
                 code: "62801",
+                market_id: "M168",
                 chartColor: "#90CAF9"
             },
             boxItem1: {
@@ -164,6 +167,11 @@ export default {
 
                         vm.cardItem1.name = response.data.results1[0].F16002;
                         vm.chartItem1.code = response.data.results1[0].F16013;
+
+                        
+                        //debugger;
+                        vm.chartItem1.market_id = response.data.results1[0].market_id;
+
                         vm.cardItem1.subTitle =
                             response.data.results1[0].F16002;
                         vm.cardItem1.close_idx =
@@ -175,6 +183,7 @@ export default {
 
                         vm.cardItem2.name = response.data.results2[0].F16002;
                         vm.chartItem2.code = response.data.results2[0].F16013;
+                        vm.chartItem2.market_id = response.data.results2[0].MARKET_ID;
                         vm.cardItem2.subTitle =
                             response.data.results2[0].F16002;
                         vm.cardItem2.close_idx =
