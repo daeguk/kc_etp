@@ -581,6 +581,55 @@ var getIndexImportanceList = function (req, res) {
 
 
 
+/*
+* <!--지수 상세 -> 분석정보 Performance 정보[선택한 지수정보, 지수에 속한 ETP 정보 4개 까지] -->
+*/
+
+var getIndexAnalysisInfo = function (req, res) {
+    try {
+        console.log('indexSummary=>getIndexAnalysisInfo 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        // var options = {id:'admin'};
+        
+        var options = {
+            large_type : req.session.large_type,
+            jisu_cd: req.query.jisu_cd,
+            market_id: req.query.market_id
+        };
+
+        util.log("options", JSON.stringify(options));
+
+        var stmt = mapper.getStatement('index', 'getIndexAnalysisInfo', options, {language:'sql', indent: '  '});
+        
+        // 대입 연산자 치환
+        stmt = stmt.replace(/\: =/g,':='); 
+     
+        console.log(stmt);
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
+
+
 module.exports.getIndexSummaryInfo = getIndexSummaryInfo;
 module.exports.getInfoOpenReqList = getInfoOpenReqList;
 module.exports.updateIndexOpenYn = updateIndexOpenYn;
@@ -593,3 +642,4 @@ module.exports.getindexSubscribeList = getindexSubscribeList;
 module.exports.getETFList = getETFList; 
 module.exports.getETNList = getETNList; 
 module.exports.getIndexImportanceList = getIndexImportanceList;
+module.exports.getIndexAnalysisInfo = getIndexAnalysisInfo;

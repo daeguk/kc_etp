@@ -29,42 +29,7 @@
         </v-card> 
          </v-flex>    
          <v-flex>
-              <v-dialog
-        v-model="dialog"
-        max-width="450"
-      >
-        <v-card class="pop_alert">
-        <h6><v-icon class="confirm">help</v-icon> Confirm</h6>
-        <!--h6><v-icon class="warning_1">warning</v-icon> Warning</h6>
-        <h6><v-icon class="error_1">error</v-icon> Error</h6-->
-          <v-card-title>정보 공개 요청 {{message}} 하시겠습니까?</v-card-title>
-  
-         
-          <v-card-actions>
-            <v-spacer></v-spacer>
-  
-            <v-btn
-              class="pop_alret_yesbtn"
-              depressed
-              dark
-              small
-              @click="updateIndexOpenYn('Y');"
-            >
-              예
-            </v-btn>
-  
-            <v-btn
-              class="pop_alret_nobtn"
-              depressed
-              dark
-              small
-              @click="updateIndexOpenYn('N');"
-            >
-              아니요
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+             <ConfirmDialog ref="confirm"></ConfirmDialog>
          </v-flex>
          
         </v-layout>
@@ -82,24 +47,31 @@ import $      from 'jquery'
 import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 import Config from "@/js/config.js";
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
+
 var reqTable;
 
 export default {
+    components: {
+        ConfirmDialog: ConfirmDialog
+    },
     props: [],
     data() {
         return {
             selected: [],
-            dialog: false,
-            message: '승인',
+            message: "",
             reqFlag: true,
             results: [],
         };
     },
     mounted: function() {
         var vm = this;
-         
-         $('#index_table, tbody').on('click', 'button', function () {
+        
+        this.$root.$confirm = this.$refs.confirm;
+
+        $('#index_table, tbody').on('click', 'button', function () {
             var data = reqTable.row($(this).parents('tr')).data();
+            vm.selected = data;
            // alert("Name = " + JSON.stringify(data));
             if ($(this).attr('name') == "ok") {
                 vm.dialogOpen('1', data);
@@ -162,18 +134,29 @@ export default {
                     }
                 });
         }, 
-        dialogOpen: function(flag, item) {
-            this.selected = item;
+        async dialogOpen(flag, item) {
+            
             if (flag == '1') {
-                this.message = '승인';
+                this.message = "정보 공개 요청 승인 하시겠습니까?";
                 this.reqFlag = true;
             } else {
-                this.message = '거절';
+                this.message = "정보 공개 요청 거절 하시겠습니까?";
                 this.reqFlag = false; 
             }
-            this.dialog = true;
+
+
+            if (await this.$root.$confirm.open(
+					'승인',
+					'정보 공개 요청 승인 하시겠습니까?',
+					{ color: 'red' }
+				)
+			) {
+
+                this.updateIndexOpenYn(this.$root.$confirm.val, item);                
+            }
         },
-        updateIndexOpenYn: function(flag) {
+        
+        updateIndexOpenYn: function(flag, item) {
             this.dialog = false;
 
             if(flag == 'Y') {

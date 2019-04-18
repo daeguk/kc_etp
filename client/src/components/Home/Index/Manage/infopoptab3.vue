@@ -1,4 +1,5 @@
 <template>
+<v-card>
  <v-card flat>
     
     
@@ -13,6 +14,11 @@
         </thead>   
     </table>
   </v-card>
+      <!--비교자산 탭end--->
+    <v-card class="pop_btn_w text-xs-center">
+        <v-btn depressed color="primary" @click="selectData()" >추가하기</v-btn>
+    </v-card>
+</v-card>
 </template>
 
 
@@ -108,13 +114,14 @@ var jisu_grid = null;
                    
                 });
         }, 
-        getReplace: function(text) {
-            if (text) {
-                return text.replace(/,/gi,"</br>");
-            }
-        },
-        movePage: function(jisu_cd, market_id) {
-            this.$router.push({path: '/index/manage/IndexListdetail', query :{'jisu_cd':jisu_cd, 'market_id':market_id}});
+        selectData: function() {
+           
+
+            console.log("data=" + jisu_grid.rows( { selected: true } ).count());
+            var data = jisu_grid.rows( { selected: true } ).data();
+           
+            this.$emit("selectedItem", data);
+            jisu_grid.rows().deselect(); 
         }
 
         

@@ -1,18 +1,24 @@
 <template>
- <v-card flat>
-    
-    
+<v-card>
+    <v-card flat>
+        
+        
 
-    <table id="etn_grid" class="display" style="width:100%">
-        <thead>
-            <tr>
-                <th><input  type='checkbox' class="selectAll select-checkbox"></input></th>
-                <th>ID</th>
-                <th>종목/지수명</th>
-            </tr>
-        </thead>   
-    </table>
-  </v-card>
+        <table id="etn_grid" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th><input  type='checkbox' class="selectAll select-checkbox"></input></th>
+                    <th>ID</th>
+                    <th>종목/지수명</th>
+                </tr>
+            </thead>   
+        </table>
+    </v-card>
+    <!--비교자산 탭end--->
+    <v-card class="pop_btn_w text-xs-center">
+        <v-btn depressed color="primary" @click="selectData()" >추가하기</v-btn>
+    </v-card>
+</v-card>
 </template>
 
 
@@ -108,6 +114,15 @@ var etn_grid = null;
                    
                 });
         }, 
+        selectData: function() {
+           
+
+            console.log("data=" + etn_grid.rows( { selected: true } ).count());
+            var data = etn_grid.rows( { selected: true } ).data();
+           
+            this.$emit("selectedItem", data);
+            etn_grid.rows().deselect(); 
+        }
     }
   }
 </script>

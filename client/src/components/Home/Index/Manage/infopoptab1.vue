@@ -1,15 +1,23 @@
 <template>
+<v-card>
+                       
  <v-card flat>
     <table id="etf_grid" class="display" style="width:100%;">
         <thead>
             <tr>
-                <th><input type='checkbox' color='primary' checked="checked" label='' value=''></th>
+                <th><input type='checkbox' class="selectAll select-checkbox" color='primary'  label='' value=''></th>
                 <th>ID</th>
                 <th>종목/지수명</th>
             </tr>
         </thead>   
     </table>
   </v-card>
+
+    <!--비교자산 탭end--->
+    <v-card class="pop_btn_w text-xs-center">
+        <v-btn depressed color="primary" @click="selectData()" >추가하기</v-btn>
+    </v-card>
+</v-card>
 </template>
 
 
@@ -52,6 +60,7 @@ var etf_grid = null;
         vm.getInfoIndexList();
 
         $('.selectAll').on('click', function () {
+           
             if ($(this).is( ":checked" )) {
                 etf_grid.rows().select();        
             } else {
@@ -105,6 +114,18 @@ var etf_grid = null;
                    
                 });
         }, 
+
+        selectData: function() {
+           
+
+            console.log("data=" + etf_grid.rows( { selected: true } ).count());
+            var data = etf_grid.rows( { selected: true } ).data();
+           
+            this.$emit("selectedItem", data);
+
+            etf_grid.rows().deselect(); 
+
+        }
     }
   }
 </script>

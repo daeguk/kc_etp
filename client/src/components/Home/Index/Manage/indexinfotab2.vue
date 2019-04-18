@@ -6,29 +6,23 @@
                     <h4 class="mb-0">Performance</h4>
                     <div class="graph_02_w" style="height:100px;">그래프 들어갑니다</div>
                     <v-card flat>
-                        <v-data-table
-                            :headers="headers"
-                            :items="desserts"
-                            class="table_line2 indexinfo_table01"
-                            
-                        >
-                            <template v-slot:items="props">
-                                <td class="text-xs-right">
-                                    <img src="/assets/img/icon_bar01.png">
-                                    <!--img src="/assets/img/icon_bar02.png"-->
-                                    <!--img src="/assets/img/icon_bar03.png"-->
-                                </td>
-                                <td class="text-xs-left">{{ props.item.name }}</td>
-                                <td class="text-xs-center">{{ props.item.Week1 }}</td>
-                                <td class="text-xs-center">{{ props.item.Month1 }}</td>
-                                <td class="text-xs-center">{{ props.item.Month3 }}</td>
-                                <td class="text-xs-center">{{ props.item.YTD }}</td>
-                                <td class="text-xs-center">{{ props.item.Year1 }}</td>
-                                <td class="text-xs-center">{{ props.item.Year3 }}</td>
-                                <td class="text-xs-center">{{ props.item.Year5 }}</td>
-                                <td class="text-xs-center">{{ props.item.Year10 }}</td>
-                            </template>
-                        </v-data-table>
+                        <table id="perf_table" class="display table01_w" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th>1-Week</th>
+                                    <th>1-Month</th>
+                                    <th>3-Month</th>
+                                    <th>YTD</th>
+                                    <th>1-Year</th>
+                                    <th>3-Year</th>
+                                    <th>5-Year</th>
+                                    <th>10-Year</th>
+                                </tr>
+                            </thead>
+                        </table>
+                      
                     </v-card>
                     <!---자산추가 팝업--->
                     <v-layout row>
@@ -78,26 +72,18 @@
                                                 </v-tabs>
                                                  <v-tabs-items v-model="tab">
                                                     <v-tab-item>
-                                                        <infopoptab1></infopoptab1>
+                                                        <infopoptab1 @selectedItem="getSelectedItem"></infopoptab1>
                                                     </v-tab-item>
                                                     <v-tab-item>
-                                                        <infopoptab2></infopoptab2>
+                                                        <infopoptab2 @selectedItem="getSelectedItem"></infopoptab2>
                                                     </v-tab-item>
                                                     <v-tab-item>
-                                                        <infopoptab3></infopoptab3>
+                                                        <infopoptab3 @selectedItem="getSelectedItem"></infopoptab3>
                                                     </v-tab-item>
                                                 </v-tabs-items>
                                             </v-flex>
                                         </v-layout>
-                                        <!--비교자산 탭end--->
-                                        <v-card class="pop_btn_w text-xs-center">
-                                            <v-btn
-                                                depressed
-                                                color="primary"
-                                                @click="dialog = false"
-                                            >추가하기</v-btn>
-                                        </v-card>
-                                    </v-card>
+                                    </v-card>   
                                 </v-dialog>
                             </v-card>
                         </v-flex>
@@ -175,6 +161,7 @@ import buttons from 'datatables.net-buttons'
 import select from 'datatables.net-select'
 import Config from '@/js/config.js'
 var importance_grid = null;
+var perf_table = null;
 export default {
     data() {
         return {
@@ -185,68 +172,7 @@ export default {
             results: [],
             importance_cnt:0,
             search:"",
-            headers: [
-                {
-                    text: "",
-                    align: "right",
-                    sortable: false,
-                    value: "",
-                    width: 10
-                },
-                {
-                    text: "",
-                    align: "left",
-                    sortable: false,
-                    value: "name"
-                },
-                { text: "1-Week", value: "Week1" },
-                { text: "1-Month", value: "Month1" },
-                { text: "3-Month", value: "Month3" },
-                { text: "YTD", value: "YTD" },
-                { text: "1-Year", value: "Year1" },
-                { text: "3-Year", value: "Year3" },
-                { text: "5-Year", value: "Year5" },
-                { text: "10-Year", value: "Year10" }
-            ],
-            desserts: [
-                {
-                    icon: "v-icon",
-                    name: "TIGER 미국달러 선물레버러지(Price)",
-                    Week1: 159,
-                    Month1: 6.0,
-                    Month3: 24,
-                    YTD: 4.0,
-                    Year1: "1%",
-                    Year3: 24,
-                    Year5: 4.0,
-                    Year10: "1%"
-                },
-                {
-                    icon: "edit",
-                    name: "TIGER 미국달러 선물레버러지(NAV)",
-                    Week1: 159,
-                    Month1: 6.0,
-                    Month3: 24,
-                    YTD: 4.0,
-                    Year1: "1%",
-                    Year3: 24,
-                    Year5: 4.0,
-                    Year10: "1%"
-                },
-                {
-                    icon: "edit",
-                    name: "F-USDKRW",
-                    Week1: 159,
-                    Month1: 6.0,
-                    Month3: 24,
-                    YTD: 4.0,
-                    Year1: "1%",
-                    Year3: 24,
-                    Year5: 4.0,
-                    Year10: "1%"
-                }
-            ],
-        
+
             modalFlag: false
         };
     },
@@ -259,8 +185,59 @@ export default {
     created: function() {},
     beforeDestroy() {},
     mounted: function() {
+        
         var vm = this;
+
+        vm.$root.$infopoptab1 = vm.$refs.$infopoptab1;
         vm.getIndexImportanceList();
+
+        perf_table = $('#perf_table').DataTable( {
+            "processing": true,
+            "serverSide": false,
+            "search": true,
+            "info": false,   // control table information display field
+            "stateSave": true,  //restore table state on page reload,
+            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+            select: {
+                style:    'single',
+                selector: 'td:first-child'
+            },
+            paging: false,
+            searching: false,
+            "columnDefs": [
+                {  
+                    "render": function ( data, type, row ) {
+                        if (data) {
+                            return "<img src='/assets/img/icon_bar01.png'>&nbsp;" + data;
+                        } else {
+                            return "";
+                        }
+                    },
+                    "targets": 1
+                },
+                {
+                    "targets": [ 0 ],
+                    "visible": false
+                }
+            ],
+            data : [],
+            columns: [
+                { "data": "F16013", "orderable": false,  "width":"30%"}, 
+                { "data": "F16002", "orderable": false,  "width":"30%"}, 
+                { "data": "Week1", "orderable": false, className: 'dt-body-right'},
+                { "data": "Month1", "orderable": false, className: 'dt-body-right'},
+                { "data": "Month3", "orderable": false, className: 'dt-body-right'},
+                { "data": "YTD", "orderable": false, className: 'dt-body-right'},
+                { "data": "Year1", "orderable": false, className: 'dt-body-right'},
+                { "data": "Year3", "orderable": false, className: 'dt-body-right'},
+                { "data": "Year5", "orderable": false, className: 'dt-body-right'},
+                { "data": "Year10", "orderable": false, className: 'dt-body-right'},
+            ]
+        }); 
+    
+
+        vm.getIndexAnalysisInfo();
+
     },
     methods: {
 
@@ -292,6 +269,8 @@ export default {
                             "info": true,   // control table information display field
                             "stateSave": true,  //restore table state on page reload,
                             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                            scrollY:        '50vh',
+                            scrollCollapse: true,
                             select: {
                                 style:    'multi',
                                 selector: 'td:first-child'
@@ -358,7 +337,69 @@ export default {
                 var chart = new google.visualization.PieChart(document.getElementById('importance_chart'));
                 chart.draw(data, options);
             }
-        }
+        },
+
+        getIndexAnalysisInfo: function() {
+            console.log("getIndexAnalysisInfo");
+            axios.get(Config.base_url + "/user/index/getIndexAnalysisInfo", {
+                    params: {
+                        jisu_cd : this.$route.query.jisu_cd,
+                        market_id : this.$route.query.market_id
+                    }
+            }).then(response => {
+                    // console.log(response);
+                if (response.data.success == false) {
+                    alert("비중 목록이 없습니다");
+                } else {
+                    var items = response.data.results;
+                        
+                    console.log("response=" + JSON.stringify(items));
+                    perf_table.clear().draw();
+                    perf_table.rows.add(items).draw();
+                }
+                   
+            });
+        }, 
+
+        getSelectedItem: function(sel_items) {
+            var vm = this;
+            vm.dialog = false;
+               
+            for (let i = 0; i < sel_items.length; i++) {
+                
+                if (perf_table.rows().count() <= 4) {
+
+                    let compare_cnt = perf_table.column(0).data().filter(
+                        function(value, index) {
+                            return sel_items[i].JISU_CD == value ? true : false;
+                        }
+                    ).count();
+                    
+                    if (compare_cnt == 0) {
+                        perf_table.row.add(  {
+                            F16012 : '',
+                            F16013 : sel_items[i].JISU_CD,
+                            F16002 : sel_items[i].JISU_NM,
+                            Week1 : '1',
+                            Month1 : '2',
+                            Month3 : '3',
+                            YTD : '4',
+                            Year1 : '5',
+                            Year3 : '6',
+                            Year5 : '7',
+                            Year10 : '8',
+                        } ).draw( false );
+                    } else {
+                        alert(sel_items[i].JISU_NM +"은 이미 추가된 자산입니다.");    
+                    }
+                } else {
+                    alert("자산 비교는 총 5개 까지 가능 합니다.");
+                    break;
+                }
+
+            }
+        
+        },
     }
 }
 </script>

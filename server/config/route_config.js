@@ -63,6 +63,8 @@ module.exports = {
         { file: './user/index/indexSummary', path: '/user/index/getETFList', method: 'getETFList', session: 'check', type: 'get' },   
         { file: './user/index/indexSummary', path: '/user/index/getETNList', method: 'getETNList', session: 'check', type: 'get' },   
         { file: './user/index/indexSummary', path: '/user/index/getIndexImportanceList', method: 'getIndexImportanceList', session: 'check', type: 'get' },
+        { file: './user/index/indexSummary', path: '/user/index/getIndexAnalysisInfo', method: 'getIndexAnalysisInfo', session: 'check', type: 'get' },
+        
 
 
         { file: './user/index/indexDetail', path: '/user/index/getIndexJongmokList', method: 'getIndexJongmokList', session: 'check', type: 'post' },
