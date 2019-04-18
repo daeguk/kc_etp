@@ -17,21 +17,23 @@
                         <div style="width:8%"></div>
                     </div>
                    <v-card flat>
-                     <table id="importance_grid2" class="tbl_type" style="width:100%">
+                     <table id="perf_table" class="tbl_type" style="width:100%">
                          <colgroup>
                             <col width="28%">
-                             <col width="width:8%">
-                              <col width="width:8%">
-                               <col width="width:8%">
-                                <col width="width:8%">
-                                 <col width="width:8%">
-                                  <col width="width:8%">
-                                   <col width="width:8%">
-                                    <col width="width:8%">
-                                     <col width="width:8%">
+                            <col width="width:8%">
+                            <col width="width:8%">
+                            <col width="width:8%">
+                            <col width="width:8%">
+                            <col width="width:8%">
+                            <col width="width:8%">
+                            <col width="width:8%">
+                            <col width="width:8%">
+                            <col width="width:8%">
+                            <col width="width:8%">
                         </colgroup>
                          <thead>
                           <tr>
+                             <th></th>
                              <th></th>
                              <th>1-Week</th>
                              <th>1-Month비중</th>
@@ -44,50 +46,6 @@
                              <th></th>
                            </tr>
                            </thead>
-                           <tbody>
-                               <tr>
-                               <td class="txt_left line2"><img src="/assets/img/icon_bar01.png">
-                                   <span> TIGER 미국달러선물레버러지 <br>(Price)</span>
-                                </td>
-                                <td>0.30</td>
-                                <td>1.26</td>
-                                <td>-4.51</td>
-                                <td>3.52</td>
-                                <td>3.32</td>
-                                <td>14.23</td>
-                                <td>13.25</td>
-                                <td>-</td>
-                                <td><div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:50px;'>삭제</span></div></td>
-                                </tr>
-                                <tr>
-                               <td class="txt_left line2"><img src="/assets/img/icon_bar02.png">
-                                   <span> TIGER 미국달러선물레버러지 <br>(Price)</span>
-                                </td>
-                                <td>0.30</td>
-                                <td>1.26</td>
-                                <td>-4.51</td>
-                                <td>3.52</td>
-                                <td>3.32</td>
-                                <td>14.23</td>
-                                <td>13.25</td>
-                                <td>-</td>
-                                <td><div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:50px;'>삭제</span></div></td>
-                                </tr>
-                                <tr>
-                               <td class="txt_left line2"><img src="/assets/img/icon_bar03.png">
-                                   <span> F-USDKRW</span>
-                                </td>
-                                <td>0.30</td>
-                                <td>1.26</td>
-                                <td>-4.51</td>
-                                <td>3.52</td>
-                                <td>3.32</td>
-                                <td>14.23</td>
-                                <td>13.25</td>
-                                <td>-</td>
-                                <td><div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:50px;'>삭제</span></div></td>
-                                </tr>
-                           </tbody>  
                        </table> 
 
                        <!--table id="perf_table" class="display table01_w" style="width:100%">
@@ -296,7 +254,7 @@ export default {
                 {  
                     "render": function ( data, type, row ) {
                         if (data) {
-                            return "<img src='/assets/img/icon_bar01.png'>&nbsp;" + data;
+                            return "<img src='/assets/img/icon_bar01.png'><span>&nbsp;&nbsp;&nbsp;" + data + "</span>";
                         } else {
                             return "";
                         }
@@ -312,7 +270,7 @@ export default {
                         if (data) {
                             // 기본 지수는 삭제 버튼 제외
                             if (row.F16013 != vm.$route.query.jisu_cd) {
-                                return "<div class='tooltip'><button type='button' name='ok' class='btn_icon v-icon material-icons '>thumb_up_alt</button><span class='tooltiptext' style='width:50px;'>삭제</span></div>";
+                                return "<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:40px;'>삭제</span></div>";
                             } 
                         } else {
                             return "";
@@ -323,8 +281,8 @@ export default {
             ],
             data : [],
             columns: [
-                { "data": "F16013", "orderable": false,  "width":"30%"}, 
-                { "data": "F16002", "orderable": false,  "width":"30%"}, 
+                { "data": "F16013", "orderable": false}, 
+                { "data": "F16002", "orderable": false,  "width":"30%", className: 'txt_left line2'}, 
                 { "data": "Week1", "orderable": false, className: 'dt-body-right'},
                 { "data": "Month1", "orderable": false, className: 'dt-body-right'},
                 { "data": "Month3", "orderable": false, className: 'dt-body-right'},
@@ -333,7 +291,7 @@ export default {
                 { "data": "Year3", "orderable": false, className: 'dt-body-right'},
                 { "data": "Year5", "orderable": false, className: 'dt-body-right'},
                 { "data": "Year10", "orderable": false, className: 'dt-body-right'},
-                {"data": null, "align":"center", className: 'dt-body-center', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:40px;'>삭제</span></div>"}
+                {"data": null, "align":"center", className: 'dt-body-center', defaultContent:""}
             ]
         }); 
     

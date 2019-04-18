@@ -23,11 +23,7 @@
                         </v-card-title>
                         <v-card-text>
                             <p class="title_ex">
-                                TIGER 미국달러선물레버리지에 관한 내용이 들어갑니다
-                                TIGER 미국달러선물레버리지에 관한 내용이 들어갑니다
-                                TIGER 미국달러선물레버리지에 관한 내용이 들어갑니다
-                                TIGER 미국달러선물레버리지에 관한 내용이 들어갑니다
-                                TIGER 미국달러선물레버리지에 관한 내용이 들어갑니다
+                                {{this.results.F16002}} 관한 설명이 들어갑니다
                             </p>
                         </v-card-text>
                     </div>
@@ -103,7 +99,7 @@ export default {
         return {
             text: "center",
             toggle_none: null,
-            toggle_one: '1D',
+            toggle_one: '1M',
             toggle_exclusive: 2,
             toggle_multiple: [0, 1, 2],
             tab: null,
@@ -169,7 +165,7 @@ export default {
                 // Create the data table.
                 var data = new google.visualization.DataTable();
                 data.addColumn('string', 'date');
-                data.addColumn('number', 'DBF 500 Index');
+                
 
                 // Set chart options
                 var options = {'title':' ',
@@ -185,14 +181,28 @@ export default {
                         term : term
                     }
                 }).then(response => {
+
+                    var INDEX_NM = response.data.results[0].INDEX_NM;
+                    var ETP_NM = response.data.results[0].ETP_NM;
+                    data.addColumn('number', INDEX_NM);
+
+                    // ETP 정보가 있으면 추가 
+                    if (ETP_NM != null) {
+                        data.addColumn('number', ETP_NM);
+                    }
+
                     // console.log(response);
                     if (response.data.success == false) {
-                        alert("지수정보가 없습니다.2"); 
+                        alert("지수정보가 없습니다."); 
                     } else {
                         var items = [] 
 
                         for (let item of response.data.results) {
-                            items.push([item.trd_dd, item.close_idx]);
+                            if (ETP_NM != null) {
+                                items.push([item.trd_dd, item.close_idx, item.ept_close_idx]);
+                            } else {
+                                items.push([item.trd_dd, item.close_idx]);
+                            }
                         }
 
                         data.addRows(

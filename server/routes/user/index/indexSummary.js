@@ -370,6 +370,7 @@ var getIndexEtpHistoryData = function (req, res) {
 
         var stmt = mapper.getStatement('index', 'getIndexEtpHistoryData', options, {language:'sql', indent: '  '});
      
+        util.log("stmt", stmt);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
