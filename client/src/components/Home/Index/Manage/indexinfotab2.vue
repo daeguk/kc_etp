@@ -20,15 +20,16 @@
                      <table id="perf_table" class="tbl_type" style="width:100%">
                          <colgroup>
                             <col width="28%">
-                             <col width="width:8%">
-                              <col width="width:8%">
-                               <col width="width:8%">
-                                <col width="width:8%">
-                                 <col width="width:8%">
-                                  <col width="width:8%">
-                                   <col width="width:8%">
-                                    <col width="width:8%">
-                                     <col width="width:8%">
+                            <col width="width:8%">
+                            <col width="width:8%">
+                            <col width="width:8%">
+                            <col width="width:8%">
+                            <col width="width:8%">
+                            <col width="width:8%">
+                            <col width="width:8%">
+                            <col width="width:8%">
+                            <col width="width:8%">
+                            <col width="width:8%">
                         </colgroup>
                          <thead>
                           <tr>
@@ -253,7 +254,7 @@ export default {
                 {  
                     "render": function ( data, type, row ) {
                         if (data) {
-                            return "<img src='/assets/img/icon_bar01.png'>&nbsp;" + data;
+                            return "<img src='/assets/img/icon_bar01.png'><span>&nbsp;&nbsp;&nbsp;" + data + "</span>";
                         } else {
                             return "";
                         }
@@ -280,7 +281,7 @@ export default {
             ],
             data : [],
             columns: [
-                { "data": "F16013", "orderable": false,  "width":"30%"}, 
+                { "data": "F16013", "orderable": false}, 
                 { "data": "F16002", "orderable": false,  "width":"30%", className: 'txt_left line2'}, 
                 { "data": "Week1", "orderable": false, className: 'dt-body-right'},
                 { "data": "Month1", "orderable": false, className: 'dt-body-right'},
