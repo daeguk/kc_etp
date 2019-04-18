@@ -19,6 +19,7 @@
                                     <th>3-Year</th>
                                     <th>5-Year</th>
                                     <th>10-Year</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                         </table>
@@ -191,6 +192,10 @@ export default {
         vm.$root.$infopoptab1 = vm.$refs.$infopoptab1;
         vm.getIndexImportanceList();
 
+        $('#perf_table, tbody').on('click', 'button', function () {
+            var data = perf_table.row($(this).parents('tr')).remove().draw();
+        });
+
         perf_table = $('#perf_table').DataTable( {
             "processing": true,
             "serverSide": false,
@@ -218,7 +223,20 @@ export default {
                 {
                     "targets": [ 0 ],
                     "visible": false
-                }
+                },
+                {  
+                    "render": function ( data, type, row ) {
+                        if (data) {
+                            // 기본 지수는 삭제 버튼 제외
+                            if (row.F16013 != vm.$route.query.jisu_cd) {
+                                return "<div class='tooltip'><button type='button' name='ok' class='btn_icon v-icon material-icons '>thumb_up_alt</button><span class='tooltiptext' style='width:50px;'>삭제</span></div>";
+                            } 
+                        } else {
+                            return "";
+                        }
+                    },
+                    "targets": 10
+                },                
             ],
             data : [],
             columns: [
@@ -232,6 +250,7 @@ export default {
                 { "data": "Year3", "orderable": false, className: 'dt-body-right'},
                 { "data": "Year5", "orderable": false, className: 'dt-body-right'},
                 { "data": "Year10", "orderable": false, className: 'dt-body-right'},
+                {"data": null, "align":"center", className: 'dt-body-center', defaultContent:""}
             ]
         }); 
     
@@ -265,11 +284,10 @@ export default {
                         importance_grid = $('#importance_grid').DataTable( {
                             "processing": true,
                             "serverSide": false,
-                            "search": true,
-                            "info": true,   // control table information display field
+                            "info": false,   // control table information display field
                             "stateSave": true,  //restore table state on page reload,
                             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                            scrollY:        '50vh',
+                            scrollY:        '500px',
                             scrollCollapse: true,
                             select: {
                                 style:    'multi',
@@ -281,8 +299,8 @@ export default {
                             columns: [
                                 { "data": "ISIN_CODE", "orderable": true},
                                 { "data": "JOING_NM", "orderable": true },
-                                { "data": "PERCNT", "orderable" : true },
-                                { "data": "GUBUN", "orderable" : true },
+                                { "data": "PERCNT", "orderable" : true},
+                                { "data": "GUBUN", "orderable" : true},
                             ]
                         }); 
 

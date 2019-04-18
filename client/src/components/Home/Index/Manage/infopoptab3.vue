@@ -88,6 +88,8 @@ var jisu_grid = null;
                             "processing": true,
                             "serverSide": false,
                             "search": true,
+                            scrollY:        '50vh',
+                            scrollCollapse: true,
                             "info": true,   // control table information display field
                             "stateSave": true,  //restore table state on page reload,
                             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
