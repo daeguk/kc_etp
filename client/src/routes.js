@@ -31,8 +31,7 @@ import  sampleLoginTest   from '@/components/Sample/loginTest.vue'
 
 // 관리자
 export const routes = [
-  {
-    path : '/', 
+  { path : '/',
     component: Home,
     children: [        
         // INDEX
@@ -54,10 +53,10 @@ export const routes = [
             ]
         },
         
-        {   path : 'index/register',
+        {   path : '/index/register',
             component: IndexRegisterMain,
         },
-        {   path : 'index/develop',
+        {   path : '/index/develop',
             component: IndexDevelopMain,
         },
         {   path : '/index/datepickerTest',
