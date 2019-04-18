@@ -4,7 +4,7 @@
     
     
 
-    <!--table id="jisu_grid" class="display" style="width:100%">
+    <table id="jisu_grid" class="display" style="width:100%">
         <thead>
             <tr>
                 <th><input  type='checkbox' class="selectAll select-checkbox"></input></th>
@@ -12,7 +12,7 @@
                 <th>지수명</th>
             </tr>
         </thead>   
-    </table-->
+    </table>
   </v-card>
       <!--비교자산 탭end--->
     <v-card class="pop_btn_w text-xs-center">
