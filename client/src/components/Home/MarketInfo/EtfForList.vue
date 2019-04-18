@@ -463,7 +463,7 @@ export default {
     },
     computed: {},
     mounted: function() {
-        this.getEtfKorList();
+        //this.getEtfKorList();
     },
     created: function() {},
     beforeDestroy() {},

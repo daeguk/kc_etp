@@ -46,7 +46,7 @@ export default {
 
   },
   mounted: function() {
-      this.getEtnKorList();
+      //this.getEtnKorList();
   },
   created: function() {
       

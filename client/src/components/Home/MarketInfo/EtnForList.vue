@@ -48,7 +48,7 @@ export default {
 
   },
   mounted: function() {
-      this.getEtnForList();
+      //this.getEtnForList();
   },
   created: function() {
       

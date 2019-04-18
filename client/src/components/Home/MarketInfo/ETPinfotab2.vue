@@ -239,7 +239,7 @@ export default {
     beforeDestroy() {},
     mounted: function() {
         var vm = this;
-        vm.getIndexImportanceList();
+        //vm.getIndexImportanceList();
     },
     methods: {
         getIndexImportanceList: function() {
