@@ -9,7 +9,7 @@
                                 <v-card flat>
                                     <div class="market_card_w line_l">
                                         <div class="market_card2">
-                                            <h6> IT </h6>
+                                            <h6> 스마트베타 </h6>
                                             <ul>
                                                 <li>
                                                     <dl> 
@@ -31,7 +31,7 @@
                                 <v-card  flat>
                                     <div class="market_card_w">
                                         <div class="market_card2">
-                                            <h6> 금융 </h6>
+                                            <h6> 배당 </h6>
                                             <ul>
                                                 <li>
                                                     <dl> 
@@ -53,7 +53,7 @@
                                 <v-card flat>
                                     <div class="market_card_w">
                                         <div class="market_card2">
-                                            <h6> 산업재 </h6>
+                                            <h6> ESG </h6>
                                             <ul>
                                                 <li>
                                                     <dl> 
@@ -75,7 +75,7 @@
                                 <v-card flat>
                                     <div class="market_card_w">
                                         <div class="market_card2">
-                                            <h6> 자유소비재 </h6>
+                                            <h6> 구조화 </h6>
                                             <ul>
                                                 <li>
                                                     <dl> 
@@ -238,7 +238,7 @@
                 <v-card flat>
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
-                           IT 섹터
+                           스마트베타
                             <p>
                                 Total
                                 <span class="text_result">120</span> results
@@ -299,7 +299,7 @@
                 <v-card flat>
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
-                            금융 섹터
+                            배당
                             <p>
                                 Total
                                 <span class="text_result">120</span> results

@@ -27,6 +27,18 @@
                 <v-tab-item>
                     <EtnForList></EtnForList>
                 </v-tab-item>
+                <v-tab-item>
+                    <EtpforList5></EtpforList5>
+                </v-tab-item>
+                <v-tab-item>
+                    <EtpforList6></EtpforList6>
+                </v-tab-item>
+                <v-tab-item>
+                    <EtpforList7></EtpforList7>
+                </v-tab-item>
+                <v-tab-item>
+                    <EtpforList8></EtpforList8>
+                </v-tab-item>
         </v-tabs-items>    
       </v-flex>
     </v-layout> 
@@ -37,6 +49,10 @@ import EtfKorList   from  './EtfKorList.vue'
 import EtfForList   from  './EtfForList.vue'
 import EtnKorList   from  './EtnKorList.vue'
 import EtnForList   from  './EtnForList.vue'
+import EtpforList5   from  './EtpforList5.vue'
+import EtpforList6   from  './EtpforList6.vue'
+import EtpforList7   from  './EtpforList7.vue'
+import EtpforList8   from  './EtpforList8.vue'
 
 export default {
         data() {
@@ -52,6 +68,10 @@ export default {
         EtfForList     : EtfForList,
         EtnKorList     : EtnKorList,
         EtnForList     : EtnForList,
+        marketinfotab5 : marketinfotab5,
+        marketinfotab6 : marketinfotab6,
+        marketinfotab7 : marketinfotab7,
+        marketinfotab8 : marketinfotab8,
     },
     created: function() {
     },

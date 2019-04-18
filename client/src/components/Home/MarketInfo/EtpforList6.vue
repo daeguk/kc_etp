@@ -2,243 +2,16 @@
     <v-container>
         <v-layout row wrap class="content_margin">
             <v-flex xs12>
-                <v-carousel  light hide-delimiters height="250px" interval="10000">
-                    <v-carousel-item  class="bg_W market_layout_w">
-                        <v-layout class="market_card_layout">
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w line_l">
-                                        <div class="market_card2">
-                                            <h6> IT </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">1234K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card  flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card2">
-                                            <h6> 금융 </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">12304K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card2">
-                                            <h6> 산업재 </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">12344K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card2">
-                                            <h6> 자유소비재 </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">12312KK</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card2">
-                                            <h6> 에너지화학 </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">12341247K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                        </v-layout>
-                    </v-carousel-item>
-                    <v-carousel-item  class="bg_W">
-                        <v-layout class="market_card_layout">
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w line_l">
-                                        <div class="market_card2">
-                                            <h6> IT </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">1234K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card  flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card2">
-                                            <h6> 금융 </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">12300004K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card2">
-                                            <h6> 산업재 </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">12345714K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card2">
-                                            <h6> 자유소비재 </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">1234568K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card2">
-                                            <h6> 에너지화학 </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">12341247K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                        </v-layout>
-                    </v-carousel-item>
-                </v-carousel>
+                <v-card flat height="300px">
+                   map
+                </v-card>
             </v-flex>
             <!---테이블1--->
             <v-flex grow xs12 mt-3>
                 <v-card flat>
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
-                           IT 섹터
+                            United States
                             <p>
                                 Total
                                 <span class="text_result">120</span> results
@@ -293,13 +66,12 @@
                 </v-card>
             </v-flex>
             <!---테이블1 end--->
-
-             <!---테이블2--->
-             <v-flex grow xs12 mt-3>
+            <!---테이블2--->
+            <v-flex grow xs12 mt-3>
                 <v-card flat>
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
-                            금융 섹터
+                            China
                             <p>
                                 Total
                                 <span class="text_result">120</span> results
@@ -354,6 +126,7 @@
                 </v-card>
             </v-flex>
             <!---테이블2 end--->
+
                      <!--rightmenu---->
                         <v-card flat class="right_menu_w2">
                             <v-navigation-drawer
