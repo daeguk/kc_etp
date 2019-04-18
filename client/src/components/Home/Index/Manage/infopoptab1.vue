@@ -2,7 +2,7 @@
 <v-card>
                        
  <v-card flat>
-    <table id="etf_grid" class="display" style="width:100%;">
+    <!--table id="etf_grid" class="display" style="width:100%;">
         <thead>
             <tr>
                 <th><input type='checkbox' class="selectAll select-checkbox" color='primary'  label='' value=''></th>
@@ -10,7 +10,7 @@
                 <th>종목/지수명</th>
             </tr>
         </thead>   
-    </table>
+    </table-->
   </v-card>
 
     <!--비교자산 탭end--->
