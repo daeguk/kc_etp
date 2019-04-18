@@ -318,6 +318,9 @@ export default {
             tab: null,
             tab2: null,
             tab3: null,
+            toggle_one : "",
+            search : "",
+            drawer : "",
             items1: ["전체", "시장대표"],
             items: [
                 { title: "Home", icon: "dashboard" },

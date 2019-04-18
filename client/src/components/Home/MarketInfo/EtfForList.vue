@@ -399,13 +399,13 @@
                                                                     </v-tabs>
                                                                     <v-tabs-items v-model="tab2">
                                                                         <v-tab-item>
-                                                                            <infopoptab1></infopoptab1>
+                                                                            <marketinfo1></marketinfo1>
                                                                         </v-tab-item>
                                                                         <v-tab-item>
-                                                                            <infopoptab2></infopoptab2>
+                                                                            <marketinfo2></marketinfo2>
                                                                         </v-tab-item>
                                                                         <v-tab-item>
-                                                                            <infopoptab3></infopoptab3>
+                                                                            <marketinfo3></marketinfo3>
                                                                         </v-tab-item>
                                                                     </v-tabs-items>
                                                                 </v-flex>
@@ -434,9 +434,9 @@
 </template>
 
 <script>
-import infopoptab1 from "../index/manage/infopoptab1.vue";
-import infopoptab2 from "../index/manage/infopoptab2.vue";
-import infopoptab3 from "../index/manage/infopoptab3.vue";
+import marketinfo1 from "./marketinfo1.vue";
+import marketinfo2 from "./marketinfo2.vue";
+import marketinfo3 from "./marketinfo3.vue";
 import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
@@ -454,6 +454,9 @@ export default {
             results: [],
             tab: null,
             tab2: null,
+            toggle_one : "",
+            search : "",
+            drawer : "",            
             items1: ["전체", "시장대표"],
             items: [
                 { title: "Home", icon: "dashboard" },
@@ -495,9 +498,9 @@ export default {
         };
     },
     components: {
-        infopoptab1: infopoptab1,
-        infopoptab2: infopoptab2,
-        infopoptab3: infopoptab3
+        marketinfo1: marketinfo1,
+        marketinfo2: marketinfo2,
+        marketinfo3: marketinfo3
     },
     computed: {},
     mounted: function() {

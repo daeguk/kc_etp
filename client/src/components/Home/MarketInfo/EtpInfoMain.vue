@@ -16,16 +16,16 @@
 
             <v-tabs-items v-model="tab">
                 <v-tab-item>
-                    <EtfKorList></EtfKorList>
+                    <etfkorlist></etfkorlist>
                 </v-tab-item>
                 <v-tab-item>
-                    <EtfForList></EtfForList>
+                    <etfforlist></etfforlist>
                 </v-tab-item>
                 <v-tab-item>
-                    <EtnKorList></EtnKorList>
+                    <etnkorlist></etnkorlist>
                 </v-tab-item>
                 <v-tab-item>
-                    <EtnForList></EtnForList>
+                    <etnforlist></etnforlist>
                 </v-tab-item>
         </v-tabs-items>    
       </v-flex>
@@ -33,10 +33,10 @@
 </template>
 
 <script>
-import EtfKorList   from  './EtfKorList.vue'
-import EtfForList   from  './EtfForList.vue'
-import EtnKorList   from  './EtnKorList.vue'
-import EtnForList   from  './EtnForList.vue'
+import etfkorlist   from  './EtfKorList.vue'
+import etfforlist   from  './EtfForList.vue'
+import etnkorlist   from  './EtnKorList.vue'
+import etnforlist   from  './EtnForList.vue'
 
 export default {
         data() {
@@ -48,10 +48,10 @@ export default {
     	};
     },    
     components: {
-        EtfKorList     : EtfKorList,
-        EtfForList     : EtfForList,
-        EtnKorList     : EtnKorList,
-        EtnForList     : EtnForList,
+        etfkorlist     : etfkorlist,
+        etfforlist     : etfforlist,
+        etnkorlist     : etnkorlist,
+        etnforlist     : etnforlist,
     },
     created: function() {
     },
