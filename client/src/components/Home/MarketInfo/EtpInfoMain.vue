@@ -45,7 +45,6 @@
 </template>
 
 <script>
-<<<<<<< HEAD
 import EtfKorList   from  './EtfKorList.vue'
 import EtfForList   from  './EtfForList.vue'
 import EtnKorList   from  './EtnKorList.vue'
@@ -54,12 +53,6 @@ import EtpforList5   from  './EtpforList5.vue'
 import EtpforList6   from  './EtpforList6.vue'
 import EtpforList7   from  './EtpforList7.vue'
 import EtpforList8   from  './EtpforList8.vue'
-=======
-import etfkorlist   from  './EtfKorList.vue'
-import etfforlist   from  './EtfForList.vue'
-import etnkorlist   from  './EtnKorList.vue'
-import etnforlist   from  './EtnForList.vue'
->>>>>>> b3ee123d897dbdf4faec2c1dbb1717b34c61c7c7
 
 export default {
         data() {
@@ -71,21 +64,14 @@ export default {
     	};
     },    
     components: {
-<<<<<<< HEAD
         EtfKorList     : EtfKorList,
         EtfForList     : EtfForList,
         EtnKorList     : EtnKorList,
         EtnForList     : EtnForList,
-        marketinfotab5 : marketinfotab5,
-        marketinfotab6 : marketinfotab6,
-        marketinfotab7 : marketinfotab7,
-        marketinfotab8 : marketinfotab8,
-=======
-        etfkorlist     : etfkorlist,
-        etfforlist     : etfforlist,
-        etnkorlist     : etnkorlist,
-        etnforlist     : etnforlist,
->>>>>>> b3ee123d897dbdf4faec2c1dbb1717b34c61c7c7
+        EtpforList5 : EtpforList5,
+        EtpforList6 : EtpforList6,
+        EtpforList7 : EtpforList7,
+       EtpforList8 : EtpforList8,
     },
     created: function() {
     },
