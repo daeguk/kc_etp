@@ -24,6 +24,7 @@
             <router-view></router-view>
            
       </v-flex>
+      
     </v-layout> 
 </template>
 
@@ -43,8 +44,10 @@ export default {
     
     mounted: function() {
         if (this.$route.query.activeTab == 2) {
+            this.activeTab = 1;
             this.pageMove('/index/manage/indexList');
         } else {
+            this.activeTab = 0;
             this.pageMove('/index/manage/indexSummary');
         }
     },

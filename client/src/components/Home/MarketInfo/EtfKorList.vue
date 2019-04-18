@@ -257,13 +257,13 @@
                                                                     </v-tabs>
                                                                     <v-tabs-items v-model="tab2">
                                                                         <v-tab-item>
-                                                                            <infopoptab1></infopoptab1>
+                                                                            <!--infopoptab1></infopoptab1-->
                                                                         </v-tab-item>
                                                                         <v-tab-item>
-                                                                            <infopoptab2></infopoptab2>
+                                                                            <!--infopoptab2></infopoptab2-->
                                                                         </v-tab-item>
                                                                         <v-tab-item>
-                                                                            <infopoptab3></infopoptab3>
+                                                                            <!--infopoptab3></infopoptab3-->
                                                                         </v-tab-item>
                                                                     </v-tabs-items>
                                                                 </v-flex>
@@ -295,11 +295,11 @@
 </template>
 
 <script>
-import infopoptab1 from "../index/manage/infopoptab1.vue";
-import infopoptab2 from "../index/manage/infopoptab2.vue";
-import infopoptab3 from "../index/manage/infopoptab3.vue";
-import ETPinfotab1 from "./ETPinfotab1.vue";
-import ETPinfotab2 from "./ETPinfotab2.vue";
+import infopoptab1 from "@/components/Home/index/manage/infopoptab1.vue";
+import infopoptab2 from "@/components/Home/index/manage/infopoptab2.vue";
+import infopoptab3 from "@/components/Home/index/manage/infopoptab3.vue";
+import ETPinfotab1 from "@/components/Home/MarketInfo/ETPinfotab1.vue";
+import ETPinfotab2 from "@/components/Home/MarketInfo/ETPinfotab2.vue";
 import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
@@ -318,6 +318,9 @@ export default {
             tab: null,
             tab2: null,
             tab3: null,
+            toggle_one : "",
+            search : "",
+            drawer : "",
             items1: ["전체", "시장대표"],
             items: [
                 { title: "Home", icon: "dashboard" },
@@ -368,7 +371,7 @@ export default {
     },
     computed: {},
     mounted: function() {
-        this.getEtfKorList();
+        //this.getEtfKorList(); 
     },
     created: function() {},
     beforeDestroy() {},

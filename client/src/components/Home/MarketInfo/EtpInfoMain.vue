@@ -16,16 +16,16 @@
 
             <v-tabs-items v-model="tab">
                 <v-tab-item>
-                    <EtfKorList></EtfKorList>
+                    <etfkorlist></etfkorlist>
                 </v-tab-item>
                 <v-tab-item>
-                    <EtfForList></EtfForList>
+                    <etfforlist></etfforlist>
                 </v-tab-item>
                 <v-tab-item>
-                    <EtnKorList></EtnKorList>
+                    <etnkorlist></etnkorlist>
                 </v-tab-item>
                 <v-tab-item>
-                    <EtnForList></EtnForList>
+                    <etnforlist></etnforlist>
                 </v-tab-item>
                 <v-tab-item>
                     <EtpforList5></EtpforList5>
@@ -45,6 +45,7 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 import EtfKorList   from  './EtfKorList.vue'
 import EtfForList   from  './EtfForList.vue'
 import EtnKorList   from  './EtnKorList.vue'
@@ -53,6 +54,12 @@ import EtpforList5   from  './EtpforList5.vue'
 import EtpforList6   from  './EtpforList6.vue'
 import EtpforList7   from  './EtpforList7.vue'
 import EtpforList8   from  './EtpforList8.vue'
+=======
+import etfkorlist   from  './EtfKorList.vue'
+import etfforlist   from  './EtfForList.vue'
+import etnkorlist   from  './EtnKorList.vue'
+import etnforlist   from  './EtnForList.vue'
+>>>>>>> b3ee123d897dbdf4faec2c1dbb1717b34c61c7c7
 
 export default {
         data() {
@@ -64,6 +71,7 @@ export default {
     	};
     },    
     components: {
+<<<<<<< HEAD
         EtfKorList     : EtfKorList,
         EtfForList     : EtfForList,
         EtnKorList     : EtnKorList,
@@ -72,6 +80,12 @@ export default {
         marketinfotab6 : marketinfotab6,
         marketinfotab7 : marketinfotab7,
         marketinfotab8 : marketinfotab8,
+=======
+        etfkorlist     : etfkorlist,
+        etfforlist     : etfforlist,
+        etnkorlist     : etnkorlist,
+        etnforlist     : etnforlist,
+>>>>>>> b3ee123d897dbdf4faec2c1dbb1717b34c61c7c7
     },
     created: function() {
     },

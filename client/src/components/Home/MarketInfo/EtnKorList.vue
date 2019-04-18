@@ -561,6 +561,7 @@ import Config from "@/js/config.js";
 var importance_grid = null;
 
 export default {
+<<<<<<< HEAD
     props: [],
     data() {
         return {
@@ -625,6 +626,72 @@ export default {
         getEtfKorList: function() {
             console.log("getEtfKorList");
             var vm = this;
+=======
+  props: [],
+  data() {
+    return {
+      rowsPerPageItems: [20, 10, 30, 50],
+      headers: [
+        { text: 'No', align:"center", sortable: false, value: 'index'},
+        { text: '종목명', align:"center", value: 'ISU_KOR_ABBRV'},
+        { text: '표준코드', align:"center", value: 'ISIN_CODE' },
+        { text: '단축코드', align:"left", value: 'ISU_SRT_CD' },
+        { text: '상장일자', align:"left", value: 'UPD_DATE' },
+        { text: '기초지수', align:"center", value: 'NAME_K' },
+        { text: '기초지수코드', align:"left", value: 'SYM_CODE' },
+      ],
+      results: [],
+    };
+  },
+  components: {
+      
+  },
+  computed:{
+
+  },
+  mounted: function() {
+      //this.getEtnKorList();
+  },
+  created: function() {
+      
+  },
+  beforeDestroy() {
+      
+  },
+  methods: {
+    getEtnKorList: function() {
+      console.log('getEtnKorList');
+      var vm = this;
+
+      axios.get(Config.base_url+'/user/marketinfo/getetnkorlist', {
+          params: {
+              // "bbs_id" : vm.bbs_id,
+              // "seloption" : vm.seloption,
+              // "searchinfo" : vm.searchinfo,
+              // "curPage": vm.curPage,
+              // "perPage": vm.perPage
+          }
+      }).then(function(response) {
+          console.log(response);
+          if(response.data.success == false){
+              alert("해당 종목이 없습니다");
+          }else {
+            var items = response.data.results;
+            var tcount   = response.data.count;
+            // items.forEach(function(item, index) {
+            //   if(item.kor_for_type == 'K') {
+            //     item.kor_for_type = "국내";
+            //   }else if(item.kor_for_type == 'F') {
+            //     item.kor_for_type = "해외";
+            //   }else {
+            //     item.kor_for_type = "";
+            //   }
+            // });
+            vm.results = items;
+            vm.count = tcount;
+          }
+      });
+>>>>>>> b3ee123d897dbdf4faec2c1dbb1717b34c61c7c7
 
             axios
                 .get(Config.base_url + "/user/marketinfo/getetfkorlist", {

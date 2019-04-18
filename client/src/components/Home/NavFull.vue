@@ -38,7 +38,7 @@ export default {
           subitems: [
             { title: '지수관리', link: '/index/manage/indexSummary' },
             { title: '지수등록', link: '/index/register'  },
-            { title: '지수개발', link: '/index/develop'  }
+            //{ title: '지수개발', link: '/index/develop'  }
           ],
         },
         {
@@ -53,26 +53,16 @@ export default {
         },
         {
           action: 'dashboard',
-          title: '시장정보',
+          title: 'Market Info',
           active: true,
           subitems: [
-            { title: 'ETP 시장정보', link: '/info/etpinfo' },
-            { title: '기초지수 시장정보', link: '/info/indexinfo' },
-          ],
-        },
-        {
-          action: 'schedule',
-          title: 'TODAY',
-          active: true,
-          subitems: [
-            { title: 'TODAY1', link: '/today/today1' },
-            { title: 'TODAY2', link: '/today/today1'  },
-            { title: 'TODAY3', link: '/today/today1'  }
+            { title: 'ETP', link: '/info/etpinfo' },
+            { title: 'INDEX', link: '/info/indexinfo' },
           ],
         },
         {
           action: 'account_balance',
-          title: 'SUPPORT',
+          title: '운영지원',
           active: true,
           subitems: [
             { title: '기초지수코드정보', link: '/index/manage' },
@@ -91,7 +81,7 @@ export default {
             { title: 'ETP관리', link: '/index/develop'  },
           ],
         },
-        {
+        /*{
           action: 'sample',
           title: 'SAMPLE',
           active: true,
@@ -102,7 +92,7 @@ export default {
             { title: 'chart and grid', link: '/sample/test'  },
             { title: 'upload', link: '/sample/upload'  },
           ],
-        },
+        },*/
         
       ] //item
     }; // return

@@ -1,4 +1,5 @@
 <template>
+<v-app>
     <v-container>
        
         <v-layout row wrap class="content_margin">
@@ -35,6 +36,10 @@
                        
         </v-layout>
     </v-container>
+    <v-flex>
+             <ConfirmDialog ref="confirm"></ConfirmDialog>
+    </v-flex>
+</v-app>    
 </template>
 
 <script>
@@ -42,6 +47,7 @@ import $      from 'jquery'
 import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 import Config from '@/js/config.js';
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 var table = null;
 
 export default {
@@ -73,11 +79,14 @@ export default {
             list_cnt: 0
         };
     },
-    components: {},
+    components: {
+        ConfirmDialog: ConfirmDialog
+    },
     computed: {},
     created: function() {},
     beforeDestroy() {},
     mounted: function() {
+
         var vm = this;
         vm.getInfoIndexList();
 
@@ -110,9 +119,10 @@ export default {
                 }).then(response => {
                     // console.log(response);
                     if (response.data.success == false) {
-                        alert("관리지수 목록이 없습니다");
+                        this.$refs.confirm.open('', '관리지수 목록이 없습니다', {}, 1);
                     } else {
-                        var items = response.data.results;
+                        
+                        var items = response.data.results;  
                         
                         //console.log("response=" + JSON.stringify(items));
                         this.results = items;

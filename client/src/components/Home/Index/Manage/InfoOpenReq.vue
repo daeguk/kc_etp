@@ -67,6 +67,7 @@ export default {
     mounted: function() {
         var vm = this;
         
+        // 메시지 박스 참조
         this.$root.$confirm = this.$refs.confirm;
 
         $('#index_table, tbody').on('click', 'button', function () {
@@ -84,7 +85,7 @@ export default {
          reqTable = $('#index_table').DataTable( {
                     "processing": true,
                     "serverSide": false,
-                    "info": true,   // control table information display field
+                    "info": false,   // control table information display field
                     "stateSave": true,  //restore table state on page reload,
                     "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
                     paging: false,
@@ -148,10 +149,10 @@ export default {
             if (await this.$root.$confirm.open(
 					'승인',
 					'정보 공개 요청 승인 하시겠습니까?',
-					{ color: 'red' }
+                    {}
+                    ,2
 				)
 			) {
-
                 this.updateIndexOpenYn(this.$root.$confirm.val, item);                
             }
         },

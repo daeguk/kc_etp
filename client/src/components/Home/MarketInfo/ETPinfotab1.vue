@@ -141,8 +141,8 @@ export default {
     created: function() {},
     beforeDestroy() {},
     mounted: function() {
-        this.getIndexBaseInfo();
-        this.getIndexInEtpInfo();
+        //this.getIndexBaseInfo();
+        //this.getIndexInEtpInfo();
     },
     methods: {
         getIndexBaseInfo: function() {
