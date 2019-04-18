@@ -365,9 +365,9 @@ input[type='file']{
 
 .market_layout_w{width:100%;}
 .market_card_layout{padding:0 40px; }
-.market_card_w:first-child{border-left:1px dashed #cecece;}
-.market_card_w{ height: 250px; position: relative; border-right:1px dashed #cecece; }
-.market_card{ padding:24px;height: 250px;  }
+.market_card_w{ height: 250px; position: relative; border-right:1px dashed #cecece;  }
+.market_card_w.line_l{border-left:1px dashed #cecece; }
+.market_card{ padding:24px;height: 250px; }
 .market_card h6{font-size: 24px; font-weight: 600;}
 .market_card h6 p{font-size: 18px; font-weight: 600;  color:#606060;}
 .market_card h6 p span{color:red;font-size: 16px; margin-left:10px; }

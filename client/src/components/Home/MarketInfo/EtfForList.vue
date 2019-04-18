@@ -3,11 +3,11 @@
         <v-layout row wrap class="content_margin">
             <v-flex xs12>
                 <v-carousel  light hide-delimiters height="250px" interval="10000">
-                    <v-carousel-item  class="bg_W">
-                        <v-layout>
-                            <v-flex xs3>
+                    <v-carousel-item  class="bg_W market_layout_w">
+                        <v-layout class="market_card_layout">
+                            <v-flex>
                                 <v-card flat>
-                                    <div class="market_card_w">
+                                    <div class="market_card_w line_l">
                                         <div class="market_card">
                                             <h6> KOSPI <p>2148.80<span class="text_blue">-3.84(0.18%)</span></p></h6>
                                             <ul>
@@ -18,7 +18,7 @@
                                     </div>
                                 </v-card>
                             </v-flex>
-                            <v-flex xs3>
+                            <v-flex>
                                 <v-card  flat>
                                     <div class="market_card_w">
                                         <div class="market_card">
@@ -31,7 +31,7 @@
                                     </div>
                                 </v-card>
                             </v-flex>
-                            <v-flex xs3>
+                            <v-flex>
                                 <v-card flat>
                                     <div class="market_card_w">
                                         <div class="market_card">
@@ -44,7 +44,7 @@
                                     </div>
                                 </v-card>
                             </v-flex>
-                            <v-flex xs3>
+                            <v-flex>
                                 <v-card flat>
                                     <div class="market_card_w">
                                         <div class="market_card">
@@ -60,8 +60,21 @@
                         </v-layout>
                     </v-carousel-item>
                     <v-carousel-item  class="bg_W">
-                        <v-layout>
-                            <v-flex xs3>
+                        <v-layout class="market_card_layout">
+                            <v-flex>
+                                <v-card flat>
+                                    <div class="market_card_w  line_l">
+                                        <div class="market_card">
+                                            <h6> KOSPI <p>2148.80<span class="text_red">3.84(0.18%)</span></p></h6>
+                                            <ul>
+                                                <li> ETF-1종목<br><span>Total</span> <span class="text_result2">AUM 30,000K</span></li>
+                                               
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </v-card>
+                            </v-flex>
+                            <v-flex>
                                 <v-card flat>
                                     <div class="market_card_w">
                                         <div class="market_card">
@@ -73,8 +86,33 @@
                                         </div>
                                     </div>
                                 </v-card>
-                            </v-flex>
-                            
+                            </v-flex> 
+                            <v-flex>
+                                <v-card flat>
+                                    <div class="market_card_w">
+                                        <div class="market_card">
+                                            <h6> KOSPI <p>2148.80<span class="text_red">3.84(0.18%)</span></p></h6>
+                                            <ul>
+                                                <li> ETF-1종목<br><span>Total</span> <span class="text_result2">AUM 30,000K</span></li>
+                                               
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </v-card>
+                            </v-flex> 
+                            <v-flex>
+                                <v-card flat>
+                                    <div class="market_card_w">
+                                        <div class="market_card">
+                                            <h6> KOSPI <p>2148.80<span class="text_red">3.84(0.18%)</span></p></h6>
+                                            <ul>
+                                                <li> ETF-1종목<br><span>Total</span> <span class="text_result2">AUM 30,000K</span></li>
+                                               
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </v-card>
+                            </v-flex>  
                         </v-layout>
                     </v-carousel-item>
                 </v-carousel>
