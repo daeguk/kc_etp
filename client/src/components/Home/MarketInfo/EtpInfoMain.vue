@@ -16,16 +16,16 @@
 
             <v-tabs-items v-model="tab">
                 <v-tab-item>
-                    <etfkorlist></etfkorlist>
+                    <EtfKorList></EtfKorList>
                 </v-tab-item>
                 <v-tab-item>
-                    <etfforlist></etfforlist>
+                    <EtfForList></EtfForList>
                 </v-tab-item>
                 <v-tab-item>
-                    <etnkorlist></etnkorlist>
+                    <EtnKorList></EtnKorList>
                 </v-tab-item>
                 <v-tab-item>
-                    <etnforlist></etnforlist>
+                    <EtnForList></EtnForList>
                 </v-tab-item>
                 <v-tab-item>
                     <EtpforList5></EtpforList5>
@@ -60,6 +60,7 @@ export default {
                 mini: false,
                 right: null,
                 tab: null,
+
                 items: ['전체', '시장대표', '섹터', '전략', '채권', '해외', '혼합', '상품'],
     	};
     },    
