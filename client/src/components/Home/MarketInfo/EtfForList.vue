@@ -3,14 +3,14 @@
         <v-layout row wrap class="content_margin">
             <v-flex xs12>
                 <v-carousel light hide-delimiters height="250px" interval="10000">
-                    <v-carousel-item class="bg_W market_layout_w">
+                    <v-carousel-item class="bg_W market_layout_w" v-for="(item, index) in representGrpList" :key="index">
                         <v-layout class="market_card_layout">
                             <v-flex>
                                 <v-card flat>
                                     <div class="market_card_w line_l">
                                         <div class="market_card">
                                             <h6>
-                                                KOSPI
+                                                {{ item.one.f16002 }}
                                                 <p>
                                                     2148.80
                                                     <span class="text_blue">-3.84(0.18%)</span>
@@ -34,12 +34,13 @@
                                     </div>
                                 </v-card>
                             </v-flex>
+                            
                             <v-flex>
                                 <v-card flat>
                                     <div class="market_card_w">
                                         <div class="market_card">
                                             <h6>
-                                                KOSPI200
+                                                {{ item.two.f16002 }}
                                                 <p>
                                                     2148.80
                                                     <span class="text_red">3.84(0.18%)</span>
@@ -68,7 +69,7 @@
                                     <div class="market_card_w">
                                         <div class="market_card">
                                             <h6>
-                                                KOSPIDAQ
+                                                {{ item.three.f16002 }}
                                                 <p>
                                                     2148.80
                                                     <span class="text_red">3.84(0.18%)</span>
@@ -97,103 +98,7 @@
                                     <div class="market_card_w">
                                         <div class="market_card">
                                             <h6>
-                                                KOSPIDAQ150
-                                                <p>
-                                                    2148.80
-                                                    <span class="text_red">3.84(0.18%)</span>
-                                                </p>
-                                            </h6>
-                                            <ul>
-                                                <li>
-                                                    ETF-1종목
-                                                    <br>
-                                                    <span>Total</span>
-                                                    <span class="text_result2">AUM 30,000K</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                        </v-layout>
-                    </v-carousel-item>
-                    <v-carousel-item class="bg_W">
-                        <v-layout class="market_card_layout">
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w line_l">
-                                        <div class="market_card">
-                                            <h6>
-                                                KOSPI
-                                                <p>
-                                                    2148.80
-                                                    <span class="text_red">3.84(0.18%)</span>
-                                                </p>
-                                            </h6>
-                                            <ul>
-                                                <li>
-                                                    ETF-1종목
-                                                    <br>
-                                                    <span>Total</span>
-                                                    <span class="text_result2">AUM 30,000K</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card">
-                                            <h6>
-                                                KOSPI
-                                                <p>
-                                                    2148.80
-                                                    <span class="text_red">3.84(0.18%)</span>
-                                                </p>
-                                            </h6>
-                                            <ul>
-                                                <li>
-                                                    ETF-1종목
-                                                    <br>
-                                                    <span>Total</span>
-                                                    <span class="text_result2">AUM 30,000K</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card">
-                                            <h6>
-                                                KOSPI
-                                                <p>
-                                                    2148.80
-                                                    <span class="text_red">3.84(0.18%)</span>
-                                                </p>
-                                            </h6>
-                                            <ul>
-                                                <li>
-                                                    ETF-1종목
-                                                    <br>
-                                                    <span>Total</span>
-                                                    <span class="text_result2">AUM 30,000K</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card">
-                                            <h6>
-                                                KOSPI
+                                                {{ item.four.f16002 }}
                                                 <p>
                                                     2148.80
                                                     <span class="text_red">3.84(0.18%)</span>
@@ -215,6 +120,8 @@
                     </v-carousel-item>
                 </v-carousel>
             </v-flex>
+
+
             <!---테이블1--->
             <v-flex grow xs12 mt-3>
                 <v-card flat>
@@ -624,6 +531,14 @@ export default {
                 }
             ],
             items4: ["ETF", "ETN", "INDEX"]
+
+
+            ,   representList       :   []
+            ,   representGrpList    :   []
+
+            ,   ctgJisuList         :   []
+            ,   ctgJisuByEtpList    :   []
+            ,   ctgJisuByEtpJson    :   {}
         };
     },
     components: {
@@ -633,45 +548,36 @@ export default {
     },
     computed: {},
     mounted: function() {
-        //this.getEtfKorList();
+        this.getEtpRepresentList();      
     },
     created: function() {},
     beforeDestroy() {},
     methods: {
-        getEtfKorList: function() {
+
+        /*
+         * 시장대표에 해당하는 지수 및 ETP 정보를 조회한다. ( ETP -> 시장대표 탭 선택시 )
+         * 2019-04-16  bkLove(촤병국)
+         */        
+        getEtpRepresentList: function() {
             console.log("getEtfKorList");
             var vm = this;
 
-            axios
-                .get(Config.base_url + "/user/marketinfo/getetfkorlist", {
-                    params: {
-                        // "bbs_id" : vm.bbs_id,
-                        // "seloption" : vm.seloption,
-                        // "searchinfo" : vm.searchinfo,
-                        // "curPage": vm.curPage,
-                        // "perPage": vm.perPage
-                    }
-                })
-                .then(function(response) {
-                    console.log(response);
-                    if (response.data.success == false) {
-                        alert("해당 종목이 없습니다");
-                    } else {
-                        var items = response.data.results;
-                        var tcount = response.data.count;
-                        // items.forEach(function(item, index) {
-                        //   if(item.kor_for_type == 'K') {
-                        //     item.kor_for_type = "국내";
-                        //   }else if(item.kor_for_type == 'F') {
-                        //     item.kor_for_type = "해외";
-                        //   }else {
-                        //     item.kor_for_type = "";
-                        //   }
-                        // });
-                        vm.results = items;
-                        vm.count = tcount;
-                    }
-                });
+            axios.post(Config.base_url + "/user/marketinfo/getEtpRepresentList", {
+                data: {}
+            }).then(function(response) {
+                console.log(response);
+
+                if( response.data ) {
+
+                    vm.$nextTick().then(() => {
+                        vm.representList    =   response.data.representList;
+                        vm.representGrpList =   response.data.representGrpList;
+                        vm.ctgJisuList      =   response.data.ctgJisuList;
+                        vm.ctgJisuByEtpList =   response.data.ctgJisuByEtpList;
+                        vm.ctgJisuByEtpJson =   response.data.ctgJisuByEtpJson;
+                    });                      
+                }
+            });
         }
     }
 };

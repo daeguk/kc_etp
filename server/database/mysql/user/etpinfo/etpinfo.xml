@@ -60,7 +60,7 @@
     <![CDATA[
         SELECT      /* etpinfo.getJisuListByEtpRepresentCnt 시장을 대표하는 지수의 ETF, ETN 건수를 조회한다. */
 
-                    base.f16257                                                     AS  f16257
+                    base.f16257                                                     AS  f16257          /* ETP기초지수코드 */
                 ,   base.middle_type                                                AS  middle_type
                 
                 ,   IFNULL(
@@ -99,7 +99,7 @@
                     )                                                               AS  grp_etn_sum
                                 
           FROM  (
-                    SELECT      td_etp_basic.f16257                                 AS  f16257
+                    SELECT      td_etp_basic.f16257                                 AS  f16257          /* ETP기초지수코드 */
                             ,   base.middle_type                                    AS  middle_type
                             ,   CASE    WHEN    td_etp_basic.f16493  IN ( '1', '2' )
                                         THEN    'ETF'
@@ -154,6 +154,35 @@
 
 
     <!--
+    * 분류코드별 지수정보를 조회한다.
+    * 2019-04-19  bkLove(촤병국)
+    -->
+    <select id="getJisuListByCtgCode">
+    <![CDATA[
+        SELECT      /* etpinfo.getJisuListByCtgCode 분류코드별 지수정보를 조회한다. */
+
+                    tm_etpctg_code.ctg_large_code                       AS  ctg_large_code      /* ETP대분류코드 */
+                ,   tm_etpctg_code.ctg_code                             AS  ctg_code            /* ETP분류코드 */
+                ,   tm_etpctg_code.ctg_name                             AS  ctg_name            /* 분류이름 */
+                
+          FROM  tm_etpctg_code
+         WHERE  tm_etpctg_code.ctg_large_code               =   '001' 
+           AND  EXISTS
+                (
+                    SELECT  1
+                      FROM  tm_etpctg_map
+                      
+                     WHERE  tm_etpctg_map.ctg_large_code    =   tm_etpctg_code.ctg_large_code
+                       AND  tm_etpctg_map.ctg_code          =   tm_etpctg_code.ctg_code
+                       
+                     LIMIT  0, 1
+                )
+         ORDER  BY      tm_etpctg_code.ctg_large_code
+                    ,   tm_etpctg_code.ctg_code
+    ]]>
+    </select>
+
+    <!--
     * 지수별 ETP 목록을 조회한다.
     * 2019-04-19  bkLove(촤병국)
     -->
@@ -161,7 +190,9 @@
     <![CDATA[
         SELECT      /* etpinfo.getEtpListByJisu 지수별 ETP 목록을 조회한다. */
 
-                    td_etp_basic.F12506                                 AS  f12506              /* 입회일 */
+                    tm_etpctg_map.ctg_code                              AS  ctg_code            /* ETP분류코드 */
+
+                ,   td_etp_basic.F12506                                 AS  f12506              /* 입회일 */
                 ,   td_etp_basic.F16012                                 AS  f16012              /* 국제표준코드 */
                 ,   td_etp_basic.F16013                                 AS  f16013              /* 단축코드 */
                 ,   td_etp_basic.F16002                                 AS  f16002              /* 한글종목명 */
@@ -233,19 +264,27 @@
                 ,   td_etp_basic.F33960                                 AS  f33960              /* ETP운용사코드 */
                 ,   td_etp_basic.F33961                                 AS  f33961              /* ETP운용사명(한글명) */
                 
-          FROM  td_etp_basic
-         WHERE  td_etp_basic.F16013                 IN
-                (
-                    SELECT  tm_etpctg_map.f16013
-                      FROM  tm_etpctg_map
-                     WHERE  ( tm_etpctg_map.ctg_large_code, tm_etpctg_map.ctg_code )    IN
-                            (
-                                SELECT      tm_etpctg_code.ctg_large_code
-                                        ,   tm_etpctg_code.ctg_code
-                                  FROM  tm_etpctg_code
-                                 WHERE  tm_etpctg_code.ctg_large_code       =   '001'
-                            )
-                )
+          FROM          td_etp_basic
+         INNER  JOIN    (        
+                            SELECT      tm_etpctg_map.ctg_large_code    AS  ctg_large_code      /* ETP대분류코드 */
+                                    ,   tm_etpctg_map.ctg_code          AS  ctg_code            /* ETP분류코드 */
+                                    ,   tm_etpctg_map.F16012            AS  F16012              /* 종목코드 */
+                                    
+                              FROM  tm_etpctg_map
+                             WHERE  ( tm_etpctg_map.ctg_large_code, tm_etpctg_map.ctg_code )    IN
+                                    (
+                                        SELECT      tm_etpctg_code.ctg_large_code
+                                                ,   tm_etpctg_code.ctg_code
+                                                
+                                          FROM  tm_etpctg_code
+                                         WHERE  tm_etpctg_code.ctg_large_code       =   '001'
+                                    )        
+                        )   tm_etpctg_map
+                        
+                  ON    td_etp_basic.F16012     =   tm_etpctg_map.F16012
+
+         ORDER  BY      tm_etpctg_map.ctg_code
+                    ,   tm_etpctg_map.F16012
     ]]>
     </select>
 

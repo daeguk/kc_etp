@@ -60,7 +60,8 @@ export default {
                 mini: false,
                 right: null,
                 tab: null,
-
+                drawer:"",
+                search:"",
                 items: ['전체', '시장대표', '섹터', '전략', '채권', '해외', '혼합', '상품'],
     	};
     },    

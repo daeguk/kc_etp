@@ -9,7 +9,7 @@ var model = {};
 
 model.selectEtfKorList = function(options) {
     console.log('selectEtpKorList');
-
+/*
     var stmt = 'SELECT ISU_KOR_ABBRV, ISIN_CODE, ISU_SRT_CD, UPD_DATE, NAME_K, \
         SYM_CODE \
         from m001_sksetfkormasti \
@@ -20,7 +20,8 @@ model.selectEtfKorList = function(options) {
     // }
 
     stmt += ` ORDER BY UPD_DATE DESC`
-    return stmt;
+*/    
+    return "";
 }
 
 model.selectEtfForList = function(options) {
