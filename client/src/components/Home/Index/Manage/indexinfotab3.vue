@@ -38,53 +38,21 @@
     </div>
       <!---table2--->
     </v-flex>
-     <v-flex>
-        <v-dialog
-            v-model="dialog"
-            max-width="450"
-        >
-        <v-card class="pop_alert">
-        <h6><v-icon class="confirm">help</v-icon> Confirm</h6>
-        <!--h6><v-icon class="warning_1">warning</v-icon> Warning</h6>
-        <h6><v-icon class="error_1">error</v-icon> Error</h6-->
-          <v-card-title>정보 공개 요청 {{message}} 하시겠습니까?</v-card-title>
-  
-         
-          <v-card-actions>
-            <v-spacer></v-spacer>
-  
-            <v-btn
-              class="pop_alret_yesbtn"
-              depressed
-              dark
-              small
-              @click="updateIndexOpenYn('Y');"
-            >
-              예
-            </v-btn>
-  
-            <v-btn
-              class="pop_alret_nobtn"
-              depressed
-              dark
-              small
-              @click="updateIndexOpenYn('N');"
-            >
-              아니요
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-         </v-flex>    
+    <v-flex>
+        <ConfirmDialog ref="confirm"></ConfirmDialog>
+    </v-flex> 
   </v-layout>
   </v-container>
 </template>
 
 
 <script>
-
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import Config from '@/js/config.js';
  export default {
+    components: {
+        ConfirmDialog: ConfirmDialog
+    },
     props: [],
     data() {
         return {
@@ -118,6 +86,9 @@ import Config from '@/js/config.js';
 
     },
     mounted: function() {
+        // ConfirmDialog 변수 
+        this.$root.$confirm = this.$refs.confirm;
+
         this.getInfoOpenReqList();
         this.getindexSubscribeList();
     },
@@ -162,20 +133,32 @@ import Config from '@/js/config.js';
                     } 
                 });
         }, 
-        dialogOpen: function(flag, item) {
-            this.selected = item;
+
+        async dialogOpen(flag, item) {
+            
             if (flag == '1') {
-                this.message = '승인';
+                this.message = "정보 공개 요청 승인 하시겠습니까?";
                 this.reqFlag = true;
             } else if (flag == '2') {
-                this.message = '거절';
+                this.message = '정보 공개 요청 거절 하시겠습니까?';
                 this.reqFlag = false; 
             } else {
-                this.message = '해지';
+                this.message = '정보 공개 요청 해지 하시겠습니까?';
                 this.reqFlag = false; 
             }
-            this.dialog = true;
+
+
+            if (await this.$root.$confirm.open(
+					'정보공개',
+					this.message,
+					{}, 2
+				)
+			) {
+                this.updateIndexOpenYn(this.$root.$confirm.val, item);                
+            }
         },
+
+
         updateIndexOpenYn: function(flag) {
             this.dialog = false;
 

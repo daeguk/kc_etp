@@ -1,6 +1,6 @@
 <template>
+<v-app>
     <v-container class="summary_card_pad">
-       
         <v-layout row wrap>
             <v-flex xs12>
                 <v-container>
@@ -38,6 +38,11 @@
             </v-flex>
         </v-layout>
     </v-container>
+    <v-flex>
+             <ConfirmDialog ref="confirm"></ConfirmDialog>
+    </v-flex>
+</v-app>
+    
 </template>
 
 
@@ -47,7 +52,7 @@ import Config from "@/js/config.js";
 import IndexSummaryCard from "./IndexSummaryCard.vue";
 import IndexSummaryBox from "./IndexSummaryBox.vue";
 import InfoOpenReq from "./InfoOpenReq.vue";
-
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 export default {
     props: [],
     data() {
@@ -130,9 +135,12 @@ export default {
     components: {
         IndexSummaryCard: IndexSummaryCard,
         IndexSummaryBox: IndexSummaryBox,
-        InfoOpenReq: InfoOpenReq
+        InfoOpenReq: InfoOpenReq,
+        ConfirmDialog: ConfirmDialog
     },
     mounted: function() {
+        // 메시지 박스 참조
+        this.$root.$confirm = this.$refs.confirm;
         this.getIndexSummaryInfo();
     },
     created: function() {},
@@ -148,8 +156,9 @@ export default {
                 .then(function(response) {
                     // console.log(response);
                     if (response.data.success == false) {
-                        alert("해당 신청현황이 없습니다");
+                        vm.$root.$confirm.open('', '지수정보가 없습니다.', {}, 1);
                     } else {
+
                         console.log(response.data.results1);
                         console.log(response.data.results1[0].F16002);
 
