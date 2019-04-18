@@ -9,7 +9,7 @@ var util = require("util");
 var Promise = require("bluebird");
 
 var util = require("util");
-var multer = require('multer');
+var multer = require('multer'); 
 var xlsx = require('xlsx');
 var fs = require('fs'); 
 
@@ -454,7 +454,7 @@ var getETFList = function (req, res) {
         var mapper = req.app.get("mapper");
         // var options = {id:'admin'};
         
-        var options = {
+        var options = { 
             large_type : req.session.large_type,
             jisu_cd: req.query.jisu_cd,
             market_id: req.query.market_id

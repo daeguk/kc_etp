@@ -2,13 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="index">  
     <!--
-    * 가장 최근 지수 정보
+    * 가장 최근 지수 정보(지수 코드가 가장큰 지수 선택)
     -->
     <select id="indexSummaryLately">
       SELECT BAS.F16013
             ,BAS.F16002
             ,BAS.LARGE_TYPE
             ,BAS.MIDDLE_TYPE
+            ,BAS.MARKET_ID
             ,HIS.F12506
             ,HIS.F15009
             ,HIS.F15010
@@ -147,6 +148,7 @@
             ,BAS.F16002
             ,BAS.LARGE_TYPE
             ,BAS.MIDDLE_TYPE
+            ,BAS.MARKET_ID
             ,HIS.F12506
             ,HIS.F15009
             ,HIS.F15010
