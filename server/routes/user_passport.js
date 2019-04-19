@@ -31,6 +31,7 @@ module.exports = function(router, passport) {
     }));
 
     // 관리자 로그인 인증
+    debugger;
     router.route('/adminlogin').post(passport.authenticate('admin-login', {
         successRedirect : '/admin/user', 
         failureRedirect : '/admin', 
