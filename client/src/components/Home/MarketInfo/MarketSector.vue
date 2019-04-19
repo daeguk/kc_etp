@@ -496,7 +496,7 @@ export default {
             tables:[],
             tab: null,
             tab2: null,
-            drawer:true,
+            drawer:false,
             search:"",
             items1: ["전체", "시장대표"],
             items: [
@@ -597,6 +597,34 @@ export default {
                                         return htm;
                                     },
                                     "targets": 0
+                                },
+                                {  
+                                    "render": function ( data, type, row ) {
+                                        let htm = ""
+                                        if (row.f15004 >= 0) {
+                                            htm = "<span class='align_r text_red'>"+data;
+                                        } else {
+                                            htm = "<span class='align_r text_blue'>"+data;
+                                        }
+                                        htm += "<br><span class='text_S'>"+row.f30818+"</span>";
+                                        htm += "   </span>";
+                                        return htm;
+                                    },
+                                    "targets": 1
+                                },
+                                {  
+                                    "render": function ( data, type, row ) {
+                                        let htm = ""
+                                        if (row.f15004 >= 0) {
+                                            htm = "<span class='align_r text_red'>"+data;
+                                        } else {
+                                            htm = "<span class='align_r text_blue'>"+data;
+                                        }
+                                        htm += "<br><span class='text_S'>"+row.f15004+"</span>";
+                                        htm += "   </span>";
+                                        return htm;
+                                    },
+                                    "targets": 6
                                 },
                                 {
                                     "render": function ( data, type, row ) {
