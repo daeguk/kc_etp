@@ -139,8 +139,8 @@
                            {{item.ctg_name}}
                             <p>
                                 Total
-                                <span class="text_result">120</span> results
-                                <span>기준일 :2018.10.20</span>
+                                <span class="text_result" v-bind:id="'represent_count'+item.ctg_code">120</span> results
+                                <span v-bind:id="'represent_date'+item.ctg_code">기준일 :2018.10.20</span>                                
                             </p>
                         </h3>
                     </v-card-title>
@@ -464,33 +464,97 @@ export default {
                         for( var inx in vm.ctgJisuByEtpList ) {
                             var item    =   vm.ctgJisuByEtpList[ inx ];
 
+                            $('#represent'+ item.ctg_code).DataTable( {
+                                    "processing": true,
+                                    "serverSide": false,
+                                    "info": false,   // control table information display field
+                                    "stateSave": true,  //restore table state on page reload,
+                                    "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                                    
+                                    select: {
+                                        style:    'single',
+                                        selector: 'td:first-child'
+                                    },
+                                    paging: false,
+                                    searching: false,
+                                    data : item.data,                            
+                                    "columnDefs": [
+                                        {  
+                                            "render": function ( data, type, row ) {
+                                                let htm = "<span>";
+                                                htm += "           <b>"+data+"</b>";
+                                                htm += "            <br>"+row.f16013+" <span><div class='text_new'>new</div></span>";
+                                                htm += "        </span>";
+                                                return htm;
+                                            },
+                                            "targets": 0
+                                        },
+                                        {  
+                                            "render": function ( data, type, row ) {
+                                                let htm = ""
+                                                if (row.f15004 >= 0) {
+                                                    htm = "<span class='align_r text_red'>"+data;
+                                                } else {
+                                                    htm = "<span class='align_r text_blue'>"+data;
+                                                }
+                                                htm += "<br><span class='text_S'>"+row.f30818+"</span>";
+                                                htm += "   </span>";
+                                                return htm;
+                                            },
+                                            "targets": 1
+                                        },
+                                        {  
+                                            "render": function ( data, type, row ) {
+                                                let htm = ""
+                                                if (row.f15004 >= 0) {
+                                                    htm = "<span class='align_r text_red'>"+data;
+                                                } else {
+                                                    htm = "<span class='align_r text_blue'>"+data;
+                                                }
+                                                htm += "<br><span class='text_S'>"+row.f15004+"</span>";
+                                                htm += "   </span>";
+                                                return htm;
+                                            },
+                                            "targets": 6
+                                        },
+                                        {
+                                            "render": function ( data, type, row ) {
+                                                let htm = "<div class='tooltip'><button type='button' id='detail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>";
+                                                htm += "<div class='tooltip'><button type='button' id='pdf' class='btn_icon v-icon material-icons'>picture_as_pdf</button><span class='tooltiptext' style='width:70px;'>PDF관리</span></div>";
+                                                return htm;
+                                            },
+                                            "targets": 7
+                                        }
+                                    ],
+                                    columns: [
+                                        { "data": "f16002", "orderable": true, className:"txt_left line2"}, /*종목*/
+                                        { "data": "f15301", "orderable": true }, /*INAV*/
+                                        { "data": "f03329", "orderable" : true}, /*전일최종Nav*/
+                                        { "data": "f15302", "orderable" : true}, /*추적오차율*/
+                                        { "data": "f15304", "orderable" : true}, /*괴리율*/
+                                        { "data": "f34777", "orderable" : true}, /*기초지수*/
+                                        { "data": "f15001", "orderable" : true}, /*지수현재가*/
+                                        { "data": null, "orderable" : true, defaultContent:""},
+                                    ]
+                            }); 
 
-                            $( '#represent' + item.ctg_code ).DataTable( {
-                                "processing": true,
-                                "serverSide": false,
-                                "info": false,   // control table information display field
-                                "stateSave": true,  //restore table state on page reload,
-                                "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                                scrollY:        '500px',
-                                scrollCollapse: true,
-                                select: {
-                                    style:    'single',
-                                    selector: 'td:first-child'
-                                },
-                                paging: false,
-                                searching: false,
-                                data : item.data,
-                                columns: [
-                                    { "data": "f16002", "orderable": true}, /*종목*/
-                                    { "data": "f15301", "orderable": true }, /*INAV*/
-                                    { "data": "f03329", "orderable" : true}, /*전일최종Nav*/
-                                    { "data": "f15302", "orderable" : true}, /*추적오차율*/
-                                    { "data": "f15304", "orderable" : true}, /*괴리율*/
-                                    { "data": "f34777", "orderable" : true}, /*기초지수*/
-                                    { "data": "f15001", "orderable" : true}, /*지수현재가*/
-                                    { "data": null, "orderable" : true, defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div><div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>picture_as_pdf</button><span class='tooltiptext' style='width:70px;'>PDF관리</span></div>"},
-                                ]
+                            // ETP 갯수와 기준일 바인딩 
+                            $("#represent_count" + item.ctg_code).html( item.data.length);
+                            $("#represent_date" + item.ctg_code).html("기준일 :"+item.data[0].f12506);
+
+                            // 테이블별 이벤트
+                            $('#represent'+ item.ctg_code+' tbody').on('click', 'button', function () {
+                                var     table   =   $('#represent'+ item.ctg_code).DataTable();
+                                var     data    =   table.row( this ).data();
+
+                                if ($(this).attr('id') == 'detail') {
+                                    console.log('move detailPage ');
+                                } else {
+                                    console.log('move pdfPage ');
+                                }
+                                    
                             });
+
                         }
                     });                      
                 }
