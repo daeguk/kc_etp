@@ -3,18 +3,18 @@
         <v-layout row wrap class="content_margin">
             <v-flex xs12>
                 <v-carousel  light hide-delimiters height="250px" interval="10000">
-                    <v-carousel-item  class="bg_W market_layout_w">
+                    <v-carousel-item  class="bg_W market_layout_w" v-for="n in carousel_item.count" :key="n">
                         <v-layout class="market_card_layout">
                             <v-flex>
                                 <v-card flat>
                                     <div class="market_card_w line_l">
                                         <div class="market_card2">
-                                            <h6> IT </h6>
+                                            <h6> IT</h6>
                                             <ul>
                                                 <li>
                                                     <dl> 
                                                         <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">1234K</dt>
+                                                        <dt class="txt_num text_result2"></dt>
                                                     </dl>
                                                 </li>
                                                 <li> <dl> 
@@ -497,6 +497,18 @@ export default {
             tab: null,
             tab2: null,
             drawer:false,
+            carousel_item:{
+                "count": 0,
+                "mod":0,
+            },
+            carousel_data:[
+                    {
+                     name: "",
+                     total_amt:0,
+                     etf_cnt:0,
+                     etn_cnt:0
+                    }
+                ],
             search:"",
             items1: ["전체", "시장대표"],
             items: [
@@ -527,9 +539,6 @@ export default {
     mounted: function() {
         var vm = this;
         vm.getCtgCodeList();
-
-        
-        
         
     },
     created: function() {},
@@ -551,13 +560,17 @@ export default {
                     var items = response.data.results;                        
                     vm.ctg_results = items[0];
 
+                    // 캐러셀 그리기 위한 정보 
+                    vm.carousel_item.count = vm.ctg_results.length / 5; //5등분 갯수
+                    vm.carousel_item.mod = vm.ctg_results.length % 5; // 나머지 갯수
+
                     for(let ctg of vm.ctg_results) {
-                        vm.getSectorEtpList(ctg.ctg_large_code, ctg.ctg_code);    
+                        vm.getSectorEtpList(ctg.ctg_large_code, ctg.ctg_code, ctg.ctg_name);    
                     }
                 }
             });             
         },
-        getSectorEtpList: function(ctg_large_code, ctg_code) {
+        getSectorEtpList: function(ctg_large_code, ctg_code, ctg_name) {
             console.log("getSectorEtpList");
             var vm = this;
 
@@ -572,6 +585,19 @@ export default {
                     alert("해당 종목이 없습니다");
                 } else {
                     var items = response.data.results[0];                        
+
+                    var total_amt = 0;
+                    var etf_cnt = 0;
+                    var etn_cnt = 0;
+                    for (let item of items) {
+                        total_amt += item.f15028;
+                        if (item.f16493 == '1' || item.f16493 == '2') {
+                            etf_cnt++; 
+                        } else if (item.f16493 == '3' || item.f16493 == '4') {
+                            etn_cnt++; 
+                        }
+                    }
+                    vm.carousel_data.push({"name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
 
                     $('#sector'+ctg_code).DataTable( {
                             "processing": true,
@@ -666,7 +692,8 @@ export default {
 
                 }
             });  
-        }
+        },
+      
     }
 };
 </script>
