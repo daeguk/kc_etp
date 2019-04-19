@@ -147,7 +147,7 @@
 
 
                     <v-card flat>
-                        <table v-bind:id="'sector' + item.ctg_code" class="tbl_type" style="width:100%">
+                        <table v-bind:id="'represent' + item.ctg_code" class="tbl_type" style="width:100%">
                             <colgroup>
                                 <col width="25%">
                                 <col width="10%">
@@ -453,17 +453,19 @@ export default {
 
                 if( response.data ) {
 
-                    vm.$nextTick().then(() => {
-                        vm.representList    =   response.data.representList;
-                        vm.representGrpList =   response.data.representGrpList;
-                        vm.ctgJisuList      =   response.data.ctgJisuList;
-                        vm.ctgJisuByEtpList =   response.data.ctgJisuByEtpList;
+                    vm.representList    =   response.data.representList;
+                    vm.representGrpList =   response.data.representGrpList;
+                    vm.ctgJisuList      =   response.data.ctgJisuList;
+                    vm.ctgJisuByEtpList =   response.data.ctgJisuByEtpList;
 
+
+                    vm.$nextTick().then(() => {
 
                         for( var inx in vm.ctgJisuByEtpList ) {
                             var item    =   vm.ctgJisuByEtpList[ inx ];
 
-                            $( '#sector' + item.ctg_code ).DataTable( {
+
+                            $( '#represent' + item.ctg_code ).DataTable( {
                                 "processing": true,
                                 "serverSide": false,
                                 "info": false,   // control table information display field
@@ -478,10 +480,6 @@ export default {
                                 paging: false,
                                 searching: false,
                                 data : item.data,
-                                "columnDefs": [
-                                    { "targets": 0, className: "dt-left" },
-                                    { "targets": 2, className: "dt-center" },
-                                ],                                  
                                 columns: [
                                     { "data": "f16002", "orderable": true}, /*종목*/
                                     { "data": "f15301", "orderable": true }, /*INAV*/

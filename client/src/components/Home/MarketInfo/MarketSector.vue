@@ -649,7 +649,6 @@ export default {
                 } else {
                     var items = response.data.results[0];                        
 
-
                     $('#sector'+ctg_code).DataTable( {
                             "processing": true,
                             "serverSide": false,
