@@ -209,7 +209,7 @@
 
                     tm_etpctg_map.ctg_code                              AS  ctg_code            /* ETP분류코드 */
 
-                ,   td_etp_basic.F12506                                 AS  f12506              /* 입회일 */
+                ,   date_format(td_etp_basic.F12506, '%Y.%m.%d')                                 AS  f12506              /* 입회일 */
                 ,   td_etp_basic.F16012                                 AS  f16012              /* 국제표준코드 */
                 ,   td_etp_basic.F16013                                 AS  f16013              /* 단축코드 */
                 ,   td_etp_basic.F16002                                 AS  f16002              /* 한글종목명 */

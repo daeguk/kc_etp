@@ -242,8 +242,8 @@
                            {{item.ctg_name}}
                             <p>
                                 Total
-                                <span class="text_result">120</span> results
-                                <span>기준일 :2018.10.20</span>
+                                <span class="text_result" v-bind:id="'sec_count'+item.ctg_code">120</span> results
+                                <span v-bind:id="'sec_date'+item.ctg_code">기준일 :2018.10.20</span>
                             </p>
                         </h3>
                     </v-card-title>
@@ -646,6 +646,10 @@ export default {
                                 { "data": null, "orderable" : true, defaultContent:""},
                             ]
                     }); 
+
+                    // ETP 갯수와 기준일 바인딩 
+                    $("#sec_count"+ctg_code).html(items.length);
+                    $("#sec_date"+ctg_code).html("기준일 :"+items[0].f12506);
 
                     // 테이블별 이벤트
                     $('#sector'+ctg_code+' tbody').on('click', 'button', function () {
