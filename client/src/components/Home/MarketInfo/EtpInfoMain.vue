@@ -16,10 +16,10 @@
 
             <v-tabs-items v-model="tab">
                 <v-tab-item>
-                    <EtfKorList></EtfKorList>
-                </v-tab-item>
-                <v-tab-item>
                     <EtfForList></EtfForList>
+                </v-tab-item>                
+                <v-tab-item>
+                    <MarketRepresent></MarketRepresent>
                 </v-tab-item>
                 <v-tab-item>
                     <MarketSector></MarketSector>
@@ -45,8 +45,8 @@
 </template>
 
 <script>
-import EtfKorList   from  './EtfKorList.vue'
 import EtfForList   from  './EtfForList.vue'
+import MarketRepresent   from  './MarketRepresent.vue'
 import MarketSector   from  './MarketSector.vue'
 import EtnForList   from  './EtnForList.vue'
 import EtpforList5   from  './EtpforList5.vue'
@@ -67,14 +67,14 @@ export default {
     	};
     },    
     components: {
-        EtfKorList     : EtfKorList,
-        EtfForList     : EtfForList,
-        MarketSector     : MarketSector,
-        EtnForList     : EtnForList,
-        EtpforList5 : EtpforList5,
-        EtpforList6 : EtpforList6,
-        EtpforList7 : EtpforList7,
-       EtpforList8 : EtpforList8,
+        EtfForList      :   EtfForList,
+        MarketRepresent :   MarketRepresent,        
+        MarketSector    :   MarketSector,
+        EtnForList      :   EtnForList,
+        EtpforList5     :   EtpforList5,
+        EtpforList6     :   EtpforList6,
+        EtpforList7     :   EtpforList7,
+       EtpforList8      :   EtpforList8,
     },
     created: function() {
     },
