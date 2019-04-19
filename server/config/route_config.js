@@ -98,6 +98,8 @@ module.exports = {
         { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getetnforlist', method: 'getEtnForList', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getEtpRepresentList', method: 'getEtpRepresentList', session: 'check', type: 'post' },
 
+        { file: './user/marketInfo/marketInfo', path: '/user/marketinfo/getMarketCtgCodeInfo', method: 'getMarketCtgCodeInfo', session: 'check', type: 'get' },
+      
         //풀 테스트 
 
         { file: './sample/bluebirdTest', path: '/sample/getBluelist', method: 'getBlueList', session: 'uncheck', type: 'post' },

@@ -234,11 +234,12 @@
                 </v-carousel>
             </v-flex>
             <!---테이블1--->
-            <v-flex grow xs12 mt-3>
+            
+            <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12 mt-3>
                 <v-card flat>
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
-                           IT 섹터
+                           {{item.ctg_name}}
                             <p>
                                 Total
                                 <span class="text_result">120</span> results
@@ -247,7 +248,7 @@
                         </h3>
                     </v-card-title>
                     <v-card flat>
-                        <table id class="tbl_type" style="width:100%">
+                        <table v-bind:id="'sector'+item.ctg_code" class="tbl_type" style="width:100%">
                             <colgroup>
                                 <col width="20%">
                                 <col width="10%">
@@ -557,7 +558,10 @@ import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
-import Config from "@/js/config.js";
+
+import Config       from "@/js/config.js"
+
+
 var importance_grid = null;
 
 export default {
@@ -567,7 +571,7 @@ export default {
             dialog: false,
             mini: false,
             right: null,
-            results: [],
+            ctg_results: [],
             tab: null,
             tab2: null,
             drawer:"",
@@ -619,46 +623,30 @@ export default {
     },
     computed: {},
     mounted: function() {
-        this.getEtfKorList();
+        this.getCtgCodeList();
     },
     created: function() {},
     beforeDestroy() {},
     methods: {
-        getEtfKorList: function() {
-            console.log("getEtfKorList");
+        getCtgCodeList: function() {
+            console.log("getCtgCodeList");
             var vm = this;
-/*
-            axios
-                .get(Config.base_url + "/user/marketinfo/getetfkorlist", {
+
+            axios.get(Config.base_url + "/user/marketinfo/getMarketCtgCodeInfo", {
                     params: {
-                        // "bbs_id" : vm.bbs_id,
-                        // "seloption" : vm.seloption,
-                        // "searchinfo" : vm.searchinfo,
-                        // "curPage": vm.curPage,
-                        // "perPage": vm.perPage
+                        "ctg_code" : "002"
                     }
-                })
-                .then(function(response) {
-                    console.log(response);
-                    if (response.data.success == false) {
-                        alert("해당 종목이 없습니다");
-                    } else {
-                        var items = response.data.results;
-                        var tcount = response.data.count;
-                        // items.forEach(function(item, index) {
-                        //   if(item.kor_for_type == 'K') {
-                        //     item.kor_for_type = "국내";
-                        //   }else if(item.kor_for_type == 'F') {
-                        //     item.kor_for_type = "해외";
-                        //   }else {
-                        //     item.kor_for_type = "";
-                        //   }
-                        // });
-                        vm.results = items;
-                        vm.count = tcount;
-                    }
-                });
-*/                
+            }).then(function(response) {
+                console.log(response);
+                if (response.data.success == false) {
+                    alert("해당 종목이 없습니다");
+                } else {
+                    var items = response.data.results;                        
+                    vm.ctg_results = items[0];
+
+
+                }
+            });             
         }
     }
 };

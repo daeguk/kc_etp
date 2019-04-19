@@ -22,7 +22,7 @@
                     <EtfForList></EtfForList>
                 </v-tab-item>
                 <v-tab-item>
-                    <EtnKorList></EtnKorList>
+                    <MarketSector></MarketSector>
                 </v-tab-item>
                 <v-tab-item>
                     <EtnForList></EtnForList>
@@ -47,7 +47,7 @@
 <script>
 import EtfKorList   from  './EtfKorList.vue'
 import EtfForList   from  './EtfForList.vue'
-import EtnKorList   from  './EtnKorList.vue'
+import MarketSector   from  './MarketSector.vue'
 import EtnForList   from  './EtnForList.vue'
 import EtpforList5   from  './EtpforList5.vue'
 import EtpforList6   from  './EtpforList6.vue'
@@ -68,7 +68,7 @@ export default {
     components: {
         EtfKorList     : EtfKorList,
         EtfForList     : EtfForList,
-        EtnKorList     : EtnKorList,
+        MarketSector     : MarketSector,
         EtnForList     : EtnForList,
         EtpforList5 : EtpforList5,
         EtpforList6 : EtpforList6,
