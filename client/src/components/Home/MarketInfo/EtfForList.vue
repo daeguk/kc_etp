@@ -12,19 +12,19 @@
                                             <h6>
                                                 {{ item.one.f16002 }}
                                                 <p>
-                                                    2148.80
-                                                    <span class="text_blue">-3.84(0.18%)</span>
+                                                    {{ item.one.f15001 }}
+                                                    <span class="text_blue">{{ item.one.f15472 }}({{ item.one.f15004 }} %)</span>
                                                 </p>
                                             </h6>
                                             <ul>
                                                 <li>
-                                                    ETF-1종목
+                                                    ETF-{{ item.one.grp_etf_cnt }}종목
                                                     <br>
                                                     <span>Total</span>
                                                     <span class="text_result2">AUM 30,000K</span>
                                                 </li>
                                                 <li>
-                                                    ETN-2종목
+                                                    ETN-{{ item.one.grp_etn_cnt }}종목
                                                     <br>
                                                     <span>Total</span>
                                                     <span class="text_result2">AUM 30,000K</span>
@@ -42,19 +42,19 @@
                                             <h6>
                                                 {{ item.two.f16002 }}
                                                 <p>
-                                                    2148.80
-                                                    <span class="text_red">3.84(0.18%)</span>
+                                                    {{ item.two.f15001 }}
+                                                    <span class="text_red">{{ item.two.f15472 }}({{ item.two.f15004 }} %)</span>
                                                 </p>
                                             </h6>
                                             <ul>
                                                 <li>
-                                                    ETF-1종목
+                                                    ETF-{{ item.two.grp_etf_cnt }}종목
                                                     <br>
                                                     <span>Total</span>
                                                     <span class="text_result2">AUM 30,000K</span>
                                                 </li>
                                                 <li>
-                                                    ETN-2종목
+                                                    ETN-{{ item.two.grp_etn_cnt }}종목
                                                     <br>
                                                     <span>Total</span>
                                                     <span class="text_result2">AUM 30,000K</span>
@@ -71,19 +71,19 @@
                                             <h6>
                                                 {{ item.three.f16002 }}
                                                 <p>
-                                                    2148.80
-                                                    <span class="text_red">3.84(0.18%)</span>
+                                                    {{ item.three.f15001 }}
+                                                    <span class="text_red">{{ item.three.f15472 }}({{ item.three.f15004 }} %)</span>
                                                 </p>
                                             </h6>
                                             <ul>
                                                 <li>
-                                                    ETF-1종목
+                                                    ETF-{{ item.three.grp_etf_cnt }}종목
                                                     <br>
                                                     <span>Total</span>
                                                     <span class="text_result2">AUM 30,000K</span>
                                                 </li>
                                                 <li>
-                                                    ETN-2종목
+                                                    ETN-{{ item.three.grp_etn_cnt }}종목
                                                     <br>
                                                     <span>Total</span>
                                                     <span class="text_result2">AUM 30,000K</span>
@@ -100,13 +100,19 @@
                                             <h6>
                                                 {{ item.four.f16002 }}
                                                 <p>
-                                                    2148.80
-                                                    <span class="text_red">3.84(0.18%)</span>
+                                                    {{ item.four.f15001 }}
+                                                    <span class="text_red">{{ item.four.f15472 }}({{ item.four.f15004 }} %)</span>
                                                 </p>
                                             </h6>
                                             <ul>
                                                 <li>
-                                                    ETF-1종목
+                                                    ETF-{{ item.four.grp_etf_cnt }}종목
+                                                    <br>
+                                                    <span>Total</span>
+                                                    <span class="text_result2">AUM 30,000K</span>
+                                                </li>
+                                                <li>
+                                                    ETN-{{ item.four.grp_etn_cnt }}종목
                                                     <br>
                                                     <span>Total</span>
                                                     <span class="text_result2">AUM 30,000K</span>
