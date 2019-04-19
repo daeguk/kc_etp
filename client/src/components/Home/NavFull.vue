@@ -32,6 +32,15 @@ export default {
     return {
       items: [
         {
+          action: 'dashboard',
+          title: 'Market Info',
+          active: true,
+          subitems: [
+            { title: 'ETP', link: '/info/etpinfo' },
+            { title: 'INDEX', link: '/info/indexinfo' },
+          ],
+        },
+        {
           action: 'equalizer',
           title: 'INDEX',
           active: true,
@@ -51,15 +60,7 @@ export default {
             { title: '계약지수 목록', link: '/etp/contract'  }
           ],
         },
-        {
-          action: 'dashboard',
-          title: 'Market Info',
-          active: true,
-          subitems: [
-            { title: 'ETP', link: '/info/etpinfo' },
-            { title: 'INDEX', link: '/info/indexinfo' },
-          ],
-        },
+        /*
         {
           action: 'account_balance',
           title: '운영지원',
@@ -81,7 +82,7 @@ export default {
             { title: 'ETP관리', link: '/index/develop'  },
           ],
         },
-        /*{
+        {
           action: 'sample',
           title: 'SAMPLE',
           active: true,
