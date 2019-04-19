@@ -569,7 +569,9 @@ export default {
             var vm = this;
 
             axios.post(Config.base_url + "/user/marketinfo/getEtpRepresentList", {
-                data: {}
+                data: {
+                    ctg_large_code  :   "001"       /* 001-시장대표 */
+                }
             }).then(function(response) {
                 console.log(response);
 

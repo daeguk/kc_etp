@@ -155,7 +155,6 @@ var getEtpRepresentList = function(req, res) {
                 /* 3. 분류코드별 지수정보를 조회한다. */
                 function( data, callback ) { 
 
-                    paramData.ctg_large_code    =   "001";          /* 001-시장대표 */
                     stmt = mapper.getStatement('etpinfo', 'getJisuListByCtgCode', paramData, format);
                     console.log(stmt);
 
@@ -182,8 +181,6 @@ var getEtpRepresentList = function(req, res) {
 
                     var dataJson    =   {};
                     var arrDataList =   [];
-
-                    paramData.ctg_large_code    =   "001";          /* 001-시장대표 */
 
                     /* ctg_code 별로 ETP 목록 데이터를 조회한다. */
                     async.forEachOf( resultMsg.ctgJisuList, function ( innerData, i, inner_callback ){
