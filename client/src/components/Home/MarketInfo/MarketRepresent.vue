@@ -439,7 +439,6 @@
                                                                 :key="item"
                                                             >{{ item }}</v-tab>
                                                         </v-tabs>
-                                                        <!--
                                                         <v-tabs-items v-model="tab2">
                                                             <v-tab-item>
                                                                 <infopoptab1></infopoptab1>
@@ -451,7 +450,6 @@
                                                                 <infopoptab3></infopoptab3>
                                                             </v-tab-item>
                                                         </v-tabs-items>
-                                                        -->
                                                     </v-flex>
                                                 </v-layout>
                                                 <!--비교자산 탭end--->
@@ -478,6 +476,9 @@
 </template>
 
 <script>
+import infopoptab1 from "../Index/Manage/infopoptab1.vue";
+import infopoptab2 from "../Index/Manage/infopoptab2.vue";
+import infopoptab3 from "../Index/Manage/infopoptab3.vue";
 import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
@@ -547,6 +548,9 @@ export default {
         };
     },
     components: {
+        infopoptab1: infopoptab1,
+        infopoptab2: infopoptab2,
+        infopoptab3: infopoptab3
     },
     computed: {},
     mounted: function() {
