@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="market">  
+    <!--
+    * 마켓 정보의 구성 기본 정보
+    -->
+    <select id="getMarketCtgCodeInfo">
+        SELECT ctg_large_code
+              ,ctg_code
+              ,ctg_name
+          FROM tm_etpctg_code 
+         WHERE ctg_large_code = #{ctg_code}
+    </select>
+  
+</mapper>

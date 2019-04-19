@@ -95,6 +95,7 @@ var getEtpRepresentList = function(req, res) {
 
                         if ( rows ) {
 
+                            /* [시장을 대표하는 마스터 데이터] 와 [ETF, ETN 별 조회 내역] 에 대해 데이터를 합치기 위함. ( 지수코드, middle_type ) */
                             for( var rep in resultMsg.representList ) {
                                 var repData     =   resultMsg.representList[ rep ];
 
@@ -115,6 +116,7 @@ var getEtpRepresentList = function(req, res) {
                                 }
                             }
 
+                            /* 시장대표 탭에서 지수노출시 4개를 1세트로 노출하기 위함. */
                             var  representGrpList = [];
                             for( var i=0, inx=0; i < resultMsg.representList.length; i=i+4 ) {
                                 var data        =   resultMsg.representList[i];
@@ -144,8 +146,6 @@ var getEtpRepresentList = function(req, res) {
                             }
 
                             resultMsg.representGrpList     =   representGrpList;
-
-                            console.log( representGrpList );
                         }
 
                         callback( null, paramData );
@@ -179,49 +179,43 @@ var getEtpRepresentList = function(req, res) {
                 /* 4. 지수별 ETP 목록을 조회한다. */
                 function( data, callback ) { 
 
-                    stmt = mapper.getStatement('etpinfo', 'getEtpListByJisu', paramData, format);
-                    console.log(stmt);
+                    var arrDataList =   [];
 
-                    conn.query(stmt, function( err, rows ) {
+                    /* ctg_code 별로 ETP 목록 데이터를 조회한다. */
+                    async.forEachOf( resultMsg.ctgJisuList, function ( innerData, i, inner_callback ){
 
-                        if( err ) {
-                            resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] etpinfo.getEtpListByJisu Error while performing Query";
-                            resultMsg.err       =   err;
+                        paramData.ctg_code  =   innerData.ctg_code;
+                        stmt = mapper.getStatement('etpinfo', 'getEtpListByJisu', paramData, format);
+                        console.log(stmt);
 
-                            return callback( resultMsg );
-                        }
+                        conn.query(stmt, function( err, rows ) {
 
-                        if ( rows ) {
+                            if( err ) {
+                                resultMsg.result    =   false;
+                                resultMsg.msg       =   "[error] etpinfo.getEtpListByJisu Error while performing Query";
+                                resultMsg.err       =   err;
 
-                            var dataJson    =   {};
-                            var arrDataList =   [];
-                            for( var ctgInx     in  resultMsg.ctgJisuList ) {
-                                var ctgData     =   resultMsg.ctgJisuList[ ctgInx ];
-
-                                var dataList    =   [];
-
-                                dataJson[ ctgData.ctg_code ]    =   [];
-                                for( var rowInx     in  rows ) {
-                                    var rowData =   rows[ rowInx ];
-
-                                    if( ctgData.ctg_code    ==   rowData.ctg_code  ) {
-                                        dataList.push( rowData );
-                                    }
-                                }
-
-                                if( dataList.length > 0 ) {
-                                    dataJson[ ctgData.ctg_code ]    =   dataList;
-                                    arrDataList.push( dataList );
-                                }
+                                return inner_callback( resultMsg );
                             }
 
-                            resultMsg.ctgJisuByEtpList      =   arrDataList;
-                            resultMsg.ctgJisuByEtpJson      =   dataJson;
-                        }
+                            if( rows ) {
+                                arrDataList.push( { "ctg_code" : innerData.ctg_code, "data" : rows });
+                            }
 
-                        callback( null );
+                            inner_callback( null );
+                        });
+
+                    }, function(err){
+
+                        if(err){
+                            return callback( resultMsg );
+                        }else{
+                            resultMsg.ctgJisuByEtpList      =   arrDataList;        /* ctg_code 별 etp 목록 ( JSON 형태 ) */
+
+                            return callback( null );
+                        }
                     });
+
                 }                
 
             ], function (err) {
@@ -255,7 +249,6 @@ var getEtpRepresentList = function(req, res) {
 
         resultMsg.ctgJisuList       =   [];
         resultMsg.ctgJisuByEtpList  =   [];
-        resultMsg.ctgJisuByEtpJson  =   {};
         
         res.json({
             resultMsg

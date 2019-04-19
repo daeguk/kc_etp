@@ -16,13 +16,13 @@
 
             <v-tabs-items v-model="tab">
                 <v-tab-item>
-                    <EtfKorList></EtfKorList>
-                </v-tab-item>
-                <v-tab-item>
                     <EtfForList></EtfForList>
+                </v-tab-item>                
+                <v-tab-item>
+                    <MarketRepresent></MarketRepresent>
                 </v-tab-item>
                 <v-tab-item>
-                    <EtnKorList></EtnKorList>
+                    <MarketSector></MarketSector>
                 </v-tab-item>
                 <v-tab-item>
                     <EtnForList></EtnForList>
@@ -45,9 +45,9 @@
 </template>
 
 <script>
-import EtfKorList   from  './EtfKorList.vue'
 import EtfForList   from  './EtfForList.vue'
-import EtnKorList   from  './EtnKorList.vue'
+import MarketRepresent   from  './MarketRepresent.vue'
+import MarketSector   from  './MarketSector.vue'
 import EtnForList   from  './EtnForList.vue'
 import EtpforList5   from  './EtpforList5.vue'
 import EtpforList6   from  './EtpforList6.vue'
@@ -55,6 +55,7 @@ import EtpforList7   from  './EtpforList7.vue'
 import EtpforList8   from  './EtpforList8.vue'
 
 export default {
+        props: [],
         data() {
             return {
                 mini: false,
@@ -66,14 +67,14 @@ export default {
     	};
     },    
     components: {
-        EtfKorList     : EtfKorList,
-        EtfForList     : EtfForList,
-        EtnKorList     : EtnKorList,
-        EtnForList     : EtnForList,
-        EtpforList5 : EtpforList5,
-        EtpforList6 : EtpforList6,
-        EtpforList7 : EtpforList7,
-       EtpforList8 : EtpforList8,
+        EtfForList      :   EtfForList,
+        MarketRepresent :   MarketRepresent,        
+        MarketSector    :   MarketSector,
+        EtnForList      :   EtnForList,
+        EtpforList5     :   EtpforList5,
+        EtpforList6     :   EtpforList6,
+        EtpforList7     :   EtpforList7,
+       EtpforList8      :   EtpforList8,
     },
     created: function() {
     },

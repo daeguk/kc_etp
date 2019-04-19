@@ -4,14 +4,14 @@
  * @date 2019-02-08
  * @author ThreeOn
  */
-var config = require('../../../config/config');
+//var config = require('../../../config/config');
 var util = require("util");
 var Promise = require("bluebird");
 
 var util = require("util");
-var multer = require('multer'); 
-var xlsx = require('xlsx');
-var fs = require('fs'); 
+//var multer = require('multer'); 
+//var xlsx = require('xlsx');
+//var fs = require('fs'); 
 
 
 var getIndexSummaryInfo = function (req, res) {

@@ -796,8 +796,11 @@ export default {
         /* 팝업창에 노출할 전체 기관정보 조회 */
         this.fn_getDomainInst();
 
-        /* 등록된 지수정보 조회 */
-        this.fn_getRegistedJisuData();
+        this.$nextTick().then(() => {
+
+            /* 등록된 지수정보 조회 */
+            this.fn_getRegistedJisuData();
+        });
     },
 
     methods: {

@@ -241,7 +241,7 @@
 
                                                             <v-layout row wrap>
                                                                 <v-flex xs12>
-                                                                    <v-tabs
+                                                                    <!--v-tabs
                                                                         fixed-tabs
                                                                         color="cyan"
                                                                         dark
@@ -255,7 +255,7 @@
                                                                             :key="item"
                                                                         >{{ item }}</v-tab>
                                                                     </v-tabs>
-                                                                    <!--v-tabs-items v-model="tab2">
+                                                                    <v-tabs-items v-model="tab2">
                                                                         <v-tab-item>
                                                                             <infopoptab1></infopoptab1>
                                                                         </v-tab-item>
