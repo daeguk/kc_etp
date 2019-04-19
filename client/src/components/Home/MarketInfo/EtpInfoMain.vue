@@ -16,6 +16,9 @@
 
             <v-tabs-items v-model="tab">
                 <v-tab-item>
+                    <EtfForList></EtfForList>
+                </v-tab-item>                
+                <v-tab-item>
                     <MarketRepresent></MarketRepresent>
                 </v-tab-item>
                 <v-tab-item>

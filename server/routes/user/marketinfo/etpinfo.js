@@ -179,7 +179,6 @@ var getEtpRepresentList = function(req, res) {
                 /* 4. 지수별 ETP 목록을 조회한다. */
                 function( data, callback ) { 
 
-                    var dataJson    =   {};
                     var arrDataList =   [];
 
                     /* ctg_code 별로 ETP 목록 데이터를 조회한다. */
@@ -200,9 +199,7 @@ var getEtpRepresentList = function(req, res) {
                             }
 
                             if( rows ) {
-                                dataJson[ innerData.ctg_code ]  =   [];
-                                dataJson[ innerData.ctg_code ]  =   rows;           /* ctg_code 별 etp 목록 ( JSON 형태 ) */
-                                arrDataList.push( rows );                           /* ctg_code 별 etp 목록 ( 배열 형태 ) */
+                                arrDataList.push( { "ctg_code" : innerData.ctg_code, "data" : rows });
                             }
 
                             inner_callback( null );
@@ -214,7 +211,6 @@ var getEtpRepresentList = function(req, res) {
                             return callback( resultMsg );
                         }else{
                             resultMsg.ctgJisuByEtpList      =   arrDataList;        /* ctg_code 별 etp 목록 ( JSON 형태 ) */
-                            resultMsg.ctgJisuByEtpJson      =   dataJson;           /* ctg_code 별 etp 목록 ( 배열 형태 ) */
 
                             return callback( null );
                         }
@@ -253,7 +249,6 @@ var getEtpRepresentList = function(req, res) {
 
         resultMsg.ctgJisuList       =   [];
         resultMsg.ctgJisuByEtpList  =   [];
-        resultMsg.ctgJisuByEtpJson  =   {};
         
         res.json({
             resultMsg
