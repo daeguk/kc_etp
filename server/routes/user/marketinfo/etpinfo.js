@@ -95,6 +95,7 @@ var getEtpRepresentList = function(req, res) {
 
                         if ( rows ) {
 
+                            /* [시장을 대표하는 마스터 데이터] 와 [ETF, ETN 별 조회 내역] 에 대해 데이터를 합치기 위함. ( 지수코드, middle_type ) */
                             for( var rep in resultMsg.representList ) {
                                 var repData     =   resultMsg.representList[ rep ];
 
@@ -115,6 +116,7 @@ var getEtpRepresentList = function(req, res) {
                                 }
                             }
 
+                            /* 시장대표 탭에서 지수노출시 4개를 1세트로 노출하기 위함. */
                             var  representGrpList = [];
                             for( var i=0, inx=0; i < resultMsg.representList.length; i=i+4 ) {
                                 var data        =   resultMsg.representList[i];
@@ -153,7 +155,6 @@ var getEtpRepresentList = function(req, res) {
                 /* 3. 분류코드별 지수정보를 조회한다. */
                 function( data, callback ) { 
 
-                    paramData.ctg_large_code    =   "001";          /* 001-시장대표 */
                     stmt = mapper.getStatement('etpinfo', 'getJisuListByCtgCode', paramData, format);
                     console.log(stmt);
 
@@ -181,10 +182,10 @@ var getEtpRepresentList = function(req, res) {
                     var dataJson    =   {};
                     var arrDataList =   [];
 
-                    paramData.ctg_large_code    =   "001";          /* 001-시장대표 */
-                    async.forEachOf( resultMsg.ctgJisuList, function ( dataElement, i, inner_callback ){
+                    /* ctg_code 별로 ETP 목록 데이터를 조회한다. */
+                    async.forEachOf( resultMsg.ctgJisuList, function ( innerData, i, inner_callback ){
 
-                        paramData.ctg_code  =   dataElement.ctg_code;
+                        paramData.ctg_code  =   innerData.ctg_code;
                         stmt = mapper.getStatement('etpinfo', 'getEtpListByJisu', paramData, format);
                         console.log(stmt);
 
@@ -199,24 +200,26 @@ var getEtpRepresentList = function(req, res) {
                             }
 
                             if( rows ) {
-                                console.log( "paramData.ctg_code=[" + dataElement.ctg_code + "]" );
-                                dataJson[ dataElement.ctg_code ]  =   [];
-                                dataJson[ dataElement.ctg_code ]  =   rows;         /* ctg_code 별 etp 목록 ( JSON 형태 ) */
-                                arrDataList.push( rows );                           /* ctg_code 별 etp 목록 (배열 형태 ) */
+                                dataJson[ innerData.ctg_code ]  =   [];
+                                dataJson[ innerData.ctg_code ]  =   rows;           /* ctg_code 별 etp 목록 ( JSON 형태 ) */
+                                arrDataList.push( rows );                           /* ctg_code 별 etp 목록 ( 배열 형태 ) */
                             }
 
                             inner_callback( null );
                         });
+
                     }, function(err){
+
                         if(err){
                             return callback( resultMsg );
                         }else{
                             resultMsg.ctgJisuByEtpList      =   arrDataList;        /* ctg_code 별 etp 목록 ( JSON 형태 ) */
-                            resultMsg.ctgJisuByEtpJson      =   dataJson;           /* ctg_code 별 etp 목록 (배열 형태 ) */
+                            resultMsg.ctgJisuByEtpJson      =   dataJson;           /* ctg_code 별 etp 목록 ( 배열 형태 ) */
 
                             return callback( null );
                         }
                     });
+
                 }                
 
             ], function (err) {
