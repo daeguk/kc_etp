@@ -47,7 +47,8 @@ module.exports = {
         //
         // 신규 개발
         //일반 ETP register
-        { file: './user/etp/etpregister', path: '/user/etp/getetpapplylist', method: 'getEtpApplyList', session: 'uncheck', type: 'get' },
+        
+        { file: './user/etp/etpApplyList', path: '/user/etp/getEtpApplyList', method: 'getEtpApplyList', session: 'uncheck', type: 'get' },
         //일반 INDEX register
 
         // 지수 요약 정보

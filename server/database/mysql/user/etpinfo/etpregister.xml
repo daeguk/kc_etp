@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="EtpRegister">  
+
+
+
+    <!--
+    * etp 신청현황조회
+    * 
+    -->
+<select id="selectEtpApplyList" >
+<![CDATA[
+SELECT a.*, 
+        (select inst_nm from m001uetpinstcode where inst_cd = a.inst_cd limit 1) inst_nm, 
+         timestampdiff(day,req_date,now()) lapse_date,
+        timestampdiff(day,ifnull(list_date,"29991231")  ,now()) list_lapse_date, 
+        ifnull(a.ridx_dist_sym_code,a.idx_sym_code) basic_idx
+        from m001uetpmaster a
+        LEFT JOIN tm_domain_mast b
+        ON a.inst_cd = b.inst_cd
+        WHERE (a.list_date    >=   now()  or      a.list_date is null) 
+        and a.isin_stat_cd != "0009" 
+ ]]>
+</select>
+
+
+
+
+<
+</mapper>
