@@ -95,6 +95,7 @@ var getEtpRepresentList = function(req, res) {
 
                         if ( rows ) {
 
+                            /* [시장을 대표하는 마스터 데이터] 와 [ETF, ETN 별 조회 내역] 에 대해 데이터를 합치기 위함. ( 지수코드, middle_type ) */
                             for( var rep in resultMsg.representList ) {
                                 var repData     =   resultMsg.representList[ rep ];
 
@@ -115,6 +116,7 @@ var getEtpRepresentList = function(req, res) {
                                 }
                             }
 
+                            /* 시장대표 탭에서 지수노출시 4개를 1세트로 노출하기 위함. */
                             var  representGrpList = [];
                             for( var i=0, inx=0; i < resultMsg.representList.length; i=i+4 ) {
                                 var data        =   resultMsg.representList[i];
@@ -182,6 +184,8 @@ var getEtpRepresentList = function(req, res) {
                     var arrDataList =   [];
 
                     paramData.ctg_large_code    =   "001";          /* 001-시장대표 */
+
+                    /* ctg_code 별로 ETP 목록 데이터를 조회한다. */
                     async.forEachOf( resultMsg.ctgJisuList, function ( innerData, i, inner_callback ){
 
                         paramData.ctg_code  =   innerData.ctg_code;
