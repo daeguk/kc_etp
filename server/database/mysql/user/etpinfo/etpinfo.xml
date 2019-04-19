@@ -46,7 +46,7 @@
                                         ,   tm_code_dtl.com_val03
 
                                 FROM  tm_code_dtl
-                               WHERE  tm_code_dtl.com_mst_cd      =   'COM003'        /* 시장을 대표하는 지수 */
+                               WHERE  tm_code_dtl.com_mst_cd      =   'COM003'              /* 시장을 대표하는 지수 */
                                  AND  tm_code_dtl.use_yn          =   '1'
                             )
 
@@ -76,7 +76,7 @@
                                 ,   0
                             )
                         ,   '###,###,###,###,###,###'
-                    )                                                               AS  grp_etf_cnt         /* ETF 건수 */
+                    )                                                               AS  grp_etf_cnt     /* ETF 건수 */
                     
                 ,   FORMAT(
                             IFNULL(
@@ -88,7 +88,7 @@
                                 ,  0
                             )
                         ,   '###,###,###,###,###,###'
-                    )                                                               AS  grp_etf_sum         /* ETF SUM( 시가총액 ) */
+                    )                                                               AS  grp_etf_sum     /* ETF SUM( 시가총액 ) */
                     
                 ,   FORMAT(
                             IFNULL(
@@ -100,7 +100,7 @@
                                 ,   0
                             )
                         ,   '###,###,###,###,###,###'
-                    )                                                               AS  grp_etn_cnt         /* ETN 건수 */
+                    )                                                               AS  grp_etn_cnt     /* ETN 건수 */
                 ,   FORMAT(
                             IFNULL(
                                     MAX(
@@ -130,9 +130,9 @@
                                       FROM  td_index_basic
                                      WHERE  1 = 1
                                        AND  (
-                                                    td_index_basic.f16013           /* 단축코드 */
-                                                ,   td_index_basic.large_type       /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
-                                                ,   td_index_basic.middle_type      /* 지수중분류(FNGUIDE, WISEFN) */
+                                                    td_index_basic.f16013                               /* 단축코드 */
+                                                ,   td_index_basic.large_type                           /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
+                                                ,   td_index_basic.middle_type                          /* 지수중분류(FNGUIDE, WISEFN) */
                                             )   IN
                                             (
                                                 SELECT      tm_code_dtl.com_val01
