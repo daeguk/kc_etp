@@ -182,9 +182,9 @@ var getEtpRepresentList = function(req, res) {
                     var arrDataList =   [];
 
                     paramData.ctg_large_code    =   "001";          /* 001-시장대표 */
-                    async.forEachOf( resultMsg.ctgJisuList, function ( dataElement, i, inner_callback ){
+                    async.forEachOf( resultMsg.ctgJisuList, function ( innerData, i, inner_callback ){
 
-                        paramData.ctg_code  =   dataElement.ctg_code;
+                        paramData.ctg_code  =   innerData.ctg_code;
                         stmt = mapper.getStatement('etpinfo', 'getEtpListByJisu', paramData, format);
                         console.log(stmt);
 
@@ -199,24 +199,26 @@ var getEtpRepresentList = function(req, res) {
                             }
 
                             if( rows ) {
-                                console.log( "paramData.ctg_code=[" + dataElement.ctg_code + "]" );
-                                dataJson[ dataElement.ctg_code ]  =   [];
-                                dataJson[ dataElement.ctg_code ]  =   rows;         /* ctg_code 별 etp 목록 ( JSON 형태 ) */
-                                arrDataList.push( rows );                           /* ctg_code 별 etp 목록 (배열 형태 ) */
+                                dataJson[ innerData.ctg_code ]  =   [];
+                                dataJson[ innerData.ctg_code ]  =   rows;           /* ctg_code 별 etp 목록 ( JSON 형태 ) */
+                                arrDataList.push( rows );                           /* ctg_code 별 etp 목록 ( 배열 형태 ) */
                             }
 
                             inner_callback( null );
                         });
+
                     }, function(err){
+
                         if(err){
                             return callback( resultMsg );
                         }else{
                             resultMsg.ctgJisuByEtpList      =   arrDataList;        /* ctg_code 별 etp 목록 ( JSON 형태 ) */
-                            resultMsg.ctgJisuByEtpJson      =   dataJson;           /* ctg_code 별 etp 목록 (배열 형태 ) */
+                            resultMsg.ctgJisuByEtpJson      =   dataJson;           /* ctg_code 별 etp 목록 ( 배열 형태 ) */
 
                             return callback( null );
                         }
                     });
+
                 }                
 
             ], function (err) {
