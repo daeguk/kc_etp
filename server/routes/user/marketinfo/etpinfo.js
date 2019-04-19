@@ -94,16 +94,89 @@ var getEtpRepresentList = function(req, res) {
                         }
 
                         if ( rows ) {
-                            resultMsg.etpList = rows;
 
-                            console.log( rows );
+                            for( var rep in resultMsg.representList ) {
+                                var repData     =   resultMsg.representList[ rep ];
+
+                                for( var etp in rows ) {
+                                    var etpData =   rows[ etp ];
+
+                                    if(     repData.f16013      == etpData.f16257           /* 단축코드 = ETP기초지수코드 */
+                                        &&  repData.middle_type == etpData.middle_type
+                                    ) {
+                                        repData.grp_etf_cnt     =   etpData.grp_etf_cnt;
+                                        repData.grp_etf_sum     =   etpData.grp_etf_sum;
+
+                                        repData.grp_etn_cnt     =   etpData.grp_etn_cnt;
+                                        repData.grp_etn_sum     =   etpData.grp_etn_sum;
+
+                                        break;
+                                    }
+                                }
+                            }
+
+                            var  representGrpList = [];
+                            for( var i=0, inx=0; i < resultMsg.representList.length; i=i+4 ) {
+                                var data        =   resultMsg.representList[i];
+                                var groupData   =   {};
+
+                                groupData.one   =   data;
+
+                                groupData.two = {};
+                                if( i+1 < resultMsg.representList.length ) {
+                                    data = resultMsg.representList[i+1];
+                                    groupData.two   =   data;
+                                }
+
+                                groupData.three = {};
+                                if( i+2 < resultMsg.representList.length ) {
+                                    data = resultMsg.representList[i+2];
+                                    groupData.three   =   data;
+                                }
+
+                                groupData.four = {};
+                                if( i+3 < resultMsg.representList.length ) {
+                                    data = resultMsg.representList[i+3];
+                                    groupData.four   =   data;
+                                }                
+
+                                representGrpList.push( groupData );
+                            }
+
+                            resultMsg.representGrpList     =   representGrpList;
+
+                            console.log( representGrpList );
                         }
 
-                        callback( null );
+                        callback( null, paramData );
                     });
                 },              
 
-                /* 3. 지수별 ETP 목록을 조회한다. */
+                /* 3. 분류코드별 지수정보를 조회한다. */
+                function( data, callback ) { 
+
+                    stmt = mapper.getStatement('etpinfo', 'getJisuListByCtgCode', paramData, format);
+                    console.log(stmt);
+
+                    conn.query(stmt, function( err, rows ) {
+
+                        if( err ) {
+                            resultMsg.result    =   false;
+                            resultMsg.msg       =   "[error] etpinfo.getJisuListByCtgCode Error while performing Query";
+                            resultMsg.err       =   err;
+
+                            return callback( resultMsg );
+                        }
+
+                        if ( rows ) {
+                            resultMsg.ctgJisuList   =   rows;
+                        }
+
+                        callback( null, paramData );
+                    });
+                },
+
+                /* 4. 지수별 ETP 목록을 조회한다. */
                 function( data, callback ) { 
 
                     stmt = mapper.getStatement('etpinfo', 'getEtpListByJisu', paramData, format);
@@ -120,12 +193,36 @@ var getEtpRepresentList = function(req, res) {
                         }
 
                         if ( rows ) {
-                            resultMsg.etpList = rows;
+
+                            var dataJson    =   {};
+                            var arrDataList =   [];
+                            for( var ctgInx     in  resultMsg.ctgJisuList ) {
+                                var ctgData     =   resultMsg.ctgJisuList[ ctgInx ];
+
+                                var dataList    =   [];
+
+                                dataJson[ ctgData.ctg_code ]    =   [];
+                                for( var rowInx     in  rows ) {
+                                    var rowData =   rows[ rowInx ];
+
+                                    if( ctgData.ctg_code    ==   rowData.ctg_code  ) {
+                                        dataList.push( rowData );
+                                    }
+                                }
+
+                                if( dataList.length > 0 ) {
+                                    dataJson[ ctgData.ctg_code ]    =   dataList;
+                                    arrDataList.push( dataList );
+                                }
+                            }
+
+                            resultMsg.ctgJisuByEtpList      =   arrDataList;
+                            resultMsg.ctgJisuByEtpJson      =   dataJson;
                         }
 
                         callback( null );
                     });
-                }
+                }                
 
             ], function (err) {
 
@@ -153,8 +250,12 @@ var getEtpRepresentList = function(req, res) {
             resultMsg.err       =   expetion;
         }
 
-        resultMsg.representList =   [];
-        resultMsg.etpList       =   [];
+        resultMsg.representList     =   [];
+        resultMsg.representList     =   [];
+
+        resultMsg.ctgJisuList       =   [];
+        resultMsg.ctgJisuByEtpList  =   [];
+        resultMsg.ctgJisuByEtpJson  =   {};
         
         res.json({
             resultMsg
@@ -176,7 +277,10 @@ var getEtfKorList = function(req, res) {
     var options = {};
     var stmt = etpStmts.EtpInfo.selectEtfKorList(options);
     console.log(stmt);
-    
+
+    res.json({ success: true, results: rows });
+    res.end();
+/*
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
               util.log("sql1" == rows.affectedRows)
@@ -190,6 +294,7 @@ var getEtfKorList = function(req, res) {
   
      
     });
+*/    
 };
 
 var getEtfForList = function(req, res) {

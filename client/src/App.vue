@@ -14,6 +14,7 @@ export default {
   methods: {
   },
   created() {
+    // this.$router.push({ path: '/landing'});
   }
 }
 </script>

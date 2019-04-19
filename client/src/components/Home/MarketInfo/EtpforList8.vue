@@ -337,7 +337,7 @@ export default {
             results: [],
             tab: null,
             tab2: null,
-             drawer:"",
+            drawer:"",
             search:"",
             items1: ["전체", "시장대표"],
             items: [
@@ -394,7 +394,7 @@ export default {
         getEtfKorList: function() {
             console.log("getEtfKorList");
             var vm = this;
-
+/*
             axios
                 .get(Config.base_url + "/user/marketinfo/getetfkorlist", {
                     params: {
@@ -425,6 +425,7 @@ export default {
                         vm.count = tcount;
                     }
                 });
+*/                
         }
     }
 };
