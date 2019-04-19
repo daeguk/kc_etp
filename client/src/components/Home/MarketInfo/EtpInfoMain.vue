@@ -55,6 +55,7 @@ import EtpforList7   from  './EtpforList7.vue'
 import EtpforList8   from  './EtpforList8.vue'
 
 export default {
+        props: [],
         data() {
             return {
                 mini: false,

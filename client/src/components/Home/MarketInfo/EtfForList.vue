@@ -487,7 +487,6 @@ import Config from "@/js/config.js";
 var importance_grid = null;
 
 export default {
-    props: [],
     data() {
         return {
             dialog: false,
