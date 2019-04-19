@@ -271,24 +271,6 @@
                                     <th></th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="txt_left line2">
-                                        <span>
-                                            <b>KODEX 200</b>
-                                            <br>000100 <span><div class="text_new">new</div></span>
-                                        </span>
-                                    </td>
-                                    <td class="align_r text_blue">277166.42<br><span class="text_S">-0.14%</span></td>
-                                    <td>1.26</td>
-                                    <td>-4.51</td>
-                                    <td>3.52</td>
-                                    <td>3.32</td>
-                                    <td class="align_r text_red">220.22<br><span class="text_S">0.98%</span></td>
-                                    <td><div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>
-                                    <div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>picture_as_pdf</button><span class='tooltiptext' style='width:70px;'>PDF관리</span></div></td>
-                                </tr>
-                            </tbody>
                         </table>
                     </v-card>
                 </v-card>
@@ -644,9 +626,59 @@ export default {
                     var items = response.data.results;                        
                     vm.ctg_results = items[0];
 
+                    for(let ctg of vm.ctg_results) {
+                        vm.getSectorEtpList(ctg.ctg_large_code, ctg.ctg_code);    
+                    }
 
                 }
             });             
+        },
+        getSectorEtpList: function(ctg_large_code, ctg_code) {
+            console.log("getSectorEtpList");
+            var vm = this;
+
+            axios.get(Config.base_url + "/user/marketinfo/getSectorEtpList", {
+                    params: {
+                        "ctg_code" : ctg_code,
+                        "ctg_large_code" : ctg_large_code,
+                    }
+            }).then(function(response) {
+                console.log(response);
+                if (response.data.success == false) {
+                    alert("해당 종목이 없습니다");
+                } else {
+                    var items = response.data.results[0];                        
+
+
+                    $('#sector'+ctg_code).DataTable( {
+                            "processing": true,
+                            "serverSide": false,
+                            "info": false,   // control table information display field
+                            "stateSave": true,  //restore table state on page reload,
+                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                            scrollY:        '500px',
+                            scrollCollapse: true,
+                            select: {
+                                style:    'single',
+                                selector: 'td:first-child'
+                            },
+                            paging: false,
+                            searching: false,
+                            data : items,
+                            columns: [
+                                { "data": "f16002", "orderable": true}, /*종목*/
+                                { "data": "f15301", "orderable": true }, /*INAV*/
+                                { "data": "f03329", "orderable" : true}, /*전일최종Nav*/
+                                { "data": "f15302", "orderable" : true}, /*추적오차율*/
+                                { "data": "f15304", "orderable" : true}, /*괴리율*/
+                                { "data": "f34777", "orderable" : true}, /*기초지수*/
+                                { "data": "f15001", "orderable" : true}, /*지수현재가*/
+                                { "data": null, "orderable" : true, defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div><div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>picture_as_pdf</button><span class='tooltiptext' style='width:70px;'>PDF관리</span></div>"},
+                            ]
+                        }); 
+
+                }
+            });  
         }
     }
 };
