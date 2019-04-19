@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="login">  
+    <!--
+    * 사용자 로그인 처리
+    -->
+    <select id="userLoginCheck">
+        SELECT A.type_cd, B.type_name, A.inst_cd, C.inst_name, 
+            A.email, A.emailchk, A.name, A.hp_no, A.tel_no
+          FROM tm_user_member A, tm_user_type B, tm_user_domain C 
+         WHERE A.email = #{email}
+         AND A.password = #{password}
+         AND A.type_cd = B.type_cd AND A.inst_cd = C.inst_cd
+    </select>
+</mapper>
+

@@ -21,6 +21,7 @@
               </div>
             </v-flex>
           </v-layout>
+          <UserLoginModal v-if="login_flag"></UserLoginModal>
         </v-container>
       </v-img>
     </v-card>
@@ -28,19 +29,24 @@
 </template> 
 
 <script>
+import UserLoginModal       from './UserLoginModal.vue';
 
 export default {
     data() {
         return {
+          login_flag: false,
         };
     },
     components: {
+      UserLoginModal: UserLoginModal,
     },
     beforeCreate() {
     },
     created: function() {
+      this.$EventBus.$on('userLoginCheck', this.userLoginCheck);
     },
     beforeDestroy() {
+      this.$EventBus.$off('userLoginCheck');
     },
 
     methods: {
@@ -48,6 +54,12 @@ export default {
         this.$EventBus.$emit("enterService");
       },
       doLogin: function() {
+        this.login_flag = true;
+      },
+      userLoginCheck: function(login_flag) {
+        console.log('userLoginCheck');
+        console.log("email : " + this.$store.state.user.user_email);
+        this.login_flag = login_flag;
         this.$EventBus.$emit("enterService");
       },
     }

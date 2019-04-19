@@ -67,6 +67,9 @@ module.exports = class {
     };
 
     getMapper() {
+        // 사용자 로그인 처리(threeon. 2019.04.19)
+        ibatisMapper.createMapper(['./database/mysql/user/login/userInfo.xml']);
+
         ibatisMapper.createMapper(['./database/mysql/user/index/indexSummary.xml']);
         ibatisMapper.createMapper(['./database/mysql/user/index/indexDetail.xml']);
 
