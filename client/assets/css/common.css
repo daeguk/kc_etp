@@ -23,6 +23,7 @@ ol, ul{padding:0 !important;}
     color: black;
 }
 
+
 .z-index{z-index: 100;}
 .v-content__wrap .container{padding:0px;}
 .v-form>.container {background:#ffffff !important;}
@@ -31,13 +32,15 @@ ol, ul{padding:0 !important;}
 
 .text_color_blue{color:#1976d2}
 
+
 h3 span{font-size:14px; width:100%;}
 h5{font-size:18px; border-bottom:0px solid #42a4e1; background:#234e68; color:#ffffff; }
 h5 .v-card__title{padding:8px 8px 0px 24px;}
 h6{font-size:16px;}
 button:focus { outline: none; }
 .text_blue{color:#2f4cac !important}
-.text_red{color:red !important}
+.text_red{color:#f44336 !important}
+.text_orange{color:#ff821d !important;}
 .text_S{font-size: 12px !important; }
 .align_r{text-align: right;}
 .pop_btn_w{border-top:1px solid #dddddd !important; padding:5px 0 10px 0;}
@@ -245,6 +248,7 @@ h3.subtit p.sub_txt{font-size:14px; font-weight: normal;}
 .right_menu_w2 .rightmenu_con2{padding:10px 16px; font-size: 14px; font-weight: 600; color:#606060;}
 .right_menu_w2 .v-input input{max-height: 20px; font-size: 14px;}
 .right_menu_w2 .v-input label{display: none;}
+.right_menu_w2 .rightmenu_con .v-icon{padding-right:3px;padding-top:3px;}
 .right_menu_w2 .v-text-field--outline>.v-input__control>.v-input__slot{min-height: 20px;}
 .right_menu_w2 .v-text-field--outline input{margin-top:7px;}
 .right_menu_w2 .v-text-field.v-text-field--enclosed .v-input__append-inner{margin-top:7px;}
@@ -363,6 +367,7 @@ input[type='file']{
 .next a {display:block; width:100%; height:100%; text-indent:-999em; background:url(../img/btn_rolling_n.png) no-repeat;}
 */
 
+/*market info*/
 .market_layout_w{width:100%;}
 .market_card_layout{padding:0 40px; }
 .market_card_w{ height: 250px; position: relative; border-right:1px dashed #cecece;  }
@@ -380,14 +385,37 @@ input[type='file']{
 .market_card2 ul li dl dt{font-size: 16px; font-weight: 600; color:#606060; padding-left:0 !important; line-height: 26px;}
 .market_card2 ul li dl dt.txt_num{font-size:26px; }
 
-
-
-
-
 .v-carousel{box-shadow: none !important;}
 .v-carousel .v-btn .v-btn__content .v-icon{color:#9e9e9e;}
 
 .text_new{width:30px; height: 11px; font-size:12px; background:#35e0e2;padding:0 2px 2px 2px; border-radius: 2px; color:#ffffff; display: unset;}
 
+.marketindex_card{padding:0 8px 0px 8px;}
+.marketindex_card .v-card__title{width:100%;}
+.marketindex_card h4{font-size: 20px;}
+.marketindex_card .v-card__title .index_num1{font-size:28px; font-weight: 600;}
+.marketindex_card .index_graph_w div{padding:0px; display: inline-block;}
+.marketindex_card .v-card__text{padding-top:0px;}
+.marketindex_card .index_graph_w .graph_v2{width:70%; height:90px;}
+.marketindex_card .index_graph_w .index_num2{text-align: right; position: absolute; right:24px;bottom:24px; font-size:16px;  font-weight:600;}
+.marketindex_card .theme--light.v-toolbar{background:#ffffff;}
+
+.tbl_w2 .v-list__tile{padding:0px;}
+.tbl_w2 .headline{margin-bottom:5px;}
 
 
+
+.toggle2 .v-btn-toggle{border:1px solid #c9c9c9;}
+.toggle2 .v-btn-toggle--selected{ box-shadow: none !important; }
+.toggle2 .v-btn-toggle .v-btn.v-btn--active{background-color:#1976d2; color:#ffffff; border-right:1px solid #1976d2; }
+.toggle2 .v-btn-toggle .v-btn{padding:0 15px; opacity: 0.7; height:28px;}
+
+
+.border_b{border-bottom:1px solid #e6e6e6}
+
+.Oper_menu .v-subheader{border-bottom:1px solid #d8d8d8; width:100%;}
+.Oper_menu .v-list{padding-top:0px !important;}
+.Oper_menu .v-list__tile--active .v-btn .v-btn__content .v-icon{ color:#21bcbe;}
+.Oper_menu .v-list__tile .v-btn .v-btn__content .v-icon:hover{ color:#21bcbe !important;}
+.Oper_menu .v-list__tile--active .v-list__tile__title{ color:#21bcbe !important}
+.Oper_menu .v-list__tile__avatar{min-width:25px !important;}
