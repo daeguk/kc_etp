@@ -299,17 +299,19 @@
                 <v-card flat>
                     <table id="example1" class="display table01_w">
                         <colgroup>
-                            <col width="3%">
-                            <col width="13%">
-                            <col width="13%">
+                            <col width="2%">
+                            <col width="2%">
+                            <col width="12%">
+                            <col width="12%">
                             <col width="9%">
                             <col width="7%">
-                            <col width="10%">
-                            <col width="15%">
+                            <col width="9%">
+                            <col width="17%">
                             <col width="30%">
                         </colgroup>
                         <thead>
                             <tr>
+                                <th></th>
                                 <th>No</th>
                                 <th>발행사</th>
                                 <th>종목명</th>
@@ -457,42 +459,6 @@ export default {
     mounted: function() {
         var vm = this;
         vm.getEtpApplyList();
-
-        $("#example1, tbody").on("click", "button", function() {
-            var data = table.row($(this).parents("tr")).data();
-            // alert("Name = " + JSON.stringify(data));
-
-            table.row
-                .add({
-                    JISU_CD: "Tiger Nixon",
-                    JISU_NM: "System Architect",
-                    IP_DT: "$3,120",
-                    ANNO_YN: "2011/04/25",
-                    INDEX_CAL_METHOD: "Edinburgh",
-                    ETP_NM: "5421",
-                    INST_CNT: "5421"
-                })
-                .draw();
-
-            vm.movePage(data.JISU_CD, data.MARKET_ID);
-        });
-
-        $("#example1, tbody").on("click", "tbody tr", function() {
-            var data = table.row($(this).parents("tr")).data();
-            // alert("Name = " + JSON.stringify(data));
-
-            table.row
-                .add({
-                    JISU_CD: "Tiger Nixon",
-                    JISU_NM: "System Architect",
-                    IP_DT: "$3,120",
-                    ANNO_YN: "2011/04/25",
-                    INDEX_CAL_METHOD: "Edinburgh",
-                    ETP_NM: "5421",
-                    INST_CNT: "5421"
-                })
-                .draw();
-        });
     },
     methods: {
         getEtpApplyList: function() {
@@ -503,8 +469,7 @@ export default {
                     params: {}
                 })
                 .then(response => {
-                    debugger;
-                     console.log("console:" + response);
+                      console.log("console:" + response);
                     if (response.data.success == false) {
                         alert("ETP신청현황  목록이 없습니다");
                     } else {
@@ -513,8 +478,9 @@ export default {
                         console.log("response=" + JSON.stringify(items));
                         this.results = items;
                         this.list_cnt = this.results.length;
-
+                        debugger;
                         table = $("#example1").DataTable({
+ 
                             processing: true,
                             serverSide: false,
                             info: true, // control table information display field
@@ -524,48 +490,67 @@ export default {
                             searching: false,
                             data: this.results,
                             columnDefs: [
-                                {
-                                    render: function(data, type, row) {
-                                        if (data) {
-                                            return data.replace(/,/gi, "</br>");
-                                        } else {
-                                            return "";
+                                {  
+                                    "render": function ( data, type, row ) {
+                                        var etpType = (row.etp_type == 'ETN')  ? 'iIV' :'iNAV' ;
+                                        let shtml = "" ;
+                                        if (row.isin_stat_cd == "0001"|| row.isin_stat_cd == "0008" ) {
+                                            shtml += "<button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='off'>기초지수</button><button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='off'>" + etpType + "</button>"; 
+                                        }else if(row.isin_stat_cd == "0002" || row.isin_stat_cd == "0003" ){
+                                             shtml += "<button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='on'>기초지수</button><button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='off'>" + etpType + "</button>"; 
+                                        }else if(row.isin_stat_cd == "0004"){
+                                            shtml += "<button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='on'>기초지수</button><button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='on'>" + etpType + "</button>"; 
                                         }
-                                    },
-                                    targets: 5
-                                }
+                                        return shtml;
+                                    },   
+                                    "targets": 7 
+                                },  
+                                                                {  
+                                    "render": function ( data, type, row ) {
+                                         let shtml = '' ;
+                                         shtml += '<td> <div class="progress"> <ol>' ;
+                                         if (row.isin_stat_cd == "0001"){ 
+                                            shtml += '<li class="on"><span><b>신청</b> : 담당자 접수중</span></li><li ><span> <b>지수</b></span></li><li ><span> <b>코드</b></span></li><li class="last"><span><b>iNAV</b></span></li>' ;
+                                         }else if(row.isin_stat_cd == "0002"){
+                                            shtml += '<li class="on"><span><b>신청</b></span></li><li class="on"><span> <b>지수 </b>: 표준코드 입력대기중</span></li><li ><span> <b>코드</b></span></li><li class="last"><span><b>iNAV</b></span></li>' ;                                            
+                                         }else if(row.isin_stat_cd == "0003"){
+                                            shtml += '<li class="on"><span><b>신청</b></span></li><li class="on"><span> <b>지수 </b></span></li><li class="on"><span> <b>코드</b>: iNAV/iIV 산출대기중</span></li><li class="last"><span><b>iNAV</b></span></li>' ;                                            
+                                         }else if(row.isin_stat_cd == "0004"){
+                                            shtml += '<li class="on"><span><b>신청</b></span></li><li class="on"><span> <b>지수</b></span></li><li class="on"><span><b>코드</b></span></li><li class="on_last"><span><b>iNAV</b> : iNAV/iIV 산출테스트 중 </span></li>' ;                                            
+                                         }else if(row.isin_stat_cd == "0008"){
+                                            shtml += '상장보류' ;                                            
+                                         }
+                                         shtml += '</ol></div></td>' ;
+                                         return shtml;
+                                    },   
+                                    "targets": 8 
+                                },  
                             ],
                             columns: [
                                 //{ "defaultContent": "<button type='button' class='btn btn-primary btn-xs'>Trial Run</button>" },
                                 {
-                                    data: "null",
-                                    className: "td_in_center",
-                                    defaultContent:
+                                   data: "null",
+                                   className: "td_in_center",
+                                   "orderable" : false,
+                                   defaultContent:
                                         "<input type='checkbox' color='primary' v-model='selected2' label='' value=''>"
                                 },
+                                { "data": "index", "orderable" : false },
                                 { "data": "inst_nm", "orderable" : true },
                                 { "data": "isu_kor_nm", "orderable" : true },
                                 { "data": "req_date", "orderable" : true },
-                                { "data": "isin_stat_cd", "orderable" : true },
-                                { "data": "inst_cd", "orderable": true },
-                                { data: null,className: "td_in_center", defaultContent: "<button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='on'>기초지수</button><button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='on'>iNAV</button>"},
-                                { data: null, className: "checks", defaultContent: ""}
+                                { "data": "kor_for_type_name", "orderable" : true },
+                                { "data": "basic_idx", "orderable": true },
+                                {  data: null,className: "td_in_center", 
+                                     "orderable" : false,
+                                   defaultContent: ""
+                                  },
+                                { data: null, className: "checks", defaultContent: "", "orderable" : false,}
                             ]
                         });
                     }
                     this.loadingbar = false;
                 });
-        },
-        getReplace: function(text) {
-            if (text) {
-                return text.replace(/,/gi, "</br>");
-            }
-        },
-        movePage: function(jisu_cd, market_id) {
-            this.$router.push({
-                path: "/index/manage/IndexListdetail",
-                query: { jisu_cd: jisu_cd, market_id: market_id }
-            });
         },
     }
 };
