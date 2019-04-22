@@ -556,6 +556,8 @@
                     <v-btn depressed large color="#3158a1" dark v-if="modForm.status == '01'" @click="fn_modifyJisu( '02' )">연동신청</v-btn>
                     <v-btn depressed large color="#9e9e9e" dark v-if="modForm.status != '03'" @click="fn_deleteJisu()">삭제</v-btn>
                 </div>
+
+                <ConfirmDialog ref="confirm"></ConfirmDialog>
             </v-container>
         </v-form>
     </v-card>
@@ -563,11 +565,15 @@
 
 
 <script>
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import Config from "@/js/config.js";
 
 export default {
     props: [ "editData" ],
 
+    components: {
+        ConfirmDialog: ConfirmDialog
+    },
     data() {
         return {
 
@@ -673,6 +679,9 @@ export default {
     },
 
     mounted() {
+
+        // 메시지 박스 참조
+        this.$root.$confirm = this.$refs.confirm;
 
         this.dragAndDropCapable = this.determineDragAndDropCapable();
 
@@ -796,8 +805,11 @@ export default {
         /* 팝업창에 노출할 전체 기관정보 조회 */
         this.fn_getDomainInst();
 
-        /* 등록된 지수정보 조회 */
-        this.fn_getRegistedJisuData();
+        this.$nextTick().then(() => {
+
+            /* 등록된 지수정보 조회 */
+            this.fn_getRegistedJisuData();
+        });
     },
 
     methods: {

@@ -456,7 +456,7 @@ export default {
     beforeDestroy() {},
     mounted: function() {
         var vm = this;
-        vm.getInfoIndexList();
+        vm.getEtpApplyList();
 
         $("#example1, tbody").on("click", "button", function() {
             var data = table.row($(this).parents("tr")).data();
@@ -495,21 +495,22 @@ export default {
         });
     },
     methods: {
-        getInfoIndexList: function() {
-            console.log("getInfoIndexList");
+        getEtpApplyList: function() {
+            console.log("getEtpApplyList");
             this.loadingbar = true;
             axios
-                .get(Config.base_url + "/user/index/getInfoIndexList", {
+                .get(Config.base_url + "/user/etp/getEtpApplyList", {
                     params: {}
                 })
                 .then(response => {
-                    // console.log(response);
+                    debugger;
+                     console.log("console:" + response);
                     if (response.data.success == false) {
-                        alert("관리지수 목록이 없습니다");
+                        alert("ETP신청현황  목록이 없습니다");
                     } else {
                         var items = response.data.results;
 
-                        //console.log("response=" + JSON.stringify(items));
+                        console.log("response=" + JSON.stringify(items));
                         this.results = items;
                         this.list_cnt = this.results.length;
 
@@ -542,11 +543,11 @@ export default {
                                     defaultContent:
                                         "<input type='checkbox' color='primary' v-model='selected2' label='' value=''>"
                                 },
-                                { "data": "JISU_NM", "orderable" : true },
-                                { "data": "IP_DT", "orderable" : true },
-                                { "data": "ANNO_YN", "orderable" : true },
-                                { "data": "INDEX_CAL_METHOD", "orderable" : true },
-                                { "data": "ETP_NM", "orderable": true },
+                                { "data": "inst_nm", "orderable" : true },
+                                { "data": "isu_kor_nm", "orderable" : true },
+                                { "data": "req_date", "orderable" : true },
+                                { "data": "isin_stat_cd", "orderable" : true },
+                                { "data": "inst_cd", "orderable": true },
                                 { data: null,className: "td_in_center", defaultContent: "<button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='on'>기초지수</button><button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='on'>iNAV</button>"},
                                 { data: null, className: "checks", defaultContent: ""}
                             ]

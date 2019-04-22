@@ -11,24 +11,27 @@
     <![CDATA[
         SELECT      /* etpinfo.getJisuListByEtpRepresent 시장을 대표하는 지수정보를 조회한다. */
 
-                    base.f16013                                     AS  f16013          /* 단축코드 */
-                ,   base.middle_type                                AS  middle_type     /* 지수중분류(FNGUIDE, WISEFN) */
-                ,   base.f16002                                     AS  f16002          /* 한글종목명 */
-                ,   base.market_id                                  AS  market_id       /* 시장 ID */
+                    base.f16013                                         AS  f16013          /* 단축코드 */
+                ,   base.middle_type                                    AS  middle_type     /* 지수중분류(FNGUIDE, WISEFN) */
+                ,   base.f16002                                         AS  f16002          /* 한글종목명 */
+                ,   base.market_id                                      AS  market_id       /* 시장 ID */
                 
-                ,   base.f15001                                     AS  f15001          /* 현재가 */
-                ,   base.f15472                                     AS  f15472          /* 대비 */
-                ,   base.f15004                                     AS  f15004          /* 등락율 */
+                ,   FORMAT( base.f15001, '###,###,###,###,###,###' )    AS  f15001          /* 현재가 */
+                ,   FORMAT( base.f15472, '###,###,###,###,###,###' )    AS  f15472          /* 대비 */
+                ,   CASE    WHEN    base.f15004 > 0
+                            THEN    CONCAT( '+',  CAST( base.f15004  AS CHAR ) )
+                            ELSE    CAST( base.f15004   AS  CHAR )
+                    END                                                 AS  f15004          /* 등락율 */
                 
         FROM  (
-                    SELECT      td_index_basic.f16013               AS  f16013          /* 단축코드 */
-                            ,   td_index_basic.f16002               AS  f16002          /* 한글종목명 */
-                            ,   td_index_basic.market_id            AS  market_id       /* 시장 ID */
-                            ,   td_index_basic.middle_type          AS  middle_type     /* 지수중분류(FNGUIDE, WISEFN) */
+                    SELECT      td_index_basic.f16013                   AS  f16013          /* 단축코드 */
+                            ,   td_index_basic.f16002                   AS  f16002          /* 한글종목명 */
+                            ,   td_index_basic.market_id                AS  market_id       /* 시장 ID */
+                            ,   td_index_basic.middle_type              AS  middle_type     /* 지수중분류(FNGUIDE, WISEFN) */
                             
-                            ,   td_index_basic.f15001               AS  f15001          /* 현재가 */
-                            ,   td_index_basic.f15472               AS  f15472          /* 대비 */
-                            ,   td_index_basic.f15004               AS  f15004          /* 등락율 */
+                            ,   td_index_basic.f15001                   AS  f15001          /* 현재가 */
+                            ,   td_index_basic.f15472                   AS  f15472          /* 대비 */
+                            ,   td_index_basic.f15004                   AS  f15004          /* 등락율 */
                             
                     FROM  td_index_basic
                    WHERE  1 = 1
@@ -43,7 +46,7 @@
                                         ,   tm_code_dtl.com_val03
 
                                 FROM  tm_code_dtl
-                               WHERE  tm_code_dtl.com_mst_cd      =   'COM003'        /* 시장을 대표하는 지수 */
+                               WHERE  tm_code_dtl.com_mst_cd      =   'COM003'              /* 시장을 대표하는 지수 */
                                  AND  tm_code_dtl.use_yn          =   '1'
                             )
 
@@ -61,63 +64,75 @@
         SELECT      /* etpinfo.getJisuListByEtpRepresentCnt 시장을 대표하는 지수의 ETF, ETN 건수를 조회한다. */
 
                     base.f16257                                                     AS  f16257          /* ETP기초지수코드 */
-                ,   base.middle_type                                                AS  middle_type
+                ,   base.middle_type                                                AS  middle_type     /* 지수중분류(FNGUIDE, WISEFN) */
                 
-                ,   IFNULL(
-                            MAX(
-                                CASE    WHEN    base.gubun  =   'ETF'
-                                        THEN    base.grp_cnt
-                                END 
+                ,   FORMAT(
+                            IFNULL(
+                                    MAX(
+                                        CASE    WHEN    base.gubun  =   'ETF'
+                                                THEN    base.grp_cnt
+                                        END 
+                                    )
+                                ,   0
                             )
-                        ,   0
-                    )                                                               AS  grp_etf_cnt
+                        ,   '###,###,###,###,###,###'
+                    )                                                               AS  grp_etf_cnt     /* ETF 건수 */
                     
-                ,   IFNULL(
-                            MAX(
-                                CASE    WHEN    base.gubun  =   'ETF'
-                                        THEN    base.grp_sum
-                                END
+                ,   FORMAT(
+                            IFNULL(
+                                    MAX(
+                                        CASE    WHEN    base.gubun  =   'ETF'
+                                                THEN    base.grp_sum
+                                        END
+                                    )
+                                ,  0
                             )
-                         ,  0
-                    )                                                               AS  grp_etf_sum
+                        ,   '###,###,###,###,###,###'
+                    )                                                               AS  grp_etf_sum     /* ETF SUM( 시가총액 ) */
                     
-                ,   IFNULL(
-                            MAX(
-                                CASE    WHEN    base.gubun  =   'ETN'
-                                        THEN    base.grp_cnt
-                                END
+                ,   FORMAT(
+                            IFNULL(
+                                    MAX(
+                                        CASE    WHEN    base.gubun  =   'ETN'
+                                                THEN    base.grp_cnt
+                                        END
+                                    )
+                                ,   0
                             )
-                        ,   0
-                    )                                                               AS  grp_etn_cnt
-                ,   IFNULL(
-                            MAX(
-                                CASE    WHEN    base.gubun  =   'ETN'
-                                        THEN    base.grp_sum
-                                END
+                        ,   '###,###,###,###,###,###'
+                    )                                                               AS  grp_etn_cnt     /* ETN 건수 */
+                ,   FORMAT(
+                            IFNULL(
+                                    MAX(
+                                        CASE    WHEN    base.gubun  =   'ETN'
+                                                THEN    base.grp_sum
+                                        END
+                                    )
+                                ,   0
                             )
-                        ,   0
-                    )                                                               AS  grp_etn_sum
+                        ,   '###,###,###,###,###,###'
+                    )                                                               AS  grp_etn_sum     /* ETN SUM( 시가총액 ) */
                                 
           FROM  (
                     SELECT      td_etp_basic.f16257                                 AS  f16257          /* ETP기초지수코드 */
-                            ,   base.middle_type                                    AS  middle_type
-                            ,   CASE    WHEN    td_etp_basic.f16493  IN ( '1', '2' )
+                            ,   base.middle_type                                    AS  middle_type     /* 지수중분류(FNGUIDE, WISEFN) */
+                            ,   CASE    WHEN    td_etp_basic.f16493  IN ( '1', '2' )                    /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
                                         THEN    'ETF'
                                         ELSE    'ETN'
                                 END                                                 AS  gubun
                             ,   COUNT(*)                                            AS  grp_cnt
-                            ,   SUM( td_etp_basic.f15028 )                          AS  grp_sum
+                            ,   SUM( td_etp_basic.f15028 )                          AS  grp_sum         /* SUM( 시가총액 ) */
 
                       FROM      td_etp_basic
                             ,   (
                                     SELECT      td_index_basic.f16013               AS  f16013          /* 단축코드 */
-                                            ,   td_index_basic.middle_type          AS  middle_type
+                                            ,   td_index_basic.middle_type          AS  middle_type     /* 지수중분류(FNGUIDE, WISEFN) */
                                       FROM  td_index_basic
                                      WHERE  1 = 1
                                        AND  (
-                                                    td_index_basic.f16013
-                                                ,   td_index_basic.large_type
-                                                ,   td_index_basic.middle_type
+                                                    td_index_basic.f16013                               /* 단축코드 */
+                                                ,   td_index_basic.large_type                           /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
+                                                ,   td_index_basic.middle_type                          /* 지수중분류(FNGUIDE, WISEFN) */
                                             )   IN
                                             (
                                                 SELECT      tm_code_dtl.com_val01
@@ -132,16 +147,16 @@
 
                      WHERE  1 = 1
                        AND  td_etp_basic.f16257         =   base.f16013     /* ETP기초지수코드 */
-                       AND  base.middle_type            =   CASE    WHEN    td_etp_basic.f34239     =   '2'
+                       AND  base.middle_type            =   CASE    WHEN    td_etp_basic.f34239     =   '2'     /* ETP기초지수MID */
                                                                     THEN    'KSP'
                                                                     
-                                                                    WHEN    td_etp_basic.f34239     =   '4'
+                                                                    WHEN    td_etp_basic.f34239     =   '4'     /* ETP기초지수MID */
                                                                     THEN    'KSQ'
                                                             END
 
                      GROUP  BY      td_etp_basic.f16257
                                 ,   base.middle_type
-                                ,   CASE    WHEN    td_etp_basic.f16493  IN ( '1', '2' )
+                                ,   CASE    WHEN    td_etp_basic.f16493  IN ( '1', '2' )                /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
                                             THEN    'ETF'
                                             ELSE    'ETN'
                                     END
@@ -166,7 +181,9 @@
                 ,   tm_etpctg_code.ctg_name                             AS  ctg_name            /* 분류이름 */
                 
           FROM  tm_etpctg_code
-         WHERE  tm_etpctg_code.ctg_large_code               =   '001' 
+         WHERE  tm_etpctg_code.ctg_large_code               =   #{ctg_large_code}
+
+                /* tm_etpctg_map 에 존재하는 경우만 조회 */
            AND  EXISTS
                 (
                     SELECT  1
@@ -192,7 +209,7 @@
 
                     tm_etpctg_map.ctg_code                              AS  ctg_code            /* ETP분류코드 */
 
-                ,   td_etp_basic.F12506                                 AS  f12506              /* 입회일 */
+                ,   DATE_FORMAT( td_etp_basic.F12506, '%Y.%m.%d' )      AS  f12506              /* 입회일 */
                 ,   td_etp_basic.F16012                                 AS  f16012              /* 국제표준코드 */
                 ,   td_etp_basic.F16013                                 AS  f16013              /* 단축코드 */
                 ,   td_etp_basic.F16002                                 AS  f16002              /* 한글종목명 */
@@ -277,7 +294,8 @@
                                                 ,   tm_etpctg_code.ctg_code
                                                 
                                           FROM  tm_etpctg_code
-                                         WHERE  tm_etpctg_code.ctg_large_code       =   '001'
+                                         WHERE  tm_etpctg_code.ctg_large_code       =   #{ctg_large_code}       /* ETP대분류코드 */
+                                           AND  tm_etpctg_code.ctg_code             =   #{ctg_code}             /* ETP분류코드 */
                                     )        
                         )   tm_etpctg_map
                         

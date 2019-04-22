@@ -427,6 +427,8 @@
                 <div class="text-xs-center">
                     <v-btn depressed large color="#3158a1" dark @click="fn_registerJisu()">등록</v-btn>
                 </div>
+
+                <ConfirmDialog ref="confirm"></ConfirmDialog>
             </v-container>
         </v-form>
     </v-card>
@@ -434,9 +436,14 @@
 
 
 <script>
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import Config from "@/js/config.js";
 
 export default {
+
+    components: {
+        ConfirmDialog: ConfirmDialog
+    },    
     data: () => {
         return {
 
@@ -587,6 +594,9 @@ export default {
 
     mounted() {
 
+        // 메시지 박스 참조
+        this.$root.$confirm = this.$refs.confirm;        
+
         this.dragAndDropCapable = this.determineDragAndDropCapable();
 
         if (this.dragAndDropCapable) {
@@ -716,48 +726,101 @@ export default {
          * 이미 등록된 지수ID 가 존재하는지 확인한다.
          * 2019-04-02  bkLove(촤병국)
          */
-        fn_jisuDuplCheck() {
+        async fn_jisuDuplCheck() {
             var vm = this;
             var regType = /^[A-Za-z0-9+]*$/;
+            
 
             /* 1. 지수 ID 필수 체크 */
             if (!this.form.jisu_id) {
-                alert("[지수 ID] is required");
-                this.$refs.jisu_id.focus();
-                vm.form.duplCheckResult = false;
 
-                return false;
+                if( await this.$root.$confirm.open(
+                            '[지수 ID]',
+                            '[지수 ID] is required',
+                            {}
+                        ,   1
+                    )
+                ) {
+                    vm.$refs.jisu_id.focus();
+                    vm.form.duplCheckResult = false;
+                    return false;
+                }
+                
             } else if (this.form.jisu_id.length > 10) {
-                alert("[기준 ID] 10자리 까지만 입력 가능합니다.");
-                this.$refs.jisu_id.focus();
-                vm.form.duplCheckResult = false;
 
-                return false;
+                if( await this.$root.$confirm.open(
+                            '[지수 ID]',
+                            '[지수 ID] 10자리 까지만 입력 가능합니다.',
+                            {}
+                        ,   1
+                    )
+                ) {
+                    vm.$refs.jisu_id.focus();
+                    vm.form.duplCheckResult = false;
+                    return false;
+                }
+
             } else if (this.form.jisu_id.length < 5) {
-                alert("[기준 ID] 5자리 이상 입력해 주세요.");
-                this.$refs.jisu_id.focus();
-                vm.form.duplCheckResult = false;
 
-                return false;
+                if( await this.$root.$confirm.open(
+                            '[지수 ID]',
+                            '[지수 ID] 5자리 이상 입력해 주세요.',
+                            {}
+                        ,   1
+                    )
+                ) {
+                    vm.$refs.jisu_id.focus();
+                    vm.form.duplCheckResult = false;
+                    return false;
+                }
+
             } else if( !regType.test( this.form.jisu_id ) ) {
-                alert("[기준 ID] 숫자와 영문자만 가능합니다.");
-                this.$refs.jisu_id.focus();
-                vm.form.duplCheckResult = false;
 
-                return false;
+                if( await this.$root.$confirm.open(
+                            '[지수 ID]',
+                            '[지수 ID] 숫자와 영문자만 가능합니다.',
+                            {}
+                        ,   1
+                    )
+                ) {
+                    vm.$refs.jisu_id.focus();
+                    vm.form.duplCheckResult = false;
+                    return false;
+                }
+
             }
 
             /* 2. 지수 ID 중복 체크 */
             axios.post(Config.base_url + "/user/index/getJisuDuplCheck", {
                 data: { jisu_id: this.form.jisu_id }
-            }).then(function(response) {
+            }).then( async function(response) {
                 if (response && response.data) {
                     if (response.data.result == true) {
-                        alert("해당 [지수 ID] 는 이미 존재합니다.");
-                        vm.form.duplCheckResult = false;
+
+                        if( await vm.$root.$confirm.open(
+                                    '[지수 ID]',
+                                    '[지수 ID] 이미 존재합니다.',
+                                    {}
+                                ,   1
+                            )
+                        ) {
+                            vm.$refs.jisu_id.focus();
+                            vm.form.duplCheckResult = false;
+                            return false;
+                        }
+
                     } else {
-                        alert("해당 [지수 ID] 는 사용 가능합니다.");
-                        vm.form.duplCheckResult = true;
+
+                        if( await vm.$root.$confirm.open(
+                                    '[지수 ID]',
+                                    '[지수 ID] 사용 가능합니다.',
+                                    {}
+                                ,   1
+                            )
+                        ) {
+                            vm.form.duplCheckResult = true;
+                            return false;
+                        }
                     }
                 }
             });
@@ -767,20 +830,40 @@ export default {
          * 등록 버튼 클릭시
          * 2019-04-02  bkLove(촤병국)
          */
-        fn_registerJisu() {
+        async   fn_registerJisu() {
             var vm = this;
 
             if (!this.form.duplCheckResult) {
-                alert("[지수 ID] 중복확인을 해주세요.");
-                this.$refs.jisu_id.focus();
 
-                return false;
+                if( await this.$root.$confirm.open(
+                            '[지수 ID]',
+                            '[지수 ID] 중복확인을 해주세요.',
+                            {}
+                        ,   1
+                    )
+                ) {
+                    this.$refs.jisu_id.focus();
+
+                    return false;
+                }
             }
 
             if (!this.$refs.form.validate()) {
                 return false;
             }
 
+
+            if( await this.$root.$confirm.open(
+                        '[신규 지수 등록]',
+                        '저장하시겠습니까?',
+                        {}
+                    ,   2
+                )
+            ) {
+                if( "Y" != this.$root.$confirm.val ) {
+                    return false;
+                }
+            }
 
             this.formData = new FormData();
             this.formData.append( "files", this.$refs.methodFile.files[0] );
@@ -1010,7 +1093,7 @@ export default {
 
             this.form.arr_jisu_inst =   arrTemp;
             this.fn_instShare();
-        }      
+        }   
     }
 };
 </script>

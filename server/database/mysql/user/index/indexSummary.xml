@@ -54,7 +54,7 @@
                    ,A.JISU_ID
                    ,B.INST_NAME 
           FROM tm_jisu_share_req A,
-                    tm_domain_mast B
+                    tm_user_domain B
           WHERE A.INST_CD = B.INST_CD) REQ
          LEFT OUTER JOIN td_index_basic BAS	
            ON BAS.F16013 = REQ.JISU_ID
@@ -85,7 +85,7 @@
                    ,A.JISU_ID
                    ,B.INST_NAME 
           FROM tm_jisu_share_req A,
-                    tm_domain_mast B
+                    tm_user_domain B
           WHERE A.INST_CD = B.INST_CD) REQ
          LEFT OUTER JOIN td_index_basic BAS	
            ON BAS.F16013 = REQ.JISU_ID
