@@ -63,13 +63,14 @@ export default {
                 tab: null,
                 drawer:"",
                 search:"",
-                items: ['전체', '시장대표', '섹터', '전략', '채권', '해외', '혼합', '상품'],
+                items: ['전체', '시장대표', '섹터', '테마', '전략', '채권', '해외', '혼합', '상품'],
     	};
     },    
     components: {
         EtfForList      :   EtfForList,
         MarketRepresent :   MarketRepresent,        
         MarketSector    :   MarketSector,
+        EtnForList      :   EtnForList,
         EtnForList      :   EtnForList,
         EtpforList5     :   EtpforList5,
         EtpforList6     :   EtpforList6,
