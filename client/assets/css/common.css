@@ -415,7 +415,10 @@ input[type='file']{
 
 .Oper_menu .v-subheader{border-bottom:1px solid #d8d8d8; width:100%;}
 .Oper_menu .v-list{padding-top:0px !important;}
-.Oper_menu .v-list__tile--active .v-btn .v-btn__content .v-icon{ color:#21bcbe;}
-.Oper_menu .v-list__tile .v-btn .v-btn__content .v-icon:hover{ color:#21bcbe !important;}
-.Oper_menu .v-list__tile--active .v-list__tile__title{ color:#21bcbe !important}
+.Oper_menu .v-list__tile .v-icon{ color:#48485e;}
+.Oper_menu .v-list__tile__title{ color:#48485e;}
+
+.Oper_menu .v-list__tile:hover{ background:#e9fafa !important;}
+.Oper_menu .v-list__tile--active .v-icon{ color:#21bcbe;}
+.Oper_menu .v-list__tile--active .v-list__tile__title{ color:#18b2b4 !important}
 .Oper_menu .v-list__tile__avatar{min-width:25px !important;}
