@@ -10,17 +10,17 @@
                                 <v-card flat>
                                     <div class="market_card_w line_l">
                                         <div class="market_card2" wrap>
-                                            <h6>{{carousel_data[(((n-1)*5)+x-1)].name}}</h6>
+                                            <h6>{{getData(carousel_data, n, x, "name")}}</h6>
                                             <ul>
                                                 <li>
                                                     <dl> 
                                                         <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">{{new Intl.NumberFormat().format((carousel_data[(((n-1)*5)+x-1)].total_amt) / 1000)}}K</dt>
+                                                        <dt class="txt_num text_result2">{{new Intl.NumberFormat().format((getData(carousel_data, n, x, "total_amt")) / 1000)}}K</dt>
                                                     </dl>
                                                 </li>
                                                 <li> <dl> 
-                                                        <dt>ETF - {{carousel_data[(((n-1)*5)+x-1)].etf_cnt}}종목</dt>
-                                                        <dt>ETN - {{carousel_data[(((n-1)*5)+x-1)].etn_cnt}}종목</dt>
+                                                        <dt>ETF - {{getData(carousel_data, n, x, "etf_cnt")}}종목</dt>
+                                                        <dt>ETN - {{getData(carousel_data, n, x, "etn_cnt")}}종목</dt>
                                                     </dl>
                                                 </li>
                                             </ul>
@@ -32,7 +32,7 @@
                     </v-carousel-item>
                     <v-carousel-item  class="bg_W" v-if="Object.keys(carousel_mod).length > 0">
                         <v-layout class="market_card_layout" >
-                            <v-flex v-for="mod_item in carousel_mod" :key="mod_item.name">
+                            <v-flex v-for="mod_item in carousel_mod" >
                                 <v-card flat>
                                     <div class="market_card_w line_l">
                                         <div class="market_card2" wrap>
@@ -146,11 +146,11 @@ export default {
                 if (dataKind == "name") {
                     return carousel_data[(((n-1)*5)+x-1)].name;
                 } else if (dataKind == "total_amt") {
-
+                    return carousel_data[(((n-1)*5)+x-1)].total_amt;
                 } else if (dataKind == "etf_cnt") {
-                    
+                    return carousel_data[(((n-1)*5)+x-1)].etf_cnt;
                 } else if (dataKind == "etn_cnt") {
-                    
+                    return carousel_data[(((n-1)*5)+x-1)].etn_cnt;
                 }
             } else {
                 return "";
@@ -258,8 +258,10 @@ export default {
                             }); 
 
                             // ETP 갯수와 기준일 바인딩 
-                            $("#sec_count"+ctgCodeItem.ctg_code).html(items.length);
-                            $("#sec_date"+ctgCodeItem.ctg_code).html("기준일 :"+items[0].f12506);
+                            if (items) {
+                                $("#sec_count"+ctgCodeItem.ctg_code).html(items.length);
+                                $("#sec_date"+ctgCodeItem.ctg_code).html("기준일 :"+items[0].f12506);
+                            }
 
                             // 테이블별 이벤트
                             $('#sector'+ctgCodeItem.ctg_code+' tbody').on('click', 'button', function () {

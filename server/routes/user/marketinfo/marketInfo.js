@@ -149,7 +149,7 @@ var getSectorEtpList = function (req, res) {
                                 }
                             });
 
-                            carousel_data.push({"name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
+                            carousel_data.push({"ctg_code":ctgCodeItem.ctg_code, "name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
                         } else {
 
                             rows[0].forEach(function(item, idx) {
@@ -161,7 +161,7 @@ var getSectorEtpList = function (req, res) {
                                     etn_cnt++; 
                                 }
                             });
-                            carousel_mod.push({"name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
+                            carousel_mod.push({"ctg_code":ctgCodeItem.ctg_code, "name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
                         }  
                         /* ===================상단 데이터 생성 완료 =========================*/
                         // 조회한 데이터 저장
@@ -182,6 +182,9 @@ var getSectorEtpList = function (req, res) {
         }
         ], function (err, etpLists, carousel_info, carousel_data, carousel_mod, ctgCodeList) {
             // result now equals 'done'
+
+            //carousel_data = carousel_data.sort(carouselSort);
+
             res.json({
                 success: true,
                 etpLists: etpLists,
@@ -202,7 +205,13 @@ var getSectorEtpList = function (req, res) {
             message: exception
         });
         res.end();
-    }    
+    }
+    
+    function carouselSort(a, b) {
+        if(a.ctg_code == b.ctg_code){ return 0} return  a.ctg_code > b.ctg_code ? 1 : -1;
+    }
+      
+      
 };
 
 
