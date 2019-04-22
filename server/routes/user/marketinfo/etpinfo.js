@@ -48,107 +48,117 @@ var getEtpRepresentList = function(req, res) {
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
+        var carousel_info = {
+            carousel_cnt    :   0,
+            carousel_mod    :   0,
+            carousel_div    :   4
+        };          
+
         Promise.using(pool.connect(), conn => {
 
 
             async.waterfall([
 
-                /* 1. 시장을 대표하는 지수정보를 조회한다. */
-                function( callback ) {
+                /* 1. 시장을 대표하는 메인 코드정보를 조회한다. */
+                function( callback ) {                  
 
-                    stmt = mapper.getStatement('etpinfo', 'getJisuListByEtpRepresent', paramData, format);
+                    paramData.com_mst_cd    =   "COM003";
+                    stmt = mapper.getStatement('indexSelectList', 'getCodeDtl', paramData, format);
                     //console.log(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
                         if( err ) {
                             resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] etpinfo.getJisuListByEtpRepresent Error while performing Query";
+                            resultMsg.msg       =   "[error] indexSelectList.getCodeDtl Error while performing Query";
                             resultMsg.err       =   err;
 
                             return callback( resultMsg );
                         }
 
                         if ( rows ) {
-                            resultMsg.representList = rows;
+                            carousel_info.carousel_cnt =  Math.floor( rows.length / carousel_info.carousel_div);
+                            carousel_info.carousel_mod =  rows.length % carousel_info.carousel_div;
+
+                            resultMsg.codeList          =   rows;
                         }
 
                         callback( null, paramData );
                     });
                 },
 
-                /* 2. 시장을 대표하는 지수의 ETF, ETN 건수를 조회한다. */
+                /* 2. 시장을 대표하는 코드 (COM003) 에 속한 지수별 데이터를 조회한다. */
                 function( data, callback ) { 
 
-                    stmt = mapper.getStatement('etpinfo', 'getJisuListByEtpRepresentCnt', paramData, format);
-                    //console.log(stmt);
+                    var carousel_data =   [];
+                    var carousel_mod = [];
 
-                    conn.query(stmt, function( err, rows ) {
+                    var total_amt = 0;
+                    var etf_cnt = 0;
+                    var etn_cnt = 0;                    
 
-                        if( err ) {
-                            resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] etpinfo.getJisuListByEtpRepresentCnt Error while performing Query";
-                            resultMsg.err       =   err;
+                    async.forEachOf( resultMsg.codeList, function ( ctgCodeItem, index, inner_callback ){
 
+                        paramData.com_val01     =   ctgCodeItem.com_val01;
+                        paramData.com_val02     =   ctgCodeItem.com_val02;
+                        paramData.com_val03     =   ctgCodeItem.com_val03;
+                        stmt = mapper.getStatement('etpinfo', 'getJisuListByEtpRepresent', paramData, format);
+                        console.log(stmt);
+
+                        conn.query(stmt, function( err, rows ) {
+
+                            if( err ) {
+                                resultMsg.result    =   false;
+                                resultMsg.msg       =   "[error] etpinfo.getJisuListByEtpRepresent Error while performing Query";
+                                resultMsg.err       =   err;
+
+                                return inner_callback( resultMsg );
+                            }
+
+                            if( rows ) {
+
+                                if ( (carousel_info.carousel_cnt * carousel_info.carousel_div) > index ) {
+
+                                    rows.forEach(function(item, idx) {
+                                        total_amt += item.f15028;
+                                        // ctf 구분자가 1과 2일 경우 
+                                        if (item.f16493 == '1' || item.f16493 == '2') {
+                                            etf_cnt++; 
+                                        } else if (item.f16493 == '3' || item.f16493 == '4') {
+                                            etn_cnt++; 
+                                        }
+                                    });
+
+                                    carousel_data.push({"name": ctgCodeItem.com_dtl_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
+                                } else {
+
+                                    rows.forEach(function(item, idx) {
+                                        total_amt += item.f15028;
+                                        // ctf 구분자가 1과 2일 경우 
+                                        if (item.f16493 == '1' || item.f16493 == '2') {
+                                            etf_cnt++; 
+                                        } else if (item.f16493 == '3' || item.f16493 == '4') {
+                                            etn_cnt++; 
+                                        }
+                                    });
+                                    carousel_mod.push({"name": ctgCodeItem.com_dtl_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
+                                }
+                            }
+
+                            inner_callback( null );
+                        });
+
+                    }, function(err){
+
+                        if(err){
                             return callback( resultMsg );
+                        }else{
+                            resultMsg.carousel_info     =   carousel_info;
+                            resultMsg.carousel_mod      =   carousel_mod;
+                            resultMsg.carousel_data     =   carousel_data;
+
+                            return callback( null, paramData );;
                         }
-
-                        if ( rows ) {
-
-                            /* [시장을 대표하는 마스터 데이터] 와 [ETF, ETN 별 조회 내역] 에 대해 데이터를 합치기 위함. ( 지수코드, middle_type ) */
-                            for( var rep in resultMsg.representList ) {
-                                var repData     =   resultMsg.representList[ rep ];
-
-                                for( var etp in rows ) {
-                                    var etpData =   rows[ etp ];
-
-                                    if(     repData.f16013      == etpData.f16257           /* 단축코드 = ETP기초지수코드 */
-                                        &&  repData.middle_type == etpData.middle_type
-                                    ) {
-                                        repData.grp_etf_cnt     =   etpData.grp_etf_cnt;
-                                        repData.grp_etf_sum     =   etpData.grp_etf_sum;
-
-                                        repData.grp_etn_cnt     =   etpData.grp_etn_cnt;
-                                        repData.grp_etn_sum     =   etpData.grp_etn_sum;
-
-                                        break;
-                                    }
-                                }
-                            }
-
-                            /* 시장대표 탭에서 지수노출시 4개를 1세트로 노출하기 위함. */
-                            var  representGrpList = [];
-                            for( var i=0, inx=0; i < resultMsg.representList.length; i=i+4 ) {
-                                var data        =   resultMsg.representList[i];
-                                var groupData   =   {};
-
-                                groupData.one   =   data;
-
-                                groupData.two = {};
-                                if( i+1 < resultMsg.representList.length ) {
-                                    data = resultMsg.representList[i+1];
-                                    groupData.two   =   data;
-                                }
-
-                                groupData.three = {};
-                                if( i+2 < resultMsg.representList.length ) {
-                                    data = resultMsg.representList[i+2];
-                                    groupData.three   =   data;
-                                }
-
-                                groupData.four = {};
-                                if( i+3 < resultMsg.representList.length ) {
-                                    data = resultMsg.representList[i+3];
-                                    groupData.four   =   data;
-                                }                
-
-                                representGrpList.push( groupData );
-                            }
-
-                            resultMsg.representGrpList     =   representGrpList;
-                        }
-
-                        callback( null, paramData );
                     });
                 },              
 
@@ -169,7 +179,7 @@ var getEtpRepresentList = function(req, res) {
                         }
 
                         if ( rows ) {
-                            resultMsg.ctgJisuList   =   rows;
+                            resultMsg.ctgCodeList   =   rows;
                         }
 
                         callback( null, paramData );
@@ -179,10 +189,10 @@ var getEtpRepresentList = function(req, res) {
                 /* 4. 지수별 ETP 목록을 조회한다. */
                 function( data, callback ) { 
 
-                    var arrDataList =   [];
+                    var etpLists    =   [];
 
                     /* ctg_code 별로 ETP 목록 데이터를 조회한다. */
-                    async.forEachOf( resultMsg.ctgJisuList, function ( innerData, i, inner_callback ){
+                    async.forEachOf( resultMsg.ctgCodeList, function ( innerData, i, inner_callback ){
 
                         paramData.ctg_code  =   innerData.ctg_code;
                         stmt = mapper.getStatement('etpinfo', 'getEtpListByJisu', paramData, format);
@@ -199,7 +209,7 @@ var getEtpRepresentList = function(req, res) {
                             }
 
                             if( rows ) {
-                                arrDataList.push( rows );
+                                etpLists.push( rows );
                             }
 
                             inner_callback( null );
@@ -210,7 +220,7 @@ var getEtpRepresentList = function(req, res) {
                         if(err){
                             return callback( resultMsg );
                         }else{
-                            resultMsg.ctgJisuByEtpList      =   arrDataList;
+                            resultMsg.etpLists          =   etpLists;
 
                             return callback( null );
                         }
@@ -244,12 +254,12 @@ var getEtpRepresentList = function(req, res) {
             resultMsg.err       =   expetion;
         }
 
-        resultMsg.representList     =   [];
-        resultMsg.representList     =   [];
+        resultMsg.etpLists          =   [];
+        resultMsg.carousel_info     =   {};
+        resultMsg.carousel_data     =   [],
+        resultMsg.carousel_mod      =   [];
+        resultMsg.ctgCodeList       =   [];
 
-        resultMsg.ctgJisuList       =   [];
-        resultMsg.ctgJisuByEtpList  =   [];
-        
         res.json({
             resultMsg
         });

@@ -2,120 +2,52 @@
     <v-container>
         <v-layout row wrap class="content_margin">
             <v-flex xs12>
-                <v-carousel light hide-delimiters height="250px" interval="10000">
-                    <v-carousel-item class="bg_W market_layout_w" v-for="(item, index) in representGrpList" :key="index">
+                <v-carousel  light hide-delimiters height="250px" interval="10000">
+                    <v-carousel-item  class="bg_W market_layout_w" v-if="carousel_info.carousel_cnt > 0"  v-for="n in carousel_info.carousel_cnt" :key="n">
+
                         <v-layout class="market_card_layout">
-                            <v-flex>
+                            <v-flex  v-for="x in carousel_info.carousel_div" :key="x">
                                 <v-card flat>
                                     <div class="market_card_w line_l">
-                                        <div class="market_card">
-                                            <h6>
-                                                {{ item.one.f16002 }}
-                                                <p>
-                                                    {{ item.one.f15001 }}
-                                                    <span class="text_blue">{{ item.one.f15472 }}({{ item.one.f15004 }} %)</span>
-                                                </p>
-                                            </h6>
+                                        <div class="market_card2" wrap>
+                                            <h6>{{getData(carousel_data, n, x, "name")}}</h6>
                                             <ul>
                                                 <li>
-                                                    ETF-{{ item.one.grp_etf_cnt }}종목
-                                                    <br>
-                                                    <span>Total</span>
-                                                    <span class="text_result2">AUM {{ item.one.grp_etf_sum }}K</span>
+                                                    <dl> 
+                                                        <dt>총규모</dt>
+                                                        <dt class="txt_num text_result2">{{new Intl.NumberFormat().format((getData(carousel_data, n, x, "total_amt")) / 1000)}}K</dt>
+                                                    </dl>
                                                 </li>
-                                                <li>
-                                                    ETN-{{ item.one.grp_etn_cnt }}종목
-                                                    <br>
-                                                    <span>Total</span>
-                                                    <span class="text_result2">AUM {{ item.one.grp_etn_sum }}K</span>
+                                                <li> <dl> 
+                                                        <dt>ETF - {{getData(carousel_data, n, x, "etf_cnt")}}종목</dt>
+                                                        <dt>ETN - {{getData(carousel_data, n, x, "etn_cnt")}}종목</dt>
+                                                    </dl>
                                                 </li>
                                             </ul>
                                         </div>
                                     </div>
                                 </v-card>
-                            </v-flex>
-                            
-                            <v-flex>
+                            </v-flex>                           
+                        </v-layout>
+                    </v-carousel-item>
+                    <v-carousel-item  class="bg_W" v-if="Object.keys(carousel_mod).length > 0">
+                        <v-layout class="market_card_layout" >
+                            <v-flex v-for="mod_item in carousel_mod" >
                                 <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card">
-                                            <h6>
-                                                {{ item.two.f16002 }}
-                                                <p>
-                                                    {{ item.two.f15001 }}
-                                                    <span class="text_red">{{ item.two.f15472 }}({{ item.two.f15004 }} %)</span>
-                                                </p>
-                                            </h6>
+                                    <div class="market_card_w line_l">
+                                        <div class="market_card2" wrap>
+                                            <h6> {{mod_item.name}} </h6>
                                             <ul>
                                                 <li>
-                                                    ETF-{{ item.two.grp_etf_cnt }}종목
-                                                    <br>
-                                                    <span>Total</span>
-                                                    <span class="text_result2">AUM {{ item.two.grp_etf_sum }}K</span>
+                                                    <dl> 
+                                                        <dt>총규모</dt>
+                                                        <dt class="txt_num text_result2">{{new Intl.NumberFormat().format((mod_item.total_amt) / 1000)}}K</dt>
+                                                    </dl>
                                                 </li>
-                                                <li>
-                                                    ETN-{{ item.two.grp_etn_cnt }}종목
-                                                    <br>
-                                                    <span>Total</span>
-                                                    <span class="text_result2">AUM {{ item.two.grp_etn_sum }}K</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card">
-                                            <h6>
-                                                {{ item.three.f16002 }}
-                                                <p>
-                                                    {{ item.three.f15001 }}
-                                                    <span class="text_red">{{ item.three.f15472 }}({{ item.three.f15004 }} %)</span>
-                                                </p>
-                                            </h6>
-                                            <ul>
-                                                <li>
-                                                    ETF-{{ item.three.grp_etf_cnt }}종목
-                                                    <br>
-                                                    <span>Total</span>
-                                                    <span class="text_result2">AUM {{ item.three.grp_etf_sum }}K</span>
-                                                </li>
-                                                <li>
-                                                    ETN-{{ item.three.grp_etn_cnt }}종목
-                                                    <br>
-                                                    <span>Total</span>
-                                                    <span class="text_result2">AUM {{ item.three.grp_etn_sum }}K</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card">
-                                            <h6>
-                                                {{ item.four.f16002 }}
-                                                <p>
-                                                    {{ item.four.f15001 }}
-                                                    <span class="text_red">{{ item.four.f15472 }}({{ item.four.f15004 }} %)</span>
-                                                </p>
-                                            </h6>
-                                            <ul>
-                                                <li>
-                                                    ETF-{{ item.four.grp_etf_cnt }}종목
-                                                    <br>
-                                                    <span>Total</span>
-                                                    <span class="text_result2">AUM {{ item.four.grp_etf_sum }}K</span>
-                                                </li>
-                                                <li>
-                                                    ETN-{{ item.four.grp_etn_cnt }}종목
-                                                    <br>
-                                                    <span>Total</span>
-                                                    <span class="text_result2">AUM {{ item.four.grp_etn_sum }}K</span>
+                                                <li> <dl> 
+                                                        <dt>ETF - {{mod_item.etf_cnt}}종목</dt>
+                                                        <dt>ETN - {{mod_item.etn_cnt}}종목</dt>
+                                                    </dl>
                                                 </li>
                                             </ul>
                                         </div>
@@ -130,26 +62,22 @@
 
 
 
-            <v-flex v-for="item in ctgJisuList" :key="item.ctg_code"  grow xs12 mt-3>
+            <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12 mt-3>
                 <v-card flat>
-
-
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
                            {{item.ctg_name}}
                             <p>
                                 Total
                                 <span class="text_result" v-bind:id="'represent_count'+item.ctg_code">120</span> results
-                                <span v-bind:id="'represent_date'+item.ctg_code">기준일 :2018.10.20</span>                                
+                                <span v-bind:id="'represent_date'+item.ctg_code">기준일 :2018.10.20</span>
                             </p>
                         </h3>
                     </v-card-title>
-
-
                     <v-card flat>
-                        <table v-bind:id="'represent' + item.ctg_code" class="tbl_type" style="width:100%">
+                        <table v-bind:id="'represent'+item.ctg_code" class="tbl_type" style="width:100%">
                             <colgroup>
-                                <col width="25%">
+                                <col width="20%">
                                 <col width="10%">
                                 <col width="10%">
                                 <col width="10%">
@@ -172,7 +100,6 @@
                             </thead>
                         </table>
                     </v-card>
-
                 </v-card>
             </v-flex>
             <!---테이블1 end--->
@@ -415,14 +342,13 @@ export default {
                     subtitle: "122630"
                 }
             ],
-            items4: ["ETF", "ETN", "INDEX"]
+            items4: ["ETF", "ETN", "INDEX"],
 
 
-            ,   representList       :   []
-            ,   representGrpList    :   []
-
-            ,   ctgJisuList         :   []
-            ,   ctgJisuByEtpList    :   []
+            ctg_results: [],
+            carousel_info:[],
+            carousel_data:[],
+            carousel_mod:[], 
         };
     },
     components: {
@@ -436,13 +362,32 @@ export default {
     beforeDestroy() {},
     methods: {
 
+        getData: function(carousel_data, n, x, dataKind) {
+
+            if (carousel_data[(((n-1)* this.carousel_info.carousel_div )+x-1)]) {
+                if (dataKind == "name") {
+                    return carousel_data[(((n-1)* this.carousel_info.carousel_div)+x-1)].name;
+                } else if (dataKind == "total_amt") {
+                    return carousel_data[(((n-1)* this.carousel_info.carousel_div)+x-1)].total_amt;
+                } else if (dataKind == "etf_cnt") {
+                    return carousel_data[(((n-1)* this.carousel_info.carousel_div)+x-1)].etf_cnt;
+                } else if (dataKind == "etn_cnt") {
+                    return carousel_data[(((n-1)* this.carousel_info.carousel_div)+x-1)].etn_cnt;
+                }
+            } else {
+                return "";
+            }
+        },        
+
         /*
          * 시장대표에 해당하는 지수 및 ETP 정보를 조회한다. ( ETP -> 시장대표 탭 선택시 )
          * 2019-04-16  bkLove(촤병국)
          */        
         getEtpRepresentList: function() {
-            console.log("getEtfKorList");
+            console.log("getEtpRepresentList");
+
             var vm = this;
+            var idx = 0;    
 
             axios.post(Config.base_url + "/user/marketinfo/getEtpRepresentList", {
                 data: {
@@ -452,19 +397,19 @@ export default {
                 console.log(response);
 
                 if( response.data ) {
+                    var etpLists = response.data.etpLists;
+                    vm.carousel_data = response.data.carousel_data;
+                    vm.carousel_mod = response.data.carousel_mod;
+                    vm.ctg_results = response.data.ctgCodeList;
+                    vm.carousel_info = response.data.carousel_info;
 
-                    vm.representList    =   response.data.representList;
-                    vm.representGrpList =   response.data.representGrpList;
-                    vm.ctgJisuList      =   response.data.ctgJisuList;
-                    vm.ctgJisuByEtpList =   response.data.ctgJisuByEtpList;
+                    var items = null;
 
+                    for (let ctgCodeItem of vm.ctg_results) {
 
-                    vm.$nextTick().then(() => {
-
-                        for( var inx in vm.ctgJisuByEtpList ) {
-                            var item    =   vm.ctgJisuByEtpList[ inx ];
-
-                            $('#represent'+ item.ctg_code).DataTable( {
+                        vm.$nextTick().then(() => {
+                            items = etpLists[idx++];
+                            $('#represent'+ctgCodeItem.ctg_code).DataTable( {
                                     "processing": true,
                                     "serverSide": false,
                                     "info": false,   // control table information display field
@@ -477,7 +422,7 @@ export default {
                                     },
                                     paging: false,
                                     searching: false,
-                                    data : item.data,                            
+                                    data : items,                            
                                     "columnDefs": [
                                         {  
                                             "render": function ( data, type, row ) {
@@ -497,7 +442,7 @@ export default {
                                                 } else {
                                                     htm = "<span class='align_r text_blue'>"+data;
                                                 }
-                                                htm += "<br><span class='text_S'>"+row.f30818+"</span>";
+                                                htm += "<br><span class='text_S'>"+row.f30818+"%</span>";
                                                 htm += "   </span>";
                                                 return htm;
                                             },
@@ -511,7 +456,7 @@ export default {
                                                 } else {
                                                     htm = "<span class='align_r text_blue'>"+data;
                                                 }
-                                                htm += "<br><span class='text_S'>"+row.f15004+"</span>";
+                                                htm += "<br><span class='text_S'>"+row.f15004+"%</span>";
                                                 htm += "   </span>";
                                                 return htm;
                                             },
@@ -539,24 +484,26 @@ export default {
                             }); 
 
                             // ETP 갯수와 기준일 바인딩 
-                            $("#represent_count" + item.ctg_code).html( item.data.length);
-                            $("#represent_date" + item.ctg_code).html("기준일 :"+item.data[0].f12506);
+                            if (items) {
+                                $("#represent_count"+ctgCodeItem.ctg_code).html(items.length);
+                                $("#represent_date"+ctgCodeItem.ctg_code).html("기준일 :"+items[0].f12506);
+                            }
 
                             // 테이블별 이벤트
-                            $('#represent'+ item.ctg_code+' tbody').on('click', 'button', function () {
-                                var     table   =   $('#represent'+ item.ctg_code).DataTable();
-                                var     data    =   table.row( this ).data();
-
+                            $('#represent'+ctgCodeItem.ctg_code+' tbody').on('click', 'button', function () {
+                                var table = $('#represent'+ctgCodeItem.ctg_code).DataTable();
+                                var data = table.row( this ).data();    
                                 if ($(this).attr('id') == 'detail') {
+                                    
                                     console.log('move detailPage ');
                                 } else {
                                     console.log('move pdfPage ');
                                 }
                                     
                             });
-
-                        }
-                    });                      
+                            
+                        });
+                    }
                 }
             });
         }
