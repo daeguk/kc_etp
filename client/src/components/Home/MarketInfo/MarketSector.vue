@@ -15,7 +15,7 @@
                                                 <li>
                                                     <dl> 
                                                         <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">{{carousel_data[(((n-1)*5)+x-1)].total_amt}}</dt>
+                                                        <dt class="txt_num text_result2">{{new Intl.NumberFormat().format((carousel_data[(((n-1)*5)+x-1)].total_amt) / 1000)}}K</dt>
                                                     </dl>
                                                 </li>
                                                 <li> <dl> 
@@ -36,17 +36,17 @@
                                 <v-card flat>
                                     <div class="market_card_w line_l">
                                         <div class="market_card2">
-                                            <h6> IT </h6>
+                                            <h6> {{carousel_mod.name}} </h6>
                                             <ul>
                                                 <li>
                                                     <dl> 
                                                         <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">1234K</dt>
+                                                        <dt class="txt_num text_result2">{{new Intl.NumberFormat().format((mod_item.total_amt) / 1000)}}K</dt>
                                                     </dl>
                                                 </li>
                                                 <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
+                                                        <dt>ETF - {{mod_item.etf_cnt}}종목</dt>
+                                                        <dt>ETF - {{mod_item.etf_cnt}}종목</dt>
                                                     </dl>
                                                 </li>
                                             </ul>
