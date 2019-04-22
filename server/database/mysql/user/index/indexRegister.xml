@@ -44,12 +44,12 @@
     <select id="getDomainInst">
     <![CDATA[
         SELECT	    /* indexRegister.getDomainInst 기관정보를 조회한다. */
-                    tm_domain_mast.inst_cd		    AS  inst_cd
-                ,   tm_domain_mast.inst_name		AS  inst_name
+                    tm_user_domain.inst_cd		    AS  inst_cd
+                ,   tm_user_domain.inst_name		AS  inst_name
 
-          FROM	tm_domain_mast
-         WHERE	tm_domain_mast.inst_type_name       =   'ETF발행사'
-         ORDER  BY  tm_domain_mast.inst_cd
+          FROM	tm_user_domain
+         WHERE	tm_user_domain.type_cd              =   #{inst_type_cd}
+         ORDER  BY  tm_user_domain.inst_cd
     ]]>
     </select>
 
