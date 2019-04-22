@@ -61,13 +61,13 @@
     <![CDATA[
         SELECT      /* indexModify.getJisuShareReq 지수정보공개요청 데이터를 조회한다. */
                     tm_jisu_share_req.inst_cd       AS  inst_cd
-                ,   tm_domain_mast.inst_name        AS  inst_name
+                ,   tm_user_domain.inst_name        AS  inst_name
 
           FROM  tm_jisu_share_req
-         INNER  JOIN    tm_domain_mast
+         INNER  JOIN    tm_user_domain
                   ON    (
-                                tm_domain_mast.inst_type_name       =   'ETF발행사'
-                            AND tm_jisu_share_req.inst_cd           =   tm_domain_mast.inst_cd
+                                    tm_user_domain.type_cd              =   #{inst_type_cd}
+                            AND     tm_jisu_share_req.inst_cd           =   tm_user_domain.inst_cd
                         )
 
          WHERE  1 = 1

@@ -391,11 +391,17 @@
                                     >
                                     </v-textarea>
                                 </v-flex>
+
                             </v-layout>
-                        </v-container>
+
+
+                            
+
+                        </v-container>                        
                     </v-card>
                 </div>
                 <!---부가정보 선택 end-->
+
 
                 <!---특정기관과 공유-->
                 <div class="register_wrap">
@@ -542,6 +548,7 @@
                                 </v-dialog>
                                 <b>사용자 추가</b>
                             </v-flex>
+                            
                         </v-container>
                     </v-card>
                 </div>
@@ -556,18 +563,25 @@
                     <v-btn depressed large color="#3158a1" dark v-if="modForm.status == '01'" @click="fn_modifyJisu( '02' )">연동신청</v-btn>
                     <v-btn depressed large color="#9e9e9e" dark v-if="modForm.status != '03'" @click="fn_deleteJisu()">삭제</v-btn>
                 </div>
-            </v-container>
+                     
+            </v-container>     
         </v-form>
+
+        <ConfirmDialog ref="confirm2" v-show="false"></ConfirmDialog>
     </v-card>
 </template>
 
 
 <script>
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import Config from "@/js/config.js";
 
 export default {
     props: [ "editData" ],
 
+    components: {
+        ConfirmDialog: ConfirmDialog
+    },
     data() {
         return {
 
@@ -575,7 +589,7 @@ export default {
 
             menu: false,                /* 기준일 달력 메뉴 */
             dialog: false,
-            dialog2: false,            
+            dialog2: false,         
             
             /* 소급지수 관련 정보 */
             headers: [
@@ -674,6 +688,9 @@ export default {
 
     mounted() {
 
+        // 메시지 박스 참조
+        this.$root.$confirm2 = this.$refs.confirm2;
+
         this.dragAndDropCapable = this.determineDragAndDropCapable();
 
         if (this.dragAndDropCapable) {
@@ -727,11 +744,14 @@ export default {
                     var selfThis    =   this;
                     let file        =   e.dataTransfer.files[0];
 
-                    if( !this.fn_checkFile( file ) ) {
-                        return  false;
-                    }
-
-                    this.fn_jisuFileUpload( file, selfThis );
+                    this.fn_checkFile( file ).then(function (res) {
+                            if( !res ) {
+                                return  false;
+                            }
+                            
+                            selfThis.fn_jisuFileUpload( file, selfThis );
+                        }
+                    );
 
                 }.bind(this)
             );
@@ -756,11 +776,14 @@ export default {
                 var selfThis    =   this;
                 let file        =   this.$refs.file.files[0];
 
-                if( !this.fn_checkFile( file ) ) {
-                    return  false;
-                }
-
-                this.fn_jisuFileUpload( file, selfThis );
+                this.fn_checkFile( file ).then(function (res) {
+                        if( !res ) {
+                            return  false;
+                        }
+                        
+                        selfThis.fn_jisuFileUpload( file, selfThis );
+                    }
+                );
 
                 this.$refs.fileform.addEventListener(
                     evt,
@@ -808,48 +831,102 @@ export default {
          * 이미 등록된 지수ID 가 존재하는지 확인한다.
          * 2019-04-02  bkLove(촤병국)
          */
-        fn_jisuDuplCheck() {
+        async   fn_jisuDuplCheck() {
             var vm = this;
             var regType = /^[A-Za-z0-9+]*$/;
+            
 
             /* 1. 지수 ID 필수 체크 */
-            if (!this.modForm.jisu_id) {
-                alert("[지수 ID] is required");
-                this.$refs.jisu_id.focus();
-                vm.modForm.duplCheckResult = false;
+            if (!vm.modForm.jisu_id) {
 
-                return false;
-            } else if (this.modForm.jisu_id.length > 10) {
-                alert("[기준 ID] 10자리 까지만 입력 가능합니다.");
-                this.$refs.jisu_id.focus();
-                vm.modForm.duplCheckResult = false;
+                if( await vm.$root.$confirm2.open(
+                            '[지수 ID]',
+                            '[지수 ID] is required',
+                            {}
+                        ,   2
+                    )
+                ) {
+                    vm.$refs.jisu_id.focus();
+                    vm.modForm.duplCheckResult = false;
+                    return false;
+                }
+                
+            } else if (vm.modForm.jisu_id.length > 10) {
 
-                return false;
-            } else if (this.modForm.jisu_id.length < 5) {
-                alert("[기준 ID] 5자리 이상 입력해 주세요.");
-                this.$refs.jisu_id.focus();
-                vm.modForm.duplCheckResult = false;
+                if( await vm.$root.$confirm2.open(
+                            '[지수 ID]',
+                            '[지수 ID] 10자리 까지만 입력 가능합니다.',
+                            {}
+                        ,   1
+                    )
+                ) {
+                    vm.$refs.jisu_id.focus();
+                    vm.modForm.duplCheckResult = false;
+                    return false;
+                }
 
-                return false;
-            } else if( !regType.test( this.modForm.jisu_id ) ) {
-                alert("[기준 ID] 숫자와 영문자만 가능합니다.");
-                this.$refs.jisu_id.focus();
-                vm.modForm.duplCheckResult = false;
+            } else if (vm.modForm.jisu_id.length < 5) {
 
-                return false;
+                if( await vm.$root.$confirm2.open(
+                            '[지수 ID]',
+                            '[지수 ID] 5자리 이상 입력해 주세요.',
+                            {}
+                        ,   1
+                    )
+                ) {
+                    vm.$refs.jisu_id.focus();
+                    vm.modForm.duplCheckResult = false;
+                    return false;
+                }
+
+            } else if( !regType.test( vm.modForm.jisu_id ) ) {
+
+                if( await vm.$root.$confirm2.open(
+                            '[지수 ID]',
+                            '[지수 ID] 숫자와 영문자만 가능합니다.',
+                            {}
+                        ,   1
+
+                    )
+                ) {
+                    vm.$refs.jisu_id.focus();
+                    vm.modForm.duplCheckResult = false;
+                    return false;
+                }
+
             }
 
             /* 2. 지수 ID 중복 체크 */
             axios.post(Config.base_url + "/user/index/getJisuDuplCheck", {
                 data: { jisu_id: this.modForm.jisu_id }
-            }).then(function(response) {
+            }).then( async function(response) {
                 if (response && response.data) {
                     if (response.data.result == true) {
-                        alert("해당 [지수 ID] 는 이미 존재합니다.");
-                        vm.modForm.duplCheckResult = false;
+
+                        if( await vm.$root.$confirm2.open(
+                                    '[지수 ID]',
+                                    '[지수 ID] 이미 존재합니다.',
+                                    {}
+                                ,   1
+                            )
+                        ) {
+                            vm.$refs.jisu_id.focus();
+                            vm.modForm.duplCheckResult = false;
+                            return false;
+                        }
+
                     } else {
-                        alert("해당 [지수 ID] 는 사용 가능합니다.");
-                        vm.modForm.duplCheckResult = true;
+
+                        if( await vm.$root.$confirm2.open(
+                                    '[지수 ID]',
+                                    '[지수 ID] 사용 가능합니다.',
+                                    {}
+                                ,   1
+                            )
+                        ) {
+                            vm.modForm.duplCheckResult = true;
+                            return false;
+                        }
                     }
                 }
             });
@@ -859,17 +936,27 @@ export default {
          * 저장 버튼 클릭시
          * 2019-04-02  bkLove(촤병국)
          */
-        fn_modifyJisu( modStatus ) {
+        async   fn_modifyJisu( modStatus ) {
             var vm = this;
+
+            var msgTitle = "";
 
             /* 연동완료 상태가 아닌 경우에만 form 을 체크한다. */
             if( this.modForm.status != "03" ) {
 
                 if (!this.modForm.duplCheckResult) {
-                    alert("[지수 ID] 중복확인을 해주세요.");
-                    this.$refs.jisu_id.focus();
 
-                    return false;
+                    if( await this.$root.$confirm2.open(
+                                '[지수 ID]',
+                                '[지수 ID] 중복확인을 해주세요.',
+                                {}
+                            ,   1
+                        )
+                    ) {
+                        this.$refs.jisu_id.focus();
+
+                        return false;
+                    }
                 }
 
                 if (!this.$refs.modForm.validate()) {
@@ -880,28 +967,60 @@ export default {
             /* [연동신청] 또는 [연동신청] 완료된 상태인 경우 */
             if( modStatus || this.modForm.status == "02"  ) {
 
-                var msgTitle = "";
                 if( modStatus ) {
                     this.modForm.modStatus = modStatus;
 
-                    msgTitle = "[연동신청 요청]";
+                    msgTitle = "[연동신청] 요청시 ";
                 }else if( this.modForm.status == "02" ) {
-                    msgTitle = "[연동신청 완료]";
+                    msgTitle = "[연동신청] 완료된 상입니다.";
                 }
 
 
                 if( !this.modForm.show_method_file ) {
-                    alert( msgTitle + " 지수방법론을 필수로 업로드 해주세요.");
 
-                    return false;
+                    if( await this.$root.$confirm2.open(
+                                '[지수방법론]',
+                                msgTitle + " 지수방법론을 필수로 업로드 해주세요.",
+                                {}
+                            ,   1
+                        )
+                    ) {
+                        return false;
+                    }
                 }
 
                 if( this.modForm.jisu_file_id == -1 ) {
-                    alert( msgTitle + " 소급지수를 필수로 업로드 해주세요.");
 
-                    return false;
+                    if( await this.$root.$confirm2.open(
+                                '[소급지수]',
+                                msgTitle + " 소급지수를 필수로 업로드 해주세요.",
+                                {}
+                            ,   1
+                        )
+                    ) {
+                        return false;
+                    }
                 }
             }
+            
+            if( modStatus ) {
+                msgTitle = "[연동 신청] 하시겠습니까?";
+            }else{
+                msgTitle = "[지수 수정] 하시겠습니까?";
+            }
+
+
+            if( await this.$root.$confirm2.open(
+                        '[지수 수정]',
+                        msgTitle,
+                        {}
+                    ,   2
+                )
+            ) {
+                if( "Y" != this.$root.$confirm2.val ) {
+                    return false;
+                }
+            }             
 
             this.formData = new FormData();
             this.formData.append( "files", this.$refs.methodFile.files[0] );
@@ -914,12 +1033,20 @@ export default {
                     headers: {
                         "Content-Type": "multipart/form-data"
                     }
-                }).then(function(response) {
+                }).then( async function(response) {
                     if( response.data ) {
 
                         var resultData = response.data;
 
-                        alert( resultData.msg );
+                        if( await vm.$root.$confirm2.open(
+                                    ''
+                                ,   resultData.msg
+                                ,   {}
+                                ,   1
+                            )
+                        ) {
+                        }
+
                         if( resultData.result ) {
                             vm.$router.push( "/index/manage" );
                         }
@@ -927,18 +1054,39 @@ export default {
                 });
         },
 
-        fn_deleteJisu() {
+        async   fn_deleteJisu() {
             var vm = this;
+
+            if( await this.$root.$confirm2.open(
+                        '[지수 삭제]',
+                        '삭제하시겠습니까?',
+                        {}
+                    ,   2
+                )
+            ) {
+                if( "Y" != this.$root.$confirm2.val ) {
+                    return false;
+                }
+            } 
 
             axios.post(
                 Config.base_url + "/user/index/deleteJisu",
                 { data : this.modForm }
-            ).then(function(response) {
+            ).then( async function(response) {
                 if( response.data ) {
 
                     var resultData = response.data;
 
-                    alert( resultData.msg );
+
+                    if( await vm.$root.$confirm2.open(
+                                ''
+                            ,   resultData.msg
+                            ,   {}
+                            ,   1
+                        )
+                    ) {
+                    }
+
                     if( resultData.result ) {
                         vm.$router.push( "/index/manage" );
                     }
@@ -991,15 +1139,23 @@ export default {
          * 엑셀 유형인지 파일을 체크한다.
          * 2019-04-02  bkLove(촤병국)
          */
-        fn_checkFile : function( file ) {
+        async   fn_checkFile( file ) {
 
             var fileLen = file.name.length;
             var lastDot = file.name.lastIndexOf(".");
 
             /* 1. 확장자가 존재하지 않는지 확인 */
             if (lastDot == -1) {
-                alert("엑셀유형의 파일인지 확인 해 주세요.");
-                return false;
+
+                if( await this.$root.$confirm2.open(
+                            '[엑셀파일 유형확인]',
+                            "엑셀유형의 파일인지 확인 해 주세요.",
+                            {}
+                        ,   1
+                    )
+                ) {
+                    return  false;
+                }
             }
 
             var fileExt     =   file.name.substring(lastDot + 1, fileLen).toLowerCase();
@@ -1007,11 +1163,20 @@ export default {
 
             /* 2. 허용되는 확장자에 포함되는지 확인 */
             if (!allowExt.includes(fileExt)) {
-                alert("엑셀유형의 파일인지 확인 해 주세요.");
-                return false;
+
+                if( await this.$root.$confirm2.open(
+                            '[엑셀파일 유형확인]',
+                            "엑셀유형의 파일인지 확인 해 주세요.",
+                            {}
+                        ,   1
+                    )
+                ) {
+                    return  false;
+                }
+
             }
 
-            return  true;    
+            return  true;
         },
 
         /*
@@ -1031,16 +1196,23 @@ export default {
                         "Content-Type": "multipart/form-data"
                     }
                 }
-            ).then(function(response) {
+            ).then( async function(response) {
                 console.log( response );
 
                 if( response.data ) {
                     selfThis.jisuUploadResult = response.data.result;
                     
                     if( !response.data.result ) {
-                        alert( response.data.msg );
 
-                        return false;
+                        if( await selfThis.$root.$confirm2.open(
+                                    ''
+                                ,   response.data.msg
+                                ,   {}
+                                ,   1
+                            )
+                        ) {
+                            return false;
+                        }
                     }
 
                     if( response.data.result ) {

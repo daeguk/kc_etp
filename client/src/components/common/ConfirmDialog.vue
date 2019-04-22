@@ -114,9 +114,6 @@ export default {
             })
         },
         agree() {
-            this.val = 'Y';
-            this.resolve(true);
-
             if (this.kind == 1) {
                 this.message_dialog = false;
             } else if (this.kind == 2) {
@@ -126,11 +123,11 @@ export default {
             } else if (this.kind == 4) {
                 this.error_dialog = false;
             }
+
+            this.val = 'Y';
+            this.resolve(true);            
         },
         cancel() {
-            this.val = 'N';
-            this.resolve(true);
-
             if (this.kind == 1) {
                 this.message_dialog = false;
             } else if (this.kind == 2) {
@@ -140,6 +137,9 @@ export default {
             } else if (this.kind == 4) {
                 this.error_dialog = false;
             }
+
+            this.val = 'N';
+            this.resolve(true);            
         }
     }
 }

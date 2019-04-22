@@ -85,7 +85,7 @@ export const routes = [
             component: IndexToastGridTestMain,
         },
         {   path : '/index/manage/IndexListdetail',
-        component: IndexListdetail,
+            component: IndexListdetail,
         },
         
         // ETP

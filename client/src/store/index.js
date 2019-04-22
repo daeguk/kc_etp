@@ -5,23 +5,30 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state: {
-        user: [{ userid: "test", username: "test", user_level: "1", comp_no: 0, comp_name: "" }],
+        user: [{ user_email: "", 
+                user_name: "", 
+                user_type_cd: "", 
+                user_type_name: "", 
+                user_type_cd: "", 
+                user_type_name: ""}],
     },
     mutations: {
         [Constant.ADD_USER]: (state, payload) => {
-            state.user.userid = payload.userid;
-            state.user.username = payload.username;
-            state.user.user_level = payload.user_level;
-            state.user.comp_no = payload.comp_no;
-            state.user.comp_name = payload.comp_name;
+            state.user.user_email = payload.user_email;
+            state.user.user_name = payload.user_name;
+            state.user.user_type_cd = payload.user_type_cd;
+            state.user.user_type_name = payload.user_type_name;
+            state.user.user_inst_cd = payload.user_inst_cd;
+            state.user.user_inst_name = payload.user_inst_name;
         },
         [Constant.DELETE_USER]: (state) => {
-            state.user.userid = "";
-            state.user.username = "";
-            state.user.user_level = "";
-            state.user.comp_no = "";
-            state.user.comp_name = "";
-        },
+          state.user.user_email = "";
+          state.user.user_name = "";
+          state.user.user_type_cd = "";
+          state.user.user_type_name = "";
+          state.user.user_inst_cd = "";
+          state.user.user_inst_name = "";
+      },
     }
 });
 
