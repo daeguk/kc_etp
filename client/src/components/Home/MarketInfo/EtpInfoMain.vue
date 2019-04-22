@@ -71,7 +71,6 @@ export default {
         MarketRepresent :   MarketRepresent,        
         MarketSector    :   MarketSector,
         EtnForList      :   EtnForList,
-        EtnForList      :   EtnForList,
         EtpforList5     :   EtpforList5,
         EtpforList6     :   EtpforList6,
         EtpforList7     :   EtpforList7,
