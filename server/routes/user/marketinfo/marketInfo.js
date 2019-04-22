@@ -151,6 +151,16 @@ var getSectorEtpList = function (req, res) {
 
                             carousel_data.push({"name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
                         } else {
+
+                            rows[0].forEach(function(item, idx) {
+                                total_amt += item.f15028;
+                                // ctf 구분자가 1과 2일 경우 
+                                if (item.f16493 == '1' || item.f16493 == '2') {
+                                    etf_cnt++; 
+                                } else if (item.f16493 == '3' || item.f16493 == '4') {
+                                    etn_cnt++; 
+                                }
+                            });
                             carousel_mod.push({"name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
                         }  
                         /* ===================상단 데이터 생성 완료 =========================*/
