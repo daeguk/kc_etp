@@ -1,0 +1,9 @@
+CREATE TABLE `tm_admin` (
+`user_id`	VARCHAR(40)	NOT NULL COMMENT	'ID',
+`password`	VARCHAR(40)	NOT NULL COMMENT	'패스워드',
+`user_level`	VARCHAR(10)	NOT NULL COMMENT	'NORMAL/SUPER',
+`user_name`	VARCHAR(40)	NOT NULL COMMENT	'사용자명',
+`create_date`	DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT	'계정 생성 일자',
+`login_date`	DATETIME COMMENT '로그인 일자',
+PRIMARY KEY (`user_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='tm_admin';

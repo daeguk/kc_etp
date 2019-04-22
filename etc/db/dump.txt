@@ -1,0 +1,9 @@
+[DUMP]
+(PC --> LINUX : powershell 에서 dump 하면 한글깨짐. cmd 통해서 dump!!)
+mysqldump -ukc_etp -pkc_etp --default-character-set=utf8 kc_etp > kc_etp.dmp
+
+[RESTORE]
+mysql -ukc_etp -pkc_etp kc_etp < ./kc_etp.dmp
+
+(PC --> LINUX)
+mysql -uroot -ptnsenddl1! kc_etp --binary-mode -o < ./kc_etp.dmp

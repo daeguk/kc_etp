@@ -17,12 +17,12 @@
             <v-flex md12>
               <div class="text-xs-center">
                 <v-btn outline color="blue darken-1" @click="doView">둘러보기</v-btn>
-                <v-btn color="info darken-1" @click="doLogin">로그인</v-btn>
+                <v-btn color="info darken-1" @click="doLogin">LOG-IN</v-btn>
               </div>
             </v-flex>
           </v-layout>
           <UserLoginModal v-if="login_flag"></UserLoginModal>
-          <UserSingupModal v-if="signup_flag"></UserSingupModal>
+          <UserSignupModal v-if="signup_flag"></UserSignupModal>
           <UserFindPwdModal v-if="findpwd_flag"></UserFindPwdModal>
         </v-container>
       </v-img>
@@ -32,7 +32,7 @@
 
 <script>
 import UserLoginModal       from './UserLoginModal.vue';
-import UserSingupModal       from './UserSignupModal.vue';
+import UserSignupModal       from './UserSignupModal.vue';
 import UserFindPwdModal       from './UserFindPwdModal.vue';
 
 export default {
@@ -45,7 +45,7 @@ export default {
     },
     components: {
       UserLoginModal: UserLoginModal,
-      UserSingupModal: UserSingupModal,
+      UserSignupModal: UserSignupModal,
       UserFindPwdModal: UserFindPwdModal,
     },
     beforeCreate() {

@@ -21,7 +21,7 @@
         <v-card-actions>
             <v-layout wrap>
             <v-flex xs12 offset-xs6>
-          <v-btn color="success darken-1" flat @click="loginCheck">Sign in to ETP PLATFORM</v-btn>
+          <v-btn color="success darken-1" flat @click="loginCheck">LOG-IN to ETP PLATFORM</v-btn>
             </v-flex>
             <v-flex xs8>
               <div>

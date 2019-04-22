@@ -1,0 +1,23 @@
+/mysql/data 생성
+
+/mysql/bin 에서
+
+./mysqld --initialize
+
+./mysqld --console --explicit_defaults_for_timestamp --skip-grant-tables
+
+mysql> update USER set authentication_string=password('tnsenddl1!') where user='root';
+
+mysql> alter user 'root'@'localhost' identified by 'tnsenddl1!', 'root'@'localhost' password expire never;
+
+mysql> flush privileges;
+
+mysql> create user kc_etp identified by 'kc_etp';
+
+mysql> create user kc_etp@localhost identified by 'kc_etp';
+
+mysql> create database kc_etp;
+
+mysql> grant all privileges on kc_etp.* to kc_etp;
+
+mysql> grant all privileges on kc_etp.* to kc_etp@localhost;

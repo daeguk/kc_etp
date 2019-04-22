@@ -12,6 +12,10 @@
         AND A.password = #{password}
         AND A.type_cd = B.type_cd AND A.inst_cd = C.inst_cd
     </select>
+    <update id="setLoginHistory">
+      UPDATE tm_user_member SET login_date = now() 
+        WHERE email = #{email}
+    </update>
     <!--
     * 사용자 회원가입 처리
     -->

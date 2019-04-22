@@ -27,8 +27,6 @@ console.log("email : " + req.body.email + " password : " + req.body.password);
   var dt_time = dt.getHours();
   console.log('client DATE***********--> ' + dt);
 
-  // var stmt = mydb.AdminMember.selectAdminCheck(options);
-  console.log(stmt);
   try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
@@ -40,16 +38,24 @@ console.log("email : " + req.body.email + " password : " + req.body.password);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
-        res.json({
+        if(rows.length == 0) {
+          res.json({
+            success: false,
+            message: "이메일계정 또는 비밀번호가 올바르지 않습니다.",
+          });
+          res.end();
+        }else {
+          res.json({
             success: true,
             results: rows
-        });
-        res.end();
+          });
+          res.end();
+        }
       }).catch(err => {
         util.log("Error while performing Query.", err);
         res.json({
           success: false,
-          message: "이메일계정 또는 비밀번호가 올바르지 않습니다.",
+          message: err,
         });
         res.end();
       });
@@ -58,7 +64,30 @@ console.log("email : " + req.body.email + " password : " + req.body.password);
   } catch(exception) {
     util.log("err=>", exception);
   }
+  setLoginHistory(req);
 };
+
+var setLoginHistory = function(req) {
+  try {
+    var options = req.body;
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('member', 'setLoginHistory', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+
+      }).catch(err => {
+        util.log("Error while performing Query.", err);
+      });
+
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+  }
+}
 
 // 사용사 그룹 가져오기
 var getMemberTypeList = function(req, res) {
