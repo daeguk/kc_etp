@@ -20,7 +20,7 @@
                                                 </li>
                                                 <li> <dl> 
                                                         <dt>ETF - {{carousel_data[(((n-1)*5)+x-1)].etf_cnt}}종목</dt>
-                                                        <dt>ETF - {{carousel_data[(((n-1)*5)+x-1)].etn_cnt}}종목</dt>
+                                                        <dt>ETN - {{carousel_data[(((n-1)*5)+x-1)].etn_cnt}}종목</dt>
                                                     </dl>
                                                 </li>
                                             </ul>
@@ -46,7 +46,7 @@
                                                 </li>
                                                 <li> <dl> 
                                                         <dt>ETF - {{mod_item.etf_cnt}}종목</dt>
-                                                        <dt>ETF - {{mod_item.etf_cnt}}종목</dt>
+                                                        <dt>ETN - {{mod_item.etn_cnt}}종목</dt>
                                                     </dl>
                                                 </li>
                                             </ul>
