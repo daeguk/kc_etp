@@ -156,7 +156,7 @@ var getEtpRepresentList = function(req, res) {
                 function( data, callback ) { 
 
                     stmt = mapper.getStatement('etpinfo', 'getJisuListByCtgCode', paramData, format);
-                    //console.log(stmt);
+                    console.log(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -186,7 +186,7 @@ var getEtpRepresentList = function(req, res) {
 
                         paramData.ctg_code  =   innerData.ctg_code;
                         stmt = mapper.getStatement('etpinfo', 'getEtpListByJisu', paramData, format);
-                        //console.log(stmt);
+                        console.log(stmt);
 
                         conn.query(stmt, function( err, rows ) {
 
@@ -199,7 +199,7 @@ var getEtpRepresentList = function(req, res) {
                             }
 
                             if( rows ) {
-                                arrDataList.push( { "ctg_code" : innerData.ctg_code, "data" : rows });
+                                arrDataList.push( rows );
                             }
 
                             inner_callback( null );
@@ -210,7 +210,7 @@ var getEtpRepresentList = function(req, res) {
                         if(err){
                             return callback( resultMsg );
                         }else{
-                            resultMsg.ctgJisuByEtpList      =   arrDataList;        /* ctg_code 별 etp 목록 ( JSON 형태 ) */
+                            resultMsg.ctgJisuByEtpList      =   arrDataList;
 
                             return callback( null );
                         }
