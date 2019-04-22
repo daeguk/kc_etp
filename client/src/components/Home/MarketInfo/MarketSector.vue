@@ -9,7 +9,7 @@
                             <v-flex  v-for="x in 5" :key="x">
                                 <v-card flat>
                                     <div class="market_card_w line_l">
-                                        <div class="market_card2">
+                                        <div class="market_card2" wrap>
                                             <h6>{{carousel_data[(((n-1)*5)+x-1)].name}}</h6>
                                             <ul>
                                                 <li>
@@ -35,7 +35,7 @@
                             <v-flex>
                                 <v-card flat>
                                     <div class="market_card_w line_l">
-                                        <div class="market_card2">
+                                        <div class="market_card2" wrap>
                                             <h6> {{carousel_mod.name}} </h6>
                                             <ul>
                                                 <li>
