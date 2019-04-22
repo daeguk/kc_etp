@@ -57,7 +57,7 @@ var getEtpRepresentList = function(req, res) {
                 function( callback ) {
 
                     stmt = mapper.getStatement('etpinfo', 'getJisuListByEtpRepresent', paramData, format);
-                    console.log(stmt);
+                    //console.log(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -81,7 +81,7 @@ var getEtpRepresentList = function(req, res) {
                 function( data, callback ) { 
 
                     stmt = mapper.getStatement('etpinfo', 'getJisuListByEtpRepresentCnt', paramData, format);
-                    console.log(stmt);
+                    //console.log(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -156,7 +156,7 @@ var getEtpRepresentList = function(req, res) {
                 function( data, callback ) { 
 
                     stmt = mapper.getStatement('etpinfo', 'getJisuListByCtgCode', paramData, format);
-                    console.log(stmt);
+                    //console.log(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -186,7 +186,7 @@ var getEtpRepresentList = function(req, res) {
 
                         paramData.ctg_code  =   innerData.ctg_code;
                         stmt = mapper.getStatement('etpinfo', 'getEtpListByJisu', paramData, format);
-                        console.log(stmt);
+                        //console.log(stmt);
 
                         conn.query(stmt, function( err, rows ) {
 
@@ -269,7 +269,7 @@ var getEtfKorList = function(req, res) {
     // var options = {id:'admin'};
     var options = {};
     var stmt = etpStmts.EtpInfo.selectEtfKorList(options);
-    console.log(stmt);
+    //console.log(stmt);
 
     res.json({ success: true, results: rows });
     res.end();
@@ -299,7 +299,7 @@ var getEtfForList = function(req, res) {
   // var options = {id:'admin'};
   var options = {};
   var stmt = etpStmts.EtpInfo.selectEtfForList(options);
-  console.log(stmt);
+  //console.log(stmt);
   
   Promise.using(pool.connect(), conn => {
     conn.queryAsync(stmt).then(rows => {
@@ -325,7 +325,7 @@ var getEtnKorList = function(req, res) {
   // var options = {id:'admin'};
   var options = {};
   var stmt = etpStmts.EtpInfo.selectEtnKorList(options);
-  console.log(stmt);
+  //console.log(stmt);
   
   Promise.using(pool.connect(), conn => {
     conn.queryAsync(stmt).then(rows => {
@@ -351,7 +351,7 @@ var getEtnForList = function(req, res) {
   // var options = {id:'admin'};
   var options = {};
   var stmt = etpStmts.EtpInfo.selectEtnForList(options);
-  console.log(stmt);
+  //console.log(stmt);
   
   Promise.using(pool.connect(), conn => {
     conn.queryAsync(stmt).then(rows => {

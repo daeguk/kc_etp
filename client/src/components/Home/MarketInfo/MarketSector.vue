@@ -3,122 +3,35 @@
         <v-layout row wrap class="content_margin">
             <v-flex xs12>
                 <v-carousel  light hide-delimiters height="250px" interval="10000">
-                    <v-carousel-item  class="bg_W market_layout_w" v-for="n in carousel_item.count" :key="n">
+                    <v-carousel-item  class="bg_W market_layout_w" v-for="n in carousel_info.carousel_cnt" :key="n">
+
                         <v-layout class="market_card_layout">
-                            <v-flex>
+                            <v-flex  v-for="x in 5" :key="x">
                                 <v-card flat>
                                     <div class="market_card_w line_l">
                                         <div class="market_card2">
-                                            <h6> IT</h6>
+                                            <h6>{{carousel_data[(((n-1)*5)+x-1)].name}}</h6>
                                             <ul>
                                                 <li>
                                                     <dl> 
                                                         <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2"></dt>
+                                                        <dt class="txt_num text_result2">{{carousel_data[(((n-1)*5)+x-1)].total_amt}}</dt>
                                                     </dl>
                                                 </li>
                                                 <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
+                                                        <dt>ETF - {{carousel_data[(((n-1)*5)+x-1)].etf_cnt}}종목</dt>
+                                                        <dt>ETF - {{carousel_data[(((n-1)*5)+x-1)].etn_cnt}}종목</dt>
                                                     </dl>
                                                 </li>
                                             </ul>
                                         </div>
                                     </div>
                                 </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card  flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card2">
-                                            <h6> 금융 </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">12304K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card2">
-                                            <h6> 산업재 </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">12344K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card2">
-                                            <h6> 자유소비재 </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">12312KK</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card2">
-                                            <h6> 에너지화학 </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">12341247K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
+                            </v-flex>                           
                         </v-layout>
                     </v-carousel-item>
-                    <v-carousel-item  class="bg_W">
-                        <v-layout class="market_card_layout">
+                    <v-carousel-item  class="bg_W" v-if="Object.keys(carousel_mod).length > 0">
+                        <v-layout class="market_card_layout" v-for="mod_item in carousel_mod" :key="mod_item">
                             <v-flex>
                                 <v-card flat>
                                     <div class="market_card_w line_l">
@@ -129,94 +42,6 @@
                                                     <dl> 
                                                         <dt>총규모</dt>
                                                         <dt class="txt_num text_result2">1234K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card  flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card2">
-                                            <h6> 금융 </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">12300004K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card2">
-                                            <h6> 산업재 </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">12345714K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card2">
-                                            <h6> 자유소비재 </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">1234568K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - 3종목</dt>
-                                                        <dt>ETF - 4종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card flat>
-                                    <div class="market_card_w">
-                                        <div class="market_card2">
-                                            <h6> 에너지화학 </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">12341247K</dt>
                                                     </dl>
                                                 </li>
                                                 <li> <dl> 
@@ -493,22 +318,12 @@ export default {
             mini: false,
             right: null,
             ctg_results: [],
-            tables:[],
             tab: null,
             tab2: null,
             drawer:false,
-            carousel_item:{
-                "count": 0,
-                "mod":0,
-            },
-            carousel_data:[
-                    {
-                     name: "",
-                     total_amt:0,
-                     etf_cnt:0,
-                     etn_cnt:0
-                    }
-                ],
+            carousel_info:[],
+            carousel_data:[],
+            carousel_mod:[],
             search:"",
             items1: ["전체", "시장대표"],
             items: [
@@ -535,10 +350,11 @@ export default {
         //infopoptab2: infopoptab2,
         //infopoptab3: infopoptab3
     },
-    computed: {},
+    computed: {
+    },
     mounted: function() {
         var vm = this;
-        vm.getCtgCodeList();
+        vm.getSectorEtpList();
         
     },
     created: function() {},
@@ -570,130 +386,134 @@ export default {
                 }
             });             
         },
-        getSectorEtpList: function(ctg_large_code, ctg_code, ctg_name) {
+        getSectorEtpList: function() {
             console.log("getSectorEtpList");
             var vm = this;
 
             axios.get(Config.base_url + "/user/marketinfo/getSectorEtpList", {
                     params: {
-                        "ctg_code" : ctg_code,
-                        "ctg_large_code" : ctg_large_code,
+                        "ctg_code" : "002"
                     }
             }).then(function(response) {
                 console.log(response);
                 if (response.data.success == false) {
                     alert("해당 종목이 없습니다");
                 } else {
-                    var items = response.data.results[0];                        
+                    var etpLists = response.data.etpLists;
+                    var carousel_data = response.data.carousel_data;
+                    var carousel_mode = response.data.carousel_mode;
+                    var ctgCodeList = response.data.ctgCodeList;
+                    vm.carousel_info = response.data.carousel_info;
+                    vm.carousel_data = carousel_data;
+                    vm.carousel_mode = carousel_mode;
+                    vm.ctg_results = response.data.ctgCodeList;
 
-                    var total_amt = 0;
-                    var etf_cnt = 0;
-                    var etn_cnt = 0;
-                    for (let item of items) {
-                        total_amt += item.f15028;
-                        if (item.f16493 == '1' || item.f16493 == '2') {
-                            etf_cnt++; 
-                        } else if (item.f16493 == '3' || item.f16493 == '4') {
-                            etn_cnt++; 
-                        }
-                    }
-                    vm.carousel_data.push({"name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
+                    var items = null;
 
-                    $('#sector'+ctg_code).DataTable( {
-                            "processing": true,
-                            "serverSide": false,
-                            "info": false,   // control table information display field
-                            "stateSave": true,  //restore table state on page reload,
-                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                            
-                            select: {
-                                style:    'single',
-                                selector: 'td:first-child'
-                            },
-                            paging: false,
-                            searching: false,
-                            data : items,                            
-                            "columnDefs": [
-                                {  
-                                    "render": function ( data, type, row ) {
-                                        let htm = "<span>";
-                                        htm += "           <b>"+data+"</b>";
-                                        htm += "            <br>"+row.f16013+" <span><div class='text_new'>new</div></span>";
-                                        htm += "        </span>";
-                                        return htm;
+                    var index = 0;
+                    for (let ctgCodeItem of vm.ctg_results) {
+
+                        items = etpLists[index];
+                        
+                        vm.$nextTick().then(() => {
+                            $('#sector'+ctgCodeItem.ctg_code).DataTable( {
+                                    "processing": true,
+                                    "serverSide": false,
+                                    "info": false,   // control table information display field
+                                    "stateSave": true,  //restore table state on page reload,
+                                    "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                                    
+                                    select: {
+                                        style:    'single',
+                                        selector: 'td:first-child'
                                     },
-                                    "targets": 0
-                                },
-                                {  
-                                    "render": function ( data, type, row ) {
-                                        let htm = ""
-                                        if (row.f15004 >= 0) {
-                                            htm = "<span class='align_r text_red'>"+data;
-                                        } else {
-                                            htm = "<span class='align_r text_blue'>"+data;
+                                    paging: false,
+                                    searching: false,
+                                    data : items,                            
+                                    "columnDefs": [
+                                        {  
+                                            "render": function ( data, type, row ) {
+                                                let htm = "<span>";
+                                                htm += "           <b>"+data+"</b>";
+                                                htm += "            <br>"+row.f16013+" <span><div class='text_new'>new</div></span>";
+                                                htm += "        </span>";
+                                                return htm;
+                                            },
+                                            "targets": 0
+                                        },
+                                        {  
+                                            "render": function ( data, type, row ) {
+                                                let htm = ""
+                                                if (row.f15004 >= 0) {
+                                                    htm = "<span class='align_r text_red'>"+data;
+                                                } else {
+                                                    htm = "<span class='align_r text_blue'>"+data;
+                                                }
+                                                htm += "<br><span class='text_S'>"+row.f30818+"</span>";
+                                                htm += "   </span>";
+                                                return htm;
+                                            },
+                                            "targets": 1
+                                        },
+                                        {  
+                                            "render": function ( data, type, row ) {
+                                                let htm = ""
+                                                if (row.f15004 >= 0) {
+                                                    htm = "<span class='align_r text_red'>"+data;
+                                                } else {
+                                                    htm = "<span class='align_r text_blue'>"+data;
+                                                }
+                                                htm += "<br><span class='text_S'>"+row.f15004+"</span>";
+                                                htm += "   </span>";
+                                                return htm;
+                                            },
+                                            "targets": 6
+                                        },
+                                        {
+                                            "render": function ( data, type, row ) {
+                                                let htm = "<div class='tooltip'><button type='button' id='detail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>";
+                                                htm += "<div class='tooltip'><button type='button' id='pdf' class='btn_icon v-icon material-icons'>picture_as_pdf</button><span class='tooltiptext' style='width:70px;'>PDF관리</span></div>";
+                                                return htm;
+                                            },
+                                            "targets": 7
                                         }
-                                        htm += "<br><span class='text_S'>"+row.f30818+"</span>";
-                                        htm += "   </span>";
-                                        return htm;
-                                    },
-                                    "targets": 1
-                                },
-                                {  
-                                    "render": function ( data, type, row ) {
-                                        let htm = ""
-                                        if (row.f15004 >= 0) {
-                                            htm = "<span class='align_r text_red'>"+data;
-                                        } else {
-                                            htm = "<span class='align_r text_blue'>"+data;
-                                        }
-                                        htm += "<br><span class='text_S'>"+row.f15004+"</span>";
-                                        htm += "   </span>";
-                                        return htm;
-                                    },
-                                    "targets": 6
-                                },
-                                {
-                                    "render": function ( data, type, row ) {
-                                        let htm = "<div class='tooltip'><button type='button' id='detail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>";
-                                        htm += "<div class='tooltip'><button type='button' id='pdf' class='btn_icon v-icon material-icons'>picture_as_pdf</button><span class='tooltiptext' style='width:70px;'>PDF관리</span></div>";
-                                        return htm;
-                                    },
-                                    "targets": 7
+                                    ],
+                                    columns: [
+                                        { "data": "f16002", "orderable": true, className:"txt_left line2"}, /*종목*/
+                                        { "data": "f15301", "orderable": true }, /*INAV*/
+                                        { "data": "f03329", "orderable" : true}, /*전일최종Nav*/
+                                        { "data": "f15302", "orderable" : true}, /*추적오차율*/
+                                        { "data": "f15304", "orderable" : true}, /*괴리율*/
+                                        { "data": "f34777", "orderable" : true}, /*기초지수*/
+                                        { "data": "f15001", "orderable" : true}, /*지수현재가*/
+                                        { "data": null, "orderable" : true, defaultContent:""},
+                                    ]
+                            }); 
+
+                            // ETP 갯수와 기준일 바인딩 
+                            $("#sec_count"+ctgCodeItem.ctg_code).html(items.length);
+                            $("#sec_date"+ctgCodeItem.ctg_code).html("기준일 :"+items[0].f12506);
+
+                            // 테이블별 이벤트
+                            $('#sector'+ctgCodeItem.ctg_code+' tbody').on('click', 'button', function () {
+                                var table = $('#sector'+ctgCodeItem.ctg_code).DataTable();
+                                var data = table.row( this ).data();    
+                                if ($(this).attr('id') == 'detail') {
+                                    
+                                    console.log('move detailPage ');
+                                } else {
+                                    console.log('move pdfPage ');
                                 }
-                            ],
-                            columns: [
-                                { "data": "f16002", "orderable": true, className:"txt_left line2"}, /*종목*/
-                                { "data": "f15301", "orderable": true }, /*INAV*/
-                                { "data": "f03329", "orderable" : true}, /*전일최종Nav*/
-                                { "data": "f15302", "orderable" : true}, /*추적오차율*/
-                                { "data": "f15304", "orderable" : true}, /*괴리율*/
-                                { "data": "f34777", "orderable" : true}, /*기초지수*/
-                                { "data": "f15001", "orderable" : true}, /*지수현재가*/
-                                { "data": null, "orderable" : true, defaultContent:""},
-                            ]
-                    }); 
-
-                    // ETP 갯수와 기준일 바인딩 
-                    $("#sec_count"+ctg_code).html(items.length);
-                    $("#sec_date"+ctg_code).html("기준일 :"+items[0].f12506);
-
-                    // 테이블별 이벤트
-                    $('#sector'+ctg_code+' tbody').on('click', 'button', function () {
-                        var table = $('#sector'+ctg_code).DataTable();
-                        var data = table.row( this ).data();    
-                        if ($(this).attr('id') == 'detail') {
-                            
-                            console.log('move detailPage ');
-                        } else {
-                            console.log('move pdfPage ');
-                        }
-                            
-                    });
+                                    
+                            });
+                            index++;
+                        });
+                    }
 
                 }
             });  
         },
-      
+        
     }
 };
 </script>
