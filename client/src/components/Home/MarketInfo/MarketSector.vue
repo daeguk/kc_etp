@@ -3,7 +3,7 @@
         <v-layout row wrap class="content_margin">
             <v-flex xs12>
                 <v-carousel  light hide-delimiters height="250px" interval="10000">
-                    <v-carousel-item  class="bg_W market_layout_w" v-for="n in carousel_info.carousel_cnt" :key="n">
+                    <v-carousel-item  class="bg_W market_layout_w" v-if="carousel_info.carousel_cnt > 0"  v-for="n in carousel_info.carousel_cnt" :key="n">
 
                         <v-layout class="market_card_layout">
                             <v-flex  v-for="x in 5" :key="x">
@@ -141,9 +141,25 @@ export default {
     created: function() {},
     beforeDestroy() {},
     methods: {
+        getData: function(carousel_data, n, x, dataKind) {
+            if (carousel_data[(((n-1)*5)+x-1)]) {
+                if (dataKind == "name") {
+                    return carousel_data[(((n-1)*5)+x-1)].name;
+                } else if (dataKind == "total_amt") {
+
+                } else if (dataKind == "etf_cnt") {
+                    
+                } else if (dataKind == "etn_cnt") {
+                    
+                }
+            } else {
+                return "";
+            }
+        },
         getSectorEtpList: function() {
             console.log("getSectorEtpList");
             var vm = this;
+            var idx = 0;
 
             axios.get(Config.base_url + "/user/marketinfo/getSectorEtpList", {
                     params: {
@@ -160,16 +176,15 @@ export default {
                     vm.ctg_results = response.data.ctgCodeList;
                     vm.carousel_info = response.data.carousel_info;
 
+                    debugger;
 
-                    
                     var items = null;
 
-                    var index = 0;
+                    
                     for (let ctgCodeItem of vm.ctg_results) {
 
-                        items = etpLists[index];
-                        
                         vm.$nextTick().then(() => {
+                            items = etpLists[idx++];
                             $('#sector'+ctgCodeItem.ctg_code).DataTable( {
                                     "processing": true,
                                     "serverSide": false,
@@ -260,7 +275,7 @@ export default {
                                 }
                                     
                             });
-                            index++;
+                            
                         });
                     }
 
