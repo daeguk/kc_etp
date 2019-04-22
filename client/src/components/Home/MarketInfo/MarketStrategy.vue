@@ -147,7 +147,7 @@ export default {
 
             axios.get(Config.base_url + "/user/marketinfo/getSectorEtpList", {
                     params: {
-                        "ctg_code" : "002"
+                        "ctg_code" : "004"
                     }
             }).then(function(response) {
                 console.log(response);

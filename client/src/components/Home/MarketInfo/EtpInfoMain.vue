@@ -3,82 +3,65 @@
         <v-flex xs12>
             <v-tabs
                 slot="extension"
-                v-model="tab"
+                v-model="activeTab"
                 align-with-title
                 light
             >
             <v-tabs-slider color="#35e0e2"></v-tabs-slider>
     
-            <v-tab v-for="item in items" :key="item">
-                {{ item }}
-            </v-tab>
+                <v-tab v-for="tab of tabs"  :key="tab.id" @click="pageMove(tab.route)" >
+                    {{ tab.name }}
+                </v-tab>
             </v-tabs>
 
-            <v-tabs-items v-model="tab">
-                <v-tab-item>
-                    <EtfForList></EtfForList>
-                </v-tab-item>                
-                <v-tab-item>
-                    <MarketRepresent></MarketRepresent>
+            <v-tabs-items v-model="activeTab">
+                <v-tab-item v-for="tab of tabs"  :key="tab.id" >
                 </v-tab-item>
-                <v-tab-item>
-                    <MarketSector></MarketSector>
-                </v-tab-item>
-                <v-tab-item>
-                    <EtnForList></EtnForList>
-                </v-tab-item>
-                <v-tab-item>
-                    <EtpforList5></EtpforList5>
-                </v-tab-item>
-                <v-tab-item>
-                    <EtpforList6></EtpforList6>
-                </v-tab-item>
-                <v-tab-item>
-                    <EtpforList7></EtpforList7>
-                </v-tab-item>
-                <v-tab-item>
-                    <EtpforList8></EtpforList8>
-                </v-tab-item>
-        </v-tabs-items>    
+            </v-tabs-items>
+            <router-view></router-view>    
       </v-flex>
     </v-layout> 
 </template>
 
 <script>
-import EtfForList   from  './EtfForList.vue'
-import MarketRepresent   from  './MarketRepresent.vue'
-import MarketSector   from  './MarketSector.vue'
-import EtnForList   from  './EtnForList.vue'
-import EtpforList5   from  './EtpforList5.vue'
-import EtpforList6   from  './EtpforList6.vue'
-import EtpforList7   from  './EtpforList7.vue'
-import EtpforList8   from  './EtpforList8.vue'
-
 export default {
         props: [],
         data() {
             return {
-                mini: false,
-                right: null,
-                tab: null,
-                drawer:"",
-                search:"",
-                items: ['전체', '시장대표', '섹터', '전략', '채권', '해외', '혼합', '상품'],
+                activeTab: 0,
+                tabs: [
+                { id: 1, name: "전체", route: '/info/etpinfo/marktEtpSummaryInfo' },
+                { id: 2, name: "시장대표", route: '/info/etpinfo/marketRepresent' },
+                { id: 3, name: "섹터", route: '/info/etpinfo/marketSector' },
+                { id: 4, name: "테마", route: '/info/etpinfo/marketEtnForList' },
+                { id: 5, name: "전략", route: '/info/etpinfo/marketStrategy' },
+                { id: 6, name: "채권", route: '/info/etpinfo/marketEtpforList6' },
+                { id: 7, name: "해외", route: '/info/etpinfo/marketEtpforList7' },
+                { id: 8, name: "혼합", route: '/info/etpinfo/marketEtpforList8' },
+                { id: 9, name: "상품", route: '/info/etpinfo/marketEtpforList9' }
+            ],
     	};
     },    
-    components: {
-        EtfForList      :   EtfForList,
-        MarketRepresent :   MarketRepresent,        
-        MarketSector    :   MarketSector,
-        EtnForList      :   EtnForList,
-        EtpforList5     :   EtpforList5,
-        EtpforList6     :   EtpforList6,
-        EtpforList7     :   EtpforList7,
-       EtpforList8      :   EtpforList8,
+    mounted: function() {
+        if (this.$route.query.activeTab == 2) {
+            //this.activeTab = 1;
+           // this.pageMove('/info/etpinfo/marketStrategy');
+        } else {
+            this.activeTab = 0;
+            this.pageMove('/info/etpinfo/marktEtpSummaryInfo');
+        }
     },
     created: function() {
+        
+    },
+    beforeUpdated: function() {
+    },
+    updated: function() {
     },
     methods: {
+        pageMove : function(route) {
+            this.$router.push(route);
+        }
     }
 
 }
