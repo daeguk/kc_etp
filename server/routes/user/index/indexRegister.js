@@ -236,7 +236,16 @@ var fileuploadSingle = function (req, res) {
                 for (var i = 0; i < dataLists.length; i++) {
                     var data = dataLists[i];
 
-                    if( data.col01.length > 100 ) {
+                /*******************/
+                    if( typeof data.col01 == "undefined" ) {
+                        check = false;
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[" + (i+1) + " 행] 첫번째 컬럼이 존재하지 않습니다.";
+                        
+                        break;
+                    }
+                    else if( data.col01.length > 100 ) {
                         check = false;
 
                         resultMsg.result = false;
@@ -244,7 +253,15 @@ var fileuploadSingle = function (req, res) {
                         
                         break;
                     }
+                /*******************/
+                    else if( typeof data.col02 == "undefined" ) {
+                        check = false;
 
+                        resultMsg.result = false;
+                        resultMsg.msg = "[" + (i+1) + " 행] 두번째 컬럼이 존재하지 않습니다.";
+                        
+                        break;
+                    }                    
                     else if( data.col02.length > 100 ) {
                         check = false;
 
@@ -253,7 +270,15 @@ var fileuploadSingle = function (req, res) {
                         
                         break;
                     }
+                /*******************/
+                    else if( typeof data.col03 == "undefined" ) {
+                        check = false;
 
+                        resultMsg.result = false;
+                        resultMsg.msg = "[" + (i+1) + " 행] 세번째 컬럼이 존재하지 않습니다.";
+                        
+                        break;
+                    }                    
                     else if( data.col03.length > 100 ) {
                         check = false;
 
@@ -262,16 +287,21 @@ var fileuploadSingle = function (req, res) {
                         
                         break;
                     }
-
-                    data.row_no = i+1;
-
-                    if( !data.col04 ) {
+                /*******************/
+                    else if(        typeof data.col04 == "undefined" 
+                                ||  !data.col04 
+                    ) {
                         data.col04 = "";
                     }
-
-                    if( !data.col05 ) {
+                /*******************/
+                    else if(        typeof data.col05 == "undefined"
+                                ||  !data.col05 
+                    ) {
                         data.col05 = "";
-                    }                     
+                    }
+                /*******************/
+
+                    data.row_no = i+1;
                 }
             }
 
