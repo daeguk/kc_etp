@@ -71,7 +71,7 @@ var getSectorEtpList = function (req, res) {
         };
 
         var carousel_data = [];
-        var carousel_mode = [];
+        var carousel_mod = [];
         // 캐러셀 나눌 분자는 5개로 처리
         var carousel_div = 5;
         var carousel_cnt = 0;
@@ -104,7 +104,7 @@ var getSectorEtpList = function (req, res) {
             console.log("ctg_code"+ ctgCodeList.length);
 
             
-            carousel_info.carousel_cnt =  ctgCodeList.length / 5;
+            carousel_info.carousel_cnt =  Math.floor(ctgCodeList.length / 5);
             carousel_info.carousel_mod =  ctgCodeList.length % 5;
 
             ctgCodeList.forEach(function(ctgCodeItem, index) {
@@ -151,7 +151,7 @@ var getSectorEtpList = function (req, res) {
 
                             carousel_data.push({"name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
                         } else {
-                            carousel_mode.push({"name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
+                            carousel_mod.push({"name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
                         }  
                         /* ===================상단 데이터 생성 완료 =========================*/
                         // 조회한 데이터 저장
@@ -159,7 +159,7 @@ var getSectorEtpList = function (req, res) {
                         
                         //console.log(ctgCodeList.length +"::" + index);
                         if (index == ctgCodeList.length-1) {
-                            callback(null, etpLists, carousel_info, carousel_data, carousel_mode, ctgCodeList);   
+                            callback(null, etpLists, carousel_info, carousel_data, carousel_mod, ctgCodeList);   
                         }
                     }).catch(err => {
                         throw err; 
@@ -170,14 +170,14 @@ var getSectorEtpList = function (req, res) {
             });
             
         }
-        ], function (err, etpLists, carousel_info, carousel_data, carousel_mode, ctgCodeList) {
+        ], function (err, etpLists, carousel_info, carousel_data, carousel_mod, ctgCodeList) {
             // result now equals 'done'
             res.json({
                 success: true,
                 etpLists: etpLists,
                 carousel_info: carousel_info,
                 carousel_data: carousel_data,
-                carousel_mode: carousel_mode,
+                carousel_mod: carousel_mod,
                 ctgCodeList: ctgCodeList
             });
             res.end();

@@ -20,7 +20,18 @@ import  EtpManageMain   from './components/Home/Etp/Manage/EtpManageMain.vue'
 import  EtpRegisterMain   from './components/Home/Etp/Register/EtpRegisterMain.vue'
 import  EtpContractMain   from './components/Home/Etp/Contract/EtpContractMain.vue'
 // MARKET INFO
-import  EtpInfoMain   from './components/Home/MarketInfo/EtpInfoMain.vue'
+import EtpInfoMain   from './components/Home/MarketInfo/EtpInfoMain.vue'
+import MarktEtpSummaryInfo   from './components/Home/MarketInfo/EtfForList.vue'
+import MarketRepresent   from  './components/Home/MarketInfo/MarketRepresent.vue'
+import MarketSector   from  './components/Home/MarketInfo/MarketSector.vue'
+import EtnForList   from  './components/Home/MarketInfo/EtnForList.vue'
+import MarketStrategy   from  './components/Home/MarketInfo/MarketStrategy.vue'
+import EtpforList6   from  './components/Home/MarketInfo/EtpforList6.vue'
+import EtpforList7   from  './components/Home/MarketInfo/EtpforList7.vue'
+import EtpforList8   from  './components/Home/MarketInfo/EtpforList8.vue'
+import EtpforList9   from  './components/Home/MarketInfo/EtpforList5.vue'
+
+
 // TODAY
 import  Today1Main   from './components/Home/Today/Today1Main.vue'
 
@@ -28,6 +39,7 @@ import  Today1Main   from './components/Home/Today/Today1Main.vue'
 import  sampleChart   from '@/components/Sample/test.vue'
 import  sampleUpload   from '@/components/Sample/fileUpload.vue'
 import  sampleLoginTest   from '@/components/Sample/loginTest.vue'
+
 
 // 관리자
 export const routes = [
@@ -37,6 +49,44 @@ export const routes = [
         // MARKET INFO
         {   path : 'info/etpinfo',
             component: EtpInfoMain,
+            children: [
+                {
+                    path : 'marktEtpSummaryInfo',
+                    component: MarktEtpSummaryInfo
+                }, 
+                {
+                    path : 'marketRepresent',
+                    component: MarketRepresent
+                }, 
+                {
+                    path : 'marketSector',
+                    component: MarketSector
+                }, 
+                {
+                    path : 'marketEtnForList',
+                    component: EtnForList
+                }, 
+                {
+                    path : 'marketStrategy',
+                    component: MarketStrategy
+                }, 
+                {
+                    path : 'marketEtpforList6',
+                    component: EtpforList6
+                }, 
+                {
+                    path : 'marketEtpforList7',
+                    component: EtpforList7
+                }, 
+                {
+                    path : 'marketEtpforList8',
+                    component: EtpforList8
+                }, 
+                {
+                    path : 'marketEtpforList9',
+                    component: EtpforList9
+                }, 
+            ]
         },
         {   path : 'info/indexinfo',
             component: Today1Main,
