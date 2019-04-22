@@ -176,8 +176,6 @@ export default {
                     vm.ctg_results = response.data.ctgCodeList;
                     vm.carousel_info = response.data.carousel_info;
 
-                    debugger;
-
                     var items = null;
 
                     
