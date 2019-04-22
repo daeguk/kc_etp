@@ -449,7 +449,7 @@ export default {
                                                 } else {
                                                     htm = "<span class='align_r text_blue'>"+data;
                                                 }
-                                                htm += "<br><span class='text_S'>"+row.f30818+"</span>";
+                                                htm += "<br><span class='text_S'>"+row.f30818+"%</span>";
                                                 htm += "   </span>";
                                                 return htm;
                                             },
@@ -463,7 +463,7 @@ export default {
                                                 } else {
                                                     htm = "<span class='align_r text_blue'>"+data;
                                                 }
-                                                htm += "<br><span class='text_S'>"+row.f15004+"</span>";
+                                                htm += "<br><span class='text_S'>"+row.f15004+"%</span>";
                                                 htm += "   </span>";
                                                 return htm;
                                             },
