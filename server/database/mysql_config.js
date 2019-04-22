@@ -17,6 +17,5 @@ module.exports = {
         { file: './mysql/user/etpregister_model', modelName: 'EtpRegister' },
         { file: './mysql/user/indexmanage_model', modelName: 'IndexManage' },
         { file: './mysql/user/etpinfo_model', modelName: 'EtpInfo' },
-        { file: './mysql/admin/member_model', modelName: 'AdminMember' },
     ],
 }

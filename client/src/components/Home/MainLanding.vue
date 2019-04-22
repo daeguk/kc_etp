@@ -22,6 +22,8 @@
             </v-flex>
           </v-layout>
           <UserLoginModal v-if="login_flag"></UserLoginModal>
+          <UserSingupModal v-if="signup_flag"></UserSingupModal>
+          <UserFindPwdModal v-if="findpwd_flag"></UserFindPwdModal>
         </v-container>
       </v-img>
     </v-card>
@@ -30,23 +32,39 @@
 
 <script>
 import UserLoginModal       from './UserLoginModal.vue';
+import UserSingupModal       from './UserSignupModal.vue';
+import UserFindPwdModal       from './UserFindPwdModal.vue';
 
 export default {
     data() {
         return {
           login_flag: false,
+          signup_flag: false,
+          findpwd_flag: false,
         };
     },
     components: {
       UserLoginModal: UserLoginModal,
+      UserSingupModal: UserSingupModal,
+      UserFindPwdModal: UserFindPwdModal,
     },
     beforeCreate() {
     },
     created: function() {
+      this.$EventBus.$on('closeLoginModal', this.closeLoginModal);
+      this.$EventBus.$on('closeNewAccountModal', this.closeNewAccountModal);
+      this.$EventBus.$on('closeFindPwdModal', this.closeFindPwdModal);
       this.$EventBus.$on('userLoginCheck', this.userLoginCheck);
+      this.$EventBus.$on('userNewAccount', this.userNewAccount);
+      this.$EventBus.$on('forgotPassword', this.forgotPassword);
     },
     beforeDestroy() {
+      this.$EventBus.$off('closeLoginModal');
+      this.$EventBus.$off('closeNewAccountModal');
+      this.$EventBus.$off('closeFindPwdModal');
       this.$EventBus.$off('userLoginCheck');
+      this.$EventBus.$off('userNewAccount');
+      this.$EventBus.$off('forgotPassword');
     },
 
     methods: {
@@ -56,11 +74,30 @@ export default {
       doLogin: function() {
         this.login_flag = true;
       },
-      userLoginCheck: function(login_flag) {
+      closeLoginModal: function() {
+        this.login_flag = false;
+      },
+      closeNewAccountModal: function() {
+        this.signup_flag = false;
+      },
+      closeFindPwdModal: function() {
+        this.findpwd_flag = false;
+      },
+      userLoginCheck: function(success) {
         console.log('userLoginCheck');
         console.log("email : " + this.$store.state.user.user_email);
-        this.login_flag = login_flag;
-        this.$EventBus.$emit("enterService");
+        this.login_flag = false;
+        if(success == true) {
+          this.$EventBus.$emit("enterService");
+        }
+      },
+      userNewAccount: function() {
+        this.login_flag = false;
+        this.signup_flag = true;
+      },
+      forgotPassword: function() {
+        this.login_flag = false;
+        this.findpwd_flag = true;
       },
     }
 }

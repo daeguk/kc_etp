@@ -9,7 +9,11 @@ module.exports = {
     route_info: [
         // 신규 개발
         // 사용자 로그인처리(threeon. 2019.04.19)
-        { file: './user/login/users', path: '/user/userlogincheck', method: 'userLoginCheck', session: 'check', type: 'post' },
+        { file: './user/member/users', path: '/user/member/getmembertypelist', method: 'getMemberTypeList', session: 'uncheck', type: 'get' },
+        { file: './user/member/users', path: '/user/member/getmemberdomainlist', method: 'getMemberDomainList', session: 'uncheck', type: 'get' },
+        { file: './user/member/users', path: '/user/member/userlogincheck', method: 'userLoginCheck', session: 'check', type: 'post' },
+        { file: './user/member/users', path: '/user/member/usernewaccount', method: 'userNewAccount', session: 'check', type: 'post' },
+        { file: './user/member/users', path: '/user/member/userfindpwd', method: 'userFindPwd', session: 'check', type: 'post' },
 
         //일반 ETP register
         { file: './user/etp/etpApplyList', path: '/user/etp/getEtpApplyList', method: 'getEtpApplyList', session: 'uncheck', type: 'get' },

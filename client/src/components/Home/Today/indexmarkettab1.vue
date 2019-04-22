@@ -588,7 +588,7 @@ export default {
         getEtpRepresentList: function() {
             console.log("getEtfKorList");
             var vm = this;
-
+/*
             axios
                 .post(
                     Config.base_url + "/user/marketinfo/getEtpRepresentList",
@@ -612,6 +612,7 @@ export default {
                         });
                     }
                 });
+*/                
         }
     }
 };

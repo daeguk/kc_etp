@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="member">  
+    <!--
+    * 사용자 로그인 처리
+    -->
+    <select id="userLoginCheck">
+      SELECT A.type_cd, B.type_name, A.inst_cd, C.inst_name, 
+          A.email, A.emailchk, A.name, A.hp_no, A.tel_no
+        FROM tm_user_member A, tm_user_type B, tm_user_domain C 
+        WHERE A.email = #{email}
+        AND A.password = #{password}
+        AND A.type_cd = B.type_cd AND A.inst_cd = C.inst_cd
+    </select>
+    <!--
+    * 사용자 회원가입 처리
+    -->
+    <select id="getMemberTypeList">
+      SELECT *
+        FROM tm_user_type
+        ORDER BY type_cd ASC
+    </select>
+    <select id="getMemberDomainList">
+      SELECT *
+        FROM tm_user_domain
+        ORDER BY type_cd, inst_cd ASC
+    </select>
+    <insert id="userNewAccount">
+      INSERT INTO tm_user_member (type_cd, inst_cd, email, password, name, hp_no, tel_no) 
+      VALUES (#{type_cd}, #{inst_cd}, #{email}, #{password}, #{name}, #{hp_no}, #{tel_no})
+    </insert>
+    <select id="userFindPwd">
+      SELECT *
+        FROM tm_user_member
+        WHERE email = #{email}
+        AND type_cd = #{type_cd}
+        AND inst_cd = #{inst_cd}
+    </select>
+</mapper>
+
