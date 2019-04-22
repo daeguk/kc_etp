@@ -234,11 +234,55 @@ var userFindPwd = function(req, res) {
   }
 };
 
+// 회원 정보 수정
+var userUpdateInfo = function(req, res) {
+  console.log('users 모듈 안에 있는 userUpdateInfo 호출됨.');
+
+  var options = req.body;
+  try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('member', 'setUserInfo', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        console.log("rows cnt : " + rows.length);
+        if(rows.length == 0) {
+          res.json({
+            success: false,
+            message: "해당 계정이 등록되어 있지 않습니다.",
+          });
+          res.end();
+        }else {
+          res.json({
+            success: true
+            // results: rows
+          });
+          res.end();
+        }
+      }).catch(err => {
+        util.log("Error while performing Query.", err);
+        res.json({
+          success: false,
+          message: err,
+        });
+        res.end();
+      });
+
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+  }
+};
+
 module.exports.userLoginCheck = userLoginCheck;
 module.exports.getMemberTypeList = getMemberTypeList;
 module.exports.getMemberDomainList = getMemberDomainList;
 module.exports.userNewAccount = userNewAccount;
 module.exports.userFindPwd = userFindPwd;
+module.exports.userUpdateInfo = userUpdateInfo;
 
 // 사용사 정보 조회
 /*

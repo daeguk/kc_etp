@@ -40,5 +40,13 @@
         AND type_cd = #{type_cd}
         AND inst_cd = #{inst_cd}
     </select>
+    <update id="setUserInfo">
+      UPDATE tm_user_member SET
+        password = #{password},
+        name = #{name},
+        hp_no = #{hp_no},
+        tel_no = #{tel_no}
+        WHERE email = #{email}
+    </update>
 </mapper>
 

@@ -76,12 +76,15 @@ export default {
           vm.$EventBus.$emit("userLoginCheck", false);
         }else {
           vm.$store.commit(Constant.ADD_USER, {
-            user_email: response.data.results[0].email, 
-            user_name: response.data.results[0].name, 
-            user_type_cd:response.data.results[0].type_cd, 
-            user_type_name:response.data.results[0].type_name, 
-            user_inst_cd:response.data.results[0].inst_cd, 
-            user_inst_name:response.data.results[0].inst_name, 
+            email: response.data.results[0].email, 
+            password: vm.password,
+            name: response.data.results[0].name, 
+            type_cd:response.data.results[0].type_cd, 
+            type_name:response.data.results[0].type_name, 
+            inst_cd:response.data.results[0].inst_cd, 
+            inst_name:response.data.results[0].inst_name, 
+            hp_no:response.data.results[0].hp_no, 
+            tel_no:response.data.results[0].tel_no, 
           });
           vm.loginDialog = false;
           // MainLanding.vue
