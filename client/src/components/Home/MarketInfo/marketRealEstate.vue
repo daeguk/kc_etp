@@ -433,10 +433,11 @@ export default {
                             // 테이블별 이벤트
                             $('#' + vm.table_name + ctgCodeItem.ctg_code+' tbody').on('click', 'button', function () {
                                 var table = $('#' + vm.table_name + ctgCodeItem.ctg_code).DataTable();
-                                var data = table.row( this ).data();    
+                                var data = table.row($(this).parents('tr')).data();
+
                                 if ($(this).attr('id') == 'detail') {
-                                    
                                     console.log('move detailPage ');
+                                    vm.movePage( data.f16012 );
                                 } else {
                                     console.log('move pdfPage ');
                                 }
@@ -447,6 +448,11 @@ export default {
                     }
                 }
             });
+        },
+        
+        movePage: function( f16012 ) {
+
+            this.$router.push({ path: '/etp/etpManageDetail', query :{ 'f16012': f16012 } });
         }
     }
 };
