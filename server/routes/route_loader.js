@@ -31,9 +31,9 @@ route_loader.sessionCheckRegister = function(app) {
                     세션 정보 처리[개발시 사용];
                     ============================
                 */
-               req.session.user_id = "test@fnguide.com";
-               req.session.inst_cd = "06485";
-               req.session.inst_type_cd = "0003";
+               req.session.user_id = "test1111@hanwha.com";
+               req.session.inst_cd = "03068";
+               req.session.type_cd = "0001";
                req.session.large_type = "FNGUIDE";
                req.session.save();
                console.log("loginkey : " + req.session.user_id);

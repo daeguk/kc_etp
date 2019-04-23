@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="common.item">  
+    <!--
+    * 마켓 정보의 구성 기본 정보
+    -->
+    <select id="getFavorItemInfo">
+        SELECT ITEM.ITEM_SEQ 
+                ,ITEM.GUBUN
+                ,ITEM.ITEM_CD
+                ,ITEM.F16002
+                ,ITEM.MARKET_ID
+            FROM (SELECT A.ITEM_SEQ 
+                        ,A.GUBUN
+                        ,A.TYPE_CD 
+                        ,A.INST_CD
+                        ,A.EMAIL
+                        ,A.F16012 AS ITEM_CD
+                        ,B.F16002
+                        ,'' AS MARKET_ID
+                FROM tm_favor_item A
+                INNER JOIN td_etp_basic B
+                    ON A.F16012 = B.F16012
+                AND A.gubun = '1'
+                UNION ALL 
+                SELECT A.ITEM_SEQ 
+                    ,A.GUBUN
+                    ,A.TYPE_CD 
+                    ,A.INST_CD
+                    ,A.EMAIL
+                    ,A.F16013 AS ITEM_CD
+                    ,B.F16002
+                    ,B.MARKET_ID
+                FROM tm_favor_item A
+                INNER JOIN td_index_basic B
+                ON A.F16013 = B.F16013
+                AND A.market_id = B.market_id
+                AND A.gubun = '2') ITEM
+            WHERE ITEM.TYPE_CD = #{type_cd}
+            AND ITEM.INST_CD = #{inst_cd}
+            AND ITEM.EMAIL = #{user_id}
+    </select>
+  
+</mapper>

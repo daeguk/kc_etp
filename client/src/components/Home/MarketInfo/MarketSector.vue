@@ -101,7 +101,7 @@
                 </v-card>
             </v-flex>
             <!---테이블1 end--->
-
+            <ComFavorItem></ComFavorItem>
         </v-layout>
     </v-container>
 </template>
@@ -113,8 +113,8 @@ import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import _ from "lodash";
-import Config       from "@/js/config.js"
-
+import Config       from "@/js/config.js";
+import ComFavorItem from "@/components/common/right/ComFavorItem";
 
 export default {
     props: [],
@@ -127,9 +127,7 @@ export default {
         };
     },
     components: {
-        //infopoptab1: infopoptab1,
-        //infopoptab2: infopoptab2,
-        //infopoptab3: infopoptab3
+        ComFavorItem: ComFavorItem,
     },
     computed: {
          orderedData : function(){
