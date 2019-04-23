@@ -41,7 +41,7 @@ var getEtpBasic = function(req, res) {
 
         paramData.user_id       =   req.session.user_id;
         paramData.inst_cd       =   req.session.inst_cd;
-        paramData.inst_type_cd  =   req.session.inst_type_cd;
+        paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
 
 
@@ -140,7 +140,7 @@ var getEtpInfo = function(req, res) {
 
         paramData.user_id       =   req.session.user_id;
         paramData.inst_cd       =   req.session.inst_cd;
-        paramData.inst_type_cd  =   req.session.inst_type_cd;
+        paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
 
 
@@ -464,7 +464,7 @@ var getEtpChartData = function(req, res) {
 
         paramData.user_id       =   req.session.user_id;
         paramData.inst_cd       =   req.session.inst_cd;
-        paramData.inst_type_cd  =   req.session.inst_type_cd;
+        paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
 
 
