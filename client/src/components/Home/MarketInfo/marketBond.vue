@@ -1,11 +1,7 @@
 <template>
     <v-container>
         <v-layout row wrap class="content_margin">
-            <v-flex xs12>
-                <v-card flat height="300px">map</v-card>
-            </v-flex>
 
-            
             <!---테이블 start--->
             <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12 mt-3>
                 <v-card flat>
@@ -304,7 +300,7 @@ export default {
         }
     },
     mounted: function() {
-        this.getEtpRepresentList();
+        this.getEtpRepresentList( "005" );      /* 005-채권 */
     },
     created: function() {},
     beforeDestroy() {},
@@ -323,7 +319,7 @@ export default {
          * 시장대표에 해당하는 지수 및 ETP 정보를 조회한다. ( ETP -> 시장대표 탭 선택시 )
          * 2019-04-16  bkLove(촤병국)
          */        
-        getEtpRepresentList: function() {
+        getEtpRepresentList: function( ctg_large_code ) {
             console.log("getEtpRepresentList");
 
             var vm = this;
@@ -331,7 +327,7 @@ export default {
 
             axios.post(Config.base_url + "/user/marketinfo/getEtpRepresentList", {
                 data: {
-                    ctg_large_code  :   "001"       /* 001-시장대표 */
+                    "ctg_large_code"  :     ctg_large_code
                 }
             }).then(function(response) {
                 console.log(response);
