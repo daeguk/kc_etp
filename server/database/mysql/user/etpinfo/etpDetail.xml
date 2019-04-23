@@ -144,7 +144,7 @@
         </if>        
 
 
-        <if test= 'term == null  or  term == "1M" or term == "3M" or term == "6M" or term == "1Y"  ' >
+        <if test= 'term == ""  or  term == "1M" or term == "3M" or term == "6M" or term == "1Y" or term == "TOTAL" ' >
     <![CDATA[
         SELECT      td_etp_hist.F12506                                      AS  yyyymmdd            /* 입회일자 */
                 ,   DATE_FORMAT( td_etp_hist.F12506, "%Y.%m.%d" )           AS  fmt_yyyymmdd        /* 입회일자 */
@@ -173,6 +173,9 @@
                 <when test="term != null and term =='1Y'">
                                     /* 1년 */
                             AND     td_etp_hist.F12506      >=  DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 YEAR ), '%Y%m%d' )
+                </when>
+                <when test="term != null and term =='TOTAL'">
+                                    /* 전체 */
                 </when>
                 <otherwise>
                                     /* 1달 */
