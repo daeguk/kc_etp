@@ -62,15 +62,15 @@ var getEtpRepresentList = function(req, res) {
                 /* 1. 시장을 대표하는 메인 코드정보를 조회한다. */
                 function( callback ) {                  
 
-                    paramData.com_mst_cd    =   "COM003";
-                    stmt = mapper.getStatement('indexSelectList', 'getCodeDtl', paramData, format);
+                    paramData.com_mst_cd    =   "COM003";       /* 시장을 대표하는 지수 */
+                    stmt = mapper.getStatement('etpinfo', 'getIndexInfoByCodeDtl', paramData, format);
                     //console.log(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
                         if( err ) {
                             resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] indexSelectList.getCodeDtl Error while performing Query";
+                            resultMsg.msg       =   "[error] etpinfo.getIndexInfoByCodeDtl Error while performing Query";
                             resultMsg.err       =   err;
 
                             return callback( resultMsg );
@@ -93,9 +93,13 @@ var getEtpRepresentList = function(req, res) {
                     var carousel_data =   [];
                     var carousel_mod = [];
 
-                    var total_amt = 0;
-                    var etf_cnt = 0;
-                    var etn_cnt = 0;                    
+                    var total_amt = 0;  /* 전체 금액 */
+
+                    var etf_cnt = 0;    /* ETF 건수, 합계 */
+                    var etf_sum = 0;
+
+                    var etn_cnt = 0;    /* ETN 건수, 합계 */
+                    var etn_sum = 0;
 
                     async.forEachOf( resultMsg.codeList, function ( ctgCodeItem, index, inner_callback ){
 
@@ -120,16 +124,30 @@ var getEtpRepresentList = function(req, res) {
                                 if ( (carousel_info.carousel_cnt * carousel_info.carousel_div) > index ) {
 
                                     rows.forEach(function(item, idx) {
-                                        total_amt += item.f15028;
+                                        total_amt += item.f15028;               /* 시가총액 */
+
                                         // ctf 구분자가 1과 2일 경우 
                                         if (item.f16493 == '1' || item.f16493 == '2') {
                                             etf_cnt++; 
+                                            etf_sum += item.f15028;             /* ETF_시가총액 누적 */
                                         } else if (item.f16493 == '3' || item.f16493 == '4') {
                                             etn_cnt++; 
+                                            etn_sum += item.f15028;             /* ETN_시가총액 누적 */
                                         }
                                     });
 
-                                    carousel_data.push({"name": ctgCodeItem.com_dtl_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
+                                    carousel_data.push({
+                                            "name"      :   ctgCodeItem.f16002          /* 한글종목명 */
+                                        ,   "total_amt" :   total_amt
+                                        ,   "etf_cnt"   :   etf_cnt
+                                        ,   "etf_sum"   :   etf_sum
+
+                                        ,   "etf_sum"   :   etf_sum
+                                        ,   "etn_sum"   :   etn_sum
+                                        ,   "f15001"    :   ctgCodeItem.f15001          /* 현재가 */
+                                        ,   "f15472"    :   ctgCodeItem.f15472          /* 대비 */
+                                        ,   "f15004"    :   ctgCodeItem.f15004          /* 등락율 */
+                                    });
                                 } else {
 
                                     rows.forEach(function(item, idx) {
@@ -141,7 +159,19 @@ var getEtpRepresentList = function(req, res) {
                                             etn_cnt++; 
                                         }
                                     });
-                                    carousel_mod.push({"name": ctgCodeItem.com_dtl_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
+
+                                    carousel_data.push({
+                                            "name"      :   ctgCodeItem.f16002          /* 한글종목명 */
+                                        ,   "total_amt" :   total_amt
+                                        ,   "etf_cnt"   :   etf_cnt
+                                        ,   "etf_sum"   :   etf_sum
+
+                                        ,   "etf_sum"   :   etf_sum
+                                        ,   "etn_sum"   :   etn_sum
+                                        ,   "f15001"    :   ctgCodeItem.f15001          /* 현재가 */
+                                        ,   "f15472"    :   ctgCodeItem.f15472          /* 대비 */
+                                        ,   "f15004"    :   ctgCodeItem.f15004          /* 등락율 */
+                                    });
                                 }
                             }
 

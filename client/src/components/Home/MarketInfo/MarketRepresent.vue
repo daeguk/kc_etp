@@ -10,18 +10,27 @@
                                 <v-card flat>
                                     <div class="market_card_w line_l">
                                         <div class="market_card2" wrap>
-                                            <h6>{{getData(carousel_data, n, x, "name")}}</h6>
+                                            <h6>
+                                                {{getData(carousel_data, n, x, "name")}}
+                                                <p>
+                                                    {{ new Intl.NumberFormat().format( getData(carousel_data, n, x, "f15001") ) }}
+                                                    <span :class='( getData(carousel_data, n, x, "f15472") > 0 ? "text_red" : "" )'>
+                                                        {{getData(carousel_data, n, x, "f15472")}}({{getData(carousel_data, n, x, "f15004")}} %)
+                                                    </span>
+                                                </p>
+                                            </h6>
                                             <ul>
                                                 <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">{{new Intl.NumberFormat().format((getData(carousel_data, n, x, "total_amt")) / 1000)}}K</dt>
-                                                    </dl>
+                                                    ETF - {{ new Intl.NumberFormat().format( getData(carousel_data, n, x, "etf_cnt") ) }}종목
+                                                    <br>
+                                                    <span>Total</span>
+                                                    <span class="text_result2">AUM {{ new Intl.NumberFormat().format( getData(carousel_data, n, x, "etf_sum")  / 1000 ) }}K</span>
                                                 </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - {{getData(carousel_data, n, x, "etf_cnt")}}종목</dt>
-                                                        <dt>ETN - {{getData(carousel_data, n, x, "etn_cnt")}}종목</dt>
-                                                    </dl>
+                                                <li>
+                                                    ETN - {{getData(carousel_data, n, x, "etn_cnt")}} 종목
+                                                    <br>
+                                                    <span>Total</span>
+                                                    <span class="text_result2">AUM {{ new Intl.NumberFormat().format( getData(carousel_data, n, x, "etn_sum")  / 1000 ) }}K</span>
                                                 </li>
                                             </ul>
                                         </div>
@@ -371,15 +380,7 @@ export default {
         getData: function(carousel_data, n, x, dataKind) {
 
             if (carousel_data[(((n-1)* this.carousel_info.carousel_div )+x-1)]) {
-                if (dataKind == "name") {
-                    return carousel_data[(((n-1)* this.carousel_info.carousel_div)+x-1)].name;
-                } else if (dataKind == "total_amt") {
-                    return carousel_data[(((n-1)* this.carousel_info.carousel_div)+x-1)].total_amt;
-                } else if (dataKind == "etf_cnt") {
-                    return carousel_data[(((n-1)* this.carousel_info.carousel_div)+x-1)].etf_cnt;
-                } else if (dataKind == "etn_cnt") {
-                    return carousel_data[(((n-1)* this.carousel_info.carousel_div)+x-1)].etn_cnt;
-                }
+                return carousel_data[(((n-1)* this.carousel_info.carousel_div)+x-1)][ dataKind ];
             } else {
                 return "";
             }

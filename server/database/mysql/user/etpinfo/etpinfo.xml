@@ -1,7 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="etpinfo">  
+<mapper namespace="etpinfo">
+
+    <!--
+    * 시장을 대표하는 코드와 지수정보를 조회한다.
+    * 2019-04-19  bkLove(촤병국)
+    -->
+    <select id="getIndexInfoByCodeDtl">
+    <![CDATA[
+        SELECT      td_index_basic.f16013                               AS  f16013          /* 단축코드 */
+                ,   td_index_basic.f16002                               AS  f16002          /* 한글종목명 */
+                ,   td_index_basic.market_id                            AS  market_id       /* 시장 ID */
+                ,   td_index_basic.middle_type                          AS  middle_type     /* 지수중분류(FNGUIDE, WISEFN) */
+                
+                ,   td_index_basic.f15001                               AS  f15001          /* 현재가 */
+                ,   td_index_basic.f15472                               AS  f15472          /* 대비 */
+                ,   td_index_basic.f15004                               AS  f15004          /* 등락율 */
+                
+                ,   tm_code_dtl.com_val01                               AS  com_val01       /* 단축코드 */
+                ,   tm_code_dtl.com_val02                               AS  com_val02       /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
+                ,   tm_code_dtl.com_val03                               AS  com_val03       /* 지수중분류(FNGUIDE, WISEFN) */
+
+          FROM          td_index_basic
+         INNER  JOIN    (
+                            SELECT      tm_code_dtl.com_val01           AS  com_val01
+                                    ,   tm_code_dtl.com_val02           AS  com_val02
+                                    ,   tm_code_dtl.com_val03           AS  com_val03
+
+                              FROM  tm_code_dtl
+
+                             WHERE  tm_code_dtl.com_mst_cd      =   #{com_mst_cd}
+                               AND  tm_code_dtl.use_yn          =   '1'   
+                        )   tm_code_dtl 
+                  ON    (
+                                    td_index_basic.f16013       =   tm_code_dtl.com_val01
+                            AND     td_index_basic.large_type   =   tm_code_dtl.com_val02
+                            AND     td_index_basic.middle_type  =   tm_code_dtl.com_val03
+                        )
+         WHERE  1 = 1
+    ]]>
+    </select>
+
 
     <!--
     * 시장을 대표하는 코드 (COM003) 에 속한 지수별 데이터를 조회한다.
