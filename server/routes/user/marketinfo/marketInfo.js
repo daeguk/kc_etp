@@ -77,126 +77,115 @@ var getSectorEtpList = function (req, res) {
         var carousel_cnt = 0;
         var ctg_code = req.query.ctg_code;
         var etpLists = [];
-
-    async.waterfall([    
-
-        function(callback) {
-            var params = {
-                ctg_code : ctg_code,
-            };
-
-            var stmt = mapper.getStatement('market', 'getMarketCtgCodeInfo', params, {language:'sql', indent: '  '});
-
-            Promise.using(pool.connect(), conn => {
-
-                Promise.all([
-                    conn.queryAsync(stmt)
-
-                ]).then( rows => {
-                    callback(null, rows[0]);         
-                }).catch(err => {
-                    throw err;
-                });
-            });  
-        },
-
-        function(ctgCodeList, callback) {
-            console.log("ctg_code"+ ctgCodeList.length);
-
             
-            carousel_info.carousel_cnt =  Math.floor(ctgCodeList.length / 5);
-            carousel_info.carousel_mod =  ctgCodeList.length % 5;
 
-            ctgCodeList.forEach(function(ctgCodeItem, index) {
-            //for (let [index, ctgCodeItem] of ctgCodeList) {  
+        Promise.using(pool.connect(), conn => {
+
+            async.waterfall([    
+                function(callback) {
+                    var params = {
+                        ctg_code : ctg_code,
+                    };
+                
+                    var stmt = mapper.getStatement('market', 'getMarketCtgCodeInfo', params, {language:'sql', indent: '  '});
+                    
+                    conn.query(stmt, function( err, rows ) {
+                        callback(null, rows);                                 
+                    })              
+                },
+
+                function(ctgCodeList, callback) {
+                    console.log("ctg_code"+ ctgCodeList.length);
+                
+                                        
+                    carousel_info.carousel_cnt =  Math.floor(ctgCodeList.length / carousel_div);
+                    carousel_info.carousel_mod =  ctgCodeList.length % carousel_div;
+                
+                    //util.log("carousel_info.carousel_cnt:", carousel_info.carousel_cnt);
+                    //util.log("carousel_info.carousel_mod:", carousel_info.carousel_mod);
+                
+                    // 항목 갯수 만큼 쿼리 
+                    async.forEachOf( ctgCodeList, function ( ctgCodeItem, index){                                
+                        var params = {
+                            ctg_code : ctgCodeItem.ctg_code,
+                            ctg_large_code : ctgCodeItem.ctg_large_code,
+                        };
+                        
+                        //console.log("ctgCodeItem.ctg_large_code,"+ctgCodeItem.ctg_large_code);
+                        var ctg_name = ctgCodeItem.ctg_name;
                 
                 
-                var params = {
-                    ctg_code : ctgCodeItem.ctg_code,
-                    ctg_large_code : ctgCodeItem.ctg_large_code,
-                };
-
-                var ctg_name = ctgCodeItem.ctg_name;
+                        var stmt = mapper.getStatement('etpinfo', 'getEtpListByJisu', params, {language:'sql', indent: '  '});
 
 
-            
-                var stmt1 = mapper.getStatement('etpinfo', 'getEtpListByJisu', params, {language:'sql', indent: '  '});
+                        conn.query(stmt, function( err, rows ) {
+                            /* ===================상단 데이터 생성 =========================*/
+                            var total_amt = 0;
+                            var etf_cnt = 0;
+                            var etn_cnt = 0;
+                            
 
-            
+                            //util.log("(carousel_info.carousel_cnt * 5):" , (carousel_info.carousel_cnt * 5));
+                            //util.log("index" , index);
 
-                Promise.using(pool.connect(), conn => {
 
-                    Promise.all([
-                        conn.queryAsync(stmt1)
+                            if ((carousel_info.carousel_cnt * 5) > index) {
+                                //util.log("data:=====================", index);
 
-                    ]).then( rows => {
-                        
-                        /* ===================상단 데이터 생성 =========================*/
-                        var total_amt = 0;
-                        var etf_cnt = 0;
-                        var etn_cnt = 0;
-                        
+                                async.forEachOf( rows, function ( item, idx){ 
+                                    total_amt += item.f15028;
+                                    // ctf 구분자가 1과 2일 경우 
+                                    if (item.f16493 == '1' || item.f16493 == '2') {
+                                        etf_cnt++; 
+                                    } else if (item.f16493 == '3' || item.f16493 == '4') {
+                                        etn_cnt++; 
+                                    }
+                                });
 
-                        if ((carousel_info.carousel_cnt * 5) > index) {
-
-                            rows[0].forEach(function(item, idx) {
-                                total_amt += item.f15028;
-                                // ctf 구분자가 1과 2일 경우 
-                                if (item.f16493 == '1' || item.f16493 == '2') {
-                                    etf_cnt++; 
-                                } else if (item.f16493 == '3' || item.f16493 == '4') {
-                                    etn_cnt++; 
-                                }
-                            });
-
-                            carousel_data.push({"ctg_code":ctgCodeItem.ctg_code, "name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
-                        } else {
-
-                            rows[0].forEach(function(item, idx) {
-                                total_amt += item.f15028;
-                                // ctf 구분자가 1과 2일 경우 
-                                if (item.f16493 == '1' || item.f16493 == '2') {
-                                    etf_cnt++; 
-                                } else if (item.f16493 == '3' || item.f16493 == '4') {
-                                    etn_cnt++; 
-                                }
-                            });
-                            carousel_mod.push({"ctg_code":ctgCodeItem.ctg_code, "name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
-                        }  
-                        /* ===================상단 데이터 생성 완료 =========================*/
-                        // 조회한 데이터 저장
-                        etpLists.push(rows[0]);
-                        
-                        //console.log(ctgCodeList.length +"::" + index);
-                        if (index == ctgCodeList.length-1) {
-                            callback(null, etpLists, carousel_info, carousel_data, carousel_mod, ctgCodeList);   
-                        }
-                    }).catch(err => {
-                        throw err; 
+                                carousel_data.push({"ctg_code":ctgCodeItem.ctg_code, "name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
+                            } else {
+                                //util.log("mode:=====================", index);
+                                async.forEachOf( rows, function ( item, idx){
+                                    total_amt += item.f15028;
+                                    // ctf 구분자가 1과 2일 경우 
+                                    if (item.f16493 == '1' || item.f16493 == '2') {
+                                        etf_cnt++; 
+                                    } else if (item.f16493 == '3' || item.f16493 == '4') {
+                                        etn_cnt++; 
+                                    }
+                                });
+                                carousel_mod.push({"ctg_code":ctgCodeItem.ctg_code, "name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
+                            }  
+                            /* ===================상단 데이터 생성 완료 =========================*/
+                            // 조회한 데이터 저장
+                            etpLists.push(rows);
+                            
+                            //console.log(ctgCodeList.length +"::" + index);
+                            if (index == ctgCodeList.length-1) {
+                                callback(null, etpLists, carousel_info, carousel_data, carousel_mod, ctgCodeList);   
+                            }                                
+                        })
                     });
-
-                             
-                });
-            });
+                }
+            ], 
+                function (err, etpLists, carousel_info, carousel_data, carousel_mod, ctgCodeList) {
+                    // result now equals 'done'
             
-        }
-        ], function (err, etpLists, carousel_info, carousel_data, carousel_mod, ctgCodeList) {
-            // result now equals 'done'
-
-            //carousel_data = carousel_data.sort(carouselSort);
-
-            res.json({
-                success: true,
-                etpLists: etpLists,
-                carousel_info: carousel_info,
-                carousel_data: carousel_data,
-                carousel_mod: carousel_mod,
-                ctgCodeList: ctgCodeList
-            });
-            res.end();
+                    //carousel_data = carousel_data.sort(carouselSort);
+            
+                    //util.log("carousel_mod:", carousel_mod.length);
+                    res.json({
+                        success: true,
+                        etpLists: etpLists,
+                        carousel_info: carousel_info,
+                        carousel_data: carousel_data,
+                        carousel_mod: carousel_mod,
+                        ctgCodeList: ctgCodeList
+                    });
+                    res.end();
+                }  
+            );          
         });
-
-        
     } catch (exception) {
 
         util.log("Error while performing Query.", exception);
