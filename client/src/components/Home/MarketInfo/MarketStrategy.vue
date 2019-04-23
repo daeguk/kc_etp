@@ -32,7 +32,7 @@
                     </v-carousel-item>
                     <v-carousel-item  class="bg_W" v-if="Object.keys(carousel_mod).length > 0">
                         <v-layout class="market_card_layout" >
-                            <v-flex v-for="mod_item in carousel_mod">
+                            <v-flex v-for="mod_item in carousel_mod" :key="mod_item.ctg_code">
                                 <v-card flat>
                                     <div class="market_card_w line_l">
                                         <div class="market_card2" wrap>
