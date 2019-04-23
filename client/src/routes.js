@@ -50,10 +50,12 @@ export const routes = [
         {   path : 'info/etpinfo',
             component: EtpInfoMain,
             children: [
+/*                
                 {
                     path : 'marktEtpSummaryInfo',
                     component: MarktEtpSummaryInfo
                 }, 
+*/                
                 {
                     path : 'marketRepresent',
                     component: MarketRepresent
