@@ -124,15 +124,15 @@ var getEtpRepresentList = function(req, res) {
                                 if ( (carousel_info.carousel_cnt * carousel_info.carousel_div) > index ) {
 
                                     rows.forEach(function(item, idx) {
-                                        total_amt += item.f15028;               /* 시가총액 */
+                                        total_amt += item.f15028;                       /* 시가총액 */
 
                                         // ctf 구분자가 1과 2일 경우 
                                         if (item.f16493 == '1' || item.f16493 == '2') {
                                             etf_cnt++; 
-                                            etf_sum += item.f15028;             /* ETF_시가총액 누적 */
+                                            etf_sum += item.f15028;                     /* ETF_시가총액 누적 */
                                         } else if (item.f16493 == '3' || item.f16493 == '4') {
                                             etn_cnt++; 
-                                            etn_sum += item.f15028;             /* ETN_시가총액 누적 */
+                                            etn_sum += item.f15028;                     /* ETN_시가총액 누적 */
                                         }
                                     });
 
@@ -151,12 +151,15 @@ var getEtpRepresentList = function(req, res) {
                                 } else {
 
                                     rows.forEach(function(item, idx) {
-                                        total_amt += item.f15028;
+                                        total_amt += item.f15028;                       /* 시가총액 */
+
                                         // ctf 구분자가 1과 2일 경우 
                                         if (item.f16493 == '1' || item.f16493 == '2') {
                                             etf_cnt++; 
+                                            etf_sum += item.f15028;                     /* ETF_시가총액 누적 */
                                         } else if (item.f16493 == '3' || item.f16493 == '4') {
                                             etn_cnt++; 
+                                            etn_sum += item.f15028;                     /* ETN_시가총액 누적 */
                                         }
                                     });
 
