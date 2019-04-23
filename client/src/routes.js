@@ -24,12 +24,12 @@ import EtpInfoMain   from './components/Home/MarketInfo/EtpInfoMain.vue'
 import MarktEtpSummaryInfo   from './components/Home/MarketInfo/EtfForList.vue'
 import MarketRepresent   from  './components/Home/MarketInfo/MarketRepresent.vue'
 import MarketSector   from  './components/Home/MarketInfo/MarketSector.vue'
-import EtnForList   from  './components/Home/MarketInfo/EtnForList.vue'
+import marketThema   from  './components/Home/MarketInfo/marketThema.vue'
 import MarketStrategy   from  './components/Home/MarketInfo/MarketStrategy.vue'
-import EtpforList6   from  './components/Home/MarketInfo/EtpforList6.vue'
-import EtpforList7   from  './components/Home/MarketInfo/EtpforList7.vue'
-import EtpforList8   from  './components/Home/MarketInfo/EtpforList8.vue'
-import EtpforList9   from  './components/Home/MarketInfo/EtpforList5.vue'
+import marketBond   from  './components/Home/MarketInfo/marketBond.vue'
+import marketOversea   from  './components/Home/MarketInfo/marketOversea.vue'
+import marketMix   from  './components/Home/MarketInfo/marketMix.vue'
+import marketItem   from  './components/Home/MarketInfo/marketItem.vue'
 
 
 // TODAY
@@ -50,10 +50,12 @@ export const routes = [
         {   path : 'info/etpinfo',
             component: EtpInfoMain,
             children: [
+/*                
                 {
                     path : 'marktEtpSummaryInfo',
                     component: MarktEtpSummaryInfo
                 }, 
+*/                
                 {
                     path : 'marketRepresent',
                     component: MarketRepresent
@@ -63,28 +65,28 @@ export const routes = [
                     component: MarketSector
                 }, 
                 {
-                    path : 'marketEtnForList',
-                    component: EtnForList
+                    path : 'marketThema',
+                    component: marketThema
                 }, 
                 {
                     path : 'marketStrategy',
                     component: MarketStrategy
                 }, 
                 {
-                    path : 'marketEtpforList6',
-                    component: EtpforList6
+                    path : 'marketBond',
+                    component: marketBond
                 }, 
                 {
-                    path : 'marketEtpforList7',
-                    component: EtpforList7
+                    path : 'marketOversea',
+                    component: marketOversea
                 }, 
                 {
-                    path : 'marketEtpforList8',
-                    component: EtpforList8
+                    path : 'marketMix',
+                    component: marketMix
                 }, 
                 {
-                    path : 'marketEtpforList9',
-                    component: EtpforList9
+                    path : 'marketItem',
+                    component: marketItem
                 }, 
             ]
         },
