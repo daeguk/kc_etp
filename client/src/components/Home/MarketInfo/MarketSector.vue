@@ -181,7 +181,6 @@ export default {
                     vm.carousel_info = response.data.carousel_info;
 
                     var items = null;
-
                     
                     for (let ctgCodeItem of vm.ctg_results) {
 
@@ -256,7 +255,7 @@ export default {
                                         { "data": "f15302", "orderable" : true}, /*추적오차율*/
                                         { "data": "f15304", "orderable" : true}, /*괴리율*/
                                         { "data": "f34777", "orderable" : true}, /*기초지수*/
-                                        { "data": "f15001", "orderable" : true}, /*지수현재가*/
+                                        { "data": "f15318", "orderable" : true}, /*지수현재가*/
                                         { "data": null, "orderable" : true, defaultContent:""},
                                     ]
                             }); 
@@ -282,7 +281,6 @@ export default {
                             
                         });
                     }
-
                 }
             });  
         },

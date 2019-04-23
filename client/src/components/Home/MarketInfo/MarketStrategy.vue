@@ -174,6 +174,7 @@ export default {
                 if (response.data.success == false) {
                     alert("해당 종목이 없습니다");
                 } else {
+                    
                     var etpLists = response.data.etpLists;
                     vm.carousel_data = response.data.carousel_data;
                     vm.carousel_mod = response.data.carousel_mod;
@@ -181,7 +182,8 @@ export default {
                     vm.carousel_info = response.data.carousel_info;
 
                     var items = null;
-                
+
+                     console.log("mod_data==="+JSON.stringify(vm.carousel_mod));
 
                     for (let ctgCodeItem of vm.ctg_results) {
 
@@ -255,8 +257,8 @@ export default {
                                         { "data": "f03329", "orderable" : true}, /*전일최종Nav*/
                                         { "data": "f15302", "orderable" : true}, /*추적오차율*/
                                         { "data": "f15304", "orderable" : true}, /*괴리율*/
-                                        { "data": "f34777", "orderable" : true}, /*기초지수*/
-                                        { "data": "f15001", "orderable" : true}, /*지수현재가*/
+                                        { "data": "f34777", "orderable" : true}, /*기초지수명*/
+                                        { "data": "f15318", "orderable" : true}, /*지수현재가*/
                                         { "data": null, "orderable" : true, defaultContent:""},
                                     ]
                             }); 
