@@ -206,7 +206,7 @@
                 ,   td_etp_basic.F16002                                 AS  f16002              /* 한글종목명 */
                 ,   td_etp_basic.F16003                                 AS  f16003              /* 한글종목약명 */
                 ,   td_etp_basic.F16017                                 AS  f16017              /* 상장일 */
-                ,   CASE WHEN DATE_FORMAT(f16017, '%Y%m%d') > DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y%m%d') then "Y" ELSE "N" END AS" NEW_YN
+                ,   CASE WHEN DATE_FORMAT(f16017, '%Y%m%d') > DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y%m%d') then "Y" ELSE "N" END    AS  NEW_YN
                 ,   td_etp_basic.F15001                                 AS  f15001              /* 현재가 */
                 ,   td_etp_basic.F15472                                 AS  f15472              /* 대비 */
                 ,   td_etp_basic.F15004                                 AS  f15004              /* 등락율 */
