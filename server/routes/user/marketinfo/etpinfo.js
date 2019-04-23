@@ -283,15 +283,19 @@ var getEtpList = function(req, res) {
 
             var funcList =   [];
 
+            /* 001-시장대표 인 경우 - 메인화면 상단의 데이터 조회를 위해 4개 함수를 호출하게 한다. */
             if( paramData.ctg_large_code    ==  "001" ) {
                 funcList.push( etpFunc1 );
                 funcList.push( etpFunc2 );
                 funcList.push( etpFunc3 );
                 funcList.push( etpFunc4 );
-            }else{
+            }
+            /* 그외 인경우 - 테이블 정보 조회를 위해 2개 함수만 호출하게 한다. */
+            else{
                 funcList.push( etpFunc3_1 );
                 funcList.push( etpFunc4 );
             }
+
 
             async.waterfall( funcList, function (err) {
 
