@@ -70,6 +70,10 @@ module.exports = {
 
         { file: './user/marketInfo/marketInfo', path: '/user/marketinfo/getMarketCtgCodeInfo', method: 'getMarketCtgCodeInfo', session: 'check', type: 'get' },
         { file: './user/marketInfo/marketInfo', path: '/user/marketinfo/getSectorEtpList', method: 'getSectorEtpList', session: 'check', type: 'get' },
+
+        { file: './user/marketInfo/marketDetail', path: '/user/marketinfo/getEtpBasic', method: 'getEtpBasic', session: 'check', type: 'post' },
+        { file: './user/marketInfo/marketDetail', path: '/user/marketinfo/getEtpInfo', method: 'getEtpInfo', session: 'check', type: 'post' },
+        { file: './user/marketInfo/marketDetail', path: '/user/marketinfo/getEtpChartData', method: 'getEtpChartData', session: 'check', type: 'post' },
         
         //풀 테스트 
 

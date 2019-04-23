@@ -501,10 +501,12 @@ export default {
                             // 테이블별 이벤트
                             $('#' + vm.table_name + ctgCodeItem.ctg_code+' tbody').on('click', 'button', function () {
                                 var table = $('#' + vm.table_name + ctgCodeItem.ctg_code).DataTable();
-                                var data = table.row( this ).data();    
+                                var data = table.row( this ).data(); 
+
                                 if ($(this).attr('id') == 'detail') {
                                     
                                     console.log('move detailPage ');
+                                    vm.movePage(data.JISU_CD, data.MARKET_ID);
                                 } else {
                                     console.log('move pdfPage ');
                                 }
@@ -515,7 +517,12 @@ export default {
                     }
                 }
             });
+        },
+        
+        movePage: function(jisu_cd, market_id) {
+            this.$router.push({path: '/index/manage/IndexListdetail', query :{'jisu_cd':jisu_cd, 'market_id':market_id}});
         }
+        
     }
 };
 </script>

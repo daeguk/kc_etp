@@ -81,6 +81,7 @@ module.exports = class {
         ibatisMapper.createMapper(['./database/mysql/user/etpinfo/etpregister.xml']);
 
         ibatisMapper.createMapper(['./database/mysql/user/marketInfo/marketInfo.xml']);
+        ibatisMapper.createMapper(['./database/mysql/user/marketInfo/marketDetail.xml']);
 
         return ibatisMapper;
     }
