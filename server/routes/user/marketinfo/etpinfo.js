@@ -52,216 +52,248 @@ var getEtpList = function(req, res) {
             carousel_cnt    :   0,
             carousel_mod    :   0,
             carousel_div    :   4
-        };          
+        };
 
         Promise.using(pool.connect(), conn => {
 
+            /* 1. 시장을 대표하는 메인 코드정보를 조회한다. */
+            var etpFunc1    =   function( callback ) {
 
-            async.waterfall([
+                paramData.com_mst_cd    =   "COM003";       /* 시장을 대표하는 지수 */
+                stmt = mapper.getStatement('etpinfo', 'getIndexInfoByCodeDtl', paramData, format);
+                console.log( "etpinfo.getIndexInfoByCodeDtl query call");
 
-                /* 1. 시장을 대표하는 메인 코드정보를 조회한다. */
-                function( callback ) {                  
+                conn.query(stmt, function( err, rows ) {
 
-                    paramData.com_mst_cd    =   "COM003";       /* 시장을 대표하는 지수 */
-                    stmt = mapper.getStatement('etpinfo', 'getIndexInfoByCodeDtl', paramData, format);
-                    //console.log(stmt);
+                    if( err ) {
+                        resultMsg.result    =   false;
+                        resultMsg.msg       =   "[error] etpinfo.getIndexInfoByCodeDtl Error while performing Query";
+                        resultMsg.err       =   err;
 
-                    conn.query(stmt, function( err, rows ) {
+                        return callback( resultMsg );
+                    }
 
-                        if( err ) {
-                            resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] etpinfo.getIndexInfoByCodeDtl Error while performing Query";
-                            resultMsg.err       =   err;
+                    if ( rows ) {
+                        carousel_info.carousel_cnt =  Math.floor( rows.length / carousel_info.carousel_div);
+                        carousel_info.carousel_mod =  rows.length % carousel_info.carousel_div;
 
-                            return callback( resultMsg );
-                        }
+                        resultMsg.codeList          =   rows;
+                    }
 
-                        if ( rows ) {
-                            carousel_info.carousel_cnt =  Math.floor( rows.length / carousel_info.carousel_div);
-                            carousel_info.carousel_mod =  rows.length % carousel_info.carousel_div;
+                    callback( null, paramData );
+                });
+            };
 
-                            resultMsg.codeList          =   rows;
-                        }
+            /* 2. 시장을 대표하는 코드 (COM003) 에 속한 지수별 데이터를 조회한다. */
+            var etpFunc2    =   function( data, callback ) { 
 
-                        callback( null, paramData );
-                    });
-                },
+                var carousel_data =   [];
+                var carousel_mod = [];
 
-                /* 2. 시장을 대표하는 코드 (COM003) 에 속한 지수별 데이터를 조회한다. */
-                function( data, callback ) { 
+                var total_amt = 0;  /* 전체 금액 */
 
-                    var carousel_data =   [];
-                    var carousel_mod = [];
+                var etf_cnt = 0;    /* ETF 건수, 합계 */
+                var etf_sum = 0;
 
-                    var total_amt = 0;  /* 전체 금액 */
+                var etn_cnt = 0;    /* ETN 건수, 합계 */
+                var etn_sum = 0;
 
-                    var etf_cnt = 0;    /* ETF 건수, 합계 */
-                    var etf_sum = 0;
+                async.forEachOf( resultMsg.codeList, function ( ctgCodeItem, index, inner_callback ){
 
-                    var etn_cnt = 0;    /* ETN 건수, 합계 */
-                    var etn_sum = 0;
-
-                    async.forEachOf( resultMsg.codeList, function ( ctgCodeItem, index, inner_callback ){
-
-                        paramData.com_val01     =   ctgCodeItem.com_val01;
-                        paramData.com_val02     =   ctgCodeItem.com_val02;
-                        paramData.com_val03     =   ctgCodeItem.com_val03;
-                        stmt = mapper.getStatement('etpinfo', 'getJisuListByEtpRepresent', paramData, format);
-                        console.log(stmt);
-
-                        conn.query(stmt, function( err, rows ) {
-
-                            if( err ) {
-                                resultMsg.result    =   false;
-                                resultMsg.msg       =   "[error] etpinfo.getJisuListByEtpRepresent Error while performing Query";
-                                resultMsg.err       =   err;
-
-                                return inner_callback( resultMsg );
-                            }
-
-                            if( rows ) {
-
-                                if ( (carousel_info.carousel_cnt * carousel_info.carousel_div) > index ) {
-
-                                    rows.forEach(function(item, idx) {
-                                        total_amt += item.f15028;                       /* 시가총액 */
-
-                                        // ctf 구분자가 1과 2일 경우 
-                                        if (item.f16493 == '1' || item.f16493 == '2') {
-                                            etf_cnt++; 
-                                            etf_sum += item.f15028;                     /* ETF_시가총액 누적 */
-                                        } else if (item.f16493 == '3' || item.f16493 == '4') {
-                                            etn_cnt++; 
-                                            etn_sum += item.f15028;                     /* ETN_시가총액 누적 */
-                                        }
-                                    });
-
-                                    carousel_data.push({
-                                            "name"      :   ctgCodeItem.f16002          /* 한글종목명 */
-                                        ,   "total_amt" :   total_amt
-                                        ,   "etf_cnt"   :   etf_cnt
-                                        ,   "etf_sum"   :   etf_sum
-
-                                        ,   "etf_sum"   :   etf_sum
-                                        ,   "etn_sum"   :   etn_sum
-                                        ,   "f15001"    :   ctgCodeItem.f15001          /* 현재가 */
-                                        ,   "f15472"    :   ctgCodeItem.f15472          /* 대비 */
-                                        ,   "f15004"    :   ctgCodeItem.f15004          /* 등락율 */
-                                    });
-                                } else {
-
-                                    rows.forEach(function(item, idx) {
-                                        total_amt += item.f15028;                       /* 시가총액 */
-
-                                        // ctf 구분자가 1과 2일 경우 
-                                        if (item.f16493 == '1' || item.f16493 == '2') {
-                                            etf_cnt++; 
-                                            etf_sum += item.f15028;                     /* ETF_시가총액 누적 */
-                                        } else if (item.f16493 == '3' || item.f16493 == '4') {
-                                            etn_cnt++; 
-                                            etn_sum += item.f15028;                     /* ETN_시가총액 누적 */
-                                        }
-                                    });
-
-                                    carousel_data.push({
-                                            "name"      :   ctgCodeItem.f16002          /* 한글종목명 */
-                                        ,   "total_amt" :   total_amt
-                                        ,   "etf_cnt"   :   etf_cnt
-                                        ,   "etf_sum"   :   etf_sum
-
-                                        ,   "etf_sum"   :   etf_sum
-                                        ,   "etn_sum"   :   etn_sum
-                                        ,   "f15001"    :   ctgCodeItem.f15001          /* 현재가 */
-                                        ,   "f15472"    :   ctgCodeItem.f15472          /* 대비 */
-                                        ,   "f15004"    :   ctgCodeItem.f15004          /* 등락율 */
-                                    });
-                                }
-                            }
-
-                            inner_callback( null );
-                        });
-
-                    }, function(err){
-
-                        if(err){
-                            return callback( resultMsg );
-                        }else{
-                            resultMsg.carousel_info     =   carousel_info;
-                            resultMsg.carousel_mod      =   carousel_mod;
-                            resultMsg.carousel_data     =   carousel_data;
-
-                            return callback( null, paramData );;
-                        }
-                    });
-                },
-
-                /* 3. 분류코드별 지수정보를 조회한다. */
-                function( data, callback ) { 
-
-                    stmt = mapper.getStatement('etpinfo', 'getJisuListByCtgCode', paramData, format);
-                    console.log(stmt);
+                    paramData.com_val01     =   ctgCodeItem.com_val01;
+                    paramData.com_val02     =   ctgCodeItem.com_val02;
+                    paramData.com_val03     =   ctgCodeItem.com_val03;
+                    stmt = mapper.getStatement('etpinfo', 'getJisuListByEtpRepresent', paramData, format);
+                    console.log( "etpinfo.getJisuListByEtpRepresent query call");
 
                     conn.query(stmt, function( err, rows ) {
 
                         if( err ) {
                             resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] etpinfo.getJisuListByCtgCode Error while performing Query";
+                            resultMsg.msg       =   "[error] etpinfo.getJisuListByEtpRepresent Error while performing Query";
                             resultMsg.err       =   err;
 
-                            return callback( resultMsg );
+                            return inner_callback( resultMsg );
                         }
 
-                        if ( rows ) {
-                            resultMsg.ctgCodeList   =   rows;
-                        }
+                        if( rows ) {
 
-                        callback( null, paramData );
-                    });
-                },
+                            if ( (carousel_info.carousel_cnt * carousel_info.carousel_div) > index ) {
 
-                /* 4. 지수별 ETP 목록을 조회한다. */
-                function( data, callback ) { 
+                                rows.forEach(function(item, idx) {
+                                    total_amt += item.f15028;                       /* 시가총액 */
 
-                    var etpLists    =   [];
+                                    // ctf 구분자가 1과 2일 경우 
+                                    if (item.f16493 == '1' || item.f16493 == '2') {
+                                        etf_cnt++; 
+                                        etf_sum += item.f15028;                     /* ETF_시가총액 누적 */
+                                    } else if (item.f16493 == '3' || item.f16493 == '4') {
+                                        etn_cnt++; 
+                                        etn_sum += item.f15028;                     /* ETN_시가총액 누적 */
+                                    }
+                                });
 
-                    /* ctg_code 별로 ETP 목록 데이터를 조회한다. */
-                    async.forEachOf( resultMsg.ctgCodeList, function ( innerData, i, inner_callback ){
+                                carousel_data.push({
+                                        "name"      :   ctgCodeItem.f16002          /* 한글종목명 */
+                                    ,   "total_amt" :   total_amt
+                                    ,   "etf_cnt"   :   etf_cnt
+                                    ,   "etf_sum"   :   etf_sum
 
-                        paramData.ctg_code  =   innerData.ctg_code;
-                        stmt = mapper.getStatement('etpinfo', 'getEtpListByJisu', paramData, format);
-                        console.log(stmt);
+                                    ,   "etf_sum"   :   etf_sum
+                                    ,   "etn_sum"   :   etn_sum
+                                    ,   "f15001"    :   ctgCodeItem.f15001          /* 현재가 */
+                                    ,   "f15472"    :   ctgCodeItem.f15472          /* 대비 */
+                                    ,   "f15004"    :   ctgCodeItem.f15004          /* 등락율 */
+                                });
+                            } else {
 
-                        conn.query(stmt, function( err, rows ) {
+                                rows.forEach(function(item, idx) {
+                                    total_amt += item.f15028;                       /* 시가총액 */
 
-                            if( err ) {
-                                resultMsg.result    =   false;
-                                resultMsg.msg       =   "[error] etpinfo.getEtpListByJisu Error while performing Query";
-                                resultMsg.err       =   err;
+                                    // ctf 구분자가 1과 2일 경우 
+                                    if (item.f16493 == '1' || item.f16493 == '2') {
+                                        etf_cnt++; 
+                                        etf_sum += item.f15028;                     /* ETF_시가총액 누적 */
+                                    } else if (item.f16493 == '3' || item.f16493 == '4') {
+                                        etn_cnt++; 
+                                        etn_sum += item.f15028;                     /* ETN_시가총액 누적 */
+                                    }
+                                });
 
-                                return inner_callback( resultMsg );
+                                carousel_data.push({
+                                        "name"      :   ctgCodeItem.f16002          /* 한글종목명 */
+                                    ,   "total_amt" :   total_amt
+                                    ,   "etf_cnt"   :   etf_cnt
+                                    ,   "etf_sum"   :   etf_sum
+
+                                    ,   "etf_sum"   :   etf_sum
+                                    ,   "etn_sum"   :   etn_sum
+                                    ,   "f15001"    :   ctgCodeItem.f15001          /* 현재가 */
+                                    ,   "f15472"    :   ctgCodeItem.f15472          /* 대비 */
+                                    ,   "f15004"    :   ctgCodeItem.f15004          /* 등락율 */
+                                });
                             }
-
-                            if( rows ) {
-                                etpLists.push( rows );
-                            }
-
-                            inner_callback( null );
-                        });
-
-                    }, function(err){
-
-                        if(err){
-                            return callback( resultMsg );
-                        }else{
-                            resultMsg.etpLists          =   etpLists;
-
-                            return callback( null );
                         }
+
+                        inner_callback( null );
                     });
 
-                }                
+                }, function(err){
 
-            ], function (err) {
+                    if(err){
+                        return callback( resultMsg );
+                    }else{
+                        resultMsg.carousel_info     =   carousel_info;
+                        resultMsg.carousel_mod      =   carousel_mod;
+                        resultMsg.carousel_data     =   carousel_data;
+
+                        return callback( null, paramData );;
+                    }
+                });
+            };
+
+            var etpFunc3_1      =   function( callback ) { 
+
+                stmt = mapper.getStatement('etpinfo', 'getJisuListByCtgCode', paramData, format);
+                console.log( "etpinfo.getJisuListByCtgCode query call");
+
+                conn.query(stmt, function( err, rows ) {
+
+                    if( err ) {
+                        resultMsg.result    =   false;
+                        resultMsg.msg       =   "[error] etpinfo.getJisuListByCtgCode Error while performing Query";
+                        resultMsg.err       =   err;
+
+                        return callback( resultMsg );
+                    }
+
+                    if ( rows ) {
+                        resultMsg.ctgCodeList   =   rows;
+                    }
+
+                    callback( null, paramData );
+                });
+            };
+
+            /* 3. 분류코드별 지수정보를 조회한다. */
+            var etpFunc3    =   function( data, callback ) { 
+
+                stmt = mapper.getStatement('etpinfo', 'getJisuListByCtgCode', paramData, format);
+                console.log( "etpinfo.getJisuListByCtgCode query call");
+
+                conn.query(stmt, function( err, rows ) {
+
+                    if( err ) {
+                        resultMsg.result    =   false;
+                        resultMsg.msg       =   "[error] etpinfo.getJisuListByCtgCode Error while performing Query";
+                        resultMsg.err       =   err;
+
+                        return callback( resultMsg );
+                    }
+
+                    if ( rows ) {
+                        resultMsg.ctgCodeList   =   rows;
+                    }
+
+                    callback( null, paramData );
+                });
+            };
+
+            /* 4. 지수별 ETP 목록을 조회한다. */
+            var etpFunc4    =   function( data, callback ) { 
+
+                var etpLists    =   [];
+
+                /* ctg_code 별로 ETP 목록 데이터를 조회한다. */
+                async.forEachOf( resultMsg.ctgCodeList, function ( innerData, i, inner_callback ){
+
+                    paramData.ctg_code  =   innerData.ctg_code;
+                    stmt = mapper.getStatement('etpinfo', 'getEtpListByJisu', paramData, format);
+                    console.log( "etpinfo.getEtpListByJisu query call");
+
+                    conn.query(stmt, function( err, rows ) {
+
+                        if( err ) {
+                            resultMsg.result    =   false;
+                            resultMsg.msg       =   "[error] etpinfo.getEtpListByJisu Error while performing Query";
+                            resultMsg.err       =   err;
+
+                            return inner_callback( resultMsg );
+                        }
+
+                        if( rows ) {
+                            etpLists.push( rows );
+                        }
+
+                        inner_callback( null );
+                    });
+
+                }, function(err){
+
+                    if(err){
+                        return callback( resultMsg );
+                    }else{
+                        resultMsg.etpLists          =   etpLists;
+
+                        return callback( null );
+                    }
+                });
+            };            
+
+
+            var funcList =   [];
+
+            if( paramData.ctg_large_code    ==  "001" ) {
+                funcList.push( etpFunc1 );
+                funcList.push( etpFunc2 );
+                funcList.push( etpFunc3 );
+                funcList.push( etpFunc4 );
+            }else{
+                funcList.push( etpFunc3_1 );
+                funcList.push( etpFunc4 );
+            }
+
+            async.waterfall( funcList, function (err) {
 
                 if( err ) {
                     console.log( err );
