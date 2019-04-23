@@ -475,12 +475,10 @@ export default {
                     } else {
                         var items = response.data.results;
 
-                        console.log("response=" + JSON.stringify(items));
+                        //console.log("response=" + JSON.stringify(items));
                         this.results = items;
                         this.list_cnt = this.results.length;
-                        debugger;
-                        table = $("#example1").DataTable({
- 
+                          table = $("#example1").DataTable({
                             processing: true,
                             serverSide: false,
                             info: true, // control table information display field
@@ -489,10 +487,18 @@ export default {
                             paging: false,
                             searching: false,
                             data: this.results,
-                            columnDefs: [
+                            //list_cnt : this.results.length,
+                               columnDefs: [
+                                 {  
+                                     "data": "num",
+                                     "render": function ( data, type, row ,meta) {
+                                        return meta.row + meta.settings._iDisplayStart + 1;
+                                    },   
+                                    "targets": 1 
+                                },  
                                 {  
                                     "render": function ( data, type, row ) {
-                                        var etpType = (row.etp_type == 'ETN')  ? 'iIV' :'iNAV' ;
+                                        var etpType = (row.etp_type == "ETN")  ? "iIV" : "iNAV" ;
                                         let shtml = "" ;
                                         if (row.isin_stat_cd == "0001"|| row.isin_stat_cd == "0008" ) {
                                             shtml += "<button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='off'>기초지수</button><button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='off'>" + etpType + "</button>"; 
@@ -535,7 +541,7 @@ export default {
                                    defaultContent:
                                         "<input type='checkbox' color='primary' v-model='selected2' label='' value=''>"
                                 },
-                                { "data": "index", "orderable" : false },
+                                { "data" : "num" , "orderable" : true },
                                 { "data": "inst_nm", "orderable" : true },
                                 { "data": "isu_kor_nm", "orderable" : true },
                                 { "data": "req_date", "orderable" : true },
@@ -547,6 +553,7 @@ export default {
                                   },
                                 { data: null, className: "checks", defaultContent: "", "orderable" : false,}
                             ]
+
                         });
                     }
                     this.loadingbar = false;
