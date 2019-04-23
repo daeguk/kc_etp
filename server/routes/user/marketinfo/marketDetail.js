@@ -15,12 +15,12 @@ var async = require('async');
 
 
 /*
- * ETP 정보를 조회한다.
- * 2019-04-19  bkLove(촤병국)
+ * ETP 의 기본정보를 조회한다.
+ * 2019-04-25  bkLove(촤병국)
  */
-var getEtpList = function(req, res) {
+var getEtpBasic = function(req, res) {
     try {
-        console.log('etpinfo.getEtpList 호출됨.');
+        console.log('marketDetail.getEtpBasic 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -28,11 +28,110 @@ var getEtpList = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            console.log("[error] etpinfo.getEtpList  req.body.data no data.");
+            console.log("[error] marketDetail.getEtpBasic  req.body.data no data.");
             console.log(req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] etpinfo.getEtpList  req.body.data no data.";
+            resultMsg.msg = "[error] marketDetail.getEtpBasic  req.body.data no data.";
+            
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse( JSON.stringify(req.body.data) );
+
+        paramData.user_id       =   req.session.user_id;
+        paramData.inst_cd       =   req.session.inst_cd;
+        paramData.inst_type_cd  =   req.session.inst_type_cd;
+        paramData.large_type    =   req.session.large_type;
+
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        Promise.using(pool.connect(), conn => {
+
+
+            async.waterfall([
+
+                /* 1. 지수정보를 조회한다. */
+                function( callback ) {
+
+                    stmt = mapper.getStatement('marketDetail', 'getEtpBasic', paramData, format);
+                    console.log(stmt);
+
+                    conn.query(stmt, function( err, rows ) {
+
+                        if( err ) {
+                            resultMsg.result    =   false;
+                            resultMsg.msg       =   "[error] marketDetail.getEtpBasic Error while performing Query";
+                            resultMsg.err       =   err;
+
+                            return callback( resultMsg );
+                        }
+
+                        if ( rows && rows.length == 1 ) {
+                            resultMsg.etpBasic  = rows[0];
+                        }
+
+                        callback( null );
+                    });
+                }
+
+            ], function (err) {
+
+                if( err ) {
+                    console.log( err );
+                }else{
+
+                    resultMsg.result    =   true;
+                    resultMsg.msg       =   "";
+                    resultMsg.err       =   null;
+                }
+
+                res.json( resultMsg );
+                res.end();
+            });
+        });
+
+    } catch(expetion) {
+
+        console.log(expetion);
+
+        if( resultMsg && !resultMsg.msg ) {
+            resultMsg.result    =   false;
+            resultMsg.msg       =   "[error] marketDetail.getEtpBasic 오류가 발생하였습니다.";
+            resultMsg.err       =   expetion;
+        }
+
+        resultMsg.etpBasic          =   {};
+
+        res.json({
+            resultMsg
+        });
+        res.end();  
+    }
+}
+
+
+/*
+ * ETP 정보를 조회한다. ( 분석정보, 포트폴리오, 성능정보 )
+ * 2019-04-25  bkLove(촤병국)
+ */
+var getEtpInfo = function(req, res) {
+    try {
+        console.log('marketDetail.getEtpInfo 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            console.log("[error] marketDetail.getEtpInfo  req.body.data no data.");
+            console.log(req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = "[error] marketDetail.getEtpInfo  req.body.data no data.";
             
             throw resultMsg;
         }
@@ -60,14 +159,14 @@ var getEtpList = function(req, res) {
             var etpFunc1    =   function( callback ) {
 
                 paramData.com_mst_cd    =   "COM003";       /* 시장을 대표하는 지수 */
-                stmt = mapper.getStatement('etpinfo', 'getIndexInfoByCodeDtl', paramData, format);
-                console.log( "etpinfo.getIndexInfoByCodeDtl query call");
+                stmt = mapper.getStatement('marketDetail', 'getIndexInfoByCodeDtl', paramData, format);
+                console.log( "marketDetail.getIndexInfoByCodeDtl query call");
 
                 conn.query(stmt, function( err, rows ) {
 
                     if( err ) {
                         resultMsg.result    =   false;
-                        resultMsg.msg       =   "[error] etpinfo.getIndexInfoByCodeDtl Error while performing Query";
+                        resultMsg.msg       =   "[error] marketDetail.getIndexInfoByCodeDtl Error while performing Query";
                         resultMsg.err       =   err;
 
                         return callback( resultMsg );
@@ -103,14 +202,14 @@ var getEtpList = function(req, res) {
                     paramData.com_val01     =   ctgCodeItem.com_val01;
                     paramData.com_val02     =   ctgCodeItem.com_val02;
                     paramData.com_val03     =   ctgCodeItem.com_val03;
-                    stmt = mapper.getStatement('etpinfo', 'getJisuListByEtpRepresent', paramData, format);
-                    console.log( "etpinfo.getJisuListByEtpRepresent query call");
+                    stmt = mapper.getStatement('marketDetail', 'getJisuListByEtpRepresent', paramData, format);
+                    console.log( "marketDetail.getJisuListByEtpRepresent query call");
 
                     conn.query(stmt, function( err, rows ) {
 
                         if( err ) {
                             resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] etpinfo.getJisuListByEtpRepresent Error while performing Query";
+                            resultMsg.msg       =   "[error] marketDetail.getJisuListByEtpRepresent Error while performing Query";
                             resultMsg.err       =   err;
 
                             return inner_callback( resultMsg );
@@ -194,14 +293,14 @@ var getEtpList = function(req, res) {
 
             var etpFunc3_1      =   function( callback ) { 
 
-                stmt = mapper.getStatement('etpinfo', 'getJisuListByCtgCode', paramData, format);
-                console.log( "etpinfo.getJisuListByCtgCode query call");
+                stmt = mapper.getStatement('marketDetail', 'getJisuListByCtgCode', paramData, format);
+                console.log( "marketDetail.getJisuListByCtgCode query call");
 
                 conn.query(stmt, function( err, rows ) {
 
                     if( err ) {
                         resultMsg.result    =   false;
-                        resultMsg.msg       =   "[error] etpinfo.getJisuListByCtgCode Error while performing Query";
+                        resultMsg.msg       =   "[error] marketDetail.getJisuListByCtgCode Error while performing Query";
                         resultMsg.err       =   err;
 
                         return callback( resultMsg );
@@ -218,14 +317,14 @@ var getEtpList = function(req, res) {
             /* 3. 분류코드별 지수정보를 조회한다. */
             var etpFunc3    =   function( data, callback ) { 
 
-                stmt = mapper.getStatement('etpinfo', 'getJisuListByCtgCode', paramData, format);
-                console.log( "etpinfo.getJisuListByCtgCode query call");
+                stmt = mapper.getStatement('marketDetail', 'getJisuListByCtgCode', paramData, format);
+                console.log( "marketDetail.getJisuListByCtgCode query call");
 
                 conn.query(stmt, function( err, rows ) {
 
                     if( err ) {
                         resultMsg.result    =   false;
-                        resultMsg.msg       =   "[error] etpinfo.getJisuListByCtgCode Error while performing Query";
+                        resultMsg.msg       =   "[error] marketDetail.getJisuListByCtgCode Error while performing Query";
                         resultMsg.err       =   err;
 
                         return callback( resultMsg );
@@ -248,14 +347,14 @@ var getEtpList = function(req, res) {
                 async.forEachOf( resultMsg.ctgCodeList, function ( innerData, i, inner_callback ){
 
                     paramData.ctg_code  =   innerData.ctg_code;
-                    stmt = mapper.getStatement('etpinfo', 'getEtpListByJisu', paramData, format);
-                    console.log( "etpinfo.getEtpListByJisu query call");
+                    stmt = mapper.getStatement('marketDetail', 'getEtpListByJisu', paramData, format);
+                    console.log( "marketDetail.getEtpListByJisu query call");
 
                     conn.query(stmt, function( err, rows ) {
 
                         if( err ) {
                             resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] etpinfo.getEtpListByJisu Error while performing Query";
+                            resultMsg.msg       =   "[error] marketDetail.getEtpListByJisu Error while performing Query";
                             resultMsg.err       =   err;
 
                             return inner_callback( resultMsg );
@@ -319,7 +418,7 @@ var getEtpList = function(req, res) {
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;
-            resultMsg.msg       =   "[error] etpinfo.getEtpList 오류가 발생하였습니다.";
+            resultMsg.msg       =   "[error] marketDetail.getEtpInfo 오류가 발생하였습니다.";
             resultMsg.err       =   expetion;
         }
 
@@ -337,118 +436,105 @@ var getEtpList = function(req, res) {
 }
 
 
+/* 
+ * ETP 차트 정보를 조회한다.
+ * 2019-04-25  bkLove(촤병국)
+ */
+var getEtpChartData = function(req, res) {
+    
+    try {
+        console.log('marketDetail.getEtpChartData 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            console.log("[error] marketDetail.getEtpChartData  req.body.data no data.");
+            console.log(req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = "[error] marketDetail.getEtpChartData  req.body.data no data.";
+            
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse( JSON.stringify(req.body.data) );
+
+        paramData.user_id       =   req.session.user_id;
+        paramData.inst_cd       =   req.session.inst_cd;
+        paramData.inst_type_cd  =   req.session.inst_type_cd;
+        paramData.large_type    =   req.session.large_type;
 
 
-var getEtfKorList = function(req, res) {
-    console.log('etpinfo 모듈 안에 있는 getEtpKorList 호출됨.');
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
 
-    var pool = req.app.get("pool");
-    var etpStmts = req.app.get("stmt");
+        Promise.using(pool.connect(), conn => {
 
-    // var options = {id:'admin'};
-    var options = {};
-    var stmt = etpStmts.EtpInfo.selectEtfKorList(options);
-    //console.log(stmt);
 
-    res.json({ success: true, results: rows });
-    res.end();
-/*
-    Promise.using(pool.connect(), conn => {
-      conn.queryAsync(stmt).then(rows => {
-              util.log("sql1" == rows.affectedRows)
-              res.json({ success: true, results: rows });
-              res.end();
-          }).catch(err => {
-              util.log("Error while performing Query.", err);
-              res.json({ success: false, message: err });
-              res.end();
-          });
-  
-     
-    });
-*/    
-};
+            async.waterfall([
 
-var getEtfForList = function(req, res) {
-  console.log('etpinfo 모듈 안에 있는 getEtfForList 호출됨.');
+                /* 1. 지수정보를 조회한다. */
+                function( callback ) {
 
-  var pool = req.app.get("pool");
-  var etpStmts = req.app.get("stmt");
+                    stmt = mapper.getStatement('marketDetail', 'getEtpChartData', paramData, format);
+                    console.log(stmt);
 
-  // var options = {id:'admin'};
-  var options = {};
-  var stmt = etpStmts.EtpInfo.selectEtfForList(options);
-  //console.log(stmt);
-  
-  Promise.using(pool.connect(), conn => {
-    conn.queryAsync(stmt).then(rows => {
-            util.log("sql1" == rows.affectedRows)
-            res.json({ success: true, results: rows });
-            res.end();
-        }).catch(err => {
-            util.log("Error while performing Query.", err);
-            res.json({ success: false, message: err });
-            res.end();
+                    conn.query(stmt, function( err, rows ) {
+
+                        if( err ) {
+                            resultMsg.result    =   false;
+                            resultMsg.msg       =   "[error] marketDetail.getEtpChartData Error while performing Query";
+                            resultMsg.err       =   err;
+
+                            return callback( resultMsg );
+                        }
+
+                        if ( rows ) {
+                            resultMsg.dataList = rows;
+                        }
+
+                        callback( null );
+                    });
+                }
+
+            ], function (err) {
+
+                if( err ) {
+                    console.log( err );
+                }else{
+
+                    resultMsg.result    =   true;
+                    resultMsg.msg       =   "";
+                    resultMsg.err       =   null;
+                }
+
+                res.json( resultMsg );
+                res.end();
+            });
+        });                
+
+    } catch(expetion) {
+
+        console.log(expetion);
+
+        if( resultMsg && !resultMsg.msg ) {
+            resultMsg.result    =   false;
+            resultMsg.msg       =   "[error] marketDetail.getEtpChartData 오류가 발생하였습니다.";
+            resultMsg.err       =   expetion;
+        }
+
+        resultMsg.dataList      =   [];
+        res.json({
+            resultMsg
         });
+        res.end();  
+    }
+}
 
-   
-  });
-};
 
-var getEtnKorList = function(req, res) {
-  console.log('etpinfo 모듈 안에 있는 getEtnKorList 호출됨.');
-
-  var pool = req.app.get("pool");
-  var etpStmts = req.app.get("stmt");
-
-  // var options = {id:'admin'};
-  var options = {};
-  var stmt = etpStmts.EtpInfo.selectEtnKorList(options);
-  //console.log(stmt);
-  
-  Promise.using(pool.connect(), conn => {
-    conn.queryAsync(stmt).then(rows => {
-            util.log("sql1" == rows.affectedRows)
-            res.json({ success: true, results: rows });
-            res.end();
-        }).catch(err => {
-            util.log("Error while performing Query.", err);
-            res.json({ success: false, message: err });
-            res.end();
-        });
-
-   
-  });
-};
-
-var getEtnForList = function(req, res) {
-  console.log('etpinfo 모듈 안에 있는 getEtnForList 호출됨.');
-
-  var pool = req.app.get("pool");
-  var etpStmts = req.app.get("stmt");
-
-  // var options = {id:'admin'};
-  var options = {};
-  var stmt = etpStmts.EtpInfo.selectEtnForList(options);
-  //console.log(stmt);
-  
-  Promise.using(pool.connect(), conn => {
-    conn.queryAsync(stmt).then(rows => {
-            util.log("sql1" == rows.affectedRows)
-            res.json({ success: true, results: rows });
-            res.end();
-        }).catch(err => {
-            util.log("Error while performing Query.", err);
-            res.json({ success: false, message: err });
-            res.end();
-        });
-
-   
-  });
-};
-
-module.exports.getEtfKorList = getEtfKorList;
-module.exports.getEtfForList = getEtfForList;
-module.exports.getEtnKorList = getEtnKorList;
-module.exports.getEtnForList = getEtnForList;
-module.exports.getEtpList = getEtpList;
+module.exports.getEtpBasic = getEtpBasic;
+module.exports.getEtpInfo = getEtpInfo;
+module.exports.getEtpChartData = getEtpChartData;

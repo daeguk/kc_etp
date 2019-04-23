@@ -69,6 +69,10 @@ module.exports = {
         { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getEtpList', method: 'getEtpList', session: 'check', type: 'post' },
         
         { file: './user/marketInfo/marketInfo', path: '/user/marketinfo/getSectorEtpList', method: 'getSectorEtpList', session: 'check', type: 'get' },
+
+        { file: './user/marketInfo/marketDetail', path: '/user/marketinfo/getEtpBasic', method: 'getEtpBasic', session: 'check', type: 'post' },
+        { file: './user/marketInfo/marketDetail', path: '/user/marketinfo/getEtpInfo', method: 'getEtpInfo', session: 'check', type: 'post' },
+        { file: './user/marketInfo/marketDetail', path: '/user/marketinfo/getEtpChartData', method: 'getEtpChartData', session: 'check', type: 'post' },
         
 
         // 공통 

@@ -9,7 +9,8 @@
     -->
     <select id="getIndexInfoByCodeDtl">
     <![CDATA[
-        SELECT      td_index_basic.f16013                               AS  f16013          /* 단축코드 */
+        SELECT      /* etpinfo.getIndexInfoByCodeDtl 시장을 대표하는 코드와 지수정보를 조회한다. */
+                    td_index_basic.f16013                               AS  f16013          /* 단축코드 */
                 ,   td_index_basic.f16002                               AS  f16002          /* 한글종목명 */
                 ,   td_index_basic.market_id                            AS  market_id       /* 시장 ID */
                 ,   td_index_basic.middle_type                          AS  middle_type     /* 지수중분류(FNGUIDE, WISEFN) */
@@ -49,7 +50,7 @@
     -->
     <select id="getJisuListByEtpRepresent">
     <![CDATA[
-        SELECT      /* etpinfo.getJisuListByEtpRepresent 시장을 대표하는 지수정보를 조회한다. */
+        SELECT      /* etpinfo.getJisuListByEtpRepresent 시장을 대표하는 코드 (COM003) 에 속한 지수별 데이터를 조회한다. */
 
                     DATE_FORMAT( td_etp_basic.F12506, '%Y.%m.%d' )      AS  f12506              /* 입회일 */
                 ,   td_etp_basic.F16012                                 AS  f16012              /* 국제표준코드 */
@@ -206,7 +207,10 @@
                 ,   td_etp_basic.F16002                                 AS  f16002              /* 한글종목명 */
                 ,   td_etp_basic.F16003                                 AS  f16003              /* 한글종목약명 */
                 ,   td_etp_basic.F16017                                 AS  f16017              /* 상장일 */
-                ,   CASE WHEN DATE_FORMAT(f16017, '%Y%m%d') > DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y%m%d') then "Y" ELSE "N" END AS NEW_YN
+                ,   CASE    WHEN    DATE_FORMAT(f16017, '%Y%m%d') > DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y%m%d') 
+                            THEN    "Y" 
+                            ELSE    "N" 
+                    END                                                 AS  NEW_YN              /* new 태그 표시여부 */
                 ,   td_etp_basic.F15001                                 AS  f15001              /* 현재가 */
                 ,   td_etp_basic.F15472                                 AS  f15472              /* 대비 */
                 ,   td_etp_basic.F15004                                 AS  f15004              /* 등락율 */
