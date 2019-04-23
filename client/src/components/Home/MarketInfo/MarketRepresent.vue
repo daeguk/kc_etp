@@ -78,13 +78,13 @@
                            {{item.ctg_name}}
                             <p>
                                 Total
-                                <span class="text_result" v-bind:id="'represent_count'+item.ctg_code">120</span> results
-                                <span v-bind:id="'represent_date'+item.ctg_code">기준일 :2018.10.20</span>
+                                <span class="text_result" v-bind:id="table_name + '_count'+item.ctg_code">120</span> results
+                                <span v-bind:id="table_name + '_date'+item.ctg_code">기준일 :2018.10.20</span>
                             </p>
                         </h3>
                     </v-card-title>
                     <v-card flat>
-                        <table v-bind:id="'represent'+item.ctg_code" class="tbl_type" style="width:100%">
+                        <table v-bind:id="table_name + item.ctg_code" class="tbl_type" style="width:100%">
                             <colgroup>
                                 <col width="20%">
                                 <col width="10%">
@@ -354,7 +354,7 @@ export default {
             ],
             items4: ["ETF", "ETN", "INDEX"],
 
-
+            table_name : "represent",
             ctg_results: [],
             carousel_info:[],
             carousel_data:[],
@@ -371,7 +371,7 @@ export default {
         }        
     },
     mounted: function() {
-        this.getEtpRepresentList();      
+        this.getEtpRepresentList();
     },
     created: function() {},
     beforeDestroy() {},
@@ -416,7 +416,7 @@ export default {
 
                         vm.$nextTick().then(() => {
                             items = etpLists[idx++];
-                            $('#represent'+ctgCodeItem.ctg_code).DataTable( {
+                            $('#' + vm.table_name + ctgCodeItem.ctg_code).DataTable( {
                                     "processing": true,
                                     "serverSide": false,
                                     "info": false,   // control table information display field
@@ -492,13 +492,13 @@ export default {
 
                             // ETP 갯수와 기준일 바인딩 
                             if (items) {
-                                $("#represent_count"+ctgCodeItem.ctg_code).html(items.length);
-                                $("#represent_date"+ctgCodeItem.ctg_code).html("기준일 :"+items[0].f12506);
+                                $("#" + vm.table_name + "_count"+ ctgCodeItem.ctg_code).html(items.length);
+                                $("#" + vm.table_name + "_date" + ctgCodeItem.ctg_code).html("기준일 :"+items[0].f12506);
                             }
 
                             // 테이블별 이벤트
-                            $('#represent'+ctgCodeItem.ctg_code+' tbody').on('click', 'button', function () {
-                                var table = $('#represent'+ctgCodeItem.ctg_code).DataTable();
+                            $('#' + vm.table_name + ctgCodeItem.ctg_code+' tbody').on('click', 'button', function () {
+                                var table = $('#' + vm.table_name + ctgCodeItem.ctg_code).DataTable();
                                 var data = table.row( this ).data();    
                                 if ($(this).attr('id') == 'detail') {
                                     
