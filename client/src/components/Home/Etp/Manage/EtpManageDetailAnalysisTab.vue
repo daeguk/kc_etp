@@ -227,7 +227,7 @@ export default {
     created: function() {},
     beforeDestroy() {},
     mounted: function() {
-        
+/*        
         var vm = this;
 
         vm.$root.$infopoptab1 = vm.$refs.$infopoptab1;
@@ -297,6 +297,7 @@ export default {
     
 
         vm.getIndexAnalysisInfo();
+*/        
 
     },
     methods: {

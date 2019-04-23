@@ -18,6 +18,11 @@ module.exports = {
 
         //일반 ETP register
         { file: './user/etp/etpApplyList', path: '/user/etp/getEtpApplyList', method: 'getEtpApplyList', session: 'uncheck', type: 'get' },
+
+        { file: './user/etp/etpDetail'      , path: '/user/etp/getEtpBasic'         , method: 'getEtpBasic'         , session: 'check', type: 'post' },
+        { file: './user/etp/etpDetail'      , path: '/user/etp/getEtpInfo'          , method: 'getEtpInfo'          , session: 'check', type: 'post' },
+        { file: './user/etp/etpDetail'      , path: '/user/etp/getEtpChartData'     , method: 'getEtpChartData'     , session: 'check', type: 'post' },
+
         //일반 INDEX register
 
         // 지수 요약 정보
@@ -69,11 +74,6 @@ module.exports = {
         { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getEtpList', method: 'getEtpList', session: 'check', type: 'post' },
         
         { file: './user/marketInfo/marketInfo', path: '/user/marketinfo/getSectorEtpList', method: 'getSectorEtpList', session: 'check', type: 'get' },
-
-        { file: './user/marketInfo/marketDetail', path: '/user/marketinfo/getEtpBasic', method: 'getEtpBasic', session: 'check', type: 'post' },
-        { file: './user/marketInfo/marketDetail', path: '/user/marketinfo/getEtpInfo', method: 'getEtpInfo', session: 'check', type: 'post' },
-        { file: './user/marketInfo/marketDetail', path: '/user/marketinfo/getEtpChartData', method: 'getEtpChartData', session: 'check', type: 'post' },
-        
 
         // 공통 
         { file: './user/common/itemInfo', path: '/user/common/getFavorItemInfo', method: 'getFavorItemInfo', session: 'check', type: 'get' },
