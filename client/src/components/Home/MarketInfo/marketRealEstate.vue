@@ -367,8 +367,10 @@ export default {
                                             "render": function ( data, type, row ) {
                                                 let htm = "<span>";
                                                 htm += "           <b>"+data+"</b>";
-                                                htm += "            <br>"+row.f16013+" <span><div class='text_new'>new</div></span>";
-                                                htm += "        </span>";
+                                                htm += "            <br>"+row.f16013;
+                                                if (row.NEW_YN == "Y") {
+                                                    htm += "<span><div class='text_new'>new</div></span>";
+                                                }
                                                 return htm;
                                             },
                                             "targets": 0
