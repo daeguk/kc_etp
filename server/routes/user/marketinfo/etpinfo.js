@@ -15,12 +15,12 @@ var async = require('async');
 
 
 /*
- * 시장대표 정보를 조회한다. ( ETP 시장정보 -> 시장대표 탭 클릭시 )
+ * ETP 정보를 조회한다.
  * 2019-04-19  bkLove(촤병국)
  */
-var getEtpRepresentList = function(req, res) {
+var getEtpList = function(req, res) {
     try {
-        console.log('etpinfo.getEtpRepresentList 호출됨.');
+        console.log('etpinfo.getEtpList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -28,11 +28,11 @@ var getEtpRepresentList = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            console.log("[error] etpinfo.getEtpRepresentList  req.body.data no data.");
+            console.log("[error] etpinfo.getEtpList  req.body.data no data.");
             console.log(req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] etpinfo.getEtpRepresentList  req.body.data no data.";
+            resultMsg.msg = "[error] etpinfo.getEtpList  req.body.data no data.";
             
             throw resultMsg;
         }
@@ -193,7 +193,7 @@ var getEtpRepresentList = function(req, res) {
                             return callback( null, paramData );;
                         }
                     });
-                },              
+                },
 
                 /* 3. 분류코드별 지수정보를 조회한다. */
                 function( data, callback ) { 
@@ -283,7 +283,7 @@ var getEtpRepresentList = function(req, res) {
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;
-            resultMsg.msg       =   "[error] etpinfo.getEtpRepresentList 오류가 발생하였습니다.";
+            resultMsg.msg       =   "[error] etpinfo.getEtpList 오류가 발생하였습니다.";
             resultMsg.err       =   expetion;
         }
 
@@ -415,4 +415,4 @@ module.exports.getEtfKorList = getEtfKorList;
 module.exports.getEtfForList = getEtfForList;
 module.exports.getEtnKorList = getEtnKorList;
 module.exports.getEtnForList = getEtnForList;
-module.exports.getEtpRepresentList = getEtpRepresentList;
+module.exports.getEtpList = getEtpList;
