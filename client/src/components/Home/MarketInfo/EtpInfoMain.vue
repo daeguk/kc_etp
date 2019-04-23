@@ -33,12 +33,12 @@ export default {
                 { id: 1, name: "전체", route: '/info/etpinfo/marktEtpSummaryInfo' },
                 { id: 2, name: "시장대표", route: '/info/etpinfo/marketRepresent' },
                 { id: 3, name: "섹터", route: '/info/etpinfo/marketSector' },
-                { id: 4, name: "테마", route: '/info/etpinfo/marketEtnForList' },
+                { id: 4, name: "테마", route: '/info/etpinfo/marketThema' },
                 { id: 5, name: "전략", route: '/info/etpinfo/marketStrategy' },
-                { id: 6, name: "채권", route: '/info/etpinfo/marketEtpforList6' },
-                { id: 7, name: "해외", route: '/info/etpinfo/marketEtpforList7' },
-                { id: 8, name: "혼합", route: '/info/etpinfo/marketEtpforList8' },
-                { id: 9, name: "상품", route: '/info/etpinfo/marketEtpforList9' }
+                { id: 6, name: "채권", route: '/info/etpinfo/marketBond' },
+                { id: 7, name: "해외", route: '/info/etpinfo/marketOversea' },
+                { id: 8, name: "혼합", route: '/info/etpinfo/marketMix' },
+                { id: 9, name: "상품", route: '/info/etpinfo/marketItem' }
             ],
     	};
     },    
