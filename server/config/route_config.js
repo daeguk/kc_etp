@@ -66,11 +66,19 @@ module.exports = {
         { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getetfforlist', method: 'getEtfForList', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getetnkorlist', method: 'getEtnKorList', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getetnforlist', method: 'getEtnForList', session: 'uncheck', type: 'get' },
-        { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getEtpRepresentList', method: 'getEtpRepresentList', session: 'check', type: 'post' },
-
-        { file: './user/marketInfo/marketInfo', path: '/user/marketinfo/getMarketCtgCodeInfo', method: 'getMarketCtgCodeInfo', session: 'check', type: 'get' },
-        { file: './user/marketInfo/marketInfo', path: '/user/marketinfo/getSectorEtpList', method: 'getSectorEtpList', session: 'check', type: 'get' },
+        { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getEtpList', method: 'getEtpList', session: 'check', type: 'post' },
         
+        { file: './user/marketInfo/marketInfo', path: '/user/marketinfo/getSectorEtpList', method: 'getSectorEtpList', session: 'check', type: 'get' },
+
+        { file: './user/marketInfo/marketDetail', path: '/user/marketinfo/getEtpBasic', method: 'getEtpBasic', session: 'check', type: 'post' },
+        { file: './user/marketInfo/marketDetail', path: '/user/marketinfo/getEtpInfo', method: 'getEtpInfo', session: 'check', type: 'post' },
+        { file: './user/marketInfo/marketDetail', path: '/user/marketinfo/getEtpChartData', method: 'getEtpChartData', session: 'check', type: 'post' },
+        
+
+        // 공통 
+        { file: './user/common/itemInfo', path: '/user/common/getFavorItemInfo', method: 'getFavorItemInfo', session: 'check', type: 'get' },
+
+
         //풀 테스트 
 
         { file: './sample/bluebirdTest', path: '/sample/getBluelist', method: 'getBlueList', session: 'uncheck', type: 'post' },

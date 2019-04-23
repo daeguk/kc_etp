@@ -502,35 +502,32 @@
                                             >
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="modForm.arr_jisu_inst"
+                                                        v-model="selectedInst"
                                                         :label="item.one.inst_name"
                                                         color="primary"
                                                         :value="item.one.inst_cd"
                                                         :id="item.one.inst_cd"
                                                         :key="item.one.inst_cd"
-                                                        @change="fn_checkedData( item.one.inst_cd )"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="modForm.arr_jisu_inst"
+                                                        v-model="selectedInst"
                                                         :label="item.two.inst_name"
                                                         color="primary"
                                                         :value="item.two.inst_cd"
                                                         :id="item.two.inst_cd"
                                                         :key="item.two.inst_cd"
-                                                        @change="fn_checkedData( item.two.inst_cd )"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="modForm.arr_jisu_inst"
+                                                        v-model="selectedInst"
                                                         :label="item.three.inst_name"
                                                         color="primary"
                                                         :value="item.three.inst_cd"
                                                         :id="item.three.inst_cd"
                                                         :key="item.three.inst_cd"
-                                                        @change="fn_checkedData( item.three.inst_cd )"
                                                     ></v-checkbox>
                                                 </v-flex>
                                             </v-layout>
@@ -625,7 +622,7 @@ export default {
             /* 지수 방법론 관련 정보 */
             formData : new FormData(),  /* 지수방법론 파일 선택시 */
 
-
+            selectedInst : [],
             /* 입력값 관련 정보 */
             modForm: {
                 duplCheckResult: false,
@@ -647,8 +644,7 @@ export default {
                 prev_jisu_id : "",
                 prev_mothod_file_id : -1,
                 prev_jisu_file_id : -1,
-                
-
+                                
                 arr_jisu_inst : [] ,     /* 선택된 기관 정보 */
             },
 
@@ -940,6 +936,9 @@ export default {
             var vm = this;
 
             var msgTitle = "";
+
+            // 선택된 공유 기관 바인딩 
+            vm.modForm.arr_jisu_inst = vm.selectedInst;
 
             /* 연동완료 상태가 아닌 경우에만 form 을 체크한다. */
             if( this.modForm.status != "03" ) {
@@ -1251,28 +1250,29 @@ export default {
         fn_instShare() {
             this.dialog2 = false;
 
+         
             var  dataList = [];
-            for( var i=0, inx=0; i < this.modForm.arr_jisu_inst.length; i=i+4 ) {
-                var data    =   this.modForm.arr_jisu_inst[i];
+            for( var i=0, inx=0; i < this.selectedInst.length; i=i+4 ) {
+                var data    =   this.selectedInst[i];
                 var groupData = {};
 
                 groupData.one = this.fn_getInstName( data );
 
                 groupData.two = {};
-                if( i+1 < this.modForm.arr_jisu_inst.length ) {
-                    data = this.modForm.arr_jisu_inst[i+1];
+                if( i+1 < this.selectedInst.length ) {
+                    data = this.selectedInst[i+1];
                     groupData.two   =   this.fn_getInstName( data );
                 }
 
                 groupData.three = {};
-                if( i+2 < this.modForm.arr_jisu_inst.length ) {
-                    data = this.modForm.arr_jisu_inst[i+2];
+                if( i+2 < this.selectedInst.length ) {
+                    data = this.selectedInst[i+2];
                     groupData.three =   this.fn_getInstName( data );
                 }
 
                 groupData.four = {};
-                if( i+3 < this.modForm.arr_jisu_inst.length ) {
-                    data = this.modForm.arr_jisu_inst[i+3];
+                if( i+3 < this.selectedInst.length ) {
+                    data = this.selectedInst[i+3];
                     groupData.four =   this.fn_getInstName( data );
                 }                
 
@@ -1310,8 +1310,8 @@ export default {
         fn_deleteInst( item ) {
 
             var   arrTemp = [];
-            for( var i=this.modForm.arr_jisu_inst.length-1; i >= 0 ; i-- ) {
-                var data = this.modForm.arr_jisu_inst[i];
+            for( var i=this.selectedInst.length-1; i >= 0 ; i-- ) {
+                var data = this.selectedInst[i];
 
                 if( data == item.inst_cd ) {
                     continue;
@@ -1320,11 +1320,11 @@ export default {
                 arrTemp.push( data );
             }
 
-            this.modForm.arr_jisu_inst =   arrTemp;
+            this.selectedInst =   arrTemp;
             this.fn_instShare();
         },
 
-        fn_checkedData( item ) {
+        fn_checkedData( item ) {            
             console.log( item );
 /*
             var inx = this.modForm.arr_jisu_inst.indexOf( item );
@@ -1354,9 +1354,12 @@ export default {
                         selfThis.modForm.duplCheckResult    =   true;
                     }
 
+                    //debugger;
                     selfThis.modForm.arr_jisu_inst          =   [];
+                    selfThis.selectedInst          =   [];
                     if( response.data.arr_jisu_inst && response.data.arr_jisu_inst.length > 0 ) {
-                        selfThis.modForm.arr_jisu_inst      =   response.data.arr_jisu_inst;    /* 선택된 기관 정보 */
+                        selfThis.modForm.arr_jisu_inst      =   response.data.arr_jisu_inst;    // 선택된 기관 정보 
+                        selfThis.selectedInst = response.data.arr_jisu_inst;
                     }
 
                     selfThis.modForm.arr_show_inst          =   [];

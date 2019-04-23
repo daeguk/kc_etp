@@ -48,7 +48,7 @@
                 ,   tm_user_domain.inst_name		AS  inst_name
 
           FROM	tm_user_domain
-         WHERE	tm_user_domain.type_cd              =   #{inst_type_cd}
+         WHERE	tm_user_domain.type_cd              =   #{type_cd}
          ORDER  BY  tm_user_domain.inst_cd
     ]]>
     </select>

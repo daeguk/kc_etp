@@ -1,76 +1,8 @@
 <template>
     <v-container>
         <v-layout row wrap class="content_margin">
-            <v-flex xs12>
-                <v-carousel  light hide-delimiters height="250px" interval="10000">
-                    <v-carousel-item  class="bg_W market_layout_w" v-if="carousel_info.carousel_cnt > 0"  v-for="n in carousel_info.carousel_cnt" :key="n">
 
-                        <v-layout class="market_card_layout">
-                            <v-flex  v-for="x in carousel_info.carousel_div" :key="x">
-                                <v-card flat>
-                                    <div class="market_card_w line_l">
-                                        <div class="market_card2" wrap>
-                                            <h6>
-                                                {{getData(carousel_data, n, x, "name")}}
-                                                <p>
-                                                    {{ new Intl.NumberFormat().format( getData(carousel_data, n, x, "f15001") ) }}
-                                                    <span :class='( getData(carousel_data, n, x, "f15472") > 0 ? "text_red" : "" )'>
-                                                        {{getData(carousel_data, n, x, "f15472")}}({{getData(carousel_data, n, x, "f15004")}} %)
-                                                    </span>
-                                                </p>
-                                            </h6>
-                                            <ul>
-                                                <li>
-                                                    ETF - {{ new Intl.NumberFormat().format( getData(carousel_data, n, x, "etf_cnt") ) }}종목
-                                                    <br>
-                                                    <span>Total</span>
-                                                    <span class="text_result2">AUM {{ new Intl.NumberFormat().format( getData(carousel_data, n, x, "etf_sum")  / 1000 ) }}K</span>
-                                                </li>
-                                                <li>
-                                                    ETN - {{getData(carousel_data, n, x, "etn_cnt")}} 종목
-                                                    <br>
-                                                    <span>Total</span>
-                                                    <span class="text_result2">AUM {{ new Intl.NumberFormat().format( getData(carousel_data, n, x, "etn_sum")  / 1000 ) }}K</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>                           
-                        </v-layout>
-                    </v-carousel-item>
-                    <v-carousel-item  class="bg_W" v-if="Object.keys(carousel_mod).length > 0">
-                        <v-layout class="market_card_layout" >
-                            <v-flex v-for="mod_item in orderedData" :key="mod_item.ctg_code">
-                                <v-card flat>
-                                    <div class="market_card_w line_l">
-                                        <div class="market_card2" wrap>
-                                            <h6> {{mod_item.name}} </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">{{new Intl.NumberFormat().format((mod_item.total_amt) / 1000)}}K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - {{mod_item.etf_cnt}}종목</dt>
-                                                        <dt>ETN - {{mod_item.etn_cnt}}종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                        </v-layout>
-                    </v-carousel-item>
-                </v-carousel>
-            </v-flex>
-
-
-
-
+            <!---테이블 start--->
             <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12 mt-3>
                 <v-card flat>
                     <v-card-title primary-title>
@@ -110,11 +42,8 @@
                         </table>
                     </v-card>
                 </v-card>
-            </v-flex>
-            <!---테이블1 end--->
-
-
-
+            </v-flex>            
+            <!---테이블 end--->
 
 
             <!--rightmenu---->
@@ -245,7 +174,7 @@
 
                                                 <v-layout row wrap>
                                                     <v-flex xs12>
-                                                        <!--v-tabs
+                                                        <v-tabs
                                                             fixed-tabs
                                                             color="cyan"
                                                             dark
@@ -257,16 +186,16 @@
                                                                 :key="item"
                                                             >{{ item }}</v-tab>
                                                         </v-tabs>
-                                                        <v-tabs-items v-model="tab2">
-                                                            <v-tab-item>
-                                                                <infopoptab1></infopoptab1>
-                                                            </v-tab-item>
-                                                            <v-tab-item>
-                                                                <infopoptab2></infopoptab2>
-                                                            </v-tab-item>
-                                                            <v-tab-item>
-                                                                <infopoptab3></infopoptab3>
-                                                            </v-tab-item>
+                                                        <!--v-tabs-items v-model="tab2">
+                                                                        <v-tab-item>
+                                                                            <infopoptab1></infopoptab1>
+                                                                        </v-tab-item>
+                                                                        <v-tab-item>
+                                                                            <infopoptab2></infopoptab2>
+                                                                        </v-tab-item>
+                                                                        <v-tab-item>
+                                                                            <infopoptab3></infopoptab3>
+                                                                        </v-tab-item>
                                                         </v-tabs-items-->
                                                     </v-flex>
                                                 </v-layout>
@@ -298,7 +227,6 @@ import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
-import _ from "lodash";
 import Config from "@/js/config.js";
 var importance_grid = null;
 
@@ -311,10 +239,9 @@ export default {
             right: null,
             results: [],
             tab: null,
-            tab2: [],
-            toggle_one: null,
-            search: null,
-            drawer: null,
+            tab2: null,
+            drawer: "",
+            search: "",
             items1: ["전체", "시장대표"],
             items: [
                 { title: "Home", icon: "dashboard" },
@@ -354,24 +281,26 @@ export default {
             ],
             items4: ["ETF", "ETN", "INDEX"],
 
-            table_name : "represent",
+            table_name : "bond",
             ctg_results: [],
             carousel_info:[],
             carousel_data:[],
-            carousel_mod:[], 
+            carousel_mod:[],             
         };
     },
     components: {
-
+        // infopoptab1: infopoptab1,
+        // infopoptab2: infopoptab2,
+        // infopoptab3: infopoptab3
     },
     computed: {
          orderedData : function(){
            
             return _.orderBy(this.carousel_mod, 'ctg_code', 'asc');
-        }        
+        }
     },
     mounted: function() {
-        this.getEtpList();
+        this.getEtpList( "005" );      /* 005-채권 */
     },
     created: function() {},
     beforeDestroy() {},
@@ -390,7 +319,7 @@ export default {
          * 시장대표에 해당하는 지수 및 ETP 정보를 조회한다. ( ETP -> 시장대표 탭 선택시 )
          * 2019-04-16  bkLove(촤병국)
          */        
-        getEtpList: function() {
+        getEtpList: function( ctg_large_code ) {
             console.log("getEtpList");
 
             var vm = this;
@@ -398,7 +327,7 @@ export default {
 
             axios.post(Config.base_url + "/user/marketinfo/getEtpList", {
                 data: {
-                    ctg_large_code  :   "001"       /* 001-시장대표 */
+                    "ctg_large_code"  :     ctg_large_code
                 }
             }).then(function(response) {
                 console.log(response);
@@ -501,12 +430,10 @@ export default {
                             // 테이블별 이벤트
                             $('#' + vm.table_name + ctgCodeItem.ctg_code+' tbody').on('click', 'button', function () {
                                 var table = $('#' + vm.table_name + ctgCodeItem.ctg_code).DataTable();
-                                var data = table.row( this ).data(); 
-
+                                var data = table.row( this ).data();    
                                 if ($(this).attr('id') == 'detail') {
                                     
                                     console.log('move detailPage ');
-                                    vm.movePage(data.JISU_CD, data.MARKET_ID);
                                 } else {
                                     console.log('move pdfPage ');
                                 }
@@ -517,12 +444,7 @@ export default {
                     }
                 }
             });
-        },
-        
-        movePage: function(jisu_cd, market_id) {
-            this.$router.push({path: '/index/manage/IndexListdetail', query :{'jisu_cd':jisu_cd, 'market_id':market_id}});
         }
-        
     }
 };
 </script>
