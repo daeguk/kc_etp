@@ -1,7 +1,13 @@
 <template>
     <v-container>
         <v-layout row wrap class="content_margin">
-            
+            <v-flex xs12>
+                <v-card flat>
+                    <img src="/assets/img/strategy_img.png" height="200px">
+                </v-card>
+            </v-flex>
+
+
             <!---테이블 start--->
             <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12 mt-3>
                 <v-card flat>
@@ -223,6 +229,9 @@
 </template>
 
 <script>
+//import infopoptab1 from "../index/manage/infopoptab1.vue";
+//import infopoptab2 from "../index/manage/infopoptab2.vue";
+//import infopoptab3 from "../index/manage/infopoptab3.vue";
 import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
@@ -281,17 +290,17 @@ export default {
             ],
             items4: ["ETF", "ETN", "INDEX"],
 
-            table_name : "mix",
+            table_name : "thema",
             ctg_results: [],
             carousel_info:[],
             carousel_data:[],
-            carousel_mod:[],             
+            carousel_mod:[], 
         };
     },
     components: {
-        // infopoptab1: infopoptab1,
+        //infopoptab1: infopoptab1,
         //infopoptab2: infopoptab2,
-        // infopoptab3: infopoptab3
+        //infopoptab3: infopoptab3
     },
     computed: {
          orderedData : function(){
@@ -345,7 +354,7 @@ export default {
 
                         vm.$nextTick().then(() => {
                             items = etpLists[idx++];
-                            $('#' + vm.table_name  + ctgCodeItem.ctg_code).DataTable( {
+                            $('#' + vm.table_name + ctgCodeItem.ctg_code).DataTable( {
                                     "processing": true,
                                     "serverSide": false,
                                     "info": false,   // control table information display field
@@ -421,8 +430,8 @@ export default {
 
                             // ETP 갯수와 기준일 바인딩 
                             if (items) {
-                                $("#" + vm.table_name +"_count" + ctgCodeItem.ctg_code).html(items.length);
-                                $("#" + vm.table_name +"_date"  + ctgCodeItem.ctg_code).html("기준일 :"+items[0].f12506);
+                                $("#" + vm.table_name + "_count" + ctgCodeItem.ctg_code).html(items.length);
+                                $("#" + vm.table_name + "_date"  + ctgCodeItem.ctg_code).html("기준일 :"+items[0].f12506);
                             }
 
                             // 테이블별 이벤트

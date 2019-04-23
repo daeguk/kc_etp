@@ -309,7 +309,7 @@ export default {
         }
     },
     mounted: function() {
-        this.getEtpRepresentList( "003" );      /* 003-테마 */
+        this.getEtpRepresentList();
     },
     created: function() {},
     beforeDestroy() {},
@@ -328,7 +328,7 @@ export default {
          * 시장대표에 해당하는 지수 및 ETP 정보를 조회한다. ( ETP -> 시장대표 탭 선택시 )
          * 2019-04-16  bkLove(촤병국)
          */        
-        getEtpRepresentList: function( ctg_large_code ) {
+        getEtpRepresentList: function() {
             console.log("getEtpRepresentList");
 
             var vm = this;
@@ -336,7 +336,7 @@ export default {
 
             axios.post(Config.base_url + "/user/marketinfo/getEtpRepresentList", {
                 data: {
-                    "ctg_large_code"  :   ctg_large_code
+                    ctg_large_code  :   "001"       /* 001-시장대표 */
                 }
             }).then(function(response) {
                 console.log(response);
