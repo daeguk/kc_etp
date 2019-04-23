@@ -19,7 +19,7 @@ import  IndexListdetail   from './components/Home/Index/Manage/IndexListdetail.v
 import  EtpManageMain   from './components/Home/Etp/Manage/EtpManageMain.vue'
 import  EtpRegisterMain   from './components/Home/Etp/Register/EtpRegisterMain.vue'
 import  EtpContractMain   from './components/Home/Etp/Contract/EtpContractMain.vue'
-import  InfoEtpDetail   from './components/Home/Etp/Manage/InfoEtpDetail.vue'
+import  EtpManageDetail   from './components/Home/Etp/Manage/EtpManageDetail.vue'
 import  InfoEtpInav   from './components/Home/Etp/Manage/InfoEtpInav.vue'
 
 // MARKET INFO
@@ -174,8 +174,8 @@ export const routes = [
         {   path : 'etp/contract',
             component: EtpContractMain,
         },
-        {   path : 'etp/InfoEtpDetail',
-            component: InfoEtpDetail,
+        {   path : 'etp/etpManageDetail',
+            component: EtpManageDetail,
         },
         {   path : 'etp/InfoEtpInav',
             component: InfoEtpInav,

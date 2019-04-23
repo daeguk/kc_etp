@@ -70,7 +70,7 @@
                                     <td class="txt_right">220.22<br><span class="text_S text_red">0.98%</span></td>
                                     <td>
                                         <div class="tooltip">
-                                           <router-link to="InfoEtpDetail"> <button type="button" class="btn_icon v-icon material-icons">equalizer</button></router-link>
+                                           <router-link to="etpManageDetail"> <button type="button" class="btn_icon v-icon material-icons">equalizer</button></router-link>
                                             <span class="tooltiptext" style="width:70px;">ETP정보</span>
                                         </div>
                                         <div class="tooltip">

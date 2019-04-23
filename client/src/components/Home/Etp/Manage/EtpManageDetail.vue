@@ -82,10 +82,10 @@
 
                                             <v-tabs-items v-model="tab5">
                                                 <v-tab-item>
-                                                    <InfoEtpDetailtab1></InfoEtpDetailtab1>
+                                                    <EtpManageDetailBasicInfoTab></EtpManageDetailBasicInfoTab>
                                                 </v-tab-item>
                                                 <v-tab-item>
-                                                    <InfoEtpDetailtab2></InfoEtpDetailtab2>
+                                                    <EtpManageDetailAnalysisTab></EtpManageDetailAnalysisTab>
                                                 </v-tab-item>
                                             </v-tabs-items>
                                         </v-flex>
@@ -355,8 +355,8 @@
 
 <script>
 //import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
-import InfoEtpDetailtab1 from "./InfoEtpDetailtab1.vue";
-import InfoEtpDetailtab2 from "./InfoEtpDetailtab2.vue";
+import EtpManageDetailBasicInfoTab  from "./EtpManageDetailBasicInfoTab.vue";
+import EtpManageDetailAnalysisTab   from "./EtpManageDetailAnalysisTab.vue";
 
 export default {
     components: {
@@ -434,8 +434,8 @@ export default {
         };
     },
     components: {
-        InfoEtpDetailtab1: InfoEtpDetailtab1,
-        InfoEtpDetailtab2: InfoEtpDetailtab2,
+        EtpManageDetailBasicInfoTab: EtpManageDetailBasicInfoTab,
+        EtpManageDetailAnalysisTab: EtpManageDetailAnalysisTab,
     },
     mounted : function() {
        
