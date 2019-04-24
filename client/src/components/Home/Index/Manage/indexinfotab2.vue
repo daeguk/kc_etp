@@ -48,23 +48,7 @@
                            </thead>
                        </table> 
 
-                       <!--table id="perf_table" class="display table01_w" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th></th>
-                                    <th>1-Week</th>
-                                    <th>1-Month</th>
-                                    <th>3-Month</th>
-                                    <th>YTD</th>
-                                    <th>1-Year</th>
-                                    <th>3-Year</th>
-                                    <th>5-Year</th>
-                                    <th>10-Year</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                        </table-->  
+                     
                     </v-card>
                     <!---자산추가 팝업--->
                     <v-layout row>
@@ -79,7 +63,7 @@
                     <h4 class="mb-0">포트폴리오</h4>
                     <v-subheader>
                         TOP10 비중정보
-                        <v-dialog v-model="dialog2" persistent max-width="500">
+                        <v-dialog v-model="dialog" persistent max-width="500">
                             <template v-slot:activator="{ on }">
                                 <v-btn outline small color="primary" dark v-on="on">VIEW ALL</v-btn>
                             </template>
@@ -88,7 +72,7 @@
                                     <v-card-title ma-0>
                                         종목 비중정보 (KODEX 200)
                                         <v-spacer></v-spacer>
-                                        <v-btn icon dark @click="dialog2 = false">
+                                        <v-btn icon dark @click="dialog = false">
                                             <v-icon>close</v-icon>
                                         </v-btn>
                                     </v-card-title>
@@ -148,7 +132,6 @@ export default {
             tab: null,
             items: ["ETF", "ETN", "INDEX"],
             dialog: false,
-            dialog2: false,
             results: [],
             importance_cnt:0,
             search:"",
@@ -358,8 +341,6 @@ export default {
 
         getSelectedItem: function(sel_items, gubun) {
             var vm = this;
-            vm.dialog = false;
-               
             for (let i = 0; i < sel_items.length; i++) {
                 
                 if (perf_table.rows().count() <= 4) {
