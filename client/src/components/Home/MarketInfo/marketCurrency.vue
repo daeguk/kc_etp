@@ -192,12 +192,12 @@ export default {
                                     ],
                                     columns: [
                                         { "data": "f16002", "orderable": true, className:"txt_left line2"}, /*종목*/
-                                        { "data": "f15301", "orderable": true }, /*INAV*/
-                                        { "data": "f03329", "orderable" : true}, /*전일최종Nav*/
+                                        { "data": "fmt_f15301", "orderable": true }, /*INAV*/
+                                        { "data": "fmt_f03329", "orderable" : true}, /*전일최종Nav*/
                                         { "data": "f15302", "orderable" : true}, /*추적오차율*/
                                         { "data": "f15304", "orderable" : true}, /*괴리율*/
                                         { "data": "f34777", "orderable" : true}, /*기초지수*/
-                                        { "data": "f15001", "orderable" : true}, /*지수현재가*/
+                                        { "data": "fmt_f15318", "orderable" : true}, /*지수현재가*/
                                         { "data": null, "orderable" : true, defaultContent:""},
                                     ]
                             }); 

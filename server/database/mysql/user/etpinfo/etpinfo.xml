@@ -230,12 +230,14 @@
                 ,   td_etp_basic.F15007                                 AS  f15007              /* 기준가 */
                 ,   td_etp_basic.F16493                                 AS  f16493              /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
                 ,   td_etp_basic.F15301                                 AS  f15301              /* ETP지표가치(NAV/IV) */
+                ,   format(td_etp_basic.F15301, '###,###,###')                                 AS  fmt_f15301              /* ETP지표가치(NAV/IV) */
                 ,   td_etp_basic.F15302                                 AS  f15302              /* 추적오차율 */
                 ,   td_etp_basic.F15303                                 AS  f15303              /* ETP장중지표가치(iNAV/iIV)대비 */
                 ,   td_etp_basic.F15304                                 AS  f15304              /* ETP괴리율 */
                 ,   td_etp_basic.F15305                                 AS  f15305              /* ETP괴리도 */
                 ,   td_etp_basic.F30818                                 AS  f30818              /* 장중지표가치(iNAV/iIV)등락율 */
                 ,   td_etp_basic.F15318                                 AS  f15318              /* ETP기초지수현재가 */
+                ,   format(td_etp_basic.F15318, '###,###,###')          AS  fmt_f15318          /* ETP기초지수현재가 */
                 ,   td_etp_basic.F16497                                 AS  f16497              /* ETF구성종목수 */
                 ,   td_etp_basic.F31892                                 AS  f31892              /* 전일현금배당금액 */
                 ,   td_etp_basic.F18450                                 AS  f18450              /* 해외ETF원주자산기준통화코드 */
@@ -254,6 +256,7 @@
                 ,   td_etp_basic.F34515                                 AS  f34515              /* ETF_1CU당금액 */
                 ,   td_etp_basic.F16499                                 AS  f16499              /* ETF_CU구성단위 */
                 ,   td_etp_basic.F03329                                 AS  f03329              /* 전일ETP지표가치(예탁원)(NAV/IV) */
+                ,   format(td_etp_basic.F03329, '###,###,###')          AS  fmt_f03329              /* 전일ETP지표가치(예탁원)(NAV/IV) */
                 ,   td_etp_basic.F18439                                 AS  f18439              /* 적용화폐명 */
                 ,   td_etp_basic.F16109                                 AS  f16109              /* 유통주식수 */
                 ,   td_etp_basic.F16257                                 AS  f16257              /* ETP기초지수코드 */
