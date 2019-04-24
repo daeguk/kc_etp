@@ -26,7 +26,7 @@
                         </v-flex>
                         <v-flex xs2 ma-2>
                             <v-card dark flat color="#466eb9">
-                                <v-icon>assignment</v-icon>지수분배: 0건
+                                <v-icon>assignment</v-icon>지수분배: {{ distCnt }}건
                             </v-card>
                         </v-flex>
                         <v-flex xs2 ma-2>
@@ -192,10 +192,12 @@ export default {
         return {
             results: [],
             loadingbar: false,
-            list_cnt: 0,
+            //list_cnt: 0,
+            distCnt: 0,
             dialog2: false,
             dialog3: false,
-            items1: ["실시간", "종가"]
+            items1: ["실시간", "종가"],
+
         };
     },
     components: {},
@@ -205,6 +207,7 @@ export default {
     mounted: function() {
         var vm = this;
         vm.getEtpApplyList();
+        vm.getEtpApplyDistCnt();
     },
     methods: {
         getEtpApplyList: function() {
@@ -302,9 +305,28 @@ export default {
 
                         });
                     }
-                    this.loadingbar = false;
+                   // this.loadingbar = false;
                 });
-        },
+        },  
+        getEtpApplyDistCnt: function() {
+            console.log("getEtpApplyDistCnt");
+            axios.get(Config.base_url + "/user/etp/getEtpApplyDistCnt", {
+                    params: {
+                    }
+            }).then(response => {
+                     console.log(response);
+
+                if (response.data.success == false) {
+                    this.distCnt = 0 ;   
+                } else {
+                    var items = response.data.results ;
+                    this.distCnt = items['0']['distCnt'] ;
+                    console.log("response=" + this.distCnt );
+                }
+                   
+            });
+        }, 
+
     }
 };
 </script>

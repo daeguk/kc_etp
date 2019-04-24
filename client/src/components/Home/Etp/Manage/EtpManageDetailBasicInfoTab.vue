@@ -136,36 +136,40 @@ export default {
             rowsPerPageItems: [50, 50],
             etp_items: [],
 
-            etpBasic    : {},
+            etpBasic    :   {},
+            indexBasic  :   {},
         };
     },
     computed: {},
     created: function() {},
     beforeDestroy() {},
     mounted: function() {
-        this.getEtpBasic();     /* ETP 의 기본정보를 조회한다. */
+        this.fn_getEtpBasic();      /* ETP 의 기본정보를 조회한다. */
     },
     methods: {
         /*
          * ETP 의 기본정보를 조회한다.
          * 2019-04-25  bkLove(촤병국)
          */
-        getEtpBasic: function() {
-            console.log("getEtpBasic");
+        fn_getEtpBasic: function() {
+            console.log("fn_getEtpBasic");
 
             var vm = this;
 
             axios.post(Config.base_url + "/user/etp/getEtpBasic", {
                 data: {
-                    f16012: vm.$route.query.f16012 /* 국제표준코드 */
+                        f16012  :   vm.$route.query.f16012      /* 국제표준코드 */
+                    ,   f16257  :   vm.$route.query.f16257      /* ETP기초지수코드  */
+                    ,   f34239  :   vm.$route.query.f34239      /* ETP기초지수MID  */
                 }
             }).then(function(response) {
                 console.log(response);
 
                 if (response.data) {
                     vm.etpBasic     =   response.data.etpBasic;
-
-                    vm.$emit( 'receiveEtpBasic',  vm.etpBasic );
+                    vm.indexBasic   =   response.data.indexBasic;
+debugger;
+                    vm.$emit( 'receiveEtpBasic',  vm.etpBasic,  vm.indexBasic );
                 }
             });
         },
