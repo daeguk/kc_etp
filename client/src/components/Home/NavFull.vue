@@ -7,6 +7,7 @@
     :key="item.title"
     :prepend-icon="item.action"
     no-action
+    color="indigo"
   >
   <v-list-tile slot="activator">
     <v-list-tile-content>

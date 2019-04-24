@@ -1,5 +1,31 @@
 <template>
     <v-container>
+        <v-layout row wrap>
+        <v-flex xs12>
+            <v-tabs
+                slot="extension"
+                v-model="tab"
+                align-with-title
+                light
+            >
+            <v-tabs-slider color="#1e99e8"></v-tabs-slider>
+    
+            <v-tab v-for="item in items4" :key="item">
+                {{ item }}
+            </v-tab>
+            </v-tabs>
+
+            <v-tabs-items v-model="tab4">
+                <v-tab-item>
+                    <Info></Info>
+                </v-tab-item>
+                <v-tab-item>
+                    <Index></Index>
+                </v-tab-item>
+                <v-tab-item>
+                    <Pdf></Pdf>
+                </v-tab-item>
+        </v-tabs-items>
         
         <v-layout row wrap class="content_margin">
             <v-flex grow>
@@ -19,10 +45,6 @@
                                     </v-btn-toggle>
                                 </span>
                             </p>
-                            <!--오른쪽 메뉴 종목으로 찾기 검색 후 
-                            <p class="text_result">
-                                6 results
-                            </p--->
                             <p class="sub_txt">기준일 : 2019.3.20</p>
                         </h3>
                     </v-card-title>
@@ -41,12 +63,12 @@
                             <thead>
                                 <tr>
                                     <th class="txt_left">종목</th>
+                                    <th class="txt_right">산출방식</th>
                                     <th class="txt_right">iNAV</th>
                                     <th class="txt_right">전일최종NAV</th>
-                                    <th class="txt_right">추적오차율</th>
-                                    <th class="txt_right">괴리율</th>
                                     <th class="txt_right">기초지수</th>
                                     <th class="txt_right">지수현재가</th>
+                                    <th class="txt_right">환율</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -57,26 +79,201 @@
                                             <b>KODEX 200</b>
                                             <br>000100
                                             <span>
-                                                <div class="txt_new">new</div>
+                                                <div class="text_new">new</div>
                                             </span>
                                         </span>
                                     </td>
+                                    <td class="txt_right">PDF</td>
                                     <td class="txt_right">277166.42<br><span class="text_S text_blue">-0.14%</span>
                                     </td>
-                                    <td class="txt_right">1.26</td>
                                     <td class="txt_right">-4.51</td>
+                                    <td class="txt_right"> 277166.42<br><span class="text_S text_red">0.14%</span>
+                                    </td>
+                                    <td class="txt_right">273.00<br><span class="text_S">2018.10.19</span>
+                                    </td>
+                                    <td class="txt_right">1129.30<br><span class="text_S">USDKRW</span>
+                                    </td>
+                                    <td>
+                                        <!--투자지표 투자지표 산출 계산기(PDF)-->
+                                        <v-dialog v-model="dialog5" persistent max-width="750">
+                                        <template v-slot:activator="{ on }">
+                                             <div class='tooltip'><button type='button' v-on="on" class='btn_icon v-icon material-icons'>visibility</button><span class='tooltiptext' style='width:70px;'>투자지표</span></div>
+                                         </template>
+                                         <v-card>
+                                            <h5>
+                                                <v-card-title ma-0>ETF iNAV Realtime Calculator
+                                                    <v-spacer></v-spacer>
+                                                    <v-btn icon dark @click="dialog5 = false">
+                                                    <v-icon>close</v-icon>
+                                                    </v-btn>
+                                                </v-card-title>
+                                            </h5>
+                                        <div class="ETPInavpop1">
+                                        <v-list subheader>
+                                            <h6> KODEX200<span>069500</span></h6>
+                                            <v-list-tile>
+                                                <v-list-tile-title class="sumu_text">Sumulation Mode</v-list-tile-title>
+                                                <v-list-tile-content class="sumul_btn_w">
+                                                    <ul>
+                                                        <li><v-switch v-model="switch1" color="primary"></v-switch></li>
+                                                        <li><v-btn small flat icon ><v-icon class="btn_on">play_circle_outline</v-icon></v-btn></li>
+                                                        <li><v-btn small flat icon ><v-icon>refresh</v-icon></v-btn></li>
+                                                    </ul>
+                                                </v-list-tile-content>
+                                            </v-list-tile>
+                                            </v-list>
+                                        </div>
+                                    <v-card flat class="sumul_card_w">
+                                        <v-layout>
+                                             <v-flex xs12>
+                                                <v-layout>
+                                                     <v-flex xs6 class="sumul_card_line">
+                                                         <ul>
+                                                             <li class="list_tit">산출방식</li>
+                                                             <li>PDF</li>
+                                                        </ul>
+                                                        <ul>
+                                                            <li class="list_tit">전일NAV</li>
+                                                            <li>12430.23</li>
+                                                         </ul>
+                                                         <ul>
+                                                            <li class="list_tit"><b>iNAV</b><br><span>외부공표</span></li>
+                                                            <li class="text_red"><b>12435.13</b><br><span class="float_r">0.56%</span></li>
+                                                        </ul>
+                                                    </v-flex>
+                                                    <v-flex xs6>
+                                                         <ul>
+                                                             <li class="list_tit">CU시가총액</li>
+                                                             <li>1235879665654411111</li>
+                                                        </ul>
+                                                        <ul>
+                                                            <li class="list_tit">CU당 주식수</li>
+                                                            <li>4000</li>
+                                                         </ul>
+                                                         <ul>
+                                                            <li class="list_tit"><b>iNAV 계산결과</b></li>
+                                                            <li class="text_red"><b>12435.13</b><br><span class="float_r">0.56%</span></li>
+                                                        </ul>
+                                                    </v-flex>
+                                                 </v-layout>
+                   
+                                                </v-flex>
+                                            </v-layout>
+                                    </v-card>
+                   
+                <!--pdf table-->
+               <h4>PDF <span>2018.11.10</span></h4>
+                <table id class="tbl_type" style="width:100%">
+                            <colgroup>
+                                <col width="7%">
+                                <col width="18%">
+                                <col width="12%">
+                                <col width="15%">
+                                <col width="10%">
+                                <col width="10%">
+                                <col width="10%">
+                                <col width="18%">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th class="txt_left">분류</th>
+                                    <th class="txt_left">코드</th>
+                                    <th>종목</th>
+                                    <th class="txt_right">CU수량</th>
+                                    <th class="txt_right">비중</th>
+                                    <th class="txt_right">현재가</th>
+                                    <th class="txt_right">기준가</th>
+                                    <th class="txt_right">CU시가총액</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>예금 </td>
+                                    <td class="txt_left">KRD0125422222</td>
+                                    <td>원화현금</td>
+                                    <td><input type="text" class="txt_right"></td>
                                     <td class="txt_right">3.52</td>
                                     <td class="txt_right">3.32</td>
                                     <td class="txt_right">220.22<br><span class="text_S text_red">0.98%</span></td>
-                                    <td>
-                                        <div class="tooltip">
-                                           <router-link to="etpManageDetail"> <button type="button" class="btn_icon v-icon material-icons">equalizer</button></router-link>
-                                            <span class="tooltiptext" style="width:70px;">ETP정보</span>
+                                    <td class="txt_right">2565751</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                <!--pdf table end-->
+                 <v-card class="pop_bot_h"></v-card>
+                                        </v-card>
+                                    </v-dialog>
+                        <!----투자지표 투자지표 산출 계산기(PDF)--->
+                        <!--투자지표 산출 계산기(지수연동)-->
+                                        <v-dialog v-model="dialog6" persistent max-width="500">
+                                        <template v-slot:activator="{ on }">
+                                             <div class='tooltip'><button type='button' v-on="on" class='btn_icon v-icon material-icons'>visibility</button><span class='tooltiptext' style='width:70px;'>투자지표</span></div>
+                                         </template>
+                                         <v-card>
+                                            <h5>
+                                                <v-card-title ma-0>ETF iNAV Realtime Calculator
+                                                    <v-spacer></v-spacer>
+                                                    <v-btn icon dark @click="dialog6 = false">
+                                                    <v-icon>close</v-icon>
+                                                    </v-btn>
+                                                </v-card-title>
+                                            </h5>
+                                        <div class="ETPInavpop1">
+                                        <v-list subheader>
+                                            <h6> KODEX 미국S&P500 선물<span>069500</span></h6>
+                                            <v-list-tile>
+                                                <v-list-tile-title class="sumu_text">Sumulation Mode</v-list-tile-title>
+                                                <v-list-tile-content class="sumul_btn_w">
+                                                    <ul>
+                                                        <li><v-switch v-model="switch1" color="primary"></v-switch></li>
+                                                        <li><v-btn small flat icon ><v-icon class="btn_on">play_circle_outline</v-icon></v-btn></li>
+                                                        <li><v-btn small flat icon ><v-icon>refresh</v-icon></v-btn></li>
+                                                    </ul>
+                                                </v-list-tile-content>
+                                            </v-list-tile>
+                                            </v-list>
                                         </div>
-                                        <div class="tooltip">
-                                            <button type="button" class="btn_icon v-icon material-icons">picture_as_pdf</button>
-                                            <span class="tooltiptext" style="width:70px;">PDF관리</span>
-                                        </div>
+                                    <v-card flat class="sumul_card_w ver2">
+                                                <v-layout>
+                                                     <v-flex xs12>
+                                                         <ul>
+                                                             <li class="list_tit">산출방식</li>
+                                                             <li>지수수익률</li>
+                                                        </ul>
+                                                        <ul>
+                                                             <li class="list_tit">유형</li>
+                                                             <li>환노출(F)</li>
+                                                        </ul>
+                                                        <ul>
+                                                            <li class="text_coment">iNAV=전일NAV*(1+배율*지수등락률)*환변동률</li>
+                                                        </ul>
+                                                        <ul>
+                                                            <li class="list_tit"><b>iNAV</b><br><span>외부공표</span></li>
+                                                            <li class="text_red"><b>12435.13</b><br><span class="float_r">0.56%</span></li>
+                                                        </ul>
+                                                        <ul>
+                                                            <li class="list_tit case2">전일NAV</li>
+                                                            <li class="input_mid"><v-text-field value outline class="txt_right"></v-text-field></li>
+                                                         </ul>
+                                                        <ul>
+                                                            <li class="list_tit case2">추적수익률</li>
+                                                            <li class="input_mid"><v-text-field value outline class="txt_right"></v-text-field></li>
+                                                         </ul>
+                                                         <ul>
+                                                            <li class="list_tit">기초지수</li>
+                                                            <li>S&P 500 Futures Total R</li>
+                                                         </ul>
+                                                    </v-flex>
+                                                 </v-layout>
+            
+                                        </v-card>
+                                        <v-card class="pop_bot_h"></v-card>
+                                    </v-card>
+                                </v-dialog>
+                        <!----투자지표 산출 계산기(지수연동)end--->
+                                        
+                                        <div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>ETP정보</span></div>
+                                        <div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>picture_as_pdf</button><span class='tooltiptext' style='width:70px;'>PDF관리</span></div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -338,6 +535,8 @@
                 </v-card>
             </v-flex>
         </v-layout>
+        </v-flex>
+        </v-layout>
     </v-container>
 </template>
 
@@ -353,14 +552,19 @@ export default {
         
         return {
             text: '전종목',
-            text2:'',
+            text2:'산출종현황',
             dialog: false,
             dialog2: false,
+            dialog5: false,
+            dialog6: false,
+            modalFlag: false,
             drawer: true,
             search: "",
             tab: null,
             tab2: null,
+            tab4: null,
             items1: ["전체", "시장대표"],
+            items4: ["ETP운영정보", "지수관리", "PDF관리"],
             items: [
                 { title: "Home", icon: "dashboard" },
                 { title: "About", icon: "question_answer" }

@@ -433,10 +433,11 @@ export default {
                             // 테이블별 이벤트
                             $('#' + vm.table_name + ctgCodeItem.ctg_code+' tbody').on('click', 'button', function () {
                                 var table = $('#' + vm.table_name + ctgCodeItem.ctg_code).DataTable();
-                                var data = table.row( this ).data();    
+                                var data = table.row($(this).parents('tr')).data();
+
                                 if ($(this).attr('id') == 'detail') {
-                                    
                                     console.log('move detailPage ');
+                                    vm.movePage( data );
                                 } else {
                                     console.log('move pdfPage ');
                                 }
@@ -447,7 +448,19 @@ export default {
                     }
                 }
             });
-        }
+        },
+
+        movePage: function( data ) {
+
+            this.$router.push({ 
+                    path    :   '/etp/etpManageDetail'
+                ,   query   :   { 
+                            'f16012'    :   data.f16012        /* 국제표준코드  */
+                        ,   'f16257'    :   data.f16257        /* ETP기초지수코드  */
+                        ,   'f34239'    :   data.f34239        /* ETP기초지수MID  */
+                    } 
+            });
+        }        
     }
 };
 </script>
