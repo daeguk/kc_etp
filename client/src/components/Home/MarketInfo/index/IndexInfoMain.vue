@@ -16,10 +16,10 @@
 
             <v-tabs-items v-model="tab">
                 <v-tab-item>
-                    <indexmarkettab1></indexmarkettab1>
+                    <today></today>
                 </v-tab-item>
                 <v-tab-item>
-                    <indexmarkettab2></indexmarkettab2>
+                    <indexBiz></indexBiz>
                 </v-tab-item>
         </v-tabs-items>
       </v-flex>
@@ -28,8 +28,8 @@
 
 <script>
 
-import indexmarkettab1   from  './indexmarkettab1.vue'
-import indexmarkettab2   from  './indexmarkettab2.vue'
+import today   from  './today.vue'
+import indexBiz   from  './indexBiz.vue'
 
 export default {
         data() {
@@ -41,8 +41,8 @@ export default {
     	};
     },    
     components: {
-        indexmarkettab1     : indexmarkettab1,
-        indexmarkettab2     : indexmarkettab2,
+        today     : today,
+        indexBiz     : indexBiz,
     },
     created: function() {
     },
