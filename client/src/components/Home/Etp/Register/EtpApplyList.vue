@@ -16,12 +16,12 @@
                     <v-layout row wrap class="etp_apply_w">
                         <v-flex xs2 mt-2 ml-3 mb-3 mr-2>
                             <v-card dark flat color="#42a4e1" class="apply_pre">
-                                <v-icon>border_color</v-icon>신청: 12건
+                                <v-icon>border_color</v-icon>신청:  {{ list_cnt }}건
                             </v-card>
                         </v-flex>
                         <v-flex xs2 ma-2>
                             <v-card dark flat color="#1976d2">
-                                <v-icon>assessment</v-icon>지수입수: 6건
+                                <v-icon>assessment</v-icon>지수입수:  {{ indexCnt }}건
                             </v-card>
                         </v-flex>
                         <v-flex xs2 ma-2>
@@ -31,12 +31,12 @@
                         </v-flex>
                         <v-flex xs2 ma-2>
                             <v-card dark flat color="#48485e">
-                                <v-icon>insert_drive_file</v-icon>종목코드 신청: 8건
+                                <v-icon>insert_drive_file</v-icon>종목코드 신청:  {{ codeCnt }}건
                             </v-card>
                         </v-flex>
                         <v-flex xs2 ma-2>
                             <v-card dark flat color="#727281">
-                                <v-icon>exposure</v-icon>iNAV산출 :4건
+                                <v-icon>exposure</v-icon>iNAV산출 :{{ inavCnt }}건
                             </v-card>
                         </v-flex>
                     </v-layout>
@@ -192,8 +192,11 @@ export default {
         return {
             results: [],
             loadingbar: false,
-            //list_cnt: 0,
+            list_cnt: 0,
             distCnt: 0,
+            indexCnt: 0,
+            codeCnt: 0,
+            inavCnt: 0,
             dialog2: false,
             dialog3: false,
             items1: ["실시간", "종가"],
@@ -208,6 +211,9 @@ export default {
         var vm = this;
         vm.getEtpApplyList();
         vm.getEtpApplyDistCnt();
+        vm.getEtpApplyIndexCnt();
+        vm.getEtpApplyCodeCnt();
+        vm.getEtpApplyInavCnt();
     },
     methods: {
         getEtpApplyList: function() {
@@ -223,7 +229,7 @@ export default {
                         alert("ETP신청현황  목록이 없습니다");
                     } else {
                         var items = response.data.results;
-
+                        
                         //console.log("response=" + JSON.stringify(items));
                         this.results = items;
                         this.list_cnt = this.results.length;
@@ -307,7 +313,7 @@ export default {
                     }
                    // this.loadingbar = false;
                 });
-        },  
+        },
         getEtpApplyDistCnt: function() {
             console.log("getEtpApplyDistCnt");
             axios.get(Config.base_url + "/user/etp/getEtpApplyDistCnt", {
@@ -326,6 +332,61 @@ export default {
                    
             });
         }, 
+        getEtpApplyIndexCnt: function() {
+            console.log("getEtpApplyIndexCnt");
+            axios.get(Config.base_url + "/user/etp/getEtpApplyIndexCnt", {
+                    params: {
+                    }
+            }).then(response => {
+                     console.log(response);
+
+                if (response.data.success == false) {
+                    this.indexCnt = 0 ;   
+                } else {
+                    var items = response.data.results ;
+                    this.indexCnt = items['0']['indexCnt'] ;
+                    console.log("responseindex=" + this.indexCnt );
+                }
+                   
+            });
+        },
+        getEtpApplyCodeCnt: function() {
+            console.log("getEtpApplyCodeCnt");
+            axios.get(Config.base_url + "/user/etp/getEtpApplyCodeCnt", {
+                    params: {
+                    }
+            }).then(response => {
+                     console.log(response);
+
+                if (response.data.success == false) {
+                    this.codeCnt = 0 ;   
+                } else {
+                    var items = response.data.results ;
+                    this.codeCnt = items['0']['codeCnt'] ;
+                    console.log("responsecode=" + this.codeCnt );
+                }
+                   
+            });
+        }, 
+        getEtpApplyInavCnt: function() {
+            console.log("getEtpApplyInavCnt");
+            axios.get(Config.base_url + "/user/etp/getEtpApplyInavCnt", {
+                    params: {
+                    }
+            }).then(response => {
+                     console.log(response);
+
+                if (response.data.success == false) {
+                    this.inavCnt = 0 ;   
+                } else {
+                    var items = response.data.results ;
+                    this.inavCnt = items['0']['inavCnt'] ;
+                    console.log("responseinav=" + this.inavCnt );
+                }
+                   
+            });
+        }, 
+
 
     }
 };

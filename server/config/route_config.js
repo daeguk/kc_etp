@@ -19,6 +19,9 @@ module.exports = {
         //일반 ETP register
         { file: './user/etp/etpApplyList', path: '/user/etp/getEtpApplyList', method: 'getEtpApplyList', session: 'uncheck', type: 'get' },
         { file: './user/etp/etpApplyList', path: '/user/etp/getEtpApplyDistCnt', method: 'getEtpApplyDistCnt', session: 'uncheck', type: 'get' },
+        { file: './user/etp/etpApplyList', path: '/user/etp/getEtpApplyIndexCnt', method: 'getEtpApplyIndexCnt', session: 'uncheck', type: 'get' },
+        { file: './user/etp/etpApplyList', path: '/user/etp/getEtpApplyCodeCnt', method: 'getEtpApplyCodeCnt', session: 'uncheck', type: 'get' },
+        { file: './user/etp/etpApplyList', path: '/user/etp/getEtpApplyInavCnt', method: 'getEtpApplyInavCnt', session: 'uncheck', type: 'get' },
 
         { file: './user/etp/etpDetail'      , path: '/user/etp/getEtpBasic'         , method: 'getEtpBasic'         , session: 'check', type: 'post' },
         { file: './user/etp/etpDetail'      , path: '/user/etp/getEtpInfo'          , method: 'getEtpInfo'          , session: 'check', type: 'post' },

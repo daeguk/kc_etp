@@ -7,8 +7,8 @@
     * 
     -->
 <select id="selectEtpApplyList" >
-<![CDATA[
-SELECT a.*, 
+       <![CDATA[
+       SELECT a.*, 
         (select inst_nm from m001uetpinstcode where inst_cd = a.inst_cd limit 1) inst_nm, 
         (select m_cd_nm from m001uetpcode where l_cd= '002' and m_cd = a.isin_stat_cd) m_cd_nm,
         timestampdiff(day,req_date,now()) lapse_date,
@@ -22,26 +22,61 @@ SELECT a.*,
         from m001uetpmaster a
         WHERE (a.list_date    >=   current_date( )  or      a.list_date is null) 
         and a.isin_stat_cd != "0009" 
- ]]>
+       ]]>
         <if test=" userType == '0001' "> 
- <![CDATA[
+       <![CDATA[
         and    a.inst_cd = #{instCd} 
- ]]>
+       ]]>
        </if> 
        order by a.seq asc
    
 </select>
 
 <select id="getEtpApplyDistCnt">
-<![CDATA[
+       <![CDATA[
        select count(1)  distCnt from m001uetpmaster where (list_date >=   current_date( )  or   list_date is null  )
-]]>
+       ]]>
        <if test=" userType == '0001' "> 
- <![CDATA[
+       <![CDATA[
         and    a.inst_cd = #{instCd} 
- ]]>
+       ]]>
        </if> 
-        and idx_dis_yn = 'y' and isin_stat_cd != '0009'
+        and idx_dis_yn = 'Y' and isin_stat_cd != '0009'
+</select>
+<select id="getEtpApplyIndexCnt" >
+       <![CDATA[
+       select count(1) indexCnt from m001uetpmaster where  (list_date >=   current_date( )  or   list_date is null  )
+       ]]>
+       <if test=" userType == '0001' "> 
+       <![CDATA[
+        and    a.inst_cd = #{instCd} 
+       ]]>
+       </if> 
+        and idx_rec_yn = 'Y' and isin_stat_cd != '0009'
+</select>
+
+<select id="getEtpApplyCodeCnt">
+       <![CDATA[
+       select count(1) codeCnt from m001uetpmaster where  (list_date >=   current_date( )  or   list_date is null  )
+       ]]>
+       <if test=" userType == '0001' "> 
+       <![CDATA[
+        and    a.inst_cd = #{instCd} 
+       ]]>
+       </if>
+       and isin_code is not null and isin_stat_cd != '0009'
+</select>
+
+<select id="getEtpApplyInavCnt" >
+       <![CDATA[
+       select count(1) inavCnt from m001uetpmaster where  (list_date >=   current_date( )  or   list_date is null  )
+       ]]>
+       <if test=" userType == '0001' "> 
+       <![CDATA[
+        and    a.inst_cd = #{instCd} 
+       ]]>
+       </if>
+       and inav_calc_yn = 'Y' and isin_stat_cd != '0009'
 </select>
 
 </mapper>
