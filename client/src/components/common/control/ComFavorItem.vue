@@ -266,12 +266,12 @@ export default {
                 
 
                 if (gubun  == '1') {
-                    var idx = _.findIndex(vm.favorItems, { 'ITEM_CD': sel_items[i].F16012});
+                    var idx = _.findIndex(vm.favorItems, { 'ITEM_CD': sel_items[i].JISU_CD});
                     
                     if (idx == -1) {
                         addFavorItems.push({
                             GUBUN : gubun,
-                            F16012 : sel_items[i].F16012,
+                            F16012 : sel_items[i].JISU_CD,
                             F16013 : '',
                             F16002 : sel_items[i].JISU_NM,
                             MARKET_ID : '',

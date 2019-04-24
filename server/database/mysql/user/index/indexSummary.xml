@@ -392,8 +392,8 @@
     <!--지수에 속한 ETP 리스트-->
     <select id="getETFList">
       SELECT base.F12506
-            ,base.F16012
-            ,base.F16013 as JISU_CD
+            ,base.F16012 as JISU_CD
+            ,base.F16013 
             ,base.F16002 as JISU_NM
             ,base.F16003
             ,base.F16017
@@ -469,8 +469,8 @@
     <!--지수에 속한 ETN 리스트-->
     <select id="getETNList">
       SELECT base.F12506
-            ,base.F16012
-            ,base.F16013 as JISU_CD
+            ,base.F16012 as JISU_CD
+            ,base.F16013
             ,base.F16002 as JISU_NM
             ,base.F16003
             ,base.F16017
