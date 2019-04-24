@@ -468,7 +468,9 @@ export default {
             axios
                 .post(Config.base_url + "/user/etp/getEtpInfo", {
                     data: {
-                        f16012: vm.$route.query.f16012 /* 국제표준코드 */
+                            f16012  :   vm.$route.query.f16012      /* 국제표준코드 */
+                        ,   f16257  :   vm.$route.query.f16257      /* ETP기초지수코드  */
+                        ,   f34239  :   vm.$route.query.f34239      /* ETP기초지수MID  */
                     }
                 })
                 .then(function(response) {
@@ -495,29 +497,40 @@ export default {
             if (!term) term = '1M';
 
             // Set a callback to run when the Google Visualization API is loaded.
-            google.charts.setOnLoadCallback( drawChart( this.$route.query.f16012 ) );
+            google.charts.setOnLoadCallback( 
+                drawChart( 
+                        vm.$route.query.f16012          /* 국제표준코드 */
+                    ,   vm.$route.query.f16257          /* ETP기초지수코드  */
+                    ,   vm.$route.query.f34239          /* ETP기초지수MID  */
+                )
+            );
 
             // Callback that creates and populates a data table,
             // instantiates the pie chart, passes in the data and
             // draws it.
       
-            function drawChart( f16012 ) {
+            function drawChart( f16012, f16257, f34239 ) {
                 
                 
                 // Create the data table.
                 var data = new google.visualization.DataTable();
 
                 // Set chart options
-                var options = {'title':' ',
-                            'width':'100%',
-                            'height':'300px',
-                            'hAxis':{format:'yyyy-MM-dd HH:mm:ss'}};
+                var options = {
+                    'title':' ',
+                    'width':'100%',
+                    'height':'300px',
+                    'hAxis':{format:'yyyy-MM-dd HH:mm:ss'}
+                };
  
                 
                 axios.post(Config.base_url + "/user/etp/getEtpChartData", {                    
                     data: {
-                            f16012  :   vm.$route.query.f16012 /* 국제표준코드 */
-                        ,   term    :   term
+                            f16012  :   f16012          /* 국제표준코드 */
+                        ,   f16257  :   f16257          /* ETP기초지수코드  */
+                        ,   f34239  :   f34239          /* ETP기초지수MID  */
+
+                        ,   term    :   term            /* 기간정보 */
                     }
                 }).then(response => {
 
@@ -535,16 +548,34 @@ export default {
 
                             var fmt_yyyymmdd = chartList[0].fmt_yyyymmdd;
                             var etp_nm = chartList[0].etp_nm;
-                            var now_price = chartList[0].now_price;
+                            var index_nm = chartList[0].index_nm;
 
                             data.addColumn('string', "date" );
                             data.addColumn('number', etp_nm );
 
+                            // index 정보가 있으면 추가
+                            if ( index_nm != null ) {
+                                data.addColumn('number', index_nm );
+                            }
+
                             for ( let item of chartList ) {
+                                // 1D 경우 가로축에 시간단위가 노출
                                 if( term == "1D" ) {
-                                    items.push( [ item.hh24, item.now_price ] );
-                                }else{
-                                    items.push( [ item.fmt_yyyymmdd, item.now_price ] );
+                                    // index 정보가 있으면 추가
+                                    if ( index_nm != null ) {
+                                        items.push( [ item.hh24, item.now_price, item.index_now_price ] );
+                                    }else{
+                                        items.push( [ item.hh24, item.now_price ] );
+                                    }
+                                }
+                                // 1D가 아닌 경우 가로축에 일자단위 노출
+                                else{
+                                    // index 정보가 있으면 추가
+                                    if ( index_nm != null ) {
+                                        items.push( [ item.fmt_yyyymmdd, item.now_price, item.index_now_price ] );
+                                    }else{
+                                        items.push( [ item.fmt_yyyymmdd, item.now_price ] );
+                                    }
                                 }
                             }
                         }

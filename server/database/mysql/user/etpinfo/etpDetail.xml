@@ -97,94 +97,246 @@
         <if test= 'term != null  and  term == "1D"' >
         /* 1일 */
     <![CDATA[
-        SELECT      td_etp_intra.F20044                                     AS  yyyymmdd            /* 입회일자 */
-                ,   DATE_FORMAT( td_etp_intra.F20044, "%Y.%m.%d" )          AS  fmt_yyyymmdd        /* 입회일자 */   
-                ,   SUBSTR( LPAD( td_etp_intra.F20004, 8, '0' ) , 1, 2 )    AS  hh24                /* 체결인트라생성시각 */
-                ,   SUM( td_etp_intra.F20008 )                              AS  now_price           /* 인트라종가 */
-                ,   MAX( td_etp_basic.F16002 )                              AS  etp_nm              /* 한글종목명 */
+        SELECT      etp_info.yyyymmdd                                                   AS  yyyymmdd            /* 입회일자 */
+                ,   etp_info.fmt_yyyymmdd                                               AS  fmt_yyyymmdd        /* 입회일자 */   
+                ,   etp_info.hh24                                                       AS  hh24                /* 체결인트라생성시각 */
+                ,   etp_info.now_price                                                  AS  now_price           /* 인트라종가 */
+                ,   etp_info.etp_nm                                                     AS  etp_nm              /* 한글종목명 */
                 
-          FROM          kc_etp.td_etp_basic
-         INNER  JOIN    td_etp_intra
-                  ON    (
-                                    td_etp_basic.F16013     =   td_etp_intra.F16013                 /* 단축코드 */
+                ,   index_info.now_price                                                AS  index_now_price     /* 인덱스 인트라 종가 */
+                ,   index_info.index_nm                                                 AS  index_nm            /* 인덱스 한글종목명 */
 
-                                    /* 1일 */
-                            AND     td_etp_intra.F20044     >=   DATE_FORMAT( DATE_SUB( now(), INTERVAL 1 DAY ), '%Y%m%d' )   /* 인트라체결일자 */
-                        )
+          FROM  (
+                    SELECT      td_etp_intra.F20044                                     AS  yyyymmdd            /* 입회일자 */
+                            ,   DATE_FORMAT( td_etp_intra.F20044, "%Y.%m.%d" )          AS  fmt_yyyymmdd        /* 입회일자 */   
+                            ,   SUBSTR( LPAD( td_etp_intra.F20004, 8, '0' ) , 1, 2 )    AS  hh24                /* 체결인트라생성시각 */
+                            ,   SUM( td_etp_intra.F20008 )                              AS  now_price           /* 인트라종가 */
+                            ,   MAX( td_etp_basic.F16002 )                              AS  etp_nm              /* 한글종목명 */
+                            
+                      FROM          kc_etp.td_etp_basic
+                     INNER  JOIN    td_etp_intra
+                              ON    (
+                                                td_etp_basic.F16013     =   td_etp_intra.F16013                 /* 단축코드 */
+
+                                                /* 1일 */
+                                        AND     td_etp_intra.F20044     >=   DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 DAY ), '%Y%m%d' )   /* 인트라체결일자 */
+                                    )
+                     WHERE  1 = 1
+                       AND  td_etp_basic.F16012     =   #{f16012}                       /* 국제표준코드 */
+
+                     GROUP  BY      td_etp_intra.F20044
+                                ,   SUBSTR( LPAD( td_etp_intra.F20004, 8, '0' ) , 1, 2 )
+                )       etp_info
+          LEFT  JOIN    
+                (
+                    SELECT      td_index_intra.F20044                                   AS  yyyymmdd            /* 입회일자 */
+                            ,   DATE_FORMAT(td_index_intra.F20044, "%Y.%m.%d")          AS  fmt_yyyymmdd        /* 입회일자 */
+                            ,   SUBSTR( LPAD( td_index_intra.F20004, 8, '0' ) , 1, 2 )  AS  hh24                /* 체결인트라생성시각 */
+                            ,   SUM( td_index_intra.F20008 )                            AS  now_price           /* 인트라 종가 */
+                            ,   MAX( td_index_basic.F16002 )                            AS  index_nm            /* 한글종목명 */
+                            
+                      FROM          td_index_basic
+                     INNER  JOIN    td_index_intra
+                              ON    (
+                                                td_index_basic.F16013       =   td_index_intra.F16013               /* 단축코드 */
+                                        AND     td_index_basic.MARKET_ID    =   td_index_intra.MARKET_ID            /* 시장 ID */
+
+                                                /* 1 일 */
+                                        AND     td_index_intra.F20044       >=  DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 DAY ), '%Y%m%d' )   /* 인트라체결일자 */
+                                    )
+                                    
+                     WHERE  1 = 1
+                       AND  td_index_basic.F16013       =   #{f16257}                                           /* 단축코드 = ETP기초지수코드 */
+                       AND  td_index_basic.MARKET_ID    LIKE   CONCAT( '_' , LPAD( #{f34239}, '0', 3 ) , '%' )  /* 시장 ID = ETP기초지수MID */
+                       
+                     GROUP  BY      td_index_intra.F20044
+                                ,   SUBSTR( LPAD( td_index_intra.F20004, 8, '0' ) , 1, 2 )
+                )   index_info
+            ON  (
+                            etp_info.yyyymmdd       =   index_info.yyyymmdd                                     /* 입회일자 */
+                    AND     etp_info.hh24           =   index_info.hh24                                         /* 체결인트라생성시각 */
+                )
+
          WHERE  1 = 1
-           AND  td_etp_basic.F16012     =   #{f16012}                       /* 국제표준코드 */
-
-         GROUP  BY      td_etp_intra.F20044
-                    ,   SUBSTR( LPAD( td_etp_intra.F20004, 8, '0' ) , 1, 2 )
     ]]>
         </if>
 
         <if test= 'term != null  and  term == "1W" ' >
         /* 1주 */
     <![CDATA[
-        SELECT      td_etp_intra.F20044                                     AS  yyyymmdd            /* 입회일자 */
-                ,   DATE_FORMAT( td_etp_intra.F20044, "%Y.%m.%d" )          AS  fmt_yyyymmdd        /* 입회일자 */   
-                ,   '00'                                                    AS  hh24                /* 체결인트라생성시각 */
-                ,   td_etp_intra.F20008                                     AS  now_price           /* 인트라종가 */
-                ,   td_etp_basic.F16002                                     AS  etp_nm              /* 한글종목명 */
+        SELECT      etp_info.yyyymmdd                                                   AS  yyyymmdd            /* 입회일자 */
+                ,   etp_info.fmt_yyyymmdd                                               AS  fmt_yyyymmdd        /* 입회일자 */   
+                ,   etp_info.hh24                                                       AS  hh24                /* 체결인트라생성시각 */
+                ,   etp_info.now_price                                                  AS  now_price           /* 인트라종가 */
+                ,   etp_info.etp_nm                                                     AS  etp_nm              /* 한글종목명 */
                 
-          FROM          kc_etp.td_etp_basic
-         INNER  JOIN    td_etp_intra
-                  ON    (
-                                    td_etp_basic.F16013     =   td_etp_intra.F16013                 /* 단축코드 */
+                ,   index_info.now_price                                                AS  index_now_price     /* 인덱스 인트라 종가 */
+                ,   index_info.index_nm                                                 AS  index_nm            /* 인덱스 한글종목명 */
 
-                                    /* 1주 */
-                            AND     td_etp_intra.F20044     >=   DATE_FORMAT( DATE_SUB( now(), INTERVAL 1 WEEK ), '%Y%m%d' )   /* 인트라체결일자 */
-                        )
+          FROM  (
+                    SELECT      td_etp_intra.F20044                                     AS  yyyymmdd            /* 입회일자 */
+                            ,   DATE_FORMAT( td_etp_intra.F20044, "%Y.%m.%d" )          AS  fmt_yyyymmdd        /* 입회일자 */   
+                            ,   '00'                                                    AS  hh24                /* 체결인트라생성시각 */
+                            ,   SUM( td_etp_intra.F20008 )                              AS  now_price           /* 인트라종가 */
+                            ,   MAX( td_etp_basic.F16002 )                              AS  etp_nm              /* 한글종목명 */
+                            
+                      FROM          kc_etp.td_etp_basic
+                     INNER  JOIN    td_etp_intra
+                              ON    (
+                                                td_etp_basic.F16013     =   td_etp_intra.F16013                 /* 단축코드 */
+
+                                                /* 1주 */
+                                        AND     td_etp_intra.F20044     >=   DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 WEEK ), '%Y%m%d' )   /* 인트라체결일자 */
+                                    )
+                     WHERE  1 = 1
+                       AND  td_etp_basic.F16012     =   #{f16012}                       /* 국제표준코드 */
+
+                     GROUP  BY      td_etp_intra.F20044
+
+                )       etp_info
+          LEFT  JOIN    
+                (
+                    SELECT      td_index_intra.F20044                                   AS  yyyymmdd            /* 입회일자 */
+                            ,   DATE_FORMAT(td_index_intra.F20044, "%Y.%m.%d")          AS  fmt_yyyymmdd        /* 입회일자 */
+                            ,   '00'                                                    AS  hh24                /* 체결인트라생성시각 */
+                            ,   SUM( td_index_intra.F20008 )                            AS  now_price           /* 인트라 종가 */
+                            ,   MAX( td_index_basic.F16002 )                            AS  index_nm            /* 한글종목명 */
+                            
+                      FROM          td_index_basic
+                     INNER  JOIN    td_index_intra
+                              ON    (
+                                                td_index_basic.F16013       =   td_index_intra.F16013               /* 단축코드 */
+                                        AND     td_index_basic.MARKET_ID    =   td_index_intra.MARKET_ID            /* 시장 ID */
+
+                                                /* 1주 */
+                                        AND     td_index_intra.F20044       >=  DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 WEEK ), '%Y%m%d' )   /* 인트라체결일자 */
+                                    )
+                                    
+                     WHERE  1 = 1
+                       AND  td_index_basic.F16013       =   #{f16257}                                           /* 단축코드 = ETP기초지수코드 */
+                       AND  td_index_basic.MARKET_ID    LIKE   CONCAT( '_' , LPAD( #{f34239}, '0', 3 ) , '%' )  /* 시장 ID = ETP기초지수MID */
+                       
+                     GROUP  BY      td_index_intra.F20044
+
+                )   index_info
+            ON  (
+                            etp_info.yyyymmdd       =   index_info.yyyymmdd                                     /* 입회일자 */
+                )
+
          WHERE  1 = 1
-           AND  td_etp_basic.F16012     =   #{f16012}                       /* 국제표준코드 */
-
-         GROUP  BY      td_etp_intra.F20044
     ]]>
         </if>        
 
 
         <if test= 'term == ""  or  term == "1M" or term == "3M" or term == "6M" or term == "1Y" or term == "TOTAL" ' >
     <![CDATA[
-        SELECT      td_etp_hist.F12506                                      AS  yyyymmdd            /* 입회일자 */
-                ,   DATE_FORMAT( td_etp_hist.F12506, "%Y.%m.%d" )           AS  fmt_yyyymmdd        /* 입회일자 */
-                ,   '00'                                                    AS  hh24                /* 생성시각 */
-                ,   td_etp_hist.F15001                                      AS  now_price           /* 현재가 */
-                ,   td_etp_basic.F16002                                     AS  etp_nm              /* 한글종목명 */
+        SELECT      etp_info.yyyymmdd                                                   AS  yyyymmdd            /* 입회일자 */
+                ,   etp_info.fmt_yyyymmdd                                               AS  fmt_yyyymmdd        /* 입회일자 */   
+                ,   etp_info.hh24                                                       AS  hh24                /* 체결인트라생성시각 */
+                ,   etp_info.now_price                                                  AS  now_price           /* 인트라종가 */
+                ,   etp_info.etp_nm                                                     AS  etp_nm              /* 한글종목명 */
                 
-          FROM          kc_etp.td_etp_basic
-         INNER  JOIN    kc_etp.td_etp_hist
-                  ON    (
-                                    td_etp_basic.F16013     =   td_etp_hist.F16013          /* 단축코드 */
+                ,   index_info.now_price                                                AS  index_now_price     /* 인덱스 인트라 종가 */
+                ,   index_info.index_nm                                                 AS  index_nm            /* 인덱스 한글종목명 */
+
+          FROM  (
+                    SELECT      td_etp_hist.F12506                                      AS  yyyymmdd            /* 입회일자 */
+                            ,   DATE_FORMAT( td_etp_hist.F12506, "%Y.%m.%d" )           AS  fmt_yyyymmdd        /* 입회일자 */   
+                            ,   '00'                                                    AS  hh24                /* 생성시각 */
+                            ,   td_etp_hist.F15001                                      AS  now_price           /* 현재가 */
+                            ,   td_etp_basic.F16002                                     AS  etp_nm              /* 한글종목명 */
+                            
+                      FROM          kc_etp.td_etp_basic
+                     INNER  JOIN    td_etp_hist
+                              ON    (
+                                                td_etp_basic.F16013     =   td_etp_hist.F16013                  /* 단축코드 */
     ]]>
             <choose>
                 <when test="term != null and term =='1M'">
-                                    /* 1달 */
-                            AND     td_etp_hist.F12506      >=  DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m%d' )
+                                                /* 1달 */
+                                        AND     td_etp_hist.F12506      >=  DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m%d' )
                 </when>
                 <when test="term != null and term =='3M'">
-                                    /* 3달 */
-                            AND     td_etp_hist.F12506      >=  DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 3 MONTH ), '%Y%m%d' )
+                                                /* 3달 */
+                                        AND     td_etp_hist.F12506      >=  DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 3 MONTH ), '%Y%m%d' )
                 </when>
                 <when test="term != null and term =='6M'">
-                                    /* 6달 */
-                            AND     td_etp_hist.F12506      >=  DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 6 MONTH ), '%Y%m%d' )
+                                                /* 6달 */
+                                        AND     td_etp_hist.F12506      >=  DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 6 MONTH ), '%Y%m%d' )
                 </when>
                 <when test="term != null and term =='1Y'">
-                                    /* 1년 */
-                            AND     td_etp_hist.F12506      >=  DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 YEAR ), '%Y%m%d' )
+                                                /* 1년 */
+                                        AND     td_etp_hist.F12506      >=  DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 YEAR ), '%Y%m%d' )
                 </when>
                 <when test="term != null and term =='TOTAL'">
-                                    /* 전체 */
+                                                /* 전체 */
                 </when>
                 <otherwise>
-                                    /* 1달 */
-                            AND     td_etp_hist.F12506      >=  DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m%d' )
+                                                /* 1달 */
+                                        AND     td_etp_hist.F12506      >=  DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m%d' )
                 </otherwise>
-            </choose>                            
-                        )
+            </choose>
+    <![CDATA[
+                                    )
+                     WHERE  1 = 1
+                     
+                       AND  td_etp_basic.F16012     =   #{f16012}                       /* 국제표준코드 */
+
+                )       etp_info
+          LEFT  JOIN    
+                (
+                    SELECT      td_index_hist.F12506                                    AS  yyyymmdd            /* 입회일자 */
+                            ,   DATE_FORMAT(td_index_hist.F12506, "%Y.%m.%d")           AS  fmt_yyyymmdd        /* 입회일자 */
+                            ,   '00'                                                    AS  hh24                /* 생성시각 */
+                            ,   td_index_hist.F15001                                    AS  now_price           /* 현재가 */
+                            ,   td_index_basic.F16002                                   AS  index_nm            /* 한글종목명 */
+                            
+                      FROM          td_index_basic
+                     INNER  JOIN    td_index_hist
+                              ON    (
+                                                td_index_basic.F16013       =   td_index_hist.F16013            /* 단축코드 */
+                                        AND     td_index_basic.MARKET_ID    =   td_index_hist.MARKET_ID         /* 시장 ID */
+    ]]>
+
+            <choose>
+                <when test="term != null and term =='1M'">
+                                                /* 1달 */
+                                        AND     td_index_hist.F12506        >=  DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m%d' )
+                </when>
+                <when test="term != null and term =='3M'">
+                                                /* 3달 */
+                                        AND     td_index_hist.F12506        >=  DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 3 MONTH ), '%Y%m%d' )
+                </when>
+                <when test="term != null and term =='6M'">
+                                                /* 6달 */
+                                        AND     td_index_hist.F12506        >=  DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 6 MONTH ), '%Y%m%d' )
+                </when>
+                <when test="term != null and term =='1Y'">
+                                                /* 1년 */
+                                        AND     td_index_hist.F12506        >=  DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 YEAR ), '%Y%m%d' )
+                </when>
+                <when test="term != null and term =='TOTAL'">
+                                                /* 전체 */
+                </when>
+                <otherwise>
+                                                /* 1달 */
+                                        AND     td_index_hist.F12506        >=  DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m%d' )
+                </otherwise>
+            </choose>
+    <![CDATA[
+                                    )
+                     WHERE  1 = 1
+                     
+                       AND  td_index_basic.F16013       =   #{f16257}                                           /* 단축코드 = ETP기초지수코드 */
+                       AND  td_index_basic.MARKET_ID    LIKE   CONCAT( '_' , LPAD( #{f34239}, '0', 3 ) , '%' )  /* 시장 ID = ETP기초지수MID */
+
+                )   index_info
+            ON  (
+                            etp_info.yyyymmdd       =   index_info.yyyymmdd                                     /* 입회일자 */
+                )
+
          WHERE  1 = 1
-           AND  td_etp_basic.F16012     =   #{f16012}                       /* 국제표준코드 */
+    ]]>
         </if>
 
     </select>    

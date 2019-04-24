@@ -157,7 +157,9 @@ export default {
 
             axios.post(Config.base_url + "/user/etp/getEtpBasic", {
                 data: {
-                    f16012: vm.$route.query.f16012 /* 국제표준코드 */
+                        f16012  :   vm.$route.query.f16012      /* 국제표준코드 */
+                    ,   f16257  :   vm.$route.query.f16257      /* ETP기초지수코드  */
+                    ,   f34239  :   vm.$route.query.f34239      /* ETP기초지수MID  */
                 }
             }).then(function(response) {
                 console.log(response);
