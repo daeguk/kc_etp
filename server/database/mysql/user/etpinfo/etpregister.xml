@@ -32,4 +32,16 @@ SELECT a.*,
    
 </select>
 
+<select id="getEtpApplyDistCnt">
+<![CDATA[
+       select count(1)  distCnt from m001uetpmaster where (list_date >=   current_date( )  or   list_date is null  )
+]]>
+       <if test=" userType == '0001' "> 
+ <![CDATA[
+        and    a.inst_cd = #{instCd} 
+ ]]>
+       </if> 
+        and idx_dis_yn = 'y' and isin_stat_cd != '0009'
+</select>
+
 </mapper>
