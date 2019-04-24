@@ -52,6 +52,9 @@
                     </v-card>
                     <!---자산추가 팝업--->
                     <v-layout row>
+                        <v-btn outline small color="primary" dark v-on:click="showJongMokPop">
+                            <v-icon small color="primary">add</v-icon>자산추가
+                        </v-btn>
                         <jongmokPopup @selectedItem="getSelectedItem"></jongmokPopup>
                     </v-layout>
                     <!--자산추가 팝업 end--->
@@ -375,6 +378,9 @@ export default {
 
             }
         
+        },
+        showJongMokPop: function() {
+            this.$EventBus.$emit( "showJongMokPop", true );
         },
     }
 }
