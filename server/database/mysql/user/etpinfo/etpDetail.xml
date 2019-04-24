@@ -17,6 +17,7 @@
                 ,   td_etp_basic.F16002                                 AS  f16002              /* 한글종목명 */
                 ,   td_etp_basic.F16003                                 AS  f16003              /* 한글종목약명 */
                 ,   td_etp_basic.F16017                                 AS  f16017              /* 상장일 */
+                ,   DATE_FORMAT( td_etp_basic.F16017, '%Y.%m.%d' )      AS  fmt_f16017          /* format 상장일 */
                 ,   td_etp_basic.F15001                                 AS  f15001              /* 현재가 */
                 ,   td_etp_basic.F15472                                 AS  f15472              /* 대비 */
                 ,   td_etp_basic.F15004                                 AS  f15004              /* 등락율 */
@@ -115,6 +116,7 @@
                 ,   td_index_basic.market_id                            AS  market_id           /* 시장 ID */
                 ,   td_index_basic.std_index                            AS  std_index           /* 기준지수 */
                 ,   td_index_basic.std_date                             AS  std_date            /* 기준일 */
+                ,   DATE_FORMAT( td_index_basic.std_date, '%Y.%m.%d' )  AS  fmt_std_date        /* 기준일 */
                 ,   td_index_basic.anno_date                            AS  anno_date           /* 발표일 */
                 ,   td_index_basic.index_cal_method                     AS  index_cal_method    /* 지수산출방식 */
                 ,   td_index_basic.std_capital                          AS  std_capital         /* 기준시가총액 */
@@ -123,6 +125,7 @@
                 
           FROM  td_index_basic
          WHERE  1 = 1
+
            AND  td_index_basic.F16013               =       #{f16257}                                           /* 단축코드 = ETP기초지수코드 */
            AND  td_index_basic.MARKET_ID            LIKE    CONCAT( '_' , LPAD( #{f34239}, 3, '0' ) , '%' )     /* 시장 ID = ETP기초지수MID */
     ]]>
