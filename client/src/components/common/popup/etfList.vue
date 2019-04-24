@@ -1,19 +1,21 @@
 <template>
-<v-card>
-    <v-card flat>
-        
-        
 
-        <table id="etn_grid" class="display" style="width:100%">
-            <thead>
-                <tr>
-                    <th><input  type='checkbox' class="selectAll select-checkbox"></input></th>
-                    <th>ID</th>
-                    <th>종목/지수명</th>
-                </tr>
-            </thead>   
-        </table>
-    </v-card>
+<v-card>
+    <v-card-title>
+        <v-text-field v-model="search" v-on:change="filterData" append-icon="search" label="Search" single-line hide-details></v-text-field>
+    </v-card-title>                       
+ <v-card flat>
+    <table id="etf_grid" class="display" style="width:100%;">
+        <thead>
+            <tr>
+                <th><input type='checkbox' class="selectAll select-checkbox" color='primary'  label='' value=''></th>
+                <th>ID</th>
+                <th>종목/지수명</th>
+            </tr>
+        </thead>   
+    </table>
+  </v-card>
+
     <!--비교자산 탭end--->
     <v-card class="pop_btn_w text-xs-center">
         <v-btn depressed color="primary" @click="selectData()" >추가하기</v-btn>
@@ -27,33 +29,21 @@ import $      from 'jquery'
 import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 import select from 'datatables.net-select'
+import _ from "lodash";
 import Config from '@/js/config.js'
-var etn_grid = null;
+var etf_grid = null;
   export default {
     data () {
       return {
         search: '',
-        headers: [
-        {
-            text: '',
-            align: 'left',
-            sortable: false,
-            value: 'name'
-          },
-          {
-            text: 'CODE',
-            align: 'left',
-            value: 'name1'
-          },
-          { text: '종목지수명', value: '종목지수명' },
-          { text: '구분', value: '구분' },
-        ],
         resultes: [
         ]
       }
     }, 
     components: {},
-    computed: {},
+    computed: {
+        
+    },
     created: function() {},
     beforeDestroy() {},
     mounted: function() {
@@ -61,17 +51,18 @@ var etn_grid = null;
         vm.getInfoIndexList();
 
         $('.selectAll').on('click', function () {
+           
             if ($(this).is( ":checked" )) {
-                etn_grid.rows().select();        
+                etf_grid.rows().select();        
             } else {
-                etn_grid.rows().deselect(); 
+                etf_grid.rows().deselect(); 
             }
         });
     },
     methods: {
         getInfoIndexList: function() {
-            console.log("etn_grid");
-            axios.get(Config.base_url + "/user/index/getETNList", {
+            console.log("getEtfList");
+            axios.get(Config.base_url + "/user/index/getETFList", {
                     params: {
                     }
                 }).then(response => {
@@ -84,7 +75,7 @@ var etn_grid = null;
                         //console.log("response=" + JSON.stringify(items));
                         this.results = items;
 
-                        etn_grid = $('#etn_grid').DataTable( {
+                        etf_grid = $('#etf_grid').DataTable( {
                             "processing": true,
                             "serverSide": false,
                             "search": true,
@@ -116,15 +107,38 @@ var etn_grid = null;
                    
                 });
         }, 
+
         selectData: function() {
            
 
-            console.log("data=" + etn_grid.rows( { selected: true } ).count());
-            var data = etn_grid.rows( { selected: true } ).data();
+            console.log("data=" + etf_grid.rows( { selected: true } ).count());
+            var data = etf_grid.rows( { selected: true } ).data();
            
-            this.$emit("selectedItem", data);
-            etn_grid.rows().deselect(); 
+            this.$emit("selectedItem", data, 1);
+
+            etf_grid.rows().deselect(); 
+
+        },
+
+        filterData: function() {
+            var vm = this;
+        
+            var filterData = _.filter(vm.results, function(o) { 
+
+                var nmIdx = o.JISU_NM.indexOf(vm.search);
+                var cdIdx = o.JISU_CD.indexOf(vm.search);
+
+                if (nmIdx > -1 || cdIdx > -1) {
+                    return true; 
+                } else {
+                    return false;
+                }
+            });
+
+            etf_grid.clear().draw();
+            etf_grid.rows.add(filterData).draw();           
         }
+
     }
   }
 </script>

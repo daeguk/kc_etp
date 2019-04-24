@@ -114,7 +114,7 @@ import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import _ from "lodash";
 import Config       from "@/js/config.js";
-import ComFavorItem from "@/components/common/right/ComFavorItem";
+import ComFavorItem from "@/components/common/control/ComFavorItem"; 
 
 export default {
     props: [],

@@ -39,6 +39,42 @@
             WHERE ITEM.TYPE_CD = #{type_cd}
             AND ITEM.INST_CD = #{inst_cd}
             AND ITEM.EMAIL = #{user_id}
+        ORDER BY ITEM.ITEM_SEQ 
     </select>
   
+    <delete id="deleteFavorItem">
+        DELETE FROM tm_favor_item
+         WHERE TYPE_CD = #{type_cd}
+           AND INST_CD =  #{inst_cd}
+           AND EMAIL = #{user_id}
+           AND ITEM_SEQ = #{item_seq}
+    </delete>
+
+
+
+    <insert id="insertFavorItem">
+        INSERT INTO tm_favor_item
+            (type_cd
+            ,inst_cd
+            ,email
+            ,gubun
+            ,F16012
+            ,F16013
+            ,market_id
+            ,large_type
+            ,middle_type)
+            VALUES
+            (
+            #{type_cd}
+            ,#{inst_cd}
+            ,#{user_id}
+            ,#{gubun}
+            ,#{F16012}
+            ,#{F16013}
+            ,#{market_id}
+            ,#{large_type}
+            ,#{middle_type})
+
+    </insert>
+
 </mapper>

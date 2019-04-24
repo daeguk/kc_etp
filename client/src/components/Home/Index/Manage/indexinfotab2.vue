@@ -68,67 +68,7 @@
                     </v-card>
                     <!---자산추가 팝업--->
                     <v-layout row>
-                        <v-flex xs12>
-                            <v-card flat>
-                                <v-dialog v-model="dialog" persistent max-width="500">
-                                    <template v-slot:activator="{ on }">
-                                        <v-btn outline small color="primary" dark v-on="on">
-                                            <v-icon small color="primary">add</v-icon>자산추가
-                                        </v-btn>
-                                    </template>
-                                    <v-card>
-                                        <h5>
-                                            <v-card-title ma-0>
-                                                비교자산추가
-                                                <v-spacer></v-spacer>
-                                                <v-btn icon dark @click="dialog = false">
-                                                    <v-icon>close</v-icon>
-                                                </v-btn>
-                                            </v-card-title>
-                                        </h5>
-                                        <v-card-title>
-                                            <v-text-field
-                                                v-model="search"
-                                                append-icon="search"
-                                                label="Search"
-                                                single-line
-                                                hide-details
-                                            ></v-text-field>
-                                        </v-card-title>
-
-                                        <!--비교자산 탭--->
-
-                                        <v-layout row wrap>
-                                            <v-flex xs12>
-                                                <v-tabs
-                                                    fixed-tabs
-                                                    color="cyan"
-                                                    dark
-                                                    v-model="tab"
-                                                >
-                                                    <v-tabs-slider color="#00fffc"></v-tabs-slider>
-                                                    <v-tab
-                                                        v-for="item in items"
-                                                        :key="item"
-                                                    >{{ item }}</v-tab>
-                                                </v-tabs>
-                                                 <v-tabs-items v-model="tab">
-                                                    <v-tab-item>
-                                                        <infopoptab1 @selectedItem="getSelectedItem"></infopoptab1>
-                                                    </v-tab-item>
-                                                    <v-tab-item>
-                                                        <infopoptab2 @selectedItem="getSelectedItem"></infopoptab2>
-                                                    </v-tab-item>
-                                                    <v-tab-item>
-                                                        <infopoptab3 @selectedItem="getSelectedItem"></infopoptab3>
-                                                    </v-tab-item>
-                                                </v-tabs-items>
-                                            </v-flex>
-                                        </v-layout>
-                                    </v-card>   
-                                </v-dialog>
-                            </v-card>
-                        </v-flex>
+                        <jongmokPopup @selectedItem="getSelectedItem"></jongmokPopup>
                     </v-layout>
                     <!--자산추가 팝업 end--->
                 </div>
@@ -194,9 +134,7 @@
 
 
 <script>
-import infopoptab1 from "./infopoptab1.vue";
-import infopoptab2 from "./infopoptab2.vue";
-import infopoptab3 from "./infopoptab3.vue";
+import jongmokPopup from "@/components/common/popup/jongmokPopup";
 import $      from 'jquery'
 import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
@@ -219,9 +157,7 @@ export default {
         };
     },
     components: {
-        infopoptab1: infopoptab1,
-        infopoptab2: infopoptab2,
-        infopoptab3: infopoptab3
+        jongmokPopup: jongmokPopup,
     },
     computed: {},
     created: function() {},
@@ -420,7 +356,7 @@ export default {
             });
         }, 
 
-        getSelectedItem: function(sel_items) {
+        getSelectedItem: function(sel_items, gubun) {
             var vm = this;
             vm.dialog = false;
                

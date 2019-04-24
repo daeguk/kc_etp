@@ -112,7 +112,6 @@
 
     <!-- 지수 목록 정보(로그인 정보엔 맞는 데이터 FNGUIDE, WISEFN-->
     <select id="getInfoIndexList">
-        <![CDATA[  
         SELECT A.JISU_CD
               ,A.JISU_NM
               ,date_format(A.IP_DT, '%Y-%m-%d') IP_DT
@@ -121,6 +120,8 @@
               ,A.MARKET_ID
               ,A.ETP_MARKET_ID
               ,A.INST_CNT
+              ,A.LARGE_TYPE
+			  ,A.MIDDLE_TYPE
               ,(SELECT GROUP_CONCAT(F16002)
                   FROM td_etp_basic
 		         WHERE F34239 = A.ETP_MARKET_ID
@@ -131,13 +132,17 @@
                     ,BAS.ANNO_DATE
                     ,BAS.INDEX_CAL_METHOD
                     ,BAS.MARKET_ID
+                    ,BAS.LARGE_TYPE
+                    ,BAS.MIDDLE_TYPE
                     ,CAST(substr(BAS.MARKET_ID, 2) AS SIGNED) ETP_MARKET_ID
                     ,(SELECT COUNT(*) FROM kc_etp.tm_jisu_share_req
                         WHERE JISU_ID = BAS.F16013
                         AND REQ_FLAG = '2') INST_CNT
                 FROM td_index_basic BAS
-               WHERE large_type = #{large_type}) A;
-        ]]> 
+            <if test="large_type != null and large_type !=''">
+               WHERE large_type = #{large_type}
+            </if>
+            ) A
     </select>
 
 

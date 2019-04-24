@@ -77,7 +77,9 @@ module.exports = {
 
         // 공통 
         { file: './user/common/itemInfo', path: '/user/common/getFavorItemInfo', method: 'getFavorItemInfo', session: 'check', type: 'get' },
-
+        { file: './user/common/itemInfo', path: '/user/common/deleteFavorItem', method: 'deleteFavorItem', session: 'check', type: 'post' },
+        { file: './user/common/itemInfo', path: '/user/common/insertFavorItem', method: 'insertFavorItem', session: 'check', type: 'post' },
+        
 
         //풀 테스트 
 

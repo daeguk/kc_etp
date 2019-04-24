@@ -1,20 +1,21 @@
 <template>
 <v-card>
- <v-card flat>
     
-    
-
-    <table id="jisu_grid" class="display" style="width:100%">
-        <thead>
-            <tr>
-                <th><input  type='checkbox' class="selectAll select-checkbox"></input></th>
-                <th>ID</th>
-                <th>지수명</th>
-            </tr>
-        </thead>   
-    </table>
-  </v-card>
-      <!--비교자산 탭end--->
+    <v-card-title>
+        <v-text-field v-model="search" v-on:change="filterData" append-icon="search" label="Search" single-line hide-details></v-text-field>
+    </v-card-title>        
+    <v-card flat>
+        <table id="etn_grid" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th><input  type='checkbox' class="selectAll select-checkbox"/></th>
+                    <th>ID</th>
+                    <th>종목/지수명</th>
+                </tr>
+            </thead>   
+        </table>
+    </v-card>
+    <!--비교자산 탭end--->
     <v-card class="pop_btn_w text-xs-center">
         <v-btn depressed color="primary" @click="selectData()" >추가하기</v-btn>
     </v-card>
@@ -27,27 +28,14 @@ import $      from 'jquery'
 import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 import select from 'datatables.net-select'
+import _ from "lodash";
 import Config from '@/js/config.js'
-var jisu_grid = null;
+var etn_grid = null;
   export default {
     data () {
       return {
         search: '',
-        headers: [
-        {
-            text: '',
-            align: 'left',
-            sortable: false,
-            value: 'name'
-          },
-          {
-            text: 'CODE',
-            align: 'left',
-            value: 'name1'
-          },
-          { text: '종목지수명', value: '종목지수명' },
-          { text: '구분', value: '구분' },
-        ],
+      
         resultes: [
         ]
       }
@@ -62,16 +50,16 @@ var jisu_grid = null;
 
         $('.selectAll').on('click', function () {
             if ($(this).is( ":checked" )) {
-                jisu_grid.rows().select();        
+                etn_grid.rows().select();        
             } else {
-                jisu_grid.rows().deselect(); 
+                etn_grid.rows().deselect(); 
             }
         });
     },
     methods: {
         getInfoIndexList: function() {
-            console.log("getInfoIndexList");
-            axios.get(Config.base_url + "/user/index/getInfoIndexList", {
+            console.log("etn_grid");
+            axios.get(Config.base_url + "/user/index/getETNList", {
                     params: {
                     }
                 }).then(response => {
@@ -84,7 +72,7 @@ var jisu_grid = null;
                         //console.log("response=" + JSON.stringify(items));
                         this.results = items;
 
-                        jisu_grid = $('#jisu_grid').DataTable( {
+                        etn_grid = $('#etn_grid').DataTable( {
                             "processing": true,
                             "serverSide": false,
                             "search": true,
@@ -119,14 +107,30 @@ var jisu_grid = null;
         selectData: function() {
            
 
-            console.log("data=" + jisu_grid.rows( { selected: true } ).count());
-            var data = jisu_grid.rows( { selected: true } ).data();
+            console.log("data=" + etn_grid.rows( { selected: true } ).count());
+            var data = etn_grid.rows( { selected: true } ).data();
            
-            this.$emit("selectedItem", data);
-            jisu_grid.rows().deselect(); 
-        }
-
+            this.$emit("selectedItem", data, 1);
+            etn_grid.rows().deselect(); 
+        },
+        filterData: function() {
+            var vm = this;
         
+            var filterData = _.filter(vm.results, function(o) { 
+
+                var nmIdx = o.JISU_NM.indexOf(vm.search);
+                var cdIdx = o.JISU_CD.indexOf(vm.search);
+
+                if (nmIdx > -1 || cdIdx > -1) {
+                    return true; 
+                } else {
+                    return false;
+                }
+            });
+
+            etn_grid.clear().draw();
+            etn_grid.rows.add(filterData).draw();           
+        }
     }
   }
 </script>

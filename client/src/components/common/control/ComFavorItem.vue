@@ -1,6 +1,7 @@
 <template>
     <v-container>
         <v-layout>
+            <v-flex>
             <!--rightmenu---->
             <v-card flat class="right_menu_w2">
                 <v-navigation-drawer
@@ -59,6 +60,7 @@
                                                                     <v-list-tile-title>{{ item.F16002 }}</v-list-tile-title>
                                                                     <v-list-tile-sub-title>{{ item.ITEM_CD }}</v-list-tile-sub-title>
                                                                 </v-list-tile-content>
+                                                                <v-btn flat icon color="#c2c2c2" @click="deleteItem(item.ITEM_SEQ, item.GUBUN, item.ITEM_CD )"><v-icon>clear</v-icon></v-btn>
                                                             </v-list-tile>
                                                         </v-list>
                                                     </v-card>
@@ -75,7 +77,6 @@
                                                             <v-list-tile
                                                                 v-for="item in items3"
                                                                 :key="item.title"
-                                                                @click
                                                                 class="right_menu_w3"
                                                             >
                                                                 <v-list-tile-content
@@ -95,82 +96,16 @@
                                 </v-flex>
                             </v-layout>
                             <!---자산추가 팝업--->
-                            <v-layout row>
-                                <v-flex xs12>
-                                    <v-card flat>
-                                        <v-dialog v-model="dialog" persistent max-width="500">
-                                            <template v-slot:activator="{ on }">
-                                                <v-btn outline small color="primary" dark v-on="on">
-                                                    <v-icon small color="primary">add</v-icon>자산추가
-                                                </v-btn>
-                                            </template>
-                                            <v-card>
-                                                <h5>
-                                                    <v-card-title ma-0>
-                                                        비교자산추가
-                                                        <v-spacer></v-spacer>
-                                                        <v-btn icon dark @click="dialog = false">
-                                                            <v-icon>close</v-icon>
-                                                        </v-btn>
-                                                    </v-card-title>
-                                                </h5>
-                                                <v-card-title>
-                                                    <v-text-field
-                                                        v-model="search"
-                                                        append-icon="search"
-                                                        label="Search"
-                                                        single-line
-                                                        hide-details
-                                                    ></v-text-field>
-                                                </v-card-title>
-
-                                                <!--비교자산 탭--->
-
-                                                <v-layout row wrap>
-                                                    <v-flex xs12>
-                                                        <!--v-tabs
-                                                            fixed-tabs
-                                                            color="cyan"
-                                                            dark
-                                                            v-model="tab2"
-                                                        >
-                                                            <v-tabs-slider color="#00fffc"></v-tabs-slider>
-                                                            <v-tab
-                                                                v-for="item in items4"
-                                                                :key="item"
-                                                            >{{ item }}</v-tab>
-                                                        </v-tabs>
-                                                        <v-tabs-items v-model="tab2">
-                                                            <v-tab-item>
-                                                                <infopoptab1></infopoptab1>
-                                                            </v-tab-item>
-                                                            <v-tab-item>
-                                                                <infopoptab2></infopoptab2>
-                                                            </v-tab-item>
-                                                            <v-tab-item>
-                                                                <infopoptab3></infopoptab3>
-                                                            </v-tab-item>
-                                                        </v-tabs-items-->
-                                                    </v-flex>
-                                                </v-layout>
-                                                <!--비교자산 탭end--->
-                                            </v-card>
-                                            <v-card class="pop_btn_w text-xs-center">
-                                                <v-btn
-                                                    depressed
-                                                    color="primary"
-                                                    @click="dialog = false"
-                                                >추가하기</v-btn>
-                                            </v-card>
-                                        </v-dialog>
-                                    </v-card>
-                                </v-flex>
-                            </v-layout>
+                            <jongmokPop @selectedItem="getSelectedItem"></jongmokPop>
                             <!--자산추가 팝업 end--->
                         </v-list-tile-content>
                     </v-list>
                 </v-navigation-drawer>
             </v-card>
+            </v-flex>
+            <v-flex>
+                <ConfirmDialog ref="confirm"></ConfirmDialog>
+            </v-flex>
             <!--rightmenu end--->
         </v-layout>
     </v-container>
@@ -184,6 +119,9 @@ import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
+import jongmokPop from "@/components/common/popup/jongmokPopup";
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
+
 var importance_grid = null;
 
 export default {
@@ -221,12 +159,15 @@ export default {
         };
     },
     components: {
-
+        jongmokPop : jongmokPop,
+        ConfirmDialog : ConfirmDialog
     },
     computed: {
         
     },
     mounted: function() {
+        // 메시지 박스 참조
+        this.$root.$confirm = this.$refs.confirm;
         this.getFavorItemInfo();
     },
     created: function() {},
@@ -242,13 +183,87 @@ export default {
             }).then(function(response) {
                 console.log(response);
                 if (response.data.success == false) {
-                    alert("관심 종목이 없습니다");
+                    vm.$root.$confirm.open('확인','관심 종목이 없습니다.',{},1);
                 } else {
                     //debugger;
                     vm.favorItems = response.data.results;
                 }
             });
-        }
+        },
+        deleteItem: function(item_seq, gubun, item_cd) {        
+            console.log("deleteItem");
+            var vm = this;
+            axios.post(Config.base_url + "/user/common/deleteFavorItem", {
+                    params: {
+                        item_seq : item_seq,
+                        gubun : gubun, 
+                        item_cd : item_cd
+                    }
+            }).then(function(response) {
+                if (response.data.success == false) {
+                    vm.$root.$confirm.open('확인','삭제 중 오류가 발생했습니다.',{},1);
+                } else {
+                    vm.getFavorItemInfo();
+                }
+            });
+
+        },
+        getSelectedItem: function(sel_items, gubun) {
+            var vm = this;
+            
+            var addFavorItems = [];
+
+            for (let i = 0; i < sel_items.length; i++) {
+                
+                
+
+                if (gubun  == '1') {
+                    var idx = _.findIndex(vm.favorItems, { 'ITEM_CD': sel_items[i].F16012});
+                    
+                    if (idx == -1) {
+                        addFavorItems.push({
+                            GUBUN : gubun,
+                            F16012 : sel_items[i].F16012,
+                            F16013 : '',
+                            F16002 : sel_items[i].JISU_NM,
+                            MARKET_ID : '',
+                            LARGE_TYPE : '',
+                            MIDDLE_TYPE : ''
+                        });
+                    } else {
+                        vm.$root.$confirm.open('확인','이미 추가된 관심 종목 입니다.',{},1);
+                    }
+                } else if (gubun == '2') {
+                    var idx = _.findIndex(vm.favorItems, { 'ITEM_CD': sel_items[i].JISU_CD, 'MARKET_ID': sel_items[i].MARKET_ID });
+
+                    if (idx == -1) {
+                        addFavorItems.push({
+                            GUBUN : gubun,
+                            F16012 : '',
+                            F16013 : sel_items[i].JISU_CD,
+                            F16002 : sel_items[i].JISU_NM,
+                            MARKET_ID : sel_items[i].MARKET_ID,
+                            LARGE_TYPE : sel_items[i].LARGE_TYPE,
+                            MIDDLE_TYPE : sel_items[i].MIDDLE_TYPE
+                        });
+                    } else {
+                        vm.$root.$confirm.open('확인','이미 추가된 관심 종목 입니다.',{},1);
+                    }
+                }
+            }
+        
+            axios.post(Config.base_url + "/user/common/insertFavorItem", {
+                    params: {
+                        addFavorItems : addFavorItems
+                    }
+            }).then(function(response) {
+                if (response.data.success == false) {
+                    vm.$root.$confirm.open('확인','저장 중 오류가 발생했습니다.',{},4);
+                } else {
+                    vm.getFavorItemInfo();
+                }
+            });
+        },
     }
 };
 </script>
