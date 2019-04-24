@@ -61,6 +61,7 @@ export default {
         
     },
     beforeUpdated: function() {
+        
     },
     updated: function() {
     },

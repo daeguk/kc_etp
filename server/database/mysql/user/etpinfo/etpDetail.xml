@@ -9,7 +9,7 @@
     -->
     <select id="getEtpBasic">
     <![CDATA[
-        SELECT      /* etpinfo.getEtpBasic EtpBasic 의 기본정보를 조회한다. */
+        SELECT      /* etpDetail.getEtpBasic EtpBasic 의 기본정보를 조회한다. */
 
                     DATE_FORMAT( td_etp_basic.F12506, '%Y.%m.%d' )      AS  f12506              /* 입회일 */
                 ,   td_etp_basic.F16012                                 AS  f16012              /* 국제표준코드 */
@@ -17,6 +17,7 @@
                 ,   td_etp_basic.F16002                                 AS  f16002              /* 한글종목명 */
                 ,   td_etp_basic.F16003                                 AS  f16003              /* 한글종목약명 */
                 ,   td_etp_basic.F16017                                 AS  f16017              /* 상장일 */
+                ,   DATE_FORMAT( td_etp_basic.F16017, '%Y.%m.%d' )      AS  fmt_f16017          /* format 상장일 */
                 ,   td_etp_basic.F15001                                 AS  f15001              /* 현재가 */
                 ,   td_etp_basic.F15472                                 AS  f15472              /* 대비 */
                 ,   td_etp_basic.F15004                                 AS  f15004              /* 등락율 */
@@ -89,15 +90,58 @@
     </select>
 
     <!--
+    * ETP기초지수코드 와 ETP기초지수MID 에 속한 IndexBasic 의 기본정보를 조회한다.
+    * 2019-04-25  bkLove(촤병국)
+    -->
+    <select id="getIndexBasicByEtpJisuCd">
+    <![CDATA[
+        SELECT      /* etpDetail.getIndexBasic ETP기초지수코드 와 ETP기초지수MID 에 속한 IndexBasic 의 기본정보를 조회한다. */
+
+                    td_index_basic.F12506                               AS  f12506              /* 입회일 */
+                ,   td_index_basic.F16013                               AS  f16013              /* 단축코드 */
+                ,   td_index_basic.F16002                               AS  f16002              /* 한글종목명 */
+                ,   td_index_basic.F15009                               AS  f15009              /* 시가 */
+                ,   td_index_basic.F15010                               AS  f15010              /* 고가 */
+                ,   td_index_basic.F15011                               AS  f15011              /* 저가 */
+                ,   td_index_basic.F15001                               AS  f15001              /* 현재가 */
+                ,   td_index_basic.F15007                               AS  f15007              /* 기준가 */
+                ,   td_index_basic.F15015                               AS  f15015              /* 거래량 */
+                ,   td_index_basic.F15023                               AS  f15023              /* 거래대금 */
+                ,   td_index_basic.F15472                               AS  f15472              /* 대비 */
+                ,   td_index_basic.F15004                               AS  f15004              /* 등락율 */
+                ,   td_index_basic.F15006                               AS  f15006              /* 등락구분(1:상한/2:상승/3:보합/4:하한/5:하락/6:기세상한/7:기세상승/8:기세하한/9:기세하락) */
+                ,   td_index_basic.F15028                               AS  f15028              /* 시가총액 */
+                ,   td_index_basic.large_type                           AS  large_type          /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
+                ,   td_index_basic.middle_type                          AS  middle_type         /* 지수중분류(FNGUIDE, WISEFN) */
+                ,   td_index_basic.market_id                            AS  market_id           /* 시장 ID */
+                ,   td_index_basic.std_index                            AS  std_index           /* 기준지수 */
+                ,   td_index_basic.std_date                             AS  std_date            /* 기준일 */
+                ,   DATE_FORMAT( td_index_basic.std_date, '%Y.%m.%d' )  AS  fmt_std_date        /* 기준일 */
+                ,   td_index_basic.anno_date                            AS  anno_date           /* 발표일 */
+                ,   td_index_basic.index_cal_method                     AS  index_cal_method    /* 지수산출방식 */
+                ,   td_index_basic.std_capital                          AS  std_capital         /* 기준시가총액 */
+                ,   td_index_basic.fixed_cash                           AS  fixed_cash          /* 고정현금 */
+                ,   td_index_basic.flowrate_yn                          AS  flowrate_yn         /* 유동비율적용여부 */
+                
+          FROM  td_index_basic
+         WHERE  1 = 1
+
+           AND  td_index_basic.F16013               =       #{f16257}                                           /* 단축코드 = ETP기초지수코드 */
+           AND  td_index_basic.MARKET_ID            LIKE    CONCAT( '_' , LPAD( #{f34239}, 3, '0' ) , '%' )     /* 시장 ID = ETP기초지수MID */
+    ]]>
+    </select>    
+
+    <!--
     * ETP 차트 정보를 조회한다.
     * 2019-04-25  bkLove(촤병국)
     -->
     <select id="getEtpChartData">
 
         <if test= 'term != null  and  term == "1D"' >
-        /* 1일 */
     <![CDATA[
-        SELECT      etp_info.yyyymmdd                                                   AS  yyyymmdd            /* 입회일자 */
+        SELECT      /* etpDetail.getEtpChartData    (#{term}) ETP 차트 정보를 조회한다. */
+
+                    etp_info.yyyymmdd                                                   AS  yyyymmdd            /* 입회일자 */
                 ,   etp_info.fmt_yyyymmdd                                               AS  fmt_yyyymmdd        /* 입회일자 */   
                 ,   etp_info.hh24                                                       AS  hh24                /* 체결인트라생성시각 */
                 ,   etp_info.now_price                                                  AS  now_price           /* 인트라종가 */
@@ -121,6 +165,7 @@
                                                 /* 1일 */
                                         AND     td_etp_intra.F20044     >=   DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 DAY ), '%Y%m%d' )   /* 인트라체결일자 */
                                     )
+
                      WHERE  1 = 1
                        AND  td_etp_basic.F16012     =   #{f16012}                       /* 국제표준코드 */
 
@@ -147,7 +192,7 @@
                                     
                      WHERE  1 = 1
                        AND  td_index_basic.F16013       =   #{f16257}                                           /* 단축코드 = ETP기초지수코드 */
-                       AND  td_index_basic.MARKET_ID    LIKE   CONCAT( '_' , LPAD( #{f34239}, '0', 3 ) , '%' )  /* 시장 ID = ETP기초지수MID */
+                       AND  td_index_basic.MARKET_ID    LIKE   CONCAT( '_' , LPAD( #{f34239}, 3, '0' ) , '%' )  /* 시장 ID = ETP기초지수MID */
                        
                      GROUP  BY      td_index_intra.F20044
                                 ,   SUBSTR( LPAD( td_index_intra.F20004, 8, '0' ) , 1, 2 )
@@ -161,10 +206,12 @@
     ]]>
         </if>
 
+
         <if test= 'term != null  and  term == "1W" ' >
-        /* 1주 */
     <![CDATA[
-        SELECT      etp_info.yyyymmdd                                                   AS  yyyymmdd            /* 입회일자 */
+        SELECT      /* etpDetail.getEtpChartData    (#{term}) ETP 차트 정보를 조회한다. */
+
+                    etp_info.yyyymmdd                                                   AS  yyyymmdd            /* 입회일자 */
                 ,   etp_info.fmt_yyyymmdd                                               AS  fmt_yyyymmdd        /* 입회일자 */   
                 ,   etp_info.hh24                                                       AS  hh24                /* 체결인트라생성시각 */
                 ,   etp_info.now_price                                                  AS  now_price           /* 인트라종가 */
@@ -214,7 +261,7 @@
                                     
                      WHERE  1 = 1
                        AND  td_index_basic.F16013       =   #{f16257}                                           /* 단축코드 = ETP기초지수코드 */
-                       AND  td_index_basic.MARKET_ID    LIKE   CONCAT( '_' , LPAD( #{f34239}, '0', 3 ) , '%' )  /* 시장 ID = ETP기초지수MID */
+                       AND  td_index_basic.MARKET_ID    LIKE   CONCAT( '_' , LPAD( #{f34239}, 3, '0' ) , '%' )  /* 시장 ID = ETP기초지수MID */
                        
                      GROUP  BY      td_index_intra.F20044
 
@@ -230,7 +277,9 @@
 
         <if test= 'term == ""  or  term == "1M" or term == "3M" or term == "6M" or term == "1Y" or term == "TOTAL" ' >
     <![CDATA[
-        SELECT      etp_info.yyyymmdd                                                   AS  yyyymmdd            /* 입회일자 */
+        SELECT      /* etpDetail.getEtpChartData    (#{term}) ETP 차트 정보를 조회한다. */
+
+                    etp_info.yyyymmdd                                                   AS  yyyymmdd            /* 입회일자 */
                 ,   etp_info.fmt_yyyymmdd                                               AS  fmt_yyyymmdd        /* 입회일자 */   
                 ,   etp_info.hh24                                                       AS  hh24                /* 체결인트라생성시각 */
                 ,   etp_info.now_price                                                  AS  now_price           /* 인트라종가 */
@@ -278,8 +327,8 @@
             </choose>
     <![CDATA[
                                     )
+
                      WHERE  1 = 1
-                     
                        AND  td_etp_basic.F16012     =   #{f16012}                       /* 국제표준코드 */
 
                 )       etp_info
@@ -325,10 +374,10 @@
             </choose>
     <![CDATA[
                                     )
-                     WHERE  1 = 1
-                     
+
+                     WHERE  1 = 1                     
                        AND  td_index_basic.F16013       =   #{f16257}                                           /* 단축코드 = ETP기초지수코드 */
-                       AND  td_index_basic.MARKET_ID    LIKE   CONCAT( '_' , LPAD( #{f34239}, '0', 3 ) , '%' )  /* 시장 ID = ETP기초지수MID */
+                       AND  td_index_basic.MARKET_ID    LIKE   CONCAT( '_' , LPAD( #{f34239}, 3, '0' ) , '%' )  /* 시장 ID = ETP기초지수MID */
 
                 )   index_info
             ON  (

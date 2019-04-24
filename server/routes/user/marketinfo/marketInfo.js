@@ -13,7 +13,7 @@ var util = require("util");
 
 
 /*
-* 섹터에 속한 ETP 정보
+* ETP 시장 정보
 */
 var getSectorEtpList = function (req, res) {
     try {
@@ -163,7 +163,89 @@ var getSectorEtpList = function (req, res) {
 };
 
 
+/*
+* INDEX 시장 정보
+*/
+var getMarketIndexList = function (req, res) {
+    try {
+
+        
+        console.log('marketInfo=>getSectorEtpList 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");       
+        var graphinfos = [];
+            
+
+        Promise.using(pool.connect(), conn => {
+
+            async.waterfall([    
+                function(callback) {
+                    var params = {
+                        com_mst_cd : "COM003",
+                    };
+                    /* 시장 대표 정보 쿼리 KOSPI, KOSPI200, KOSDAQ, KOSDAQ150*/
+                    var stmt = mapper.getStatement('etpinfo', 'getIndexInfoByCodeDtl', params, {language:'sql', indent: '  '});
+                    
+                    conn.query(stmt, function( err, rows ) {
+                        callback(null, rows);                                 
+                    })              
+                },
+                
+                function(marketRepList, callback) {
+                
+                    // 항목 갯수 만큼 쿼리 
+                    async.forEachOf( marketRepList, function ( marketItem, index){                                
+                        var params = {
+                            f16013 : marketItem.f16013,
+                            market_id : marketItem.market_id,
+                        };
+                
+                        var stmt = mapper.getStatement('common.item', 'getTodayIntraInfo', params, {language:'sql', indent: '  '});
+
+
+                        conn.query(stmt, function( err, rows ) {
+                            
+                            /* ===================상단 데이터 생성 완료 =========================*/
+                            // 조회한 데이터 저장
+                            graphinfos.push(rows);
+                            
+                            //console.log(ctgCodeList.length +"::" + index);
+                            if (index == marketRepList.length-1) {
+                                callback(null, marketRepList, graphinfos);   
+                            }                                
+                        })
+                    });
+                }
+            ], 
+                function (err, marketRepList, graphinfos) {
+                    // result now equals 'done'
+            
+                    res.json({
+                        success: true,
+                        marketRepList: marketRepList,
+                        graphinfos: graphinfos,
+                    });
+                    res.end();
+                }  
+            );          
+        });
+    } catch (exception) {
+
+        util.log("Error while performing Query.", exception);
+        res.json({
+            success: false,
+            message: exception
+        });
+        res.end();
+    }
+    
+      
+};
+
+
 
 
 
 module.exports.getSectorEtpList = getSectorEtpList;
+module.exports.getMarketIndexList = getMarketIndexList;

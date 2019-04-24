@@ -101,7 +101,7 @@
                 </v-card>
             </v-flex>
             <!---테이블1 end--->
-
+            <ComFavorItem></ComFavorItem>
         </v-layout>
     </v-container>
 </template>
@@ -113,8 +113,8 @@ import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import _ from "lodash";
-import Config       from "@/js/config.js"
-
+import Config       from "@/js/config.js";
+import ComFavorItem from "@/components/common/control/ComFavorItem"; 
 
 export default {
     props: [],
@@ -127,9 +127,7 @@ export default {
         };
     },
     components: {
-        //infopoptab1: infopoptab1,
-        //infopoptab2: infopoptab2,
-        //infopoptab3: infopoptab3
+        ComFavorItem: ComFavorItem,
     },
     computed: {
          orderedData : function(){
@@ -167,14 +165,13 @@ export default {
 
             axios.get(Config.base_url + "/user/marketinfo/getSectorEtpList", {
                     params: {
-                        "ctg_code" : "004"
+                        "ctg_code" : "002"
                     }
             }).then(function(response) {
                 console.log(response);
                 if (response.data.success == false) {
                     alert("해당 종목이 없습니다");
                 } else {
-                    
                     var etpLists = response.data.etpLists;
                     vm.carousel_data = response.data.carousel_data;
                     vm.carousel_mod = response.data.carousel_mod;
@@ -182,9 +179,7 @@ export default {
                     vm.carousel_info = response.data.carousel_info;
 
                     var items = null;
-
-                     console.log("mod_data==="+JSON.stringify(vm.carousel_mod));
-
+                    
                     for (let ctgCodeItem of vm.ctg_results) {
 
                         vm.$nextTick().then(() => {
@@ -256,12 +251,12 @@ export default {
                                     ],
                                     columns: [
                                         { "data": "f16002", "orderable": true, className:"txt_left line2"}, /*종목*/
-                                        { "data": "f15301", "orderable": true }, /*INAV*/
-                                        { "data": "f03329", "orderable" : true}, /*전일최종Nav*/
+                                        { "data": "fmt_f15301", "orderable": true }, /*INAV*/
+                                        { "data": "fmt_f03329", "orderable" : true}, /*전일최종Nav*/
                                         { "data": "f15302", "orderable" : true}, /*추적오차율*/
                                         { "data": "f15304", "orderable" : true}, /*괴리율*/
-                                        { "data": "f34777", "orderable" : true}, /*기초지수명*/
-                                        { "data": "f15318", "orderable" : true}, /*지수현재가*/
+                                        { "data": "f34777", "orderable" : true}, /*기초지수*/
+                                        { "data": "fmt_f15318", "orderable" : true}, /*지수현재가*/
                                         { "data": null, "orderable" : true, defaultContent:""},
                                     ]
                             }); 
@@ -271,7 +266,7 @@ export default {
                                 $("#sec_count"+ctgCodeItem.ctg_code).html(items.length);
                                 $("#sec_date"+ctgCodeItem.ctg_code).html("기준일 :"+items[0].f12506);
                             }
-                            
+
                             // 테이블별 이벤트
                             $('#sector'+ctgCodeItem.ctg_code+' tbody').on('click', 'button', function () {
                                 var table = $('#sector'+ctgCodeItem.ctg_code).DataTable();

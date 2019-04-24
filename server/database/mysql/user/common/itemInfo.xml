@@ -77,4 +77,19 @@
 
     </insert>
 
+
+    <select id="getTodayIntraInfo">
+        SELECT concat(substr(lpad(B.F20004,8, '0'), 1, 2), ':',substr(lpad(B.F20004,8, '0'), 3, 2), ':',substr(lpad(B.F20004,8, '0'), 5, 2)) AS trd_his
+               ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as trd_dd
+		       ,B.F20008 as close_idx
+        FROM td_index_basic A, 
+            td_index_intra B
+        WHERE A.F16013 = B.F16013
+        AND A.MARKET_ID = B.MARKET_ID
+        AND A.F16013 = #{f16013}
+        AND A.MARKET_ID = #{market_id}
+        AND DATE_FORMAT(B.F20044, "%Y.%m.%d") = DATE_FORMAT('20190410', "%Y.%m.%d")
+        ORDER BY B.F20044 desc
+    </select>
+
 </mapper>

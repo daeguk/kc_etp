@@ -23,24 +23,24 @@ import  EtpManageDetail   from './components/Home/Etp/Manage/EtpManageDetail.vue
 import  InfoEtpInav   from './components/Home/Etp/Manage/InfoEtpInav.vue'
 
 // MARKET INFO
-import EtpInfoMain              from './components/Home/MarketInfo/EtpInfoMain.vue'
+import EtpInfoMain              from './components/Home/MarketInfo/etp/EtpInfoMain.vue'
 //import MarktEtpSummaryInfo    from './components/Home/MarketInfo/EtfForList.vue'
-import MarketRepresent          from  './components/Home/MarketInfo/MarketRepresent.vue'             /* 001-시장대표 */
-import MarketSector             from  './components/Home/MarketInfo/MarketSector.vue'                /* 002-섹터*/
-import MarketThema              from  './components/Home/MarketInfo/marketThema.vue'                 /* 003-테마 */
-import MarketStrategy           from  './components/Home/MarketInfo/MarketStrategy.vue'              /* 004-전략 */
-import MarketBond               from  './components/Home/MarketInfo/marketBond.vue'                  /* 005-채권 */
-import MarketCurrency           from  './components/Home/MarketInfo/marketCurrency.vue'              /* 006-통화 */
-import MarketRawMaterials       from  './components/Home/MarketInfo/marketRawMaterials.vue'          /* 007-원자재 */
-import MarketVix                from  './components/Home/MarketInfo/marketVix.vue'                   /* 008-VIX */
-import MarketRealEstate         from  './components/Home/MarketInfo/marketRealEstate.vue'            /* 009-부동산 */
-import MarketMixAssets          from  './components/Home/MarketInfo/marketMixAssets.vue'             /* 010-혼합자산 */
-import MarketOversea            from  './components/Home/MarketInfo/marketOversea.vue'               /* 101-국가 ( 탭에 노출은 '해외' ) */
-import MarketLeverageInverse    from  './components/Home/MarketInfo/marketLeverageInverse.vue'       /* 201-배율 ( 탭에 노출은 '레버리지/인버스' ) */
+import MarketRepresent          from  './components/Home/MarketInfo/etp/MarketRepresent.vue'             /* 001-시장대표 */
+import MarketSector             from  './components/Home/MarketInfo/etp/MarketSector.vue'                /* 002-섹터*/
+import MarketThema              from  './components/Home/MarketInfo/etp/marketThema.vue'                 /* 003-테마 */
+import MarketStrategy           from  './components/Home/MarketInfo/etp/MarketStrategy.vue'              /* 004-전략 */
+import MarketBond               from  './components/Home/MarketInfo/etp/marketBond.vue'                  /* 005-채권 */
+import MarketCurrency           from  './components/Home/MarketInfo/etp/marketCurrency.vue'              /* 006-통화 */
+import MarketRawMaterials       from  './components/Home/MarketInfo/etp/marketRawMaterials.vue'          /* 007-원자재 */
+import MarketVix                from  './components/Home/MarketInfo/etp/marketVix.vue'                   /* 008-VIX */
+import MarketRealEstate         from  './components/Home/MarketInfo/etp/marketRealEstate.vue'            /* 009-부동산 */
+import MarketMixAssets          from  './components/Home/MarketInfo/etp/marketMixAssets.vue'             /* 010-혼합자산 */
+import MarketOversea            from  './components/Home/MarketInfo/etp/marketOversea.vue'               /* 101-국가 ( 탭에 노출은 '해외' ) */
+import MarketLeverageInverse    from  './components/Home/MarketInfo/etp/marketLeverageInverse.vue'       /* 201-배율 ( 탭에 노출은 '레버리지/인버스' ) */
 
 
 // TODAY
-import  Today1Main   from './components/Home/Today/Today1Main.vue'
+import  Today1Main   from './components/Home/MarketInfo/index/IndexInfoMain.vue'
 
 
 import  sampleChart   from '@/components/Sample/test.vue'

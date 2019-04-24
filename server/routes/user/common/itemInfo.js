@@ -86,22 +86,25 @@ var deleteFavorItem = function (req, res) {
             var stmt = mapper.getStatement('common.item', 'deleteFavorItem', params, {language:'sql', indent: '  '});
 
             Promise.using(pool.connect(), conn => {
+                conn.beginTransaction(txerr => {
+                    Promise.all([
+                        conn.queryAsync(stmt)
 
-                Promise.all([
-                    conn.queryAsync(stmt)
-
-                ]).then( rows => {
-                    res.json({
-                        success: true
+                    ]).then( rows => {
+                        conn.commit();
+                        res.json({
+                            success: true
+                        });
+                        res.end();  
+                    }).catch(err => {
+                        conn.rollback();
+                        util.log("Error while performing Query.", err);
+                        res.json({
+                            success: false,
+                            message: err
+                        });
+                        res.end();
                     });
-                    res.end();  
-                }).catch(err => {
-                    util.log("Error while performing Query.", err);
-                    res.json({
-                        success: false,
-                        message: err
-                    });
-                    res.end();
                 });
             }); 
         } else {

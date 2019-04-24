@@ -63,34 +63,94 @@
                                                                 <v-btn flat icon color="#c2c2c2" @click="deleteItem(item.ITEM_SEQ, item.GUBUN, item.ITEM_CD )"><v-icon>clear</v-icon></v-btn>
                                                             </v-list-tile>
                                                         </v-list>
+                                                        <v-btn outline small color="primary" dark v-on:click="showJongMokPop">
+                                                            <v-icon small color="primary">add</v-icon>자산추가
+                                                        </v-btn>
                                                     </v-card>
-                                                </v-flex>
+                                                </v-flex>                                                
                                             </v-layout>
                                             <!--오른쪽 메뉴 하단 리스트 영역--->
                                         </v-tab-item>
                                         <v-tab-item>
-                                            <!--오른쪽 메뉴 하단 리스트 영역--->
-                                            <v-layout row class="w100 pt-2">
-                                                <v-flex xs12>
-                                                    <v-card flat>
-                                                        <v-list two-line subheader>
-                                                            <v-list-tile
-                                                                v-for="item in items3"
-                                                                :key="item.title"
-                                                                class="right_menu_w3"
-                                                            >
-                                                                <v-list-tile-content
-                                                                    class="rm_con_h"
+
+                                            <v-tabs v-model="activeTab" centered>
+                                                <v-tabs-slider color="#1976d2"></v-tabs-slider>
+
+                                                <v-tab v-for="item in kindTabs" :key="item">{{ item }}</v-tab>
+                                            </v-tabs>
+                                            
+                                            <v-tabs-items v-model="activeTab">
+                                            <v-tab-item>
+                                                <!--etf 리스트 영역--->
+                                                <v-layout row class="w100 pt-2">
+                                                    <v-flex xs12>
+                                                        <v-card flat>
+                                                            <v-list two-line subheader>
+                                                                <v-list-tile
+                                                                    v-for="item in etfList"
+                                                                    :key="item.JISU_CD"
+                                                                    class="right_menu_w3"
                                                                 >
-                                                                    <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                                                                    <v-list-tile-sub-title>{{ item.subtitle }}</v-list-tile-sub-title>
-                                                                </v-list-tile-content>
-                                                            </v-list-tile>
-                                                        </v-list>
-                                                    </v-card>
-                                                </v-flex>
-                                            </v-layout>
-                                            <!--오른쪽 메뉴 하단 리스트 영역 end--->
+                                                                    <v-list-tile-content
+                                                                        class="rm_con_h"
+                                                                    >
+                                                                        <v-list-tile-title>{{ item.JISU_NM }}</v-list-tile-title>
+                                                                        <v-list-tile-sub-title>{{ item.JISU_CD }}</v-list-tile-sub-title>
+                                                                    </v-list-tile-content>
+                                                                </v-list-tile>
+                                                            </v-list>
+                                                        </v-card>
+                                                    </v-flex>
+                                                </v-layout>
+                                            </v-tab-item>
+                                            <v-tab-item>
+                                                <!--ETN 리스트 영역--->
+                                                <v-layout row class="w100 pt-2">
+                                                    <v-flex xs12>
+                                                        <v-card flat>
+                                                            <v-list two-line subheader>
+                                                                <v-list-tile
+                                                                    v-for="item in etnList"
+                                                                    :key="item.JISU_CD"
+                                                                    class="right_menu_w3"
+                                                                >
+                                                                    <v-list-tile-content
+                                                                        class="rm_con_h"
+                                                                    >
+                                                                        <v-list-tile-title>{{ item.JISU_NM }}</v-list-tile-title>
+                                                                        <v-list-tile-sub-title>{{ item.JISU_CD }}</v-list-tile-sub-title>
+                                                                    </v-list-tile-content>
+                                                                </v-list-tile>
+                                                            </v-list>
+                                                        </v-card>
+                                                    </v-flex>
+                                                </v-layout>
+                                            </v-tab-item>
+                                            <v-tab-item>
+                                                <!--INDEX 리스트 영역--->
+                                                <v-layout row class="w100 pt-2">
+                                                    <v-flex xs12>
+                                                        <v-card flat>
+                                                            <v-list two-line subheader>
+                                                                <v-list-tile
+                                                                    v-for="item in indexList"
+                                                                    :key="item.JISU_CD"
+                                                                    class="right_menu_w3"
+                                                                >
+                                                                    <v-list-tile-content
+                                                                        class="rm_con_h"
+                                                                    >
+                                                                        <v-list-tile-title>{{ item.JISU_NM }}</v-list-tile-title>
+                                                                        <v-list-tile-sub-title>{{ item.JISU_CD }}</v-list-tile-sub-title>
+                                                                    </v-list-tile-content>
+                                                                </v-list-tile>
+                                                            </v-list>
+                                                        </v-card>
+                                                    </v-flex>
+                                                </v-layout>                                                 
+                                            </v-tab-item>
+                                            </v-tabs-items>
+                                           
                                         </v-tab-item>
                                     </v-tabs-items>
                                 </v-flex>
@@ -132,30 +192,15 @@ export default {
             mini: false,
             right: null,
             tab: null,
+            kindTab : null, 
+            activeTab: 0, 
             tabs: ["관심종목", "전체종목"],
-            tab2: [],
-            search: null,
+            kindTabs: ["ETF", "ETN", "INDEX"],
             drawer: null,
-            items: [
-                { title: "Home", icon: "dashboard" },
-                { title: "About", icon: "question_answer" }
-            ],
             favorItems: [],
-            items3: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            items4: ["ETF", "ETN", "INDEX"],
+            etnList: [],
+            etfList: [],
+            indexList: []
         };
     },
     components: {
@@ -169,6 +214,9 @@ export default {
         // 메시지 박스 참조
         this.$root.$confirm = this.$refs.confirm;
         this.getFavorItemInfo();
+        this.getEtnList();
+        this.getEtfList();
+        this.getIndexList();
     },
     created: function() {},
     beforeDestroy() {},
@@ -218,12 +266,12 @@ export default {
                 
 
                 if (gubun  == '1') {
-                    var idx = _.findIndex(vm.favorItems, { 'ITEM_CD': sel_items[i].F16012});
+                    var idx = _.findIndex(vm.favorItems, { 'ITEM_CD': sel_items[i].JISU_CD});
                     
                     if (idx == -1) {
                         addFavorItems.push({
                             GUBUN : gubun,
-                            F16012 : sel_items[i].F16012,
+                            F16012 : sel_items[i].JISU_CD,
                             F16013 : '',
                             F16002 : sel_items[i].JISU_NM,
                             MARKET_ID : '',
@@ -263,6 +311,64 @@ export default {
                     vm.getFavorItemInfo();
                 }
             });
+        },
+        showJongMokPop: function() {
+            this.$EventBus.$emit( "showJongMokPop", true );
+        },
+
+        getEtnList: function() {
+            console.log("etn_grid");
+            axios.get(Config.base_url + "/user/index/getETNList", {
+                    params: {
+                    }
+                }).then(response => {
+                    // console.log(response);
+                    if (response.data.success == false) {
+                        this.$root.$confirm.open('확인','종목정보가 없습니다.',{},1);
+                    } else {
+                        var items = response.data.results;
+                        
+                        //console.log("response=" + JSON.stringify(items));
+                        this.etnList = items;                        
+                    }
+                   
+                });
+        }, 
+        getEtfList: function() {
+            console.log("etn_grid");
+            axios.get(Config.base_url + "/user/index/getETFList", {
+                    params: {
+                    }
+                }).then(response => {
+                    // console.log(response);
+                    if (response.data.success == false) {
+                        this.$root.$confirm.open('확인','종목정보가 없습니다.',{},1);
+                    } else {
+                        var items = response.data.results;
+                        
+                        //console.log("response=" + JSON.stringify(items));
+                        this.etfList = items;                        
+                    }
+                   
+                });
+        }, 
+        getIndexList: function() {
+            console.log("etn_grid");
+            axios.get(Config.base_url + "/user/index/getInfoIndexList", {
+                    params: {
+                    }
+                }).then(response => {
+                    // console.log(response);
+                    if (response.data.success == false) {
+                        this.$root.$confirm.open('확인','종목정보가 없습니다.',{},1);
+                    } else {
+                        var items = response.data.results;
+                        
+                        //console.log("response=" + JSON.stringify(items));
+                        this.indexList = items;                        
+                    }
+                   
+                });
         },
     }
 };

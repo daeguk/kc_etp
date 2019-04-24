@@ -4,12 +4,7 @@
                     <v-layout row>
                         <v-flex xs12>
                             <v-card flat>
-                                <v-dialog v-model="dialog" persistent max-width="500">
-                                    <template v-slot:activator="{ on }">
-                                        <v-btn outline small color="primary" dark v-on="on">
-                                            <v-icon small color="primary">add</v-icon>자산추가
-                                        </v-btn>
-                                    </template>
+                                <v-dialog v-model="dialog" persistent max-width="500">                                   
                                     <v-card>
                                         <h5>
                                             <v-card-title ma-0>
@@ -91,8 +86,14 @@ export default {
         indexList: indexList
     },
     computed: {},
-    created: function() {},
-    beforeDestroy() {},
+    created: function() {
+        this.$EventBus.$on("showJongMokPop", res => {
+            this.dialog = res;
+        });
+    },
+    beforeDestroy() {
+         this.$EventBus.$off("showJongMokPop");
+    },
     mounted: function() {
         
 

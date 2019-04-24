@@ -1,65 +1,8 @@
 <template>
     <v-container>
         <v-layout row wrap class="content_margin">
-            <v-flex xs12>
-                <v-carousel  light hide-delimiters height="250px" interval="10000">
-                    <v-carousel-item  class="bg_W market_layout_w" v-if="carousel_info.carousel_cnt > 0"  v-for="n in carousel_info.carousel_cnt" :key="n">
 
-                        <v-layout class="market_card_layout">
-                            <v-flex  v-for="x in 5" :key="x">
-                                <v-card flat>
-                                    <div class="market_card_w line_l">
-                                        <div class="market_card2" wrap>
-                                            <h6>{{getData(carousel_data, n, x, "name")}}</h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">{{new Intl.NumberFormat().format((getData(carousel_data, n, x, "total_amt")) / 1000)}}K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - {{getData(carousel_data, n, x, "etf_cnt")}}종목</dt>
-                                                        <dt>ETN - {{getData(carousel_data, n, x, "etn_cnt")}}종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>                           
-                        </v-layout>
-                    </v-carousel-item>
-                    <v-carousel-item  class="bg_W" v-if="Object.keys(carousel_mod).length > 0">
-                        <v-layout class="market_card_layout" >
-                            <v-flex v-for="mod_item in orderedData" :key="mod_item.ctg_code">
-                                <v-card flat>
-                                    <div class="market_card_w line_l">
-                                        <div class="market_card2" wrap>
-                                            <h6> {{mod_item.name}} </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">{{new Intl.NumberFormat().format((mod_item.total_amt) / 1000)}}K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - {{mod_item.etf_cnt}}종목</dt>
-                                                        <dt>ETN - {{mod_item.etn_cnt}}종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                        </v-layout>
-                    </v-carousel-item>
-                </v-carousel>
-            </v-flex>
-            <!---테이블1--->
-            
+            <!---테이블 start--->
             <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12 mt-3>
                 <v-card flat>
                     <v-card-title primary-title>
@@ -67,13 +10,13 @@
                            {{item.ctg_name}}
                             <p>
                                 Total
-                                <span class="text_result" v-bind:id="'sec_count'+item.ctg_code">120</span> results
-                                <span v-bind:id="'sec_date'+item.ctg_code">기준일 :2018.10.20</span>
+                                <span class="text_result" v-bind:id="table_name + '_count'+item.ctg_code">120</span> results
+                                <span v-bind:id="table_name + '_date'+item.ctg_code">기준일 :2018.10.20</span>
                             </p>
                         </h3>
                     </v-card-title>
                     <v-card flat>
-                        <table v-bind:id="'sector'+item.ctg_code" class="tbl_type" style="width:100%">
+                        <table v-bind:id="table_name + item.ctg_code" class="tbl_type" style="width:100%">
                             <colgroup>
                                 <col width="20%">
                                 <col width="10%">
@@ -99,31 +42,33 @@
                         </table>
                     </v-card>
                 </v-card>
-            </v-flex>
-            <!---테이블1 end--->
+            </v-flex>            
+            <!---테이블 end--->
+
             <ComFavorItem></ComFavorItem>
         </v-layout>
     </v-container>
 </template>
 
 <script>
-
 import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
-import _ from "lodash";
-import Config       from "@/js/config.js";
+import Config from "@/js/config.js";
 import ComFavorItem from "@/components/common/control/ComFavorItem"; 
+var importance_grid = null;
 
 export default {
     props: [],
     data() {
         return {
+            
+            table_name : "leverageInverse",
             ctg_results: [],
             carousel_info:[],
             carousel_data:[],
-            carousel_mod:[],            
+            carousel_mod:[], 
         };
     },
     components: {
@@ -136,42 +81,39 @@ export default {
         }
     },
     mounted: function() {
-        var vm = this;
-        vm.getSectorEtpList();
-        
+        this.getEtpList( "201" );      /* 201-배율 ( 탭에 노출은 '레버리지/인버스' ) */
     },
     created: function() {},
     beforeDestroy() {},
     methods: {
+
         getData: function(carousel_data, n, x, dataKind) {
-            if (carousel_data[(((n-1)*5)+x-1)]) {
-                if (dataKind == "name") {
-                    return carousel_data[(((n-1)*5)+x-1)].name;
-                } else if (dataKind == "total_amt") {
-                    return carousel_data[(((n-1)*5)+x-1)].total_amt;
-                } else if (dataKind == "etf_cnt") {
-                    return carousel_data[(((n-1)*5)+x-1)].etf_cnt;
-                } else if (dataKind == "etn_cnt") {
-                    return carousel_data[(((n-1)*5)+x-1)].etn_cnt;
-                }
+
+            if (carousel_data[(((n-1)* this.carousel_info.carousel_div )+x-1)]) {
+                return carousel_data[(((n-1)* this.carousel_info.carousel_div)+x-1)][ dataKind ];
             } else {
                 return "";
             }
-        },
-        getSectorEtpList: function() {
-            console.log("getSectorEtpList");
-            var vm = this;
-            var idx = 0;
+        },        
 
-            axios.get(Config.base_url + "/user/marketinfo/getSectorEtpList", {
-                    params: {
-                        "ctg_code" : "002"
-                    }
+        /*
+         * 시장대표에 해당하는 지수 및 ETP 정보를 조회한다. ( ETP -> 시장대표 탭 선택시 )
+         * 2019-04-16  bkLove(촤병국)
+         */        
+        getEtpList: function( ctg_large_code ) {
+            console.log("getEtpList");
+
+            var vm = this;
+            var idx = 0;    
+
+            axios.post(Config.base_url + "/user/marketinfo/getEtpList", {
+                data: {
+                    "ctg_large_code"    :   ctg_large_code
+                }
             }).then(function(response) {
                 console.log(response);
-                if (response.data.success == false) {
-                    alert("해당 종목이 없습니다");
-                } else {
+
+                if( response.data ) {
                     var etpLists = response.data.etpLists;
                     vm.carousel_data = response.data.carousel_data;
                     vm.carousel_mod = response.data.carousel_mod;
@@ -179,12 +121,12 @@ export default {
                     vm.carousel_info = response.data.carousel_info;
 
                     var items = null;
-                    
+
                     for (let ctgCodeItem of vm.ctg_results) {
 
                         vm.$nextTick().then(() => {
                             items = etpLists[idx++];
-                            $('#sector'+ctgCodeItem.ctg_code).DataTable( {
+                            $('#' + vm.table_name + ctgCodeItem.ctg_code).DataTable( {
                                     "processing": true,
                                     "serverSide": false,
                                     "info": false,   // control table information display field
@@ -207,7 +149,6 @@ export default {
                                                 if (row.NEW_YN == "Y") {
                                                     htm += "<span><div class='text_new'>new</div></span>";
                                                 }
-                                                htm += "        </span>";
                                                 return htm;
                                             },
                                             "targets": 0
@@ -251,25 +192,25 @@ export default {
                                     ],
                                     columns: [
                                         { "data": "f16002", "orderable": true, className:"txt_left line2"}, /*종목*/
-                                        { "data": "f15301", "orderable": true }, /*INAV*/
-                                        { "data": "f03329", "orderable" : true}, /*전일최종Nav*/
+                                        { "data": "fmt_f15301", "orderable": true }, /*INAV*/
+                                        { "data": "fmt_f03329", "orderable" : true}, /*전일최종Nav*/
                                         { "data": "f15302", "orderable" : true}, /*추적오차율*/
                                         { "data": "f15304", "orderable" : true}, /*괴리율*/
                                         { "data": "f34777", "orderable" : true}, /*기초지수*/
-                                        { "data": "f15318", "orderable" : true}, /*지수현재가*/
+                                        { "data": "fmt_f15318", "orderable" : true}, /*지수현재가*/
                                         { "data": null, "orderable" : true, defaultContent:""},
                                     ]
                             }); 
 
                             // ETP 갯수와 기준일 바인딩 
                             if (items) {
-                                $("#sec_count"+ctgCodeItem.ctg_code).html(items.length);
-                                $("#sec_date"+ctgCodeItem.ctg_code).html("기준일 :"+items[0].f12506);
+                                $("#" + vm.table_name + "_count" + ctgCodeItem.ctg_code).html(items.length);
+                                $("#" + vm.table_name + "_date"  + ctgCodeItem.ctg_code).html("기준일 :"+items[0].f12506);
                             }
 
                             // 테이블별 이벤트
-                            $('#sector'+ctgCodeItem.ctg_code+' tbody').on('click', 'button', function () {
-                                var table = $('#sector'+ctgCodeItem.ctg_code).DataTable();
+                            $('#' + vm.table_name + ctgCodeItem.ctg_code+' tbody').on('click', 'button', function () {
+                                var table = $('#' + vm.table_name + ctgCodeItem.ctg_code).DataTable();
                                 var data = table.row($(this).parents('tr')).data();
 
                                 if ($(this).attr('id') == 'detail') {
