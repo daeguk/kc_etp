@@ -129,71 +129,46 @@
 import Config from "@/js/config.js";
 
 export default {
-    props: [""],
+    props: [  ],
     data() {
         return {
             index_item: {},
             rowsPerPageItems: [50, 50],
-            etp_items: []
+            etp_items: [],
+
+            etpBasic    : {},
         };
     },
     computed: {},
     created: function() {},
     beforeDestroy() {},
     mounted: function() {
-        //this.getIndexBaseInfo();
-        //this.getIndexInEtpInfo();
+        this.getEtpBasic();     /* ETP 의 기본정보를 조회한다. */
     },
     methods: {
-        getIndexBaseInfo: function() {
-            var vm = this;
-            console.log("getIndexBaseInfo");
+        /*
+         * ETP 의 기본정보를 조회한다.
+         * 2019-04-25  bkLove(촤병국)
+         */
+        getEtpBasic: function() {
+            console.log("getEtpBasic");
 
-            axios
-                .get(Config.base_url + "/user/index/getIndexBaseInfo", {
-                    params: {
-                        jisu_cd: vm.$route.query.jisu_cd,
-                        market_id: vm.$route.query.market_id
-                    }
-                })
-                .then(response => {
-                    // console.log(response);
-                    if (response.data.success == false) {
-                        alert("지수정보가 없습니다.");
-                    } else {
-                        var items = response.data.results;
-                        vm.index_item = items[0];
-                        console.log(
-                            "response=" + JSON.stringify(vm.index_item)
-                        );
-                        //this.list_cnt = this.results.length;
-                    }
-                });
+            var vm = this;
+
+            axios.post(Config.base_url + "/user/etp/getEtpBasic", {
+                data: {
+                    f16012: vm.$route.query.f16012 /* 국제표준코드 */
+                }
+            }).then(function(response) {
+                console.log(response);
+
+                if (response.data) {
+                    vm.etpBasic     =   response.data.etpBasic;
+
+                    vm.$emit( 'receiveEtpBasic',  vm.etpBasic );
+                }
+            });
         },
-        getIndexInEtpInfo: function() {
-            var vm = this;
-
-            axios
-                .get(Config.base_url + "/user/index/getIndexInEtpInfo", {
-                    params: {
-                        jisu_cd: vm.$route.query.jisu_cd,
-                        market_id: vm.$route.query.market_id
-                    }
-                })
-                .then(response => {
-                    // console.log(response);
-                    if (response.data.success == false) {
-                        alert("지수정보가 없습니다.1");
-                    } else {
-                        var items = response.data.results;
-                        vm.etp_items = items;
-                        console.log(
-                            "etp_response=" + JSON.stringify(vm.etp_items)
-                        );
-                        //this.list_cnt = this.results.length;
-                    }
-                });
-        }
     }
 };
 </script>

@@ -10,8 +10,8 @@
                         <v-card-title primary-title>
                             <div class="title_wrap01">
                                 <h3 class="headline mb-0">
-                                    {{this.results.f16002}}
-                                    <span class="grey--text">{{results.f16013}}</span>
+                                    {{this.etpBasic.f16002}}
+                                    <span class="grey--text">{{etpBasic.f16013}}</span>
                                 </h3>
                                 <div class="right_btn">
                                     <v-layout align-right>
@@ -31,7 +31,7 @@
                         </v-card-title>
                         <v-card-text>
                             <p class="title_ex">
-                                {{this.results.f16002}} 관한 내용이 들어갑니다
+                                {{this.etpBasic.f16002}} 관한 내용이 들어갑니다
                             </p>
                         </v-card-text>
                     </div>
@@ -40,21 +40,21 @@
                     <div class="graph_01_w">
 
                         <div class="sub_title_num">
-                            {{results.f15001}}
-                            <span class="text_blue">{{results.f15472}}({{results.f15004}})</span>
-                            <p>Last Updated : {{results.f12506}}</p>
+                            {{etpBasic.f15001}}
+                            <span class="text_blue">{{etpBasic.f15472}}({{etpBasic.f15004}})</span>
+                            <p>Last Updated : {{etpBasic.f12506}}</p>
                         </div>
 
                         <v-card flat class="graph_toggle">
                             <v-flex xs12 sm6 class="py-2">
                                 <v-btn-toggle v-model="toggle_one" class="toggle_01">
-                                    <v-btn flat value="1D" v-on:click="getEtpChartData('1D')">1D</v-btn>
-                                    <v-btn flat value="1W" v-on:click="getEtpChartData('1W')">1W</v-btn>
-                                    <v-btn ref="etpBtn_1m" flat value="1M" v-on:click.stop="getEtpChartData('1M')">1M</v-btn>
-                                    <v-btn flat value="3M" v-on:click="getEtpChartData('3M')">3M</v-btn>
-                                    <v-btn flat value="6M" v-on:click="getEtpChartData('6M')">6M</v-btn>
-                                    <v-btn flat value="1Y" v-on:click="getEtpChartData('1Y')">1Y</v-btn>
-                                    <v-btn flat value="Total" v-on:click="getEtpChartData('TOTAL')">Total</v-btn>
+                                    <v-btn flat value="1D" v-on:click="fn_getEtpChartData('1D')">1D</v-btn>
+                                    <v-btn flat value="1W" v-on:click="fn_getEtpChartData('1W')">1W</v-btn>
+                                    <v-btn ref="etpBtn_1m" flat value="1M" v-on:click.stop="fn_getEtpChartData('1M')">1M</v-btn>
+                                    <v-btn flat value="3M" v-on:click="fn_getEtpChartData('3M')">3M</v-btn>
+                                    <v-btn flat value="6M" v-on:click="fn_getEtpChartData('6M')">6M</v-btn>
+                                    <v-btn flat value="1Y" v-on:click="fn_getEtpChartData('1Y')">1Y</v-btn>
+                                    <v-btn flat value="Total" v-on:click="fn_getEtpChartData('TOTAL')">Total</v-btn>
                                 </v-btn-toggle>
                             </v-flex>
                         </v-card>
@@ -76,7 +76,7 @@
 
                                 <v-tabs-items v-model="tab5">
                                     <v-tab-item>
-                                        <EtpManageDetailBasicInfoTab></EtpManageDetailBasicInfoTab>
+                                        <EtpManageDetailBasicInfoTab    v-on:receiveEtpBasic = "fn_setEtpBasic"></EtpManageDetailBasicInfoTab>
                                     </v-tab-item>
                                     <v-tab-item>
                                         <EtpManageDetailAnalysisTab></EtpManageDetailAnalysisTab>
@@ -427,8 +427,8 @@ export default {
             desserts: [],
             toggle_one: null,
 
-            results: {},
-            etpInfos: {}
+            etpBasic    : {},
+            etpInfos    : {}
         };
     },
     components: {
@@ -438,8 +438,7 @@ export default {
     mounted: function() {
         var vm = this;
 
-        this.getEtpBasic(); /* ETP 의 기본정보를 조회한다. */
-        // this.getEtpInfo();              /* ETP 정보를 조회한다. ( 분석정보, 포트폴리오, 성능정보 ) */
+        // this.fn_getEtpInfo();            /* ETP 정보를 조회한다. ( 분석정보, 포트폴리오, 성능정보 ) */
 
         vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
     },
@@ -449,35 +448,19 @@ export default {
     methods: {
 
         /*
-         * ETP 의 기본정보를 조회한다.
+         * EtpManageDetailBasicInfoTab 에서 조회된 etp 기본정보를 설정한다.
          * 2019-04-25  bkLove(촤병국)
          */
-        getEtpBasic: function() {
-            console.log("getEtpBasic");
-
-            var vm = this;
-            var idx = 0;
-
-            axios.post(Config.base_url + "/user/etp/getEtpBasic", {
-                data: {
-                    f16012: vm.$route.query.f16012 /* 국제표준코드 */
-                }
-            }).then(function(response) {
-                console.log(response);
-
-                if (response.data) {
-                    vm.results  =   response.data.etpBasic;
-                }
-            });
+        fn_setEtpBasic : function( etpBasic ) {
+            this.etpBasic   =   etpBasic;
         },
 
         /*
          * ETP 정보를 조회한다. ( 분석정보, 포트폴리오, 성능정보 )
          * 2019-04-25  bkLove(촤병국)
          */
-
-        getEtpInfo: function() {
-            console.log("getEtpInfo");
+        fn_getEtpInfo: function() {
+            console.log("fn_getEtpInfo");
 
             var vm = this;
             var idx = 0;
@@ -500,8 +483,8 @@ export default {
          * ETP 차트 정보를 조회한다.
          * 2019-04-25  bkLove(촤병국)
          */
-        getEtpChartData: function( term ) {
-            console.log("getEtpChartData");
+        fn_getEtpChartData: function( term ) {
+            console.log("fn_getEtpChartData");
 
             var vm = this;
 
