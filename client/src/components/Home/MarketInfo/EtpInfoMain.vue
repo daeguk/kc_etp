@@ -49,7 +49,13 @@ export default {
     	};
     },    
     mounted: function() {
-       
+        if (this.$route.query.activeTab == 2) {
+            //this.activeTab = 1;
+           // this.pageMove('/info/etpinfo/marketStrategy');
+        } else {
+            this.activeTab = 0;
+            this.pageMove('/info/etpinfo/marketRepresent');
+        }
     },
     created: function() {
         
@@ -58,8 +64,6 @@ export default {
         
     },
     updated: function() {
-        this.activeTab = 0;
-        this.pageMove('/info/etpinfo/marketRepresent');
     },
     methods: {
         pageMove : function(route) {
