@@ -4,68 +4,41 @@
             <v-flex xs12 flat>
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">Performance</h4>
-                    <div class="graph_02_w">
-                        <div class="graph_box" style="width:28%">그래프 라인</div>
-                        <div style="width:8%">1-Week</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%"></div>
-                    </div>
-                   <v-card flat>
-                     <table id="perf_table" class="tbl_type" style="width:100%">
-                         <colgroup>
-                            <col width="28%">
-                            <col width="width:8%">
-                            <col width="width:8%">
-                            <col width="width:8%">
-                            <col width="width:8%">
-                            <col width="width:8%">
-                            <col width="width:8%">
-                            <col width="width:8%">
-                            <col width="width:8%">
-                            <col width="width:8%">
-                            <col width="width:8%">
-                        </colgroup>
-                         <thead>
-                          <tr>
-                             <th></th>
-                             <th></th>
-                             <th>1-Week</th>
-                             <th>1-Month비중</th>
-                             <th>3-Month</th>
-                             <th>YTD</th>
-                             <th>1-Year</th>
-                             <th>3-Year</th>
-                             <th>5-Year</th>
-                             <th>10-Year</th>
-                             <th></th>
-                           </tr>
-                           </thead>
-                       </table> 
 
-                       <!--table id="perf_table" class="display table01_w" style="width:100%">
+                    <div
+                        id="etp_comboChart_div"
+                        class="graph_01"
+                        style="height:300px;background-color:#f6f6f6;"
+                    ></div>
+
+                    <v-card flat>
+                        
+                        <table v-bind:id="tableName" class="tbl_type" style="width:100%">
+                            <colgroup>
+                                <col width="30%">
+                                <col width="10%">
+                                <col width="10%">
+                                <col width="10%">
+                                <col width="10%">
+                                <col width="10%">
+                                <col width="10%">
+                                <col width="10%">
+                            </colgroup>
                             <thead>
                                 <tr>
-                                    <th></th>
-                                    <th></th>
+                                    <th>{{ this.nowDate }} (%)</th>
                                     <th>1-Week</th>
                                     <th>1-Month</th>
                                     <th>3-Month</th>
-                                    <th>YTD</th>
                                     <th>1-Year</th>
-                                    <th>3-Year</th>
-                                    <th>5-Year</th>
+                                    <th>3Year</th>
+                                    <th>5Year</th>
                                     <th>10-Year</th>
-                                    <th></th>
                                 </tr>
                             </thead>
-                        </table-->  
+                        </table>
                     </v-card>
+
                     <!---자산추가 팝업--->
                     <v-layout row>
                         <v-flex xs12>
@@ -100,19 +73,14 @@
 
                                         <v-layout row wrap>
                                             <v-flex xs12>
-                                                <v-tabs
-                                                    fixed-tabs
-                                                    color="cyan"
-                                                    dark
-                                                    v-model="tab"
-                                                >
+                                                <v-tabs fixed-tabs color="cyan" dark v-model="tab">
                                                     <v-tabs-slider color="#00fffc"></v-tabs-slider>
                                                     <v-tab
                                                         v-for="item in items"
                                                         :key="item"
                                                     >{{ item }}</v-tab>
                                                 </v-tabs>
-                                                 <!--v-tabs-items v-model="tab">
+                                                <!--v-tabs-items v-model="tab">
                                                     <v-tab-item>
                                                         <infopoptab1 @selectedItem="getSelectedItem"></infopoptab1>
                                                     </v-tab-item>
@@ -121,11 +89,11 @@
                                                     </v-tab-item>
                                                     <v-tab-item>
                                                         <infopoptab3 @selectedItem="getSelectedItem"></infopoptab3>
-                                                    </v-tab-item-->
-                                                </v-tabs-items>
+                                                    </v-tab-item
+                                                </v-tabs-items-->
                                             </v-flex>
                                         </v-layout>
-                                    </v-card>   
+                                    </v-card>
                                 </v-dialog>
                             </v-card>
                         </v-flex>
@@ -174,14 +142,14 @@
                                                 <th>비중</th>
                                                 <th>구분</th>
                                             </tr>
-                                        </thead>   
+                                        </thead>
                                     </table>
                                 </v-card>
                                 <v-card class="pop_bot_h"></v-card>
                             </v-card>
                         </v-dialog>
                     </v-subheader>
-                    <div class="graph_02_w"  id="importance_chart"></div>
+                    <div class="graph_02_w" id="importance_chart"></div>
                     <v-card flat></v-card>
                 </div>
                 <!---비중정보 팝업end-->
@@ -197,11 +165,11 @@
 //import infopoptab1 from "./infopoptab1.vue";
 //import infopoptab2 from "./infopoptab2.vue";
 //import infopoptab3 from "./infopoptab3.vue";
-import $      from 'jquery'
-import dt      from 'datatables.net'
-import buttons from 'datatables.net-buttons'
-import select from 'datatables.net-select'
-import Config from '@/js/config.js'
+import $ from "jquery";
+import dt from "datatables.net";
+import buttons from "datatables.net-buttons";
+import select from "datatables.net-select";
+import Config from "@/js/config.js";
 var importance_grid = null;
 var perf_table = null;
 export default {
@@ -212,10 +180,19 @@ export default {
             dialog: false,
             dialog2: false,
             results: [],
-            importance_cnt:0,
-            search:"",
+            importance_cnt: 0,
+            search: "",
 
-            modalFlag: false
+            modalFlag: false,
+
+            tableName : "tblEtp",
+            nowDate:        new Date().getFullYear() 
+                        +   "." 
+                        +   (parseInt(new Date().getMonth()) + 1) 
+                        +   "." 
+                        +   new Date().getDate(),
+            arrEtpPerformance: [],
+            arrIndexPerformance: []
         };
     },
     components: {
@@ -227,7 +204,7 @@ export default {
     created: function() {},
     beforeDestroy() {},
     mounted: function() {
-/*        
+        /*        
         var vm = this;
 
         vm.$root.$infopoptab1 = vm.$refs.$infopoptab1;
@@ -297,169 +274,299 @@ export default {
     
 
         vm.getIndexAnalysisInfo();
-*/        
-
+*/
+        this.fn_getEtpPerformance(); /* ETP performance 정보를 조회한다. */
     },
     methods: {
+        /*
+         * ETP 의 기본정보를 조회한다.
+         * 2019-04-25  bkLove(촤병국)
+         */
+        fn_getEtpPerformance: function() {
+            console.log("fn_getEtpPerformance");
+
+            var vm = this;
+
+
+            var chart = new google.visualization.ComboChart(
+                document.getElementById("etp_comboChart_div")
+            );
+
+            // Set chart options
+            var options = {
+                title: " ",
+                align: "start",
+                width: 940,
+                height: 300,
+                vAxis: { title: "" },
+                hAxis: { title: "" },
+                seriesType: "bars",
+                series: "",
+                legend: { position: "bottom" }
+            };
+
+            var arrToData;
+
+            // Load the Visualization API and the corechart package.
+            google.charts.load("current", { packages: ["corechart"] });
+
+            google.charts.setOnLoadCallback(function() {
+                chart.clearChart();
+            });
+
+            if (
+                vm.$route.query.f16012 &&
+                vm.$route.query.f16257 &&
+                vm.$route.query.f34239
+            ) {
+                google.charts.setOnLoadCallback(
+                    drawChart(
+                        vm.$route.query.f16012,
+                        vm.$route.query.f16257,
+                        vm.$route.query.f34239,
+
+                        vm.arrEtpPerformance,
+                        vm.arrIndexPerformance
+                    )
+                );
+            }
+
+            function drawChart(
+                f16012,
+                f16257,
+                f34239,
+                arrEtpPerformance,
+                arrIndexPerformance
+            ) {
+                axios.post(Config.base_url + "/user/etp/getEtpPerformance", {
+                    data: {
+                        f16012: f16012,
+                        f16257: f16257,
+                        f34239: f34239,
+
+                        arrEtpPerformance: arrEtpPerformance,
+                        arrIndexPerformance: arrIndexPerformance
+                    }
+                }).then(response => {
+                    console.log(response.data);
+                    if (response.data) {
+                        var chartList = response.data.chartList;
+                        var etpPerformanceList =
+                            response.data.etpPerformanceList;
+
+                    /* 차트 출력 */
+                        var items = [];
+                        if (chartList && chartList.length > 0) {
+                            items = chartList;
+                        }
+                        arrToData = new google.visualization.arrayToDataTable( items, false);
+                        chart.draw( arrToData, options );
+
+
+                    /* 테이블 정보 출력 */
+                        vm.$nextTick().then(() => {
+                            $("#" + vm.tableName ).DataTable({
+                                processing: true,
+                                serverSide: false,
+                                info: false, // control table information display field
+                                stateSave: true, //restore table state on page reload,
+                                lengthMenu: [
+                                    [10, 20, 50, -1],
+                                    [10, 20, 50, "All"]
+                                ],
+
+                                select: {
+                                    style: "single",
+                                    selector: "td:first-child"
+                                },
+                                paging: false,
+                                searching: false,
+                                data: etpPerformanceList,
+                                columnDefs: [
+                                ],
+                                columns: [
+                                    { "data": "f16002"      , "orderable" : true , className:"txt_left line2" },    /* 한글 종목명 */
+                                    { "data": "week1_price" , "orderable" : true , className:"txt_left line2" },    /* 1-week */
+                                    { "data": "month1_price", "orderable" : true , className:"txt_left line2" },    /* 1-Month */
+                                    { "data": "month3_price", "orderable" : true , className:"txt_left line2" },    /* 3-Month */
+                                    { "data": "year1_price" , "orderable" : true , className:"txt_left line2" },    /* 1-Year */
+                                    { "data": "year3_price" , "orderable" : true , className:"txt_left line2" },    /* 3-Year */
+                                    { "data": "year5_price" , "orderable" : true , className:"txt_left line2" },    /* 5-Year */
+                                    { "data": "year10_price", "orderable" : true , className:"txt_left line2" },    /* 10-Year */
+                                ]
+                            });
+
+                            // 테이블별 이벤트
+                            $('#' + vm.tableName + ' tbody').on('click', 'button', function () {
+                                var table = $('#' + vm.tableName ).DataTable();
+                                var data = table.row($(this).parents('tr')).data();
+
+                                if ($(this).attr('id') == 'detail') {
+                                    console.log('move detailPage ');
+                                    vm.movePage( data );
+                                } else {
+                                    console.log('move pdfPage ');
+                                }
+                                    
+                            });
+                           
+                        });
+                    }
+                });
+            }
+        },
 
         getIndexImportanceList: function() {
             console.log("getIndexImportanceList");
-            axios.get(Config.base_url + "/user/index/getIndexImportanceList", {
+            axios
+                .get(Config.base_url + "/user/index/getIndexImportanceList", {
                     params: {
-                        jisu_cd : this.$route.query.jisu_cd,
-                        market_id : this.$route.query.market_id
+                        jisu_cd: this.$route.query.jisu_cd,
+                        market_id: this.$route.query.market_id
                     }
-                }).then(response => {
+                })
+                .then(response => {
                     // console.log(response);
                     if (response.data.success == false) {
                         alert("비중 목록이 없습니다");
                     } else {
                         var items = response.data.results;
-                        
+
                         //console.log("response=" + JSON.stringify(items));
                         this.results = items;
                         this.importance_cnt = this.results.length;
 
                         // 차트 호출
                         this.importance_chart(items);
-                        
-                        importance_grid = $('#importance_grid').DataTable( {
-                            "processing": true,
-                            "serverSide": false,
-                            "info": false,   // control table information display field
-                            "stateSave": true,  //restore table state on page reload,
-                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                            scrollY:        '500px',
+
+                        importance_grid = $("#importance_grid").DataTable({
+                            processing: true,
+                            serverSide: false,
+                            info: false, // control table information display field
+                            stateSave: true, //restore table state on page reload,
+                            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                            scrollY: "500px",
                             scrollCollapse: true,
                             select: {
-                                style:    'multi',
-                                selector: 'td:first-child'
+                                style: "multi",
+                                selector: "td:first-child"
                             },
                             paging: false,
                             searching: false,
-                            data : this.results,
+                            data: this.results,
                             columns: [
-                                { "data": "ISIN_CODE", "orderable": true},
-                                { "data": "JOING_NM", "orderable": true },
-                                { "data": "PERCNT", "orderable" : true},
-                                { "data": "GUBUN", "orderable" : true},
+                                { data: "ISIN_CODE", orderable: true },
+                                { data: "JOING_NM", orderable: true },
+                                { data: "PERCNT", orderable: true },
+                                { data: "GUBUN", orderable: true }
                             ]
-                        }); 
-
-                        
+                        });
                     }
-                   
                 });
-        }, 
+        },
 
         importance_chart: function(results) {
             // Load the Visualization API and the corechart package.
-            google.charts.load('current', {'packages':['corechart']});
+            google.charts.load("current", { packages: ["corechart"] });
 
-           
             // Set a callback to run when the Google Visualization API is loaded.
             google.charts.setOnLoadCallback(drawChart());
 
             // Callback that creates and populates a data table,
             // instantiates the pie chart, passes in the data and
             // draws it.
-      
+
             function drawChart() {
-                
-                
                 // Create the data table.
                 var data = new google.visualization.DataTable();
-                data.addColumn('string', 'JOING_NM');
-                data.addColumn('number', 'PERCNT');
+                data.addColumn("string", "JOING_NM");
+                data.addColumn("number", "PERCNT");
 
                 // Set chart options
-                var options = {'title':' ',
-                            'width':'100%',
-                            'height':'400px'};
- 
-                
-                
-                var items = [] 
+                var options = { title: " ", width: "100%", height: "400px" };
+
+                var items = [];
 
                 for (let item of results) {
-                    
                     if (items.length >= 5) break;
 
                     items.push([item.JOING_NM, item.PERCNT]);
-
                 }
 
-                data.addRows(
-                    items
-                );
+                data.addRows(items);
 
                 // Instantiate and draw our chart, passing in some options.
-                var chart = new google.visualization.PieChart(document.getElementById('importance_chart'));
+                var chart = new google.visualization.PieChart(
+                    document.getElementById("importance_chart")
+                );
                 chart.draw(data, options);
             }
         },
 
         getIndexAnalysisInfo: function() {
             console.log("getIndexAnalysisInfo");
-            axios.get(Config.base_url + "/user/index/getIndexAnalysisInfo", {
+            axios
+                .get(Config.base_url + "/user/index/getIndexAnalysisInfo", {
                     params: {
-                        jisu_cd : this.$route.query.jisu_cd,
-                        market_id : this.$route.query.market_id
+                        jisu_cd: this.$route.query.jisu_cd,
+                        market_id: this.$route.query.market_id
                     }
-            }).then(response => {
+                })
+                .then(response => {
                     // console.log(response);
-                if (response.data.success == false) {
-                    alert("비중 목록이 없습니다");
-                } else {
-                    var items = response.data.results;
-                        
-                    console.log("response=" + JSON.stringify(items));
-                    perf_table.clear().draw();
-                    perf_table.rows.add(items).draw();
-                }
-                   
-            });
-        }, 
+                    if (response.data.success == false) {
+                        alert("비중 목록이 없습니다");
+                    } else {
+                        var items = response.data.results;
+
+                        console.log("response=" + JSON.stringify(items));
+                        perf_table.clear().draw();
+                        perf_table.rows.add(items).draw();
+                    }
+                });
+        },
 
         getSelectedItem: function(sel_items) {
             var vm = this;
             vm.dialog = false;
-               
-            for (let i = 0; i < sel_items.length; i++) {
-                
-                if (perf_table.rows().count() <= 4) {
 
-                    let compare_cnt = perf_table.column(0).data().filter(
-                        function(value, index) {
+            for (let i = 0; i < sel_items.length; i++) {
+                if (perf_table.rows().count() <= 4) {
+                    let compare_cnt = perf_table
+                        .column(0)
+                        .data()
+                        .filter(function(value, index) {
                             return sel_items[i].JISU_CD == value ? true : false;
-                        }
-                    ).count();
-                    
+                        })
+                        .count();
+
                     if (compare_cnt == 0) {
-                        perf_table.row.add(  {
-                            F16012 : '',
-                            F16013 : sel_items[i].JISU_CD,
-                            F16002 : sel_items[i].JISU_NM,
-                            Week1 : '1',
-                            Month1 : '2',
-                            Month3 : '3',
-                            YTD : '4',
-                            Year1 : '5',
-                            Year3 : '6',
-                            Year5 : '7',
-                            Year10 : '8',
-                        } ).draw( false );
+                        perf_table.row
+                            .add({
+                                F16012: "",
+                                F16013: sel_items[i].JISU_CD,
+                                F16002: sel_items[i].JISU_NM,
+                                Week1: "1",
+                                Month1: "2",
+                                Month3: "3",
+                                YTD: "4",
+                                Year1: "5",
+                                Year3: "6",
+                                Year5: "7",
+                                Year10: "8"
+                            })
+                            .draw(false);
                     } else {
-                        alert(sel_items[i].JISU_NM +"은 이미 추가된 자산입니다.");    
+                        alert(
+                            sel_items[i].JISU_NM + "은 이미 추가된 자산입니다."
+                        );
                     }
                 } else {
                     alert("자산 비교는 총 5개 까지 가능 합니다.");
                     break;
                 }
-
             }
-        
-        },
+        }
     }
-}
+};
 </script>

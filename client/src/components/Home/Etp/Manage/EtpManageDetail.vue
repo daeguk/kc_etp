@@ -455,7 +455,6 @@ export default {
         fn_setEtpBasic : function( etpBasic, indexBasic ) {
             this.etpBasic       =   etpBasic;
             this.indexBasic     =   indexBasic;
-debugger;
         },
 
         /*

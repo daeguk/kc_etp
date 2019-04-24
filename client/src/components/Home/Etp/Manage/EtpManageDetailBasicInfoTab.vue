@@ -153,15 +153,16 @@ export default {
             rowsPerPageItems: [50, 50],
             etp_items: [],
 
-            etpBasic: {},
-            indexBasic: {}
+            etpBasic            :   {},
+            indexBasic          :   {},
+            arrEtpPerformance   :   [],
         };
     },
     computed: {},
     created: function() {},
     beforeDestroy() {},
     mounted: function() {
-        this.fn_getEtpBasic(); /* ETP 의 기본정보를 조회한다. */
+        this.fn_getEtpBasic();          /* ETP 의 기본정보를 조회한다. */
     },
     methods: {
         /*
@@ -185,11 +186,12 @@ export default {
                 if (response.data) {
                     vm.etpBasic = response.data.etpBasic;
                     vm.indexBasic = response.data.indexBasic;
-                    debugger;
+
                     vm.$emit("receiveEtpBasic", vm.etpBasic, vm.indexBasic);
                 }
             });
-        }
+        },
+
     }
 };
 </script>
