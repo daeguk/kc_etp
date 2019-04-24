@@ -427,8 +427,9 @@ export default {
             desserts: [],
             toggle_one: null,
 
-            etpBasic    : {},
-            etpInfos    : {}
+            etpBasic    :   {},
+            indexBasic  :   {},
+            etpInfos    :   {}
         };
     },
     components: {
@@ -451,8 +452,10 @@ export default {
          * EtpManageDetailBasicInfoTab 에서 조회된 etp 기본정보를 설정한다.
          * 2019-04-25  bkLove(촤병국)
          */
-        fn_setEtpBasic : function( etpBasic ) {
-            this.etpBasic   =   etpBasic;
+        fn_setEtpBasic : function( etpBasic, indexBasic ) {
+            this.etpBasic       =   etpBasic;
+            this.indexBasic     =   indexBasic;
+debugger;
         },
 
         /*

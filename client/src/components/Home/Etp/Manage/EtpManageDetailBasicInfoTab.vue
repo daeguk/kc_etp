@@ -136,22 +136,23 @@ export default {
             rowsPerPageItems: [50, 50],
             etp_items: [],
 
-            etpBasic    : {},
+            etpBasic    :   {},
+            indexBasic  :   {},
         };
     },
     computed: {},
     created: function() {},
     beforeDestroy() {},
     mounted: function() {
-        this.getEtpBasic();     /* ETP 의 기본정보를 조회한다. */
+        this.fn_getEtpBasic();      /* ETP 의 기본정보를 조회한다. */
     },
     methods: {
         /*
          * ETP 의 기본정보를 조회한다.
          * 2019-04-25  bkLove(촤병국)
          */
-        getEtpBasic: function() {
-            console.log("getEtpBasic");
+        fn_getEtpBasic: function() {
+            console.log("fn_getEtpBasic");
 
             var vm = this;
 
@@ -166,8 +167,9 @@ export default {
 
                 if (response.data) {
                     vm.etpBasic     =   response.data.etpBasic;
-
-                    vm.$emit( 'receiveEtpBasic',  vm.etpBasic );
+                    vm.indexBasic   =   response.data.indexBasic;
+debugger;
+                    vm.$emit( 'receiveEtpBasic',  vm.etpBasic,  vm.indexBasic );
                 }
             });
         },

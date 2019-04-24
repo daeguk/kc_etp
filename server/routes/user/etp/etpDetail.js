@@ -53,7 +53,7 @@ var getEtpBasic = function(req, res) {
 
             async.waterfall([
 
-                /* 1. 지수정보를 조회한다. */
+                /* 1. EtpBasic 의 기본정보를 조회한다. */
                 function( callback ) {
 
                     stmt = mapper.getStatement('etpDetail', 'getEtpBasic', paramData, format);
@@ -73,9 +73,33 @@ var getEtpBasic = function(req, res) {
                             resultMsg.etpBasic  = rows[0];
                         }
 
+                        callback( null, resultMsg );
+                    });
+                }, 
+
+                /* 2. ETP기초지수코드 와 ETP기초지수MID 에 속한 IndexBasic 의 기본정보를 조회한다. */
+                function( data, callback ) { 
+
+                    stmt = mapper.getStatement('etpDetail', 'getIndexBasicByEtpJisuCd', paramData, format);
+                    console.log(stmt);
+
+                    conn.query(stmt, function( err, rows ) {
+
+                        if( err ) {
+                            resultMsg.result    =   false;
+                            resultMsg.msg       =   "[error] etpDetail.getIndexBasicByEtpJisuCd Error while performing Query";
+                            resultMsg.err       =   err;
+
+                            return callback( resultMsg );
+                        }
+
+                        if ( rows && rows.length == 1 ) {
+                            resultMsg.indexBasic  = rows[0];
+                        }
+
                         callback( null );
                     });
-                }
+                }                
 
             ], function (err) {
 
@@ -104,6 +128,7 @@ var getEtpBasic = function(req, res) {
         }
 
         resultMsg.etpBasic          =   {};
+        resultMsg.indexBasic        =   {};
 
         res.json({
             resultMsg
