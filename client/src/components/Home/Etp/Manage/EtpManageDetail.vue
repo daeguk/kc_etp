@@ -524,6 +524,13 @@ export default {
                     if( response.data ) {
 
                         var chartList   =   response.data.chartList;
+
+                        if( chartList == null || chartList.length == 0 ) {
+                            data.addColumn('string', "date" );
+                            data.addColumn('number', "" );
+                        }
+
+                        var items = [] 
                         if( chartList && chartList.length > 0 ) {
 
                             var fmt_yyyymmdd = chartList[0].fmt_yyyymmdd;
@@ -533,8 +540,6 @@ export default {
                             data.addColumn('string', "date" );
                             data.addColumn('number', etp_nm );
 
-                            var items = [] 
-
                             for ( let item of chartList ) {
                                 if( term == "1D" ) {
                                     items.push( [ item.hh24, item.now_price ] );
@@ -542,15 +547,15 @@ export default {
                                     items.push( [ item.fmt_yyyymmdd, item.now_price ] );
                                 }
                             }
-
-                            data.addRows(
-                                items
-                            );
-
-                            // Instantiate and draw our chart, passing in some options.
-                            var chart = new google.visualization.LineChart(document.getElementById('etp_chart_div'));
-                            chart.draw(data, options);
                         }
+
+                        data.addRows(
+                            items
+                        );
+
+                        // Instantiate and draw our chart, passing in some options.
+                        var chart = new google.visualization.LineChart(document.getElementById('etp_chart_div'));
+                        chart.draw(data, options);
                     }
                 });   
             }

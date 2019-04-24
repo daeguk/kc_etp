@@ -109,7 +109,7 @@
                                     td_etp_basic.F16013     =   td_etp_intra.F16013                 /* 단축코드 */
 
                                     /* 1일 */
-                            AND     td_etp_intra.F20044     >=   DATE_FORMAT( DATE_SUB( '20190410', INTERVAL 1 DAY ), '%Y%m%d' )   /* 인트라체결일자 */
+                            AND     td_etp_intra.F20044     >=   DATE_FORMAT( DATE_SUB( now(), INTERVAL 1 DAY ), '%Y%m%d' )   /* 인트라체결일자 */
                         )
          WHERE  1 = 1
            AND  td_etp_basic.F16012     =   #{f16012}                       /* 국제표준코드 */
@@ -134,7 +134,7 @@
                                     td_etp_basic.F16013     =   td_etp_intra.F16013                 /* 단축코드 */
 
                                     /* 1주 */
-                            AND     td_etp_intra.F20044     >=   DATE_FORMAT( DATE_SUB( '20190411', INTERVAL 1 WEEK ), '%Y%m%d' )   /* 인트라체결일자 */
+                            AND     td_etp_intra.F20044     >=   DATE_FORMAT( DATE_SUB( now(), INTERVAL 1 WEEK ), '%Y%m%d' )   /* 인트라체결일자 */
                         )
          WHERE  1 = 1
            AND  td_etp_basic.F16012     =   #{f16012}                       /* 국제표준코드 */
