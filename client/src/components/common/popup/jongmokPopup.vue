@@ -92,6 +92,7 @@ export default {
         });
     },
     beforeDestroy() {
+         //this.$EventBus.$off("showJongMokPop");
     },
     mounted: function() {
         
