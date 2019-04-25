@@ -369,10 +369,34 @@ export default {
 
 
                 // Set chart options
-                var options = {'title':' ',
+                var options = {'title':'',
                             'width':'100%',
                             'height':'300px',
-                            'hAxis':''};
+                            'colors': ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6'],
+                            'hAxis':{
+                                format:'yyyy-MM-dd HH:mm:ss',
+                                textStyle: {
+                                    color:'#ffffff'
+                                },
+                                gridlines: {
+                                    color:'#ffffff'
+                                }
+                            },
+                            'vAxis':{
+                                format:'decimal',
+                                textStyle: {
+                                    color:'#ffffff'
+                                },
+                                gridlines: {
+                                    color:'#ffffff'
+                                }
+                            }, 
+
+                            'legend': {
+                                position: 'left',
+                                color: '#ffffff'
+                            }
+                };
  
                 
                     
@@ -388,7 +412,7 @@ export default {
 
                 // Instantiate and draw our chart, passing in some options.
                 
-                var chart = new google.visualization.LineChart(document.getElementById(id));
+                var chart = new google.visualization.AreaChart(document.getElementById(id));
                 chart.draw(data, options);
             }
         },

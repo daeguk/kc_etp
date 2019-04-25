@@ -172,7 +172,7 @@ export default {
                             'width':'100%',
                             'height':'300px',
                             'hAxis':{format:'yyyy-MM-dd HH:mm:ss'}};
- 
+                
                 
                 axios.get(Config.base_url + "/user/index/getIndexEtpHistoryData", {                    
                     params: {
@@ -211,6 +211,8 @@ export default {
 
                         // Instantiate and draw our chart, passing in some options.
                         var chart = new google.visualization.LineChart(document.getElementById('index_chart_div'));
+
+                        
                         chart.draw(data, options);
                     }
                 });
