@@ -12,17 +12,18 @@
                     ></div>
 
                     <v-card flat>
-                        
+
                         <table v-bind:id="tableName" class="tbl_type" style="width:100%">
                             <colgroup>
                                 <col width="30%">
-                                <col width="10%">
-                                <col width="10%">
-                                <col width="10%">
-                                <col width="10%">
-                                <col width="10%">
-                                <col width="10%">
-                                <col width="10%">
+                                <col width="9%">
+                                <col width="9%">
+                                <col width="9%">
+                                <col width="9%">
+                                <col width="9%">
+                                <col width="9%">
+                                <col width="9%">
+                                <col width="7%">
                             </colgroup>
                             <thead>
                                 <tr>
@@ -34,6 +35,7 @@
                                     <th>3Year</th>
                                     <th>5Year</th>
                                     <th>10-Year</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                         </table>
@@ -170,8 +172,10 @@ import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
+
 var importance_grid = null;
-var perf_table = null;
+var table01 = null;
+
 export default {
     data() {
         return {
@@ -191,8 +195,11 @@ export default {
                         +   (parseInt(new Date().getMonth()) + 1) 
                         +   "." 
                         +   new Date().getDate(),
-            arrEtpPerformance: [],
-            arrIndexPerformance: []
+
+            basicData           :   {},
+            arrNavPriceGubun    :   [],
+            arrEtpPerformance   :   [],
+            arrIndexPerformance :   []
         };
     },
     components: {
@@ -275,9 +282,118 @@ export default {
 
         vm.getIndexAnalysisInfo();
 */
-        this.fn_getEtpPerformance(); /* ETP performance 정보를 조회한다. */
+        var vm = this;
+
+        vm.basicData.f16012     =   vm.$route.query.f16012;     /* 국제표준코드 */
+        vm.basicData.f16257     =   vm.$route.query.f16257;     /* ETP기초지수코드 */
+        vm.basicData.f34239     =   vm.$route.query.f34239;     /* ETP기초지수MID */
+        
+        vm.arrNavPriceGubun     =   [ "PRICE", "NAV"];        
+
+        /* ETP performance 정보를 조회한다. */
+        this.fn_getEtpPerformance(); 
+
+        /* 테이블 렌더링 */
+        this.$nextTick().then(() => {
+
+            table01 =  $("#" + vm.tableName ).DataTable({
+                processing: true,
+                serverSide: false,
+                info: false, // control table information display field
+                stateSave: true, //restore table state on page reload,
+                lengthMenu: [
+                    [10, 20, 50, -1],
+                    [10, 20, 50, "All"]
+                ],
+
+                select: {
+                    style: "single",
+                    selector: "td:first-child"
+                },
+                paging: false,
+                searching: false,
+                data: [],
+                ordering: false,
+                columnDefs: [                   
+                    {  
+                        "targets": 0,
+                        "render": function ( data, type, row ) {
+                            if (data) {
+
+                               if( row.etpIndexGubun == "ETP" ) {
+                                    var  html = "";
+
+                                    html +=  "<img src='/assets/img/icon_bar01.png'>";
+                                    html +=  "<span>"
+                                    html +=     "&nbsp;&nbsp;&nbsp;";
+                                    html +=     data;
+                                    html +=     "<br>";
+                                    html +=     "&nbsp;&nbsp;&nbsp;";
+                                    html +=     "(" + row.navPriceGubun + ")";
+                                    html +=  "</span>";
+
+                                    return html;
+                                }else{
+                                    return "<img src='/assets/img/icon_bar01.png'><span>&nbsp;&nbsp;&nbsp;" + data + "</span>";
+                                }
+                                
+                            } else {
+                                return "";
+                            }
+                        },
+                    },
+
+                    {  
+                        "targets": 8,
+                        "render": function ( data, type, row ) {
+                            if (data) {
+                                if ( row.delAbleYn == "Y" ) {
+                                    return "<div class='tooltip'><button id='btnDelete' type='button' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:40px;'>삭제</span></div>";
+                                }else{
+                                    return "";
+                                }
+                            } else {
+                                return "";
+                            }
+                        },
+                    }, 
+
+                ],
+                columns: [
+                    { "data": "f16002"      , "orderable" : false , className: "txt_left line2"  },    /* 한글 종목명 */
+                    { "data": "week1_price" , "orderable" : false , className: 'dt-body-right'   },    /* 1-week */
+                    { "data": "month1_price", "orderable" : false , className: 'dt-body-right'   },    /* 1-Month */
+                    { "data": "month3_price", "orderable" : false , className: 'dt-body-right'   },    /* 3-Month */
+                    { "data": "year1_price" , "orderable" : false , className: 'dt-body-right'   },    /* 1-Year */
+                    { "data": "year3_price" , "orderable" : false , className: 'dt-body-right'   },    /* 3-Year */
+                    { "data": "year5_price" , "orderable" : false , className: 'dt-body-right'   },    /* 5-Year */
+                    { "data": "year10_price", "orderable" : false , className: 'dt-body-right'   },    /* 10-Year */
+                    { "data": null          , "orderable" : false , className: 'dt-body-center', defaultContent:"", "align":"center" }
+                ]
+            });
+
+
+            // 테이블별 이벤트
+            $('#' + vm.tableName + ' tbody').on('click', 'button', function () {
+                var table = $('#' + vm.tableName ).DataTable();
+                var data = table.row($(this).parents('tr')).data();
+
+                if ($(this).attr('id') == 'btnDelete') {
+                    vm.fn_deleteTableData( data );
+                }
+                    
+            });
+        });
+
     },
     methods: {
+
+        fn_deleteTableData : function( rowData ) {
+            console.log("fn_deleteTableData");
+
+            var vm = this;
+        },
+
         /*
          * ETP 의 기본정보를 조회한다.
          * 2019-04-25  bkLove(촤병국)
@@ -314,45 +430,42 @@ export default {
                 chart.clearChart();
             });
 
+            if( table01 ) {
+                table01.clear().draw();
+            }
+
             if (
-                vm.$route.query.f16012 &&
-                vm.$route.query.f16257 &&
-                vm.$route.query.f34239
+                    vm.basicData.f16012     /* 국제표준코드 */
+                &&  vm.basicData.f16257     /* ETP기초지수코드 */
+                &&  vm.basicData.f34239     /* ETP기초지수MID */
             ) {
                 google.charts.setOnLoadCallback(
                     drawChart(
-                        vm.$route.query.f16012,
-                        vm.$route.query.f16257,
-                        vm.$route.query.f34239,
-
+                        vm.basicData,
+                        vm.arrNavPriceGubun,
                         vm.arrEtpPerformance,
                         vm.arrIndexPerformance
                     )
                 );
             }
 
-            function drawChart(
-                f16012,
-                f16257,
-                f34239,
-                arrEtpPerformance,
-                arrIndexPerformance
-            ) {
-                axios.post(Config.base_url + "/user/etp/getEtpPerformance", {
-                    data: {
-                        f16012: f16012,
-                        f16257: f16257,
-                        f34239: f34239,
+            function drawChart( basicData, arrNavPriceGubun, arrEtpPerformance, arrIndexPerformance ) {
 
-                        arrEtpPerformance: arrEtpPerformance,
-                        arrIndexPerformance: arrIndexPerformance
+                axios.post(Config.base_url + "/user/etp/getEtpPerformance", {
+
+                    data: {
+                        basicData           :   basicData,
+                        arrNavPriceGubun    :   arrNavPriceGubun,
+
+                        arrEtpPerformance   :   arrEtpPerformance,
+                        arrIndexPerformance :   arrIndexPerformance
                     }
+
                 }).then(response => {
                     console.log(response.data);
                     if (response.data) {
                         var chartList = response.data.chartList;
-                        var etpPerformanceList =
-                            response.data.etpPerformanceList;
+                        var etpPerformanceList = response.data.etpPerformanceList;
 
                     /* 차트 출력 */
                         var items = [];
@@ -362,55 +475,10 @@ export default {
                         arrToData = new google.visualization.arrayToDataTable( items, false);
                         chart.draw( arrToData, options );
 
-
                     /* 테이블 정보 출력 */
-                        vm.$nextTick().then(() => {
-                            $("#" + vm.tableName ).DataTable({
-                                processing: true,
-                                serverSide: false,
-                                info: false, // control table information display field
-                                stateSave: true, //restore table state on page reload,
-                                lengthMenu: [
-                                    [10, 20, 50, -1],
-                                    [10, 20, 50, "All"]
-                                ],
-
-                                select: {
-                                    style: "single",
-                                    selector: "td:first-child"
-                                },
-                                paging: false,
-                                searching: false,
-                                data: etpPerformanceList,
-                                columnDefs: [
-                                ],
-                                columns: [
-                                    { "data": "f16002"      , "orderable" : true , className:"txt_left line2" },    /* 한글 종목명 */
-                                    { "data": "week1_price" , "orderable" : true , className:"txt_left line2" },    /* 1-week */
-                                    { "data": "month1_price", "orderable" : true , className:"txt_left line2" },    /* 1-Month */
-                                    { "data": "month3_price", "orderable" : true , className:"txt_left line2" },    /* 3-Month */
-                                    { "data": "year1_price" , "orderable" : true , className:"txt_left line2" },    /* 1-Year */
-                                    { "data": "year3_price" , "orderable" : true , className:"txt_left line2" },    /* 3-Year */
-                                    { "data": "year5_price" , "orderable" : true , className:"txt_left line2" },    /* 5-Year */
-                                    { "data": "year10_price", "orderable" : true , className:"txt_left line2" },    /* 10-Year */
-                                ]
-                            });
-
-                            // 테이블별 이벤트
-                            $('#' + vm.tableName + ' tbody').on('click', 'button', function () {
-                                var table = $('#' + vm.tableName ).DataTable();
-                                var data = table.row($(this).parents('tr')).data();
-
-                                if ($(this).attr('id') == 'detail') {
-                                    console.log('move detailPage ');
-                                    vm.movePage( data );
-                                } else {
-                                    console.log('move pdfPage ');
-                                }
-                                    
-                            });
-                           
-                        });
+                        if( table01 ) {
+                            table01.rows.add( etpPerformanceList ).draw();                        
+                        }
                     }
                 });
             }

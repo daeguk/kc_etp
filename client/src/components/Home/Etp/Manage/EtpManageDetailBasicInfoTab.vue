@@ -153,6 +153,7 @@ export default {
             rowsPerPageItems: [50, 50],
             etp_items: [],
 
+            basicData           :   {},
             etpBasic            :   {},
             indexBasic          :   {},
             arrEtpPerformance   :   [],
@@ -162,6 +163,13 @@ export default {
     created: function() {},
     beforeDestroy() {},
     mounted: function() {
+
+        var vm = this;
+
+        vm.basicData.f16012     =   vm.$route.query.f16012;     /* 국제표준코드 */
+        vm.basicData.f16257     =   vm.$route.query.f16257;     /* ETP기초지수코드 */
+        vm.basicData.f34239     =   vm.$route.query.f34239;     /* ETP기초지수MID */
+
         this.fn_getEtpBasic();          /* ETP 의 기본정보를 조회한다. */
     },
     methods: {
@@ -176,9 +184,7 @@ export default {
 
             axios.post(Config.base_url + "/user/etp/getEtpBasic", {
                 data: {
-                    f16012: vm.$route.query.f16012 /* 국제표준코드 */,
-                    f16257: vm.$route.query.f16257 /* ETP기초지수코드  */,
-                    f34239: vm.$route.query.f34239 /* ETP기초지수MID  */
+                    basicData   :   vm.basicData
                 }
             }).then(function(response) {
                 console.log(response);
