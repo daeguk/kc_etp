@@ -175,6 +175,7 @@ import Config from "@/js/config.js";
 
 var importance_grid = null;
 var table01 = null;
+var chart01 = null;
 
 export default {
     data() {
@@ -196,8 +197,9 @@ export default {
                         +   "." 
                         +   new Date().getDate(),
 
-            basicData           :   {},
-            arrNavPriceGubun    :   [],
+            basicData           :   {
+                arrNavPriceGubun    :   [],
+            },
             arrEtpPerformance   :   [],
             arrIndexPerformance :   []
         };
@@ -284,11 +286,17 @@ export default {
 */
         var vm = this;
 
+        chart01 = new google.visualization.ComboChart( document.getElementById("etp_comboChart_div") );
+
         vm.basicData.f16012     =   vm.$route.query.f16012;     /* 국제표준코드 */
         vm.basicData.f16257     =   vm.$route.query.f16257;     /* ETP기초지수코드 */
         vm.basicData.f34239     =   vm.$route.query.f34239;     /* ETP기초지수MID */
         
-        vm.arrNavPriceGubun     =   [ "PRICE", "NAV"];        
+        vm.basicData.arrNavPriceGubun     =   [ "PRICE", "NAV"];
+
+        google.charts.setOnLoadCallback(function() {
+            chart01.clearChart();
+        });        
 
         /* ETP performance 정보를 조회한다. */
         this.fn_getEtpPerformance(); 
@@ -379,7 +387,7 @@ export default {
                 var data = table.row($(this).parents('tr')).data();
 
                 if ($(this).attr('id') == 'btnDelete') {
-                    vm.fn_deleteTableData( data );
+                    vm.fn_deleteTableData( $(this), data );
                 }
                     
             });
@@ -388,10 +396,78 @@ export default {
     },
     methods: {
 
-        fn_deleteTableData : function( rowData ) {
+        /*
+         * Performance 테이블에서 삭제버튼을 누를시 수행한다.
+         * 2019-04-25  bkLove(촤병국)
+         */
+        fn_deleteTableData : function( pThis, rowData ) {
             console.log("fn_deleteTableData");
 
             var vm = this;
+
+            if( table01 ) {
+                table01.clear().draw();
+            }            
+
+            /* 초기데이터 유무가 Y 인 경우 */
+            if( rowData.initYn  === "Y" ) {
+
+                /* ETP/INDEX 구분 이 'ETP' 인 경우 */
+                if( rowData.etpIndexGubun   === "ETP" ) {
+
+                    var selData =   vm.basicData.arrNavPriceGubun.filter( function(item) {
+                        return  rowData.navPriceGubun   === item;           /* NAV/PRICE 구분 이 일치히는 경우 */
+
+                                
+                    });
+
+                    vm.basicData.arrNavPriceGubun   =   vm.basicData.arrNavPriceGubun.filter( function(item) { 
+                        return  selData.indexOf( item ) == -1; 
+                    });
+
+                }
+
+                /* ETP/INDEX 구분 이 'ETP' 인 경우 */
+                if( rowData.etpIndexGubun   === "INDEX" ) {
+
+                    if(     vm.basicData.f16257     ==  rowData.f16257          /* ETP기초지수코드 */
+                        &&  vm.basicData.f34239     ==  rowData.f34239          /* ETP기초지수MID */
+                    )   {
+                        /* 초기데이터 지수정보 초기화 */
+                        vm.basicData.f16257 =   "";     /* ETP기초지수코드 */
+                        vm.basicData.f34239 =   "";     /* ETP기초지수MID */
+                    }
+                }
+
+            }
+
+            if( table01 ) {
+                table01.row( pThis.parents('tr') ).remove().draw();
+            }
+
+
+            
+
+            var options = {
+                title: " ",
+                align: "start",
+                width: 940,
+                height: 300,
+                vAxis: { title: "" },
+                hAxis: { title: "" },
+                seriesType: "bars",
+                series: "",
+                legend: { position: "bottom" }
+            };
+
+            // Load the Visualization API and the corechart package.
+            google.charts.load("current", { packages: ["corechart"] });
+
+            google.charts.setOnLoadCallback(function() {
+                chart01.clearChart();
+            });
+
+            this.fn_getEtpPerformance();
         },
 
         /*
@@ -402,11 +478,8 @@ export default {
             console.log("fn_getEtpPerformance");
 
             var vm = this;
+            var arrToData;
 
-
-            var chart = new google.visualization.ComboChart(
-                document.getElementById("etp_comboChart_div")
-            );
 
             // Set chart options
             var options = {
@@ -421,42 +494,23 @@ export default {
                 legend: { position: "bottom" }
             };
 
-            var arrToData;
-
             // Load the Visualization API and the corechart package.
             google.charts.load("current", { packages: ["corechart"] });
 
-            google.charts.setOnLoadCallback(function() {
-                chart.clearChart();
-            });
+            google.charts.setOnLoadCallback(
+                drawChart(
+                    vm.basicData,
+                    vm.arrEtpPerformance,
+                    vm.arrIndexPerformance
+                )
+            );
 
-            if( table01 ) {
-                table01.clear().draw();
-            }
-
-            if (
-                    vm.basicData.f16012     /* 국제표준코드 */
-                &&  vm.basicData.f16257     /* ETP기초지수코드 */
-                &&  vm.basicData.f34239     /* ETP기초지수MID */
-            ) {
-                google.charts.setOnLoadCallback(
-                    drawChart(
-                        vm.basicData,
-                        vm.arrNavPriceGubun,
-                        vm.arrEtpPerformance,
-                        vm.arrIndexPerformance
-                    )
-                );
-            }
-
-            function drawChart( basicData, arrNavPriceGubun, arrEtpPerformance, arrIndexPerformance ) {
+            function drawChart( basicData, arrEtpPerformance, arrIndexPerformance ) {
 
                 axios.post(Config.base_url + "/user/etp/getEtpPerformance", {
 
                     data: {
                         basicData           :   basicData,
-                        arrNavPriceGubun    :   arrNavPriceGubun,
-
                         arrEtpPerformance   :   arrEtpPerformance,
                         arrIndexPerformance :   arrIndexPerformance
                     }
@@ -473,7 +527,7 @@ export default {
                             items = chartList;
                         }
                         arrToData = new google.visualization.arrayToDataTable( items, false);
-                        chart.draw( arrToData, options );
+                        chart01.draw( arrToData, options );
 
                     /* 테이블 정보 출력 */
                         if( table01 ) {
