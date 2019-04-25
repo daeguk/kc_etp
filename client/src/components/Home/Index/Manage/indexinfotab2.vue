@@ -108,7 +108,7 @@
                             </v-card>
                         </v-dialog>
                     </v-subheader>
-                    <div class="graph_02_w"  id="importance_chart"></div>
+                    <div class="graph_02_w" style="height:300px"  id="importance_chart"></div>
                     <v-card flat></v-card>
                 </div>
                 <!---비중정보 팝업end-->
@@ -293,11 +293,16 @@ export default {
                 data.addColumn('string', 'JOING_NM');
                 data.addColumn('number', 'PERCNT');
 
+               
                 // Set chart options
-                var options = {'title':' ',
+                var options = {'title':'',
                             'width':'100%',
-                            'height':'400px'};
- 
+                            'height':'300px',
+                            'colors': ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6'],                           
+                            'legend': {
+                                position: 'left'
+                            }
+                };
                 
                 
                 var items = [] 
