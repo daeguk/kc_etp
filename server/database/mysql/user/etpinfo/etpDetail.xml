@@ -426,6 +426,7 @@
 
                 ,   BASE.RNUM                                                       AS  rnum            /* 순번 */
                 ,   BASE.delAbleYn                                                  AS  delAbleYn       /* 삭제가능 유무 */
+                ,   BASE.initYn                                                     AS  initYn          /* 초기데이터 유무 */
                 ,   BASE.etpIndexGubun                                              AS  etpIndexGubun   /* ETP/INDEX 구분 */
                 ,   BASE.navPriceGubun                                              AS  navPriceGubun   /* NAV/PRICE 구분 */
     
@@ -465,6 +466,7 @@
 
                             ,   1                                                   AS  rnum
                             ,   'N'                                                 AS  delAbleYn       /* 삭제가능 유무 */
+                            ,   'Y'                                                 AS  initYn          /* 초기데이터 유무 */
                             ,   'ETP'                                               AS  etpIndexGubun   /* ETP/INDEX 구분 */
                             ,   'PRICE'                                             AS  navPriceGubun   /* NAV/PRICE 구분 */
                                             
@@ -472,7 +474,7 @@
                      WHERE  td_etp_basic.F16012         =   #{basicData.f16012}
                        AND  'PRICE'                     IN
                             (
-                            <foreach    collection="arrNavPriceGubun"   item="item"    index="index"   separator=" ," > 
+                            <foreach    collection="basicData.arrNavPriceGubun"   item="item"    index="index"   separator=" ," > 
                                 #{item}  COLLATE utf8_general_ci
                             </foreach>
                             )
@@ -513,6 +515,7 @@
 
                             ,   2                                                   AS  rnum
                             ,   'Y'                                                 AS  delAbleYn       /* 삭제가능 유무 */
+                            ,   'Y'                                                 AS  initYn          /* 초기데이터 유무 */
                             ,   'ETP'                                               AS  etpIndexGubun   /* ETP/INDEX 구분 */
                             ,   'NAV'                                               AS  navPriceGubun   /* NAV/PRICE 구분 */
                                             
@@ -520,7 +523,7 @@
                      WHERE  td_etp_basic.F16012         =   #{basicData.f16012}
                        AND  'NAV'                       IN
                             (
-                            <foreach    collection="arrNavPriceGubun"   item="item"    index="index"   separator=" ," >
+                            <foreach    collection="basicData.arrNavPriceGubun"   item="item"    index="index"   separator=" ," >
                                 #{item}  COLLATE utf8_general_ci
                             </foreach>
                             )
@@ -560,6 +563,7 @@
 
                             ,   3                                                   AS  rnum
                             ,   'Y'                                                 AS  delAbleYn       /* 삭제가능 유무 */
+                            ,   'Y'                                                 AS  initYn          /* 초기데이터 유무 */
                             ,   'INDEX'                                             AS  etpIndexGubun   /* ETP/INDEX 구분 */
                             ,   'PRICE'                                             AS  navPriceGubun   /* NAV/PRICE 구분 */
                             
@@ -593,6 +597,7 @@
                                                 
                             ,   @rownum :=   @rownum + 1                            AS  rnum
                             ,   BASE.delAbleYn                                      AS  delAbleYn       /* 삭제가능 유무 */
+                            ,   BASE.initYn                                         AS  initYn          /* 초기데이터 유무 */
                             ,   BASE.etpIndexGubun                                  AS  etpIndexGubun   /* ETP/INDEX 구분 */
                             ,   BASE.navPriceGubun                                  AS  navPriceGubun   /* NAV/PRICE 구분 */
 
@@ -633,6 +638,7 @@
                                             )                                       AS  year10_price    /* 10year */
 
                                         ,   'Y'                                     AS  delAbleYn       /* 삭제가능 유무 */
+                                        ,   'N'                                     AS  initYn          /* 초기데이터 유무 */
                                         ,   'ETP'                                   AS  etpIndexGubun   /* ETP/INDEX 구분 */
                                         ,   'PRICE'                                 AS  navPriceGubun   /* NAV/PRICE 구분 */
                                                         
@@ -690,6 +696,7 @@
                                             )                                       AS  year10_price    /* 10year */
 
                                         ,   'Y'                                     AS  delAbleYn       /* 삭제가능 유무 */
+                                        ,   'N'                                     AS  initYn          /* 초기데이터 유무 */
                                         ,   'INDEX'                                 AS  etpIndexGubun   /* ETP/INDEX 구분 */
                                         ,   'PRICE'                                 AS  navPriceGubun   /* NAV/PRICE 구분 */
                                         
