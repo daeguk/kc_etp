@@ -465,7 +465,7 @@
                                 )                                                   AS  year10_price    /* 10year */
 
                             ,   1                                                   AS  rnum
-                            ,   'Y'                                                 AS  delAbleYn       /* 삭제가능 유무 */
+                            ,   'N'                                                 AS  delAbleYn       /* 삭제가능 유무 */
                             ,   'Y'                                                 AS  initYn          /* 초기데이터 유무 */
                             ,   'ETP'                                               AS  etpIndexGubun   /* ETP/INDEX 구분 */
                             ,   'NAV'                                               AS  navPriceGubun   /* NAV/PRICE 구분 */
@@ -514,7 +514,7 @@
                                 )                                                   AS  year10_price    /* 10year */
 
                             ,   2                                                   AS  rnum
-                            ,   'N'                                                 AS  delAbleYn       /* 삭제가능 유무 */
+                            ,   'Y'                                                 AS  delAbleYn       /* 삭제가능 유무 */
                             ,   'Y'                                                 AS  initYn          /* 초기데이터 유무 */
                             ,   'ETP'                                               AS  etpIndexGubun   /* ETP/INDEX 구분 */
                             ,   'PRICE'                                             AS  navPriceGubun   /* NAV/PRICE 구분 */
