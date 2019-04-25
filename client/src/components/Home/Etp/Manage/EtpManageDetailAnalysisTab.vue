@@ -5,14 +5,17 @@
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">Performance</h4>
 
+                <!---performance chart 정보 START--->
                     <div
                         id="etp_comboChart_div"
                         class="graph_01"
                         style="height:300px;background-color:#f6f6f6;"
                     ></div>
+                <!---performance chart 정보 END--->
 
                     <v-card flat>
 
+                <!---performance table 정보 START--->
                         <table v-bind:id="tableName" class="tbl_type" style="width:100%">
                             <colgroup>
                                 <col width="30%">
@@ -39,68 +42,20 @@
                                 </tr>
                             </thead>
                         </table>
+                <!---performance table 정보 END--->
+
                     </v-card>
 
-                    <!---자산추가 팝업--->
+                <!---자산추가 팝업 START--->
                     <v-layout row>
-                        <v-flex xs12>
-                            <v-card flat>
-                                <v-dialog v-model="dialog" persistent max-width="500">
-                                    <template v-slot:activator="{ on }">
-                                        <v-btn outline small color="primary" dark v-on="on">
-                                            <v-icon small color="primary">add</v-icon>자산추가
-                                        </v-btn>
-                                    </template>
-                                    <v-card>
-                                        <h5>
-                                            <v-card-title ma-0>
-                                                비교자산추가
-                                                <v-spacer></v-spacer>
-                                                <v-btn icon dark @click="dialog = false">
-                                                    <v-icon>close</v-icon>
-                                                </v-btn>
-                                            </v-card-title>
-                                        </h5>
-                                        <v-card-title>
-                                            <v-text-field
-                                                v-model="search"
-                                                append-icon="search"
-                                                label="Search"
-                                                single-line
-                                                hide-details
-                                            ></v-text-field>
-                                        </v-card-title>
+                        <v-btn outline small color="primary" dark v-on:click="showJongMokPop">
+                            <v-icon small color="primary">add</v-icon>자산추가
+                        </v-btn>
 
-                                        <!--비교자산 탭--->
-
-                                        <v-layout row wrap>
-                                            <v-flex xs12>
-                                                <v-tabs fixed-tabs color="cyan" dark v-model="tab">
-                                                    <v-tabs-slider color="#00fffc"></v-tabs-slider>
-                                                    <v-tab
-                                                        v-for="item in items"
-                                                        :key="item"
-                                                    >{{ item }}</v-tab>
-                                                </v-tabs>
-                                                <!--v-tabs-items v-model="tab">
-                                                    <v-tab-item>
-                                                        <infopoptab1 @selectedItem="getSelectedItem"></infopoptab1>
-                                                    </v-tab-item>
-                                                    <v-tab-item>
-                                                        <infopoptab2 @selectedItem="getSelectedItem"></infopoptab2>
-                                                    </v-tab-item>
-                                                    <v-tab-item>
-                                                        <infopoptab3 @selectedItem="getSelectedItem"></infopoptab3>
-                                                    </v-tab-item
-                                                </v-tabs-items-->
-                                            </v-flex>
-                                        </v-layout>
-                                    </v-card>
-                                </v-dialog>
-                            </v-card>
-                        </v-flex>
+                        
                     </v-layout>
-                    <!--자산추가 팝업 end--->
+                <!--자산추가 팝업 END--->
+
                 </div>
             </v-flex>
             <v-flex xs12 flat>
@@ -159,14 +114,13 @@
 
             <v-flex xs12></v-flex>
         </v-layout>
+        <EtpJongmokPopup @selectedItem="getSelectedItem"></EtpJongmokPopup>
     </v-container>
 </template>
 
 
 <script>
-//import infopoptab1 from "./infopoptab1.vue";
-//import infopoptab2 from "./infopoptab2.vue";
-//import infopoptab3 from "./infopoptab3.vue";
+import EtpJongmokPopup from "@/components/common/popup/jongmokPopup";
 import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
@@ -205,9 +159,7 @@ export default {
         };
     },
     components: {
-        //infopoptab1: infopoptab1,
-        //infopoptab2: infopoptab2,
-        //infopoptab3: infopoptab3
+        EtpJongmokPopup: EtpJongmokPopup, 
     },
     computed: {},
     created: function() {},
@@ -538,6 +490,52 @@ export default {
             }
         },
 
+        getSelectedItem: function(sel_items, gubun) {
+            var vm = this;
+            for (let i = 0; i < sel_items.length; i++) {
+                
+                if (perf_table.rows().count() <= 4) {
+
+                    let compare_cnt = perf_table.column(0).data().filter(
+                        function(value, index) {
+                            return sel_items[i].JISU_CD == value ? true : false;
+                        }
+                    ).count();
+                    
+                    if (compare_cnt == 0) {
+                        perf_table.row.add(  {
+                            F16012 : '',
+                            F16013 : sel_items[i].JISU_CD,
+                            F16002 : sel_items[i].JISU_NM,
+                            Week1 : '1',
+                            Month1 : '2',
+                            Month3 : '3',
+                            YTD : '4',
+                            Year1 : '5',
+                            Year3 : '6',
+                            Year5 : '7',
+                            Year10 : '8',
+                        } ).draw( false );
+                    } else {
+                        alert(sel_items[i].JISU_NM +"은 이미 추가된 자산입니다.");    
+                    }
+                } else {
+                    alert("자산 비교는 총 5개 까지 가능 합니다.");
+                    break;
+                }
+
+            }
+        
+        },        
+
+        /*
+         * [자산추가] 팝업창을 호출한다.
+         * 2019-04-25  bkLove(촤병국)
+         */
+        showJongMokPop: function() { 
+            this.$EventBus.$emit( "showEtpJongMokPop", true );
+        },        
+
         getIndexImportanceList: function() {
             console.log("getIndexImportanceList");
             axios
@@ -689,6 +687,7 @@ export default {
                 }
             }
         }
+        
     }
 };
 </script>
