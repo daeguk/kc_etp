@@ -50,8 +50,8 @@
                                                     <v-card flat>
                                                         <v-list two-line subheader>
                                                             <v-list-tile
-                                                                v-for="item in favorItems"
-                                                                :key="item.ITEM_CD"
+                                                                v-for="(item, index) in favorItems"
+                                                                :key="index"
                                                                 class="right_menu_w3"
                                                             >
                                                                 <v-list-tile-content
