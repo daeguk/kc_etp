@@ -85,9 +85,13 @@
                 ,   td_etp_basic.F33961                                 AS  f33961              /* ETP운용사명(한글명) */
                 
           FROM  td_etp_basic
-         WHERE  td_etp_basic.f16012                 =   #{f16012}       /* 국제표준코드 */
+         WHERE  td_etp_basic.f16012                 =   #{basicData.f16012}         /* 국제표준코드 */
     ]]>
     </select>
+
+<!--
+******************************************************************************************************************
+-->
 
     <!--
     * ETP기초지수코드 와 ETP기초지수MID 에 속한 IndexBasic 의 기본정보를 조회한다.
@@ -126,10 +130,14 @@
           FROM  td_index_basic
          WHERE  1 = 1
 
-           AND  td_index_basic.F16013               =       #{f16257}                                           /* 단축코드 = ETP기초지수코드 */
-           AND  td_index_basic.MARKET_ID            LIKE    CONCAT( '_' , LPAD( #{f34239}, 3, '0' ) , '%' )     /* 시장 ID = ETP기초지수MID */
+           AND  td_index_basic.F16013               =       #{basicData.f16257}                                             /* 단축코드 = ETP기초지수코드 */
+           AND  td_index_basic.MARKET_ID            LIKE    CONCAT( '_' , LPAD( #{basicData.f34239}, 3, '0' ) , '%' )       /* 시장 ID = ETP기초지수MID */
     ]]>
     </select>    
+
+<!--
+******************************************************************************************************************
+-->
 
     <!--
     * ETP 차트 정보를 조회한다.
@@ -167,7 +175,7 @@
                                     )
 
                      WHERE  1 = 1
-                       AND  td_etp_basic.F16012     =   #{f16012}                       /* 국제표준코드 */
+                       AND  td_etp_basic.F16012     =   #{basicData.f16012}             /* 국제표준코드 */
 
                      GROUP  BY      td_etp_intra.F20044
                                 ,   SUBSTR( LPAD( td_etp_intra.F20004, 8, '0' ) , 1, 2 )
@@ -191,8 +199,8 @@
                                     )
                                     
                      WHERE  1 = 1
-                       AND  td_index_basic.F16013       =   #{f16257}                                           /* 단축코드 = ETP기초지수코드 */
-                       AND  td_index_basic.MARKET_ID    LIKE   CONCAT( '_' , LPAD( #{f34239}, 3, '0' ) , '%' )  /* 시장 ID = ETP기초지수MID */
+                       AND  td_index_basic.F16013       =   #{basicData.f16257}                                             /* 단축코드 = ETP기초지수코드 */
+                       AND  td_index_basic.MARKET_ID    LIKE   CONCAT( '_' , LPAD( #{basicDataf34239}, 3, '0' ) , '%' )     /* 시장 ID = ETP기초지수MID */
                        
                      GROUP  BY      td_index_intra.F20044
                                 ,   SUBSTR( LPAD( td_index_intra.F20004, 8, '0' ) , 1, 2 )
@@ -236,7 +244,7 @@
                                         AND     td_etp_intra.F20044     >=   DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 WEEK ), '%Y%m%d' )   /* 인트라체결일자 */
                                     )
                      WHERE  1 = 1
-                       AND  td_etp_basic.F16012     =   #{f16012}                       /* 국제표준코드 */
+                       AND  td_etp_basic.F16012     =   #{basicDataf16012}              /* 국제표준코드 */
 
                      GROUP  BY      td_etp_intra.F20044
 
@@ -260,8 +268,8 @@
                                     )
                                     
                      WHERE  1 = 1
-                       AND  td_index_basic.F16013       =   #{f16257}                                           /* 단축코드 = ETP기초지수코드 */
-                       AND  td_index_basic.MARKET_ID    LIKE   CONCAT( '_' , LPAD( #{f34239}, 3, '0' ) , '%' )  /* 시장 ID = ETP기초지수MID */
+                       AND  td_index_basic.F16013       =   #{basicData.f16257}                                             /* 단축코드 = ETP기초지수코드 */
+                       AND  td_index_basic.MARKET_ID    LIKE   CONCAT( '_' , LPAD( #{basicData.f34239}, 3, '0' ) , '%' )    /* 시장 ID = ETP기초지수MID */
                        
                      GROUP  BY      td_index_intra.F20044
 
@@ -329,7 +337,7 @@
                                     )
 
                      WHERE  1 = 1
-                       AND  td_etp_basic.F16012     =   #{f16012}                       /* 국제표준코드 */
+                       AND  td_etp_basic.F16012     =   #{basicData.f16012}             /* 국제표준코드 */
 
                 )       etp_info
           LEFT  JOIN    
@@ -376,8 +384,8 @@
                                     )
 
                      WHERE  1 = 1                     
-                       AND  td_index_basic.F16013       =   #{f16257}                                           /* 단축코드 = ETP기초지수코드 */
-                       AND  td_index_basic.MARKET_ID    LIKE   CONCAT( '_' , LPAD( #{f34239}, 3, '0' ) , '%' )  /* 시장 ID = ETP기초지수MID */
+                       AND  td_index_basic.F16013       =   #{basicData.f16257}                                             /* 단축코드 = ETP기초지수코드 */
+                       AND  td_index_basic.MARKET_ID    LIKE   CONCAT( '_' , LPAD( #{basicData.f34239}, 3, '0' ) , '%' )    /* 시장 ID = ETP기초지수MID */
 
                 )   index_info
             ON  (
@@ -390,12 +398,15 @@
 
     </select>
 
+<!--
+******************************************************************************************************************
+-->
+
     <!--
     * ETP performance 정보를 조회한다.
     * 2019-04-25  bkLove(촤병국)
     -->
     <select id="getEtpPerformance">
-    <![CDATA[
         SELECT      /* etpDetail.getEtpPerformance    ETP performance 정보를 조회한다. */
 
                     BASE.F16012                                                     AS  f16012          /* 국제표준코드 */
@@ -412,119 +423,111 @@
                 ,   IFNULL( BASE.year3_price    , 0 )                               AS  year3_price     /* 3year */
                 ,   IFNULL( BASE.year5_price    , 0 )                               AS  year5_price     /* 5year */
                 ,   IFNULL( BASE.year10_price   , 0 )                               AS  year10_price    /* 10year */
-                ,   BASE.RNUM                                                       AS  rnum
+
+                ,   BASE.RNUM                                                       AS  rnum            /* 순번 */
+                ,   BASE.delAbleYn                                                  AS  delAbleYn       /* 삭제가능 유무 */
+                ,   BASE.etpIndexGubun                                              AS  etpIndexGubun   /* ETP/INDEX 구분 */
+                ,   BASE.navPriceGubun                                              AS  navPriceGubun   /* NAV/PRICE 구분 */
     
-          FROM  (                   
-                    SELECT      etp_basic.F16012                                    AS  f16012          /* 국제표준코드 */
-                            ,   etp_basic.F16013                                    AS  f16013          /* 단축코드 */
-                            ,   etp_basic.F16002                                    AS  f16002          /* 한글종목명 */
+          FROM  (
+
+                /* ETP PRICE 정보 */
+                    SELECT      td_etp_basic.F16012                                 AS  f16012          /* 국제표준코드 */
+                            ,   td_etp_basic.F16013                                 AS  f16013          /* 단축코드 */
+                            ,   td_etp_basic.F16002                                 AS  f16002          /* 한글종목명 */
                                         
-                            ,   etp_basic.F16257                                    AS  f16257          /* ETP기초지수코드 */      
-                            ,   LPAD( etp_basic.F34239, 3, '0' )                    AS  f34239          /* ETP기초지수MID */
-                                        
-                            ,   CASE    WHEN    temp.RNUM = 1           
-                                        THEN    etp_basic.F15001            
-                                                    
-                                        WHEN    temp.RNUM = 2           
-                                        THEN    etp_basic.F19288            
-                                END                                                 AS  price           /* 금액 */
+                            ,   td_etp_basic.F16257                                 AS  f16257          /* ETP기초지수코드 */      
+                            ,   LPAD( td_etp_basic.F34239, 3, '0' )                 AS  f34239          /* ETP기초지수MID */
+
+                            ,   td_etp_basic.F15001                                 AS  price           /* 현재가 */
                                     
-                            ,   CASE    WHEN    temp.RNUM = 1           
-                                        THEN    (           
-                                                    SELECT  11          
-                                                )           
-                                                    
-                                        WHEN    temp.RNUM = 2           
-                                        THEN    (           
-                                                    SELECT  22          
-                                                )           
-                                END                                                 AS  week1_price     /* 1week */
-                            ,   CASE    WHEN    temp.RNUM = 1           
-                                        THEN    (           
-                                                    SELECT  11          
-                                                )           
-                                                    
-                                        WHEN    temp.RNUM = 2           
-                                        THEN    (           
-                                                    SELECT  22          
-                                                )           
-                                END                                                 AS  month1_price    /* 1month */
-                            ,   CASE    WHEN    temp.RNUM = 1           
-                                        THEN    (           
-                                                    SELECT  33          
-                                                )           
-                                                    
-                                        WHEN    temp.RNUM = 2           
-                                        THEN    (           
-                                                    SELECT  44          
-                                                )           
-                                END                                                 AS  month3_price    /* 3month */
-                            ,   CASE    WHEN    temp.RNUM = 1           
-                                        THEN    (           
-                                                    SELECT  55          
-                                                )           
-                                                    
-                                        WHEN    temp.RNUM = 2           
-                                        THEN    (           
-                                                    SELECT  66          
-                                                )           
-                                END                                                 AS  year1_price     /* 1year */
-                            ,   CASE    WHEN    temp.RNUM = 1           
-                                        THEN    (           
-                                                    SELECT  77          
-                                                )           
-                                                    
-                                        WHEN    temp.RNUM = 2           
-                                        THEN    (           
-                                                    SELECT  88          
-                                                )           
-                                END                                                 AS  year3_price     /* 3year */
-                            ,   CASE    WHEN    temp.RNUM = 1           
-                                        THEN    (           
-                                                    SELECT  99          
-                                                )           
-                                                    
-                                        WHEN    temp.RNUM = 2           
-                                        THEN    (           
-                                                    SELECT  100         
-                                                )           
-                                END                                                 AS  year5_price     /* 5year */
-                            ,   CASE    WHEN    temp.RNUM = 1           
-                                        THEN    (           
-                                                    SELECT  110         
-                                                )           
-                                                    
-                                        WHEN    temp.RNUM = 2           
-                                        THEN    (           
-                                                    SELECT  120         
-                                                )           
-                                END                                                 AS  year10_price    /* 10year */
-                            ,   temp.rnum                                           AS  rnum
+                            ,   (           
+                                    SELECT  1       FROM    DUAL
+                                )                                                   AS  week1_price     /* 1week */
+                            ,   (           
+                                    SELECT  2       FROM    DUAL
+                                )                                                   AS  month1_price    /* 1month */
+                            ,   (           
+                                    SELECT  -40     FROM    DUAL
+                                )                                                   AS  month3_price    /* 3month */
+                            ,   (           
+                                    SELECT  6       FROM    DUAL
+                                )                                                   AS  year1_price     /* 1year */
+                            ,   (           
+                                    SELECT  -80     FROM    DUAL
+                                )                                                   AS  year3_price     /* 3year */
+                            ,   (           
+                                    SELECT  10      FROM    DUAL
+                                )                                                   AS  year5_price     /* 5year */
+                            ,   (           
+                                    SELECT  -12     FROM    DUAL
+                                )                                                   AS  year10_price    /* 10year */
+
+                            ,   1                                                   AS  rnum
+                            ,   'N'                                                 AS  delAbleYn       /* 삭제가능 유무 */
+                            ,   'ETP'                                               AS  etpIndexGubun   /* ETP/INDEX 구분 */
+                            ,   'PRICE'                                             AS  navPriceGubun   /* NAV/PRICE 구분 */
                                             
-                      FROM  (                               
-                                SELECT      td_etp_basic.F16012                     AS  f16012          /* 국제표준코드 */
-                                        ,   td_etp_basic.F16013                     AS  f16013          /* 단축코드 */
-                                        ,   td_etp_basic.F16002                     AS  f16002          /* 한글종목명 */
-                                        ,   td_etp_basic.F16257                     AS  f16257          /* ETP기초지수코드 */
-                                        ,   td_etp_basic.F34239                     AS  f34239          /* ETP기초지수MID */
-                                                    
-                                        ,   td_etp_basic.F15001                     AS  f15001          /* 현재가 */
-                                        ,   td_etp_basic.F19288                     AS  f19288          /* ETP지표가치_장종료-확정치차(NAV/IV) */
-
-                                  FROM  kc_etp.td_etp_basic
-                                 WHERE  td_etp_basic.F16012         =   #{f16012}
-
-                            )       etp_basic
-                     INNER  JOIN    
+                      FROM  kc_etp.td_etp_basic
+                     WHERE  td_etp_basic.F16012         =   #{basicData.f16012}
+                       AND  'PRICE'                     IN
                             (
-                                SELECT  1       AS  RNUM
-                                UNION   ALL
-                                SELECT  2       AS  RNUM
-                            )       temp
+                            <foreach    collection="arrNavPriceGubun"   item="item"    index="index"   separator=" ," > 
+                                #{item}  COLLATE utf8_general_ci
+                            </foreach>
+                            )
 
-                                        
                     UNION   ALL
 
+                /* ETP NAV 정보 */
+                    SELECT      td_etp_basic.F16012                                 AS  f16012          /* 국제표준코드 */
+                            ,   td_etp_basic.F16013                                 AS  f16013          /* 단축코드 */
+                            ,   td_etp_basic.F16002                                 AS  f16002          /* 한글종목명 */
+                                        
+                            ,   td_etp_basic.F16257                                 AS  f16257          /* ETP기초지수코드 */      
+                            ,   LPAD( td_etp_basic.F34239, 3, '0' )                 AS  f34239          /* ETP기초지수MID */
+                                        
+                            ,   td_etp_basic.F19288                                 AS  price           /* ETP지표가치_장종료-확정치차(NAV/IV) */
+                                    
+                            ,   (           
+                                    SELECT  22      FROM    DUAL
+                                )                                                   AS  week1_price     /* 1week */
+                            ,   (           
+                                    SELECT  22      FROM    DUAL
+                                )                                                   AS  month1_price    /* 1month */
+                            ,   (           
+                                    SELECT  44      FROM    DUAL
+                                )                                                   AS  month3_price    /* 3month */
+                            ,   (           
+                                    SELECT  66      FROM    DUAL
+                                )                                                   AS  year1_price     /* 1year */
+                            ,   (           
+                                    SELECT  88      FROM    DUAL
+                                )                                                   AS  year3_price     /* 3year */
+                            ,   (           
+                                    SELECT  100     FROM    DUAL
+                                )                                                   AS  year5_price     /* 5year */
+                            ,   (           
+                                    SELECT  -120    FROM    DUAL
+                                )                                                   AS  year10_price    /* 10year */
+
+                            ,   2                                                   AS  rnum
+                            ,   'Y'                                                 AS  delAbleYn       /* 삭제가능 유무 */
+                            ,   'ETP'                                               AS  etpIndexGubun   /* ETP/INDEX 구분 */
+                            ,   'NAV'                                               AS  navPriceGubun   /* NAV/PRICE 구분 */
+                                            
+                      FROM  kc_etp.td_etp_basic
+                     WHERE  td_etp_basic.F16012         =   #{basicData.f16012}
+                       AND  'NAV'                       IN
+                            (
+                            <foreach    collection="arrNavPriceGubun"   item="item"    index="index"   separator=" ," >
+                                #{item}  COLLATE utf8_general_ci
+                            </foreach>
+                            )
+
+                    UNION   ALL
+
+                /* INDEX 정보 */
                     SELECT      ''                                                  AS  f16012          /* 국제표준코드 */
                             ,   td_index_basic.F16013                               AS  f16013          /* 단축코드 */
                             ,   td_index_basic.F16002                               AS  f16002          /* 한글종목명 */
@@ -537,7 +540,7 @@
                                     SELECT  111         
                                 )                                                   AS  week1_price     /* 1week */
                             ,   (           
-                                    SELECT  111         
+                                    SELECT  -111         
                                 )                                                   AS  month1_price    /* 1month */
                             ,   (           
                                     SELECT  222         
@@ -546,7 +549,7 @@
                                     SELECT  333         
                                 )                                                   AS  year1_price     /* 1year */
                             ,   (           
-                                    SELECT  444         
+                                    SELECT  -444         
                                 )                                                   AS  year3_price     /* 3year */
                             ,   (           
                                     SELECT  555         
@@ -554,13 +557,17 @@
                             ,   (           
                                     SELECT  666         
                                 )                                                   AS  year10_price    /* 10year */
+
                             ,   3                                                   AS  rnum
+                            ,   'Y'                                                 AS  delAbleYn       /* 삭제가능 유무 */
+                            ,   'INDEX'                                             AS  etpIndexGubun   /* ETP/INDEX 구분 */
+                            ,   'PRICE'                                             AS  navPriceGubun   /* NAV/PRICE 구분 */
                             
                       FROM  td_index_basic
                      WHERE  1 = 1
-                       AND  td_index_basic.F16013           =       #{f16257}                                           /* 단축코드 = ETP기초지수코드 */
-                       AND  td_index_basic.MARKET_ID        LIKE    CONCAT( '_' , LPAD( #{f34239}, 3, '0' ) , '%' )     /* 시장 ID = ETP기초지수MID */
-    ]]>
+                       AND  td_index_basic.F16013           =       #{basicData.f16257}                                             /* 단축코드 = ETP기초지수코드 */
+                       AND  td_index_basic.MARKET_ID        LIKE    CONCAT( '_' , LPAD( #{basicData.f34239}, 3, '0' ) , '%' )       /* 시장 ID = ETP기초지수MID */
+
 
         <!-- arrEtpPerformance 와 arrIndexPerformance 둘중 1개만 존재하면 UNION ALL 처리 되게 START -->
         <if test= ' ( arrEtpPerformance != null and arrEtpPerformance.length > 0 ) or ( arrIndexPerformance != null and arrIndexPerformance.length > 0 )' >
@@ -584,65 +591,61 @@
                             ,   BASE.year5_price                                    AS  year5_price     /* 5year */
                             ,   BASE.year10_price                                   AS  year10_price    /* 10year */
                                                 
-                            ,   @rownum :=   @rownum + 1                            AS  rownum
+                            ,   @rownum :=   @rownum + 1                            AS  rnum
+                            ,   BASE.delAbleYn                                      AS  delAbleYn       /* 삭제가능 유무 */
+                            ,   BASE.etpIndexGubun                                  AS  etpIndexGubun   /* ETP/INDEX 구분 */
+                            ,   BASE.navPriceGubun                                  AS  navPriceGubun   /* NAV/PRICE 구분 */
+
                       FROM  (
 
                 <!-- arrEtpPerformance 가 존재하는 경우 아래 쿼리 실행 START -->
                 <if test= 'arrEtpPerformance != null and arrEtpPerformance.length > 0' >
 
-                                SELECT      etp_basic.F16012                        AS  f16012          /* 국제표준코드 */
-                                        ,   etp_basic.F16013                        AS  f16013          /* 단축코드 */
-                                        ,   etp_basic.F16002                        AS  f16002          /* 한글종목명 */
+                                SELECT      td_etp_basic.F16012                     AS  f16012          /* 국제표준코드 */
+                                        ,   td_etp_basic.F16013                     AS  f16013          /* 단축코드 */
+                                        ,   td_etp_basic.F16002                     AS  f16002          /* 한글종목명 */
                                                     
-                                        ,   etp_basic.F16257                        AS  f16257          /* ETP기초지수코드 */      
-                                        ,   LPAD( etp_basic.F34239, 3, '0' )        AS  f34239          /* ETP기초지수MID */
+                                        ,   td_etp_basic.F16257                     AS  f16257          /* ETP기초지수코드 */      
+                                        ,   LPAD( td_etp_basic.F34239, 3, '0' )     AS  f34239          /* ETP기초지수MID */
                                                     
-                                        ,   etp_basic.F15001                        AS  price           /* 금액 */
+                                        ,   td_etp_basic.F15001                     AS  price           /* 현재가 */
                                                 
                                         ,   (           
-                                                SELECT  etp_basic.F15001        
+                                                SELECT  td_etp_basic.F15001        
                                             )                                       AS  week1_price     /* 1week */
                                         ,   (           
-                                                SELECT  etp_basic.F15001        
+                                                SELECT  td_etp_basic.F15001        
                                             )                                       AS  month1_price    /* 1month */
                                         ,   (           
-                                                SELECT  etp_basic.F15001        
+                                                SELECT  td_etp_basic.F15001        
                                             )                                       AS  month3_price    /* 3month */
                                         ,   (           
-                                                SELECT  etp_basic.F15001    
+                                                SELECT  td_etp_basic.F15001    
                                             )                                       AS  year1_price     /* 1year */
                                         ,   (           
-                                                SELECT  etp_basic.F15001    
+                                                SELECT  td_etp_basic.F15001    
                                             )                                       AS  year3_price     /* 3year */
                                         ,   (           
-                                                SELECT  etp_basic.F15001    
+                                                SELECT  td_etp_basic.F15001    
                                             )                                       AS  year5_price     /* 5year */
                                         ,   (           
-                                                SELECT  etp_basic.F15001    
+                                                SELECT  td_etp_basic.F15001    
                                             )                                       AS  year10_price    /* 10year */
+
+                                        ,   'Y'                                     AS  delAbleYn       /* 삭제가능 유무 */
+                                        ,   'ETP'                                   AS  etpIndexGubun   /* ETP/INDEX 구분 */
+                                        ,   'PRICE'                                 AS  navPriceGubun   /* NAV/PRICE 구분 */
                                                         
-                                  FROM  (                               
-                                            SELECT      td_etp_basic.F16012         AS  f16012          /* 국제표준코드 */
-                                                    ,   td_etp_basic.F16013         AS  f16013          /* 단축코드 */
-                                                    ,   td_etp_basic.F16002         AS  f16002          /* 한글종목명 */
-                                                    ,   td_etp_basic.F16257         AS  f16257          /* ETP기초지수코드 */
-                                                    ,   td_etp_basic.F34239         AS  f34239          /* ETP기초지수MID */
-                                                                
-                                                    ,   td_etp_basic.F15001         AS  f15001          /* 현재가 */
-                                                    ,   td_etp_basic.F19288         AS  f19288          /* ETP지표가치_장종료-확정치차(NAV/IV) */
-
-                                              FROM  kc_etp.td_etp_basic
-                                             WHERE  td_etp_basic.F16012             IN  
-                                                    ( 
-                    <foreach    collection="arrEtpPerformance"   item="item"    index="index"   separator="," >
-                    <![CDATA[
-                                                        #{item.f16012}              /* 국제표준코드 */
-                    ]]>
-                    </foreach>
-    
-                                                    )
-
-                                        )       etp_basic
+                                  FROM  kc_etp.td_etp_basic
+                                 WHERE  1 = 1
+                                   AND  td_etp_basic.F16012             IN
+                                        ( 
+                                    <foreach    collection="arrEtpPerformance"   item="item"    index="index"   separator="," >
+                                    <![CDATA[
+                                        #{item.f16012}              /* 국제표준코드 */
+                                    ]]>
+                                    </foreach>
+                                        )
                 </if>
                 <!-- arrEtpPerformance 가 존재하는 경우 아래 쿼리 실행 END -->
 
@@ -685,6 +688,10 @@
                                         ,   (           
                                                 SELECT  666         
                                             )                                       AS  year10_price    /* 10year */
+
+                                        ,   'Y'                                     AS  delAbleYn       /* 삭제가능 유무 */
+                                        ,   'INDEX'                                 AS  etpIndexGubun   /* ETP/INDEX 구분 */
+                                        ,   'PRICE'                                 AS  navPriceGubun   /* NAV/PRICE 구분 */
                                         
                                   FROM  td_index_basic
                                  WHERE  1 = 1
@@ -711,9 +718,9 @@
 
          WHERE  1 = 1
 
-         ORDER  BY      BASE.F16257
-                    ,   BASE.F34239
-                    ,   RNUM
+         ORDER  BY      BASE.F16257     /* ETP기초지수코드 */
+                    ,   BASE.F34239     /* ETP기초지수MID */
+                    ,   RNUM            /* 순번 */
     </select>
 
 </mapper>

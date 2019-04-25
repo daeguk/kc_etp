@@ -427,9 +427,10 @@ export default {
             desserts: [],
             toggle_one: null,
 
-            etpBasic    :   {},
-            indexBasic  :   {},
-            etpInfos    :   {}
+            basicData           :   {},
+            etpBasic            :   {},
+            indexBasic          :   {},
+            etpInfos            :   {}
         };
     },
     components: {
@@ -439,7 +440,9 @@ export default {
     mounted: function() {
         var vm = this;
 
-        // this.fn_getEtpInfo();            /* ETP 정보를 조회한다. ( 분석정보, 포트폴리오, 성능정보 ) */
+        vm.basicData.f16012     =   vm.$route.query.f16012;     /* 국제표준코드 */
+        vm.basicData.f16257     =   vm.$route.query.f16257;     /* ETP기초지수코드 */
+        vm.basicData.f34239     =   vm.$route.query.f34239;     /* ETP기초지수MID */
 
         vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
     },
@@ -455,32 +458,6 @@ export default {
         fn_setEtpBasic : function( etpBasic, indexBasic ) {
             this.etpBasic       =   etpBasic;
             this.indexBasic     =   indexBasic;
-        },
-
-        /*
-         * ETP 정보를 조회한다. ( 분석정보, 포트폴리오, 성능정보 )
-         * 2019-04-25  bkLove(촤병국)
-         */
-        fn_getEtpInfo: function() {
-            console.log("fn_getEtpInfo");
-
-            var vm = this;
-            var idx = 0;
-
-            axios
-                .post(Config.base_url + "/user/etp/getEtpInfo", {
-                    data: {
-                            f16012  :   vm.$route.query.f16012      /* 국제표준코드 */
-                        ,   f16257  :   vm.$route.query.f16257      /* ETP기초지수코드  */
-                        ,   f34239  :   vm.$route.query.f34239      /* ETP기초지수MID  */
-                    }
-                })
-                .then(function(response) {
-                    console.log(response);
-
-                    if (response.data) {
-                    }
-                });
         },
 
         /*
@@ -501,9 +478,7 @@ export default {
             // Set a callback to run when the Google Visualization API is loaded.
             google.charts.setOnLoadCallback( 
                 drawChart( 
-                        vm.$route.query.f16012          /* 국제표준코드 */
-                    ,   vm.$route.query.f16257          /* ETP기초지수코드  */
-                    ,   vm.$route.query.f34239          /* ETP기초지수MID  */
+                    vm.basicData
                 )
             );
 
@@ -511,7 +486,7 @@ export default {
             // instantiates the pie chart, passes in the data and
             // draws it.
       
-            function drawChart( f16012, f16257, f34239 ) {
+            function drawChart( basicData ) {
                 
                 
                 // Create the data table.
@@ -528,11 +503,8 @@ export default {
                 
                 axios.post(Config.base_url + "/user/etp/getEtpChartData", {                    
                     data: {
-                            f16012  :   f16012          /* 국제표준코드 */
-                        ,   f16257  :   f16257          /* ETP기초지수코드  */
-                        ,   f34239  :   f34239          /* ETP기초지수MID  */
-
-                        ,   term    :   term            /* 기간정보 */
+                            basicData   :   basicData
+                        ,   term        :   term            /* 기간정보 */
                     }
                 }).then(response => {
 

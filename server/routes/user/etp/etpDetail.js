@@ -274,10 +274,8 @@ var getEtpPerformance = function(req, res) {
                                 for( var inx in rowJson.f16002 ) {
                                     var tempData = rowJson.f16002[ inx ];
 
-                                    if( inx == 0 ) {
-                                        titleList.push( tempData + "\n" + "(Price)" );
-                                    }else if( inx == 1 ) {
-                                        titleList.push( tempData + "\n" + "(NAV)" );
+                                    if( tempData.etpIndexGubun = "ETP" ) {
+                                        titleList.push( tempData + "\n" + "(" + tempData.navPriceGubun + ")" );
                                     }else{
                                         titleList.push( tempData );
                                     }
