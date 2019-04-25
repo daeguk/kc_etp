@@ -91,6 +91,8 @@ export default {
             this.dialog = res;
         });
     },
+    updated: function() {
+    },
     beforeDestroy() {
          //this.$EventBus.$off("showJongMokPop");
     },
