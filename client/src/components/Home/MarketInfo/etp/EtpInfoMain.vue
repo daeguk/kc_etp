@@ -64,7 +64,7 @@ export default {
         
     },
     updated: function() {
-        if (this.$route.path != '/info/etpinfo/marketRepresent') {        
+        if (this.$route.path == '/info/etpinfo') {        
             this.activeTab = 0;
             this.pageMove('/info/etpinfo/marketRepresent');
         }
