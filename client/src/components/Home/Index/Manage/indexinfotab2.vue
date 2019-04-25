@@ -108,7 +108,7 @@
                             </v-card>
                         </v-dialog>
                     </v-subheader>
-                    <div class="graph_02_w" style="height:300px"  id="importance_chart"></div>
+                    <div class="graph_02_w"  id="importance_chart"></div>
                     <v-card flat></v-card>
                 </div>
                 <!---비중정보 팝업end-->
@@ -296,12 +296,14 @@ export default {
                
                 // Set chart options
                 var options = {'title':'',
-                            'width':'100%',
-                            'height':'300px',
-                            'colors': ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6'],                           
+                            'width':'1250',
+                            'height':'300',
+                            'colors': ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde'],                           
                             'legend': {
                                 position: 'left'
-                            }
+                            },
+                            'lineWidth': 5
+                            
                 };
                 
                 
