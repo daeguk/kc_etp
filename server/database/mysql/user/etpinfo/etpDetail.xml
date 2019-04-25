@@ -200,7 +200,7 @@
                                     
                      WHERE  1 = 1
                        AND  td_index_basic.F16013       =   #{basicData.f16257}                                             /* 단축코드 = ETP기초지수코드 */
-                       AND  td_index_basic.MARKET_ID    LIKE   CONCAT( '_' , LPAD( #{basicDataf34239}, 3, '0' ) , '%' )     /* 시장 ID = ETP기초지수MID */
+                       AND  td_index_basic.MARKET_ID    LIKE   CONCAT( '_' , LPAD( #{basicData.f34239}, 3, '0' ) , '%' )    /* 시장 ID = ETP기초지수MID */
                        
                      GROUP  BY      td_index_intra.F20044
                                 ,   SUBSTR( LPAD( td_index_intra.F20004, 8, '0' ) , 1, 2 )
@@ -244,7 +244,7 @@
                                         AND     td_etp_intra.F20044     >=   DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 WEEK ), '%Y%m%d' )   /* 인트라체결일자 */
                                     )
                      WHERE  1 = 1
-                       AND  td_etp_basic.F16012     =   #{basicDataf16012}              /* 국제표준코드 */
+                       AND  td_etp_basic.F16012     =   #{basicData.f16012}              /* 국제표준코드 */
 
                      GROUP  BY      td_etp_intra.F20044
 
@@ -432,55 +432,6 @@
     
           FROM  (
 
-                /* ETP PRICE 정보 */
-                    SELECT      td_etp_basic.F16012                                 AS  f16012          /* 국제표준코드 */
-                            ,   td_etp_basic.F16013                                 AS  f16013          /* 단축코드 */
-                            ,   td_etp_basic.F16002                                 AS  f16002          /* 한글종목명 */
-                                        
-                            ,   td_etp_basic.F16257                                 AS  f16257          /* ETP기초지수코드 */      
-                            ,   LPAD( td_etp_basic.F34239, 3, '0' )                 AS  f34239          /* ETP기초지수MID */
-
-                            ,   td_etp_basic.F15001                                 AS  price           /* 현재가 */
-                                    
-                            ,   (           
-                                    SELECT  1       FROM    DUAL
-                                )                                                   AS  week1_price     /* 1week */
-                            ,   (           
-                                    SELECT  2       FROM    DUAL
-                                )                                                   AS  month1_price    /* 1month */
-                            ,   (           
-                                    SELECT  -40     FROM    DUAL
-                                )                                                   AS  month3_price    /* 3month */
-                            ,   (           
-                                    SELECT  6       FROM    DUAL
-                                )                                                   AS  year1_price     /* 1year */
-                            ,   (           
-                                    SELECT  -80     FROM    DUAL
-                                )                                                   AS  year3_price     /* 3year */
-                            ,   (           
-                                    SELECT  10      FROM    DUAL
-                                )                                                   AS  year5_price     /* 5year */
-                            ,   (           
-                                    SELECT  -12     FROM    DUAL
-                                )                                                   AS  year10_price    /* 10year */
-
-                            ,   1                                                   AS  rnum
-                            ,   'N'                                                 AS  delAbleYn       /* 삭제가능 유무 */
-                            ,   'Y'                                                 AS  initYn          /* 초기데이터 유무 */
-                            ,   'ETP'                                               AS  etpIndexGubun   /* ETP/INDEX 구분 */
-                            ,   'PRICE'                                             AS  navPriceGubun   /* NAV/PRICE 구분 */
-                                            
-                      FROM  kc_etp.td_etp_basic
-                     WHERE  td_etp_basic.F16012         =   #{basicData.f16012}
-                       AND  'PRICE'                     IN
-                            (
-                            <foreach    collection="basicData.arrNavPriceGubun"   item="item"    index="index"   separator=" ," > 
-                                #{item}  COLLATE utf8_general_ci
-                            </foreach>
-                            )
-
-                    UNION   ALL
-
                 /* ETP NAV 정보 */
                     SELECT      td_etp_basic.F16012                                 AS  f16012          /* 국제표준코드 */
                             ,   td_etp_basic.F16013                                 AS  f16013          /* 단축코드 */
@@ -513,8 +464,8 @@
                                     SELECT  -120    FROM    DUAL
                                 )                                                   AS  year10_price    /* 10year */
 
-                            ,   2                                                   AS  rnum
-                            ,   'Y'                                                 AS  delAbleYn       /* 삭제가능 유무 */
+                            ,   1                                                   AS  rnum
+                            ,   'N'                                                 AS  delAbleYn       /* 삭제가능 유무 */
                             ,   'Y'                                                 AS  initYn          /* 초기데이터 유무 */
                             ,   'ETP'                                               AS  etpIndexGubun   /* ETP/INDEX 구분 */
                             ,   'NAV'                                               AS  navPriceGubun   /* NAV/PRICE 구분 */
@@ -527,6 +478,55 @@
                                 #{item}  COLLATE utf8_general_ci
                             </foreach>
                             )
+
+                    UNION   ALL
+
+                /* ETP PRICE 정보 */
+                    SELECT      td_etp_basic.F16012                                 AS  f16012          /* 국제표준코드 */
+                            ,   td_etp_basic.F16013                                 AS  f16013          /* 단축코드 */
+                            ,   td_etp_basic.F16002                                 AS  f16002          /* 한글종목명 */
+                                        
+                            ,   td_etp_basic.F16257                                 AS  f16257          /* ETP기초지수코드 */      
+                            ,   LPAD( td_etp_basic.F34239, 3, '0' )                 AS  f34239          /* ETP기초지수MID */
+
+                            ,   td_etp_basic.F15001                                 AS  price           /* 현재가 */
+                                    
+                            ,   (           
+                                    SELECT  1       FROM    DUAL
+                                )                                                   AS  week1_price     /* 1week */
+                            ,   (           
+                                    SELECT  2       FROM    DUAL
+                                )                                                   AS  month1_price    /* 1month */
+                            ,   (           
+                                    SELECT  -40     FROM    DUAL
+                                )                                                   AS  month3_price    /* 3month */
+                            ,   (           
+                                    SELECT  6       FROM    DUAL
+                                )                                                   AS  year1_price     /* 1year */
+                            ,   (           
+                                    SELECT  -80     FROM    DUAL
+                                )                                                   AS  year3_price     /* 3year */
+                            ,   (           
+                                    SELECT  10      FROM    DUAL
+                                )                                                   AS  year5_price     /* 5year */
+                            ,   (           
+                                    SELECT  -12     FROM    DUAL
+                                )                                                   AS  year10_price    /* 10year */
+
+                            ,   2                                                   AS  rnum
+                            ,   'Y'                                                 AS  delAbleYn       /* 삭제가능 유무 */
+                            ,   'Y'                                                 AS  initYn          /* 초기데이터 유무 */
+                            ,   'ETP'                                               AS  etpIndexGubun   /* ETP/INDEX 구분 */
+                            ,   'PRICE'                                             AS  navPriceGubun   /* NAV/PRICE 구분 */
+                                            
+                      FROM  kc_etp.td_etp_basic
+                     WHERE  td_etp_basic.F16012         =   #{basicData.f16012}
+                       AND  'PRICE'                     IN
+                            (
+                            <foreach    collection="basicData.arrNavPriceGubun"   item="item"    index="index"   separator=" ," > 
+                                #{item}  COLLATE utf8_general_ci
+                            </foreach>
+                            )                            
 
                     UNION   ALL
 
