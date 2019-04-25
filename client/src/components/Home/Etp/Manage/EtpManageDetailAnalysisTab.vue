@@ -51,13 +51,13 @@
                         <v-btn outline small color="primary" dark v-on:click="showJongMokPop">
                             <v-icon small color="primary">add</v-icon>자산추가
                         </v-btn>
-
-                        
+                        <jongmokPopup @selectedItem="getSelectedItem" v-if="jongmokPopYn"></jongmokPopup>
                     </v-layout>
                 <!--자산추가 팝업 END--->
 
                 </div>
             </v-flex>
+            
             <v-flex xs12 flat>
                 <!---비중정보 팝업--->
                 <div class="indexinfo_box01">
@@ -114,13 +114,13 @@
 
             <v-flex xs12></v-flex>
         </v-layout>
-        <EtpJongmokPopup @selectedItem="getSelectedItem"></EtpJongmokPopup>
+
     </v-container>
 </template>
 
 
 <script>
-import EtpJongmokPopup from "@/components/common/popup/jongmokPopup";
+import jongmokPopup from "@/components/common/popup/jongmokPopup";
 import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
@@ -151,6 +151,7 @@ export default {
                         +   "." 
                         +   new Date().getDate(),
 
+            jongmokPopYn        :   false,
             basicData           :   {
                 arrNavPriceGubun    :   [],
             },
@@ -159,7 +160,7 @@ export default {
         };
     },
     components: {
-        EtpJongmokPopup: EtpJongmokPopup, 
+        jongmokPopup: jongmokPopup, 
     },
     computed: {},
     created: function() {},
@@ -533,121 +534,15 @@ export default {
          * 2019-04-25  bkLove(촤병국)
          */
         showJongMokPop: function() { 
-            this.$EventBus.$emit( "showEtpJongMokPop", true );
+            this.jongmokPopYn   =   true;
+            this.$EventBus.$emit("showEtpJongMokPop", true );
         },        
 
-        getIndexImportanceList: function() {
-            console.log("getIndexImportanceList");
-            axios
-                .get(Config.base_url + "/user/index/getIndexImportanceList", {
-                    params: {
-                        jisu_cd: this.$route.query.jisu_cd,
-                        market_id: this.$route.query.market_id
-                    }
-                })
-                .then(response => {
-                    // console.log(response);
-                    if (response.data.success == false) {
-                        alert("비중 목록이 없습니다");
-                    } else {
-                        var items = response.data.results;
-
-                        //console.log("response=" + JSON.stringify(items));
-                        this.results = items;
-                        this.importance_cnt = this.results.length;
-
-                        // 차트 호출
-                        this.importance_chart(items);
-
-                        importance_grid = $("#importance_grid").DataTable({
-                            processing: true,
-                            serverSide: false,
-                            info: false, // control table information display field
-                            stateSave: true, //restore table state on page reload,
-                            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                            scrollY: "500px",
-                            scrollCollapse: true,
-                            select: {
-                                style: "multi",
-                                selector: "td:first-child"
-                            },
-                            paging: false,
-                            searching: false,
-                            data: this.results,
-                            columns: [
-                                { data: "ISIN_CODE", orderable: true },
-                                { data: "JOING_NM", orderable: true },
-                                { data: "PERCNT", orderable: true },
-                                { data: "GUBUN", orderable: true }
-                            ]
-                        });
-                    }
-                });
-        },
-
-        importance_chart: function(results) {
-            // Load the Visualization API and the corechart package.
-            google.charts.load("current", { packages: ["corechart"] });
-
-            // Set a callback to run when the Google Visualization API is loaded.
-            google.charts.setOnLoadCallback(drawChart());
-
-            // Callback that creates and populates a data table,
-            // instantiates the pie chart, passes in the data and
-            // draws it.
-
-            function drawChart() {
-                // Create the data table.
-                var data = new google.visualization.DataTable();
-                data.addColumn("string", "JOING_NM");
-                data.addColumn("number", "PERCNT");
-
-                // Set chart options
-                var options = { title: " ", width: "100%", height: "400px" };
-
-                var items = [];
-
-                for (let item of results) {
-                    if (items.length >= 5) break;
-
-                    items.push([item.JOING_NM, item.PERCNT]);
-                }
-
-                data.addRows(items);
-
-                // Instantiate and draw our chart, passing in some options.
-                var chart = new google.visualization.PieChart(
-                    document.getElementById("importance_chart")
-                );
-                chart.draw(data, options);
-            }
-        },
-
-        getIndexAnalysisInfo: function() {
-            console.log("getIndexAnalysisInfo");
-            axios
-                .get(Config.base_url + "/user/index/getIndexAnalysisInfo", {
-                    params: {
-                        jisu_cd: this.$route.query.jisu_cd,
-                        market_id: this.$route.query.market_id
-                    }
-                })
-                .then(response => {
-                    // console.log(response);
-                    if (response.data.success == false) {
-                        alert("비중 목록이 없습니다");
-                    } else {
-                        var items = response.data.results;
-
-                        console.log("response=" + JSON.stringify(items));
-                        perf_table.clear().draw();
-                        perf_table.rows.add(items).draw();
-                    }
-                });
-        },
 
         getSelectedItem: function(sel_items) {
             var vm = this;
+
+            vm.jongmokPopYn   =   false;
             vm.dialog = false;
 
             for (let i = 0; i < sel_items.length; i++) {
