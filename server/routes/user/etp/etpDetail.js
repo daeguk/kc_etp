@@ -137,6 +137,198 @@ var getEtpBasic = function(req, res) {
     }
 }
 
+/*
+ * ETP performance 정보를 조회한다.
+ * 2019-04-25  bkLove(촤병국)
+ */
+var getEtpPerformance = function(req, res) {
+    try {
+        console.log('etpDetail.getEtpPerformance 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            console.log("[error] etpDetail.getEtpPerformance  req.body.data no data.");
+            console.log(req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = "[error] etpDetail.getEtpPerformance  req.body.data no data.";
+            
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse( JSON.stringify(req.body.data) );
+
+        paramData.user_id       =   req.session.user_id;
+        paramData.inst_cd       =   req.session.inst_cd;
+        paramData.type_cd       =   req.session.type_cd;
+        paramData.large_type    =   req.session.large_type;
+
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        Promise.using(pool.connect(), conn => {
+
+            async.waterfall([
+
+                /* 1. ETP performance 정보를 조회한다. */
+                function( callback ) {
+
+                    stmt = mapper.getStatement('etpDetail', 'getEtpPerformance', paramData, format);
+                    console.log(stmt);
+
+                    conn.query(stmt, function( err, rows ) {
+
+                        if( err ) {
+                            resultMsg.result    =   false;
+                            resultMsg.msg       =   "[error] etpDetail.getEtpPerformance Error while performing Query";
+                            resultMsg.err       =   err;
+
+                            return callback( resultMsg );
+                        }
+
+                        if ( rows && rows.length > 0 ) {
+
+                            /* 차트에 노출하기 위해 데이터 변환처리 */
+                            var dataList    =   [];
+                            var rowJson     =   {};
+
+                            rowJson.f16012          =   [];
+                            rowJson.f16013          =   [];
+                            rowJson.f16002          =   [];
+                            rowJson.f16257          =   [];
+                            rowJson.f34239          =   [];
+                            rowJson.price           =   [];
+                            rowJson.week1_price     =   [];
+                            rowJson.month1_price    =   [];
+                            rowJson.month3_price    =   [];
+                            rowJson.year1_price     =   [];
+                            rowJson.year3_price     =   [];
+                            rowJson.year5_price     =   [];
+                            rowJson.year10_price    =   [];
+                            rowJson.rnum            =   [];
+                            for( var inx in  rows ){
+                                var rowData     =   rows[ inx ];
+
+                                rowJson.f16012.push(        rowData.f16012          );
+                                rowJson.f16013.push(        rowData.f16013          );
+                                rowJson.f16002.push(        rowData.f16002          );
+                                rowJson.f16257.push(        rowData.f16257          );
+                                rowJson.f34239.push(        rowData.f34239          );
+                                rowJson.price.push(         rowData.price           );
+                                rowJson.week1_price.push(   rowData.week1_price     );
+                                rowJson.month1_price.push(  rowData.month1_price    );
+                                rowJson.month3_price.push(  rowData.month3_price    );
+
+                                rowJson.year1_price.push(   rowData.year1_price     );
+                                rowJson.year3_price.push(   rowData.year3_price     );
+                                rowJson.year5_price.push(   rowData.year5_price     );
+                                rowJson.year10_price.push(  rowData.year10_price    );
+                                rowJson.rnum.push(          rowData.rnum            );
+                            }
+
+                            if( rowJson.week1_price && rowJson.week1_price.length > 0 ) {
+                                rowJson.week1_price.unshift( "1-week" );
+                            }
+                            dataList.push( rowJson.week1_price );
+
+                            if( rowJson.month1_price && rowJson.month1_price.length > 0 ) {
+                                rowJson.month1_price.unshift( "1-month" );
+                            }
+                            dataList.push( rowJson.month1_price );
+
+                            if( rowJson.month3_price && rowJson.month3_price.length > 0 ) {
+                                rowJson.month3_price.unshift( "3-month" );
+                            }
+                            dataList.push( rowJson.month3_price );
+
+                            if( rowJson.year1_price && rowJson.year1_price.length > 0 ) {
+                                rowJson.year1_price.unshift( "1-year" );
+                            }
+                            dataList.push( rowJson.year1_price );
+
+                            if( rowJson.year3_price && rowJson.year3_price.length > 0 ) {
+                                rowJson.year3_price.unshift( "3-year" );
+                            }
+                            dataList.push( rowJson.year3_price );
+
+                            if( rowJson.year5_price && rowJson.year5_price.length > 0 ) {
+                                rowJson.year5_price.unshift( "5-year" );
+                            }
+                            dataList.push( rowJson.year5_price );
+
+                            if( rowJson.year10_price && rowJson.year10_price.length > 0 ) {
+                                rowJson.year10_price.unshift( "10-year" );
+                            }
+                            dataList.push( rowJson.year10_price );
+
+
+                            /* title 정보 */
+                            if( dataList && dataList.length > 0 ) {
+                                var titleList = [ "" ];
+
+                                for( var inx in rowJson.f16002 ) {
+                                    var tempData = rowJson.f16002[ inx ];
+
+                                    if( inx == 0 ) {
+                                        titleList.push( tempData + "\n" + "(Price)" );
+                                    }else if( inx == 1 ) {
+                                        titleList.push( tempData + "\n" + "(NAV)" );
+                                    }else{
+                                        titleList.push( tempData );
+                                    }
+                                }
+                                dataList.unshift( titleList );
+                            }
+
+                            resultMsg.etpPerformanceList    =   rows;
+                            resultMsg.chartList             =   dataList;
+                        }
+
+                        callback( null );
+                    });
+                }
+
+            ], function (err) {
+
+                if( err ) {
+                    console.log( err );
+                }else{
+
+                    resultMsg.result    =   true;
+                    resultMsg.msg       =   "";
+                    resultMsg.err       =   null;
+                }
+
+                res.json( resultMsg );
+                res.end();
+            });
+        });
+
+    } catch(expetion) {
+
+        console.log(expetion);
+
+        if( resultMsg && !resultMsg.msg ) {
+            resultMsg.result    =   false;
+            resultMsg.msg       =   "[error] etpDetail.getEtpPerformance 오류가 발생하였습니다.";
+            resultMsg.err       =   expetion;
+        }
+
+        resultMsg.etpPerformanceList    =   [];
+        resultMsg.chartList             =   [];
+
+        res.json({
+            resultMsg
+        });
+        res.end();  
+    }
+}
+
 
 /*
  * ETP 정보를 조회한다. ( 분석정보, 포트폴리오, 성능정보 )
@@ -562,4 +754,5 @@ var getEtpChartData = function(req, res) {
 
 module.exports.getEtpBasic = getEtpBasic;
 module.exports.getEtpInfo = getEtpInfo;
+module.exports.getEtpPerformance = getEtpPerformance;
 module.exports.getEtpChartData = getEtpChartData;
