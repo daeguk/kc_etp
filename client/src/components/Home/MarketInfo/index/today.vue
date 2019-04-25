@@ -371,7 +371,7 @@ export default {
                 // Set chart options
                 var options = {'title':'',
                             'width':'100%',
-                            'height':'300px',
+                            'height':'100%',
                             'colors': ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6'],
                             'hAxis':{
                                 format:'yyyy-MM-dd HH:mm:ss',

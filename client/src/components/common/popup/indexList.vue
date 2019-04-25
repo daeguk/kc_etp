@@ -74,34 +74,36 @@ var jisu_grid = null;
                         //console.log("response=" + JSON.stringify(items));
                         this.results = items;
 
-                        jisu_grid = $('#jisu_grid').DataTable( {
-                            "processing": true,
-                            "serverSide": false,
-                            "search": true,
-                            scrollY:        '50vh',
-                            scrollCollapse: true,
-                            "info": true,   // control table information display field
-                            "stateSave": true,  //restore table state on page reload,
-                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                             "columnDefs": [
-                             {  
-                                'orderable': false,
-                                'targets': 0,
-                                'className': 'select-checkbox',
-                            },],
-                            select: {
-                                style:    'multi',
-                                selector: 'td:first-child'
-                            },
-                            paging: false,
-                            searching: false,
-                            data : this.results,
-                            columns: [
-                                { "data": null, "defaultContent": ""},
-                                { "data": "JISU_CD", "orderable": true },
-                                { "data": "JISU_NM", "orderable" : true },
-                            ]
-                        }); 
+                        if (!$.fn.dataTable.isDataTable( '#jisu_grid' ) ) {
+                            jisu_grid = $('#jisu_grid').DataTable( {
+                                "processing": true,
+                                "serverSide": false,
+                                "search": true,
+                                scrollY:        '50vh',
+                                scrollCollapse: true,
+                                "info": true,   // control table information display field
+                                "stateSave": true,  //restore table state on page reload,
+                                "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                                "columnDefs": [
+                                {  
+                                    'orderable': false,
+                                    'targets': 0,
+                                    'className': 'select-checkbox',
+                                },],
+                                select: {
+                                    style:    'multi',
+                                    selector: 'td:first-child'
+                                },
+                                paging: false,
+                                searching: false,
+                                data : this.results,
+                                columns: [
+                                    { "data": null, "defaultContent": ""},
+                                    { "data": "JISU_CD", "orderable": true },
+                                    { "data": "JISU_NM", "orderable" : true },
+                                ]
+                            }); 
+                        }
                     }
                    
                 });
