@@ -170,11 +170,13 @@ var getMarketIndexList = function (req, res) {
     try {
 
         
-        console.log('marketInfo=>getSectorEtpList 호출됨.');
+        console.log('marketInfo=>getMarketIndexList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");       
         var graphinfos = [];
+        var krsLists = [];
+        var fnGuideLists = [];
             
 
         Promise.using(pool.connect(), conn => {
@@ -216,15 +218,63 @@ var getMarketIndexList = function (req, res) {
                             }                                
                         })
                     });
+                },
+                function(marketRepList, graphinfos, callback) {
+
+                    var dataCnt = 0;
+                    // KRS INDEX 정보 추출
+                    var params = {
+                        large_type : 'KRX'
+                    };
+
+                    var stmt = mapper.getStatement('common.item', 'getIndexBaseInfo', params, {language:'sql', indent: '  '});
+
+
+                    conn.query(stmt, function( err, rows ) {
+                            
+                        /* ===================상단 데이터 생성 완료 =========================*/
+                        // 조회한 데이터 저장
+                        krsLists.push(rows);
+
+                        dataCnt++;
+                        
+                        if (dataCnt == 2) {
+                            callback(null, marketRepList, graphinfos, krsLists, fnGuideLists);   
+                        }
+                    })
+
+                    // FNGUIDE INDEX 정보 추출
+                    params = {
+                        large_type : 'FNGUIDE'
+                    };
+
+                    stmt = mapper.getStatement('common.item', 'getIndexBaseInfo', params, {language:'sql', indent: '  '});
+
+
+                    conn.query(stmt, function( err, rows ) {
+                            
+                        /* ===================상단 데이터 생성 완료 =========================*/
+                        // 조회한 데이터 저장
+                        fnGuideLists.push(rows);
+                        dataCnt++;
+
+                        if (dataCnt == 2) {
+                            callback(null, marketRepList, graphinfos, krsLists, fnGuideLists);   
+                        }
+                    })
+
+                    
                 }
             ], 
-                function (err, marketRepList, graphinfos) {
+                function (err, marketRepList, graphinfos, krsLists, fnGuideLists) {
                     // result now equals 'done'
             
                     res.json({
                         success: true,
                         marketRepList: marketRepList,
                         graphinfos: graphinfos,
+                        krsLists: krsLists, 
+                        fnGuideLists: fnGuideLists
                     });
                     res.end();
                 }  
