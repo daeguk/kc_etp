@@ -258,52 +258,100 @@
 
     <!-- 기간 지수와 ETP 정보(그래프정보)-->
     <select id="getIndexEtpHistoryData">
-    <![CDATA[
 
-        SELECT INDX.trd_dd, ifnull(INDX.close_idx,0) close_idx, ifnull(ETP.ept_close_idx, 0) ept_close_idx, INDX.INDEX_NM, ETP.ETP_NM
-            FROM(SELECT B.F12506, date_format(B.F12506, "%Y.%m.%d") as trd_dd, B.F15001 as close_idx, A.F16002 as INDEX_NM
-                    FROM td_index_basic A, 
-                        td_index_hist B
-                    WHERE A.F16013 = B.F16013
-                    AND A.MARKET_ID = B.MARKET_ID
-                    AND A.F16013 = #{jisu_cd}
-                    AND A.MARKET_ID = #{market_id}
-                    AND A.large_type = #{large_type}) INDX
-         Left outer Join   
-                (select hist.F12506, date_format(hist.F12506, "%Y.%m.%d") as trd_dd, hist.F15001 as ept_close_idx, base.F16002 ETP_NM
-                    from (select max(a.F15028),  a.F16012, a.F16013, a.F16002 
-                            FROM kc_etp.td_etp_basic a
-                            WHERE a.F34239 = CAST(substr(#{market_id}, 2) AS SIGNED) 
-                            AND a.F16257 = #{jisu_cd}
-                        ) base
-                inner join kc_etp.td_etp_hist hist
-                    on base.F16013 = hist.F16013) ETP
-            on INDX.trd_dd = ETP.trd_dd
-    ]]>
     <choose>
-        <when test="term != null and jisu_cd =='1D'">
-            WHERE INDX.F12506 >= date_format(DATE_SUB(now(), INTERVAL 1 DAY), '%Y%m%d')
+        <when test="term != null and (term =='1D' or term == '1W')">
+            <![CDATA[
+			SELECT concat(date_format(INDX.trd_dd, "%Y-%m-%d"), ' ', IFNULL(SUBSTR(INDX.trd_hh, 1, 2), 0), ':', IFNULL(SUBSTR(INDX.trd_hh, 3, 2), 0), ':', IFNULL(SUBSTR(INDX.trd_hh, 5, 2), 0)) trd_dd
+                    ,IFNULL(INDX.close_idx,0) close_idx
+                    ,IFNULL(ETP.ept_close_idx, 0) ept_close_idx
+                    ,INDX.INDEX_NM
+                    ,ETP.ETP_NM
+              FROM(SELECT B.F20044 as trd_dd
+                         ,lpad(B.F20004,8, '0') AS trd_hh
+                         ,B.F20008 as close_idx
+                         ,0 as ept_close_idx
+                         ,A.F16002 as INDEX_NM
+                    FROM td_index_basic A, 
+                        td_index_intra B
+                            WHERE A.F16013 = B.F16013
+                            AND A.MARKET_ID = B.MARKET_ID
+                            AND A.F16013 = #{jisu_cd}
+                            AND A.MARKET_ID = #{market_id}
+                            AND A.large_type = #{large_type}) INDX
+                Left outer Join   
+                    (select hist.F20044 as trd_dd
+                                ,LPAD(hist.F20004,8, '0') AS trd_hh
+                                ,0 as close_idx
+                                ,hist.F20008 as ept_close_idx
+                                ,base.F16002 ETP_NM
+                        from (select max(a.F15028),  a.F16012, a.F16013, a.F16002 
+                                FROM kc_etp.td_etp_basic a
+                                WHERE a.F34239 = CAST(SUBSTR(#{market_id}, 2) AS SIGNED) 
+                                AND a.F16257 = #{jisu_cd}
+                            ) base
+                    inner join kc_etp.td_index_intra hist
+                            on base.F16013 = hist.F16013) ETP
+                    on INDX.trd_dd = ETP.trd_dd
+            ]]>
         </when>
-        <when test="term != null and jisu_cd =='1W'">
-            WHERE INDX.F12506 >= date_format(DATE_SUB(now(), INTERVAL 1 WEEK), '%Y%m%d')
+        <otherwise>
+            <![CDATA[
+                SELECT concat(date_format(INDX.trd_dd, "%Y-%m-%d"), ' 00:00:00') trd_dd
+                    ,IFNULL(INDX.close_idx,0) close_idx
+                    ,IFNULL(ETP.ept_close_idx, 0) ept_close_idx
+                    ,INDX.INDEX_NM, ETP.ETP_NM
+                    FROM(SELECT B.F12506 as trd_dd
+                               ,B.F15001 as close_idx
+                               ,0 as ept_close_idx
+                               ,A.F16002 as INDEX_NM
+                            FROM td_index_basic A, 
+                                td_index_hist B
+                            WHERE A.F16013 = B.F16013
+                            AND A.MARKET_ID = B.MARKET_ID
+                            AND A.F16013 = #{jisu_cd}
+                            AND A.MARKET_ID = #{market_id}
+                            AND A.large_type = #{large_type}) INDX
+                Left outer Join   
+                        (select hist.F12506 as trd_dd
+                               ,0 as close_idx
+                               ,hist.F15001 as ept_close_idx
+                               ,base.F16002 ETP_NM
+                            from (select max(a.F15028),  a.F16012, a.F16013, a.F16002 
+                                    FROM kc_etp.td_etp_basic a
+                                    WHERE a.F34239 = CAST(substr(#{market_id}, 2) AS SIGNED) 
+                                    AND a.F16257 = #{jisu_cd}
+                                ) base
+                        inner join kc_etp.td_etp_hist hist
+                            on base.F16013 = hist.F16013) ETP
+                    on INDX.trd_dd = ETP.trd_dd
+            ]]>
+        </otherwise>
+    </choose> 
+    <choose>
+        <when test="term != null and term =='1D'">
+            WHERE date_format(INDX.trd_dd, '%Y%m%d') = date_format('20190409', '%Y%m%d')
         </when>
-        <when test="term != null and jisu_cd =='1M'">
-            WHERE INDX.F12506 >= date_format(DATE_SUB(now(), INTERVAL 1 MONTH), '%Y%m%d')
+        <when test="term != null and term =='1W'">
+            WHERE date_format(INDX.trd_dd, '%Y%m%d') >= date_format(DATE_SUB(now(), INTERVAL 1 MONTH), '%Y%m%d')
         </when>
-        <when test="term != null and jisu_cd =='3M'">
-            WHERE INDX.F12506 >= date_format(DATE_SUB(now(), INTERVAL 3 MONTH), '%Y%m%d')
+        <when test="term != null and term =='1M'">
+            WHERE date_format(INDX.trd_dd, '%Y%m%d') >= date_format(DATE_SUB(now(), INTERVAL 1 MONTH), '%Y%m%d')
         </when>
-        <when test="term != null and jisu_cd =='6M'">
-            WHERE INDX.F12506 >= date_format(DATE_SUB(now(), INTERVAL 6 MONTH), '%Y%m%d')
+        <when test="term != null and term =='3M'">
+            WHERE date_format(INDX.trd_dd, '%Y%m%d') >= date_format(DATE_SUB(now(), INTERVAL 3 MONTH), '%Y%m%d')
         </when>
-        <when test="term != null and jisu_cd =='1Y'">
-            WHERE INDX.F12506 >= date_format(DATE_SUB(now(), INTERVAL 1 YEAR), '%Y%m%d')
+        <when test="term != null and term =='6M'">
+            WHERE date_format(INDX.trd_dd, '%Y%m%d') >= date_format(DATE_SUB(now(), INTERVAL 6 MONTH), '%Y%m%d')
         </when>
-        <when test="term != null and jisu_cd =='TOTAL'">
+        <when test="term != null and term =='1Y'">
+            WHERE date_format(INDX.trd_dd, '%Y%m%d') >= date_format(DATE_SUB(now(), INTERVAL 1 YEAR), '%Y%m%d')
+        </when>
+        <when test="term != null and term =='TOTAL'">
             
         </when>
         <otherwise>
-            WHERE INDX.F12506 >= date_format(DATE_SUB(now(), INTERVAL 1 MONTH), '%Y%m%d')
+            WHERE date_format(INDX.trd_dd, '%Y%m%d') >= date_format(DATE_SUB(now(), INTERVAL 1 MONTH), '%Y%m%d')
         </otherwise>
     </choose>
     </select>
