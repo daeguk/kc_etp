@@ -169,7 +169,9 @@ export default {
                 arrNavPriceGubun    :   [],
             },
             arrEtpPerformance   :   [],
-            arrIndexPerformance :   []
+            arrIndexPerformance :   [],
+            performChartColors  :   ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde'],
+            performChartImages  :   ['perform_bar01.png', 'perform_bar02.png', 'perform_bar03.png', 'perform_bar04.png', 'perform_bar05.png']
         };
     },
     components: {
@@ -233,6 +235,9 @@ export default {
 
                                if( row.etpIndexGubun == "ETP" ) {
                                     var  html = "";
+debugger;
+console.log( ">>>>>>>>>>>row" + row );
+console.log( ">>>>>>>>>>>vm.performChartImages" + vm.performChartImages[ row ] );
 
                                     html +=  "<img src='/assets/img/icon_bar01.png'>";
                                     html +=  "<span>"
@@ -405,6 +410,7 @@ export default {
                 align: "start",
                 width: 940,
                 height: 300,
+                colors: vm.performChartColors,
                 vAxis: { title: "" },
                 hAxis: { title: "" },
                 seriesType: "bars",
