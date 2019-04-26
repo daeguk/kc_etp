@@ -21,7 +21,7 @@
                                                     outline
                                                     color="primary"
                                                     small
-                                                    :to="{path:'/ETP/manage', query:{'activeTab':'2'}}"
+                                                    @click="fn_goBack()"
                                                 >목록으로 돌아가기</v-btn>
                                             </div>
                                         </v-flex>
@@ -202,7 +202,7 @@
 
                                         <v-tabs-items v-model="tab">
                                             <v-tab-item>
-                                                <!--오른쪽 메뉴 하단 리스트 영역--->
+                                                <!--오른쪽 메뉴 하단 리스트 영역 -->
                                                 <v-layout row class="w100 pt-2">
                                                     <v-flex xs12>
                                                         <v-card flat>
@@ -224,10 +224,10 @@
                                                         </v-card>
                                                     </v-flex>
                                                 </v-layout>
-                                                <!--오른쪽 메뉴 하단 리스트 영역--->
+                                                <!--오른쪽 메뉴 하단 리스트 영역 -->
                                             </v-tab-item>
                                             <v-tab-item>
-                                                <!--오른쪽 메뉴 하단 리스트 영역--->
+                                                <!--오른쪽 메뉴 하단 리스트 영역 -->
                                                 <v-layout row class="w100 pt-2">
                                                     <v-flex xs12>
                                                         <v-card flat>
@@ -249,7 +249,7 @@
                                                         </v-card>
                                                     </v-flex>
                                                 </v-layout>
-                                                <!--오른쪽 메뉴 하단 리스트 영역 end--->
+                                                <!--오른쪽 메뉴 하단 리스트 영역 end -->
                                             </v-tab-item>
                                         </v-tabs-items>
                                     </v-flex>
@@ -294,7 +294,7 @@
                                                         ></v-text-field>
                                                     </v-card-title>
 
-                                                    <!--비교자산 탭--->
+                                                    <!--비교자산 탭 -->
 
                                                     <v-layout row wrap>
                                                         <v-flex xs12>
@@ -323,7 +323,7 @@
                                                             </v-tabs-items-->
                                                         </v-flex>
                                                     </v-layout>
-                                                    <!--비교자산 탭end--->
+                                                    <!--비교자산 탭end -->
                                                 </v-card>
                                                 <v-card class="pop_btn_w text-xs-center">
                                                     <v-btn
@@ -336,12 +336,12 @@
                                         </v-card>
                                     </v-flex>
                                 </v-layout>
-                                <!--자산추가 팝업 end--->
+                                <!--자산추가 팝업 end -->
                             </v-list-tile-content>
                         </v-list>
                     </v-navigation-drawer>
                 </v-card>
-                <!--rightmenu end--->
+                <!--rightmenu end -->
             </v-flex>
         </v-layout>
     </v-container>
@@ -564,6 +564,14 @@ export default {
                     }
                 });   
             }
+        },
+
+        /*
+         * 이전화면으로 되돌린다.
+         * 2019-04-25  bkLove(촤병국)
+         */
+        fn_goBack() {
+            this.$router.go(-1);
         }
     }
 };

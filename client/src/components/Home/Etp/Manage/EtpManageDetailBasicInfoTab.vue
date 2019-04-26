@@ -48,7 +48,7 @@
 
             <v-flex md6>
 
-                <!---INDEX Info--->
+                <!-- INDEX Info -->
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">INDEX Info</h4>
                     <v-card flat class="indexinfo_list_table">
@@ -135,7 +135,7 @@
                         </v-flex>
                     </v-layout>
                 </div>
-                <!--table3 end--->
+                <!-- table3 end -->
             </v-flex>
 
         </v-layout>

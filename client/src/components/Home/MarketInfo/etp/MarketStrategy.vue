@@ -58,7 +58,7 @@
                     </v-carousel-item>
                 </v-carousel>
             </v-flex>
-            <!---테이블1--->
+            <!-- 테이블1 -->
             
             <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12 mt-3>
                 <v-card flat>
@@ -100,7 +100,7 @@
                     </v-card>
                 </v-card>
             </v-flex>
-            <!---테이블1 end--->
+            <!-- 테이블1 end -->
             <ComFavorItem></ComFavorItem>
         </v-layout>
     </v-container>

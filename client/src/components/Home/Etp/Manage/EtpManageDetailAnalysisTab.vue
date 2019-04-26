@@ -18,40 +18,40 @@
                 <!-- performance table 정보 START -->
                         <table v-bind:id="tableName" class="tbl_type" style="width:100%">
                             <colgroup>
-                                <col width="width:5%">
-                                <col width="width:5%">
-                                <col width="width:5%">
+                                <col width="width:5%">          <!-- 국제표준코드 -->
+                                <col width="width:5%">          <!-- ETP기초지수코드 -->
+                                <col width="width:5%">          <!-- ETP기초지수MID -->
 
-                                <col width="width:22%">
-                                <col width="width:10%">       <!-- 1-Week -->
-                                <col width="width:10%">       <!-- 1-Month -->
-                                <col width="width:10%">       <!-- 3-Month -->
-                                <col width="width:9%">        <!-- YTD -->
+                                <col width="width:22%">         <!-- 한글 종목명 -->
+                                <col width="width:10%">         <!-- 1-Week -->
+                                <col width="width:10%">         <!-- 1-Month -->
+                                <col width="width:10%">         <!-- 3-Month -->
+                                <col width="width:9%">          <!-- YTD -->
 
-                                <col width="width:9%">        <!-- 1-Year -->
-                                <col width="width:9%">        <!-- 3-Year -->
-                                <col width="width:9%">        <!-- 5-Year -->
-                                <col width="width:9%">        <!-- 10-Year -->
-                                <col width="width:3%">        <!-- 삭제버튼 -->                             
+                                <col width="width:9%">          <!-- 1-Year -->
+                                <col width="width:9%">          <!-- 3-Year -->
+                                <col width="width:9%">          <!-- 5-Year -->
+                                <col width="width:9%">          <!-- 10-Year -->
+                                <col width="width:3%">          <!-- 삭제버튼 -->
                             </colgroup>
 
                             <thead>
                                 <tr>
-                                    <th>x</th>
-                                    <th>x</th>
-                                    <th>x</th>
+                                    <th>x</th>                  <!-- 국제표준코드 -->
+                                    <th>x</th>                  <!-- ETP기초지수코드 -->
+                                    <th>x</th>                  <!-- ETP기초지수MID -->
 
-                                    <th></th>
-                                    <th>1-Week</th>
-                                    <th>1-Month</th>
-                                    <th>3-Month</th>
-                                    <th>YTD</th>
+                                    <th></th>                   <!-- 한글 종목명 -->
+                                    <th>1-Week</th>             <!-- 1-Week -->
+                                    <th>1-Month</th>            <!-- 1-Month -->
+                                    <th>3-Month</th>            <!-- 3-Month -->
+                                    <th>YTD</th>                <!-- YTD -->
 
-                                    <th>1-Year</th>
-                                    <th>3-Year</th>
-                                    <th>5-Year</th>
-                                    <th>10-Year</th>
-                                    <th></th>
+                                    <th>1-Year</th>             <!-- 1-Year -->
+                                    <th>3-Year</th>             <!-- 3-Year -->
+                                    <th>5-Year</th>             <!-- 5-Year -->
+                                    <th>10-Year</th>            <!-- 10-Year -->
+                                    <th></th>                   <!-- 삭제버튼 -->
                                 </tr>
                             </thead>
                         </table>
@@ -184,27 +184,22 @@ export default {
        
         var vm = this;
 
-        /* 차트를 초기화한다. */
-        chart01 = new google.visualization.ComboChart( document.getElementById("etp_comboChart_div") );
-
         vm.basicData.f16012     =   vm.$route.query.f16012;     /* 국제표준코드 */
         vm.basicData.f16257     =   vm.$route.query.f16257;     /* ETP기초지수코드 */
         vm.basicData.f34239     =   vm.$route.query.f34239;     /* ETP기초지수MID */
         
         vm.basicData.arrNavPriceGubun     =   [ "PRICE", "NAV"];
 
-        google.charts.setOnLoadCallback(function() {
-            chart01.clearChart();
-        });        
 
-
-        /* ETP performance 정보를 조회한다. */
-        this.fn_getEtpPerformance(); 
-
-
-        /* 테이블 렌더링 */
         this.$nextTick().then(() => {
 
+            chart01 = new google.visualization.ComboChart(document.getElementById('etp_comboChart_div'));
+
+            /* ETP performance 정보를 조회한다. */
+            vm.fn_getEtpPerformance();             
+
+
+            /* 테이블 렌더링 */
             table01 =  $("#" + vm.tableName ).DataTable({
                 processing: true,
                 serverSide: false,
@@ -230,16 +225,23 @@ export default {
                     },                    
                     {  
                         "targets": 3,
-                        "render": function ( data, type, row ) {
+                        "render": function ( data, type, row, meta ) {
                             if (data) {
 
-                               if( row.etpIndexGubun == "ETP" ) {
-                                    var  html = "";
-debugger;
-console.log( ">>>>>>>>>>>row" + row );
-console.log( ">>>>>>>>>>>vm.performChartImages" + vm.performChartImages[ row ] );
+                                var     imgHtml = "<img src='/assets/img/icon_bar01.png'>";
+                                var     html    = "";
 
-                                    html +=  "<img src='/assets/img/icon_bar01.png'>";
+                                if(     !vm.performChartImages 
+                                    ||  meta.row  > 4
+                                    ||  !vm.performChartImages[ meta.row ] 
+                                ) {
+                                    html += imgHtml;
+                                }else{
+                                    html += "<img src='/assets/img/" + vm.performChartImages[ meta.row ] + "'>";
+                                }                                
+
+                               if( row.etpIndexGubun == "ETP" ) {
+
                                     html +=  "<span>"
                                     html +=     "&nbsp;&nbsp;&nbsp;";
                                     html +=     data;
@@ -250,7 +252,13 @@ console.log( ">>>>>>>>>>>vm.performChartImages" + vm.performChartImages[ row ] )
 
                                     return html;
                                 }else{
-                                    return "<img src='/assets/img/icon_bar01.png'><span>&nbsp;&nbsp;&nbsp;" + data + "</span>";
+
+                                    html += "<span>";
+                                    html +=     "&nbsp;&nbsp;&nbsp;";
+                                    html +=     data;
+                                    html += "</span>";
+
+                                    return html;
                                 }
                                 
                             } else {
@@ -421,48 +429,63 @@ console.log( ">>>>>>>>>>>vm.performChartImages" + vm.performChartImages[ row ] )
             // Load the Visualization API and the corechart package.
             google.charts.load("current", { packages: ["corechart"] });
 
+
+            /* 차트를 초기화한다. */
             google.charts.setOnLoadCallback(function() {
-                chart01.clearChart();
-            });            
+                if( chart01 ) {
+                    chart01.clearChart();
+                }
+            });
 
-            google.charts.setOnLoadCallback(
-                drawChart(
-                    vm.basicData,
-                    vm.arrEtpPerformance,
-                    vm.arrIndexPerformance
-                )
-            );
+            if( vm.basicData.arrNavPriceGubun && vm.basicData.arrNavPriceGubun.length != 0  ) {
 
-            function drawChart( basicData, arrEtpPerformance, arrIndexPerformance ) {
+                google.charts.setOnLoadCallback(
+                    drawChart(
+                        vm.basicData,
+                        vm.arrEtpPerformance,
+                        vm.arrIndexPerformance
+                    )
+                );
 
-                axios.post(Config.base_url + "/user/etp/getEtpPerformance", {
+                function drawChart( basicData, arrEtpPerformance, arrIndexPerformance ) {
 
-                    data: {
-                        basicData           :   basicData,
-                        arrEtpPerformance   :   arrEtpPerformance,
-                        arrIndexPerformance :   arrIndexPerformance
-                    }
+                    axios.post(Config.base_url + "/user/etp/getEtpPerformance", {
 
-                }).then(response => {
-                    console.log(response.data);
-                    if (response.data) {
-                        var chartList = response.data.chartList;
-                        var etpPerformanceList = response.data.etpPerformanceList;
-debugger;
-                    /* 차트 출력 */
-                        var items = [];
-                        if (chartList && chartList.length > 0) {
-                            items = chartList;
+                        data: {
+                            basicData           :   basicData,
+                            arrEtpPerformance   :   arrEtpPerformance,
+                            arrIndexPerformance :   arrIndexPerformance
                         }
-                        arrToData = new google.visualization.arrayToDataTable( items, false);
-                        chart01.draw( arrToData, options );
 
-                    /* 테이블 정보 출력 */
-                        if( table01 ) {
-                            table01.rows.add( etpPerformanceList ).draw();                        
+                    }).then(response => {
+                        console.log(response.data);
+                        if (response.data) {
+                            var chartList = response.data.chartList;
+                            var etpPerformanceList = response.data.etpPerformanceList;
+
+                        /* 차트 출력 */
+                            var items = [];
+                            if (chartList && chartList.length > 0) {
+                                items = chartList;
+                            }
+
+                            arrToData = new google.visualization.arrayToDataTable( items, false);
+
+                            if( chart01 ) {
+                                chart01.draw( arrToData, options );
+                            }
+
+                        /* 테이블 정보 출력 */
+                            if( table01 ) {
+                                table01.rows.add( etpPerformanceList ).draw();                        
+                            }
                         }
-                    }
-                });
+                    });
+                }
+            }else{
+
+                alert( "PRICE 또는 NAV 중 1개는 존재해야 합니다. 데이터를 다시 조회 해 주세요." );
+                vm.$router.go( -1 );                
             }
         },       
 
