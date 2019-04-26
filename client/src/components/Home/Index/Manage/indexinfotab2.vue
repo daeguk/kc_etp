@@ -46,7 +46,7 @@
                         <v-btn outline small color="primary" dark v-on:click="showJongMokPop">
                             <v-icon small color="primary">add</v-icon>자산추가
                         </v-btn>
-                        <jongmokPopup @selectedItem="getSelectedItem" @hideJongMokPop="hideJongMokPop" :showDialog="jongMokDialog"></jongmokPopup>
+                        <jongmokPopup @selectedItem="getSelectedItem"></jongmokPopup>
                     </v-layout>
                     <!--자산추가 팝업 end--->
                 </div>
@@ -125,7 +125,6 @@ export default {
         return {
             tab: null,
             items: ["ETF", "ETN", "INDEX"],
-            jongMokDialog: false,
             dialog: false,
             results: [],
             importance_cnt:0,
@@ -456,12 +455,8 @@ export default {
             vm.performance_chart();
         
         },
-        showJongMokPop: function() { 
-            this.jongMokDialog = true;
-        },        
-
-        hideJongMokPop: function() {
-            this.jongMokDialog = false;
+        showJongMokPop: function() {
+            this.$EventBus.$emit( "showJongMokPop", true );
         },
     }
 }

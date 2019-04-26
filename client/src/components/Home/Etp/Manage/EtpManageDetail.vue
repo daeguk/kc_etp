@@ -5,7 +5,7 @@
 
                 <v-card flat ma-3>
 
-                <!---content내용--->
+                <!-- content내용 -->
                     <div class="title01_w">
                         <v-card-title primary-title>
                             <div class="title_wrap01">
@@ -85,7 +85,7 @@
                             </v-flex>
                         </v-layout>
                     </div>
-                </v-card>  
+                </v-card>
 
                 <v-card flat class="right_menu_w2">
                     <v-navigation-drawer
@@ -163,7 +163,7 @@
                                 </v-subheader>
                                 <v-card flat class="w100">
                                     <v-list>
-                                        <v-list-tile @click class="border_b" v-model="text2">
+                                        <v-list-tile @click.stop="" class="border_b" v-model="text2">
                                             <v-list-tile-avatar>
                                                 <v-icon value="산출 현황">exposure</v-icon>
                                             </v-list-tile-avatar>
@@ -171,7 +171,7 @@
                                                 <v-list-tile-title>iNAV 산출 현황</v-list-tile-title>
                                             </v-list-tile-content>
                                         </v-list-tile>
-                                        <v-list-tile @click class="border_b">
+                                        <v-list-tile @click.stop="" class="border_b">
                                             <v-list-tile-avatar>
                                                 <v-icon value="Performance" icon>loop</v-icon>
                                             </v-list-tile-avatar>
@@ -179,7 +179,7 @@
                                                 <v-list-tile-title>ETP Performance</v-list-tile-title>
                                             </v-list-tile-content>
                                         </v-list-tile>
-                                        <v-list-tile @click class="border_b">
+                                        <v-list-tile @click.stop="" class="border_b">
                                             <v-list-tile-avatar>
                                                 <v-icon value="Customize" icon>poll</v-icon>
                                             </v-list-tile-avatar>
@@ -254,7 +254,7 @@
                                         </v-tabs-items>
                                     </v-flex>
                                 </v-layout>
-                                <!---자산추가 팝업--->
+                                <!-- 자산추가 팝업 -->
                                 <v-layout row>
                                     <v-flex xs12>
                                         <v-card flat>
