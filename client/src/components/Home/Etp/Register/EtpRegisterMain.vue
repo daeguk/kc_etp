@@ -7,7 +7,7 @@
                 align-with-title
                 light
             >
-            <v-tabs-slider color="#35e0e2"></v-tabs-slider>
+            <v-tabs-slider color="#1e99e8"></v-tabs-slider>
     
             <v-tab v-for="item in items" :key="item">
                 {{ item }}

@@ -1,6 +1,5 @@
 <template>
     <v-container>
-        
         <v-layout row wrap class="content_margin">
             <v-flex grow>
                 <v-card flat>
@@ -173,7 +172,7 @@
                                                     <v-list-tile-title>iNAV 산출 현황</v-list-tile-title>
                                                 </v-list-tile-content>
                                            </v-list-tile>
-                                           <v-list-tile @click class="border_b">
+                                           <v-list-tile  router-link to="ETPPerfomance" class="border_b">
                                                <v-list-tile-avatar>
                                                     <v-icon  value="Performance" icon>loop</v-icon>
                                                  </v-list-tile-avatar>
@@ -181,7 +180,10 @@
                                                     <v-list-tile-title>ETP Performance</v-list-tile-title>
                                                 </v-list-tile-content>
                                            </v-list-tile>
-                                           <v-list-tile @click class="border_b">
+
+                                           <v-dialog v-model="dialog5" persistent max-width="550">
+                                            <template v-slot:activator="{ on }">
+                                           <v-list-tile v-on="on" class="border_b">
                                                <v-list-tile-avatar>
                                                <v-icon value="Customize" icon>poll</v-icon>
                                                  </v-list-tile-avatar>
@@ -189,12 +191,79 @@
                                                     <v-list-tile-title>Customize</v-list-tile-title>
                                                 </v-list-tile-content>
                                            </v-list-tile>
-                                           </v-list>
-                                           </v-card>
-                                       </v-list-tile-content>
+                                            </template>
+                                            <!---ETP운용화면 항목설정  팝업-->
+                                            <v-card class="listset_pop">
+                                                <h5>
+                                                <v-card-title ma-0>
+                                                    ETP 운용화면 항목설정
+                                                    <v-spacer></v-spacer>
+                                                    <v-btn icon @click="dialog5 = false">
+                                                        <v-icon>close</v-icon>
+                                                    </v-btn>
+                                                </v-card-title>
+                                                 </h5>
 
-                                        <v-list-tile-content class="rightmenu_con">
-                                           <v-layout class="w100">
+                                            <v-layout align-center justify-space-around row fill-height>
+                                                <v-flex xs3>
+                                                     <v-checkbox v-model="selected" label="iNAV" value="iNAV"></v-checkbox>
+                                                </v-flex>
+                                                <v-flex xs3>
+                                                     <v-checkbox v-model="selected" label="기초지수명" value="기초지수명"></v-checkbox>
+                                                </v-flex>
+                                                <v-flex xs3>
+                                                     <v-checkbox v-model="selected" label="ETF전일가" value="ETF전일가"></v-checkbox>
+                                                </v-flex>
+                                            </v-layout>
+                                            <v-layout align-center justify-space-around row fill-height>
+                                                <v-flex xs3>
+                                                     <v-checkbox v-model="selected" label="전일NAV" value="전일NAV"></v-checkbox>
+                                                </v-flex>
+                                                <v-flex xs3>
+                                                     <v-checkbox v-model="selected" label="기초지수현재가" value="기초지수현재가"></v-checkbox>
+                                                </v-flex>
+                                                <v-flex xs3>
+                                                     <v-checkbox v-model="selected" label="AUM" value="AUM"></v-checkbox>
+                                                </v-flex>
+                                            </v-layout>
+                                            <v-layout align-center justify-space-around row fill-height>
+                                                <v-flex xs3>
+                                                     <v-checkbox v-model="selected" label="추적오차율" value="추적오차율"></v-checkbox>
+                                                </v-flex>
+                                                <v-flex xs3>
+                                                     <v-checkbox v-model="selected" label="기초지수전일가" value="기초지수전일가"></v-checkbox>
+                                                </v-flex>
+                                                <v-flex xs3>
+                                                     <v-checkbox v-model="selected" label="과표기준가" value="과표기준가"></v-checkbox>
+                                                </v-flex>
+                                            </v-layout>
+                                            <v-layout align-center justify-space-around row fill-height>
+                                                <v-flex xs3>
+                                                     <v-checkbox v-model="selected" label="괴리율" value="괴리율"></v-checkbox>
+                                                </v-flex>
+                                                <v-flex xs3>
+                                                     <v-checkbox v-model="selected" label="ETF현재가" value="ETF현재가"></v-checkbox>
+                                                </v-flex>
+                                                <v-flex xs3>
+                                                     <v-checkbox v-model="selected" label="과세구분" value="과세구분"></v-checkbox>
+                                                </v-flex>
+                                            </v-layout>
+
+                                        <v-card flat class="pop_btn_w text-xs-center">
+                                            <v-btn
+                                                depressed
+                                                color="primary"
+                                                @click=""
+                                            >추가하기</v-btn>
+                                        </v-card>
+                                    </v-card>
+                                    <!---ETP운용화면 항목설정 팝업 end-->
+                                    </v-dialog>
+                                </v-list>
+                               </v-card>
+                              </v-list-tile-content>
+                              <v-list-tile-content class="rightmenu_con">
+                                <v-layout class="w100">
                                 <v-flex xs12>
                                     <v-tabs v-model="tab" centered>
                                         <v-tabs-slider color="#1976d2"></v-tabs-slider>
@@ -330,11 +399,11 @@
                                 </v-flex>
                             </v-layout>
                             <!--자산추가 팝업 end--->
-                                        </v-list-tile-content>
-                                    </v-list>
-                                </v-navigation-drawer>
-                            </v-card>
-                            <!--rightmenu end--->
+                          </v-list-tile-content>
+                       </v-list>
+                    </v-navigation-drawer>
+                    </v-card>
+                   <!--rightmenu end--->
                 </v-card>
             </v-flex>
         </v-layout>
@@ -353,9 +422,11 @@ export default {
         
         return {
             text: '전종목',
+            checkbox: true,
             text2:'',
             dialog: false,
             dialog2: false,
+            dialog5: false,
             drawer: true,
             search: "",
             tab: null,

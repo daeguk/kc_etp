@@ -19,8 +19,8 @@
                                                     </dl>
                                                 </li>
                                                 <li> <dl> 
-                                                        <dt>ETF - {{getData(carousel_data, n, x, "etf_cnt")}}종목</dt>
-                                                        <dt>ETN - {{getData(carousel_data, n, x, "etn_cnt")}}종목</dt>
+                                                        <dt><span class="etf_icon">ETF</span>  {{getData(carousel_data, n, x, "etf_cnt")}}종목</dt>
+                                                        <dt><span class="etn_icon">ETN</span>  {{getData(carousel_data, n, x, "etn_cnt")}}종목</dt>
                                                     </dl>
                                                 </li>
                                             </ul>
