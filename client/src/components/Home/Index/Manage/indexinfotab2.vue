@@ -5,7 +5,8 @@
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">Performance</h4>
                     <div class="graph_02_w">
-                        <div id="perf_chart" class="graph_box" style="width:100%">그래프 라인</div>
+                        <div class="graph_box"></div>
+                        <div id="perf_chart"></div>
                     </div>
                    <v-card flat>
                      <table id="perf_table" class="tbl_type" style="width:100%">
@@ -46,7 +47,7 @@
                         <v-btn outline small color="primary" dark v-on:click="showJongMokPop">
                             <v-icon small color="primary">add</v-icon>자산추가
                         </v-btn>
-                        <jongmokPopup @selectedItem="getSelectedItem"></jongmokPopup>
+                        <jongmokPopup @selectedItem="getSelectedItem" @hideJongMokPop="hideJongMokPop" :showDialog="jongMokDialog"></jongmokPopup>
                     </v-layout>
                     <!--자산추가 팝업 end--->
                 </div>
@@ -126,6 +127,7 @@ export default {
             tab: null,
             items: ["ETF", "ETN", "INDEX"],
             dialog: false,
+            jongMokDialog: false,
             results: [],
             importance_cnt:0,
             search:"",
@@ -367,12 +369,13 @@ export default {
                     }
                 }
         
-                debugger;
-                var chart_data = new google.visualization.arrayToDataTable( items, false);
+            
+                var chart_data = new google.visualization.arrayToDataTable( items);
 
+            
                  // Set chart options
                 var options = {'title':'',
-                            'width':'100%',
+                            'width':$(window).width()*0.58,
                             'height':'300',
                             'colors': ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde'],                           
                             'legend': {
@@ -455,9 +458,14 @@ export default {
             vm.performance_chart();
         
         },
-        showJongMokPop: function() {
-            this.$EventBus.$emit( "showJongMokPop", true );
-        },
+        showJongMokPop: function() {  
+                 this.jongMokDialog = true; 
+        },         
+     
+        hideJongMokPop: function() { 
+            this.jongMokDialog = false; 
+        }, 
+
     }
 }
 </script>
