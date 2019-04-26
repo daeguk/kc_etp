@@ -39,10 +39,10 @@
                                 <span class="text_result">120</span> results
                                 <span  class="toggle2">
                                     <v-btn-toggle v-model="text" class="toggle_01">
-                                        <v-btn flat value="전종목" v-on:click="">전종목</v-btn>
-                                        <v-btn flat value="국내" v-on:click="">국내</v-btn>
+                                        <v-btn flat value="전종목" v-on:click.stop="">전종목</v-btn>
+                                        <v-btn flat value="국내" v-on:click.stop="">국내</v-btn>
                                         <v-btn flat value="해외" v-on:click="">해외</v-btn>
-                                        <v-btn flat value="관심종목" v-on:click="">관심종목</v-btn>
+                                        <v-btn flat value="관심종목" v-on:click.stop="">관심종목</v-btn>
                                     </v-btn-toggle>
                                 </span>
                             </p>
@@ -220,7 +220,7 @@
                                                     <v-list-tile-title>ETP Performance</v-list-tile-title>
                                                 </v-list-tile-content>
                                            </v-list-tile>
-                                           <v-list-tile @click class="border_b">
+                                           <v-list-tile @click.stop class="border_b">
                                                <v-list-tile-avatar>
                                                <v-icon value="Customize" icon>poll</v-icon>
                                                  </v-list-tile-avatar>

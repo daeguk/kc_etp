@@ -179,6 +179,10 @@ var getEtpPerformance = function(req, res) {
                 function( callback ) {
 
                     stmt = mapper.getStatement('etpDetail', 'getEtpPerformance', paramData, format);
+
+                    // 대입 문자 치환
+                    stmt = stmt.replace(/\: =/g,':='); 
+
                     console.log(stmt);
 
                     conn.query(stmt, function( err, rows ) {
@@ -203,9 +207,12 @@ var getEtpPerformance = function(req, res) {
                             rowJson.f16257          =   [];
                             rowJson.f34239          =   [];
                             rowJson.price           =   [];
+
                             rowJson.week1_price     =   [];
                             rowJson.month1_price    =   [];
                             rowJson.month3_price    =   [];
+                            rowJson.ytd_price       =   [];
+
                             rowJson.year1_price     =   [];
                             rowJson.year3_price     =   [];
                             rowJson.year5_price     =   [];
@@ -220,9 +227,11 @@ var getEtpPerformance = function(req, res) {
                                 rowJson.f16257.push(        rowData.f16257          );
                                 rowJson.f34239.push(        rowData.f34239          );
                                 rowJson.price.push(         rowData.price           );
+
                                 rowJson.week1_price.push(   rowData.week1_price     );
                                 rowJson.month1_price.push(  rowData.month1_price    );
                                 rowJson.month3_price.push(  rowData.month3_price    );
+                                rowJson.ytd_price.push(     rowData.ytd_price       );
 
                                 rowJson.year1_price.push(   rowData.year1_price     );
                                 rowJson.year3_price.push(   rowData.year3_price     );
@@ -245,6 +254,11 @@ var getEtpPerformance = function(req, res) {
                                 rowJson.month3_price.unshift( "3-month" );
                             }
                             dataList.push( rowJson.month3_price );
+
+                            if( rowJson.ytd_price && rowJson.ytd_price.length > 0 ) {
+                                rowJson.ytd_price.unshift( "YTD" );
+                            }
+                            dataList.push( rowJson.ytd_price );
 
                             if( rowJson.year1_price && rowJson.year1_price.length > 0 ) {
                                 rowJson.year1_price.unshift( "1-year" );

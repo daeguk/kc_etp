@@ -5,61 +5,74 @@
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">Performance</h4>
 
-                <!---performance chart 정보 START--->
+                <!-- performance chart 정보 START -->
                     <div
                         id="etp_comboChart_div"
                         class="graph_01"
                         style="height:300px;background-color:#f6f6f6;"
                     ></div>
-                <!---performance chart 정보 END--->
+                <!-- performance chart 정보 END -->
 
                     <v-card flat>
 
-                <!---performance table 정보 START--->
+                <!-- performance table 정보 START -->
                         <table v-bind:id="tableName" class="tbl_type" style="width:100%">
                             <colgroup>
-                                <col width="30%">
-                                <col width="9%">
-                                <col width="9%">
-                                <col width="9%">
-                                <col width="9%">
-                                <col width="9%">
-                                <col width="9%">
-                                <col width="9%">
-                                <col width="7%">
+                                <col width="width:5%">
+                                <col width="width:5%">
+                                <col width="width:5%">
+
+                                <col width="width:22%">
+                                <col width="width:10%">       <!-- 1-Week -->
+                                <col width="width:10%">       <!-- 1-Month -->
+                                <col width="width:10%">       <!-- 3-Month -->
+                                <col width="width:9%">        <!-- YTD -->
+
+                                <col width="width:9%">        <!-- 1-Year -->
+                                <col width="width:9%">        <!-- 3-Year -->
+                                <col width="width:9%">        <!-- 5-Year -->
+                                <col width="width:9%">        <!-- 10-Year -->
+                                <col width="width:3%">        <!-- 삭제버튼 -->                             
                             </colgroup>
+
                             <thead>
                                 <tr>
-                                    <th>{{ this.nowDate }} (%)</th>
+                                    <th>x</th>
+                                    <th>x</th>
+                                    <th>x</th>
+
+                                    <th></th>
                                     <th>1-Week</th>
                                     <th>1-Month</th>
                                     <th>3-Month</th>
+                                    <th>YTD</th>
+
                                     <th>1-Year</th>
-                                    <th>3Year</th>
-                                    <th>5Year</th>
+                                    <th>3-Year</th>
+                                    <th>5-Year</th>
                                     <th>10-Year</th>
                                     <th></th>
                                 </tr>
                             </thead>
                         </table>
-                <!---performance table 정보 END--->
+                <!-- performance table 정보 END -->
 
                     </v-card>
 
-                <!---자산추가 팝업 START--->
+                <!-- 자산추가 팝업 START -->
                     <v-layout row>
                         <v-btn outline small color="primary" dark v-on:click="showJongMokPop">
                             <v-icon small color="primary">add</v-icon>자산추가
                         </v-btn>
                         <jongmokPopup @selectedItem="getSelectedItem" @hideJongMokPop="hideJongMokPop" :showDialog="jongMokDialog"></jongmokPopup>
                     </v-layout>
-                <!--자산추가 팝업 END--->
+                <!-- 자산추가 팝업 END -->
 
                 </div> 
             </v-flex>
             
             <v-flex xs12 flat>
-                <!---비중정보 팝업--->
+                <!-- 비중정보 팝업 -->
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">포트폴리오</h4>
                     <v-subheader>
@@ -109,7 +122,7 @@
                     <div class="graph_02_w" id="importance_chart"></div>
                     <v-card flat></v-card>
                 </div>
-                <!---비중정보 팝업end-->
+                <!-- 비중정보 팝업end -->
             </v-flex>
 
             <v-flex xs12></v-flex>
@@ -166,79 +179,10 @@ export default {
     created: function() {},
     beforeDestroy() {},
     mounted: function() {
-        /*        
+       
         var vm = this;
 
-        vm.$root.$infopoptab1 = vm.$refs.$infopoptab1;
-        vm.getIndexImportanceList();
-
-        $('#perf_table, tbody').on('click', 'button', function () {
-            var data = perf_table.row($(this).parents('tr')).remove().draw();
-        });
-
-        perf_table = $('#perf_table').DataTable( {
-            "processing": true,
-            "serverSide": false,
-            "search": true,
-            "info": false,   // control table information display field
-            "stateSave": true,  //restore table state on page reload,
-            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-            select: {
-                style:    'single',
-                selector: 'td:first-child'
-            },
-            paging: false,
-            searching: false,
-            "columnDefs": [
-                {  
-                    "render": function ( data, type, row ) {
-                        if (data) {
-                            return "<img src='/assets/img/icon_bar01.png'><span>&nbsp;&nbsp;&nbsp;" + data + "</span>";
-                        } else {
-                            return "";
-                        }
-                    },
-                    "targets": 1
-                },
-                {
-                    "targets": [ 0 ],
-                    "visible": false
-                },
-                {  
-                    "render": function ( data, type, row ) {
-                        if (data) {
-                            // 기본 지수는 삭제 버튼 제외
-                            if (row.F16013 != vm.$route.query.jisu_cd) {
-                                return "<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:40px;'>삭제</span></div>";
-                            } 
-                        } else {
-                            return "";
-                        }
-                    },
-                    "targets": 10
-                },                
-            ],
-            data : [],
-            columns: [
-                { "data": "F16013", "orderable": false}, 
-                { "data": "F16002", "orderable": false,  "width":"30%", className: 'txt_left line2'}, 
-                { "data": "Week1", "orderable": false, className: 'dt-body-right'},
-                { "data": "Month1", "orderable": false, className: 'dt-body-right'},
-                { "data": "Month3", "orderable": false, className: 'dt-body-right'},
-                { "data": "YTD", "orderable": false, className: 'dt-body-right'},
-                { "data": "Year1", "orderable": false, className: 'dt-body-right'},
-                { "data": "Year3", "orderable": false, className: 'dt-body-right'},
-                { "data": "Year5", "orderable": false, className: 'dt-body-right'},
-                { "data": "Year10", "orderable": false, className: 'dt-body-right'},
-                {"data": null, "align":"center", className: 'dt-body-center', defaultContent:""}
-            ]
-        }); 
-    
-
-        vm.getIndexAnalysisInfo();
-*/
-        var vm = this;
-
+        /* 차트를 초기화한다. */
         chart01 = new google.visualization.ComboChart( document.getElementById("etp_comboChart_div") );
 
         vm.basicData.f16012     =   vm.$route.query.f16012;     /* 국제표준코드 */
@@ -251,8 +195,10 @@ export default {
             chart01.clearChart();
         });        
 
+
         /* ETP performance 정보를 조회한다. */
         this.fn_getEtpPerformance(); 
+
 
         /* 테이블 렌더링 */
         this.$nextTick().then(() => {
@@ -261,7 +207,7 @@ export default {
                 processing: true,
                 serverSide: false,
                 info: false, // control table information display field
-                stateSave: true, //restore table state on page reload,
+                stateSave: false, //restore table state on page reload,
                 lengthMenu: [
                     [10, 20, 50, -1],
                     [10, 20, 50, "All"]
@@ -275,9 +221,13 @@ export default {
                 searching: false,
                 data: [],
                 ordering: false,
-                columnDefs: [                   
+                columnDefs: [     
+                    {
+                        "targets": [ 0, 1, 2 ],
+                        "visible": false
+                    },                    
                     {  
-                        "targets": 0,
+                        "targets": 3,
                         "render": function ( data, type, row ) {
                             if (data) {
 
@@ -304,8 +254,8 @@ export default {
                         },
                     },
 
-                    {  
-                        "targets": 8,
+                    { 
+                        "targets": 12,
                         "render": function ( data, type, row ) {
                             if (data) {
                                 if ( row.delAbleYn == "Y" ) {
@@ -319,19 +269,30 @@ export default {
                         },
                     }, 
 
+
                 ],
                 columns: [
-                    { "data": "f16002"      , "orderable" : false , className: "txt_left line2"  },    /* 한글 종목명 */
-                    { "data": "week1_price" , "orderable" : false , className: 'dt-body-right'   },    /* 1-week */
-                    { "data": "month1_price", "orderable" : false , className: 'dt-body-right'   },    /* 1-Month */
-                    { "data": "month3_price", "orderable" : false , className: 'dt-body-right'   },    /* 3-Month */
-                    { "data": "year1_price" , "orderable" : false , className: 'dt-body-right'   },    /* 1-Year */
-                    { "data": "year3_price" , "orderable" : false , className: 'dt-body-right'   },    /* 3-Year */
-                    { "data": "year5_price" , "orderable" : false , className: 'dt-body-right'   },    /* 5-Year */
-                    { "data": "year10_price", "orderable" : false , className: 'dt-body-right'   },    /* 10-Year */
-                    { "data": null          , "orderable" : false , className: 'dt-body-center', defaultContent:"", "align":"center" }
+
+                    { "data": "f16012"      , "orderable" : false  },                                   /* 국제표준코드 */
+                    { "data": "f16257"      , "orderable" : false  },                                   /* ETP기초지수코드 */
+                    { "data": "f34239"      , "orderable" : false  },                                   /* ETP기초지수MID */
+
+                    { "data": "f16002"      , "orderable" : false , className: "txt_left line2" },      /* 한글 종목명 */
+                    { "data": "week1_price" , "orderable" : false , className: 'dt-body-right'  },      /* 1-week */
+                    { "data": "month1_price", "orderable" : false , className: 'dt-body-right'  },      /* 1-Month */
+                    { "data": "month3_price", "orderable" : false , className: 'dt-body-right'  },      /* 3-Month */
+                    { "data": "ytd_price"   , "orderable" : false , className: 'dt-body-right'  },      /* ytd */
+
+                    { "data": "year1_price" , "orderable" : false , className: 'dt-body-right'  },      /* 1-Year */
+                    { "data": "year3_price" , "orderable" : false , className: 'dt-body-right'  },      /* 3-Year */
+                    { "data": "year5_price" , "orderable" : false , className: 'dt-body-right'  },      /* 5-Year */
+                    { "data": "year10_price", "orderable" : false , className: 'dt-body-right'  },      /* 10-Year */
+                    { "data": null          , "orderable" : false , className: 'dt-body-center', defaultContent:"", "align":"center" },
+
                 ]
             });
+
+            $( table01.column( 3 ).header() ).text( vm.nowDate + " (%)" );
 
 
             // 테이블별 이벤트
@@ -380,8 +341,8 @@ export default {
 
                 }
 
-                /* ETP/INDEX 구분 이 'ETP' 인 경우 */
-                if( rowData.etpIndexGubun   === "INDEX" ) {
+                /* ETP/INDEX 구분 이 'INDEX' 인 경우 */
+                else if( rowData.etpIndexGubun   === "INDEX" ) {
 
                     if(     vm.basicData.f16257     ==  rowData.f16257          /* ETP기초지수코드 */
                         &&  vm.basicData.f34239     ==  rowData.f34239          /* ETP기초지수MID */
@@ -391,37 +352,41 @@ export default {
                         vm.basicData.f34239 =   "";     /* ETP기초지수MID */
                     }
                 }
-
             }
 
-            if( table01 ) {
-                table01.row( pThis.parents('tr') ).remove().draw();
+            /* 추가된 ETP/INDEX 인 경우 */
+            else{
+
+                /* 'ETP' 인 경우 */
+                if( rowData.etpIndexGubun   === "ETP" ) {
+
+                    var selData =   vm.arrEtpPerformance.filter( function(item) {
+                        return  rowData.f16012   === item.f16012;               /* 국제표준코드 */  
+                    });
+
+                    vm.arrEtpPerformance   =   vm.arrEtpPerformance.filter( function(item) { 
+                        return  selData.indexOf( item ) == -1; 
+                    });
+
+                }
+
+                /* 'INDEX' 인 경우 */
+                else if( rowData.etpIndexGubun   === "INDEX" ) {
+
+                    var selData =   vm.arrIndexPerformance.filter( function(item) {
+                        return      rowData.f16257   === item.f16257            /* ETP기초지수코드 */
+                                &&  rowData.f34239   === item.f34239;           /* ETP기초지수MID */
+                    });
+
+                    vm.arrIndexPerformance   =   vm.arrIndexPerformance.filter( function(item) { 
+                        return  selData.indexOf( item ) == -1; 
+                    });
+                }
             }
-
-
-            
-
-            var options = {
-                title: " ",
-                align: "start",
-                width: 940,
-                height: 300,
-                vAxis: { title: "" },
-                hAxis: { title: "" },
-                seriesType: "bars",
-                series: "",
-                legend: { position: "bottom" }
-            };
-
-            // Load the Visualization API and the corechart package.
-            google.charts.load("current", { packages: ["corechart"] });
-
-            google.charts.setOnLoadCallback(function() {
-                chart01.clearChart();
-            });
 
             this.fn_getEtpPerformance();
         },
+
 
         /*
          * ETP 의 기본정보를 조회한다.
@@ -449,6 +414,10 @@ export default {
 
             // Load the Visualization API and the corechart package.
             google.charts.load("current", { packages: ["corechart"] });
+
+            google.charts.setOnLoadCallback(function() {
+                chart01.clearChart();
+            });            
 
             google.charts.setOnLoadCallback(
                 drawChart(
@@ -489,45 +458,8 @@ export default {
                     }
                 });
             }
-        },
+        },       
 
-        getSelectedItem: function(sel_items, gubun) {
-            var vm = this;
-            for (let i = 0; i < sel_items.length; i++) {
-                
-                if (perf_table.rows().count() <= 4) {
-
-                    let compare_cnt = perf_table.column(0).data().filter(
-                        function(value, index) {
-                            return sel_items[i].JISU_CD == value ? true : false;
-                        }
-                    ).count();
-                    
-                    if (compare_cnt == 0) {
-                        perf_table.row.add(  {
-                            F16012 : '',
-                            F16013 : sel_items[i].JISU_CD,
-                            F16002 : sel_items[i].JISU_NM,
-                            Week1 : '1',
-                            Month1 : '2',
-                            Month3 : '3',
-                            YTD : '4',
-                            Year1 : '5',
-                            Year3 : '6',
-                            Year5 : '7',
-                            Year10 : '8',
-                        } ).draw( false );
-                    } else {
-                        alert(sel_items[i].JISU_NM +"은 이미 추가된 자산입니다.");    
-                    }
-                } else {
-                    alert("자산 비교는 총 5개 까지 가능 합니다.");
-                    break;
-                }
-
-            }
-        
-        },        
 
         /*
          * [자산추가] 팝업창을 호출한다.
@@ -537,50 +469,93 @@ export default {
             this.jongMokDialog = true;
         },        
 
+
         hideJongMokPop: function() {
             this.jongMokDialog = false;
         },
 
-        getSelectedItem: function(sel_items) {
+
+        getSelectedItem: function( sel_items, gubun ) {
+
             var vm = this;
 
-            vm.jongMokDialog = false;
-
+            vm.hideJongMokPop();
             for (let i = 0; i < sel_items.length; i++) {
-                if (perf_table.rows().count() <= 4) {
-                    let compare_cnt = perf_table
-                        .column(0)
-                        .data()
-                        .filter(function(value, index) {
-                            return sel_items[i].JISU_CD == value ? true : false;
-                        })
-                        .count();
 
-                    if (compare_cnt == 0) {
-                        perf_table.row
-                            .add({
-                                F16012: "",
-                                F16013: sel_items[i].JISU_CD,
-                                F16002: sel_items[i].JISU_NM,
-                                Week1: "1",
-                                Month1: "2",
-                                Month3: "3",
-                                YTD: "4",
-                                Year1: "5",
-                                Year3: "6",
-                                Year5: "7",
-                                Year10: "8"
-                            })
-                            .draw(false);
-                    } else {
+                if ( table01.rows().count() <= 4 ) {
+
+                    let checkList = table01.columns( [0,1,2] ).data();
+                    var compare_cnt =   -1;
+
+                    /* INDEX 인 경우 */
+                    if( gubun == "2" ) {
+
+                        /* 팝업에서 받은 지수코드와 Table의 ETP기초지수코드(f16257) 가 존재하는지 체크 */
+                        var jisuCompCnt =   checkList[1].filter( function( jisuCd, jisuInx ){
+                            return sel_items[i].JISU_CD == jisuCd ? true : false;
+                        }).length;
+
+                        if( jisuCompCnt > 0 ) {
+                            compare_cnt =   jisuCompCnt;
+                            break;
+                        }
+
+                        /* 팝업에서 받은 지수코드와 Table의 ETP기초지수MID(f34239) 가 존재하는지 체크 */
+                        var marketCnt   =   checkList[2].filter( function( marketCd, marketInx ){
+                            return sel_items[i].MARKET_ID == marketCd ? true : false;
+                        }).length;
+
+                        compare_cnt =   marketCnt;
+
+                    }else{
+
+                        /* 팝업에서 받은 지수코드와 Table의 국제표준코드(f16012) 가 존재하는지 체크 */
+                        var etpCompCnt  =   checkList[0].filter( function( etpCd, etpInx ){
+                            return sel_items[i].JISU_CD == etpCd ? true : false;
+                        }).length;
+
+                        compare_cnt =   etpCompCnt;
+                    }
+
+                    if (compare_cnt > 0) {
                         alert(
                             sel_items[i].JISU_NM + "은 이미 추가된 자산입니다."
                         );
+
+                        return false;
                     }
+
+
+                    /* INDEX 인 경우 */
+                    if( gubun == "2" ) {
+                        vm.arrIndexPerformance.push({
+                                f16012      :   ""                                      /* 국제표준코드 */
+                            ,   f16257      :   sel_items[i].JISU_CD                    /* ETP기초지수코드 */
+                            ,   f34239      :   sel_items[i].MARKET_ID.substring( 1 )   /* ETP기초지수MID */
+                        });
+                    }else{
+                        vm.arrEtpPerformance.push({
+                                f16012      :   sel_items[i].JISU_CD                    /* 국제표준코드 */
+                            ,   f16257      :   ""                                      /* ETP기초지수코드 */
+                            ,   f34239      :   ""                                      /* ETP기초지수MID */
+                        });
+                    }
+                    
                 } else {
                     alert("자산 비교는 총 5개 까지 가능 합니다.");
-                    break;
+                    return false;
                 }
+            }
+
+
+            if(     ( vm.arrIndexPerformance && vm.arrIndexPerformance.length > 0 )
+                ||  ( vm.arrEtpPerformance   && vm.arrEtpPerformance.length > 0 )
+            ) {
+                if( table01 ) {
+                    table01.clear().draw();
+                }            
+
+                this.fn_getEtpPerformance();
             }
         }
         
