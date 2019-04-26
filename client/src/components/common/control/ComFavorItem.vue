@@ -188,7 +188,7 @@
                                 </v-flex>
                             </v-layout>
                             <!---자산추가 팝업--->
-                            <jongmokPop @selectedItem="getSelectedItem" @hideJongMokPop="hideJongMokPop" :message="jongMokDialog"></jongmokPop>
+                            <jongmokPop @selectedItem="getSelectedItem" @hideJongMokPop="hideJongMokPop" :showDialog="jongMokDialog"></jongmokPop>
                             <!--자산추가 팝업 end--->
                         </v-list-tile-content>
                     </v-list>

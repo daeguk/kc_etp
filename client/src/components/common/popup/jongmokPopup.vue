@@ -4,7 +4,7 @@
                     <v-layout row>
                         <v-flex xs12>
                             <v-card flat>
-                                <v-dialog v-model="message" persistent max-width="500">                                   
+                                <v-dialog v-model="showDialog" persistent max-width="500">                                   
                                     <v-card>
                                         <h5>
                                             <v-card-title ma-0>
@@ -67,7 +67,7 @@ import Config from '@/js/config.js'
 var importance_grid = null;
 var perf_table = null;
 export default {
-    props: ['message'],
+    props: ['showDialog'],
     data() {
         return {
             tab: null,
@@ -82,9 +82,7 @@ export default {
     },
     computed: {},
     created: function() {
-        this.$EventBus.$on("showJongMokPop", res => {
-            this.dialog = res;
-        });
+       
     },
   
     beforeDestroy() {
