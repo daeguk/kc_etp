@@ -5,16 +5,7 @@
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">Performance</h4>
                     <div class="graph_02_w">
-                        <div class="graph_box" style="width:28%">그래프 라인</div>
-                        <div style="width:8%">1-Week</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%"></div>
+                        <div id="perf_chart" class="graph_box" style="width:100%">그래프 라인</div>
                     </div>
                    <v-card flat>
                      <table id="perf_table" class="tbl_type" style="width:100%">
@@ -36,7 +27,7 @@
                              <th></th>
                              <th></th>
                              <th>1-Week</th>
-                             <th>1-Month비중</th>
+                             <th>1-Month</th>
                              <th>3-Month</th>
                              <th>YTD</th>
                              <th>1-Year</th>
@@ -158,6 +149,8 @@ export default {
 
         $('#perf_table, tbody').on('click', 'button', function () {
             var data = perf_table.row($(this).parents('tr')).remove().draw();
+
+            vm.performance_chart();
         });
 
         perf_table = $('#perf_table').DataTable( {
@@ -328,7 +321,76 @@ export default {
             }
         },
 
+
+        performance_chart: function() {
+            // Load the Visualization API and the corechart package.
+            google.charts.load('current', {'packages':['corechart']});
+
+           
+            // Set a callback to run when the Google Visualization API is loaded.
+            google.charts.setOnLoadCallback(drawChart());
+
+            // Callback that creates and populates a data table,
+            // instantiates the pie chart, passes in the data and
+            // draws it.
+      
+            function drawChart() {
+               
+              
+                var items = [] 
+
+                items.push(['string']);
+                items.push(['1-Week']);
+                items.push(['1-Month']);
+                items.push(['3-Month']);
+                items.push(['YTD']);
+                items.push(['1-Year']);
+                items.push(['3-Year']);
+                items.push(['5-Year']);
+                items.push(['10-Year']);
+
+              
+                for (let i = 0; i < perf_table.rows().data().length; i++) {   
+                    var data = perf_table.rows().data()[i];
+                    // 첫번째 ROW 범위
+                    items[0][i+1] = data.F16002;           
+                    for (let x = 0; x < perf_table.rows().data().length; x++) {   
+                        var item = perf_table.rows().data()[x];
+                        // 데이터                    
+                        items[1][x+1] = Number(item.Week1);
+                        items[2][x+1] = Number(item.Month1);
+                        items[3][x+1] = Number(item.Month3);
+                        items[4][x+1] = Number(item.YTD);
+                        items[5][x+1] = Number(item.Year1);
+                        items[6][x+1] = Number(item.Year3);
+                        items[7][x+1] = Number(item.Year5);
+                        items[8][x+1] = Number(item.Year10);
+                    }
+                }
+        
+                debugger;
+                var chart_data = new google.visualization.arrayToDataTable( items, false);
+
+                 // Set chart options
+                var options = {'title':'',
+                            'width':'100%',
+                            'height':'300',
+                            'colors': ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde'],                           
+                            'legend': {
+                                position: 'left'
+                            },
+                            seriesType: 'bars',
+                            
+                };
+                // Instantiate and draw our chart, passing in some options.
+                var chart = new google.visualization.ComboChart(document.getElementById('perf_chart'));
+                chart.draw(chart_data, options);
+            }
+        },
+
+
         getIndexAnalysisInfo: function() {
+            var vm = this;
             console.log("getIndexAnalysisInfo");
             axios.get(Config.base_url + "/user/index/getIndexAnalysisInfo", {
                     params: {
@@ -341,10 +403,14 @@ export default {
                     alert("비중 목록이 없습니다");
                 } else {
                     var items = response.data.results;
-                        
+                    
                     console.log("response=" + JSON.stringify(items));
                     perf_table.clear().draw();
                     perf_table.rows.add(items).draw();
+
+                    // 그래프 실행
+                    
+                    vm.performance_chart();
                 }
                    
             });
@@ -352,6 +418,7 @@ export default {
 
         getSelectedItem: function(sel_items, gubun) {
             var vm = this;
+            vm.jongMokDialog = false;
             for (let i = 0; i < sel_items.length; i++) {
                 
                 if (perf_table.rows().count() <= 4) {
@@ -362,7 +429,8 @@ export default {
                         }
                     ).count();
                     
-                    if (compare_cnt == 0) {
+
+                    if (compare_cnt == 0) {                        
                         perf_table.row.add(  {
                             F16012 : '',
                             F16013 : sel_items[i].JISU_CD,
@@ -375,7 +443,7 @@ export default {
                             Year3 : '6',
                             Year5 : '7',
                             Year10 : '8',
-                        } ).draw( false );
+                        } ).draw(false);                        
                     } else {
                         alert(sel_items[i].JISU_NM +"은 이미 추가된 자산입니다.");    
                     }
@@ -383,8 +451,9 @@ export default {
                     alert("자산 비교는 총 5개 까지 가능 합니다.");
                     break;
                 }
-
             }
+
+            vm.performance_chart();
         
         },
         showJongMokPop: function() { 

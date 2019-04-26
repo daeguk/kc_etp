@@ -473,7 +473,7 @@ export default {
                     if (response.data) {
                         var chartList = response.data.chartList;
                         var etpPerformanceList = response.data.etpPerformanceList;
-
+debugger;
                     /* 차트 출력 */
                         var items = [];
                         if (chartList && chartList.length > 0) {
