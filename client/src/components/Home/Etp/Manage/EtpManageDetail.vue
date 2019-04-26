@@ -85,7 +85,7 @@
                             </v-flex>
                         </v-layout>
                     </div>
-                </v-card>
+                </v-card>  
 
                 <v-card flat class="right_menu_w2">
                     <v-navigation-drawer

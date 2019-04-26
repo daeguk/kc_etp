@@ -51,11 +51,11 @@
                         <v-btn outline small color="primary" dark v-on:click="showJongMokPop">
                             <v-icon small color="primary">add</v-icon>자산추가
                         </v-btn>
-                        <jongmokPopup @selectedItem="getSelectedItem" v-if="jongmokPopYn"></jongmokPopup>
+                        <jongmokPopup @selectedItem="getSelectedItem" @hideJongMokPop="hideJongMokPop" :message="dialog"></jongmokPopup>
                     </v-layout>
                 <!--자산추가 팝업 END--->
 
-                </div>
+                </div> 
             </v-flex>
             
             <v-flex xs12 flat>
@@ -136,7 +136,7 @@ export default {
         return {
             tab: null,
             items: ["ETF", "ETN", "INDEX"],
-            dialog: false,
+            jongMokDialog: false,
             dialog2: false,
             results: [],
             importance_cnt: 0,
@@ -534,16 +534,17 @@ export default {
          * 2019-04-25  bkLove(촤병국)
          */
         showJongMokPop: function() { 
-            this.jongmokPopYn   =   true;
-            this.$EventBus.$emit("showEtpJongMokPop", true );
+            this.jongMokDialog = true;
         },        
 
+        hideJongMokPop: function() {
+            this.jongMokDialog = false;
+        },
 
         getSelectedItem: function(sel_items) {
             var vm = this;
 
-            vm.jongmokPopYn   =   false;
-            vm.dialog = false;
+            vm.jongMokDialog = false;
 
             for (let i = 0; i < sel_items.length; i++) {
                 if (perf_table.rows().count() <= 4) {

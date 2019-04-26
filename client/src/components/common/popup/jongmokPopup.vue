@@ -4,13 +4,13 @@
                     <v-layout row>
                         <v-flex xs12>
                             <v-card flat>
-                                <v-dialog v-model="dialog" persistent max-width="500">                                   
+                                <v-dialog v-model="message" persistent max-width="500">                                   
                                     <v-card>
                                         <h5>
                                             <v-card-title ma-0>
                                                 비교자산추가
                                                 <v-spacer></v-spacer>
-                                                <v-btn icon dark @click="dialog = false">
+                                                <v-btn icon dark @click="hideJongMokPop">
                                                     <v-icon>close</v-icon>
                                                 </v-btn>
                                             </v-card-title>
@@ -67,17 +67,12 @@ import Config from '@/js/config.js'
 var importance_grid = null;
 var perf_table = null;
 export default {
+    props: ['message'],
     data() {
         return {
             tab: null,
             items: ["ETF", "ETN", "INDEX"],
-            dialog: false,
-            dialog2: false,
-            results: [],
-            importance_cnt:0,
-            search:"",
-
-            modalFlag: false
+            dialog: false
         };
     },
     components: {
@@ -91,8 +86,7 @@ export default {
             this.dialog = res;
         });
     },
-    updated: function() {
-    },
+  
     beforeDestroy() {
          //this.$EventBus.$off("showJongMokPop");
     },
@@ -105,9 +99,13 @@ export default {
             var vm = this;
 
             this.$emit("selectedItem", sel_items, gubun);
-
+        
             vm.dialog = false;
         },
+        hideJongMokPop: function() {
+            this.dialog = false;
+            this.$emit("hideJongMokPop", false);
+        }
     }
 }
 </script>

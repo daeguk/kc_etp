@@ -188,7 +188,7 @@
                                 </v-flex>
                             </v-layout>
                             <!---자산추가 팝업--->
-                            <jongmokPop @selectedItem="getSelectedItem"></jongmokPop>
+                            <jongmokPop @selectedItem="getSelectedItem" @hideJongMokPop="hideJongMokPop" :message="jongMokDialog"></jongmokPop>
                             <!--자산추가 팝업 end--->
                         </v-list-tile-content>
                     </v-list>
@@ -223,7 +223,7 @@ export default {
     props: [],
     data() {
         return {
-            dialog: false,
+            jongMokDialog: false,
             mini: false,
             right: null,
             tab: null,
@@ -442,7 +442,7 @@ export default {
         /* 자산추가 팝업에서 선택된 종목 추가 */
         getSelectedItem: function(sel_items, gubun) {
             var vm = this;
-            
+            vm.jongMokDialog = false;
             var addFavorItems = [];
 
             for (let i = 0; i < sel_items.length; i++) {
@@ -498,7 +498,10 @@ export default {
         },
         /* 종목팝업 show */
         showJongMokPop: function() {
-            this.$EventBus.$emit( "showJongMokPop", true );
+            this.jongMokDialog = true;            
+        },
+        hideJongMokPop: function() {
+            this.jongMokDialog = false;
         },
 
         /* 전체 종목 etn 종목리스트 */
@@ -562,6 +565,7 @@ export default {
                    
                 });
         },
+        
     }
 };
 </script>
