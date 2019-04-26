@@ -35,10 +35,11 @@
 
                        
         </v-layout>
-    </v-container>
-    <v-flex>
+         <v-flex>
              <ConfirmDialog ref="confirm"></ConfirmDialog>
-    </v-flex>
+        </v-flex>
+    </v-container>
+   
 </v-app>    
 </template>
 
@@ -91,6 +92,7 @@ export default {
         vm.getInfoIndexList();
 
         $('#index_table, tbody').on('click', 'button', function () {
+        
             var data = table.row($(this).parents('tr')).data();
            // alert("Name = " + JSON.stringify(data));
 
@@ -132,7 +134,7 @@ export default {
                             "processing": true,
                             "serverSide": false,
                             "info": true,   // control table information display field
-                            "stateSave": true,  //restore table state on page reload,
+                           
                             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
                             paging: false,
                             searching: false,
