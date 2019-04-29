@@ -42,18 +42,18 @@
 
                      
                     </v-card>
-                    <!---자산추가 팝업--->
+                    <!---자산추가 팝업 -->
                     <v-layout row>
                         <v-btn outline small color="primary" dark v-on:click="showJongMokPop">
                             <v-icon small color="primary">add</v-icon>자산추가
                         </v-btn>
                         <jongmokPopup @selectedItem="getSelectedItem" @hideJongMokPop="hideJongMokPop" :showDialog="jongMokDialog"></jongmokPopup>
                     </v-layout>
-                    <!--자산추가 팝업 end--->
+                    <!--자산추가 팝업 end -->
                 </div>
             </v-flex>
             <v-flex xs12 flat>
-                <!---비중정보 팝업--->
+                <!---비중정보 팝업 -->
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">포트폴리오</h4>
                     <v-subheader>
@@ -119,9 +119,11 @@ import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 import select from 'datatables.net-select'
 import Config from '@/js/config.js'
-var importance_grid = null;
+import { index_common } from '../../Index/mixins_index.js';
+
 var perf_table = null;
 export default {
+    props: ["basicData"],
     data() {
         return {
             tab: null,
@@ -132,9 +134,13 @@ export default {
             importance_cnt:0,
             search:"",
 
-            modalFlag: false
+            modalFlag: false,
+            importance_grid_id : "importance_grid",
+            importance_chart_id : "importance_chart",
+            param: {}
         };
     },
+    mixins : [ index_common ],
     components: {
         jongmokPopup: jongmokPopup,
     },
@@ -145,14 +151,28 @@ export default {
         
         var vm = this;
 
+        if(     this.basicData 
+            &&  this.basicData.jisu_cd
+            &&  this.basicData.large_type
+            &&  this.basicData.market_id
+        ) {
+            this.param.jisu_cd      =   this.basicData.jisu_cd;
+            this.param.large_type   =   this.basicData.large_type;
+            this.param.market_id    =   this.basicData.market_id;
+        }
+        else if(   
+                vm.$route.query.jisu_cd  
+            &&  vm.$route.query.large_type  
+            &&  vm.$route.query.market_id  
+        ) {
+            this.param.jisu_cd      =   this.$route.query.jisu_cd;
+            this.param.large_type   =   this.$route.query.large_type;
+            this.param.market_id    =   this.$route.query.market_id;
+        }        
+
+
         vm.$root.$infopoptab1 = vm.$refs.$infopoptab1;
-        vm.getIndexImportanceList();
 
-        $('#perf_table, tbody').on('click', 'button', function () {
-            var data = perf_table.row($(this).parents('tr')).remove().draw();
-
-            vm.performance_chart();
-        });
 
         perf_table = $('#perf_table').DataTable( {
             "processing": true,
@@ -213,115 +233,24 @@ export default {
         }); 
     
 
-        vm.getIndexAnalysisInfo();
+        if(     this.param
+            &&  this.param.jisu_cd
+            &&  this.param.market_id
+        ) {
+
+            vm.getIndexImportanceList( this.param );
+
+            $('#perf_table, tbody').on('click', 'button', function () {
+                var data = perf_table.row($(this).parents('tr')).remove().draw();
+
+                vm.performance_chart();
+            });
+
+            vm.getIndexAnalysisInfo();
+        }
 
     },
     methods: {
-
-        getIndexImportanceList: function() {
-            console.log("getIndexImportanceList");
-            axios.get(Config.base_url + "/user/index/getIndexImportanceList", {
-                    params: {
-                        jisu_cd : this.$route.query.jisu_cd,
-                        market_id : this.$route.query.market_id
-                    }
-                }).then(response => {
-                    // console.log(response);
-                    if (response.data.success == false) {
-                        alert("비중 목록이 없습니다");
-                    } else {
-                        var items = response.data.results;
-                        
-                        //console.log("response=" + JSON.stringify(items));
-                        this.results = items;
-                        this.importance_cnt = this.results.length;
-
-                        // 차트 호출
-                        this.importance_chart(items);
-                        
-                        importance_grid = $('#importance_grid').DataTable( {
-                            "processing": true,
-                            "serverSide": false,
-                            "info": false,   // control table information display field
-                            "stateSave": true,  //restore table state on page reload,
-                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                            scrollY:        '500px',
-                            scrollCollapse: true,
-                            select: {
-                                style:    'multi',
-                                selector: 'td:first-child'
-                            },
-                            paging: false,
-                            searching: false,
-                            data : this.results,
-                            columns: [
-                                { "data": "ISIN_CODE", "orderable": true},
-                                { "data": "JOING_NM", "orderable": true },
-                                { "data": "PERCNT", "orderable" : true},
-                                { "data": "GUBUN", "orderable" : true},
-                            ]
-                        }); 
-
-                        
-                    }
-                   
-                });
-        }, 
-
-        importance_chart: function(results) {
-            // Load the Visualization API and the corechart package.
-            google.charts.load('current', {'packages':['corechart']});
-
-           
-            // Set a callback to run when the Google Visualization API is loaded.
-            google.charts.setOnLoadCallback(drawChart());
-
-            // Callback that creates and populates a data table,
-            // instantiates the pie chart, passes in the data and
-            // draws it.
-      
-            function drawChart() {
-                
-                
-                // Create the data table.
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', 'JOING_NM');
-                data.addColumn('number', 'PERCNT');
-
-               
-                // Set chart options
-                var options = {'title':'',
-                            'width':'1250',
-                            'height':'300',
-                            'colors': ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde'],                           
-                            'legend': {
-                                position: 'left'
-                            },
-                            'lineWidth': 5
-                            
-                };
-                
-                
-                var items = [] 
-
-                for (let item of results) {
-                    
-                    if (items.length >= 5) break;
-
-                    items.push([item.JOING_NM, item.PERCNT]);
-
-                }
-
-                data.addRows(
-                    items
-                );
-
-                // Instantiate and draw our chart, passing in some options.
-                var chart = new google.visualization.PieChart(document.getElementById('importance_chart'));
-                chart.draw(data, options);
-            }
-        },
-
 
         performance_chart: function() {
             // Load the Visualization API and the corechart package.
@@ -395,8 +324,8 @@ export default {
             console.log("getIndexAnalysisInfo");
             axios.get(Config.base_url + "/user/index/getIndexAnalysisInfo", {
                     params: {
-                        jisu_cd : this.$route.query.jisu_cd,
-                        market_id : this.$route.query.market_id
+                        jisu_cd : vm.param.jisu_cd,
+                        market_id : vm.param.market_id
                     }
             }).then(response => {
                     // console.log(response);

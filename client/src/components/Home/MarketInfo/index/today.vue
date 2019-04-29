@@ -27,7 +27,7 @@
                 </v-layout>
             </v-flex>
 
-            <!---테이블1--->
+            <!---테이블1 -->
             <v-flex grow xs12 mt-3>
                 <v-card flat>
                     <v-card-title primary-title class="tbl_w2">
@@ -77,9 +77,9 @@
                     </v-card>
                 </v-card>
             </v-flex>
-            <!---테이블1 end--->
+            <!---테이블1 end -->
 
-            <!---테이블2--->
+            <!-- 테이블2 -->
             <v-flex grow xs12 mt-3>
                 <v-card flat>
                     <v-card-title primary-title class="tbl_w2">
@@ -129,7 +129,7 @@
                     </v-card>
                 </v-card>
             </v-flex>
-            <!---테이블2 end--->
+            <!---테이블2 end-->
 
             <ComFavorItem></ComFavorItem>
         </v-layout>
@@ -173,6 +173,7 @@ export default {
     },
     mounted: function() {
         var vm = this;
+
         vm.getMarketIndexList();
         
 
@@ -219,7 +220,7 @@ export default {
                 },
                 {
                     "render": function ( data, type, row ) {
-                        let htm = "<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>";                            
+                        let htm = "<div class='tooltip'><button type='button' id='btnIndexDetail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>";                            
                         return htm;
                     },
                     "targets": 9
@@ -238,6 +239,21 @@ export default {
                 { "data": null, "orderable" : true, defaultContent:""},
             ]
         }); 
+
+        // 테이블별 이벤트
+        $('#krxIndexTable tbody').on('click', 'button', function (e) {
+            e.stopImmediatePropagation();
+
+            var table = $('#krxIndexTable').DataTable();
+            var data = table.row($(this).parents('tr')).data();
+
+            if ($(this).attr('id') == 'btnIndexDetail') {
+                vm.movePage( data );
+            }
+
+            return  false; 
+        });
+
 
         fnGuideIndexTable = $('#fnGuideIndexTable').DataTable( {
             "processing": true,
@@ -282,7 +298,7 @@ export default {
                 },
                 {
                     "render": function ( data, type, row ) {
-                        let htm = "<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>";                            
+                        let htm = "<div class='tooltip'><button type='button' id='btnIndexDetail'  class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>";                            
                         return htm;
                     },
                     "targets": 9
@@ -300,11 +316,30 @@ export default {
                 { "data": null, "orderable" : true, defaultContent:""}, /*3Year*/
                 { "data": null, "orderable" : true, defaultContent:""},
             ]
-        }); 
+        });
+
+        // 테이블별 이벤트
+        $('#fnGuideIndexTable tbody').on('click', 'button', function (e) {
+            e.stopImmediatePropagation();
+
+            var table = $('#fnGuideIndexTable').DataTable();
+            var data = table.row($(this).parents('tr')).data();
+
+            if ($(this).attr('id') == 'btnIndexDetail') {
+                vm.movePage( data );
+            }
+
+            return  false;
+        });
     },
     created: function() {},
     beforeDestroy() {},
     methods: {
+
+        movePage: function( data ) {
+            this.$emit( "fn_receiveIndexData", data );
+        },    
+
         getMarketIndexList: function() {
             console.log("getMarketIndexList");
             var vm = this;

@@ -139,8 +139,8 @@ import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
+import { index_common } from '../../Index/mixins_index.js';
 
-var importance_grid = null;
 var table01 = null;
 var chart01 = null;
 
@@ -156,6 +156,11 @@ export default {
             search: "",
 
             modalFlag: false,
+
+            /* 비중관련 정보 */
+            importance_cnt:0,
+            importance_grid_id : "importance_grid",
+            importance_chart_id : "importance_chart",
 
             tableName : "tblEtp",
             nowDate:        new Date().getFullYear() 
@@ -174,6 +179,7 @@ export default {
             performChartImages  :   ['perform_bar01.png', 'perform_bar02.png', 'perform_bar03.png', 'perform_bar04.png', 'perform_bar05.png']
         };
     },
+    mixins : [ index_common ],
     components: {
         jongmokPopup: jongmokPopup, 
     },
@@ -192,6 +198,13 @@ export default {
 
 
         this.$nextTick().then(() => {
+
+            /* 비중정보 및 차트정보 조회 */
+            var paramData   =   {};
+            paramData.jisu_cd   =   vm.basicData.f16257 ;
+            paramData.market_id =   vm.basicData.f34239;
+            vm.getIndexImportanceList( paramData );            
+
 
             chart01 = new google.visualization.ComboChart(document.getElementById('etp_comboChart_div'));
 

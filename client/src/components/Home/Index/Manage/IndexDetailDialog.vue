@@ -1,10 +1,10 @@
 <template>
-    <v-dialog v-model="index_dialog" :max-width="options.width" v-bind:style="{ zIndex: options.zIndex }">
+    <v-dialog v-model="showDialog" :max-width="options.width" v-bind:style="{ zIndex: options.zIndex }">
     <div class="content_margin">
         <v-layout row>
             <v-flex xs12>
                 <v-card flat ma-3>
-                    <div class="title01_w">
+                    <div class="title01_w">                 
                         <v-card-title primary-title>
                             <div class="title_wrap01">
                                 <h3 class="headline mb-0">
@@ -15,7 +15,7 @@
                                     <v-layout align-right>
                                         <v-flex xs12 sm4 text-xs-center>                                         
                                             <div class="btn_r">
-                                                <v-btn icon dark @click="index_dialog = false">
+                                                <v-btn icon  @click.stop="fn_close">
                                                     <v-icon>close</v-icon>
                                                 </v-btn>
                                             </div>
@@ -71,12 +71,15 @@
                                 </v-tabs>
 
                                 <v-tabs-items v-model="tab">
+                               
                                     <v-tab-item>
-                                        <indexinfotab1></indexinfotab1>
+                                        <indexinfotab1  :basicData = "basicData"    v-if="openIndexInfoTab1"></indexinfotab1>
                                     </v-tab-item>
+
                                     <v-tab-item>
-                                        <indexinfotab2></indexinfotab2>
-                                    </v-tab-item>                        
+                                        <indexinfotab2  :basicData = "basicData"    v-if="openIndexInfoTab2"></indexinfotab2>
+                                    </v-tab-item>
+
                                 </v-tabs-items>
                             </v-flex>
                         </v-layout>
@@ -90,11 +93,13 @@
 
 
 <script>
+
 import indexinfotab1 from "./indexinfotab1.vue";
 import indexinfotab2 from "./indexinfotab2.vue";
 
 import Config from "@/js/config.js";
 export default {
+    props: ['paramData', 'showDialog'],
     data() {
         return {
             text: "center",
@@ -111,30 +116,79 @@ export default {
                 color: 'primary',
                 width: '809%',
                 zIndex: 200
-            }
+            },
+
+            openIndexInfoTab1: false,
+            openIndexInfoTab2: false,
+            basicData : {}
         };
     },
     components: {
-        indexinfotab1: indexinfotab1,
-        indexinfotab2: indexinfotab2,
+          indexinfotab1: indexinfotab1,
+          indexinfotab2: indexinfotab2,
     }, 
     computed: {},
     created: function() {},
     beforeDestroy() {},
+
     mounted: function() {
-        this.getIndexBaseInfo();
-        this.Indexchart();
+        var vm = this;
+
+        if(     this.paramData 
+            &&  this.paramData.F16013
+            &&  this.paramData.LARGE_TYPE
+            &&  this.paramData.MARKET_ID
+        ) {
+            this.basicData.jisu_cd      =   this.paramData.F16013;
+            this.basicData.large_type   =   this.paramData.LARGE_TYPE;
+            this.basicData.market_id    =   this.paramData.MARKET_ID;
+        }
+        else if(
+                vm.$route.query.jisu_cd  
+            &&  vm.$route.query.large_type  
+            &&  vm.$route.query.market_id  
+        ) {
+            this.basicData.jisu_cd      =   this.$route.query.jisu_cd;
+            this.basicData.large_type   =   this.$route.query.large_type;
+            this.basicData.market_id    =   this.$route.query.market_id;
+        }
+
+
+
+        if(     this.basicData
+            &&  this.basicData.jisu_cd
+            &&  this.basicData.large_type
+            &&  this.basicData.market_id
+        ) {
+            this.openIndexInfoTab1   =   true;
+
+            this.getIndexBaseInfo();
+            this.Indexchart();
+        }
+
+
+        if(     this.basicData
+            &&  this.basicData.jisu_cd
+            &&  this.basicData.market_id
+        ) {
+            this.openIndexInfoTab2   =   true;
+        }
     },
+
     methods: {
+
+        fn_close : function() {
+            this.$emit( "fn_closePop", "close" );
+        },
+
         getIndexBaseInfo: function() {
             var vm = this;
-            console.log("getIndexBaseInfo");
-            
+
             axios.get(Config.base_url + "/user/index/getIndexBaseInfo", {
                     params: {
-                        jisu_cd : vm.$route.query.jisu_cd,
-                        market_id : vm.$route.query.market_id,
-                        large_type : vm.$route.query.large_type
+                        jisu_cd : vm.basicData.jisu_cd,
+                        market_id : vm.basicData.market_id,
+                        large_type : vm.basicData.large_type
                     }
             }).then(response => {
                 // console.log(response);
@@ -147,7 +201,6 @@ export default {
                     //this.list_cnt = this.results.length;
                 }
             });
-
         },   
         
         Indexchart: function(term) {
@@ -157,9 +210,9 @@ export default {
             // 주기 디폴트
             if (!term) term = '1M';
 
-            var jisu_cd = this.$route.query.jisu_cd; 
-            var market_id = this.$route.query.market_id;
-            var large_type = this.$route.query.large_type;
+            var jisu_cd = this.basicData.jisu_cd; 
+            var market_id = this.basicData.market_id;
+            var large_type = this.basicData.large_type;
 
             // Set a callback to run when the Google Visualization API is loaded.
             google.charts.setOnLoadCallback(drawChart(jisu_cd, market_id, large_type, term));
@@ -173,7 +226,7 @@ export default {
                 // Create the data table.
                 var data = new google.visualization.DataTable();
                 data.addColumn('date', 'date');
-            
+
                 axios.get(Config.base_url + "/user/index/getIndexEtpHistoryData", {                    
                     params: {
                         jisu_cd : jisu_cd,
