@@ -314,7 +314,7 @@ var getIndexBaseInfo = function (req, res) {
         // var options = {id:'admin'};
         
         var options = {
-            large_type : req.session.large_type,
+            large_type : req.query.large_type,
             jisu_cd: req.query.jisu_cd,
             market_id: req.query.market_id
         };
@@ -360,7 +360,7 @@ var getIndexEtpHistoryData = function (req, res) {
         // var options = {id:'admin'};
         
         var options = {
-            large_type : req.session.large_type,
+            large_type : req.query.large_type,
             jisu_cd: req.query.jisu_cd,
             market_id: req.query.market_id,
             term: req.query.term
@@ -409,7 +409,7 @@ var getIndexInEtpInfo = function (req, res) {
         // var options = {id:'admin'};
         
         var options = {
-            large_type : req.session.large_type,
+            large_type : req.query.large_type,
             jisu_cd: req.query.jisu_cd,
             market_id: req.query.market_id
         };
@@ -545,7 +545,7 @@ var getIndexImportanceList = function (req, res) {
         // var options = {id:'admin'};
         
         var options = {
-            large_type : req.session.large_type,
+            large_type : req.query.large_type,
             jisu_cd: req.query.jisu_cd,
             market_id: req.query.market_id
         };

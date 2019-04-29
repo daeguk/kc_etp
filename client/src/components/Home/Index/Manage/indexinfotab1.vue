@@ -113,8 +113,8 @@ export default {
             axios.get(Config.base_url + "/user/index/getIndexBaseInfo", {
                     params: {
                         jisu_cd : vm.$route.query.jisu_cd,
-                        market_id : vm.$route.query.market_id
-                        
+                        market_id : vm.$route.query.market_id,
+                        large_type : vm.$route.query.large_type
                     }
             }).then(response => {
                 // console.log(response);
@@ -135,8 +135,8 @@ export default {
             axios.get(Config.base_url + "/user/index/getIndexInEtpInfo", {
                     params: {
                         jisu_cd : vm.$route.query.jisu_cd,
-                        market_id : vm.$route.query.market_id
-                        
+                        market_id : vm.$route.query.market_id,
+                        large_type : vm.$route.query.large_type
                     }
             }).then(response => { 
                 // console.log(response);

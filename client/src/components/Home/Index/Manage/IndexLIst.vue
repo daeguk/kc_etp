@@ -98,7 +98,7 @@ export default {
 
 
             
-            vm.movePage(data.JISU_CD, data.MARKET_ID);
+            vm.movePage(data.JISU_CD, data.MARKET_ID, data.LARGE_TYPE);
         
         });
 
@@ -171,8 +171,8 @@ export default {
                 return text.replace(/,/gi,"</br>");
             }
         },
-        movePage: function(jisu_cd, market_id) {
-            this.$router.push({path: '/index/manage/IndexListdetail', query :{'jisu_cd':jisu_cd, 'market_id':market_id}});
+        movePage: function(jisu_cd, market_id, large_type) {
+            this.$router.push({path: '/index/manage/IndexListdetail', query :{'jisu_cd':jisu_cd, 'market_id':market_id, 'large_type':large_type}});
         }
 
         

@@ -1,4 +1,5 @@
 <template>
+    <v-dialog v-model="index_dialog" :max-width="options.width" v-bind:style="{ zIndex: options.zIndex }">
     <div class="content_margin">
         <v-layout row>
             <v-flex xs12>
@@ -12,9 +13,11 @@
                                 </h3>
                                 <div class="right_btn">
                                     <v-layout align-right>
-                                        <v-flex xs12 sm4 text-xs-center>
+                                        <v-flex xs12 sm4 text-xs-center>                                         
                                             <div class="btn_r">
-                                                <v-btn outline color="indigo" small :to="{path:'/index/manage', query:{'activeTab':'2'}}">목록으로 돌아가기</v-btn>
+                                                <v-btn icon dark @click="index_dialog = false">
+                                                    <v-icon>close</v-icon>
+                                                </v-btn>
                                             </div>
                                         </v-flex>
                                     </v-layout>
@@ -73,10 +76,7 @@
                                     </v-tab-item>
                                     <v-tab-item>
                                         <indexinfotab2></indexinfotab2>
-                                    </v-tab-item>
-                                    <v-tab-item>
-                                        <indexinfotab3></indexinfotab3>
-                                    </v-tab-item>
+                                    </v-tab-item>                        
                                 </v-tabs-items>
                             </v-flex>
                         </v-layout>
@@ -85,13 +85,13 @@
             </v-flex>
         </v-layout>
     </div>
+    </v-dialog>
 </template>
 
 
 <script>
 import indexinfotab1 from "./indexinfotab1.vue";
 import indexinfotab2 from "./indexinfotab2.vue";
-import indexinfotab3 from "./indexinfotab3.vue";
 
 import Config from "@/js/config.js";
 export default {
@@ -106,12 +106,17 @@ export default {
             items: ["기본정보", "분석정보", "정보공개 목록"],
             results:{},
             etpInfos:{},
+            index_dialog:false,
+            options: {
+                color: 'primary',
+                width: '809%',
+                zIndex: 200
+            }
         };
     },
     components: {
         indexinfotab1: indexinfotab1,
         indexinfotab2: indexinfotab2,
-        indexinfotab3: indexinfotab3
     }, 
     computed: {},
     created: function() {},
