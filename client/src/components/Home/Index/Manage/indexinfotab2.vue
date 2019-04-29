@@ -42,18 +42,18 @@
 
                      
                     </v-card>
-                    <!---자산추가 팝업--->
+                    <!---자산추가 팝업 -->
                     <v-layout row>
                         <v-btn outline small color="primary" dark v-on:click="showJongMokPop">
                             <v-icon small color="primary">add</v-icon>자산추가
                         </v-btn>
                         <jongmokPopup @selectedItem="getSelectedItem" @hideJongMokPop="hideJongMokPop" :showDialog="jongMokDialog"></jongmokPopup>
                     </v-layout>
-                    <!--자산추가 팝업 end--->
+                    <!--자산추가 팝업 end -->
                 </div>
             </v-flex>
             <v-flex xs12 flat>
-                <!---비중정보 팝업--->
+                <!---비중정보 팝업 -->
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">포트폴리오</h4>
                     <v-subheader>

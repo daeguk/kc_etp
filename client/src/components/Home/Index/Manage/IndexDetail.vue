@@ -149,7 +149,7 @@
 
                                                 @keyup.enter ="fn_getIndexList()"
                                             ></v-text-field>
-                                            <!--오른쪽 메뉴 하단 리스트 영역--->
+                                            <!--오른쪽 메뉴 하단 리스트 영역 -->
                                             <v-layout row class="w100 pt-3">
                                                 <v-flex xs12>
                                                     <v-card flat>
@@ -158,7 +158,7 @@
                                                             <v-list-tile
                                                                 v-for="item in indexDataList"
                                                                 :key="item.f16002"
-                                                                @click
+                                                                @click.stop=""
                                                                 class="right_menu_w3"
                                                             >
                                                                 <v-list-tile-content
@@ -177,12 +177,12 @@
                                                     </v-card>
                                                 </v-flex>
                                             </v-layout>
-                                            <!--오른쪽 메뉴 하단 리스트 영역--->
+                                            <!--오른쪽 메뉴 하단 리스트 영역 -->
                                         </v-list-tile-content>
                                     </v-list>
                                 </v-navigation-drawer>
                             </v-card>
-                            <!--rightmenu end--->
+                            <!--rightmenu end -->
 
                         </v-layout>
                     </v-container>

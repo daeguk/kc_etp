@@ -40,14 +40,14 @@
                         </v-layout>
                     </v-card>
                 </div>
-                <!--table1 end--->
+                <!--table1 end -->
             </v-flex>
             <v-flex md6>
-                <!---table2--->
+                <!---table2 -->
                 <v-container fluid grid-list-md pa-0 mb-4>
                     <v-layout row wrap>
                         <v-flex xs12 v-for="(etp_item, index) in etp_items" :key="etp_item.F16013">
-                            <!---table2_1--->
+                            <!---table2_1 -->
                             <div class="indexinfo_box02 a1">
                                 <h4 class="mb-0">ETP Info</h4>
                                 <v-card flat class="indexinfo_list_table">
@@ -74,7 +74,7 @@
                         
                     </v-layout>
                 </v-container>
-                <!---table2 end--->
+                <!---table2 end -->
             </v-flex>
         </v-layout>
     </v-container>
