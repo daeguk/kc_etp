@@ -372,11 +372,10 @@ export default {
             
                 var chart_data = new google.visualization.arrayToDataTable( items);
 
-            
                  // Set chart options
                 var options = {'title':'',
                             'width':$(window).width()*0.58,
-                            'height':'300',
+                            'height':'230',
                             'colors': ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde'],                           
                             'legend': {
                                 position: 'left'
@@ -411,8 +410,9 @@ export default {
                     perf_table.rows.add(items).draw();
 
                     // 그래프 실행
-                    
-                    vm.performance_chart();
+                    setTimeout(function() {
+                        vm.performance_chart();
+                    }, 2500);
                 }
                    
             });
