@@ -84,12 +84,15 @@
 import Config from '@/js/config.js';
 
 export default {
-    props: [""],
+    props: ["basicData"],
     data() {
         return {
             index_item: {},
             rowsPerPageItems: [50, 50],
             etp_items : [],
+
+//            basicData : {}
+            param: {}
         };
     },
     computed: {
@@ -102,8 +105,37 @@ export default {
 
     },
     mounted: function() {
-        this.getIndexBaseInfo();
-        this.getIndexInEtpInfo();
+
+        var vm = this;
+
+        if(     this.basicData 
+            &&  this.basicData.jisu_cd
+            &&  this.basicData.large_type
+            &&  this.basicData.market_id
+        ) {
+            this.param.jisu_cd      =   this.basicData.jisu_cd;
+            this.param.large_type   =   this.basicData.large_type;
+            this.param.market_id    =   this.basicData.market_id;
+        }
+        else if(   
+                vm.$route.query.jisu_cd  
+            &&  vm.$route.query.large_type  
+            &&  vm.$route.query.market_id  
+        ) {
+            this.param.jisu_cd      =   this.$route.query.jisu_cd;
+            this.param.large_type   =   this.$route.query.large_type;
+            this.param.market_id    =   this.$route.query.market_id;
+        }
+
+
+        if(     this.param
+            &&  this.param.jisu_cd
+            &&  this.param.large_type
+            &&  this.param.market_id
+        ) {
+            this.getIndexBaseInfo();
+            this.getIndexInEtpInfo();
+        }        
     },
     methods: {
         getIndexBaseInfo: function() {
@@ -112,9 +144,9 @@ export default {
             
             axios.get(Config.base_url + "/user/index/getIndexBaseInfo", {
                     params: {
-                        jisu_cd : vm.$route.query.jisu_cd,
-                        market_id : vm.$route.query.market_id,
-                        large_type : vm.$route.query.large_type
+                        jisu_cd : vm.param.jisu_cd,
+                        market_id : vm.param.market_id,
+                        large_type : vm.param.large_type
                     }
             }).then(response => {
                 // console.log(response);
@@ -134,9 +166,9 @@ export default {
 
             axios.get(Config.base_url + "/user/index/getIndexInEtpInfo", {
                     params: {
-                        jisu_cd : vm.$route.query.jisu_cd,
-                        market_id : vm.$route.query.market_id,
-                        large_type : vm.$route.query.large_type
+                        jisu_cd : vm.param.jisu_cd,
+                        market_id : vm.param.market_id,
+                        large_type : vm.param.large_type
                     }
             }).then(response => { 
                 // console.log(response);

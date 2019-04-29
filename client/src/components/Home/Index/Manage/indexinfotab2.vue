@@ -123,6 +123,7 @@ import { index_common } from '../../Index/mixins_index.js';
 
 var perf_table = null;
 export default {
+    props: ["basicData"],
     data() {
         return {
             tab: null,
@@ -136,6 +137,7 @@ export default {
             modalFlag: false,
             importance_grid_id : "importance_grid",
             importance_chart_id : "importance_chart",
+            param: {}
         };
     },
     mixins : [ index_common ],
@@ -149,18 +151,28 @@ export default {
         
         var vm = this;
 
+        if(     this.basicData 
+            &&  this.basicData.jisu_cd
+            &&  this.basicData.large_type
+            &&  this.basicData.market_id
+        ) {
+            this.param.jisu_cd      =   this.basicData.jisu_cd;
+            this.param.large_type   =   this.basicData.large_type;
+            this.param.market_id    =   this.basicData.market_id;
+        }
+        else if(   
+                vm.$route.query.jisu_cd  
+            &&  vm.$route.query.large_type  
+            &&  vm.$route.query.market_id  
+        ) {
+            this.param.jisu_cd      =   this.$route.query.jisu_cd;
+            this.param.large_type   =   this.$route.query.large_type;
+            this.param.market_id    =   this.$route.query.market_id;
+        }        
+
+
         vm.$root.$infopoptab1 = vm.$refs.$infopoptab1;
 
-        var paramData   =   {};
-        paramData.jisu_cd   =   this.$route.query.jisu_cd;
-        paramData.market_id =   this.$route.query.market_id;
-        vm.getIndexImportanceList( paramData );
-
-        $('#perf_table, tbody').on('click', 'button', function () {
-            var data = perf_table.row($(this).parents('tr')).remove().draw();
-
-            vm.performance_chart();
-        });
 
         perf_table = $('#perf_table').DataTable( {
             "processing": true,
@@ -221,7 +233,21 @@ export default {
         }); 
     
 
-        vm.getIndexAnalysisInfo();
+        if(     this.param
+            &&  this.param.jisu_cd
+            &&  this.param.market_id
+        ) {
+
+            vm.getIndexImportanceList( this.param );
+
+            $('#perf_table, tbody').on('click', 'button', function () {
+                var data = perf_table.row($(this).parents('tr')).remove().draw();
+
+                vm.performance_chart();
+            });
+
+            vm.getIndexAnalysisInfo();
+        }
 
     },
     methods: {
@@ -298,8 +324,8 @@ export default {
             console.log("getIndexAnalysisInfo");
             axios.get(Config.base_url + "/user/index/getIndexAnalysisInfo", {
                     params: {
-                        jisu_cd : this.$route.query.jisu_cd,
-                        market_id : this.$route.query.market_id
+                        jisu_cd : vm.param.jisu_cd,
+                        market_id : vm.param.market_id
                     }
             }).then(response => {
                     // console.log(response);

@@ -241,15 +241,17 @@ export default {
         }); 
 
         // 테이블별 이벤트
-        $('#krxIndexTable tbody').on('click', 'button', function () {
+        $('#krxIndexTable tbody').on('click', 'button', function (e) {
+            e.stopImmediatePropagation();
+
             var table = $('#krxIndexTable').DataTable();
             var data = table.row($(this).parents('tr')).data();
 
             if ($(this).attr('id') == 'btnIndexDetail') {
-                console.log('move detailPage ');
                 vm.movePage( data );
             }
-                
+
+            return  false; 
         });
 
 
@@ -317,15 +319,17 @@ export default {
         });
 
         // 테이블별 이벤트
-        $('#fnGuideIndexTable tbody').on('click', 'button', function () {
+        $('#fnGuideIndexTable tbody').on('click', 'button', function (e) {
+            e.stopImmediatePropagation();
+
             var table = $('#fnGuideIndexTable').DataTable();
             var data = table.row($(this).parents('tr')).data();
 
             if ($(this).attr('id') == 'btnIndexDetail') {
-                console.log('move detailPage ');
                 vm.movePage( data );
             }
-                
+
+            return  false;
         });
     },
     created: function() {},
@@ -335,7 +339,7 @@ export default {
         movePage: function( data ) {
             this.$emit( "fn_receiveIndexData", data );
         },    
-            
+
         getMarketIndexList: function() {
             console.log("getMarketIndexList");
             var vm = this;
