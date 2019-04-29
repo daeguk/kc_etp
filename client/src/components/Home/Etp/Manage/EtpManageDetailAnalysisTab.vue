@@ -291,15 +291,15 @@ export default {
                     { "data": "f34239"      , "orderable" : false  },                                   /* ETP기초지수MID */
 
                     { "data": "f16002"      , "orderable" : false , className: "txt_left line2" },      /* 한글 종목명 */
-                    { "data": "week1_price" , "orderable" : false , className: 'dt-body-right'  },      /* 1-week */
-                    { "data": "month1_price", "orderable" : false , className: 'dt-body-right'  },      /* 1-Month */
-                    { "data": "month3_price", "orderable" : false , className: 'dt-body-right'  },      /* 3-Month */
-                    { "data": "ytd_price"   , "orderable" : false , className: 'dt-body-right'  },      /* ytd */
+                    { "data": "Week1"       , "orderable" : false , className: 'dt-body-right'  },      /* 1-week */
+                    { "data": "Month1"      , "orderable" : false , className: 'dt-body-right'  },      /* 1-Month */
+                    { "data": "Month3"      , "orderable" : false , className: 'dt-body-right'  },      /* 3-Month */
+                    { "data": "YTD"         , "orderable" : false , className: 'dt-body-right'  },      /* ytd */
 
-                    { "data": "year1_price" , "orderable" : false , className: 'dt-body-right'  },      /* 1-Year */
-                    { "data": "year3_price" , "orderable" : false , className: 'dt-body-right'  },      /* 3-Year */
-                    { "data": "year5_price" , "orderable" : false , className: 'dt-body-right'  },      /* 5-Year */
-                    { "data": "year10_price", "orderable" : false , className: 'dt-body-right'  },      /* 10-Year */
+                    { "data": "Year1"       , "orderable" : false , className: 'dt-body-right'  },      /* 1-Year */
+                    { "data": "Year3"       , "orderable" : false , className: 'dt-body-right'  },      /* 3-Year */
+                    { "data": "Year5"       , "orderable" : false , className: 'dt-body-right'  },      /* 5-Year */
+                    { "data": "Year10"      , "orderable" : false , className: 'dt-body-right'  },      /* 10-Year */
                     { "data": null          , "orderable" : false , className: 'dt-body-center', defaultContent:"", "align":"center" },
 
                 ]
@@ -416,7 +416,7 @@ export default {
             var options = {
                 title: " ",
                 align: "start",
-                width: 940,
+                width: $(window).width()*0.58,
                 height: 300,
                 colors: vm.performChartColors,
                 vAxis: { title: "" },
@@ -459,26 +459,68 @@ export default {
 
                     }).then(response => {
                         console.log(response.data);
+
                         if (response.data) {
-                            var chartList = response.data.chartList;
                             var etpPerformanceList = response.data.etpPerformanceList;
-
-                        /* 차트 출력 */
-                            var items = [];
-                            if (chartList && chartList.length > 0) {
-                                items = chartList;
-                            }
-
-                            arrToData = new google.visualization.arrayToDataTable( items, false);
-
-                            if( chart01 ) {
-                                chart01.draw( arrToData, options );
-                            }
 
                         /* 테이블 정보 출력 */
                             if( table01 ) {
                                 table01.rows.add( etpPerformanceList ).draw();                        
                             }
+
+                        /* 차트 출력 */
+                        var items = [] 
+
+                        items.push(['string']);
+                        items.push(['1-Week']);
+                        items.push(['1-Month']);
+                        items.push(['3-Month']);
+                        items.push(['YTD']);
+                        items.push(['1-Year']);
+                        items.push(['3-Year']);
+                        items.push(['5-Year']);
+                        items.push(['10-Year']);
+
+                    
+                        for (let i = 0; i < table01.rows().data().length; i++) {
+                            var data = table01.rows().data()[i];
+
+                            // 첫번째 ROW 범위
+                            items[0][i+1] = data.f16002;           
+
+                            for (let x = 0; x < table01.rows().data().length; x++) {   
+                                var item = table01.rows().data()[x];
+
+                                // 데이터                    
+                                items[1][x+1] = Number(item.Week1);
+                                items[2][x+1] = Number(item.Month1);
+                                items[3][x+1] = Number(item.Month3);
+                                items[4][x+1] = Number(item.YTD);
+                                items[5][x+1] = Number(item.Year1);
+                                items[6][x+1] = Number(item.Year3);
+                                items[7][x+1] = Number(item.Year5);
+                                items[8][x+1] = Number(item.Year10);
+                            }
+                        }
+                
+                    
+                            var chart_data = new google.visualization.arrayToDataTable( items);
+
+                            // Set chart options
+                            var options = {'title':'',
+                                        'width':$(window).width()*0.58,
+                                        'height':'300',
+                                        'colors': ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde'],                           
+                                        'legend': {
+                                            position: 'left'
+                                        },
+                                        seriesType: 'bars',
+                                        
+                            };
+
+                            // Instantiate and draw our chart, passing in some options.
+                            var chart = new google.visualization.ComboChart( document.getElementById('etp_comboChart_div') );
+                            chart.draw(chart_data, options);
                         }
                     });
                 }
