@@ -16,37 +16,57 @@
 
             <v-tabs-items v-model="tab">
                 <v-tab-item>
-                    <today></today>
+                    <today  @fn_receiveIndexData = "fn_receiveIndexData"></today>
                 </v-tab-item>
                 <v-tab-item>
                     <indexBiz></indexBiz>
                 </v-tab-item>
-        </v-tabs-items>
-      </v-flex>
+            </v-tabs-items>
+        </v-flex>
+
+        <v-flex>
+            <IndexDetailDialog v-if="showDialog"  :paramData="paramData" :showDialog="showDialog"  @fn_closePop = "fn_closePop"></IndexDetailDialog>
+        </v-flex>
+
     </v-layout>
 </template>
 
 <script>
 
-import today   from  './today.vue'
-import indexBiz   from  './indexBiz.vue'
+import today   from  './today.vue';
+import indexBiz   from  './indexBiz.vue';
+import IndexDetailDialog from "../../Index/Manage/IndexDetailDialog.vue";
 
 export default {
-        data() {
-            return {
-                tab: null,
-                drawer:"",
-                search:"",
-                items: ['TODAY', '지수사업자별'],
+
+    data() {
+        return {
+            tab: null,
+            drawer:"",
+            search:"",
+            items: ['TODAY', '지수사업자별'],
+
+            paramData : {},
+            showDialog : false,
     	};
     },    
     components: {
         today     : today,
-        indexBiz     : indexBiz,
+        indexBiz  : indexBiz,
+        IndexDetailDialog : IndexDetailDialog
     },
     created: function() {
     },
     methods: {
+        fn_receiveIndexData : function( param ) {
+            this.paramData = param;
+
+            this.showDialog =   true;
+        },
+
+        fn_closePop : function( param ) {
+            this.showDialog =   false;
+        }
     }
 
 }

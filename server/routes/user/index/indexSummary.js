@@ -313,10 +313,13 @@ var getIndexBaseInfo = function (req, res) {
         var mapper = req.app.get("mapper");
         // var options = {id:'admin'};
         
+        var market_id = req.query.market_id;
+        var jisu_cd = req.query.jisu_cd;
+        var large_type = req.query.large_type;
         var options = {
-            large_type : req.query.large_type,
-            jisu_cd: req.query.jisu_cd,
-            market_id: req.query.market_id
+            large_type : large_type == null ? ' ': large_type,
+            jisu_cd: jisu_cd == null ? ' ': jisu_cd,
+            market_id: market_id == null ? ' ': market_id
         };
 
         util.log("options", JSON.stringify(options));
@@ -408,10 +411,13 @@ var getIndexInEtpInfo = function (req, res) {
         var mapper = req.app.get("mapper");
         // var options = {id:'admin'};
         
+        var market_id = req.query.market_id;
+        var jisu_cd = req.query.jisu_cd;
+        var large_type = req.query.large_type;
         var options = {
-            large_type : req.query.large_type,
-            jisu_cd: req.query.jisu_cd,
-            market_id: req.query.market_id
+            large_type : large_type == null ? ' ': large_type,
+            jisu_cd: jisu_cd == null ? ' ': jisu_cd,
+            market_id: market_id == null ? ' ': market_id
         };
 
         util.log("options", JSON.stringify(options));
