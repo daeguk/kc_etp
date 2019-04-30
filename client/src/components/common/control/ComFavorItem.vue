@@ -273,7 +273,7 @@ export default {
                                 },
                             ],
                             select: {
-                                style:    'multi',
+                                style:    'single',
                                 selector: 'td:first-child'
                             },
                             paging: false,
@@ -315,7 +315,7 @@ export default {
                                 },
                             ],
                             select: {
-                                style:    'multi',
+                                style:    'single',
                                 selector: 'td:first-child'
                             },
                             paging: false,
@@ -348,7 +348,7 @@ export default {
                                 },
                             ],
                             select: {
-                                style:    'multi',
+                                style:    'single',
                                 selector: 'td:first-child'
                             },
                             paging: false,
@@ -381,7 +381,7 @@ export default {
                                 },
                             ],
                             select: {
-                                style:    'multi',
+                                style:    'single',
                                 selector: 'td:first-child'
                             },
                             paging: false,
