@@ -1,7 +1,7 @@
 <template>
     <v-container>
-        <v-layout justify-center column fill-height>
-            <v-flex >
+        <v-layout justify-center column fill-height>        
+        <v-flex >
         <v-card>
             <v-card flat>
                 <v-card-title primary-title>
@@ -27,15 +27,11 @@
                     </thead>
             </table>
         </v-card> 
-         </v-flex>    
+         </v-flex>     
          <v-flex>
              <ConfirmDialog ref="confirm"></ConfirmDialog>
-         </v-flex>
-         
+         </v-flex>   
         </v-layout>
-
-
-             
     </v-container>    
 
 </template>

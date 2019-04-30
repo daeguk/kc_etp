@@ -111,7 +111,7 @@
                     </v-card>
                 </v-card>
             </v-flex>
-            <!---테이블1 end--->
+            <!-- 테이블1 end -->
             <ComFavorItem></ComFavorItem>
         </v-layout>
     </v-container>

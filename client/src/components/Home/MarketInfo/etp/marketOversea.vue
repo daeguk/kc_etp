@@ -2,7 +2,7 @@
     <v-container>
         <v-layout row wrap class="content_margin">
             
-            <!---테이블 start--->
+            <!-- 테이블 start -->
             <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12 mt-3>
                 <v-card flat>
                     <v-card-title primary-title>
@@ -43,7 +43,7 @@
                     </v-card>
                 </v-card>
             </v-flex>            
-            <!---테이블 end--->            
+            <!-- 테이블 end -->            
 
             <ComFavorItem></ComFavorItem>
         </v-layout>

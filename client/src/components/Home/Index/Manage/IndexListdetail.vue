@@ -128,8 +128,8 @@ export default {
             axios.get(Config.base_url + "/user/index/getIndexBaseInfo", {
                     params: {
                         jisu_cd : vm.$route.query.jisu_cd,
-                        market_id : vm.$route.query.market_id
-                        
+                        market_id : vm.$route.query.market_id,
+                        large_type : vm.$route.query.large_type
                     }
             }).then(response => {
                 // console.log(response);
@@ -148,42 +148,44 @@ export default {
         Indexchart: function(term) {
             // Load the Visualization API and the corechart package.
             google.charts.load('current', {'packages':['corechart']});
-
+                        
             // 주기 디폴트
             if (!term) term = '1M';
 
+            var jisu_cd = this.$route.query.jisu_cd; 
+            var market_id = this.$route.query.market_id;
+            var large_type = this.$route.query.large_type;
+
             // Set a callback to run when the Google Visualization API is loaded.
-            google.charts.setOnLoadCallback(drawChart(this.$route.query.jisu_cd, this.$route.query.market_id));
+            google.charts.setOnLoadCallback(drawChart(jisu_cd, market_id, large_type, term));
 
             // Callback that creates and populates a data table,
             // instantiates the pie chart, passes in the data and
             // draws it.
       
-            function drawChart(jisu_cd, market_id, term) {
-                
-                
+            function drawChart(jisu_cd, market_id, large_type, term) {
+                            
                 // Create the data table.
                 var data = new google.visualization.DataTable();
-                data.addColumn('string', 'date');
-                
-
-                // Set chart options
-                var options = {'title':' ',
-                            'width':'100%',
-                            'height':'300px',
-                            'hAxis':{format:'yyyy-MM-dd HH:mm:ss'}};
-                
-                
+                data.addColumn('date', 'date');
+            
                 axios.get(Config.base_url + "/user/index/getIndexEtpHistoryData", {                    
                     params: {
                         jisu_cd : jisu_cd,
                         market_id : market_id,
+                        large_type : large_type,
                         term : term
                     }
                 }).then(response => {
 
-                    var INDEX_NM = response.data.results[0].INDEX_NM;
-                    var ETP_NM = response.data.results[0].ETP_NM;
+                    var INDEX_NM = "";
+                    var ETP_NM = "";
+
+                    if (response.data.results != null) {
+                        var INDEX_NM = response.data.results[0].INDEX_NM;
+                        var ETP_NM = response.data.results[0].ETP_NM;
+                    }
+
                     data.addColumn('number', INDEX_NM);
 
                     // ETP 정보가 있으면 추가 
@@ -193,22 +195,56 @@ export default {
 
                     // console.log(response);
                     if (response.data.success == false) {
-                        alert("지수정보가 없습니다."); 
+                        alert("정보가 없습니다."); 
+
+                        data.addRows(
+                            []
+                        );
+
+                         // Set chart options
+                        var options = {'title':' ',
+                                'height':'300',
+                                'colors':['#a52714', '#0000ff', '#ff00000', '#00ff00'],
+                                'hAxis':{
+                                    format: "MM.dd",
+                                    ticks: data.getDistinctValues(0),
+                                },
+                            };
+                        // Instantiate and draw our chart, passing in some options.
+                        var chart = new google.visualization.LineChart(document.getElementById('index_chart_div'));
+
+                        
+                        chart.draw(data, options);
                     } else {
                         var items = [] 
 
                         for (let item of response.data.results) {
                             if (ETP_NM != null) {
-                                items.push([item.trd_dd, item.close_idx, item.ept_close_idx]);
+                                items.push([new Date(item.trd_dd), item.close_idx, item.ept_close_idx]);
                             } else {
-                                items.push([item.trd_dd, item.close_idx]);
+                                items.push([new Date(item.trd_dd), item.close_idx]);
                             }
+                          
                         }
 
                         data.addRows(
                             items
                         );
 
+                         // Set chart options
+                        var options = {'title':' ',
+                                'height':'300',
+                                'colors':['#a52714', '#0000ff', '#ff00000', '#00ff00'],
+                                'hAxis':{
+                                    format: "MM.dd",
+                                    ticks: data.getDistinctValues(0),
+                                },
+                        };
+
+                        if (term == "1D" || term == "1W") {
+                            options.hAxis.format = "HH:mm";
+                            options.hAxis.ticks = data.getDistinctValues(0);
+                        }
                         // Instantiate and draw our chart, passing in some options.
                         var chart = new google.visualization.LineChart(document.getElementById('index_chart_div'));
 
@@ -216,10 +252,6 @@ export default {
                         chart.draw(data, options);
                     }
                 });
-
-
-                
-                
             }
         },
     } 

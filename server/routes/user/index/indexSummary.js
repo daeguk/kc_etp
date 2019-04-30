@@ -165,13 +165,13 @@ var getindexSubscribeList = function (req, res) {
 
 
 var updateIndexOpenYn = function(req, res) {
-    
+ 
     try {
         console.log('indexSummary=>updateIndexOpenYn 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
-
+ 
         var params = {
             JISU_ID : req.body.params.JISU_ID,
             INST_CD : req.body.params.INST_CD
@@ -278,7 +278,7 @@ var getIndexSummaryHist = function (req, res) {
 
         var stmt = mapper.getStatement('index', 'selectIndexSummaryHist', options, {language:'sql', indent: '  '});
         console.log(stmt);
-
+ 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -314,7 +314,7 @@ var getIndexBaseInfo = function (req, res) {
         // var options = {id:'admin'};
         
         var options = {
-            large_type : req.session.large_type,
+            large_type : req.query.large_type,
             jisu_cd: req.query.jisu_cd,
             market_id: req.query.market_id
         };
@@ -360,7 +360,7 @@ var getIndexEtpHistoryData = function (req, res) {
         // var options = {id:'admin'};
         
         var options = {
-            large_type : req.session.large_type,
+            large_type : req.query.large_type,
             jisu_cd: req.query.jisu_cd,
             market_id: req.query.market_id,
             term: req.query.term
@@ -409,7 +409,7 @@ var getIndexInEtpInfo = function (req, res) {
         // var options = {id:'admin'};
         
         var options = {
-            large_type : req.session.large_type,
+            large_type : req.query.large_type,
             jisu_cd: req.query.jisu_cd,
             market_id: req.query.market_id
         };
@@ -545,7 +545,7 @@ var getIndexImportanceList = function (req, res) {
         // var options = {id:'admin'};
         
         var options = {
-            large_type : req.session.large_type,
+            large_type : req.query.large_type,
             jisu_cd: req.query.jisu_cd,
             market_id: req.query.market_id
         };

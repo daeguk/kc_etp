@@ -89,7 +89,7 @@ var etn_grid = null;
                                     'className': 'select-checkbox',
                                 },],
                                 select: {
-                                    style:    'multi',
+                                    style:    'single',
                                     selector: 'td:first-child'
                                 },
                                 paging: false,

@@ -5,16 +5,8 @@
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">Performance</h4>
                     <div class="graph_02_w">
-                        <div class="graph_box" style="width:28%">그래프 라인</div>
-                        <div style="width:8%">1-Week</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%">1-Month비중</div>
-                        <div style="width:8%"></div>
+                        <div class="graph_box"></div>
+                        <div id="perf_chart"></div>
                     </div>
                    <v-card flat>
                      <table id="perf_table" class="tbl_type" style="width:100%">
@@ -36,7 +28,7 @@
                              <th></th>
                              <th></th>
                              <th>1-Week</th>
-                             <th>1-Month비중</th>
+                             <th>1-Month</th>
                              <th>3-Month</th>
                              <th>YTD</th>
                              <th>1-Year</th>
@@ -50,18 +42,18 @@
 
                      
                     </v-card>
-                    <!---자산추가 팝업--->
+                    <!---자산추가 팝업 -->
                     <v-layout row>
                         <v-btn outline small color="primary" dark v-on:click="showJongMokPop">
                             <v-icon small color="primary">add</v-icon>자산추가
                         </v-btn>
                         <jongmokPopup @selectedItem="getSelectedItem" @hideJongMokPop="hideJongMokPop" :showDialog="jongMokDialog"></jongmokPopup>
                     </v-layout>
-                    <!--자산추가 팝업 end--->
+                    <!--자산추가 팝업 end -->
                 </div>
             </v-flex>
             <v-flex xs12 flat>
-                <!---비중정보 팝업--->
+                <!---비중정보 팝업 -->
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">포트폴리오</h4>
                     <v-subheader>
@@ -127,22 +119,28 @@ import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 import select from 'datatables.net-select'
 import Config from '@/js/config.js'
-var importance_grid = null;
+import { index_common } from '../../Index/mixins_index.js';
+
 var perf_table = null;
 export default {
+    props: ["basicData"],
     data() {
         return {
             tab: null,
             items: ["ETF", "ETN", "INDEX"],
-            jongMokDialog: false,
             dialog: false,
+            jongMokDialog: false,
             results: [],
             importance_cnt:0,
             search:"",
 
-            modalFlag: false
+            modalFlag: false,
+            importance_grid_id : "importance_grid",
+            importance_chart_id : "importance_chart",
+            param: {}
         };
     },
+    mixins : [ index_common ],
     components: {
         jongmokPopup: jongmokPopup,
     },
@@ -153,12 +151,28 @@ export default {
         
         var vm = this;
 
-        vm.$root.$infopoptab1 = vm.$refs.$infopoptab1;
-        vm.getIndexImportanceList();
+        if(     this.basicData 
+            &&  this.basicData.jisu_cd
+            &&  this.basicData.large_type
+            &&  this.basicData.market_id
+        ) {
+            this.param.jisu_cd      =   this.basicData.jisu_cd;
+            this.param.large_type   =   this.basicData.large_type;
+            this.param.market_id    =   this.basicData.market_id;
+        }
+        else if(   
+                vm.$route.query.jisu_cd  
+            &&  vm.$route.query.large_type  
+            &&  vm.$route.query.market_id  
+        ) {
+            this.param.jisu_cd      =   this.$route.query.jisu_cd;
+            this.param.large_type   =   this.$route.query.large_type;
+            this.param.market_id    =   this.$route.query.market_id;
+        }        
 
-        $('#perf_table, tbody').on('click', 'button', function () {
-            var data = perf_table.row($(this).parents('tr')).remove().draw();
-        });
+
+        vm.$root.$infopoptab1 = vm.$refs.$infopoptab1;
+
 
         perf_table = $('#perf_table').DataTable( {
             "processing": true,
@@ -219,62 +233,26 @@ export default {
         }); 
     
 
-        vm.getIndexAnalysisInfo();
+        if(     this.param
+            &&  this.param.jisu_cd
+            &&  this.param.market_id
+        ) {
+
+            vm.getIndexImportanceList( this.param );
+
+            $('#perf_table, tbody').on('click', 'button', function () {
+                var data = perf_table.row($(this).parents('tr')).remove().draw();
+
+                vm.performance_chart();
+            });
+
+            vm.getIndexAnalysisInfo();
+        }
 
     },
     methods: {
 
-        getIndexImportanceList: function() {
-            console.log("getIndexImportanceList");
-            axios.get(Config.base_url + "/user/index/getIndexImportanceList", {
-                    params: {
-                        jisu_cd : this.$route.query.jisu_cd,
-                        market_id : this.$route.query.market_id
-                    }
-                }).then(response => {
-                    // console.log(response);
-                    if (response.data.success == false) {
-                        alert("비중 목록이 없습니다");
-                    } else {
-                        var items = response.data.results;
-                        
-                        //console.log("response=" + JSON.stringify(items));
-                        this.results = items;
-                        this.importance_cnt = this.results.length;
-
-                        // 차트 호출
-                        this.importance_chart(items);
-                        
-                        importance_grid = $('#importance_grid').DataTable( {
-                            "processing": true,
-                            "serverSide": false,
-                            "info": false,   // control table information display field
-                            "stateSave": true,  //restore table state on page reload,
-                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                            scrollY:        '500px',
-                            scrollCollapse: true,
-                            select: {
-                                style:    'multi',
-                                selector: 'td:first-child'
-                            },
-                            paging: false,
-                            searching: false,
-                            data : this.results,
-                            columns: [
-                                { "data": "ISIN_CODE", "orderable": true},
-                                { "data": "JOING_NM", "orderable": true },
-                                { "data": "PERCNT", "orderable" : true},
-                                { "data": "GUBUN", "orderable" : true},
-                            ]
-                        }); 
-
-                        
-                    }
-                   
-                });
-        }, 
-
-        importance_chart: function(results) {
+        performance_chart: function() {
             // Load the Visualization API and the corechart package.
             google.charts.load('current', {'packages':['corechart']});
 
@@ -287,53 +265,67 @@ export default {
             // draws it.
       
             function drawChart() {
-                
-                
-                // Create the data table.
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', 'JOING_NM');
-                data.addColumn('number', 'PERCNT');
-
                
-                // Set chart options
+              
+                var items = [] 
+
+                items.push(['string']);
+                items.push(['1-Week']);
+                items.push(['1-Month']);
+                items.push(['3-Month']);
+                items.push(['YTD']);
+                items.push(['1-Year']);
+                items.push(['3-Year']);
+                items.push(['5-Year']);
+                items.push(['10-Year']);
+
+              
+                for (let i = 0; i < perf_table.rows().data().length; i++) {   
+                    var data = perf_table.rows().data()[i];
+                    // 첫번째 ROW 범위
+                    items[0][i+1] = data.F16002;           
+                    for (let x = 0; x < perf_table.rows().data().length; x++) {   
+                        var item = perf_table.rows().data()[x];
+                        // 데이터                    
+                        items[1][x+1] = Number(item.Week1);
+                        items[2][x+1] = Number(item.Month1);
+                        items[3][x+1] = Number(item.Month3);
+                        items[4][x+1] = Number(item.YTD);
+                        items[5][x+1] = Number(item.Year1);
+                        items[6][x+1] = Number(item.Year3);
+                        items[7][x+1] = Number(item.Year5);
+                        items[8][x+1] = Number(item.Year10);
+                    }
+                }
+        
+            
+                var chart_data = new google.visualization.arrayToDataTable( items);
+
+                 // Set chart options
                 var options = {'title':'',
-                            'width':'1250',
-                            'height':'300',
+                            'width':$(window).width()*0.58,
+                            'height':'230',
                             'colors': ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde'],                           
                             'legend': {
                                 position: 'left'
                             },
-                            'lineWidth': 5
+                            seriesType: 'bars',
                             
                 };
-                
-                
-                var items = [] 
-
-                for (let item of results) {
-                    
-                    if (items.length >= 5) break;
-
-                    items.push([item.JOING_NM, item.PERCNT]);
-
-                }
-
-                data.addRows(
-                    items
-                );
-
                 // Instantiate and draw our chart, passing in some options.
-                var chart = new google.visualization.PieChart(document.getElementById('importance_chart'));
-                chart.draw(data, options);
+                var chart = new google.visualization.ComboChart(document.getElementById('perf_chart'));
+                chart.draw(chart_data, options);
             }
         },
 
+
         getIndexAnalysisInfo: function() {
+            var vm = this;
             console.log("getIndexAnalysisInfo");
             axios.get(Config.base_url + "/user/index/getIndexAnalysisInfo", {
                     params: {
-                        jisu_cd : this.$route.query.jisu_cd,
-                        market_id : this.$route.query.market_id
+                        jisu_cd : vm.param.jisu_cd,
+                        market_id : vm.param.market_id
                     }
             }).then(response => {
                     // console.log(response);
@@ -341,10 +333,15 @@ export default {
                     alert("비중 목록이 없습니다");
                 } else {
                     var items = response.data.results;
-                        
+                    
                     console.log("response=" + JSON.stringify(items));
                     perf_table.clear().draw();
                     perf_table.rows.add(items).draw();
+
+                    // 그래프 실행
+                    setTimeout(function() {
+                        vm.performance_chart();
+                    }, 2500);
                 }
                    
             });
@@ -352,6 +349,7 @@ export default {
 
         getSelectedItem: function(sel_items, gubun) {
             var vm = this;
+            vm.jongMokDialog = false;
             for (let i = 0; i < sel_items.length; i++) {
                 
                 if (perf_table.rows().count() <= 4) {
@@ -362,7 +360,8 @@ export default {
                         }
                     ).count();
                     
-                    if (compare_cnt == 0) {
+
+                    if (compare_cnt == 0) {                        
                         perf_table.row.add(  {
                             F16012 : '',
                             F16013 : sel_items[i].JISU_CD,
@@ -375,7 +374,7 @@ export default {
                             Year3 : '6',
                             Year5 : '7',
                             Year10 : '8',
-                        } ).draw( false );
+                        } ).draw(false);                        
                     } else {
                         alert(sel_items[i].JISU_NM +"은 이미 추가된 자산입니다.");    
                     }
@@ -383,17 +382,19 @@ export default {
                     alert("자산 비교는 총 5개 까지 가능 합니다.");
                     break;
                 }
-
             }
+
+            vm.performance_chart();
         
         },
-        showJongMokPop: function() { 
-            this.jongMokDialog = true;
-        },        
+        showJongMokPop: function() {  
+                 this.jongMokDialog = true; 
+        },         
+     
+        hideJongMokPop: function() { 
+            this.jongMokDialog = false; 
+        }, 
 
-        hideJongMokPop: function() {
-            this.jongMokDialog = false;
-        },
     }
 }
 </script>

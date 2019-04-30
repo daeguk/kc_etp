@@ -72,14 +72,14 @@ module.exports = {
         
 
         //일반 MARKET INFO
-        { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getetfkorlist', method: 'getEtfKorList', session: 'uncheck', type: 'get' },
-        { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getetfforlist', method: 'getEtfForList', session: 'uncheck', type: 'get' },
-        { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getetnkorlist', method: 'getEtnKorList', session: 'uncheck', type: 'get' },
-        { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getetnforlist', method: 'getEtnForList', session: 'uncheck', type: 'get' },
-        { file: './user/marketinfo/etpinfo', path: '/user/marketinfo/getEtpList', method: 'getEtpList', session: 'uncheck', type: 'post' },
+        { file: './user/marketinfo/etpInfo', path: '/user/marketinfo/getetfkorlist', method: 'getEtfKorList', session: 'uncheck', type: 'get' },
+        { file: './user/marketinfo/etpInfo', path: '/user/marketinfo/getetfforlist', method: 'getEtfForList', session: 'uncheck', type: 'get' },
+        { file: './user/marketinfo/etpInfo', path: '/user/marketinfo/getetnkorlist', method: 'getEtnKorList', session: 'uncheck', type: 'get' },
+        { file: './user/marketinfo/etpInfo', path: '/user/marketinfo/getetnforlist', method: 'getEtnForList', session: 'uncheck', type: 'get' },
+        { file: './user/marketinfo/etpInfo', path: '/user/marketinfo/getEtpList', method: 'getEtpList', session: 'uncheck', type: 'post' },
         
-        { file: './user/marketInfo/marketInfo', path: '/user/marketinfo/getSectorEtpList', method: 'getSectorEtpList', session: 'uncheck', type: 'get' },
-        { file: './user/marketInfo/marketInfo', path: '/user/marketinfo/getMarketIndexList', method: 'getMarketIndexList', session: 'uncheck', type: 'get' },
+        { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getSectorEtpList', method: 'getSectorEtpList', session: 'uncheck', type: 'get' },
+        { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getMarketIndexList', method: 'getMarketIndexList', session: 'uncheck', type: 'get' },
 
         
         // 공통 

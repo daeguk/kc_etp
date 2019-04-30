@@ -40,10 +40,10 @@
                         </v-layout>
                     </v-card>
                 </div>
-                <!--table1 end--->
+                <!--table1 end -->
             </v-flex>
             <v-flex md6>
-                <!---table2--->
+                <!---table2 -->
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">INDEX Info</h4>
                     <v-card flat class="indexinfo_list_table">
@@ -78,7 +78,7 @@
                         </v-layout>
                     </v-card>
                 </div>
-                <!---table2 end--->
+                <!---table2 end -->
             </v-flex>
             <v-flex xs12>
                 <!--table3-->
@@ -119,7 +119,7 @@
                         </v-flex>
                     </v-layout>
                 </div>
-                <!--table3 end--->
+                <!--table3 end -->
             </v-flex>
         </v-layout>
     </v-container>

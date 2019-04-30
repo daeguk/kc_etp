@@ -1,5 +1,5 @@
 <template>
-<v-app>
+<v-container>
 
 
     <v-dialog v-model="message_dialog" :max-width="options.width" @keydown.esc="cancel" @keydown.enter="cancel" v-bind:style="{ zIndex: options.zIndex }">
@@ -68,7 +68,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-</v-app>    
+</v-container>    
 </template>
 
 <script>

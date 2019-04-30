@@ -72,7 +72,7 @@ export default {
         },
         movePage: function() {
             
-            this.$router.push({path: '/index/manage/IndexListdetail', query :{'jisu_cd':this.chartItem.code, 'market_id':this.chartItem.market_id}});
+            this.$router.push({path: '/index/manage/IndexListdetail', query :{'jisu_cd':this.chartItem.code, 'market_id':this.chartItem.market_id, 'large_type':this.chartItem.large_type}});
         }
     }
 }

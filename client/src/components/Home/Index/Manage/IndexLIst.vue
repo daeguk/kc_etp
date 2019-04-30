@@ -35,10 +35,11 @@
 
                        
         </v-layout>
-    </v-container>
-    <v-flex>
+         <v-flex>
              <ConfirmDialog ref="confirm"></ConfirmDialog>
-    </v-flex>
+        </v-flex>
+    </v-container>
+   
 </v-app>    
 </template>
 
@@ -91,12 +92,13 @@ export default {
         vm.getInfoIndexList();
 
         $('#index_table, tbody').on('click', 'button', function () {
+        
             var data = table.row($(this).parents('tr')).data();
            // alert("Name = " + JSON.stringify(data));
 
 
             
-            vm.movePage(data.JISU_CD, data.MARKET_ID);
+            vm.movePage(data.JISU_CD, data.MARKET_ID, data.LARGE_TYPE);
         
         });
 
@@ -132,7 +134,7 @@ export default {
                             "processing": true,
                             "serverSide": false,
                             "info": true,   // control table information display field
-                            "stateSave": true,  //restore table state on page reload,
+                           
                             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
                             paging: false,
                             searching: false,
@@ -169,8 +171,8 @@ export default {
                 return text.replace(/,/gi,"</br>");
             }
         },
-        movePage: function(jisu_cd, market_id) {
-            this.$router.push({path: '/index/manage/IndexListdetail', query :{'jisu_cd':jisu_cd, 'market_id':market_id}});
+        movePage: function(jisu_cd, market_id, large_type) {
+            this.$router.push({path: '/index/manage/IndexListdetail', query :{'jisu_cd':jisu_cd, 'market_id':market_id, 'large_type':large_type}});
         }
 
         

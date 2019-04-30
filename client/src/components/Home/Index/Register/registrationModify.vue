@@ -230,7 +230,7 @@
                     </v-card>
                 </div>
 
-                <!---부가정보 선택-->
+                <!-- 부가정보 선택-->
                 <div class="register_wrap">
                     <v-card flat xs12 class="register_t_w">
                         <h4>
@@ -400,10 +400,10 @@
                         </v-container>                        
                     </v-card>
                 </div>
-                <!---부가정보 선택 end-->
+                <!-- 부가정보 선택 end-->
 
 
-                <!---특정기관과 공유-->
+                <!-- 특정기관과 공유-->
                 <div class="register_wrap">
                     <v-card flat xs12 class="register_t_w">
                         <h4>
@@ -479,7 +479,7 @@
                                         </v-btn>
                                     </template>
 
-                                    <!---특정기관과의 공유 팝업-->
+                                    <!-- 특정기관과의 공유 팝업-->
                                     <v-card>
                                         <h5>
                                             <v-card-title ma-0>
@@ -541,7 +541,7 @@
                                             >공유하기</v-btn>
                                         </v-card>
                                     </v-card>
-                                    <!---특정기관과의 공유 팝업 end-->
+                                    <!-- 특정기관과의 공유 팝업 end-->
                                 </v-dialog>
                                 <b>사용자 추가</b>
                             </v-flex>
@@ -549,7 +549,7 @@
                         </v-container>
                     </v-card>
                 </div>
-                <!---특정기관과 공유 end-->
+                <!-- 특정기관과 공유 end-->
 
                 <div class="text-xs-center">
                     <p class="text_info1" v-if="modForm.status == '03'">

@@ -87,6 +87,7 @@ export default {
                 marginH: 20,
                 code: "DBF001",
                 market_id: "M168",
+                large_type: "FNGUIDE",
                 chartColor: "#B39DDB"
             },
             chartItem2: {
@@ -97,6 +98,7 @@ export default {
                 marginH: 20,
                 code: "DBF002",
                 market_id: "M168",
+                large_type: "FNGUIDE",
                 chartColor: "#9FA8DA"
             },
             chartItem3: {
@@ -107,6 +109,7 @@ export default {
                 marginH: 20,
                 code: "62801",
                 market_id: "M168",
+                large_type: "FNGUIDE",
                 chartColor: "#90CAF9"
             },
             boxItem1: {

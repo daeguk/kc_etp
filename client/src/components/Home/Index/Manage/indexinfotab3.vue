@@ -2,7 +2,7 @@
   <v-container fluid grid-list-md pa-0 mb-4>
   <v-layout row wrap>
     <v-flex md6> 
-      <!--table1--->
+      <!--table1 -->
       <div class="indexinfo_box01 ver1">
   <h4 class="mb-0">지수정보 구독 현황</h4>
   <v-data-table 
@@ -22,7 +22,7 @@
       <!--table1 end-->
     </v-flex>
     <v-flex md6>
-      <!--tabel2--->
+      <!--tabel2 -->
        <div class="indexinfo_box01 ver1">
         <h4 class="mb-0">지수정보 신청 현황</h4>
         <v-data-table :headers="headers2" :items="req_results" slot="extension" hide-actions>
@@ -36,7 +36,7 @@
             </template> 
         </v-data-table> 
     </div>
-      <!---table2--->
+      <!---table2 -->
     </v-flex>
     <v-flex>
         <ConfirmDialog ref="confirm"></ConfirmDialog>
