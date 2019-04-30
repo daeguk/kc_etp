@@ -10,6 +10,7 @@
                 ,ITEM.ITEM_CD
                 ,ITEM.F16002
                 ,ITEM.MARKET_ID
+                ,ITEM.LARGE_TYPE
             FROM (SELECT A.ITEM_SEQ 
                         ,A.GUBUN
                         ,A.TYPE_CD 
@@ -18,6 +19,7 @@
                         ,A.F16012 AS ITEM_CD
                         ,B.F16002
                         ,'' AS MARKET_ID
+                        ,A.LARGE_TYPE
                 FROM tm_favor_item A
                 INNER JOIN td_etp_basic B
                     ON A.F16012 = B.F16012
@@ -31,6 +33,7 @@
                     ,A.F16013 AS ITEM_CD
                     ,B.F16002
                     ,B.MARKET_ID
+                    ,A.LARGE_TYPE
                 FROM tm_favor_item A
                 INNER JOIN td_index_basic B
                 ON A.F16013 = B.F16013
