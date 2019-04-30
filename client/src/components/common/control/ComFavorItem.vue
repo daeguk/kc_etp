@@ -2,7 +2,7 @@
     <v-container>
         <v-layout>
             <v-flex>
-            <!--rightmenu---->
+            <!--rightmenu -->
             <v-card flat class="right_menu_w2">
                 <v-navigation-drawer
                     v-model="drawer"
@@ -44,7 +44,7 @@
 
                                     <v-tabs-items v-model="tab">
                                         <v-tab-item>
-                                            <!--오른쪽 메뉴 하단 리스트 영역--->
+                                            <!--오른쪽 메뉴 하단 리스트 영역 -->
                                             <v-layout row class="w100 pt-2">
                                                 <v-flex xs12>
                                                     <v-card flat>
@@ -56,28 +56,14 @@
                                                             </tr>
                                                         </thead>   
                                                     </table>
-                                                        <!--v-list two-line subheader>
-                                                            <v-list-tile
-                                                                v-for="(item, index) in favorItems"
-                                                                :key="index"
-                                                                class="right_menu_w3"
-                                                            >
-                                                                <v-list-tile-content
-                                                                    class="rm_con_h"
-                                                                >
-                                                                    <v-list-tile-title>{{ item.F16002 }}</v-list-tile-title>
-                                                                    <v-list-tile-sub-title>{{ item.ITEM_CD }}</v-list-tile-sub-title>
-                                                                </v-list-tile-content>
-                                                                <v-btn flat icon color="#c2c2c2" @click="deleteItem(item.ITEM_SEQ, item.GUBUN, item.ITEM_CD )"><v-icon>clear</v-icon></v-btn>
-                                                            </v-list-tile>
-                                                        </v-list-->
+
                                                         <v-btn outline small color="primary" dark v-on:click="showJongMokPop">
                                                             <v-icon small color="primary">add</v-icon>자산추가
                                                         </v-btn>
                                                     </v-card>
                                                 </v-flex>                                                
                                             </v-layout>
-                                            <!--오른쪽 메뉴 하단 리스트 영역--->
+                                            <!--오른쪽 메뉴 하단 리스트 영역 -->
                                         </v-tab-item>
                                         <v-tab-item>
 
@@ -89,7 +75,7 @@
                                             
                                             <v-tabs-items v-model="activeTab">
                                             <v-tab-item>
-                                                <!--etf 리스트 영역--->
+                                                <!-- etf 리스트 영역 -->
                                                 <v-layout row class="w100 pt-2">
                                                     <v-flex xs12>
                                                         <v-card flat>
@@ -101,26 +87,12 @@
                                                                     </tr>
                                                                 </thead>  
                                                             </table>
-                                                            <!--v-list two-line subheader>
-                                                                <v-list-tile
-                                                                    v-for="item in etfList"
-                                                                    :key="item.JISU_CD"
-                                                                    class="right_menu_w3"
-                                                                >
-                                                                    <v-list-tile-content
-                                                                        class="rm_con_h"
-                                                                    >
-                                                                        <v-list-tile-title>{{ item.JISU_NM }}</v-list-tile-title>
-                                                                        <v-list-tile-sub-title>{{ item.JISU_CD }}</v-list-tile-sub-title>
-                                                                    </v-list-tile-content>
-                                                                </v-list-tile>
-                                                            </v-list-->
                                                         </v-card>
                                                     </v-flex>
                                                 </v-layout>
                                             </v-tab-item>
                                             <v-tab-item>
-                                                <!--ETN 리스트 영역--->
+                                                <!--ETN 리스트 영역 -->
                                                 <v-layout row class="w100 pt-2">
                                                     <v-flex xs12>
                                                         <v-card flat>
@@ -132,26 +104,12 @@
                                                                     </tr>
                                                                 </thead>  
                                                             </table>
-                                                            <!--v-list two-line subheader>
-                                                                <v-list-tile
-                                                                    v-for="item in etnList"
-                                                                    :key="item.JISU_CD"
-                                                                    class="right_menu_w3"
-                                                                >
-                                                                    <v-list-tile-content
-                                                                        class="rm_con_h"
-                                                                    >
-                                                                        <v-list-tile-title>{{ item.JISU_NM }}</v-list-tile-title>
-                                                                        <v-list-tile-sub-title>{{ item.JISU_CD }}</v-list-tile-sub-title>
-                                                                    </v-list-tile-content>
-                                                                </v-list-tile>
-                                                            </v-list-->
                                                         </v-card>
                                                     </v-flex>
                                                 </v-layout>
                                             </v-tab-item>
                                             <v-tab-item>
-                                                <!--INDEX 리스트 영역--->
+                                                <!--INDEX 리스트 영역 -->
                                                 <v-layout row class="w100 pt-2">
                                                     <v-flex xs12>
                                                         <v-card flat>
@@ -163,20 +121,6 @@
                                                                     </tr>
                                                                 </thead>  
                                                             </table>
-                                                            <!--v-list two-line subheader>
-                                                                <v-list-tile
-                                                                    v-for="item in indexList"
-                                                                    :key="item.JISU_CD"
-                                                                    class="right_menu_w3"
-                                                                >
-                                                                    <v-list-tile-content
-                                                                        class="rm_con_h"
-                                                                    >
-                                                                        <v-list-tile-title>{{ item.JISU_NM }}</v-list-tile-title>
-                                                                        <v-list-tile-sub-title>{{ item.JISU_CD }}</v-list-tile-sub-title>
-                                                                    </v-list-tile-content>
-                                                                </v-list-tile>
-                                                            </v-list-->
                                                         </v-card>
                                                     </v-flex>
                                                 </v-layout>                                                 
@@ -187,9 +131,9 @@
                                     </v-tabs-items>
                                 </v-flex>
                             </v-layout>
-                            <!---자산추가 팝업--->
+                            <!---자산추가 팝업 -->
                             <jongmokPop @selectedItem="getSelectedItem" @hideJongMokPop="hideJongMokPop" :showDialog="jongMokDialog"></jongmokPop>
-                            <!--자산추가 팝업 end--->
+                            <!--자산추가 팝업 end -->
                         </v-list-tile-content>
                     </v-list>
                 </v-navigation-drawer>
@@ -198,7 +142,7 @@
             <v-flex>
                 <ConfirmDialog ref="confirm"></ConfirmDialog>
             </v-flex>
-            <!--rightmenu end--->
+            <!--rightmenu end -->
         </v-layout>
     </v-container>
 </template>
@@ -246,42 +190,43 @@ export default {
         
     },
     mounted: function() {
+
         // 메시지 박스 참조
         this.$root.$confirm = this.$refs.confirm;
         
         var vm = this;
 
         favor_grid = $('#favor_grid').DataTable( {
-                            "processing": true,
-                            "serverSide": false,
-                            "info": false,   // control table information display field
-                            "stateSave": true,  //restore table state on page reload,
-                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                            thead: {
-                                display:'none'
-                            },
-                            "ordering": false,
-                            "columnDefs": [
-                                {  
-                                    "render": function ( data, type, row ) {
-                                        let htm = "<span>";
-                                        htm += "           <b>"+data+"</b>";
-                                        htm += "            <br>"+row.ITEM_CD;
-                                        return htm;
-                                    },
-                                    "targets": 0
-                                },
-                            ],
-                            select: {
-                                style:    'single',
-                                selector: 'td:first-child'
-                            },
-                            paging: false,
-                            searching: false,
-                            columns: [
-                                { "data": "F16002", "orderable": false, width:'95%'},
-                                { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>clear</button><span class='tooltiptext' style='width:40px;'>삭제</span></div>"},
-                            ]
+            "processing": true,
+            "serverSide": false,
+            "info": false,   // control table information display field
+            "stateSave": true,  //restore table state on page reload,
+            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+            thead: {
+                display:'none'
+            },
+            "ordering": false,
+            "columnDefs": [
+                {  
+                    "render": function ( data, type, row ) {
+                        let htm = "<span>";
+                        htm += "           <b>"+data+"</b>";
+                        htm += "            <br>"+row.ITEM_CD;
+                        return htm;
+                    },
+                    "targets": 0
+                },
+            ],
+            select: {
+                style:    'single',
+                selector: 'td:first-child'
+            },
+            paging: false,
+            searching: false,
+            columns: [
+                { "data": "F16002", "orderable": false, width:'95%'},
+                { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>clear</button><span class='tooltiptext' style='width:40px;'>삭제</span></div>"},
+            ]
         }); 
 
 
@@ -294,102 +239,102 @@ export default {
          });
 
         etf_table = $('#etf_table').DataTable( {
-                            "processing": true,
-                            "serverSide": false,
-                            "info": false,   // control table information display field
-                            "stateSave": true,  //restore table state on page reload,
-                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                            thead: {
-                                display:'none'
-                            },
-                            "ordering": false,
-                            "columnDefs": [
-                                {  
-                                    "render": function ( data, type, row ) {
-                                        let htm = "<span>";
-                                        htm += "           <b>"+data+"</b>";
-                                        htm += "            <br>"+row.JISU_CD;
-                                        return htm;
-                                    },
-                                    "targets": 0
-                                },
-                            ],
-                            select: {
-                                style:    'single',
-                                selector: 'td:first-child'
-                            },
-                            paging: false,
-                            searching: false,
-                            columns: [
-                                { "data": "JISU_NM", "orderable": false},
-                                { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>ETP</span></div>"},
-                            ]
+            "processing": true,
+            "serverSide": false,
+            "info": false,   // control table information display field
+            "stateSave": true,  //restore table state on page reload,
+            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+            thead: {
+                display:'none'
+            },
+            "ordering": false,
+            "columnDefs": [
+                {  
+                    "render": function ( data, type, row ) {
+                        let htm = "<span>";
+                        htm += "           <b>"+data+"</b>";
+                        htm += "            <br>"+row.JISU_CD;
+                        return htm;
+                    },
+                    "targets": 0
+                },
+            ],
+            select: {
+                style:    'single',
+                selector: 'td:first-child'
+            },
+            paging: false,
+            searching: false,
+            columns: [
+                { "data": "JISU_NM", "orderable": false},
+                { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>ETP</span></div>"},
+            ]
         }); 
 
         etn_table = $('#etn_table').DataTable( {
-                            "processing": true,
-                            "serverSide": false,
-                            "info": false,   // control table information display field
-                            "stateSave": true,  //restore table state on page reload,
-                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                            thead: {
-                                display:'none'
-                            },
-                            "ordering": false,
-                            "columnDefs": [
-                                {  
-                                    "render": function ( data, type, row ) {
-                                        let htm = "<span>";
-                                        htm += "           <b>"+data+"</b>";
-                                        htm += "            <br>"+row.JISU_CD;
-                                        return htm;
-                                    },
-                                    "targets": 0
-                                },
-                            ],
-                            select: {
-                                style:    'single',
-                                selector: 'td:first-child'
-                            },
-                            paging: false,
-                            searching: false,
-                            columns: [
-                                { "data": "JISU_NM", "orderable": false},
-                                { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>ETP</span></div>"},
-                            ]
+            "processing": true,
+            "serverSide": false,
+            "info": false,   // control table information display field
+            "stateSave": true,  //restore table state on page reload,
+            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+            thead: {
+                display:'none'
+            },
+            "ordering": false,
+            "columnDefs": [
+                {  
+                    "render": function ( data, type, row ) {
+                        let htm = "<span>";
+                        htm += "           <b>"+data+"</b>";
+                        htm += "            <br>"+row.JISU_CD;
+                        return htm;
+                    },
+                    "targets": 0
+                },
+            ],
+            select: {
+                style:    'single',
+                selector: 'td:first-child'
+            },
+            paging: false,
+            searching: false,
+            columns: [
+                { "data": "JISU_NM", "orderable": false},
+                { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>ETP</span></div>"},
+            ]
         }); 
 
         index_table = $('#index_table').DataTable( {
-                            "processing": true,
-                            "serverSide": false,
-                            "info": false,   // control table information display field
-                            "stateSave": true,  //restore table state on page reload,
-                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                            thead: {
-                                display:'none'
-                            },
-                            "ordering": false,
-                            "columnDefs": [
-                                {  
-                                    "render": function ( data, type, row ) {
-                                        let htm = "<span>";
-                                        htm += "           <b>"+data+"</b>";
-                                        htm += "            <br>"+row.JISU_CD;
-                                        return htm;
-                                    },
-                                    "targets": 0
-                                },
-                            ],
-                            select: {
-                                style:    'single',
-                                selector: 'td:first-child'
-                            },
-                            paging: false,
-                            searching: false,
-                            columns: [
-                                { "data": "JISU_NM", "orderable": false},
-                                { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>INDEX</span></div>"},
-                            ]
+            "processing": true,
+            "serverSide": false,
+            "info": false,   // control table information display field
+            "stateSave": true,  //restore table state on page reload,
+            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+            thead: {
+                display:'none'
+            },
+            "ordering": false,
+            "columnDefs": [
+                {  
+                    "render": function ( data, type, row ) {
+                        let htm = "<span>";
+                        htm += "           <b>"+data+"</b>";
+                        htm += "            <br>"+row.JISU_CD;
+                        return htm;
+                    },
+                    "targets": 0
+                },
+            ],
+            select: {
+                style:    'single',
+                selector: 'td:first-child'
+            },
+            paging: false,
+            searching: false,
+            columns: [
+                { "data": "JISU_NM", "orderable": false},
+                { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>INDEX</span></div>"},
+            ]
         }); 
 
 
@@ -406,8 +351,8 @@ export default {
             console.log("getSectorEtpList");
             var vm = this;
             axios.get(Config.base_url + "/user/common/getFavorItemInfo", {
-                    params: {
-                    }
+                params: {
+                }
             }).then(function(response) {
                 console.log(response);
                 if (response.data.success == false) {
@@ -425,11 +370,11 @@ export default {
             console.log("deleteItem");
             var vm = this;
             axios.post(Config.base_url + "/user/common/deleteFavorItem", {
-                    params: {
-                        item_seq : item_seq,
-                        gubun : gubun, 
-                        item_cd : item_cd
-                    }
+                params: {
+                    item_seq : item_seq,
+                    gubun : gubun, 
+                    item_cd : item_cd
+                }
             }).then(function(response) {
                 if (response.data.success == false) {
                     vm.$root.$confirm.open('확인','삭제 중 오류가 발생했습니다.',{},1);
@@ -442,7 +387,9 @@ export default {
         /* 자산추가 팝업에서 선택된 종목 추가 */
         getSelectedItem: function(sel_items, gubun) {
             var vm = this;
+
             vm.jongMokDialog = false;
+
             var addFavorItems = [];
 
             for (let i = 0; i < sel_items.length; i++) {
@@ -495,6 +442,7 @@ export default {
                     vm.getFavorItemInfo();
                 }
             });
+
         },
         /* 종목팝업 show */
         showJongMokPop: function() {
@@ -508,62 +456,63 @@ export default {
         getEtnList: function() {
             console.log("etn_grid");
             axios.get(Config.base_url + "/user/index/getETNList", {
-                    params: {
-                    }
-                }).then(response => {
-                    // console.log(response);
-                    if (response.data.success == false) {
-                        this.$root.$confirm.open('확인','종목정보가 없습니다.',{},1);
-                    } else {
-                        var items = response.data.results;
-                        
-                        etn_table.clear().draw();
-                        etn_table.rows.add(items).draw();
-                                         
-                    }
-                   
-                });
+                params: {
+                }
+            }).then(response => {
+                // console.log(response);
+                if (response.data.success == false) {
+                    this.$root.$confirm.open('확인','종목정보가 없습니다.',{},1);
+                } else {
+                    var items = response.data.results;
+                    
+                    etn_table.clear().draw();
+                    etn_table.rows.add(items).draw();
+                                        
+                }
+                
+            });
         }, 
 
         /* 전체 종목 etf 종목리스트 */
         getEtfList: function() {
             console.log("etn_grid");
             axios.get(Config.base_url + "/user/index/getETFList", {
-                    params: {
-                    }
-                }).then(response => {
-                    // console.log(response);
-                    if (response.data.success == false) {
-                        this.$root.$confirm.open('확인','종목정보가 없습니다.',{},1);
-                    } else {
-                        var items = response.data.results;
-                        
-                        etf_table.clear().draw();
-                        etf_table.rows.add(items).draw();
-               
-                    }
-                   
-                });
+                params: {
+                }
+            }).then(response => {
+                // console.log(response);
+                if (response.data.success == false) {
+                    this.$root.$confirm.open('확인','종목정보가 없습니다.',{},1);
+                } else {
+                    var items = response.data.results;
+                    
+                    etf_table.clear().draw();
+                    etf_table.rows.add(items).draw();
+            
+                }
+                
+            });
         }, 
+
         /* 전체 종목 index 종목리스트 */
         getIndexList: function() {
             console.log("etn_grid");
             axios.get(Config.base_url + "/user/index/getInfoIndexList", {
-                    params: {
-                    }
-                }).then(response => {
-                    // console.log(response);
-                    if (response.data.success == false) {
-                        this.$root.$confirm.open('확인','종목정보가 없습니다.',{},1);
-                    } else {
-                        var items = response.data.results;
-                        
-                        index_table.clear().draw();
-                        index_table.rows.add(items).draw();
-                       
-                    }
-                   
-                });
+                params: {
+                }
+            }).then(response => {
+                // console.log(response);
+                if (response.data.success == false) {
+                    this.$root.$confirm.open('확인','종목정보가 없습니다.',{},1);
+                } else {
+                    var items = response.data.results;
+                    
+                    index_table.clear().draw();
+                    index_table.rows.add(items).draw();
+                    
+                }
+                
+            });
         },
         
     }
