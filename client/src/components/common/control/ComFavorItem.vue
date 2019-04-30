@@ -142,6 +142,7 @@
             <v-flex>
                 <ConfirmDialog ref="confirm"></ConfirmDialog>
             </v-flex>
+
             <!--rightmenu end -->
         </v-layout>
     </v-container>
@@ -179,12 +180,12 @@ export default {
             favorItems: [],
             etnList: [],
             etfList: [],
-            indexList: []
+            indexList: [],
         };
     },
     components: {
         jongmokPop : jongmokPop,
-        ConfirmDialog : ConfirmDialog
+        ConfirmDialog : ConfirmDialog,
     },
     computed: {
         
@@ -196,6 +197,8 @@ export default {
         
         var vm = this;
 
+
+    /* [관심종목] 테이블 */
         favor_grid = $('#favor_grid').DataTable( {
             "processing": true,
             "serverSide": false,
@@ -236,8 +239,18 @@ export default {
             var data = table.row($(this).parents('tr')).data();
 
             vm.deleteItem(data.ITEM_SEQ, data.GUBUN, data.ITEM_CD );
-         });
+        });
 
+        //  관심종목 더블 클릭시
+        $('#favor_grid tbody').on('dblclick', 'td', function () {
+            var table = $('#favor_grid').DataTable();
+            var data = table.row($(this).parents('tr')).data();
+
+            vm.fn_detailPop( data );
+        });        
+
+
+    /* [전체종목 -> ETF] 테이블 */
         etf_table = $('#etf_table').DataTable( {
             "processing": true,
             "serverSide": false,
@@ -269,8 +282,20 @@ export default {
                 { "data": "JISU_NM", "orderable": false},
                 { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>ETP</span></div>"},
             ]
-        }); 
+        });
 
+
+        //  ETF 에서 그래프 선택시
+        $('#etf_table tbody').on('click', 'button', function () {
+            var table = $('#etf_table').DataTable();
+            var data = table.row($(this).parents('tr')).data();
+
+            vm.fn_detailPop( data );
+        });
+
+
+
+    /* [전체종목 -> ETN] 테이블 */
         etn_table = $('#etn_table').DataTable( {
             "processing": true,
             "serverSide": false,
@@ -302,8 +327,18 @@ export default {
                 { "data": "JISU_NM", "orderable": false},
                 { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>ETP</span></div>"},
             ]
-        }); 
+        });
 
+        //  ETN 에서 그래프 선택시
+        $('#etn_table tbody').on('click', 'button', function () {
+            var table = $('#etn_table').DataTable();
+            var data = table.row($(this).parents('tr')).data();
+
+            vm.fn_detailPop( data );
+        });
+
+
+    /* [전체종목 -> INDEX] 테이블 */
         index_table = $('#index_table').DataTable( {
             "processing": true,
             "serverSide": false,
@@ -335,7 +370,15 @@ export default {
                 { "data": "JISU_NM", "orderable": false},
                 { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>INDEX</span></div>"},
             ]
-        }); 
+        });
+
+        //  INDEX 에서 그래프 선택시
+        $('#index_table tbody').on('click', 'button', function () {
+            var table = $('#index_table').DataTable();
+            var data = table.row($(this).parents('tr')).data();
+
+            vm.fn_detailPop( data );
+        });
 
 
         this.getFavorItemInfo();
@@ -513,8 +556,7 @@ export default {
                 }
                 
             });
-        },
-        
+        },        
     }
 };
 </script>

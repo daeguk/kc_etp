@@ -132,6 +132,10 @@
             <!---테이블2 end-->
 
             <ComFavorItem></ComFavorItem>
+
+            <v-flex>
+                <IndexDetailDialog v-if="showIndexDetailDialog"  :paramData="paramData" :showDialog="showIndexDetailDialog"  @fn_closePop = "fn_closePop"></IndexDetailDialog>
+            </v-flex>
         </v-layout>
     </v-container>
 </template>
@@ -148,7 +152,8 @@ import _ from "lodash";
 import Config       from "@/js/config.js";
 import util       from "@/js/util.js";
 import ComFavorItem from "@/components/common/control/ComFavorItem"; 
-import AreaChart   from  '@/components/Common/Chart/AreaChart.vue'
+import AreaChart   from  '@/components/Common/Chart/AreaChart.vue';
+import IndexDetailDialog from "@/components/Home/Index/Manage/IndexDetailDialog.vue";
 
 var krxIndexTable = null;
 var fnGuideIndexTable = null;
@@ -166,11 +171,15 @@ export default {
             fnCurrentPage: 0,
             fnTotalPage:0,
             chartLoadFlag: true,
+
+            paramData : {},
+            showIndexDetailDialog : false,
         };
     },
     components: {
         ComFavorItem: ComFavorItem,
-        AreaChart: AreaChart
+        AreaChart: AreaChart,
+        IndexDetailDialog : IndexDetailDialog
     },
     computed: {
         
@@ -534,7 +543,27 @@ export default {
         },
         formatNumber:function(num) {
             return util.formatNumber(num);
-        }
+        },
+
+        fn_detailPop : function( param ) {
+
+            console.log( "today.vue -> fn_detailPop" );
+            console.log( param );
+
+            if( param.GUBUN == "2" ) {
+                this.paramData.F16013       =   param.ITEM_CD;
+                this.paramData.LARGE_TYPE   =   param.LARGE_TYPE;
+                this.paramData.MARKET_ID    =   param.MARKET_ID;
+
+                this.showIndexDetailDialog  =   true;
+            }
+        },
+
+        fn_closePop : function( param ) {
+            console.log( "today.vue -> fn_closePop" );
+
+            this.showIndexDetailDialog =   false;
+        }                
         
     }
 };
