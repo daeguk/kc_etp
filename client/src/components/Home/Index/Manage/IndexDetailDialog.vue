@@ -108,7 +108,7 @@ export default {
             toggle_exclusive: 2,
             toggle_multiple: [0, 1, 2],
             tab: null,
-            items: ["기본정보", "분석정보", "정보공개 목록"],
+            items: ["기본정보", "분석정보"],
             results:{},
             etpInfos:{},
             index_dialog:false,
