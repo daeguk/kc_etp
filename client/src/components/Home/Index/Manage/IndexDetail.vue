@@ -132,6 +132,11 @@ export default {
             vm.form.resultsCnt  =   paramIndexDetailList.length;
         },
 
+
+        /*
+         * 종목찾기 데이터를 조회한다.
+         * 2019-04-16  bkLove(촤병국)
+         */
         fn_getIndexJongmokList : function( paramJongmokDataList, paramForm ) {
 
             var vm = this;

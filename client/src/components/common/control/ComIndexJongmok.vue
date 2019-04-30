@@ -177,12 +177,13 @@ export default {
 
         console.log( "ComIndexJongmok.vue -> mounted" );
 
-        /* 우측 quick 메뉴의 지수정보에서 첫번째 데이터를 조회하여 지수 및 상세정보를 조회한다. */
-        vm.fn_getIndexListByFirst();
-
-
         vm.$nextTick().then(() => {
 
+            /* 우측 quick 메뉴의 지수정보에서 첫번째 데이터를 조회하여 지수 및 상세정보를 조회한다. */
+            vm.fn_getIndexListByFirst();
+
+
+            /* 지수 테이블 초기 설정 */
             jisuTable   =   $("#jisuTable").DataTable({
                 processing: true,
                 language: {
@@ -216,7 +217,8 @@ export default {
                 ]
             });
 
-            // 테이블
+
+            // 지수에서 행 선택시
             $("#jisuTable tbody").on("click", "td", function() {
                 var table = $("#jisuTable").DataTable();
                 var rowData = table.row( $(this).parents('tr') ).data();
@@ -267,6 +269,7 @@ export default {
             });
         },        
 
+
         /*
          * 지수종목상세 정보를 조회한다. ( 지수관리 -> 지수종목상세 탭 클릭시 )
          * 2019-04-16  bkLove(촤병국)
@@ -298,6 +301,7 @@ export default {
 
         },
 
+
         /*
          * 우측 quick 메뉴의 지수정보에서 첫번째 데이터를 조회하여 지수 및 상세정보를 조회한다.
          * 2019-04-16  bkLove(촤병국)
@@ -325,6 +329,7 @@ export default {
                 }
             });
         },
+
 
         /*
          * 우측 quick 메뉴의 지수정보를 조회한다. ( 지수관리 -> 지수종목상세 ->  quick 메뉴 -> 검색영역 )
@@ -354,6 +359,7 @@ export default {
                 }
             });
         },
+
 
         /*
          * 지수 조회현황 팝업을 오픈한다.
