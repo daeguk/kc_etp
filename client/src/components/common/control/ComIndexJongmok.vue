@@ -281,8 +281,6 @@ export default {
             var vm = this;
 
             console.log( currentFileName + "." + "fn_getIndexDetailList" );
-            console.log( rowData );
-            console.log( paramForm );
 
             axios.post(Config.base_url + "/user/index/getIndexDetailList", {
                 data:  rowData
@@ -313,6 +311,8 @@ export default {
 
             var vm = this;
 
+            console.log( currentFileName + "." + "fn_getIndexJongmokList" );
+
             if( vm.form.jongmokSearch.length < 2 ) {
                 alert( "2자 이상 입력해 주세요.");
                 return false;
@@ -342,7 +342,6 @@ export default {
 
             var vm = this;
 
-            var CurrentFileName = document.URL.substring(document.URL.lastIndexOf("/") + 1, document.URL.lastIndexOf("/") + 30);
             console.log( CurrentFileName + "." + "fn_getIndexListByFirst" );
 
             axios.post(Config.base_url + "/user/index/getIndexList", {
@@ -371,6 +370,8 @@ export default {
 
             var vm = this;
 
+            console.log( currentFileName + "." + "fn_getIndexList" );
+
             if( jisuTable ) {
                 jisuTable.clear().draw();
             }
@@ -384,6 +385,7 @@ export default {
                 if (response && response.data) {
                     vm.indexDataList = response.data.dataList;
 
+                    jisuTable.clear().draw();
                     jisuTable.rows.add( vm.indexDataList ).draw();                    
                 }
             });
