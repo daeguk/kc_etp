@@ -22,7 +22,11 @@ module.exports = {
         { file: './user/etp/etpApplyList', path: '/user/etp/getEtpApplyIndexCnt', method: 'getEtpApplyIndexCnt', session: 'uncheck', type: 'get' },
         { file: './user/etp/etpApplyList', path: '/user/etp/getEtpApplyCodeCnt', method: 'getEtpApplyCodeCnt', session: 'uncheck', type: 'get' },
         { file: './user/etp/etpApplyList', path: '/user/etp/getEtpApplyInavCnt', method: 'getEtpApplyInavCnt', session: 'uncheck', type: 'get' },
-
+        
+        { file: './user/etp/etpregister', path: '/user/etp/getEtpRegisterView', method: 'getEtpRegisterView', session: 'check', type: 'get' },
+        { file: './user/etp/etpregister', path: '/user/etp/insertEtpRegister', method: 'insertEtpRegister', session: 'check', type: 'post' },
+        { file: './user/etp/etpregister', path: '/user/etp/updateEtpRegister', method: 'updateEtpRegister', session: 'check', type: 'post' },
+        
         { file: './user/etp/etpDetail'      , path: '/user/etp/getEtpBasic'         , method: 'getEtpBasic'         , session: 'check', type: 'post' },
         { file: './user/etp/etpDetail'      , path: '/user/etp/getEtpInfo'          , method: 'getEtpInfo'          , session: 'check', type: 'post' },
         { file: './user/etp/etpDetail'      , path: '/user/etp/getEtpChartData'     , method: 'getEtpChartData'     , session: 'check', type: 'post' },
