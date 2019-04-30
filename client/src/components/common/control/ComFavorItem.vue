@@ -246,7 +246,7 @@ export default {
             var table = $('#favor_grid').DataTable();
             var data = table.row($(this).parents('tr')).data();
 
-            vm.fn_detailPop( data );
+            vm.$emit( "fn_detailPop", data );
         });        
 
 
@@ -290,7 +290,7 @@ export default {
             var table = $('#etf_table').DataTable();
             var data = table.row($(this).parents('tr')).data();
 
-            vm.fn_detailPop( data );
+            vm.$emit( "fn_detailPop", data );
         });
 
 
@@ -334,7 +334,7 @@ export default {
             var table = $('#etn_table').DataTable();
             var data = table.row($(this).parents('tr')).data();
 
-            vm.fn_detailPop( data );
+            vm.$emit( "fn_detailPop", data );
         });
 
 
@@ -377,7 +377,7 @@ export default {
             var table = $('#index_table').DataTable();
             var data = table.row($(this).parents('tr')).data();
 
-            vm.fn_detailPop( data );
+            vm.$emit( "fn_detailPop", data );
         });
 
 
