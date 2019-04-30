@@ -51,7 +51,6 @@ import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
 import ComIndexJongmok from "@/components/common/control/ComIndexJongmok.vue"; 
 
 var tableIndexList = null;
-var currentFileName = null;
 
 export default {
     components: {
@@ -62,7 +61,6 @@ export default {
         return {
 
             indexBasic : {},                    /* 선택된 지수의 마스터 정보 */
-            indexDetailList : [],               /* 선택된 지수의 상세 목록 */
       
             form: {
                     jisuSearch: ""              /* quick Menu 에서 지수검색 데이터 */
@@ -73,8 +71,7 @@ export default {
         };
     },
     mounted () {
-        currentFileName =   document.URL.substring( document.URL.lastIndexOf("/") + 1, document.URL.lastIndexOf("/") + 30 );
-        console.log( currentFileName + "." + "mounted" );
+        console.log( "IndexDetail.vue -> mounted" );
     },
     created: function() {},
     beforeDestory: function() {},
@@ -89,8 +86,7 @@ export default {
 
             var vm = this;
 
-            console.log( currentFileName + "." + "fn_getIndexDetailList" );
-            console.log( paramForm );
+            console.log( "IndexDetail.vue -> fn_getIndexDetailList" );
 
             if( paramIndexBasic ) {
                 vm.indexBasic   =   paramIndexBasic;
@@ -140,7 +136,7 @@ export default {
 
             var vm = this;
 
-            console.log( currentFileName + "." + "fn_getIndexJongmokList" );
+            console.log( "IndexDetail.vue -> fn_getIndexJongmokList" );
 
             if( paramForm ) {
                 vm.form =   paramForm;

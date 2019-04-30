@@ -117,27 +117,7 @@
                                                 </tr>
                                             </thead>  
                                         </table>      
-<!--                              
-                                        <v-list two-line subheader>
 
-                                            <v-list-tile
-                                                v-for="item in indexDataList"
-                                                :key="item.f16002"
-                                                @click.stop
-                                                class="right_menu_w3"
-                                            >
-                                                <v-list-tile-content class="rm_con_h" @click="fn_getSelectedIndexList(item)">
-                                                    <v-list-tile-title>{{ item.f16002 }}</v-list-tile-title>
-                                                    <v-list-tile-sub-title>{{ item.f16013 }}</v-list-tile-sub-title>
-                                                </v-list-tile-content>
-
-                                                <v-list-tile-avatar>
-                                                    <v-icon class="lighten-1 white--text">feedback</v-icon>
-                                                </v-list-tile-avatar>
-                                            </v-list-tile>
-
-                                        </v-list>
--->                                        
                                     </v-card>
                                 </v-flex>
                             </v-layout>
@@ -164,7 +144,6 @@ import indexDetailrtmenupop from "@/components/Home/Index/Manage/indexDetailrtme
 
 
 var jisuTable = null;
-var currentFileName = null;
 
 export default {
     props: [  ],
@@ -174,30 +153,17 @@ export default {
             dialog: false,
             mini: false,
 
-            jongmokDataList : [],
-
-
-            jisuHeader: [
-                { title: "Home", icon: "dashboard" },
-                { title: "About", icon: "question_answer" }
-            ],
-            indexDataList : [],                 /* quick Menu 에서 지수목록 데이터 */
-
             indexBasic : {},                    /* 선택된 지수의 마스터 정보 */
-            indexDetailList : [],               /* 선택된 지수의 상세 목록 */
-
 
             /* 지수 조치현황 정보 */
             indexFixData    :   {},             /* 지수조치 현황의 기본정보 */
             indexFixJongmokInoutList : [],      /* 지수조치 종목 편출입 정보 */
             indexFixModifyList      : [],       /* 지수채용 주식수 변경 정보 */
-                    
-            rowData : {},                       /* 지수목록에서 선택된 데이터 */
+
             form: {
                     jisuSearch: ""              /* quick Menu 에서 지수검색 데이터 */
                 ,   jisuSearchYn : "Y"
                 ,   jongmokSearch: ""           /* quick Menu 에서 종목검색 데이터 */
-                ,   resultsCnt  : 0
             },
         };
     },
@@ -209,8 +175,7 @@ export default {
 
         var vm = this;
 
-        currentFileName =   document.URL.substring( document.URL.lastIndexOf("/") + 1, document.URL.lastIndexOf("/") + 30 );
-        console.log( currentFileName + "." + "mounted" );
+        console.log( "ComIndexJongmok.vue -> mounted" );
 
         /* 우측 quick 메뉴의 지수정보에서 첫번째 데이터를 조회하여 지수 및 상세정보를 조회한다. */
         vm.fn_getIndexListByFirst();
@@ -280,7 +245,8 @@ export default {
 
             var vm = this;
 
-            console.log( currentFileName + "." + "fn_getIndexDetailList" );
+            console.log( "ComIndexJongmok.vue -> fn_getIndexDetailList" );
+            
 
             axios.post(Config.base_url + "/user/index/getIndexDetailList", {
                 data:  rowData
@@ -294,11 +260,9 @@ export default {
                     }
 
                     var indexDetailList =   response.data.indexDetailList;
-                    vm.indexDetailList  =   indexDetailList;
 
                     vm.form.jisuSearchYn    =   "Y";
-                    vm.form.resultsCnt      =   indexDetailList.length;
-                    vm.$emit( "fn_getIndexDetailList", vm.indexBasic, vm.indexDetailList, vm.form );
+                    vm.$emit( "fn_getIndexDetailList", vm.indexBasic, indexDetailList, vm.form );
                 }
             });
         },        
@@ -311,7 +275,7 @@ export default {
 
             var vm = this;
 
-            console.log( currentFileName + "." + "fn_getIndexJongmokList" );
+            console.log( "ComIndexJongmok.vue -> fn_getIndexJongmokList" );
 
             if( vm.form.jongmokSearch.length < 2 ) {
                 alert( "2자 이상 입력해 주세요.");
@@ -325,10 +289,10 @@ export default {
             }).then(response => {
 
                 if (response && response.data) {
-                    vm.jongmokDataList = response.data.dataList;
+                    var jongmokDataList = response.data.dataList;
 
                     vm.form.jisuSearchYn =   "N";
-                    vm.$emit( "fn_getIndexJongmokList", vm.jongmokDataList, vm.form );
+                    vm.$emit( "fn_getIndexJongmokList", jongmokDataList, vm.form );
                 }
             });
 
@@ -342,7 +306,7 @@ export default {
 
             var vm = this;
 
-            console.log( CurrentFileName + "." + "fn_getIndexListByFirst" );
+            console.log( "ComIndexJongmok.vue -> fn_getIndexListByFirst" );
 
             axios.post(Config.base_url + "/user/index/getIndexList", {
                 data: {
@@ -353,10 +317,10 @@ export default {
                 if (response && response.data) {
                     var indexDataList = response.data.dataList;
                     if( indexDataList && indexDataList.length == 1 ) {
-                        vm.rowData = indexDataList[0];
+                        var rowData = indexDataList[0];
 
                         vm.form.jisuSearchYn =   "Y";
-                        vm.fn_getIndexDetailList( vm.rowData, vm.form );
+                        vm.fn_getIndexDetailList( rowData, vm.form );
                     }
                 }
             });
@@ -370,7 +334,7 @@ export default {
 
             var vm = this;
 
-            console.log( currentFileName + "." + "fn_getIndexList" );
+            console.log( "ComIndexJongmok.vue -> fn_getIndexList" );
 
             if( jisuTable ) {
                 jisuTable.clear().draw();
@@ -383,10 +347,10 @@ export default {
             }).then(response => {
 
                 if (response && response.data) {
-                    vm.indexDataList = response.data.dataList;
+                    var indexDataList = response.data.dataList;
 
                     jisuTable.clear().draw();
-                    jisuTable.rows.add( vm.indexDataList ).draw();                    
+                    jisuTable.rows.add( indexDataList ).draw();                    
                 }
             });
         },
