@@ -99,7 +99,7 @@
     -->
     <select id="getIndexBasicByEtpJisuCd">
     <![CDATA[
-        SELECT      /* etpDetail.getIndexBasic ETP기초지수코드 와 ETP기초지수MID 에 속한 IndexBasic 의 기본정보를 조회한다. */
+        SELECT      /* etpDetail.getIndexBasicByEtpJisuCd ETP기초지수코드 와 ETP기초지수MID 에 속한 IndexBasic 의 기본정보를 조회한다. */
 
                     td_index_basic.F12506                               AS  f12506              /* 입회일 */
                 ,   td_index_basic.F16013                               AS  f16013              /* 단축코드 */
