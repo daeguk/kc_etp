@@ -282,9 +282,9 @@ export default {
 
                         for (let item of response.data.results) {
                             if (ETP_NM != null) {
-                                items.push([new Date(item.trd_dd), item.close_idx, item.ept_close_idx]);
+                                items.push([new Date(item.trd_dd), Number(item.close_idx), Number(item.ept_close_idx)]);
                             } else {
-                                items.push([new Date(item.trd_dd), item.close_idx]);
+                                items.push([new Date(item.trd_dd), Number(item.close_idx)]);
                             }
                           
                         }

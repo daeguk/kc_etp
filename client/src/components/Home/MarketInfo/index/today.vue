@@ -394,12 +394,15 @@ export default {
                     vm.fnTotalPage = vm.fnGuideLists.length;
 
                     // KRX INDEX DRAW (페이지 크기만큼만 잘라내어 보여 준다.)
-                    krxIndexTable.clear().draw();
-                    krxIndexTable.rows.add(vm.getSliceData(vm.krsLists, 'krx')).draw();
-
+                    if (vm.krxTotalPage > 0) {
+                        krxIndexTable.clear().draw();
+                        krxIndexTable.rows.add(vm.getSliceData(vm.krsLists, 'krx')).draw();
+                    }
                     // FNGUIDE INDEX DRAW
-                    fnGuideIndexTable.clear().draw();
-                    fnGuideIndexTable.rows.add(vm.getSliceData(vm.fnGuideLists, 'fn')).draw();
+                    if (vm.fnTotalPage > 0) {
+                        fnGuideIndexTable.clear().draw();
+                        fnGuideIndexTable.rows.add(vm.getSliceData(vm.fnGuideLists, 'fn')).draw();
+                    }
 
                     /*구글 챠트 사용 하지 않음 차후 사용 가능성이 있어 그대로 둠*/
                     /*var idx = 0;
@@ -498,32 +501,34 @@ export default {
             var curPage = 0;
             if (gubun == "krx") {
                 curPage = vm.pageLength + vm.krxCurrentPage;
-
-                if (curPage <= items.length) {
-                    vm.krxCurrentPage = curPage;
-                    return _.slice(items, 0, curPage);
-                } else {
-                    if (vm.krxCurrentPage < items.length) {
-                        vm.krxCurrentPage = items.length;
+                if (items != null) {
+                    if (curPage <= items.length) {
+                        vm.krxCurrentPage = curPage;
                         return _.slice(items, 0, curPage);
                     } else {
-                        return null;
+                        if (vm.krxCurrentPage < items.length) {
+                            vm.krxCurrentPage = items.length;
+                            return _.slice(items, 0, curPage);
+                        } else {
+                            return null;
+                        }
                     }
                 }
             } else if (gubun == "fn") {
                 curPage = vm.pageLength + vm.fnCurrentPage;
-
-                if (curPage <= items.length) {
-                    vm.fnCurrentPage = curPage;
-                    return _.slice(items, 0, curPage);
-                } else {            
-                    if (vm.fnCurrentPage < items.length) {
-                        vm.fnCurrentPage = items.length;
+                if (items != null) {
+                    if (curPage <= items.length) {
+                        vm.fnCurrentPage = curPage;
                         return _.slice(items, 0, curPage);
-                    } else {
+                    } else {            
+                        if (vm.fnCurrentPage < items.length) {
+                            vm.fnCurrentPage = items.length;
+                            return _.slice(items, 0, curPage);
+                        } else {
+                            return null;
+                        }
                         return null;
                     }
-                    return null;
                 }
             } 
         }, 
