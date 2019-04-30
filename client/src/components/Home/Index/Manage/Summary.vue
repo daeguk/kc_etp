@@ -164,39 +164,43 @@ export default {
                     if (response.data.success == false) {
                         vm.$root.$confirm.open('', '지수정보가 없습니다.', {}, 1);
                     } else {
+                        if(response.data.results1[0]) {
+                            console.log(response.data.results1);
+                            console.log(response.data.results1[0].F16002);
 
-                        console.log(response.data.results1);
-                        console.log(response.data.results1[0].F16002);
+                            vm.cardItem1.name = response.data.results1[0].F16002;
+                            vm.chartItem1.code = response.data.results1[0].F16013;
 
-                        vm.cardItem1.name = response.data.results1[0].F16002;
-                        vm.chartItem1.code = response.data.results1[0].F16013;
+                            
+                            //debugger;
+                            vm.chartItem1.market_id = response.data.results1[0].market_id;
 
+                            vm.cardItem1.subTitle =
+                                response.data.results1[0].F16002;
+                            vm.cardItem1.close_idx =
+                                response.data.results1[0].F15001;
+                            vm.cardItem1.fluc_idx =
+                                response.data.results1[0].F15472;
+                            vm.cardItem1.fluc_rate =
+                                response.data.results1[0].F15004;
+                        }
+
+                        if(response.data.results2[0]) {
+                            vm.cardItem2.name = response.data.results2[0].F16002;
+                            vm.chartItem2.code = response.data.results2[0].F16013;
+                            vm.chartItem2.market_id = response.data.results2[0].MARKET_ID;
+                            vm.cardItem2.subTitle =
+                                response.data.results2[0].F16002;
+                            vm.cardItem2.close_idx =
+                                response.data.results2[0].F15001;
+                            vm.cardItem2.fluc_idx =
+                                response.data.results2[0].F15472;
+                            vm.cardItem2.fluc_rate =
+                                response.data.results2[0].F15004;
+                        }
                         
-                        //debugger;
-                        vm.chartItem1.market_id = response.data.results1[0].market_id;
-
-                        vm.cardItem1.subTitle =
-                            response.data.results1[0].F16002;
-                        vm.cardItem1.close_idx =
-                            response.data.results1[0].F15001;
-                        vm.cardItem1.fluc_idx =
-                            response.data.results1[0].F15472;
-                        vm.cardItem1.fluc_rate =
-                            response.data.results1[0].F15004;
-
-                        vm.cardItem2.name = response.data.results2[0].F16002;
-                        vm.chartItem2.code = response.data.results2[0].F16013;
-                        vm.chartItem2.market_id = response.data.results2[0].MARKET_ID;
-                        vm.cardItem2.subTitle =
-                            response.data.results2[0].F16002;
-                        vm.cardItem2.close_idx =
-                            response.data.results2[0].F15001;
-                        vm.cardItem2.fluc_idx =
-                            response.data.results2[0].F15472;
-                        vm.cardItem2.fluc_rate =
-                            response.data.results2[0].F15004;
-
                         vm.$EventBus.$emit("getIndexSummaryHist", "loading");
+                        
                     }
                 });
         }
