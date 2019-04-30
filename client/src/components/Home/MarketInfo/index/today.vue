@@ -131,7 +131,7 @@
             </v-flex>
             <!---테이블2 end-->
 
-            <ComFavorItem></ComFavorItem>
+            <ComFavorItem   @fn_detailPop = "fn_detailPop"></ComFavorItem>
 
             <v-flex>
                 <IndexDetailDialog  v-if="showIndexDetailDialog"  
@@ -139,8 +139,8 @@
                                     :paramData="paramData" 
                                     :showDialog="showIndexDetailDialog"  
 
-                                    @fn_closePop = "fn_closePop"
-                                    @fn_detailPop = "fn_detailPop"></IndexDetailDialog>
+                                    @fn_closePop = "fn_closePop">
+                </IndexDetailDialog>
             </v-flex>
         </v-layout>
     </v-container>
