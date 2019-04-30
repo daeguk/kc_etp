@@ -201,7 +201,6 @@ export default {
                 } else {
                     var items = response.data.results;
                     vm.results = items[0];
-                    console.log("response=" + JSON.stringify(vm.results));
                     //this.list_cnt = this.results.length;
                 }
             });
