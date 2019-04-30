@@ -177,6 +177,10 @@ export default {
 
     methods: {
 
+        fn_showDialog : function( param ) {
+            this.showDialog =   param;
+        },
+
         fn_close : function() {
             this.$emit( "fn_closePop", "close" );
         },
