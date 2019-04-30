@@ -24,7 +24,9 @@ const DB_INFO = {
     database: config.database,
     multipleStatements: true,
     connectionLimit:25,
-    waitForConnections:false
+    waitForConnections:false,
+    supportBigNumbers: true,
+    bigNumberStrings: true,
 };
 
 module.exports = class {

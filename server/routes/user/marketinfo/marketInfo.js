@@ -203,6 +203,7 @@ var getMarketIndexList = function (req, res) {
                             market_id : marketItem.market_id,
                         };
                 
+                        util.log("현재가=", marketItem.f15001)
                         var stmt = mapper.getStatement('common.item', 'getTodayIntraInfo', params, {language:'sql', indent: '  '});
 
 

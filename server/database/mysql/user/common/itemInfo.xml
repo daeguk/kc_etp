@@ -98,21 +98,21 @@
         SELECT date_format(BAS.F12506, "%Y.%m.%d") F12506
               ,BAS.F16013
               ,BAS.F16002
-              ,format(BAS.F15009, '###,###,###') F15009
+              ,BAS.F15009
               ,BAS.F15010
               ,BAS.F15011
               ,CASE    WHEN    DATE_FORMAT(BAS.ANNO_DATE, '%Y%m%d') > DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y%m%d') 
                             THEN    "Y" 
                             ELSE    "N" 
                        END                                                 AS  NEW_YN              /* new 태그 표시여부 */
-              ,format(BAS.F15001, '###,###,###') F15001
-              ,format(BAS.F15007, '###,###,###') F15007
-              ,format(BAS.F15015, '###,###,###') F15015
-              ,format(BAS.F15023, '###,###,###') F15023
+              ,BAS.F15001
+              ,BAS.F15007
+              ,BAS.F15015
+              ,BAS.F15023
               ,BAS.F15472
               ,BAS.F15004
               ,BAS.F15006
-              ,format(BAS.F15028, '###,###,###') F15028
+              ,BAS.F15028
               ,BAS.LARGE_TYPE
               ,BAS.MIDDLE_TYPE
               ,BAS.MARKET_ID

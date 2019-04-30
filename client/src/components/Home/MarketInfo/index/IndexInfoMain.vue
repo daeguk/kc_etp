@@ -18,9 +18,7 @@
                 <v-tab-item>
                     <today  @fn_receiveIndexData = "fn_receiveIndexData"></today>
                 </v-tab-item>
-                <v-tab-item>
-                    <indexBiz></indexBiz>
-                </v-tab-item>
+              
             </v-tabs-items>
         </v-flex>
 
@@ -34,7 +32,6 @@
 <script>
 
 import today   from  './today.vue';
-import indexBiz   from  './indexBiz.vue';
 import IndexDetailDialog from "../../Index/Manage/IndexDetailDialog.vue";
 
 export default {
@@ -44,7 +41,7 @@ export default {
             tab: null,
             drawer:"",
             search:"",
-            items: ['TODAY', '지수사업자별'],
+            items: ['TODAY'],
 
             paramData : {},
             showDialog : false,
@@ -52,7 +49,6 @@ export default {
     },    
     components: {
         today     : today,
-        indexBiz  : indexBiz,
         IndexDetailDialog : IndexDetailDialog
     },
     created: function() {

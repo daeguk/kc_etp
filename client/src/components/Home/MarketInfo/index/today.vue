@@ -3,16 +3,16 @@
         <v-layout row wrap class="content_margin">
             <v-flex xs12>
                 <v-layout>
-                    <v-flex xs3 pr-2 v-for="marketRep in marketRepList" :key="marketRep.f16002">
+                    <v-flex xs3 pr-2 v-for="(marketRep, index) in marketRepList" :key="marketRep.f16002">
                         <v-card flat class="marketindex_card">
                             <v-card-title>
                                 <h4>{{marketRep.f16002}}</h4>
                                 <v-spacer></v-spacer>
-                                <div class="index_num1">{{new Intl.NumberFormat().format(marketRep.f15001)}}</div>
+                                <div class="index_num1">{{formatNumber(marketRep.f15001)}}</div>
                             </v-card-title>
                             <v-card-text class="index_graph_w">
-                                <div class="graph_v2" :id="marketRep.f16013 + marketRep.market_id"></div>
-                                
+                                <!--div class="graph_v2" :id="marketRep.f16013 + marketRep.market_id"></div-->
+                                <AreaChart v-if=chartLoadFlag :chartItem="{chartId: marketRep.f16013 + marketRep.market_id, width: '150', height: '100',  marginW: 10, marginH: 20, chartColor: '#B39DDB'}" :dataSet="getDataSet(index)"></AreaChart>
                                 <div class="index_num2 text_red" v-if="marketRep.f15004 >= 0">
                                     {{marketRep.f15472}}
                                     <br>({{marketRep.f15004}}%)
@@ -146,7 +146,9 @@ import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import _ from "lodash";
 import Config       from "@/js/config.js";
+import util       from "@/js/util.js";
 import ComFavorItem from "@/components/common/control/ComFavorItem"; 
+import AreaChart   from  '@/components/Common/Chart/AreaChart.vue'
 
 var krxIndexTable = null;
 var fnGuideIndexTable = null;
@@ -163,10 +165,12 @@ export default {
             krxTotalPage:0,
             fnCurrentPage: 0,
             fnTotalPage:0,
+            chartLoadFlag: true,
         };
     },
     components: {
         ComFavorItem: ComFavorItem,
+        AreaChart: AreaChart
     },
     computed: {
         
@@ -208,15 +212,21 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = ""
                             if (row.F15004 >= 0) {
-                                htm = "<span class='align_r text_red'>"+data;
+                                htm = "<span class='align_r text_red'>"+util.formatNumber(data);
                             } else {
-                                htm = "<span class='align_r text_blue'>"+data;
+                                htm = "<span class='align_r text_blue'>"+util.formatNumber(data);
                             }
                             htm += "<br><span class='text_S'>"+row.F15004+"%</span>";
                             htm += "   </span>";
                             return htm;
                             },
                     "targets": 1
+                },
+                {
+                    "render": function ( data, type, row ) {
+                        return util.formatNumber(data);                            
+                    },
+                    "targets": 2
                 },
                 {
                     "render": function ( data, type, row ) {
@@ -286,15 +296,21 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = ""
                             if (row.F15004 >= 0) {
-                                htm = "<span class='align_r text_red'>"+data;
+                                htm = "<span class='align_r text_red'>"+util.formatNumber(data);
                             } else {
-                                htm = "<span class='align_r text_blue'>"+data;
+                                htm = "<span class='align_r text_blue'>"+util.formatNumber(data);
                             }
                             htm += "<br><span class='text_S'>"+row.F15004+"%</span>";
                             htm += "   </span>";
                             return htm;
                             },
                     "targets": 1
+                },
+                {
+                    "render": function ( data, type, row ) {
+                        return util.formatNumber(data);                            
+                    },
+                    "targets": 2
                 },
                 {
                     "render": function ( data, type, row ) {
@@ -370,18 +386,29 @@ export default {
                     fnGuideIndexTable.clear().draw();
                     fnGuideIndexTable.rows.add(vm.getSliceData(vm.fnGuideLists, 'fn')).draw();
 
-                    var idx = 0;
+                    /*구글 챠트 사용 하지 않음 차후 사용 가능성이 있어 그대로 둠*/
+                    /*var idx = 0;
                     for (let marketInfo of vm.marketRepList) {
                         vm.$nextTick().then(() => {
                             vm.Indexchart(marketInfo.f16013 + marketInfo.market_id, vm.graphinfos[idx]);
 
                             idx++;
                         });
-                    }
+                    }*/
                 }
             });
         },
         
+        getDataSet: function(idx) {
+            var vm = this;
+            var graphinfo = vm.graphinfos[idx];
+            var items = [];
+            for (let item of graphinfo) {
+                items.push([item.trd_his, item.close_idx]);
+            }
+
+            return items;
+        },
         Indexchart: function(id, graphinfo) {
             // Load the Visualization API and the corechart package.
             google.charts.load('current', {'packages':['corechart']});
@@ -504,8 +531,10 @@ export default {
                     fnGuideIndexTable.rows.add(items).draw();
                 }
             }
+        },
+        formatNumber:function(num) {
+            return util.formatNumber(num);
         }
-
         
     }
 };
