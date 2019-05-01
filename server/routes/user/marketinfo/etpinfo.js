@@ -280,6 +280,98 @@ var getEtpList = function(req, res) {
                 });
             };            
 
+            /* 4. 지수별 ETP 목록을 조회한다. */
+            var etpFunc4_1   =   function( data, callback ) { 
+
+                var etpLists        =   [];
+                var carousel_data   =   [];
+                var carousel_mod    =   [];
+
+                carousel_info.carousel_cnt =  Math.floor(resultMsg.ctgCodeList.length / carousel_info.carousel_div);
+                carousel_info.carousel_mod =  resultMsg.ctgCodeList.length % carousel_info.carousel_div;
+
+                /* ctg_code 별로 ETP 목록 데이터를 조회한다. */
+                async.forEachOf( resultMsg.ctgCodeList, function ( ctgCodeItem, index, inner_callback ){
+
+                    paramData.ctg_code  =   ctgCodeItem.ctg_code;
+                    stmt = mapper.getStatement('etpinfo', 'getEtpListByJisu', paramData, format);
+                    console.log( "etpinfo.getEtpListByJisu query call");
+
+                    conn.query(stmt, function( err, rows ) {
+
+                        if( err ) {
+                            resultMsg.result    =   false;
+                            resultMsg.msg       =   "[error] etpinfo.getEtpListByJisu Error while performing Query";
+                            resultMsg.err       =   err;
+
+                            return inner_callback( resultMsg );
+                        }
+
+                        if( rows ) {
+                            /* ===================상단 데이터 생성 =========================*/
+                            var total_amt = 0;
+                            var etf_cnt = 0;
+                            var etn_cnt = 0;
+                            
+
+                            //util.log("(carousel_info.carousel_cnt * 5):" , (carousel_info.carousel_cnt * 5));
+                            //util.log("index" , index);
+
+
+                            if ((carousel_info.carousel_cnt * 5) > index) {
+                                //util.log("data:=====================", index);
+
+                                async.forEachOf( rows, function ( item, idx){ 
+                                    total_amt += item.f15028;
+                                    // ctf 구분자가 1과 2일 경우 
+                                    if (item.f16493 == '1' || item.f16493 == '2') {
+                                        etf_cnt++; 
+                                    } else if (item.f16493 == '3' || item.f16493 == '4') {
+                                        etn_cnt++; 
+                                    }
+                                });
+
+                                carousel_data.push({"ctg_code":ctgCodeItem.ctg_code, "name":ctgCodeItem.ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
+                            } else {
+                                //util.log("mode:=====================", index);
+                                async.forEachOf( rows, function ( item, idx){
+                                    total_amt += item.f15028;
+                                    // ctf 구분자가 1과 2일 경우 
+                                    if (item.f16493 == '1' || item.f16493 == '2') {
+                                        etf_cnt++; 
+                                    } else if (item.f16493 == '3' || item.f16493 == '4') {
+                                        etn_cnt++; 
+                                    }
+                                });
+                                carousel_mod.push({"ctg_code":ctgCodeItem.ctg_code, "name":ctgCodeItem.ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
+                            }  
+                            /* ===================상단 데이터 생성 완료 =========================*/
+
+                            etpLists.push( rows );
+                        }
+
+                        inner_callback( null );
+                    });
+
+                }, function(err){
+
+                    if(err){
+                        return callback( resultMsg );
+                    }else{
+                        resultMsg.etpLists          =   etpLists;
+
+                        resultMsg.carousel_info     =   carousel_info;
+                        resultMsg.carousel_data     =   carousel_data;
+                        resultMsg.carousel_mod      =   carousel_mod;
+
+                        return callback( null );
+                    }
+                });
+            };
+
+console.log("##############################################################");
+console.log("##############################################################" + paramData.ctg_large_code );            
+
 
             var funcList =   [];
 
@@ -289,6 +381,13 @@ var getEtpList = function(req, res) {
                 funcList.push( etpFunc2 );
                 funcList.push( etpFunc3 );
                 funcList.push( etpFunc4 );
+            }
+            else if( 
+                    paramData.ctg_large_code    ==  "002"       /* 섹터 */
+                ||  paramData.ctg_large_code    ==  "004"       /* 테마 */
+            ) {
+                funcList.push( etpFunc3_1 );
+                funcList.push( etpFunc4_1 );
             }
             /* 그외 인경우 - 테이블 정보 조회를 위해 2개 함수만 호출하게 한다. */
             else{

@@ -140,6 +140,35 @@
 -->
 
     <!--
+    * EtpBasic 의 기본정보를 조회한다.
+    * 2019-04-25  bkLove(촤병국)
+    -->
+    <select id="getExistEtpBasicCnt">
+    <![CDATA[
+        SELECT      /* etpDetail.getExistEtpBasicCnt    ETP 또는 INDEX 정보가 존재하는지 체크한다. */
+
+                    (
+                        SELECT  COUNT( td_etp_basic.f16012 )
+                          FROM  td_etp_basic
+                         WHERE  td_etp_basic.f16012                 =   #{basicData.f16012}         /* 국제표준코드 */
+                    )                                                   AS  ept_cnt
+                ,   (
+                        SELECT  COUNT( td_index_basic.f16013 )
+                                
+                          FROM  td_index_basic
+                         WHERE  1 = 1
+                           AND  td_index_basic.F16013               =       #{basicData.f16257}                                             /* 단축코드 = ETP기초지수코드 */
+                           AND  td_index_basic.MARKET_ID            LIKE    CONCAT( '_' , LPAD( #{basicData.f34239}, 3, '0' ) , '%' )       /* 시장 ID = ETP기초지수MID */
+                    )                                                   AS  index_cnt
+          FROM  DUAL
+    ]]>
+    </select>
+
+<!--
+******************************************************************************************************************
+-->
+
+    <!--
     * ETP 차트 정보를 조회한다.
     * 2019-04-25  bkLove(촤병국)
     -->
@@ -152,10 +181,10 @@
                     etp_info.yyyymmdd                                                   AS  yyyymmdd            /* 입회일자 */
                 ,   etp_info.fmt_yyyymmdd                                               AS  fmt_yyyymmdd        /* 입회일자 */   
                 ,   etp_info.hh24                                                       AS  hh24                /* 체결인트라생성시각 */
-                ,   IFNULL( etp_info.now_price      , 0 )                               AS  now_price           /* 인트라종가 */
-                ,   IFNULL( etp_info.etp_nm         , 0 )                               AS  etp_nm              /* 한글종목명 */
+                ,   IFNULL( CAST( etp_info.now_price as unsigned )   , 0 )              AS  now_price           /* 인트라종가 */
+                ,   etp_info.etp_nm                                                     AS  etp_nm              /* 한글종목명 */
                 
-                ,   IFNULL( index_info.now_price    , 0 )                               AS  index_now_price     /* 인덱스 인트라 종가 */
+                ,   IFNULL( CAST( index_info.now_price as unsigned ) , 0 )              AS  index_now_price     /* 인덱스 인트라 종가 */
                 ,   index_info.index_nm                                                 AS  index_nm            /* 인덱스 한글종목명 */
 
           FROM  (
@@ -222,10 +251,10 @@
                     etp_info.yyyymmdd                                                   AS  yyyymmdd            /* 입회일자 */
                 ,   etp_info.fmt_yyyymmdd                                               AS  fmt_yyyymmdd        /* 입회일자 */   
                 ,   etp_info.hh24                                                       AS  hh24                /* 체결인트라생성시각 */
-                ,   etp_info.now_price                                                  AS  now_price           /* 인트라종가 */
+                ,   IFNULL( CAST( etp_info.now_price as unsigned )   , 0 )              AS  now_price           /* 인트라종가 */
                 ,   etp_info.etp_nm                                                     AS  etp_nm              /* 한글종목명 */
                 
-                ,   index_info.now_price                                                AS  index_now_price     /* 인덱스 인트라 종가 */
+                ,   IFNULL( CAST( index_info.now_price as unsigned ) , 0 )              AS  index_now_price     /* 인덱스 인트라 종가 */
                 ,   index_info.index_nm                                                 AS  index_nm            /* 인덱스 한글종목명 */
 
           FROM  (
@@ -290,10 +319,10 @@
                     etp_info.yyyymmdd                                                   AS  yyyymmdd            /* 입회일자 */
                 ,   etp_info.fmt_yyyymmdd                                               AS  fmt_yyyymmdd        /* 입회일자 */   
                 ,   etp_info.hh24                                                       AS  hh24                /* 체결인트라생성시각 */
-                ,   etp_info.now_price                                                  AS  now_price           /* 인트라종가 */
+                ,   IFNULL( CAST( etp_info.now_price as unsigned )   , 0 )              AS  now_price           /* 인트라종가 */
                 ,   etp_info.etp_nm                                                     AS  etp_nm              /* 한글종목명 */
                 
-                ,   index_info.now_price                                                AS  index_now_price     /* 인덱스 인트라 종가 */
+                ,   IFNULL( CAST( index_info.now_price as unsigned ) , 0 )              AS  index_now_price     /* 인덱스 인트라 종가 */
                 ,   index_info.index_nm                                                 AS  index_nm            /* 인덱스 한글종목명 */
 
           FROM  (

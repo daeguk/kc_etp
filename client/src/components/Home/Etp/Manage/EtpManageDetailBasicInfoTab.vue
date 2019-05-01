@@ -146,7 +146,7 @@
 import Config from "@/js/config.js";
 
 export default {
-    props: [],
+    props   :   [ "paramData" ],
     data() {
         return {
             index_item: {},
@@ -166,11 +166,41 @@ export default {
 
         var vm = this;
 
-        vm.basicData.f16012     =   vm.$route.query.f16012;     /* 국제표준코드 */
-        vm.basicData.f16257     =   vm.$route.query.f16257;     /* ETP기초지수코드 */
-        vm.basicData.f34239     =   vm.$route.query.f34239;     /* ETP기초지수MID */
+        console.log( "EtpManageDetailBasicInfoTab.vue -> mounted" );
 
-        this.fn_getEtpBasic();          /* ETP 의 기본정보를 조회한다. */
+        console.log( "####### vm.paramData #######" );
+        console.log( vm.paramData );        
+
+        if(     vm.paramData 
+            &&  (       vm.paramData.f16012
+                    ||  vm.paramData.f16257
+                    ||  vm.paramData.f34239
+                )
+        ) {
+            vm.basicData.f16012         =   vm.paramData.f16012;            /* 국제표준코드 */
+            vm.basicData.f16257         =   vm.paramData.f16257;            /* ETP기초지수코드 */
+            vm.basicData.f34239         =   vm.paramData.f34239;            /* ETP기초지수MID */
+        }
+        else if(
+                vm.$route.query.f16012
+            ||  vm.$route.query.f16257
+            ||  vm.$route.query.f34239
+        ) {
+            vm.basicData.f16012         =   vm.$route.query.f16012;         /* 국제표준코드 */
+            vm.basicData.f16257         =   vm.$route.query.f16257;         /* ETP기초지수코드 */
+            vm.basicData.f34239         =   vm.$route.query.f34239;         /* ETP기초지수MID */
+        }
+
+        console.log( "####### vm.basicData #######" );
+        console.log( vm.basicData );
+
+        if(     vm.basicData.f16012
+            ||  vm.basicData.f16257
+            ||  vm.basicData.f34239
+        )   {
+
+            this.fn_getEtpBasic();          /* ETP 의 기본정보를 조회한다. */
+        }
     },
     methods: {
         /*
@@ -192,6 +222,8 @@ export default {
                 if (response.data) {
                     vm.etpBasic = response.data.etpBasic;
                     vm.indexBasic = response.data.indexBasic;
+
+                    console.log("EtpManageDetailBasicInfoTab.vue -> fn_getEtpBasic emit 전");
 
                     vm.$emit("receiveEtpBasic", vm.etpBasic, vm.indexBasic);
                 }

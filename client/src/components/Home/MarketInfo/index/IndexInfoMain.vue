@@ -23,7 +23,13 @@
         </v-flex>
 
         <v-flex>
-            <IndexDetailDialog v-if="showDialog"  :paramData="paramData" :showDialog="showDialog"  @fn_closePop = "fn_closePop"></IndexDetailDialog>
+            <IndexDetailDialog  v-if="showDialog"  
+
+                                :paramData="paramData" 
+                                :showDialog="showDialog"  
+                                
+                                @fn_closePop = "fn_closePop">
+            </IndexDetailDialog>
         </v-flex>
 
     </v-layout>

@@ -1,4 +1,5 @@
 <template>
+
     <v-container>
         <v-layout row wrap class="content_margin">
             <v-flex grow>
@@ -13,7 +14,20 @@
                                     {{this.etpBasic.f16002}}
                                     <span class="grey--text">{{etpBasic.f16013}}</span>
                                 </h3>
-                                <div class="right_btn">
+
+                                <div class="right_btn"  v-if="showEtpManageDetailDialog">
+                                    <v-layout align-right>
+                                        <v-flex xs12 sm4 text-xs-center>                                         
+                                            <div class="btn_r">
+                                                <v-btn icon  @click.stop="fn_close">
+                                                    <v-icon>close</v-icon>
+                                                </v-btn>
+                                            </div>
+                                        </v-flex>
+                                    </v-layout>
+                                </div>
+
+                                <div class="right_btn"  v-if="!showEtpManageDetailDialog">
                                     <v-layout align-right>
                                         <v-flex xs12 sm4 text-xs-center>
                                             <div class="btn_r">
@@ -76,17 +90,17 @@
 
                                 <v-tabs-items v-model="tab5">
                                     <v-tab-item>
-                                        <EtpManageDetailBasicInfoTab    v-on:receiveEtpBasic = "fn_setEtpBasic"></EtpManageDetailBasicInfoTab>
+                                        <EtpManageDetailBasicInfoTab    :paramData="paramData"  @:receiveEtpBasic = "fn_setEtpBasic"></EtpManageDetailBasicInfoTab>
                                     </v-tab-item>
                                     <v-tab-item>
-                                        <EtpManageDetailAnalysisTab></EtpManageDetailAnalysisTab>
+                                        <EtpManageDetailAnalysisTab     :paramData="paramData" ></EtpManageDetailAnalysisTab>
                                     </v-tab-item>
                                 </v-tabs-items>
                             </v-flex>
                         </v-layout>
                     </div>
                 </v-card>
-
+<!--
                 <v-card flat class="right_menu_w2">
                     <v-navigation-drawer
                         v-model="drawer"
@@ -148,7 +162,7 @@
                                                     </v-list-tile>
                                                 </v-list>
                                             </div>
-                                            <!--indexDetailrtmenupop></indexDetailrtmenupop-->
+                                            <indexDetailrtmenupop></indexDetailrtmenupop>
                                             <v-card class="pop_bot_h"></v-card>
                                         </v-card>
                                     </v-dialog>
@@ -202,7 +216,7 @@
 
                                         <v-tabs-items v-model="tab">
                                             <v-tab-item>
-                                                <!--오른쪽 메뉴 하단 리스트 영역 -->
+
                                                 <v-layout row class="w100 pt-2">
                                                     <v-flex xs12>
                                                         <v-card flat>
@@ -224,10 +238,10 @@
                                                         </v-card>
                                                     </v-flex>
                                                 </v-layout>
-                                                <!--오른쪽 메뉴 하단 리스트 영역 -->
+
                                             </v-tab-item>
                                             <v-tab-item>
-                                                <!--오른쪽 메뉴 하단 리스트 영역 -->
+
                                                 <v-layout row class="w100 pt-2">
                                                     <v-flex xs12>
                                                         <v-card flat>
@@ -249,12 +263,12 @@
                                                         </v-card>
                                                     </v-flex>
                                                 </v-layout>
-                                                <!--오른쪽 메뉴 하단 리스트 영역 end -->
+
                                             </v-tab-item>
                                         </v-tabs-items>
                                     </v-flex>
                                 </v-layout>
-                                <!-- 자산추가 팝업 -->
+
                                 <v-layout row>
                                     <v-flex xs12>
                                         <v-card flat>
@@ -294,7 +308,7 @@
                                                         ></v-text-field>
                                                     </v-card-title>
 
-                                                    <!--비교자산 탭 -->
+
 
                                                     <v-layout row wrap>
                                                         <v-flex xs12>
@@ -310,20 +324,9 @@
                                                                     :key="item"
                                                                 >{{ item }}</v-tab>
                                                             </v-tabs>
-                                                            <!--v-tabs-items v-model="tab2">
-                                                            <v-tab-item>
-                                                                <infopoptab1></infopoptab1>
-                                                            </v-tab-item>
-                                                            <v-tab-item>
-                                                                <infopoptab2></infopoptab2>
-                                                            </v-tab-item>
-                                                            <v-tab-item>
-                                                                <infopoptab3></infopoptab3>
-                                                            </v-tab-item>
-                                                            </v-tabs-items-->
                                                         </v-flex>
                                                     </v-layout>
-                                                    <!--비교자산 탭end -->
+
                                                 </v-card>
                                                 <v-card class="pop_btn_w text-xs-center">
                                                     <v-btn
@@ -336,12 +339,12 @@
                                         </v-card>
                                     </v-flex>
                                 </v-layout>
-                                <!--자산추가 팝업 end -->
+
                             </v-list-tile-content>
                         </v-list>
                     </v-navigation-drawer>
                 </v-card>
-                <!--rightmenu end -->
+-->
             </v-flex>
         </v-layout>
     </v-container>
@@ -355,6 +358,7 @@ import EtpManageDetailAnalysisTab from "./EtpManageDetailAnalysisTab.vue";
 import Config from "@/js/config.js";
 
 export default {
+    props : [ "paramData", "showEtpManageDetailDialog" ],
     components: {
         //indexDetailrtmenupop: indexDetailrtmenupop
     },
@@ -430,7 +434,8 @@ export default {
             basicData           :   {},
             etpBasic            :   {},
             indexBasic          :   {},
-            etpInfos            :   {}
+            etpInfos            :   {},
+
         };
     },
     components: {
@@ -440,11 +445,40 @@ export default {
     mounted: function() {
         var vm = this;
 
-        vm.basicData.f16012     =   vm.$route.query.f16012;     /* 국제표준코드 */
-        vm.basicData.f16257     =   vm.$route.query.f16257;     /* ETP기초지수코드 */
-        vm.basicData.f34239     =   vm.$route.query.f34239;     /* ETP기초지수MID */
+        console.log( "EtpManageDetail.vue -> mounted" );
 
-        vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
+        console.log( "####### vm.paramData #######" );
+        console.log( vm.paramData );
+
+        if(     vm.paramData 
+            &&  (       vm.paramData.f16012
+                    ||  vm.paramData.f16257
+                    ||  vm.paramData.f34239
+                )
+        ) {
+            vm.basicData.f16012         =   vm.paramData.f16012;            /* 국제표준코드 */
+            vm.basicData.f16257         =   vm.paramData.f16257;            /* ETP기초지수코드 */
+            vm.basicData.f34239         =   vm.paramData.f34239;            /* ETP기초지수MID */
+        }
+        else if(
+                vm.$route.query.f16012  
+            &&  vm.$route.query.f16257  
+            &&  vm.$route.query.f34239  
+        ) {
+            vm.basicData.f16012         =   vm.$route.query.f16012;         /* 국제표준코드 */
+            vm.basicData.f16257         =   vm.$route.query.f16257;         /* ETP기초지수코드 */
+            vm.basicData.f34239         =   vm.$route.query.f34239;         /* ETP기초지수MID */
+        }
+
+        console.log( "####### vm.basicData #######" );
+        console.log( vm.basicData );
+
+        if(     vm.basicData.f16012
+            ||  vm.basicData.f16257
+            ||  vm.basicData.f34239
+        )   {
+            vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
+        }
     },
     created: function() {},
     beforeDestory: function() {},
@@ -456,6 +490,8 @@ export default {
          * 2019-04-25  bkLove(촤병국)
          */
         fn_setEtpBasic : function( etpBasic, indexBasic ) {
+            console.log("EtpManageDetail.vue -> fn_setEtpBasic emit 후");
+
             this.etpBasic       =   etpBasic;
             this.indexBasic     =   indexBasic;
         },
@@ -537,18 +573,18 @@ export default {
                                 if( term == "1D" ) {
                                     // index 정보가 있으면 추가
                                     if ( index_nm != null ) {
-                                        items.push( [ item.hh24, item.now_price, item.index_now_price ] );
+                                        items.push( [ item.hh24, Number( item.now_price ), Number( item.index_now_price ) ] );
                                     }else{
-                                        items.push( [ item.hh24, item.now_price ] );
+                                        items.push( [ item.hh24, Number( item.now_price ) ] );
                                     }
                                 }
                                 // 1D가 아닌 경우 가로축에 일자단위 노출
                                 else{
                                     // index 정보가 있으면 추가
                                     if ( index_nm != null ) {
-                                        items.push( [ item.fmt_yyyymmdd, item.now_price, item.index_now_price ] );
+                                        items.push( [ item.fmt_yyyymmdd, Number( item.now_price ), Number( item.index_now_price ) ] );
                                     }else{
-                                        items.push( [ item.fmt_yyyymmdd, item.now_price ] );
+                                        items.push( [ item.fmt_yyyymmdd, Number( item.now_price ) ] );
                                     }
                                 }
                             }
@@ -572,7 +608,15 @@ export default {
          */
         fn_goBack() {
             this.$router.go(-1);
-        }
+        },
+
+        /*
+         * 팝업창을 종료한다.
+         * 2019-04-25  bkLove(촤병국)
+         */
+        fn_close : function() {
+            this.$emit( "fn_closePop", "close" );
+        },        
     }
 };
 </script>

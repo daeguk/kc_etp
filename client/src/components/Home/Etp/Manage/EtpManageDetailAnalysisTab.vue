@@ -139,12 +139,14 @@ import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
-import { index_common } from '../../Index/mixins_index.js';
+import { index_common } from '@/components/Home/Index/mixins_index.js';
 
 var table01 = null;
 var chart01 = null;
 
 export default {
+    props   :   [ "paramData" ],
+
     data() {
         return {
             tab: null,
@@ -187,151 +189,181 @@ export default {
     created: function() {},
     beforeDestroy() {},
     mounted: function() {
+
+        console.log( "EtpManageDetailAnalysisTab.vue -> mounted" );
        
         var vm = this;
 
-        vm.basicData.f16012     =   vm.$route.query.f16012;     /* 국제표준코드 */
-        vm.basicData.f16257     =   vm.$route.query.f16257;     /* ETP기초지수코드 */
-        vm.basicData.f34239     =   vm.$route.query.f34239;     /* ETP기초지수MID */
-        
-        vm.basicData.arrNavPriceGubun     =   [ "PRICE", "NAV"];
+        console.log( "####### vm.paramData #######" );
+        console.log( vm.paramData );
+
+        if(     vm.paramData 
+            &&  (       vm.paramData.f16012
+                    ||  vm.paramData.f16257
+                    ||  vm.paramData.f34239
+                )
+        ) {
+            vm.basicData.f16012         =   vm.paramData.f16012;            /* 국제표준코드 */
+            vm.basicData.f16257         =   vm.paramData.f16257;            /* ETP기초지수코드 */
+            vm.basicData.f34239         =   vm.paramData.f34239;            /* ETP기초지수MID */
+        }
+        else if(
+                vm.$route.query.f16012
+            ||  vm.$route.query.f16257
+            ||  vm.$route.query.f34239
+        ) {
+            vm.basicData.f16012         =   vm.$route.query.f16012;         /* 국제표준코드 */
+            vm.basicData.f16257         =   vm.$route.query.f16257;         /* ETP기초지수코드 */
+            vm.basicData.f34239         =   vm.$route.query.f34239;         /* ETP기초지수MID */
+        }
+
+        console.log( "####### vm.basicData #######" );
+        console.log( vm.basicData );
+
+        if(     vm.basicData.f16012
+            ||  vm.basicData.f16257
+            ||  vm.basicData.f34239
+        )   {
+
+            vm.basicData.arrNavPriceGubun     =   [ "PRICE", "NAV"];
 
 
-        this.$nextTick().then(() => {
+            this.$nextTick().then(() => {
 
-            /* 비중정보 및 차트정보 조회 */
-            var paramData   =   {};
-            paramData.jisu_cd   =   vm.basicData.f16257 ;
-            paramData.market_id =   vm.basicData.f34239;
-            vm.getIndexImportanceList( paramData );            
-
-
-            chart01 = new google.visualization.ComboChart(document.getElementById('etp_comboChart_div'));
-
-            /* ETP performance 정보를 조회한다. */
-            vm.fn_getEtpPerformance();             
+                /* 비중정보 및 차트정보 조회 */
+                var paramData   =   {};
+                paramData.jisu_cd   =   vm.basicData.f16257 ;
+                paramData.market_id =   vm.basicData.f34239;
+                vm.getIndexImportanceList( paramData );            
 
 
-            /* 테이블 렌더링 */
-            table01 =  $("#" + vm.tableName ).DataTable({
-                processing: true,
-                serverSide: false,
-                info: false, // control table information display field
-                stateSave: false, //restore table state on page reload,
-                lengthMenu: [
-                    [10, 20, 50, -1],
-                    [10, 20, 50, "All"]
-                ],
+                chart01 = new google.visualization.ComboChart(document.getElementById('etp_comboChart_div'));
 
-                select: {
-                    style: "single",
-                    selector: "td:first-child"
-                },
-                paging: false,
-                searching: false,
-                data: [],
-                ordering: false,
-                columnDefs: [     
-                    {
-                        "targets": [ 0, 1, 2 ],
-                        "visible": false
-                    },                    
-                    {  
-                        "targets": 3,
-                        "render": function ( data, type, row, meta ) {
-                            if (data) {
+                /* ETP performance 정보를 조회한다. */
+                vm.fn_getEtpPerformance();             
 
-                                var     imgHtml = "<img src='/assets/img/icon_bar01.png'>";
-                                var     html    = "";
 
-                                if(     !vm.performChartImages 
-                                    ||  meta.row  > 4
-                                    ||  !vm.performChartImages[ meta.row ] 
-                                ) {
-                                    html += imgHtml;
-                                }else{
-                                    html += "<img src='/assets/img/" + vm.performChartImages[ meta.row ] + "'>";
-                                }                                
+                /* 테이블 렌더링 */
+                table01 =  $("#" + vm.tableName ).DataTable({
+                    processing: true,
+                    serverSide: false,
+                    info: false, // control table information display field
+                    stateSave: false, //restore table state on page reload,
+                    lengthMenu: [
+                        [10, 20, 50, -1],
+                        [10, 20, 50, "All"]
+                    ],
 
-                               if( row.etpIndexGubun == "ETP" ) {
-
-                                    html +=  "<span>"
-                                    html +=     "&nbsp;&nbsp;&nbsp;";
-                                    html +=     data;
-                                    html +=     "<br>";
-                                    html +=     "&nbsp;&nbsp;&nbsp;";
-                                    html +=     "(" + row.navPriceGubun + ")";
-                                    html +=  "</span>";
-
-                                    return html;
-                                }else{
-
-                                    html += "<span>";
-                                    html +=     "&nbsp;&nbsp;&nbsp;";
-                                    html +=     data;
-                                    html += "</span>";
-
-                                    return html;
-                                }
-                                
-                            } else {
-                                return "";
-                            }
-                        },
+                    select: {
+                        style: "single",
+                        selector: "td:first-child"
                     },
+                    paging: false,
+                    searching: false,
+                    data: [],
+                    ordering: false,
+                    columnDefs: [     
+                        {
+                            "targets": [ 0, 1, 2 ],
+                            "visible": false
+                        },                    
+                        {  
+                            "targets": 3,
+                            "render": function ( data, type, row, meta ) {
+                                if (data) {
 
-                    { 
-                        "targets": 12,
-                        "render": function ( data, type, row ) {
-                            if (data) {
-                                if ( row.delAbleYn == "Y" ) {
-                                    return "<div class='tooltip'><button id='btnDelete' type='button' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:40px;'>삭제</span></div>";
-                                }else{
+                                    var     imgHtml = "<img src='/assets/img/icon_bar01.png'>";
+                                    var     html    = "";
+
+                                    if(     !vm.performChartImages 
+                                        ||  meta.row  > 4
+                                        ||  !vm.performChartImages[ meta.row ] 
+                                    ) {
+                                        html += imgHtml;
+                                    }else{
+                                        html += "<img src='/assets/img/" + vm.performChartImages[ meta.row ] + "'>";
+                                    }                                
+
+                                if( row.etpIndexGubun == "ETP" ) {
+
+                                        html +=  "<span>"
+                                        html +=     "&nbsp;&nbsp;&nbsp;";
+                                        html +=     data;
+                                        html +=     "<br>";
+                                        html +=     "&nbsp;&nbsp;&nbsp;";
+                                        html +=     "(" + row.navPriceGubun + ")";
+                                        html +=  "</span>";
+
+                                        return html;
+                                    }else{
+
+                                        html += "<span>";
+                                        html +=     "&nbsp;&nbsp;&nbsp;";
+                                        html +=     data;
+                                        html += "</span>";
+
+                                        return html;
+                                    }
+                                    
+                                } else {
                                     return "";
                                 }
-                            } else {
-                                return "";
-                            }
+                            },
                         },
-                    }, 
+
+                        { 
+                            "targets": 12,
+                            "render": function ( data, type, row ) {
+                                if (data) {
+                                    if ( row.delAbleYn == "Y" ) {
+                                        return "<div class='tooltip'><button id='btnDelete' type='button' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:40px;'>삭제</span></div>";
+                                    }else{
+                                        return "";
+                                    }
+                                } else {
+                                    return "";
+                                }
+                            },
+                        }, 
 
 
-                ],
-                columns: [
+                    ],
+                    columns: [
 
-                    { "data": "f16012"      , "orderable" : false  },                                   /* 국제표준코드 */
-                    { "data": "f16257"      , "orderable" : false  },                                   /* ETP기초지수코드 */
-                    { "data": "f34239"      , "orderable" : false  },                                   /* ETP기초지수MID */
+                        { "data": "f16012"      , "orderable" : false  },                                   /* 국제표준코드 */
+                        { "data": "f16257"      , "orderable" : false  },                                   /* ETP기초지수코드 */
+                        { "data": "f34239"      , "orderable" : false  },                                   /* ETP기초지수MID */
 
-                    { "data": "f16002"      , "orderable" : false , className: "txt_left line2" },      /* 한글 종목명 */
-                    { "data": "Week1"       , "orderable" : false , className: 'dt-body-right'  },      /* 1-week */
-                    { "data": "Month1"      , "orderable" : false , className: 'dt-body-right'  },      /* 1-Month */
-                    { "data": "Month3"      , "orderable" : false , className: 'dt-body-right'  },      /* 3-Month */
-                    { "data": "YTD"         , "orderable" : false , className: 'dt-body-right'  },      /* ytd */
+                        { "data": "f16002"      , "orderable" : false , className: "txt_left line2" },      /* 한글 종목명 */
+                        { "data": "Week1"       , "orderable" : false , className: 'dt-body-right'  },      /* 1-week */
+                        { "data": "Month1"      , "orderable" : false , className: 'dt-body-right'  },      /* 1-Month */
+                        { "data": "Month3"      , "orderable" : false , className: 'dt-body-right'  },      /* 3-Month */
+                        { "data": "YTD"         , "orderable" : false , className: 'dt-body-right'  },      /* ytd */
 
-                    { "data": "Year1"       , "orderable" : false , className: 'dt-body-right'  },      /* 1-Year */
-                    { "data": "Year3"       , "orderable" : false , className: 'dt-body-right'  },      /* 3-Year */
-                    { "data": "Year5"       , "orderable" : false , className: 'dt-body-right'  },      /* 5-Year */
-                    { "data": "Year10"      , "orderable" : false , className: 'dt-body-right'  },      /* 10-Year */
-                    { "data": null          , "orderable" : false , className: 'dt-body-center', defaultContent:"", "align":"center" },
+                        { "data": "Year1"       , "orderable" : false , className: 'dt-body-right'  },      /* 1-Year */
+                        { "data": "Year3"       , "orderable" : false , className: 'dt-body-right'  },      /* 3-Year */
+                        { "data": "Year5"       , "orderable" : false , className: 'dt-body-right'  },      /* 5-Year */
+                        { "data": "Year10"      , "orderable" : false , className: 'dt-body-right'  },      /* 10-Year */
+                        { "data": null          , "orderable" : false , className: 'dt-body-center', defaultContent:"", "align":"center" },
 
-                ]
+                    ]
+                });
+
+                $( table01.column( 3 ).header() ).text( vm.nowDate + " (%)" );
+
+
+                // 테이블별 이벤트
+                $('#' + vm.tableName + ' tbody').on('click', 'button', function () {
+                    var table = $('#' + vm.tableName ).DataTable();
+                    var data = table.row($(this).parents('tr')).data();
+
+                    if ($(this).attr('id') == 'btnDelete') {
+                        vm.fn_deleteTableData( $(this), data );
+                    }
+                        
+                });
             });
-
-            $( table01.column( 3 ).header() ).text( vm.nowDate + " (%)" );
-
-
-            // 테이블별 이벤트
-            $('#' + vm.tableName + ' tbody').on('click', 'button', function () {
-                var table = $('#' + vm.tableName ).DataTable();
-                var data = table.row($(this).parents('tr')).data();
-
-                if ($(this).attr('id') == 'btnDelete') {
-                    vm.fn_deleteTableData( $(this), data );
-                }
-                    
-            });
-        });
+        }
 
     },
     methods: {
