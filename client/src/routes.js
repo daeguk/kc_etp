@@ -39,6 +39,7 @@ import MarketMixAssets          from  './components/Home/MarketInfo/etp/marketMi
 import MarketOversea            from  './components/Home/MarketInfo/etp/marketOversea.vue'               /* 101-국가 ( 탭에 노출은 '해외' ) */
 import MarketLeverageInverse    from  './components/Home/MarketInfo/etp/marketLeverageInverse.vue'       /* 201-배율 ( 탭에 노출은 '레버리지/인버스' ) */
 
+import  Login   from '@/components/common/login.vue'
 
 // TODAY
 import  Today1Main   from './components/Home/MarketInfo/index/IndexInfoMain.vue'
@@ -46,7 +47,7 @@ import  Today1Main   from './components/Home/MarketInfo/index/IndexInfoMain.vue'
 
 import  sampleChart   from '@/components/Sample/test.vue'
 import  sampleUpload   from '@/components/Sample/fileUpload.vue'
-import  sampleLoginTest   from '@/components/Sample/loginTest.vue'
+
 
 
 // 관리자
@@ -157,7 +158,7 @@ export const routes = [
             component: sampleUpload,
         },
         {   path : 'login',
-            component: sampleLoginTest,
+            component: Login,
         },
         // INDEX
         {   path : 'index/manage',

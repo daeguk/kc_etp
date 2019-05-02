@@ -1,5 +1,6 @@
 <template>
-<v-dialog v-model="loginDialog" persistent max-width="600px">
+<v-app>
+    <v-container>
     <v-card>
         <v-card-text>
         <v-container grid-list-md>
@@ -36,8 +37,8 @@
             </v-layout>
         </v-card-actions>
     </v-card>
-</v-dialog>
-
+    </v-container>
+</v-app>
 </template>
 
 <script>
@@ -65,7 +66,6 @@ export default {
     loginCheck: function() {
       console.log('loginCheck');
       var vm = this;
-
       axios.post(Config.base_url+'/user/member/userlogincheck', {
         "email" : vm.email,
         "password" : vm.password,
@@ -98,7 +98,10 @@ export default {
 
           vm.loginDialog = false;
           // MainLanding.vue
-          vm.$EventBus.$emit("userLoginCheck", true);
+          debugger;
+            
+          alert(vm.$route.params.nextUrl);
+          vm.$router.push({path:vm.$route.params.nextUrl});
         }
       });
     },

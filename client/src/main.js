@@ -20,11 +20,14 @@ Vue.use(VueResource);
 Vue.use(Vuetify);
 
 // Vue.component('icon', Icon);
+
+
 const router = new VueRouter({
     routes,
     // get rid of #
     mode: 'history'
 });
+
 
 
 // Event Bus
@@ -35,30 +38,21 @@ new Vue({
     el: '#app',
     router,
     render: h => h(App)
-})
+}).$mount('#app')
 
-/*
-// Routing전 로그인 체크 
-router.beforeEach(function (to, from, next) {
-    //alert(store.state.user.user_level);
-    console.log("store="+ JSON.stringify(store.state.user));
-    console.log(store.state.user[0].user_level);
 
-    // to: 이동할 url에 해당하는 라우팅 객체
-    console.log(to.path);
 
-    if (to.path != '/login') {
-        if (store.state.user[0].user_level < 2) {        
-        // 이동할 페이지에 인증 정보가 필요하면 경고 창을 띄우고 페이지 전환은 하지 않음
+// 페이지 이동전 로그인 체크
+router.beforeEach((to, from, next) => {
+    if(to.matched.some(record => record.meta.requiresAuth)) {        
+        if (sessionStorage.getItem('email') == null || sessionStorage.getItem('email') == "null") {
             
-            alert('로그인 후 사용 하시기 바랍니다.');
-            next('/login');   
+           // next({path: '/login',params: { nextUrl: to.fullPath }});            
+           next();
         } else {
-            console.log("routing success : '" + to.path + "'");
-            next(); // 페이지 전환
-        }; 
+            next()
+        }
     } else {
         next();
     }
-  });
-*/
+})
