@@ -102,8 +102,11 @@
                         </v-layout>
                     </div>
                 </v-card>
-<!--
-                <v-card flat class="right_menu_w2">
+
+
+
+
+                <v-card flat class="right_menu_w2"  v-if="!showEtpManageDetailDialog">
                     <v-navigation-drawer
                         v-model="drawer"
                         :mini-variant="mini"
@@ -346,7 +349,7 @@
                         </v-list>
                     </v-navigation-drawer>
                 </v-card>
--->
+
             </v-flex>
         </v-layout>
     </v-container>
