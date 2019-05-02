@@ -422,7 +422,7 @@
                                            <v-subheader><v-icon small>build</v-icon>Operation Tools</v-subheader>
                                            <v-card flat class="w100">
                                            <v-list>
-                                           <v-list-tile router-link to="InfoEtpInav" class="border_b" v-model="text2">
+                                           <v-list-tile router-link to="EtpOperInav" class="border_b" v-model="text2">
                                                <v-list-tile-avatar>
                                                 <v-icon  value="산출 현황">exposure</v-icon>
                                                  </v-list-tile-avatar>

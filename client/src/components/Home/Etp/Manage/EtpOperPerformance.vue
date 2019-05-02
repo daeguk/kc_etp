@@ -204,7 +204,7 @@
                                         <v-list>
                                             <v-list-tile
                                                 router-link
-                                                to="InfoEtpInav"
+                                                to="EtpOperInav"
                                                 class="border_b"
                                                 v-model="text2"
                                             >

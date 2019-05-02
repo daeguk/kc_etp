@@ -20,7 +20,7 @@ import  EtpManageMain   from './components/Home/Etp/Manage/EtpManageMain.vue'
 import  EtpRegisterMain   from './components/Home/Etp/Register/EtpRegisterMain.vue'
 import  EtpContractMain   from './components/Home/Etp/Contract/EtpContractMain.vue'
 import  EtpManageDetail   from './components/Home/Etp/Manage/EtpManageDetail.vue'
-import  InfoEtpInav   from './components/Home/Etp/Manage/InfoEtpInav.vue'
+import  EtpOperInav   from './components/Home/Etp/Manage/EtpOperInav.vue'
 import  EtpOperPerformance   from './components/Home/Etp/Manage/EtpOperPerformance.vue'
 import  OverseasIndex   from './components/Home/Etp/Manage/OverseasIndex.vue'
 
@@ -179,8 +179,8 @@ export const routes = [
         {   path : 'etp/etpManageDetail',
             component: EtpManageDetail,
         },
-        {   path : 'etp/InfoEtpInav',
-            component: InfoEtpInav,
+        {   path : 'etp/EtpOperInav',
+            component: EtpOperInav,
         },
         {   path : 'etp/EtpOperPerformance',
             component: EtpOperPerformance,
