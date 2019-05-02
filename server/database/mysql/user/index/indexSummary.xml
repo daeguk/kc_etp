@@ -702,4 +702,24 @@
         limit 0, 4;
     ]]>    
     </select>
+
+    <!--지수요약: 지수정보 공개 요청 건수 -->
+    <select id="getShareReqCnt">
+    <![CDATA[
+        SELECT COUNT(*) as count
+              ,DATE_FORMAT(MAX(REG_TIME),'%Y/%m/%d') as updateDate
+          FROM tm_jisu_share_req
+         WHERE REQ_FLAG = '1'
+    ]]>    
+    </select>
+
+    <!--지수요약: 지수정보 등록상태(01: 등록, 02: 연동신청, 03:연동완료)-->
+    <select id="getIndexRegStateCnt">
+    <![CDATA[
+        SELECT COUNT(*) as count
+              ,DATE_FORMAT(MAX(REG_TIME),'%Y/%m/%d') as updateDate
+          FROM tm_jisu_mast
+         WHERE STATUS = #{state};
+    ]]>    
+    </select>
 </mapper>

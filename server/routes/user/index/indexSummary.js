@@ -631,6 +631,91 @@ var getIndexAnalysisInfo = function (req, res) {
 };
 
 
+
+
+/*
+* 지수요약: 지수정보 공개 요청 건수 
+*/
+
+var getShareReqCnt = function (req, res) {
+    try {
+        console.log('indexSummary=>getShareReqCnt 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        // var options = {id:'admin'};
+        
+        var options = {
+        };
+
+
+        var stmt = mapper.getStatement('index', 'getShareReqCnt', options, {language:'sql', indent: '  '});
+        
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
+
+
+/*
+* 지수요약: 지수정보 등록상태(01: 등록, 02: 연동신청, 03:연동완료)
+*/
+
+var getIndexRegStateCnt = function (req, res) {
+    try {
+        console.log('indexSummary=>getIndexRegStateCnt 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        // var options = {id:'admin'};
+        
+        var options = {
+            state : req.query.state
+        };
+
+
+        var stmt = mapper.getStatement('index', 'getIndexRegStateCnt', options, {language:'sql', indent: '  '});
+        
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
+
+
 module.exports.getIndexSummaryInfo = getIndexSummaryInfo;
 module.exports.getInfoOpenReqList = getInfoOpenReqList;
 module.exports.updateIndexOpenYn = updateIndexOpenYn;
@@ -644,3 +729,5 @@ module.exports.getETFList = getETFList;
 module.exports.getETNList = getETNList; 
 module.exports.getIndexImportanceList = getIndexImportanceList;
 module.exports.getIndexAnalysisInfo = getIndexAnalysisInfo;
+module.exports.getShareReqCnt = getShareReqCnt;
+module.exports.getIndexRegStateCnt = getIndexRegStateCnt;

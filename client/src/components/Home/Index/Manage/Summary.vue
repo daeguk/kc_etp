@@ -113,28 +113,32 @@ export default {
                 chartColor: "#90CAF9"
             },
             boxItem1: {
+                mode: '4',
                 title: "발표지수",
-                count: 120,
+                count: 0,
                 subTitle: "회원사/벤더로 분배되는 지수",
-                updateDate: "25/02/19"
+                updateDate: "0"
             },
             boxItem2: {
+                mode: '3',
                 title: "산출지수",
-                count: 156,
+                count: 0,
                 subTitle: "미발표 지수를 포함한 플랫폼에서 산출중인 지수",
-                updateDate: "25/02/19"
+                updateDate: "0"
             },
             boxItem3: {
+                mode: '2',
                 title: "프로젝트",
-                count: 7,
+                count: 0,
                 subTitle: "개발중인 지수",
-                updateDate: "25/02/19"
+                updateDate: "0"
             },
             boxItem4: {
+                mode: '1',
                 title: "조회요청",
-                count: 12,
+                count: 0,
                 subTitle: "지수상세정보 공개요청 건수",
-                updateDate: "25/02/19"
+                updateDate: "0"
             }
         };
     },

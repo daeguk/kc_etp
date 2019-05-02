@@ -49,6 +49,8 @@ module.exports = {
         { file: './user/index/indexSummary', path: '/user/index/getETNList', method: 'getETNList', session: 'check', type: 'get' },   
         { file: './user/index/indexSummary', path: '/user/index/getIndexImportanceList', method: 'getIndexImportanceList', session: 'check', type: 'get' },
         { file: './user/index/indexSummary', path: '/user/index/getIndexAnalysisInfo', method: 'getIndexAnalysisInfo', session: 'check', type: 'get' },
+        { file: './user/index/indexSummary', path: '/user/index/getShareReqCnt', method: 'getShareReqCnt', session: 'check', type: 'get' },
+        { file: './user/index/indexSummary', path: '/user/index/getIndexRegStateCnt', method: 'getIndexRegStateCnt', session: 'check', type: 'get' },
         
 
 
