@@ -9,7 +9,6 @@ import IndexMainIndexDetail   from  '@/components/Home/Index/Manage/IndexDetail.
 
 
 import  IndexRegisterMain   from './components/Home/Index/Register/IndexRegisterMain.vue'
-import  IndexDevelopMain   from './components/Home/Index/Develop/IndexDevelopMain.vue'
 import  IndexDatepickerTestMain   from './components/Home/Index/ToastGridTest/IndexDatepickerTestMain.vue'
 import  IndexVueTableTestMain   from './components/Home/Index/ToastGridTest/IndexVueTableTestMain.vue'
 import  IndexToastGridTestMain   from './components/Home/Index/ToastGridTest/IndexToastGridTestMain.vue'
@@ -58,61 +57,93 @@ export const routes = [
         // MARKET INFO
         {   path : 'info/etpinfo',
             component: EtpInfoMain,
+            meta: {
+                requiresAuth: false
+            },
             children: [
-/*                
-                {
-                    path : 'marktEtpSummaryInfo',
-                    component: MarktEtpSummaryInfo
-                }, 
-*/                
-
                 {
                     path : 'marketRepresent',
-                    component: MarketRepresent          /* 001-시장대표 */
+                    component: MarketRepresent,          /* 001-시장대표 */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
                 {
                     path : 'marketSector',
-                    component: MarketSector             /* 002-섹터 */
+                    component: MarketSector,             /* 002-섹터 */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
                 {
                     path : 'marketThema',
-                    component: MarketThema              /* 003-테마 */
+                    component: MarketThema,              /* 003-테마 */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
                 {
                     path : 'marketStrategy',
-                    component: MarketStrategy           /* 004-전략 */
+                    component: MarketStrategy,           /* 004-전략 */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
                 {
                     path : 'marketBond',
-                    component: MarketBond               /* 005-채권 */
+                    component: MarketBond,               /* 005-채권 */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
                 {
                     path : 'marketCurrency',
-                    component: MarketCurrency           /* 006-통화 */
+                    component: MarketCurrency,           /* 006-통화 */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
                 {
                     path : 'marketRawMaterials',
-                    component: MarketRawMaterials       /* 007-원자재 */
+                    component: MarketRawMaterials,       /* 007-원자재 */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
                 {
                     path : 'marketVix',
-                    component: MarketVix                /* 008-VIX */
+                    component: MarketVix,                /* 008-VIX */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
                 {
                     path : 'marketRealEstate',
-                    component: MarketRealEstate         /* 009-부동산 */
+                    component: MarketRealEstate,         /* 009-부동산 */
+                    meta: {
+                        requiresAuth: false
+                    },
                 },
                 {
                     path : 'marketMixAssets',
-                    component: MarketMixAssets          /* 010-혼합자산 */
+                    component: MarketMixAssets,          /* 010-혼합자산 */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
                 {
                     path : 'marketOversea',
-                    component: MarketOversea            /* 101-국가 ( 탭에 노출은 '해외' ) */
+                    component: MarketOversea,            /* 101-국가 ( 탭에 노출은 '해외' ) */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
                 {
                     path : 'marketLeverageInverse',
-                    component: MarketLeverageInverse    /* 201-배율 ( 탭에 노출은 '레버리지/인버스' ) */
+                    component: MarketLeverageInverse,    /* 201-배율 ( 탭에 노출은 '레버리지/인버스' ) */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
             ]
         },
@@ -131,28 +162,90 @@ export const routes = [
         // INDEX
         {   path : 'index/manage',
             component: IndexManageMain,
+            meta: {
+                requiresAuth: true
+            },
             children: [
                 {
                     path : 'indexSummary',
-                    component: IndexMainSummary
+                    component: IndexMainSummary,
+                    meta: {
+                        requiresAuth: true
+                    },
                 }, 
                 {
                     path : 'indexList',
-                    component: IndexMainIndexList
+                    component: IndexMainIndexList,
+                    meta: {
+                        requiresAuth: true
+                    },
                 }, 
                 {
                     path : 'indexDetail',
-                    component: IndexMainIndexDetail
+                    component: IndexMainIndexDetail,
+                    meta: {
+                        requiresAuth: true
+                    },
                 }, 
             ]
         },
-        
+        {   path : '/index/manage/IndexListdetail',
+            component: IndexListdetail,
+            meta: {
+                requiresAuth: true
+            },
+        },
         {   path : '/index/register',
             component: IndexRegisterMain,
+            meta: {
+                requiresAuth: true
+            },
         },
-        {   path : '/index/develop',
-            component: IndexDevelopMain,
+        // ETP
+        {   path : 'etp/manage',
+            component: EtpManageMain,
+            meta: {
+                requiresAuth: true
+            },
         },
+        {   path : 'etp/register',
+            component: EtpRegisterMain,
+            meta: {
+                requiresAuth: true
+            },
+        },
+        {   path : 'etp/contract',
+            component: EtpContractMain,
+            meta: {
+                requiresAuth: true
+            },
+        },
+        {   path : 'etp/etpManageDetail',
+            component: EtpManageDetail,
+            meta: {
+                requiresAuth: true
+            },
+        },
+        {   path : 'etp/InfoEtpInav',
+            component: InfoEtpInav,
+            meta: {
+                requiresAuth: true
+            },
+        },
+        {   path : 'etp/ETPPerfomance',
+            component: ETPPerfomance,
+            meta: {
+                requiresAuth: true
+            },
+        },
+        {   path : 'etp/OverseasIndex',
+            component: OverseasIndex,
+            meta: {
+                requiresAuth: true
+            },
+        },
+
+
         {   path : '/index/datepickerTest',
             component: IndexDatepickerTestMain,
         },
@@ -161,32 +254,6 @@ export const routes = [
         },
         {   path : '/index/toastGridTest',
             component: IndexToastGridTestMain,
-        },
-        {   path : '/index/manage/IndexListdetail',
-            component: IndexListdetail,
-        },
-        
-        // ETP
-        {   path : 'etp/manage',
-            component: EtpManageMain,
-        },
-        {   path : 'etp/register',
-            component: EtpRegisterMain,
-        },
-        {   path : 'etp/contract',
-            component: EtpContractMain,
-        },
-        {   path : 'etp/etpManageDetail',
-            component: EtpManageDetail,
-        },
-        {   path : 'etp/InfoEtpInav',
-            component: InfoEtpInav,
-        },
-        {   path : 'etp/ETPPerfomance',
-            component: ETPPerfomance,
-        },
-        {   path : 'etp/OverseasIndex',
-            component: OverseasIndex,
         },
     ]
   }
