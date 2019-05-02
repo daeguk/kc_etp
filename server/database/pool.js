@@ -49,7 +49,7 @@ module.exports = class {
         }); 
     }
 
-    getStmts() {
+    /*getStmts() {
         console.log('getStmts() 호출됨.');
         
         var modelLen = config.db_model.length;
@@ -66,7 +66,7 @@ module.exports = class {
         console.log('[MYSQL]mydb 객체가 app 객체의 속성으로 추가됨.');
 
         return etpStmts;
-    };
+    };*/
 
     getMapper() {
         // 사용자 로그인 처리(threeon. 2019.04.19)
