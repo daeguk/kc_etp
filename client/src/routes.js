@@ -15,7 +15,7 @@ import  IndexToastGridTestMain   from './components/Home/Index/ToastGridTest/Ind
 import  IndexListdetail   from './components/Home/Index/Manage/IndexListdetail.vue'
 
 // ETP
-import  EtpManageMain   from './components/Home/Etp/Manage/EtpManageMain.vue'
+import  EtpOperMain   from './components/Home/Etp/Manage/EtpOperMain.vue'
 import  EtpRegisterMain   from './components/Home/Etp/Register/EtpRegisterMain.vue'
 import  EtpContractMain   from './components/Home/Etp/Contract/EtpContractMain.vue'
 import  EtpManageDetail   from './components/Home/Etp/Manage/EtpManageDetail.vue'
@@ -203,7 +203,7 @@ export const routes = [
         },
         // ETP
         {   path : 'etp/manage',
-            component: EtpManageMain,
+            component: EtpOperMain,
             meta: {
                 requiresAuth: true
             },
