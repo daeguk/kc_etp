@@ -51,13 +51,15 @@ var getEtpList = function(req, res) {
         var carousel_info = {
             carousel_cnt    :   0,
             carousel_mod    :   0,
-            carousel_div    :   4
+            carousel_div    :   0
         };
 
         Promise.using(pool.connect(), conn => {
 
             /* 1. 시장을 대표하는 메인 코드정보를 조회한다. */
             var etpFunc1    =   function( callback ) {
+
+                carousel_info.carousel_div  =   4;
 
                 paramData.com_mst_cd    =   "COM003";       /* 시장을 대표하는 지수 */
                 stmt = mapper.getStatement('etpinfo', 'getIndexInfoByCodeDtl', paramData, format);
@@ -286,6 +288,8 @@ var getEtpList = function(req, res) {
                 var etpLists        =   [];
                 var carousel_data   =   [];
                 var carousel_mod    =   [];
+
+                carousel_info.carousel_div  =   5;
 
                 carousel_info.carousel_cnt =  Math.floor(resultMsg.ctgCodeList.length / carousel_info.carousel_div);
                 carousel_info.carousel_mod =  resultMsg.ctgCodeList.length % carousel_info.carousel_div;
