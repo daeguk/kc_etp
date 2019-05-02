@@ -138,6 +138,12 @@
               ,BAS.STD_CAPITAL
               ,BAS.FIXED_CASH
               ,BAS.FLOWRATE_YN
+
+
+              , ''                                              AS  F16012      /* 국제표준코드 */
+              , BAS.F16013                                      AS  F16257      /* ETP기초지수코드 */
+              , LPAD( SUBSTR( BAS.MARKET_ID, 2 ), 3, '0' )      AS  F34239      /* ETP기초지수MID */  
+                         
         FROM  td_index_basic BAS
         WHERE BAS.large_type = #{large_type}               
     ORDER BY BAS.ANNO_DATE DESC

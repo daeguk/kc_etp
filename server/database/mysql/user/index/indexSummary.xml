@@ -47,6 +47,10 @@
             ,date_format(REQ.REG_TIME, '%Y-%m-%d') REG_TIME
             ,REQ.REQ_FLAG
             ,REQ.REG_ID
+
+            ,''                                               AS  F16012        /* 국제표준코드 */
+            , BAS.F16013                                      AS  F16257        /* ETP기초지수코드 */
+            , LPAD( SUBSTR( BAS.MARKET_ID, 2 ), 3, '0' )      AS  F34239        /* ETP기초지수MID */            
         FROM (SELECT A.INST_CD
 				   ,A.REG_TIME
                    ,A.REQ_FLAG

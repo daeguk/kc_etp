@@ -326,6 +326,7 @@ export default {
             var table = $('#etf_table').DataTable();
             var data = table.row($(this).parents('tr')).data();
 
+            data.GUBUN= "1";
             vm.fn_detailPop( data );
         });
 
@@ -370,6 +371,7 @@ export default {
             var table = $('#etn_table').DataTable();
             var data = table.row($(this).parents('tr')).data();
 
+            data.GUBUN= "1";
             vm.fn_detailPop( data );
         });
 
@@ -413,6 +415,7 @@ export default {
             var table = $('#index_table').DataTable();
             var data = table.row($(this).parents('tr')).data();
 
+            data.GUBUN= "2";
             vm.fn_detailPop( data );
         });
 
@@ -645,7 +648,7 @@ export default {
                             vm.$root.$confirm.open('확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.' + '(' + etpIndex.index_cnt + ')', {}, 1);
                             return  false;
                         }
-
+debugger;
                         vm.showIndexDetailDialog    =   false;
                         vm.showEtpDetailDialog      =   true;
                     }
@@ -655,11 +658,11 @@ export default {
             else if( param.GUBUN == "2" ) {
 
                 console.log("########## ComFavorItem.vue -> fn_detailPop ############");
-                console.log( "param.ITEM_CD=["      + param.ITEM_CD     + "] /* 지수코드  */" );
-                console.log( "param.LARGE_TYPE=["   + param.LARGE_TYPE  + "] /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */" );
-                console.log( "param.MARKET_ID=["    + param.MARKET_ID   + "] /* 시장 ID  */" );
+                console.log( "param.F16257=["       + param.F16257     + "]     /* 지수코드  */" );
+                console.log( "param.LARGE_TYPE=["   + param.LARGE_TYPE  + "]    /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */" );
+                console.log( "param.MARKET_ID=["    + param.MARKET_ID   + "]    /* 시장 ID  */" );
 
-                if(     !param.ITEM_CD          /* 지수코드  */
+                if(     !param.F16257          /* 지수코드  */
                     ||  !param.LARGE_TYPE       /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */
                     ||  !param.MARKET_ID        /* 시장 ID  */
                 ) {
