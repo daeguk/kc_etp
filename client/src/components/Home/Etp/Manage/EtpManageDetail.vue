@@ -229,7 +229,7 @@
                                                                 <v-list-tile
                                                                     v-for="item in items2"
                                                                     :key="item.title"
-                                                                    @click
+                                                                    @click.stop=""
                                                                     class="right_menu_w3"
                                                                 >
                                                                     <v-list-tile-content
@@ -254,7 +254,7 @@
                                                                 <v-list-tile
                                                                     v-for="item in items3"
                                                                     :key="item.title"
-                                                                    @click
+                                                                    @click.stop=""
                                                                     class="right_menu_w3"
                                                                 >
                                                                     <v-list-tile-content
