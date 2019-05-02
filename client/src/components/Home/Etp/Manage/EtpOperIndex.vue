@@ -440,6 +440,11 @@
 
 
 <script>
+import $      from 'jquery'
+import dt      from 'datatables.net'
+import buttons from 'datatables.net-buttons'
+
+import Config from '@/js/config.js';
 //import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
 import IndexInfoDetailPop from "./IndexInfoDetailPop.vue";
 
@@ -516,7 +521,9 @@ export default {
                 { text: "Ceiling rto", value: "CeilingRto", align: "right" },
                 { text: "Factor rto", value: "FactorRto", align: "right" }
             ],
-            desserts: []
+            desserts: [],
+
+            dataList    :   [],
         };
     },
     components: {
@@ -524,7 +531,32 @@ export default {
     },
     mounted: function() {},
     created: function() {},
-    beforeDestory: function() {}
+    beforeDestory: function() {},
+
+    methods: {
+
+        /*
+         * ETP 지수관리 정보를 조회한다.
+         * 2019-05-03  bkLove(촤병국)
+         */        
+        fn_getEtpOperIndex( ) {
+
+            var vm = this;
+
+            console.log( "EtpOperIndex.vue -> fn_getEtpOperIndex" );
+
+            axios.post(Config.base_url + "/user/etp/getEtpOperIndex", {
+                data: {}
+            }).then(function(response) {
+                console.log(response);
+
+                if (response.data) {
+                    vm.dataList = response.data.dataList;
+                    
+                }
+            });
+        },
+    }    
 };
 </script>
 

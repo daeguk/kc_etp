@@ -12,6 +12,12 @@
 </template>
 
 <script>
+import $      from 'jquery'
+import dt      from 'datatables.net'
+import buttons from 'datatables.net-buttons'
+
+import Config from '@/js/config.js';
+
 export default {
     props: [],
     data() {
@@ -110,7 +116,9 @@ export default {
                     protein: 7,
                     iron: "6%"
                 }
-            ]
+            ],
+
+            dataList    :   [],
         };
     },
     components: {},
@@ -118,7 +126,30 @@ export default {
     created: function() {},
     beforeDestroy() {},
     mounted: function() {},
-    methods: {}
+    methods: {
+
+        /*
+         * ETP PDF 정보를 조회한다.
+         * 2019-05-03  bkLove(촤병국)
+         */        
+        fn_getEtpOperPdf( ) {
+
+            var vm = this;
+
+            console.log( "EtpOperPdf.vue -> fn_getEtpOperPdf" );
+
+            axios.post(Config.base_url + "/user/etp/getEtpOperPdf", {
+                data: {}
+            }).then(function(response) {
+                console.log(response);
+
+                if (response.data) {
+                    vm.dataList = response.data.dataList;
+                    
+                }
+            });
+        },        
+    }
 };
 </script>
 <style scoped>
