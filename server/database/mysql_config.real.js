@@ -13,10 +13,10 @@ module.exports = {
     user: "kc_etp",
     password: "kc_etp",
     database: "kc_etp",
-    db_model: [
+    /*db_model: [
         { file: './mysql/user/member_model', modelName: 'UserMember' },
         { file: './mysql/user/etpregister_model', modelName: 'EtpRegister' },
         { file: './mysql/user/indexmanage_model', modelName: 'IndexManage' },
         { file: './mysql/user/etpinfo_model', modelName: 'EtpInfo' },
-    ],
+    ],*/
 }

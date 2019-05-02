@@ -47,7 +47,7 @@ var app = express();
 
 app.set("pool", pool);
 
-app.set("stmt", pool.getStmts());
+//app.set("stmt", pool.getStmts());
 app.set("mapper", pool.getMapper());
 
 //===== 서버 변수 설정  =====//
