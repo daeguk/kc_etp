@@ -430,7 +430,7 @@
                                                     <v-list-tile-title>iNAV 산출 현황</v-list-tile-title>
                                                 </v-list-tile-content>
                                            </v-list-tile>
-                                           <v-list-tile router-link to="ETPPerfomance" class="border_b">
+                                           <v-list-tile router-link to="EtpOperPerformance" class="border_b">
                                                <v-list-tile-avatar>
                                                     <v-icon  value="Performance" icon>loop</v-icon>
                                                  </v-list-tile-avatar>
