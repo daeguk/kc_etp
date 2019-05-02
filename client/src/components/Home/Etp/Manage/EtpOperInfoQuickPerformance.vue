@@ -13,10 +13,10 @@
                         <EtpOperInfo></EtpOperInfo>
                     </v-tab-item>
                     <v-tab-item>
-                        <EtpOperIndexManage></EtpOperIndexManage>
+                        <EtpOperIndex></EtpOperIndex>
                     </v-tab-item>
                     <v-tab-item>
-                        <EtpOperPdfManage></EtpOperPdfManage>
+                        <EtpOperPdf></EtpOperPdf>
                     </v-tab-item>
                 </v-tabs-items>
             </v-flex>
@@ -403,9 +403,9 @@
 
 <script>
 //import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
-import EtpOperInfo from "./EtpOperInfo.vue";
-import EtpOperIndexManage from "./EtpOperIndexManage.vue";
-import EtpOperPdfManage from "./EtpOperPdfManage.vue";
+import EtpOperInfo  from "./EtpOperInfo.vue";
+import EtpOperIndex from "./EtpOperIndex.vue";
+import EtpOperPdf   from "./EtpOperPdf.vue";
 
 export default {
     components: {
@@ -464,9 +464,9 @@ export default {
             right: null,
             desserts: [],
             components: {
-                EtpOperInfo: EtpOperInfo,
-                EtpOperIndexManage: EtpOperIndexManage,
-                EtpOperPdfManage: EtpOperPdfManage
+                EtpOperInfo     :   EtpOperInfo,
+                EtpOperIndex    :   EtpOperIndex,
+                EtpOperPdf      :   EtpOperPdf
             }
         };
     },

@@ -83,7 +83,7 @@
                                 <v-list>
                                     <v-list-tile
                                         router-link
-                                        to="EtpOperInav"
+                                        to="/etp/manage/etpOperControlMenuInav"
                                         class="border_b"
                                         v-model="text2"
                                     >
