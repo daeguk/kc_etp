@@ -108,7 +108,7 @@
                                         :paramData="paramData"
                                         :showEtpManageDetailDialog="showEtpManageDetailDialog"  
                                         
-                                        @fn_closePop = "fn_closePop">
+                                        @fn_closePop = "fn_marketClosePop">
                     </EtpManageDetail>
                 </v-dialog>
             </v-flex>

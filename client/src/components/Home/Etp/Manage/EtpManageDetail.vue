@@ -90,7 +90,9 @@
 
                                 <v-tabs-items v-model="tab5">
                                     <v-tab-item>
-                                        <EtpManageDetailBasicInfoTab    :paramData="paramData"  @:receiveEtpBasic = "fn_setEtpBasic"></EtpManageDetailBasicInfoTab>
+                                        <EtpManageDetailBasicInfoTab    :paramData="paramData"
+                                                                        :etpBasic="etpBasic"
+                                                                        :indexBasic="indexBasic"></EtpManageDetailBasicInfoTab>
                                     </v-tab-item>
                                     <v-tab-item>
                                         <EtpManageDetailAnalysisTab     :paramData="paramData" ></EtpManageDetailAnalysisTab>
@@ -478,6 +480,8 @@ export default {
             ||  vm.basicData.f34239
         )   {
             vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
+
+            vm.fn_getEtpBasic();                /* ETP 의 기본정보를 조회한다. */
         }
     },
     created: function() {},
@@ -486,14 +490,26 @@ export default {
     methods: {
 
         /*
-         * EtpManageDetailBasicInfoTab 에서 조회된 etp 기본정보를 설정한다.
+         * ETP 의 기본정보를 조회한다.
          * 2019-04-25  bkLove(촤병국)
          */
-        fn_setEtpBasic : function( etpBasic, indexBasic ) {
-            console.log("EtpManageDetail.vue -> fn_setEtpBasic emit 후");
+        fn_getEtpBasic: function() {
+            console.log("fn_getEtpBasic");
 
-            this.etpBasic       =   etpBasic;
-            this.indexBasic     =   indexBasic;
+            var vm = this;
+
+            axios.post(Config.base_url + "/user/etp/getEtpBasic", {
+                data: {
+                    basicData   :   vm.basicData
+                }
+            }).then(function(response) {
+                console.log(response);
+
+                if (response.data) {
+                    vm.etpBasic = response.data.etpBasic;
+                    vm.indexBasic = response.data.indexBasic;
+                }
+            });
         },
 
         /*
