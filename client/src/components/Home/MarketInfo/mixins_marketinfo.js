@@ -163,12 +163,16 @@ export  const  market_common =   {
             var vm = this;
 
             console.log("########## mixins_marketinfo.js -> fn_movePageFromMarket ############");
+            console.log( "data.f16012=[" + data.f16012 + "] /* 국제표준코드  */" );
+            console.log( "data.f16257=[" + data.f16257 + "] /* ETP기초지수코드  */" );
+            console.log( "data.f34239=[" + data.f34239 + "] /* ETP기초지수MID  */" );
 
             if(     !data.f16012        /* 국제표준코드  */
                 ||  !data.f16257        /* ETP기초지수코드  */
                 ||  !data.f34239        /* ETP기초지수MID  */
+                ||  data.f34239 < 0
             ) {
-                vm.$root.$confirm.open('확인','잘못된 데이터가 존재합니다. 관리자에게 문의해 주세요.', {}, 1);
+                vm.$root.$confirm.open('확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
                 return  false;
             }
 
@@ -186,17 +190,17 @@ export  const  market_common =   {
 
                 if (response.data) {
                     var etpIndex = response.data.etpIndex;
-/*
+
                     if( etpIndex.etp_cnt == 0 ) {
-                        vm.$root.$confirm.open('확인','(ETP) 잘못된 데이터가 존재합니다. 관리자에게 문의해 주세요.', {}, 1);
+                        vm.$root.$confirm.open('확인','ETP 정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
                         return  false;
                     }
 
                     if( etpIndex.index_cnt == 0 ) {
-                        vm.$root.$confirm.open('확인','(지수) 잘못된 데이터가 존재합니다. 관리자에게 문의해 주세요.', {}, 1);
+                        vm.$root.$confirm.open('확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.' + '(' + etpIndex.index_cnt + ')', {}, 1);
                         return  false;
                     }
-*/
+
                     vm.showEtpManageDetailDialog = true;
                 }
             });
