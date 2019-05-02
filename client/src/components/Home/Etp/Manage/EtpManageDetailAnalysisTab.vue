@@ -384,7 +384,7 @@ export default {
             /* 초기데이터 유무가 Y 인 경우 */
             if( rowData.initYn  === "Y" ) {
 
-                /* ETP/INDEX 구분 이 'ETP' 인 경우 */
+                /* 'ETP' 인 경우 */
                 if( rowData.etpIndexGubun   === "ETP" ) {
 
                     var selData =   vm.basicData.arrNavPriceGubun.filter( function(item) {
@@ -399,9 +399,8 @@ export default {
 
                 }
 
-                /* ETP/INDEX 구분 이 'INDEX' 인 경우 */
+                /* 'INDEX' 인 경우 */
                 else if( rowData.etpIndexGubun   === "INDEX" ) {
-
                     if(     vm.basicData.f16257     ==  rowData.f16257          /* ETP기초지수코드 */
                         &&  vm.basicData.f34239     ==  rowData.f34239          /* ETP기초지수MID */
                     )   {
@@ -430,7 +429,6 @@ export default {
 
                 /* 'INDEX' 인 경우 */
                 else if( rowData.etpIndexGubun   === "INDEX" ) {
-
                     var selData =   vm.arrIndexPerformance.filter( function(item) {
                         return      rowData.f16257   === item.f16257            /* ETP기초지수코드 */
                                 &&  rowData.f34239   === item.f34239;           /* ETP기초지수MID */
