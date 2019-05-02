@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state: {
-        user: [{ email: "", 
+        user: { email: "", 
                 password: "", 
                 name: "", 
                 type_cd: "", 
@@ -14,7 +14,7 @@ const store = new Vuex.Store({
                 inst_name: "",
                 hp_no: "",
                 tel_no: "",
-              }],
+              },
     },
     mutations: {
         [Constant.ADD_USER]: (state, payload) => {

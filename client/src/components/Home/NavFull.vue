@@ -31,7 +31,7 @@
 export default {
   data() {
     return {
-      items: [
+      full_items: [
         {
           action: 'dashboard',
           title: 'Market Info',
@@ -61,49 +61,29 @@ export default {
             { title: '계약지수 목록', link: '/etp/contract'  }
           ],
         },
-        /*
-        {
-          action: 'account_balance',
-          title: '운영지원',
-          active: true,
-          subitems: [
-            { title: '기초지수코드정보', link: '/index/manage' },
-            { title: '지수채용주식수', link: '/index/register'  },
-            { title: '기초지수종가', link: '/index/develop'  },
-            { title: '추적오차율 괴리', link: '/index/develop'  },
-          ],
-        },
-        {
-          action: 'account_circle',
-          title: 'ADMIN',
-          active: true,
-          subitems: [
-            { title: '회원관리', link: '/index/manage' },
-            { title: '지수관리', link: '/index/register'  },
-            { title: 'ETP관리', link: '/index/develop'  },
-          ],
-        },
-        {
-          action: 'sample',
-          title: 'SAMPLE',
-          active: true,
-          subitems: [
-            { title: 'datepicker 테스트', link: '/index/datepickerTest'  },
-            { title: 'Vue Table 테스트', link: '/index/vueTableTest'  },
-            { title: 'Toast Grid 테스트', link: '/index/toastGridTest'  },
-            { title: 'chart and grid', link: '/sample/test'  },
-            { title: 'upload', link: '/sample/upload'  },
-          ],
-        },*/
-        
-      ] //item
+      ], //full_items
+      items: [],
     }; // return
   },
   created: function() {
   },
   beforeDestroy() {
   },
+  mounted: function() {
+    var type_cd = this.$store.state.user.type_cd ;
 
+    if(type_cd == "") {
+      this.items.push(this.full_items[0]);
+    }else if(type_cd == "9998" || type_cd == "9999") {
+      this.items = this.full_items;
+    }else if(type_cd == "0001" || type_cd == "0002" || type_cd == "0004" || type_cd == "0005") {
+      this.items.push(this.full_items[0]);
+      this.items.push(this.full_items[2]);
+    }else if(type_cd == "0003" || type_cd == "0005") {
+      this.items.push(this.full_items[0]);
+      this.items.push(this.full_items[1]);
+    }
+  },
   methods: {
   }
 }

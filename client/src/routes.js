@@ -66,85 +66,73 @@ export const routes = [
                 requiresAuth: false
             },
             children: [
-                {
-                    path : 'marketRepresent',
+                {   path : 'marketRepresent',
                     component: MarketRepresent,          /* 001-시장대표 */
                     meta: {
                         requiresAuth: false
                     },
                 }, 
-                {
-                    path : 'marketSector',
+                {   path : 'marketSector',
                     component: MarketSector,             /* 002-섹터 */
                     meta: {
                         requiresAuth: false
                     },
                 }, 
-                {
-                    path : 'marketThema',
+                {   path : 'marketThema',
                     component: MarketThema,              /* 003-테마 */
                     meta: {
                         requiresAuth: false
                     },
                 }, 
-                {
-                    path : 'marketStrategy',
+                {   path : 'marketStrategy',
                     component: MarketStrategy,           /* 004-전략 */
                     meta: {
                         requiresAuth: false
                     },
                 }, 
-                {
-                    path : 'marketBond',
+                {   path : 'marketBond',
                     component: MarketBond,               /* 005-채권 */
                     meta: {
                         requiresAuth: false
                     },
                 }, 
-                {
-                    path : 'marketCurrency',
+                {   path : 'marketCurrency',
                     component: MarketCurrency,           /* 006-통화 */
                     meta: {
                         requiresAuth: false
                     },
                 }, 
-                {
-                    path : 'marketRawMaterials',
+                {   path : 'marketRawMaterials',
                     component: MarketRawMaterials,       /* 007-원자재 */
                     meta: {
                         requiresAuth: false
                     },
                 }, 
-                {
-                    path : 'marketVix',
+                {   path : 'marketVix',
                     component: MarketVix,                /* 008-VIX */
                     meta: {
                         requiresAuth: false
                     },
                 }, 
-                {
-                    path : 'marketRealEstate',
+                {   path : 'marketRealEstate',
                     component: MarketRealEstate,         /* 009-부동산 */
                     meta: {
                         requiresAuth: false
                     },
                 },
-                {
-                    path : 'marketMixAssets',
+                {   path : 'marketMixAssets',
                     component: MarketMixAssets,          /* 010-혼합자산 */
                     meta: {
                         requiresAuth: false
                     },
                 }, 
-                {
-                    path : 'marketOversea',
+                {   path : 'marketOversea',
                     component: MarketOversea,            /* 101-국가 ( 탭에 노출은 '해외' ) */
                     meta: {
                         requiresAuth: false
                     },
                 }, 
-                {
-                    path : 'marketLeverageInverse',
+                {   path : 'marketLeverageInverse',
                     component: MarketLeverageInverse,    /* 201-배율 ( 탭에 노출은 '레버리지/인버스' ) */
                     meta: {
                         requiresAuth: false
@@ -168,28 +156,29 @@ export const routes = [
         {   path : 'index/manage',
             component: IndexManageMain,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                requiresType: ['0003', '0005']
             },
             children: [
-                {
-                    path : 'indexSummary',
+                {   path : 'indexSummary',
                     component: IndexMainSummary,
                     meta: {
-                        requiresAuth: true
+                      requiresAuth: true,
+                      requiresType: ['0003', '0005']
                     },
                 }, 
-                {
-                    path : 'indexList',
+                {   path : 'indexList',
                     component: IndexMainIndexList,
                     meta: {
-                        requiresAuth: true
+                      requiresAuth: true,
+                      requiresType: ['0003', '0005']
                     },
                 }, 
-                {
-                    path : 'indexDetail',
+                {   path : 'indexDetail',
                     component: IndexMainIndexDetail,
                     meta: {
-                        requiresAuth: true
+                      requiresAuth: true,
+                      requiresType: ['0003', '0005']
                     },
                 }, 
             ]
@@ -197,13 +186,15 @@ export const routes = [
         {   path : '/index/manage/IndexListdetail',
             component: IndexListdetail,
             meta: {
-                requiresAuth: true
+              requiresAuth: true,
+              requiresType: ['0003', '0005']
             },
         },
         {   path : '/index/register',
             component: IndexRegisterMain,
             meta: {
-                requiresAuth: true
+              requiresAuth: true,
+              requiresType: ['0003', '0005']
             },
         },
 
@@ -211,28 +202,29 @@ export const routes = [
         {   path : 'etp/manage',
             component: EtpOperMain,                         /* ETP 운용관리 메인 */
             meta: {
-                requiresAuth: true
+              requiresAuth: true,
+              requiresType: ['0001', '0002', '0004', '0005']
             },
             children: [
-                {
-                    path : 'etpOperInfo',
+                {   path : 'etpOperInfo',
                     component: EtpOperInfo,                 /* ETP 운용정보 */
                     meta: {
-                        requiresAuth: true
+                      requiresAuth: true,
+                      requiresType: ['0001', '0002', '0004', '0005']
                     },
                 }, 
-                {
-                    path : 'etpOperIndex',
+                {   path : 'etpOperIndex',
                     component: EtpOperIndex,                /* 지수관리 */
                     meta: {
-                        requiresAuth: true
+                      requiresAuth: true,
+                      requiresType: ['0001', '0002', '0004', '0005']
                     },
                 }, 
-                {
-                    path : 'etpOperPdf',
+                {   path : 'etpOperPdf',
                     component: EtpOperPdf,                  /* PDF 관리 */
                     meta: {
-                        requiresAuth: true
+                      requiresAuth: true,
+                      requiresType: ['0001', '0002', '0004', '0005']
                     },
                 }, 
             ]            
@@ -240,49 +232,64 @@ export const routes = [
         {   path : 'etp/register',
             component: EtpRegisterMain,
             meta: {
-                requiresAuth: true
+              requiresAuth: true,
+              requiresType: ['0001', '0002', '0004', '0005']
             },
         },
         {   path : 'etp/contract',
             component: EtpContractMain,
             meta: {
-                requiresAuth: true
+              requiresAuth: true,
+              requiresType: ['0001', '0002', '0004', '0005']
             },
         },
         {   path : 'etp/etpManageDetail',
             component: EtpManageDetail,
             meta: {
-                requiresAuth: true
+              requiresAuth: true,
+              requiresType: ['0001', '0002', '0004', '0005']
             },
         },
         {   path : 'etp/manage/etpOperInfoQuickInav',
             component: EtpOperInfoQuickInav,
             meta: {
-                requiresAuth: true
+              requiresAuth: true,
+              requiresType: ['0001', '0002', '0004', '0005']
             },
         },
         {   path : 'etp/manage/etpOperInfoQuickPerformance',
             component: EtpOperInfoQuickPerformance,
             meta: {
-                requiresAuth: true
+              requiresAuth: true,
+              requiresType: ['0001', '0002', '0004', '0005']
             },
         },
         {   path : 'etp/OverseasIndex',
             component: OverseasIndex,
             meta: {
-                requiresAuth: true
+              requiresAuth: true,
+              requiresType: ['0001', '0002', '0004', '0005']
             },
         },
 
 
         {   path : '/index/datepickerTest',
             component: IndexDatepickerTestMain,
+            meta: {
+              requiresAuth: false
+            },
         },
         {   path : '/index/vueTableTest',
             component: IndexVueTableTestMain,
+            meta: {
+              requiresAuth: false
+            },
         },
         {   path : '/index/toastGridTest',
             component: IndexToastGridTestMain,
+            meta: {
+              requiresAuth: false
+            },
         },
     ]
   }

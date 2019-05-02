@@ -86,16 +86,6 @@ export default {
             tel_no:response.data.results[0].tel_no, 
           });
 
-          // 로그인 정보 LocalStorage에 저장
-          sessionStorage.email = response.data.results[0].email;
-          sessionStorage.name = response.data.results[0].name;
-          sessionStorage.type_cd = response.data.results[0].type_cd;
-          sessionStorage.type_name = response.data.results[0].type_name;
-          sessionStorage.inst_cd = response.data.results[0].inst_cd;
-          sessionStorage.inst_name = response.data.results[0].inst_name;
-          sessionStorage.hp_no = response.data.results[0].hp_no;
-          sessionStorage.tel_no = response.data.results[0].tel_no;
-
           vm.loginDialog = false;
           // MainLanding.vue
           debugger;
