@@ -139,6 +139,29 @@
                 </v-navigation-drawer>
             </v-card>
             </v-flex>
+
+            <v-flex>
+                <IndexDetailDialog  v-if="showIndexDetailDialog"  
+
+                                    :paramData="paramData" 
+                                    :showDialog="showIndexDetailDialog"  
+
+                                    @fn_closePop = "fn_closeIndexDetailPop">
+                </IndexDetailDialog>
+            </v-flex>
+
+            <v-flex>
+                <v-dialog v-model="showEtpDetailDialog"   :max-width="options.width" v-bind:style="{ zIndex: options.zIndex }" >
+                    <EtpManageDetail    v-if="showEtpDetailDialog"  
+
+                                        :paramData="paramData"
+                                        :showEtpManageDetailDialog="showEtpDetailDialog"
+                                        
+                                        @fn_closePop = "fn_closeEtpDetailPop">
+                    </EtpManageDetail>
+                </v-dialog>
+            </v-flex>            
+
             <v-flex>
                 <ConfirmDialog ref="confirm"></ConfirmDialog>
             </v-flex>
@@ -158,6 +181,8 @@ import _ from "lodash";
 import Config from "@/js/config.js";
 import jongmokPop from "@/components/common/popup/jongmokPopup";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
+import IndexDetailDialog from "@/components/Home/Index/Manage/IndexDetailDialog.vue";
+import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";
 
 var favor_grid = null;
 var etf_table = null;
@@ -181,11 +206,22 @@ export default {
             etnList: [],
             etfList: [],
             indexList: [],
+
+            options: {
+                color: 'primary',
+                width: '80%',
+                zIndex: 200
+            },
+            paramData : {},
+            showIndexDetailDialog : false,
+            showEtpDetailDialog : false,
         };
     },
     components: {
         jongmokPop : jongmokPop,
         ConfirmDialog : ConfirmDialog,
+        IndexDetailDialog : IndexDetailDialog,
+        EtpManageDetail :   EtpManageDetail
     },
     computed: {
         
@@ -246,7 +282,7 @@ export default {
             var table = $('#favor_grid').DataTable();
             var data = table.row($(this).parents('tr')).data();
 
-            vm.$emit( "fn_detailPop", data );
+            vm.fn_detailPop( data );
         });        
 
 
@@ -290,7 +326,7 @@ export default {
             var table = $('#etf_table').DataTable();
             var data = table.row($(this).parents('tr')).data();
 
-            vm.$emit( "fn_detailPop", data );
+            vm.fn_detailPop( data );
         });
 
 
@@ -334,7 +370,7 @@ export default {
             var table = $('#etn_table').DataTable();
             var data = table.row($(this).parents('tr')).data();
 
-            vm.$emit( "fn_detailPop", data );
+            vm.fn_detailPop( data );
         });
 
 
@@ -377,7 +413,7 @@ export default {
             var table = $('#index_table').DataTable();
             var data = table.row($(this).parents('tr')).data();
 
-            vm.$emit( "fn_detailPop", data );
+            vm.fn_detailPop( data );
         });
 
 
@@ -556,7 +592,122 @@ export default {
                 }
                 
             });
-        },        
+        },
+
+        /*
+         * Control 영역( 관심종목/전체종목 - ComFavorItem ) 에서 ETP 또는 INDEX 를 선택하는 경우 팝업창을 띄운다.
+         * 2019-04-16  bkLove(촤병국)
+         */
+        fn_detailPop : function( param ) {
+
+            var vm = this;
+
+            console.log( "ComFavorItem.vue -> fn_detailPop" );
+            console.log( param );
+
+            /* ETP 인 경우 */
+            if( param.GUBUN == "1" ) {
+
+                console.log("########## ComFavorItem.vue -> fn_detailPop ############");
+                console.log( "param.F16012=[" + param.F16012 + "] /* 국제표준코드  */" );
+                console.log( "param.F16257=[" + param.F16257 + "] /* ETP기초지수코드  */" );
+                console.log( "param.F34239=[" + param.F34239 + "] /* ETP기초지수MID  */" );
+
+                if(     !param.F16012        /* 국제표준코드  */
+                    ||  !param.F16257        /* ETP기초지수코드  */
+                    ||  !param.F34239        /* ETP기초지수MID  */
+                    ||  param.F34239 < 0
+                ) {
+                    this.$root.$confirm.open('확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
+                    return  false;
+                }
+
+                this.paramData.f16012       =   param.F16012;           /* 국제표준코드 */
+                this.paramData.f16257       =   param.F16257;           /* ETP기초지수코드 */
+                this.paramData.f34239       =   param.F34239;           /* ETP기초지수MID */
+
+                axios.post(Config.base_url + "/user/etp/getExistEtpBasicCnt", {
+                    data: {
+                        basicData   :   vm.paramData
+                    }
+                }).then(function(response) {
+                    console.log(response);
+
+                    if (response.data) {
+                        var etpIndex = response.data.etpIndex;
+
+                        if( etpIndex.etp_cnt == 0 ) {
+                            vm.$root.$confirm.open('확인','ETP 정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
+                            return  false;
+                        }
+
+                        if( etpIndex.index_cnt == 0 ) {
+                            vm.$root.$confirm.open('확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.' + '(' + etpIndex.index_cnt + ')', {}, 1);
+                            return  false;
+                        }
+
+                        vm.showIndexDetailDialog    =   false;
+                        vm.showEtpDetailDialog      =   true;
+                    }
+                });
+            }
+            /* 인덱스인 경우 */
+            else if( param.GUBUN == "2" ) {
+
+                console.log("########## ComFavorItem.vue -> fn_detailPop ############");
+                console.log( "param.ITEM_CD=["      + param.ITEM_CD     + "] /* 지수코드  */" );
+                console.log( "param.LARGE_TYPE=["   + param.LARGE_TYPE  + "] /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */" );
+                console.log( "param.MARKET_ID=["    + param.MARKET_ID   + "] /* 시장 ID  */" );
+
+                if(     !param.ITEM_CD          /* 지수코드  */
+                    ||  !param.LARGE_TYPE       /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */
+                    ||  !param.MARKET_ID        /* 시장 ID  */
+                ) {
+                    this.$root.$confirm.open('확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
+                    return  false;
+                }
+
+                this.paramData.f16012       =   param.F16012;           /* 국제표준코드 */
+                this.paramData.f16257       =   param.F16257;           /* ETP기초지수코드 */
+                this.paramData.f34239       =   param.F34239;           /* ETP기초지수MID */
+
+                axios.post(Config.base_url + "/user/etp/getExistEtpBasicCnt", {
+                    data: {
+                        basicData   :   vm.paramData
+                    }
+                }).then(function(response) {
+                    console.log(response);
+
+                    if (response.data) {
+                        var etpIndex = response.data.etpIndex;
+
+                        if( etpIndex.index_cnt == 0 ) {
+                            vm.$root.$confirm.open('확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.' + '(' + etpIndex.index_cnt + ')', {}, 1);
+                            return  false;
+                        }
+
+                        vm.showIndexDetailDialog    =   true;
+                        vm.showEtpDetailDialog      =   false;
+                    }
+                });                
+            }
+        },
+
+        /*
+         * Control 영역( 관심종목/전체종목 - ComFavorItem ) 에서 띄워진 Index 상세 팝업창을 종료한다.
+         * 2019-04-16  bkLove(촤병국)
+         */
+        fn_closeIndexDetailPop : function( param ) {
+            console.log( "ComFavorItem.vue -> fn_closeIndexDetailPop" );
+
+            this.showIndexDetailDialog =       false;
+        },
+
+        fn_closeEtpDetailPop : function( param ) {
+            console.log( "ComFavorItem.vue -> fn_closeEtpDetailPop" );
+
+            this.showEtpDetailDialog    =   false;
+        }        
     }
 };
 </script>

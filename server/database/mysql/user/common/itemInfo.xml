@@ -11,6 +11,10 @@
                 ,ITEM.F16002
                 ,ITEM.MARKET_ID
                 ,ITEM.LARGE_TYPE
+
+                ,ITEM.F16012                                        AS  F16012       /* 국제표준코드 */
+                ,ITEM.F16257                                        AS  F16257       /* ETP기초지수코드 */
+                ,ITEM.F34239                                        AS  F34239       /* ETP기초지수MID */
             FROM (SELECT A.ITEM_SEQ 
                         ,A.GUBUN
                         ,A.TYPE_CD 
@@ -20,6 +24,10 @@
                         ,B.F16002
                         ,'' AS MARKET_ID
                         ,A.LARGE_TYPE
+
+                        ,B.F16012                                   AS  F16012       /* 국제표준코드 */
+                        ,B.F16257                                   AS  F16257       /* ETP기초지수코드 */
+                        ,B.F34239                                   AS  F34239       /* ETP기초지수MID */
                 FROM tm_favor_item A
                 INNER JOIN td_etp_basic B
                     ON A.F16012 = B.F16012
@@ -34,6 +42,10 @@
                     ,B.F16002
                     ,B.MARKET_ID
                     ,A.LARGE_TYPE
+
+                    , ''                                            AS  F16012      /* 국제표준코드 */
+                    , B.F16013                                      AS  F16257      /* ETP기초지수코드 */
+                    , LPAD( SUBSTR( B.MARKET_ID, 2 ), 3, '0' )      AS  F34239      /* ETP기초지수MID */
                 FROM tm_favor_item A
                 INNER JOIN td_index_basic B
                 ON A.F16013 = B.F16013

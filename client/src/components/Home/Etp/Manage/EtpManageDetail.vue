@@ -90,12 +90,17 @@
 
                                 <v-tabs-items v-model="tab5">
                                     <v-tab-item>
-                                        <EtpManageDetailBasicInfoTab    :paramData="paramData"
+                                        <EtpManageDetailBasicInfoTab    v-if="showEtpManageDetailDialogBySub"
+
+                                                                        :paramData="paramData"
                                                                         :etpBasic="etpBasic"
-                                                                        :indexBasic="indexBasic"></EtpManageDetailBasicInfoTab>
+                                                                        :indexBasic="indexBasic">
+                                        </EtpManageDetailBasicInfoTab>
                                     </v-tab-item>
                                     <v-tab-item>
-                                        <EtpManageDetailAnalysisTab     :paramData="paramData" ></EtpManageDetailAnalysisTab>
+                                        <EtpManageDetailAnalysisTab     v-if="showEtpManageDetailDialogBySub"
+                                                                        :paramData="paramData" >
+                                        </EtpManageDetailAnalysisTab>
                                     </v-tab-item>
                                 </v-tabs-items>
                             </v-flex>
@@ -441,6 +446,8 @@ export default {
             indexBasic          :   {},
             etpInfos            :   {},
 
+            showEtpManageDetailDialogBySub : false,
+
         };
     },
     components: {
@@ -451,41 +458,39 @@ export default {
         var vm = this;
 
         console.log( "EtpManageDetail.vue -> mounted" );
-
-        console.log( "####### vm.paramData #######" );
         console.log( vm.paramData );
 
-        if(     vm.paramData 
-            &&  (       vm.paramData.f16012
-                    ||  vm.paramData.f16257
-                    ||  vm.paramData.f34239
-                )
-        ) {
-            vm.basicData.f16012         =   vm.paramData.f16012;            /* 국제표준코드 */
-            vm.basicData.f16257         =   vm.paramData.f16257;            /* ETP기초지수코드 */
-            vm.basicData.f34239         =   vm.paramData.f34239;            /* ETP기초지수MID */
-        }
-        else if(
-                vm.$route.query.f16012  
-            &&  vm.$route.query.f16257  
-            &&  vm.$route.query.f34239  
-        ) {
-            vm.basicData.f16012         =   vm.$route.query.f16012;         /* 국제표준코드 */
-            vm.basicData.f16257         =   vm.$route.query.f16257;         /* ETP기초지수코드 */
-            vm.basicData.f34239         =   vm.$route.query.f34239;         /* ETP기초지수MID */
-        }
+        vm.$nextTick().then(() => {
+            if(     vm.paramData 
+                &&  (       vm.paramData.f16012
+                        ||  vm.paramData.f16257
+                        ||  vm.paramData.f34239
+                    )
+            ) {
+                vm.basicData.f16012         =   vm.paramData.f16012;            /* 국제표준코드 */
+                vm.basicData.f16257         =   vm.paramData.f16257;            /* ETP기초지수코드 */
+                vm.basicData.f34239         =   vm.paramData.f34239;            /* ETP기초지수MID */
+            }
+            else if(
+                    vm.$route.query.f16012  
+                &&  vm.$route.query.f16257  
+                &&  vm.$route.query.f34239  
+            ) {
+                vm.basicData.f16012         =   vm.$route.query.f16012;         /* 국제표준코드 */
+                vm.basicData.f16257         =   vm.$route.query.f16257;         /* ETP기초지수코드 */
+                vm.basicData.f34239         =   vm.$route.query.f34239;         /* ETP기초지수MID */
+            }
 
-        console.log( "####### vm.basicData #######" );
-        console.log( vm.basicData );
 
-        if(     vm.basicData.f16012
-            ||  vm.basicData.f16257
-            ||  vm.basicData.f34239
-        )   {
-            vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
+            if(     vm.basicData.f16012
+                ||  vm.basicData.f16257
+                ||  vm.basicData.f34239
+            )   {
+                vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
 
-            vm.fn_getEtpBasic();                /* ETP 의 기본정보를 조회한다. */
-        }
+                vm.fn_getEtpBasic();                /* ETP 의 기본정보를 조회한다. */
+            }
+        });
     },
     created: function() {},
     beforeDestory: function() {},
@@ -511,6 +516,8 @@ export default {
                 if (response.data) {
                     vm.etpBasic = response.data.etpBasic;
                     vm.indexBasic = response.data.indexBasic;
+
+                    vm.showEtpManageDetailDialogBySub   =   true;
                 }
             });
         },

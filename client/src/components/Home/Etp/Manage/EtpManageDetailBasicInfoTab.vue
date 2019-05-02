@@ -159,7 +159,24 @@ export default {
     beforeDestroy() {},
     mounted: function() {
 
+        var vm = this;
+
+        vm.$nextTick().then(() => {
+
+            console.log( "EtpManageDetailBasicInfoTab.vue -> mounted" );
+
+            console.log( "##### EtpManageDetailBasicInfoTab.vue -> mounted  paramData ######");
+            console.log( vm.paramData );
+
+            console.log( "##### EtpManageDetailBasicInfoTab.vue -> mounted  etpBasic ######");
+            console.log( vm.etpBasic );
+
+            console.log( "##### EtpManageDetailBasicInfoTab.vue -> mounted  indexBasic ######");
+            console.log( vm.indexBasic );
+            
+        });
     },
+    
     methods: {
         
 
