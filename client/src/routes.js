@@ -226,8 +226,8 @@ export const routes = [
                 requiresAuth: true
             },
         },
-        {   path : 'etp/InfoEtpInav',
-            component: InfoEtpInav,
+        {   path : 'etp/EtpOperInav',
+            component: EtpOperInav,
             meta: {
                 requiresAuth: true
             },
