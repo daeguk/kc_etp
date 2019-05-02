@@ -101,6 +101,8 @@
                                                 </v-card>
                                             </v-dialog>
                                         </div>
+
+
                                         <div class="tooltip">
                                             <v-dialog v-model="dialog6" persistent max-width="800">
                                                 <template v-slot:activator="{ on }">
@@ -192,6 +194,8 @@
                                                 </v-card>
                                             </v-dialog>
                                         </div>
+
+
                                         <v-menu bottom left>
                                             <template v-slot:activator="{ on }">
                                                 <div class="tooltip">
@@ -326,7 +330,10 @@
                             </tbody>
                         </table>
                     </v-card>
+
+                    
                     <!--rightmenu---->
+
                     <v-card flat class="right_menu_w2">
                         <v-navigation-drawer
                             v-model="drawer"

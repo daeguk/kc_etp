@@ -102,7 +102,8 @@
                     </v-card>
 
 
-                    <EtpOperControlMenu></EtpOperControlMenu>    
+                    <EtpOperInfoQuick></EtpOperInfoQuick>
+
                 </v-card>
             </v-flex>
         </v-layout>
@@ -111,13 +112,13 @@
 
 
 <script>
-import EtpOperControlMenu from "@/components/Home/Etp/Manage/EtpOperControlMenu.vue";
+import EtpOperInfoQuick     from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
 //import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
 
 export default {
     components: {
         //indexDetailrtmenupop: indexDetailrtmenupop
-        EtpOperControlMenu  :   EtpOperControlMenu
+        EtpOperInfoQuick  :   EtpOperInfoQuick
     },
     data() {
         return {

@@ -31,8 +31,8 @@ export default {
             activeTab: 0,
             tabs: [
                 { id: 0, name: "ETP 운용정보"       , route: '/etp/manage/etpOperInfo' },               /* ETP 운용정보 */
-                { id: 1, name: "지수관리"           , route: '/etp/manage/etpOperIndexManage' },        /* 지수관리 */
-                { id: 2, name: "PDF 관리"           , route: '/etp/manage/etpOperPdfManage' },          /* PDF 관리 */
+                { id: 1, name: "지수관리"           , route: '/etp/manage/etpOperIndex' },              /* 지수관리 */
+                { id: 2, name: "PDF 관리"           , route: '/etp/manage/etpOperPdf' },                /* PDF 관리 */
             ],
         };
     },

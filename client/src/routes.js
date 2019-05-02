@@ -15,17 +15,17 @@ import  IndexToastGridTestMain   from './components/Home/Index/ToastGridTest/Ind
 import  IndexListdetail   from './components/Home/Index/Manage/IndexListdetail.vue'
 
 // ETP
-import  EtpOperMain             from './components/Home/Etp/Manage/EtpOperMain.vue'                         /* ETP 운용관리 메인 */
-import  EtpOperInfo             from "./components/Home/Etp/Manage/EtpOperInfo.vue";                        /* ETP 운용정보 */
-import  EtpOperIndexManage      from "./components/Home/Etp/Manage/EtpOperIndexManage.vue";                 /* 지수관리 */
-import  EtpOperPdfManage        from "./components/Home/Etp/Manage/EtpOperPdfManage.vue";                   /* PDF 관리 */
+import  EtpOperMain                         from './components/Home/Etp/Manage/EtpOperMain.vue'                         /* ETP 운용관리 메인 */
+import  EtpOperInfo                         from "./components/Home/Etp/Manage/EtpOperInfo.vue";                        /* ETP 운용정보 */
+import  EtpOperIndex                        from "./components/Home/Etp/Manage/EtpOperIndex.vue";                       /* 지수관리 */
+import  EtpOperPdf                          from "./components/Home/Etp/Manage/EtpOperPdf.vue";                         /* PDF 관리 */
+import  EtpOperInfoQuickInav                from './components/Home/Etp/Manage/EtpOperInfoQuickInav.vue';
+import  EtpOperInfoQuickPerformance         from './components/Home/Etp/Manage/EtpOperInfoQuickPerformance.vue';
 
-import  EtpRegisterMain         from './components/Home/Etp/Register/EtpRegisterMain.vue'
-import  EtpContractMain         from './components/Home/Etp/Contract/EtpContractMain.vue'
-import  EtpManageDetail         from './components/Home/Etp/Manage/EtpManageDetail.vue'
-import  EtpOperInav             from './components/Home/Etp/Manage/EtpOperInav.vue'
-import  EtpOperPerformance      from './components/Home/Etp/Manage/EtpOperPerformance.vue'
-import  OverseasIndex           from './components/Home/Etp/Manage/OverseasIndex.vue'
+import  EtpRegisterMain                     from './components/Home/Etp/Register/EtpRegisterMain.vue';
+import  EtpContractMain                     from './components/Home/Etp/Contract/EtpContractMain.vue';
+import  EtpManageDetail                     from './components/Home/Etp/Manage/EtpManageDetail.vue';
+import  OverseasIndex                       from './components/Home/Etp/Manage/OverseasIndex.vue';
 
 // MARKET INFO
 import EtpInfoMain              from './components/Home/MarketInfo/etp/EtpInfoMain.vue'
@@ -221,15 +221,15 @@ export const routes = [
                     },
                 }, 
                 {
-                    path : 'etpOperIndexManage',
-                    component: EtpOperIndexManage,          /* 지수관리 */
+                    path : 'etpOperIndex',
+                    component: EtpOperIndex,                /* 지수관리 */
                     meta: {
                         requiresAuth: true
                     },
                 }, 
                 {
-                    path : 'etpOperPdfManage',
-                    component: EtpOperPdfManage,            /* PDF 관리 */
+                    path : 'etpOperPdf',
+                    component: EtpOperPdf,                  /* PDF 관리 */
                     meta: {
                         requiresAuth: true
                     },
@@ -254,14 +254,14 @@ export const routes = [
                 requiresAuth: true
             },
         },
-        {   path : 'etp/EtpOperInav',
-            component: EtpOperInav,
+        {   path : 'etp/manage/etpOperInfoQuickInav',
+            component: EtpOperInfoQuickInav,
             meta: {
                 requiresAuth: true
             },
         },
-        {   path : 'etp/EtpOperPerformance',
-            component: EtpOperPerformance,
+        {   path : 'etp/manage/etpOperInfoQuickPerformance',
+            component: EtpOperInfoQuickPerformance,
             meta: {
                 requiresAuth: true
             },
