@@ -15,13 +15,17 @@ import  IndexToastGridTestMain   from './components/Home/Index/ToastGridTest/Ind
 import  IndexListdetail   from './components/Home/Index/Manage/IndexListdetail.vue'
 
 // ETP
-import  EtpOperMain   from './components/Home/Etp/Manage/EtpOperMain.vue'
-import  EtpRegisterMain   from './components/Home/Etp/Register/EtpRegisterMain.vue'
-import  EtpContractMain   from './components/Home/Etp/Contract/EtpContractMain.vue'
-import  EtpManageDetail   from './components/Home/Etp/Manage/EtpManageDetail.vue'
-import  EtpOperInav   from './components/Home/Etp/Manage/EtpOperInav.vue'
-import  EtpOperPerformance   from './components/Home/Etp/Manage/EtpOperPerformance.vue'
-import  OverseasIndex   from './components/Home/Etp/Manage/OverseasIndex.vue'
+import  EtpOperMain             from './components/Home/Etp/Manage/EtpOperMain.vue'                         /* ETP 운용관리 메인 */
+import  EtpOperInfo             from "./components/Home/Etp/Manage/EtpOperInfo.vue";                        /* ETP 운용정보 */
+import  EtpOperIndexManage      from "./components/Home/Etp/Manage/EtpOperIndexManage.vue";                 /* 지수관리 */
+import  EtpOperPdfManage        from "./components/Home/Etp/Manage/EtpOperPdfManage.vue";                   /* PDF 관리 */
+
+import  EtpRegisterMain         from './components/Home/Etp/Register/EtpRegisterMain.vue'
+import  EtpContractMain         from './components/Home/Etp/Contract/EtpContractMain.vue'
+import  EtpManageDetail         from './components/Home/Etp/Manage/EtpManageDetail.vue'
+import  EtpOperInav             from './components/Home/Etp/Manage/EtpOperInav.vue'
+import  EtpOperPerformance      from './components/Home/Etp/Manage/EtpOperPerformance.vue'
+import  OverseasIndex           from './components/Home/Etp/Manage/OverseasIndex.vue'
 
 // MARKET INFO
 import EtpInfoMain              from './components/Home/MarketInfo/etp/EtpInfoMain.vue'
@@ -201,12 +205,36 @@ export const routes = [
                 requiresAuth: true
             },
         },
-        // ETP
+
+        //  ETP 운용관리
         {   path : 'etp/manage',
-            component: EtpOperMain,
+            component: EtpOperMain,                         /* ETP 운용관리 메인 */
             meta: {
                 requiresAuth: true
             },
+            children: [
+                {
+                    path : 'etpOperInfo',
+                    component: EtpOperInfo,                 /* ETP 운용정보 */
+                    meta: {
+                        requiresAuth: true
+                    },
+                }, 
+                {
+                    path : 'etpOperIndexManage',
+                    component: EtpOperIndexManage,          /* 지수관리 */
+                    meta: {
+                        requiresAuth: true
+                    },
+                }, 
+                {
+                    path : 'etpOperPdfManage',
+                    component: EtpOperPdfManage,            /* PDF 관리 */
+                    meta: {
+                        requiresAuth: true
+                    },
+                }, 
+            ]            
         },
         {   path : 'etp/register',
             component: EtpRegisterMain,
