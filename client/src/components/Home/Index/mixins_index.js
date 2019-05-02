@@ -135,7 +135,7 @@ export  const  index_common =   {
                     
                     if (items.length >= 5) break;
 
-                    items.push([item.JOING_NM, item.PERCNT]);
+                    items.push([item.JOING_NM, Number( item.PERCNT ) ]);
 
                 }
 

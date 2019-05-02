@@ -671,6 +671,10 @@ export default {
                 this.paramData.f16257       =   param.F16257;           /* ETP기초지수코드 */
                 this.paramData.f34239       =   param.F34239;           /* ETP기초지수MID */
 
+                this.paramData.F16257       =   param.F16257;           /* ETP기초지수코드 */
+                this.paramData.LARGE_TYPE   =   param.LARGE_TYPE;       /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
+                this.paramData.MARKET_ID    =   param.MARKET_ID;        /* 시장 ID  */
+
                 axios.post(Config.base_url + "/user/etp/getExistEtpBasicCnt", {
                     data: {
                         basicData   :   vm.paramData
