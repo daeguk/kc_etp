@@ -25,7 +25,15 @@
 
         SELECT      /* etpDetail.getEtpOperInfo  ETP 운용관리 - ETP 운영정보를 조회한다. */
                     <include    refid="sqlEtpBasic01" />
-          FROM  td_etp_basic
+                ,   td_index_basic.f16002                                           AS  index_nm            /* 지수명 */
+                ,   td_index_basic.f15001                                           AS  f15001              /* 지수 현재가 */
+
+          FROM          td_etp_basic
+          LEFT  JOIN    td_index_basic
+            ON  (
+                         td_index_basic.F16013           =  td_etp_basic.f16257                                                 /* 단축코드 = ETP기초지수코드 */
+                    AND  td_index_basic.MARKET_ID        LIKE    CONCAT( '_' , LPAD( td_etp_basic.f34239, 3, '0' ) , '%' )      /* 시장 ID = ETP기초지수MID */
+                )
          WHERE  1 = 1
 
         <choose>
@@ -37,6 +45,7 @@
             </when>
 
             <when   test=' f34241 != null  and f34241  == "I" '>
+                /* 관심종목에 존재하는 경우 ( 구분: ETP ) */
            AND  EXISTS
                 (
                     SELECT  1

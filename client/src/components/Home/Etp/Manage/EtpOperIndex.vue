@@ -14,6 +14,9 @@
                         </h3>
                     </v-card-title>
                     <v-card flat>
+
+                        <table id="table01" class="display table01_w"></table>
+
                         <table id class="tbl_type" style="width:100%">
                             <colgroup>
                                 <col width="20%">

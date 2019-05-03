@@ -31,7 +31,7 @@
 
                     <v-card flat>
                         <table id="table01" class="display table01_w"></table>
-                        
+
                         <table id class="tbl_type" style="width:100%">
                             <colgroup>
                                 <col width="20%">
@@ -188,11 +188,32 @@ export default {
             desserts: [],
 
 
-            dataList    :   [],
         };
     },
     mounted: function() {
         var vm = this;
+
+        /* 유형에 따라 컬럼 헤더 변경 */
+        table01 = $('#table01').DataTable( {
+            "processing": true,
+            "serverSide": false,
+            "info": false,   // control table information display field
+            "stateSave": true,  //restore table state on page reload,
+            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+            paging: false,
+            searching: false,
+            data : [],
+            "columnDefs": [ {} ],
+            columns: [
+                { "name" : "f16002"     ,   "title"   :   "종목"            ,   "data":     "f16002"            ,   "orderable" : true  },      /* 한글종목명 */
+                { "name" : "f15301"     ,   "title"   :   "iNAV"           ,    "data":     "f15301"            ,   "orderable" : true  },      /* ETP지표가치(NAV/IV) */
+                { "name" : "f03329"     ,   "title"   :   "전일최종NAV"     ,   "data":     "f03329"            ,   "orderable" : true  },      /* 전일ETP지표가치(예탁원)(NAV/IV) */
+                { "name" : "f15302"     ,   "title"   :   "추적오차율"      ,   "data":     "f30812"             ,   "orderable" : true  },      /* 추적오차율 */
+                { "name" : "f15304"     ,   "title"   :   "괴리율"          ,   "data":     "f15304"            ,   "orderable" : true  },      /* ETP괴리율 */
+                { "name" : "index_nm"   ,   "title"   :   "기초지수"        ,   "data":     "index_nm"          ,   "orderable" : true  },      /* 기초지수명 */
+                { "name" : "f15001"     ,   "title"   :   "지수현재가"      ,   "data":     "f15001"            ,   "orderable" : true  }       /* 지수 현재가 */
+            ]
+        });        
         
         vm.fn_getEtpOperInfo( 'A' );     /* 초기에 [전종목]이 조회되게 처리한다. */
     },
@@ -216,6 +237,11 @@ export default {
                 gubun   =   "A";
             }
 
+
+            if( table01 ) {
+                table01.clear().draw();
+            }
+
             axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
                 data: {
                     f34241 : gubun
@@ -224,8 +250,12 @@ export default {
                 console.log(response);
 
                 if (response.data) {
-                    vm.dataList = response.data.dataList;
+                    var dataList = response.data.dataList;
                     
+                    if( dataList && dataList.length > 0 ) {
+                        table01.rows.add( dataList ).draw();
+                        table01.draw();
+                    }
                 }
             });
         },
