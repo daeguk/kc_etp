@@ -4,6 +4,7 @@
 
         <v-layout row wrap class="content_margin">
 
+
             <!--rightmenu---->
             <v-card flat class="right_menu_w2">
                 <v-navigation-drawer
@@ -16,6 +17,7 @@
                     mini-variant-width="50"
                     width="250"
                 >
+
                     <v-list class="pa-1">
                         <v-list-tile v-if="mini">
                             <v-list-tile-action>
@@ -24,6 +26,7 @@
                                 </v-btn>
                             </v-list-tile-action>
                         </v-list-tile>
+
                         <v-list-tile avatar tag="div">
                             <v-list-tile-content class="rightmenu_tit">Quick Start</v-list-tile-content>
                             <v-list-tile-content>
@@ -34,10 +37,14 @@
                         </v-list-tile>
                     </v-list>
 
+
+
                     <v-list class="pt-0" dense>
+
                         <v-list-tile-content class="rightmenu_con rightmenu_line">
                             <v-subheader>
                                 <v-icon small>feedback</v-icon>지수 조치 현황
+
                                 <v-dialog v-model="dialog" persistent max-width="500">
                                     <template v-slot:activator="{ on }">
                                         <v-btn
@@ -48,6 +55,7 @@
                                             v-on="on"
                                         >내역확인</v-btn>
                                     </template>
+
                                     <v-card flat>
                                         <h5>
                                             <v-card-title ma-0>
@@ -75,17 +83,23 @@
                                 <v-icon small>arrow_right</v-icon>3개 지수에 대한 조치 발생
                             </p>
                         </v-list-tile-content>
+
+
                         <v-list-tile-content class="rightmenu_con Oper_menu">
+
                             <v-subheader>
                                 <v-icon small>build</v-icon>Operation Tools
                             </v-subheader>
+
                             <v-card flat class="w100">
                                 <v-list>
                                     <v-list-tile
-                                        router-link
-                                        to="/etp/manage/etpOperInfoQuickInav"
                                         class="border_b"
                                         v-model="text2"
+                                        @click="fn_setInavData"
+
+                                        router-link
+                                        to="/etp/manage/etpOperInfoQuickInav"                                        
                                     >
                                         <v-list-tile-avatar>
                                             <v-icon value="산출 현황">exposure</v-icon>
@@ -94,18 +108,24 @@
                                             <v-list-tile-title>iNAV 산출 현황</v-list-tile-title>
                                         </v-list-tile-content>
                                     </v-list-tile>
+
+
                                     <v-list-tile
-                                        router-link
-                                        to="EtpOperPerformance"
                                         class="border_b"
+                                        @click="fn_setEtpPerformanceData"
+
+                                        router-link
+                                        to="/etp/manage/etpOperInfoQuickPerformance"                                        
                                     >
                                         <v-list-tile-avatar>
                                             <v-icon value="Performance" icon>loop</v-icon>
                                         </v-list-tile-avatar>
+
                                         <v-list-tile-content class="rm_con_h">
                                             <v-list-tile-title>ETP Performance</v-list-tile-title>
                                         </v-list-tile-content>
                                     </v-list-tile>
+
 
                                     <v-dialog v-model="dialog5" persistent max-width="550">
                                         <template v-slot:activator="{ on }">
@@ -113,11 +133,13 @@
                                                 <v-list-tile-avatar>
                                                     <v-icon value="Customize" icon>poll</v-icon>
                                                 </v-list-tile-avatar>
+
                                                 <v-list-tile-content class="rm_con_h">
                                                     <v-list-tile-title>Customize</v-list-tile-title>
                                                 </v-list-tile-content>
                                             </v-list-tile>
                                         </template>
+
                                         <!---ETP운용화면 항목설정  팝업-->
                                         <v-card class="listset_pop">
                                             <h5>
@@ -244,7 +266,7 @@
                                             </v-layout>
 
                                             <v-card flat class="pop_btn_w text-xs-center">
-                                                <v-btn depressed color="primary" @click>추가하기</v-btn>
+                                                <v-btn depressed color="primary" @click="fn_setCustomizeData">추가하기</v-btn>
                                             </v-card>
                                         </v-card>
                                         <!---ETP운용화면 항목설정 팝업 end-->
@@ -252,6 +274,8 @@
                                 </v-list>
                             </v-card>
                         </v-list-tile-content>
+
+
                         <v-list-tile-content class="rightmenu_con">
                             <v-layout class="w100">
                                 <v-flex xs12>
@@ -491,11 +515,61 @@ export default {
             ],
             desserts: [],
 
+            toggleINav : false,
+            toggleEtpPerformance : false
         };
     },
     mounted: function() {},
     created: function() {},
-    beforeDestory: function() {}
+    beforeDestory: function() {},
+
+    methods : {
+
+
+        /*
+         *  EtpOperInfo.vue -> fn_setInavData 함수를 호출한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_setInavData() {
+            var vm = this;
+            vm.toggleINav  =   !vm.toggleINav;
+
+            var paramData   =   {};
+            paramData.toggleINav    =   vm.toggleINav;
+
+            console.log("########## EtpOperInfoQuick.vue -> fn_setInavData START ############");
+            vm.$emit( "fn_setInavData", paramData );
+            console.log("########## EtpOperInfoQuick.vue -> fn_setInavData END ############");
+        },
+
+        /*
+         *  EtpOperInfo.vue -> fn_setEtpPerformanceData 함수를 호출한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_setEtpPerformanceData() {
+            var vm = this;
+            vm.toggleEtpPerformance  =   !vm.toggleEtpPerformance;
+
+            var paramData   =   {};
+            paramData.toggleEtpPerformance    =   vm.toggleEtpPerformance;            
+
+            console.log("########## EtpOperInfoQuick.vue -> fn_setEtpPerformanceData START ############");
+            vm.$emit( "fn_setEtpPerformanceData", paramData );
+            console.log("########## EtpOperInfoQuick.vue -> fn_setEtpPerformanceData END ############");
+        },
+
+        /*
+         *  EtpOperInfo.vue -> fn_setCustomizeData 함수를 호출한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_setCustomizeData() {
+            var vm = this;
+
+            console.log("########## EtpOperInfoQuick.vue -> fn_setCustomizeData START ############");
+            vm.$emit( "fn_setCustomizeData", "fn_setCustomizeData" );
+            console.log("########## EtpOperInfoQuick.vue -> fn_setCustomizeData END ############");
+        }
+    }
 };
 </script>
 

@@ -1,5 +1,33 @@
 <template>
     <v-container>
+        <v-layout row wrap>
+        <v-flex xs12>
+            <v-tabs
+                slot="extension"
+                v-model="tab5"
+                align-with-title
+                light
+            >
+            <v-tabs-slider color="#1e99e8"></v-tabs-slider>
+    
+            <v-tab v-for="item in items5" :key="item">
+                {{ item }}
+            </v-tab>
+            </v-tabs>
+
+            <v-tabs-items v-model="tab">
+                <v-tab-item>
+                    <Info></Info>
+                </v-tab-item>
+                <v-tab-item>
+                    <Index></Index>
+                </v-tab-item>
+                <v-tab-item>
+                    <Pdf></Pdf>
+                </v-tab-item>
+        </v-tabs-items>
+      </v-flex>
+    </v-layout>
         <v-layout row wrap class="content_margin">
             <v-flex grow>
                 <v-card flat>
@@ -23,25 +51,40 @@
                     <v-card flat>
                         <table id class="tbl_type" style="width:100%">
                             <colgroup>
+                                <col width="8%">
+                                <col width="6%">
                                 <col width="10%">
                                 <col width="10%">
-                                <col width="15%">
-                                <col width="15%">
                                 <col width="10%">
-                                <col width="15%">
-                                <col width="15%">
                                 <col width="10%">
+                                <col width="10%">
+                                <col width="7%">
+                                <col width="7%">
+                                <col width="7%">
+                                <col width="7%">
+                                <col width="7%">
                             </colgroup>
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th class="txt_right">시장구분</th>
-                                    <th class="txt_left">구성종목코드</th>
-                                    <th class="txt_left">종목명</th>
-                                    <th class="txt_right">CU Shrs</th>
-                                    <th class="txt_right">액면금액</th>
-                                    <th class="txt_right">평가금액</th>
+                                    <th rowspan="2">Date</th>
+                                    <th rowspan="2" class="txt_right">시장구분</th>
+                                    <th rowspan="2" class="txt_left">구성종목코드</th>
+                                    <th rowspan="2" class="txt_left">종목명</th>
+                                    <th rowspan="2" class="txt_right">CU Shrs</th>
+                                    <th rowspan="2" class="txt_right">액면금액</th>
+                                    <th rowspan="2" class="txt_right">평가금액</th>
                                     <th class="txt_right">비중</th>
+                                    <th class="txt_right">비중</th>
+                                    <th class="txt_right">비중</th>
+                                    <th class="txt_right">비중</th>
+                                    <th class="txt_right">비중</th>
+                                </tr>
+                                <tr>
+                                    <th class="txt_right text_blue th_line">11/12</th>
+                                    <th class="txt_right text_blue th_line">11/11</th>
+                                    <th class="txt_right text_blue th_line">11/10</th>
+                                    <th class="txt_right text_blue th_line">11/09</th>
+                                    <th class="txt_right text_blue th_line">11/08</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -54,6 +97,11 @@
                                     <td class="txt_right">0</td>
                                     <td class="txt_right">548521321300</td>
                                     <td class="txt_right">85.65</td>
+                                    <td class="txt_right">85.65</td>
+                                    <td class="txt_right">85.65</td>
+                                    <td class="txt_right">85.65</td>
+                                    <td class="txt_right">85.65</td>
+
                                 </tr>
                             </tbody>
                         </table>
@@ -243,7 +291,7 @@
                      </v-dialog>
                     <!---iNAV 계산기 팝업 end---->
                     
-                             <v-list-tile  v-model="text" class="border_b ver2 importance" router-link to="PdfModifyImportance">
+                             <v-list-tile  v-model="text" class="border_b ver2 importance">
                                  <v-list-tile-avatar>
                                      <v-icon value="비중변경현황" icon>find_replace</v-icon>
                                  </v-list-tile-avatar>
@@ -389,7 +437,7 @@ export default {
             checkbox: true,
             date2: new Date().toISOString().substr(0, 10),
             menu2: false,
-            text2:'',
+            text:'비중변경현황',
             dialog: false,
             dialog2: false,
             dialog5: false,
@@ -398,7 +446,9 @@ export default {
             search: "",
             tab: null,
             tab2: null,
+            tab5: null,
             items1: ["전체", "시장대표"],
+            items5: ['ETP 운용정보', '지수관리', 'PDF 관리'],
             items: [
                 { title: "Home", icon: "dashboard" },
                 { title: "About", icon: "question_answer" }

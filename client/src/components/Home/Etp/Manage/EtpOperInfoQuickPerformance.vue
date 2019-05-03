@@ -204,7 +204,7 @@
                                         <v-list>
                                             <v-list-tile
                                                 router-link
-                                                to="EtpOperInav"
+                                                to="/etp/manage/etpOperInfoQuickInav"
                                                 class="border_b"
                                                 v-model="text2"
                                             >
@@ -217,7 +217,7 @@
                                             </v-list-tile>
                                             <v-list-tile
                                                 router-link
-                                                to="EtpOperPerformance"
+                                                to="/etp/manage/etpOperInfoQuickPerformance"
                                                 class="border_b"
                                             >
                                                 <v-list-tile-avatar>
