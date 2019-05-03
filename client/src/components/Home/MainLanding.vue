@@ -85,7 +85,7 @@ export default {
       },
       userLoginCheck: function(success) {
         console.log('userLoginCheck');
-        console.log("email : " + this.$store.state.user.user_email);
+        console.log("email : " + this.$store.state.user.email);
         this.login_flag = false;
         if(success == true) {
           this.$EventBus.$emit("enterService");

@@ -90,18 +90,28 @@
 
                                 <v-tabs-items v-model="tab5">
                                     <v-tab-item>
-                                        <EtpManageDetailBasicInfoTab    :paramData="paramData"  @:receiveEtpBasic = "fn_setEtpBasic"></EtpManageDetailBasicInfoTab>
+                                        <EtpManageDetailBasicInfoTab    v-if="showEtpManageDetailDialogBySub"
+
+                                                                        :paramData="paramData"
+                                                                        :etpBasic="etpBasic"
+                                                                        :indexBasic="indexBasic">
+                                        </EtpManageDetailBasicInfoTab>
                                     </v-tab-item>
                                     <v-tab-item>
-                                        <EtpManageDetailAnalysisTab     :paramData="paramData" ></EtpManageDetailAnalysisTab>
+                                        <EtpManageDetailAnalysisTab     v-if="showEtpManageDetailDialogBySub"
+                                                                        :paramData="paramData" >
+                                        </EtpManageDetailAnalysisTab>
                                     </v-tab-item>
                                 </v-tabs-items>
                             </v-flex>
                         </v-layout>
                     </div>
                 </v-card>
-<!--
-                <v-card flat class="right_menu_w2">
+
+
+
+
+                <v-card flat class="right_menu_w2"  v-if="!showEtpManageDetailDialog">
                     <v-navigation-drawer
                         v-model="drawer"
                         :mini-variant="mini"
@@ -224,7 +234,7 @@
                                                                 <v-list-tile
                                                                     v-for="item in items2"
                                                                     :key="item.title"
-                                                                    @click
+                                                                    @click.stop=""
                                                                     class="right_menu_w3"
                                                                 >
                                                                     <v-list-tile-content
@@ -249,7 +259,7 @@
                                                                 <v-list-tile
                                                                     v-for="item in items3"
                                                                     :key="item.title"
-                                                                    @click
+                                                                    @click.stop=""
                                                                     class="right_menu_w3"
                                                                 >
                                                                     <v-list-tile-content
@@ -344,7 +354,7 @@
                         </v-list>
                     </v-navigation-drawer>
                 </v-card>
--->
+
             </v-flex>
         </v-layout>
     </v-container>
@@ -436,6 +446,8 @@ export default {
             indexBasic          :   {},
             etpInfos            :   {},
 
+            showEtpManageDetailDialogBySub : false,
+
         };
     },
     components: {
@@ -446,39 +458,39 @@ export default {
         var vm = this;
 
         console.log( "EtpManageDetail.vue -> mounted" );
-
-        console.log( "####### vm.paramData #######" );
         console.log( vm.paramData );
 
-        if(     vm.paramData 
-            &&  (       vm.paramData.f16012
-                    ||  vm.paramData.f16257
-                    ||  vm.paramData.f34239
-                )
-        ) {
-            vm.basicData.f16012         =   vm.paramData.f16012;            /* 국제표준코드 */
-            vm.basicData.f16257         =   vm.paramData.f16257;            /* ETP기초지수코드 */
-            vm.basicData.f34239         =   vm.paramData.f34239;            /* ETP기초지수MID */
-        }
-        else if(
-                vm.$route.query.f16012  
-            &&  vm.$route.query.f16257  
-            &&  vm.$route.query.f34239  
-        ) {
-            vm.basicData.f16012         =   vm.$route.query.f16012;         /* 국제표준코드 */
-            vm.basicData.f16257         =   vm.$route.query.f16257;         /* ETP기초지수코드 */
-            vm.basicData.f34239         =   vm.$route.query.f34239;         /* ETP기초지수MID */
-        }
+        vm.$nextTick().then(() => {
+            if(     vm.paramData 
+                &&  (       vm.paramData.f16012
+                        ||  vm.paramData.f16257
+                        ||  vm.paramData.f34239
+                    )
+            ) {
+                vm.basicData.f16012         =   vm.paramData.f16012;            /* 국제표준코드 */
+                vm.basicData.f16257         =   vm.paramData.f16257;            /* ETP기초지수코드 */
+                vm.basicData.f34239         =   vm.paramData.f34239;            /* ETP기초지수MID */
+            }
+            else if(
+                    vm.$route.query.f16012  
+                &&  vm.$route.query.f16257  
+                &&  vm.$route.query.f34239  
+            ) {
+                vm.basicData.f16012         =   vm.$route.query.f16012;         /* 국제표준코드 */
+                vm.basicData.f16257         =   vm.$route.query.f16257;         /* ETP기초지수코드 */
+                vm.basicData.f34239         =   vm.$route.query.f34239;         /* ETP기초지수MID */
+            }
 
-        console.log( "####### vm.basicData #######" );
-        console.log( vm.basicData );
 
-        if(     vm.basicData.f16012
-            ||  vm.basicData.f16257
-            ||  vm.basicData.f34239
-        )   {
-            vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
-        }
+            if(     vm.basicData.f16012
+                ||  vm.basicData.f16257
+                ||  vm.basicData.f34239
+            )   {
+                vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
+
+                vm.fn_getEtpBasic();                /* ETP 의 기본정보를 조회한다. */
+            }
+        });
     },
     created: function() {},
     beforeDestory: function() {},
@@ -486,14 +498,28 @@ export default {
     methods: {
 
         /*
-         * EtpManageDetailBasicInfoTab 에서 조회된 etp 기본정보를 설정한다.
+         * ETP 의 기본정보를 조회한다.
          * 2019-04-25  bkLove(촤병국)
          */
-        fn_setEtpBasic : function( etpBasic, indexBasic ) {
-            console.log("EtpManageDetail.vue -> fn_setEtpBasic emit 후");
+        fn_getEtpBasic: function() {
+            console.log("fn_getEtpBasic");
 
-            this.etpBasic       =   etpBasic;
-            this.indexBasic     =   indexBasic;
+            var vm = this;
+
+            axios.post(Config.base_url + "/user/etp/getEtpBasic", {
+                data: {
+                    basicData   :   vm.basicData
+                }
+            }).then(function(response) {
+                console.log(response);
+
+                if (response.data) {
+                    vm.etpBasic = response.data.etpBasic;
+                    vm.indexBasic = response.data.indexBasic;
+
+                    vm.showEtpManageDetailDialogBySub   =   true;
+                }
+            });
         },
 
         /*

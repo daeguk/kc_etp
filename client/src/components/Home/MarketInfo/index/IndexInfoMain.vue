@@ -28,7 +28,7 @@
                                 :paramData="paramData" 
                                 :showDialog="showDialog"  
                                 
-                                @fn_closePop = "fn_closePop">
+                                @fn_closePop = "fn_closeIndexDetailPop">
             </IndexDetailDialog>
         </v-flex>
 
@@ -60,13 +60,26 @@ export default {
     created: function() {
     },
     methods: {
+
+        /*
+         *  자식에서 인덱스 상세 팝업창을 띄우도록 요청을 받음 ( today.vue 에서 emit 받음 )
+         *  2019-04-16  bkLove(촤병국)
+         */
         fn_receiveIndexData : function( param ) {
+            console.log( "IndexInfoMain.vue -> fn_receiveIndexData" );
+
             this.paramData = param;
 
             this.showDialog =   true;
         },
 
-        fn_closePop : function( param ) {
+        /*
+         *  상세팝업창을 종료한다.
+         *  2019-04-16  bkLove(촤병국)
+         */
+        fn_closeIndexDetailPop : function( param ) {
+            console.log( "IndexInfoMain.vue -> fn_closeIndexDetailPop" );
+
             this.showDialog =   false;
         }
     }

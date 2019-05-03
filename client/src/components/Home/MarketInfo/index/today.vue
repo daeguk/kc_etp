@@ -131,7 +131,7 @@
             </v-flex>
             <!---테이블2 end-->
 
-            <ComFavorItem   @fn_detailPop = "fn_detailPop"></ComFavorItem>
+            <ComFavorItem></ComFavorItem>
 
             <v-flex>
                 <IndexDetailDialog  v-if="showIndexDetailDialog"  
@@ -139,7 +139,7 @@
                                     :paramData="paramData" 
                                     :showDialog="showIndexDetailDialog"  
 
-                                    @fn_closePop = "fn_closePop">
+                                    @fn_closePop = "fn_closeIndexDetailPop">
                 </IndexDetailDialog>
             </v-flex>
         </v-layout>
@@ -273,7 +273,7 @@ export default {
             var data = table.row($(this).parents('tr')).data();
 
             if ($(this).attr('id') == 'btnIndexDetail') {
-                vm.movePage( data );
+                vm.fn_movePage( data );
             }
 
             return  false; 
@@ -357,7 +357,7 @@ export default {
             var data = table.row($(this).parents('tr')).data();
 
             if ($(this).attr('id') == 'btnIndexDetail') {
-                vm.movePage( data );
+                vm.fn_movePage( data );
             }
 
             return  false;
@@ -366,10 +366,6 @@ export default {
     created: function() {},
     beforeDestroy() {},
     methods: {
-
-        movePage: function( data ) {
-            this.$emit( "fn_receiveIndexData", data );
-        },    
 
         getMarketIndexList: function() {
             console.log("getMarketIndexList");
@@ -556,26 +552,13 @@ export default {
             return util.formatNumber(num);
         },
 
-        fn_detailPop : function( param ) {
-
-            console.log( "today.vue -> fn_detailPop" );
-            console.log( param );
-
-            if( param.GUBUN == "2" ) {
-                this.paramData.F16013       =   param.ITEM_CD;
-                this.paramData.LARGE_TYPE   =   param.LARGE_TYPE;
-                this.paramData.MARKET_ID    =   param.MARKET_ID;
-
-                this.showIndexDetailDialog  =   true;
-            }
+        /*
+         *  그리드에서 차트이미지 선택시 인덱스 상세 팝업창을 띄운다. ( IndexInfoMain.vue -> emit )
+         *  2019-04-16  bkLove(촤병국)
+         */
+        fn_movePage: function( data ) {
+            this.$emit( "fn_receiveIndexData", data );
         },
-
-        fn_closePop : function( param ) {
-            console.log( "today.vue -> fn_closePop" );
-
-            this.showIndexDetailDialog =   false;
-        }                
-        
     }
 };
 </script>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="etpOper">
+
+    <!--
+    * Pdf 의 기본정보를 조회한다.
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="getEtpOperPdf">
+    <![CDATA[
+        SELECT      base.in_out                                                 AS  in_out          /* 입수 구분 */
+                ,   base.degree                                                 AS  degree          /* 차수 */
+                ,   base.real_symbol                                            AS  real_symbol     /* 실시간 심볼 */
+                ,   base.incre_symbol                                           AS  incre_symbol    /* 증가 심볼 */
+                ,   base.rest_date                                              AS  rest_date       /* 휴장일 */
+                ,   base.recently_date                                          AS  recently_date   /* 최근일자 */
+                ,   base.incre_recently                                         AS  incre_recently  /* 최근증가 */
+                ,   base.base_date                                              AS  base_date       /* 기준일자 */
+
+          FROM  (
+                    SELECT      'OK'                                            AS  in_out          /* 입수 구분 */
+                            ,   'S&P GCCI1'                                     AS  degree          /* 차수 */
+                            ,   'S&P GCCI1'                                     AS  real_symbol     /* 실시간 심볼 */
+                            ,   'S&P GCCI1'                                     AS  incre_symbol    /* 증가 심볼 */
+                            ,   '2018.04.01'                                    AS  rest_date       /* 휴장일 */
+                            ,   '2018.04.01'                                    AS  recently_date   /* 최근일자 */
+                            ,   11111111                                        AS  incre_recently  /* 최근증가 */
+                            ,   '2018.04.01'                                    AS  base_date       /* 기준일자 */
+
+                    FROM  dual
+
+                    UNION   ALL
+
+                    SELECT      'NO'                                            AS  in_out          /* 입수 구분 */
+                            ,   'S&P GCCI2'                                     AS  degree          /* 차수 */
+                            ,   'S&P GCCI2'                                     AS  real_symbol     /* 실시간 심볼 */
+                            ,   'S&P GCCI2'                                     AS  incre_symbol    /* 증가 심볼 */
+                            ,   '2018.04.02'                                    AS  rest_date       /* 휴장일 */
+                            ,   '2018.04.02'                                    AS  recently_date   /* 최근일자 */
+                            ,   22222222                                        AS  incre_recently  /* 최근증가 */
+                            ,   '2018.04.02'                                    AS  base_date       /* 기준일자 */
+
+                    FROM  dual
+
+                    UNION   ALL
+
+                    SELECT      'OK'                                            AS  in_out          /* 입수 구분 */
+                            ,   'S&P GCCI3'                                     AS  degree          /* 차수 */
+                            ,   'S&P GCCI3'                                     AS  real_symbol     /* 실시간 심볼 */
+                            ,   'S&P GCCI3'                                     AS  incre_symbol    /* 증가 심볼 */
+                            ,   '2018.04.03'                                    AS  rest_date       /* 휴장일 */
+                            ,   '2018.04.03'                                    AS  recently_date   /* 최근일자 */
+                            ,   3333333                                         AS  incre_recently  /* 최근증가 */
+                            ,   '2018.04.03'                                    AS  base_date       /* 기준일자 */
+
+                    FROM  dual                    
+
+                )       base
+
+         WHERE  1 = 1
+    ]]>
+    </select>    
+
+</mapper>

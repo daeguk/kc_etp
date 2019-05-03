@@ -33,6 +33,10 @@ module.exports = {
         { file: './user/etp/etpDetail'      , path: '/user/etp/getEtpPerformance'   , method: 'getEtpPerformance'   , session: 'check', type: 'post' },
         { file: './user/etp/etpDetail'      , path: '/user/etp/getExistEtpBasicCnt' , method: 'getExistEtpBasicCnt' , session: 'check', type: 'post' },
 
+        { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperInfo'      , method: 'getEtpOperInfo'      , session: 'check', type: 'post' },
+        { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperIndex'     , method: 'getEtpOperIndex'     , session: 'check', type: 'post' },
+        { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperPdf'       , method: 'getEtpOperPdf'       , session: 'check', type: 'post' },
+
         //일반 INDEX register
 
         // 지수 요약 정보
@@ -49,6 +53,8 @@ module.exports = {
         { file: './user/index/indexSummary', path: '/user/index/getETNList', method: 'getETNList', session: 'check', type: 'get' },   
         { file: './user/index/indexSummary', path: '/user/index/getIndexImportanceList', method: 'getIndexImportanceList', session: 'check', type: 'get' },
         { file: './user/index/indexSummary', path: '/user/index/getIndexAnalysisInfo', method: 'getIndexAnalysisInfo', session: 'check', type: 'get' },
+        { file: './user/index/indexSummary', path: '/user/index/getShareReqCnt', method: 'getShareReqCnt', session: 'check', type: 'get' },
+        { file: './user/index/indexSummary', path: '/user/index/getIndexRegStateCnt', method: 'getIndexRegStateCnt', session: 'check', type: 'get' },
         
 
 

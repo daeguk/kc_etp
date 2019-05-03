@@ -8,9 +8,71 @@
     * 2019-04-25  bkLove(촤병국)
     -->
     <select id="getEtpBasic">
-    <![CDATA[
-        SELECT      /* etpDetail.getEtpBasic EtpBasic 의 기본정보를 조회한다. */
 
+        SELECT      /* etpDetail.getEtpBasic EtpBasic 의 기본정보를 조회한다. */
+                    <include    refid="sqlEtpBasic01" />
+          FROM  td_etp_basic
+         WHERE  td_etp_basic.f16012                 =   #{basicData.f16012}         /* 국제표준코드 */
+
+    </select>
+
+ 
+    <!--
+    * ETP 운용관리 - ETP 운영정보를 조회한다.
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="getEtpOperInfo">
+
+        SELECT      /* etpDetail.getEtpOperInfo  ETP 운용관리 - ETP 운영정보를 조회한다. */
+                    <include    refid="sqlEtpBasic01" />
+                ,   td_index_basic.f16002                                           AS  index_nm            /* 지수명 */
+                ,   td_index_basic.f15001                                           AS  f15001              /* 지수 현재가 */
+
+          FROM          td_etp_basic
+          LEFT  JOIN    td_index_basic
+            ON  (
+                         td_index_basic.F16013           =  td_etp_basic.f16257                                                 /* 단축코드 = ETP기초지수코드 */
+                    AND  td_index_basic.MARKET_ID        LIKE    CONCAT( '_' , LPAD( td_etp_basic.f34239, 3, '0' ) , '%' )      /* 시장 ID = ETP기초지수MID */
+                )
+         WHERE  1 = 1
+
+        <choose>
+            <when   test=' f34241 != null  and f34241 == "A" '>
+            </when>
+
+            <when   test=' f34241 != null  and f34241 != "I" '>
+           AND  td_etp_basic.f34241                 =   #{f34241}                   /* ETP지표가치산출구분(K:국내,F:해외) */
+            </when>
+
+            <when   test=' f34241 != null  and f34241  == "I" '>
+                /* 관심종목에 존재하는 경우 ( 구분: ETP ) */
+           AND  EXISTS
+                (
+                    SELECT  1
+                      FROM  tm_favor_item
+                     WHERE  1 = 1
+                    
+                       AND  tm_favor_item.type_cd   =   #{type_cd}                  /* 사용자 그룹 코드 */
+                       AND  tm_favor_item.inst_cd   =   #{inst_cd}                  /* 기관구분코드 */
+                       AND  tm_favor_item.email     =   #{user_id}                  /* 이메일 */
+                    
+                       AND  tm_favor_item.gubun     =   '1'                         /* 구분 : 1, ETP, 2. INDEX */
+                       AND  tm_favor_item.f16012    =   td_etp_basic.f16012         /* 국제표준코드 */
+
+                     LIMIT  0, 1
+                )
+            </when>        
+        </choose>
+
+    </select>
+    
+
+    <!--
+    * EtpBasic 컬럼 SQL 정보를 추출한다.
+    * 2019-04-25  bkLove(촤병국)
+    -->
+    <sql    id="sqlEtpBasic01">
+    <![CDATA[
                     DATE_FORMAT( td_etp_basic.F12506, '%Y.%m.%d' )      AS  f12506              /* 입회일 */
                 ,   td_etp_basic.F16012                                 AS  f16012              /* 국제표준코드 */
                 ,   td_etp_basic.F16013                                 AS  f16013              /* 단축코드 */
@@ -83,11 +145,8 @@
                 ,   td_etp_basic.F34783                                 AS  f34783              /* ETP지수자산소분류2 */
                 ,   td_etp_basic.F33960                                 AS  f33960              /* ETP운용사코드 */
                 ,   td_etp_basic.F33961                                 AS  f33961              /* ETP운용사명(한글명) */
-                
-          FROM  td_etp_basic
-         WHERE  td_etp_basic.f16012                 =   #{basicData.f16012}         /* 국제표준코드 */
     ]]>
-    </select>
+    </sql>
 
 <!--
 ******************************************************************************************************************
@@ -98,9 +157,36 @@
     * 2019-04-25  bkLove(촤병국)
     -->
     <select id="getIndexBasicByEtpJisuCd">
-    <![CDATA[
-        SELECT      /* etpDetail.getIndexBasicByEtpJisuCd ETP기초지수코드 와 ETP기초지수MID 에 속한 IndexBasic 의 기본정보를 조회한다. */
 
+        SELECT      /* etpDetail.getIndexBasicByEtpJisuCd ETP기초지수코드 와 ETP기초지수MID 에 속한 IndexBasic 의 기본정보를 조회한다. */
+                    <include    refid="sqlIndexBasic01" />
+                
+          FROM  td_index_basic
+         WHERE  1 = 1
+
+           AND  td_index_basic.F16013               =       #{basicData.f16257}                                             /* 단축코드 = ETP기초지수코드 */
+           AND  td_index_basic.MARKET_ID            LIKE    CONCAT( '_' , LPAD( #{basicData.f34239}, 3, '0' ) , '%' )       /* 시장 ID = ETP기초지수MID */
+    </select>
+
+    <!--
+    * ETP 운용관리 - 지수관리 를 조회한다.
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="geEtpOperIndex">
+
+        SELECT      /* etpDetail.getEtpOperIndex  ETP 운용관리 - 지수관리 를 조회한다. */
+                    <include    refid="sqlIndexBasic01" />
+          FROM  td_index_basic
+         WHERE  1 = 1
+
+    </select>    
+
+    <!--
+    * IndexBasic 컬럼 SQL 정보를 추출한다.
+    * 2019-04-25  bkLove(촤병국)
+    -->
+    <sql    id="sqlIndexBasic01">
+    <![CDATA[
                     td_index_basic.F12506                               AS  f12506              /* 입회일 */
                 ,   td_index_basic.F16013                               AS  f16013              /* 단축코드 */
                 ,   td_index_basic.F16002                               AS  f16002              /* 한글종목명 */
@@ -126,14 +212,8 @@
                 ,   td_index_basic.std_capital                          AS  std_capital         /* 기준시가총액 */
                 ,   td_index_basic.fixed_cash                           AS  fixed_cash          /* 고정현금 */
                 ,   td_index_basic.flowrate_yn                          AS  flowrate_yn         /* 유동비율적용여부 */
-                
-          FROM  td_index_basic
-         WHERE  1 = 1
-
-           AND  td_index_basic.F16013               =       #{basicData.f16257}                                             /* 단축코드 = ETP기초지수코드 */
-           AND  td_index_basic.MARKET_ID            LIKE    CONCAT( '_' , LPAD( #{basicData.f34239}, 3, '0' ) , '%' )       /* 시장 ID = ETP기초지수MID */
     ]]>
-    </select>    
+    </sql>
 
 <!--
 ******************************************************************************************************************
@@ -542,10 +622,10 @@
                     SELECT      ''                                                  AS  f16012          /* 국제표준코드 */
                             ,   td_index_basic.F16013                               AS  f16013          /* 단축코드 */
                             ,   td_index_basic.F16002                               AS  f16002          /* 한글종목명 */
+                            ,   td_index_basic.F16002                               AS  chartTitle      /* 차트에 표시될 타이틀 정보 */
                                         
                             ,   td_index_basic.F16013                               AS  f16013          /* ETP기초지수코드 */
                             ,   SUBSTR( td_index_basic.market_id, 2 )               AS  f34239          /* ETP기초지수MID */
-                            ,   td_index_basic.F16002                               AS  chartTitle      /* 차트에 표시될 타이틀 정보 */
                                         
                             ,   td_index_basic.F15001                               AS  price           /* 금액 */
                             ,   11                                                  AS  Week1           /* 1week */

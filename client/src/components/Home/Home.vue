@@ -75,6 +75,7 @@ export default {
       console.log('outService............');
       this.enterServiceFlag = false;
       this.$store.commit(Constant.DELETE_USER);
+
       this.$router.push({
         path: Config.home_url
       });

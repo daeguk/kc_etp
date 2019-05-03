@@ -20,11 +20,14 @@ Vue.use(VueResource);
 Vue.use(Vuetify);
 
 // Vue.component('icon', Icon);
+
+
 const router = new VueRouter({
     routes,
     // get rid of #
     mode: 'history'
 });
+
 
 
 // Event Bus
@@ -37,28 +40,32 @@ new Vue({
     render: h => h(App)
 })
 
-/*
-// Routing전 로그인 체크 
-router.beforeEach(function (to, from, next) {
-    //alert(store.state.user.user_level);
-    console.log("store="+ JSON.stringify(store.state.user));
-    console.log(store.state.user[0].user_level);
+// 메뉴에서 레벨 체크해서 갈 수 있는 URL 만 표시
+// 강제로 URL 입력했을 경우, 경고창 띄우고 현재 페이지 그대로 있슴
+router.beforeEach((to, _from, next) => {
+  // console.log("test store.........");
+  // console.log(store);
+    var type_cd = store.state.user.type_cd;
 
-    // to: 이동할 url에 해당하는 라우팅 객체
-    console.log(to.path);
-
-    if (to.path != '/login') {
-        if (store.state.user[0].user_level < 2) {        
-        // 이동할 페이지에 인증 정보가 필요하면 경고 창을 띄우고 페이지 전환은 하지 않음
-            
-            alert('로그인 후 사용 하시기 바랍니다.');
-            next('/login');   
-        } else {
-            console.log("routing success : '" + to.path + "'");
-            next(); // 페이지 전환
-        }; 
-    } else {
+    if(to.meta.requiresAuth) {
+      console.log("type_cd : " + type_cd);
+      // console.log(record.meta.requiresType);
+      if(type_cd == "") {
+        alert("접근할 수 없는 페이지 입니다.");
+        next(_from);
+      }else if(type_cd == "9998" || type_cd == "9999") {
         next();
+      }else {
+        console.log("to.meta.requiresType...........");
+        console.log(to.meta.requiresType);
+        if(to.meta.requiresType.includes(type_cd)) {
+          next();
+        }else {
+          alert("접근할 수 없는 페이지 입니다.");
+          next(_from);
+        }
+      }
+    } else {
+      next();
     }
-  });
-*/
+})

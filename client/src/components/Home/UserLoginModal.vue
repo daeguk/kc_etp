@@ -48,8 +48,8 @@ export default {
   data() {
     return {
         loginDialog: true,
-        email: "",
-        password: "",
+        email: "test@koscom.co.kr",
+        password: "1111",
     };
   },
   mounted: function() {
@@ -63,7 +63,7 @@ export default {
 
     },
     loginCheck: function() {
-      console.log('loginCheck');
+      // console.log('loginCheck');
       var vm = this;
 
       axios.post(Config.base_url+'/user/member/userlogincheck', {
@@ -77,7 +77,6 @@ export default {
         }else {
           vm.$store.commit(Constant.ADD_USER, {
             email: response.data.results[0].email, 
-            password: vm.password,
             name: response.data.results[0].name, 
             type_cd:response.data.results[0].type_cd, 
             type_name:response.data.results[0].type_name, 
@@ -86,6 +85,7 @@ export default {
             hp_no:response.data.results[0].hp_no, 
             tel_no:response.data.results[0].tel_no, 
           });
+
           vm.loginDialog = false;
           // MainLanding.vue
           vm.$EventBus.$emit("userLoginCheck", true);

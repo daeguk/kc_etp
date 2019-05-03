@@ -9,20 +9,23 @@ import IndexMainIndexDetail   from  '@/components/Home/Index/Manage/IndexDetail.
 
 
 import  IndexRegisterMain   from './components/Home/Index/Register/IndexRegisterMain.vue'
-import  IndexDevelopMain   from './components/Home/Index/Develop/IndexDevelopMain.vue'
 import  IndexDatepickerTestMain   from './components/Home/Index/ToastGridTest/IndexDatepickerTestMain.vue'
 import  IndexVueTableTestMain   from './components/Home/Index/ToastGridTest/IndexVueTableTestMain.vue'
 import  IndexToastGridTestMain   from './components/Home/Index/ToastGridTest/IndexToastGridTestMain.vue'
-import  IndexListdetail   from './components/Home/Index/Manage/IndexListdetail.vue'
+import  IndexDetailInfo   from './components/Home/Index/Manage/IndexDetailInfo.vue'
 
 // ETP
-import  EtpManageMain   from './components/Home/Etp/Manage/EtpManageMain.vue'
-import  EtpRegisterMain   from './components/Home/Etp/Register/EtpRegisterMain.vue'
-import  EtpContractMain   from './components/Home/Etp/Contract/EtpContractMain.vue'
-import  EtpManageDetail   from './components/Home/Etp/Manage/EtpManageDetail.vue'
-import  InfoEtpInav   from './components/Home/Etp/Manage/InfoEtpInav.vue'
-import  ETPPerfomance   from './components/Home/Etp/Manage/ETPPerfomance.vue'
-import  OverseasIndex   from './components/Home/Etp/Manage/OverseasIndex.vue'
+import  EtpOperMain                         from './components/Home/Etp/Manage/EtpOperMain.vue'                         /* ETP 운용관리 메인 */
+import  EtpOperInfo                         from "./components/Home/Etp/Manage/EtpOperInfo.vue";                        /* ETP 운용정보 */
+import  EtpOperIndex                        from "./components/Home/Etp/Manage/EtpOperIndex.vue";                       /* 지수관리 */
+import  EtpOperPdf                          from "./components/Home/Etp/Manage/EtpOperPdf.vue";                         /* PDF 관리 */
+import  EtpOperInfoQuickInav                from './components/Home/Etp/Manage/EtpOperInfoQuickInav.vue';               /* ETP 운용정보 -> iNAV 산출현황 */
+import  EtpOperInfoQuickPerformance         from './components/Home/Etp/Manage/EtpOperInfoQuickPerformance.vue';        /* ETP 운용정보 -> ETP Performance */
+
+import  EtpRegisterMain                     from './components/Home/Etp/Register/EtpRegisterMain.vue';
+import  EtpContractMain                     from './components/Home/Etp/Contract/EtpContractMain.vue';
+import  EtpManageDetail                     from './components/Home/Etp/Manage/EtpManageDetail.vue';
+import  OverseasIndex                       from './components/Home/Etp/Manage/OverseasIndex.vue';
 
 // MARKET INFO
 import EtpInfoMain              from './components/Home/MarketInfo/etp/EtpInfoMain.vue'
@@ -47,7 +50,7 @@ import  Today1Main   from './components/Home/MarketInfo/index/IndexInfoMain.vue'
 
 import  sampleChart   from '@/components/Sample/test.vue'
 import  sampleUpload   from '@/components/Sample/fileUpload.vue'
-import  sampleLoginTest   from '@/components/Sample/loginTest.vue'
+
 
 
 // 관리자
@@ -58,61 +61,81 @@ export const routes = [
         // MARKET INFO
         {   path : 'info/etpinfo',
             component: EtpInfoMain,
+            meta: {
+                requiresAuth: false
+            },
             children: [
-/*                
-                {
-                    path : 'marktEtpSummaryInfo',
-                    component: MarktEtpSummaryInfo
+                {   path : 'marketRepresent',
+                    component: MarketRepresent,          /* 001-시장대표 */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
-*/                
-
-                {
-                    path : 'marketRepresent',
-                    component: MarketRepresent          /* 001-시장대표 */
+                {   path : 'marketSector',
+                    component: MarketSector,             /* 002-섹터 */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
-                {
-                    path : 'marketSector',
-                    component: MarketSector             /* 002-섹터 */
+                {   path : 'marketThema',
+                    component: MarketThema,              /* 003-테마 */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
-                {
-                    path : 'marketThema',
-                    component: MarketThema              /* 003-테마 */
+                {   path : 'marketStrategy',
+                    component: MarketStrategy,           /* 004-전략 */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
-                {
-                    path : 'marketStrategy',
-                    component: MarketStrategy           /* 004-전략 */
+                {   path : 'marketBond',
+                    component: MarketBond,               /* 005-채권 */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
-                {
-                    path : 'marketBond',
-                    component: MarketBond               /* 005-채권 */
+                {   path : 'marketCurrency',
+                    component: MarketCurrency,           /* 006-통화 */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
-                {
-                    path : 'marketCurrency',
-                    component: MarketCurrency           /* 006-통화 */
+                {   path : 'marketRawMaterials',
+                    component: MarketRawMaterials,       /* 007-원자재 */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
-                {
-                    path : 'marketRawMaterials',
-                    component: MarketRawMaterials       /* 007-원자재 */
+                {   path : 'marketVix',
+                    component: MarketVix,                /* 008-VIX */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
-                {
-                    path : 'marketVix',
-                    component: MarketVix                /* 008-VIX */
-                }, 
-                {
-                    path : 'marketRealEstate',
-                    component: MarketRealEstate         /* 009-부동산 */
+                {   path : 'marketRealEstate',
+                    component: MarketRealEstate,         /* 009-부동산 */
+                    meta: {
+                        requiresAuth: false
+                    },
                 },
-                {
-                    path : 'marketMixAssets',
-                    component: MarketMixAssets          /* 010-혼합자산 */
+                {   path : 'marketMixAssets',
+                    component: MarketMixAssets,          /* 010-혼합자산 */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
-                {
-                    path : 'marketOversea',
-                    component: MarketOversea            /* 101-국가 ( 탭에 노출은 '해외' ) */
+                {   path : 'marketOversea',
+                    component: MarketOversea,            /* 101-국가 ( 탭에 노출은 '해외' ) */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
-                {
-                    path : 'marketLeverageInverse',
-                    component: MarketLeverageInverse    /* 201-배율 ( 탭에 노출은 '레버리지/인버스' ) */
+                {   path : 'marketLeverageInverse',
+                    component: MarketLeverageInverse,    /* 201-배율 ( 탭에 노출은 '레버리지/인버스' ) */
+                    meta: {
+                        requiresAuth: false
+                    },
                 }, 
             ]
         },
@@ -125,68 +148,144 @@ export const routes = [
         {   path : 'sample/upload',
             component: sampleUpload,
         },
-        {   path : 'login',
-            component: sampleLoginTest,
-        },
         // INDEX
         {   path : 'index/manage',
             component: IndexManageMain,
+            meta: {
+                requiresAuth: true,
+                requiresType: ['0003', '0005']
+            },
             children: [
-                {
-                    path : 'indexSummary',
-                    component: IndexMainSummary
+                {   path : 'indexSummary',
+                    component: IndexMainSummary,
+                    meta: {
+                      requiresAuth: true,
+                      requiresType: ['0003', '0005']
+                    },
                 }, 
-                {
-                    path : 'indexList',
-                    component: IndexMainIndexList
+                {   path : 'indexList',
+                    component: IndexMainIndexList,
+                    meta: {
+                      requiresAuth: true,
+                      requiresType: ['0003', '0005']
+                    },
                 }, 
-                {
-                    path : 'indexDetail',
-                    component: IndexMainIndexDetail
+                {   path : 'indexDetail',
+                    component: IndexMainIndexDetail,
+                    meta: {
+                      requiresAuth: true,
+                      requiresType: ['0003', '0005']
+                    },
                 }, 
             ]
         },
-        
+        {   path : '/index/manage/IndexDetailInfo',
+            component: IndexDetailInfo,
+            meta: {
+              requiresAuth: true,
+              requiresType: ['0003', '0005']
+            },
+        },
         {   path : '/index/register',
             component: IndexRegisterMain,
+            meta: {
+              requiresAuth: true,
+              requiresType: ['0003', '0005']
+            },
         },
-        {   path : '/index/develop',
-            component: IndexDevelopMain,
-        },
-        {   path : '/index/datepickerTest',
-            component: IndexDatepickerTestMain,
-        },
-        {   path : '/index/vueTableTest',
-            component: IndexVueTableTestMain,
-        },
-        {   path : '/index/toastGridTest',
-            component: IndexToastGridTestMain,
-        },
-        {   path : '/index/manage/IndexListdetail',
-            component: IndexListdetail,
-        },
-        
-        // ETP
+
+        //  ETP 운용관리
         {   path : 'etp/manage',
-            component: EtpManageMain,
+            component: EtpOperMain,                         /* ETP 운용관리 메인 */
+            meta: {
+              requiresAuth: true,
+              requiresType: ['0001', '0002', '0004', '0005']
+            },
+            children: [
+                {   path : 'etpOperInfo',
+                    component: EtpOperInfo,                 /* ETP 운용정보 */
+                    meta: {
+                      requiresAuth: true,
+                      requiresType: ['0001', '0002', '0004', '0005']
+                    },
+                }, 
+                {   path : 'etpOperIndex',
+                    component: EtpOperIndex,                /* 지수관리 */
+                    meta: {
+                      requiresAuth: true,
+                      requiresType: ['0001', '0002', '0004', '0005']
+                    },
+                }, 
+                {   path : 'etpOperPdf',
+                    component: EtpOperPdf,                  /* PDF 관리 */
+                    meta: {
+                      requiresAuth: true,
+                      requiresType: ['0001', '0002', '0004', '0005']
+                    },
+                }, 
+            ]            
         },
         {   path : 'etp/register',
             component: EtpRegisterMain,
+            meta: {
+              requiresAuth: true,
+              requiresType: ['0001', '0002', '0004', '0005']
+            },
         },
         {   path : 'etp/contract',
             component: EtpContractMain,
+            meta: {
+              requiresAuth: true,
+              requiresType: ['0001', '0002', '0004', '0005']
+            },
         },
         {   path : 'etp/etpManageDetail',
             component: EtpManageDetail,
+            meta: {
+              requiresAuth: true,
+              requiresType: ['0001', '0002', '0004', '0005']
+            },
         },
-        {   path : 'etp/InfoEtpInav',
-            component: InfoEtpInav,
+        {   path : 'etp/manage/etpOperInfoQuickInav',
+            component: EtpOperInfoQuickInav,
+            meta: {
+              requiresAuth: true,
+              requiresType: ['0001', '0002', '0004', '0005']
+            },
         },
-        {   path : 'etp/ETPPerfomance',
-            component: ETPPerfomance,
+        {   path : 'etp/manage/etpOperInfoQuickPerformance',
+            component: EtpOperInfoQuickPerformance,
+            meta: {
+              requiresAuth: true,
+              requiresType: ['0001', '0002', '0004', '0005']
+            },
         },
         {   path : 'etp/OverseasIndex',
             component: OverseasIndex,
+            meta: {
+              requiresAuth: true,
+              requiresType: ['0001', '0002', '0004', '0005']
+            },
+        },
+
+
+        {   path : '/index/datepickerTest',
+            component: IndexDatepickerTestMain,
+            meta: {
+              requiresAuth: false
+            },
+        },
+        {   path : '/index/vueTableTest',
+            component: IndexVueTableTestMain,
+            meta: {
+              requiresAuth: false
+            },
+        },
+        {   path : '/index/toastGridTest',
+            component: IndexToastGridTestMain,
+            meta: {
+              requiresAuth: false
+            },
         },
     ]
   }

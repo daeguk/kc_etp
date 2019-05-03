@@ -146,17 +146,12 @@
 import Config from "@/js/config.js";
 
 export default {
-    props   :   [ "paramData" ],
+    props   :   [ "paramData", "etpBasic", "indexBasic" ],
     data() {
         return {
             index_item: {},
             rowsPerPageItems: [50, 50],
             etp_items: [],
-
-            basicData           :   {},
-            etpBasic            :   {},
-            indexBasic          :   {},
-            arrEtpPerformance   :   [],
         };
     },
     computed: {},
@@ -166,69 +161,24 @@ export default {
 
         var vm = this;
 
-        console.log( "EtpManageDetailBasicInfoTab.vue -> mounted" );
+        vm.$nextTick().then(() => {
 
-        console.log( "####### vm.paramData #######" );
-        console.log( vm.paramData );        
+            console.log( "EtpManageDetailBasicInfoTab.vue -> mounted" );
 
-        if(     vm.paramData 
-            &&  (       vm.paramData.f16012
-                    ||  vm.paramData.f16257
-                    ||  vm.paramData.f34239
-                )
-        ) {
-            vm.basicData.f16012         =   vm.paramData.f16012;            /* 국제표준코드 */
-            vm.basicData.f16257         =   vm.paramData.f16257;            /* ETP기초지수코드 */
-            vm.basicData.f34239         =   vm.paramData.f34239;            /* ETP기초지수MID */
-        }
-        else if(
-                vm.$route.query.f16012
-            ||  vm.$route.query.f16257
-            ||  vm.$route.query.f34239
-        ) {
-            vm.basicData.f16012         =   vm.$route.query.f16012;         /* 국제표준코드 */
-            vm.basicData.f16257         =   vm.$route.query.f16257;         /* ETP기초지수코드 */
-            vm.basicData.f34239         =   vm.$route.query.f34239;         /* ETP기초지수MID */
-        }
+            console.log( "##### EtpManageDetailBasicInfoTab.vue -> mounted  paramData ######");
+            console.log( vm.paramData );
 
-        console.log( "####### vm.basicData #######" );
-        console.log( vm.basicData );
+            console.log( "##### EtpManageDetailBasicInfoTab.vue -> mounted  etpBasic ######");
+            console.log( vm.etpBasic );
 
-        if(     vm.basicData.f16012
-            ||  vm.basicData.f16257
-            ||  vm.basicData.f34239
-        )   {
-
-            this.fn_getEtpBasic();          /* ETP 의 기본정보를 조회한다. */
-        }
+            console.log( "##### EtpManageDetailBasicInfoTab.vue -> mounted  indexBasic ######");
+            console.log( vm.indexBasic );
+            
+        });
     },
+    
     methods: {
-        /*
-         * ETP 의 기본정보를 조회한다.
-         * 2019-04-25  bkLove(촤병국)
-         */
-        fn_getEtpBasic: function() {
-            console.log("fn_getEtpBasic");
-
-            var vm = this;
-
-            axios.post(Config.base_url + "/user/etp/getEtpBasic", {
-                data: {
-                    basicData   :   vm.basicData
-                }
-            }).then(function(response) {
-                console.log(response);
-
-                if (response.data) {
-                    vm.etpBasic = response.data.etpBasic;
-                    vm.indexBasic = response.data.indexBasic;
-
-                    console.log("EtpManageDetailBasicInfoTab.vue -> fn_getEtpBasic emit 전");
-
-                    vm.$emit("receiveEtpBasic", vm.etpBasic, vm.indexBasic);
-                }
-            });
-        },
+        
 
     }
 };

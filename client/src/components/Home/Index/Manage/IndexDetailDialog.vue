@@ -73,11 +73,11 @@
                                 <v-tabs-items v-model="tab">
                                
                                     <v-tab-item>
-                                        <indexinfotab1  :basicData = "basicData"    v-if="openIndexInfoTab1"></indexinfotab1>
+                                        <IndexDetailInfoTab1  :basicData = "basicData"    v-if="openSubIndexInfoTab"></IndexDetailInfoTab1>
                                     </v-tab-item>
 
                                     <v-tab-item>
-                                        <indexinfotab2  :basicData = "basicData"    v-if="openIndexInfoTab2"></indexinfotab2>
+                                        <IndexDetailInfoTab2  :basicData = "basicData"    v-if="openSubIndexInfoTab"></IndexDetailInfoTab2>
                                     </v-tab-item>
 
                                 </v-tabs-items>
@@ -94,8 +94,8 @@
 
 <script>
 
-import indexinfotab1 from "./indexinfotab1.vue";
-import indexinfotab2 from "./indexinfotab2.vue";
+import IndexDetailInfoTab1 from "./IndexDetailInfoTab1.vue";
+import IndexDetailInfoTab2 from "./IndexDetailInfoTab2.vue";
 
 import Config from "@/js/config.js";
 export default {
@@ -118,14 +118,13 @@ export default {
                 zIndex: 200
             },
 
-            openIndexInfoTab1: false,
-            openIndexInfoTab2: false,
+            openSubIndexInfoTab: false,
             basicData : {}
         };
     },
     components: {
-          indexinfotab1: indexinfotab1,
-          indexinfotab2: indexinfotab2,
+          IndexDetailInfoTab1: IndexDetailInfoTab1,
+          IndexDetailInfoTab2: IndexDetailInfoTab2,
     }, 
     computed: {},
     created: function() {},
@@ -134,12 +133,17 @@ export default {
     mounted: function() {
         var vm = this;
 
+        console.log("########## IndexDetailDialog.vue -> mounted ############");
+        console.log( "paramData.F16257=["           + this.paramData.F16257         + "] /* ETP기초지수코드 */" );
+        console.log( "paramData.LARGE_TYPE=["       + this.paramData.LARGE_TYPE     + "] /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */" );
+        console.log( "paramData.MARKET_ID=["        + this.paramData.MARKET_ID      + "] /* 시장 ID  */" );
+
         if(     this.paramData 
-            &&  this.paramData.F16013
+            &&  this.paramData.F16257
             &&  this.paramData.LARGE_TYPE
             &&  this.paramData.MARKET_ID
         ) {
-            this.basicData.jisu_cd      =   this.paramData.F16013;
+            this.basicData.jisu_cd      =   this.paramData.F16257;
             this.basicData.large_type   =   this.paramData.LARGE_TYPE;
             this.basicData.market_id    =   this.paramData.MARKET_ID;
         }
@@ -160,18 +164,8 @@ export default {
             &&  this.basicData.large_type
             &&  this.basicData.market_id
         ) {
-            this.openIndexInfoTab1   =   true;
-
             this.getIndexBaseInfo();
             this.Indexchart();
-        }
-
-
-        if(     this.basicData
-            &&  this.basicData.jisu_cd
-            &&  this.basicData.market_id
-        ) {
-            this.openIndexInfoTab2   =   true;
         }
     },
 
@@ -201,6 +195,9 @@ export default {
                 } else {
                     var items = response.data.results;
                     vm.results = items[0];
+
+
+                    vm.openSubIndexInfoTab      =   true;
                     //this.list_cnt = this.results.length;
                 }
             });
