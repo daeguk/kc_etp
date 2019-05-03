@@ -10,7 +10,7 @@
                             ETP 운용 정보
                             <p>
                                 Total
-                                <span class="text_result">120</span> results
+                                <span class="text_result" ref="result_cnt" >0</span> results
                                 <span class="toggle2">
                                     <v-btn-toggle v-model="text" class="toggle_01">
                                         <v-btn flat value="전종목"      @click="fn_getEtpOperInfo('A')">전종목</v-btn>
@@ -24,16 +24,17 @@
                             <p class="text_result">
                                 6 results
                             </p--->
-                            <p class="sub_txt">기준일 : 2019.3.20</p>
+                            <p class="sub_txt">기준일 : {{ nowDate }}</p>
                         </h3>
                     </v-card-title>
 
 
                     <v-card flat>
-                        
+
                         <table id="table01" class="display table01_w">
                             <colgroup>
                                 <col width="22%">       <!-- 종목 -->
+                                <col>                   <!-- 지수산출방식 -->
                                 <col width="12%">       <!-- iNAV -->
                                 <col width="12%">       <!-- 전일최종NAV -->
                                 <col width="11%">       <!-- 추적오차율 -->
@@ -41,12 +42,14 @@
 
                                 <col width="22%">       <!-- 기초지수 -->
                                 <col width="11%">       <!-- 지수현재가 -->
+                                <col>                   <!-- 환율 -->
                                 <col width="2%">        <!-- 그래프 이미지 -->
                             </colgroup>
 
                             <thead>
                                 <tr>
                                     <th >종목</th>
+                                    <th >지수산출방식</th>
                                     <th >iNAV</th>
                                     <th >전일최종NAV</th>
                                     <th >추적오차율</th>
@@ -54,6 +57,7 @@
 
                                     <th >기초지수</th>
                                     <th >지수현재가</th>
+                                    <th >환율</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -132,7 +136,10 @@
                     </v-card>
 
 
-                    <EtpOperInfoQuick></EtpOperInfoQuick>
+                    <EtpOperInfoQuick   @fn_setInavData="fn_setInavData"
+                                        @fn_setEtpPerformanceData="fn_setEtpPerformanceData"
+                                        @fn_setCustomizeData="fn_setCustomizeData"
+                    ></EtpOperInfoQuick>
 
                 </v-card>
             </v-flex>
@@ -215,13 +222,16 @@ export default {
             ],
             desserts: [],
 
-
+            nowDate:        new Date().getFullYear() 
+                        +   "." 
+                        +   (parseInt(new Date().getMonth()) + 1) 
+                        +   "." 
+                        +   new Date().getDate(),
         };
     },
     mounted: function() {
         var vm = this;
 
-        /* 유형에 따라 컬럼 헤더 변경 */
         table01 = $('#table01').DataTable( {
             "processing": true,
             "serverSide": false,
@@ -233,16 +243,18 @@ export default {
             data : [],
             "columnDefs": [ {} ],
             columns: [
-                { "name" : "f16002"     ,   "title"   :   "종목"            ,   "data":     "f16002"            ,   "orderable" : true  },      /* 한글종목명 */
-                { "name" : "f15301"     ,   "title"   :   "iNAV"           ,    "data":     "f15301"            ,   "orderable" : true  },      /* ETP지표가치(NAV/IV) */
-                { "name" : "f03329"     ,   "title"   :   "전일최종NAV"     ,   "data":     "f03329"            ,   "orderable" : true  },      /* 전일ETP지표가치(예탁원)(NAV/IV) */
-                { "name" : "f15302"     ,   "title"   :   "추적오차율"      ,   "data":     "f30812"             ,   "orderable" : true  },      /* 추적오차율 */
-                { "name" : "f15304"     ,   "title"   :   "괴리율"          ,   "data":     "f15304"            ,   "orderable" : true  },      /* ETP괴리율 */
-                { "name" : "index_nm"   ,   "title"   :   "기초 지수"       ,   "data":     "index_nm"          ,   "orderable" : true  },      /* 기초지수명 */
-                { "name" : "f15001"     ,   "title"   :   "지수 현재가"     ,   "data":     "f15001"            ,   "orderable" : true  },       /* 지수 현재가 */
+                { "name" : "f16002"             , "data": "f16002"           , "title" : "종목"        ,   "orderable" : true  ,   className: 'dt-body-left'  },        /* 한글종목명 */
+                { "name" : "index_cal_method"   , "data": "index_cal_method" , "title" : "산출방식"     ,   "orderable" : true  ,   className: 'dt-body-left'  },       /* 지수산출방식 */
+                { "name" : "f15301"             , "data": "f15301"           , "title" : "iNAV"        ,   "orderable" : true  ,   className: 'dt-body-right'  },      /* ETP지표가치(NAV/IV) */
+                { "name" : "f03329"             , "data": "f03329"           , "title" : "전일최종NAV"  ,   "orderable" : true  ,   className: 'dt-body-right'  },      /* 전일ETP지표가치(예탁원)(NAV/IV) */
+                { "name" : "f15302"             , "data": "f30812"           , "title" : "추적오차율"   ,   "orderable" : true  ,   className: 'dt-body-right'  },      /* 추적오차율 */
+                { "name" : "f15304"             , "data": "f15304"           , "title" : "괴리율"       ,   "orderable" : true  ,   className: 'dt-body-right'  },      /* ETP괴리율 */
+                { "name" : "index_nm"           , "data": "index_nm"         , "title" : "기초 지수"    ,   "orderable" : true  ,   className: 'dt-body-left'  },       /* 기초지수명 */
+                { "name" : "f15001"             , "data": "f15001"           , "title" : "지수 현재가"  ,   "orderable" : true  ,   className: 'dt-body-right'  },      /* 지수 현재가 */
+                { "name" : "f18438"             , "data": "f18438"           , "title" : "환율"         ,   "orderable" : true  ,   className: 'dt-body-right'  },      /* 적용환율 */
                 { "data": null, className: 'checks', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:50px;'>지수정보</span></div>" } 
             ]
-        });        
+        });
         
         vm.fn_getEtpOperInfo( 'A' );     /* 초기에 [전종목]이 조회되게 처리한다. */
     },
@@ -255,7 +267,7 @@ export default {
          *  ETP 운영정보를 조회한다.
          *  param   :   ETP지표가치산출구분(K:국내,F:해외)  / A:전종목, I:관심종목
          *  2019-05-03  bkLove(촤병국)
-         */        
+         */
         fn_getEtpOperInfo( gubun ) {
 
             var vm = this;
@@ -271,6 +283,10 @@ export default {
                 table01.clear().draw();
             }
 
+
+//            table01.column( [ 'index_cal_method', 'f18438' ] ).visible(false);
+            vm.$refs.result_cnt.textContent = "0";
+
             axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
                 data: {
                     f34241 : gubun
@@ -284,10 +300,47 @@ export default {
                     if( dataList && dataList.length > 0 ) {
                         table01.rows.add( dataList ).draw();
                         table01.draw();
+
+                        vm.$refs.result_cnt.textContent = dataList.length;
                     }
                 }
             });
         },
+
+        /*
+         *  EtpOperInfoQuick.vue -> [iNAV 산출현황] 선택시 호출된다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_setInavData( param ) {
+            console.log("########## EtpOperInfo.vue -> fn_setInavData START ############");
+            console.log("# param");
+            console.log( param );
+            console.log("########## EtpOperInfo.vue -> fn_setInavData END ############");
+
+
+        },
+
+        /*
+         *  EtpOperInfoQuick.vue -> [ETP Performance] 선택시 호출된다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_setEtpPerformanceData( param ) {
+            console.log("########## EtpOperInfo.vue -> fn_setEtpPerformanceData START ############");
+            console.log("# param");
+            console.log( param );
+            console.log("########## EtpOperInfo.vue -> fn_setEtpPerformanceData END ############");
+        },
+
+        /*
+         *  EtpOperInfoQuick.vue -> [Curtomize] 선택시 호출된다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_setCustomizeData( param ) {
+            console.log("########## EtpOperInfo.vue -> fn_setCustomizeData START ############");
+            console.log("# param");
+            console.log( param );
+            console.log("########## EtpOperInfo.vue -> fn_setCustomizeData END ############");
+        }
     }
 };
 </script>

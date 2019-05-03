@@ -422,7 +422,7 @@
                                            <v-subheader><v-icon small>build</v-icon>Operation Tools</v-subheader>
                                            <v-card flat class="w100">
                                            <v-list>
-                                           <v-list-tile router-link to="EtpOperInav" class="border_b" v-model="text2">
+                                           <v-list-tile router-link to="/etp/manage/etpOperInfoQuickInav" class="border_b" v-model="text2">
                                                <v-list-tile-avatar>
                                                 <v-icon  value="산출 현황">exposure</v-icon>
                                                  </v-list-tile-avatar>
@@ -430,7 +430,7 @@
                                                     <v-list-tile-title>iNAV 산출 현황</v-list-tile-title>
                                                 </v-list-tile-content>
                                            </v-list-tile>
-                                           <v-list-tile router-link to="EtpOperPerformance" class="border_b">
+                                           <v-list-tile router-link to="/etp/manage/etpOperInfoQuickPerformance" class="border_b">
                                                <v-list-tile-avatar>
                                                     <v-icon  value="Performance" icon>loop</v-icon>
                                                  </v-list-tile-avatar>

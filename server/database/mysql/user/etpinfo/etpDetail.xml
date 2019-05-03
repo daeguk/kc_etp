@@ -27,6 +27,7 @@
                     <include    refid="sqlEtpBasic01" />
                 ,   td_index_basic.f16002                                           AS  index_nm            /* 지수명 */
                 ,   td_index_basic.f15001                                           AS  f15001              /* 지수 현재가 */
+                ,   td_index_basic.index_cal_method                                 AS  index_cal_method    /* 지수 산출방식 */
 
           FROM          td_etp_basic
           LEFT  JOIN    td_index_basic

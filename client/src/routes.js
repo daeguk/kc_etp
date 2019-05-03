@@ -260,7 +260,7 @@ export const routes = [
               requiresType: ['0001', '0002', '0004', '0005']
             },
         },
-        {   path : 'etp/OverseasIndex',
+        {   path : 'etp/manage/overseasIndex',
             component: OverseasIndex,
             meta: {
               requiresAuth: true,

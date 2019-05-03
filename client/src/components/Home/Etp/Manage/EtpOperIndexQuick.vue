@@ -85,7 +85,7 @@
                                 <v-list>
                                     <v-list-tile
                                         router-link
-                                        to="Overseasindex"
+                                        to="/etp/manage/overseasIndex"
                                         class="border_b"
                                         v-model="text2"
                                     >
