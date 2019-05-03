@@ -144,7 +144,7 @@ import Config from "@/js/config.js";
 import ComFavorItem from "@/components/common/control/ComFavorItem"; 
 import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
-import { market_common } from '@/components/Home/MarketInfo/mixins_marketinfo.js';
+import { market_common } from '@/js/common/mixins/mixins_marketinfo.js';
 
 
 var importance_grid = null;

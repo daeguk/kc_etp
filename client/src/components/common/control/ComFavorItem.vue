@@ -648,7 +648,7 @@ export default {
                             vm.$root.$confirm.open('확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.' + '(' + etpIndex.index_cnt + ')', {}, 1);
                             return  false;
                         }
-debugger;
+
                         vm.showIndexDetailDialog    =   false;
                         vm.showEtpDetailDialog      =   true;
                     }
