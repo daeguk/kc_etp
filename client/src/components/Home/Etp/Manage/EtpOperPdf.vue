@@ -18,6 +18,8 @@ import buttons from 'datatables.net-buttons'
 
 import Config from '@/js/config.js';
 
+var table01 = null;
+
 export default {
     props: [],
     data() {

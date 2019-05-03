@@ -448,6 +448,8 @@ import Config from '@/js/config.js';
 //import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
 import IndexInfoDetailPop from "./IndexInfoDetailPop.vue";
 
+var table01 = null;
+
 export default {
     components: {
         //indexDetailrtmenupop: indexDetailrtmenupop
