@@ -13,10 +13,10 @@
                                 <span class="text_result">120</span> results
                                 <span class="toggle2">
                                     <v-btn-toggle v-model="text" class="toggle_01">
-                                        <v-btn flat value="전종목" v-on:click.stop="">전종목</v-btn>
-                                        <v-btn flat value="국내" v-on:click.stop="">국내</v-btn>
-                                        <v-btn flat value="해외" v-on:click.stop="">해외</v-btn>
-                                        <v-btn flat value="관심종목" v-on:click.stop="">관심종목</v-btn>
+                                        <v-btn flat value="전종목"      @click.stop="fn_getEtpOperInfo('A')"   ref="btnEtpAll">전종목</v-btn>
+                                        <v-btn flat value="국내"        @click.stop="fn_getEtpOperInfo('K')">국내</v-btn>
+                                        <v-btn flat value="해외"        @click.stop="fn_getEtpOperInfo('F')">해외</v-btn>
+                                        <v-btn flat value="관심종목"    @click.stop="fn_getEtpOperInfo('I')">관심종목</v-btn>
                                     </v-btn-toggle>
                                 </span>
                             </p>
@@ -112,6 +112,11 @@
 
 
 <script>
+import $      from 'jquery'
+import dt      from 'datatables.net'
+import buttons from 'datatables.net-buttons'
+
+import Config from '@/js/config.js';
 import EtpOperInfoQuick     from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
 //import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
 
@@ -176,12 +181,47 @@ export default {
                 { text: "Ceiling rto", value: "CeilingRto", align: "right" },
                 { text: "Factor rto", value: "FactorRto", align: "right" }
             ],
-            desserts: []
+            desserts: [],
+
+
+            dataList    :   [],
         };
     },
     mounted: function() {},
     created: function() {},
-    beforeDestory: function() {}
+    beforeDestory: function() {},
+
+    methods: {
+
+        /*
+         *  ETP 운영정보를 조회한다.
+         *  param   :   ETP지표가치산출구분(K:국내,F:해외)  / A:전종목, I:관심종목
+         *  2019-05-03  bkLove(촤병국)
+         */        
+        fn_getEtpOperInfo( gubun ) {
+
+            var vm = this;
+
+            console.log( "EtpOperInfo.vue -> fn_getEtpOperInfo" );
+
+            if( !gubun ) {
+                gubun   =   "A";
+            }
+
+            axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
+                data: {
+                    f34241 : gubun
+                }
+            }).then(function(response) {
+                console.log(response);
+
+                if (response.data) {
+                    vm.dataList = response.data.dataList;
+                    
+                }
+            });
+        },
+    }
 };
 </script>
 
