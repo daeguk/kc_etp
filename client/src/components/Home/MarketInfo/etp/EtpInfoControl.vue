@@ -1,7 +1,22 @@
 <template>
     <v-layout row wrap>
-        <v-flex xs12>
-            
+        <v-flex xs12>  
+            <IndexDetailDialog v-if="showIndexDetailDialog" :paramData="paramData"></IndexDetailDialog>
+            <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
+            <marketRepresent v-if="showMarketInfo == 1" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketRepresent>               
+            <marketSector v-if="showMarketInfo == 2" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketSector>                   
+            <marketThema v-if="showMarketInfo == 3" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketThema>                       
+            <marketStrategy v-if="showMarketInfo == 4" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketStrategy>                 
+            <marketBond v-if="showMarketInfo == 5" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketBond>                         
+            <marketCurrency v-if="showMarketInfo == 6" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketCurrency>                 
+            <marketRawMaterials v-if="showMarketInfo == 7" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketRawMaterials>         
+            <marketVix v-if="showMarketInfo == 8" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketVix>                          
+            <marketRealEstate v-if="showMarketInfo == 9" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketRealEstate>             
+            <marketMixAssets v-if="showMarketInfo == 10" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketMixAssets>               
+            <marketOversea v-if="showMarketInfo == 11" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketOversea>                   
+            <marketLeverageInverse v-if="showMarketInfo == 12" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketLeverageInverse>   
+            <ComFavorItem v-if="showMarketInfo == 13" @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItem>
+            <ConfirmDialog ref="confirm"></ConfirmDialog>
         </v-flex>
     </v-layout> 
 </template>
@@ -33,12 +48,13 @@ import marketMixAssets from "./marketMixAssets.vue";                /* 010-혼�
 import marketOversea from "./marketOversea.vue";                    /* 101-국가 ( 탭에 노출은 '해외' ) */
 import marketLeverageInverse from "./marketLeverageInverse.vue";    /* 201-배율 ( 탭에 노출은 '레버리지/인버스' ) */
 export default {
-    props: [],
+    props: ["activeTab"],
     data() {
-            return {
-                showIndexDetailDialog : false,
-                showEtpDetailDialog : false,
-            ],
+        return {
+            showIndexDetailDialog : false,
+            showEtpDetailDialog : false,
+            showMarketInfo : 0,
+            paramData : [],
     	};
     },    
 
@@ -62,31 +78,37 @@ export default {
     },
 
     mounted: function() {
-        if (this.$route.query.activeTab == 2) {
-            //this.activeTab = 1;
-           // this.pageMove('/info/etpinfo/marketStrategy');
-        } else {
-            this.activeTab = 0;
-            this.pageMove('/info/etpinfo/marketRepresent');
-        }
+        // 메시지 박스 참조
+        this.$root.$confirm = this.$refs.confirm;
     },
     created: function() {
-        
+        this.$EventBus.$on('showList', data => {
+            this.showMarketInfo = data.tab_id;
+            this.showEtpDetailDialog = false;
+            this.showIndexDetailDialog = false;
+        });
     },
     beforeUpdated: function() {
         
     },
     updated: function() {
-        if (this.$route.path == '/info/etpinfo') {        
-            this.activeTab = 0;
-            this.pageMove('/info/etpinfo/marketRepresent');
-        }
     },
     methods: {
-        pageMove : function(route) {
-            this.$router.push(route);
+        showDetail: function(gubun, paramData) {
+            if (gubun == '1') {
+                this.paramData = paramData;
+                this.showEtpDetailDialog = true;
+                this.showMarketInfo = 0;
+            } else {
+                this.showIndexDetailDialog = true;
+                this.showMarketInfo = 0;
+            }
+        },
+        showMessageBox: function(title, msg, option, gubun) {
+            this.$root.$confirm.open(title,msg, option, gubun);
         }
-    }
+    }   
+
 
 }
 </script>

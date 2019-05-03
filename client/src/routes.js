@@ -28,20 +28,7 @@ import  EtpManageDetail                     from './components/Home/Etp/Manage/E
 import  OverseasIndex                       from './components/Home/Etp/Manage/OverseasIndex.vue';
 
 // MARKET INFO
-import EtpInfoMain              from './components/Home/MarketInfo/etp/EtpInfoMain.vue'
-//import MarktEtpSummaryInfo    from './components/Home/MarketInfo/EtfForList.vue'
-import MarketRepresent          from  './components/Home/MarketInfo/etp/MarketRepresent.vue'             /* 001-시장대표 */
-import MarketSector             from  './components/Home/MarketInfo/etp/MarketSector.vue'                /* 002-섹터*/
-import MarketThema              from  './components/Home/MarketInfo/etp/marketThema.vue'                 /* 003-테마 */
-import MarketStrategy           from  './components/Home/MarketInfo/etp/MarketStrategy.vue'              /* 004-전략 */
-import MarketBond               from  './components/Home/MarketInfo/etp/marketBond.vue'                  /* 005-채권 */
-import MarketCurrency           from  './components/Home/MarketInfo/etp/marketCurrency.vue'              /* 006-통화 */
-import MarketRawMaterials       from  './components/Home/MarketInfo/etp/marketRawMaterials.vue'          /* 007-원자재 */
-import MarketVix                from  './components/Home/MarketInfo/etp/marketVix.vue'                   /* 008-VIX */
-import MarketRealEstate         from  './components/Home/MarketInfo/etp/marketRealEstate.vue'            /* 009-부동산 */
-import MarketMixAssets          from  './components/Home/MarketInfo/etp/marketMixAssets.vue'             /* 010-혼합자산 */
-import MarketOversea            from  './components/Home/MarketInfo/etp/marketOversea.vue'               /* 101-국가 ( 탭에 노출은 '해외' ) */
-import MarketLeverageInverse    from  './components/Home/MarketInfo/etp/marketLeverageInverse.vue'       /* 201-배율 ( 탭에 노출은 '레버리지/인버스' ) */
+import EtpInfoMain              from  './components/Home/MarketInfo/etp/EtpInfoMain.vue'
 
 
 // TODAY
@@ -64,80 +51,7 @@ export const routes = [
             meta: {
                 requiresAuth: false
             },
-            children: [
-                {   path : 'marketRepresent',
-                    component: MarketRepresent,          /* 001-시장대표 */
-                    meta: {
-                        requiresAuth: false
-                    },
-                }, 
-                {   path : 'marketSector',
-                    component: MarketSector,             /* 002-섹터 */
-                    meta: {
-                        requiresAuth: false
-                    },
-                }, 
-                {   path : 'marketThema',
-                    component: MarketThema,              /* 003-테마 */
-                    meta: {
-                        requiresAuth: false
-                    },
-                }, 
-                {   path : 'marketStrategy',
-                    component: MarketStrategy,           /* 004-전략 */
-                    meta: {
-                        requiresAuth: false
-                    },
-                }, 
-                {   path : 'marketBond',
-                    component: MarketBond,               /* 005-채권 */
-                    meta: {
-                        requiresAuth: false
-                    },
-                }, 
-                {   path : 'marketCurrency',
-                    component: MarketCurrency,           /* 006-통화 */
-                    meta: {
-                        requiresAuth: false
-                    },
-                }, 
-                {   path : 'marketRawMaterials',
-                    component: MarketRawMaterials,       /* 007-원자재 */
-                    meta: {
-                        requiresAuth: false
-                    },
-                }, 
-                {   path : 'marketVix',
-                    component: MarketVix,                /* 008-VIX */
-                    meta: {
-                        requiresAuth: false
-                    },
-                }, 
-                {   path : 'marketRealEstate',
-                    component: MarketRealEstate,         /* 009-부동산 */
-                    meta: {
-                        requiresAuth: false
-                    },
-                },
-                {   path : 'marketMixAssets',
-                    component: MarketMixAssets,          /* 010-혼합자산 */
-                    meta: {
-                        requiresAuth: false
-                    },
-                }, 
-                {   path : 'marketOversea',
-                    component: MarketOversea,            /* 101-국가 ( 탭에 노출은 '해외' ) */
-                    meta: {
-                        requiresAuth: false
-                    },
-                }, 
-                {   path : 'marketLeverageInverse',
-                    component: MarketLeverageInverse,    /* 201-배율 ( 탭에 노출은 '레버리지/인버스' ) */
-                    meta: {
-                        requiresAuth: false
-                    },
-                }, 
-            ]
+            
         },
         {   path : 'info/indexinfo',
             component: Today1Main,

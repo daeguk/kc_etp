@@ -113,7 +113,7 @@ export  const  market_common =   {
                                         },
                                         {
                                             "render": function ( data, type, row ) {
-                                                let htm = "<div class='tooltip'><button type='button' id='detail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>";
+                                                let htm = "<div class='tooltip'><button type='button' id='detail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>ETP</span></div>";
                                                 htm += "<div class='tooltip'><button type='button' id='pdf' class='btn_icon v-icon material-icons'>picture_as_pdf</button><span class='tooltiptext' style='width:70px;'>PDF관리</span></div>";
                                                 return htm;
                                             },
@@ -192,16 +192,17 @@ export  const  market_common =   {
                     var etpIndex = response.data.etpIndex;
 
                     if( etpIndex.etp_cnt == 0 ) {
-                        vm.$root.$confirm.open('확인','ETP 정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
+                        vm.$emit("showMessageBox", '확인','ETP 정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
                         return  false;
                     }
 
                     if( etpIndex.index_cnt == 0 ) {
-                        vm.$root.$confirm.open('확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.' + '(' + etpIndex.index_cnt + ')', {}, 1);
+                        vm.$emit("showMessageBox", '확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.' + '(' + etpIndex.index_cnt + ')', {}, 1);
                         return  false;
                     }
 
-                    vm.showEtpManageDetailDialog = true;
+                    //vm.showEtpManageDetailDialog = true;
+                    vm.$emit('showDetail', 1, vm.paramData);
                 }
             });
         },

@@ -9,7 +9,7 @@
             >
             <v-tabs-slider color="#35e0e2"></v-tabs-slider>
     
-                <v-tab v-for="tab of tabs"  :key="tab.id" @click="pageMove(tab.route)" >
+                <v-tab v-for="tab of tabs"  :key="tab.id" @click="pageMove(tab.id)" >
                     {{ tab.name }}
                 </v-tab>
             </v-tabs>
@@ -18,12 +18,14 @@
                 <v-tab-item v-for="tab of tabs"  :key="tab.id" >
                 </v-tab-item>
             </v-tabs-items>
-            <router-view></router-view>    
+            <!--router-view></router-view-->    
+            <EtpInfoControl :activeTab="activeTab"></EtpInfoControl>
       </v-flex>
     </v-layout> 
 </template>
 
 <script>
+import EtpInfoControl from  '@/components/Home/MarketInfo/etp/EtpInfoControl.vue'
 export default {
         props: [],
         data() {
@@ -54,7 +56,7 @@ export default {
            // this.pageMove('/info/etpinfo/marketStrategy');
         } else {
             this.activeTab = 0;
-            this.pageMove('/info/etpinfo/marketRepresent');
+            this.pageMove(1);
         }
     },
     created: function() {
@@ -63,15 +65,20 @@ export default {
     beforeUpdated: function() {
         
     },
+    components: {
+        EtpInfoControl : EtpInfoControl
+    },
     updated: function() {
         if (this.$route.path == '/info/etpinfo') {        
-            this.activeTab = 0;
-            this.pageMove('/info/etpinfo/marketRepresent');
+            //this.activeTab = 0;
+            //this.pageMove(0);
         }
     },
     methods: {
-        pageMove : function(route) {
-            this.$router.push(route);
+        pageMove : function(tab_id) {
+            this.$EventBus.$emit("showList", {tab_id:tab_id});
+            //this.activeTab = id + 1;
+            //this.$router.push({path:'/info/etpinfo/EtpMarketInfo', props:{activeTab:this.activeTab}});
         }
     }
 

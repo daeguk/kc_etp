@@ -15,7 +15,7 @@
                                     <span class="grey--text">{{etpBasic.f16013}}</span>
                                 </h3>
 
-                                <div class="right_btn"  v-if="showEtpManageDetailDialog">
+                                <!--div class="right_btn"  v-if="showEtpManageDetailDialog">
                                     <v-layout align-right>
                                         <v-flex xs12 sm4 text-xs-center>                                         
                                             <div class="btn_r">
@@ -25,7 +25,7 @@
                                             </div>
                                         </v-flex>
                                     </v-layout>
-                                </div>
+                                </div-->
 
                                 <div class="right_btn"  v-if="!showEtpManageDetailDialog">
                                     <v-layout align-right>
@@ -111,7 +111,7 @@
 
 
 
-                <v-card flat class="right_menu_w2"  v-if="!showEtpManageDetailDialog">
+                <v-card flat class="right_menu_w2"  v-if="showEtpManageDetailDialog">
                     <v-navigation-drawer
                         v-model="drawer"
                         :mini-variant="mini"
@@ -172,7 +172,7 @@
                                                     </v-list-tile>
                                                 </v-list>
                                             </div>
-                                            <indexDetailrtmenupop></indexDetailrtmenupop>
+                                            <!--indexDetailrtmenupop></indexDetailrtmenupop-->
                                             <v-card class="pop_bot_h"></v-card>
                                         </v-card>
                                     </v-dialog>
