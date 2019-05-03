@@ -26,6 +26,7 @@ import  EtpRegisterMain                     from './components/Home/Etp/Register
 import  EtpContractMain                     from './components/Home/Etp/Contract/EtpContractMain.vue';
 import  EtpManageDetail                     from './components/Home/Etp/Manage/EtpManageDetail.vue';
 import  OverseasIndex                       from './components/Home/Etp/Manage/OverseasIndex.vue';
+import  PdfModifyImportance                       from './components/Home/Etp/Manage/PdfModifyImportance.vue';
 
 // MARKET INFO
 import EtpInfoMain              from './components/Home/MarketInfo/etp/EtpInfoMain.vue'
@@ -267,6 +268,13 @@ export const routes = [
               requiresType: ['0001', '0002', '0004', '0005']
             },
         },
+        {   path : 'etp/manage/PdfModifyImportance',
+            component: PdfModifyImportance,
+            meta: {
+              requiresAuth: true,
+              requiresType: ['0001', '0002', '0004', '0005']
+            },
+        },
 
 
         {   path : '/index/datepickerTest',
@@ -287,6 +295,7 @@ export const routes = [
               requiresAuth: false
             },
         },
+        
     ]
   }
 ]
