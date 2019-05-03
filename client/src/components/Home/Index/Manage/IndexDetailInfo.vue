@@ -69,13 +69,13 @@
 
                                 <v-tabs-items v-model="tab">
                                     <v-tab-item>
-                                        <indexinfotab1></indexinfotab1>
+                                        <IndexDetailInfoTab1></IndexDetailInfoTab1>
                                     </v-tab-item>
                                     <v-tab-item>
-                                        <indexinfotab2></indexinfotab2>
+                                        <IndexDetailInfoTab2></IndexDetailInfoTab2>
                                     </v-tab-item>
                                     <v-tab-item>
-                                        <indexinfotab3></indexinfotab3>
+                                        <IndexDetailInfoTab3></IndexDetailInfoTab3>
                                     </v-tab-item>
                                 </v-tabs-items>
                             </v-flex>
@@ -89,9 +89,9 @@
 
 
 <script>
-import indexinfotab1 from "./indexinfotab1.vue";
-import indexinfotab2 from "./indexinfotab2.vue";
-import indexinfotab3 from "./indexinfotab3.vue";
+import IndexDetailInfoTab1 from "./IndexDetailInfoTab1.vue";
+import IndexDetailInfoTab2 from "./IndexDetailInfoTab2.vue";
+import IndexDetailInfoTab3 from "./IndexDetailInfoTab3.vue";
 
 import Config from "@/js/config.js";
 export default {
@@ -109,9 +109,9 @@ export default {
         };
     },
     components: {
-        indexinfotab1: indexinfotab1,
-        indexinfotab2: indexinfotab2,
-        indexinfotab3: indexinfotab3
+        IndexDetailInfoTab1: IndexDetailInfoTab1,
+        IndexDetailInfoTab2: IndexDetailInfoTab2,
+        IndexDetailInfoTab3: IndexDetailInfoTab3
     }, 
     computed: {},
     created: function() {},

@@ -71,6 +71,16 @@
                                 </v-card>
                             </div>
                         </v-flex>
+
+                        <v-flex xs12 v-if="!etp_yn">
+                            <!---table2_1 -->
+                            <div class="indexinfo_box02 a1">
+                                <h4 class="mb-0">ETP Info</h4>
+                                <v-card flat class="indexinfo_list_table">
+                                    <v-card-title>● ETP 정보가 없습니다.</v-card-title>
+                                </v-card>
+                            </div>
+                        </v-flex>
                         
                     </v-layout>
                 </v-container>
@@ -90,8 +100,7 @@ export default {
             index_item: {},
             rowsPerPageItems: [50, 50],
             etp_items : [],
-
-//            basicData : {}
+            etp_yn : false,
             param: {}
         };
     },
@@ -163,7 +172,7 @@ export default {
         },   
         getIndexInEtpInfo: function() {
             var vm = this;
-
+            vm.etp_yn = false;
             axios.get(Config.base_url + "/user/index/getIndexInEtpInfo", {
                     params: {
                         jisu_cd : vm.param.jisu_cd,
@@ -177,7 +186,14 @@ export default {
                 } else {
                     var items = response.data.results;
                     vm.etp_items = items;
-                    console.log("etp_response=" + JSON.stringify(vm.etp_items));
+
+                    if (items.length > 0) {
+                        vm.etp_yn = true;
+                    } else {
+                        vm.etp_yn = false;
+                    }
+
+                    //console.log("etp_response=" + JSON.stringify(vm.etp_items));
                     //this.list_cnt = this.results.length;
                 }
             });

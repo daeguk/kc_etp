@@ -172,7 +172,7 @@ export default {
             }
         },
         movePage: function(jisu_cd, market_id, large_type) {
-            this.$router.push({path: '/index/manage/IndexListdetail', query :{'jisu_cd':jisu_cd, 'market_id':market_id, 'large_type':large_type}});
+            this.$router.push({path: '/index/manage/IndexDetailInfo', query :{'jisu_cd':jisu_cd, 'market_id':market_id, 'large_type':large_type}});
         }
 
         

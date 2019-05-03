@@ -12,7 +12,7 @@ import  IndexRegisterMain   from './components/Home/Index/Register/IndexRegister
 import  IndexDatepickerTestMain   from './components/Home/Index/ToastGridTest/IndexDatepickerTestMain.vue'
 import  IndexVueTableTestMain   from './components/Home/Index/ToastGridTest/IndexVueTableTestMain.vue'
 import  IndexToastGridTestMain   from './components/Home/Index/ToastGridTest/IndexToastGridTestMain.vue'
-import  IndexListdetail   from './components/Home/Index/Manage/IndexListdetail.vue'
+import  IndexDetailInfo   from './components/Home/Index/Manage/IndexDetailInfo.vue'
 
 // ETP
 import  EtpOperMain                         from './components/Home/Etp/Manage/EtpOperMain.vue'                         /* ETP 운용관리 메인 */
@@ -43,7 +43,6 @@ import MarketMixAssets          from  './components/Home/MarketInfo/etp/marketMi
 import MarketOversea            from  './components/Home/MarketInfo/etp/marketOversea.vue'               /* 101-국가 ( 탭에 노출은 '해외' ) */
 import MarketLeverageInverse    from  './components/Home/MarketInfo/etp/marketLeverageInverse.vue'       /* 201-배율 ( 탭에 노출은 '레버리지/인버스' ) */
 
-import  Login   from '@/components/common/login.vue'
 
 // TODAY
 import  Today1Main   from './components/Home/MarketInfo/index/IndexInfoMain.vue'
@@ -149,9 +148,6 @@ export const routes = [
         {   path : 'sample/upload',
             component: sampleUpload,
         },
-        {   path : 'login',
-            component: Login,
-        },
         // INDEX
         {   path : 'index/manage',
             component: IndexManageMain,
@@ -183,8 +179,8 @@ export const routes = [
                 }, 
             ]
         },
-        {   path : '/index/manage/IndexListdetail',
-            component: IndexListdetail,
+        {   path : '/index/manage/IndexDetailInfo',
+            component: IndexDetailInfo,
             meta: {
               requiresAuth: true,
               requiresType: ['0003', '0005']

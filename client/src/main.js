@@ -38,7 +38,7 @@ new Vue({
     el: '#app',
     router,
     render: h => h(App)
-}).$mount('#app')
+})
 
 // 메뉴에서 레벨 체크해서 갈 수 있는 URL 만 표시
 // 강제로 URL 입력했을 경우, 경고창 띄우고 현재 페이지 그대로 있슴
@@ -46,6 +46,7 @@ router.beforeEach((to, _from, next) => {
   // console.log("test store.........");
   // console.log(store);
     var type_cd = store.state.user.type_cd;
+
     if(to.meta.requiresAuth) {
       console.log("type_cd : " + type_cd);
       // console.log(record.meta.requiresType);
