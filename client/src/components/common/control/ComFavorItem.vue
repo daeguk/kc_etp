@@ -140,32 +140,6 @@
             </v-card>
             </v-flex>
 
-            <v-flex>
-                <IndexDetailDialog  v-if="showIndexDetailDialog"  
-
-                                    :paramData="paramData" 
-                                    :showDialog="showIndexDetailDialog"  
-
-                                    @fn_closePop = "fn_closeIndexDetailPop">
-                </IndexDetailDialog>
-            </v-flex>
-
-            <v-flex>
-                <v-dialog v-model="showEtpDetailDialog"   :max-width="options.width" v-bind:style="{ zIndex: options.zIndex }" >
-                    <EtpManageDetail    v-if="showEtpDetailDialog"  
-
-                                        :paramData="paramData"
-                                        :showEtpManageDetailDialog="showEtpDetailDialog"
-                                        
-                                        @fn_closePop = "fn_closeEtpDetailPop">
-                    </EtpManageDetail>
-                </v-dialog>
-            </v-flex>            
-
-            <v-flex>
-                <ConfirmDialog ref="confirm"></ConfirmDialog>
-            </v-flex>
-
             <!--rightmenu end -->
         </v-layout>
     </v-container>
@@ -180,9 +154,6 @@ import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
 import jongmokPop from "@/components/common/popup/jongmokPopup";
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
-import IndexDetailDialog from "@/components/Home/Index/Manage/IndexDetailDialog.vue";
-import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";
 
 var favor_grid = null;
 var etf_table = null;
@@ -219,17 +190,12 @@ export default {
     },
     components: {
         jongmokPop : jongmokPop,
-        ConfirmDialog : ConfirmDialog,
-        IndexDetailDialog : IndexDetailDialog,
-        EtpManageDetail :   EtpManageDetail
     },
     computed: {
         
     },
     mounted: function() {
 
-        // 메시지 박스 참조
-        this.$root.$confirm = this.$refs.confirm;
         
         var vm = this;
 
@@ -438,7 +404,7 @@ export default {
             }).then(function(response) {
                 console.log(response);
                 if (response.data.success == false) {
-                    vm.$root.$confirm.open('확인','관심 종목이 없습니다.',{},1);
+                    vm.$emit("showMessageBox", '확인','관심 종목이 없습니다.',{},1);
                 } else {
                     //debugger;
                     vm.favorItems = response.data.results;
@@ -459,7 +425,7 @@ export default {
                 }
             }).then(function(response) {
                 if (response.data.success == false) {
-                    vm.$root.$confirm.open('확인','삭제 중 오류가 발생했습니다.',{},1);
+                    vm.$emit("showMessageBox", '확인','삭제 중 오류가 발생했습니다.',{},1);
                 } else {
                     vm.getFavorItemInfo();
                 }
@@ -492,7 +458,7 @@ export default {
                             MIDDLE_TYPE : ''
                         });
                     } else {
-                        vm.$root.$confirm.open('확인','이미 추가된 관심 종목 입니다.',{},1);
+                       vm.$emit("showMessageBox", '확인','이미 추가된 관심 종목 입니다.',{},1);
                     }
                 } else if (gubun == '2') {
                     var idx = _.findIndex(vm.favorItems, { 'ITEM_CD': sel_items[i].JISU_CD, 'MARKET_ID': sel_items[i].MARKET_ID });
@@ -508,7 +474,7 @@ export default {
                             MIDDLE_TYPE : sel_items[i].MIDDLE_TYPE
                         });
                     } else {
-                        vm.$root.$confirm.open('확인','이미 추가된 관심 종목 입니다.',{},1);
+                        vm.$emit("showMessageBox", '확인','이미 추가된 관심 종목 입니다.',{},1);
                     }
                 }
             }
@@ -519,7 +485,7 @@ export default {
                     }
             }).then(function(response) {
                 if (response.data.success == false) {
-                    vm.$root.$confirm.open('확인','저장 중 오류가 발생했습니다.',{},4);
+                    vm.$emit("showMessageBox", '확인','저장 중 오류가 발생했습니다.',{},4);
                 } else {
                     vm.getFavorItemInfo();
                 }
@@ -543,7 +509,7 @@ export default {
             }).then(response => {
                 // console.log(response);
                 if (response.data.success == false) {
-                    this.$root.$confirm.open('확인','종목정보가 없습니다.',{},1);
+                    vm.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
                 } else {
                     var items = response.data.results;
                     
@@ -564,7 +530,7 @@ export default {
             }).then(response => {
                 // console.log(response);
                 if (response.data.success == false) {
-                    this.$root.$confirm.open('확인','종목정보가 없습니다.',{},1);
+                    tvm.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
                 } else {
                     var items = response.data.results;
                     
@@ -585,7 +551,7 @@ export default {
             }).then(response => {
                 // console.log(response);
                 if (response.data.success == false) {
-                    this.$root.$confirm.open('확인','종목정보가 없습니다.',{},1);
+                    vm.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
                 } else {
                     var items = response.data.results;
                     
@@ -621,13 +587,13 @@ export default {
                     ||  !param.F34239        /* ETP기초지수MID  */
                     ||  param.F34239 < 0
                 ) {
-                    this.$root.$confirm.open('확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
+                    vm.$emit("showMessageBox", '확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
                     return  false;
                 }
 
-                this.paramData.f16012       =   param.F16012;           /* 국제표준코드 */
-                this.paramData.f16257       =   param.F16257;           /* ETP기초지수코드 */
-                this.paramData.f34239       =   param.F34239;           /* ETP기초지수MID */
+                vm.paramData.f16012       =   param.F16012;           /* 국제표준코드 */
+                vm.paramData.f16257       =   param.F16257;           /* ETP기초지수코드 */
+                vm.paramData.f34239       =   param.F34239;           /* ETP기초지수MID */
 
                 axios.post(Config.base_url + "/user/etp/getExistEtpBasicCnt", {
                     data: {
@@ -640,17 +606,18 @@ export default {
                         var etpIndex = response.data.etpIndex;
 
                         if( etpIndex.etp_cnt == 0 ) {
-                            vm.$root.$confirm.open('확인','ETP 정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
+                            vm.$emit("showMessageBox", '확인','ETP 정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
                             return  false;
                         }
 
                         if( etpIndex.index_cnt == 0 ) {
-                            vm.$root.$confirm.open('확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.' + '(' + etpIndex.index_cnt + ')', {}, 1);
+                            vm.$emit("showMessageBox", '확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.' + '(' + etpIndex.index_cnt + ')', {}, 1);
                             return  false;
                         }
 
-                        vm.showIndexDetailDialog    =   false;
-                        vm.showEtpDetailDialog      =   true;
+                        //vm.showIndexDetailDialog    =   false;
+                        //vm.showEtpDetailDialog      =   true;
+                        vm.$emit('showDetail', 1, vm.paramData);
                     }
                 });
             }
@@ -666,17 +633,17 @@ export default {
                     ||  !param.LARGE_TYPE       /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */
                     ||  !param.MARKET_ID        /* 시장 ID  */
                 ) {
-                    this.$root.$confirm.open('확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
+                    vm.$emit("showMessageBox", '확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
                     return  false;
                 }
 
-                this.paramData.f16012       =   param.F16012;           /* 국제표준코드 */
-                this.paramData.f16257       =   param.F16257;           /* ETP기초지수코드 */
-                this.paramData.f34239       =   param.F34239;           /* ETP기초지수MID */
+                vm.paramData.f16012       =   param.F16012;           /* 국제표준코드 */
+                vm.paramData.f16257       =   param.F16257;           /* ETP기초지수코드 */
+                vm.paramData.f34239       =   param.F34239;           /* ETP기초지수MID */
 
-                this.paramData.F16257       =   param.F16257;           /* ETP기초지수코드 */
-                this.paramData.LARGE_TYPE   =   param.LARGE_TYPE;       /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
-                this.paramData.MARKET_ID    =   param.MARKET_ID;        /* 시장 ID  */
+                vm.paramData.F16257       =   param.F16257;           /* ETP기초지수코드 */
+                vm.paramData.LARGE_TYPE   =   param.LARGE_TYPE;       /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
+                vm.paramData.MARKET_ID    =   param.MARKET_ID;        /* 시장 ID  */
 
                 axios.post(Config.base_url + "/user/etp/getExistEtpBasicCnt", {
                     data: {
@@ -689,12 +656,14 @@ export default {
                         var etpIndex = response.data.etpIndex;
 
                         if( etpIndex.index_cnt == 0 ) {
-                            vm.$root.$confirm.open('확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.' + '(' + etpIndex.index_cnt + ')', {}, 1);
+                            vm.$emit("showMessageBox", '확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.' + '(' + etpIndex.index_cnt + ')', {}, 1);
                             return  false;
                         }
 
-                        vm.showIndexDetailDialog    =   true;
-                        vm.showEtpDetailDialog      =   false;
+                        //vm.showIndexDetailDialog    =   true;
+                        //vm.showEtpDetailDialog      =   false;
+
+                        vm.$emit('showDetail', 2, vm.paramData);
                     }
                 });                
             }

@@ -15,7 +15,7 @@
             <marketMixAssets v-if="showMarketInfo == 10" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketMixAssets>               
             <marketOversea v-if="showMarketInfo == 11" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketOversea>                   
             <marketLeverageInverse v-if="showMarketInfo == 12" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketLeverageInverse>   
-            <ComFavorItem v-if="showMarketInfo == 13" @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItem>
+            <ComFavorItem v-if="showFaver" @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItem>
             <ConfirmDialog ref="confirm"></ConfirmDialog>
         </v-flex>
     </v-layout> 
@@ -55,6 +55,7 @@ export default {
             showEtpDetailDialog : false,
             showMarketInfo : 0,
             paramData : [],
+            showFaver : false
     	};
     },    
 
@@ -86,6 +87,7 @@ export default {
             this.showMarketInfo = data.tab_id;
             this.showEtpDetailDialog = false;
             this.showIndexDetailDialog = false;
+            this.showFaver = false;
         });
     },
     beforeUpdated: function() {
@@ -95,13 +97,16 @@ export default {
     },
     methods: {
         showDetail: function(gubun, paramData) {
+
             if (gubun == '1') {
                 this.paramData = paramData;
                 this.showEtpDetailDialog = true;
                 this.showMarketInfo = 0;
+                this.showFaver = true;
             } else {
                 this.showIndexDetailDialog = true;
                 this.showMarketInfo = 0;
+                this.showFaver = true;
             }
         },
         showMessageBox: function(title, msg, option, gubun) {
