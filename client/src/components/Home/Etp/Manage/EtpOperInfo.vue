@@ -13,10 +13,10 @@
                                 <span class="text_result">120</span> results
                                 <span class="toggle2">
                                     <v-btn-toggle v-model="text" class="toggle_01">
-                                        <v-btn flat value="전종목"      @click.stop="fn_getEtpOperInfo('A')"   ref="btnEtpAll">전종목</v-btn>
-                                        <v-btn flat value="국내"        @click.stop="fn_getEtpOperInfo('K')">국내</v-btn>
-                                        <v-btn flat value="해외"        @click.stop="fn_getEtpOperInfo('F')">해외</v-btn>
-                                        <v-btn flat value="관심종목"    @click.stop="fn_getEtpOperInfo('I')">관심종목</v-btn>
+                                        <v-btn flat value="전종목"      @click="fn_getEtpOperInfo('A')"   >전종목</v-btn>
+                                        <v-btn flat value="국내"        @click="fn_getEtpOperInfo('K')" ref="btnEtpAll">국내</v-btn>
+                                        <v-btn flat value="해외"        @click="fn_getEtpOperInfo('F')">해외</v-btn>
+                                        <v-btn flat value="관심종목"    @click="fn_getEtpOperInfo('I')">관심종목</v-btn>
                                     </v-btn-toggle>
                                 </span>
                             </p>
@@ -30,6 +30,8 @@
 
 
                     <v-card flat>
+                        <table id="table01" class="display table01_w"></table>
+                        
                         <table id class="tbl_type" style="width:100%">
                             <colgroup>
                                 <col width="20%">
@@ -120,6 +122,8 @@ import Config from '@/js/config.js';
 import EtpOperInfoQuick     from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
 //import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
 
+var table01 = null;
+
 export default {
     components: {
         //indexDetailrtmenupop: indexDetailrtmenupop
@@ -187,7 +191,11 @@ export default {
             dataList    :   [],
         };
     },
-    mounted: function() {},
+    mounted: function() {
+        var vm = this;
+        
+        vm.fn_getEtpOperInfo( 'A' );     /* 초기에 [전종목]이 조회되게 처리한다. */
+    },
     created: function() {},
     beforeDestory: function() {},
 
