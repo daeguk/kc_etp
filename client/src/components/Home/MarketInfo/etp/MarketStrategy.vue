@@ -134,7 +134,7 @@ import ComFavorItem from "@/components/common/control/ComFavorItem";
 import Config       from "@/js/config.js";
 import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
-import { market_common } from '@/components/Home/MarketInfo/mixins_marketinfo.js';
+import { market_common } from '@/js/common/mixins/mixins_marketinfo.js';
 
 
 export default {

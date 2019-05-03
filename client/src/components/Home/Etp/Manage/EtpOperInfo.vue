@@ -13,8 +13,8 @@
                                 <span class="text_result">120</span> results
                                 <span class="toggle2">
                                     <v-btn-toggle v-model="text" class="toggle_01">
-                                        <v-btn flat value="전종목"      @click="fn_getEtpOperInfo('A')"   >전종목</v-btn>
-                                        <v-btn flat value="국내"        @click="fn_getEtpOperInfo('K')" ref="btnEtpAll">국내</v-btn>
+                                        <v-btn flat value="전종목"      @click="fn_getEtpOperInfo('A')">전종목</v-btn>
+                                        <v-btn flat value="국내"        @click="fn_getEtpOperInfo('K')">국내</v-btn>
                                         <v-btn flat value="해외"        @click="fn_getEtpOperInfo('F')">해외</v-btn>
                                         <v-btn flat value="관심종목"    @click="fn_getEtpOperInfo('I')">관심종목</v-btn>
                                     </v-btn-toggle>
@@ -30,7 +30,35 @@
 
 
                     <v-card flat>
-                        <table id="table01" class="display table01_w"></table>
+                        
+                        <table id="table01" class="display table01_w">
+                            <colgroup>
+                                <col width="22%">       <!-- 종목 -->
+                                <col width="12%">       <!-- iNAV -->
+                                <col width="12%">       <!-- 전일최종NAV -->
+                                <col width="11%">       <!-- 추적오차율 -->
+                                <col width="8%">        <!-- 괴리율 -->
+
+                                <col width="22%">       <!-- 기초지수 -->
+                                <col width="11%">       <!-- 지수현재가 -->
+                                <col width="2%">        <!-- 그래프 이미지 -->
+                            </colgroup>
+
+                            <thead>
+                                <tr>
+                                    <th >종목</th>
+                                    <th >iNAV</th>
+                                    <th >전일최종NAV</th>
+                                    <th >추적오차율</th>
+                                    <th >괴리율</th>
+
+                                    <th >기초지수</th>
+                                    <th >지수현재가</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                        </table>
+
 
                         <table id class="tbl_type" style="width:100%">
                             <colgroup>
@@ -210,8 +238,9 @@ export default {
                 { "name" : "f03329"     ,   "title"   :   "전일최종NAV"     ,   "data":     "f03329"            ,   "orderable" : true  },      /* 전일ETP지표가치(예탁원)(NAV/IV) */
                 { "name" : "f15302"     ,   "title"   :   "추적오차율"      ,   "data":     "f30812"             ,   "orderable" : true  },      /* 추적오차율 */
                 { "name" : "f15304"     ,   "title"   :   "괴리율"          ,   "data":     "f15304"            ,   "orderable" : true  },      /* ETP괴리율 */
-                { "name" : "index_nm"   ,   "title"   :   "기초지수"        ,   "data":     "index_nm"          ,   "orderable" : true  },      /* 기초지수명 */
-                { "name" : "f15001"     ,   "title"   :   "지수현재가"      ,   "data":     "f15001"            ,   "orderable" : true  }       /* 지수 현재가 */
+                { "name" : "index_nm"   ,   "title"   :   "기초 지수"       ,   "data":     "index_nm"          ,   "orderable" : true  },      /* 기초지수명 */
+                { "name" : "f15001"     ,   "title"   :   "지수 현재가"     ,   "data":     "f15001"            ,   "orderable" : true  },       /* 지수 현재가 */
+                { "data": null, className: 'checks', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:50px;'>지수정보</span></div>" } 
             ]
         });        
         
