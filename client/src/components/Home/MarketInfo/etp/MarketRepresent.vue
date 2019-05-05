@@ -45,18 +45,27 @@
                                 <v-card flat>
                                     <div class="market_card_w line_l">
                                         <div class="market_card2" wrap>
-                                            <h6> {{mod_item.name}} </h6>
+                                            <h6>
+                                                {{fn_getDataFromMarket(mod_item, n, x, "name")}}
+                                                <p>
+                                                    {{ new Intl.NumberFormat().format( fn_getDataFromMarket(mod_item, n, x, "f15001") ) }}
+                                                    <span :class='( fn_getDataFromMarket(mod_item, n, x, "f15472") > 0 ? "text_red" : "" )'>
+                                                        {{fn_getDataFromMarket(mod_item, n, x, "f15472")}}({{fn_getDataFromMarket(mod_item, n, x, "f15004")}} %)
+                                                    </span>
+                                                </p>
+                                            </h6>
                                             <ul>
                                                 <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">{{new Intl.NumberFormat().format((mod_item.total_amt) / 1000)}}K</dt>
-                                                    </dl>
+                                                    ETF - {{ new Intl.NumberFormat().format( fn_getDataFromMarket(mod_item, n, x, "etf_cnt") ) }}종목
+                                                    <br>
+                                                    <span>Total</span>
+                                                    <span class="text_result2">AUM {{ new Intl.NumberFormat().format( fn_getDataFromMarket(mod_item, n, x, "etf_sum")  / 1000 ) }}K</span>
                                                 </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - {{mod_item.etf_cnt}}종목</dt>
-                                                        <dt>ETN - {{mod_item.etn_cnt}}종목</dt>
-                                                    </dl>
+                                                <li>
+                                                    ETN - {{fn_getDataFromMarket(mod_item, n, x, "etn_cnt")}} 종목
+                                                    <br>
+                                                    <span>Total</span>
+                                                    <span class="text_result2">AUM {{ new Intl.NumberFormat().format( fn_getDataFromMarket(mod_item, n, x, "etn_sum")  / 1000 ) }}K</span>
                                                 </li>
                                             </ul>
                                         </div>
