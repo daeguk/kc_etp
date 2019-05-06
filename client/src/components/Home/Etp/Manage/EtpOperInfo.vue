@@ -198,33 +198,84 @@ export default {
                         +   "." 
                         +   new Date().getDate(),
 
+            columnState :   'etpInfo',      /* etpInfo-ETP운용정보, iNav-iNav 산출현황, customize-컬럼 선택 */
             arrColumn   :   [],
-            arrShowColumn   :   []
+            arrShowColumn   :   [],
+
+            arrColumnDef  :   [],
+            arrShowColumnDef   :   []            
         };
     },
     mounted: function() {
         var vm = this;
 
         vm.arrColumn  =   [
-            { 'name' : 'f16002'             , 'data': 'f16002'           ,   'orderable' : true  , className: 'dt-body-left',  'width' : '200', 'title' : '종목'          },      /* 한글종목명 */
-            { 'name' : 'index_cal_method'   , 'data': 'index_cal_method' ,   'orderable' : true  , className: 'dt-body-left',  'width' : '80',  'title' : '지수산출방식'  },      /* 지수산출방식 */
-            { 'name' : 'f15301'             , 'data': 'f15301'           ,   'orderable' : true  , className: 'dt-body-right', 'width' : '80',  'title' : 'iNAV'          },      /* ETP지표가치(NAV/IV) */
-            { 'name' : 'f03329'             , 'data': 'f03329'           ,   'orderable' : true  , className: 'dt-body-right', 'width' : '80',  'title' : '전일최종NAV'   },      /* 전일ETP지표가치(예탁원)(NAV/IV) */
-            { 'name' : 'f15302'             , 'data': 'f15302'           ,   'orderable' : true  , className: 'dt-body-right', 'width' : '80',   'title' : '추적오차율'    },      /* 추적오차율 */
+            { 'name' : 'f16002'             , 'data': 'f16002'           ,  'width' : '220', 'orderable' : true  , 'className': 'dt-body-left',  'title' : '종목'           },      /* 한글종목명 */
+            { 'name' : 'index_cal_method'   , 'data': 'index_cal_method' ,  'width' : '80',  'orderable' : true  , 'className': 'dt-body-left',  'title' : '지수산출방식'   },      /* 지수산출방식 */
+            { 'name' : 'f15301'             , 'data': 'f15301'           ,  'width' : '60',  'orderable' : true  , 'className': 'dt-body-right', 'title' : 'iNAV'          },      /* ETP지표가치(NAV/IV) */
+            { 'name' : 'f03329'             , 'data': 'f03329'           ,  'width' : '60',  'orderable' : true  , 'className': 'dt-body-right', 'title' : '전일최종<br>NAV'},      /* 전일ETP지표가치(예탁원)(NAV/IV) */
+            { 'name' : 'f15302'             , 'data': 'f15302'           ,  'width' : '60',  'orderable' : true  , 'className': 'dt-body-right', 'title' : '추적<br>오차율' },      /* 추적오차율 */
                                                                                                                                                   
-            { 'name' : 'f15304'             , 'data': 'f15304'           ,   'orderable' : true  , className: 'dt-body-right', 'width' : '80',  'title' : '괴리율'        },      /* ETP괴리율 */
-            { 'name' : 'index_nm'           , 'data': 'index_nm'         ,   'orderable' : true  , className: 'dt-body-left' , 'width' : '180', 'title' : '기초지수'      },      /* 기초지수명 */
-            { 'name' : 'index_f15001'       , 'data': 'index_f15001'     ,   'orderable' : true  , className: 'dt-body-right', 'width' : '80',  'title' : '지수현재가'    },      /* 지수 현재가 */
-            { 'name' : 'f18438'             , 'data': 'f18438'           ,   'orderable' : true  , className: 'dt-body-right', 'width' : '80',  'title' : '환율'          },      /* 적용환율 */
-            { 'name' : 'f18001'             , 'data': 'f18001'           ,   'orderable' : true  , className: 'dt-body-right', 'width' : '80',  'title' : 'ETF 전일가'    },      /* 전일ETF순자산총액(원)  */
+            { 'name' : 'f15304'             , 'data': 'f15304'           ,  'width' : '60',  'orderable' : true  , 'className': 'dt-body-right', 'title' : '괴리율'        },      /* ETP괴리율 */
+            { 'name' : 'index_nm'           , 'data': 'index_nm'         ,  'width' : '200', 'orderable' : true  , 'className': 'dt-body-left' , 'title' : '기초지수'      },      /* 기초지수명 */
+            { 'name' : 'index_f15001'       , 'data': 'index_f15001'     ,  'width' : '80',  'orderable' : true  , 'className': 'dt-body-right', 'title' : '지수<br>현재가' },      /* 지수 현재가 */
+            { 'name' : 'f18438'             , 'data': 'f18438'           ,  'width' : '80',  'orderable' : true  , 'className': 'dt-body-right', 'title' : '환율'          },      /* 적용환율 */
+            { 'name' : 'f18001'             , 'data': 'f18001'           ,  'width' : '80',  'orderable' : true  , 'className': 'dt-body-right', 'title' : 'ETF 전일가'    },      /* 전일ETF순자산총액(원)  */
                                                                                                                                                   
-            { 'name' : 'f30812'             , 'data': 'f30812'           ,   'orderable' : true  , className: 'dt-body-right', 'width' : '80',  'title' : 'AUM'           },      /* 유동시가총액  */
-            { 'name' : 'prev_f15001'        , 'data': 'prev_f15001'      ,   'orderable' : true  , className: 'dt-body-right', 'width' : '90',  'title' : '기초지수 전일가'},     /* 기초지수 전일가  */
-            { 'name' : 'f15007'             , 'data': 'f15007'           ,   'orderable' : true  , className: 'dt-body-right', 'width' : '80',  'title' : '과표기준가'    },      /* 기준가  */
-            { 'name' : 'f15001'             , 'data': 'f15001'           ,   'orderable' : true  , className: 'dt-body-right', 'width' : '80',  'title' : 'ETF 현재가'    },      /* 현재가  */
-            { 'name' : 'f16073'             , 'data': 'f16073'           ,   'orderable' : true  , className: 'dt-body-right', 'width' : '80',  'title' : '과세구분'      },      /* 락구분코드  */
+            { 'name' : 'f30812'             , 'data': 'f30812'           ,  'width' : '80',  'orderable' : true  , 'className': 'dt-body-right', 'title' : 'AUM'           },      /* 유동시가총액  */
+            { 'name' : 'prev_f15001'        , 'data': 'prev_f15001'      ,  'width' : '90',  'orderable' : true  , 'className': 'dt-body-right', 'title' : '기초지수<br>전일가'},     /* 기초지수 전일가  */
+            { 'name' : 'f15007'             , 'data': 'f15007'           ,  'width' : '80',  'orderable' : true  , 'className': 'dt-body-right', 'title' : '과표기준가'    },      /* 기준가  */
+            { 'name' : 'f15001'             , 'data': 'f15001'           ,  'width' : '80',  'orderable' : true  , 'className': 'dt-body-right', 'title' : 'ETF 현재가'    },      /* 현재가  */
+            { 'name' : 'f16073'             , 'data': 'f16073'           ,  'width' : '80',  'orderable' : true  , 'className': 'dt-body-right', 'title' : '과세구분'      },      /* 락구분코드  */
 
-            { 'name' : 'graph'              , 'data': null ,  width : '80', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:50px;'>지수정보</span></div>" },
+            { 'name' : 'graph'              , 'data': null               ,  'width' : '80', 
+              'defaultContent' :    '<div class="tooltip">'
+                                        /* ETF 상세정보 */
+                                +       '<button    id="btnEtpInfo" '
+                                +       '           type="button" '
+                                +       '           class="btn_icon v-icon material-icons" '
+                                +       '>equalizer</button>'
+                                +       '<span class="tooltiptext" style="width:70px;">ETP정보</span>'
+                                +   '</div>'
+                                +   '<div class="tooltip">'
+                                        /* PD 정보 */
+                                +       '<button    id="btnPdf" '
+                                +       '           type="button" '
+                                +       '           class="btn_icon v-icon material-icons" '
+                                +       '>picture_as_pdf</button> '
+                                +       '<span class="tooltiptext" style="width:70px;">PDF관리</span>'
+                                +   '</div>' 
+            },
+        ];        
+
+        vm.arrColumnDef  =   [
+/*            
+            {       'name' : 'index_cal_method'   
+                ,   "render": function ( data, type, row ) {
+                        if (data) {
+                            return "<img src='/assets/img/icon_bar01.png'><span>&nbsp;&nbsp;&nbsp;" + data + "</span>";
+                        } else {
+                            return "";
+                        }
+                    }
+            },
+            {       'name' : 'f15301'             
+                ,   "render": function ( data, type, row ) {
+                        if (data) {
+                            return "<img src='/assets/img/icon_bar01.png'><span>&nbsp;&nbsp;&nbsp;" + data + "</span>";
+                        } else {
+                            return "";
+                        }
+                    }            
+            },
+            {       'name' : 'f03329'             
+                ,   "render": function ( data, type, row ) {
+                            let htm = "<span>";
+                            htm += "           <b>"+data+"</b>";
+                            return htm;
+                    }
+            },
+*/            
         ];
 
 
@@ -241,26 +292,15 @@ export default {
         };
 
         var totWidth    =   vm.fn_setArrShowColumn( [ 
-                { name : 'f16002' }
-            ,   { name : 'index_cal_method' }
-            ,   { name : 'f15301' } 
-            ,   { name : 'f03329' } 
-/*
-            ,   { name : 'f15302' } 
-            ,   { name : 'f15304' } 
-            ,   { name : 'index_nm' } 
-            ,   { name : 'index_f15001' } 
-            ,   { name : 'f18438' } 
-            ,   { name : 'f18001' } 
+                'f16002'                        /* 종목 */
+            ,   'f15301'                        /* iNAV */
+            ,   'f03329'                        /* 전일최종NAV */
+            ,   'f15302'                        /* 추적오차율 */
+            ,   'f15304'                        /* 괴리율 */
 
-            ,   { name : 'f30812' } 
-            ,   { name : 'prev_f15001' } 
-            ,   { name : 'f15007' } 
-            ,   { name : 'f15001' } 
-            ,   { name : 'f16073' } 
-*/
-            ,   { name : 'graph' } 
-
+            ,   'index_nm'                      /* 기초지수 */
+            ,   'index_f15001'                  /* 지수현재가 */
+            ,   'graph'                         /* 그래프 영역 */
         ] );
 
 
@@ -270,17 +310,15 @@ export default {
 
         if( totWidth > 900 ) {
             $('#table01').attr( "style", "width: 1500px; table-layout: fixed;");
-console.log("######1");
             tableObj.scrollX    =   true;
-            tableObj.columns    =   vm.arrShowColumn ;
-            table01 = $('#table01').DataTable( tableObj );
         }else{
             $('#table01').attr( "style", "width: 100%; ");
-console.log("######2");
             tableObj.scrollX    =   false;
-            tableObj.columns    =   vm.arrShowColumn ;
-            table01 = $('#table01').DataTable( tableObj );
-        }        
+        }
+
+        tableObj.columns    =   vm.arrShowColumn ;
+        tableObj.columnDefs =   vm.arrColumnDef ;
+        table01 = $('#table01').DataTable( tableObj );     
 
         vm.fn_getEtpOperInfo( 'A' );     /* 초기에 [전종목]이 조회되게 처리한다. */
     },
@@ -301,25 +339,12 @@ console.log("######2");
             console.log( "EtpOperInfo.vue -> fn_getEtpOperInfo" );
 
             if( !gubun ) {
-                gubun   =   "A";
+                gubun   =   "A";        /* A-전종목, K-국내, F-해외, I-관심종목 */
             }
 
             if( table01 ) {
                 table01.clear().draw();
             }
-    
-
-            // table01.columns( [
-            //         'index_cal_method:name'             /* 산출방식         - 지수산출방식 */
-            //     ,   'f18438:name'                       /* 환율             - 적용환율 */
-
-            //     ,   'f18001:name'                       /* ETF 전일가       - 전일ETF순자산총액(원) */
-            //     ,   'f30812:name'                       /* AUM              - 유동시가총액 */
-            //     ,   'prev_f15001:name'                  /* 기초지수 전일가  - 기초지수 전일가 */
-            //     ,   'f15007:name'                       /* 과표기준가       - 기준가 */
-            //     ,   'f15001:name'                       /* ETF 현재가       - 현재가 */
-            //     ,   'f16073:name'                       /* 과세구분         - 락구분코드 */
-            // ] ).visible( true );
 
             vm.$refs.result_cnt.textContent = "0";
 
@@ -383,9 +408,8 @@ console.log("######2");
 
             var totWidth    =   0;
             arrTemp.forEach(function(e,i) {
-
                 var same = vm.arrColumn.filter(function(o, p) {
-                    return o.name === e.name;
+                    return o.name === e;
                 });
 
                 if( same.length > 0 ) {
@@ -394,6 +418,21 @@ console.log("######2");
                     vm.arrShowColumn.push( same[0] );
                 }
             });
+
+
+            if( vm.arrShowColumn.length > 0 && vm.arrColumnDef.length > 0 ) {
+                vm.arrShowColumn.forEach(function(e,i) {
+                    var same = vm.arrColumnDef.filter(function(o, p) {
+                        return o.name === e.name;
+                    });
+
+                    if( same.length > 0 ) {
+                        same[0].targets = [ i ];
+                        vm.arrShowColumnDef.push( same[0] );
+                    }
+                });
+            }
+            
 
             return  totWidth;
         }
