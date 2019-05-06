@@ -451,7 +451,9 @@ export default {
                 { text: "Ceiling rto", value: "CeilingRto", align: "right" },
                 { text: "Factor rto", value: "FactorRto", align: "right" }
             ],
-            desserts: []
+            desserts: [],
+            items4 : [],
+            switch1 : ""
         };
     },
     components: {

@@ -46,6 +46,12 @@
                            AND  td_index_hist.F12506        =   DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 DAY ), '%Y%m%d' )      /* 입회일자 ( 1일전 ) */
                     )                                                               AS  prev_f15001        /* 기초지수 전일 현재가 */
 
+                ,   1111                                                            AS  week1
+                ,   2222222                                                         AS  month1
+                ,   333333333                                                       AS  month3
+                ,   4444444444                                                      AS  month6
+                ,   555555555555555                                                 AS  year1
+
           FROM          td_etp_basic
           LEFT  JOIN    td_index_basic
             ON  (

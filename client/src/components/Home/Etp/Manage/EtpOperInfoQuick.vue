@@ -85,6 +85,9 @@
                         </v-list-tile-content>
 
 
+<v-btn @click='$router.push( "/etp/manage/etpOperInfoQuickInav")'>iNav Publ</v-btn><br>
+<v-btn @click='$router.push( "/etp/manage/etpOperInfoQuickPerformance")'>ETP Performance Publ</v-btn><br>
+
                         <v-list-tile-content class="rightmenu_con Oper_menu">
 
                             <v-subheader>
@@ -95,11 +98,7 @@
                                 <v-list>
                                     <v-list-tile
                                         class="border_b"
-                                        v-model="text2"
                                         @click="fn_setInavData"
-
-                                        router-link
-                                        to="/etp/manage/etpOperInfoQuickInav"                                        
                                     >
                                         <v-list-tile-avatar>
                                             <v-icon value="산출 현황">exposure</v-icon>
@@ -113,9 +112,6 @@
                                     <v-list-tile
                                         class="border_b"
                                         @click="fn_setEtpPerformanceData"
-
-                                        router-link
-                                        to="/etp/manage/etpOperInfoQuickPerformance"                                        
                                     >
                                         <v-list-tile-avatar>
                                             <v-icon value="Performance" icon>loop</v-icon>
@@ -127,7 +123,9 @@
                                     </v-list-tile>
 
 
-                                    <v-dialog v-model="dialog5" persistent max-width="550">
+
+
+                                    <v-dialog v-model="customizeDialog" persistent max-width="550">
                                         <template v-slot:activator="{ on }">
                                             <v-list-tile v-on="on" class="border_b">
                                                 <v-list-tile-avatar>
@@ -140,13 +138,15 @@
                                             </v-list-tile>
                                         </template>
 
+
+
                                         <!---ETP운용화면 항목설정  팝업-->
                                         <v-card class="listset_pop">
                                             <h5>
                                                 <v-card-title ma-0>
                                                     ETP 운용화면 항목설정
                                                     <v-spacer></v-spacer>
-                                                    <v-btn icon @click="dialog5 = false">
+                                                    <v-btn icon @click="customizeDialog = false">
                                                         <v-icon>close</v-icon>
                                                     </v-btn>
                                                 </v-card-title>
@@ -160,23 +160,23 @@
                                             >
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="iNAV"
-                                                        value="iNAV"
+                                                        value="f15301"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="기초지수명"
-                                                        value="기초지수명"
+                                                        value="index_nm"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="ETF전일가"
-                                                        value="ETF전일가"
+                                                        value="f18001"
                                                     ></v-checkbox>
                                                 </v-flex>
                                             </v-layout>
@@ -188,23 +188,23 @@
                                             >
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="전일NAV"
-                                                        value="전일NAV"
+                                                        value="f03329"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="기초지수현재가"
-                                                        value="기초지수현재가"
+                                                        value="index_f15001"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="AUM"
-                                                        value="AUM"
+                                                        value="f30812"
                                                     ></v-checkbox>
                                                 </v-flex>
                                             </v-layout>
@@ -216,23 +216,23 @@
                                             >
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="추적오차율"
-                                                        value="추적오차율"
+                                                        value="f15302"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="기초지수전일가"
-                                                        value="기초지수전일가"
+                                                        value="prev_f15001"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="과표기준가"
-                                                        value="과표기준가"
+                                                        value="f15007"
                                                     ></v-checkbox>
                                                 </v-flex>
                                             </v-layout>
@@ -244,23 +244,23 @@
                                             >
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="괴리율"
-                                                        value="괴리율"
+                                                        value="f15304"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="ETF현재가"
-                                                        value="ETF현재가"
+                                                        value="f15001"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="과세구분"
-                                                        value="과세구분"
+                                                        value="f16073"
                                                     ></v-checkbox>
                                                 </v-flex>
                                             </v-layout>
@@ -516,7 +516,11 @@ export default {
             desserts: [],
 
             toggleINav : false,
-            toggleEtpPerformance : false
+            toggleEtpPerformance : false,
+
+            arrCustomizeColumn : [],
+
+            customizeDialog : false
         };
     },
     mounted: function() {},
@@ -566,7 +570,13 @@ export default {
             var vm = this;
 
             console.log("########## EtpOperInfoQuick.vue -> fn_setCustomizeData START ############");
-            vm.$emit( "fn_setCustomizeData", "fn_setCustomizeData" );
+
+            vm.customizeDialog  =   false;
+
+
+            vm.arrCustomizeColumn.unshift( "f16002" );     /* 종목은 선택하지 않아도 출력되게 수정 */
+            vm.$emit( "fn_setCustomizeData", vm.arrCustomizeColumn );
+
             console.log("########## EtpOperInfoQuick.vue -> fn_setCustomizeData END ############");
         }
     }
