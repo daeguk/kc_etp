@@ -366,6 +366,10 @@ export default {
             search: "",
             step: 1,
             panel: [],
+            tab2 : "",
+
+            items4: [],
+            on : false
         }
        
     },
