@@ -220,7 +220,6 @@ export default {
         var vm = this;
 
         this.$EventBus.$on('changeEtpInfo', data => {
-            this.paramData = data;
             vm.init();
         });
     },
@@ -255,7 +254,7 @@ export default {
                     ||  vm.basicData.f16257
                     ||  vm.basicData.f34239
                 )   {
-                    vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
+                    //vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
 
                     vm.fn_getEtpBasic();                /* ETP 의 기본정보를 조회한다. */
                 }

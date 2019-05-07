@@ -119,7 +119,6 @@ export default {
         var vm = this;
 
         this.$EventBus.$on('changeIndexInfo', data => {
-            vm.paramData = data;
             vm.init();
         });
     },
@@ -132,41 +131,42 @@ export default {
     methods: {
         init: function() {
             var vm = this;
+            vm.$nextTick().then(() => {
+                console.log("########## IndexDetailDialog.vue -> mounted ############");
+                console.log( "paramData.F16257=["           + this.paramData.F16257         + "] /* ETP기초지수코드 */" );
+                console.log( "paramData.LARGE_TYPE=["       + this.paramData.LARGE_TYPE     + "] /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */" );
+                console.log( "paramData.MARKET_ID=["        + this.paramData.MARKET_ID      + "] /* 시장 ID  */" );
 
-            console.log("########## IndexDetailDialog.vue -> mounted ############");
-            console.log( "paramData.F16257=["           + this.paramData.F16257         + "] /* ETP기초지수코드 */" );
-            console.log( "paramData.LARGE_TYPE=["       + this.paramData.LARGE_TYPE     + "] /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */" );
-            console.log( "paramData.MARKET_ID=["        + this.paramData.MARKET_ID      + "] /* 시장 ID  */" );
-
-            if(     this.paramData 
-                &&  this.paramData.F16257
-                &&  this.paramData.LARGE_TYPE
-                &&  this.paramData.MARKET_ID
-            ) {
-                this.basicData.jisu_cd      =   this.paramData.F16257;
-                this.basicData.large_type   =   this.paramData.LARGE_TYPE;
-                this.basicData.market_id    =   this.paramData.MARKET_ID;
-            }
-            else if(
-                    vm.$route.query.jisu_cd  
-                &&  vm.$route.query.large_type  
-                &&  vm.$route.query.market_id  
-            ) {
-                this.basicData.jisu_cd      =   this.$route.query.jisu_cd;
-                this.basicData.large_type   =   this.$route.query.large_type;
-                this.basicData.market_id    =   this.$route.query.market_id;
-            }
+                if(     this.paramData 
+                    &&  this.paramData.F16257
+                    &&  this.paramData.LARGE_TYPE
+                    &&  this.paramData.MARKET_ID
+                ) {
+                    this.basicData.jisu_cd      =   this.paramData.F16257;
+                    this.basicData.large_type   =   this.paramData.LARGE_TYPE;
+                    this.basicData.market_id    =   this.paramData.MARKET_ID;
+                }
+                else if(
+                        vm.$route.query.jisu_cd  
+                    &&  vm.$route.query.large_type  
+                    &&  vm.$route.query.market_id  
+                ) {
+                    this.basicData.jisu_cd      =   this.$route.query.jisu_cd;
+                    this.basicData.large_type   =   this.$route.query.large_type;
+                    this.basicData.market_id    =   this.$route.query.market_id;
+                }
 
 
 
-            if(     this.basicData
-                &&  this.basicData.jisu_cd
-                &&  this.basicData.large_type
-                &&  this.basicData.market_id
-            ) {
-                this.getIndexBaseInfo();
-                this.Indexchart();
-            }
+                if(     this.basicData
+                    &&  this.basicData.jisu_cd
+                    &&  this.basicData.large_type
+                    &&  this.basicData.market_id
+                ) {
+                    this.getIndexBaseInfo();
+                    this.Indexchart();
+                }
+            });
         },
         fn_showDialog : function( param ) {
             this.showDialog =   param;

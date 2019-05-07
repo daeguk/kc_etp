@@ -3,7 +3,7 @@
         <v-flex xs12>
            <v-tabs
                 slot="extension"
-                v-model="tab"
+                v-model="activeTab"
                 align-with-title
                 light
             >
@@ -14,11 +14,9 @@
                 </v-tab>
             </v-tabs>
 
-            <v-tabs-items v-model="tab">
-                <v-tab-item>
-                    
+            <v-tabs-items v-model="activeTab">
+                <v-tab-item v-for="tab of tabs"  :key="tab.id" >
                 </v-tab-item>
-              
             </v-tabs-items>
         </v-flex>
         <IndexInfoControl :activeTab="activeTab"></IndexInfoControl>

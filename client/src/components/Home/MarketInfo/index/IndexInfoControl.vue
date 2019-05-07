@@ -68,18 +68,25 @@ export default {
 
             if (gubun == '1') {
                 this.paramData = paramData;
+
+                if (this.showEtpDetailDialog) {
+                    this.$EventBus.$emit('changeEtpInfo', paramData);
+                }
                 this.showEtpDetailDialog = true;
                 this.showIndexDetailDialog = false;
                 this.showMarketInfo = 0;
                 this.showFaver = true;
-                this.$EventBus.$emit('changeEtpInfo', paramData);
+                
             } else {
                 this.paramData = paramData;
+
+                if (this.showIndexDetailDialog) {
+                    this.$EventBus.$emit('changeIndexInfo', paramData);
+                }
                 this.showEtpDetailDialog = false;
                 this.showIndexDetailDialog = true;                
                 this.showMarketInfo = 0;
                 this.showFaver = true;
-                this.$EventBus.$emit('changeIndexInfo', paramData);
             }
         },
         showMessageBox: function(title, msg, option, gubun) {
