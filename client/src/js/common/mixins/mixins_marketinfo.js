@@ -105,7 +105,7 @@ export  const  market_common =   {
                                                 } else {
                                                     htm = "<span class='align_r text_blue'>"+data;
                                                 }
-                                                htm += "<br><span class='text_S'>"+row.f15004+"%</span>";
+                                                htm += "<br><span class='text_S'>"+row.f30823+"%</span>";           /* ETF관련지수등락율 */
                                                 htm += "   </span>";
                                                 return htm;
                                             },
