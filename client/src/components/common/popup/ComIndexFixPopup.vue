@@ -1,54 +1,72 @@
 <template>
-    <v-layout row>
-        <v-flex xs12>
-            <v-card flat>
-                <div class="index3pop2_con">
-                    <v-list subheader two-line>
-                        <v-list-tile>
-                            <v-list-tile-title>조치 기준일</v-list-tile-title>
-                            <v-list-tile-content>{{ indexFixData.fix_date }}</v-list-tile-content>
-                        </v-list-tile>
-                    </v-list>
-                </div>
 
-                <v-card flat class="right_menu_w4">
-                    <v-list subheader two-line>
-                        <v-subheader class="subheading">기준시총 변동</v-subheader>
-                        <v-list-tile>
-                            <v-list-tile-content>
-                                <v-list-tile-title>당일( {{indexFixData.now_date}} )</v-list-tile-title>
-                                <v-list-tile-sub-title>
-                                    {{indexFixData.now_date_money}}
-                                    <p>{{indexFixData.now_date_change_money}}</p>
-                                </v-list-tile-sub-title>
-                            </v-list-tile-content>
-                            <v-list-tile-content>
-                                <v-list-tile-title>당일( {{indexFixData.oper_date}} )</v-list-tile-title>
-                                <v-list-tile-sub-title>
-                                    {{indexFixData.oper_date_money}}
-                                    <p></p>
-                                </v-list-tile-sub-title>
-                            </v-list-tile-content>
-                        </v-list-tile>
-                    </v-list>
+    <v-dialog v-model="indexFixDialog" persistent max-width="500">
+
+        <v-layout row>
+            <v-flex xs12>
+                <v-card flat>
+
+                    <h5>
+                        <v-card-title ma-0>
+                            
+                            지수조치 현황 ( {{ indexFixData.f16002 }} )
+                            <v-spacer></v-spacer>
+
+                            <v-btn icon dark @click="fn_closePop">
+                                <v-icon>close</v-icon>
+                            </v-btn>
+                        </v-card-title>
+                    </h5>
+
+                    <div class="index3pop2_con">
+                        <v-list subheader two-line>
+                            <v-list-tile>
+                                <v-list-tile-title>조치 기준일</v-list-tile-title>
+                                <v-list-tile-content>{{ indexFixData.fix_date }}</v-list-tile-content>
+                            </v-list-tile>
+                        </v-list>
+                    </div>
+
+                    <v-card flat class="right_menu_w4">
+                        <v-list subheader two-line>
+                            <v-subheader class="subheading">기준시총 변동</v-subheader>
+                            <v-list-tile>
+                                <v-list-tile-content>
+                                    <v-list-tile-title>당일( {{indexFixData.now_date}} )</v-list-tile-title>
+                                    <v-list-tile-sub-title>
+                                        {{indexFixData.now_date_money}}
+                                        <p>{{indexFixData.now_date_change_money}}</p>
+                                    </v-list-tile-sub-title>
+                                </v-list-tile-content>
+                                <v-list-tile-content>
+                                    <v-list-tile-title>당일( {{indexFixData.oper_date}} )</v-list-tile-title>
+                                    <v-list-tile-sub-title>
+                                        {{indexFixData.oper_date_money}}
+                                        <p></p>
+                                    </v-list-tile-sub-title>
+                                </v-list-tile-content>
+                            </v-list-tile>
+                        </v-list>
+                    </v-card>
+
+
+                    <!--종목편출입 테이블-->
+                    <v-subheader class="subheading">종목편출입</v-subheader>
+                    <table id="tableIndexFixJongmokInout" class="display table01_w"></table>
+                    <!--종목편출입 테이블 end-->
+
+                    <br>
+
+                    <!--지수채용주식수변경테이블-->
+                    <v-subheader class="subheading">지수채용주식수변경</v-subheader>
+                    <table id="tableIndexFixModify" class="display table01_w"></table>
+                    <!--지수채용주식수변경테이블 end-->
+                    
                 </v-card>
+            </v-flex>
+        </v-layout>
+    </v-dialog>
 
-
-                <!--종목편출입 테이블-->
-                <v-subheader class="subheading">종목편출입</v-subheader>
-                <table id="tableIndexFixJongmokInout" class="display table01_w"></table>
-                <!--종목편출입 테이블 end-->
-
-                <br>
-
-                <!--지수채용주식수변경테이블-->
-                <v-subheader class="subheading">지수채용주식수변경</v-subheader>
-                <table id="tableIndexFixModify" class="display table01_w"></table>
-                <!--지수채용주식수변경테이블 end-->
-                
-            </v-card>
-        </v-flex>
-    </v-layout>
 </template>
 
 
@@ -64,7 +82,7 @@ var tableIndexFixModify = null;
 
 
 export default {
-    props: [ "indexBasic" ],
+    props: [ "indexBasic", "indexFixDialog" ],
 
     data() {
         return {
@@ -89,6 +107,17 @@ export default {
     },
 
     methods: {
+
+        /*
+         * 지수조치현황 팝업창을 종료한다.
+         * 2019-04-16  bkLove(촤병국)
+         */
+        fn_closePop : function() {
+            var vm = this;
+
+            vm.$emit( "fn_closePop", false );
+        },
+
         /*
          * 선택한 지수 조치내역을 조회한다.
          * 2019-04-16  bkLove(촤병국)

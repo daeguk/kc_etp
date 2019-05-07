@@ -44,41 +44,24 @@
                         <v-list-tile-content class="rightmenu_con rightmenu_line">
                             <v-subheader>
                                 <v-icon small>feedback</v-icon>지수 조치 현황
+                                <v-btn
+                                    small
+                                    depressed
+                                    outline
+                                    color="primary"
+                                    @click="indexFixDialog=true"
+                                >내역확인</v-btn>
 
-                                <v-dialog v-model="dialog" persistent max-width="500">
-                                    <template v-slot:activator="{ on }">
-                                        <v-btn
-                                            small
-                                            depressed
-                                            outline
-                                            color="primary"
-                                            v-on="on"
-                                        >내역확인</v-btn>
-                                    </template>
+                                <ComIndexFixPopup   v-if="indexFixDialog"
 
-                                    <v-card flat>
-                                        <h5>
-                                            <v-card-title ma-0>
-                                                지수조치 현황(DBF 500 Index)
-                                                <v-spacer></v-spacer>
-                                                <v-btn icon dark @click="dialog = false">
-                                                    <v-icon>close</v-icon>
-                                                </v-btn>
-                                            </v-card-title>
-                                        </h5>
-                                        <div class="index3pop2_con">
-                                            <v-list subheader two-line>
-                                                <v-list-tile>
-                                                    <v-list-tile-title>조치 기준일</v-list-tile-title>
-                                                    <v-list-tile-content>2018.10.11</v-list-tile-content>
-                                                </v-list-tile>
-                                            </v-list>
-                                        </div>
-                                        <!--indexDetailrtmenupop></indexDetailrtmenupop-->
-                                        <v-card class="pop_bot_h"></v-card>
-                                    </v-card>
-                                </v-dialog>
+                                                    :indexBasic="this.indexBasic" 
+                                                    :indexFixDialog="this.indexFixDialog" 
+                                                    
+                                                    @fn_closePop="fn_closePop" >
+                                </ComIndexFixPopup>                                
                             </v-subheader>
+
+
                             <p class="text_red">
                                 <v-icon small>arrow_right</v-icon>3개 지수에 대한 조치 발생
                             </p>
@@ -439,11 +422,13 @@
 
 
 <script>
-//import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
+import ComIndexFixPopup from "@/components/common/popup/ComIndexFixPopup.vue";
 
 export default {
+    props: [ "indexBasic" ],
+
     components: {
-        //indexDetailrtmenupop: indexDetailrtmenupop
+        ComIndexFixPopup    :   ComIndexFixPopup
     },
     data() {
         return {
@@ -517,10 +502,10 @@ export default {
 
             toggleINav : false,
             toggleEtpPerformance : false,
-
             arrCustomizeColumn : [],
+            customizeDialog : false,
 
-            customizeDialog : false
+            indexFixDialog : false,
         };
     },
     mounted: function() {},
@@ -529,6 +514,15 @@ export default {
 
     methods : {
 
+        /*
+         * 지수조치현황 팝업창을 종료한다.
+         * 2019-04-16  bkLove(촤병국)
+         */
+        fn_closePop( param )  {
+            var vm = this;
+
+            vm.indexFixDialog = false;
+        },        
 
         /*
          *  EtpOperInfo.vue -> fn_setInavData 함수를 호출한다.
@@ -568,13 +562,23 @@ export default {
          */
         fn_setCustomizeData() {
             var vm = this;
+            var arrFixTitle = [ "f16002" ];     /* 종목은 선택하지 않아도 출력되게 수정 */
 
             console.log("########## EtpOperInfoQuick.vue -> fn_setCustomizeData START ############");
 
             vm.customizeDialog  =   false;
 
 
-            vm.arrCustomizeColumn.unshift( "f16002" );     /* 종목은 선택하지 않아도 출력되게 수정 */
+            arrFixTitle.forEach(function(e,i) {
+                var same = vm.arrCustomizeColumn.filter(function(o, p) {
+                    return o === e;
+                });
+
+                if( same.length == 0 ) {
+                    vm.arrCustomizeColumn.unshift( e );
+                }
+            });
+
             vm.$emit( "fn_setCustomizeData", vm.arrCustomizeColumn );
 
             console.log("########## EtpOperInfoQuick.vue -> fn_setCustomizeData END ############");
