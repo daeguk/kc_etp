@@ -29,9 +29,9 @@
 
                     <table id="tableIndexList" class="display table01_w"></table>
                     
-                    <ComIndexJongmok    @fn_getIndexDetailList="fn_getIndexDetailList"
+                    <IndexDetailQuick   @fn_getIndexDetailList="fn_getIndexDetailList"
                                         @fn_getIndexJongmokList="fn_getIndexJongmokList"
-                    ></ComIndexJongmok>
+                    ></IndexDetailQuick>
                     
                 </v-card>
             </v-flex>
@@ -47,15 +47,13 @@ import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 
 import Config from '@/js/config.js';
-import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
-import ComIndexJongmok from "@/components/common/control/ComIndexJongmok.vue"; 
+import IndexDetailQuick from "@/components/Home/Index/Manage/IndexDetailQuick.vue";
 
 var tableIndexList = null;
 
 export default {
     components: {
-            indexDetailrtmenupop:   indexDetailrtmenupop
-        ,   ComIndexJongmok     :   ComIndexJongmok
+        IndexDetailQuick     :   IndexDetailQuick
     },
     data() {
         return {
