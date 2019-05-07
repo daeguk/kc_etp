@@ -45,12 +45,13 @@
                                     <v-tabs-items v-model="tab">
                                         <v-tab-item>
                                             <!--오른쪽 메뉴 하단 리스트 영역 -->
-                                            <v-layout row class="w100 pt-2">
+                                            <v-layout row >
                                                 <v-flex xs12>
                                                     <v-card flat>
                                                         <table id="favor_grid" class="display" style="width:100%">
                                                         <thead>
                                                             <tr>
+                                                                <th></th>
                                                                 <th></th>
                                                                 <th></th>
                                                             </tr>
@@ -76,7 +77,7 @@
                                             <v-tabs-items v-model="activeTab">
                                             <v-tab-item>
                                                 <!-- etf 리스트 영역 -->
-                                                <v-layout row class="w100 pt-2">
+                                                <v-layout row >
                                                     <v-flex xs12>
                                                         <v-card flat>
                                                             <table id="etf_table" class="display" style="width:100%">
@@ -93,7 +94,7 @@
                                             </v-tab-item>
                                             <v-tab-item>
                                                 <!--ETN 리스트 영역 -->
-                                                <v-layout row class="w100 pt-2">
+                                                <v-layout row>
                                                     <v-flex xs12>
                                                         <v-card flat>
                                                             <table id="etn_table" class="display" style="width:100%">
@@ -110,7 +111,7 @@
                                             </v-tab-item>
                                             <v-tab-item>
                                                 <!--INDEX 리스트 영역 -->
-                                                <v-layout row class="w100 pt-2">
+                                                <v-layout row >
                                                     <v-flex xs12>
                                                         <v-card flat>
                                                             <table id="index_table" class="display" style="width:100%">
@@ -140,32 +141,6 @@
             </v-card>
             </v-flex>
 
-            <v-flex>
-                <IndexDetailDialog  v-if="showIndexDetailDialog"  
-
-                                    :paramData="paramData" 
-                                    :showDialog="showIndexDetailDialog"  
-
-                                    @fn_closePop = "fn_closeIndexDetailPop">
-                </IndexDetailDialog>
-            </v-flex>
-
-            <v-flex>
-                <v-dialog v-model="showEtpDetailDialog"   :max-width="options.width" v-bind:style="{ zIndex: options.zIndex }" >
-                    <EtpManageDetail    v-if="showEtpDetailDialog"  
-
-                                        :paramData="paramData"
-                                        :showEtpManageDetailDialog="showEtpDetailDialog"
-                                        
-                                        @fn_closePop = "fn_closeEtpDetailPop">
-                    </EtpManageDetail>
-                </v-dialog>
-            </v-flex>            
-
-            <v-flex>
-                <ConfirmDialog ref="confirm"></ConfirmDialog>
-            </v-flex>
-
             <!--rightmenu end -->
         </v-layout>
     </v-container>
@@ -180,9 +155,6 @@ import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
 import jongmokPop from "@/components/common/popup/jongmokPopup";
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
-import IndexDetailDialog from "@/components/Home/Index/Manage/IndexDetailDialog.vue";
-import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";
 
 var favor_grid = null;
 var etf_table = null;
@@ -219,17 +191,12 @@ export default {
     },
     components: {
         jongmokPop : jongmokPop,
-        ConfirmDialog : ConfirmDialog,
-        IndexDetailDialog : IndexDetailDialog,
-        EtpManageDetail :   EtpManageDetail
     },
     computed: {
         
     },
     mounted: function() {
 
-        // 메시지 박스 참조
-        this.$root.$confirm = this.$refs.confirm;
         
         var vm = this;
 
@@ -263,8 +230,9 @@ export default {
             paging: false,
             searching: false,
             columns: [
-                { "data": "F16002", "orderable": false, width:'95%'},
-                { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>clear</button><span class='tooltiptext' style='width:40px;'>삭제</span></div>"},
+                { "data": "F16002", "orderable": false, width:'70%'},
+                { "data": null, "orderable": false, width:'15%', defaultContent:"<div class='tooltip'><button type='button' id='equalizer' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:15px;'>ETP</span></div>"},
+                { "data": null, "orderable": false, width:'15%', defaultContent:"<div class='tooltip'><button type='button' id='clear' class='btn_icon v-icon material-icons'>clear</button><span class='tooltiptext' style='width:15px;'>삭제</span></div>"},
             ]
         }); 
 
@@ -272,18 +240,16 @@ export default {
         // 테이블
         $('#favor_grid tbody').on('click', 'button', function () {
             var table = $('#favor_grid').DataTable();
+
+            
             var data = table.row($(this).parents('tr')).data();
 
-            vm.deleteItem(data.ITEM_SEQ, data.GUBUN, data.ITEM_CD );
+            if ($(this).attr('id') == 'clear') {
+                vm.deleteItem(data.ITEM_SEQ, data.GUBUN, data.ITEM_CD );
+            } else {
+                vm.fn_detailPop( data );
+            }
         });
-
-        //  관심종목 더블 클릭시
-        $('#favor_grid tbody').on('dblclick', 'td', function () {
-            var table = $('#favor_grid').DataTable();
-            var data = table.row($(this).parents('tr')).data();
-
-            vm.fn_detailPop( data );
-        });        
 
 
     /* [전체종목 -> ETF] 테이블 */
@@ -438,7 +404,7 @@ export default {
             }).then(function(response) {
                 console.log(response);
                 if (response.data.success == false) {
-                    vm.$root.$confirm.open('확인','관심 종목이 없습니다.',{},1);
+                    vm.$emit("showMessageBox", '확인','관심 종목이 없습니다.',{},1);
                 } else {
                     //debugger;
                     vm.favorItems = response.data.results;
@@ -459,7 +425,7 @@ export default {
                 }
             }).then(function(response) {
                 if (response.data.success == false) {
-                    vm.$root.$confirm.open('확인','삭제 중 오류가 발생했습니다.',{},1);
+                    vm.$emit("showMessageBox", '확인','삭제 중 오류가 발생했습니다.',{},1);
                 } else {
                     vm.getFavorItemInfo();
                 }
@@ -492,7 +458,7 @@ export default {
                             MIDDLE_TYPE : ''
                         });
                     } else {
-                        vm.$root.$confirm.open('확인','이미 추가된 관심 종목 입니다.',{},1);
+                       vm.$emit("showMessageBox", '확인','이미 추가된 관심 종목 입니다.',{},1);
                     }
                 } else if (gubun == '2') {
                     var idx = _.findIndex(vm.favorItems, { 'ITEM_CD': sel_items[i].JISU_CD, 'MARKET_ID': sel_items[i].MARKET_ID });
@@ -508,7 +474,7 @@ export default {
                             MIDDLE_TYPE : sel_items[i].MIDDLE_TYPE
                         });
                     } else {
-                        vm.$root.$confirm.open('확인','이미 추가된 관심 종목 입니다.',{},1);
+                        vm.$emit("showMessageBox", '확인','이미 추가된 관심 종목 입니다.',{},1);
                     }
                 }
             }
@@ -519,7 +485,7 @@ export default {
                     }
             }).then(function(response) {
                 if (response.data.success == false) {
-                    vm.$root.$confirm.open('확인','저장 중 오류가 발생했습니다.',{},4);
+                    vm.$emit("showMessageBox", '확인','저장 중 오류가 발생했습니다.',{},4);
                 } else {
                     vm.getFavorItemInfo();
                 }
@@ -543,7 +509,7 @@ export default {
             }).then(response => {
                 // console.log(response);
                 if (response.data.success == false) {
-                    this.$root.$confirm.open('확인','종목정보가 없습니다.',{},1);
+                    vm.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
                 } else {
                     var items = response.data.results;
                     
@@ -564,7 +530,7 @@ export default {
             }).then(response => {
                 // console.log(response);
                 if (response.data.success == false) {
-                    this.$root.$confirm.open('확인','종목정보가 없습니다.',{},1);
+                    tvm.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
                 } else {
                     var items = response.data.results;
                     
@@ -585,7 +551,7 @@ export default {
             }).then(response => {
                 // console.log(response);
                 if (response.data.success == false) {
-                    this.$root.$confirm.open('확인','종목정보가 없습니다.',{},1);
+                    vm.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
                 } else {
                     var items = response.data.results;
                     
@@ -616,43 +582,21 @@ export default {
                 console.log( "param.F16257=[" + param.F16257 + "] /* ETP기초지수코드  */" );
                 console.log( "param.F34239=[" + param.F34239 + "] /* ETP기초지수MID  */" );
 
-                if(     !param.F16012        /* 국제표준코드  */
-                    ||  !param.F16257        /* ETP기초지수코드  */
-                    ||  !param.F34239        /* ETP기초지수MID  */
-                    ||  param.F34239 < 0
-                ) {
-                    this.$root.$confirm.open('확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
-                    return  false;
-                }
+                //if(     !param.F16012        /* 국제표준코드  */
+                //    ||  !param.F16257        /* ETP기초지수코드  */
+                //    ||  !param.F34239        /* ETP기초지수MID  */
+                //    ||  param.F34239 < 0
+                //) {
+                //    vm.$emit("showMessageBox", '확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
+                //    return  false;
+                //}
 
-                this.paramData.f16012       =   param.F16012;           /* 국제표준코드 */
-                this.paramData.f16257       =   param.F16257;           /* ETP기초지수코드 */
-                this.paramData.f34239       =   param.F34239;           /* ETP기초지수MID */
+                vm.paramData.f16012       =   param.F16012;           /* 국제표준코드 */
+                vm.paramData.f16257       =   param.F16257;           /* ETP기초지수코드 */
+                vm.paramData.f34239       =   param.F34239;           /* ETP기초지수MID */
 
-                axios.post(Config.base_url + "/user/etp/getExistEtpBasicCnt", {
-                    data: {
-                        basicData   :   vm.paramData
-                    }
-                }).then(function(response) {
-                    console.log(response);
-
-                    if (response.data) {
-                        var etpIndex = response.data.etpIndex;
-
-                        if( etpIndex.etp_cnt == 0 ) {
-                            vm.$root.$confirm.open('확인','ETP 정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
-                            return  false;
-                        }
-
-                        if( etpIndex.index_cnt == 0 ) {
-                            vm.$root.$confirm.open('확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.' + '(' + etpIndex.index_cnt + ')', {}, 1);
-                            return  false;
-                        }
-debugger;
-                        vm.showIndexDetailDialog    =   false;
-                        vm.showEtpDetailDialog      =   true;
-                    }
-                });
+             
+                vm.$emit('showDetail', 1, vm.paramData);
             }
             /* 인덱스인 경우 */
             else if( param.GUBUN == "2" ) {
@@ -662,41 +606,23 @@ debugger;
                 console.log( "param.LARGE_TYPE=["   + param.LARGE_TYPE  + "]    /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */" );
                 console.log( "param.MARKET_ID=["    + param.MARKET_ID   + "]    /* 시장 ID  */" );
 
-                if(     !param.F16257          /* 지수코드  */
-                    ||  !param.LARGE_TYPE       /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */
-                    ||  !param.MARKET_ID        /* 시장 ID  */
-                ) {
-                    this.$root.$confirm.open('확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
-                    return  false;
-                }
+                //if(     !param.F16257          /* 지수코드  */
+                //    ||  !param.LARGE_TYPE       /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */
+                //    ||  !param.MARKET_ID        /* 시장 ID  */
+                //) {
+                //    vm.$emit("showMessageBox", '확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
+                //    return  false;
+                //}
 
-                this.paramData.f16012       =   param.F16012;           /* 국제표준코드 */
-                this.paramData.f16257       =   param.F16257;           /* ETP기초지수코드 */
-                this.paramData.f34239       =   param.F34239;           /* ETP기초지수MID */
+                vm.paramData.f16012       =   param.F16012;           /* 국제표준코드 */
+                vm.paramData.f16257       =   param.F16257;           /* ETP기초지수코드 */
+                vm.paramData.f34239       =   param.F34239;           /* ETP기초지수MID */
 
-                this.paramData.F16257       =   param.F16257;           /* ETP기초지수코드 */
-                this.paramData.LARGE_TYPE   =   param.LARGE_TYPE;       /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
-                this.paramData.MARKET_ID    =   param.MARKET_ID;        /* 시장 ID  */
+                vm.paramData.F16257       =   param.F16257;           /* ETP기초지수코드 */
+                vm.paramData.LARGE_TYPE   =   param.LARGE_TYPE;       /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
+                vm.paramData.MARKET_ID    =   param.MARKET_ID;        /* 시장 ID  */
 
-                axios.post(Config.base_url + "/user/etp/getExistEtpBasicCnt", {
-                    data: {
-                        basicData   :   vm.paramData
-                    }
-                }).then(function(response) {
-                    console.log(response);
-
-                    if (response.data) {
-                        var etpIndex = response.data.etpIndex;
-
-                        if( etpIndex.index_cnt == 0 ) {
-                            vm.$root.$confirm.open('확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.' + '(' + etpIndex.index_cnt + ')', {}, 1);
-                            return  false;
-                        }
-
-                        vm.showIndexDetailDialog    =   true;
-                        vm.showEtpDetailDialog      =   false;
-                    }
-                });                
+                vm.$emit('showDetail', 2, vm.paramData);
             }
         },
 

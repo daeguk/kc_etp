@@ -45,18 +45,27 @@
                                 <v-card flat>
                                     <div class="market_card_w line_l">
                                         <div class="market_card2" wrap>
-                                            <h6> {{mod_item.name}} </h6>
+                                            <h6>
+                                                {{fn_getDataFromMarket(mod_item, n, x, "name")}}
+                                                <p>
+                                                    {{ new Intl.NumberFormat().format( fn_getDataFromMarket(mod_item, n, x, "f15001") ) }}
+                                                    <span :class='( fn_getDataFromMarket(mod_item, n, x, "f15472") > 0 ? "text_red" : "" )'>
+                                                        {{fn_getDataFromMarket(mod_item, n, x, "f15472")}}({{fn_getDataFromMarket(mod_item, n, x, "f15004")}} %)
+                                                    </span>
+                                                </p>
+                                            </h6>
                                             <ul>
                                                 <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">{{new Intl.NumberFormat().format((mod_item.total_amt) / 1000)}}K</dt>
-                                                    </dl>
+                                                    ETF - {{ new Intl.NumberFormat().format( fn_getDataFromMarket(mod_item, n, x, "etf_cnt") ) }}종목
+                                                    <br>
+                                                    <span>Total</span>
+                                                    <span class="text_result2">AUM {{ new Intl.NumberFormat().format( fn_getDataFromMarket(mod_item, n, x, "etf_sum")  / 1000 ) }}K</span>
                                                 </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - {{mod_item.etf_cnt}}종목</dt>
-                                                        <dt>ETN - {{mod_item.etn_cnt}}종목</dt>
-                                                    </dl>
+                                                <li>
+                                                    ETN - {{fn_getDataFromMarket(mod_item, n, x, "etn_cnt")}} 종목
+                                                    <br>
+                                                    <span>Total</span>
+                                                    <span class="text_result2">AUM {{ new Intl.NumberFormat().format( fn_getDataFromMarket(mod_item, n, x, "etn_sum")  / 1000 ) }}K</span>
                                                 </li>
                                             </ul>
                                         </div>
@@ -112,24 +121,6 @@
                 </v-card>
             </v-flex>
 
-            <v-flex>
-                <v-dialog v-model="showEtpManageDetailDialog"   :max-width="options.width" v-bind:style="{ zIndex: options.zIndex }" >
-                    <EtpManageDetail    v-if="showEtpManageDetailDialog"  
-
-                                        :paramData="paramData"
-                                        :showEtpManageDetailDialog="showEtpManageDetailDialog"  
-                                        
-                                        @fn_closePop = "fn_marketClosePop">
-                    </EtpManageDetail>
-                </v-dialog>
-            </v-flex>
-
-            <v-flex>
-                <ConfirmDialog ref="confirm"></ConfirmDialog>
-            </v-flex>
-
-            <!-- 테이블1 end -->
-            <ComFavorItem></ComFavorItem>
         </v-layout>
     </v-container>
 </template>
@@ -141,10 +132,7 @@ import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
-import ComFavorItem from "@/components/common/control/ComFavorItem"; 
-import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
-import { market_common } from '@/components/Home/MarketInfo/mixins_marketinfo.js';
+import { market_common } from '@/js/common/mixins/mixins_marketinfo.js';
 
 
 var importance_grid = null;
@@ -170,9 +158,6 @@ export default {
     },
     mixins : [ market_common ],
     components: {
-            ComFavorItem    :   ComFavorItem
-        ,   EtpManageDetail :   EtpManageDetail
-        ,   ConfirmDialog   :   ConfirmDialog
     },
     computed: {
          orderedData : function(){
@@ -181,9 +166,6 @@ export default {
         }        
     },
     mounted: function() {
-
-        // 메시지 박스 참조
-        this.$root.$confirm = this.$refs.confirm;
 
         this.fn_getEtpList( "001" );       /* 001-시장대표 */
     },

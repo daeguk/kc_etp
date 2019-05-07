@@ -129,19 +129,7 @@
                     </v-card>
                 </v-card>
             </v-flex>
-            <!---테이블2 end-->
-
-            <ComFavorItem></ComFavorItem>
-
-            <v-flex>
-                <IndexDetailDialog  v-if="showIndexDetailDialog"  
-
-                                    :paramData="paramData" 
-                                    :showDialog="showIndexDetailDialog"  
-
-                                    @fn_closePop = "fn_closeIndexDetailPop">
-                </IndexDetailDialog>
-            </v-flex>
+            
         </v-layout>
     </v-container>
 </template>
@@ -157,9 +145,7 @@ import select from "datatables.net-select";
 import _ from "lodash";
 import Config       from "@/js/config.js";
 import util       from "@/js/util.js";
-import ComFavorItem from "@/components/common/control/ComFavorItem"; 
 import AreaChart   from  '@/components/Common/Chart/AreaChart.vue';
-import IndexDetailDialog from "@/components/Home/Index/Manage/IndexDetailDialog.vue";
 
 var krxIndexTable = null;
 var fnGuideIndexTable = null;
@@ -179,13 +165,10 @@ export default {
             chartLoadFlag: true,
 
             paramData : {},
-            showIndexDetailDialog : false,
         };
     },
     components: {
-        ComFavorItem: ComFavorItem,
         AreaChart: AreaChart,
-        IndexDetailDialog : IndexDetailDialog
     },
     computed: {
         
@@ -557,7 +540,7 @@ export default {
          *  2019-04-16  bkLove(촤병국)
          */
         fn_movePage: function( data ) {
-            this.$emit( "fn_receiveIndexData", data );
+            this.$emit('showDetail', 2, data);
         },
     }
 };

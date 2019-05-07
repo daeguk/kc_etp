@@ -9,81 +9,61 @@
             >
             <v-tabs-slider color="#35e0e2"></v-tabs-slider>
     
-            <v-tab v-for="item in items" :key="item">
-                {{ item }}
-            </v-tab>
+                <v-tab v-for="tab of tabs"  :key="tab.id" @click="pageMove(tab.id)" >
+                    {{ tab.name }}
+                </v-tab>
             </v-tabs>
 
             <v-tabs-items v-model="tab">
                 <v-tab-item>
-                    <today  @fn_receiveIndexData = "fn_receiveIndexData"></today>
+                    
                 </v-tab-item>
               
             </v-tabs-items>
         </v-flex>
-
-        <v-flex>
-            <IndexDetailDialog  v-if="showDialog"  
-
-                                :paramData="paramData" 
-                                :showDialog="showDialog"  
-                                
-                                @fn_closePop = "fn_closeIndexDetailPop">
-            </IndexDetailDialog>
-        </v-flex>
+        <IndexInfoControl :activeTab="activeTab"></IndexInfoControl>
 
     </v-layout>
 </template>
 
 <script>
 
-import today   from  './today.vue';
-import IndexDetailDialog from "../../Index/Manage/IndexDetailDialog.vue";
+import IndexInfoControl from  '@/components/Home/MarketInfo/index/IndexInfoControl.vue'
 
 export default {
 
     data() {
         return {
-            tab: null,
-            drawer:"",
-            search:"",
-            items: ['TODAY'],
-
-            paramData : {},
-            showDialog : false,
+            activeTab: 0,
+            inx : 1,
+            tabs: [
+                { id: 1, name: "TODAY"       , route: '/info/indexinfo/Today' },         /* 001-Today */
+            ]
     	};
     },    
-    components: {
-        today     : today,
-        IndexDetailDialog : IndexDetailDialog
+    mounted: function() {
+        this.activeTab = 0;
+        this.pageMove(1);
     },
     created: function() {
+        
+    },
+    beforeUpdated: function() {
+        
+    },
+    components: {
+        IndexInfoControl : IndexInfoControl
+    },
+    updated: function() {
+      
     },
     methods: {
-
-        /*
-         *  자식에서 인덱스 상세 팝업창을 띄우도록 요청을 받음 ( today.vue 에서 emit 받음 )
-         *  2019-04-16  bkLove(촤병국)
-         */
-        fn_receiveIndexData : function( param ) {
-            console.log( "IndexInfoMain.vue -> fn_receiveIndexData" );
-
-            this.paramData = param;
-
-            this.showDialog =   true;
-        },
-
-        /*
-         *  상세팝업창을 종료한다.
-         *  2019-04-16  bkLove(촤병국)
-         */
-        fn_closeIndexDetailPop : function( param ) {
-            console.log( "IndexInfoMain.vue -> fn_closeIndexDetailPop" );
-
-            this.showDialog =   false;
+        pageMove : function(tab_id) {
+            this.$EventBus.$emit("showList", {tab_id:tab_id});
+            //this.activeTab = id + 1;
+            //this.$router.push({path:'/info/etpinfo/EtpMarketInfo', props:{activeTab:this.activeTab}});
         }
     }
-
 }
 </script>
 

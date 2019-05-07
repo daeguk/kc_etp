@@ -101,24 +101,6 @@
                 </v-card>
             </v-flex>
 
-            <v-flex>
-                <v-dialog v-model="showEtpManageDetailDialog"   :max-width="options.width" v-bind:style="{ zIndex: options.zIndex }" >
-                    <EtpManageDetail    v-if="showEtpManageDetailDialog"  
-
-                                        :paramData="paramData"
-                                        :showEtpManageDetailDialog="showEtpManageDetailDialog"  
-                                        
-                                        @fn_closePop = "fn_marketClosePop">
-                    </EtpManageDetail>
-                </v-dialog>
-            </v-flex>
-
-            <v-flex>
-                <ConfirmDialog ref="confirm"></ConfirmDialog>
-            </v-flex>
-
-            <!-- 테이블1 end -->
-            <ComFavorItem></ComFavorItem>
         </v-layout>
     </v-container>
 </template>
@@ -131,10 +113,7 @@ import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import _ from "lodash";
 import Config       from "@/js/config.js";
-import ComFavorItem from "@/components/common/control/ComFavorItem"; 
-import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
-import { market_common } from '@/components/Home/MarketInfo/mixins_marketinfo.js';
+import { market_common } from '@/js/common/mixins/mixins_marketinfo.js';
 
 
 export default {
@@ -159,9 +138,6 @@ export default {
     },
     mixins : [ market_common ],
     components: {
-            ComFavorItem    :   ComFavorItem
-        ,   EtpManageDetail :   EtpManageDetail
-        ,   ConfirmDialog   :   ConfirmDialog
     },
     computed: {
          orderedData : function(){
@@ -171,9 +147,6 @@ export default {
     },
     mounted: function() {
         var vm = this;
-
-        // 메시지 박스 참조
-        this.$root.$confirm = this.$refs.confirm;
 
         vm.fn_getEtpList( "002" );
         

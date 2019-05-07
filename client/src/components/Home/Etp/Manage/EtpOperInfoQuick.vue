@@ -4,6 +4,7 @@
 
         <v-layout row wrap class="content_margin">
 
+
             <!--rightmenu---->
             <v-card flat class="right_menu_w2">
                 <v-navigation-drawer
@@ -16,6 +17,7 @@
                     mini-variant-width="50"
                     width="250"
                 >
+
                     <v-list class="pa-1">
                         <v-list-tile v-if="mini">
                             <v-list-tile-action>
@@ -24,6 +26,7 @@
                                 </v-btn>
                             </v-list-tile-action>
                         </v-list-tile>
+
                         <v-list-tile avatar tag="div">
                             <v-list-tile-content class="rightmenu_tit">Quick Start</v-list-tile-content>
                             <v-list-tile-content>
@@ -34,10 +37,14 @@
                         </v-list-tile>
                     </v-list>
 
+
+
                     <v-list class="pt-0" dense>
+
                         <v-list-tile-content class="rightmenu_con rightmenu_line">
                             <v-subheader>
                                 <v-icon small>feedback</v-icon>지수 조치 현황
+
                                 <v-dialog v-model="dialog" persistent max-width="500">
                                     <template v-slot:activator="{ on }">
                                         <v-btn
@@ -48,6 +55,7 @@
                                             v-on="on"
                                         >내역확인</v-btn>
                                     </template>
+
                                     <v-card flat>
                                         <h5>
                                             <v-card-title ma-0>
@@ -75,17 +83,22 @@
                                 <v-icon small>arrow_right</v-icon>3개 지수에 대한 조치 발생
                             </p>
                         </v-list-tile-content>
+
+
+<v-btn @click='$router.push( "/etp/manage/etpOperInfoQuickInav")'>iNav Publ</v-btn><br>
+<v-btn @click='$router.push( "/etp/manage/etpOperInfoQuickPerformance")'>ETP Performance Publ</v-btn><br>
+
                         <v-list-tile-content class="rightmenu_con Oper_menu">
+
                             <v-subheader>
                                 <v-icon small>build</v-icon>Operation Tools
                             </v-subheader>
+
                             <v-card flat class="w100">
                                 <v-list>
                                     <v-list-tile
-                                        router-link
-                                        to="/etp/manage/etpOperControlMenuInav"
                                         class="border_b"
-                                        v-model="text2"
+                                        @click="fn_setInavData"
                                     >
                                         <v-list-tile-avatar>
                                             <v-icon value="산출 현황">exposure</v-icon>
@@ -94,37 +107,46 @@
                                             <v-list-tile-title>iNAV 산출 현황</v-list-tile-title>
                                         </v-list-tile-content>
                                     </v-list-tile>
+
+
                                     <v-list-tile
-                                        router-link
-                                        to="EtpOperPerformance"
                                         class="border_b"
+                                        @click="fn_setEtpPerformanceData"
                                     >
                                         <v-list-tile-avatar>
                                             <v-icon value="Performance" icon>loop</v-icon>
                                         </v-list-tile-avatar>
+
                                         <v-list-tile-content class="rm_con_h">
                                             <v-list-tile-title>ETP Performance</v-list-tile-title>
                                         </v-list-tile-content>
                                     </v-list-tile>
 
-                                    <v-dialog v-model="dialog5" persistent max-width="550">
+
+
+
+                                    <v-dialog v-model="customizeDialog" persistent max-width="550">
                                         <template v-slot:activator="{ on }">
                                             <v-list-tile v-on="on" class="border_b">
                                                 <v-list-tile-avatar>
                                                     <v-icon value="Customize" icon>poll</v-icon>
                                                 </v-list-tile-avatar>
+
                                                 <v-list-tile-content class="rm_con_h">
                                                     <v-list-tile-title>Customize</v-list-tile-title>
                                                 </v-list-tile-content>
                                             </v-list-tile>
                                         </template>
+
+
+
                                         <!---ETP운용화면 항목설정  팝업-->
                                         <v-card class="listset_pop">
                                             <h5>
                                                 <v-card-title ma-0>
                                                     ETP 운용화면 항목설정
                                                     <v-spacer></v-spacer>
-                                                    <v-btn icon @click="dialog5 = false">
+                                                    <v-btn icon @click="customizeDialog = false">
                                                         <v-icon>close</v-icon>
                                                     </v-btn>
                                                 </v-card-title>
@@ -138,23 +160,23 @@
                                             >
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="iNAV"
-                                                        value="iNAV"
+                                                        value="f15301"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="기초지수명"
-                                                        value="기초지수명"
+                                                        value="index_nm"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="ETF전일가"
-                                                        value="ETF전일가"
+                                                        value="f18001"
                                                     ></v-checkbox>
                                                 </v-flex>
                                             </v-layout>
@@ -166,23 +188,23 @@
                                             >
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="전일NAV"
-                                                        value="전일NAV"
+                                                        value="f03329"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="기초지수현재가"
-                                                        value="기초지수현재가"
+                                                        value="index_f15001"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="AUM"
-                                                        value="AUM"
+                                                        value="f30812"
                                                     ></v-checkbox>
                                                 </v-flex>
                                             </v-layout>
@@ -194,23 +216,23 @@
                                             >
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="추적오차율"
-                                                        value="추적오차율"
+                                                        value="f15302"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="기초지수전일가"
-                                                        value="기초지수전일가"
+                                                        value="prev_f15001"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="과표기준가"
-                                                        value="과표기준가"
+                                                        value="f15007"
                                                     ></v-checkbox>
                                                 </v-flex>
                                             </v-layout>
@@ -222,29 +244,29 @@
                                             >
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="괴리율"
-                                                        value="괴리율"
+                                                        value="f15304"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="ETF현재가"
-                                                        value="ETF현재가"
+                                                        value="f15001"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
-                                                        v-model="selected"
+                                                        v-model="arrCustomizeColumn"
                                                         label="과세구분"
-                                                        value="과세구분"
+                                                        value="f16073"
                                                     ></v-checkbox>
                                                 </v-flex>
                                             </v-layout>
 
                                             <v-card flat class="pop_btn_w text-xs-center">
-                                                <v-btn depressed color="primary" @click>추가하기</v-btn>
+                                                <v-btn depressed color="primary" @click="fn_setCustomizeData">추가하기</v-btn>
                                             </v-card>
                                         </v-card>
                                         <!---ETP운용화면 항목설정 팝업 end-->
@@ -252,6 +274,8 @@
                                 </v-list>
                             </v-card>
                         </v-list-tile-content>
+
+
                         <v-list-tile-content class="rightmenu_con">
                             <v-layout class="w100">
                                 <v-flex xs12>
@@ -491,11 +515,71 @@ export default {
             ],
             desserts: [],
 
+            toggleINav : false,
+            toggleEtpPerformance : false,
+
+            arrCustomizeColumn : [],
+
+            customizeDialog : false
         };
     },
     mounted: function() {},
     created: function() {},
-    beforeDestory: function() {}
+    beforeDestory: function() {},
+
+    methods : {
+
+
+        /*
+         *  EtpOperInfo.vue -> fn_setInavData 함수를 호출한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_setInavData() {
+            var vm = this;
+            vm.toggleINav  =   !vm.toggleINav;
+
+            var paramData   =   {};
+            paramData.toggleINav    =   vm.toggleINav;
+
+            console.log("########## EtpOperInfoQuick.vue -> fn_setInavData START ############");
+            vm.$emit( "fn_setInavData", paramData );
+            console.log("########## EtpOperInfoQuick.vue -> fn_setInavData END ############");
+        },
+
+        /*
+         *  EtpOperInfo.vue -> fn_setEtpPerformanceData 함수를 호출한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_setEtpPerformanceData() {
+            var vm = this;
+            vm.toggleEtpPerformance  =   !vm.toggleEtpPerformance;
+
+            var paramData   =   {};
+            paramData.toggleEtpPerformance    =   vm.toggleEtpPerformance;            
+
+            console.log("########## EtpOperInfoQuick.vue -> fn_setEtpPerformanceData START ############");
+            vm.$emit( "fn_setEtpPerformanceData", paramData );
+            console.log("########## EtpOperInfoQuick.vue -> fn_setEtpPerformanceData END ############");
+        },
+
+        /*
+         *  EtpOperInfo.vue -> fn_setCustomizeData 함수를 호출한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_setCustomizeData() {
+            var vm = this;
+
+            console.log("########## EtpOperInfoQuick.vue -> fn_setCustomizeData START ############");
+
+            vm.customizeDialog  =   false;
+
+
+            vm.arrCustomizeColumn.unshift( "f16002" );     /* 종목은 선택하지 않아도 출력되게 수정 */
+            vm.$emit( "fn_setCustomizeData", vm.arrCustomizeColumn );
+
+            console.log("########## EtpOperInfoQuick.vue -> fn_setCustomizeData END ############");
+        }
+    }
 };
 </script>
 

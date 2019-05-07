@@ -92,7 +92,8 @@ var getSectorEtpList = function (req, res) {
                                 //util.log("data:=====================", index);
 
                                 async.forEachOf( rows, function ( item, idx){ 
-                                    total_amt += item.f15028;
+                                    total_amt += Number(item.f15028);
+                                    console.log("tot_amt"+ item.f15028);
                                     // ctf 구분자가 1과 2일 경우 
                                     if (item.f16493 == '1' || item.f16493 == '2') {
                                         etf_cnt++; 
@@ -104,8 +105,9 @@ var getSectorEtpList = function (req, res) {
                                 carousel_data.push({"ctg_code":ctgCodeItem.ctg_code, "name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
                             } else {
                                 //util.log("mode:=====================", index);
-                                async.forEachOf( rows, function ( item, idx){
-                                    total_amt += item.f15028;
+                                async.forEachOf( rows, function ( item, idx){                                    
+                                    total_amt += Number(item.f15028);
+                                    console.log("tot_amt"+ item.f15028);
                                     // ctf 구분자가 1과 2일 경우 
                                     if (item.f16493 == '1' || item.f16493 == '2') {
                                         etf_cnt++; 

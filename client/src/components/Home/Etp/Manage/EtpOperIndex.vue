@@ -14,6 +14,9 @@
                         </h3>
                     </v-card-title>
                     <v-card flat>
+
+                        <table id="table01" class="display table01_w"></table>
+
                         <table id class="tbl_type" style="width:100%">
                             <colgroup>
                                 <col width="20%">
@@ -447,6 +450,8 @@ import buttons from 'datatables.net-buttons'
 import Config from '@/js/config.js';
 //import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
 import IndexInfoDetailPop from "./IndexInfoDetailPop.vue";
+
+var table01 = null;
 
 export default {
     components: {
