@@ -277,17 +277,8 @@ export default {
                 console.log(response);
 
                 if (response.data) {
-                    
                     vm.etpBasic = response.data.etpBasic;
                     vm.indexBasic = response.data.indexBasic;
-
-                    if( typeof vm.etpBasic === "undefined" ) {
-                        vm.etpBasic   =   {};
-                    }
-
-                    if( typeof vm.indexBasic === "undefined" ) {
-                        vm.indexBasic   =   {};
-                    }
 
                     vm.showEtpManageDetailDialogBySub   =   true;
                 }

@@ -46,7 +46,7 @@
 
 
 
-            <v-flex md6>
+            <v-flex md6     v-if="fn_indexExistsYn">
 
                 <!-- INDEX Info -->
                 <div class="indexinfo_box01">
@@ -84,6 +84,17 @@
                     </v-card>
                 </div>
             </v-flex>
+
+
+            <v-flex md6     v-if="!fn_indexExistsYn">
+                <div class="indexinfo_box01">
+                    <h4 class="mb-0">INDEX Info</h4>
+
+                    <v-card flat class="indexinfo_list_table">
+                        <v-card-title>● INDEX 정보가 없습니다.</v-card-title>
+                    </v-card>
+                </div>
+            </v-flex>            
 
 
 
@@ -155,6 +166,18 @@ export default {
         };
     },
     computed: {
+
+        fn_indexExistsYn : function() {
+            var vm = this;
+
+            if(     typeof vm.indexBasic === "undefined" 
+                ||  vm.indexBasic.length == 0
+            ) {
+                return  false;
+            }
+
+            return  true;
+        }
     },
     created: function() {},
     beforeDestroy() {},
