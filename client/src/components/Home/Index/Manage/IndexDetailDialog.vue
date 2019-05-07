@@ -119,6 +119,7 @@ export default {
         var vm = this;
 
         this.$EventBus.$on('changeIndexInfo', data => {
+            vm.toggle_one = '1M';
             vm.init();
         });
     },
