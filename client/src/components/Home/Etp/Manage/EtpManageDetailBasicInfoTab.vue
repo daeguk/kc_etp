@@ -10,7 +10,7 @@
                     <v-card flat class="indexinfo_list_table">
                         <v-layout row>
                             <v-flex xs6>발행사</v-flex>
-                            <v-flex xs6 class="text_r">{{ etpBasic.f16002 /* 한글종목명 */ }}</v-flex>
+                            <v-flex xs6 class="text_r">{{ etpBasic.f33961    /* ETP운용사명(한글명) */ }}</v-flex>
                         </v-layout>
                         <v-layout row>
                             <v-flex xs6>상장일</v-flex>
@@ -58,15 +58,15 @@
                         </v-layout>
                         <v-layout row>
                             <v-flex xs6>지수산출기관</v-flex>
-                            <v-flex xs6 class="text_r">{{ indexBasic.index_cal_method    /* 지수산출방식 */ }}</v-flex>
+                            <v-flex xs6 class="text_r">{{ indexBasic.index_cal_method   /* 지수산출방식 */ }}</v-flex>
                         </v-layout>
                         <v-layout row>
                             <v-flex xs6>기준지수</v-flex>
-                            <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( indexBasic.std_index )     /* 기준지수 */ }}</v-flex>
+                            <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( indexBasic.std_index )     /* 지수산출방식 */ }}</v-flex>
                         </v-layout>
                         <v-layout row>
                             <v-flex xs6>기준일</v-flex>
-                            <v-flex xs6 class="text_r">{{ indexBasic.fmt_std_date        /* 기준일 */ }}</v-flex>
+                            <v-flex xs6 class="text_r">{{  indexBasic.fmt_std_date  /* 기준일 */ }}</v-flex>
                         </v-layout>
                         <v-layout row class="pa-0">
                             <v-flex xs6 style="padding:12px !important">지수방법론</v-flex>
@@ -154,7 +154,8 @@ export default {
             etp_items: [],
         };
     },
-    computed: {},
+    computed: {
+    },
     created: function() {},
     beforeDestroy() {},
     mounted: function() {
@@ -179,7 +180,6 @@ export default {
     
     methods: {
         
-
     }
 };
 </script>
