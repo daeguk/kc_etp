@@ -280,7 +280,7 @@ export default {
             };
 
 
-            /* 기본 ETP 운용정보를 선택한 경우 */
+            /* [기본 ETP 운용정보] 를 선택한 경우 */
             if( vm.stateInfo.pageState == "etpInfo" ) {
                 
                 vm.fn_setArrShowColumn( [ 
@@ -296,7 +296,7 @@ export default {
                 ] );
 
             }
-            /* iNAV 산출현황 을 선택한 경우 */
+            /* [iNAV 산출현황] 을 선택한 경우 */
             else if( vm.stateInfo.pageState == "iNav" ) {
 
                 vm.fn_setArrShowColumn( [ 
@@ -313,7 +313,7 @@ export default {
                     ,   'graph'                         /* 그래프 영역 */
                 ] );
             }
-            /* ETP Performance 를 선택한 경우 */
+            /* [ETP Performance] 를 선택한 경우 */
             else if( vm.stateInfo.pageState == "performance" ) {
 
                 vm.fn_setArrShowColumn( [ 
@@ -333,7 +333,7 @@ export default {
             }
             /* customize 를 선택한 경우 */
             else if( vm.stateInfo.pageState == "customize" ) {
-debugger;
+                
                 vm.fn_setArrShowColumn( arrCustomizeColumn );                
             }
 
