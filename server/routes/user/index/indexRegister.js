@@ -236,6 +236,7 @@ var fileuploadSingle = function (req, res) {
                 for (var i = 0; i < dataLists.length; i++) {
                     var data = dataLists[i];
 
+
                 /*******************/
                     if( typeof data.col01 == "undefined" ) {
                         check = false;
@@ -254,7 +255,7 @@ var fileuploadSingle = function (req, res) {
                         break;
                     }
                 /*******************/
-                    else if( typeof data.col02 == "undefined" ) {
+                    if( typeof data.col02 == "undefined" ) {
                         check = false;
 
                         resultMsg.result = false;
@@ -271,7 +272,7 @@ var fileuploadSingle = function (req, res) {
                         break;
                     }
                 /*******************/
-                    else if( typeof data.col03 == "undefined" ) {
+                    if( typeof data.col03 == "undefined" ) {
                         check = false;
 
                         resultMsg.result = false;
@@ -288,14 +289,14 @@ var fileuploadSingle = function (req, res) {
                         break;
                     }
                 /*******************/
-                    else if(        typeof data.col04 == "undefined" 
-                                ||  !data.col04 
+                    if(     typeof data.col04 === "undefined"
+                        ||  !data.col04 
                     ) {
                         data.col04 = "";
                     }
                 /*******************/
-                    else if(        typeof data.col05 == "undefined"
-                                ||  !data.col05 
+                    if(     typeof data.col05 === "undefined"
+                        ||  !data.col05 
                     ) {
                         data.col05 = "";
                     }
@@ -356,12 +357,25 @@ var fileuploadSingle = function (req, res) {
 
                                 if( reqParam.file_id ) {
 
-                                    reqParam.dataLists  =   dataLists;
-                        
-                                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuTempUpload', reqParam, format);
-                                    console.log(stmt);
+                                    try{
 
-                                    conn.query(stmt, function( err, rows ) {
+                                        reqParam.dataLists  =   dataLists;
+                                        stmt = mapper.getStatement('indexRegister', 'saveTmJisuTempUpload', reqParam, format);
+                                        console.log(stmt);
+
+                                        conn.query(stmt, function( err, rows ) {
+
+                                            if( err ) {
+                                                resultMsg.result    =   false;
+                                                resultMsg.msg       =   "[error] indexRegister.saveTmJisuTempUpload Error while performing Query";
+                                                resultMsg.err       =   err;
+
+                                                return callback( resultMsg );
+                                            }
+
+                                            callback( null, reqParam );
+                                        });
+                                    }catch( err ) {
 
                                         if( err ) {
                                             resultMsg.result    =   false;
@@ -370,9 +384,7 @@ var fileuploadSingle = function (req, res) {
 
                                             return callback( resultMsg );
                                         }
-
-                                        callback( null, reqParam );
-                                    });
+                                    }
 
                                 }else{
 
@@ -418,6 +430,7 @@ var fileuploadSingle = function (req, res) {
 
                             if( err ) {
                                 console.log( err );
+
                                 conn.rollback();
                             }else{
 
@@ -440,15 +453,14 @@ var fileuploadSingle = function (req, res) {
 
             console.log(expetion);
 
-            if( resultMsg && !resultMsg.msg ) {
-                resultMsg.result    =   false;
-                resultMsg.msg       =   "[error] 소급지수 파일 업로드 중 오류가 발생하였습니다.";
-                resultMsg.err       =   expetion;
-            }
+            resultMsg.result    =   false;
+            resultMsg.msg       =   "[error] 소급지수 파일 업로드 중 오류가 발생하였습니다.";
+            resultMsg.err       =   expetion;
 
-            res.json({
-                resultMsg
-            });
+            resultMsg.jisu_file_id  =   "";
+            resultMsg.dataList  =   [];
+
+            res.json( resultMsg );
             res.end();        
         }
     });
