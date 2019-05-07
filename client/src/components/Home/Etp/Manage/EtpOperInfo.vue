@@ -36,7 +36,10 @@
                     </v-card>
 
 
-                    <EtpOperInfoQuick   @fn_setInavData="fn_setInavData"
+                    <EtpOperInfoQuick   v-if="etpOperInfoQuickYn"
+
+                                        :indexBasic = "indexBasic"
+                                        @fn_setInavData="fn_setInavData"
                                         @fn_setEtpPerformanceData="fn_setEtpPerformanceData"
                                         @fn_setCustomizeData="fn_setCustomizeData"
                     ></EtpOperInfoQuick>
@@ -122,6 +125,7 @@ export default {
             ],
             desserts: [],
 
+
             nowDate:        new Date().getFullYear() 
                         +   "." 
                         +   (parseInt(new Date().getMonth()) + 1) 
@@ -134,7 +138,9 @@ export default {
                                 ,   totWidth : 0
                             },
             arrShowColumn   :   [],
-            arrShowColumnDef   :   []
+            arrShowColumnDef   :   [],
+            indexBasic : {},
+            etpOperInfoQuickYn : true
         };
     },
     mounted: function() {
@@ -183,6 +189,7 @@ export default {
                         table01.rows.add( dataList ).draw();
                         table01.draw();
 
+                        vm.indexBasic = dataList[0];
                         vm.$refs.result_cnt.textContent = dataList.length;
                     }
                 }
