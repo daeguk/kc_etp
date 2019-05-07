@@ -569,6 +569,7 @@ export default {
             vm.customizeDialog  =   false;
 
 
+            /* 고정으로 노출할 항목이 중복으로 존재하는지 체크한다. */
             arrFixTitle.forEach(function(e,i) {
                 var same = vm.arrCustomizeColumn.filter(function(o, p) {
                     return o === e;
