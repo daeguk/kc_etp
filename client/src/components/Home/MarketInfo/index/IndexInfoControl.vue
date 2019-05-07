@@ -65,28 +65,28 @@ export default {
     },
     methods: {
         showDetail: function(gubun, paramData) {
-
+            var vm = this;
             if (gubun == '1') {
-                this.paramData = paramData;
-
-                if (this.showEtpDetailDialog) {
-                    this.$EventBus.$emit('changeEtpInfo', paramData);
+                vm.paramData = paramData;
+                vm.showIndexDetailDialog = false;
+                if (vm.showEtpDetailDialog) {
+                    vm.$EventBus.$emit('changeEtpInfo', paramData);
                 }
-                this.showEtpDetailDialog = true;
-                this.showIndexDetailDialog = false;
-                this.showMarketInfo = 0;
-                this.showFaver = true;
+                vm.showEtpDetailDialog = true;                
+                vm.showMarketInfo = 0;
+                vm.showFaver = true;
                 
             } else {
-                this.paramData = paramData;
+                vm.paramData = paramData;
+                vm.showEtpDetailDialog = false;
 
-                if (this.showIndexDetailDialog) {
-                    this.$EventBus.$emit('changeIndexInfo', paramData);
+                if (vm.showIndexDetailDialog) {
+                    vm.$EventBus.$emit('changeIndexInfo', paramData);
                 }
-                this.showEtpDetailDialog = false;
-                this.showIndexDetailDialog = true;                
-                this.showMarketInfo = 0;
-                this.showFaver = true;
+                
+                vm.showIndexDetailDialog = true;                
+                vm.showMarketInfo = 0;
+                vm.showFaver = true;
             }
         },
         showMessageBox: function(title, msg, option, gubun) {

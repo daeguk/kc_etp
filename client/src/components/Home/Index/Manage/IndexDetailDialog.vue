@@ -118,15 +118,31 @@ export default {
     created: function() {
         var vm = this;
 
-        this.$EventBus.$on('changeIndexInfo', data => {
-            vm.toggle_one = '1M';
-            vm.init();
-        });
+        
     },
-    beforeDestroy() {},
+    updated: function() {
+
+    },
+    beforeDestroy() {
+        this.$EventBus.$off('changeIndexInfo');
+        this.$EventBus.$off('changeIndexInfoClose');
+    },
 
     mounted: function() {
-        this.init();
+        var vm = this;
+        vm.init();
+
+        vm.$EventBus.$on('changeIndexInfo', data => {
+            vm.toggle_one = '1M';
+            vm.openSubIndexInfoTab = true;
+            vm.init();
+        });
+
+        vm.$EventBus.$on('changeIndexInfoClose', data => {
+            vm.$EventBus.$off('changeIndexInfo');
+
+            vm.openSubIndexInfoTab = false;
+        });
     },
 
     methods: {
@@ -167,7 +183,9 @@ export default {
                     this.getIndexBaseInfo();
                     this.Indexchart();
                 }
-            });
+            });   
+            
+            
         },
         fn_showDialog : function( param ) {
             this.showDialog =   param;

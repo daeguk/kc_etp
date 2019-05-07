@@ -193,7 +193,7 @@ export default {
                 { text: "Factor rto", value: "FactorRto", align: "right" }
             ],
             desserts: [],
-            toggle_one: null,
+            toggle_one: '1M',
 
             basicData           :   {},
             etpBasic            :   {},
@@ -210,20 +210,32 @@ export default {
     },
     mounted: function() {
         var vm = this;
-
+        
         console.log( "EtpManageDetail.vue -> mounted" );
         console.log( vm.paramData );
 
         vm.init();
+
+        vm.$EventBus.$on('changeEtpInfo', data => {
+            vm.toggle_one = '1M';
+            vm.init();
+        });
+
+        vm.$EventBus.$on('changeEtpInfoClose', data => {
+            vm.$EventBus.$off('changeEtpInfo');
+        });
     },
     created: function() {
         var vm = this;
 
-        this.$EventBus.$on('changeEtpInfo', data => {
-            vm.init();
-        });
+        
     },
-    beforeDestory: function() {},
+    updated: function() {
+        console.log("Etp_updated================");
+    },
+    beforeDestory: function() {
+        this.$EventBus.$off('changeEtpInfo');
+    },
     
     methods: {
         init: function() {
@@ -254,11 +266,14 @@ export default {
                     ||  vm.basicData.f16257
                     ||  vm.basicData.f34239
                 )   {
-                    vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
+                   // vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
 
                     vm.fn_getEtpBasic();                /* ETP 의 기본정보를 조회한다. */
+                    vm.fn_getEtpChartData('1M');        /* ETP 차트 정보를 조회한다. */
                 }
             });
+
+            
         },
         /*
          * ETP 의 기본정보를 조회한다.

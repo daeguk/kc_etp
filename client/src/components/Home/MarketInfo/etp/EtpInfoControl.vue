@@ -96,22 +96,32 @@ export default {
     updated: function() {
     },
     methods: {
-        showDetail: function(gubun, paramData) {
-
+        showDetail: function(gubun, paramData) {            
             if (gubun == '1') {
                 this.paramData = paramData;
-                this.showEtpDetailDialog = true;
                 this.showIndexDetailDialog = false;
+                
+                if (this.showEtpDetailDialog) {
+                    this.$EventBus.$emit('changeIndexInfoClose', paramData);
+                    this.$EventBus.$emit('changeEtpInfo', paramData);
+                }
+                this.showEtpDetailDialog = true;
+                
                 this.showMarketInfo = 0;
                 this.showFaver = true;
-                this.$EventBus.$emit('changeEtpInfo', paramData);
-            } else {
+                
+            } else if (gubun == '2') { 
                 this.paramData = paramData;
                 this.showEtpDetailDialog = false;
+
+                if (this.showIndexDetailDialog) {
+                    this.$EventBus.$emit('changeEtpInfoClose', paramData);
+                    this.$EventBus.$emit('changeIndexInfo', paramData);
+                }
+                
                 this.showIndexDetailDialog = true;                
                 this.showMarketInfo = 0;
                 this.showFaver = true;
-                this.$EventBus.$emit('changeIndexInfo', paramData);
             }
         },
         showMessageBox: function(title, msg, option, gubun) {

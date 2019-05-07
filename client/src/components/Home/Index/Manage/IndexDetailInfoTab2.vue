@@ -207,7 +207,7 @@ export default {
                         if (data) {
                             // 기본 지수는 삭제 버튼 제외
                             if (row.F16013 != vm.$route.query.jisu_cd) {
-                                return "<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:40px;'>삭제</span></div>";
+                                return "<div class='tooltip'><button type='button' id='per_del' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:40px;'>삭제</span></div>";
                             } 
                         } else {
                             return "";
@@ -241,9 +241,11 @@ export default {
             vm.getIndexImportanceList( this.param );
 
             $('#perf_table, tbody').on('click', 'button', function () {
-                var data = perf_table.row($(this).parents('tr')).remove().draw();
-
-                vm.performance_chart();
+                if ($(this).attr('id') == 'per_del') {
+                    var data = perf_table.row($(this).parents('tr')).remove().draw();
+                
+                    vm.performance_chart();
+                }
             });
 
             vm.getIndexAnalysisInfo();
@@ -253,6 +255,7 @@ export default {
     methods: {
 
         performance_chart: function() {
+            alert("performance_chart");
             // Load the Visualization API and the corechart package.
             google.charts.load('current', {'packages':['corechart']});
 
@@ -312,7 +315,7 @@ export default {
                             seriesType: 'bars',
                             
                 };
-                // Instantiate and draw our chart, passing in some options.
+                // Instantiate and draw our chart, passing in some options.                
                 var chart = new google.visualization.ComboChart(document.getElementById('perf_chart'));
                 chart.draw(chart_data, options);
             }
