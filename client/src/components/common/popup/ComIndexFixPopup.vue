@@ -64,7 +64,7 @@ var tableIndexFixModify = null;
 
 
 export default {
-    props: [ "rowData" ],
+    props: [ "indexBasic" ],
 
     data() {
         return {
@@ -83,7 +83,7 @@ export default {
 
     mounted() {
 
-        if( this.rowData ) {
+        if( this.indexBasic ) {
             this.fn_getIndexFixList();
         }
     },
@@ -98,7 +98,7 @@ export default {
             var vm = this;
 
             axios.post(Config.base_url + "/user/index/getIndexFixList", {
-                data: this.rowData
+                data: this.indexBasic
             }).then(response => {
 
                 if (response && response.data) {
@@ -109,48 +109,49 @@ export default {
                         vm.indexFixData             =   indexFixData;
                     }
 
- /* 지수조치 종목 편출입 정보 */
-                tableIndexFixJongmokInout = $('#tableIndexFixJongmokInout').DataTable( {
-                    "processing": true,
-                    "serverSide": false,
-                    "info": false,   // control table information display field
-                    "stateSave": true,  //restore table state on page reload,
-                    "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                    paging: false,
-                    searching: false,
-                    data : [],
-                    "columnDefs": [
-                        { "targets": 0, className: "dt-center" },
-                        { "targets": 2, className: "dt-center" },
-                    ],            
-                    columns: [
-                        { "title"   :   "code"      ,   "data": "code"           ,   "orderable" : true  },      /* code */
-                        { "title"   :   "종목명"    ,   "data": "name"            ,   "orderable" : true  },      /* 종목명 */
-                        { "title"   :   "구분"      ,   "data": "gubun_name"      ,   "orderable" : true  },      /* 구분 */
-                        { "title"   :   "비중(%)"   ,   "data": "rate"            ,   "orderable" : true  },      /* 비중(%) */
-                    ]
-                });
+                    /* 지수조치 종목 편출입 정보 */
+                    tableIndexFixJongmokInout = $('#tableIndexFixJongmokInout').DataTable( {
+                        "processing": true,
+                        "serverSide": false,
+                        "info": false,   // control table information display field
+                        "stateSave": true,  //restore table state on page reload,
+                        "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                        paging: false,
+                        searching: false,
+                        data : [],
+                        "columnDefs": [
+                            { "targets": 0, className: "dt-center" },
+                            { "targets": 2, className: "dt-center" },
+                        ],            
+                        columns: [
+                            { "title"   :   "code"      ,   "data": "code"           ,   "orderable" : true  },      /* code */
+                            { "title"   :   "종목명"    ,   "data": "name"            ,   "orderable" : true  },      /* 종목명 */
+                            { "title"   :   "구분"      ,   "data": "gubun_name"      ,   "orderable" : true  },      /* 구분 */
+                            { "title"   :   "비중(%)"   ,   "data": "rate"            ,   "orderable" : true  },      /* 비중(%) */
+                        ]
+                    });
 
 
-                /* 지수채용 주식수 변경 정보 */
-                tableIndexFixModify = $('#tableIndexFixModify').DataTable( {
-                    "processing": true,
-                    "serverSide": false,
-                    "info": false,   // control table information display field
-                    "stateSave": true,  //restore table state on page reload,
-                    "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                    paging: false,
-                    searching: false,
-                    data : [],
-                
-                    columns: [
-                        { "title"   :   "code"      ,   "data": "code"                ,   "orderable" : true  },      /* 종목코드 */
-                        { "title"   :   "종목명"    ,   "data": "name"                ,   "orderable" : true  },      /* 한글종목명 */
-                        { "title"   :   vm.indexFixData.now_date      ,   "data": "now_date_money"      ,   "orderable" : true  },      /* 당일 금액 */
-                        { "title"   :   vm.indexFixData.oper_date      ,   "data": "prev_date_money"     ,   "orderable" : true  },      /* 전일 금액 */
-                        { "title"   :   "변경분"    ,   "data": "in_out_money"        ,   "orderable" : true  },      /* 변경분 */
-                    ]
-                });                    
+                    /* 지수채용 주식수 변경 정보 */
+                    tableIndexFixModify = $('#tableIndexFixModify').DataTable( {
+                        "processing": true,
+                        "serverSide": false,
+                        "info": false,   // control table information display field
+                        "stateSave": true,  //restore table state on page reload,
+                        "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                        paging: false,
+                        searching: false,
+                        data : [],
+                    
+                        columns: [
+                            { "title"   :   "code"      ,   "data": "code"                ,   "orderable" : true  },      /* 종목코드 */
+                            { "title"   :   "종목명"    ,   "data": "name"                ,   "orderable" : true  },      /* 한글종목명 */
+                            { "title"   :   vm.indexFixData.now_date      ,   "data": "now_date_money"      ,   "orderable" : true  },      /* 당일 금액 */
+                            { "title"   :   vm.indexFixData.oper_date      ,   "data": "prev_date_money"     ,   "orderable" : true  },      /* 전일 금액 */
+                            { "title"   :   "변경분"    ,   "data": "in_out_money"        ,   "orderable" : true  },      /* 변경분 */
+                        ]
+                    });
+
 
                     /* 지수조치 종목 편출입 정보 */
                     var indexFixJongmokInoutList    =   response.data.indexFixJongmokInoutList;

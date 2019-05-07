@@ -52,6 +52,7 @@
                             ></v-text-field>
                         </v-list-tile-content>
 
+
                         <v-list-tile-content class="rightmenu_con ver2">
                             <v-subheader>
                                 <v-icon small color="primary">feedback</v-icon>지수 조치 현황
@@ -78,10 +79,11 @@
                                             </v-card-title>
                                         </h5>
 
-                                        <indexDetailrtmenupop :rowData="this.rowData" v-if="dialog"></indexDetailrtmenupop>
+                                        <ComIndexFixPopup :indexBasic="this.indexBasic" v-if="dialog"></ComIndexFixPopup>
                                         <v-card class="pop_bot_h"></v-card>
                                     </v-card>
                                 </v-dialog>
+
                             </v-subheader>
                             <p>
                                 <v-icon small color="primary">arrow_right</v-icon>기준시가 총액변동
@@ -140,7 +142,7 @@ import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
-import indexDetailrtmenupop from "@/components/Home/Index/Manage/indexDetailrtmenupop.vue";
+import ComIndexFixPopup from "@/components/common/popup/ComIndexFixPopup.vue";
 
 
 var jisuTable = null;
@@ -168,7 +170,7 @@ export default {
         };
     },
     components: {
-        indexDetailrtmenupop: indexDetailrtmenupop
+        ComIndexFixPopup: ComIndexFixPopup
     },
     computed: {},
     mounted: function() {
