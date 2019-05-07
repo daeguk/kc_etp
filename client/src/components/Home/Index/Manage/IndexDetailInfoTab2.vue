@@ -255,7 +255,6 @@ export default {
     methods: {
 
         performance_chart: function() {
-            alert("performance_chart");
             // Load the Visualization API and the corechart package.
             google.charts.load('current', {'packages':['corechart']});
 
