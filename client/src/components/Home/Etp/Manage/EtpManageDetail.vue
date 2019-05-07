@@ -214,43 +214,53 @@ export default {
         console.log( "EtpManageDetail.vue -> mounted" );
         console.log( vm.paramData );
 
-        vm.$nextTick().then(() => {
-            if(     vm.paramData 
-                &&  (       vm.paramData.f16012
-                        ||  vm.paramData.f16257
-                        ||  vm.paramData.f34239
-                    )
-            ) {
-                vm.basicData.f16012         =   vm.paramData.f16012;            /* 국제표준코드 */
-                vm.basicData.f16257         =   vm.paramData.f16257;            /* ETP기초지수코드 */
-                vm.basicData.f34239         =   vm.paramData.f34239;            /* ETP기초지수MID */
-            }
-            else if(
-                    vm.$route.query.f16012  
-                &&  vm.$route.query.f16257  
-                &&  vm.$route.query.f34239  
-            ) {
-                vm.basicData.f16012         =   vm.$route.query.f16012;         /* 국제표준코드 */
-                vm.basicData.f16257         =   vm.$route.query.f16257;         /* ETP기초지수코드 */
-                vm.basicData.f34239         =   vm.$route.query.f34239;         /* ETP기초지수MID */
-            }
+        vm.init();
+    },
+    created: function() {
+        var vm = this;
 
-
-            if(     vm.basicData.f16012
-                ||  vm.basicData.f16257
-                ||  vm.basicData.f34239
-            )   {
-                vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
-
-                vm.fn_getEtpBasic();                /* ETP 의 기본정보를 조회한다. */
-            }
+        this.$EventBus.$on('changeEtpInfo', data => {
+            this.paramData = data;
+            vm.init();
         });
     },
-    created: function() {},
     beforeDestory: function() {},
     
     methods: {
+        init: function() {
+            var vm = this;
+            vm.$nextTick().then(() => {
+                if(     vm.paramData 
+                    &&  (       vm.paramData.f16012
+                            ||  vm.paramData.f16257
+                            ||  vm.paramData.f34239
+                        )
+                ) {
+                    vm.basicData.f16012         =   vm.paramData.f16012;            /* 국제표준코드 */
+                    vm.basicData.f16257         =   vm.paramData.f16257;            /* ETP기초지수코드 */
+                    vm.basicData.f34239         =   vm.paramData.f34239;            /* ETP기초지수MID */
+                }
+                else if(
+                        vm.$route.query.f16012  
+                    &&  vm.$route.query.f16257  
+                    &&  vm.$route.query.f34239  
+                ) {
+                    vm.basicData.f16012         =   vm.$route.query.f16012;         /* 국제표준코드 */
+                    vm.basicData.f16257         =   vm.$route.query.f16257;         /* ETP기초지수코드 */
+                    vm.basicData.f34239         =   vm.$route.query.f34239;         /* ETP기초지수MID */
+                }
 
+
+                if(     vm.basicData.f16012
+                    ||  vm.basicData.f16257
+                    ||  vm.basicData.f34239
+                )   {
+                    vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
+
+                    vm.fn_getEtpBasic();                /* ETP 의 기본정보를 조회한다. */
+                }
+            });
+        },
         /*
          * ETP 의 기본정보를 조회한다.
          * 2019-04-25  bkLove(촤병국)

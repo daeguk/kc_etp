@@ -1,5 +1,4 @@
 <template>
-    <v-dialog v-model="showDialog" :max-width="options.width" v-bind:style="{ zIndex: options.zIndex }">
     <div class="content_margin">
         <v-layout row>
             <v-flex xs12>
@@ -11,17 +10,7 @@
                                    {{this.results.F16002}}
                                     <span class="grey--text">{{results.F16013}}</span> 
                                 </h3>
-                                <div class="right_btn">
-                                    <v-layout align-right>
-                                        <v-flex xs12 sm4 text-xs-center>                                         
-                                            <div class="btn_r">
-                                                <v-btn icon  @click.stop="fn_close">
-                                                    <v-icon>close</v-icon>
-                                                </v-btn>
-                                            </div>
-                                        </v-flex>
-                                    </v-layout>
-                                </div>
+                                
                             </div>
                         </v-card-title>
                         <v-card-text>
@@ -88,7 +77,6 @@
             </v-flex>
         </v-layout>
     </div>
-    </v-dialog>
 </template>
 
 
@@ -127,50 +115,59 @@ export default {
           IndexDetailInfoTab2: IndexDetailInfoTab2,
     }, 
     computed: {},
-    created: function() {},
+    created: function() {
+        var vm = this;
+
+        this.$EventBus.$on('changeIndexInfo', data => {
+            this.paramData = data;
+            vm.init();
+        });
+    },
     beforeDestroy() {},
 
     mounted: function() {
-        var vm = this;
-
-        console.log("########## IndexDetailDialog.vue -> mounted ############");
-        console.log( "paramData.F16257=["           + this.paramData.F16257         + "] /* ETP기초지수코드 */" );
-        console.log( "paramData.LARGE_TYPE=["       + this.paramData.LARGE_TYPE     + "] /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */" );
-        console.log( "paramData.MARKET_ID=["        + this.paramData.MARKET_ID      + "] /* 시장 ID  */" );
-
-        if(     this.paramData 
-            &&  this.paramData.F16257
-            &&  this.paramData.LARGE_TYPE
-            &&  this.paramData.MARKET_ID
-        ) {
-            this.basicData.jisu_cd      =   this.paramData.F16257;
-            this.basicData.large_type   =   this.paramData.LARGE_TYPE;
-            this.basicData.market_id    =   this.paramData.MARKET_ID;
-        }
-        else if(
-                vm.$route.query.jisu_cd  
-            &&  vm.$route.query.large_type  
-            &&  vm.$route.query.market_id  
-        ) {
-            this.basicData.jisu_cd      =   this.$route.query.jisu_cd;
-            this.basicData.large_type   =   this.$route.query.large_type;
-            this.basicData.market_id    =   this.$route.query.market_id;
-        }
-
-
-
-        if(     this.basicData
-            &&  this.basicData.jisu_cd
-            &&  this.basicData.large_type
-            &&  this.basicData.market_id
-        ) {
-            this.getIndexBaseInfo();
-            this.Indexchart();
-        }
+        init();
     },
 
     methods: {
+        init: function() {
+            var vm = this;
 
+            console.log("########## IndexDetailDialog.vue -> mounted ############");
+            console.log( "paramData.F16257=["           + this.paramData.F16257         + "] /* ETP기초지수코드 */" );
+            console.log( "paramData.LARGE_TYPE=["       + this.paramData.LARGE_TYPE     + "] /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */" );
+            console.log( "paramData.MARKET_ID=["        + this.paramData.MARKET_ID      + "] /* 시장 ID  */" );
+
+            if(     this.paramData 
+                &&  this.paramData.F16257
+                &&  this.paramData.LARGE_TYPE
+                &&  this.paramData.MARKET_ID
+            ) {
+                this.basicData.jisu_cd      =   this.paramData.F16257;
+                this.basicData.large_type   =   this.paramData.LARGE_TYPE;
+                this.basicData.market_id    =   this.paramData.MARKET_ID;
+            }
+            else if(
+                    vm.$route.query.jisu_cd  
+                &&  vm.$route.query.large_type  
+                &&  vm.$route.query.market_id  
+            ) {
+                this.basicData.jisu_cd      =   this.$route.query.jisu_cd;
+                this.basicData.large_type   =   this.$route.query.large_type;
+                this.basicData.market_id    =   this.$route.query.market_id;
+            }
+
+
+
+            if(     this.basicData
+                &&  this.basicData.jisu_cd
+                &&  this.basicData.large_type
+                &&  this.basicData.market_id
+            ) {
+                this.getIndexBaseInfo();
+                this.Indexchart();
+            }
+        },
         fn_showDialog : function( param ) {
             this.showDialog =   param;
         },

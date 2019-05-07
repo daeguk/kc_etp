@@ -101,12 +101,17 @@ export default {
             if (gubun == '1') {
                 this.paramData = paramData;
                 this.showEtpDetailDialog = true;
+                this.showIndexDetailDialog = false;
                 this.showMarketInfo = 0;
                 this.showFaver = true;
+                this.$EventBus.$emit('changeEtpInfo', paramData);
             } else {
-                this.showIndexDetailDialog = true;
+                this.paramData = paramData;
+                this.showEtpDetailDialog = false;
+                this.showIndexDetailDialog = true;                
                 this.showMarketInfo = 0;
                 this.showFaver = true;
+                this.$EventBus.$emit('changeIndexInfo', paramData);
             }
         },
         showMessageBox: function(title, msg, option, gubun) {
