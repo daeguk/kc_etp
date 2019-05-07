@@ -56,35 +56,28 @@
                         <v-list-tile-content class="rightmenu_con ver2">
                             <v-subheader>
                                 <v-icon small color="primary">feedback</v-icon>지수 조치 현황
-                                <v-dialog v-model="dialog" persistent max-width="500">
-                                    <template v-slot:activator="{ on }">
-                                        <v-btn
-                                            small
-                                            depressed
-                                            outline
-                                            color="primary"
-                                            v-on="on"
-                                            @click="fn_openJisuJixPopup()"
-                                        >내역확인</v-btn>
-                                    </template>
 
-                                    <v-card flat>
-                                        <h5>
-                                            <v-card-title ma-0>
-                                                지수조치 현황 ( {{ indexBasic.f16002 }} )
-                                                <v-spacer></v-spacer>
-                                                <v-btn icon dark @click="dialog = false">
-                                                    <v-icon>close</v-icon>
-                                                </v-btn>
-                                            </v-card-title>
-                                        </h5>
+                                <v-btn
+                                    small
+                                    depressed
+                                    outline
+                                    color="primary"
+                                    v-on="on"
+                                    @click="fn_openJisuJixPopup()"
+                                >내역확인</v-btn>
 
-                                        <ComIndexFixPopup :indexBasic="this.indexBasic" v-if="dialog"></ComIndexFixPopup>
-                                        <v-card class="pop_bot_h"></v-card>
-                                    </v-card>
-                                </v-dialog>
+                                <v-card flat>
+                                    <ComIndexFixPopup   v-if="indexFixDialog"
 
+                                                        :indexBasic="this.indexBasic" 
+                                                        :indexFixDialog="this.indexFixDialog" 
+                                                        
+                                                        @fn_closePop="fn_closePop" >
+                                    </ComIndexFixPopup>
+                                    <v-card class="pop_bot_h"></v-card>
+                                </v-card>
                             </v-subheader>
+                            
                             <p>
                                 <v-icon small color="primary">arrow_right</v-icon>기준시가 총액변동
                             </p>
@@ -152,12 +145,12 @@ export default {
     data() {
         return {
             drawer: true,
-            dialog: false,
             mini: false,
 
             indexBasic : {},                    /* 선택된 지수의 마스터 정보 */
 
             /* 지수 조치현황 정보 */
+            indexFixDialog : false,
             indexFixData    :   {},             /* 지수조치 현황의 기본정보 */
             indexFixJongmokInoutList : [],      /* 지수조치 종목 편출입 정보 */
             indexFixModifyList      : [],       /* 지수채용 주식수 변경 정보 */
@@ -240,6 +233,16 @@ export default {
     beforeDestroy() {},
 
     methods: {
+
+        /*
+         * 지수조치현황 팝업창을 종료한다.
+         * 2019-04-16  bkLove(촤병국)
+         */
+        fn_closePop( param )  {
+            var vm = this;
+
+            vm.indexFixDialog = false;
+        },
 
         /*
          * 지수 목록에서 선택된 데이터를 조회한다.
@@ -371,7 +374,7 @@ export default {
 
             var vm = this;
 
-            vm.dialog = true;
+            vm.indexFixDialog = true;
         },
 
     }

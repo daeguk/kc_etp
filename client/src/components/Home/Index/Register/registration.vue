@@ -667,6 +667,7 @@ export default {
             this.$refs.methodForm.addEventListener(
                 "drop",
                 function(e) {
+
                     var selfThis    =   this;
                     let file        =   e.dataTransfer.files[0];
 

@@ -243,9 +243,17 @@
 
           FROM  td_index_basic
 
-         WHERE  td_index_basic.f16013           =   #{f16013}                               /* 단축코드 */
-           AND  td_index_basic.market_id        =   #{market_id}                            /* 시장 ID */
+         WHERE  1 = 1
     ]]>
+        <if test= '( f16013 != null  and  f16013 != "" ) and ( market_id != null and market_id != "" ) ' >
+           AND  td_index_basic.f16013           =   #{f16013}                               /* 단축코드 */
+           AND  td_index_basic.market_id        =   #{market_id}                            /* 시장 ID */
+        </if>
+
+        <if test= '( f16257 != null  and  f16257 != "" ) and ( f34239 != null and f34239 != "" ) ' >
+           AND  td_index_basic.f16013           =  #{f16257}                                                 /* 단축코드 = ETP기초지수코드 */
+           AND  td_index_basic.market_id        LIKE    CONCAT( '_' , LPAD( #{f34239}, 3, '0' ) , '%' )      /* 시장 ID = ETP기초지수MID */
+        </if>     
     </select>
 
     <!--
