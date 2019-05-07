@@ -119,14 +119,14 @@ export default {
         var vm = this;
 
         this.$EventBus.$on('changeIndexInfo', data => {
-            this.paramData = data;
+            vm.paramData = data;
             vm.init();
         });
     },
     beforeDestroy() {},
 
     mounted: function() {
-        init();
+        this.init();
     },
 
     methods: {
