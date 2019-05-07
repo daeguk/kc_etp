@@ -35,15 +35,6 @@
 
                     </v-card>
 
-
-                    <EtpOperInfoQuick   v-if="etpOperInfoQuickYn"
-
-                                        :indexBasic = "indexBasic"
-                                        @fn_setInavData="fn_setInavData"
-                                        @fn_setEtpPerformanceData="fn_setEtpPerformanceData"
-                                        @fn_setCustomizeData="fn_setCustomizeData"
-                    ></EtpOperInfoQuick>
-
                 </v-card>
             </v-flex>
         </v-layout>
@@ -139,18 +130,48 @@ export default {
                             },
             arrShowColumn   :   [],
             arrShowColumnDef   :   [],
-            indexBasic : {},
             etpOperInfoQuickYn : true
         };
     },
     mounted: function() {
         var vm = this;
 
-        vm.fn_setTableInfo();
-        vm.fn_getEtpOperInfo( vm.stateInfo.gubun );        
+        vm.$nextTick().then(() => {
+            vm.fn_setTableInfo();
+            vm.fn_getEtpOperInfo( vm.stateInfo.gubun );
+        });
+
+        vm.$EventBus.$on('EtpOperControl_EtpOperInfo_setInavData', data => {
+            vm.fn_setInavData( data );
+alert(11);
+//            vm.$destory();
+        });
+
+        vm.$EventBus.$on('EtpOperControl_EtpOperInfo_setEtpPerformanceData', data => {
+            vm.fn_setEtpPerformanceData( data );
+        });
+
+        vm.$EventBus.$on('EtpOperControl_EtpOperInfo_setCustomizeData', data => {
+            vm.fn_setCustomizeData( data );
+        });                       
     },
     created: function() {},
-    beforeDestory: function() {},
+    beforeDestory: function() {
+        var vm = this;
+console.log( "############ beforeDestory" );
+
+        vm.$EventBus.$off('EtpOperControl_EtpOperInfo_setInavData', data => {
+            vm.fn_setInavData( data );
+        });
+
+        vm.$EventBus.$off('EtpOperControl_EtpOperInfo_setEtpPerformanceData', data => {
+            vm.fn_setEtpPerformanceData( data );
+        });
+
+        vm.$EventBus.$off('EtpOperControl_EtpOperInfo_setCustomizeData', data => {
+            vm.fn_setCustomizeData( data );
+        });
+    },
 
     methods: {
 
@@ -173,7 +194,7 @@ export default {
                 table01.clear().draw();
             }
 
-            vm.$refs.result_cnt.textContent = "0";
+//            vm.$refs.result_cnt.textContent = "0";
 
             axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
                 data: {
@@ -189,8 +210,9 @@ export default {
                         table01.rows.add( dataList ).draw();
                         table01.draw();
 
-                        vm.indexBasic = dataList[0];
-                        vm.$refs.result_cnt.textContent = dataList.length;
+//                        vm.$refs.result_cnt.textContent = dataList.length;
+
+                        vm.$emit( "fn_setIndexBasic", dataList[0] );
                     }
                 }
             });
@@ -319,6 +341,7 @@ export default {
             vm.fn_setTableInfo();
             vm.fn_getEtpOperInfo( vm.stateInfo.gubun );
 
+            vm.$emit( "fn_eventClose", "fn_setInavData" );
             console.log("########## EtpOperInfo.vue -> fn_setInavData END ############");
         },
 

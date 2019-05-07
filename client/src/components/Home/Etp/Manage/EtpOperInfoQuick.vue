@@ -259,157 +259,13 @@
                         </v-list-tile-content>
 
 
-                        <v-list-tile-content class="rightmenu_con">
-                            <v-layout class="w100">
-                                <v-flex xs12>
-                                    <v-tabs v-model="tab" centered>
-                                        <v-tabs-slider color="#1976d2"></v-tabs-slider>
 
-                                        <v-tab v-for="item in items1" :key="item">{{ item }}</v-tab>
-                                    </v-tabs>
+                        <ComFavorItemSub    v-if="showFaver" 
+                        
+                                            @showDetail="showDetail" 
+                                            @showMessageBox="showMessageBox"
+                        ></ComFavorItemSub>
 
-                                    <v-tabs-items v-model="tab">
-                                        <v-tab-item>
-                                            <!--오른쪽 메뉴 하단 리스트 영역--->
-                                            <v-layout row class="w100 pt-2">
-                                                <v-flex xs12>
-                                                    <v-card flat>
-                                                        <v-list two-line subheader>
-                                                            <v-list-tile
-                                                                v-for="item in items2"
-                                                                :key="item.title"
-                                                                @click
-                                                                class="right_menu_w3"
-                                                            >
-                                                                <v-list-tile-content
-                                                                    class="rm_con_h"
-                                                                >
-                                                                    <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                                                                    <v-list-tile-sub-title>{{ item.subtitle }}</v-list-tile-sub-title>
-                                                                </v-list-tile-content>
-                                                            </v-list-tile>
-                                                        </v-list>
-                                                    </v-card>
-                                                </v-flex>
-                                            </v-layout>
-                                            <!--오른쪽 메뉴 하단 리스트 영역--->
-                                        </v-tab-item>
-                                        <v-tab-item>
-                                            <!--오른쪽 메뉴 하단 리스트 영역--->
-                                            <v-layout row class="w100 pt-2">
-                                                <v-flex xs12>
-                                                    <v-card flat>
-                                                        <v-list two-line subheader>
-                                                            <v-list-tile
-                                                                v-for="item in items3"
-                                                                :key="item.title"
-                                                                @click
-                                                                class="right_menu_w3"
-                                                            >
-                                                                <v-list-tile-content
-                                                                    class="rm_con_h"
-                                                                >
-                                                                    <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                                                                    <v-list-tile-sub-title>{{ item.subtitle }}</v-list-tile-sub-title>
-                                                                </v-list-tile-content>
-                                                            </v-list-tile>
-                                                        </v-list>
-                                                    </v-card>
-                                                </v-flex>
-                                            </v-layout>
-                                            <!--오른쪽 메뉴 하단 리스트 영역 end--->
-                                        </v-tab-item>
-                                    </v-tabs-items>
-                                </v-flex>
-                            </v-layout>
-                            <!---자산추가 팝업--->
-                            <v-layout row>
-                                <v-flex xs12>
-                                    <v-card flat>
-                                        <v-dialog
-                                            v-model="dialog2"
-                                            persistent
-                                            max-width="500"
-                                        >
-                                            <template v-slot:activator="{ on }">
-                                                <v-btn
-                                                    outline
-                                                    small
-                                                    color="primary"
-                                                    dark
-                                                    v-on="on"
-                                                >
-                                                    <v-icon small color="primary">add</v-icon>자산추가
-                                                </v-btn>
-                                            </template>
-                                            <v-card>
-                                                <h5>
-                                                    <v-card-title ma-0>
-                                                        비교자산추가
-                                                        <v-spacer></v-spacer>
-                                                        <v-btn
-                                                            icon
-                                                            dark
-                                                            @click="dialog2 = false"
-                                                        >
-                                                            <v-icon>close</v-icon>
-                                                        </v-btn>
-                                                    </v-card-title>
-                                                </h5>
-                                                <v-card-title>
-                                                    <v-text-field
-                                                        v-model="search"
-                                                        append-icon="search"
-                                                        label="Search"
-                                                        single-line
-                                                        hide-details
-                                                    ></v-text-field>
-                                                </v-card-title>
-
-                                                <!--비교자산 탭--->
-
-                                                <v-layout row wrap>
-                                                    <v-flex xs12>
-                                                        <v-tabs
-                                                            fixed-tabs
-                                                            color="cyan"
-                                                            dark
-                                                            v-model="tab2"
-                                                        >
-                                                            <v-tabs-slider color="#00fffc"></v-tabs-slider>
-                                                            <v-tab
-                                                                v-for="item in items4"
-                                                                :key="item"
-                                                            >{{ item }}</v-tab>
-                                                        </v-tabs>
-                                                        <!--v-tabs-items v-model="tab2">
-                                                    <v-tab-item>
-                                                        <infopoptab1></infopoptab1>
-                                                    </v-tab-item>
-                                                    <v-tab-item>
-                                                        <infopoptab2></infopoptab2>
-                                                    </v-tab-item>
-                                                    <v-tab-item>
-                                                        <infopoptab3></infopoptab3>
-                                                    </v-tab-item>
-                                                        </v-tabs-items-->
-                                                    </v-flex>
-                                                </v-layout>
-                                                <!--비교자산 탭end--->
-                                            </v-card>
-                                            <v-card class="pop_btn_w text-xs-center">
-                                                <v-btn
-                                                    depressed
-                                                    color="primary"
-                                                    @click="dialog = false"
-                                                >추가하기</v-btn>
-                                            </v-card>
-                                        </v-dialog>
-                                    </v-card>
-                                </v-flex>
-                            </v-layout>
-                            <!--자산추가 팝업 end--->
-                        </v-list-tile-content>
                     </v-list>
                 </v-navigation-drawer>
             </v-card>
@@ -423,12 +279,14 @@
 
 <script>
 import ComIndexFixPopup from "@/components/common/popup/ComIndexFixPopup.vue";
+import ComFavorItemSub from "@/components/common/control/ComFavorItemSub"; 
 
 export default {
     props: [ "indexBasic" ],
 
     components: {
-        ComIndexFixPopup    :   ComIndexFixPopup
+            ComIndexFixPopup    :   ComIndexFixPopup
+        ,   ComFavorItemSub     :   ComFavorItemSub
     },
     data() {
         return {
@@ -506,6 +364,7 @@ export default {
             customizeDialog : false,
 
             indexFixDialog : false,
+            showFaver : true,
         };
     },
     mounted: function() {},
@@ -521,7 +380,7 @@ export default {
         fn_closePop( param )  {
             var vm = this;
 
-            vm.indexFixDialog = false;
+            vm.indexFixDialog   =   false;
         },        
 
         /*
@@ -583,7 +442,18 @@ export default {
             vm.$emit( "fn_setCustomizeData", vm.arrCustomizeColumn );
 
             console.log("########## EtpOperInfoQuick.vue -> fn_setCustomizeData END ############");
-        }
+        },
+
+        showDetail: function(gubun, paramData) {
+            var vm = this;
+debugger;
+            vm.$emit( "showDetail", gubun, paramData );
+        },
+        showMessageBox: function(title, msg, option, gubun) {
+            var vm = this;
+debugger;
+            vm.$emit( "showMessageBox", title, msg, option, gubun );
+        }        
     }
 };
 </script>

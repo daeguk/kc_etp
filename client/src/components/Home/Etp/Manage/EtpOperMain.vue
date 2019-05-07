@@ -5,7 +5,7 @@
             <v-tabs slot="extension" v-model="tab" align-with-title light>
                 <v-tabs-slider color="#1e99e8"></v-tabs-slider>
 
-                <v-tab v-for="tab of tabs"  :key="tab.id" @click="pageMove(tab.route)" >
+                <v-tab v-for="tab of tabs"  :key="tab.id" @click="pageMove(tab.id)" >
                     {{ tab.name }}
                 </v-tab>                
             </v-tabs>
@@ -15,13 +15,17 @@
                 <v-tab-item v-for="tab of tabs"  :key="tab.id" >
                 </v-tab-item>
             </v-tabs-items>
-            <router-view></router-view>
+            <!--router-view></router-view-->
+
+            <EtpOperControl :activeTab="activeTab"></EtpOperControl>
 
         </v-flex>
     </v-layout>
 </template>
 
 <script>
+
+import EtpOperControl from  '@/components/Home/Etp/Manage/EtpOperControl.vue'
 
 export default {
     data() {
@@ -37,16 +41,17 @@ export default {
         };
     },
     components: {
-
+        EtpOperControl  :   EtpOperControl
     },
     mounted: function() {
-
         this.activeTab = 0;
-        this.pageMove('/etp/manage/etpOperInfo');
+        this.pageMove(0);
     },
     methods: {
-        pageMove : function(route) {
-            this.$router.push(route);
+        pageMove : function(tab_id) {
+            this.$EventBus.$emit("showList", {tab_id:tab_id});
+            //this.activeTab = id + 1;
+            //this.$router.push({path:'/info/etpinfo/EtpMarketInfo', props:{activeTab:this.activeTab}});
         }
     }
 };
