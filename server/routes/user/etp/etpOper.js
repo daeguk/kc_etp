@@ -56,14 +56,14 @@ var getEtpOperInfo = function(req, res) {
                 /* 1. EtpBasic 의 기본정보를 조회한다. */
                 function( callback ) {
 
-                    stmt = mapper.getStatement('etpDetail', 'getEtpOperInfo', paramData, format);
+                    stmt = mapper.getStatement('etpOper', 'getEtpOperInfo', paramData, format);
                     console.log(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
                         if( err ) {
                             resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] etpDetail.getEtpOperInfo Error while performing Query";
+                            resultMsg.msg       =   "[error] etpOper.getEtpOperInfo Error while performing Query";
                             resultMsg.err       =   err;
 
                             return callback( resultMsg );
@@ -154,14 +154,14 @@ var getEtpOperIndex = function(req, res) {
                 /* 1. EtpBasic 의 기본정보를 조회한다. */
                 function( callback ) {
 
-                    stmt = mapper.getStatement('etpDetail', 'getEtpOperIndex', paramData, format);
+                    stmt = mapper.getStatement('etpOper', 'getEtpOperIndex', paramData, format);
                     console.log(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
                         if( err ) {
                             resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] etpDetail.getEtpOperIndex Error while performing Query";
+                            resultMsg.msg       =   "[error] etpOper.getEtpOperIndex Error while performing Query";
                             resultMsg.err       =   err;
 
                             return callback( resultMsg );
