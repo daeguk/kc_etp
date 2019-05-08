@@ -4,56 +4,57 @@
 <mapper namespace="etpOper">
 
     <!--
-    * Pdf 의 기본정보를 조회한다.
+    * ETP 운용관리 - PDF관리 정보를 조회한다.
     * 2019-05-03  bkLove(촤병국)
     -->
     <select id="getEtpOperPdf">
     <![CDATA[
-        SELECT      /* etpOper.getEtpOperPdf  Pdf 의 기본정보를 조회한다. */
-                    base.in_out                                                 AS  in_out          /* 입수 구분 */
-                ,   base.degree                                                 AS  degree          /* 차수 */
-                ,   base.real_symbol                                            AS  real_symbol     /* 실시간 심볼 */
-                ,   base.incre_symbol                                           AS  incre_symbol    /* 증가 심볼 */
-                ,   base.rest_date                                              AS  rest_date       /* 휴장일 */
-                ,   base.recently_date                                          AS  recently_date   /* 최근일자 */
-                ,   base.incre_recently                                         AS  incre_recently  /* 최근증가 */
-                ,   base.base_date                                              AS  base_date       /* 기준일자 */
+        SELECT      /* etpOper.getEtpOperPdf  ETP 운용관리 - PDF관리 정보를 조회한다. */
+
+                    base.date                                                   AS  date            /* Date */
+                ,   base.market_gubun                                           AS  market_gubun    /* 시장구분 */
+                ,   base.jongmok_code                                           AS  jongmok_code    /* 종목코드 */
+                ,   base.jongmok_nm                                             AS  jongmok_nm      /* 종목명 */
+                ,   base.cuShrs                                                 AS  cuShrs          /* CU SHrs */
+                ,   base.org_money                                              AS  org_money       /* 액면금액 */
+                ,   base.eval_monry                                             AS  eval_monry      /* 평가금액 */
+                ,   base.rate                                                   AS  rate            /* 비중 */
 
           FROM  (
-                    SELECT      'OK'                                            AS  in_out          /* 입수 구분 */
-                            ,   'S&P GCCI1'                                     AS  degree          /* 차수 */
-                            ,   'S&P GCCI1'                                     AS  real_symbol     /* 실시간 심볼 */
-                            ,   'S&P GCCI1'                                     AS  incre_symbol    /* 증가 심볼 */
-                            ,   '2018.04.01'                                    AS  rest_date       /* 휴장일 */
-                            ,   '2018.04.01'                                    AS  recently_date   /* 최근일자 */
-                            ,   11111111                                        AS  incre_recently  /* 최근증가 */
-                            ,   '2018.04.01'                                    AS  base_date       /* 기준일자 */
+                    SELECT      '20181112'                                      AS  date            /* Date */
+                            ,   '2'                                             AS  market_gubun    /* 시장구분 */
+                            ,   'KRD0001112'                                    AS  jongmok_code    /* 종목코드 */
+                            ,   '원화현금'                                       AS  jongmok_nm      /* 종목명 */
+                            ,   771717171                                       AS  cuShrs          /* CU SHrs */
+                            ,   11111                                           AS  org_money       /* 액면금액 */
+                            ,   3434343434                                      AS  eval_monry      /* 평가금액 */
+                            ,   85.64                                           AS  rate            /* 비중 */
 
                     FROM  dual
 
                     UNION   ALL
 
-                    SELECT      'NO'                                            AS  in_out          /* 입수 구분 */
-                            ,   'S&P GCCI2'                                     AS  degree          /* 차수 */
-                            ,   'S&P GCCI2'                                     AS  real_symbol     /* 실시간 심볼 */
-                            ,   'S&P GCCI2'                                     AS  incre_symbol    /* 증가 심볼 */
-                            ,   '2018.04.02'                                    AS  rest_date       /* 휴장일 */
-                            ,   '2018.04.02'                                    AS  recently_date   /* 최근일자 */
-                            ,   22222222                                        AS  incre_recently  /* 최근증가 */
-                            ,   '2018.04.02'                                    AS  base_date       /* 기준일자 */
+                    SELECT      '20181113'                                      AS  date            /* Date */
+                            ,   '2'                                             AS  market_gubun    /* 시장구분 */
+                            ,   'KRD0001333'                                    AS  jongmok_code    /* 종목코드 */
+                            ,   '삼성전자'                                       AS  jongmok_nm      /* 종목명 */
+                            ,   343444                                          AS  cuShrs          /* CU SHrs */
+                            ,   77777                                           AS  org_money       /* 액면금액 */
+                            ,   787878                                          AS  eval_monry      /* 평가금액 */
+                            ,   11.22                                           AS  rate            /* 비중 */
 
                     FROM  dual
 
                     UNION   ALL
 
-                    SELECT      'OK'                                            AS  in_out          /* 입수 구분 */
-                            ,   'S&P GCCI3'                                     AS  degree          /* 차수 */
-                            ,   'S&P GCCI3'                                     AS  real_symbol     /* 실시간 심볼 */
-                            ,   'S&P GCCI3'                                     AS  incre_symbol    /* 증가 심볼 */
-                            ,   '2018.04.03'                                    AS  rest_date       /* 휴장일 */
-                            ,   '2018.04.03'                                    AS  recently_date   /* 최근일자 */
-                            ,   3333333                                         AS  incre_recently  /* 최근증가 */
-                            ,   '2018.04.03'                                    AS  base_date       /* 기준일자 */
+                    SELECT      '20181114'                                      AS  date            /* Date */
+                            ,   '3'                                             AS  market_gubun    /* 시장구분 */
+                            ,   'KRD0001444'                                    AS  jongmok_code    /* 종목코드 */
+                            ,   '예금'                                          AS  jongmok_nm      /* 종목명 */
+                            ,   89898989                                        AS  cuShrs          /* CU SHrs */
+                            ,   44444                                           AS  org_money       /* 액면금액 */
+                            ,   888888                                          AS  eval_monry      /* 평가금액 */
+                            ,   10.44                                           AS  rate            /* 비중 */
 
                     FROM  dual                    
 
@@ -259,10 +260,93 @@
     <select id="geEtpOperIndex">
 
         SELECT      /* etpOper.getEtpOperIndex  ETP 운용관리 - 지수관리 를 조회한다. */
-                    <include    refid="sqlIndexBasic01" />
-          FROM  td_index_basic
-         WHERE  1 = 1
+                <include    refid="sqlIndexBasic01" />
 
+                ,   td_etp_basic.f16012                                 AS  f16012          /* 국제표준코드 */
+                ,   td_etp_basic.f16002                                 AS  f16002          /* 한글종목명 */
+          FROM          td_index_basic
+         INNER  JOIN    td_etp_basic
+                  ON    (           td_index_basic.f16013       =       td_etp_basic.f16257
+                                AND td_index_basic.market_id    LIKE    CONCAT( '_', LPAD( td_etp_basic.f34239, 3, '0' ), '%' )
+                        )
+         WHERE  1 = 1         
+
+    </select>
+
+
+    <!--
+    * ETP 운용관리 - 지수관리 - 해외지수 종가 모니터링을 조회한다.
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="geEtpOperIndexOversea">
+
+        SELECT      /* etpOper.geEtpOperIndexOversea  ETP 운용관리 - 지수관리 - 해외지수 종가 모니터링을 조회한다. */
+                    <include    refid="sqlEtpBasic01" />
+    <![CDATA[
+                ,   'OK'                                            AS  in_out          /* 입수 구분 */
+                ,   'S&P GCCI1'                                     AS  degree          /* 차수 */
+                ,   'S&P GCCI1'                                     AS  real_symbol     /* 실시간 심볼 */
+                ,   'S&P GCCI1'                                     AS  incre_symbol    /* 증가 심볼 */
+                ,   '2018.04.01'                                    AS  rest_date       /* 휴장일 */
+                ,   '2018.04.01'                                    AS  recently_date   /* 최근일자 */
+                ,   11111111                                        AS  incre_recently  /* 최근증가 */
+                ,   '2018.04.01'                                    AS  base_date       /* 기준일자 */
+    ]]>
+          FROM  td_etp_basic
+         WHERE  1 = 1
+           AND  td_etp_basic.f16257     REGEXP  '[^0-9]'       /* 첫글자가 0-9가 아닌 것 */
+
+    </select>
+
+    <!--
+    * ETP 운용관리 - 지수관리 - 오류내역을 조회한다.
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="geEtpOperIndexError">
+
+        SELECT      /* etpOper.geEtpOperIndexError  ETP 운용관리 - 지수관리 - 오류내역을 조회한다. */
+
+                    base.err_id                                                 AS  err_id          /* err_id */
+                ,   base.err_date                                               AS  err_date        /* 날짜 */
+                ,   base.err_time                                               AS  err_time        /* 발생시간 */
+                ,   base.fix_time                                               AS  fix_time        /* 조치시간 */
+                ,   base.err_content                                            AS  err_content      /* 오류내용 */
+                ,   base.remark                                                 AS  remark           /* 비고 */
+
+          FROM  (
+                    SELECT      'err_dbf_18090101'                              AS  err_id          /* err_id */
+                            ,   '2018.09.10'                                    AS  err_date        /* 날짜 */
+                            ,   '06:30:10'                                      AS  err_time        /* 발생시간 */
+                            ,   '07:00:00'                                      AS  fix_time        /* 조치시간 */
+                            ,   '지수 연속성 불일치'                             AS  err_content      /* 오류내용 */
+                            ,   '장전처리 완료됨'                                AS  remark           /* 비고 */
+                    FROM  dual
+                   WHERE  1 = 1
+
+                    UNION   ALL
+
+                    SELECT      'err_dbf_18090102'                              AS  err_id          /* err_id */
+                            ,   '2018.09.11'                                    AS  err_date        /* 날짜 */
+                            ,   '07:30:10'                                      AS  err_time        /* 발생시간 */
+                            ,   '08:00:00'                                      AS  fix_time        /* 조치시간 */
+                            ,   '지수 재배치 작업'                               AS  err_content      /* 오류내용 */
+                            ,   '장전처리 완료됨'                                AS  remark           /* 비고 */
+                    FROM  dual
+                   WHERE  1 = 1
+
+                    UNION   ALL
+
+                    SELECT      'err_dbf_18090103'                              AS  err_id          /* err_id */
+                            ,   '2018.09.12'                                    AS  err_date        /* 날짜 */
+                            ,   '08:30:10'                                      AS  err_time        /* 발생시간 */
+                            ,   '09:00:00'                                      AS  fix_time        /* 조치시간 */
+                            ,   '지수 (종가) 입수 지연'                          AS  err_content      /* 오류내용 */
+                            ,   '송출오류'                                      AS  remark           /* 비고 */
+                    FROM  dual
+                   WHERE  1 = 1                                       
+                )       base
+
+         WHERE  1 = 1
     </select>    
 
 </mapper>
