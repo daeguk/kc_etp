@@ -8,7 +8,8 @@
             <EtpOperInfo    v-if="showEtpOerInfo == 0" 
             
                             @showDetail="showDetail" 
-                            @showMessageBox="showMessageBox">
+                            @showMessageBox="showMessageBox"
+                            @fn_pageMove="fn_pageMove">
             </EtpOperInfo>
 
             <!-- 지수관리 -->
@@ -117,6 +118,12 @@ export default {
         showMessageBox: function(title, msg, option, gubun) {
             this.$root.$confirm.open(title,msg, option, gubun);
         },
+
+        fn_pageMove( btnId, paramData ) {
+//            this.showEtpOerInfo =   2;
+
+            this.$emit( "fn_setActiveTab", 2 );
+        }
     }
 }
 </script>

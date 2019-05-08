@@ -2,7 +2,7 @@
     <v-layout row wrap>
         <v-flex xs12>
 
-            <v-tabs slot="extension" v-model="tab" align-with-title light>
+            <v-tabs slot="extension" v-model="activeTab" align-with-title light>
                 <v-tabs-slider color="#1e99e8"></v-tabs-slider>
 
                 <v-tab v-for="tab of tabs"  :key="tab.id" @click="pageMove(tab.id)" >
@@ -17,7 +17,8 @@
             </v-tabs-items>
             <!--router-view></router-view-->
 
-            <EtpOperControl :activeTab="activeTab"></EtpOperControl>
+            <EtpOperControl :activeTab="activeTab"
+                            @fn_setActiveTab="fn_setActiveTab"></EtpOperControl>
 
         </v-flex>
     </v-layout>
@@ -30,8 +31,6 @@ import EtpOperControl from  '@/components/Home/Etp/Manage/EtpOperControl.vue'
 export default {
     data() {
         return {
-            tab: null,
-
             activeTab: 0,
             tabs: [
                 { id: 0, name: "ETP 운용정보"       , route: '/etp/manage/etpOperInfo' },               /* ETP 운용정보 */
@@ -52,6 +51,11 @@ export default {
             this.$EventBus.$emit("showList", {tab_id:tab_id});
             //this.activeTab = id + 1;
             //this.$router.push({path:'/info/etpinfo/EtpMarketInfo', props:{activeTab:this.activeTab}});
+        },
+
+        fn_setActiveTab : function( activeTab ) {
+            this.activeTab = activeTab;
+            this.pageMove( activeTab );
         }
     }
 };

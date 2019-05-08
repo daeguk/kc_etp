@@ -70,62 +70,6 @@ export default {
     data() {
         return {
             text: "전종목",
-            items: [
-                { title: "Home", icon: "dashboard" },
-                { title: "About", icon: "question_answer" }
-            ],
-            items2: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                },
-                {
-                    title: "KODEX 코스닥150 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            items3: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            
-            mini: false,
-            right: null,
-            rowsPerPageItems: [10, 20, 30, 50],
-            headers: [
-                {
-                    text: "Code",
-                    align: "left",
-                    value: "name"
-                },
-                { text: "name", value: "name" },
-                { text: "BasePrc", value: "BasePrc", align: "right" },
-                { text: "Shrs", value: "Shrs", align: "right" },
-                { text: "Float rto", value: "FloatRto", align: "right" },
-                { text: "Ceiling rto", value: "CeilingRto", align: "right" },
-                { text: "Factor rto", value: "FactorRto", align: "right" }
-            ],
-            desserts: [],
-
-
             nowDate:        new Date().getFullYear() 
                         +   "." 
                         +   (parseInt(new Date().getMonth()) + 1) 
@@ -141,7 +85,8 @@ export default {
             arrShowColumnDef   :   [],
             etpOperInfoQuickYn : true,
 
-            indexBasic : {}
+            indexBasic : {},
+            paramData  : {}
         };
     },
     mounted: function() {
@@ -150,7 +95,7 @@ export default {
         console.log( "######### EtpOperInfo.vue mounted ");
         vm.$nextTick().then(() => {
             vm.fn_setTableInfo();
-            vm.fn_getEtpOperInfo( vm.stateInfo.gubun );
+            vm.fn_getEtpOperInfo( vm.stateInfo.gubun );        
         });
     },
     created: function() {},
@@ -210,7 +155,7 @@ export default {
 
                         vm.indexBasic   =    dataList[0];
 
-                        vm.$refs.result_cnt.textContent = dataList.length;
+                        vm.$refs.result_cnt.textContent = dataList.length;                       
                     }
                 }
             });
@@ -310,9 +255,39 @@ export default {
             }
 
             tableObj.columns    =   vm.arrShowColumn ;
-            tableObj.columnDefs =   vm.arrColumnDef ;
+            tableObj.columnDefs =   vm.arrShowColumnDef ;
 
             table01 = $('#table01').DataTable( tableObj );
+
+            // 테이블별 이벤트
+            $('#table01 tbody').on('click', 'button[id=btnEtpInfo],button[id=btnPdf]', function () {
+
+                var table = $('#table01').DataTable();
+                var data = table.row($(this).parents('tr')).data();
+
+                var btnId   =   $(this).attr('id');
+
+                console.log("########## EtpOperInfo.vue -> pageMove START ############");
+                console.log( "data.f16012=[" + data.f16012 + "] /* 국제표준코드  */" );
+                console.log( "data.f16257=[" + data.f16257 + "] /* ETP기초지수코드  */" );
+                console.log( "data.f34239=[" + data.f34239 + "] /* ETP기초지수MID  */" );
+
+                vm.paramData.f16012         =   data.f16012;        /* 국제표준코드  */
+                vm.paramData.f16257         =   data.f16257;        /* ETP기초지수코드  */
+                vm.paramData.f34239         =   data.f34239;        /* ETP기초지수MID  */
+
+                switch( btnId ) {
+
+                    case    'btnEtpInfo'    :
+                                vm.$emit('showDetail', 1, vm.paramData);
+                                break;
+
+                    case    'btnPdf'    :
+                                vm.$emit('fn_pageMove', btnId, vm.paramData);
+                                break;
+                }
+                console.log("########## EtpOperInfo.vue -> pageMove END ############");
+            });                
         },
 
         /*
@@ -390,6 +365,53 @@ export default {
 
             console.log("########## EtpOperInfo.vue -> fn_setCustomizeData END ############");
         },
+        
+        /*
+         *  테이블에서 그래프 영역에 출력될 버튼이미지를 렌더링한다.
+         *  2019-05-03  bkLove(촤병국)
+         */        
+        fn_getGraphInfo( param ) {
+
+            var graphContent    =   "";
+
+            var divClass = "tooltip";
+            var btnClass = "btn_icon v-icon material-icons";
+            var btnSpanClass = "tooltiptext";
+            var btnSpanStyle = "width:70px;";
+
+            var btnId = "";
+            var btnContent = "";
+            var btnSpanContent = "";
+
+            if( !param ) {
+                return  graphContent;
+            }
+
+            if(     typeof param.btnId      === "undefined"
+                ||  typeof param.btnContent === "undefined" 
+            ) {
+                return  graphContent;
+            }
+
+
+            if( typeof param.btnSpanContent != "undefined" ) {
+                btnSpanContent  =   param.btnSpanContent;
+            }            
+
+            btnId           =   param.btnId;
+            btnContent      =   param.btnContent;
+
+
+            graphContent    +=  '<div class="' + divClass + '">';
+            graphContent    +=      '<button    id="' + btnId + '" ';
+            graphContent    +=      '           type="button" ';
+            graphContent    +=      '           class="' + btnClass + '" ';
+            graphContent    +=      '>' + btnContent + '</button>';
+            graphContent    +=      '<span class="' + btnSpanClass + '" style="' + btnSpanStyle + '" >' + btnSpanContent + '</span>';
+            graphContent    +=  '</div>';            
+
+            return  graphContent;
+        },
 
 
         /*
@@ -401,35 +423,17 @@ export default {
 
             var graphContent = "";
 
+            /* iNAV 산출현황 */
             if( vm.stateInfo.pageState != 'etpInfo' ) {
-                /* iNAV 산출현황 */
-                graphContent    +=  '<div class="tooltip">';
-                graphContent    +=      '<button    id="btnInav" ';
-                graphContent    +=      '           type="button" ';
-                graphContent    +=      '           v-on="on" ';
-                graphContent    +=      '           class="btn_icon v-icon material-icons" ';
-                graphContent    +=      '>visibility</button>';
-                graphContent    +=      '<span class="tooltiptext" style="width:70px;" >투자지표</span>';
-                graphContent    +=  '</div>';
+                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnInav", "btnContent" : "visibility", "btnSpanContent" : "투자지표" } );
             }
             
             /* ETF 상세정보 */
-            graphContent        +=   '<div class="tooltip">';
-            graphContent        +=       '<button    id="btnEtpInfo" ';
-            graphContent        +=       '           type="button" ';
-            graphContent        +=       '           class="btn_icon v-icon material-icons" ';
-            graphContent        +=       '>equalizer</button>';
-            graphContent        +=       '<span class="tooltiptext" style="width:70px;">ETP정보</span>';
-            graphContent        +=   '</div>';
+            graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnEtpInfo", "btnContent" : "equalizer", "btnSpanContent" : "ETP정보" } );
 
-            /* PD 정보 */
-            graphContent        +=   '<div class="tooltip">';
-            graphContent        +=       '<button    id="btnPdf" ';
-            graphContent        +=       '           type="button" ';
-            graphContent        +=       '           class="btn_icon v-icon material-icons" ';
-            graphContent        +=       '>picture_as_pdf</button> ';
-            graphContent        +=       '<span class="tooltiptext" style="width:70px;">PDF관리</span>';
-            graphContent        +=   '</div>' ;
+            /* PDF 정보 */
+            graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnPdf", "btnContent" : "picture_as_pdf", "btnSpanContent" : "PDF관리" } );
+
 
             var arrColumn  =   [
                 { 'name' : 'f16002'             , 'data': 'f16002'           ,  'width' : '220', 'orderable' : true  , 'className': 'dt-body-left',  'title' : '종목'           },      /* 한글종목명 */
@@ -530,6 +534,7 @@ export default {
                         }
                     });
                 }
+
             }
         }
     }
