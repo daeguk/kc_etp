@@ -261,9 +261,14 @@
 
         SELECT      /* etpOper.getEtpOperIndex  ETP 운용관리 - 지수관리 를 조회한다. */
                 <include    refid="sqlIndexBasic01" />
+                ,   'vendor'                                            AS  vendor
+                ,   '1'                                                 AS  manage_type
+                ,   '2018.09.05'                                        AS  last_date
+                ,   '18:00:01'                                          AS  last_time
 
                 ,   td_etp_basic.f16012                                 AS  f16012          /* 국제표준코드 */
                 ,   td_etp_basic.f16002                                 AS  f16002          /* 한글종목명 */
+
           FROM          td_index_basic
          INNER  JOIN    td_etp_basic
                   ON    (           td_index_basic.f16013       =       td_etp_basic.f16257
