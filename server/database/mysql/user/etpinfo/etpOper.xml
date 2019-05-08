@@ -299,7 +299,7 @@
     ]]>
           FROM  td_etp_basic
          WHERE  1 = 1
-           AND  td_etp_basic.f16257     REGEXP  '[^0-9]'       /* 첫글자가 0-9가 아닌 것 */
+           AND  td_etp_basic.f16257     REGEXP  '[^0-9]'       /* 첫글자가 0-9가 아닌 것 해외지수로 임시 간주. 추후 수정 필요. */
 
     </select>
 
