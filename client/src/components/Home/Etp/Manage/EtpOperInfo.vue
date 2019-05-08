@@ -105,19 +105,6 @@ export default {
 
     methods: {
 
-
-        showDetail: function(gubun, paramData) {      
-            var vm = this;
-
-            vm.$emit( "showDetail", gubun, paramData );
-        },
-
-        showMessageBox: function(title, msg, option, gubun) {
-            var vm = this;
-
-            vm.$emit( "showMessageBox", title, msg, option, gubun );
-        },        
-
         /*
          *  ETP 운영정보를 조회한다.
          *  param   :   ETP지표가치산출구분(K:국내,F:해외)  / A:전종목, I:관심종목
@@ -137,7 +124,9 @@ export default {
                 table01.clear().draw();
             }
 
-            vm.$refs.result_cnt.textContent = "0";
+            if( typeof vm.$refs.result_cnt != "undefined" ) {
+                vm.$refs.result_cnt.textContent = "0";
+            }
 
             axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
                 data: {
@@ -155,7 +144,9 @@ export default {
 
                         vm.indexBasic   =    dataList[0];
 
-                        vm.$refs.result_cnt.textContent = dataList.length;                       
+                        if( typeof vm.$refs.result_cnt != "undefined" ) {
+                            vm.$refs.result_cnt.textContent = dataList.length;
+                        }
                     }
                 }
             });
@@ -536,7 +527,19 @@ export default {
                 }
 
             }
-        }
+        },
+        
+        showDetail: function(gubun, paramData) {      
+            var vm = this;
+
+            vm.$emit( "showDetail", gubun, paramData );
+        },
+
+        showMessageBox: function(title, msg, option, gubun) {
+            var vm = this;
+
+            vm.$emit( "showMessageBox", title, msg, option, gubun );
+        },        
     }
 };
 </script>

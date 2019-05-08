@@ -53,6 +53,10 @@ export default {
             //this.$router.push({path:'/info/etpinfo/EtpMarketInfo', props:{activeTab:this.activeTab}});
         },
 
+        /*
+         *  탭을 변경한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
         fn_setActiveTab : function( activeTab ) {
             this.activeTab = activeTab;
             this.pageMove( activeTab );

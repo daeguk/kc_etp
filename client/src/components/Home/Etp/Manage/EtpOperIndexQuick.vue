@@ -188,7 +188,29 @@ export default {
     },
     mounted: function() {},
     created: function() {},
-    beforeDestory: function() {}
+    beforeDestory: function() {},
+
+    methods : {
+
+
+        /*
+         *  관심종목에서 그래프 선택시 상세정보를 보여준다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        showDetail: function(gubun, paramData) {
+            var vm = this;
+            vm.$emit( "showDetail", gubun, paramData );
+        },
+
+        /*
+         *  메시지창 정보가 필요한 경우 해당 정보를 보여준다.
+         *  2019-05-03  bkLove(촤병국)
+         */        
+        showMessageBox: function(title, msg, option, gubun) {
+            var vm = this;
+            vm.$emit( "showMessageBox", title, msg, option, gubun );
+        }        
+    }
 };
 </script>
 
