@@ -110,7 +110,42 @@
     <!-- 인덱스 기본정보-->
     <select id="getIndexBaseInfo">
     <![CDATA[
-        SELECT date_format(BAS.F12506, "%Y.%m.%d") F12506
+    SELECT BAS.F12506
+         ,BAS.F16013
+         ,BAS.F16002
+         ,BAS.F15009
+         ,BAS.F15010
+         ,BAS.F15011
+         ,BAS.NEW_YN              /* new 태그 표시여부 */
+         ,BAS.F15001
+         ,BAS.F15007
+         ,BAS.F15015
+         ,BAS.F15023
+         ,BAS.F15472
+         ,BAS.F15004
+         ,BAS.F15006
+         ,BAS.F15028
+         ,BAS.LARGE_TYPE
+         ,BAS.MIDDLE_TYPE
+         ,BAS.MARKET_ID
+         ,BAS.STD_INDEX
+         ,BAS.STD_DATE
+         ,BAS.ANNO_DATE
+         ,BAS.INDEX_CAL_METHOD
+         ,BAS.STD_CAPITAL
+         ,BAS.FIXED_CASH
+         ,BAS.FLOWRATE_YN
+         ,BAS.F16012      /* 국제표준코드 */
+         ,BAS.F16257      /* ETP기초지수코드 */
+         ,BAS.F34239      /* ETP기초지수MID */  
+         ,BAS.daily /*daily 수익률*/
+		 ,TRUNCATE((BAS.F15001 / ifnull(BAS.1week, BAS.F15001)) - 1, 2)  AS 1week
+		 ,TRUNCATE((BAS.F15001/ ifnull(BAS.1month, BAS.F15001)) - 1, 2)  AS 1month  
+		 ,TRUNCATE((BAS.F15001/ ifnull(BAS.ytd, BAS.F15001)) - 1, 2)  AS ytd 
+		 ,TRUNCATE((BAS.F15001/ ifnull(BAS.1year, BAS.F15001)) - 1, 2) AS 1year
+		 ,TRUNCATE((BAS.F15001/ ifnull(BAS.3year, BAS.F15001)) -1, 2) AS 3year
+    FROM(         
+		  SELECT date_format(BAS.F12506, "%Y.%m.%d") F12506
               ,BAS.F16013
               ,BAS.F16002
               ,BAS.F15009
@@ -138,15 +173,77 @@
               ,BAS.STD_CAPITAL
               ,BAS.FIXED_CASH
               ,BAS.FLOWRATE_YN
-
-
               , ''                                              AS  F16012      /* 국제표준코드 */
               , BAS.F16013                                      AS  F16257      /* ETP기초지수코드 */
-              , LPAD( SUBSTR( BAS.MARKET_ID, 2 ), 3, '0' )      AS  F34239      /* ETP기초지수MID */  
-                         
-        FROM  td_index_basic BAS
-        WHERE BAS.large_type = #{large_type}               
+              , LPAD( SUBSTR( BAS.MARKET_ID, 2 ), 3, '0' )      AS  F34239      /* ETP기초지수MID */                
+              , BAS.F15004 as daily /*daily 수익률*/    
+				  , @vF12506:= BAS.F12506         
+              ,(SELECT F15001
+                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+                             , (@vF16013:= a.F16013) vF16013
+                          FROM td_index_hist a
+                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+                         WHERE a.F12506 >= date_format(DATE_SUB(DATE_FORMAT(@vF12506, '%Y.%m.%d'), INTERVAL 1 week), '%Y%m%d')
+                         order BY a.F16013, a.F12506 ASC
+								 LIMIT 0, 2) A
+                  where A.rnum = 1
+                    and A.F16013 = BAS.F16013
+						  AND A.market_id = BAS.market_id) AS 1week
+				  ,(SELECT F15001
+                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+                             , (@vF16013:= a.F16013) vF16013
+                          FROM td_index_hist a
+                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+                         WHERE a.F12506 >= date_format(DATE_SUB(DATE_FORMAT(@vF12506, '%Y.%m.%d'), INTERVAL 1 MONTH), '%Y%m%d')
+                         order BY a.F16013, a.F12506 ASC
+								 LIMIT 0, 2) A
+                  where A.rnum = 1
+                    and A.F16013 = BAS.F16013
+						  AND A.market_id = BAS.market_id) AS 1month
+				  ,(SELECT F15001
+                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+                             , (@vF16013:= a.F16013) vF16013
+                          FROM td_index_hist a
+                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+                         WHERE DATE_FORMAT(a.F12506, '%Y') = DATE_FORMAT(@vF12506, '%Y')
+                         order BY a.F16013, a.F12506 ASC
+								 LIMIT 0, 2) A
+                  where A.rnum = 1
+                    and A.F16013 = BAS.F16013
+						  AND A.market_id = BAS.market_id) AS ytd
+				  ,(SELECT F15001
+                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+                             , (@vF16013:= a.F16013) vF16013
+                          FROM td_index_hist a
+                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+                         WHERE a.F12506 >= date_format(DATE_SUB(DATE_FORMAT(@vF12506, '%Y.%m.%d'), INTERVAL 1 YEAR), '%Y%m%d')
+                         order BY a.F16013, a.F12506 ASC
+					    LIMIT 0, 2) A
+                  where A.rnum = 1
+                    and A.F16013 = BAS.F16013
+						  AND A.market_id = BAS.market_id) AS 1year
+				  ,(SELECT F15001
+                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+                             , (@vF16013:= a.F16013) vF16013
+                          FROM td_index_hist a
+                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+                         WHERE a.F12506 >= date_format(DATE_SUB(DATE_FORMAT(@vF12506, '%Y.%m.%d'), INTERVAL 3 YEAR), '%Y%m%d')
+                         order BY a.F16013, a.F12506 ASC
+                         LIMIT 0, 2) A
+                  where A.rnum = 1
+                    and A.F16013 = BAS.F16013
+						  AND A.market_id = BAS.market_id) AS 3year
+				 
+		   FROM  td_index_basic BAS
+        WHERE BAS.large_type = #{large_type}
     ORDER BY BAS.ANNO_DATE DESC
+    ) BAS
+   
     ]]>
     </select>
 </mapper>

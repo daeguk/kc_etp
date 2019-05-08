@@ -228,6 +228,18 @@ export default {
                 },
                 {
                     "render": function ( data, type, row ) {
+                        let htm = ""
+                        if (data >= 0) {
+                                htm = "<span class='align_r text_red'>"+data + "</span>";
+                        } else {
+                                htm = "<span class='align_r text_blue'>"+data + "</span>";
+                        }      
+                        return htm;                   
+                    },
+                    "targets": [3, 4, 5, 6, 7, 8]
+                },
+                {
+                    "render": function ( data, type, row ) {
                         let htm = "<div class='tooltip'><button type='button' id='btnIndexDetail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>";                            
                         return htm;
                     },
@@ -238,12 +250,12 @@ export default {
                 { "data": "F16002", "orderable": true, className:"txt_left line2"}, /*종목*/
                 { "data": 'F15001', "orderable": true }, /*현재가*/
                 { "data": 'F15009', "orderable" : true}, /*전일가*/
-                { "data": null, "orderable" : true, defaultContent:""}, /*Daily*/
-                { "data": null, "orderable" : true, defaultContent:""}, /*1Week*/
-                { "data": null, "orderable" : true, defaultContent:""}, /*1Month*/
-                { "data": null, "orderable" : true, defaultContent:""}, /*YTD*/
-                { "data": null, "orderable" : true, defaultContent:""}, /*1Year*/
-                { "data": null, "orderable" : true, defaultContent:""}, /*3Year*/
+                { "data": 'daily', "orderable" : true }, /*Daily*/
+                { "data": '1week', "orderable" : true}, /*1Week*/
+                { "data": '1month', "orderable" : true}, /*1Month*/
+                { "data": 'ytd', "orderable" : true}, /*YTD*/
+                { "data": '1year', "orderable" : true}, /*1Year*/
+                { "data": '3year', "orderable" : true}, /*3Year*/
                 { "data": null, "orderable" : true, defaultContent:""},
             ]
         }); 
@@ -312,6 +324,18 @@ export default {
                 },
                 {
                     "render": function ( data, type, row ) {
+                        let htm = ""
+                        if (data >= 0) {
+                                htm = "<span class='align_r text_red'>"+data + "</span>";
+                        } else {
+                                htm = "<span class='align_r text_blue'>"+data + "</span>";
+                        }      
+                        return htm;                   
+                    },
+                    "targets": [3, 4, 5, 6, 7, 8]
+                },
+                {
+                    "render": function ( data, type, row ) {
                         let htm = "<div class='tooltip'><button type='button' id='btnIndexDetail'  class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>";                            
                         return htm;
                     },
@@ -322,13 +346,13 @@ export default {
                 { "data": "F16002", "orderable": true, className:"txt_left line2"}, /*종목*/
                 { "data": 'F15001', "orderable": true }, /*현재가*/
                 { "data": 'F15009', "orderable" : true}, /*전일가*/
-                { "data": null, "orderable" : true, defaultContent:""}, /*Daily*/
-                { "data": null, "orderable" : true, defaultContent:""}, /*1Week*/
-                { "data": null, "orderable" : true, defaultContent:""}, /*1Month*/
-                { "data": null, "orderable" : true, defaultContent:""}, /*YTD*/
-                { "data": null, "orderable" : true, defaultContent:""}, /*1Year*/
-                { "data": null, "orderable" : true, defaultContent:""}, /*3Year*/
-                { "data": null, "orderable" : true, defaultContent:""},
+                { "data": 'daily', "orderable" : true }, /*Daily*/
+                { "data": '1week', "orderable" : true}, /*1Week*/
+                { "data": '1month', "orderable" : true}, /*1Month*/
+                { "data": 'ytd', "orderable" : true}, /*YTD*/
+                { "data": '1year', "orderable" : true}, /*1Year*/
+                { "data": '3year', "orderable" : true}, /*3Year*/
+                { "data": null, "orderable" : true},
             ]
         });
 
