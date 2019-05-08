@@ -260,6 +260,7 @@
 
 
 
+                        <!-- 관심종목 영역 -->
                         <ComFavorItemSub    v-if="showFaver" 
                         
                                             @showDetail="showDetail" 
@@ -427,7 +428,6 @@ export default {
 
             vm.customizeDialog  =   false;
 
-
             /* 고정으로 노출할 항목이 중복으로 존재하는지 체크한다. */
             arrFixTitle.forEach(function(e,i) {
                 var same = vm.arrCustomizeColumn.filter(function(o, p) {
@@ -444,14 +444,21 @@ export default {
             console.log("########## EtpOperInfoQuick.vue -> fn_setCustomizeData END ############");
         },
 
+        /*
+         *  관심종목에서 그래프 선택시 상세정보를 보여준다.
+         *  2019-05-03  bkLove(촤병국)
+         */
         showDetail: function(gubun, paramData) {
             var vm = this;
-debugger;
             vm.$emit( "showDetail", gubun, paramData );
         },
+
+        /*
+         *  메시지창 정보가 필요한 경우 해당 정보를 보여준다.
+         *  2019-05-03  bkLove(촤병국)
+         */        
         showMessageBox: function(title, msg, option, gubun) {
             var vm = this;
-debugger;
             vm.$emit( "showMessageBox", title, msg, option, gubun );
         }        
     }
