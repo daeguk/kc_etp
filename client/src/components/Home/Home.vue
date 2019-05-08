@@ -6,8 +6,8 @@
     <div v-else>
       <ToolBar></ToolBar>
       <NoticeModal v-if="showModalFlag"></NoticeModal>
-      <NavMini v-if="!showFullFlag"></NavMini>
-      <NavFull v-if="showFullFlag"></NavFull>
+      <!--NavMini v-if="!showFullFlag"></NavMini>
+      <NavFull v-if="showFullFlag"></NavFull-->
       <HomeContents></HomeContents>
       <Footer></Footer>
     </div>        

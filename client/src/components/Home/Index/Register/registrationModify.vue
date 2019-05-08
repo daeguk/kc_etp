@@ -3,21 +3,21 @@
         <v-form ref="modForm" v-model="valid" lazy-validation>
             <v-container>
                 <v-card flat class="regi_status">
-                    <v-layout row>
+                    <v-layout row  mt-2 mb-1>
                         <v-flex xs2>
                             <v-subheader>Register ID</v-subheader>
                         </v-flex>
-                        <v-flex xs4 mt-3 mb-2>
-                            <span>{{ modForm.reg_id }}</span>
+                        <v-flex xs4 mt-2>
+                            <span>{{ modForm.reg_id }}fdsfds</span>
                         </v-flex>
                     </v-layout>
 
-                    <v-layout row>
+                    <v-layout row  mt-1 mb-2>
                         <v-flex xs2>
                             <v-subheader>Status</v-subheader>
                         </v-flex>
 
-                        <v-flex xs4 mt-3 mb-2>
+                        <v-flex xs4 mt-2 >
                             <span class="text_color_blue">등록완료 ></span>
                             <span v-bind:class="{ 'text_color_blue' : modForm.status >= '02'}">연동신청 ></span>
                             <span v-bind:class="{ 'text_color_blue' : modForm.status >= '03'}">연동완료</span>
@@ -41,7 +41,7 @@
                                     <v-subheader>지수산출기관</v-subheader>
                                 </v-flex>
 
-                                <v-flex xs4 mt-3 mb-2>
+                                <v-flex xs4 mt-1 mb-3>
                                     <span class="text_color_blue">dbfn</span>
                                 </v-flex>
                             </v-layout>
@@ -76,7 +76,7 @@
                                                     color="primary"
                                                     dark
                                                     @click="fn_jisuDuplCheck"
-
+                                                    class="mt-0"
                                                     v-if="modForm.status != '03'"
                                                 >중복확인</v-btn>
                                             </template>
@@ -138,7 +138,7 @@
                                 <v-flex xs2>
                                     <v-subheader>지수개요</v-subheader>
                                 </v-flex>
-                                <v-flex xs10>
+                                <v-flex xs8>
                                     <v-textarea
                                         label="지수개요"
                                         outline
@@ -175,7 +175,7 @@
                                     <v-subheader>기준일</v-subheader>
                                 </v-flex>
 
-                                <v-flex xs4>
+                                <v-flex xs3>
                                     <!--달력-->
                                     <v-layout row wrap>
                                         <v-flex xs12 sm6 md6>
@@ -196,7 +196,6 @@
                                                         label="Picker in menu"
                                                         append-icon="event"
                                                         box
-                                                        readonly
                                                         outline
                                                         v-on="on"
                                                         widh="100%"
@@ -378,7 +377,7 @@
                                 <v-flex xs2>
                                     <v-subheader>요청사항</v-subheader>
                                 </v-flex>
-                                <v-flex xs10>
+                                <v-flex xs8>
                                     <v-textarea
                                         label="요청사항"
                                         outline
@@ -472,7 +471,7 @@
                             </v-layout>
 
                             <v-flex xs12 class="add_btn" v-if="modForm.status != '03'">
-                                <v-dialog v-model="dialog2" persistent max-width="700">
+                                <v-dialog v-model="dialog2" persistent max-width="750">
                                     <template v-slot:activator="{ on }">
                                         <v-btn flat icon color="#888888" dark v-on="on">
                                             <v-icon>add_circle_outline</v-icon>
@@ -492,13 +491,10 @@
                                         </h5>
 
                                         <v-container fluid pt-0>
-                                            <v-layout
-                                                align-center
-                                                justify-space-around
-                                                row
+                                            <v-layout row
                                                 fill-height
-
                                                 v-for="(item, index) in arr_group_inst" :key="index"
+                                                class="IndexRegi_w ver2_xs3"
                                             >
                                                 <v-flex xs3>
                                                     <v-checkbox
@@ -508,6 +504,7 @@
                                                         :value="item.one.inst_cd"
                                                         :id="item.one.inst_cd"
                                                         :key="item.one.inst_cd"
+                                                        hide-details
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
@@ -518,6 +515,7 @@
                                                         :value="item.two.inst_cd"
                                                         :id="item.two.inst_cd"
                                                         :key="item.two.inst_cd"
+                                                        hide-details
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
@@ -528,6 +526,7 @@
                                                         :value="item.three.inst_cd"
                                                         :id="item.three.inst_cd"
                                                         :key="item.three.inst_cd"
+                                                        hide-details
                                                     ></v-checkbox>
                                                 </v-flex>
                                             </v-layout>

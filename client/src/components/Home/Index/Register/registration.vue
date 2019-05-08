@@ -16,7 +16,7 @@
                                 <v-flex xs2>
                                     <v-subheader>지수산출기관</v-subheader>
                                 </v-flex>
-                                <v-flex xs4 mt-3 mb-2>
+                                <v-flex xs4 mt-1 mb-3>
                                     <span class="text_color_blue">dbfn</span>
                                 </v-flex>
                             </v-layout>
@@ -45,6 +45,7 @@
                                         <v-dialog v-model="dialog" persistent max-width="350">
                                             <template v-slot:activator="{ on }">
                                                 <v-btn
+                                                    class="mt-0"
                                                     small
                                                     depressed
                                                     color="primary"
@@ -80,7 +81,7 @@
                                     <v-subheader>지수개요</v-subheader>
                                 </v-flex>
 
-                                <v-flex xs10>
+                                <v-flex xs8>
                                     <v-textarea
                                         label="지수개요"
                                         outline
@@ -114,7 +115,7 @@
                                     <v-subheader>기준일</v-subheader>
                                 </v-flex>
 
-                                <v-flex xs4>
+                                <v-flex xs3>
                                     <!--달력-->
                                     <v-layout row wrap>
                                         <v-flex xs12 sm6 md6>
@@ -136,7 +137,6 @@
                                                         label="Picker in menu"
                                                         append-icon="event"
                                                         box
-                                                        readonly
                                                         outline
                                                         v-on="on"
                                                         widh="100%"
@@ -217,7 +217,7 @@
                                     <v-subheader>소급지수</v-subheader>
                                 </v-flex>
 
-                                <v-flex xs4 id="file-drag-drop" v-show="!jisuUploadResult">
+                                <v-flex xs4 id="file-drag-drop" v-show="false">
                                     <v-layout flat class="drag_box" ref="fileform">
                                         <input type="file" name="file" ref="file" style="display:none;">
 
@@ -238,7 +238,7 @@
                                 </v-flex>
 
 
-                                <v-flex xs4 ml-3 v-show="!jisuUploadResult">
+                                <v-flex xs4 ml-3 v-show="false">
                                     <p>
                                         <v-icon color="#1976d2">check</v-icon>
                                         <b>허용되는 확장자</b>
@@ -258,13 +258,9 @@
                                 </v-flex>
 
 
-                                <v-flex mb-3 v-show="!!jisuUploadResult">
+                                <v-flex mb-3 v-show="true">
 
-                                    <v-flex>
-                                        <v-btn @click="fn_clearFile()">X</v-btn>
-                                    </v-flex>
-
-                                    <v-flex xs16 class="drag_box_w">
+                                    <v-flex xs4 class="drag_box_w">
                                         <v-layout flat class="drag_box list">
 
                                             <v-data-table
@@ -283,6 +279,9 @@
                                             </v-data-table>
                                         </v-layout>
                                     </v-flex>
+                                     <v-flex xs2 class="drag_box_close">
+                                        <v-btn icon @click="fn_clearFile()"><v-icon>close</v-icon></v-btn>
+                                    </v-flex>
                                 </v-flex>
                             </v-layout>
 
@@ -292,7 +291,7 @@
                                     <v-subheader>요청사항</v-subheader>
                                 </v-flex>
 
-                                <v-flex xs10>
+                                <v-flex xs8>
                                     <v-textarea outline color="blue" height="80px"  v-model="form.req_content" :rules="[rules.req_content]">
                                         <template v-slot:label>
                                             <div>
@@ -349,7 +348,7 @@
                             </v-layout>
 
                             <v-flex xs12 class="add_btn">
-                                <v-dialog v-model="dialog2" persistent max-width="700">
+                                <v-dialog v-model="dialog2" persistent max-width="750">
                                     <template v-slot:activator="{ on }">
                                         <v-btn flat icon color="#888888" dark v-on="on">
                                             <v-icon>add_circle_outline</v-icon>
@@ -369,13 +368,10 @@
                                         </h5>
 
                                         <v-container fluid pt-0>
-                                            <v-layout
-                                                align-center
-                                                justify-space-around
-                                                row
+                                            <v-layout row
                                                 fill-height
-
                                                 v-for="(item, index) in arr_group_inst" :key="index"
+                                                class="IndexRegi_w ver2_xs3"
                                             >
                                                 <v-flex xs3>
                                                     <v-checkbox
@@ -425,7 +421,7 @@
 
                 <!-- 특정기관과 공유 end-->
                 <div class="text-xs-center">
-                    <v-btn depressed large color="#3158a1" dark @click="fn_registerJisu()">등록</v-btn>
+                    <v-btn depressed large class="btn_blue01" dark @click="fn_registerJisu()">등록</v-btn>
                 </div>
 
                 <ConfirmDialog ref="confirm1"    v-show="false"></ConfirmDialog>
@@ -680,7 +676,6 @@ export default {
         this.$refs.file.addEventListener(
             "change",
             function(evt) {
-
                 var selfThis    =   this;
                 let file        =   this.$refs.file.files[0];
 

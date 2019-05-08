@@ -1,7 +1,7 @@
 <template>
-    <v-container>
-        <v-layout row class="content_margin">
-            <v-flex grow>
+    <v-container class="IndexRegi_w">
+        <v-layout row class="content_margin con_wrap">
+            <v-flex grow  class="conWidth_left">
                 <v-card flat lite pb-0>
                     <v-card-title primary-title>
                         <h3 class="headline" pb-0>
@@ -13,50 +13,16 @@
                     <registration v-show="!editYn"></registration>
                 </v-card>
             </v-flex>
-            <v-flex shrink>
+            <v-flex shrink   class="conWidth_right">
                 <v-card flat class="right_menu_w">
-                    <v-navigation-drawer
-                        clipped
-                        width="250"
-                        class="drawer-style" 
-                        mini-variant-width="50"
-                        v-model="drawer"
-                        :mini-variant.sync="mini"
-                        app
-                        right
-                    >
-                        <v-toolbar flat class="transparent">
-                            <v-list class="pa-0">
-                                <v-list-tile avatar>
-                                    <v-list-tile-avatar class="right_menu_t_i">
-                                        <v-btn icon>
-                                            <v-icon>add</v-icon>
-                                        </v-btn>
-                                    </v-list-tile-avatar>
-                                    <v-list-tile-content>
-                                        <v-list-tile-title>
-                                            <h6>Quick Menu</h6>
-                                        </v-list-tile-title>
-                                    </v-list-tile-content>
-                                    <v-list-tile-action>
-                                        <v-btn icon @click.stop="mini = !mini">
-                                            <v-icon>chevron_right</v-icon>
-                                        </v-btn>
-                                    </v-list-tile-action>
-                                </v-list-tile>
-                            </v-list>
-                        </v-toolbar>
-
-                        <v-list class="pt-0" dense>
-                            <v-divider></v-divider>
-                            <v-list-tile class="right_menu_newbtn">
+                    <v-list class="pt-0" dense>
+                         <v-list-tile class="right_menu_newbtn">
                                 <v-list-tile-content>
-                                    <v-btn nomal depressed color="#ff821d" dark  @click="fn_jisuRegister()">신규지수등록</v-btn>
+                                    <v-btn nomal depressed class="btn_orange01" dark  @click="fn_jisuRegister()">신규지수등록</v-btn>
                                 </v-list-tile-content>
                             </v-list-tile>
                             <quickmenucon></quickmenucon>
                         </v-list>
-                    </v-navigation-drawer>
                 </v-card>
             </v-flex>
 
