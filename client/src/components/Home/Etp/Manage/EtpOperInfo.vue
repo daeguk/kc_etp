@@ -43,9 +43,28 @@
                                         @showDetail="showDetail" 
                                         @showMessageBox="showMessageBox">
                     </EtpOperInfoQuick>
-
                 </v-card>
-            </v-flex>
+
+                <!-- [ETP 운영정보] -> Quick Menu iNAV 산출현황 선택 -> 그리드에서 Pdf 선택시 -->
+                <v-dialog   v-model="showInavPdfYn"     persistent  max-width="500" >
+                    <EtpOperInfoInavPdf     v-if="inavGubun == 'pdf'"
+
+                                            :paramData = "etpRow"
+                                            @fn_close = "fn_close">
+                    </EtpOperInfoInavPdf>
+                </v-dialog>
+
+                <!-- [ETP 운영정보] -> Quick Menu iNAV 산출현황 선택 -> 그리드에서 Index 선택시 -->
+                <v-dialog  v-model="showInavIndexYn"  persistent  max-width="500" >
+                    <EtpOperInfoInavIndex   v-if="inavGubun == 'index'"
+
+                                            :paramData = "etpRow"
+                                            @fn_close = "fn_close">
+                    </EtpOperInfoInavIndex>
+                </v-dialog>   
+
+
+            </v-flex>         
         </v-layout>
     </v-container>
 </template>
@@ -57,15 +76,18 @@ import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 
 import Config from '@/js/config.js';
-import EtpOperInfoQuick     from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
-//import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
+import EtpOperInfoQuick         from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
+import EtpOperInfoInavPdf       from    "@/components/Home/Etp/Manage/EtpOperInfoInavPdf.vue";
+import EtpOperInfoInavIndex     from    "@/components/Home/Etp/Manage/EtpOperInfoInavIndex.vue";
 
 var table01 = null;
 
 export default {
     components: {
         //indexDetailrtmenupop: indexDetailrtmenupop
-        EtpOperInfoQuick  :   EtpOperInfoQuick
+            EtpOperInfoQuick        :   EtpOperInfoQuick
+        ,   EtpOperInfoInavPdf      :   EtpOperInfoInavPdf
+        ,   EtpOperInfoInavIndex    :   EtpOperInfoInavIndex
     },
     data() {
         return {
@@ -85,8 +107,12 @@ export default {
             arrShowColumnDef   :   [],
             etpOperInfoQuickYn : true,
 
-            indexBasic : {},
-            paramData  : {}
+            indexBasic  :   {},
+            paramData   :   {},
+            etpRow      :   {},
+            inavGubun   :   "",
+            showInavPdfYn : false,
+            showInavIndexYn : false
         };
     },
     mounted: function() {
@@ -251,11 +277,11 @@ export default {
             table01 = $('#table01').DataTable( tableObj );
 
             // 테이블별 이벤트
-            $('#table01 tbody').on('click', 'button[id=btnEtpInfo],button[id=btnPdf]', function () {
+            $('#table01 tbody').on('click', 'button[id=btnInav],button[id=btnEtpInfo],button[id=btnPdf]', function () {
 
                 var table = $('#table01').DataTable();
                 var data = table.row($(this).parents('tr')).data();
-
+                var rowInx = table.row($(this)).index();
                 var btnId   =   $(this).attr('id');
 
                 console.log("########## EtpOperInfo.vue -> pageMove START ############");
@@ -266,8 +292,29 @@ export default {
                 vm.paramData.f16012         =   data.f16012;        /* 국제표준코드  */
                 vm.paramData.f16257         =   data.f16257;        /* ETP기초지수코드  */
                 vm.paramData.f34239         =   data.f34239;        /* ETP기초지수MID  */
+                vm.paramData.rowIndex       =   rowInx;
+
+                /* 산출방식 컬럼값이 없어 레코드 행이 짝수이면 pdf, 홀수이면 index 로 임시 처리함. TODO: 추후 변경 필요. */
+                var gubun = "";
+                if( rowInx %2 ==0 ) {
+                    gubun = "btnInavPdfPop";
+                }else{
+                    gubun = "btnInavIndexPop";
+                }
 
                 switch( btnId ) {
+
+                    case    'btnInav'       :
+
+                                if( gubun == "btnInavPdfPop" ) {
+                                    vm.inavGubun    =   "pdf";
+                                    vm.showInavPdfYn   =   true;
+                                }else if( gubun == "btnInavIndexPop" ) {
+                                    vm.inavGubun    =   "index";
+                                    vm.showInavIndexYn =   true;
+                                }
+
+                                break;
 
                     case    'btnEtpInfo'    :
                                 vm.$emit('showDetail', 1, vm.paramData);
@@ -277,6 +324,7 @@ export default {
                                 vm.$emit('fn_pageMove', btnId, vm.paramData);
                                 break;
                 }
+                
                 console.log("########## EtpOperInfo.vue -> pageMove END ############");
             });                
         },
@@ -412,20 +460,6 @@ export default {
         fn_setArrShowColumn( arrTemp ) {
             var vm = this;
 
-            var graphContent = "";
-
-            /* iNAV 산출현황 */
-            if( vm.stateInfo.pageState != 'etpInfo' ) {
-                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnInav", "btnContent" : "visibility", "btnSpanContent" : "투자지표" } );
-            }
-            
-            /* ETF 상세정보 */
-            graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnEtpInfo", "btnContent" : "equalizer", "btnSpanContent" : "ETP정보" } );
-
-            /* PDF 정보 */
-            graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnPdf", "btnContent" : "picture_as_pdf", "btnSpanContent" : "PDF관리" } );
-
-
             var arrColumn  =   [
                 { 'name' : 'f16002'             , 'data': 'f16002'           ,  'width' : '220', 'orderable' : true  , 'className': 'dt-body-left',  'title' : '종목'           },      /* 한글종목명 */
                 { 'name' : 'index_cal_method'   , 'data': 'index_cal_method' ,  'width' : '100', 'orderable' : true  , 'className': 'dt-body-left',  'title' : '지수<br>산출방식'   },      /* 지수산출방식 */
@@ -451,10 +485,32 @@ export default {
                 { 'name' : 'f15001'             , 'data': 'f15001'           ,  'width' : '80',  'orderable' : true  , 'className': 'dt-body-right', 'title' : 'ETF 현재가'    },      /* 현재가  */
                 { 'name' : 'f16073'             , 'data': 'f16073'           ,  'width' : '80',  'orderable' : true  , 'className': 'dt-body-right', 'title' : '과세구분'      },      /* 락구분코드  */
 
-                { 'name' : 'graph'              , 'data': null               ,  'width' : '150', 'defaultContent' :  graphContent },
+                { 'name' : 'graph'              , 'data': null               ,  'width' : '150' },
             ];        
 
             var arrColumnDef  =   [
+
+                    {       'name' : 'graph'   
+                        ,   "render": function ( data, type, row ) {
+
+                                var graphContent = "";
+
+                                /* etpInfo - ETP운용정보, iNav - iNav 산출현황, performance - ETP Performance, customize - 컬럼 선택 */
+                                /* iNAV 산출현황 */
+                                if( vm.stateInfo.pageState === 'iNav' ) {
+                                    graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnInav", "btnContent" : "visibility", "btnSpanContent" : "투자지표" } );
+                                }
+                                
+                                /* ETF 상세정보 */
+                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnEtpInfo", "btnContent" : "equalizer", "btnSpanContent" : "ETP정보" } );
+
+                                /* PDF 정보 */
+                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnPdf", "btnContent" : "picture_as_pdf", "btnSpanContent" : "PDF관리" } );                                
+
+                                return  graphContent;
+                            }
+                    },                
+
 /*            
                 {       'name' : 'index_cal_method'   
                     ,   "render": function ( data, type, row ) {
@@ -527,6 +583,20 @@ export default {
                 }
 
             }
+        },
+
+
+        /*
+         *  iNAV 산출현황 선택 후 그리드에서 pdf 또는 index 에 따라 호출되 팝업창을 총료한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_close( param ) {
+            var vm = this;
+
+            vm.inavGubun   =   "";
+
+            vm.showInavPdfYn   =   false;
+            vm.showInavIndexYn =   false;
         },
         
         showDetail: function(gubun, paramData) {      
