@@ -67,9 +67,6 @@
                         </v-list-tile-content>
 
 
-<v-btn @click='$router.push( "/etp/manage/etpOperInfoQuickInav")'>iNav Publ</v-btn><br>
-<v-btn @click='$router.push( "/etp/manage/etpOperInfoQuickPerformance")'>ETP Performance Publ</v-btn><br>
-
                         <v-list-tile-content class="rightmenu_con Oper_menu">
 
                             <v-subheader>
