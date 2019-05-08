@@ -19,7 +19,6 @@ import  EtpOperMain                         from './components/Home/Etp/Manage/E
 import  EtpOperInfo                         from "./components/Home/Etp/Manage/EtpOperInfo.vue";                        /* ETP 운용정보 */
 import  EtpOperIndex                        from "./components/Home/Etp/Manage/EtpOperIndex.vue";                       /* 지수관리 */
 import  EtpOperPdf                          from "./components/Home/Etp/Manage/EtpOperPdf.vue";                         /* PDF 관리 */
-import  EtpOperInfoQuickInav                from './components/Home/Etp/Manage/EtpOperInfoQuickInav.vue';               /* ETP 운용정보 -> iNAV 산출현황 */
 import  EtpOperInfoQuickPerformance         from './components/Home/Etp/Manage/EtpOperInfoQuickPerformance.vue';        /* ETP 운용정보 -> ETP Performance */
 
 import  EtpRegisterMain                     from './components/Home/Etp/Register/EtpRegisterMain.vue';
@@ -156,13 +155,6 @@ export const routes = [
         },
         {   path : 'etp/etpManageDetail',
             component: EtpManageDetail,
-            meta: {
-              requiresAuth: true,
-              requiresType: ['0001', '0002', '0004', '0005']
-            },
-        },
-        {   path : 'etp/manage/etpOperInfoQuickInav',
-            component: EtpOperInfoQuickInav,
             meta: {
               requiresAuth: true,
               requiresType: ['0001', '0002', '0004', '0005']

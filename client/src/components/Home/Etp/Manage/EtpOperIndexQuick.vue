@@ -87,7 +87,6 @@
                                         router-link
                                         to="/etp/manage/overseasIndex"
                                         class="border_b"
-                                        v-model="text2"
                                     >
                                         <v-list-tile-avatar>
                                             <v-icon value="해외지수">exposure</v-icon>
@@ -120,8 +119,6 @@ export default {
     data() {
         return {
             text: "전종목",
-            checkbox: true,
-            text2: "",
             dialog: false,
             dialog2: false,
             dialog5: false,
