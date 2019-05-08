@@ -30,10 +30,19 @@
 
 
                     <v-card flat>
-
                         <table id="table01" class="tbl_type"    style="width:100%"/>
-
                     </v-card>
+
+                    <!-- [ETP 운영정보] Quick 메뉴 정보 -->
+                    <EtpOperInfoQuick   :indexBasic = "indexBasic"
+
+                                        @fn_setInavData = "fn_setInavData"
+                                        @fn_setEtpPerformanceData = "fn_setEtpPerformanceData"
+                                        @fn_setCustomizeData = "fn_setCustomizeData"
+
+                                        @showDetail="showDetail" 
+                                        @showMessageBox="showMessageBox">
+                    </EtpOperInfoQuick>
 
                 </v-card>
             </v-flex>
@@ -130,50 +139,39 @@ export default {
                             },
             arrShowColumn   :   [],
             arrShowColumnDef   :   [],
-            etpOperInfoQuickYn : true
+            etpOperInfoQuickYn : true,
+
+            indexBasic : {}
         };
     },
     mounted: function() {
         var vm = this;
 
+        console.log( "######### EtpOperInfo.vue mounted ");
         vm.$nextTick().then(() => {
             vm.fn_setTableInfo();
             vm.fn_getEtpOperInfo( vm.stateInfo.gubun );
         });
-
-        vm.$EventBus.$on('EtpOperControl_EtpOperInfo_setInavData', data => {
-            vm.fn_setInavData( data );
-alert(11);
-//            vm.$destory();
-        });
-
-        vm.$EventBus.$on('EtpOperControl_EtpOperInfo_setEtpPerformanceData', data => {
-            vm.fn_setEtpPerformanceData( data );
-        });
-
-        vm.$EventBus.$on('EtpOperControl_EtpOperInfo_setCustomizeData', data => {
-            vm.fn_setCustomizeData( data );
-        });                       
     },
     created: function() {},
     beforeDestory: function() {
         var vm = this;
-console.log( "############ beforeDestory" );
-
-        vm.$EventBus.$off('EtpOperControl_EtpOperInfo_setInavData', data => {
-            vm.fn_setInavData( data );
-        });
-
-        vm.$EventBus.$off('EtpOperControl_EtpOperInfo_setEtpPerformanceData', data => {
-            vm.fn_setEtpPerformanceData( data );
-        });
-
-        vm.$EventBus.$off('EtpOperControl_EtpOperInfo_setCustomizeData', data => {
-            vm.fn_setCustomizeData( data );
-        });
     },
 
     methods: {
+
+
+        showDetail: function(gubun, paramData) {      
+            var vm = this;
+
+            vm.$emit( "showDetail", gubun, paramData );
+        },
+
+        showMessageBox: function(title, msg, option, gubun) {
+            var vm = this;
+
+            vm.$emit( "showMessageBox", title, msg, option, gubun );
+        },        
 
         /*
          *  ETP 운영정보를 조회한다.
@@ -194,7 +192,7 @@ console.log( "############ beforeDestory" );
                 table01.clear().draw();
             }
 
-//            vm.$refs.result_cnt.textContent = "0";
+            vm.$refs.result_cnt.textContent = "0";
 
             axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
                 data: {
@@ -210,9 +208,9 @@ console.log( "############ beforeDestory" );
                         table01.rows.add( dataList ).draw();
                         table01.draw();
 
-//                        vm.$refs.result_cnt.textContent = dataList.length;
+                        vm.indexBasic   =    dataList[0];
 
-                        vm.$emit( "fn_setIndexBasic", dataList[0] );
+                        vm.$refs.result_cnt.textContent = dataList.length;
                     }
                 }
             });
@@ -341,7 +339,6 @@ console.log( "############ beforeDestory" );
             vm.fn_setTableInfo();
             vm.fn_getEtpOperInfo( vm.stateInfo.gubun );
 
-            vm.$emit( "fn_eventClose", "fn_setInavData" );
             console.log("########## EtpOperInfo.vue -> fn_setInavData END ############");
         },
 

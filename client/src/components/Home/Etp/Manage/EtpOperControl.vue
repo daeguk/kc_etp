@@ -8,9 +8,7 @@
             <EtpOperInfo    v-if="showEtpOerInfo == 0" 
             
                             @showDetail="showDetail" 
-                            @showMessageBox="showMessageBox"
-                            @fn_setIndexBasic="fn_setIndexBasic"
-                            @fn_eventClose = "fn_eventClose" >
+                            @showMessageBox="showMessageBox">
             </EtpOperInfo>
 
             <!-- 지수관리 -->
@@ -26,18 +24,6 @@
                             @showDetail="showDetail" 
                             @showMessageBox="showMessageBox">
             </EtpOperPdf>
-
-            <EtpOperInfoQuick   v-if="showEtpOperInfoQuick"
-
-                                :indexBasic = "indexBasic"
-
-                                @fn_setInavData = "fn_setInavData"
-                                @fn_setEtpPerformanceData = "fn_setEtpPerformanceData"
-                                @fn_setCustomizeData = "fn_setCustomizeData"
-
-                                @showDetail="showDetail" 
-                                @showMessageBox="showMessageBox"                                
-            ></EtpOperInfoQuick>
             
             <ConfirmDialog ref="confirm"></ConfirmDialog>
         </v-flex>
@@ -61,8 +47,6 @@ import EtpOperInfo from "@/components/Home/Etp/Manage/EtpOperInfo.vue";         
 import EtpOperIndex from "@/components/Home/Etp/Manage/EtpOperIndex.vue";               /* 지수관리 */
 import EtpOperPdf from "@/components/Home/Etp/Manage/EtpOperPdf.vue";                   /* PDF 관리 */
 
-import EtpOperInfoQuick     from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
-
 export default {
     props: ["activeTab"],
     data() {
@@ -71,23 +55,19 @@ export default {
             showEtpDetailDialog : false,
             showEtpOerInfo : 0,
             paramData : [],
-
-            showEtpOperInfoQuick : false,
-            indexBasic : {}
     	};
     },    
 
     components: {
         
-        IndexDetailDialog : IndexDetailDialog,
-        EtpManageDetail :   EtpManageDetail,
+        IndexDetailDialog : IndexDetailDialog,      /* 인덱스 상세정보 */
+        EtpManageDetail :   EtpManageDetail,        /* ETP 상세정보 */
 
         EtpOperInfo :  EtpOperInfo,                 /* ETP 운용정보 */
         EtpOperIndex :   EtpOperIndex,              /* 지수관리 */
         EtpOperPdf :  EtpOperPdf,                   /* PDF 관리 */
 
         ConfirmDialog : ConfirmDialog,
-        EtpOperInfoQuick, EtpOperInfoQuick
     },
 
     mounted: function() {
@@ -137,59 +117,7 @@ export default {
         showMessageBox: function(title, msg, option, gubun) {
             this.$root.$confirm.open(title,msg, option, gubun);
         },
-
-        fn_setIndexBasic : function( paramData ) {
-            this.indexBasic = paramData;
-
-            this.showEtpOperInfoQuick =   true;
-        },
-
-        /*
-         *  EtpOperControl.vue -> EtpOperInfo  fn_setInavData 함수를 호출한다.
-         *  2019-05-03  bkLove(촤병국)
-         */
-        fn_setInavData( paramData ) {
-            var vm = this;
-
-            console.log("########## EtpOperControl.vue -> fn_setInavData START ############");
-            vm.$EventBus.$emit( "EtpOperControl_EtpOperInfo_setInavData", paramData );
-            console.log("########## EtpOperControl.vue -> fn_setInavData END ############");
-        },
-
-        /*
-         *  EtpOperControl.vue -> EtpOperInfo  fn_setEtpPerformanceData 함수를 호출한다.
-         *  2019-05-03  bkLove(촤병국)
-         */
-        fn_setEtpPerformanceData( paramData ) {
-            var vm = this;
-
-            console.log("########## EtpOperControl.vue -> fn_setEtpPerformanceData START ############");
-            vm.$EventBus.$emit( "EtpOperControl_EtpOperInfo_setEtpPerformanceData", paramData );
-            console.log("########## EtpOperControl.vue -> fn_setEtpPerformanceData END ############");
-        },
-
-        /*
-         *  EtpOperControl.vue -> EtpOperInfo  fn_setCustomizeData 함수를 호출한다.
-         *  2019-05-03  bkLove(촤병국)
-         */
-        fn_setCustomizeData( paramData ) {
-            var vm = this;
-
-            console.log("########## EtpOperControl.vue -> fn_setCustomizeData START ############");
-            vm.$EventBus.$emit( "EtpOperControl_EtpOperInfo_setCustomizeData", paramData );
-            console.log("########## EtpOperControl.vue -> fn_setCustomizeData END ############");
-        },
-
-        fn_eventClose( paramData ) {
-
-            if( paramData == "fn_setInavData" ) {
-                this.showEtpOperInfoQuick   =   false;
-                this.showEtpOperInfoQuick   =   true;
-            }
-        }
-    }   
-
-
+    }
 }
 </script>
 
