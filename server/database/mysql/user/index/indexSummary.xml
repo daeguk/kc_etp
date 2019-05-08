@@ -865,7 +865,7 @@
 		                ,base.F16002
 		                ,base.F15001
 		                ,base.F15004 as daily /*daily 수익률*/    
-						  , @vF12506:= base.F12506         
+						, @vF12506:= base.F12506         
 		              ,(SELECT F15001
                   FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
                              , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
