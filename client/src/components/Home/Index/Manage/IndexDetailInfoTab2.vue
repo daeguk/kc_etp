@@ -187,6 +187,7 @@ export default {
             },
             paging: false,
             searching: false,
+            "ordering": false,
             "columnDefs": [
                 {  
                     "render": function ( data, type, row ) {
@@ -335,8 +336,8 @@ export default {
                     alert("비중 목록이 없습니다");
                 } else {
                     var items = response.data.results;
-                    
                     console.log("response=" + JSON.stringify(items));
+                    
                     perf_table.clear().draw();
                     perf_table.rows.add(items).draw();
 
@@ -349,9 +350,11 @@ export default {
             });
         }, 
 
+        /* 자산 추가시 선택된 정보 처리*/
         getSelectedItem: function(sel_items, gubun) {
             var vm = this;
             vm.jongMokDialog = false;
+            
             for (let i = 0; i < sel_items.length; i++) {
                 
                 if (perf_table.rows().count() <= 4) {
@@ -362,31 +365,60 @@ export default {
                         }
                     ).count();
                     
-
-                    if (compare_cnt == 0) {                        
-                        perf_table.row.add(  {
-                            F16012 : '',
-                            F16013 : sel_items[i].JISU_CD,
-                            F16002 : sel_items[i].JISU_NM,
-                            Week1 : '1',
-                            Month1 : '2',
-                            Month3 : '3',
-                            YTD : '4',
-                            Year1 : '5',
-                            Year3 : '6',
-                            Year5 : '7',
-                            Year10 : '8',
-                        } ).draw(false);                        
+                    if (compare_cnt == 0) {      
+                        var jisu_cd = '';
+                        var market_id = '';
+                        // ETP 정보일 경우
+                        if (gubun == '1') {
+                            jisu_cd = sel_items[i].JISU_CD
+                            market_id = '';
+                        // Index 정보 일경우
+                        } else if (gubun == '2') {
+                            jisu_cd = sel_items[i].JISU_CD
+                            market_id = sel_items[i].MARKET_ID;
+                        }
+                        axios.get(Config.base_url + "/user/index/getIndexAnalysisData", {
+                                params: {
+                                    jisu_cd : jisu_cd,                            
+                                    market_id : market_id,
+                                    gubun : gubun
+                                }
+                        }).then(response => {
+                                // console.log(response);
+                            if (response.data.success == false) {
+                                alert("비중 목록이 없습니다");
+                            } else {
+                                var items = response.data.results[0];
+                                                
+                                perf_table.row.add(  {
+                                    F16012 : items.F16012,
+                                    F16013 : items.F16013,
+                                    F16002 : items.F16002,
+                                    Week1 : items.Week1,
+                                    Month1 : items.Month1,
+                                    Month3 : items.Month3,
+                                    YTD : items.YTD,
+                                    Year1 : items.Year1,
+                                    Year3 : items.Year3,
+                                    Year5 : items.Year5,
+                                    Year10 : items.Year10,
+                                } ).draw(false); 
+                                
+                                vm.performance_chart();
+                            }
+                       
+                        });
                     } else {
-                        alert(sel_items[i].JISU_NM +"은 이미 추가된 자산입니다.");    
+                            alert(sel_items[i].JISU_NM +"은 이미 추가된 자산입니다.");    
                     }
+                   
                 } else {
                     alert("자산 비교는 총 5개 까지 가능 합니다.");
                     break;
                 }
             }
 
-            vm.performance_chart();
+            
         
         },
         showJongMokPop: function() {  
