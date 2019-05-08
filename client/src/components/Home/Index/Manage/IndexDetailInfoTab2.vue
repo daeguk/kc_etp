@@ -145,116 +145,127 @@ export default {
         jongmokPopup: jongmokPopup,
     },
     computed: {},
-    created: function() {},
-    beforeDestroy() {},
-    mounted: function() {
-        
+    created: function() {
         var vm = this;
-
-        if(     this.basicData 
-            &&  this.basicData.jisu_cd
-            &&  this.basicData.large_type
-            &&  this.basicData.market_id
-        ) {
-            this.param.jisu_cd      =   this.basicData.jisu_cd;
-            this.param.large_type   =   this.basicData.large_type;
-            this.param.market_id    =   this.basicData.market_id;
-        }
-        else if(   
-                vm.$route.query.jisu_cd  
-            &&  vm.$route.query.large_type  
-            &&  vm.$route.query.market_id  
-        ) {
-            this.param.jisu_cd      =   this.$route.query.jisu_cd;
-            this.param.large_type   =   this.$route.query.large_type;
-            this.param.market_id    =   this.$route.query.market_id;
-        }        
-
-
-        vm.$root.$infopoptab1 = vm.$refs.$infopoptab1;
-
-
-        perf_table = $('#perf_table').DataTable( {
-            "processing": true,
-            "serverSide": false,
-            "search": true,
-            "info": false,   // control table information display field
-            "stateSave": true,  //restore table state on page reload,
-            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-            select: {
-                style:    'single',
-                selector: 'td:first-child'
-            },
-            paging: false,
-            searching: false,
-            "ordering": false,
-            "columnDefs": [
-                {  
-                    "render": function ( data, type, row ) {
-                        if (data) {
-                            return "<img src='/assets/img/icon_bar01.png'><span>&nbsp;&nbsp;&nbsp;" + data + "</span>";
-                        } else {
-                            return "";
-                        }
-                    },
-                    "targets": 1
-                },
-                {
-                    "targets": [ 0 ],
-                    "visible": false
-                },
-                {  
-                    "render": function ( data, type, row ) {
-                        if (data) {
-                            // 기본 지수는 삭제 버튼 제외
-                            if (row.F16013 != vm.$route.query.jisu_cd) {
-                                return "<div class='tooltip'><button type='button' id='per_del' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:40px;'>삭제</span></div>";
-                            } 
-                        } else {
-                            return "";
-                        }
-                    },
-                    "targets": 10
-                },                
-            ],
-            data : [],
-            columns: [
-                { "data": "F16013", "orderable": false}, 
-                { "data": "F16002", "orderable": false,  "width":"30%", className: 'txt_left line2'}, 
-                { "data": "Week1", "orderable": false, className: 'dt-body-right'},
-                { "data": "Month1", "orderable": false, className: 'dt-body-right'},
-                { "data": "Month3", "orderable": false, className: 'dt-body-right'},
-                { "data": "YTD", "orderable": false, className: 'dt-body-right'},
-                { "data": "Year1", "orderable": false, className: 'dt-body-right'},
-                { "data": "Year3", "orderable": false, className: 'dt-body-right'},
-                { "data": "Year5", "orderable": false, className: 'dt-body-right'},
-                { "data": "Year10", "orderable": false, className: 'dt-body-right'},
-                {"data": null, "align":"center", className: 'dt-body-center', defaultContent:""}
-            ]
-        }); 
-    
-
-        if(     this.param
-            &&  this.param.jisu_cd
-            &&  this.param.market_id
-        ) {
-
-            vm.getIndexImportanceList( this.param );
-
-            $('#perf_table, tbody').on('click', 'button', function () {
-                if ($(this).attr('id') == 'per_del') {
-                    var data = perf_table.row($(this).parents('tr')).remove().draw();
-                
-                    vm.performance_chart();
-                }
-            });
-
-            vm.getIndexAnalysisInfo();
-        }
+        vm.$EventBus.$on('changeIndexAnalysisInfo', data => {
+            vm.init();
+        });
 
     },
-    methods: {
+    beforeDestroy() {
+        this.$EventBus.$off('changeIndexAnalysisInfo')
+    },
 
+    mounted: function() {        
+        this.init();
+    },
+    methods: {
+        init: function() {
+            var vm = this;
+
+            if(     vm.basicData 
+                &&  vm.basicData.jisu_cd
+                &&  vm.basicData.large_type
+                &&  vm.basicData.market_id
+            ) {
+                vm.param.jisu_cd      =   vm.basicData.jisu_cd;
+                vm.param.large_type   =   vm.basicData.large_type;
+                vm.param.market_id    =   vm.basicData.market_id;
+            }
+            else if(   
+                    vm.$route.query.jisu_cd  
+                &&  vm.$route.query.large_type  
+                &&  vm.$route.query.market_id  
+            ) {
+                vm.param.jisu_cd      =   vm.$route.query.jisu_cd;
+                vm.param.large_type   =   vm.$route.query.large_type;
+                vm.param.market_id    =   vm.$route.query.market_id;
+            }        
+
+
+            vm.$root.$infopoptab1 = vm.$refs.$infopoptab1;
+
+            if(perf_table) {
+                perf_table.destroy();
+            }
+            perf_table = $('#perf_table').DataTable( {
+                "processing": true,
+                "serverSide": false,
+                "search": true,
+                "info": false,   // control table information display field
+                "stateSave": true,  //restore table state on page reload,
+                "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                select: {
+                    style:    'single',
+                    selector: 'td:first-child'
+                },
+                paging: false,
+                searching: false,
+                "ordering": false,
+                "columnDefs": [
+                    {  
+                        "render": function ( data, type, row ) {
+                            if (data) {
+                                return "<img src='/assets/img/icon_bar01.png'><span>&nbsp;&nbsp;&nbsp;" + data + "</span>";
+                            } else {
+                                return "";
+                            }
+                        },
+                        "targets": 1
+                    },
+                    {
+                        "targets": [ 0 ],
+                        "visible": false
+                    },
+                    {  
+                        "render": function ( data, type, row ) {
+                            if (data) {
+                                // 기본 지수는 삭제 버튼 제외
+                                if (row.F16013 != vm.$route.query.jisu_cd) {
+                                    return "<div class='tooltip'><button type='button' id='per_del' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:40px;'>삭제</span></div>";
+                                } 
+                            } else {
+                                return "";
+                            }
+                        },
+                        "targets": 10
+                    },                
+                ],
+                data : [],
+                columns: [
+                    { "data": "F16013", "orderable": false}, 
+                    { "data": "F16002", "orderable": false,  "width":"30%", className: 'txt_left line2'}, 
+                    { "data": "Week1", "orderable": false, className: 'dt-body-right'},
+                    { "data": "Month1", "orderable": false, className: 'dt-body-right'},
+                    { "data": "Month3", "orderable": false, className: 'dt-body-right'},
+                    { "data": "YTD", "orderable": false, className: 'dt-body-right'},
+                    { "data": "Year1", "orderable": false, className: 'dt-body-right'},
+                    { "data": "Year3", "orderable": false, className: 'dt-body-right'},
+                    { "data": "Year5", "orderable": false, className: 'dt-body-right'},
+                    { "data": "Year10", "orderable": false, className: 'dt-body-right'},
+                    {"data": null, "align":"center", className: 'dt-body-center', defaultContent:""}
+                ]
+            }); 
+        
+
+            if(     this.param
+                &&  this.param.jisu_cd
+                &&  this.param.market_id
+            ) {
+
+                vm.getIndexImportanceList( this.param );
+
+                $('#perf_table, tbody').on('click', 'button', function () {
+                    if ($(this).attr('id') == 'per_del') {
+                        var data = perf_table.row($(this).parents('tr')).remove().draw();
+                    
+                        vm.performance_chart();
+                    }
+                });
+
+                vm.getIndexAnalysisInfo();
+            }
+        },
         performance_chart: function() {
             // Load the Visualization API and the corechart package.
             google.charts.load('current', {'packages':['corechart']});

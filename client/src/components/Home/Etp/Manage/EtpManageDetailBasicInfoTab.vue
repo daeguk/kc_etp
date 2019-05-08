@@ -179,6 +179,7 @@ export default {
             return  true;
         }
     },
+
     created: function() {},
     beforeDestroy() {},
     mounted: function() {

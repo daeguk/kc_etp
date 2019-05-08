@@ -118,7 +118,17 @@ export default {
     created: function() {
         var vm = this;
 
-        
+        vm.$EventBus.$on('changeIndexInfo', data => {
+            vm.toggle_one = '1M';
+            vm.openSubIndexInfoTab = true;
+            vm.init(true);
+        });
+
+        vm.$EventBus.$on('changeIndexInfoClose', data => {
+            vm.$EventBus.$off('changeIndexInfo');
+
+            vm.openSubIndexInfoTab = false;
+        });
     },
     updated: function() {
 
@@ -130,58 +140,53 @@ export default {
 
     mounted: function() {
         var vm = this;
-        vm.init();
-
-        vm.$EventBus.$on('changeIndexInfo', data => {
-            vm.toggle_one = '1M';
-            vm.openSubIndexInfoTab = true;
-            vm.init();
-        });
-
-        vm.$EventBus.$on('changeIndexInfoClose', data => {
-            vm.$EventBus.$off('changeIndexInfo');
-
-            vm.openSubIndexInfoTab = false;
-        });
+        vm.init(false);  
     },
 
     methods: {
-        init: function() {
+        init: function(event) {
             var vm = this;
             vm.$nextTick().then(() => {
                 console.log("########## IndexDetailDialog.vue -> mounted ############");
-                console.log( "paramData.F16257=["           + this.paramData.F16257         + "] /* ETP기초지수코드 */" );
-                console.log( "paramData.LARGE_TYPE=["       + this.paramData.LARGE_TYPE     + "] /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */" );
-                console.log( "paramData.MARKET_ID=["        + this.paramData.MARKET_ID      + "] /* 시장 ID  */" );
+                console.log( "paramData.F16257=["           + vm.paramData.F16257         + "] /* ETP기초지수코드 */" );
+                console.log( "paramData.LARGE_TYPE=["       + vm.paramData.LARGE_TYPE     + "] /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */" );
+                console.log( "paramData.MARKET_ID=["        + vm.paramData.MARKET_ID      + "] /* 시장 ID  */" );
 
-                if(     this.paramData 
-                    &&  this.paramData.F16257
-                    &&  this.paramData.LARGE_TYPE
-                    &&  this.paramData.MARKET_ID
+                if(     vm.paramData 
+                    &&  vm.paramData.F16257
+                    &&  vm.paramData.LARGE_TYPE
+                    &&  vm.paramData.MARKET_ID
                 ) {
-                    this.basicData.jisu_cd      =   this.paramData.F16257;
-                    this.basicData.large_type   =   this.paramData.LARGE_TYPE;
-                    this.basicData.market_id    =   this.paramData.MARKET_ID;
+                    vm.basicData.jisu_cd      =   vm.paramData.F16257;
+                    vm.basicData.large_type   =   vm.paramData.LARGE_TYPE;
+                    vm.basicData.market_id    =   vm.paramData.MARKET_ID;
                 }
                 else if(
                         vm.$route.query.jisu_cd  
                     &&  vm.$route.query.large_type  
                     &&  vm.$route.query.market_id  
                 ) {
-                    this.basicData.jisu_cd      =   this.$route.query.jisu_cd;
-                    this.basicData.large_type   =   this.$route.query.large_type;
-                    this.basicData.market_id    =   this.$route.query.market_id;
+                    vm.basicData.jisu_cd      =   vm.$route.query.jisu_cd;
+                    vm.basicData.large_type   =   vm.$route.query.large_type;
+                    vm.basicData.market_id    =   vm.$route.query.market_id;
                 }
 
 
 
-                if(     this.basicData
-                    &&  this.basicData.jisu_cd
-                    &&  this.basicData.large_type
-                    &&  this.basicData.market_id
+                if(     vm.basicData
+                    &&  vm.basicData.jisu_cd
+                    &&  vm.basicData.large_type
+                    &&  vm.basicData.market_id
                 ) {
-                    this.getIndexBaseInfo();
-                    this.Indexchart();
+                    vm.getIndexBaseInfo();
+                    vm.Indexchart();
+                }
+
+                if (event == true) {
+                    // 분석정보 실행
+                    vm.$EventBus.$emit('changeIndexAnalysisInfo');
+                    // 분석정보 실행
+                    vm.$EventBus.$emit('changeIndexBasicInfo');
                 }
             });   
             
