@@ -132,8 +132,10 @@ export default {
                 zIndex: 200
             },
             paramData : {},
+            search: '',
             showIndexDetailDialog : false,
             showEtpDetailDialog : false,
+            
         };
     },
     components: {
