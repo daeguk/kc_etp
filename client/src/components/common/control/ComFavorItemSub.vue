@@ -16,8 +16,12 @@
                                 <v-tab-item>
                                     <!-- etf 리스트 영역 -->
                                     <v-layout row >
+                                        
                                         <v-flex xs12>
                                             <v-card flat>
+                                                <v-card-title>
+                                                    <v-text-field v-model="search" v-on:keyup="filterEtfData" append-icon="search" label="Search" single-line hide-details></v-text-field>
+                                                </v-card-title>    
                                                 <table id="etf_table" class="tbl_type" style="width:100%">
                                                     <thead>
                                                         <tr>
@@ -37,6 +41,9 @@
                                     <v-layout row>
                                         <v-flex xs12>
                                             <v-card flat>
+                                                <v-card-title>
+                                                    <v-text-field v-model="search" v-on:keyup="filterEtnData" append-icon="search" label="Search" single-line hide-details></v-text-field>
+                                                </v-card-title>    
                                                 <table id="etn_table" class="tbl_type" style="width:100%">
                                                     <thead>
                                                         <tr>
@@ -56,6 +63,9 @@
                                     <v-layout row >
                                         <v-flex xs12>
                                             <v-card flat>
+                                                <v-card-title>
+                                                    <v-text-field v-model="search" v-on:keyup="filterIndexData" append-icon="search" label="Search" single-line hide-details></v-text-field>
+                                                </v-card-title>    
                                                 <table id="index_table" class="tbl_type" style="width:100%">
                                                     <thead>
                                                         <tr>
@@ -563,10 +573,10 @@ export default {
             }).then(response => {
                 // console.log(response);
                 if (response.data.success == false) {
-                    vm.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
+                    this.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
                 } else {
                     var items = response.data.results;
-                    
+                    this.etnList = items;
                     etn_table.clear().draw();
                     etn_table.rows.add(items).draw();
                                         
@@ -584,10 +594,11 @@ export default {
             }).then(response => {
                 // console.log(response);
                 if (response.data.success == false) {
-                    tvm.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
+                    this.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
                 } else {
                     var items = response.data.results;
-                    
+                    this.etfList = items;
+
                     etf_table.clear().draw();
                     etf_table.rows.add(items).draw();
             
@@ -605,10 +616,11 @@ export default {
             }).then(response => {
                 // console.log(response);
                 if (response.data.success == false) {
-                    vm.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
+                    this.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
                 } else {
                     var items = response.data.results;
-                    
+                    this.indexList = items;
+
                     index_table.clear().draw();
                     index_table.rows.add(items).draw();
                     
@@ -694,6 +706,62 @@ export default {
             console.log( "ComFavorItem.vue -> fn_closeEtpDetailPop" );
 
             this.showEtpDetailDialog    =   false;
+        },
+        filterEtfData: function() {
+            var vm = this;
+        
+            var filterData = _.filter(vm.etfList, function(o) { 
+
+                var nmIdx = o.JISU_NM.indexOf(vm.search);
+                var cdIdx = o.JISU_CD.indexOf(vm.search);
+
+                if (nmIdx > -1 || cdIdx > -1) {
+                    return true; 
+                } else {
+                    return false;
+                }
+            });
+
+            etf_table.clear().draw();
+            etf_table.rows.add(filterData).draw();           
+        },     
+        
+        filterEtnData: function() {
+            var vm = this;
+        
+            var filterData = _.filter(vm.etnList, function(o) { 
+
+                var nmIdx = o.JISU_NM.indexOf(vm.search);
+                var cdIdx = o.JISU_CD.indexOf(vm.search);
+
+                if (nmIdx > -1 || cdIdx > -1) {
+                    return true; 
+                } else {
+                    return false;
+                }
+            });
+
+            etn_table.clear().draw();
+            etn_table.rows.add(filterData).draw();           
+        },        
+
+        filterIndexData: function() {
+            var vm = this;
+        
+            var filterData = _.filter(vm.indexList, function(o) { 
+
+                var nmIdx = o.JISU_NM.indexOf(vm.search);
+                var cdIdx = o.JISU_CD.indexOf(vm.search);
+
+                if (nmIdx > -1 || cdIdx > -1) {
+                    return true; 
+                } else {
+                    return false;
+                }
+            });
+
+            index_table.clear().draw();
+            index_table.rows.add(filterData).draw();           
         }        
     }
 };
