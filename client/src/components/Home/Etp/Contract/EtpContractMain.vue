@@ -34,9 +34,9 @@
 
 <template id="template-context-menu">
   <ul id="context-menu">
-    <context-menu-item >      
+    <li>      
        <v-btn depressed color="primary">테스트</v-btn>
-    </context-menu-item>
+    </li>
     
   </ul>
 </template>
@@ -109,41 +109,32 @@ var jisu_grid = null;
         var vm = this;
         vm.getInfoIndexList();
 
-
-        $('#jisu_grid, tbody').on('click', 'tbody td', function (event) {
+        
+        $('#jisu_grid, tbody').on('click', "input[name='calcu']", function (event) {
             //var data = table.row($(this).parents('tr')).data();
 
-            if ($(this).index() == 2) {
-                var cal = $("input[name='calcu']")
-                var sum = 0;
-                for (let i = 0; i < cal.length; i++) {
+            var cal = $("input[name='calcu']")
+            var sum = 0;
+            for (let i = 0; i < cal.length; i++) {
                     sum += Number(cal.eq(i).val());
-                }
-
-                console.log("sum==" + sum);
             }
+
+            console.log("sum==" + sum);
        
-            // context menu click시
-            if ($(this).index() == 3) {
-                var table = $('#jisu_grid').DataTable();
-                var data = table.row($(this).parents('tr')).data();
-
-                vm.showContextMenu(event);
-            }
-           
         });
+        
 
-        $('#btn_context').on('click', function (event) {
+        $('#jisu_grid, tbody').on('click', 'tbody button', function (event) {
             //var data = table.row($(this).parents('tr')).data();
-            vm.showContextMenu(event);    
+            vm.hideContextMenu(event);    
            //  vm.hideContextMenu(event);
            
         });
 
-        $('#btn_context').on('contextmenu', function (event) {
+        $('#jisu_grid, tbody').on('contextmenu', 'tbody button', function (event) {
             //var data = table.row($(this).parents('tr')).data();
-
-           
+        
+            event.preventDefault();
             vm.showContextMenu(event);           
         });
 
@@ -268,6 +259,7 @@ var jisu_grid = null;
             }
             
             menu.classList.add('active');
+
         },
         hideContextMenu: function() {
             document.getElementById("context-menu").classList.remove('active');
