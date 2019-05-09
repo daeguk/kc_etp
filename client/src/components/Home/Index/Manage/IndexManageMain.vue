@@ -37,7 +37,7 @@ export default {
             tabs: [
                 { id: 1, name: "Summary", route: '/index/manage/indexSummary' },
                 { id: 2, name: "관리지수목록", route: '/index/manage/indexList' },
-                { id: 3, name: "지수종목상세", route: '/index/manage/indexDetail' }
+                { id: 3, name: "지수종목상세", route: '/index/manage/indexDetailList' }
             ],
     	};
     },    

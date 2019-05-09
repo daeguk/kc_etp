@@ -5,13 +5,14 @@
                 <v-card flat ma-3>
                     <div class="title01_w">                 
                         <v-card-title primary-title>
-                            <div class="title_wrap01">
-                                <h3 class="headline mb-0">
-                                   {{this.results.F16002}}
-                                    <span class="grey--text">{{results.F16013}}</span> 
-                                </h3>
-                                
-                            </div>
+                            <h3 class="headline mb-0">
+                                {{this.results.F16002}}
+                                <span class="grey--text">{{results.F16013}}</span>                                  
+                            </h3>
+                            <v-spacer></v-spacer>
+                            <v-btn v-if="showDialog" icon @click="fn_close">
+                                <v-icon>close</v-icon>
+                            </v-btn>
                         </v-card-title>
                         <v-card-text>
                             <p class="title_ex">

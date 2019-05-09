@@ -29,7 +29,9 @@
 
                     <table id="tableIndexList" class="display table01_w"></table>
                     
-                    <IndexDetailQuick   @fn_getIndexDetailList="fn_getIndexDetailList"
+                    <IndexDetailQuick   v-if="showIndexDetailDialog"
+                    
+                                        @fn_getIndexDetailList="fn_getIndexDetailList"
                                         @fn_getIndexJongmokList="fn_getIndexJongmokList"
                     ></IndexDetailQuick>
                     
@@ -52,6 +54,7 @@ import IndexDetailQuick from "@/components/Home/Index/Manage/IndexDetailQuick.vu
 var tableIndexList = null;
 
 export default {
+    props : [ "showIndexDetailDialog" ],
     components: {
         IndexDetailQuick     :   IndexDetailQuick
     },
@@ -69,7 +72,7 @@ export default {
         };
     },
     mounted () {
-        console.log( "IndexDetail.vue -> mounted" );
+        console.log( "IndexDetailList.vue -> mounted" );
     },
     created: function() {},
     beforeDestory: function() {},
