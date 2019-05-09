@@ -4,37 +4,7 @@
             <v-list-tile-content class="rightmenu_con2 rightmenu_line">
                 <v-layout class="w100">
                     <v-flex xs12>
-                        <v-tabs v-model="tab" centered>
-                            <v-tabs-slider color="#1976d2"></v-tabs-slider>
-
-                            <v-tab v-for="item in tabs" :key="item">{{ item }}</v-tab>
-                        </v-tabs>
-
-                        <v-tabs-items v-model="tab">
-                            <v-tab-item>
-                                <!--오른쪽 메뉴 하단 리스트 영역 -->
-                                <v-layout row >
-                                    <v-flex xs12>
-                                        <v-card flat>
-                                            <table id="favor_grid" class="display" style="width:100%">
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th></th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>   
-                                        </table>
-
-                                            <v-btn outline small color="primary" dark v-on:click="showJongMokPop">
-                                                <v-icon small color="primary">add</v-icon>자산추가
-                                            </v-btn>
-                                        </v-card>
-                                    </v-flex>                                                
-                                </v-layout>
-                                <!--오른쪽 메뉴 하단 리스트 영역 -->
-                            </v-tab-item>
-                            <v-tab-item>
+                       
 
                                 <v-tabs v-model="activeTab" centered>
                                     <v-tabs-slider color="#1976d2"></v-tabs-slider>
@@ -48,9 +18,10 @@
                                     <v-layout row >
                                         <v-flex xs12>
                                             <v-card flat>
-                                                <table id="etf_table" class="display" style="width:100%">
+                                                <table id="etf_table" class="tbl_type" style="width:100%">
                                                     <thead>
                                                         <tr>
+                                                            <th></th>
                                                             <th></th>
                                                             <th></th>
                                                         </tr>
@@ -65,9 +36,10 @@
                                     <v-layout row>
                                         <v-flex xs12>
                                             <v-card flat>
-                                                <table id="etn_table" class="display" style="width:100%">
+                                                <table id="etn_table" class="tbl_type" style="width:100%">
                                                     <thead>
                                                         <tr>
+                                                            <th></th>
                                                             <th></th>
                                                             <th></th>
                                                         </tr>
@@ -82,9 +54,10 @@
                                     <v-layout row >
                                         <v-flex xs12>
                                             <v-card flat>
-                                                <table id="index_table" class="display" style="width:100%">
+                                                <table id="index_table" class="tbl_type" style="width:100%">
                                                     <thead>
                                                         <tr>
+                                                            <th></th>
                                                             <th></th>
                                                             <th></th>
                                                         </tr>
@@ -96,8 +69,6 @@
                                 </v-tab-item>
                                 </v-tabs-items>
                                 
-                            </v-tab-item>
-                        </v-tabs-items>
                     </v-flex>
                 </v-layout>
                 <!---자산추가 팝업 -->
@@ -229,12 +200,25 @@ export default {
             "columnDefs": [
                 {  
                     "render": function ( data, type, row ) {
-                        let htm = "<span>";
-                        htm += "           <b>"+data+"</b>";
-                        htm += "            <br>"+row.JISU_CD;
+                        let htm = "";
+                        if (data == '1') {
+                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                        } else {
+                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star_border</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                        }
+                        
                         return htm;
                     },
                     "targets": 0
+                },
+                {  
+                    "render": function ( data, type, row ) {
+                        let htm = "<span>";
+                        htm += "           "+data+"";
+                        htm += "            <br>"+row.JISU_CD;
+                        return htm;
+                    },
+                    "targets": 1
                 },
             ],
             select: {
@@ -244,8 +228,9 @@ export default {
             paging: false,
             searching: false,
             columns: [
+                { "data": "faver", "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>"},
                 { "data": "JISU_NM", "orderable": false},
-                { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>ETP</span></div>"},
+                { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_detail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>ETP</span></div>"},
             ]
         });
 
@@ -255,8 +240,14 @@ export default {
             var table = $('#etf_table').DataTable();
             var data = table.row($(this).parents('tr')).data();
 
-            data.GUBUN= "1";
-            vm.fn_detailPop( data );
+            if ($(this).attr('id') == 'btn_faver') {
+               data.faver =  data.faver == '1' ? '0' : '1';
+               jisu_grid.clear().draw();
+               jisu_grid.rows.add(vm.results).draw();
+            } else {
+                data.GUBUN= "1";
+                vm.fn_detailPop( data );
+            }
         });
 
 
@@ -275,12 +266,25 @@ export default {
             "columnDefs": [
                 {  
                     "render": function ( data, type, row ) {
+                        let htm = "";
+                        if (data == '1') {
+                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                        } else {
+                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star_border</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                        }
+                        
+                        return htm;
+                    },
+                    "targets": 0
+                },
+                {  
+                    "render": function ( data, type, row ) {
                         let htm = "<span>";
                         htm += "           <b>"+data+"</b>";
                         htm += "            <br>"+row.JISU_CD;
                         return htm;
                     },
-                    "targets": 0
+                    "targets": 1
                 },
             ],
             select: {
@@ -290,8 +294,9 @@ export default {
             paging: false,
             searching: false,
             columns: [
+                { "data": "faver", "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>"},
                 { "data": "JISU_NM", "orderable": false},
-                { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>ETP</span></div>"},
+                { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_detail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>ETP</span></div>"},
             ]
         });
 
@@ -319,12 +324,25 @@ export default {
             "columnDefs": [
                 {  
                     "render": function ( data, type, row ) {
+                        let htm = "";
+                        if (data == '1') {
+                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                        } else {
+                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star_border</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                        }
+                        
+                        return htm;
+                    },
+                    "targets": 0
+                },
+                {  
+                    "render": function ( data, type, row ) {
                         let htm = "<span>";
                         htm += "           <b>"+data+"</b>";
                         htm += "            <br>"+row.JISU_CD;
                         return htm;
                     },
-                    "targets": 0
+                    "targets": 1
                 },
             ],
             select: {
@@ -334,8 +352,9 @@ export default {
             paging: false,
             searching: false,
             columns: [
+                { "data": "faver", "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>"},
                 { "data": "JISU_NM", "orderable": false},
-                { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>INDEX</span></div>"},
+                { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_detail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>INDEX</span></div>"},
             ]
         });
 

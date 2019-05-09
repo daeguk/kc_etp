@@ -232,7 +232,10 @@ var getInfoIndexList = function (req, res) {
     var mapper = req.app.get("mapper");
 
     var params = {
-        large_type : req.session.large_type,
+        large_type : req.session.large_type == null? '' : req.session.large_type,
+        type_cd : req.session.type_cd == null? '' : req.session.type_cd,
+        inst_cd : req.session.inst_cd == null? '' : req.session.inst_cd,
+        user_id : req.session.user_id == null? '' : req.session.user_id
     };
 
     var stmt = mapper.getStatement('index', 'getInfoIndexList', params, {language:'sql', indent: '  '});
@@ -457,7 +460,11 @@ var getETFList = function (req, res) {
         var options = { 
             large_type : req.session.large_type,
             jisu_cd: req.query.jisu_cd,
-            market_id: req.query.market_id
+            market_id: req.query.market_id,
+            type_cd : req.session.type_cd == null? '' : req.session.type_cd,
+            inst_cd : req.session.inst_cd == null? '' : req.session.inst_cd,
+            user_id : req.session.user_id == null? '' : req.session.user_id
+            
         };
 
         util.log("options", JSON.stringify(options));
@@ -502,7 +509,10 @@ var getETNList = function (req, res) {
         var options = {
             large_type : req.session.large_type,
             jisu_cd: req.query.jisu_cd,
-            market_id: req.query.market_id
+            market_id: req.query.market_id,
+            type_cd : req.session.type_cd == null? '' : req.session.type_cd,
+            inst_cd : req.session.inst_cd == null? '' : req.session.inst_cd,
+            user_id : req.session.user_id == null? '' : req.session.user_id
         };
 
         util.log("options", JSON.stringify(options));

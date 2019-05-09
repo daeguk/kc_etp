@@ -105,7 +105,7 @@
                                 <v-flex xs12>
                                     <v-card flat>
 
-                                        <table id="jisuTable" class="display" style="width:100%">
+                                        <table id="jisuTable" class="tbl_type" style="width:100%">
                                             <thead>
                                                 <tr>
                                                     <th></th>
