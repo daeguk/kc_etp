@@ -86,6 +86,7 @@ export const routes = [
                 }, 
                 {   path : 'indexDetailList',
                     component: IndexMainIndexDetailList,
+                    props :  { "showIndexDetailDialog" : true } ,
                     meta: {
                       requiresAuth: true,
                       requiresType: ['0003', '0005']
