@@ -334,7 +334,7 @@
                     <!-- [지수관리] Quick 메뉴 정보 -->
                     <EtpOperIndexQuick  @showDetail="showDetail" 
                                         @showMessageBox="showMessageBox">
-                    </EtpOperIndexQuick>                    
+                    </EtpOperIndexQuick>
 
                 </v-card>
             </v-flex>
@@ -428,13 +428,29 @@ export default {
             ],
             desserts: [],
 
-            dataList: []
+
+
+            paramData : {},
+            stateInfo :     {       
+                                    pageState : 'index'     /* index - 지수관리 , oversea - 해외지수 종가 모니터링 */
+                                ,   totWidth : 0
+                            },
+            arrShowColumn   :   [],
+            arrShowColumnDef   :   [],
         };
     },
     components: {
         EtpOperIndexQuick: EtpOperIndexQuick
     },
-    mounted: function() {},
+    mounted: function() {
+
+        var vm = this;
+
+        vm.$nextTick().then(() => {
+            vm.fn_setTableInfo();
+            vm.fn_getEtpOperIndex();
+        });
+    },
     created: function() {},
     beforeDestory: function() {},
 
@@ -449,6 +465,10 @@ export default {
 
             console.log("EtpOperIndex.vue -> fn_getEtpOperIndex");
 
+            if( table01 ) {
+                table01.clear().draw();
+            }            
+
             axios.post(Config.base_url + "/user/etp/getEtpOperIndex", {
                 data: {}
             })
@@ -456,10 +476,254 @@ export default {
                 console.log(response);
 
                 if (response.data) {
-                    vm.dataList = response.data.dataList;
+                    var dataList = response.data.dataList;
+
+                    if( dataList && dataList.length > 0 ) {
+                        table01.rows.add( dataList ).draw();
+                        table01.draw();
+                    }
                 }
             });
         },
+
+        /*
+         *  테이블 기본정보를 설정한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_setTableInfo( arrCustomizeColumn ) {
+
+            var vm = this;
+
+            var tableObj    =    {
+                "processing": true,
+                "serverSide": false,
+                "info": false,   // control table information display field
+                "stateSave": true,  //restore table state on page reload,
+                "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                paging: false,
+                searching: false,
+                data : [],
+                autoWidth: false,
+            };
+
+
+            /* [지수관리] 를 선택한 경우 */
+            if( vm.stateInfo.pageState == "index" ) {
+                
+                vm.fn_setArrShowColumn( [ 
+                        'f16002'                        /* 지수 */
+                    ,   'large_type'                    /* 산출기관 */
+                    ,   'vendor'                        /* 벤더 */
+                    ,   'manage_type'                   /* 관리유형 */
+                    ,   'last_date'                     /* Last */
+                    ,   'last_time'                     /* Time */
+                    ,   'etp_info_json'                 /* ETF */
+                    ,   'graph'                         /* 그래프 영역 */
+                ] );
+
+            }
+            /* [iNAV 산출현황] 을 선택한 경우 */
+            else if( vm.stateInfo.pageState == "iNav" ) {
+
+                vm.fn_setArrShowColumn( [ 
+                        'f16002'                        /* 종목 */
+                    ,   'index_cal_method'              /* 산출방식  <---- ADDED */
+                    ,   'f15301'                        /* iNAV */
+                    ,   'f03329'                        /* 전일최종NAV */
+                    ,   'f15302'                        /* 추적오차율 */
+                    ,   'f15304'                        /* 괴리율 */
+
+                    ,   'index_nm'                      /* 기초지수 */
+                    ,   'index_f15001'                  /* 지수현재가 */
+                    ,   'f18438'                        /* 환율  <---- ADDED */
+                    ,   'graph'                         /* 그래프 영역 */
+                ] );
+            }
+
+
+
+            if ( $.fn.DataTable.isDataTable('#table01') ) {
+                $('#table01').DataTable().destroy();
+                $('#table01').empty();
+            }        
+
+            if( vm.stateInfo.totWidth > 900 ) {
+                $('#table01').attr( "style", "width: 1500px; table-layout: fixed;");
+                tableObj.scrollX    =   true;
+            }else{
+                $('#table01').attr( "style", "width: 100%; ");
+                tableObj.scrollX    =   false;
+            }
+
+            tableObj.columns    =   vm.arrShowColumn ;
+            tableObj.columnDefs =   vm.arrShowColumnDef ;
+
+            table01 = $('#table01').DataTable( tableObj );
+
+            // 테이블별 이벤트
+            $('#table01 tbody').on('click', 'button[id=btnIndex],button[id=btnIndexDetail],button[id=btnIndexFix],button[id=btnIndexError]', function () {
+
+                var table = $('#table01').DataTable();
+                var data = table.row($(this).parents('tr')).data();
+                var rowInx = table.row($(this)).index();
+                var btnId   =   $(this).attr('id');
+
+                
+            });                
+        },
+
+        /*
+         *  테이블에서 그래프 영역에 출력될 버튼이미지를 렌더링한다.
+         *  2019-05-03  bkLove(촤병국)
+         */        
+        fn_getGraphInfo( param ) {
+
+            var graphContent    =   "";
+
+            var divClass = "tooltip";
+            var btnClass = "btn_icon v-icon material-icons";
+            var btnSpanClass = "tooltiptext";
+            var btnSpanStyle = "width:70px;";
+
+            var btnId = "";
+            var btnContent = "";
+            var btnSpanContent = "";
+
+            if( !param ) {
+                return  graphContent;
+            }
+
+            if(     typeof param.btnId      === "undefined"
+                ||  typeof param.btnContent === "undefined" 
+            ) {
+                return  graphContent;
+            }
+
+
+            if( typeof param.btnSpanContent != "undefined" ) {
+                btnSpanContent  =   param.btnSpanContent;
+            }            
+
+            btnId           =   param.btnId;
+            btnContent      =   param.btnContent;
+
+
+            graphContent    +=  '<div class="' + divClass + '">';
+            graphContent    +=      '<button    id="' + btnId + '" ';
+            graphContent    +=      '           type="button" ';
+            graphContent    +=      '           class="' + btnClass + '" ';
+            graphContent    +=      '>' + btnContent + '</button>';
+            graphContent    +=      '<span class="' + btnSpanClass + '" style="' + btnSpanStyle + '" >' + btnSpanContent + '</span>';
+            graphContent    +=  '</div>';            
+
+            return  graphContent;
+        },        
+
+        /*
+         *  노출할 컬럼 배열정보를 통해 테이블에 컬럼을 설정한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_setArrShowColumn( arrTemp ) {
+            var vm = this;
+
+            var arrColumn  =   [
+                { 'name' : 'f16002'             , 'data': 'f16002'          ,  'width' : '200', 'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '지수'      },      /* 한글종목명 */
+                { 'name' : 'large_type'         , 'data': 'large_type'      ,  'width' : '60',  'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '산출기관'  },      /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
+                { 'name' : 'vendor'             , 'data': 'vendor'          ,  'width' : '40',  'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '벤더'      },      /* 벤더 */
+                { 'name' : 'manage_type'        , 'data': 'manage_type'     ,  'width' : '60',  'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '관리유형'  },      /* 관리유형 */
+                { 'name' : 'last_date'          , 'data': 'last_date'       ,  'width' : '60',  'orderable' : true  , 'className': 'dt-body-center' , 'title' : 'Last'      },      /* Last */
+                { 'name' : 'last_time'          , 'data': 'last_time'       ,  'width' : '60',  'orderable' : true  , 'className': 'dt-body-center' , 'title' : 'Time'      },      /* Time */
+                { 'name' : 'etp_info_json'      , 'data': 'etp_info_json'   ,  'width' : '250', 'orderable' : true  , 'className': 'dt-body-left'   , 'title' : 'ETF'       },       /* ETF */
+
+                { 'name' : 'graph'              , 'data': null              ,  'width' : '150' },
+            ];        
+
+            var arrColumnDef  =   [
+
+                    {       'name' : 'etp_info_json'   
+                        ,   "render": function ( data, type, row, meta ) {
+                                var content = "";
+
+                                if( data ) {
+                                    var arrData = JSON.parse( data );
+
+                                    content     +=  "<span>";
+                                    for( var i in arrData ) {
+                                        content +=      arrData[i].f16002;
+                                        content +=      "<br>";
+                                    }
+                                    content     +=  "</span>";
+                                }
+
+                                return  content;
+                            }
+                    },
+
+                    {       'name' : 'graph'   
+                        ,   "render": function ( data, type, row ) {
+
+                                var graphContent = "";
+
+                                /* 지수정보 */
+                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndex", "btnContent" : "visibility", "btnSpanContent" : "지수정보" } );
+                                
+                                /* 지수구성정보 */
+                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexDetail", "btnContent" : "equalizer", "btnSpanContent" : "지수구성정보" } );
+
+                                /* 지수조치내역 */
+                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexFix", "btnContent" : "insert_comment", "btnSpanContent" : "지수조치내역" } );
+
+                                /* 지수오류내역 */
+                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexError", "btnContent" : "assignment_turned_in", "btnSpanContent" : "지수오류내역" } );
+
+                                return  graphContent;
+                            }
+                    },                    
+            ];
+
+            vm.stateInfo.totWidth    =   0;
+
+            vm.arrShowColumn    =   [];
+            vm.arrShowColumnDef =   [];
+
+
+            if( arrTemp && arrTemp.length > 0 ) {
+
+                /* 화면에 노출할 arrTemp 배열을 통해 arrShowColumn 에 노출할 컬럼 정보를 넣는다. */
+                arrTemp.forEach(function(e,i) {
+                    var same = arrColumn.filter(function(o, p) {
+                        return o.name === e;
+                    });
+
+                    if( same.length > 0 ) {
+                        vm.stateInfo.totWidth += Number( same[0].width );
+
+                        vm.arrShowColumn.push( same[0] );
+                    }
+                });
+            }
+
+
+
+            if( vm.arrShowColumn.length > 0 )  {
+
+                /* 설정한 columnDefs 가 존재하는 경우 */
+                if( arrColumnDef.length > 0 ) {
+
+                    /* 화면에 노출할 arrTemp 배열 과 일치하는 columnDefs 정보를 넣는다. */
+                    vm.arrShowColumn.forEach(function(e,i) {
+                        var same = arrColumnDef.filter(function(o, p) {
+                            return o.name === e.name;
+                        });
+
+                        if( same.length > 0 ) {
+                            same[0].targets = [ i ];
+                            vm.arrShowColumnDef.push( same[0] );
+                        }
+                    });
+                }
+            }
+        },        
 
         showDetail: function(gubun, paramData) {      
             var vm = this;
