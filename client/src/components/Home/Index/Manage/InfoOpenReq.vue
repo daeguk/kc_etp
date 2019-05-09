@@ -7,21 +7,19 @@
                 <v-card-title primary-title>
                     <div>
                         <h3 class="headline mb-0">정보공개 요청처리</h3>
-                        <div
-                            style="color:grey"
-                        >지수 구성종목의 유동비율, cap비율 및 다양한 factor 비율과 기준시가총액 등 지수의 상세 정보를 요청자와 공유합니다.</div>
+                        <span>지수 구성종목의 유동비율, cap비율 및 다양한 factor 비율과 기준시가총액 등 지수의 상세 정보를 요청자와 공유합니다.</span>
                     </div>
                 </v-card-title>
             </v-card>
 
-            <table id="index_table" class="display table01_w">
+            <table id="index_table" class="tbl_type" width="100%">
                      <thead>
                         <tr>
-                            <th>reqID</th>
-                            <th>신청기관</th>
-                            <th>지수</th>
-                            <th>지수코드</th>
-                            <th>요청일자</th>
+                            <th class="txt_left">reqID</th>
+                            <th class="txt_left">신청기관</th>
+                            <th class="txt_left">지수</th>
+                            <th class="txt_left">지수코드</th>
+                            <th class="txt_left">요청일자</th>
                             <th>요청처리</th>
                         </tr>
                     </thead>
@@ -89,12 +87,12 @@ export default {
                     data : [],
                             
                     columns: [
-                        { "data": "REG_ID", "orderable": true },
-                        { "data": "INST_NAME", "orderable" : true },
-                        { "data": "F16002", "orderable" : true },
-                        { "data": "F16013", "orderable" : true },
-                        { "data": "REG_TIME", "orderable" : true },
-                        { "data": null, "align":"center", className: 'dt-body-center', defaultContent:"<div class='tooltip'><button type='button' name='ok' class='btn_icon v-icon material-icons '>thumb_up_alt</button><span class='tooltiptext' style='width:50px;'>승인</span></div><div class='tooltip'><button type='button' name='no' color='grey' class='btn_icon v-icon material-icons grey'>thumb_down_alt</button><span class='tooltiptext' style='width:50px;'>거절</span></div>" } 
+                        { "data": "REG_ID", "orderable": true, className: 'txt_left'},
+                        { "data": "INST_NAME", "orderable" : true, className: 'txt_left' },
+                        { "data": "F16002", "orderable" : true, className: 'txt_left' },
+                        { "data": "F16013", "orderable" : true, className: 'txt_left' },
+                        { "data": "REG_TIME", "orderable" : true, className: 'txt_left' },
+                        { "data": null, "orderable" : false, "align":"center", className: 'dt-body-center', defaultContent:"<div class='tooltip'><button type='button' name='ok' class='btn_icon v-icon material-icons '>thumb_up_alt</button><span class='tooltiptext' style='width:40px;'>승인</span></div><div class='tooltip'><button type='button' name='no' class='btn_icon v-icon material-icons'>thumb_down_alt</button><span class='tooltiptext' style='width:40px;'>거절</span></div>" } 
                     ]
         });
         

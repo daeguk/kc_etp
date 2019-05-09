@@ -1,7 +1,7 @@
 <template>
-    <v-container>
-        <v-layout row wrap class="content_margin">
-            <v-flex grow>
+    <v-container class="IndexRegi_w">
+        <v-layout row wrap class="content_margin  con_wrap">
+            <v-flex grow class="conWidth_left">
                 <v-card flat>
 
                     
@@ -27,13 +27,14 @@
                     </v-card-title>                    
 
 
-                    <table id="tableIndexList" class="display table01_w"></table>
-                    
-                    <IndexDetailQuick   @fn_getIndexDetailList="fn_getIndexDetailList"
-                                        @fn_getIndexJongmokList="fn_getIndexJongmokList"
-                    ></IndexDetailQuick>
+                    <table id="tableIndexList" class="tbl_type" width="100%"></table>
                     
                 </v-card>
+            </v-flex >
+            <v-flex  class="conWidth_right">
+                <IndexDetailQuick   @fn_getIndexDetailList="fn_getIndexDetailList"
+                                        @fn_getIndexJongmokList="fn_getIndexJongmokList"
+                    ></IndexDetailQuick>
             </v-flex>
         </v-layout>
     </v-container>
@@ -110,13 +111,13 @@ export default {
                 data : [],
                 "columnDefs": [ {} ],
                 columns: [
-                    { "title"   :   "code"          ,   "data": "isin_code"             ,   "orderable" : true  },      /* 종목코드 */
-                    { "title"   :   "name"          ,   "data": "f16002"                ,   "orderable" : true  },      /* 한글종목명 */
-                    { "title"   :   "base_prc"      ,   "data": "f03003"                ,   "orderable" : true  },      /* 전일종가 */
-                    { "title"   :   "shrs"          ,   "data": "f30812"                ,   "orderable" : true  },      /* 상장주식수 */
-                    { "title"   :   "float_rto"     ,   "data": "style_includ_percnt"   ,   "orderable" : true  },      /* 스타일포함비중 */
-                    { "title"   :   "ceiling_rto"   ,   "data": "ceiling_percnt"        ,   "orderable" : true  },      /* CEILING비중 */
-                    { "title"   :   "factor_rto"    ,   "data": "f30813"                ,   "orderable" : true  }       /* 유동주식비율 */
+                    { "title"   :   "code"          ,   "data": "isin_code"             ,   "orderable" : true, className:"txt_left" },      /* 종목코드 */
+                    { "title"   :   "name"          ,   "data": "f16002"                ,   "orderable" : true, className:"txt_left"  },      /* 한글종목명 */
+                    { "title"   :   "base_prc"      ,   "data": "f03003"                ,   "orderable" : true, className:"txt_right"  },      /* 전일종가 */
+                    { "title"   :   "shrs"          ,   "data": "f30812"                ,   "orderable" : true, className:"txt_right"  },      /* 상장주식수 */
+                    { "title"   :   "float_rto"     ,   "data": "style_includ_percnt"   ,   "orderable" : true, className:"txt_right"  },      /* 스타일포함비중 */
+                    { "title"   :   "ceiling_rto"   ,   "data": "ceiling_percnt"        ,   "orderable" : true, className:"txt_right"  },      /* CEILING비중 */
+                    { "title"   :   "factor_rto"    ,   "data": "f30813"                ,   "orderable" : true, className:"txt_right"  }       /* 유동주식비율 */
                 ]
             });
 

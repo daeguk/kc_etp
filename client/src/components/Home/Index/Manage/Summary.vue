@@ -1,39 +1,39 @@
 <template>
 <v-app>
-    <v-container class="summary_card_pad">
-        <v-layout row wrap>
+    <v-container>
+        <v-layout row wrap class="content_margin">
             <v-flex xs12>
                 <v-container>
                     <v-layout>
-                        <v-flex xs4 ml-3 mt-3 mr-2>
+                        <v-flex xs4 mr-2>
                             <IndexSummaryCard :item="cardItem1" :chartItem="chartItem1"></IndexSummaryCard>
                         </v-flex>
-                        <v-flex xs4 mt-3 mr-2>
+                        <v-flex xs4 mr-2>
                             <IndexSummaryCard :item="cardItem2" :chartItem="chartItem2"></IndexSummaryCard>
                         </v-flex>
-                        <v-flex xs4 mt-3 mr-3>
+                        <v-flex xs4>
                             <IndexSummaryCard :item="cardItem3" :chartItem="chartItem3"></IndexSummaryCard>
                         </v-flex>
                     </v-layout>
                 </v-container>
             </v-flex>
         </v-layout>
-        <v-layout row wrap mt-2 ml-3 mr-2>
-            <v-flex md3>
+        <v-layout row wrap mt-2 >
+            <v-flex xs3 pr-2>
                 <IndexSummaryBox :item="boxItem1"></IndexSummaryBox>
             </v-flex>
-            <v-flex md3>
+            <v-flex xs3 pr-2>
                 <IndexSummaryBox :item="boxItem2"></IndexSummaryBox>
             </v-flex>
-            <v-flex md3>
+            <v-flex xs3 pr-2>
                 <IndexSummaryBox :item="boxItem3"></IndexSummaryBox>
             </v-flex>
-            <v-flex md3>
+            <v-flex xs3>
                 <IndexSummaryBox :item="boxItem4"></IndexSummaryBox>
             </v-flex>
         </v-layout>
-        <v-layout row wrap ml-3 mt-2 mr-2 mb-3>
-            <v-flex md12 >
+        <v-layout row wrap class="content_margin">
+            <v-flex xs12 >
                 <InfoOpenReq></InfoOpenReq>
             </v-flex>
         </v-layout>

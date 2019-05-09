@@ -228,7 +228,7 @@ export default {
                 },
                 {
                     "render": function ( data, type, row ) {
-                        let htm = "<div class='tooltip'><button type='button' id='btnIndexDetail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>";                            
+                        let htm = "<div class='tooltip'><button type='button' id='btnIndexDetail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:60px;'>지수정보</span></div>";                            
                         return htm;
                     },
                     "targets": 9
@@ -244,7 +244,7 @@ export default {
                 { "data": null, "orderable" : true, defaultContent:""}, /*YTD*/
                 { "data": null, "orderable" : true, defaultContent:""}, /*1Year*/
                 { "data": null, "orderable" : true, defaultContent:""}, /*3Year*/
-                { "data": null, "orderable" : true, defaultContent:""},
+                { "data": null, "orderable" : false, defaultContent:""},
             ]
         }); 
 

@@ -1,18 +1,19 @@
 <template>
     <v-card>
-        <div class="card_title summary_title">
+        <div class="summary_title">
             <v-toolbar flat>
-           <v-toolbar-title>{{item.name}}</v-toolbar-title>
-           <v-spacer></v-spacer>
-          <v-btn icon @click.stop="movePage">
-              <v-icon color="primary">more_horiz</v-icon>
+                <v-toolbar-title>{{item.name}}</v-toolbar-title>
+            <v-spacer></v-spacer>
+             <v-btn icon @click.stop="movePage">
+              <v-icon>more_horiz</v-icon>
            </v-btn>
          </v-toolbar>
             <!--h5 class="headline mb-0">{{item.name}}</h5-->
-            <div><span class="grey--text">{{item.subTitle}}</span></div>
-            <h3 class="display-1 mb-0 text-xs-right">{{new Intl.NumberFormat().format(item.close_idx)}}</h3>
-            <div class="text-xs-right"><span class="red--text">{{item.fluc_idx}} ({{item.fluc_rate}}%)</span></div>
-        </div>
+            <div>
+                <span>{{item.subTitle}}</span></div>
+                <h3 class="display-1 mb-0 text-xs-right">{{new Intl.NumberFormat().format(item.close_idx)}}</h3>
+                <div class="text-xs-right"><span class="red--text">{{item.fluc_idx}} ({{item.fluc_rate}}%)</span></div>
+            </div>
         <AreaChart v-if=chartLoadFlag :chartItem="chartItem" :dataSet="dataSet"></AreaChart>
     </v-card>
 </template>
@@ -77,9 +78,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-.card_title {
-    padding: 10px 20px 0px 20px;
-}
-</style>

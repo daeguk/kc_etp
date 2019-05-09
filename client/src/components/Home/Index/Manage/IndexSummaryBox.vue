@@ -1,20 +1,12 @@
 <template>
-    <v-card>
-        <div class="card_title">
-            <h4 class="mb-0">{{item.title}}</h4>
-            <hr>
-            <v-layout row>
-                <v-flex md9>
+    <v-card flat class="summary_box">
+            <v-card-title class="summary_box_tit">{{item.title}} </v-card-title>
+            <div class="box-sub_w">
                     <div class="box-subtitle">
-                        <div class="grey--text">{{item.subTitle}}</div>
-                        <div class="grey--text">Last Updated : {{item.updateDate}}</div>
+                        {{item.subTitle}}<br>Last Updated : {{item.updateDate}}
                     </div>
-                </v-flex>
-                <v-flex md3>
-                    <h1>{{item.count}}</h1>
-                </v-flex>
-            </v-layout>
-        </div>
+                    <div class="index_num1">{{item.count}}</div>
+            </div>
     </v-card>
 </template>
 

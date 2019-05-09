@@ -8,9 +8,10 @@
             align-with-title
             app
             fixed
+            clipped-left
             clipped-right
             >
-            <v-tabs-slider color="#35e0e2"></v-tabs-slider>
+            <v-tabs-slider></v-tabs-slider>
     
             <v-tab v-for="tab of tabs"  :key="tab.id" @click="pageMove(tab.route)" >
               {{ tab.name }}

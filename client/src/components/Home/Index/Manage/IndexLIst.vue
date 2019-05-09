@@ -16,16 +16,16 @@
                 </v-card>
                 <v-card flat>
                
-                 <table id="index_table" class="display table01_w">
+                 <table id="index_table"  class="tbl_type" width="100%">
                      <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>지수명</th>
-                            <th>요청일</th>
-                            <th>발표여부</th>
-                            <th>산출타입</th>
-                            <th>ETP</th>
-                            <th>정보조회기관</th>
+                            <th class="txt_left">ID</th>
+                            <th class="txt_left">지수명</th>
+                            <th class="txt_left">요청일</th>
+                            <th class="txt_left">발표여부</th>
+                            <th class="txt_left">산출타입</th>
+                            <th class="txt_left">ETP</th>
+                            <th class="txt_left">정보조회기관</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -152,14 +152,14 @@ export default {
                             },],
                             columns: [
                                 //{ "defaultContent": "<button type='button' class='btn btn-primary btn-xs'>Trial Run</button>" },
-                                { "data": "JISU_CD", "orderable": true },
-                                { "data": "JISU_NM", "orderable" : true },
-                                { "data": "IP_DT", "orderable" : true },
-                                { "data": "ANNO_YN", "orderable" : true },
-                                { "data": "INDEX_CAL_METHOD", "orderable" : true },
-                                { "data": "ETP_NM", "orderable": true },
-                                { "data": "INST_CNT", "orderable": true },
-                                { "data": null, className: 'checks', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:50px;'>지수정보</span></div>" } 
+                                { "data": "JISU_CD", "orderable": true, className: 'txt_left' },
+                                { "data": "JISU_NM", "orderable" : true, className: 'txt_left' },
+                                { "data": "IP_DT", "orderable" : true, className: 'txt_left' },
+                                { "data": "ANNO_YN", "orderable" : true, className: 'txt_left' },
+                                { "data": "INDEX_CAL_METHOD", "orderable" : true, className: 'txt_left' },
+                                { "data": "ETP_NM", "orderable": true, className: 'txt_left' },
+                                { "data": "INST_CNT", "orderable": true, className: 'txt_left' },
+                                { "data": null, "orderable": false, className: 'checks', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:50px;'>지수정보</span></div>" } 
                             ]
                         }); 
                     }

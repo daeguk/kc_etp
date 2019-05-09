@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <v-layout row class="content_margin">
+        <v-layout row>
 
             <v-flex grow>
                 <v-card flat lite pb-0></v-card>
@@ -8,36 +8,8 @@
 
             <!-- rightmenu -->
             <v-card flat class="right_menu_w2">
-                <v-navigation-drawer
-                    v-model="drawer"
-                    :mini-variant="mini"
-                    app
-                    right
-                    light
-                    clipped
-                    mini-variant-width="50"
-                    width="250"
-                >
-                    <v-list class="pa-1">
-                        <v-list-tile v-if="mini">
-                            <v-list-tile-action>
-                                <v-btn icon @click.stop="mini = !mini">
-                                    <v-icon>chevron_left</v-icon>
-                                </v-btn>
-                            </v-list-tile-action>
-                        </v-list-tile>
-                        <v-list-tile avatar tag="div">
-                            <v-list-tile-content class="rightmenu_tit">Quick Start</v-list-tile-content>
-                            <v-list-tile-content>
-                                <v-btn icon @click.stop="mini = !mini">
-                                    <v-icon>chevron_right</v-icon>
-                                </v-btn>
-                            </v-list-tile-content>
-                        </v-list-tile>
-                    </v-list>
-
                     <v-list class="pt-0" dense>
-                        <v-list-tile-content class="rightmenu_con rightmenu_line">
+                        <v-list-tile-content class="rightmenu_con">
                             <v-subheader>
                                 <v-icon small color="primary">flash_on</v-icon>종목으로 찾기
                             </v-subheader>
@@ -101,25 +73,51 @@
                             ></v-text-field>
 
                             <!--오른쪽 메뉴 하단 리스트 영역 -->
-                            <v-layout row class="w100 pt-3">
+                            <v-layout row class="w100 pt-3 pr-2">
                                 <v-flex xs12>
                                     <v-card flat>
 
-                                        <table id="jisuTable" class="display" style="width:100%">
+                                        <table id="jisuTable" class="tbl_type ver2">
                                             <thead>
                                                 <tr>
-                                                    <th></th>
+                                                    <th class="txt_left">지수명</th>
                                                 </tr>
                                             </thead>  
-                                        </table>      
-
+                                        </table> 
+                                        <!---ppt09버전 수정 테이블--->
+                                        <table id="jisuTable" class="tbl_type ver2">
+                                            <colgroup>
+                                                <col width="70%">
+                                                <col width="30%">
+                                            </colgroup>
+                                            <thead>
+                                                <tr>
+                                                    <th class="txt_left">지수명</th>
+                                                    <th class="txt_right">현재가</th>
+                                                </tr>
+                                            </thead> 
+                                            <tbody>
+                                                <tr>
+                                                       <td class="txt_left line2 in_icon">
+                                                           <div>
+                                                             KODEX 200fds
+                                                             <br><span class="text_S">000100</span>
+                                                            </div>
+                                                            <div class="in_icon_r">
+                                                                <span class="btn_icon v-icon material-icons text_red">feedback</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="txt_right">1234.56<br><span class='text_blue text_S'>-2.5</span></td>
+                                                </tr>
+                                            </tbody> 
+                                        </table> 
+                                      <!---ppt09버전 수정 테이블--->
                                     </v-card>
                                 </v-flex>
                             </v-layout>
                             <!--오른쪽 메뉴 하단 리스트 영역 -->
                         </v-list-tile-content>
                     </v-list>
-                </v-navigation-drawer>
             </v-card>
             <!--rightmenu end -->
 
@@ -208,7 +206,7 @@ export default {
                 paging: false,
                 searching: false,
                 columns: [
-                    { data: "f16002", orderable: false, width: "95%" },
+                    { data: "f16002", orderable: false, className:"txt_left"},
                 ]
             });
 
