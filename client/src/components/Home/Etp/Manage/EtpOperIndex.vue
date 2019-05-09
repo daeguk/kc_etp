@@ -563,12 +563,38 @@ export default {
             // 테이블별 이벤트
             $('#table01 tbody').on('click', 'button[id=btnIndex],button[id=btnIndexDetail],button[id=btnIndexFix],button[id=btnIndexError]', function () {
 
-                var table = $('#table01').DataTable();
-                var data = table.row($(this).parents('tr')).data();
-                var rowInx = table.row($(this)).index();
+                var table   =   $('#table01').DataTable();
+                var data    =   table.row($(this).parents('tr')).data();
+                var rowInx  =   table.row($(this)).index();
                 var btnId   =   $(this).attr('id');
 
-                
+
+                console.log("########## EtpOperIndex.vue -> pageMove START ############");
+                console.log( "data.f16013=["        +   data.f16013         +   "]  /* 단축코드  */" );
+                console.log( "data.large_type=["    +   data.large_type     +   "]  /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */" );
+                console.log( "data.market_id=["     +   data.market_id      +   "]  /* 시장 ID  */" );
+
+
+                vm.paramData.F16257         =   data.f16013;        /* 단축코드  */
+                vm.paramData.LARGE_TYPE     =   data.large_type;    /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */
+                vm.paramData.MARKET_ID      =   data.market_id;     /* 시장 ID  */
+                vm.paramData.rowIndex       =   rowInx;
+
+
+                switch( btnId ) {
+
+                    case    'btnIndex'       :
+                                vm.$emit('showDetail', 2, vm.paramData);
+                                break;
+
+                    case    'btnEtpInfo'    :
+                                vm.$emit('showDetail', 1, vm.paramData);
+                                break;
+
+                    case    'btnPdf'    :
+                                vm.$emit('fn_pageMove', btnId, vm.paramData);
+                                break;
+                }                
             });                
         },
 
@@ -665,16 +691,16 @@ export default {
                                 var graphContent = "";
 
                                 /* 지수정보 */
-                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndex", "btnContent" : "visibility", "btnSpanContent" : "지수정보" } );
+                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndex"      , "btnContent" : "visibility"       , "btnSpanContent" : "지수정보" } );
                                 
                                 /* 지수구성정보 */
-                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexDetail", "btnContent" : "equalizer", "btnSpanContent" : "지수구성정보" } );
+                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexDetail", "btnContent" : "equalizer"        , "btnSpanContent" : "지수구성정보" } );
 
                                 /* 지수조치내역 */
-                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexFix", "btnContent" : "insert_comment", "btnSpanContent" : "지수조치내역" } );
+                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexFix"   , "btnContent" : "insert_comment"   , "btnSpanContent" : "지수조치내역" } );
 
                                 /* 지수오류내역 */
-                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexError", "btnContent" : "assignment_turned_in", "btnSpanContent" : "지수오류내역" } );
+                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexError" , "btnContent" : "assignment_turned_in", "btnSpanContent" : "지수오류내역" } );
 
                                 return  graphContent;
                             }

@@ -1,7 +1,10 @@
 <template>
     <v-layout row wrap>
         <v-flex xs12>  
-            <IndexDetailDialog v-if="showIndexDetailDialog" :paramData="paramData"></IndexDetailDialog>
+            <v-dialog v-model="showIndexDetailDialog" persistent max-width="1300">
+                <IndexDetailDialog v-if="showIndexDetailDialog" :paramData="paramData" :showDialog="showIndexDetailDialog" @fn_closePop="fn_close"></IndexDetailDialog>
+            </v-dialog>
+
             <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
 
             <!-- ETP 운용정보 -->
@@ -101,7 +104,7 @@ export default {
                 }
                 this.showEtpDetailDialog = true;
                 
-                this.showEtpOerInfo = 0;
+                this.showEtpOerInfo = vm.activeTab;
                 
             } else if (gubun == '2') { 
                 this.paramData = paramData;
@@ -113,7 +116,7 @@ export default {
                 }
                 
                 this.showIndexDetailDialog = true;                
-                this.showEtpOerInfo = 0;
+                this.showEtpOerInfo = vm.activeTab;
             }
         },
         showMessageBox: function(title, msg, option, gubun) {
@@ -133,6 +136,17 @@ export default {
                             this.$emit( "fn_setActiveTab", 2 );
                             break;
             }            
+        },
+
+        /*
+         *  지소관리 상세 팝업에서 종료시 해당 팝업을 종료한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_close( param ) {
+            var vm = this;
+
+            vm.showIndexDetailDialog    =   false;
+            
         }
     }
 }
