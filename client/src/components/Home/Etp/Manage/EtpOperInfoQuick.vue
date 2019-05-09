@@ -8,7 +8,6 @@
             <!--rightmenu---->
             <v-card flat class="right_menu_w2">
                 <v-navigation-drawer
-                    v-model="drawer"
                     :mini-variant="mini"
                     app
                     right
@@ -67,9 +66,6 @@
                             </p>
                         </v-list-tile-content>
 
-
-<v-btn @click='$router.push( "/etp/manage/etpOperInfoQuickInav")'>iNav Publ</v-btn><br>
-<v-btn @click='$router.push( "/etp/manage/etpOperInfoQuickPerformance")'>ETP Performance Publ</v-btn><br>
 
                         <v-list-tile-content class="rightmenu_con Oper_menu">
 
@@ -292,72 +288,7 @@ export default {
     data() {
         return {
             text: "전종목",
-            checkbox: true,
-            text2: "",
-            dialog: false,
-            dialog2: false,
-            dialog5: false,
-            drawer: true,
-            search: "",
-            tab: null,
-            tab2: null,
-            items1: ["전체", "시장대표"],
-            items: [
-                { title: "Home", icon: "dashboard" },
-                { title: "About", icon: "question_answer" }
-            ],
-            items2: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                },
-                {
-                    title: "KODEX 코스닥150 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            items3: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            items4 : [],
-            selected : [],
-
             mini: false,
-            right: null,
-            rowsPerPageItems: [10, 20, 30, 50],
-            headers: [
-                {
-                    text: "Code",
-                    align: "left",
-                    value: "name"
-                },
-                { text: "name", value: "name" },
-                { text: "BasePrc", value: "BasePrc", align: "right" },
-                { text: "Shrs", value: "Shrs", align: "right" },
-                { text: "Float rto", value: "FloatRto", align: "right" },
-                { text: "Ceiling rto", value: "CeilingRto", align: "right" },
-                { text: "Factor rto", value: "FactorRto", align: "right" }
-            ],
-            desserts: [],
 
             toggleINav : false,
             toggleEtpPerformance : false,

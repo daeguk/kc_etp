@@ -8,7 +8,8 @@
             <EtpOperInfo    v-if="showEtpOerInfo == 0" 
             
                             @showDetail="showDetail" 
-                            @showMessageBox="showMessageBox">
+                            @showMessageBox="showMessageBox"
+                            @fn_pageMove="fn_pageMove">
             </EtpOperInfo>
 
             <!-- 지수관리 -->
@@ -20,7 +21,8 @@
 
             <!-- PDF 관리 -->
             <EtpOperPdf     v-if="showEtpOerInfo == 2" 
-                        
+                            :paramData="paramData"
+
                             @showDetail="showDetail" 
                             @showMessageBox="showMessageBox">
             </EtpOperPdf>
@@ -117,6 +119,21 @@ export default {
         showMessageBox: function(title, msg, option, gubun) {
             this.$root.$confirm.open(title,msg, option, gubun);
         },
+
+        /*
+         *  ETP 운용정보에서 이미지 버튼 클릭시 상세페이지로 이동시킨다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_pageMove( btnId, paramData ) {
+
+            switch( btnId ) {
+
+                case    'btnPdf'    :
+                            this.paramData  =   paramData;
+                            this.$emit( "fn_setActiveTab", 2 );
+                            break;
+            }            
+        }
     }
 }
 </script>
