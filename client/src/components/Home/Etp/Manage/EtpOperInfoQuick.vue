@@ -8,7 +8,6 @@
             <!--rightmenu---->
             <v-card flat class="right_menu_w2">
                 <v-navigation-drawer
-                    v-model="drawer"
                     :mini-variant="mini"
                     app
                     right
@@ -67,9 +66,6 @@
                             </p>
                         </v-list-tile-content>
 
-
-<v-btn @click='$router.push( "/etp/manage/etpOperInfoQuickInav")'>iNav Publ</v-btn><br>
-<v-btn @click='$router.push( "/etp/manage/etpOperInfoQuickPerformance")'>ETP Performance Publ</v-btn><br>
 
                         <v-list-tile-content class="rightmenu_con Oper_menu">
 
@@ -260,6 +256,7 @@
 
 
 
+                        <!-- 관심종목 영역 -->
                         <ComFavorItemSub    v-if="showFaver" 
                         
                                             @showDetail="showDetail" 
@@ -291,72 +288,7 @@ export default {
     data() {
         return {
             text: "전종목",
-            checkbox: true,
-            text2: "",
-            dialog: false,
-            dialog2: false,
-            dialog5: false,
-            drawer: true,
-            search: "",
-            tab: null,
-            tab2: null,
-            items1: ["전체", "시장대표"],
-            items: [
-                { title: "Home", icon: "dashboard" },
-                { title: "About", icon: "question_answer" }
-            ],
-            items2: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                },
-                {
-                    title: "KODEX 코스닥150 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            items3: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            items4 : [],
-            selected : [],
-
             mini: false,
-            right: null,
-            rowsPerPageItems: [10, 20, 30, 50],
-            headers: [
-                {
-                    text: "Code",
-                    align: "left",
-                    value: "name"
-                },
-                { text: "name", value: "name" },
-                { text: "BasePrc", value: "BasePrc", align: "right" },
-                { text: "Shrs", value: "Shrs", align: "right" },
-                { text: "Float rto", value: "FloatRto", align: "right" },
-                { text: "Ceiling rto", value: "CeilingRto", align: "right" },
-                { text: "Factor rto", value: "FactorRto", align: "right" }
-            ],
-            desserts: [],
 
             toggleINav : false,
             toggleEtpPerformance : false,
@@ -427,7 +359,6 @@ export default {
 
             vm.customizeDialog  =   false;
 
-
             /* 고정으로 노출할 항목이 중복으로 존재하는지 체크한다. */
             arrFixTitle.forEach(function(e,i) {
                 var same = vm.arrCustomizeColumn.filter(function(o, p) {
@@ -444,14 +375,21 @@ export default {
             console.log("########## EtpOperInfoQuick.vue -> fn_setCustomizeData END ############");
         },
 
+        /*
+         *  관심종목에서 그래프 선택시 상세정보를 보여준다.
+         *  2019-05-03  bkLove(촤병국)
+         */
         showDetail: function(gubun, paramData) {
             var vm = this;
-debugger;
             vm.$emit( "showDetail", gubun, paramData );
         },
+
+        /*
+         *  메시지창 정보가 필요한 경우 해당 정보를 보여준다.
+         *  2019-05-03  bkLove(촤병국)
+         */        
         showMessageBox: function(title, msg, option, gubun) {
             var vm = this;
-debugger;
             vm.$emit( "showMessageBox", title, msg, option, gubun );
         }        
     }

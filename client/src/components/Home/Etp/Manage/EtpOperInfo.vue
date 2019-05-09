@@ -30,13 +30,41 @@
 
 
                     <v-card flat>
-
                         <table id="table01" class="tbl_type"    style="width:100%"/>
-
                     </v-card>
 
+                    <!-- [ETP 운영정보] Quick 메뉴 정보 -->
+                    <EtpOperInfoQuick   :indexBasic = "indexBasic"
+
+                                        @fn_setInavData = "fn_setInavData"
+                                        @fn_setEtpPerformanceData = "fn_setEtpPerformanceData"
+                                        @fn_setCustomizeData = "fn_setCustomizeData"
+
+                                        @showDetail="showDetail" 
+                                        @showMessageBox="showMessageBox">
+                    </EtpOperInfoQuick>
                 </v-card>
-            </v-flex>
+
+                <!-- [ETP 운영정보] -> Quick Menu iNAV 산출현황 선택 -> 그리드에서 Pdf 선택시 -->
+                <v-dialog   v-model="showInavPdfYn"     persistent  max-width="500" >
+                    <EtpOperInfoInavPdf     v-if="inavGubun == 'pdf'"
+
+                                            :paramData = "etpRow"
+                                            @fn_close = "fn_close">
+                    </EtpOperInfoInavPdf>
+                </v-dialog>
+
+                <!-- [ETP 운영정보] -> Quick Menu iNAV 산출현황 선택 -> 그리드에서 Index 선택시 -->
+                <v-dialog  v-model="showInavIndexYn"  persistent  max-width="500" >
+                    <EtpOperInfoInavIndex   v-if="inavGubun == 'index'"
+
+                                            :paramData = "etpRow"
+                                            @fn_close = "fn_close">
+                    </EtpOperInfoInavIndex>
+                </v-dialog>   
+
+
+            </v-flex>         
         </v-layout>
     </v-container>
 </template>
@@ -48,75 +76,22 @@ import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 
 import Config from '@/js/config.js';
-import EtpOperInfoQuick     from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
-//import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
+import EtpOperInfoQuick         from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
+import EtpOperInfoInavPdf       from    "@/components/Home/Etp/Manage/EtpOperInfoInavPdf.vue";
+import EtpOperInfoInavIndex     from    "@/components/Home/Etp/Manage/EtpOperInfoInavIndex.vue";
 
 var table01 = null;
 
 export default {
     components: {
         //indexDetailrtmenupop: indexDetailrtmenupop
-        EtpOperInfoQuick  :   EtpOperInfoQuick
+            EtpOperInfoQuick        :   EtpOperInfoQuick
+        ,   EtpOperInfoInavPdf      :   EtpOperInfoInavPdf
+        ,   EtpOperInfoInavIndex    :   EtpOperInfoInavIndex
     },
     data() {
         return {
             text: "전종목",
-            items: [
-                { title: "Home", icon: "dashboard" },
-                { title: "About", icon: "question_answer" }
-            ],
-            items2: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                },
-                {
-                    title: "KODEX 코스닥150 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            items3: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            
-            mini: false,
-            right: null,
-            rowsPerPageItems: [10, 20, 30, 50],
-            headers: [
-                {
-                    text: "Code",
-                    align: "left",
-                    value: "name"
-                },
-                { text: "name", value: "name" },
-                { text: "BasePrc", value: "BasePrc", align: "right" },
-                { text: "Shrs", value: "Shrs", align: "right" },
-                { text: "Float rto", value: "FloatRto", align: "right" },
-                { text: "Ceiling rto", value: "CeilingRto", align: "right" },
-                { text: "Factor rto", value: "FactorRto", align: "right" }
-            ],
-            desserts: [],
-
-
             nowDate:        new Date().getFullYear() 
                         +   "." 
                         +   (parseInt(new Date().getMonth()) + 1) 
@@ -130,47 +105,28 @@ export default {
                             },
             arrShowColumn   :   [],
             arrShowColumnDef   :   [],
-            etpOperInfoQuickYn : true
+            etpOperInfoQuickYn : true,
+
+            indexBasic  :   {},
+            paramData   :   {},
+            etpRow      :   {},
+            inavGubun   :   "",
+            showInavPdfYn : false,
+            showInavIndexYn : false
         };
     },
     mounted: function() {
         var vm = this;
 
+        console.log( "######### EtpOperInfo.vue mounted ");
         vm.$nextTick().then(() => {
             vm.fn_setTableInfo();
-            vm.fn_getEtpOperInfo( vm.stateInfo.gubun );
+            vm.fn_getEtpOperInfo( vm.stateInfo.gubun );        
         });
-
-        vm.$EventBus.$on('EtpOperControl_EtpOperInfo_setInavData', data => {
-            vm.fn_setInavData( data );
-alert(11);
-//            vm.$destory();
-        });
-
-        vm.$EventBus.$on('EtpOperControl_EtpOperInfo_setEtpPerformanceData', data => {
-            vm.fn_setEtpPerformanceData( data );
-        });
-
-        vm.$EventBus.$on('EtpOperControl_EtpOperInfo_setCustomizeData', data => {
-            vm.fn_setCustomizeData( data );
-        });                       
     },
     created: function() {},
     beforeDestory: function() {
         var vm = this;
-console.log( "############ beforeDestory" );
-
-        vm.$EventBus.$off('EtpOperControl_EtpOperInfo_setInavData', data => {
-            vm.fn_setInavData( data );
-        });
-
-        vm.$EventBus.$off('EtpOperControl_EtpOperInfo_setEtpPerformanceData', data => {
-            vm.fn_setEtpPerformanceData( data );
-        });
-
-        vm.$EventBus.$off('EtpOperControl_EtpOperInfo_setCustomizeData', data => {
-            vm.fn_setCustomizeData( data );
-        });
     },
 
     methods: {
@@ -194,7 +150,9 @@ console.log( "############ beforeDestory" );
                 table01.clear().draw();
             }
 
-//            vm.$refs.result_cnt.textContent = "0";
+            if( typeof vm.$refs.result_cnt != "undefined" ) {
+                vm.$refs.result_cnt.textContent = "0";
+            }
 
             axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
                 data: {
@@ -210,9 +168,11 @@ console.log( "############ beforeDestory" );
                         table01.rows.add( dataList ).draw();
                         table01.draw();
 
-//                        vm.$refs.result_cnt.textContent = dataList.length;
+                        vm.indexBasic   =    dataList[0];
 
-                        vm.$emit( "fn_setIndexBasic", dataList[0] );
+                        if( typeof vm.$refs.result_cnt != "undefined" ) {
+                            vm.$refs.result_cnt.textContent = dataList.length;
+                        }
                     }
                 }
             });
@@ -312,9 +272,61 @@ console.log( "############ beforeDestory" );
             }
 
             tableObj.columns    =   vm.arrShowColumn ;
-            tableObj.columnDefs =   vm.arrColumnDef ;
+            tableObj.columnDefs =   vm.arrShowColumnDef ;
 
             table01 = $('#table01').DataTable( tableObj );
+
+            // 테이블별 이벤트
+            $('#table01 tbody').on('click', 'button[id=btnInav],button[id=btnEtpInfo],button[id=btnPdf]', function () {
+
+                var table = $('#table01').DataTable();
+                var data = table.row($(this).parents('tr')).data();
+                var rowInx = table.row($(this)).index();
+                var btnId   =   $(this).attr('id');
+
+                console.log("########## EtpOperInfo.vue -> pageMove START ############");
+                console.log( "data.f16012=[" + data.f16012 + "] /* 국제표준코드  */" );
+                console.log( "data.f16257=[" + data.f16257 + "] /* ETP기초지수코드  */" );
+                console.log( "data.f34239=[" + data.f34239 + "] /* ETP기초지수MID  */" );
+
+                vm.paramData.f16012         =   data.f16012;        /* 국제표준코드  */
+                vm.paramData.f16257         =   data.f16257;        /* ETP기초지수코드  */
+                vm.paramData.f34239         =   data.f34239;        /* ETP기초지수MID  */
+                vm.paramData.rowIndex       =   rowInx;
+
+                /* 산출방식 컬럼값이 없어 레코드 행이 짝수이면 pdf, 홀수이면 index 로 임시 처리함. TODO: 추후 변경 필요. */
+                var gubun = "";
+                if( rowInx %2 ==0 ) {
+                    gubun = "btnInavPdfPop";
+                }else{
+                    gubun = "btnInavIndexPop";
+                }
+
+                switch( btnId ) {
+
+                    case    'btnInav'       :
+
+                                if( gubun == "btnInavPdfPop" ) {
+                                    vm.inavGubun    =   "pdf";
+                                    vm.showInavPdfYn   =   true;
+                                }else if( gubun == "btnInavIndexPop" ) {
+                                    vm.inavGubun    =   "index";
+                                    vm.showInavIndexYn =   true;
+                                }
+
+                                break;
+
+                    case    'btnEtpInfo'    :
+                                vm.$emit('showDetail', 1, vm.paramData);
+                                break;
+
+                    case    'btnPdf'    :
+                                vm.$emit('fn_pageMove', btnId, vm.paramData);
+                                break;
+                }
+                
+                console.log("########## EtpOperInfo.vue -> pageMove END ############");
+            });                
         },
 
         /*
@@ -341,7 +353,6 @@ console.log( "############ beforeDestory" );
             vm.fn_setTableInfo();
             vm.fn_getEtpOperInfo( vm.stateInfo.gubun );
 
-            vm.$emit( "fn_eventClose", "fn_setInavData" );
             console.log("########## EtpOperInfo.vue -> fn_setInavData END ############");
         },
 
@@ -393,6 +404,53 @@ console.log( "############ beforeDestory" );
 
             console.log("########## EtpOperInfo.vue -> fn_setCustomizeData END ############");
         },
+        
+        /*
+         *  테이블에서 그래프 영역에 출력될 버튼이미지를 렌더링한다.
+         *  2019-05-03  bkLove(촤병국)
+         */        
+        fn_getGraphInfo( param ) {
+
+            var graphContent    =   "";
+
+            var divClass = "tooltip";
+            var btnClass = "btn_icon v-icon material-icons";
+            var btnSpanClass = "tooltiptext";
+            var btnSpanStyle = "width:70px;";
+
+            var btnId = "";
+            var btnContent = "";
+            var btnSpanContent = "";
+
+            if( !param ) {
+                return  graphContent;
+            }
+
+            if(     typeof param.btnId      === "undefined"
+                ||  typeof param.btnContent === "undefined" 
+            ) {
+                return  graphContent;
+            }
+
+
+            if( typeof param.btnSpanContent != "undefined" ) {
+                btnSpanContent  =   param.btnSpanContent;
+            }            
+
+            btnId           =   param.btnId;
+            btnContent      =   param.btnContent;
+
+
+            graphContent    +=  '<div class="' + divClass + '">';
+            graphContent    +=      '<button    id="' + btnId + '" ';
+            graphContent    +=      '           type="button" ';
+            graphContent    +=      '           class="' + btnClass + '" ';
+            graphContent    +=      '>' + btnContent + '</button>';
+            graphContent    +=      '<span class="' + btnSpanClass + '" style="' + btnSpanStyle + '" >' + btnSpanContent + '</span>';
+            graphContent    +=  '</div>';            
+
+            return  graphContent;
+        },
 
 
         /*
@@ -401,38 +459,6 @@ console.log( "############ beforeDestory" );
          */
         fn_setArrShowColumn( arrTemp ) {
             var vm = this;
-
-            var graphContent = "";
-
-            if( vm.stateInfo.pageState != 'etpInfo' ) {
-                /* iNAV 산출현황 */
-                graphContent    +=  '<div class="tooltip">';
-                graphContent    +=      '<button    id="btnInav" ';
-                graphContent    +=      '           type="button" ';
-                graphContent    +=      '           v-on="on" ';
-                graphContent    +=      '           class="btn_icon v-icon material-icons" ';
-                graphContent    +=      '>visibility</button>';
-                graphContent    +=      '<span class="tooltiptext" style="width:70px;" >투자지표</span>';
-                graphContent    +=  '</div>';
-            }
-            
-            /* ETF 상세정보 */
-            graphContent        +=   '<div class="tooltip">';
-            graphContent        +=       '<button    id="btnEtpInfo" ';
-            graphContent        +=       '           type="button" ';
-            graphContent        +=       '           class="btn_icon v-icon material-icons" ';
-            graphContent        +=       '>equalizer</button>';
-            graphContent        +=       '<span class="tooltiptext" style="width:70px;">ETP정보</span>';
-            graphContent        +=   '</div>';
-
-            /* PD 정보 */
-            graphContent        +=   '<div class="tooltip">';
-            graphContent        +=       '<button    id="btnPdf" ';
-            graphContent        +=       '           type="button" ';
-            graphContent        +=       '           class="btn_icon v-icon material-icons" ';
-            graphContent        +=       '>picture_as_pdf</button> ';
-            graphContent        +=       '<span class="tooltiptext" style="width:70px;">PDF관리</span>';
-            graphContent        +=   '</div>' ;
 
             var arrColumn  =   [
                 { 'name' : 'f16002'             , 'data': 'f16002'           ,  'width' : '220', 'orderable' : true  , 'className': 'dt-body-left',  'title' : '종목'           },      /* 한글종목명 */
@@ -459,10 +485,32 @@ console.log( "############ beforeDestory" );
                 { 'name' : 'f15001'             , 'data': 'f15001'           ,  'width' : '80',  'orderable' : true  , 'className': 'dt-body-right', 'title' : 'ETF 현재가'    },      /* 현재가  */
                 { 'name' : 'f16073'             , 'data': 'f16073'           ,  'width' : '80',  'orderable' : true  , 'className': 'dt-body-right', 'title' : '과세구분'      },      /* 락구분코드  */
 
-                { 'name' : 'graph'              , 'data': null               ,  'width' : '150', 'defaultContent' :  graphContent },
+                { 'name' : 'graph'              , 'data': null               ,  'width' : '150' },
             ];        
 
             var arrColumnDef  =   [
+
+                    {       'name' : 'graph'   
+                        ,   "render": function ( data, type, row ) {
+
+                                var graphContent = "";
+
+                                /* etpInfo - ETP운용정보, iNav - iNav 산출현황, performance - ETP Performance, customize - 컬럼 선택 */
+                                /* iNAV 산출현황 */
+                                if( vm.stateInfo.pageState === 'iNav' ) {
+                                    graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnInav", "btnContent" : "visibility", "btnSpanContent" : "투자지표" } );
+                                }
+                                
+                                /* ETF 상세정보 */
+                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnEtpInfo", "btnContent" : "equalizer", "btnSpanContent" : "ETP정보" } );
+
+                                /* PDF 정보 */
+                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnPdf", "btnContent" : "picture_as_pdf", "btnSpanContent" : "PDF관리" } );                                
+
+                                return  graphContent;
+                            }
+                    },                
+
 /*            
                 {       'name' : 'index_cal_method'   
                     ,   "render": function ( data, type, row ) {
@@ -533,8 +581,35 @@ console.log( "############ beforeDestory" );
                         }
                     });
                 }
+
             }
-        }
+        },
+
+
+        /*
+         *  iNAV 산출현황 선택 후 그리드에서 pdf 또는 index 에 따라 호출되 팝업창을 총료한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_close( param ) {
+            var vm = this;
+
+            vm.inavGubun   =   "";
+
+            vm.showInavPdfYn   =   false;
+            vm.showInavIndexYn =   false;
+        },
+        
+        showDetail: function(gubun, paramData) {      
+            var vm = this;
+
+            vm.$emit( "showDetail", gubun, paramData );
+        },
+
+        showMessageBox: function(title, msg, option, gubun) {
+            var vm = this;
+
+            vm.$emit( "showMessageBox", title, msg, option, gubun );
+        },        
     }
 };
 </script>

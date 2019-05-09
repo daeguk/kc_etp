@@ -216,19 +216,20 @@ export default {
 
         vm.init();
 
-        vm.$EventBus.$on('changeEtpInfo', data => {
-            vm.toggle_one = '1M';
-            vm.init();
-        });
-
-        vm.$EventBus.$on('changeEtpInfoClose', data => {
-            vm.$EventBus.$off('changeEtpInfo');
-        });
+        
     },
     created: function() {
         var vm = this;
+        vm.$EventBus.$on('changeEtpInfo', data => {
+            vm.toggle_one = '1M';
+            vm.init();
+            // 분석정보 실행
+            vm.$EventBus.$emit('changeEtpAnalysisInfo');
+        });
 
-        
+        vm.$EventBus.$on('changeEtpInfoClose', data => {
+            vm.$EventBus.$off('changeEtpInfo');         
+        });
     },
     updated: function() {
         console.log("Etp_updated================");

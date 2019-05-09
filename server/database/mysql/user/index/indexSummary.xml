@@ -682,38 +682,329 @@
     <!--지수 상세 -> 분석정보 Performance 정보[선택한 지수정보, 지수에 속한 ETP 정보 4개 까지] -->
     <select id="getIndexAnalysisInfo">
     <![CDATA[
-        SELECT base.F12506
-                ,'' as F16012
-                ,base.F16013
-                ,base.F16002
-                ,'189' Week1
-                ,'6' Month1
-                ,'24' Month3
-                ,'4' YTD
-                ,'1' Year1
-                ,'24' Year3
-                ,'4' Year5
-                ,'1' Year10
-          from kc_etp.td_index_basic base
+           SELECT BAS.F12506
+			      ,BAS.F16012
+			      ,BAS.F16013
+			      ,BAS.F16002
+			      ,BAS.F15001
+			      ,BAS.daily /* DAILY 수익률 */
+			      ,TRUNCATE((BAS.F15001 / ifnull(BAS.1week, BAS.F15001)) - 1, 2)  AS Week1      /* 1WEEK 수익률*/
+			      ,TRUNCATE((BAS.F15001 / ifnull(BAS.1month, BAS.F15001)) - 1, 2)  AS Month1    /* Month1 수익률*/
+			      ,TRUNCATE((BAS.F15001 / ifnull(BAS.3month, BAS.F15001)) - 1, 2)  AS Month3    /* Month3 수익률*/
+			      ,TRUNCATE((BAS.F15001 / ifnull(BAS.ytd, BAS.F15001)) - 1, 2)  AS YTD          /* YTD 수익률*/
+			      ,TRUNCATE((BAS.F15001 / ifnull(BAS.1year, BAS.F15001)) - 1, 2)  AS Year1      /* Year1 수익률*/
+			      ,TRUNCATE((BAS.F15001 / ifnull(BAS.3year, BAS.F15001)) - 1, 2)  AS Year3      /* YEAR3 수익률*/
+			      ,TRUNCATE((BAS.F15001 / ifnull(BAS.5year, BAS.F15001)) - 1, 2)  AS Year5      /* YEAR5 수익률*/
+			      ,TRUNCATE((BAS.F15001 / ifnull(BAS.10year, BAS.F15001)) - 1, 2)  AS Year10    /* Year10 수익률*/
+			  FROM (SELECT base.F12506
+		                ,'' as F16012
+		                ,base.F16013
+		                ,base.F16002
+		                ,base.F15001
+		                ,base.F15004 as daily /*daily 수익률*/    
+						  , @vF12506:= base.F12506         
+		              ,(SELECT F15001
+                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+                             , (@vF16013:= a.F16013) vF16013
+                          FROM td_index_hist a
+                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+                         WHERE a.F12506 >= date_format(DATE_SUB(DATE_FORMAT(@vF12506, '%Y.%m.%d'), INTERVAL 1 week), '%Y%m%d')
+                         order BY a.F16013, a.F12506 ASC
+								 LIMIT 0, 2) A
+                  where A.rnum = 1
+                    and A.F16013 = base.F16013
+						  AND A.market_id = base.market_id) AS 1week
+						,(SELECT F15001
+                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+                             , (@vF16013:= a.F16013) vF16013
+                          FROM td_index_hist a
+                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+                         WHERE a.F12506 >= date_format(DATE_SUB(DATE_FORMAT(@vF12506, '%Y.%m.%d'), INTERVAL 1 MONTH), '%Y%m%d')
+                         order BY a.F16013, a.F12506 ASC
+								 LIMIT 0, 2) A
+                  where A.rnum = 1
+                    and A.F16013 = base.F16013
+						  AND A.market_id = base.market_id) AS 1month
+					  ,(SELECT F15001
+                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+                             , (@vF16013:= a.F16013) vF16013
+                          FROM td_index_hist a
+                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+                         WHERE a.F12506 >= date_format(DATE_SUB(DATE_FORMAT(@vF12506, '%Y.%m.%d'), INTERVAL 3 MONTH), '%Y%m%d')
+                         order BY a.F16013, a.F12506 ASC
+								 LIMIT 0, 2) A
+                  where A.rnum = 1
+                    and A.F16013 = base.F16013
+						  AND A.market_id = base.market_id) AS 3month
+					  ,(SELECT F15001
+	                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+	                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+	                             , (@vF16013:= a.F16013) vF16013
+	                          FROM td_index_hist a
+	                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+	                         WHERE DATE_FORMAT(a.F12506, '%Y') = DATE_FORMAT(@vF12506, '%Y')
+	                         order BY a.F16013, a.F12506 ASC
+									 LIMIT 0, 2) A
+	                  where A.rnum = 1
+	                    and A.F16013 = base.F16013
+							  AND A.market_id = base.market_id) AS ytd
+					  ,(SELECT F15001
+	                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+	                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+	                             , (@vF16013:= a.F16013) vF16013
+	                          FROM td_index_hist a
+	                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+	                         WHERE a.F12506 >= date_format(DATE_SUB(DATE_FORMAT(@vF12506, '%Y.%m.%d'), INTERVAL 1 YEAR), '%Y%m%d')
+	                         order BY a.F16013, a.F12506 ASC
+						    LIMIT 0, 2) A
+	                  where A.rnum = 1
+	                    and A.F16013 = base.F16013
+							  AND A.market_id = base.market_id) AS 1year
+					  ,(SELECT F15001
+	                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+	                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+	                             , (@vF16013:= a.F16013) vF16013
+	                          FROM td_index_hist a
+	                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+	                         WHERE a.F12506 >= date_format(DATE_SUB(DATE_FORMAT(@vF12506, '%Y.%m.%d'), INTERVAL 3 YEAR), '%Y%m%d')
+	                         order BY a.F16013, a.F12506 ASC
+	                         LIMIT 0, 2) A
+	                  where A.rnum = 1
+	                    and A.F16013 = base.F16013
+							  AND A.market_id = base.market_id) AS 3year
+					  ,(SELECT F15001
+	                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+	                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+	                             , (@vF16013:= a.F16013) vF16013
+	                          FROM td_index_hist a
+	                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+	                         WHERE a.F12506 >= date_format(DATE_SUB(DATE_FORMAT(@vF12506, '%Y.%m.%d'), INTERVAL 5 YEAR), '%Y%m%d')
+	                         order BY a.F16013, a.F12506 ASC
+	                         LIMIT 0, 2) A
+	                  where A.rnum = 1
+	                    and A.F16013 = base.F16013
+							  AND A.market_id = base.market_id) AS 5year
+					  ,(SELECT F15001
+	                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+	                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+	                             , (@vF16013:= a.F16013) vF16013
+	                          FROM td_index_hist a
+	                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+	                         WHERE a.F12506 >= date_format(DATE_SUB(DATE_FORMAT(@vF12506, '%Y.%m.%d'), INTERVAL 10 YEAR), '%Y%m%d')
+	                         order BY a.F16013, a.F12506 ASC
+	                         LIMIT 0, 2) A
+	                  where A.rnum = 1
+	                    and A.F16013 = base.F16013
+							  AND A.market_id = base.market_id) AS 10year
+				from kc_etp.td_index_basic base
          WHERE base.F16013 = #{jisu_cd}
            AND base.market_id = #{market_id}
-        UNION ALL
-        SELECT   base.F12506
-                ,base.F16012
-                ,base.F16013
-                ,base.F16002   
-                ,'189' Week1
-                ,'6' Month1
-                ,'24' Month3
-                ,'4' YTD
-                ,'1' Year1
-                ,'24' Year3
-                ,'4' Year5
-                ,'1' Year10         
-            FROM kc_etp.td_etp_basic base
-            WHERE base.F34239 = CAST(substr(#{market_id}, 2) AS SIGNED) 
-            AND base.F16257 = #{jisu_cd}
-        limit 0, 4;
+		  ) BAS
+		  UNION ALL
+		  /* 총4개 까지 만 쿼리 */
+        SELECT BAS.F12506
+			     ,BAS.F16012
+			     ,BAS.F16013
+			     ,BAS.F16002
+				 ,BAS.F15001 
+				 ,BAS.daily  
+			     ,TRUNCATE(BAS.Week1, 2) as Week1
+			     ,TRUNCATE(BAS.Month1, 2) as Month1
+			     ,TRUNCATE(BAS.Month3, 2) as Month3
+			     ,TRUNCATE(BAS.YTD, 2) as YTD
+			     ,TRUNCATE(BAS.Year1, 2) as Year1
+			     ,TRUNCATE(BAS.Year3, 2) as Year3
+			     ,TRUNCATE(BAS.Year5, 2) as Year5
+			     ,TRUNCATE(BAS.Year10, 2) as Year10     
+		    FROM (SELECT   base.F12506
+			                ,base.F16012
+			                ,base.F16013
+			                ,base.F16002
+							,base.F15001 
+							,base.W00001 AS daily  
+			                ,base.W00002 AS Week1
+			                ,base.W00003 AS Month1
+			                ,base.W00004 AS Month3
+			                ,base.W00005 AS YTD
+			                ,base.W00006 AS Year1
+			                ,base.W00007 AS Year3
+			                ,base.W00008 AS Year5
+			                ,base.W00009 AS Year10         
+			            FROM kc_etp.td_etp_basic base
+			            WHERE base.F34239 = CAST(substr(#{market_id} , 2) AS SIGNED) 
+			            AND base.F16257 = #{jisu_cd}
+			          ORDER BY base.W00003 DESC
+			        limit 0, 4
+		  ) BAS
+    ]]>    
+    </select>
+
+    <!--지수 상세 -> 분석정보 Performance 정보[선택한 지수정보] -->
+    <select id="getIndexAnalysisInfoIndexData">
+    <![CDATA[
+           SELECT BAS.F12506
+			      ,BAS.F16012
+			      ,BAS.F16013
+			      ,BAS.F16002
+			      ,BAS.F15001
+			      ,BAS.daily /* DAILY 수익률 */
+			      ,TRUNCATE((BAS.F15001 / ifnull(BAS.1week, BAS.F15001)) - 1, 2)  AS Week1      /* 1WEEK 수익률*/
+			      ,TRUNCATE((BAS.F15001 / ifnull(BAS.1month, BAS.F15001)) - 1, 2)  AS Month1    /* Month1 수익률*/
+			      ,TRUNCATE((BAS.F15001 / ifnull(BAS.3month, BAS.F15001)) - 1, 2)  AS Month3    /* Month3 수익률*/
+			      ,TRUNCATE((BAS.F15001 / ifnull(BAS.ytd, BAS.F15001)) - 1, 2)  AS YTD          /* YTD 수익률*/
+			      ,TRUNCATE((BAS.F15001 / ifnull(BAS.1year, BAS.F15001)) - 1, 2)  AS Year1      /* Year1 수익률*/
+			      ,TRUNCATE((BAS.F15001 / ifnull(BAS.3year, BAS.F15001)) - 1, 2)  AS Year3      /* YEAR3 수익률*/
+			      ,TRUNCATE((BAS.F15001 / ifnull(BAS.5year, BAS.F15001)) - 1, 2)  AS Year5      /* YEAR5 수익률*/
+			      ,TRUNCATE((BAS.F15001 / ifnull(BAS.10year, BAS.F15001)) - 1, 2)  AS Year10    /* Year10 수익률*/
+			  FROM (SELECT base.F12506
+		                ,'' as F16012
+		                ,base.F16013
+		                ,base.F16002
+		                ,base.F15001
+		                ,base.F15004 as daily /*daily 수익률*/    
+						, @vF12506:= base.F12506         
+		              ,(SELECT F15001
+                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+                             , (@vF16013:= a.F16013) vF16013
+                          FROM td_index_hist a
+                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+                         WHERE a.F12506 >= date_format(DATE_SUB(DATE_FORMAT(@vF12506, '%Y.%m.%d'), INTERVAL 1 week), '%Y%m%d')
+                         order BY a.F16013, a.F12506 ASC
+								 LIMIT 0, 2) A
+                  where A.rnum = 1
+                    and A.F16013 = base.F16013
+						  AND A.market_id = base.market_id) AS 1week
+						,(SELECT F15001
+                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+                             , (@vF16013:= a.F16013) vF16013
+                          FROM td_index_hist a
+                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+                         WHERE a.F12506 >= date_format(DATE_SUB(DATE_FORMAT(@vF12506, '%Y.%m.%d'), INTERVAL 1 MONTH), '%Y%m%d')
+                         order BY a.F16013, a.F12506 ASC
+								 LIMIT 0, 2) A
+                  where A.rnum = 1
+                    and A.F16013 = base.F16013
+						  AND A.market_id = base.market_id) AS 1month
+					  ,(SELECT F15001
+                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+                             , (@vF16013:= a.F16013) vF16013
+                          FROM td_index_hist a
+                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+                         WHERE a.F12506 >= date_format(DATE_SUB(DATE_FORMAT(@vF12506, '%Y.%m.%d'), INTERVAL 3 MONTH), '%Y%m%d')
+                         order BY a.F16013, a.F12506 ASC
+								 LIMIT 0, 2) A
+                  where A.rnum = 1
+                    and A.F16013 = base.F16013
+						  AND A.market_id = base.market_id) AS 3month
+					  ,(SELECT F15001
+	                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+	                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+	                             , (@vF16013:= a.F16013) vF16013
+	                          FROM td_index_hist a
+	                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+	                         WHERE DATE_FORMAT(a.F12506, '%Y') = DATE_FORMAT(@vF12506, '%Y')
+	                         order BY a.F16013, a.F12506 ASC
+									 LIMIT 0, 2) A
+	                  where A.rnum = 1
+	                    and A.F16013 = base.F16013
+							  AND A.market_id = base.market_id) AS ytd
+					  ,(SELECT F15001
+	                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+	                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+	                             , (@vF16013:= a.F16013) vF16013
+	                          FROM td_index_hist a
+	                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+	                         WHERE a.F12506 >= date_format(DATE_SUB(DATE_FORMAT(@vF12506, '%Y.%m.%d'), INTERVAL 1 YEAR), '%Y%m%d')
+	                         order BY a.F16013, a.F12506 ASC
+						    LIMIT 0, 2) A
+	                  where A.rnum = 1
+	                    and A.F16013 = base.F16013
+							  AND A.market_id = base.market_id) AS 1year
+					  ,(SELECT F15001
+	                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+	                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+	                             , (@vF16013:= a.F16013) vF16013
+	                          FROM td_index_hist a
+	                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+	                         WHERE a.F12506 >= date_format(DATE_SUB(DATE_FORMAT(@vF12506, '%Y.%m.%d'), INTERVAL 3 YEAR), '%Y%m%d')
+	                         order BY a.F16013, a.F12506 ASC
+	                         LIMIT 0, 2) A
+	                  where A.rnum = 1
+	                    and A.F16013 = base.F16013
+							  AND A.market_id = base.market_id) AS 3year
+					  ,(SELECT F15001
+	                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+	                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+	                             , (@vF16013:= a.F16013) vF16013
+	                          FROM td_index_hist a
+	                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+	                         WHERE a.F12506 >= date_format(DATE_SUB(DATE_FORMAT(@vF12506, '%Y.%m.%d'), INTERVAL 5 YEAR), '%Y%m%d')
+	                         order BY a.F16013, a.F12506 ASC
+	                         LIMIT 0, 2) A
+	                  where A.rnum = 1
+	                    and A.F16013 = base.F16013
+							  AND A.market_id = base.market_id) AS 5year
+					  ,(SELECT F15001
+	                  FROM (SELECT a.F16013, a.F12506, a.F15009, a.market_id, a.F15001
+	                             , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
+	                             , (@vF16013:= a.F16013) vF16013
+	                          FROM td_index_hist a
+	                         INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
+	                         WHERE a.F12506 >= date_format(DATE_SUB(DATE_FORMAT(@vF12506, '%Y.%m.%d'), INTERVAL 10 YEAR), '%Y%m%d')
+	                         order BY a.F16013, a.F12506 ASC
+	                         LIMIT 0, 2) A
+	                  where A.rnum = 1
+	                    and A.F16013 = base.F16013
+							  AND A.market_id = base.market_id) AS 10year
+				from kc_etp.td_index_basic base
+         WHERE base.F16013 = #{jisu_cd}
+           AND base.market_id = #{market_id}
+		  ) BAS
+		  
+    ]]>    
+    </select>
+
+    <!--지수 상세 -> 분석정보 Performance 정보[선택한 ETP정보] -->
+    <select id="getIndexAnalysisInfoEtpData">
+    <![CDATA[
+           SELECT BAS.F12506
+			     ,BAS.F16012
+			     ,BAS.F16013
+			     ,BAS.F16002
+				 ,BAS.F15001 
+				 ,BAS.daily  
+			     ,TRUNCATE(BAS.Week1, 2) as Week1
+			     ,TRUNCATE(BAS.Month1, 2) as Month1
+			     ,TRUNCATE(BAS.Month3, 2) as Month3
+			     ,TRUNCATE(BAS.YTD, 2) as YTD
+			     ,TRUNCATE(BAS.Year1, 2) as Year1
+			     ,TRUNCATE(BAS.Year3, 2) as Year3
+			     ,TRUNCATE(BAS.Year5, 2) as Year5
+			     ,TRUNCATE(BAS.Year10, 2) as Year10   
+		    FROM (SELECT   base.F12506
+			                ,base.F16012
+			                ,base.F16013
+			                ,base.F16002
+							,base.F15001 
+							,base.W00001 AS daily  
+			                ,base.W00002 AS Week1
+			                ,base.W00003 AS Month1
+			                ,base.W00004 AS Month3
+			                ,base.W00005 AS YTD
+			                ,base.W00006 AS Year1
+			                ,base.W00007 AS Year3
+			                ,base.W00008 AS Year5
+			                ,base.W00009 AS Year10         
+			            FROM kc_etp.td_etp_basic base
+			            WHERE base.F16012 = #{jisu_cd}
+                ) BAS
+		  
     ]]>    
     </select>
 

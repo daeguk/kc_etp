@@ -631,6 +631,63 @@ var getIndexAnalysisInfo = function (req, res) {
 };
 
 
+/*
+* <!--Index 또는 ETP 수익률 비교 정보, gubun 1: etp, 2:index] -->
+*/
+
+var getIndexAnalysisData = function (req, res) {
+    try {
+        console.log('indexSummary=>getIndexAnalysisInfo 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        // var options = {id:'admin'};
+        
+        var options = {
+            large_type : req.session.large_type,
+            jisu_cd: req.query.jisu_cd,
+            market_id: req.query.market_id
+        };
+
+        var gubun = req.query.gubun;
+        util.log("options", JSON.stringify(options));
+        var query_id = '';
+
+        if (gubun == '1') {
+            query_id = 'getIndexAnalysisInfoEtpData';
+        } else if (gubun == '2') {
+            query_id = 'getIndexAnalysisInfoIndexData';
+        }
+        var stmt = mapper.getStatement('index', query_id, options, {language:'sql', indent: '  '});
+        
+        // 대입 연산자 치환
+        stmt = stmt.replace(/\: =/g,':='); 
+     
+        console.log(stmt);
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
+
+
+
 
 
 /*
@@ -731,3 +788,4 @@ module.exports.getIndexImportanceList = getIndexImportanceList;
 module.exports.getIndexAnalysisInfo = getIndexAnalysisInfo;
 module.exports.getShareReqCnt = getShareReqCnt;
 module.exports.getIndexRegStateCnt = getIndexRegStateCnt;
+module.exports.getIndexAnalysisData = getIndexAnalysisData;

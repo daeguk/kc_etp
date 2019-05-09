@@ -108,45 +108,52 @@ export default {
 
     },
     created: function() {
+        var vm = this;
+        vm.$EventBus.$on('changeIndexBasicInfo', data => {
+            vm.init();
+        });
 
     },
     beforeDestroy() {
-
+        this.$EventBus.$off('changeIndexBasicInfo')
     },
     mounted: function() {
 
-        var vm = this;
-
-        if(     this.basicData 
-            &&  this.basicData.jisu_cd
-            &&  this.basicData.large_type
-            &&  this.basicData.market_id
-        ) {
-            this.param.jisu_cd      =   this.basicData.jisu_cd;
-            this.param.large_type   =   this.basicData.large_type;
-            this.param.market_id    =   this.basicData.market_id;
-        }
-        else if(   
-                vm.$route.query.jisu_cd  
-            &&  vm.$route.query.large_type  
-            &&  vm.$route.query.market_id  
-        ) {
-            this.param.jisu_cd      =   this.$route.query.jisu_cd;
-            this.param.large_type   =   this.$route.query.large_type;
-            this.param.market_id    =   this.$route.query.market_id;
-        }
-
-
-        if(     this.param
-            &&  this.param.jisu_cd
-            &&  this.param.large_type
-            &&  this.param.market_id
-        ) {
-            this.getIndexBaseInfo();
-            this.getIndexInEtpInfo();
-        }        
+        this.init();
     },
     methods: {
+        init: function() {
+            var vm = this;
+
+            if(     vm.basicData 
+                &&  vm.basicData.jisu_cd
+                &&  vm.basicData.large_type
+                &&  vm.basicData.market_id
+            ) {
+                vm.param.jisu_cd      =   vm.basicData.jisu_cd;
+                vm.param.large_type   =   vm.basicData.large_type;
+                vm.param.market_id    =   vm.basicData.market_id;
+            }
+            else if(   
+                    vm.$route.query.jisu_cd  
+                &&  vm.$route.query.large_type  
+                &&  vm.$route.query.market_id  
+            ) {
+                vm.param.jisu_cd      =   vm.$route.query.jisu_cd;
+                vm.param.large_type   =   vm.$route.query.large_type;
+                vm.param.market_id    =   vm.$route.query.market_id;
+            }
+
+
+            if(     vm.param
+                &&  vm.param.jisu_cd
+                &&  vm.param.large_type
+                &&  vm.param.market_id
+            ) {
+                vm.getIndexBaseInfo();
+                vm.getIndexInEtpInfo();
+            }        
+        },
         getIndexBaseInfo: function() {
             var vm = this;
             console.log("getIndexBaseInfo");

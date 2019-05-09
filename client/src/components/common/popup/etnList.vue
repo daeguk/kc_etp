@@ -2,7 +2,7 @@
 <v-card>
     
     <v-card-title>
-        <v-text-field v-model="search" v-on:change="filterData" append-icon="search" label="Search" single-line hide-details></v-text-field>
+        <v-text-field v-model="search" v-on:keyup="filterData" append-icon="search" label="Search" single-line hide-details></v-text-field>
     </v-card-title>        
     <v-card flat>
         <table id="etn_grid" class="display" style="width:100%">

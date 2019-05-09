@@ -51,7 +51,10 @@ export  const  index_common =   {
 
                         // 차트 호출
                         this.importance_chart(items);
-  
+                        
+                        if (importance_grid) {
+                            importance_grid.destroy()
+                        }
                         importance_grid = $('#' + vm.importance_grid_id).DataTable( {
                             "processing": true,
                             "serverSide": false,
