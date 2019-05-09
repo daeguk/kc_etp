@@ -561,7 +561,7 @@ export default {
             table01 = $('#table01').DataTable( tableObj );
 
             // 테이블별 이벤트
-            $('#table01 tbody').on('click', 'button[id=btnIndex],button[id=btnIndexDetail],button[id=btnIndexFix],button[id=btnIndexError]', function () {
+            $('#table01 tbody').on('click', 'button[id=btnIndex],button[id=btnIndexDetailList],button[id=btnIndexFix],button[id=btnIndexError]', function () {
 
                 var table   =   $('#table01').DataTable();
                 var data    =   table.row($(this).parents('tr')).data();
@@ -578,6 +578,10 @@ export default {
                 vm.paramData.F16257         =   data.f16013;        /* 단축코드  */
                 vm.paramData.LARGE_TYPE     =   data.large_type;    /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */
                 vm.paramData.MARKET_ID      =   data.market_id;     /* 시장 ID  */
+
+                vm.paramData.f16013         =   data.f16013;        /* 단축코드  */
+                vm.paramData.market_id      =   data.market_id;     /* 시장 ID  */
+
                 vm.paramData.rowIndex       =   rowInx;
 
 
@@ -587,8 +591,8 @@ export default {
                                 vm.$emit('showDetail', 2, vm.paramData);
                                 break;
 
-                    case    'btnEtpInfo'    :
-                                vm.$emit('showDetail', 1, vm.paramData);
+                    case    'btnIndexDetailList'    :
+                                vm.$emit('showDetail', 3, vm.paramData);
                                 break;
 
                     case    'btnPdf'    :
@@ -694,7 +698,7 @@ export default {
                                 graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndex"      , "btnContent" : "visibility"       , "btnSpanContent" : "지수정보" } );
                                 
                                 /* 지수구성정보 */
-                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexDetail", "btnContent" : "equalizer"        , "btnSpanContent" : "지수구성정보" } );
+                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexDetailList", "btnContent" : "equalizer"        , "btnSpanContent" : "지수구성정보" } );
 
                                 /* 지수조치내역 */
                                 graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexFix"   , "btnContent" : "insert_comment"   , "btnSpanContent" : "지수조치내역" } );
