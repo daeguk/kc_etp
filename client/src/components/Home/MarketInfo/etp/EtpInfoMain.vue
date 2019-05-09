@@ -76,9 +76,15 @@ export default {
     },
     methods: {
         pageMove : function(tab_id) {
+
+            /* 페이지 이동시 마다 이벤트 삭제 처리 */
+            this.$EventBus.$off('changeEtpInfo');
+            this.$EventBus.$off('changeIndexBasicInfo');
+            this.$EventBus.$off('changeIndexAnalysisInfo');
+            this.$EventBus.$off('changeEtpAnalysisInfo');
+            
+
             this.$EventBus.$emit("showList", {tab_id:tab_id});
-            //this.activeTab = id + 1;
-            //this.$router.push({path:'/info/etpinfo/EtpMarketInfo', props:{activeTab:this.activeTab}});
         }
     }
 
