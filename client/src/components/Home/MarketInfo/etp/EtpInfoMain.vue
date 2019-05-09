@@ -79,6 +79,7 @@ export default {
 
             /* 페이지 이동시 마다 이벤트 삭제 처리 */
             this.$EventBus.$off('changeEtpInfo');
+            this.$EventBus.$off('changeIndexInfo');
             this.$EventBus.$off('changeIndexBasicInfo');
             this.$EventBus.$off('changeIndexAnalysisInfo');
             this.$EventBus.$off('changeEtpAnalysisInfo');
