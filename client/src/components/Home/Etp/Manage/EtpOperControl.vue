@@ -1,9 +1,14 @@
 <template>
     <v-layout row wrap>
-        <v-flex xs12>  
+        <v-flex xs12>
+
             <v-dialog v-model="showIndexDetailDialog" persistent max-width="1300">
                 <IndexDetailDialog v-if="showIndexDetailDialog" :paramData="paramData" :showDialog="showIndexDetailDialog" @fn_closePop="fn_close"></IndexDetailDialog>
             </v-dialog>
+
+            <v-dialog v-model="showIndexDetailListDialog" persistent max-width="1300">
+                <IndexDetailList v-if="showIndexDetailListDialog" :paramData="paramData" :showDialog="showIndexDetailListDialog" @fn_closePop="fn_close"></IndexDetailList>
+            </v-dialog>            
 
             <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
 
@@ -46,6 +51,7 @@ import Config from "@/js/config.js";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 import IndexDetailDialog from "@/components/Home/Index/Manage/IndexDetailDialog.vue";   /*지수 상세정보*/
+import IndexDetailList from "@/components/Home/Index/Manage/IndexDetailList.vue";       /* 지수종목 상세정보 */
 import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";         /*ETP 상세정보*/
 
 import EtpOperInfo from "@/components/Home/Etp/Manage/EtpOperInfo.vue";                 /* ETP 운용정보 */
@@ -58,6 +64,8 @@ export default {
         return {
             showIndexDetailDialog : false,
             showEtpDetailDialog : false,
+            showIndexDetailListDialog : false,
+
             showEtpOerInfo : 0,
             paramData : [],
     	};
@@ -67,6 +75,7 @@ export default {
         
         IndexDetailDialog : IndexDetailDialog,      /* 인덱스 상세정보 */
         EtpManageDetail :   EtpManageDetail,        /* ETP 상세정보 */
+        IndexDetailList :   IndexDetailList,
 
         EtpOperInfo :  EtpOperInfo,                 /* ETP 운용정보 */
         EtpOperIndex :   EtpOperIndex,              /* 지수관리 */
@@ -84,6 +93,7 @@ export default {
             this.showEtpOerInfo = data.tab_id;
             this.showEtpDetailDialog = false;
             this.showIndexDetailDialog = false;
+            this.showIndexDetailListDialog = false;
         });
     },
     beforeUpdated: function() {
@@ -97,26 +107,46 @@ export default {
             if (gubun == '1') {
                 this.paramData = paramData;
                 this.showIndexDetailDialog = false;
+                this.showIndexDetailListDialog = false;
                 
                 if (this.showEtpDetailDialog) {
                     this.$EventBus.$emit('changeIndexInfoClose', paramData);
+                    this.$EventBus.$emit('changeIndexDetailListClose', paramData);
+
                     this.$EventBus.$emit('changeEtpInfo', paramData);
                 }
                 this.showEtpDetailDialog = true;
                 
-                this.showEtpOerInfo = vm.activeTab;
+                this.showEtpOerInfo = this.activeTab;
                 
             } else if (gubun == '2') { 
                 this.paramData = paramData;
                 this.showEtpDetailDialog = false;
+                this.showIndexDetailListDialog = false;
 
                 if (this.showIndexDetailDialog) {
                     this.$EventBus.$emit('changeEtpInfoClose', paramData);
+                    this.$EventBus.$emit('changeIndexDetailListClose', paramData);
+
                     this.$EventBus.$emit('changeIndexInfo', paramData);
                 }
                 
                 this.showIndexDetailDialog = true;                
-                this.showEtpOerInfo = vm.activeTab;
+                this.showEtpOerInfo = this.activeTab;
+            } else if( gubun == '3' ) {
+                this.paramData = paramData;
+                this.showIndexDetailDialog = false;
+                this.showEtpDetailDialog = false;
+
+                if (this.showIndexDetailListDialog) {
+                    this.$EventBus.$emit('changeEtpInfoClose', paramData);
+                    this.$EventBus.$emit('changeIndexInfoClose', paramData);
+
+                    this.$EventBus.$emit('changeIndexDetailList', paramData);
+                }
+                
+                this.showIndexDetailListDialog = true;                
+                this.showEtpOerInfo = this.activeTab;                
             }
         },
         showMessageBox: function(title, msg, option, gubun) {
@@ -145,8 +175,8 @@ export default {
         fn_close( param ) {
             var vm = this;
 
-            vm.showIndexDetailDialog    =   false;
-            
+            vm.showIndexDetailDialog        =   false;
+            vm.showIndexDetailListDialog    =   false;
         }
     }
 }
