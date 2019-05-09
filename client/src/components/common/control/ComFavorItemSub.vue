@@ -24,6 +24,7 @@
                                                             <th></th>
                                                             <th></th>
                                                             <th></th>
+                                                            <th></th>
                                                         </tr>
                                                     </thead>  
                                                 </table>
@@ -39,6 +40,7 @@
                                                 <table id="etn_table" class="tbl_type" style="width:100%">
                                                     <thead>
                                                         <tr>
+                                                            <th></th>
                                                             <th></th>
                                                             <th></th>
                                                             <th></th>
@@ -60,6 +62,7 @@
                                                             <th></th>
                                                             <th></th>
                                                             <th></th>
+                                                            <th></th>
                                                         </tr>
                                                     </thead>  
                                                 </table>
@@ -72,7 +75,7 @@
                     </v-flex>
                 </v-layout>
                 <!---자산추가 팝업 -->
-                <jongmokPop @selectedItem="getSelectedItem" @hideJongMokPop="hideJongMokPop" :showDialog="jongMokDialog"></jongmokPop>
+                <jongmokPop @selectedItem="setSelectedItem" @hideJongMokPop="hideJongMokPop" :showDialog="jongMokDialog"></jongmokPop>
                 <!--자산추가 팝업 end -->
             </v-list-tile-content>
         </v-list>
@@ -209,7 +212,7 @@ export default {
                         
                         return htm;
                     },
-                    "targets": 0
+                    "targets": 1
                 },
                 {  
                     "render": function ( data, type, row ) {
@@ -218,7 +221,7 @@ export default {
                         htm += "            <br>"+row.JISU_CD;
                         return htm;
                     },
-                    "targets": 1
+                    "targets": 2
                 },
             ],
             select: {
@@ -228,6 +231,7 @@ export default {
             paging: false,
             searching: false,
             columns: [
+                { "data": "faver_seq", "visible": false},
                 { "data": "faver", "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>"},
                 { "data": "JISU_NM", "orderable": false},
                 { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_detail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>ETP</span></div>"},
@@ -241,10 +245,21 @@ export default {
             var data = table.row($(this).parents('tr')).data();
 
             if ($(this).attr('id') == 'btn_faver') {
-               data.faver =  data.faver == '1' ? '0' : '1';
-               jisu_grid.clear().draw();
-               jisu_grid.rows.add(vm.results).draw();
-            } else {
+                console.log(data.faver_seq);
+                //data.faver =  data.faver == '1' ? '0' : '1';
+
+                if (data.faver == '1') {
+                    data.faver = 0;
+                    $(this).html("star_border");
+                    vm.deleteItem(data, 'etf');
+                } else {
+                    data.faver = 1;
+                    $(this).html("star");
+                    vm.setSelectedItem(data, '1', 'etf');
+                }
+                //$(this).html("star_border");
+                //etf_table.rows.add(etf_table.rows().data()).draw();
+            } else if ($(this).attr('id') == 'btn_detail') {
                 data.GUBUN= "1";
                 vm.fn_detailPop( data );
             }
@@ -275,7 +290,7 @@ export default {
                         
                         return htm;
                     },
-                    "targets": 0
+                    "targets": 1
                 },
                 {  
                     "render": function ( data, type, row ) {
@@ -284,7 +299,7 @@ export default {
                         htm += "            <br>"+row.JISU_CD;
                         return htm;
                     },
-                    "targets": 1
+                    "targets": 2
                 },
             ],
             select: {
@@ -294,6 +309,7 @@ export default {
             paging: false,
             searching: false,
             columns: [
+                { "data": "faver_seq", "visible": false},
                 { "data": "faver", "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>"},
                 { "data": "JISU_NM", "orderable": false},
                 { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_detail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>ETP</span></div>"},
@@ -305,8 +321,26 @@ export default {
             var table = $('#etn_table').DataTable();
             var data = table.row($(this).parents('tr')).data();
 
-            data.GUBUN= "1";
-            vm.fn_detailPop( data );
+            if ($(this).attr('id') == 'btn_faver') {
+                console.log(data.faver_seq);
+                //data.faver =  data.faver == '1' ? '0' : '1';
+
+                if (data.faver == '1') {
+                    data.faver = 0;
+                    $(this).html("star_border");
+                    vm.deleteItem(data, 'etn');
+                } else {
+                    data.faver = 1;
+                    $(this).html("star");
+                    vm.setSelectedItem(data, '1', 'etn');
+                }
+                //$(this).html("star_border");
+                //etf_table.rows.add(etf_table.rows().data()).draw();
+            } else if ($(this).attr('id') == 'btn_detail') {
+                data.GUBUN= "1";
+                vm.fn_detailPop( data );
+            }
+           
         });
 
 
@@ -333,7 +367,7 @@ export default {
                         
                         return htm;
                     },
-                    "targets": 0
+                    "targets": 1
                 },
                 {  
                     "render": function ( data, type, row ) {
@@ -342,7 +376,7 @@ export default {
                         htm += "            <br>"+row.JISU_CD;
                         return htm;
                     },
-                    "targets": 1
+                    "targets": 2
                 },
             ],
             select: {
@@ -352,6 +386,7 @@ export default {
             paging: false,
             searching: false,
             columns: [
+                { "data": "faver_seq", "visible": false},
                 { "data": "faver", "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>"},
                 { "data": "JISU_NM", "orderable": false},
                 { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_detail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>INDEX</span></div>"},
@@ -363,8 +398,26 @@ export default {
             var table = $('#index_table').DataTable();
             var data = table.row($(this).parents('tr')).data();
 
-            data.GUBUN= "2";
-            vm.fn_detailPop( data );
+
+            if ($(this).attr('id') == 'btn_faver') {
+                console.log(data.faver_seq);
+                //data.faver =  data.faver == '1' ? '0' : '1';
+
+                if (data.faver == '1') {
+                    data.faver = 0;
+                    $(this).html("star_border");
+                    vm.deleteItem(data, 'index');
+                } else {
+                    data.faver = 1;
+                    $(this).html("star");
+                    vm.setSelectedItem(data, '2', 'index');
+                }
+                //$(this).html("star_border");
+                //etf_table.rows.add(etf_table.rows().data()).draw();
+            } else if ($(this).attr('id') == 'btn_detail') {
+                data.GUBUN= "2";
+                vm.fn_detailPop( data );
+            }
         });
 
 
@@ -396,71 +449,88 @@ export default {
                 }
             });
         },
-        deleteItem: function(item_seq, gubun, item_cd) {        
+        
+        deleteItem: function(data, mode) {        
             console.log("deleteItem");
             var vm = this;
+
+            var jisu_cd = '';
+            var market_id = '';
+            if (data.GUBUN == '1') {
+                jisu_cd = data.JISU_CD;
+            } else {
+                jisu_cd = data.JISU_CD;
+                market_id = data.MARKET_ID;
+            }
+
             axios.post(Config.base_url + "/user/common/deleteFavorItem", {
                 params: {
-                    item_seq : item_seq,
-                    gubun : gubun, 
-                    item_cd : item_cd
+                    jisu_cd : jisu_cd,
+                    market_id : market_id
                 }
             }).then(function(response) {
                 if (response.data.success == false) {
                     vm.$emit("showMessageBox", '확인','삭제 중 오류가 발생했습니다.',{},1);
                 } else {
-                    vm.getFavorItemInfo();
+                    //if (mode == 'etf') vm.getEtfList();
+                   // if (mode == 'etn') vm.getEtnList();
+                    //if (mode == 'index') vm.getIndexList();
                 }
             });
 
         },
-        /* 자산추가 팝업에서 선택된 종목 추가 */
-        getSelectedItem: function(sel_items, gubun) {
+        /* 관심 종목 추가 */
+        setSelectedItem: function(sel_items, gubun, mode) {
             var vm = this;
 
             vm.jongMokDialog = false;
 
             var addFavorItems = [];
 
-            for (let i = 0; i < sel_items.length; i++) {
-                
-                
-
-                if (gubun  == '1') {
-                    var idx = _.findIndex(vm.favorItems, { 'ITEM_CD': sel_items[i].JISU_CD});
+            if (gubun  == '1') {
+                var idx = - 1;
+                if (mode == 'etf') idx =  _.findIndex(vm.etfList, { 'ITEM_CD': sel_items.JISU_CD});
+                if (mode == 'etn') idx =  _.findIndex(vm.etnList, { 'ITEM_CD': sel_items.JISU_CD});
+                if (mode == 'index') idx =  _.findIndex(vm.indexList, { 'ITEM_CD': sel_items.JISU_CD});
                     
-                    if (idx == -1) {
-                        addFavorItems.push({
-                            GUBUN : gubun,
-                            F16012 : sel_items[i].JISU_CD,
-                            F16013 : '',
-                            F16002 : sel_items[i].JISU_NM,
-                            MARKET_ID : '',
-                            LARGE_TYPE : '',
-                            MIDDLE_TYPE : ''
-                        });
-                    } else {
-                       vm.$emit("showMessageBox", '확인','이미 추가된 관심 종목 입니다.',{},1);
-                    }
-                } else if (gubun == '2') {
-                    var idx = _.findIndex(vm.favorItems, { 'ITEM_CD': sel_items[i].JISU_CD, 'MARKET_ID': sel_items[i].MARKET_ID });
-
-                    if (idx == -1) {
-                        addFavorItems.push({
-                            GUBUN : gubun,
-                            F16012 : '',
-                            F16013 : sel_items[i].JISU_CD,
-                            F16002 : sel_items[i].JISU_NM,
-                            MARKET_ID : sel_items[i].MARKET_ID,
-                            LARGE_TYPE : sel_items[i].LARGE_TYPE,
-                            MIDDLE_TYPE : sel_items[i].MIDDLE_TYPE
-                        });
-                    } else {
-                        vm.$emit("showMessageBox", '확인','이미 추가된 관심 종목 입니다.',{},1);
-                    }
+                if (idx == -1) {
+                    addFavorItems.push({
+                        GUBUN : gubun,
+                        F16012 : sel_items.JISU_CD,
+                        F16013 : '',
+                        F16002 : sel_items.JISU_NM,
+                        MARKET_ID : '',
+                        LARGE_TYPE : '',
+                        MIDDLE_TYPE : ''
+                    });
+                } else {
+                    vm.$emit("showMessageBox", '확인','이미 추가된 관심 종목 입니다.',{},1);
                 }
-            }
+            } else if (gubun == '2') {
+                var idx = -1;
+
+                if (mode == 'etf') idx =  _.findIndex(vm.favorItems, { 'ITEM_CD': sel_items.JISU_CD, 'MARKET_ID': sel_items.MARKET_ID });
+                if (mode == 'etn') idx =  _.findIndex(vm.favorItems, { 'ITEM_CD': sel_items.JISU_CD, 'MARKET_ID': sel_items.MARKET_ID });
+                if (mode == 'index') idx =  _.findIndex(vm.favorItems, { 'ITEM_CD': sel_items.JISU_CD, 'MARKET_ID': sel_items.MARKET_ID });
+
+                if (idx == -1) {
+                    addFavorItems.push({
+                        GUBUN : gubun,
+                        F16012 : '',
+                        F16013 : sel_items.JISU_CD,
+                        F16002 : sel_items.JISU_NM,
+                        MARKET_ID : sel_items.MARKET_ID,
+                        LARGE_TYPE : sel_items.LARGE_TYPE,
+                        MIDDLE_TYPE : sel_items.MIDDLE_TYPE
+                    });
+                } else {
+                    vm.$emit("showMessageBox", '확인','이미 추가된 관심 종목 입니다.',{},1);
+                }
+            }    
+
+            
         
+
             axios.post(Config.base_url + "/user/common/insertFavorItem", {
                     params: {
                         addFavorItems : addFavorItems
@@ -469,7 +539,9 @@ export default {
                 if (response.data.success == false) {
                     vm.$emit("showMessageBox", '확인','저장 중 오류가 발생했습니다.',{},4);
                 } else {
-                    vm.getFavorItemInfo();
+                    //if (mode == 'etf') vm.getEtfList();
+                    //if (mode == 'etn') vm.getEtnList();
+                    //if (mode == 'index') vm.getIndexList();
                 }
             });
 

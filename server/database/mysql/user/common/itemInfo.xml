@@ -62,7 +62,14 @@
          WHERE TYPE_CD = #{type_cd}
            AND INST_CD =  #{inst_cd}
            AND EMAIL = #{user_id}
-           AND ITEM_SEQ = #{item_seq}
+
+        <if test="gubun != null and gubun !='1'">
+           AND F16012 = #{jisu_cd}
+        </if>
+        <if test="gubun != null and gubun !='2'">
+            AND F16013 = #{jisu_cd}
+            AND market_id = #{market_id}
+        </if>
     </delete>
 
 

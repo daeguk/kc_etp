@@ -76,9 +76,8 @@ var deleteFavorItem = function (req, res) {
             type_cd : req.session.type_cd,
             inst_cd : req.session.inst_cd,
             user_id : req.session.user_id,
-            item_seq : req.body.params.item_seq,
-            gubun : req.body.params.gubun, 
-            item_cd : req.body.params.item_cd
+            jisu_cd : req.body.params.jisu_cd,
+            market_id : req.body.params.market_id
         };
 
         
