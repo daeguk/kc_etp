@@ -275,7 +275,7 @@ var getEtpOperIndex = function(req, res) {
  */
 var geEtpOperIndexOversea = function(req, res) {
     try {
-        console.log('etpOper.geEtpOperIndexOversea 호출됨.');
+        console.log('etpOper.getEtpOperIndexOversea 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -283,11 +283,11 @@ var geEtpOperIndexOversea = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            console.log("[error] etpOper.geEtpOperIndexOversea  req.body.data no data.");
+            console.log("[error] etpOper.getEtpOperIndexOversea  req.body.data no data.");
             console.log(req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.geEtpOperIndexOversea  req.body.data no data.";
+            resultMsg.msg = "[error] etpOper.getEtpOperIndexOversea  req.body.data no data.";
             
             throw resultMsg;
         }
@@ -311,14 +311,14 @@ var geEtpOperIndexOversea = function(req, res) {
                 /* 1. EtpBasic 의 기본정보를 조회한다. */
                 function( callback ) {
 
-                    stmt = mapper.getStatement('etpOper', 'geEtpOperIndexOversea', paramData, format);
+                    stmt = mapper.getStatement('etpOper', 'getEtpOperIndexOversea', paramData, format);
                     console.log(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
                         if( err ) {
                             resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] etpOper.geEtpOperIndexOversea Error while performing Query";
+                            resultMsg.msg       =   "[error] etpOper.getEtpOperIndexOversea Error while performing Query";
                             resultMsg.err       =   err;
 
                             return callback( resultMsg );
@@ -354,7 +354,7 @@ var geEtpOperIndexOversea = function(req, res) {
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;
-            resultMsg.msg       =   "[error] etpOper.geEtpOperIndexOversea 오류가 발생하였습니다.";
+            resultMsg.msg       =   "[error] etpOper.getEtpOperIndexOversea 오류가 발생하였습니다.";
             resultMsg.err       =   expetion;
         }
 
@@ -373,7 +373,7 @@ var geEtpOperIndexOversea = function(req, res) {
  */
 var geEtpOperIndexError = function(req, res) {
     try {
-        console.log('etpOper.geEtpOperIndexError 호출됨.');
+        console.log('etpOper.getEtpOperIndexError 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -381,11 +381,11 @@ var geEtpOperIndexError = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            console.log("[error] etpOper.geEtpOperIndexError  req.body.data no data.");
+            console.log("[error] etpOper.getEtpOperIndexError  req.body.data no data.");
             console.log(req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.geEtpOperIndexOversea  req.body.data no data.";
+            resultMsg.msg = "[error] etpOper.getEtpOperIndexOversea  req.body.data no data.";
             
             throw resultMsg;
         }
@@ -409,14 +409,14 @@ var geEtpOperIndexError = function(req, res) {
                 /* 1. EtpBasic 의 기본정보를 조회한다. */
                 function( callback ) {
 
-                    stmt = mapper.getStatement('etpOper', 'geEtpOperIndexError', paramData, format);
+                    stmt = mapper.getStatement('etpOper', 'getEtpOperIndexError', paramData, format);
                     console.log(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
                         if( err ) {
                             resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] etpOper.geEtpOperIndexError Error while performing Query";
+                            resultMsg.msg       =   "[error] etpOper.getEtpOperIndexError Error while performing Query";
                             resultMsg.err       =   err;
 
                             return callback( resultMsg );
@@ -452,7 +452,7 @@ var geEtpOperIndexError = function(req, res) {
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;
-            resultMsg.msg       =   "[error] etpOper.geEtpOperIndexError 오류가 발생하였습니다.";
+            resultMsg.msg       =   "[error] etpOper.getEtpOperIndexError 오류가 발생하였습니다.";
             resultMsg.err       =   expetion;
         }
 

@@ -15,7 +15,7 @@
                     </v-card-title>
                     
                     <v-card flat>
-                        <table id="table01" class="display table01_w"></table>
+                        <table id="tableOperIndex" class="display table01_w"></table>
 
                         <table id class="tbl_type" style="width:100%">
                             <colgroup>
@@ -354,7 +354,7 @@ import Config from "@/js/config.js";
 import IndexInfoDetailPop from "./IndexInfoDetailPop.vue";
 import EtpOperIndexQuick     from    "@/components/Home/Etp/Manage/EtpOperIndexQuick.vue";
 
-var table01 = null;
+var tableOperIndex = null;
 
 export default {
 
@@ -466,8 +466,8 @@ export default {
 
             console.log("EtpOperIndex.vue -> fn_getEtpOperIndex");
 
-            if( table01 ) {
-                table01.clear().draw();
+            if( tableOperIndex ) {
+                tableOperIndex.clear().draw();
             }            
 
             axios.post(Config.base_url + "/user/etp/getEtpOperIndex", {
@@ -480,8 +480,8 @@ export default {
                     var dataList = response.data.dataList;
 
                     if( dataList && dataList.length > 0 ) {
-                        table01.rows.add( dataList ).draw();
-                        table01.draw();
+                        tableOperIndex.rows.add( dataList ).draw();
+                        tableOperIndex.draw();
                     }
                 }
             });
@@ -543,28 +543,28 @@ export default {
 
 
 
-            if ( $.fn.DataTable.isDataTable('#table01') ) {
-                $('#table01').DataTable().destroy();
-                $('#table01').empty();
+            if ( $.fn.DataTable.isDataTable('#tableOperIndex') ) {
+                $('#tableOperIndex').DataTable().destroy();
+                $('#tableOperIndex').empty();
             }        
 
             if( vm.stateInfo.totWidth > 900 ) {
-                $('#table01').attr( "style", "width: 1500px; table-layout: fixed;");
+                $('#tableOperIndex').attr( "style", "width: 1500px; table-layout: fixed;");
                 tableObj.scrollX    =   true;
             }else{
-                $('#table01').attr( "style", "width: 100%; ");
+                $('#tableOperIndex').attr( "style", "width: 100%; ");
                 tableObj.scrollX    =   false;
             }
 
             tableObj.columns    =   vm.arrShowColumn ;
             tableObj.columnDefs =   vm.arrShowColumnDef ;
 
-            table01 = $('#table01').DataTable( tableObj );
+            tableOperIndex = $('#tableOperIndex').DataTable( tableObj );
 
             // 테이블별 이벤트
-            $('#table01 tbody').on('click', 'button[id=btnIndex],button[id=btnIndexDetailList],button[id=btnIndexFix],button[id=btnIndexError]', function () {
+            $('#tableOperIndex tbody').on('click', 'button[id=btnIndex],button[id=btnIndexDetailList],button[id=btnIndexFix],button[id=btnIndexError] ', function () {
 
-                var table   =   $('#table01').DataTable();
+                var table   =   $('#tableOperIndex').DataTable();
                 var data    =   table.row($(this).parents('tr')).data();
                 var rowInx  =   table.row($(this)).index();
                 var btnId   =   $(this).attr('id');
@@ -601,10 +601,12 @@ export default {
                             /* 지수조치내역 */
                     case    'btnIndexFix'    :
                                 vm.$emit('fn_showDetailIndex', 4, vm.paramData);
+                                break;
 
                             /* 지수오류내역 */
                     case    'btnIndexError'    :
                                 vm.$emit('fn_showDetailIndex', 5, vm.paramData);
+                                break;
 
                     case    'btnPdf'    :
                                 vm.$emit('fn_pageMove', btnId, vm.paramData);
