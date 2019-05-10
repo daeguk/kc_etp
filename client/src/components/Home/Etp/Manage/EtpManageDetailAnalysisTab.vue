@@ -8,8 +8,7 @@
                 <!-- performance chart 정보 START -->
                     <div
                         id="etp_comboChart_div"
-                        class="graph_01"
-                        style="height:300px;background-color:#f6f6f6;"
+                        class="perf_chart_w2"
                     ></div>
                 <!-- performance chart 정보 END -->
 
@@ -38,21 +37,21 @@
 
                             <thead>
                                 <tr>
-                                    <th>x</th>                  <!-- 초기화유무 -->
-                                    <th>x</th>                  <!-- 국제표준코드 -->
-                                    <th>x</th>                  <!-- ETP기초지수코드 -->
-                                    <th>x</th>                  <!-- ETP기초지수MID -->
+                                    <th class="txt_left">x</th>                  <!-- 초기화유무 -->
+                                    <th class="txt_left">x</th>                  <!-- 국제표준코드 -->
+                                    <th class="txt_left">x</th>                  <!-- ETP기초지수코드 -->
+                                    <th class="txt_left">x</th>                  <!-- ETP기초지수MID -->
 
-                                    <th></th>                   <!-- 한글 종목명 -->
-                                    <th>1-Week</th>             <!-- 1-Week -->
-                                    <th>1-Month</th>            <!-- 1-Month -->
-                                    <th>3-Month</th>            <!-- 3-Month -->
-                                    <th>YTD</th>                <!-- YTD -->
+                                    <th class="txt_left"></th>                   <!-- 한글 종목명 -->
+                                    <th class="txt_right">1-Week</th>             <!-- 1-Week -->
+                                    <th class="txt_right">1-Month</th>            <!-- 1-Month -->
+                                    <th class="txt_right">3-Month</th>            <!-- 3-Month -->
+                                    <th class="txt_right">YTD</th>                <!-- YTD -->
 
-                                    <th>1-Year</th>             <!-- 1-Year -->
-                                    <th>3-Year</th>             <!-- 3-Year -->
-                                    <th>5-Year</th>             <!-- 5-Year -->
-                                    <th>10-Year</th>            <!-- 10-Year -->
+                                    <th class="txt_right">1-Year</th>             <!-- 1-Year -->
+                                    <th class="txt_right">3-Year</th>             <!-- 3-Year -->
+                                    <th class="txt_right">5-Year</th>             <!-- 5-Year -->
+                                    <th class="txt_right">10-Year</th>            <!-- 10-Year -->
                                     <th></th>                   <!-- 삭제버튼 -->
                                 </tr>
                             </thead>
@@ -346,22 +345,22 @@ export default {
 
                         ],
                         columns: [
-                            { "data": "initYn"      , "visible" : false  },                                   /* 국제표준코드 */
-                            { "data": "f16012"      , "orderable" : false  },                                   /* 국제표준코드 */
-                            { "data": "f16257"      , "orderable" : false  },                                   /* ETP기초지수코드 */
-                            { "data": "f34239"      , "orderable" : false  },                                   /* ETP기초지수MID */
+                            { "data": "initYn"      , "visible" : false , className:"txt_left" },                                   /* 국제표준코드 */
+                            { "data": "f16012"      , "orderable" : false, className:"txt_left"  },                                   /* 국제표준코드 */
+                            { "data": "f16257"      , "orderable" : false, className:"txt_left"  },                                   /* ETP기초지수코드 */
+                            { "data": "f34239"      , "orderable" : false, className:"txt_left"  },                                   /* ETP기초지수MID */
 
                             { "data": "f16002"      , "orderable" : false , className: "txt_left line2" },      /* 한글 종목명 */
-                            { "data": "Week1"       , "orderable" : false , className: 'dt-body-right'  },      /* 1-week */
-                            { "data": "Month1"      , "orderable" : false , className: 'dt-body-right'  },      /* 1-Month */
-                            { "data": "Month3"      , "orderable" : false , className: 'dt-body-right'  },      /* 3-Month */
-                            { "data": "YTD"         , "orderable" : false , className: 'dt-body-right'  },      /* ytd */
+                            { "data": "Week1"       , "orderable" : false , className: 'txt_right'  },      /* 1-week */
+                            { "data": "Month1"      , "orderable" : false , className: 'txt_right'  },      /* 1-Month */
+                            { "data": "Month3"      , "orderable" : false , className: 'txt_right'  },      /* 3-Month */
+                            { "data": "YTD"         , "orderable" : false , className: 'txt_right'  },      /* ytd */
 
-                            { "data": "Year1"       , "orderable" : false , className: 'dt-body-right'  },      /* 1-Year */
-                            { "data": "Year3"       , "orderable" : false , className: 'dt-body-right'  },      /* 3-Year */
-                            { "data": "Year5"       , "orderable" : false , className: 'dt-body-right'  },      /* 5-Year */
-                            { "data": "Year10"      , "orderable" : false , className: 'dt-body-right'  },      /* 10-Year */
-                            { "data": null          , "orderable" : false , className: 'dt-body-center', defaultContent:"", "align":"center" },
+                            { "data": "Year1"       , "orderable" : false , className: 'txt_right'  },      /* 1-Year */
+                            { "data": "Year3"       , "orderable" : false , className: 'txt_right'  },      /* 3-Year */
+                            { "data": "Year5"       , "orderable" : false , className: 'txt_right'  },      /* 5-Year */
+                            { "data": "Year10"      , "orderable" : false , className: 'txt_right'  },      /* 10-Year */
+                            { "data": null          , "orderable" : false , defaultContent:"", "align":"center" },
 
                         ]
                     });
