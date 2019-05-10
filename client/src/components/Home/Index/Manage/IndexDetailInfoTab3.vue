@@ -17,27 +17,9 @@
                 <th class="txt_right">구독지수</th>
                 <th></th>
             </tr>
-            </thead> 
-            <tbody>
-                <tr>
-                    <td class="txt_left">삼성자산운용</td>
-                    <td class="txt_right">15</td>
-                    <td><button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_02' v-on='on'>해지</button></td>
-                </tr>
-            </tbody>  
+            </thead>             
         </table>
-  <!--v-data-table 
-    :headers="headers"
-    :items="subscribe_results"
-    slot="extension"
-    hide-actions
-  >
-    <template slot="items" slot-scope="props">
-      <td class="text-xs-left">{{ props.item.INST_NAME }}</td>
-      <td class="text-xs-right">15</td>
-      <td class="text-xs-center"><v-btn depressed dark small color="#ff821d" @click.stop="dialogOpen('3', props.item);">해지</v-btn></td>
-    </template>
-  </v-data-table-->
+  
 
   </div>
       <!--table1 end-->
@@ -63,7 +45,7 @@
                 <tr>
                     <td class="txt_left">미래에셋자산운용<br><span>Sean Kim</span></td>
                     <td class="txt_left">2018.08.15</td>
-                    <td><button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='on'>Yes</button><button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_03' v-on='on'>No</button></td>
+                    <td><button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01'>Yes</button><button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_03' >No</button></td>
                 </tr>
             </tbody>  
         </table>
@@ -92,6 +74,10 @@
 var subscribe_table = "";
 var req_table = "";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
+import $      from 'jquery'
+import dt      from 'datatables.net'
+import buttons from 'datatables.net-buttons'
+import select from 'datatables.net-select'
 import Config from '@/js/config.js';
  export default {
     components: {
@@ -133,10 +119,7 @@ import Config from '@/js/config.js';
         // ConfirmDialog 변수 
         this.$root.$confirm = this.$refs.confirm;
 
-        this.getInfoOpenReqList();
-        this.getindexSubscribeList();
-
-
+        var vm = this;
         subscribe_table = $('#subscribe_table').DataTable( {
                 "processing": true,
                 "serverSide": false,
@@ -154,12 +137,63 @@ import Config from '@/js/config.js';
                
                 data : [],
                 columns: [
-                    { "data": "F16013", "orderable": false}, 
-                    { "data": "F16002", "orderable": false,  "width":"30%", className: 'txt_left line2'},                    
+                    { "data": "INST_NAME", "orderable": false}, 
+                    { "data": "SUBCNT", "orderable": false},      
+                    {"data": null, "align":"center", className: '', defaultContent:"<button type='button' id='btn_haji' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_02'>해지</button>"}
                 ]
-            }); 
+        }); 
+
+        //  INDEX 에서 그래프 선택시
+        $('#subscribe_table tbody').on('click', 'button', function () {
+            var table = $('#subscribe_table').DataTable();
+            var data = table.row($(this).parents('tr')).data();
+           
+            vm.dialogOpen('3', data);
+
+        });
+
+
+        req_table = $('#req_table').DataTable( {
+                "processing": true,
+                "serverSide": false,
+                "search": true,
+                "info": false,   // control table information display field
+                "stateSave": true,  //restore table state on page reload,
+                "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                select: {
+                    style:    'single',
+                    selector: 'td:first-child'
+                },
+                paging: false,
+                searching: false,
+                "ordering": false,
+               
+                data : [],
+                columns: [
+                    { "data": "INST_NAME", "orderable": false}, 
+                    { "data": "REG_TIME", "orderable": false},      
+                    {"data": null, "align":"center", className: '', defaultContent:"<button type='button' id='btn_yes' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01'>Yes</button><button type='button' id='btn_no' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_03' >No</button>"}
+                ]
+        }); 
+
+        //  INDEX 에서 그래프 선택시
+        $('#req_table tbody').on('click', 'button', function () {
+            var table = $('#req_table').DataTable();
+            var data = table.row($(this).parents('tr')).data();
+
+            if ($(this).attr('id') == 'btn_yes') {
+                vm.dialogOpen('1', data);
+            } else if ($(this).attr('id') == 'btn_no') {
+                vm.dialogOpen('2', data);
+            }
+
+        });
+
+        vm.getInfoOpenReqList();
+        vm.getindexSubscribeList();
     },
     methods: {
+        /* 신청 현황 */
         getInfoOpenReqList: function() {
             console.log("getInfoOpenReqList");
             var vm = this;
@@ -174,12 +208,15 @@ import Config from '@/js/config.js';
                         alert("해당 신청현황이 없습니다");
                     } else {
                         var items = response.data.results;
-                        
-                        console.log("response=" + JSON.stringify(items));
+     
                         vm.req_results = items;
+                    
+                        req_table.clear().draw();
+                        req_table.rows.add(vm.req_results).draw();
                     } 
                 });
         }, 
+        /* 구독 현황 */
         getindexSubscribeList: function() {
             console.log("getInfoOpenReqList");
             var vm = this;
@@ -194,9 +231,11 @@ import Config from '@/js/config.js';
                         alert("해당 신청현황이 없습니다");
                     } else {
                         var items = response.data.results;
-                        
-                        console.log("getindexSubscribeList=" + JSON.stringify(items));
+                                            
                         vm.subscribe_results = items;
+
+                        subscribe_table.clear().draw();
+                        subscribe_table.rows.add(vm.subscribe_results).draw();
                     } 
                 });
         }, 
@@ -226,17 +265,17 @@ import Config from '@/js/config.js';
         },
 
 
-        updateIndexOpenYn: function(flag) {
+        updateIndexOpenYn: function(flag, item) {
             this.dialog = false;
-
+            
             if(flag == 'Y') {
-                console.log("JISU_ID="+this.selected.F16013);
+                console.log("JISU_ID="+item.F16013);
                 axios.post(Config.base_url + '/user/index/updateIndexOpenYn', {
                     params : {
                         flag : flag,
-                        reqFlag : this.reqFlag,
-                        JISU_ID : this.selected.F16013,
-                        INST_CD : this.selected.INST_CD
+                        reqFlag : item.REQ_FLAG,
+                        JISU_ID : item.F16013,
+                        INST_CD : item.INST_CD
                     }
                 }).then(response => {
                   

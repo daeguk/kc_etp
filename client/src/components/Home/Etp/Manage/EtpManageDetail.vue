@@ -226,10 +226,6 @@ export default {
             // 분석정보 실행
             vm.$EventBus.$emit('changeEtpAnalysisInfo');
         });
-
-        vm.$EventBus.$on('changeEtpInfoClose', data => {
-            vm.$EventBus.$off('changeEtpInfo');         
-        });
     },
     updated: function() {
         console.log("Etp_updated================");

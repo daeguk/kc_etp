@@ -102,7 +102,7 @@ export default {
                 this.showIndexDetailDialog = false;
                 
                 if (this.showEtpDetailDialog) {
-                    this.$EventBus.$emit('changeIndexInfoClose', paramData);
+                    this.$EventBus.$off('changeIndexInfo', paramData);
                     this.$EventBus.$emit('changeEtpInfo', paramData);
                 }
                 this.showEtpDetailDialog = true;
@@ -115,7 +115,7 @@ export default {
                 this.showEtpDetailDialog = false;
 
                 if (this.showIndexDetailDialog) {
-                    this.$EventBus.$emit('changeEtpInfoClose', paramData);
+                    this.$EventBus.$off('changeEtpInfo', paramData);
                     this.$EventBus.$emit('changeIndexInfo', paramData);
                 }
                 
