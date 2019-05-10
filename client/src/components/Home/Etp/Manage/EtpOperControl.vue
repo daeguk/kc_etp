@@ -51,7 +51,7 @@
                                 :indexFixDialog="showEtpOperIndexErrorDialog" 
                                 
                                 @fn_closePop="fn_close" >
-            </ComIndexFixPopup>            
+            </ComIndexFixPopup>
         </v-flex>
     </v-layout> 
 </template>
@@ -138,7 +138,7 @@ export default {
                 }
                 this.showEtpDetailDialog = true;
                 
-                this.showEtpOerInfo = this.activeTab;
+                this.showEtpOerInfo = -1;
                 
             } else if (gubun == '2') { 
                 this.paramData = paramData;

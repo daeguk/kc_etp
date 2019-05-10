@@ -106,8 +106,6 @@ export default {
         vm.$EventBus.$on('changeEtpOperIndexFix', data => {
             console.log( "EventBus changeEtpOperIndexFix >>>>>>>" );
             console.log( data );
-
-            vm.init();
         });
 
         vm.$EventBus.$on('changeEtpOperIndexFixClose', data => {
