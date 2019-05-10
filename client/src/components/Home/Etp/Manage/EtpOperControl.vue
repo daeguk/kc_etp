@@ -2,11 +2,17 @@
     <v-layout row wrap>
         <v-flex xs12>
 
+            <!-- 지수 상세 팝업 -->
             <v-dialog v-model="showIndexDetailDialog" persistent max-width="1300">
-                <IndexDetailDialog v-if="showIndexDetailDialog" :paramData="paramData" :showDialog="showIndexDetailDialog" @fn_closePop="fn_close"></IndexDetailDialog>
+                <IndexDetailDialog      v-if="showIndexDetailDialog" 
+                
+                                        :paramData="paramData" 
+                                        :showDialog="showIndexDetailDialog" 
+                                        @fn_closePop="fn_close">
+                </IndexDetailDialog>
             </v-dialog>
 
-            
+            <!-- 지수 상세정보 팝업 -->
             <EtpOperIndexDetailListPop  v-if="showEtpOperIndexDetailListDialog" 
             
                                         :paramData="paramData" 
@@ -16,8 +22,12 @@
             </EtpOperIndexDetailListPop>
 
 
-
-            <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
+            <!-- ETP 상세 -->
+            <EtpManageDetail    v-if="showEtpDetailDialog" 
+            
+                                :paramData="paramData" 
+                                :showEtpManageDetailDialog="showEtpDetailDialog">
+            </EtpManageDetail>
 
             <!-- ETP 운용정보 -->
             <EtpOperInfo    v-if="showEtpOerInfo == 0" 
@@ -43,15 +53,27 @@
                             @showMessageBox="showMessageBox">
             </EtpOperPdf>
             
+            <!-- 메시지 관리 -->
             <ConfirmDialog ref="confirm"></ConfirmDialog>
 
-            <ComIndexFixPopup   v-if="showEtpOperIndexErrorDialog"
+            <!-- 지수 조치현황 -->
+            <ComIndexFixPopup   v-if="showEtpOperIndexFixDialog"
 
                                 :indexBasic="paramData" 
-                                :indexFixDialog="showEtpOperIndexErrorDialog" 
+                                :indexFixDialog="showEtpOperIndexFixDialog" 
                                 
                                 @fn_closePop="fn_close" >
-            </ComIndexFixPopup>
+            </ComIndexFixPopup>            
+
+            <!-- 지수오류내역 -->
+            <EtpOperIndexErrorPop   v-if="showEtpOperIndexErrorDialog"
+
+                                    :paramData="paramData" 
+                                    :showDialog="showEtpOperIndexErrorDialog" 
+                                
+                                    @fn_closePop="fn_close" >
+            </EtpOperIndexErrorPop>
+
         </v-flex>
     </v-layout> 
 </template>
@@ -68,13 +90,14 @@ import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import ComIndexFixPopup from "@/components/common/popup/ComIndexFixPopup.vue";
 
 
-import IndexDetailDialog from "@/components/Home/Index/Manage/IndexDetailDialog.vue";                       /* 지수 상세정보 */
-import EtpOperIndexDetailListPop from "@/components/Home/Etp/Manage/EtpOperIndexDetailListPop.vue";         /* 지수종목 상세정보 */
-import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";                             /*ETP 상세정보*/
+import IndexDetailDialog            from "@/components/Home/Index/Manage/IndexDetailDialog.vue";            /* 지수 상세정보 */
+import EtpOperIndexDetailListPop    from "@/components/Home/Etp/Manage/EtpOperIndexDetailListPop.vue";      /* 지수종목 상세정보 */
+import EtpManageDetail              from "@/components/Home/Etp/Manage/EtpManageDetail.vue";                /*ETP 상세정보*/
+import EtpOperIndexErrorPop         from "@/components/Home/Etp/Manage/EtpOperIndexErrorPop.vue";           /*ETP 상세정보*/
 
-import EtpOperInfo from "@/components/Home/Etp/Manage/EtpOperInfo.vue";                                     /* ETP 운용정보 */
-import EtpOperIndex from "@/components/Home/Etp/Manage/EtpOperIndex.vue";                                   /* 지수관리 */
-import EtpOperPdf from "@/components/Home/Etp/Manage/EtpOperPdf.vue";                                       /* PDF 관리 */
+import EtpOperInfo                  from "@/components/Home/Etp/Manage/EtpOperInfo.vue";                    /* ETP 운용정보 */
+import EtpOperIndex                 from "@/components/Home/Etp/Manage/EtpOperIndex.vue";                   /* 지수관리 */
+import EtpOperPdf                   from "@/components/Home/Etp/Manage/EtpOperPdf.vue";                     /* PDF 관리 */
 
 export default {
     props: ["activeTab"],
@@ -97,6 +120,7 @@ export default {
         EtpManageDetail             :   EtpManageDetail,        /* ETP 상세정보 */
         EtpOperIndexDetailListPop   :   EtpOperIndexDetailListPop,
         ComIndexFixPopup            :   ComIndexFixPopup,
+        EtpOperIndexErrorPop        :   EtpOperIndexErrorPop,
 
         EtpOperInfo :  EtpOperInfo,                 /* ETP 운용정보 */
         EtpOperIndex :   EtpOperIndex,              /* 지수관리 */
@@ -174,11 +198,11 @@ export default {
                 }
                 
                 this.showEtpOperIndexDetailListDialog = true;
-                this.showEtpOerInfo = this.activeTab;                
+                this.showEtpOerInfo = this.activeTab;
             }
             /* 지수관리 -> 지수조치내역 팝업 */
             else if( gubun == '4' ) {
-
+                this.paramData = paramData;
                 this.showEtpOperIndexDetailListDialog = false;
                 this.showEtpOperIndexErrorDialog = false;
 
@@ -189,7 +213,8 @@ export default {
                     this.$EventBus.$emit('changeEtpOperIndexFix', paramData);
                 }
 
-                this.showEtpOperIndexFixDialog = true;                
+                this.showEtpOperIndexFixDialog = true;  
+                this.showEtpOerInfo = this.activeTab;              
             
             }
             /* 지수관리 -> 지수오류내역 */
