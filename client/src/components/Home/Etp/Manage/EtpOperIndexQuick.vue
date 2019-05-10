@@ -1,9 +1,6 @@
 <template>
-
     <v-container>
-
         <v-layout row wrap class="content_margin">
-
             <!--rightmenu---->
             <v-card flat class="right_menu_w2">
                 <v-navigation-drawer
@@ -48,7 +45,6 @@
                                             v-on="on"
                                         >내역확인</v-btn>
                                     </template>
-                                    <!---개발 중복 팝업 ppt: IDX_MNG_06_01 참조-->
                                     <v-card flat>
                                         <h5>
                                             <v-card-title ma-0>
@@ -70,7 +66,6 @@
                                         <!--indexDetailrtmenupop></indexDetailrtmenupop-->
                                         <v-card class="pop_bot_h"></v-card>
                                     </v-card>
-                                    <!---개발 중복 팝업 ppt: IDX_MNG_06_01 참조 end-->
                                 </v-dialog>
                             </v-subheader>
                             <p class="text_red">
@@ -84,9 +79,8 @@
                             <v-card flat class="w100">
                                 <v-list>
                                     <v-list-tile
-                                        router-link
-                                        to="/etp/manage/overseasIndex"
                                         class="border_b"
+                                        @click="fn_setEtpOperIndexOversea"
                                     >
                                         <v-list-tile-avatar>
                                             <v-icon value="해외지수">exposure</v-icon>
@@ -102,9 +96,7 @@
                 </v-navigation-drawer>
             </v-card>
             <!--rightmenu end--->
-
         </v-layout>
-
     </v-container>
 </template>
 
@@ -118,98 +110,44 @@ export default {
     },
     data() {
         return {
-            text: "전종목",
             dialog: false,
-            dialog2: false,
-            dialog5: false,
-            drawer: true,
-            search: "",
-            tab: null,
-            tab2: null,
-            items1: ["전체", "시장대표"],
-            items: [
-                { title: "Home", icon: "dashboard" },
-                { title: "About", icon: "question_answer" }
-            ],
-            items2: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                },
-                {
-                    title: "KODEX 코스닥150 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            items3: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            items4 : [],
-            selected : [],
 
-            mini: false,
-            right: null,
-            rowsPerPageItems: [10, 20, 30, 50],
-            headers: [
-                {
-                    text: "Code",
-                    align: "left",
-                    value: "name"
-                },
-                { text: "name", value: "name" },
-                { text: "BasePrc", value: "BasePrc", align: "right" },
-                { text: "Shrs", value: "Shrs", align: "right" },
-                { text: "Float rto", value: "FloatRto", align: "right" },
-                { text: "Ceiling rto", value: "CeilingRto", align: "right" },
-                { text: "Factor rto", value: "FactorRto", align: "right" }
-            ],
-            desserts: [],
-
+            toggleIndexOversea : false,
         };
     },
     mounted: function() {},
     created: function() {},
     beforeDestory: function() {},
 
-    methods : {
-
-
+    methods: {
         /*
          *  관심종목에서 그래프 선택시 상세정보를 보여준다.
          *  2019-05-03  bkLove(촤병국)
          */
         showDetail: function(gubun, paramData) {
             var vm = this;
-            vm.$emit( "showDetail", gubun, paramData );
+            vm.$emit("showDetail", gubun, paramData);
         },
 
         /*
          *  메시지창 정보가 필요한 경우 해당 정보를 보여준다.
          *  2019-05-03  bkLove(촤병국)
-         */        
+         */
+
         showMessageBox: function(title, msg, option, gubun) {
             var vm = this;
-            vm.$emit( "showMessageBox", title, msg, option, gubun );
-        }        
+            vm.$emit("showMessageBox", title, msg, option, gubun);
+        },
+
+        fn_setEtpOperIndexOversea() {
+            var vm = this;
+            vm.toggleIndexOversea  =   !vm.toggleIndexOversea;
+
+            var paramData   =   {};
+            paramData.toggleIndexOversea    =   vm.toggleIndexOversea;            
+
+            vm.$emit( "fn_setEtpOperIndexOversea", paramData );
+        }
     }
 };
 </script>

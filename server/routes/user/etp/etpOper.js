@@ -273,7 +273,7 @@ var getEtpOperIndex = function(req, res) {
  * ETP 운용관리 - 지수관리 - 해외지수 종가 모니터링을 조회한다.
  * 2019-05-03  bkLove(촤병국)
  */
-var geEtpOperIndexOversea = function(req, res) {
+var getEtpOperIndexOversea = function(req, res) {
     try {
         console.log('etpOper.getEtpOperIndexOversea 호출됨.');
 
@@ -371,7 +371,7 @@ var geEtpOperIndexOversea = function(req, res) {
  * ETP 운용관리 - 지수관리 - 오류내역을 조회한다.
  * 2019-05-03  bkLove(촤병국)
  */
-var geEtpOperIndexError = function(req, res) {
+var getEtpOperIndexError = function(req, res) {
     try {
         console.log('etpOper.getEtpOperIndexError 호출됨.');
 
@@ -602,7 +602,7 @@ var getEtpOperPdf = function(req, res) {
 
 module.exports.getEtpOperInfo = getEtpOperInfo;
 module.exports.getEtpOperIndex = getEtpOperIndex;
-module.exports.geEtpOperIndexOversea = geEtpOperIndexOversea;
-module.exports.geEtpOperIndexError = geEtpOperIndexError;
+module.exports.getEtpOperIndexOversea = getEtpOperIndexOversea;
+module.exports.getEtpOperIndexError = getEtpOperIndexError;
 module.exports.getEtpOperPdf = getEtpOperPdf;
 
