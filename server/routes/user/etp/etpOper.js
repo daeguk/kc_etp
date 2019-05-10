@@ -426,9 +426,43 @@ var geEtpOperIndexError = function(req, res) {
                             resultMsg.dataList  = rows;
                         }
 
-                        callback( null );
+                        callback( null, paramData );
                     });
-                }
+                },
+
+                /* 2. ETP Basic 정보를 조회한다. */
+                function( msg, callback ) {
+
+                    if( resultMsg.dataList && resultMsg.dataList.length > 0 ) {
+
+                        stmt = mapper.getStatement('indexDetail', 'getIndexBasicDetail', paramData, format);
+
+                        // 대입 문자 치환
+                        stmt = stmt.replace(/\: =/g,':='); 
+
+                        console.log(stmt);
+
+                        conn.query(stmt, function( err, rows ) {
+
+                            if( err ) {
+                                resultMsg.result    =   false;
+                                resultMsg.msg       =   "[error] indexDetail.getIndexBasicDetail Error while performing Query";
+                                resultMsg.err       =   err;
+
+                                return callback( resultMsg );
+                            }
+
+                            if ( rows  ) {
+                                resultMsg.indexBasic    =   rows[0];
+                            }
+
+                            callback( null );
+                        });
+
+                    }else{
+                        callback( null );
+                    }
+                },                
 
             ], function (err) {
 
@@ -457,6 +491,7 @@ var geEtpOperIndexError = function(req, res) {
         }
 
         resultMsg.dataList      =   [];
+        resultMsg.indexBasic    =   {};
 
         res.json({
             resultMsg

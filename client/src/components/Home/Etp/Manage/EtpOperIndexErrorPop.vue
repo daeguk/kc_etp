@@ -8,7 +8,7 @@
 
                 <h5>
                     <v-card-title ma-0>
-                        {{ indexBasic.f16002     /* 한글종목명 */ }}
+                        지수 오류 내역 ({{ indexBasic.f16002     /* 한글종목명 */ }} Index)
                         <v-spacer></v-spacer>
                         <v-btn
                             icon
@@ -71,12 +71,12 @@ export default {
             data : [],
             "columnDefs": [ {} ],
             columns: [
-                { "data": "err_id"          ,   "orderable" : true, "width" :   "80" ,   "title"   :   "err_id"     },      /* err_id */
-                { "data": "err_date"        ,   "orderable" : true, "width" :   "200",   "title"   :   "날짜"        },       /* 날짜 */
-                { "data": "err_time"        ,   "orderable" : true, "width" :   "70" ,   "title"   :   "발생시간"       },      /* 발생시간 */
-                { "data": "fix_time"        ,   "orderable" : true, "width" :   "70" ,   "title"   :   "조치시간"       },      /* 조치시간 */
-                { "data": "err_content"     ,   "orderable" : true, "width" :   "70" ,   "title"   :   "오류내용"       },      /* 오류내용 */
-                { "data": "remark"          ,   "orderable" : true, "width" :   "70" ,   "title"   :   "비고"         },      /* 비고 */
+                { "data": "err_id"          ,   "orderable" : true, "width" :   "120"   ,   "title"   :   "err_id"     },      /* err_id */
+                { "data": "err_date"        ,   "orderable" : true, "width" :   "80"    ,   "title"   :   "날짜"        },       /* 날짜 */
+                { "data": "err_time"        ,   "orderable" : true, "width" :   "80"    ,   "title"   :   "발생시간"       },      /* 발생시간 */
+                { "data": "fix_time"        ,   "orderable" : true, "width" :   "80"    ,   "title"   :   "조치시간"       },      /* 조치시간 */
+                { "data": "err_content"     ,   "orderable" : true, "width" :   "200"   ,   "title"   :   "오류내용"       },      /* 오류내용 */
+                { "data": "remark"          ,   "orderable" : true, "width" :   "150"   ,   "title"   :   "비고"         },      /* 비고 */
             ]
         });
 
@@ -112,14 +112,18 @@ export default {
         fn_getIndexErrorList : function() {
 
             var vm = this;
-console.log( ">>>>>>>>> fn_getIndexErrorList >>>> " );
-console.log( vm.paramData );
+
             axios.post(Config.base_url + "/user/etp/geEtpOperIndexError", {
                 data:  vm.paramData
             }).then(response => {
 
                 if (response && response.data) {
-debugger;
+
+                    var indexBasic = response.data.indexBasic;
+                    if( indexBasic ) {
+                        vm.indexBasic   =  indexBasic;
+                    }                    
+
                     var dataList =   response.data.dataList;
 
                     if( dataList ) {
