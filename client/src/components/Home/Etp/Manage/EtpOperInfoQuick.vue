@@ -257,13 +257,12 @@
 
 
                         <!-- 관심종목 영역 -->
-<!--
                         <ComFavorItemSub    v-if="showFaver" 
                         
                                             @showDetail="showDetail" 
                                             @showMessageBox="showMessageBox"
                         ></ComFavorItemSub>
--->
+
                     </v-list>
                 </v-navigation-drawer>
             </v-card>
