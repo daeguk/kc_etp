@@ -4,7 +4,6 @@
             <v-flex grow class="conWidth_left">
                 <v-card flat>
 
-                    
                     <!-- 지수 찾기 결과 -->
                     <v-card-title primary-title v-if="form.jisuSearchYn == 'Y'">
                         <h3 class="headline subtit" pb-0>
@@ -13,11 +12,6 @@
                             <p>기준일 : {{ indexBasic.fmt_f12506 }}</p>
                             <p class="sub_txt">Last Updated : </p>
                         </h3>
-
-                        <v-spacer></v-spacer>
-                        <v-btn icon  @click="fn_closePop">
-                            <v-icon>close</v-icon>
-                        </v-btn>                        
                     </v-card-title>
 
 
