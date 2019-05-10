@@ -20,6 +20,7 @@
                             <col width="118px">
                             <col width="122px">
                             <col width="85px">
+                            <col width="10px">
                         </colgroup>
                          <thead>
                           <tr>
@@ -87,15 +88,17 @@
                                 <v-card flat>
                                     <table id="importance_grid" class="tbl_type" style="width:100%">
                                         <colgroup>
-                                            <col width="20%">
+                                            <col width="10%">
                                             <col width="40%">
                                             <col width="40%">
+                                            <col width="10%">
                                         </colgroup>
                                         <thead>
                                             <tr>
                                                 <th class="txt_left">Code</th>
                                                 <th class="txt_left">Name</th>
                                                 <th class="txt_right">Alllocation</th>
+                                                <th class="txt_left">GUBUN</th>
                                             </tr>
                                         </thead>   
                                     </table>

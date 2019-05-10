@@ -261,9 +261,9 @@ export default {
                     var INDEX_NM = "";
                     var ETP_NM = "";
 
-                    if (response.data.results != null) {
-                        var INDEX_NM = response.data.results[0].INDEX_NM;
-                        var ETP_NM = response.data.results[0].ETP_NM;
+                    if (response.data.results[0] != null) {
+                        INDEX_NM = response.data.results[0].INDEX_NM;
+                        ETP_NM = response.data.results[0].ETP_NM;
                     }
 
                     data.addColumn('number', INDEX_NM);
@@ -275,7 +275,6 @@ export default {
 
                     // console.log(response);
                     if (response.data.success == false) {
-                        alert("정보가 없습니다."); 
 
                         data.addRows(
                             []

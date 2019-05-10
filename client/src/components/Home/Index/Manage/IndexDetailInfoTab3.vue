@@ -5,7 +5,7 @@
       <!--table1 -->
       <div class="indexinfo_box01 ver1">
         <h4 class="mb-0">지수정보 구독 현황</h4>
-          <table id="" class="tbl_type" style="width:100%">
+          <table id="subscribe_table" class="tbl_type" style="width:100%">
             <colgroup>
                 <col width="35%">
                 <col width="35%">
@@ -46,7 +46,7 @@
       <!--tabel2 -->
        <div class="indexinfo_box01 ver1">
         <h4 class="mb-0">지수정보 신청 현황</h4>
-        <table id="" class="tbl_type" style="width:100%">
+        <table id="req_table" class="tbl_type" style="width:100%">
             <colgroup>
                 <col width="30%">
                 <col width="30%">
@@ -89,6 +89,8 @@
 
 
 <script>
+var subscribe_table = "";
+var req_table = "";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import Config from '@/js/config.js';
  export default {
@@ -133,6 +135,29 @@ import Config from '@/js/config.js';
 
         this.getInfoOpenReqList();
         this.getindexSubscribeList();
+
+
+        subscribe_table = $('#subscribe_table').DataTable( {
+                "processing": true,
+                "serverSide": false,
+                "search": true,
+                "info": false,   // control table information display field
+                "stateSave": true,  //restore table state on page reload,
+                "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                select: {
+                    style:    'single',
+                    selector: 'td:first-child'
+                },
+                paging: false,
+                searching: false,
+                "ordering": false,
+               
+                data : [],
+                columns: [
+                    { "data": "F16013", "orderable": false}, 
+                    { "data": "F16002", "orderable": false,  "width":"30%", className: 'txt_left line2'},                    
+                ]
+            }); 
     },
     methods: {
         getInfoOpenReqList: function() {
