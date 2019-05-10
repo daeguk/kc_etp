@@ -11,8 +11,13 @@
                                     <span class="grey--text">{{results.F16013}}</span> 
                                 </h3>
                                 <div class="right_btn">
-                                    <v-spacer></v-spacer>
-                                    <v-btn outline color="primary" small :to="{path:'/index/manage', query:{'activeTab':'2'}}">목록으로 돌아가기</v-btn>
+                                    <v-layout align-right>
+                                        <v-flex xs12 sm4 text-xs-center>
+                                            <div class="btn_r">
+                                                <v-btn outline color="primary" small :to="{path:'/index/manage', query:{'activeTab':'2'}}">목록으로 돌아가기</v-btn>
+                                            </div>
+                                        </v-flex>
+                                    </v-layout>
                                 </div>
                             </div>
                         </v-card-title>
