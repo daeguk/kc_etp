@@ -1,8 +1,8 @@
 <template>
 
-    <v-container>
-        <v-layout row wrap class="content_margin">
-            <v-flex grow>
+    <v-container >
+        <v-layout row wrap class="content_margin con_wrap">
+            <v-flex grow class="conWidth_left">
 
                 <v-card flat ma-3>
 
@@ -75,7 +75,6 @@
                         <div
                             id="etp_chart_div"
                             class="graph_01"
-                            style="height:300px;background-color:#f6f6f6;"
                         ></div>
                     </div>
 
@@ -107,8 +106,9 @@
                         </v-layout>
                     </div>
                 </v-card>
-
-
+            </v-flex>
+            <v-flex class="conWidth_right">
+                <ComFavorItemSub    @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
             </v-flex>
         </v-layout>
     </v-container>
@@ -119,6 +119,7 @@
 //import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
 import EtpManageDetailBasicInfoTab from "./EtpManageDetailBasicInfoTab.vue";
 import EtpManageDetailAnalysisTab from "./EtpManageDetailAnalysisTab.vue";
+import ComFavorItemSub from "@/components/common/control/ComFavorItemSub";
 import Config from "@/js/config.js";
 
 export default {
@@ -206,7 +207,8 @@ export default {
     },
     components: {
         EtpManageDetailBasicInfoTab: EtpManageDetailBasicInfoTab,
-        EtpManageDetailAnalysisTab: EtpManageDetailAnalysisTab
+        EtpManageDetailAnalysisTab: EtpManageDetailAnalysisTab,
+        ComFavorItemSub: ComFavorItemSub
     },
     mounted: function() {
         var vm = this;

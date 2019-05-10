@@ -15,7 +15,7 @@
             <marketMixAssets v-if="showMarketInfo == 10" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketMixAssets>               
             <marketOversea v-if="showMarketInfo == 11" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketOversea>                   
             <marketLeverageInverse v-if="showMarketInfo == 12" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketLeverageInverse>   
-            <ComFavorItem v-if="showFaver" @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItem>
+            <!--ComFavorItem v-if="showFaver" @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItem-->
             <ConfirmDialog ref="confirm"></ConfirmDialog>
         </v-flex>
     </v-layout> 
