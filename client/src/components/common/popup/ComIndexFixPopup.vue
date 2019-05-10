@@ -99,8 +99,24 @@ export default {
         };
     },
 
-    mounted() {
+    created: function() {
 
+        var vm = this;
+
+        vm.$EventBus.$on('changeEtpOperIndexFix', data => {
+            console.log( "EventBus changeEtpOperIndexFix >>>>>>>" );
+            console.log( data );
+
+            vm.init();
+        });
+
+        vm.$EventBus.$on('changeEtpOperIndexFixClose', data => {
+            console.log( "EventBus changeEtpOperIndexFixClose >>>>>>>" );
+            vm.$EventBus.$off('changeEtpOperIndexFix');         
+        });
+    },
+
+    mounted() {
         if( this.indexBasic ) {
             this.fn_getIndexFixList();
         }

@@ -16,14 +16,6 @@
             </EtpOperIndexDetailListPop>
 
 
-            <ComIndexFixPopup   v-if="showEtpOperIndexFixDialog"
-
-                                :indexBasic="this.paramData" 
-                                :indexFixDialog="this.showEtpOperIndexFixDialog" 
-                                
-                                @fn_closePop="fn_close" >
-            </ComIndexFixPopup>
-
 
             <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
 
@@ -45,13 +37,21 @@
 
             <!-- PDF 관리 -->
             <EtpOperPdf     v-if="showEtpOerInfo == 2" 
-                            :paramData="paramData"
 
+                            :paramData="paramData"
                             @showDetail="showDetail" 
                             @showMessageBox="showMessageBox">
             </EtpOperPdf>
             
             <ConfirmDialog ref="confirm"></ConfirmDialog>
+
+            <ComIndexFixPopup   v-if="showEtpOperIndexErrorDialog"
+
+                                :indexBasic="paramData" 
+                                :indexFixDialog="showEtpOperIndexErrorDialog" 
+                                
+                                @fn_closePop="fn_close" >
+            </ComIndexFixPopup>            
         </v-flex>
     </v-layout> 
 </template>
@@ -65,6 +65,8 @@ import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
+import ComIndexFixPopup from "@/components/common/popup/ComIndexFixPopup.vue";
+
 
 import IndexDetailDialog from "@/components/Home/Index/Manage/IndexDetailDialog.vue";                       /* 지수 상세정보 */
 import EtpOperIndexDetailListPop from "@/components/Home/Etp/Manage/EtpOperIndexDetailListPop.vue";         /* 지수종목 상세정보 */
@@ -94,6 +96,7 @@ export default {
         IndexDetailDialog           :   IndexDetailDialog,      /* 인덱스 상세정보 */
         EtpManageDetail             :   EtpManageDetail,        /* ETP 상세정보 */
         EtpOperIndexDetailListPop   :   EtpOperIndexDetailListPop,
+        ComIndexFixPopup            :   ComIndexFixPopup,
 
         EtpOperInfo :  EtpOperInfo,                 /* ETP 운용정보 */
         EtpOperIndex :   EtpOperIndex,              /* 지수관리 */
@@ -156,7 +159,7 @@ export default {
 
 
         fn_showDetailIndex : function(gubun, paramData) {      
-debugger;
+
             /* 지수관리 -> 지수구성정보 상세팝업 */
             if( gubun == '3' ) {
                 this.paramData = paramData;
@@ -175,7 +178,7 @@ debugger;
             }
             /* 지수관리 -> 지수조치내역 팝업 */
             else if( gubun == '4' ) {
-                this.paramData = paramData;
+
                 this.showEtpOperIndexDetailListDialog = false;
                 this.showEtpOperIndexErrorDialog = false;
 
@@ -185,9 +188,9 @@ debugger;
 
                     this.$EventBus.$emit('changeEtpOperIndexFix', paramData);
                 }
-                
+
                 this.showEtpOperIndexFixDialog = true;                
-                this.showEtpOerInfo = this.activeTab;                
+            
             }
             /* 지수관리 -> 지수오류내역 */
             else if ( gubun == '5' ) {
