@@ -1,4 +1,5 @@
 <template>
+
 <v-card>
 
  <!--비교자산 탭end--->
@@ -101,7 +102,8 @@ var jisu_grid = null;
         contextMenuHeight: null
       }
     }, 
-    components: {},
+    components: {
+    },
     computed: {},
     created: function() {},
     beforeDestroy() {},

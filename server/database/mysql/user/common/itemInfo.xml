@@ -343,10 +343,6 @@
             ) faver
           ON base.F16012 = faver.F16012
 		WHERE (base.F16493 = '1' OR base.F16493 = '2') 
-        /* 발행사별 리스트를 뽑을 때 */
-        <if test="krx_cd != null and krx_cd !=''">
-          AND base.F33960 = #{krx_cd}
-        </if>
     </select>
 
     <!--ETN 리스트(관심종목 처리)-->
@@ -437,15 +433,12 @@
             ) faver
           ON base.F16012 = faver.F16012
        where (F16493 = '3' OR F16493 = '4') 
-       <if test="krx_cd != null and krx_cd !=''">
-          AND base.F33960 = #{krx_cd}
-       </if>
       
     </select>
 
 
-    <!--PDF ETF 리스트(관심종목 처리)-->
-    <select id="getPdfEtfList">
+    <!--발행사가 발행한 ETF 리스트(관심종목 처리)-->
+    <select id="getPublishEtfList">
       SELECT
             if (faver.F16012 = base.F16012, '1', '0') faver 
             ,faver.item_seq faver_seq
@@ -532,14 +525,11 @@
             ) faver
           ON base.F16012 = faver.F16012
 		WHERE (base.F16493 = '1' OR base.F16493 = '2') 
-        /* 발행사별 리스트를 뽑을 때 */
-        <if test="krx_cd != null and krx_cd !=''">
           AND base.F33960 = #{krx_cd}
-        </if>
     </select>
 
-    <!--PDF ETN 리스트(관심종목 처리)-->
-    <select id="getPdfEtnList">
+    <!--발행사별 ETN 리스트(관심종목 처리)-->
+    <select id="getPublishEtnList">
       SELECT
             if (faver.F16012 = base.F16012, '1', '0') faver 
             ,faver.item_seq faver_seq
@@ -626,10 +616,7 @@
             ) faver
           ON base.F16012 = faver.F16012
        where (F16493 = '3' OR F16493 = '4') 
-       <if test="krx_cd != null and krx_cd !=''">
           AND base.F33960 = #{krx_cd}
-       </if>
-      
     </select>
 
 
