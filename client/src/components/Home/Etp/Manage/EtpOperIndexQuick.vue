@@ -35,38 +35,13 @@
                         <v-list-tile-content class="rightmenu_con rightmenu_line">
                             <v-subheader>
                                 <v-icon small>feedback</v-icon>지수 조치 현황
-                                <v-dialog v-model="dialog" persistent max-width="500">
-                                    <template v-slot:activator="{ on }">
-                                        <v-btn
-                                            small
-                                            depressed
-                                            outline
-                                            color="primary"
-                                            v-on="on"
-                                        >내역확인</v-btn>
-                                    </template>
-                                    <v-card flat>
-                                        <h5>
-                                            <v-card-title ma-0>
-                                                지수조치 현황(DBF 500 Index)
-                                                <v-spacer></v-spacer>
-                                                <v-btn icon dark @click="dialog = false">
-                                                    <v-icon>close</v-icon>
-                                                </v-btn>
-                                            </v-card-title>
-                                        </h5>
-                                        <div class="index3pop2_con">
-                                            <v-list subheader two-line>
-                                                <v-list-tile>
-                                                    <v-list-tile-title>조치 기준일</v-list-tile-title>
-                                                    <v-list-tile-content>2018.10.11</v-list-tile-content>
-                                                </v-list-tile>
-                                            </v-list>
-                                        </div>
-                                        <!--indexDetailrtmenupop></indexDetailrtmenupop-->
-                                        <v-card class="pop_bot_h"></v-card>
-                                    </v-card>
-                                </v-dialog>
+                                <v-btn
+                                    small
+                                    depressed
+                                    outline
+                                    color="primary"
+                                    @click="fn_showDetailIndex"
+                                >내역확인</v-btn>
                             </v-subheader>
                             <p class="text_red">
                                 <v-icon small>arrow_right</v-icon>3개 지수에 대한 조치 발생
@@ -105,11 +80,14 @@
 //import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
 
 export default {
+    props : [ "indexBasic"],
     components: {
         //indexDetailrtmenupop: indexDetailrtmenupop
     },
     data() {
         return {
+            mini: false,
+            drawer : true,
             dialog: false,
 
             toggleIndexOversea : false,
@@ -120,6 +98,13 @@ export default {
     beforeDestory: function() {},
 
     methods: {
+
+        fn_showDetailIndex() {
+            var vm = this;
+
+            vm.$emit( "fn_showDetailIndex", 4, vm.indexBasic );
+        },
+
         /*
          *  관심종목에서 그래프 선택시 상세정보를 보여준다.
          *  2019-05-03  bkLove(촤병국)

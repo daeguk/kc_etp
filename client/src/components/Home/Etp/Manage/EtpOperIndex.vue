@@ -333,8 +333,11 @@
                     </v-card>
 
                     <!-- [지수관리] Quick 메뉴 정보 -->
-                    <EtpOperIndexQuick  @showDetail="showDetail" 
+                    <EtpOperIndexQuick  :indexBasic = "indexBasic"
+
+                                        @showDetail="showDetail" 
                                         @showMessageBox="showMessageBox"
+                                        @fn_showDetailIndex="fn_showDetailIndex"
                                         @fn_setEtpOperIndexOversea="fn_setEtpOperIndexOversea">
                     </EtpOperIndexQuick>
 
@@ -431,9 +434,9 @@ export default {
             desserts: [],
 
 
-
-            paramData : {},
-            stateInfo :     {       
+            indexBasic  :   {},
+            paramData   :   {},
+            stateInfo   :   {
                                     pageState : 'index'     /* index - 지수관리 , oversea - 해외지수 종가 모니터링 */
                                 ,   totWidth : 0
                             },
@@ -497,7 +500,8 @@ export default {
                         tableOperIndex.rows.add( dataList ).draw();
                         tableOperIndex.draw();
 
-                        vm.result_cnt = dataList.length;
+                        vm.indexBasic   =   dataList[0];
+                        vm.result_cnt   =   dataList.length;
                     }
                 }
             });
@@ -818,7 +822,13 @@ export default {
             var vm = this;
 
             vm.$emit( "showMessageBox", title, msg, option, gubun );
-        },          
+        },
+
+        fn_showDetailIndex( gubun, paramData) {
+            var vm = this;
+
+            vm.$emit( "fn_showDetailIndex", gubun, paramData );
+        },
     }
 };
 </script>
