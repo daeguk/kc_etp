@@ -593,7 +593,7 @@ export default {
                                 break;
 
                     case    'btnIndexDetailList'    :
-                                vm.$emit('showDetail', 3, vm.paramData);
+                                vm.$emit('fn_showDetailIndex', 3, vm.paramData);
                                 break;
 
                     case    'btnPdf'    :
