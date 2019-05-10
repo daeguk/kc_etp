@@ -121,8 +121,8 @@ export  const  index_common =   {
                
                 // Set chart options
                 var options = {'title':'',
-                            'width':'600',
-                            'height':'600',
+                            'width':'700',
+                            'height':'350',
                             'colors': ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde'],                           
                             'legend': {
                                 position: 'right',
