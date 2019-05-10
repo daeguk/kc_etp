@@ -34,8 +34,7 @@
 
                     <table id="tableIndexList" class="display table01_w"></table>
                     
-                    <IndexDetailQuick   v-if="typeof paramData == 'undefined'"
-                                        @fn_setIndexDetailList="fn_setIndexDetailList"
+                    <IndexDetailQuick   @fn_setIndexDetailList="fn_setIndexDetailList"
                                         @fn_setIndexJongmokList="fn_setIndexJongmokList"
                     ></IndexDetailQuick>
                     
@@ -58,7 +57,6 @@ import IndexDetailQuick from "@/components/Home/Index/Manage/IndexDetailQuick.vu
 var tableIndexList = null;
 
 export default {
-    props : [ "showDialog", "paramData" ],
     components: {
         IndexDetailQuick     :   IndexDetailQuick
     },
@@ -80,54 +78,11 @@ export default {
         var vm = this;
 
         console.log( "IndexDetailList.vue -> mounted" );
-
-        if( vm.paramData ) {
-            vm.form.jisuSearchYn   =   "Y";
-            vm.form.resultCnt      =   0;
-
-            vm.fn_getIndexDetailList();
-        }
-
-        vm.$EventBus.$on('changeIndexDetailList', data => {
-            vm.init(true);
-        });
-
-        vm.$EventBus.$on('changeIndexDetailListClose', data => {
-            vm.$EventBus.$off('changeIndexInfo');
-        });
-
     },
     created: function() {},
     beforeDestory: function() {},
 
     methods: {
-
-        /*
-         * 지수 목록에서 선택된 데이터를 조회한다.
-         * 2019-04-16  bkLove(촤병국)
-         */
-        fn_getIndexDetailList : function() {
-
-            var vm = this;
-
-            axios.post(Config.base_url + "/user/index/getIndexDetailList", {
-                data:  vm.paramData
-            }).then(response => {
-
-                if (response && response.data) {
-
-                    var indexBasic = response.data.indexBasic;
-                    if( indexBasic ) {
-                        vm.indexBasic   =  indexBasic;
-                    }
-
-                    var indexDetailList =   response.data.indexDetailList;
-                    vm.form.resultsCnt  =   indexDetailList.length;
-
-                    vm.fn_setIndexDetailList( vm.indexBasic, indexDetailList, vm.form );
-                }
-            });            
-        },
 
         /*
          * 조회된 지수데이터를 설정한다.
@@ -136,7 +91,7 @@ export default {
         fn_setIndexDetailList : function( paramIndexBasic, paramIndexDetailList, paramForm ) {
 
             var vm = this;
-debugger;
+
             console.log( "IndexDetail.vue -> fn_getIndexDetailList" );
 
             if( paramIndexBasic ) {

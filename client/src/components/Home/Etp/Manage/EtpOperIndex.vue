@@ -13,6 +13,7 @@
                             <p class="sub_txt">기준일 : 2019.3.20</p>
                         </h3>
                     </v-card-title>
+                    
                     <v-card flat>
                         <table id="table01" class="display table01_w"></table>
 
