@@ -8,14 +8,14 @@
                             지수관리
                             <p>
                                 Total
-                                <span class="text_result">120</span> results
+                                <span class="text_result">{{ result_cnt }}</span> results
                             </p>
-                            <p class="sub_txt">기준일 : 2019.3.20</p>
+                            <p class="sub_txt">기준일 : {{ nowDate }}</p>
                         </h3>
                     </v-card-title>
                     
                     <v-card flat>
-                        <table id="table01" class="display table01_w"></table>
+                        <table id="tableOperIndex" class="display table01_w"></table>
 
                         <table id class="tbl_type" style="width:100%">
                             <colgroup>
@@ -333,8 +333,12 @@
                     </v-card>
 
                     <!-- [지수관리] Quick 메뉴 정보 -->
-                    <EtpOperIndexQuick  @showDetail="showDetail" 
-                                        @showMessageBox="showMessageBox">
+                    <EtpOperIndexQuick  :indexBasic = "indexBasic"
+
+                                        @showDetail="showDetail" 
+                                        @showMessageBox="showMessageBox"
+                                        @fn_showDetailIndex="fn_showDetailIndex"
+                                        @fn_setEtpOperIndexOversea="fn_setEtpOperIndexOversea">
                     </EtpOperIndexQuick>
 
                 </v-card>
@@ -354,7 +358,7 @@ import Config from "@/js/config.js";
 import IndexInfoDetailPop from "./IndexInfoDetailPop.vue";
 import EtpOperIndexQuick     from    "@/components/Home/Etp/Manage/EtpOperIndexQuick.vue";
 
-var table01 = null;
+var tableOperIndex = null;
 
 export default {
 
@@ -430,14 +434,20 @@ export default {
             desserts: [],
 
 
-
-            paramData : {},
-            stateInfo :     {       
+            indexBasic  :   {},
+            paramData   :   {},
+            stateInfo   :   {
                                     pageState : 'index'     /* index - 지수관리 , oversea - 해외지수 종가 모니터링 */
                                 ,   totWidth : 0
                             },
             arrShowColumn   :   [],
             arrShowColumnDef   :   [],
+            nowDate:        new Date().getFullYear() 
+                        +   "." 
+                        +   (parseInt(new Date().getMonth()) + 1) 
+                        +   "." 
+                        +   new Date().getDate(),
+            result_cnt  :   0
         };
     },
     components: {
@@ -466,26 +476,53 @@ export default {
 
             console.log("EtpOperIndex.vue -> fn_getEtpOperIndex");
 
-            if( table01 ) {
-                table01.clear().draw();
+            var  url = Config.base_url + "/user/etp/getEtpOperIndex";
+
+            if( vm.stateInfo.pageState == "oversea" ) {
+                url = Config.base_url + "/user/etp/getEtpOperIndexOversea";
+            }
+
+            if( tableOperIndex ) {
+                tableOperIndex.clear().draw();
             }            
 
-            axios.post(Config.base_url + "/user/etp/getEtpOperIndex", {
+            axios.post( url, {
                 data: {}
             })
             .then(function(response) {
                 console.log(response);
 
+                vm.result_cnt = 0;
                 if (response.data) {
                     var dataList = response.data.dataList;
 
                     if( dataList && dataList.length > 0 ) {
-                        table01.rows.add( dataList ).draw();
-                        table01.draw();
+                        tableOperIndex.rows.add( dataList ).draw();
+                        tableOperIndex.draw();
+
+                        vm.indexBasic   =   dataList[0];
+                        vm.result_cnt   =   dataList.length;
                     }
                 }
             });
         },
+
+        fn_setEtpOperIndexOversea : function( paramData ) {
+
+            var vm = this;
+
+            /* 해외지수 종가 모니터링 버튼이 체크된 경우에는 해외지수 종가 모니터링 정보를 노출한다. */
+            if( paramData && paramData.toggleIndexOversea ) {
+                vm.stateInfo.pageState  =  'oversea';               /* index - 지수관리 , oversea - 해외지수 종가 모니터링 */
+            }
+            /* 해외지수 종가 모니터링 버튼이 두번 눌러 체크해제된 경우 지수관리 기본 정보를 노출한다.  */
+            else{
+                vm.stateInfo.pageState  =  'index';
+            }            
+            
+            vm.fn_setTableInfo();
+            vm.fn_getEtpOperIndex();
+        },        
 
         /*
          *  테이블 기본정보를 설정한다.
@@ -524,47 +561,46 @@ export default {
 
             }
             /* [iNAV 산출현황] 을 선택한 경우 */
-            else if( vm.stateInfo.pageState == "iNav" ) {
+            else if( vm.stateInfo.pageState == "oversea" ) {
 
                 vm.fn_setArrShowColumn( [ 
-                        'f16002'                        /* 종목 */
-                    ,   'index_cal_method'              /* 산출방식  <---- ADDED */
-                    ,   'f15301'                        /* iNAV */
-                    ,   'f03329'                        /* 전일최종NAV */
-                    ,   'f15302'                        /* 추적오차율 */
-                    ,   'f15304'                        /* 괴리율 */
+                        'in_out'                        /* 입수 구분 */
+                    ,   'degree'                        /* 차수 */
+                    ,   'real_symbol'                   /* 실시간 심볼 */
+                    ,   'incre_symbol'                  /* 증가 심볼 */
+                    ,   'rest_date'                     /* 휴장일 */
+                    ,   'recently_date'                 /* 최근일자 */
 
-                    ,   'index_nm'                      /* 기초지수 */
-                    ,   'index_f15001'                  /* 지수현재가 */
-                    ,   'f18438'                        /* 환율  <---- ADDED */
-                    ,   'graph'                         /* 그래프 영역 */
+                    ,   'incre_recently'                /* 최근증가 */
+                    ,   'base_date'                     /* 기준일자 */
+                    ,   'f18438'                        /* 환율 */
                 ] );
             }
 
 
 
-            if ( $.fn.DataTable.isDataTable('#table01') ) {
-                $('#table01').DataTable().destroy();
-                $('#table01').empty();
+            if ( $.fn.DataTable.isDataTable('#tableOperIndex') ) {
+                $('#tableOperIndex').DataTable().destroy();
+                $('#tableOperIndex').empty();
             }        
 
             if( vm.stateInfo.totWidth > 900 ) {
-                $('#table01').attr( "style", "width: 1500px; table-layout: fixed;");
+                $('#tableOperIndex').attr( "style", "width: 1500px; table-layout: fixed;");
                 tableObj.scrollX    =   true;
             }else{
-                $('#table01').attr( "style", "width: 100%; ");
+                $('#tableOperIndex').attr( "style", "width: 100%; ");
                 tableObj.scrollX    =   false;
             }
 
             tableObj.columns    =   vm.arrShowColumn ;
             tableObj.columnDefs =   vm.arrShowColumnDef ;
 
-            table01 = $('#table01').DataTable( tableObj );
+            tableOperIndex = $('#tableOperIndex').DataTable( tableObj );
 
             // 테이블별 이벤트
-            $('#table01 tbody').on('click', 'button[id=btnIndex],button[id=btnIndexDetailList],button[id=btnIndexFix],button[id=btnIndexError]', function () {
+            $('#tableOperIndex tbody').on('click', 'button[id=btnIndex],button[id=btnIndexDetailList],button[id=btnIndexFix],button[id=btnIndexError] ', function () {
 
-                var table   =   $('#table01').DataTable();
+                var table   =   $('#tableOperIndex').DataTable();
                 var data    =   table.row($(this).parents('tr')).data();
                 var rowInx  =   table.row($(this)).index();
                 var btnId   =   $(this).attr('id');
@@ -601,10 +637,12 @@ export default {
                             /* 지수조치내역 */
                     case    'btnIndexFix'    :
                                 vm.$emit('fn_showDetailIndex', 4, vm.paramData);
+                                break;
 
                             /* 지수오류내역 */
                     case    'btnIndexError'    :
                                 vm.$emit('fn_showDetailIndex', 5, vm.paramData);
+                                break;
 
                     case    'btnPdf'    :
                                 vm.$emit('fn_pageMove', btnId, vm.paramData);
@@ -675,8 +713,16 @@ export default {
                 { 'name' : 'last_date'          , 'data': 'last_date'       ,  'width' : '60',  'orderable' : true  , 'className': 'dt-body-center' , 'title' : 'Last'      },      /* Last */
                 { 'name' : 'last_time'          , 'data': 'last_time'       ,  'width' : '60',  'orderable' : true  , 'className': 'dt-body-center' , 'title' : 'Time'      },      /* Time */
                 { 'name' : 'etp_info_json'      , 'data': 'etp_info_json'   ,  'width' : '250', 'orderable' : true  , 'className': 'dt-body-left'   , 'title' : 'ETF'       },       /* ETF */
-
                 { 'name' : 'graph'              , 'data': null              ,  'width' : '150' },
+
+                { 'name' : 'in_out'             , 'data': 'in_out'          ,  'width' : '80', 'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '입수 구분'     },      /* 입수 구분 */
+                { 'name' : 'degree'             , 'data': 'degree'          ,  'width' : '80',  'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '차수'          },      /* 차수 */
+                { 'name' : 'real_symbol'        , 'data': 'real_symbol'     ,  'width' : '100',  'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '실시간 심볼'   },      /* 실시간 심볼 */
+                { 'name' : 'incre_symbol'       , 'data': 'incre_symbol'    ,  'width' : '100',  'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '증가 심볼'     },      /* 증가 심볼 */
+                { 'name' : 'rest_date'          , 'data': 'rest_date'       ,  'width' : '100',  'orderable' : true  , 'className': 'dt-body-center' , 'title' : '휴장일'        },      /* 휴장일 */
+                { 'name' : 'recently_date'      , 'data': 'recently_date'   ,  'width' : '100',  'orderable' : true  , 'className': 'dt-body-center' , 'title' : '최근일자'      },      /* 최근일자 */
+                { 'name' : 'incre_recently'     , 'data': 'incre_recently'  ,  'width' : '100', 'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '최근증가'      },      /* 최근증가 */                
+                { 'name' : 'base_date'          , 'data': 'base_date'       ,  'width' : '100', 'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '기준일자'      },      /* 기준일자 */
             ];        
 
             var arrColumnDef  =   [
@@ -776,7 +822,13 @@ export default {
             var vm = this;
 
             vm.$emit( "showMessageBox", title, msg, option, gubun );
-        },          
+        },
+
+        fn_showDetailIndex( gubun, paramData) {
+            var vm = this;
+
+            vm.$emit( "fn_showDetailIndex", gubun, paramData );
+        },
     }
 };
 </script>

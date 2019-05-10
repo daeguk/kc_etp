@@ -82,6 +82,10 @@
             ,date_format(REQ.REG_TIME, '%Y-%m-%d') REG_TIME
             ,REQ.REQ_FLAG
             ,REQ.REG_ID
+            ,(SELECT COUNT(*)
+					 FROM tm_user_member
+					WHERE INST_CD = REQ.INST_CD
+			  ) SUBCNT  /*구독자수*/
         FROM (SELECT A.INST_CD
 				   ,A.REG_TIME
                    ,A.REQ_FLAG
@@ -453,7 +457,7 @@
     <![CDATA[
        SELECT ITEM.ISIN_CODE
             , ITEM.JOING_NM
-            , (ITEM.ITEM_AMT/TOT_ITEM.TOT_AMT) * 100 PERCNT
+            , TRUNCATE((ITEM.ITEM_AMT/TOT_ITEM.TOT_AMT) * 100, 2) PERCNT
             , ITEM.GUBUN   	 
         FROM(SELECT MAP.ISIN_CODE
                     ,MAP.F16002 JOING_NM

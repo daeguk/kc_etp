@@ -35,9 +35,10 @@ module.exports = {
 
         { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperInfo'          , method: 'getEtpOperInfo'          , session: 'check', type: 'post' },
         { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperIndex'         , method: 'getEtpOperIndex'         , session: 'check', type: 'post' },
-        { file: './user/etp/etpOper'        , path: '/user/etp/geEtpOperIndexOversea'   , method: 'geEtpOperIndexOversea'   , session: 'check', type: 'post' },
-        { file: './user/etp/etpOper'        , path: '/user/etp/geEtpOperIndexError'     , method: 'geEtpOperIndexError'     , session: 'check', type: 'post' },
+        { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperIndexOversea'  , method: 'getEtpOperIndexOversea'  , session: 'check', type: 'post' },
+        { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperIndexError'    , method: 'getEtpOperIndexError'    , session: 'check', type: 'post' },
         { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperPdf'           , method: 'getEtpOperPdf'           , session: 'check', type: 'post' },
+        { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperPdfByRate'     , method: 'getEtpOperPdfByRate'     , session: 'check', type: 'post' },
 
         //일반 INDEX register
 
@@ -89,7 +90,6 @@ module.exports = {
         { file: './user/marketinfo/etpInfo', path: '/user/marketinfo/getetnkorlist', method: 'getEtnKorList', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/etpInfo', path: '/user/marketinfo/getetnforlist', method: 'getEtnForList', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/etpInfo', path: '/user/marketinfo/getEtpList', method: 'getEtpList', session: 'uncheck', type: 'post' },
-        
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getSectorEtpList', method: 'getSectorEtpList', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getMarketIndexList', method: 'getMarketIndexList', session: 'uncheck', type: 'get' },
 
@@ -101,6 +101,8 @@ module.exports = {
         { file: './user/common/itemInfo', path: '/user/common/getETFList', method: 'getETFList', session: 'check', type: 'get' },   
         { file: './user/common/itemInfo', path: '/user/common/getETNList', method: 'getETNList', session: 'check', type: 'get' },   
         { file: './user/common/itemInfo', path: '/user/common/getIndexList', method: 'getIndexList', session: 'check', type: 'get' },   
+        { file: './user/common/itemInfo', path: '/user/common/getPublishEtpList', method: 'getPublishEtpList', session: 'check', type: 'get' },   
+        { file: './user/common/itemInfo', path: '/user/common/getALLEtpList', method: 'getALLEtpList', session: 'check', type: 'get' },   
 
         //풀 테스트 
 

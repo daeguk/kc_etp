@@ -41,7 +41,8 @@
                                         @fn_setCustomizeData = "fn_setCustomizeData"
 
                                         @showDetail="showDetail" 
-                                        @showMessageBox="showMessageBox">
+                                        @showMessageBox="showMessageBox"
+                                        @fn_showDetailIndex="fn_showDetailIndex">
                     </EtpOperInfoQuick>
                 </v-card>
 
@@ -609,6 +610,12 @@ export default {
             var vm = this;
 
             vm.$emit( "showMessageBox", title, msg, option, gubun );
+        },
+
+        fn_showDetailIndex( gubun, paramData) {
+            var vm = this;
+
+            vm.$emit( "fn_showDetailIndex", gubun, paramData );
         },        
     }
 };

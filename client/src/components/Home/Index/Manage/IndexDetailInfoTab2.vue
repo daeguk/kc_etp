@@ -110,41 +110,41 @@
                     <v-card flat>
                     <div class="indexinfo_box01">
                     <v-card flat class="indexinfo_list_table">
-                        <v-layout row>
-                            <v-flex xs3><v-icon style="color:#b9e0f7" class="lineh">fiber_manual_record</v-icon>삼성전자</v-flex>
-                            <v-flex xs2 class="text_r">10.25%</v-flex>
-                            <v-flex xs2></v-flex>
-                            <v-flex xs3><v-icon style="color:#72cdf4" class="lineh">fiber_manual_record</v-icon>SK하이닉스</v-flex>
-                            <v-flex xs2 class="text_r">10.25%</v-flex>
-                        </v-layout>
-                        <v-layout row>
-                            <v-flex xs3><v-icon style="color:#1e99e8" class="lineh">fiber_manual_record</v-icon>셀트리온</v-flex>
-                            <v-flex xs2 class="text_r">10.25%</v-flex>
-                            <v-flex xs2></v-flex>
-                            <v-flex xs3><v-icon style="color:#0076be" class="lineh">fiber_manual_record</v-icon>LG화학</v-flex>
-                            <v-flex xs2 class="text_r">10.25%</v-flex>
-                        </v-layout>
-                        <v-layout row>
-                            <v-flex xs3><v-icon style="color:#dcddde" class="lineh">fiber_manual_record</v-icon>NAVER</v-flex>
-                            <v-flex xs2 class="text_r">10.25%</v-flex>
-                             <v-flex xs2></v-flex>
-                            <v-flex xs3><v-icon style="color:#B6B8BA;" class="lineh">fiber_manual_record</v-icon>삼성바이오로</v-flex>
-                            <v-flex xs2 class="text_r">10.25%</v-flex>
-                        </v-layout>
-                        <v-layout row>
-                            <v-flex xs3><v-icon style="color:#7E8083" class="lineh">fiber_manual_record</v-icon>삼성바이오</v-flex>
-                            <v-flex xs2 class="text_r">10.25%</v-flex>
-                            <v-flex xs2></v-flex>
-                            <v-flex xs3><v-icon style="color:#FBB040" class="lineh">fiber_manual_record</v-icon>신한지주</v-flex>
-                            <v-flex xs2 class="text_r">10.25%</v-flex>
-                        </v-layout>
-                        <v-layout row>
-                            <v-flex xs3><v-icon style="color:#F58025" class="lineh">fiber_manual_record</v-icon>현대차</v-flex>
-                            <v-flex xs2 class="text_r">10.25%</v-flex>
-                             <v-flex xs2></v-flex>
-                            <v-flex xs3><v-icon style="color:#EDED8A" class="lineh">fiber_manual_record</v-icon>SK</v-flex>
-                            <v-flex xs2 class="text_r">10.25%</v-flex>
-                        </v-layout>
+                        <v-layout v-if="results.length >= 1">
+                                <v-flex xs3><v-icon :style="{color:importance_colors[0]}" class="lineh">fiber_manual_record</v-icon>{{results[0].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r">{{results[0].PERCNT}}%</v-flex>
+                                <v-flex xs2></v-flex>
+                                <v-flex xs3 v-if="results.length >= 2"><v-icon :style="{color:importance_colors[1]}" class="lineh">fiber_manual_record</v-icon>{{results[1].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r" v-if="results.length >= 2">{{results[1].PERCNT}}%</v-flex>     
+                        </v-layout>    
+                        <v-layout v-if="results.length >= 3">
+                                <v-flex xs3><v-icon :style="{color:importance_colors[2]}" class="lineh">fiber_manual_record</v-icon>{{results[2].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r">{{results[2].PERCNT}}%</v-flex>
+                                <v-flex xs2></v-flex>
+                                <v-flex xs3 v-if="results.length >= 4"><v-icon :style="{color:importance_colors[3]}" class="lineh">fiber_manual_record</v-icon>{{results[3].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r" v-if="results.length >= 4">{{results[3].PERCNT}}%</v-flex>     
+                        </v-layout>    
+                        <v-layout v-if="results.length >= 5">
+                                <v-flex xs3><v-icon :style="{color:importance_colors[4]}" class="lineh">fiber_manual_record</v-icon>{{results[4].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r">{{results[4].PERCNT}}%</v-flex>
+                                <v-flex xs2></v-flex>
+                                <v-flex xs3 v-if="results.length >= 6"><v-icon :style="{color:importance_colors[5]}" class="lineh">fiber_manual_record</v-icon>{{results[5].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r" v-if="results.length >= 6">{{results[5].PERCNT}}%</v-flex>     
+                        </v-layout>    
+                        <v-layout v-if="results.length >= 7">
+                                <v-flex xs3><v-icon :style="{color:importance_colors[6]}" class="lineh">fiber_manual_record</v-icon>{{results[6].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r">{{results[6].PERCNT}}%</v-flex>
+                                <v-flex xs2></v-flex>
+                                <v-flex xs3 v-if="results.length >= 8"><v-icon :style="{color:importance_colors[7]}" class="lineh">fiber_manual_record</v-icon>{{results[7].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r" v-if="results.length >= 8">{{results[7].PERCNT}}%</v-flex>     
+                        </v-layout>    
+                        <v-layout v-if="results.length >= 9">
+                                <v-flex xs3><v-icon :style="{color:importance_colors[8]}" class="lineh">fiber_manual_record</v-icon>{{results[8].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r">{{results[8].PERCNT}}%</v-flex>
+                                <v-flex xs2></v-flex>
+                                <v-flex xs3 v-if="results.length >= 10"><v-icon :style="{color:importance_colors[9]}" class="lineh">fiber_manual_record</v-icon>{{results[9].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r" v-if="results.length >= 10">{{results[9].PERCNT}}%</v-flex>     
+                        </v-layout>                       
                     </v-card>
                 </div>
                     </v-card>
@@ -180,13 +180,12 @@ export default {
     data() {
         return {
             tab: null,
-            items: ["ETF", "ETN", "INDEX"],
+            importance_colors: ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde', '#B6B8BA', '#7E8083', '#FBB040', '#F58025', '#EDED8A'],
             dialog: false,
             jongMokDialog: false,
             results: [],
             importance_cnt:0,
             search:"",
-
             modalFlag: false,
             importance_grid_id : "importance_grid",
             importance_chart_id : "importance_chart",
@@ -373,10 +372,19 @@ export default {
                 var options = {'title':'',
                             'width':'1180',
                             'height':'180',
-                            'colors': ['#1e99e8', '#48485e', '#ff4366', '#727281', '#b9e0f7'],                           
-                            'legend': {
-                                position: 'left'
+                            'colors': ['#1e99e8', '#48485e', '#ff4366', '#727281', '#b9e0f7'],                
+                            'hAxis':{
+                                textStyle: {
+                                    color:'#ffffff'
+                                },
+                                gridlines: {
+                                    color:'#ffffff'
+                                }
                             },
+                            'legend': {
+                                position: 'left',
+                            },
+
                             seriesType: 'bars',
                             
                 };

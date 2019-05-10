@@ -6,54 +6,55 @@
                     <h4 class="mb-0">Performance</h4>
 
                 <!-- performance chart 정보 START -->
+                <div class="graph_02_w">
                     <div
                         id="etp_comboChart_div"
-                        class="graph_01"
-                        style="height:300px;background-color:#f6f6f6;"
+                        class="perf_chart_w2"
                     ></div>
+                </div>
                 <!-- performance chart 정보 END -->
 
                     <v-card flat>
 
                 <!-- performance table 정보 START -->
-                        <table v-bind:id="tableName" class="tbl_type" style="width:100%">
+                        <table v-bind:id="tableName" class="tbl_type ver3" style="width:1348px">
                             <colgroup>
-                                <col width="width:5%">          <!-- 초기화유무 -->
-                                <col width="width:5%">          <!-- 국제표준코드 -->
-                                <col width="width:5%">          <!-- ETP기초지수코드 -->
-                                <col width="width:5%">          <!-- ETP기초지수MID -->
+                                <col width="314px">                             <!-- 한글 종목명 -->
+                                <col width="122px">                             <!-- 1-Week -->
+                                <col width="117px">                             <!-- 1-Month -->
+                                <col width="112px">                             <!-- 3-Month -->
+                                <col width="123px">                             <!-- YTD -->
 
-                                <col width="width:22%">         <!-- 한글 종목명 -->
-                                <col width="width:10%">         <!-- 1-Week -->
-                                <col width="width:10%">         <!-- 1-Month -->
-                                <col width="width:10%">         <!-- 3-Month -->
-                                <col width="width:9%">          <!-- YTD -->
+                                <col width="118px">                             <!-- 1-Year -->
+                                <col width="118px">                             <!-- 3-Year -->
+                                <col width="122px">                             <!-- 5-Year -->
+                                <col width="85px">                              <!-- 10-Year -->
+                                <col width="10px">                              <!-- 삭제버튼 -->
 
-                                <col width="width:9%">          <!-- 1-Year -->
-                                <col width="width:9%">          <!-- 3-Year -->
-                                <col width="width:9%">          <!-- 5-Year -->
-                                <col width="width:9%">          <!-- 10-Year -->
-                                <col width="width:3%">          <!-- 삭제버튼 -->
+                                <col width="10px">                              <!-- 초기화유무 -->
+                                <col width="10px">                              <!-- 국제표준코드 -->
+                                <col width="10px">                              <!-- ETP기초지수코드 -->
+                                <col width="10px">                              <!-- ETP기초지수MID -->
                             </colgroup>
 
                             <thead>
                                 <tr>
-                                    <th>x</th>                  <!-- 초기화유무 -->
-                                    <th>x</th>                  <!-- 국제표준코드 -->
-                                    <th>x</th>                  <!-- ETP기초지수코드 -->
-                                    <th>x</th>                  <!-- ETP기초지수MID -->
+                                    <th></th>                                   <!-- 한글 종목명 -->
+                                    <th class="txt_right">1-Week</th>           <!-- 1-Week -->
+                                    <th class="txt_right">1-Month</th>          <!-- 1-Month -->
+                                    <th class="txt_right">3-Month</th>          <!-- 3-Month -->
+                                    <th class="txt_right">YTD</th>              <!-- YTD -->
 
-                                    <th></th>                   <!-- 한글 종목명 -->
-                                    <th>1-Week</th>             <!-- 1-Week -->
-                                    <th>1-Month</th>            <!-- 1-Month -->
-                                    <th>3-Month</th>            <!-- 3-Month -->
-                                    <th>YTD</th>                <!-- YTD -->
+                                    <th class="txt_right">1-Year</th>           <!-- 1-Year -->
+                                    <th class="txt_right">3-Year</th>           <!-- 3-Year -->
+                                    <th class="txt_right">5-Year</th>           <!-- 5-Year -->
+                                    <th class="txt_right">10-Year</th>          <!-- 10-Year -->
+                                    <th></th>                                   <!-- 삭제버튼 -->
 
-                                    <th>1-Year</th>             <!-- 1-Year -->
-                                    <th>3-Year</th>             <!-- 3-Year -->
-                                    <th>5-Year</th>             <!-- 5-Year -->
-                                    <th>10-Year</th>            <!-- 10-Year -->
-                                    <th></th>                   <!-- 삭제버튼 -->
+                                    <th></th>                                   <!-- 초기화유무 -->
+                                    <th></th>                                   <!-- 국제표준코드 -->
+                                    <th></th>                                   <!-- ETP기초지수코드 -->
+                                    <th></th>                                   <!-- ETP기초지수MID -->                                    
                                 </tr>
                             </thead>
                         </table>
@@ -74,12 +75,14 @@
             </v-flex>
             
             <v-flex xs12 flat>
-                <!-- 비중정보 팝업 -->
+                <!---비중정보 팝업 -->
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">포트폴리오</h4>
+                    <v-layout>
+                        <v-flex xs6>
                     <v-subheader>
                         TOP10 비중정보
-                        <v-dialog v-model="dialog2" persistent max-width="500">
+                        <v-dialog v-model="dialog" persistent max-width="500">
                             <template v-slot:activator="{ on }">
                                 <v-btn outline small color="primary" dark v-on="on">VIEW ALL</v-btn>
                             </template>
@@ -88,7 +91,7 @@
                                     <v-card-title ma-0>
                                         종목 비중정보 (KODEX 200)
                                         <v-spacer></v-spacer>
-                                        <v-btn icon dark @click="dialog2 = false">
+                                        <v-btn icon dark @click="dialog = false">
                                             <v-icon>close</v-icon>
                                         </v-btn>
                                     </v-card-title>
@@ -106,33 +109,83 @@
                                     </v-list>
                                 </div>
                                 <v-card flat>
-                                    <table id="importance_grid" class="display" style="width:100%">
+                                    <table id="importance_grid" class="tbl_type" style="width:100%">
+                                        <colgroup>
+                                            <col width="10%">
+                                            <col width="40%">
+                                            <col width="40%">
+                                            <col width="10%">
+                                        </colgroup>
                                         <thead>
                                             <tr>
-                                                <th>CODE</th>
-                                                <th>종목지수명</th>
-                                                <th>비중</th>
-                                                <th>구분</th>
+                                                <th class="txt_left">Code</th>
+                                                <th class="txt_left">Name</th>
+                                                <th class="txt_right">Alllocation</th>
+                                                <th class="txt_left">GUBUN</th>
                                             </tr>
-                                        </thead>
+                                        </thead>   
                                     </table>
                                 </v-card>
                                 <v-card class="pop_bot_h"></v-card>
                             </v-card>
                         </v-dialog>
                     </v-subheader>
-                    <div class="graph_02_w" id="importance_chart"></div>
+                    <v-card flat>
+                    <div class="indexinfo_box01">
+                    <v-card flat class="indexinfo_list_table">
+                        <v-layout v-if="results.length >= 1">
+                                <v-flex xs3><v-icon :style="{color:importance_colors[0]}" class="lineh">fiber_manual_record</v-icon>{{results[0].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r">{{results[0].PERCNT}}%</v-flex>
+                                <v-flex xs2></v-flex>
+                                <v-flex xs3 v-if="results.length >= 2"><v-icon :style="{color:importance_colors[1]}" class="lineh">fiber_manual_record</v-icon>{{results[1].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r" v-if="results.length >= 2">{{results[1].PERCNT}}%</v-flex>     
+                        </v-layout>    
+                        <v-layout v-if="results.length >= 3">
+                                <v-flex xs3><v-icon :style="{color:importance_colors[2]}" class="lineh">fiber_manual_record</v-icon>{{results[2].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r">{{results[2].PERCNT}}%</v-flex>
+                                <v-flex xs2></v-flex>
+                                <v-flex xs3 v-if="results.length >= 4"><v-icon :style="{color:importance_colors[3]}" class="lineh">fiber_manual_record</v-icon>{{results[3].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r" v-if="results.length >= 4">{{results[3].PERCNT}}%</v-flex>     
+                        </v-layout>    
+                        <v-layout v-if="results.length >= 5">
+                                <v-flex xs3><v-icon :style="{color:importance_colors[4]}" class="lineh">fiber_manual_record</v-icon>{{results[4].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r">{{results[4].PERCNT}}%</v-flex>
+                                <v-flex xs2></v-flex>
+                                <v-flex xs3 v-if="results.length >= 6"><v-icon :style="{color:importance_colors[5]}" class="lineh">fiber_manual_record</v-icon>{{results[5].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r" v-if="results.length >= 6">{{results[5].PERCNT}}%</v-flex>     
+                        </v-layout>    
+                        <v-layout v-if="results.length >= 7">
+                                <v-flex xs3><v-icon :style="{color:importance_colors[6]}" class="lineh">fiber_manual_record</v-icon>{{results[6].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r">{{results[6].PERCNT}}%</v-flex>
+                                <v-flex xs2></v-flex>
+                                <v-flex xs3 v-if="results.length >= 8"><v-icon :style="{color:importance_colors[7]}" class="lineh">fiber_manual_record</v-icon>{{results[7].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r" v-if="results.length >= 8">{{results[7].PERCNT}}%</v-flex>     
+                        </v-layout>    
+                        <v-layout v-if="results.length >= 9">
+                                <v-flex xs3><v-icon :style="{color:importance_colors[8]}" class="lineh">fiber_manual_record</v-icon>{{results[8].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r">{{results[8].PERCNT}}%</v-flex>
+                                <v-flex xs2></v-flex>
+                                <v-flex xs3 v-if="results.length >= 10"><v-icon :style="{color:importance_colors[9]}" class="lineh">fiber_manual_record</v-icon>{{results[9].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r" v-if="results.length >= 10">{{results[9].PERCNT}}%</v-flex>     
+                        </v-layout>                       
+                    </v-card>
+                </div>
+                    </v-card>
+
+                        </v-flex>
+                        <v-flex xs6>
+                            <div class="graph_02_w"  id="importance_chart"></div>
+                        </v-flex>
+                    </v-layout>
                     <v-card flat></v-card>
                 </div>
-                <!-- 비중정보 팝업end -->
+                <!---비중정보 팝업end-->
             </v-flex>
 
             <v-flex xs12></v-flex>
         </v-layout>
-
     </v-container>
 </template>
-
 
 <script>
 import jongmokPopup from "@/components/common/popup/jongmokPopup";
@@ -154,6 +207,8 @@ export default {
             tab: null,
             items: ["ETF", "ETN", "INDEX"],
             jongMokDialog: false,
+            importance_colors: ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde', '#B6B8BA', '#7E8083', '#FBB040', '#F58025', '#EDED8A'],
+            dialog : false,
             dialog2: false,
             results: [],
             importance_cnt: 0,
@@ -279,13 +334,9 @@ export default {
                         searching: false,
                         data: [],
                         ordering: false,
-                        columnDefs: [     
-                            {
-                                "targets": [ 0, 1, 2 ],
-                                "visible": false
-                            },                    
+                        columnDefs: [                      
                             {  
-                                "targets": 3,
+                                "targets": 0,
                                 "render": function ( data, type, row, meta ) {
                                     if (data) {
 
@@ -327,9 +378,8 @@ export default {
                                     }
                                 },
                             },
-
                             { 
-                                "targets": 12,
+                                "targets": 9,
                                 "render": function ( data, type, row ) {
                                     if (data) {
                                         if ( row.delAbleYn == "Y" ) {
@@ -342,31 +392,32 @@ export default {
                                     }
                                 },
                             }, 
-
-
+                            {
+                                "targets": [ 10, 11, 12, 13 ],
+                                "visible": false
+                            },                               
                         ],
                         columns: [
-                            { "data": "initYn"      , "visible" : false  },                                   /* 국제표준코드 */
-                            { "data": "f16012"      , "orderable" : false  },                                   /* 국제표준코드 */
-                            { "data": "f16257"      , "orderable" : false  },                                   /* ETP기초지수코드 */
-                            { "data": "f34239"      , "orderable" : false  },                                   /* ETP기초지수MID */
+                            { "data": "f16002"      , "orderable" : false , className: "txt_left line2" },          /* 한글 종목명 */
+                            { "data": "Week1"       , "orderable" : false , className: 'txt_right'  },              /* 1-week */
+                            { "data": "Month1"      , "orderable" : false , className: 'txt_right'  },              /* 1-Month */
+                            { "data": "Month3"      , "orderable" : false , className: 'txt_right'  },              /* 3-Month */
+                            { "data": "YTD"         , "orderable" : false , className: 'txt_right'  },              /* ytd */
 
-                            { "data": "f16002"      , "orderable" : false , className: "txt_left line2" },      /* 한글 종목명 */
-                            { "data": "Week1"       , "orderable" : false , className: 'dt-body-right'  },      /* 1-week */
-                            { "data": "Month1"      , "orderable" : false , className: 'dt-body-right'  },      /* 1-Month */
-                            { "data": "Month3"      , "orderable" : false , className: 'dt-body-right'  },      /* 3-Month */
-                            { "data": "YTD"         , "orderable" : false , className: 'dt-body-right'  },      /* ytd */
+                            { "data": "Year1"       , "orderable" : false , className: 'txt_right'  },              /* 1-Year */
+                            { "data": "Year3"       , "orderable" : false , className: 'txt_right'  },              /* 3-Year */
+                            { "data": "Year5"       , "orderable" : false , className: 'txt_right'  },              /* 5-Year */
+                            { "data": "Year10"      , "orderable" : false , className: 'txt_right'  },              /* 10-Year */
+                            { "data": null          , "orderable" : false , defaultContent:"", "align":"center" },
 
-                            { "data": "Year1"       , "orderable" : false , className: 'dt-body-right'  },      /* 1-Year */
-                            { "data": "Year3"       , "orderable" : false , className: 'dt-body-right'  },      /* 3-Year */
-                            { "data": "Year5"       , "orderable" : false , className: 'dt-body-right'  },      /* 5-Year */
-                            { "data": "Year10"      , "orderable" : false , className: 'dt-body-right'  },      /* 10-Year */
-                            { "data": null          , "orderable" : false , className: 'dt-body-center', defaultContent:"", "align":"center" },
-
+                            { "data": "initYn"      , "visible" : false  },                                         /* 초기화유무 */
+                            { "data": "f16012"      , "visible" : false  },                                         /* 국제표준코드 */
+                            { "data": "f16257"      , "visible" : false  },                                         /* ETP기초지수코드 */
+                            { "data": "f34239"      , "visible" : false  },                                         /* ETP기초지수MID */
                         ]
                     });
 
-                    $( table01.column( 3 ).header() ).text( vm.nowDate + " (%)" );
+                    $( table01.column( 0 ).header() ).text( vm.nowDate + " (%)" );
 
 
                     // 테이블별 이벤트
@@ -566,12 +617,21 @@ export default {
 
                             // Set chart options
                             var options = {'title':'',
-                                        'width':$(window).width()*0.58,
-                                        'height':'300',
-                                        'colors': ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde'],                           
-                                        'legend': {
-                                            position: 'left'
+                                        'width':'1180',
+                                        'height':'180',
+                                        'colors': ['#1e99e8', '#48485e', '#ff4366', '#727281', '#b9e0f7'],                
+                                        'hAxis':{
+                                            textStyle: {
+                                                color:'#ffffff'
+                                            },
+                                            gridlines: {
+                                                color:'#ffffff'
+                                            }
                                         },
+                                        'legend': {
+                                            position: 'left',
+                                        },
+
                                         seriesType: 'bars',
                                         
                             };
