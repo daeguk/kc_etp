@@ -374,9 +374,31 @@ export default {
                             'width':'1180',
                             'height':'180',
                             'colors': ['#1e99e8', '#48485e', '#ff4366', '#727281', '#b9e0f7'],                           
-                            'legend': {
-                                position: 'left'
+                           
+
+                            'hAxis':{
+                                format:'yyyy-MM-dd HH:mm:ss',
+                                textStyle: {
+                                    color:'#ffffff'
+                                },
+                                gridlines: {
+                                    color:'#ffffff'
+                                }
                             },
+                            'vAxis':{
+                                format:'decimal',
+                                textStyle: {
+                                    color:'#ffffff'
+                                },
+                                gridlines: {
+                                    color:'#ffffff'
+                                }
+                            }, 
+
+                            'legend': {
+                                position: 'left',
+                            },
+
                             seriesType: 'bars',
                             
                 };

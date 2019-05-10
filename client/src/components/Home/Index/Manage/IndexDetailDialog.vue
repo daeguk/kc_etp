@@ -125,11 +125,6 @@ export default {
             vm.init(true);
         });
 
-        vm.$EventBus.$on('changeIndexInfoClose', data => {
-            vm.$EventBus.$off('changeIndexInfo');
-
-            vm.openSubIndexInfoTab = false;
-        });
     },
     updated: function() {
 
