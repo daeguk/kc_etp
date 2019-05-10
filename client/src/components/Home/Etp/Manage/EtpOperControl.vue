@@ -16,7 +16,7 @@
             </EtpOperIndexDetailListPop>
 
 
-            <ComIndexFixPopup   v-if="indexFixDialog"
+            <ComIndexFixPopup   v-if="showEtpOperIndexFixDialog"
 
                                 :indexBasic="this.paramData" 
                                 :indexFixDialog="this.showEtpOperIndexFixDialog" 
@@ -39,7 +39,8 @@
             <EtpOperIndex   v-if="showEtpOerInfo == 1" 
                             
                             @showDetail="showDetail" 
-                            @showMessageBox="showMessageBox">
+                            @showMessageBox="showMessageBox"
+                            @fn_showDetailIndex="fn_showDetailIndex">
             </EtpOperIndex>
 
             <!-- PDF 관리 -->
@@ -155,7 +156,7 @@ export default {
 
 
         fn_showDetailIndex : function(gubun, paramData) {      
-            
+debugger;
             /* 지수관리 -> 지수구성정보 상세팝업 */
             if( gubun == '3' ) {
                 this.paramData = paramData;
@@ -229,8 +230,10 @@ export default {
             var vm = this;
 
             vm.showIndexDetailDialog                =   false;
+
             vm.showEtpOperIndexDetailListDialog     =   false;
-            vm.indexFixDialog                       =   false;
+            vm.showEtpOperIndexFixDialog            =   false;
+            vm.showEtpOperIndexErrorDialog          =   false;
         }
     }
 }

@@ -588,13 +588,23 @@ export default {
 
                 switch( btnId ) {
 
+                            /* 지수정보 */
                     case    'btnIndex'       :
                                 vm.$emit('showDetail', 2, vm.paramData);
                                 break;
 
+                            /* 지수구성정보 */
                     case    'btnIndexDetailList'    :
                                 vm.$emit('fn_showDetailIndex', 3, vm.paramData);
                                 break;
+
+                            /* 지수조치내역 */
+                    case    'btnIndexFix'    :
+                                vm.$emit('fn_showDetailIndex', 4, vm.paramData);
+
+                            /* 지수오류내역 */
+                    case    'btnIndexError'    :
+                                vm.$emit('fn_showDetailIndex', 5, vm.paramData);
 
                     case    'btnPdf'    :
                                 vm.$emit('fn_pageMove', btnId, vm.paramData);
