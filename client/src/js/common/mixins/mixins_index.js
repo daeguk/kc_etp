@@ -115,17 +115,18 @@ export  const  index_common =   {
                 
                 // Create the data table.
                 var data = new google.visualization.DataTable();
-                data.addColumn('string', 'JOING_NM');
+                data.addColumn('string', '');
                 data.addColumn('number', 'PERCNT');
 
                
                 // Set chart options
                 var options = {'title':'',
-                            'width':'1250',
-                            'height':'300',
+                            'width':'600',
+                            'height':'600',
                             'colors': ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde'],                           
                             'legend': {
-                                position: 'left'
+                                position: 'right',
+                                color: '#ffffff'
                             },
                             'lineWidth': 5
                             
