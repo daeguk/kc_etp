@@ -15,6 +15,16 @@
                                         @fn_closePop="fn_close">
             </EtpOperIndexDetailListPop>
 
+
+            <ComIndexFixPopup   v-if="indexFixDialog"
+
+                                :indexBasic="this.paramData" 
+                                :indexFixDialog="this.showEtpOperIndexFixDialog" 
+                                
+                                @fn_closePop="fn_close" >
+            </ComIndexFixPopup>
+
+
             <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
 
             <!-- ETP 운용정보 -->
@@ -70,6 +80,8 @@ export default {
             showIndexDetailDialog : false,
             showEtpDetailDialog : false,
             showEtpOperIndexDetailListDialog : false,
+            showEtpOperIndexFixDialog: false,
+            showEtpOperIndexErrorDialog : false,
 
             showEtpOerInfo : 0,
             paramData : [],
@@ -98,7 +110,10 @@ export default {
             this.showEtpOerInfo = data.tab_id;
             this.showEtpDetailDialog = false;
             this.showIndexDetailDialog = false;
+
             this.showEtpOperIndexDetailListDialog = false;
+            this.showEtpOperIndexFixDialog = false;
+            this.showEtpOperIndexErrorDialog = false;
         });
     },
     beforeUpdated: function() {
@@ -112,12 +127,9 @@ export default {
             if (gubun == '1') {
                 this.paramData = paramData;
                 this.showIndexDetailDialog = false;
-                this.showEtpOperIndexDetailListDialog = false;
                 
                 if (this.showEtpDetailDialog) {
                     this.$EventBus.$emit('changeIndexInfoClose', paramData);
-                    this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
-
                     this.$EventBus.$emit('changeEtpInfo', paramData);
                 }
                 this.showEtpDetailDialog = true;
@@ -127,35 +139,71 @@ export default {
             } else if (gubun == '2') { 
                 this.paramData = paramData;
                 this.showEtpDetailDialog = false;
-                this.showEtpOperIndexDetailListDialog = false;
 
                 if (this.showIndexDetailDialog) {
                     this.$EventBus.$emit('changeEtpInfoClose', paramData);
-                    this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
-
                     this.$EventBus.$emit('changeIndexInfo', paramData);
                 }
                 
                 this.showIndexDetailDialog = true;                
                 this.showEtpOerInfo = this.activeTab;
-            } else if( gubun == '3' ) {
+            } 
+        },
+        showMessageBox: function(title, msg, option, gubun) {
+            this.$root.$confirm.open(title,msg, option, gubun);
+        },
+
+
+        fn_showDetailIndex : function(gubun, paramData) {      
+            
+            /* 지수관리 -> 지수구성정보 상세팝업 */
+            if( gubun == '3' ) {
                 this.paramData = paramData;
-                this.showIndexDetailDialog = false;
-                this.showEtpDetailDialog = false;
+                this.showEtpOperIndexFixDialog = false;
+                this.showEtpOperIndexErrorDialog = false;
 
                 if (this.showEtpOperIndexDetailListDialog) {
-                    this.$EventBus.$emit('changeEtpInfoClose', paramData);
-                    this.$EventBus.$emit('changeIndexInfoClose', paramData);
+                    this.$EventBus.$emit('changeEtpOperIndexFixClose', paramData);
+                    this.$EventBus.$emit('changeEtpOperIndexErrorClose', paramData);
 
                     this.$EventBus.$emit('changeEtpOperIndexDetailList', paramData);
                 }
                 
-                this.showEtpOperIndexDetailListDialog = true;                
+                this.showEtpOperIndexDetailListDialog = true;
                 this.showEtpOerInfo = this.activeTab;                
             }
-        },
-        showMessageBox: function(title, msg, option, gubun) {
-            this.$root.$confirm.open(title,msg, option, gubun);
+            /* 지수관리 -> 지수조치내역 팝업 */
+            else if( gubun == '4' ) {
+                this.paramData = paramData;
+                this.showEtpOperIndexDetailListDialog = false;
+                this.showEtpOperIndexErrorDialog = false;
+
+                if (this.showEtpOperIndexFixDialog) {
+                    this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
+                    this.$EventBus.$emit('changeEtpOperIndexErrorClose', paramData);
+
+                    this.$EventBus.$emit('changeEtpOperIndexFix', paramData);
+                }
+                
+                this.showEtpOperIndexFixDialog = true;                
+                this.showEtpOerInfo = this.activeTab;                
+            }
+            /* 지수관리 -> 지수오류내역 */
+            else if ( gubun == '5' ) {
+                this.paramData = paramData;
+                this.showEtpOperIndexDetailListDialog = false;
+                this.showEtpOperIndexFixDialog = false;
+
+                if (this.showEtpOperIndexErrorDialog) {
+                    this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
+                    this.$EventBus.$emit('changeEtpOperIndexFixClose', paramData);
+
+                    this.$EventBus.$emit('changeEtpOperIndexError', paramData);
+                }
+                
+                this.showEtpOperIndexErrorDialog = true;                
+                this.showEtpOerInfo = this.activeTab;
+            }
         },
 
         /*
@@ -180,8 +228,9 @@ export default {
         fn_close( param ) {
             var vm = this;
 
-            vm.showIndexDetailDialog        =   false;
-            vm.showEtpOperIndexDetailListDialog    =   false;
+            vm.showIndexDetailDialog                =   false;
+            vm.showEtpOperIndexDetailListDialog     =   false;
+            vm.indexFixDialog                       =   false;
         }
     }
 }
