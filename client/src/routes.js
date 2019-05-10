@@ -5,7 +5,7 @@ import  IndexManageMain   from './components/Home/Index/Manage/IndexManageMain.v
 
 import IndexMainSummary   from  '@/components/Home/Index/Manage/Summary.vue';
 import IndexMainIndexList   from  '@/components/Home/Index/Manage/IndexList.vue';
-import IndexMainIndexDetail   from  '@/components/Home/Index/Manage/IndexDetail.vue';
+import IndexMainIndexDetailList   from  '@/components/Home/Index/Manage/IndexDetailList.vue';
 
 
 import  IndexRegisterMain   from './components/Home/Index/Register/IndexRegisterMain.vue'
@@ -84,8 +84,8 @@ export const routes = [
                       requiresType: ['0003', '0005']
                     },
                 }, 
-                {   path : 'indexDetail',
-                    component: IndexMainIndexDetail,
+                {   path : 'indexDetailList',
+                    component: IndexMainIndexDetailList,
                     meta: {
                       requiresAuth: true,
                       requiresType: ['0003', '0005']

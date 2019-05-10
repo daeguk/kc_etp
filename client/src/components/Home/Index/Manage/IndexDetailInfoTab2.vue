@@ -187,6 +187,7 @@ export default {
             modalFlag: false,
             importance_grid_id : "importance_grid",
             importance_chart_id : "importance_chart",
+            performChartImages  :   ['perform_bar01.png', 'perform_bar02.png', 'perform_bar03.png', 'perform_bar04.png', 'perform_bar05.png'],
             param: {}
         };
     },
@@ -254,9 +255,9 @@ export default {
                 "ordering": false,
                 "columnDefs": [
                     {  
-                        "render": function ( data, type, row ) {
+                        "render": function ( data, type, row, meta ) {
                             if (data) {
-                                return "<img src='/assets/img/icon_bar01.png'><span>&nbsp;&nbsp;&nbsp;" + data + "</span>";
+                                return "<img src='/assets/img/" + vm.performChartImages[ meta.row ] + "'><span>&nbsp;&nbsp;&nbsp;" + data + "</span>";
                             } else {
                                 return "";
                             }

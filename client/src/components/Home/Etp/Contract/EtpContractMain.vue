@@ -15,14 +15,72 @@
                 <th>ID</th>
                 <th>지수명</th>
                 <th>CU SHrs</th>
+                <th></th>
             </tr>
         </thead>   
     </table>
+    
   </v-card>
-     
+
+<v-card class="pop_btn_w text-xs-right">
+        <v-btn depressed color="primary" @click="hideContextMenu()" @contextmenu.prevent="showContextMenu($event)">....</v-btn>
+</v-card>
+
+<template id="template-context-menu-item">
+  <li class="context-menu-item">
+    <slot></slot>
+  </li>
+</template>
+
+<template id="template-context-menu">
+  <ul id="context-menu">
+    <li>      
+       <v-btn depressed color="primary">테스트</v-btn>
+    </li>
+    
+  </ul>
+</template>
+
 </v-card>
 </template>
 
+<style>
+#context-menu {
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  display: none;
+  list-style: none;
+  position: absolute;
+  z-index: 2147483647;
+  background-color: white;
+  border: 1px solid #ebebeb;
+  border-bottom-width: 0px;
+}
+
+#context-menu.active {
+  display: block;
+}
+
+.context-menu-icon {
+  top: 1px;
+  position: relative;
+  margin-right: 10px;
+}
+
+.context-menu-item {
+  display: flex;
+  cursor: pointer;
+  padding: 8px 15px;
+  align-items: center;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.context-menu-item:hover {
+  background-color: #ebebeb;
+}
+</style>
 
 <script>
 import $      from 'jquery'
@@ -35,9 +93,12 @@ var jisu_grid = null;
   export default {
     data () {
       return {
+        on: false,
         search: '',       
         results: [
-        ]
+        ],
+        contextMenuWidth: null,
+        contextMenuHeight: null
       }
     }, 
     components: {},
@@ -48,26 +109,42 @@ var jisu_grid = null;
         var vm = this;
         vm.getInfoIndexList();
 
-
-        $('#jisu_grid, tbody').on('click', 'tbody td', function () {
+        
+        $('#jisu_grid, tbody').on('click', "input[name='calcu']", function (event) {
             //var data = table.row($(this).parents('tr')).data();
 
-            if ($(this).index() == 2) {
-                var cal = $("input[name='calcu']")
-                var sum = 0;
-                for (let i = 0; i < cal.length; i++) {
+            var cal = $("input[name='calcu']")
+            var sum = 0;
+            for (let i = 0; i < cal.length; i++) {
                     sum += Number(cal.eq(i).val());
-                }
-
-                console.log("sum==" + sum);
             }
-           
+
+            console.log("sum==" + sum);
+       
         });
         
-       
-    
+
+        $('#jisu_grid, tbody').on('click', 'tbody button', function (event) {
+            //var data = table.row($(this).parents('tr')).data();
+            vm.hideContextMenu(event);    
+           //  vm.hideContextMenu(event);
+           
+        });
+
+        $('#jisu_grid, tbody').on('contextmenu', 'tbody button', function (event) {
+            //var data = table.row($(this).parents('tr')).data();
+        
+            event.preventDefault();
+            vm.showContextMenu(event);           
+        });
+
+        
+        
     },
     methods: {
+
+        
+
         getInfoIndexList: function() {
             console.log("getInfoIndexList");
             axios.get(Config.base_url + "/user/index/getInfoIndexList", {
@@ -104,7 +181,8 @@ var jisu_grid = null;
                                 columns: [
                                     { "data": "JISU_CD", "orderable": true },
                                     { "data": "JISU_NM", "orderable" : true },
-                                    { "data": "CU", "orderable" : true, defaultContent:"<input type='number' name='calcu' id='calcu'>"}, 
+                                    { "data": "CU", "orderable" : true, defaultContent:"<input type='number' name='calcu' id='calcu'>"},
+                                    { "data": null, "orderable" : true, defaultContent:"<div class='tooltip'><button type='button' id='btn_context' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>INDEX</span></div>"},
                                 ]
                             }); 
                         }
@@ -155,6 +233,37 @@ var jisu_grid = null;
                 'CU':"<input type='number' name='calcu' id='calcu' value='test'>"
              } 
         }, 
+
+        showContextMenu: function(e) {
+            
+            var menu = document.getElementById("context-menu");
+            if(!this.contextMenuWidth || !this.contextMenuHeight) {
+                menu.style.visibility = "hidden";
+                menu.style.display = "block";
+                this.contextMenuWidth = menu.offsetWidth;
+                this.contextMenuHeight = menu.offsetHeight;
+                menu.removeAttribute("style");
+            }
+            if((this.contextMenuWidth + e.pageX) >= window.innerWidth) {
+                menu.style.left = (e.pageX - this.contextMenuWidth) + "px";
+            } else {
+                var left = e.pageX - 150;
+                menu.style.left = left + "px";
+            }
+
+            if((this.contextMenuHeight + e.pageY) >= window.innerHeight) {
+                menu.style.top = (e.pageY - this.contextMenuHeight) - 50 + "px";
+            } else {
+                var top = e.pageY - 50;
+                menu.style.top = top + "px";
+            }
+            
+            menu.classList.add('active');
+
+        },
+        hideContextMenu: function() {
+            document.getElementById("context-menu").classList.remove('active');
+        }
         
     }
   }

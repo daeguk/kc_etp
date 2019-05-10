@@ -257,7 +257,7 @@
     * ETP 운용관리 - 지수관리 를 조회한다.
     * 2019-05-03  bkLove(촤병국)
     -->
-    <select id="geEtpOperIndex">
+    <select id="getEtpOperIndex">
 
         SELECT      /* etpOper.getEtpOperIndex  ETP 운용관리 - 지수관리 를 조회한다. */
                 <include    refid="sqlIndexBasic01" />
@@ -266,14 +266,8 @@
                 ,   '2018.09.05'                                        AS  last_date
                 ,   '18:00:01'                                          AS  last_time
 
-                ,   td_etp_basic.f16012                                 AS  f16012          /* 국제표준코드 */
-                ,   td_etp_basic.f16002                                 AS  f16002          /* 한글종목명 */
+          FROM  td_index_basic
 
-          FROM          td_index_basic
-         INNER  JOIN    td_etp_basic
-                  ON    (           td_index_basic.f16013       =       td_etp_basic.f16257
-                                AND td_index_basic.market_id    LIKE    CONCAT( '_', LPAD( td_etp_basic.f34239, 3, '0' ), '%' )
-                        )
          WHERE  1 = 1         
 
     </select>
@@ -283,7 +277,7 @@
     * ETP 운용관리 - 지수관리 - 해외지수 종가 모니터링을 조회한다.
     * 2019-05-03  bkLove(촤병국)
     -->
-    <select id="geEtpOperIndexOversea">
+    <select id="getEtpOperIndexOversea">
 
         SELECT      /* etpOper.geEtpOperIndexOversea  ETP 운용관리 - 지수관리 - 해외지수 종가 모니터링을 조회한다. */
                     <include    refid="sqlEtpBasic01" />
@@ -307,7 +301,7 @@
     * ETP 운용관리 - 지수관리 - 오류내역을 조회한다.
     * 2019-05-03  bkLove(촤병국)
     -->
-    <select id="geEtpOperIndexError">
+    <select id="getEtpOperIndexError">
 
         SELECT      /* etpOper.geEtpOperIndexError  ETP 운용관리 - 지수관리 - 오류내역을 조회한다. */
 

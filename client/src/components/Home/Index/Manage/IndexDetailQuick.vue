@@ -144,6 +144,7 @@ export default {
         return {
             drawer: true,
             mini: false,
+            on : false,
 
             indexBasic : {},                    /* 선택된 지수의 마스터 정보 */
 
@@ -267,7 +268,7 @@ export default {
                     var indexDetailList =   response.data.indexDetailList;
 
                     vm.form.jisuSearchYn    =   "Y";
-                    vm.$emit( "fn_getIndexDetailList", vm.indexBasic, indexDetailList, vm.form );
+                    vm.$emit( "fn_setIndexDetailList", vm.indexBasic, indexDetailList, vm.form );
                 }
             });
         },        
@@ -298,7 +299,7 @@ export default {
                     var jongmokDataList = response.data.dataList;
 
                     vm.form.jisuSearchYn =   "N";
-                    vm.$emit( "fn_getIndexJongmokList", jongmokDataList, vm.form );
+                    vm.$emit( "fn_setIndexJongmokList", jongmokDataList, vm.form );
                 }
             });
 

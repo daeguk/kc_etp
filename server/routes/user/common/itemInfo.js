@@ -76,9 +76,8 @@ var deleteFavorItem = function (req, res) {
             type_cd : req.session.type_cd,
             inst_cd : req.session.inst_cd,
             user_id : req.session.user_id,
-            item_seq : req.body.params.item_seq,
-            gubun : req.body.params.gubun, 
-            item_cd : req.body.params.item_cd
+            jisu_cd : req.body.params.jisu_cd,
+            market_id : req.body.params.market_id
         };
 
         
@@ -197,6 +196,151 @@ var insertFavorItem = function (req, res) {
     
 };
 
+
+
+
+/*
+* ETF 리스트
+*/
+var getETFList = function (req, res) {
+    try {
+        console.log('indexSummary=>getETFList 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        // var options = {id:'admin'};
+        
+        var options = { 
+            large_type : req.session.large_type,
+            jisu_cd: req.query.jisu_cd,
+            market_id: req.query.market_id,
+            type_cd : req.session.type_cd == null? '' : req.session.type_cd,
+            inst_cd : req.session.inst_cd == null? '' : req.session.inst_cd,
+            user_id : req.session.user_id == null? '' : req.session.user_id
+            
+        };
+
+        util.log("options", JSON.stringify(options));
+
+        var stmt = mapper.getStatement('common.item', 'getETFList', options, {language:'sql', indent: '  '});
+     
+
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
+
+
+/*
+* ETN 리스트
+*/
+var getETNList = function (req, res) {
+    try {
+        console.log('indexSummary=>getETNList 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        // var options = {id:'admin'};
+        
+        var options = {
+            large_type : req.session.large_type,
+            jisu_cd: req.query.jisu_cd,
+            market_id: req.query.market_id,
+            type_cd : req.session.type_cd == null? '' : req.session.type_cd,
+            inst_cd : req.session.inst_cd == null? '' : req.session.inst_cd,
+            user_id : req.session.user_id == null? '' : req.session.user_id
+        };
+
+        util.log("options", JSON.stringify(options));
+
+        var stmt = mapper.getStatement('common.item', 'getETNList', options, {language:'sql', indent: '  '});
+     
+
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
+
+
+
+/*
+* Index 목록(관심종목)
+*/
+var getIndexList = function (req, res) {
+    console.log('indexSummary=>getInfoOpenReqList 호출됨.');
+
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+
+    var params = {
+        large_type : req.session.large_type == null? '' : req.session.large_type,
+        type_cd : req.session.type_cd == null? '' : req.session.type_cd,
+        inst_cd : req.session.inst_cd == null? '' : req.session.inst_cd,
+        user_id : req.session.user_id == null? '' : req.session.user_id
+    };
+
+    var stmt = mapper.getStatement('common.item', 'getIndexList', params, {language:'sql', indent: '  '});
+
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+        conn.queryAsync(stmt).then(rows => {
+            res.json({
+                success: true,
+                results: rows
+            });
+            res.end();
+        }).catch(err => {
+            util.log("Error while performing Query.", err);
+            res.json({
+                success: false,
+                message: err
+            });
+            res.end();
+        });
+
+
+    });
+};
+
+
 module.exports.insertFavorItem = insertFavorItem;
 module.exports.deleteFavorItem = deleteFavorItem;
 module.exports.getFavorItemInfo = getFavorItemInfo;
+module.exports.getETFList = getETFList; 
+module.exports.getETNList = getETNList; 
+module.exports.getIndexList = getIndexList; 

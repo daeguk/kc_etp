@@ -13,6 +13,11 @@
                             <p>기준일 : {{ indexBasic.fmt_f12506 }}</p>
                             <p class="sub_txt">Last Updated : </p>
                         </h3>
+
+                        <v-spacer></v-spacer>
+                        <v-btn icon  @click="fn_closePop">
+                            <v-icon>close</v-icon>
+                        </v-btn>                        
                     </v-card-title>
 
 
@@ -70,7 +75,10 @@ export default {
         };
     },
     mounted () {
-        console.log( "IndexDetail.vue -> mounted" );
+
+        var vm = this;
+
+        console.log( "IndexDetailList.vue -> mounted" );
     },
     created: function() {},
     beforeDestory: function() {},
@@ -78,10 +86,10 @@ export default {
     methods: {
 
         /*
-         * 지수 목록에서 선택된 데이터를 조회한다.
+         * 조회된 지수데이터를 설정한다.
          * 2019-04-16  bkLove(촤병국)
          */
-        fn_getIndexDetailList : function( paramIndexBasic, paramIndexDetailList, paramForm ) {
+        fn_setIndexDetailList : function( paramIndexBasic, paramIndexDetailList, paramForm ) {
 
             var vm = this;
 
@@ -133,10 +141,10 @@ export default {
 
 
         /*
-         * 종목찾기 데이터를 조회한다.
+         * 조회된 종목데이터를 설정한다.
          * 2019-04-16  bkLove(촤병국)
          */
-        fn_getIndexJongmokList : function( paramJongmokDataList, paramForm ) {
+        fn_setIndexJongmokList : function( paramJongmokDataList, paramForm ) {
 
             var vm = this;
 
@@ -181,6 +189,12 @@ export default {
             }
         },
              
+
+        fn_closePop() {
+            var vm = this;
+
+            vm.$emit( "fn_closePop", "close" );
+        }
     }
 };
 </script>

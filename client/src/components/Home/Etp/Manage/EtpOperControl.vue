@@ -1,7 +1,20 @@
 <template>
     <v-layout row wrap>
-        <v-flex xs12>  
-            <IndexDetailDialog v-if="showIndexDetailDialog" :paramData="paramData"></IndexDetailDialog>
+        <v-flex xs12>
+
+            <v-dialog v-model="showIndexDetailDialog" persistent max-width="1300">
+                <IndexDetailDialog v-if="showIndexDetailDialog" :paramData="paramData" :showDialog="showIndexDetailDialog" @fn_closePop="fn_close"></IndexDetailDialog>
+            </v-dialog>
+
+            
+            <EtpOperIndexDetailListPop  v-if="showEtpOperIndexDetailListDialog" 
+            
+                                        :paramData="paramData" 
+                                        :showDialog="showEtpOperIndexDetailListDialog" 
+                                        
+                                        @fn_closePop="fn_close">
+            </EtpOperIndexDetailListPop>
+
             <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
 
             <!-- ETP 운용정보 -->
@@ -42,12 +55,13 @@ import _ from "lodash";
 import Config from "@/js/config.js";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
-import IndexDetailDialog from "@/components/Home/Index/Manage/IndexDetailDialog.vue";   /*지수 상세정보*/
-import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";         /*ETP 상세정보*/
+import IndexDetailDialog from "@/components/Home/Index/Manage/IndexDetailDialog.vue";                       /* 지수 상세정보 */
+import EtpOperIndexDetailListPop from "@/components/Home/Etp/Manage/EtpOperIndexDetailListPop.vue";         /* 지수종목 상세정보 */
+import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";                             /*ETP 상세정보*/
 
-import EtpOperInfo from "@/components/Home/Etp/Manage/EtpOperInfo.vue";                 /* ETP 운용정보 */
-import EtpOperIndex from "@/components/Home/Etp/Manage/EtpOperIndex.vue";               /* 지수관리 */
-import EtpOperPdf from "@/components/Home/Etp/Manage/EtpOperPdf.vue";                   /* PDF 관리 */
+import EtpOperInfo from "@/components/Home/Etp/Manage/EtpOperInfo.vue";                                     /* ETP 운용정보 */
+import EtpOperIndex from "@/components/Home/Etp/Manage/EtpOperIndex.vue";                                   /* 지수관리 */
+import EtpOperPdf from "@/components/Home/Etp/Manage/EtpOperPdf.vue";                                       /* PDF 관리 */
 
 export default {
     props: ["activeTab"],
@@ -55,6 +69,8 @@ export default {
         return {
             showIndexDetailDialog : false,
             showEtpDetailDialog : false,
+            showEtpOperIndexDetailListDialog : false,
+
             showEtpOerInfo : 0,
             paramData : [],
     	};
@@ -62,8 +78,9 @@ export default {
 
     components: {
         
-        IndexDetailDialog : IndexDetailDialog,      /* 인덱스 상세정보 */
-        EtpManageDetail :   EtpManageDetail,        /* ETP 상세정보 */
+        IndexDetailDialog           :   IndexDetailDialog,      /* 인덱스 상세정보 */
+        EtpManageDetail             :   EtpManageDetail,        /* ETP 상세정보 */
+        EtpOperIndexDetailListPop   :   EtpOperIndexDetailListPop,
 
         EtpOperInfo :  EtpOperInfo,                 /* ETP 운용정보 */
         EtpOperIndex :   EtpOperIndex,              /* 지수관리 */
@@ -81,6 +98,7 @@ export default {
             this.showEtpOerInfo = data.tab_id;
             this.showEtpDetailDialog = false;
             this.showIndexDetailDialog = false;
+            this.showEtpOperIndexDetailListDialog = false;
         });
     },
     beforeUpdated: function() {
@@ -94,26 +112,46 @@ export default {
             if (gubun == '1') {
                 this.paramData = paramData;
                 this.showIndexDetailDialog = false;
+                this.showEtpOperIndexDetailListDialog = false;
                 
                 if (this.showEtpDetailDialog) {
                     this.$EventBus.$emit('changeIndexInfoClose', paramData);
+                    this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
+
                     this.$EventBus.$emit('changeEtpInfo', paramData);
                 }
                 this.showEtpDetailDialog = true;
                 
-                this.showEtpOerInfo = 0;
+                this.showEtpOerInfo = this.activeTab;
                 
             } else if (gubun == '2') { 
                 this.paramData = paramData;
                 this.showEtpDetailDialog = false;
+                this.showEtpOperIndexDetailListDialog = false;
 
                 if (this.showIndexDetailDialog) {
                     this.$EventBus.$emit('changeEtpInfoClose', paramData);
+                    this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
+
                     this.$EventBus.$emit('changeIndexInfo', paramData);
                 }
                 
                 this.showIndexDetailDialog = true;                
-                this.showEtpOerInfo = 0;
+                this.showEtpOerInfo = this.activeTab;
+            } else if( gubun == '3' ) {
+                this.paramData = paramData;
+                this.showIndexDetailDialog = false;
+                this.showEtpDetailDialog = false;
+
+                if (this.showEtpOperIndexDetailListDialog) {
+                    this.$EventBus.$emit('changeEtpInfoClose', paramData);
+                    this.$EventBus.$emit('changeIndexInfoClose', paramData);
+
+                    this.$EventBus.$emit('changeEtpOperIndexDetailList', paramData);
+                }
+                
+                this.showEtpOperIndexDetailListDialog = true;                
+                this.showEtpOerInfo = this.activeTab;                
             }
         },
         showMessageBox: function(title, msg, option, gubun) {
@@ -133,6 +171,17 @@ export default {
                             this.$emit( "fn_setActiveTab", 2 );
                             break;
             }            
+        },
+
+        /*
+         *  지소관리 상세 팝업에서 종료시 해당 팝업을 종료한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_close( param ) {
+            var vm = this;
+
+            vm.showIndexDetailDialog        =   false;
+            vm.showEtpOperIndexDetailListDialog    =   false;
         }
     }
 }

@@ -223,7 +223,7 @@ var updateIndexOpenYn = function(req, res) {
 
 
 /*
-* 관리지 목록
+* Index 목록
 */
 var getInfoIndexList = function (req, res) {
     console.log('indexSummary=>getInfoOpenReqList 호출됨.');
@@ -232,7 +232,10 @@ var getInfoIndexList = function (req, res) {
     var mapper = req.app.get("mapper");
 
     var params = {
-        large_type : req.session.large_type,
+        large_type : req.session.large_type == null? '' : req.session.large_type,
+        type_cd : req.session.type_cd == null? '' : req.session.type_cd,
+        inst_cd : req.session.inst_cd == null? '' : req.session.inst_cd,
+        user_id : req.session.user_id == null? '' : req.session.user_id
     };
 
     var stmt = mapper.getStatement('index', 'getInfoIndexList', params, {language:'sql', indent: '  '});
@@ -442,95 +445,6 @@ var getIndexInEtpInfo = function (req, res) {
 };
 
 
-
-/*
-* 지수ETF 리스트
-*/
-var getETFList = function (req, res) {
-    try {
-        console.log('indexSummary=>getETFList 호출됨.');
-
-        var pool = req.app.get("pool");
-        var mapper = req.app.get("mapper");
-        // var options = {id:'admin'};
-        
-        var options = { 
-            large_type : req.session.large_type,
-            jisu_cd: req.query.jisu_cd,
-            market_id: req.query.market_id
-        };
-
-        util.log("options", JSON.stringify(options));
-
-        var stmt = mapper.getStatement('index', 'getETFList', options, {language:'sql', indent: '  '});
-     
-
-        Promise.using(pool.connect(), conn => {
-            conn.queryAsync(stmt).then(rows => {
-                res.json({
-                    success: true,
-                    results: rows
-                });
-                res.end();
-            }).catch(err => {
-                util.log("Error while performing Query.", err);
-                res.json({
-                    success: false,
-                    message: err
-                });
-                res.end();
-            });
-
-        });
-    } catch(exception) {
-        util.log("err=>", exception);
-    }
-};
-
-
-/*
-* 지수ETN 리스트
-*/
-var getETNList = function (req, res) {
-    try {
-        console.log('indexSummary=>getETNList 호출됨.');
-
-        var pool = req.app.get("pool");
-        var mapper = req.app.get("mapper");
-        // var options = {id:'admin'};
-        
-        var options = {
-            large_type : req.session.large_type,
-            jisu_cd: req.query.jisu_cd,
-            market_id: req.query.market_id
-        };
-
-        util.log("options", JSON.stringify(options));
-
-        var stmt = mapper.getStatement('index', 'getETNList', options, {language:'sql', indent: '  '});
-     
-
-        Promise.using(pool.connect(), conn => {
-            conn.queryAsync(stmt).then(rows => {
-                res.json({
-                    success: true,
-                    results: rows
-                });
-                res.end();
-            }).catch(err => {
-                util.log("Error while performing Query.", err);
-                res.json({
-                    success: false,
-                    message: err
-                });
-                res.end();
-            });
-
-        });
-    } catch(exception) {
-        util.log("err=>", exception);
-    }
-};
 
 
 /*
@@ -782,8 +696,6 @@ module.exports.getIndexBaseInfo = getIndexBaseInfo;
 module.exports.getIndexEtpHistoryData = getIndexEtpHistoryData;
 module.exports.getIndexInEtpInfo = getIndexInEtpInfo;
 module.exports.getindexSubscribeList = getindexSubscribeList;
-module.exports.getETFList = getETFList; 
-module.exports.getETNList = getETNList; 
 module.exports.getIndexImportanceList = getIndexImportanceList;
 module.exports.getIndexAnalysisInfo = getIndexAnalysisInfo;
 module.exports.getShareReqCnt = getShareReqCnt;

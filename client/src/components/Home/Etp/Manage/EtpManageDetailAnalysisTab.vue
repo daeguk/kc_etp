@@ -18,6 +18,7 @@
                 <!-- performance table 정보 START -->
                         <table v-bind:id="tableName" class="tbl_type" style="width:100%">
                             <colgroup>
+                                <col width="width:5%">          <!-- 초기화유무 -->
                                 <col width="width:5%">          <!-- 국제표준코드 -->
                                 <col width="width:5%">          <!-- ETP기초지수코드 -->
                                 <col width="width:5%">          <!-- ETP기초지수MID -->
@@ -37,6 +38,7 @@
 
                             <thead>
                                 <tr>
+                                    <th>x</th>                  <!-- 초기화유무 -->
                                     <th>x</th>                  <!-- 국제표준코드 -->
                                     <th>x</th>                  <!-- ETP기초지수코드 -->
                                     <th>x</th>                  <!-- ETP기초지수MID -->
@@ -344,7 +346,7 @@ export default {
 
                         ],
                         columns: [
-
+                            { "data": "initYn"      , "visible" : false  },                                   /* 국제표준코드 */
                             { "data": "f16012"      , "orderable" : false  },                                   /* 국제표준코드 */
                             { "data": "f16257"      , "orderable" : false  },                                   /* ETP기초지수코드 */
                             { "data": "f34239"      , "orderable" : false  },                                   /* ETP기초지수MID */
@@ -520,6 +522,7 @@ export default {
 
                         /* 테이블 정보 출력 */
                             if( table01 ) {
+                                table01.clear().draw();
                                 table01.rows.add( etpPerformanceList ).draw();                        
                             }
 

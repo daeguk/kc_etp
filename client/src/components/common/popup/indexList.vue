@@ -65,8 +65,8 @@ var jisu_grid = null;
     },
     methods: {
         getInfoIndexList: function() {
-            console.log("getInfoIndexList");
-            axios.get(Config.base_url + "/user/index/getInfoIndexList", {
+            console.log("getIndexList");
+            axios.get(Config.base_url + "/user/common/getIndexList", {
                     params: {
                     }
                 }).then(response => {
