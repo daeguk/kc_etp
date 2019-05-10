@@ -15,44 +15,44 @@
                     <v-card flat>
 
                 <!-- performance table 정보 START -->
-                        <table v-bind:id="tableName" class="tbl_type" style="width:100%">
+                        <table v-bind:id="tableName" class="tbl_type ver3" style="width:1348px">
                             <colgroup>
-                                <col width="width:5%">          <!-- 초기화유무 -->
-                                <col width="width:5%">          <!-- 국제표준코드 -->
-                                <col width="width:5%">          <!-- ETP기초지수코드 -->
-                                <col width="width:5%">          <!-- ETP기초지수MID -->
+                                <col width="314px">                             <!-- 한글 종목명 -->
+                                <col width="122px">                             <!-- 1-Week -->
+                                <col width="117px">                             <!-- 1-Month -->
+                                <col width="112px">                             <!-- 3-Month -->
+                                <col width="123px">                             <!-- YTD -->
 
-                                <col width="width:22%">         <!-- 한글 종목명 -->
-                                <col width="width:10%">         <!-- 1-Week -->
-                                <col width="width:10%">         <!-- 1-Month -->
-                                <col width="width:10%">         <!-- 3-Month -->
-                                <col width="width:9%">          <!-- YTD -->
+                                <col width="118px">                             <!-- 1-Year -->
+                                <col width="118px">                             <!-- 3-Year -->
+                                <col width="122px">                             <!-- 5-Year -->
+                                <col width="85px">                              <!-- 10-Year -->
+                                <col width="10px">                              <!-- 삭제버튼 -->
 
-                                <col width="width:9%">          <!-- 1-Year -->
-                                <col width="width:9%">          <!-- 3-Year -->
-                                <col width="width:9%">          <!-- 5-Year -->
-                                <col width="width:9%">          <!-- 10-Year -->
-                                <col width="width:3%">          <!-- 삭제버튼 -->
+                                <col width="10px">                              <!-- 초기화유무 -->
+                                <col width="10px">                              <!-- 국제표준코드 -->
+                                <col width="10px">                              <!-- ETP기초지수코드 -->
+                                <col width="10px">                              <!-- ETP기초지수MID -->
                             </colgroup>
 
                             <thead>
                                 <tr>
-                                    <th class="txt_left">x</th>                  <!-- 초기화유무 -->
-                                    <th class="txt_left">x</th>                  <!-- 국제표준코드 -->
-                                    <th class="txt_left">x</th>                  <!-- ETP기초지수코드 -->
-                                    <th class="txt_left">x</th>                  <!-- ETP기초지수MID -->
+                                    <th></th>                                   <!-- 한글 종목명 -->
+                                    <th class="txt_right">1-Week</th>           <!-- 1-Week -->
+                                    <th class="txt_right">1-Month</th>          <!-- 1-Month -->
+                                    <th class="txt_right">3-Month</th>          <!-- 3-Month -->
+                                    <th class="txt_right">YTD</th>              <!-- YTD -->
 
-                                    <th class="txt_left"></th>                   <!-- 한글 종목명 -->
-                                    <th class="txt_right">1-Week</th>             <!-- 1-Week -->
-                                    <th class="txt_right">1-Month</th>            <!-- 1-Month -->
-                                    <th class="txt_right">3-Month</th>            <!-- 3-Month -->
-                                    <th class="txt_right">YTD</th>                <!-- YTD -->
+                                    <th class="txt_right">1-Year</th>           <!-- 1-Year -->
+                                    <th class="txt_right">3-Year</th>           <!-- 3-Year -->
+                                    <th class="txt_right">5-Year</th>           <!-- 5-Year -->
+                                    <th class="txt_right">10-Year</th>          <!-- 10-Year -->
+                                    <th></th>                                   <!-- 삭제버튼 -->
 
-                                    <th class="txt_right">1-Year</th>             <!-- 1-Year -->
-                                    <th class="txt_right">3-Year</th>             <!-- 3-Year -->
-                                    <th class="txt_right">5-Year</th>             <!-- 5-Year -->
-                                    <th class="txt_right">10-Year</th>            <!-- 10-Year -->
-                                    <th></th>                   <!-- 삭제버튼 -->
+                                    <th></th>                                   <!-- 초기화유무 -->
+                                    <th></th>                                   <!-- 국제표준코드 -->
+                                    <th></th>                                   <!-- ETP기초지수코드 -->
+                                    <th></th>                                   <!-- ETP기초지수MID -->                                    
                                 </tr>
                             </thead>
                         </table>
@@ -278,13 +278,9 @@ export default {
                         searching: false,
                         data: [],
                         ordering: false,
-                        columnDefs: [     
-                            {
-                                "targets": [ 0, 1, 2 ],
-                                "visible": false
-                            },                    
+                        columnDefs: [                      
                             {  
-                                "targets": 3,
+                                "targets": 0,
                                 "render": function ( data, type, row, meta ) {
                                     if (data) {
 
@@ -326,9 +322,8 @@ export default {
                                     }
                                 },
                             },
-
                             { 
-                                "targets": 12,
+                                "targets": 9,
                                 "render": function ( data, type, row ) {
                                     if (data) {
                                         if ( row.delAbleYn == "Y" ) {
@@ -341,31 +336,32 @@ export default {
                                     }
                                 },
                             }, 
-
-
+                            {
+                                "targets": [ 10, 11, 12, 13 ],
+                                "visible": false
+                            },                               
                         ],
                         columns: [
-                            { "data": "initYn"      , "visible" : false , className:"txt_left" },                                   /* 국제표준코드 */
-                            { "data": "f16012"      , "orderable" : false, className:"txt_left"  },                                   /* 국제표준코드 */
-                            { "data": "f16257"      , "orderable" : false, className:"txt_left"  },                                   /* ETP기초지수코드 */
-                            { "data": "f34239"      , "orderable" : false, className:"txt_left"  },                                   /* ETP기초지수MID */
+                            { "data": "f16002"      , "orderable" : false , className: "txt_left line2" },          /* 한글 종목명 */
+                            { "data": "Week1"       , "orderable" : false , className: 'txt_right'  },              /* 1-week */
+                            { "data": "Month1"      , "orderable" : false , className: 'txt_right'  },              /* 1-Month */
+                            { "data": "Month3"      , "orderable" : false , className: 'txt_right'  },              /* 3-Month */
+                            { "data": "YTD"         , "orderable" : false , className: 'txt_right'  },              /* ytd */
 
-                            { "data": "f16002"      , "orderable" : false , className: "txt_left line2" },      /* 한글 종목명 */
-                            { "data": "Week1"       , "orderable" : false , className: 'txt_right'  },      /* 1-week */
-                            { "data": "Month1"      , "orderable" : false , className: 'txt_right'  },      /* 1-Month */
-                            { "data": "Month3"      , "orderable" : false , className: 'txt_right'  },      /* 3-Month */
-                            { "data": "YTD"         , "orderable" : false , className: 'txt_right'  },      /* ytd */
-
-                            { "data": "Year1"       , "orderable" : false , className: 'txt_right'  },      /* 1-Year */
-                            { "data": "Year3"       , "orderable" : false , className: 'txt_right'  },      /* 3-Year */
-                            { "data": "Year5"       , "orderable" : false , className: 'txt_right'  },      /* 5-Year */
-                            { "data": "Year10"      , "orderable" : false , className: 'txt_right'  },      /* 10-Year */
+                            { "data": "Year1"       , "orderable" : false , className: 'txt_right'  },              /* 1-Year */
+                            { "data": "Year3"       , "orderable" : false , className: 'txt_right'  },              /* 3-Year */
+                            { "data": "Year5"       , "orderable" : false , className: 'txt_right'  },              /* 5-Year */
+                            { "data": "Year10"      , "orderable" : false , className: 'txt_right'  },              /* 10-Year */
                             { "data": null          , "orderable" : false , defaultContent:"", "align":"center" },
 
+                            { "data": "initYn"      , "visible" : false  },                                         /* 초기화유무 */
+                            { "data": "f16012"      , "visible" : false  },                                         /* 국제표준코드 */
+                            { "data": "f16257"      , "visible" : false  },                                         /* ETP기초지수코드 */
+                            { "data": "f34239"      , "visible" : false  },                                         /* ETP기초지수MID */
                         ]
                     });
 
-                    $( table01.column( 3 ).header() ).text( vm.nowDate + " (%)" );
+                    $( table01.column( 0 ).header() ).text( vm.nowDate + " (%)" );
 
 
                     // 테이블별 이벤트
