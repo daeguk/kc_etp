@@ -6,10 +6,12 @@
                     <h4 class="mb-0">Performance</h4>
 
                 <!-- performance chart 정보 START -->
+                <div class="graph_02_w">
                     <div
                         id="etp_comboChart_div"
                         class="perf_chart_w2"
                     ></div>
+                </div>
                 <!-- performance chart 정보 END -->
 
                     <v-card flat>
@@ -73,12 +75,14 @@
             </v-flex>
             
             <v-flex xs12 flat>
-                <!-- 비중정보 팝업 -->
+                <!---비중정보 팝업 -->
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">포트폴리오</h4>
+                    <v-layout>
+                        <v-flex xs6>
                     <v-subheader>
                         TOP10 비중정보
-                        <v-dialog v-model="dialog2" persistent max-width="500">
+                        <v-dialog v-model="dialog" persistent max-width="500">
                             <template v-slot:activator="{ on }">
                                 <v-btn outline small color="primary" dark v-on="on">VIEW ALL</v-btn>
                             </template>
@@ -87,7 +91,7 @@
                                     <v-card-title ma-0>
                                         종목 비중정보 (KODEX 200)
                                         <v-spacer></v-spacer>
-                                        <v-btn icon dark @click="dialog2 = false">
+                                        <v-btn icon dark @click="dialog = false">
                                             <v-icon>close</v-icon>
                                         </v-btn>
                                     </v-card-title>
@@ -105,33 +109,83 @@
                                     </v-list>
                                 </div>
                                 <v-card flat>
-                                    <table id="importance_grid" class="display" style="width:100%">
+                                    <table id="importance_grid" class="tbl_type" style="width:100%">
+                                        <colgroup>
+                                            <col width="10%">
+                                            <col width="40%">
+                                            <col width="40%">
+                                            <col width="10%">
+                                        </colgroup>
                                         <thead>
                                             <tr>
-                                                <th>CODE</th>
-                                                <th>종목지수명</th>
-                                                <th>비중</th>
-                                                <th>구분</th>
+                                                <th class="txt_left">Code</th>
+                                                <th class="txt_left">Name</th>
+                                                <th class="txt_right">Alllocation</th>
+                                                <th class="txt_left">GUBUN</th>
                                             </tr>
-                                        </thead>
+                                        </thead>   
                                     </table>
                                 </v-card>
                                 <v-card class="pop_bot_h"></v-card>
                             </v-card>
                         </v-dialog>
                     </v-subheader>
-                    <div class="graph_02_w" id="importance_chart"></div>
+                    <v-card flat>
+                    <div class="indexinfo_box01">
+                    <v-card flat class="indexinfo_list_table">
+                        <v-layout v-if="results.length >= 1">
+                                <v-flex xs3><v-icon :style="{color:importance_colors[0]}" class="lineh">fiber_manual_record</v-icon>{{results[0].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r">{{results[0].PERCNT}}%</v-flex>
+                                <v-flex xs2></v-flex>
+                                <v-flex xs3 v-if="results.length >= 2"><v-icon :style="{color:importance_colors[1]}" class="lineh">fiber_manual_record</v-icon>{{results[1].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r" v-if="results.length >= 2">{{results[1].PERCNT}}%</v-flex>     
+                        </v-layout>    
+                        <v-layout v-if="results.length >= 3">
+                                <v-flex xs3><v-icon :style="{color:importance_colors[2]}" class="lineh">fiber_manual_record</v-icon>{{results[2].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r">{{results[2].PERCNT}}%</v-flex>
+                                <v-flex xs2></v-flex>
+                                <v-flex xs3 v-if="results.length >= 4"><v-icon :style="{color:importance_colors[3]}" class="lineh">fiber_manual_record</v-icon>{{results[3].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r" v-if="results.length >= 4">{{results[3].PERCNT}}%</v-flex>     
+                        </v-layout>    
+                        <v-layout v-if="results.length >= 5">
+                                <v-flex xs3><v-icon :style="{color:importance_colors[4]}" class="lineh">fiber_manual_record</v-icon>{{results[4].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r">{{results[4].PERCNT}}%</v-flex>
+                                <v-flex xs2></v-flex>
+                                <v-flex xs3 v-if="results.length >= 6"><v-icon :style="{color:importance_colors[5]}" class="lineh">fiber_manual_record</v-icon>{{results[5].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r" v-if="results.length >= 6">{{results[5].PERCNT}}%</v-flex>     
+                        </v-layout>    
+                        <v-layout v-if="results.length >= 7">
+                                <v-flex xs3><v-icon :style="{color:importance_colors[6]}" class="lineh">fiber_manual_record</v-icon>{{results[6].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r">{{results[6].PERCNT}}%</v-flex>
+                                <v-flex xs2></v-flex>
+                                <v-flex xs3 v-if="results.length >= 8"><v-icon :style="{color:importance_colors[7]}" class="lineh">fiber_manual_record</v-icon>{{results[7].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r" v-if="results.length >= 8">{{results[7].PERCNT}}%</v-flex>     
+                        </v-layout>    
+                        <v-layout v-if="results.length >= 9">
+                                <v-flex xs3><v-icon :style="{color:importance_colors[8]}" class="lineh">fiber_manual_record</v-icon>{{results[8].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r">{{results[8].PERCNT}}%</v-flex>
+                                <v-flex xs2></v-flex>
+                                <v-flex xs3 v-if="results.length >= 10"><v-icon :style="{color:importance_colors[9]}" class="lineh">fiber_manual_record</v-icon>{{results[9].JOING_NM}}</v-flex>
+                                <v-flex xs2 class="text_r" v-if="results.length >= 10">{{results[9].PERCNT}}%</v-flex>     
+                        </v-layout>                       
+                    </v-card>
+                </div>
+                    </v-card>
+
+                        </v-flex>
+                        <v-flex xs6>
+                            <div class="graph_02_w"  id="importance_chart"></div>
+                        </v-flex>
+                    </v-layout>
                     <v-card flat></v-card>
                 </div>
-                <!-- 비중정보 팝업end -->
+                <!---비중정보 팝업end-->
             </v-flex>
 
             <v-flex xs12></v-flex>
         </v-layout>
-
     </v-container>
 </template>
-
 
 <script>
 import jongmokPopup from "@/components/common/popup/jongmokPopup";
@@ -153,6 +207,7 @@ export default {
             tab: null,
             items: ["ETF", "ETN", "INDEX"],
             jongMokDialog: false,
+            importance_colors: ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde', '#B6B8BA', '#7E8083', '#FBB040', '#F58025', '#EDED8A'],
             dialog2: false,
             results: [],
             importance_cnt: 0,
@@ -561,12 +616,21 @@ export default {
 
                             // Set chart options
                             var options = {'title':'',
-                                        'width':$(window).width()*0.58,
-                                        'height':'300',
-                                        'colors': ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde'],                           
-                                        'legend': {
-                                            position: 'left'
+                                        'width':'1180',
+                                        'height':'180',
+                                        'colors': ['#1e99e8', '#48485e', '#ff4366', '#727281', '#b9e0f7'],                
+                                        'hAxis':{
+                                            textStyle: {
+                                                color:'#ffffff'
+                                            },
+                                            gridlines: {
+                                                color:'#ffffff'
+                                            }
                                         },
+                                        'legend': {
+                                            position: 'left',
+                                        },
+
                                         seriesType: 'bars',
                                         
                             };
