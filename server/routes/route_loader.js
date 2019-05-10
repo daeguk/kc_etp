@@ -35,6 +35,7 @@ route_loader.sessionCheckRegister = function(app) {
                req.session.inst_cd = "03068";
                req.session.type_cd = "0001";
                req.session.large_type = "FNGUIDE";
+               req.session.krx_cd = '410220'; /*거래소 ETP 발행사 코드*/
                req.session.save();
                console.log("loginkey : " + req.session.user_id);
                 /*===================================*/

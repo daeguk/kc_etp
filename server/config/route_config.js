@@ -50,9 +50,7 @@ module.exports = {
         { file: './user/index/indexSummary', path: '/user/index/getIndexBaseInfo', method: 'getIndexBaseInfo', session: 'check', type: 'get' },   
         { file: './user/index/indexSummary', path: '/user/index/getIndexEtpHistoryData', method: 'getIndexEtpHistoryData', session: 'check', type: 'get' },   
         { file: './user/index/indexSummary', path: '/user/index/getIndexInEtpInfo', method: 'getIndexInEtpInfo', session: 'check', type: 'get' },   
-        { file: './user/index/indexSummary', path: '/user/index/getindexSubscribeList', method: 'getindexSubscribeList', session: 'check', type: 'get' },   
-        { file: './user/index/indexSummary', path: '/user/index/getETFList', method: 'getETFList', session: 'check', type: 'get' },   
-        { file: './user/index/indexSummary', path: '/user/index/getETNList', method: 'getETNList', session: 'check', type: 'get' },   
+        { file: './user/index/indexSummary', path: '/user/index/getindexSubscribeList', method: 'getindexSubscribeList', session: 'check', type: 'get' },           
         { file: './user/index/indexSummary', path: '/user/index/getIndexImportanceList', method: 'getIndexImportanceList', session: 'check', type: 'get' },
         { file: './user/index/indexSummary', path: '/user/index/getIndexAnalysisInfo', method: 'getIndexAnalysisInfo', session: 'check', type: 'get' },
         { file: './user/index/indexSummary', path: '/user/index/getIndexAnalysisData', method: 'getIndexAnalysisData', session: 'check', type: 'get' },
@@ -100,7 +98,9 @@ module.exports = {
         { file: './user/common/itemInfo', path: '/user/common/getFavorItemInfo', method: 'getFavorItemInfo', session: 'check', type: 'get' },
         { file: './user/common/itemInfo', path: '/user/common/deleteFavorItem', method: 'deleteFavorItem', session: 'check', type: 'post' },
         { file: './user/common/itemInfo', path: '/user/common/insertFavorItem', method: 'insertFavorItem', session: 'check', type: 'post' },
-        
+        { file: './user/common/itemInfo', path: '/user/common/getETFList', method: 'getETFList', session: 'check', type: 'get' },   
+        { file: './user/common/itemInfo', path: '/user/common/getETNList', method: 'getETNList', session: 'check', type: 'get' },   
+        { file: './user/common/itemInfo', path: '/user/common/getIndexList', method: 'getIndexList', session: 'check', type: 'get' },   
 
         //풀 테스트 
 

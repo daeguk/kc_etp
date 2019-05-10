@@ -62,7 +62,7 @@ var etf_grid = null;
     methods: {
         getInfoIndexList: function() {
             console.log("getEtfList");
-            axios.get(Config.base_url + "/user/index/getETFList", {
+            axios.get(Config.base_url + "/user/common/getETFList", {
                     params: {
                     }
                 }).then(response => {

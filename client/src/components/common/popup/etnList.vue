@@ -59,7 +59,7 @@ var etn_grid = null;
     methods: {
         getInfoIndexList: function() {
             console.log("etn_grid");
-            axios.get(Config.base_url + "/user/index/getETNList", {
+            axios.get(Config.base_url + "/user/common/getETNList", {
                     params: {
                     }
                 }).then(response => {
