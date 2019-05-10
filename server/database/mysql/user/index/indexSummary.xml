@@ -457,7 +457,7 @@
     <![CDATA[
        SELECT ITEM.ISIN_CODE
             , ITEM.JOING_NM
-            , (ITEM.ITEM_AMT/TOT_ITEM.TOT_AMT) * 100 PERCNT
+            , TRUNCATE((ITEM.ITEM_AMT/TOT_ITEM.TOT_AMT) * 100, 2) PERCNT
             , ITEM.GUBUN   	 
         FROM(SELECT MAP.ISIN_CODE
                     ,MAP.F16002 JOING_NM

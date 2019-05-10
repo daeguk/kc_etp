@@ -123,10 +123,12 @@ export  const  index_common =   {
                 var options = {'title':'',
                             'width':'700',
                             'height':'350',
-                            'colors': ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde'],                           
+                            'colors': ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde', '#B6B8BA', '#7E8083', '#FBB040', '#F58025', '#EDED8A'],        
+                                       
                             'legend': {
                                 position: 'right',
-                                color: '#ffffff'
+                                color: '#ffffff',
+                               
                             },
                             'lineWidth': 5
                             
@@ -137,12 +139,15 @@ export  const  index_common =   {
 
                 for (let item of results) {
                     
-                    if (items.length >= 5) break;
+                    if (items.length >= 10) break;
 
                     items.push([item.JOING_NM, Number( item.PERCNT ) ]);
 
                 }
+                
+            
 
+                
                 data.addRows(
                     items
                 );
