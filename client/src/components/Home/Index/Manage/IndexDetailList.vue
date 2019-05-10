@@ -38,8 +38,8 @@
             </v-flex >
             <v-flex  class="conWidth_right">
                 <IndexDetailQuick   @fn_getIndexDetailList="fn_getIndexDetailList"
-                                        @fn_getIndexJongmokList="fn_getIndexJongmokList"
-                    ></IndexDetailQuick>
+                                    @fn_getIndexJongmokList="fn_getIndexJongmokList">
+                </IndexDetailQuick>
             </v-flex>
         </v-layout>
     </v-container>
@@ -89,7 +89,7 @@ export default {
          * 조회된 지수데이터를 설정한다.
          * 2019-04-16  bkLove(촤병국)
          */
-        fn_setIndexDetailList : function( paramIndexBasic, paramIndexDetailList, paramForm ) {
+        fn_getIndexDetailList : function( paramIndexBasic, paramIndexDetailList, paramForm ) {
 
             var vm = this;
 
@@ -144,7 +144,7 @@ export default {
          * 조회된 종목데이터를 설정한다.
          * 2019-04-16  bkLove(촤병국)
          */
-        fn_setIndexJongmokList : function( paramJongmokDataList, paramForm ) {
+        fn_getIndexJongmokList : function( paramJongmokDataList, paramForm ) {
 
             var vm = this;
 
