@@ -72,7 +72,7 @@ export default {
                         +   "." 
                         +   (parseInt(new Date().getMonth()) + 1) 
                         +   "." 
-                        +   new Date().getDate(),            
+                        +   new Date().getDate(),
         };
     },
     components : {},

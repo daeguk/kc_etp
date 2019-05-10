@@ -8,9 +8,9 @@
                             지수관리
                             <p>
                                 Total
-                                <span class="text_result">120</span> results
+                                <span class="text_result">{{ result_cnt }}</span> results
                             </p>
-                            <p class="sub_txt">기준일 : 2019.3.20</p>
+                            <p class="sub_txt">기준일 : {{ nowDate }}</p>
                         </h3>
                     </v-card-title>
                     
@@ -438,6 +438,12 @@ export default {
                             },
             arrShowColumn   :   [],
             arrShowColumnDef   :   [],
+            nowDate:        new Date().getFullYear() 
+                        +   "." 
+                        +   (parseInt(new Date().getMonth()) + 1) 
+                        +   "." 
+                        +   new Date().getDate(),
+            result_cnt  :   0
         };
     },
     components: {
@@ -476,12 +482,15 @@ export default {
             .then(function(response) {
                 console.log(response);
 
+                vm.result_cnt = 0;
                 if (response.data) {
                     var dataList = response.data.dataList;
 
                     if( dataList && dataList.length > 0 ) {
                         tableOperIndex.rows.add( dataList ).draw();
                         tableOperIndex.draw();
+
+                        vm.result_cnt = dataList.length;
                     }
                 }
             });
