@@ -1,6 +1,6 @@
 <template>
-    <v-layout row wrap>
-        <v-flex xs12>  
+    <v-layout row wrap class="content_margin con_wrap">
+        <v-flex grow :class="className">
             <IndexDetailDialog v-if="showIndexDetailDialog" :paramData="paramData"></IndexDetailDialog>
             <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
             <marketRepresent v-if="showMarketInfo == 1" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketRepresent>               
@@ -15,10 +15,13 @@
             <marketMixAssets v-if="showMarketInfo == 10" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketMixAssets>               
             <marketOversea v-if="showMarketInfo == 11" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketOversea>                   
             <marketLeverageInverse v-if="showMarketInfo == 12" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketLeverageInverse>   
-            <!--ComFavorItem v-if="showFaver" @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItem-->
             <ConfirmDialog ref="confirm"></ConfirmDialog>
         </v-flex>
+        <v-flex :class="FaverClassName">
+                <ComFavorItemSub v-if="showFaver"   @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
+        </v-flex>
     </v-layout> 
+    
 </template>
 
 <script>
@@ -29,7 +32,7 @@ import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
-import ComFavorItem from "@/components/common/control/ComFavorItem"; 
+import ComFavorItemSub from "@/components/common/control/ComFavorItemSub"; 
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 import IndexDetailDialog from "@/components/Home/Index/Manage/IndexDetailDialog.vue";   /*지수 상세정보*/
@@ -55,12 +58,14 @@ export default {
             showEtpDetailDialog : false,
             showMarketInfo : 0,
             paramData : [],
-            showFaver : false
+            showFaver : false,
+            className: '',
+            FaverClassName: '',
     	};
     },    
 
     components: {
-        ComFavorItem : ComFavorItem,
+        ComFavorItemSub : ComFavorItemSub,
         ConfirmDialog : ConfirmDialog,
         IndexDetailDialog : IndexDetailDialog,
         EtpManageDetail :   EtpManageDetail,
@@ -84,6 +89,8 @@ export default {
     },
     created: function() {
         this.$EventBus.$on('showList', data => {
+            this.className = "";
+            this.FaverClassName = "";
             this.showMarketInfo = data.tab_id;
             this.showEtpDetailDialog = false;
             this.showIndexDetailDialog = false;
@@ -96,7 +103,7 @@ export default {
     updated: function() {
     },
     methods: {
-        showDetail: function(gubun, paramData) {            
+        showDetail: function(gubun, paramData) {               
             if (gubun == '1') {
                 this.paramData = paramData;
                 this.showIndexDetailDialog = false;
@@ -123,6 +130,9 @@ export default {
                 this.showMarketInfo = 0;
                 this.showFaver = true;
             }
+
+            this.className = "conWidth_left";  
+            this.FaverClassName = "conWidth_right";       
         },
         showMessageBox: function(title, msg, option, gubun) {
             this.$root.$confirm.open(title,msg, option, gubun);

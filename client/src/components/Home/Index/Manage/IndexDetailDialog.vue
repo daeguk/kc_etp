@@ -1,5 +1,5 @@
 <template>
-    <div class="content_margin">
+    <div >
         <v-layout row>
             <v-flex xs12>
                 <v-card flat ma-3>
