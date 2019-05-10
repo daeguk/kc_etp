@@ -14,7 +14,7 @@
                                     <v-layout align-right>
                                         <v-flex xs12 sm4 text-xs-center>
                                             <div class="btn_r">
-                                                <v-btn outline color="indigo" small :to="{path:'/index/manage', query:{'activeTab':'2'}}">목록으로 돌아가기</v-btn>
+                                                <v-btn outline color="primary" small :to="{path:'/index/manage', query:{'activeTab':'2'}}">목록으로 돌아가기</v-btn>
                                             </div>
                                         </v-flex>
                                     </v-layout>
@@ -204,7 +204,7 @@ export default {
                          // Set chart options
                         var options = {'title':' ',
                                 'height':'300',
-                                'colors':['#a52714', '#0000ff', '#ff00000', '#00ff00'],
+                                'colors':['#1e99e8', '#48485e', '#ff4366', '#727281'],
                                 'hAxis':{
                                     format: "MM.dd",
                                     ticks: data.getDistinctValues(0),
@@ -234,7 +234,7 @@ export default {
                          // Set chart options
                         var options = {'title':' ',
                                 'height':'300',
-                                'colors':['#a52714', '#0000ff', '#ff00000', '#00ff00'],
+                                'colors':['#1e99e8', '#48485e', '#ff4366', '#727281'],
                                 'hAxis':{
                                     format: "MM.dd",
                                     ticks: data.getDistinctValues(0),

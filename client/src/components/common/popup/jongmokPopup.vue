@@ -5,7 +5,7 @@
                         <v-flex xs12>
                             <v-card flat>
                                 <v-dialog v-model="showDialog" persistent max-width="500">                                   
-                                    <v-card>
+                                    <v-card flat>
                                         <h5>
                                             <v-card-title ma-0>
                                                 비교자산추가
@@ -22,11 +22,10 @@
                                             <v-flex xs12>
                                                 <v-tabs
                                                     fixed-tabs
-                                                    color="cyan"
-                                                    dark
+                                                    light
                                                     v-model="tab"
                                                 >
-                                                    <v-tabs-slider color="#00fffc"></v-tabs-slider>
+                                                    <v-tabs-slider ></v-tabs-slider>
                                                     <v-tab
                                                         v-for="item in items"
                                                         :key="item"

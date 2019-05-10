@@ -11,6 +11,7 @@
 }*/
 html{ width:1400px; margin:0 auto !important;overflow-x: hidden !important;}
 body{background: #f5f5f5}
+/*.content_margin{width:1400px !important; margin:10px auto !important;overflow-x: hidden !important;}*/
 .v-content__wrap{background: #f5f5f5 !important;}
 .theme--light.application{background:#f5f5f5 !important;color:rgba(0,0,0,.87)}
 html{font-family: 'Noto Sans', sans-serif,'Noto Sans'  !important; }
@@ -105,6 +106,8 @@ button:focus { outline: none; }
 
 
 .btn_intable_01{color:#1976d2; border-color:#1976d2; height:23px !important; background:#ffffff;}
+.btn_intable_02{color:#ff4366; border-color:#ff4366; height:23px !important; background:#ffffff;}
+.btn_intable_03{color:#9e9e9e; border-color:#9e9e9e; height:23px !important; background:#ffffff;}
 
 .con_wrap{width:1400px; margin:0 auto;}
 .con_wrap .conWidth_left{width:1080px; float: left;}
@@ -120,7 +123,6 @@ input[type="checkbox"]:disabled, input[type="radio"]:disabled { background-posit
 input[type="checkbox"]:disabled:checked, input[type="radio"]:disabled:checked { background-position: 0 -75px; }
 input:focus { outline: none; }
 .td_in_center{text-align: center;}
-
 input[type="text"], input[type="number"]{border:1px solid #ccd0d4; border-radius: 2px;padding:2px 3px; width:100%}
 input[type="text"]:focus, input[type="number"]:focus{border-color:#1976d2;}
 
@@ -179,14 +181,17 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type th.txt_left{text-align: left;}
 .tbl_type th.txt_right{text-align: right;}
 
-.tbl_type td{padding:6px 12px 4px 12px;border-bottom:1px solid #e5e5e5;color:#3d3d4d; line-height: 16px; font-size:12px !important; }
+.tbl_type td{padding:6px 17px 4px 12px;border-bottom:1px solid #e5e5e5;color:#3d3d4d; line-height: 16px; font-size:12px !important; }
 .tbl_type td.txt_left{text-align: left;}
 .tbl_type td.txt_right{text-align: right;}
 .tbl_type td.line2 span{ display: inline-block; font-weight: 400 !important;}
 .tbl_type td.line2 img{vertical-align:top; }
+.tbl_type tbody tr:hover{background:#edf3f6}
 
 .tbl_type.ver2{width:270px;}
 .tbl_type.ver2 td{font-weight: 400;}
+
+.tbl_type.ver3 th{padding:8px 12px 4px 12px;}
 
 
 
@@ -199,7 +204,7 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .flex.xs3{width:25%; overflow:hidden !important;}
 .flex.xs4{width:33%; overflow:hidden !important;}
 .flex.xs5{width:480px; overflow:hidden !important;}
-.flex.xs6{width:600px; overflow:hidden !important;}
+.flex.xs6{width:50%; overflow:hidden !important;}
 .flex.xs7{width:720px; overflow:hidden !important;}
 .flex.xs8{width:840px; overflow:hidden !important;}
 .flex.xs9{width:75%; overflow:hidden !important;}
@@ -242,16 +247,17 @@ h3.subtit p.sub_txt{font-size:14px; font-weight: normal;}
 
 
 :-ms-fullscreen, :root .title_wrap01 .btn_r{float:right;}
-.title01_w .v-card__title{padding-bottom:5px;}
+.title01_w .v-card__title{padding:24px 24px 5px 24px}
+.title01_w .v-card__text{padding:5px 30px 5px 24px;}
 .title_wrap01{width:100%;height:30px;}
 .title_wrap01 h3{float:left; padding-bottom:0px;}
 .title_wrap01 .right_btn{float:right; display: block; }
-.title_ex{color:#9e9e9e;padding:0 8px; font-weight:bold; position: relative; width:100%;}
+.title_ex{color:#878793;padding:0px; font-weight:bold; position: relative; width:100%;}
 
-.graph_01_w{ padding:0 24px 40px;}
+.graph_01_w{ padding:0 24px 0px;}
 .graph_01_w .sub_title_num{font-size:30px;  font-weight:bold; color:#101010;}
 .graph_01_w .sub_title_num span{font-size:14px; color:red;}
-.graph_01_w .sub_title_num p{font-size: 14px; color:#9e9e9e; }
+.graph_01_w .sub_title_num p{font-size: 14px; color:#878793; }
 .graph_01_w .graph_01{width:100%;}
 .graph_toggle .v-btn-toggle{border:1px solid #c9c9c9;}
 .graph_toggle .v-btn-toggle--selected{ box-shadow: none !important; }
@@ -259,9 +265,10 @@ h3.subtit p.sub_txt{font-size:14px; font-weight: normal;}
 .graph_toggle .v-btn-toggle .v-btn{padding:0 15px; opacity: 0.7; }
 
 .graph_02_w{ padding:0; width:100%; height:100%;}
-.graph_02_w div{height:80px; display:inline-block;}
-.graph_02_w .graph_box{width:10%;padding:0 8px}
 
+.graph_02_w .graph_box{width:400px;padding:0 8px;  float: left; display: block}
+.perf_chart_w{ padding-left:225px;}
+.lineh{line-height:16px !important;}
 
 
 .indexlist_ww .flex{padding:0 !important;}
@@ -270,19 +277,19 @@ h3.subtit p.sub_txt{font-size:14px; font-weight: normal;}
 .indexinfo_box02{ width:100%;padding:16px 28px 0 0px; margin-top:10px;}
 .indexinfo_box02.a2 .indexinfo_list_table{border-top:1px solid #9e9e9e;}
 .indexinfo_box02.a3 .indexinfo_list_table{border-top:1px solid #9e9e9e;}
-.indexinfo_box01 h4, .indexinfo_box02 h4{border-top:2px solid #9e9e9e;border-bottom:1px solid #9e9e9e; font-size: 18px; padding:10px;}
+.indexinfo_box01 h4, .indexinfo_box02 h4{border-top:2px solid #9e9e9e;border-bottom:1px solid #9e9e9e; font-size: 14px; padding:5px;}
 .indexinfo_box01 table.v-table, .indexinfo_box02 table.v-table{border-bottom:2px solid #9e9e9e;}
 .indexinfo_box01 table.v-table th, .indexinfo_box01 table.v-table tbody td{ height:35px;}
 .indexinfo_box01 table.v-table tbody td{ font-size:14px; color:#101010;}
 
-.indexinfo_list_table .layout{border-bottom:1px solid #e0e0e0; padding:12px;}
+.indexinfo_list_table .layout{border-bottom:1px solid #e0e0e0; padding:7px 6px 6px 15px;}
 .indexinfo_list_table .layout .flex{font-size: 14px;}
 .indexinfo_list_table .layout .flex.text_r{text-align: right; font-weight: 600;}
 .indexinfo_list_table .v-list__tile{font-size: 13px !important;border-bottom:1px solid #e0e0e0; padding:12px 16px;width:100%;}
 .indexinfo_list_table .v-list__tile__content{font-size:13px !important; height:35px !important; justify-content: flex-end;}
 .indexinfo_list_table .v-list{padding:0px 0 !important;}
 
-.indexinfo_box02 .indexinfo_list_table .v-card__title{font-weight: 600; border-bottom:1px solid #9e9e9e;padding:12px;border-bottom:1px solid #9e9e9e;}
+.indexinfo_box02 .indexinfo_list_table .v-card__title{font-weight: 600; border-bottom:1px solid #9e9e9e;padding:7px 6px 6px 15px;border-bottom:1px solid #9e9e9e;}
 .indexinfo_box02.a1 .indexinfo_list_table .v-card__title{font-size:14px;  color:red;}
 .indexinfo_box02.a2 .indexinfo_list_table .v-card__title{font-size:14px;  color:#ff8400;}
 .indexinfo_box02.a3 .indexinfo_list_table .v-card__title{font-size:14px;  color:#2f4cac;}

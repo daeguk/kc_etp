@@ -18,7 +18,7 @@
                 </v-container>
             </v-flex>
         </v-layout>
-        <v-layout row wrap mt-2 >
+        <v-layout row wrap mt-2  class="content_margin">
             <v-flex xs3 pr-2>
                 <IndexSummaryBox :item="boxItem1"></IndexSummaryBox>
             </v-flex>

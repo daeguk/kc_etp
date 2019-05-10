@@ -42,7 +42,7 @@
                 </div>
                 <!--table1 end -->
             </v-flex>
-            <v-flex md6>
+            <v-flex xs6>
                 <!---table2 -->
                 <v-container fluid grid-list-md pa-0 mb-4>
                     <v-layout row wrap>

@@ -1,16 +1,21 @@
 <template>
-<v-card>
+<v-card flat>
     
     <v-card-title>
         <v-text-field v-model="search" v-on:keyup="filterData" append-icon="search" label="Search" single-line hide-details></v-text-field>
     </v-card-title>        
     <v-card flat>
-        <table id="etn_grid" class="display" style="width:100%">
+        <table id="etn_grid" class="tbl_type" style="width:100%">
+            <colgroup>
+                <col width="15%">
+                <col width="30%">
+                <col width="55%">
+            </colgroup>
             <thead>
                 <tr>
-                    <th><input  type='checkbox' class="selectAll select-checkbox"/></th>
-                    <th>ID</th>
-                    <th>종목/지수명</th>
+                    <th><!--input  type='checkbox' class="selectAll select-checkbox"/--></th>
+                    <th class="txt_left">ID</th>
+                    <th class="txt_left">종목/지수명</th>
                 </tr>
             </thead>   
         </table>
@@ -96,9 +101,9 @@ var etn_grid = null;
                                 searching: false,
                                 data : this.results,
                                 columns: [
-                                    { "data": null, "defaultContent": ""},
-                                    { "data": "JISU_CD", "orderable": true },
-                                    { "data": "JISU_NM", "orderable" : true },
+                                    { "data": null, "defaultContent": "", "orderable": false },
+                                    { "data": "JISU_CD", "orderable": true, className:'txt_left' },
+                                    { "data": "JISU_NM", "orderable" : true, className:'txt_left' },
                                 ]
                             }); 
                         }

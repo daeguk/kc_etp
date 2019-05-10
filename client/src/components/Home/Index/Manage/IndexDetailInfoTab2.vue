@@ -5,36 +5,34 @@
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">Performance</h4>
                     <div class="graph_02_w">
-                        <div class="graph_box"></div>
-                        <div id="perf_chart"></div>
+                        <div class="perf_chart_w" id="perf_chart"></div>
                     </div>
                    <v-card flat>
-                     <table id="perf_table" class="tbl_type" style="width:100%">
+                     <table id="perf_table" class="tbl_type ver3" style="width:1348px">
                          <colgroup>
-                            <col width="28%">
-                            <col width="width:8%">
-                            <col width="width:8%">
-                            <col width="width:8%">
-                            <col width="width:8%">
-                            <col width="width:8%">
-                            <col width="width:8%">
-                            <col width="width:8%">
-                            <col width="width:8%">
-                            <col width="width:8%">
-                            <col width="width:8%">
+                            <col width="314px">
+                            <col width="117px">
+                            <col width="122px">
+                            <col width="117px">
+                            <col width="112px">
+                            <col width="123px">
+                            <col width="118px">
+                            <col width="118px">
+                            <col width="122px">
+                            <col width="85px">
                         </colgroup>
                          <thead>
                           <tr>
                              <th></th>
                              <th></th>
-                             <th>1-Week</th>
-                             <th>1-Month</th>
-                             <th>3-Month</th>
-                             <th>YTD</th>
-                             <th>1-Year</th>
-                             <th>3-Year</th>
-                             <th>5-Year</th>
-                             <th>10-Year</th>
+                             <th class="txt_right">1-Week</th>
+                             <th class="txt_right">1-Month</th>
+                             <th class="txt_right">3-Month</th>
+                             <th class="txt_right">YTD</th>
+                             <th class="txt_right">1-Year</th>
+                             <th class="txt_right">3-Year</th>
+                             <th class="txt_right">5-Year</th>
+                             <th class="txt_right">10-Year</th>
                              <th></th>
                            </tr>
                            </thead>
@@ -56,6 +54,8 @@
                 <!---비중정보 팝업 -->
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">포트폴리오</h4>
+                    <v-layout>
+                        <v-flex xs6>
                     <v-subheader>
                         TOP10 비중정보
                         <v-dialog v-model="dialog" persistent max-width="500">
@@ -85,13 +85,17 @@
                                     </v-list>
                                 </div>
                                 <v-card flat>
-                                    <table id="importance_grid" class="display" style="width:100%">
+                                    <table id="importance_grid" class="tbl_type" style="width:100%">
+                                        <colgroup>
+                                            <col width="20%">
+                                            <col width="40%">
+                                            <col width="40%">
+                                        </colgroup>
                                         <thead>
                                             <tr>
-                                                <th>CODE</th>
-                                                <th>종목지수명</th>
-                                                <th>비중</th>
-                                                <th>구분</th>
+                                                <th class="txt_left">Code</th>
+                                                <th class="txt_left">Name</th>
+                                                <th class="txt_right">Alllocation</th>
                                             </tr>
                                         </thead>   
                                     </table>
@@ -100,7 +104,53 @@
                             </v-card>
                         </v-dialog>
                     </v-subheader>
-                    <div class="graph_02_w"  id="importance_chart"></div>
+                    <v-card flat>
+                    <div class="indexinfo_box01">
+                    <v-card flat class="indexinfo_list_table">
+                        <v-layout row>
+                            <v-flex xs3><v-icon style="color:#b9e0f7" class="lineh">fiber_manual_record</v-icon>삼성전자</v-flex>
+                            <v-flex xs2 class="text_r">10.25%</v-flex>
+                            <v-flex xs2></v-flex>
+                            <v-flex xs3><v-icon style="color:#72cdf4" class="lineh">fiber_manual_record</v-icon>SK하이닉스</v-flex>
+                            <v-flex xs2 class="text_r">10.25%</v-flex>
+                        </v-layout>
+                        <v-layout row>
+                            <v-flex xs3><v-icon style="color:#1e99e8" class="lineh">fiber_manual_record</v-icon>셀트리온</v-flex>
+                            <v-flex xs2 class="text_r">10.25%</v-flex>
+                            <v-flex xs2></v-flex>
+                            <v-flex xs3><v-icon style="color:#0076be" class="lineh">fiber_manual_record</v-icon>LG화학</v-flex>
+                            <v-flex xs2 class="text_r">10.25%</v-flex>
+                        </v-layout>
+                        <v-layout row>
+                            <v-flex xs3><v-icon style="color:#dcddde" class="lineh">fiber_manual_record</v-icon>NAVER</v-flex>
+                            <v-flex xs2 class="text_r">10.25%</v-flex>
+                             <v-flex xs2></v-flex>
+                            <v-flex xs3><v-icon style="color:#B6B8BA;" class="lineh">fiber_manual_record</v-icon>삼성바이오로</v-flex>
+                            <v-flex xs2 class="text_r">10.25%</v-flex>
+                        </v-layout>
+                        <v-layout row>
+                            <v-flex xs3><v-icon style="color:#7E8083" class="lineh">fiber_manual_record</v-icon>삼성바이오</v-flex>
+                            <v-flex xs2 class="text_r">10.25%</v-flex>
+                            <v-flex xs2></v-flex>
+                            <v-flex xs3><v-icon style="color:#FBB040" class="lineh">fiber_manual_record</v-icon>신한지주</v-flex>
+                            <v-flex xs2 class="text_r">10.25%</v-flex>
+                        </v-layout>
+                        <v-layout row>
+                            <v-flex xs3><v-icon style="color:#F58025" class="lineh">fiber_manual_record</v-icon>현대차</v-flex>
+                            <v-flex xs2 class="text_r">10.25%</v-flex>
+                             <v-flex xs2></v-flex>
+                            <v-flex xs3><v-icon style="color:#EDED8A" class="lineh">fiber_manual_record</v-icon>SK</v-flex>
+                            <v-flex xs2 class="text_r">10.25%</v-flex>
+                        </v-layout>
+                    </v-card>
+                </div>
+                    </v-card>
+
+                        </v-flex>
+                        <v-flex xs6>
+                            <div class="graph_02_w"  id="importance_chart"></div>
+                        </v-flex>
+                    </v-layout>
                     <v-card flat></v-card>
                 </div>
                 <!---비중정보 팝업end-->
@@ -235,15 +285,15 @@ export default {
                 columns: [
                     { "data": "F16013", "orderable": false}, 
                     { "data": "F16002", "orderable": false,  "width":"30%", className: 'txt_left line2'}, 
-                    { "data": "Week1", "orderable": false, className: 'dt-body-right'},
-                    { "data": "Month1", "orderable": false, className: 'dt-body-right'},
-                    { "data": "Month3", "orderable": false, className: 'dt-body-right'},
-                    { "data": "YTD", "orderable": false, className: 'dt-body-right'},
-                    { "data": "Year1", "orderable": false, className: 'dt-body-right'},
-                    { "data": "Year3", "orderable": false, className: 'dt-body-right'},
-                    { "data": "Year5", "orderable": false, className: 'dt-body-right'},
-                    { "data": "Year10", "orderable": false, className: 'dt-body-right'},
-                    {"data": null, "align":"center", className: 'dt-body-center', defaultContent:""}
+                    { "data": "Week1", "orderable": false, className: 'txt_right'},
+                    { "data": "Month1", "orderable": false, className: 'txt_right'},
+                    { "data": "Month3", "orderable": false, className: 'txt_right'},
+                    { "data": "YTD", "orderable": false, className: 'txt_right'},
+                    { "data": "Year1", "orderable": false, className: 'txt_right'},
+                    { "data": "Year3", "orderable": false, className: 'txt_right'},
+                    { "data": "Year5", "orderable": false, className: 'txt_right'},
+                    { "data": "Year10", "orderable": false, className: 'txt_right'},
+                    {"data": null, "align":"center", className: '', defaultContent:""}
                 ]
             }); 
         
@@ -317,9 +367,9 @@ export default {
 
                  // Set chart options
                 var options = {'title':'',
-                            'width':$(window).width()*0.58,
-                            'height':'230',
-                            'colors': ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde'],                           
+                            'width':'1180',
+                            'height':'180',
+                            'colors': ['#1e99e8', '#48485e', '#ff4366', '#727281', '#b9e0f7'],                           
                             'legend': {
                                 position: 'left'
                             },

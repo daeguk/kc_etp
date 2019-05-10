@@ -52,14 +52,14 @@
 
                     <!--종목편출입 테이블-->
                     <v-subheader class="subheading">종목편출입</v-subheader>
-                    <table id="tableIndexFixJongmokInout" class="display table01_w"></table>
+                    <table id="tableIndexFixJongmokInout" class="tbl_type"></table>
                     <!--종목편출입 테이블 end-->
 
                     <br>
 
                     <!--지수채용주식수변경테이블-->
                     <v-subheader class="subheading">지수채용주식수변경</v-subheader>
-                    <table id="tableIndexFixModify" class="display table01_w"></table>
+                    <table id="tableIndexFixModify" class="tbl_type"></table>
                     <!--지수채용주식수변경테이블 end-->
                     
                 </v-card>
@@ -149,14 +149,14 @@ export default {
                         searching: false,
                         data : [],
                         "columnDefs": [
-                            { "targets": 0, className: "dt-center" },
-                            { "targets": 2, className: "dt-center" },
+                            { "targets": 0, className: "dt-left" },
+                            { "targets": 2, className: "dt-right" },
                         ],            
                         columns: [
-                            { "title"   :   "code"      ,   "data": "code"           ,   "orderable" : true  },      /* code */
-                            { "title"   :   "종목명"    ,   "data": "name"            ,   "orderable" : true  },      /* 종목명 */
-                            { "title"   :   "구분"      ,   "data": "gubun_name"      ,   "orderable" : true  },      /* 구분 */
-                            { "title"   :   "비중(%)"   ,   "data": "rate"            ,   "orderable" : true  },      /* 비중(%) */
+                            { "title"   :   "code"      ,   "data": "code"           ,   "orderable" : true , className:"txt_left" },      /* code */
+                            { "title"   :   "종목명"    ,   "data": "name"            ,   "orderable" : true , className:"txt_left" },      /* 종목명 */
+                            { "title"   :   "구분"      ,   "data": "gubun_name"      ,   "orderable" : true , className:"txt_right" },      /* 구분 */
+                            { "title"   :   "비중(%)"   ,   "data": "rate"            ,   "orderable" : true , className:"txt_right" },      /* 비중(%) */
                         ]
                     });
 
@@ -173,11 +173,11 @@ export default {
                         data : [],
                     
                         columns: [
-                            { "title"   :   "code"      ,   "data": "code"                ,   "orderable" : true  },      /* 종목코드 */
-                            { "title"   :   "종목명"    ,   "data": "name"                ,   "orderable" : true  },      /* 한글종목명 */
-                            { "title"   :   vm.indexFixData.now_date      ,   "data": "now_date_money"      ,   "orderable" : true  },      /* 당일 금액 */
-                            { "title"   :   vm.indexFixData.oper_date      ,   "data": "prev_date_money"     ,   "orderable" : true  },      /* 전일 금액 */
-                            { "title"   :   "변경분"    ,   "data": "in_out_money"        ,   "orderable" : true  },      /* 변경분 */
+                            { "title"   :   "code"      ,   "data": "code"                ,   "orderable" : true , className:"txt_left"  },      /* 종목코드 */
+                            { "title"   :   "종목명"    ,   "data": "name"                ,   "orderable" : true , className:"txt_left"  },      /* 한글종목명 */
+                            { "title"   :   vm.indexFixData.now_date      ,   "data": "now_date_money"      ,   "orderable" : true , className:"txt_right"  },      /* 당일 금액 */
+                            { "title"   :   vm.indexFixData.oper_date      ,   "data": "prev_date_money"     ,   "orderable" : true , className:"txt_right"  },      /* 전일 금액 */
+                            { "title"   :   "변경분"    ,   "data": "in_out_money"        ,   "orderable" : true , className:"txt_right"  },      /* 변경분 */
                         ]
                     });
 
