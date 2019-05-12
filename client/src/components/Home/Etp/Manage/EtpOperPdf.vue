@@ -7,7 +7,7 @@
                         <h3 class="headline subtit" pb-0>
                             <v-text-field
                                 v-model="search"
-                                label="TIGER 코스닥 150 레버러지 (229200)"
+                                :label="searchParam.default_label"
                                 class="pdf_search"
                                 append-icon="search"
                                 single-line
@@ -16,7 +16,7 @@
                             <p class="pdf_calendar">
                                 <v-menu
                                     ref="menu2"
-                                    v-model="menu2"
+                                    v-model="searchParam.search_date"
                                     :close-on-content-click="false"
                                     :nudge-right="40"
                                     :return-value.sync="date2"
@@ -160,7 +160,11 @@ export default {
                 totWidth: 0
             },
             arrShowColumn: [],
-            arrShowColumnDef: []
+            arrShowColumnDef: [],
+            searchParam : {
+                default_label : "TIGER 코스닥 150 레버러지 (229200)",
+                search_date : "",
+            }
         };
     },
     components: {
@@ -194,8 +198,7 @@ export default {
 
             axios.post(Config.base_url + "/user/etp/getEtpOperPdf", {
                 data: {}
-            })
-            .then(function(response) {
+            }).then(function(response) {
                 console.log(response);
 
                 if (response.data) {

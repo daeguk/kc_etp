@@ -21,7 +21,7 @@
                 ,   base.rate                                                   AS  rate            /* 비중 */
 
           FROM  (
-                    SELECT      '20181112'                                      AS  date            /* Date */
+                    SELECT      '20190512'                                      AS  date            /* Date */
                             ,   '2'                                             AS  market_gubun    /* 시장구분 */
                             ,   'KRD0001112'                                    AS  jongmok_code    /* 종목코드 */
                             ,   '원화현금'                                       AS  jongmok_nm      /* 종목명 */
@@ -34,7 +34,7 @@
 
                     UNION   ALL
 
-                    SELECT      '20181113'                                      AS  date            /* Date */
+                    SELECT      '20190513'                                      AS  date            /* Date */
                             ,   '2'                                             AS  market_gubun    /* 시장구분 */
                             ,   'KRD0001333'                                    AS  jongmok_code    /* 종목코드 */
                             ,   '삼성전자'                                       AS  jongmok_nm      /* 종목명 */
@@ -47,7 +47,7 @@
 
                     UNION   ALL
 
-                    SELECT      '20181114'                                      AS  date            /* Date */
+                    SELECT      '20190514'                                      AS  date            /* Date */
                             ,   '3'                                             AS  market_gubun    /* 시장구분 */
                             ,   'KRD0001444'                                    AS  jongmok_code    /* 종목코드 */
                             ,   '예금'                                          AS  jongmok_nm      /* 종목명 */
@@ -62,6 +62,9 @@
 
          WHERE  1 = 1
     ]]>
+        <if test= 'search_date != null  and  search_date != "" ' >
+           AND  date    =   search_date
+        </if>
     </select>
 
     <!--
@@ -87,7 +90,7 @@
                 ,   base.rate_day4                                              AS  rate_day4       /* 비중 4일전 */
 
           FROM  (
-                    SELECT      '20181112'                                      AS  date            /* Date */
+                    SELECT      '20190512'                                      AS  date            /* Date */
                             ,   '2'                                             AS  market_gubun    /* 시장구분 */
                             ,   'KRD0001112'                                    AS  jongmok_code    /* 종목코드 */
                             ,   '원화현금'                                       AS  jongmok_nm      /* 종목명 */
@@ -96,6 +99,7 @@
                             ,   3434343434                                      AS  eval_money      /* 평가금액 */
                             ,   85.64                                           AS  rate            /* 비중 */
 
+                            ,    1.11                                           AS  rate_day0       /* 당일 */
                             ,   11.11                                           AS  rate_day1       /* 1일전 */
                             ,   22.11                                           AS  rate_day2       /* 2일전 */
                             ,   33.11                                           AS  rate_day3       /* 3일전 */
@@ -105,7 +109,7 @@
 
                     UNION   ALL
 
-                    SELECT      '20181113'                                      AS  date            /* Date */
+                    SELECT      '20190513'                                      AS  date            /* Date */
                             ,   '2'                                             AS  market_gubun    /* 시장구분 */
                             ,   'KRD0001333'                                    AS  jongmok_code    /* 종목코드 */
                             ,   '삼성전자'                                       AS  jongmok_nm      /* 종목명 */
@@ -114,6 +118,7 @@
                             ,   787878                                          AS  eval_money      /* 평가금액 */
                             ,   11.22                                           AS  rate            /* 비중 */
 
+                            ,   11.22                                           AS  rate_day0       /* 당일 */
                             ,   21.22                                           AS  rate_day1       /* 1일전 */
                             ,   31.22                                           AS  rate_day2       /* 2일전 */
                             ,   41.22                                           AS  rate_day3       /* 3일전 */
@@ -122,7 +127,7 @@
 
                     UNION   ALL
 
-                    SELECT      '20181114'                                      AS  date            /* Date */
+                    SELECT      '20190514'                                      AS  date            /* Date */
                             ,   '3'                                             AS  market_gubun    /* 시장구분 */
                             ,   'KRD0001444'                                    AS  jongmok_code    /* 종목코드 */
                             ,   '예금'                                          AS  jongmok_nm      /* 종목명 */
@@ -131,6 +136,7 @@
                             ,   888888                                          AS  eval_money      /* 평가금액 */
                             ,   10.44                                           AS  rate            /* 비중 */
 
+                            ,   13.33                                           AS  rate_day0       /* 당일 */
                             ,   23.33                                           AS  rate_day1       /* 1일전 */
                             ,   33.33                                           AS  rate_day2       /* 2일전 */
                             ,   43.33                                           AS  rate_day3       /* 3일전 */
@@ -141,6 +147,9 @@
 
          WHERE  1 = 1
     ]]>
+        <if test= 'search_date != null  and  search_date != "" ' >
+           AND  date    =   search_date
+        </if>    
     </select>    
 
     <!--
