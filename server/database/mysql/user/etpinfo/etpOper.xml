@@ -17,7 +17,7 @@
                 ,   base.jongmok_nm                                             AS  jongmok_nm      /* 종목명 */
                 ,   base.cuShrs                                                 AS  cuShrs          /* CU SHrs */
                 ,   base.org_money                                              AS  org_money       /* 액면금액 */
-                ,   base.eval_monry                                             AS  eval_monry      /* 평가금액 */
+                ,   base.eval_money                                             AS  eval_money      /* 평가금액 */
                 ,   base.rate                                                   AS  rate            /* 비중 */
 
           FROM  (
@@ -27,7 +27,7 @@
                             ,   '원화현금'                                       AS  jongmok_nm      /* 종목명 */
                             ,   771717171                                       AS  cuShrs          /* CU SHrs */
                             ,   11111                                           AS  org_money       /* 액면금액 */
-                            ,   3434343434                                      AS  eval_monry      /* 평가금액 */
+                            ,   3434343434                                      AS  eval_money      /* 평가금액 */
                             ,   85.64                                           AS  rate            /* 비중 */
 
                     FROM  dual
@@ -40,7 +40,7 @@
                             ,   '삼성전자'                                       AS  jongmok_nm      /* 종목명 */
                             ,   343444                                          AS  cuShrs          /* CU SHrs */
                             ,   77777                                           AS  org_money       /* 액면금액 */
-                            ,   787878                                          AS  eval_monry      /* 평가금액 */
+                            ,   787878                                          AS  eval_money      /* 평가금액 */
                             ,   11.22                                           AS  rate            /* 비중 */
 
                     FROM  dual
@@ -53,7 +53,7 @@
                             ,   '예금'                                          AS  jongmok_nm      /* 종목명 */
                             ,   89898989                                        AS  cuShrs          /* CU SHrs */
                             ,   44444                                           AS  org_money       /* 액면금액 */
-                            ,   888888                                          AS  eval_monry      /* 평가금액 */
+                            ,   888888                                          AS  eval_money      /* 평가금액 */
                             ,   10.44                                           AS  rate            /* 비중 */
 
                     FROM  dual                    
@@ -63,7 +63,7 @@
          WHERE  1 = 1
     ]]>
         <if test= 'search_date != null  and  search_date != "" ' >
-           AND  date    =   search_date
+           AND  date    =   #{search_date}
         </if>
     </select>
 
@@ -148,7 +148,7 @@
          WHERE  1 = 1
     ]]>
         <if test= 'search_date != null  and  search_date != "" ' >
-           AND  date    =   search_date
+           AND  date    =   #{search_date}
         </if>    
     </select>    
 

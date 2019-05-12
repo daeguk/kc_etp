@@ -124,7 +124,7 @@ export default {
             vm.$emit("showMessageBox", title, msg, option, gubun);
         },
 
-        fn_setEtpOperIndexOversea() {
+        fn_setEtpOperIndexOversea : function() {
             var vm = this;
             vm.toggleIndexOversea  =   !vm.toggleIndexOversea;
 

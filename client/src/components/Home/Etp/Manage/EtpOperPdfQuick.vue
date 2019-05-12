@@ -251,10 +251,8 @@
                                     <!---iNAV 계산기 팝업 end---->
 
                                     <v-list-tile
-                                        v-model="text"
                                         class="border_b ver2 importance"
-                                        router-link
-                                        to="PdfModifyImportance"
+                                        @click="fn_setEtpOperPdfByRate"
                                     >
                                         <v-list-tile-avatar>
                                             <v-icon value="비중변경현황" icon>find_replace</v-icon>
@@ -492,7 +490,10 @@ export default {
             ],
             desserts: [],
             items4: [],
-            switch1: ""
+            switch1: "",
+
+
+            togglePdfByRate   : false,
         };
     },
     components: {
@@ -519,7 +520,18 @@ export default {
         showMessageBox: function(title, msg, option, gubun) {
             var vm = this;
             vm.$emit( "showMessageBox", title, msg, option, gubun );
-        }     
+        },
+
+        fn_setEtpOperPdfByRate : function() {
+
+            var vm = this;
+            vm.togglePdfByRate  =   !vm.togglePdfByRate;
+
+            var paramData   =   {};
+            paramData.togglePdfByRate    =   vm.togglePdfByRate;            
+
+            vm.$emit( "fn_setEtpOperPdfByRate", paramData );
+        }        
     }
 };
 </script>

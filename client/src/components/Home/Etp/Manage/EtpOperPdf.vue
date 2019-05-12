@@ -16,7 +16,6 @@
                             <p class="pdf_calendar">
                                 <v-menu
                                     ref="menu2"
-                                    v-model="searchParam.search_date"
                                     :close-on-content-click="false"
                                     :nudge-right="40"
                                     :return-value.sync="date2"
@@ -28,7 +27,7 @@
                                 >
                                     <template v-slot:activator="{ on }">
                                         <v-text-field
-                                            v-model="date2"
+                                            v-model="searchParam.show_date"
                                             label="Picker in menu"
                                             append-icon="event"
                                             box
@@ -59,6 +58,8 @@
                         :paramData="paramData"
                         @showDetail="showDetail"
                         @showMessageBox="showMessageBox"
+
+                        @fn_setEtpOperPdfByRate = "fn_setEtpOperPdfByRate"
                     ></EtpOperPdfQuick>
                 </v-card>
             </v-flex>
@@ -69,6 +70,7 @@
 
 <script>
 import $ from "jquery";
+import _ from "lodash";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 
@@ -156,13 +158,14 @@ export default {
 
             paramData: {},
             stateInfo: {
-                pageState:  "pdf" /* pdf - PDF 관리, changeRate - 비중변경현황 */,
+                pageState:  "pdf" /* pdf - PDF 관리, pdfByRate - 비중변경현황 */,
                 totWidth: 0
             },
             arrShowColumn: [],
             arrShowColumnDef: [],
             searchParam : {
                 default_label : "TIGER 코스닥 150 레버러지 (229200)",
+                show_date : "",
                 search_date : "",
             }
         };
@@ -172,6 +175,12 @@ export default {
     },
     mounted: function() {
         var vm = this;
+
+        vm.searchParam.show_date    =       new Date().getFullYear() 
+                                        +   "-" 
+                                        +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
+                                        +   "-" 
+                                        +   new Date().getDate();
 
         vm.$nextTick().then(() => {
             vm.fn_setTableInfo();
@@ -192,11 +201,20 @@ export default {
 
             console.log("EtpOperPdf.vue -> fn_getEtpOperPdf");
 
+            var  url = Config.base_url + "/user/etp/getEtpOperPdf";
+
+            if( vm.stateInfo.pageState == "pdfByRate" ) {
+                url = Config.base_url + "/user/etp/getEtpOperPdfByRate";
+            }            
+
             if (tblPdfList) {
                 tblPdfList.clear().draw();
             }
 
-            axios.post(Config.base_url + "/user/etp/getEtpOperPdf", {
+            vm.searchParam.search_date  =   vm.searchParam.show_date.replace(/-/g,"");
+            vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
+
+            axios.post( url, {
                 data: vm.searchParam
             }).then(function(response) {
                 console.log(response);
@@ -211,6 +229,23 @@ export default {
                 }
             });
         },
+
+        fn_setEtpOperPdfByRate : function( paramData ) {
+
+            var vm = this;
+
+            /* 해외지수 종가 모니터링 버튼이 체크된 경우에는 해외지수 종가 모니터링 정보를 노출한다. */
+            if( paramData && paramData.togglePdfByRate ) {
+                vm.stateInfo.pageState  =  'pdfByRate';               /* pdf - PDF 관리 , pdfByRate - 비중변경현황 */
+            }
+            /* 해외지수 종가 모니터링 버튼이 두번 눌러 체크해제된 경우 지수관리 기본 정보를 노출한다.  */
+            else{
+                vm.stateInfo.pageState  =  'pdf';
+            }            
+
+            vm.fn_setTableInfo();
+            vm.fn_getEtpOerPdf();
+        },        
 
         /*
          *  테이블 기본정보를 설정한다.
@@ -231,7 +266,7 @@ export default {
                 autoWidth: false
             };
 
-            /* pdf - PDF 관리, changeRate - 비중변경현황 */
+            /* pdf - PDF 관리, pdfByRate - 비중변경현황 */
             /* [PDF 관리] 를 선택한 경우 */
             if (vm.stateInfo.pageState == "pdf") {
 
@@ -242,12 +277,12 @@ export default {
                     "jongmok_nm"        /* 종목명 */,
                     "cuShrs"            /* CU SHrs */,
                     "org_money"         /* 액면금액 */,
-                    "eval_monry"        /* 평가금액 */,
+                    "eval_money"        /* 평가금액 */,
                     "rate"              /* 비중 */
                 ]);
             } 
             /* [비중변경현황] 을 선택한 경우 */
-            else if (vm.stateInfo.pageState == "changeRate") {
+            else if (vm.stateInfo.pageState == "pdfByRate") {
                 
                 vm.fn_setArrShowColumn([
                     "date"              /* 종목 */,
@@ -256,7 +291,7 @@ export default {
                     "jongmok_nm"        /* 종목명 */,
                     "cuShrs"            /* CU SHrs */,
                     "org_money"         /* 액면금액 */,
-                    "eval_monry"        /* 평가금액 */,
+                    "eval_money"        /* 평가금액 */,
 
                     "rate_day0"         /* 비중 당일 */,
                     "rate_day1"         /* 비중 1일전 */,
@@ -339,7 +374,7 @@ export default {
             graphContent    +=  '</div>';            
 
             return  graphContent;
-        },
+        },    
 
         /*
          *  노출할 컬럼 배열정보를 통해 테이블에 컬럼을 설정한다.
@@ -349,14 +384,14 @@ export default {
             var vm = this;
 
             var arrColumn  =   [
-                { 'name' : 'date'           , 'data': 'date'            ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-center'   , 'title' : 'Date'      },      /* Date */
-                { 'name' : 'market_gubun'   , 'data': 'market_gubun'    ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-center'   , 'title' : '시장구분'  },       /* 시장구분 */
-                { 'name' : 'jongmok_code'   , 'data': 'jongmok_code'    ,  'width' : '120', 'orderable' : true , 'className': 'dt-body-left'   , 'title' : '종목코드'  },       /* 종목코드 */
-                { 'name' : 'jongmok_nm'     , 'data': 'jongmok_nm'      ,  'width' : '200', 'orderable' : true , 'className': 'dt-body-left'   , 'title' : '종목명'    },       /* 종목명 */
-                { 'name' : 'cuShrs'         , 'data': 'cuShrs'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right' , 'title' : 'CU SHrs'   },      /* CU SHrs */
-                { 'name' : 'org_money'      , 'data': 'org_money'       ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right' , 'title' : '액면금액'   },      /* 액면금액 */
-                { 'name' : 'eval_monry'     , 'data': 'eval_monry'      ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '평가금액'   },      /* 평가금액 */
-                { 'name' : 'rate'           , 'data': 'rate'            ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'    , 'title' : '비중'      },      /* 비중 */
+                { 'name' : 'date'           , 'data': 'date'            ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-center'  , 'title' : 'Date'      },      /* Date */
+                { 'name' : 'market_gubun'   , 'data': 'market_gubun'    ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-center'  , 'title' : '시장구분'  },       /* 시장구분 */
+                { 'name' : 'jongmok_code'   , 'data': 'jongmok_code'    ,  'width' : '120', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목코드'  },       /* 종목코드 */
+                { 'name' : 'jongmok_nm'     , 'data': 'jongmok_nm'      ,  'width' : '200', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목명'    },       /* 종목명 */
+                { 'name' : 'cuShrs'         , 'data': 'cuShrs'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : 'CU SHrs'   },      /* CU SHrs */
+                { 'name' : 'org_money'      , 'data': 'org_money'       ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '액면금액'   },      /* 액면금액 */
+                { 'name' : 'eval_money'     , 'data': 'eval_money'      ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '평가금액'   },      /* 평가금액 */
+                { 'name' : 'rate'           , 'data': 'rate'            ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중'      },      /* 비중 */
 
                 { 'name' : 'rate_day0'      , 'data': 'rate_day0'       ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중'       },      /* 비중 */
                 { 'name' : 'rate_day1'      , 'data': 'rate_day1'       ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중'       },      /* 비중 */
