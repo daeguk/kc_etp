@@ -488,8 +488,7 @@ export default {
 
             axios.post( url, {
                 data: {}
-            })
-            .then(function(response) {
+            }).then(function(response) {
                 console.log(response);
 
                 vm.result_cnt = 0;

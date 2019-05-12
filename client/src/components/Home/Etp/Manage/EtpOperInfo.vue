@@ -318,11 +318,11 @@ export default {
                                 break;
 
                     case    'btnEtpInfo'    :
-                                vm.$emit('showDetail', 1, vm.paramData);
+                                vm.$emit('showDetail', 1, data );
                                 break;
 
                     case    'btnPdf'    :
-                                vm.$emit('fn_pageMove', btnId, vm.paramData);
+                                vm.$emit('fn_pageMove', btnId, data);
                                 break;
                 }
                 

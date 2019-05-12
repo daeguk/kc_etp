@@ -55,10 +55,11 @@
 
                     <!-- [PDF 관리] Quick 메뉴 정보 -->
                     <EtpOperPdfQuick
-                        :paramData="paramData"
+                        :indexBasic = "indexBasic"
                         @showDetail="showDetail"
                         @showMessageBox="showMessageBox"
 
+                        @fn_showDetailIndex="fn_showDetailIndex"
                         @fn_setEtpOperPdfByRate = "fn_setEtpOperPdfByRate"
                     ></EtpOperPdfQuick>
                 </v-card>
@@ -80,6 +81,7 @@ import EtpOperPdfQuick from "@/components/Home/Etp/Manage/EtpOperPdfQuick.vue";
 var tblPdfList = null;
 
 export default {
+    props: [ "paramData" ],
     components: {
         //indexDetailrtmenupop: indexDetailrtmenupop
     },
@@ -156,7 +158,8 @@ export default {
             switch1: "",
 
 
-            paramData: {},
+
+            indexBasic : {},
             stateInfo: {
                 pageState:  "pdf" /* pdf - PDF 관리, pdfByRate - 비중변경현황 */,
                 totWidth: 0
@@ -176,6 +179,16 @@ export default {
     mounted: function() {
         var vm = this;
 
+        vm.searchParam.f16013   =   vm.paramData.f16257;     /* ETP기초지수코드  */
+        vm.searchParam.f34239   =   vm.paramData.f34239;     /* ETP기초지수MID  */
+
+        if(     vm.paramData.index_nm
+            &&  vm.paramData.f16257
+        ) {
+            vm.searchParam.default_label    =   vm.paramData.index_nm + "(" + vm.paramData.f16257 + ")";
+        }
+        
+
         vm.searchParam.show_date    =       new Date().getFullYear() 
                                         +   "-" 
                                         +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
@@ -191,6 +204,13 @@ export default {
     beforeDestory: function() {},
 
     methods: {
+
+        fn_showDetailIndex( gubun, paramData) {
+            var vm = this;
+
+            vm.$emit( "fn_showDetailIndex", gubun, paramData );
+        },
+
         /*
          * ETP 지수관리 정보를 조회한다.
          * 2019-05-03  bkLove(촤병국)
@@ -225,6 +245,8 @@ export default {
                     if (dataList && dataList.length > 0) {
                         tblPdfList.rows.add(dataList).draw();
                         tblPdfList.draw();
+
+                        vm.indexBasic   =   dataList[0];
                     }
                 }
             });

@@ -24,7 +24,8 @@
 
                             :paramData="paramData"
                             @showDetail="showDetail" 
-                            @showMessageBox="showMessageBox">
+                            @showMessageBox="showMessageBox"
+                            @fn_showDetailIndex="fn_showDetailIndex">
             </EtpOperPdf>
             
 
@@ -148,6 +149,8 @@ export default {
             this.showEtpOperIndexDetailListDialog = false;
             this.showEtpOperIndexFixDialog = false;
             this.showEtpOperIndexErrorDialog = false;
+
+            this.paramData = data.paramData;
         });
     },
     beforeUpdated: function() {
@@ -286,7 +289,7 @@ export default {
 
                 case    'btnPdf'    :
                             this.paramData  =   paramData;
-                            this.$emit( "fn_setActiveTab", 2 );
+                            this.$emit( "fn_setActiveTab", 2, this.paramData );
                             break;
             }            
         },
