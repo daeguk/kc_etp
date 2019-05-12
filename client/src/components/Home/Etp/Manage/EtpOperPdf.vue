@@ -197,7 +197,7 @@ export default {
             }
 
             axios.post(Config.base_url + "/user/etp/getEtpOperPdf", {
-                data: {}
+                data: vm.searchParam
             }).then(function(response) {
                 console.log(response);
 
