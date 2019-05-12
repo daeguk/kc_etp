@@ -179,13 +179,16 @@ export default {
     mounted: function() {
         var vm = this;
 
-        vm.searchParam.f16013   =   vm.paramData.f16257;     /* ETP기초지수코드  */
-        vm.searchParam.f34239   =   vm.paramData.f34239;     /* ETP기초지수MID  */
+        if( vm.paramData ) {
 
-        if(     vm.paramData.index_nm
-            &&  vm.paramData.f16257
-        ) {
-            vm.searchParam.default_label    =   vm.paramData.index_nm + "(" + vm.paramData.f16257 + ")";
+            vm.searchParam.f16013   =   vm.paramData.f16257;     /* ETP기초지수코드  */
+            vm.searchParam.f34239   =   vm.paramData.f34239;     /* ETP기초지수MID  */
+
+            if(     vm.paramData.index_nm
+                &&  vm.paramData.f16257
+            ) {
+                vm.searchParam.default_label    =   vm.paramData.index_nm + "(" + vm.paramData.f16257 + ")";
+            }
         }
         
 
