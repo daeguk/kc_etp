@@ -8,61 +8,183 @@
     * 2019-05-03  bkLove(촤병국)
     -->
     <select id="getEtpOperPdf">
-    <![CDATA[
+    
         SELECT      /* etpOper.getEtpOperPdf  ETP 운용관리 - PDF관리 정보를 조회한다. */
 
-                    base.date                                                   AS  date            /* Date */
+                    <include    refid="sqlIndexBasic01" />
+                ,   base.date                                                   AS  date            /* Date */
                 ,   base.market_gubun                                           AS  market_gubun    /* 시장구분 */
                 ,   base.jongmok_code                                           AS  jongmok_code    /* 종목코드 */
                 ,   base.jongmok_nm                                             AS  jongmok_nm      /* 종목명 */
                 ,   base.cuShrs                                                 AS  cuShrs          /* CU SHrs */
                 ,   base.org_money                                              AS  org_money       /* 액면금액 */
-                ,   base.eval_monry                                             AS  eval_monry      /* 평가금액 */
+                ,   base.eval_money                                             AS  eval_money      /* 평가금액 */
                 ,   base.rate                                                   AS  rate            /* 비중 */
-
+    <![CDATA[
           FROM  (
-                    SELECT      '20181112'                                      AS  date            /* Date */
+                    SELECT      '20190512'                                      AS  date            /* Date */
                             ,   '2'                                             AS  market_gubun    /* 시장구분 */
                             ,   'KRD0001112'                                    AS  jongmok_code    /* 종목코드 */
                             ,   '원화현금'                                       AS  jongmok_nm      /* 종목명 */
                             ,   771717171                                       AS  cuShrs          /* CU SHrs */
                             ,   11111                                           AS  org_money       /* 액면금액 */
-                            ,   3434343434                                      AS  eval_monry      /* 평가금액 */
+                            ,   3434343434                                      AS  eval_money      /* 평가금액 */
                             ,   85.64                                           AS  rate            /* 비중 */
+
+                            ,   '11177'                                         AS  f16013
+                            ,   'M168'                                          AS  market_id
 
                     FROM  dual
 
                     UNION   ALL
 
-                    SELECT      '20181113'                                      AS  date            /* Date */
+                    SELECT      '20190513'                                      AS  date            /* Date */
                             ,   '2'                                             AS  market_gubun    /* 시장구분 */
                             ,   'KRD0001333'                                    AS  jongmok_code    /* 종목코드 */
                             ,   '삼성전자'                                       AS  jongmok_nm      /* 종목명 */
                             ,   343444                                          AS  cuShrs          /* CU SHrs */
                             ,   77777                                           AS  org_money       /* 액면금액 */
-                            ,   787878                                          AS  eval_monry      /* 평가금액 */
+                            ,   787878                                          AS  eval_money      /* 평가금액 */
                             ,   11.22                                           AS  rate            /* 비중 */
+
+                            ,   '11178'                                         AS  f16013
+                            ,   'M168'                                          AS  market_id                            
 
                     FROM  dual
 
                     UNION   ALL
 
-                    SELECT      '20181114'                                      AS  date            /* Date */
+                    SELECT      '20190514'                                      AS  date            /* Date */
                             ,   '3'                                             AS  market_gubun    /* 시장구분 */
                             ,   'KRD0001444'                                    AS  jongmok_code    /* 종목코드 */
                             ,   '예금'                                          AS  jongmok_nm      /* 종목명 */
                             ,   89898989                                        AS  cuShrs          /* CU SHrs */
                             ,   44444                                           AS  org_money       /* 액면금액 */
-                            ,   888888                                          AS  eval_monry      /* 평가금액 */
+                            ,   888888                                          AS  eval_money      /* 평가금액 */
                             ,   10.44                                           AS  rate            /* 비중 */
+
+                            ,   '11178'                                         AS  f16013
+                            ,   'M168'                                          AS  market_id                            
 
                     FROM  dual                    
 
                 )       base
 
+         INNER  JOIN    td_index_basic
+            ON  (
+                            base.f16013     =   td_index_basic.f16013
+                    AND     base.market_id  =   td_index_basic.market_id
+                )
+
          WHERE  1 = 1
     ]]>
+        <if test= 'search_date != null  and  search_date != "" ' >
+           AND  date    =   #{search_date}
+        </if>
     </select>
+
+    <!--
+    * ETP 운용관리 - 비중변경현황 정보를 조회한다.
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="getEtpOperPdfByRate">
+    
+        SELECT      /* etpOper.getEtpOperPdfByRate  ETP 운용관리 - 비중변경현황 정보를 조회한다. */
+
+                    <include    refid="sqlIndexBasic01" />
+                ,   base.date                                                   AS  date            /* Date */
+                ,   base.market_gubun                                           AS  market_gubun    /* 시장구분 */
+                ,   base.jongmok_code                                           AS  jongmok_code    /* 종목코드 */
+                ,   base.jongmok_nm                                             AS  jongmok_nm      /* 종목명 */
+                ,   base.cuShrs                                                 AS  cuShrs          /* CU SHrs */
+                ,   base.org_money                                              AS  org_money       /* 액면금액 */
+                ,   base.eval_money                                             AS  eval_money      /* 평가금액 */
+
+                ,   base.rate_day0                                              AS  rate_day0       /* 비중 */
+                ,   base.rate_day1                                              AS  rate_day1       /* 비중 1일전 */
+                ,   base.rate_day2                                              AS  rate_day2       /* 비중 2일전 */
+                ,   base.rate_day3                                              AS  rate_day3       /* 비중 3일전 */
+                ,   base.rate_day4                                              AS  rate_day4       /* 비중 4일전 */
+        <![CDATA[
+          FROM  (
+                    SELECT      '20190512'                                      AS  date            /* Date */
+                            ,   '2'                                             AS  market_gubun    /* 시장구분 */
+                            ,   'KRD0001112'                                    AS  jongmok_code    /* 종목코드 */
+                            ,   '원화현금'                                       AS  jongmok_nm      /* 종목명 */
+                            ,   771717171                                       AS  cuShrs          /* CU SHrs */
+                            ,   11111                                           AS  org_money       /* 액면금액 */
+                            ,   3434343434                                      AS  eval_money      /* 평가금액 */
+                            ,   85.64                                           AS  rate            /* 비중 */
+
+                            ,    1.11                                           AS  rate_day0       /* 당일 */
+                            ,   11.11                                           AS  rate_day1       /* 1일전 */
+                            ,   22.11                                           AS  rate_day2       /* 2일전 */
+                            ,   33.11                                           AS  rate_day3       /* 3일전 */
+                            ,   44.11                                           AS  rate_day4       /* 4일전 */
+
+                            ,   '11177'                                         AS  f16013
+                            ,   'M168'                                          AS  market_id                            
+
+                    FROM  dual
+
+                    UNION   ALL
+
+                    SELECT      '20190513'                                      AS  date            /* Date */
+                            ,   '2'                                             AS  market_gubun    /* 시장구분 */
+                            ,   'KRD0001333'                                    AS  jongmok_code    /* 종목코드 */
+                            ,   '삼성전자'                                       AS  jongmok_nm      /* 종목명 */
+                            ,   343444                                          AS  cuShrs          /* CU SHrs */
+                            ,   77777                                           AS  org_money       /* 액면금액 */
+                            ,   787878                                          AS  eval_money      /* 평가금액 */
+                            ,   11.22                                           AS  rate            /* 비중 */
+
+                            ,   11.22                                           AS  rate_day0       /* 당일 */
+                            ,   21.22                                           AS  rate_day1       /* 1일전 */
+                            ,   31.22                                           AS  rate_day2       /* 2일전 */
+                            ,   41.22                                           AS  rate_day3       /* 3일전 */
+                            ,   51.22                                           AS  rate_day4       /* 4일전 */
+
+                            ,   '11178'                                         AS  f16013
+                            ,   'M168'                                          AS  market_id
+
+                    FROM  dual
+
+                    UNION   ALL
+
+                    SELECT      '20190514'                                      AS  date            /* Date */
+                            ,   '3'                                             AS  market_gubun    /* 시장구분 */
+                            ,   'KRD0001444'                                    AS  jongmok_code    /* 종목코드 */
+                            ,   '예금'                                          AS  jongmok_nm      /* 종목명 */
+                            ,   89898989                                        AS  cuShrs          /* CU SHrs */
+                            ,   44444                                           AS  org_money       /* 액면금액 */
+                            ,   888888                                          AS  eval_money      /* 평가금액 */
+                            ,   10.44                                           AS  rate            /* 비중 */
+
+                            ,   13.33                                           AS  rate_day0       /* 당일 */
+                            ,   23.33                                           AS  rate_day1       /* 1일전 */
+                            ,   33.33                                           AS  rate_day2       /* 2일전 */
+                            ,   43.33                                           AS  rate_day3       /* 3일전 */
+                            ,   53.33                                           AS  rate_day4       /* 4일전 */
+
+                            ,   '11179'                                         AS  f16013
+                            ,   'M168'                                          AS  market_id
+
+                    FROM  dual                    
+
+                )       base
+
+         INNER  JOIN    td_index_basic
+            ON  (
+                            base.f16013     =   td_index_basic.f16013
+                    AND     base.market_id  =   td_index_basic.market_id
+                )
+
+         WHERE  1 = 1
+    ]]>
+        <if test= 'search_date != null  and  search_date != "" ' >
+           AND  date    =   #{search_date}
+        </if>    
+    </select>    
 
     <!--
     * EtpBasic 컬럼 SQL 정보를 추출한다.

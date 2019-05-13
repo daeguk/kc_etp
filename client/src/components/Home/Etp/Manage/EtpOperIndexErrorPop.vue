@@ -113,7 +113,7 @@ export default {
 
             var vm = this;
 
-            axios.post(Config.base_url + "/user/etp/geEtpOperIndexError", {
+            axios.post(Config.base_url + "/user/etp/getEtpOperIndexError", {
                 data:  vm.paramData
             }).then(response => {
 

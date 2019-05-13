@@ -47,8 +47,8 @@ export default {
         this.pageMove(0);
     },
     methods: {
-        pageMove : function(tab_id) {
-            this.$EventBus.$emit("showList", {tab_id:tab_id});
+        pageMove : function(tab_id, paramData) {
+            this.$EventBus.$emit("showList", {tab_id:tab_id, paramData : paramData});
             //this.activeTab = id + 1;
             //this.$router.push({path:'/info/etpinfo/EtpMarketInfo', props:{activeTab:this.activeTab}});
         },
@@ -57,9 +57,9 @@ export default {
          *  탭을 변경한다.
          *  2019-05-03  bkLove(촤병국)
          */
-        fn_setActiveTab : function( activeTab ) {
+        fn_setActiveTab : function( activeTab, paramData ) {
             this.activeTab = activeTab;
-            this.pageMove( activeTab );
+            this.pageMove( activeTab, paramData );
         }
     }
 };

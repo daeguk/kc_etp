@@ -48,16 +48,8 @@
                                     depressed
                                     outline
                                     color="primary"
-                                    @click="indexFixDialog=true"
+                                    @click="fn_showDetailIndex"
                                 >내역확인</v-btn>
-
-                                <ComIndexFixPopup   v-if="indexFixDialog"
-
-                                                    :indexBasic="this.indexBasic" 
-                                                    :indexFixDialog="this.indexFixDialog" 
-                                                    
-                                                    @fn_closePop="fn_closePop" >
-                                </ComIndexFixPopup>                                
                             </v-subheader>
 
 
@@ -304,6 +296,12 @@ export default {
     beforeDestory: function() {},
 
     methods : {
+
+        fn_showDetailIndex() {
+            var vm = this;
+
+            vm.$emit( "fn_showDetailIndex", 4, vm.indexBasic );
+        },
 
         /*
          * 지수조치현황 팝업창을 종료한다.
