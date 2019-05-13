@@ -249,11 +249,11 @@
 
 
                         <!-- 관심종목 영역 -->
-                        <ComFavorItemSub    v-if="showFaver" 
+                        <ComEtpFavorItemSub     v-if="showFaver" 
                         
-                                            @showDetail="showDetail" 
-                                            @showMessageBox="showMessageBox"
-                        ></ComFavorItemSub>
+                                                @showDetail="showDetail" 
+                                                @showMessageBox="showMessageBox">
+                        </ComEtpFavorItemSub>
 
                     </v-list>
                 </v-navigation-drawer>
@@ -267,15 +267,15 @@
 
 
 <script>
-import ComIndexFixPopup from "@/components/common/popup/ComIndexFixPopup.vue";
-import ComFavorItemSub from "@/components/common/control/ComFavorItemSub"; 
+import ComIndexFixPopup     from "@/components/common/popup/ComIndexFixPopup.vue";
+import ComEtpFavorItemSub   from "@/components/common/control/ComEtpFavorItemSub.vue"; 
 
 export default {
     props: [ "indexBasic" ],
 
     components: {
-            ComIndexFixPopup    :   ComIndexFixPopup
-        ,   ComFavorItemSub     :   ComFavorItemSub
+            ComIndexFixPopup        :   ComIndexFixPopup
+        ,   ComEtpFavorItemSub      :   ComEtpFavorItemSub
     },
     data() {
         return {

@@ -1,6 +1,7 @@
 <template>
-    <v-layout row wrap>
-        <v-flex xs12>
+    <v-layout row wrap class="content_margin con_wrap">
+
+        <v-flex grow :class="className">
 
             <!-- ETP 운용정보 -->
             <EtpOperInfo    v-if="showEtpOerInfo == 0" 
@@ -61,7 +62,7 @@
             <EtpManageDetail    v-if="showEtpDetailDialog" 
             
                                 :paramData="paramData" 
-                                :showEtpManageDetailDialog="showEtpDetailDialog">
+                                :showEtpManageDetailDialog="showEtpManageDetailDialog">
             </EtpManageDetail>            
 
             <!-- 지수 조치현황 -->
@@ -102,6 +103,15 @@
             </EtpOperPdfInavCalcPop>
 
         </v-flex>
+
+        <v-flex :class="FaverClassName">
+            <ComFavorItemSub        v-if="showFaver"   
+
+                                    @showDetail="showDetail" 
+                                    @showMessageBox="showMessageBox">
+            </ComFavorItemSub>
+        </v-flex>
+
     </v-layout> 
 </template>
 
@@ -117,6 +127,7 @@ import Config                       from "@/js/config.js";
 
 import ConfirmDialog                from "@/components/common/ConfirmDialog.vue";
 import ComIndexFixPopup             from "@/components/common/popup/ComIndexFixPopup.vue";
+import ComFavorItemSub              from "@/components/common/control/ComFavorItemSub"; 
 
 
 import IndexDetailDialog            from "@/components/Home/Index/Manage/IndexDetailDialog.vue";            /* 지수 상세정보 */
@@ -136,6 +147,7 @@ export default {
         return {
             showIndexDetailDialog : false,
             showEtpDetailDialog : false,
+            showEtpManageDetailDialog : false,
             showEtpOperIndexDetailListDialog : false,
             showEtpOperIndexFixDialog: false,
             showEtpOperIndexErrorDialog : false,
@@ -144,6 +156,8 @@ export default {
 
             showEtpOerInfo : 0,
             paramData : [],
+            className: '',
+            FaverClassName: '',            
     	};
     },    
 
@@ -162,16 +176,23 @@ export default {
         EtpOperPdf                      :   EtpOperPdf,                         /* PDF 관리 */
 
         ConfirmDialog                   :   ConfirmDialog,                      /* 공통 메시지창 */
+        ComFavorItemSub                 :   ComFavorItemSub,
     },
 
     mounted: function() {
         // 메시지 박스 참조
         this.$root.$confirm = this.$refs.confirm;
+
+        this.className = "conWidth_100";
     },
     created: function() {
         this.$EventBus.$on('showList', data => {
+
+            this.className = "conWidth_100";
+
             this.showEtpOerInfo                     =   data.tab_id;
             this.showEtpDetailDialog                =   false;
+            this.showEtpManageDetailDialog          =   false;
             this.showIndexDetailDialog              =   false;
 
             this.showEtpOperIndexDetailListDialog   =   false;
@@ -179,6 +200,8 @@ export default {
             this.showEtpOperIndexErrorDialog        =   false;
             this.showEtpOperPdfEmergencyModifyPop   =   false;
             this.showEtpOperPdfInavCalcPop          =   false;
+
+            this.showFaver                          =   false;
 
             this.paramData                          =   data.paramData;
         });
@@ -202,6 +225,7 @@ export default {
                 this.showEtpDetailDialog = true;
                 
                 this.showEtpOerInfo = -1;
+                this.showFaver = true;
                 
             } else if (gubun == '2') { 
                 this.paramData = paramData;
@@ -214,7 +238,11 @@ export default {
                 
                 this.showIndexDetailDialog = true;                
                 this.showEtpOerInfo = this.activeTab;
+                this.showFaver = false;
             } 
+
+            this.className = "conWidth_left";  
+            this.FaverClassName = "conWidth_right";
         },
         showMessageBox: function(title, msg, option, gubun) {
             this.$root.$confirm.open(title,msg, option, gubun);
