@@ -35,15 +35,17 @@
                                             outline
                                             v-on="on"
                                             widh="100%"
+
+                                            @change.enter ="fn_getEtpOerPdf()"
                                         ></v-text-field>
                                     </template>
-                                    <v-date-picker v-model="date2" no-title scrollable>
+                                    <v-date-picker v-model="searchParam.show_date" no-title scrollable>
                                         <v-spacer></v-spacer>
                                         <v-btn flat @click="menu = false">Cancel</v-btn>
                                         <v-btn
                                             flat
                                             color="primary"
-                                            @click="$refs.menu2.save(date2)"
+                                            @click="$refs.menu2.save(searchParam.show_date);fn_getEtpOerPdf()"
                                         >OK</v-btn>
                                     </v-date-picker>
                                 </v-menu>
