@@ -86,10 +86,11 @@ export default {
     mounted: function() {
         // 메시지 박스 참조
         this.$root.$confirm = this.$refs.confirm;
+        this.className = "conWidth_100";
     },
     created: function() {
         this.$EventBus.$on('showList', data => {
-            this.className = "";
+            this.className = "conWidth_100";
             this.FaverClassName = "";
             this.showMarketInfo = data.tab_id;
             this.showEtpDetailDialog = false;

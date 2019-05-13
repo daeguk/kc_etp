@@ -220,10 +220,11 @@ export default {
                         var items = [] 
 
                         for (let item of response.data.results) {
+                            let trd_dd = item.trd_dd.split(',');
                             if (ETP_NM != null) {
-                                items.push([new Date(item.trd_dd), Number(item.close_idx), Number(item.ept_close_idx)]);
+                                items.push([new Date(trd_dd[0], trd_dd[1], trd_dd[2], trd_dd[3], trd_dd[4], trd_dd[5]), Number(item.close_idx), Number(item.ept_close_idx)]);
                             } else {
-                                items.push([new Date(item.trd_dd), Number(item.close_idx)]);
+                                items.push([new Date(trd_dd[0], trd_dd[1], trd_dd[2], trd_dd[3], trd_dd[4], trd_dd[5]), Number(item.close_idx)]);
                             }
                           
                         }

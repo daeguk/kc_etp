@@ -279,7 +279,7 @@
     <choose>
         <when test="term != null and (term =='1D' or term == '1W')">
             <![CDATA[
-			SELECT concat(date_format(INDX.trd_dd, "%Y-%m-%d"), ' ', IFNULL(SUBSTR(INDX.trd_hh, 1, 2), 0), ':', IFNULL(SUBSTR(INDX.trd_hh, 3, 2), 0), ':', IFNULL(SUBSTR(INDX.trd_hh, 5, 2), 0)) trd_dd
+			SELECT  date_format(CONCAT(INDX.trd_dd, INDX.trd_hh), '%Y,%m,%d,%H,%i,%s') trd_dd
                     ,IFNULL(INDX.close_idx,0) close_idx
                     ,IFNULL(ETP.ept_close_idx, 0) ept_close_idx
                     ,INDX.INDEX_NM
@@ -314,7 +314,7 @@
         </when>
         <otherwise>
             <![CDATA[
-                SELECT concat(date_format(INDX.trd_dd, "%Y-%m-%d"), ' 00:00:00') trd_dd
+                SELECT date_format(INDX.trd_dd, '%Y,%m,%d,%H,%i,%s') trd_dd
                     ,IFNULL(INDX.close_idx,0) close_idx
                     ,IFNULL(ETP.ept_close_idx, 0) ept_close_idx
                     ,INDX.INDEX_NM, ETP.ETP_NM

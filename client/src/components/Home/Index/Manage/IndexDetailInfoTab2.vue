@@ -406,7 +406,7 @@ export default {
             }).then(response => {
                     // console.log(response);
                 if (response.data.success == false) {
-                    alert("비중 목록이 없습니다");
+                    alert("데이터가 없습니다");
                 } else {
                     var items = response.data.results;
                     console.log("response=" + JSON.stringify(items));
