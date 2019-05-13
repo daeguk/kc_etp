@@ -21,7 +21,7 @@
                 <ComFavorItemSub v-if="showFaver"   @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
         </v-flex>
     </v-layout> 
-    
+     
 </template>
 
 <script>
