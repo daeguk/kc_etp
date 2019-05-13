@@ -62,6 +62,7 @@
 
                         @fn_showDetailIndex="fn_showDetailIndex"
                         @fn_setEtpOperPdfByRate = "fn_setEtpOperPdfByRate"
+                        @fn_showDetailPdf="fn_showDetailPdf"
                     ></EtpOperPdfQuick>
                 </v-card>
             </v-flex>
@@ -491,6 +492,12 @@ export default {
 
             vm.$emit( "showMessageBox", title, msg, option, gubun );
         },
+
+        fn_showDetailPdf : function( gubun, paramData ) {
+            var vm = this;
+
+            vm.$emit( "fn_showDetailPdf", gubun, paramData );
+        }
     }
 };
 </script>
