@@ -10,12 +10,13 @@
                     </v-btn>
                 </v-card-title>
             </h5>
+
             <div class="ETPInavpop1">
                 <v-list subheader>
                     <h6>
-                        KODEX200
-                        <span>069500</span>
+                        KODEX200 <span>069500</span>
                     </h6>
+
                     <v-list-tile>
                         <v-list-tile-title class="sumu_text">Sumulation Mode</v-list-tile-title>
                         <v-list-tile-content class="sumul_btn_w">
@@ -35,9 +36,11 @@
                                 </li>
                             </ul>
                         </v-list-tile-content>
+
                     </v-list-tile>
                 </v-list>
             </div>
+
             <div class="sumul_w">
                 <v-card flat class="sumul_card_w">
                     <v-layout>
@@ -91,10 +94,11 @@
                 </v-card>
             </div>
             <!--pdf table-->
+
             <h4>
-                PDF
-                <span>2018.11.10</span>
+                PDF <span>2018.11.10</span>
             </h4>
+
             <table id class="tbl_type" style="width:100%">
                 <colgroup>
                     <col width="9%">
@@ -137,6 +141,7 @@
                     </tr>
                 </tbody>
             </table>
+
             <!--pdf table end-->
             <v-card class="pop_bot_h"></v-card>
         </v-card>
@@ -147,7 +152,7 @@
 
 <script>
 export default {
-    props: ["showDialog", "paramData"],
+    props: [ "showDialog", "paramData" ],
     data() {
         return {
             dialog2: false,
@@ -159,22 +164,25 @@ export default {
             tab2: "",
             items4: [],
             switch1: "",
-            on: false
+            on: false,
+
+
+            searchData : {
+                second  :   10
+            }
         };
     },
     created: function() {
         var vm = this;
 
         vm.$EventBus.$on( "EtpOperControl_EtpOperPdfInavCalcPop_call", data => {
-                console.log( "EventBus EtpOperControl_EtpOperPdfInavCalcPop_call>>>>>>>" );
-                console.log(data);
-            }
-        );
+            console.log( "EventBus EtpOperControl_EtpOperPdfInavCalcPop_call>>>>>>>" );
+            console.log(data);
+        });
 
         vm.$EventBus.$on( "EtpOperControl_EtpOperPdfInavCalcPop_close", data => {
-                vm.$EventBus.$off( "EtpOperControl_EtpOperPdfInavCalcPop_call");
-            }
-        );
+            vm.$EventBus.$off( "EtpOperControl_EtpOperPdfInavCalcPop_call");
+        });
     },
     methods: {
         // Create an array the length of our items
@@ -182,6 +190,31 @@ export default {
         all() {
             this.panel = [...Array(this.items).keys()].map(_ => true);
         },
+
+        /*
+         * ETP iNAV 계산기 데이터를 조회한다.
+         * 2019-05-14  bkLove(촤병국)
+         */
+        fn_getEtpOerPdfInavCalc() {
+            var vm = this;
+
+            console.log( "EtpOperPdfInavCalcPop.vue -> fn_getEtpOerPdfInavCalc" );
+
+            axios.post( Config.base_url + "/user/etp/getEtpOerPdfInavCalc", {
+                data: vm.paramData
+            }).then(function(response) {
+                console.log(response);
+
+                if (response.data) {
+                    var dataList = response.data.dataList;
+
+                    if (dataList && dataList.length > 0) {
+                        tblPdfList.rows.add(dataList).draw();
+                        tblPdfList.draw();                    
+                    }
+                }
+            });
+        },        
 
         fn_closePop() {
             var vm = this;
