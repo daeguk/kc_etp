@@ -10,27 +10,32 @@ var format = { language: 'sql', indent: '' };
 
 var getEtpRegisterView = function(req, res) {
     try {
-        util.log('###ETP VIEW CALL###');
+        util.log('###ETP VIEW CALL###', req.query.seq);
 
-    var pool = req.app.get("pool");
-    var mapper = req.app.get("mapper"); 
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper"); 
+        
+        var paramData ={};
+        util.log('###ETP VIEW CALL paramData###', paramData)
+        paramData.seq = req.query.seq*1;
 
-       var paramData = JSON.parse( JSON.stringify(req.params) );
-       paramData.user_id       =   req.session.user_id;
-       // paramData.inst_cd       =   req.session.inst_cd;
-       paramData.inst_cd       =   '04654';
-       // paramData.inst_type_cd  =   req.session.inst_type_cd;
-       paramData.inst_type_cd  =   '0001';
-       paramData.seq= '441';
-        util.log('###ETP VIEW CALL###'+JSON.stringify(paramData));
+        util.log('###ETP VIEW CALL paramData.seq###', paramData.seq);
+        paramData.user_id       =   req.session.user_id;
+        //paramData.inst_cd       =   req.session.inst_cd;
+        //paramData.inst_type_cd  =   req.session.inst_type_cd;
+        
+        //개발용 세팅
+        paramData.inst_cd       =   '04654';
+        paramData.inst_type_cd  =   '0001';
+     
 
         // /* 2. 발행사코드 체크 */
-        // if ( paramData.inst_type_cd !='0001' && paramData.inst_type_cd !='0002') {
-        //     resultMsg.result = false;
-        //     resultMsg.msg = "[error] NO paramData.inst_type_cd ";
-        //     throw resultMsg;
-        // }
-
+        if ( paramData.inst_type_cd !=='0001' && paramData.inst_type_cd !=='0002') {
+            resultMsg.result = false;
+            resultMsg.msg = "[error] NOT SUPPORTED paramData.inst_type_cd ";
+            throw resultMsg;
+        }
+        util.log('###ETP VIEW CALL sessioncheck###');
         var resultMsg = {};
         var param = { 
             userType: '0001', 
@@ -48,7 +53,7 @@ var getEtpRegisterView = function(req, res) {
                 //발행사
                 function( callback ) {
                     stmt = mapper.getStatement('EtpRegister', 'getCompList', param, format);
-                    //util.log(stmt);
+                    util.log(stmt);
                     conn.query(stmt, function( err, rows ) {
                         if( err ) {
                             resultMsg.result    =   false;
@@ -220,38 +225,40 @@ var getEtpRegisterView = function(req, res) {
                     });
                    
                  },
-                 function( data, callback ) { //update 화면에조회될 기본정보
-                    stmt = mapper.getStatement('EtpRegister', 'getMaster', param, format);
-                   // util.log(stmt);
-                    conn.query(stmt, function( err, rows ) {
-                        if( err ) {
-                            resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] ";
-                            resultMsg.err       =   err;
+                
+                function( data, callback ) { //update 화면에조회될 기본정보
+                //    if(param.seq !== '0'){
+                        stmt = mapper.getStatement('EtpRegister', 'getMaster', param, format);
+                        // util.log(stmt);
+                        conn.query(stmt, function( err, rows ) {
+                            if( err ) {
+                                resultMsg.result    =   false;
+                                resultMsg.msg       =   "[error] ";
+                                resultMsg.err       =   err;
 
-                            return callback( resultMsg );
-                        }
-                 
-                        resultMsg.masterData = rows;
-                        //util.log(resultMsg.masterData);
-                        if ( rows ) {
-                            var idxFileNm = rows.idx_file_nm;
-                            if(idxFileNm !==null && idxFileNm ==''){
-                                var idx = idxFileNm.lastIndexOf;
-                                if(idx > 0){
-                                   var idxFilePath  = idxFileNm.substring(0, idx);
-                                   var newIdxFileNm = idxFileNm.substring(idx+1, idxFileNm.length);
-                                   resultMsg.masterData.idx_file_nm   = newIdxFileNm;
-                                   resultMsg.masterData.idx_file_path = idxFilePath;
+                                return callback( resultMsg );
+                            }
+                    
+                            resultMsg.masterData = rows;
+                            //util.log(resultMsg.masterData);
+                            if ( rows ) {
+                                var idxFileNm = rows.idx_file_nm;
+                                if(idxFileNm !==null && idxFileNm =='' && idxFileNm !==undefined){
+                                    var idx = idxFileNm.lastIndexOf;
+                                    if(idx > 0){
+                                    var idxFilePath  = idxFileNm.substring(0, idx);
+                                    var newIdxFileNm = idxFileNm.substring(idx+1, idxFileNm.length);
+                                    resultMsg.masterData.idx_file_nm   = newIdxFileNm;
+                                    resultMsg.masterData.idx_file_path = idxFilePath;
+                                    }
                                 }
                             }
-                        }
 
-                        callback( null, param );
-                        //util.log(rows);
-                    });
-                   
-                 },
+                            callback( null, param );
+                            //util.log(rows);
+                        });
+                //    }  
+                },
             ],
              function (err) {
 
@@ -305,11 +312,12 @@ var insertEtpRegister = function(req, res) {
         var paramData = JSON.parse(req.body.data);
      
         paramData.user_id       =   req.session.user_id;
-   
-         // paramData.inst_cd       =   req.session.inst_cd;
-       paramData.inst_cd       =   '04654';
-       // paramData.inst_type_cd  =   req.session.inst_type_cd;
-       paramData.inst_type_cd  =   '0001';
+        //paramData.inst_cd       =   req.session.inst_cd;
+        //paramData.inst_type_cd  =   req.session.inst_type_cd;
+        
+        //개발용 세팅
+        paramData.inst_cd       =   '04654';
+        paramData.inst_type_cd  =   '0001';
 
         util.log("###ETP INSERT CALL HUDLE1##",  req.session);
         if( req.session ==''){
@@ -335,10 +343,7 @@ var insertEtpRegister = function(req, res) {
 
         var isin_code       = paramData.isin_code;      //단축코드
         var list_req_date   = paramData.list_req_date;  //상장신청일
-    //  var lis_date        = paramData.list_date;      //상장일
         var inav_calc_yn    = paramData.inav_calc_yn;   //iNAV산출여부
-    //   var kor_for_type    = paramData.kor_for_type;   //국내/해외구분
-    //  var isu_srt_cd      = paramData.isu_srt_cd;     //종목코드
         var idx_rec_yn      = paramData.idx_rec_yn ;    //기초지수입수여부
         var isin_stat_cd    = paramData.isin_stat_cd;   //상태
         var real_yn         = paramData.real_yn;        //실시간 지수반영여부
@@ -461,9 +466,11 @@ var updateEtpRegister = function(req, res) {
     var paramData = JSON.parse(req.body.data);
     
     paramData.user_id       =   req.session.user_id;
-    // paramData.inst_cd       =   req.session.inst_cd;
+    //paramData.inst_cd       =   req.session.inst_cd;
+    //paramData.inst_type_cd  =   req.session.inst_type_cd;
+    
+    //개발용 세팅
     paramData.inst_cd       =   '04654';
-    // paramData.inst_type_cd  =   req.session.inst_type_cd;
     paramData.inst_type_cd  =   '0001';
     
     paramData.list_req_date = paramData.listReqDate;
@@ -479,42 +486,66 @@ var updateEtpRegister = function(req, res) {
     }
     util.log('###ETP UPDATE JSONPARSE HUDLE1>>>###',req.session);
     var idx_file_nm = paramData.idx_file_nm;
-    if(idx_file_nm!=='' && idx_file_nm!==undefined){
+    if(idx_file_nm!==null && idx_file_nm!=='' && idx_file_nm!==undefined){
         var idx = idx_file_nm.lastIndexOf("/");
-        if(idx != -1){
+        if(idx > 0 ){
             var idx_file_path =     idx_file_nm.substring(0, idx);
             var new_idx_file_nm =   idx_file_nm.substring(idx+1, idx_file_nm.length);
             paramData.idx_file_path     = idx_file_path;
             paramData.idx_file_nm       = new_idx_file_nm;
-            util.log('###ETP UPDATE JSONPARSE idx_file_path>>>###'+paramData.idx_file_path);
-            util.log('###ETP UPDATE JSONPARSE idx_file_nm>>>###'+paramData.idx_file_nm);
         }
     }
-
-    util.log('###ETP UPDATE JSONPARSE HUDLE2>>>###',paramData);
-    var stmt = mapper.getStatement('EtpRegister', 'updateMaster', paramData, format);
-    util.log('###ETP UPDATE JSONPARSE LAST>>>###',stmt);
+    var stmt='';
 
 
     Promise.using(pool.connect(), conn => {
-        conn.queryAsync(stmt).then(rows => {
+        try{
+            async.waterfall([    
 
-            if ( rows ) {
-                console.log( "updateMaster", rows );
-            }
-            res.json({
-                result: true
-            });
-            res.end();
+                function( callback ) {
+                    stmt = mapper.getStatement('EtpRegister', 'updateMaster', paramData, format);
+                    conn.query(stmt, function( err, rows ) {  
+                        if ( rows ) {
+                            console.log( "updateMaster", rows );
+                        }
+                        if( err ) {
+                            return callback( err );
+                        }
+                        callback( null, paramData );
 
-        }).catch(err => {
-            console.log("[error] EtpRegister.updateMaster Error while performing Query.", err);
-            res.json({
-                result: false
-                ,msg: err
-            });
-            res.end();
-        });
+
+                    });
+                },
+                function( data, callback ) {
+                    stmt = mapper.getStatement('EtpRegister', 'insertMasterHistory', paramData, format);
+                    conn.query(stmt, function( err, rows ) {
+                        if ( rows ) {
+                            console.log( "insertMasterHistory", rows );
+                        }
+                        if( err ) {
+                            return callback( err );
+                        }
+                        callback( null, paramData );
+
+                    });
+                
+                },
+                ],function (err) {
+
+                    if(err){
+                        res.json({
+                            result: false
+                            ,msg: err
+                        });
+                    }
+                    res.json({
+                        result: true
+                    });
+                    res.end();
+                });
+        }catch(exception) {
+        
+        }
     });
 
 };

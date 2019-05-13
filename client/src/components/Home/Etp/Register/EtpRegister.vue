@@ -533,7 +533,7 @@
                                             <v-subheader class="subheader_r">블룸버그 티커</v-subheader>
                                         </v-flex>
                                         <v-flex xs3>
-                                            <v-text-field label="블룸버그 티커" value outline  v-model="masterData.blom_ticker"></v-text-field>
+                                            <v-text-field label="블룸버그 티커" value outline  v-model="masterData.blom_ticker" v-bind:disabled = inputDisabled></v-text-field>
                                         </v-flex>
                                         <v-flex xs2>
                                             <v-subheader class="subheader_r">Hedge여부/적용환율</v-subheader>
@@ -666,7 +666,7 @@
                                             <v-subheader class="subheader_r">지수입수기관</v-subheader>
                                         </v-flex>
                                         <v-flex xs3>
-                                            <v-select v-bind:disabled="masterData.real_yn === 'N' && inputDisabled"
+                                            <v-select v-bind:disabled="masterData.real_yn === 'N' || inputDisabled"
                                                :items="code0041List"
                                                 item-value="value"
                                                 item-text="text"
@@ -682,7 +682,7 @@
                                             <v-subheader class="subheader_r">지수입수기관심볼</v-subheader>
                                         </v-flex>
                                         <v-flex xs3>
-                                            <v-text-field  v-bind:disabled="masterData.real_yn === 'N' && inputDisabled"
+                                            <v-text-field  v-bind:disabled="masterData.real_yn === 'N' || inputDisabled"
                                             label="지수입수기관심볼" value outline v-model="masterData.ridx_dist_sym_code" ></v-text-field>
                                         </v-flex>
                                     </v-layout>
@@ -693,7 +693,7 @@
                                             <v-subheader class="subheader_r">실시간휴장일기준</v-subheader>
                                         </v-flex>
                                         <v-flex xs3> 
-                                            <v-select v-bind:disabled="masterData.real_yn === 'N'  && inputDisabled"
+                                            <v-select v-bind:disabled="masterData.real_yn === 'N'  || inputDisabled"
                                               :items="code005List"
                                                 item-value="value"
                                                 item-text="text"
@@ -711,7 +711,7 @@
                                         <v-flex xs5 row class="checkbox_w">
                                             <v-layout row wrap class="light--text">
                                                 <v-flex xs2>
-                                                    <v-checkbox v-bind:disabled="masterData.real_yn === 'N'  && inputDisabled"
+                                                    <v-checkbox v-bind:disabled="masterData.real_yn === 'N'  || inputDisabled"
                                                         color="primary"
                                                         :checked="masterData.ridx_comp_dist_yn"
                                                         v-model="masterData.ridx_comp_dist_yn"
@@ -720,7 +720,7 @@
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs2>
-                                                    <v-checkbox v-bind:disabled="masterData.real_yn === 'N'  && inputDisabled"
+                                                    <v-checkbox v-bind:disabled="masterData.real_yn === 'N'  || inputDisabled"
                                                         color="primary"
                                                         :checked="masterData.ridx_krx_dist_yn"
                                                         v-model="masterData.ridx_krx_dist_yn"
@@ -729,7 +729,7 @@
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs2>
-                                                    <v-checkbox v-bind:disabled="masterData.real_yn === 'N'  && inputDisabled"
+                                                    <v-checkbox v-bind:disabled="masterData.real_yn === 'N'  || inputDisabled"
                                                         color="primary"
                                                        :checked="masterData.ridx_ksd_dist_yn"
                                                         v-model="masterData.ridx_ksd_dist_yn"
@@ -738,7 +738,7 @@
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs6>
-                                                    <v-checkbox v-bind:disabled="masterData.real_yn === 'N'  && inputDisabled"
+                                                    <v-checkbox v-bind:disabled="masterData.real_yn === 'N'  || inputDisabled"
                                                         color="primary"
                                                          :checked="masterData.ridx_mirae_dist_yn"
                                                         v-model="masterData.ridx_mirae_dist_yn"
@@ -768,14 +768,14 @@
                                             <v-subheader class="subheader_r">지수심볼</v-subheader>
                                         </v-flex>
                                         <v-flex xs3>
-                                            <v-text-field  v-bind:disabled="masterData.etp_type !== 'ETF' && inputDisabled"
+                                            <v-text-field  v-bind:disabled="masterData.etp_type !== 'ETF' || inputDisabled"
                                             label value outline  v-model="masterData.refidx_sym_code"></v-text-field>
                                         </v-flex>
                                         <v-flex xs2>
                                             <v-subheader class="subheader_r">지수명칭</v-subheader>
                                         </v-flex>
                                         <v-flex xs3>
-                                            <v-text-field  v-bind:disabled="masterData.etp_type !== 'ETF' && inputDisabled"
+                                            <v-text-field  v-bind:disabled="masterData.etp_type !== 'ETF' || inputDisabled"
                                             label value outline  v-model="masterData.refidx_nm" ></v-text-field>
                                         </v-flex>
                                     </v-layout>
@@ -786,7 +786,7 @@
                                             <v-subheader class="subheader_r">지수입수기관</v-subheader>
                                         </v-flex>
                                         <v-flex xs3>
-                                            <v-select v-bind:disabled="masterData.etp_type !== 'ETF'&& inputDisabled"
+                                            <v-select v-bind:disabled="masterData.etp_type !== 'ETF'|| inputDisabled"
                                                :items="code004List"
                                                  item-value="value"
                                                 item-text="text"
@@ -800,7 +800,7 @@
                                             <v-subheader class="subheader_r">지수파일명</v-subheader>
                                         </v-flex>
                                         <v-flex xs3>
-                                            <v-text-field label="지수파일명"  v-bind:disabled="masterData.etp_type !== 'ETF' && inputDisabled"
+                                            <v-text-field label="지수파일명"  v-bind:disabled="masterData.etp_type !== 'ETF' || inputDisabled"
                                              value outline  v-model="masterData.refidx_file_nm" ></v-text-field>
                                         </v-flex>
                                     </v-layout>
@@ -811,7 +811,7 @@
                                             <v-subheader class="subheader_r">블룸버그 티커</v-subheader>
                                         </v-flex>
                                         <v-flex xs8>
-                                            <v-text-field  v-bind:disabled="masterData.etp_type !== 'ETF' && inputDisabled"  
+                                            <v-text-field  v-bind:disabled="masterData.etp_type !== 'ETF' || inputDisabled"  
                                             label="블룸버그 티커"  value outline v-model="masterData.refidx_blom_ticker"></v-text-field>
                                         </v-flex>
                                     </v-layout>
@@ -822,7 +822,7 @@
                                             <v-subheader class="subheader_r essen">요청사항</v-subheader>
                                         </v-flex>
                                         <v-flex xs8>
-                                            <v-textarea v-bind:disabled="masterData.etp_type !== 'ETF' && inputDisabled" 
+                                            <v-textarea v-bind:disabled="masterData.etp_type !== 'ETF' ||  inputDisabled" 
                                             label="요청사항" outline  color="blue" v-model="masterData.refidx_req" ></v-textarea>
                                         </v-flex>
                                     </v-layout>
@@ -1012,7 +1012,6 @@
 import Config from "@/js/config.js";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
-
 export default {
     data() {
         return {
@@ -1044,33 +1043,34 @@ export default {
                 paramInstCd:"0000"
                ,paramInstTypeCd:"0001"
                ,idxCompDistYn:"N"
-               ,seq:"",isu_kor_nm:"",isu_eng_nm:"",isin_code:"",isu_srt_cd:"",etp_type:"",inst_cd:"",req_date:"",list_req_date:"",list_date:"",krx_dist_yn:"",comp_dist_yn:"",ksd_dist_yn:"",mirae_dist_yn:"",idx_inst_cd:"",idx_sym_code:"",idx_nm:"",idx_dist_inst_cd:"",idx_close_type:"",idx_holy_cd:"",idx_trace_yd_mult_type:"",pre_idx_type:"",idx_file_nm:"",idx_comp_ksd_dist_yn:"",idx_comp_mirae_dist_yn:"",blom_ticker:"",user_req:"",real_yn:"",ridx_inst_cd:"",ridx_dist_inst_cd:"",ridx_crt_sym_code:"",ridx_dist_sym_code:"",ridx_holy_cd:"",ridx_krx_dist_yn:"",ridx_comp_dist_yn:"",ridx_ksd_dist_yn:"",ridx_mirae_dist_yn:"",ridx_dist_term:"",refidx_sym_code:"",refidx_nm:"",refidx_inst_cd:"",refidx_file_nm:"",refidx_req:"",refidx_blom_ticker:"",ex_rate_cd:"",ex_hedge_yn:"",isin_stat_cd:"",inav_calc_cd:"",idx_rec_yn:"",idx_dis_yn:"",inav_calc_yn:"",idx_mid:"",ridx_mid:"",close_file:"",real_idx_tr:"",proc_stat:"",insert_id:"",insert_time:"",update_id:"",update_time:"",kor_for_type:"F",agent_cd:"",idx_comp_cd:"",krx_up_code:"",agent_up_code:""
+               ,seq_hist:"", seq:"",isu_kor_nm:"",isu_eng_nm:"",isin_code:"",isu_srt_cd:"",etp_type:"",inst_cd:"",req_date:"",list_req_date:"",list_date:"",krx_dist_yn:"",comp_dist_yn:"",ksd_dist_yn:"",mirae_dist_yn:"",idx_inst_cd:"",idx_sym_code:"",idx_nm:"",idx_dist_inst_cd:"",idx_close_type:"",idx_holy_cd:"",idx_trace_yd_mult_type:"",pre_idx_type:"",idx_file_nm:"",idx_comp_ksd_dist_yn:"",idx_comp_mirae_dist_yn:"",blom_ticker:"",user_req:"",real_yn:"",ridx_inst_cd:"",ridx_dist_inst_cd:"",ridx_crt_sym_code:"",ridx_dist_sym_code:"",ridx_holy_cd:"",ridx_krx_dist_yn:"",ridx_comp_dist_yn:"",ridx_ksd_dist_yn:"",ridx_mirae_dist_yn:"",ridx_dist_term:"",refidx_sym_code:"",refidx_nm:"",refidx_inst_cd:"",refidx_file_nm:"",refidx_req:"",refidx_blom_ticker:"",ex_rate_cd:"",ex_hedge_yn:"",isin_stat_cd:"",inav_calc_cd:"",idx_rec_yn:"",idx_dis_yn:"",inav_calc_yn:"",idx_mid:"",ridx_mid:"",close_file:"",real_idx_tr:"",proc_stat:"",insert_id:"",insert_time:"",update_id:"",update_time:"",kor_for_type:"F",agent_cd:"",idx_comp_cd:"",krx_up_code:"",agent_up_code:""
                ,idx_file_path:""
                ,idx_comp_dist_yn:"N"
+               ,listDate:"", listReqDate:""
             },
             inputDisabled: false,
             errors: {},
+            seq : 0
 
         };
     },
-   
-     mounted: function() {
+    mounted: function() {
         // 메시지 박스 참조
         this.$root.$confirm = this.$refs.confirm;
         this.getEtpRegisterView();
 
     },
-    
-    methods: {
-        
-       
+    created: function() {
 
+       // this.$emit('movePage', 0);
+    }, 
+    methods: {
         getEtpRegisterView : function(){
             var vm = this;
-            console.log('##getEtpRegisterView 호출##')
+            console.log('##getEtpRegisterView 호출##', vm.seq);
             axios
             .get(Config.base_url + "/user/etp/getEtpRegisterView", {
-                    params: {}
+                    params: {seq: vm.seq}
                 })
             .then(function(response) {
                     console.log("'##getEtpRegisterView 호출 >>> result##", response.data);
@@ -1142,11 +1142,13 @@ export default {
                             vm.inputDisabled = true;
                         }
 
-                        var imsi =vm.masterData.list_req_date;
-                        var imsi2 =vm.masterData.list_date;
-                        vm.masterData.list_req_date = imsi.substr(0,4).concat("-").concat(imsi.substr(4,2)).concat("-").concat(imsi.substr(6,2));
-                        vm.masterData.list_date     = imsi2.substr(0,4).concat("-").concat(imsi2.substr(4,2)).concat("-").concat(imsi2.substr(6,2));
+                        var imsi  = vm.masterData.list_req_date;
+                        var imsi2 = vm.masterData.list_date;
+                        
+                        if(imsi  !==undefined && imsi !==null)   vm.masterData.list_req_date = imsi.substr(0,4).concat("-").concat(imsi.substr(4,2)).concat("-").concat(imsi.substr(6,2));
+                        if(imsi2 !==undefined && imsi2 !==null) vm.masterData.list_date     = imsi2.substr(0,4).concat("-").concat(imsi2.substr(4,2)).concat("-").concat(imsi2.substr(6,2));
                     }else{ 
+                        vm.masterData =[];
                         vm.masterData.list_req_date = new Date().toISOString().substr(0, 10); //함수라서 여기서해줌
                         vm.masterData.list_date = new Date().toISOString().substr(0, 10); 
                     }
@@ -1159,8 +1161,7 @@ export default {
                   
                      console.log("paramData",paramData);
                     vm.masterData.paramInstCd=paramData.inst_cd;
-                    vm.masterData.paramInstTypeCd=paramData.inst_type_cd
-                    ; 
+                    vm.masterData.paramInstTypeCd=paramData.inst_type_cd;
                   
                     // vm.masterData.inst_cd =paramData.inst_cd;
                     // vm.masterData.inst_type_cd =paramData.inst_type_cd;
@@ -1170,12 +1171,13 @@ export default {
                      console.log("masterData RESET", vm.masterData);
 
             });
-        }, fn_insertEtpRegisterStep1: function() {
+        },
+        fn_insertEtpRegisterStep1: function() {
             var vm = this;
             vm.errors = {};
 
             console.log("fn_insertEtpRegisterStep1 호출>> this.masterData ", this.masterData);
-            
+                  
             if(vm.masterData.isu_kor_nm.length < 1){
                 vm.errors.isu_kor_nm = "this field is required"
                 return;
@@ -1217,6 +1219,7 @@ export default {
             }
 
             vm.e1 = 3;
+          
          },
          fn_insertEtpRegisterStep2: function() {
             var vm = this;
@@ -1262,10 +1265,10 @@ export default {
                 return;
             }
 
-            if(vm.masterData.idx_file_path.length < 1){
-                vm.errors.idx_file_path = "this field is required"
-                return;
-            }
+            // if(vm.masterData.idx_file_path.length < 1){
+            //     vm.errors.idx_file_path = "this field is required"
+            //     return;
+            // }
 
             if(vm.masterData.idx_comp_dist_yn.length < 1){
                 vm.errors.idx_comp_dist_yn = "this field is required"
@@ -1356,8 +1359,7 @@ export default {
                        
                        console.log("insertEtpRegister result>>>", response);
                     if( response.data.result ) {
-                        //이동은  하는데 조회페이지 링크확인필요.
-                        //vm.$router.push( "/user/etp/etpApplyList" );
+                         vm.$emit("movePage", 0); 
                     }else{
                         console.log(response.msg);
                     }
@@ -1367,16 +1369,30 @@ export default {
 
          fn_updateEtpRegister: function() {
             var vm = this;
-            console.log("fn_updateEtpRegister 호출>> this.masterData ", this.masterData);
-            
-            vm.masterData.listReqDate = vm.masterData.list_req_date.replace(/-/gi, "");
-            vm.masterData.listDate     = vm.masterData.list_date.replace(/-/gi, "");
+            console.log("fn_updateEtpRegister 호출>> this.masterData ", vm.masterData);
+                        
+           if(vm.masterData.list_req_date !==undefined && vm.masterData.list_req_date!==null) {
+               vm.masterData.listReqDate = vm.masterData.list_req_date.replace(/-/gi, "");
+           }
+           if(vm.masterData.list_date !==undefined && vm.masterData.list_date!==null) {
+               vm.masterData.listDate     = vm.masterData.list_date.replace(/-/gi, "");
+           }
            // vm.masterData.req_date     = vm.masterData.req_date.replace(/-/gi, "");
+            var json = JSON.stringify(vm.masterData);
+
+            function replacer(name, val) {
+                if ( val == null || val==undefined ) {
+                    return ""; 
+                }  else {
+                    return val; // return unchanged
+                }
+            }   
 
             axios({
                  method: 'post',
                  url: Config.base_url + "/user/etp/updateEtpRegister",
-                 data: { "data" : JSON.stringify(vm.masterData)},
+                 
+                 data: { "data" : JSON.stringify(vm.masterData, replacer)},
                  headers: {
                         "Content-Type": "application/json"
                     }
@@ -1384,8 +1400,8 @@ export default {
                         
                         console.log("updateEtpRegister result>>>", response);
                      if( response.data.result ) {
-                        //이동은  하는데 조회페이지 링크확인필요.
-                        //vm.$router.push( "/user/etp/etpApplyList" ); 
+                         alert('수정이 완료되었습니다.');
+                          vm.$emit("movePage", 0); 
                     }else{
                         console.log(resultData.msg);
                     }

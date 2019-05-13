@@ -44,26 +44,18 @@
                  <!---실제적용 테이블--->
                 <v-card flat>
                     <table id="example1" class="display table01_w">
-                        <colgroup>
-                            <col width="2%">
-                            <col width="2%">
-                            <col width="12%">
-                            <col width="12%">
-                            <col width="9%">
-                            <col width="7%">
-                            <col width="9%">
-                            <col width="17%">
-                            <col width="30%">
-                        </colgroup>
+                        
                         <thead>
                             <tr>
-                                <th></th>
-                                <th>No</th>
-                                <th>발행사</th>
-                                <th>종목명</th>
+                                <th width="2%"></th>
+                                <th width="1%">No</th>
+                                <th style="display: none">seq</th>
+                                <th style="display: none">inst_cd</th>
+                                <th width="15%">발행사</th>
+                                <th width="40%">종목명</th>
                                 <th>신청일</th>
-                                <th>국내/해외</th>
-                                <th>기초지수</th>
+                                <th width="10%">국내/해외</th>
+                                <th width="10%">기초지수</th>
                                 <th></th>
                                 <th></th>
                             </tr>
@@ -77,11 +69,49 @@
                         <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
                     </td>
                     <td class="text-xs-center">{{ props.index+1 }}</td>
-                    <td class="text-xs-center">
+                    <td class="text-xs-left" >{{ props.item.isu_kor_nm }}</td>
+                    <td class="text-xs-left">{{ props.item.req_date }}</td>
+                    <td class="text-xs-left">{{ props.item.kor_for_type }}</td>
+                    <td class="text-xs-center"></td>
+
+                </template>
+                        <v-dialog v-model="dialog3" persistent max-width="550">
+                            <!---기초지수 팝업 내용-->
+                            <v-card>
+                                <h5>
+                                    <v-card-title ma-0>
+                                        기초지수 
+                                        <v-spacer></v-spacer>
+                                        <v-btn icon dark @click="dialog3 = false">
+                                            <v-icon>close</v-icon>
+                                        </v-btn>
+                                    </v-card-title>
+                                </h5>
+                                <v-card flat>
+                                  <v-data-table
+                                        class="elevation-1 table_line4"
+                                        :items="idxList"
+                                      
+                                    >
+                                      <template slot="items" slot-scope="props" >
+                                            <td class="text-xs-center">>{{props.item.idx}}</td>
+                                            <td class="text-xs-center"></td>
+                                            <td class="text-xs-center"></td>
+                                            <td class="text-xs-center"></td>
+                                        <v-alert
+                                            v-slot:no-results
+                                            :value="true"
+                                            color="error"
+                                            icon="warning"
+                                        ></v-alert>
+                                     </template>    
+                                    </v-data-table>
+                                </v-card>
+                                <v-card class="pop_bot_h"></v-card>
+                            </v-card>
+                            <!---기초지수 팝업 내용-end-->
+                        </v-dialog>
                         <v-dialog v-model="dialog2" persistent max-width="550">
-                            <template v-slot:activator="{ on }">
-                                <v-btn v-on="on">한국투자 증권</v-btn>
-                            </template>
                             <!---발행사 담당자 연락처 팝업 내용-->
                             <v-card>
                                 <h5>
@@ -95,80 +125,30 @@
                                 </h5>
                                 <v-card flat>
                                     <v-data-table
-                                        :headers="headers2"
-                                        :items="desserts2"
-                                        :search="search"
                                         hide-actions
                                         class="elevation-1 table_line4"
-                                    >
-                                        <template v-slot:items="props">
-                                            <td class="text-xs-center">{{ props.item.name11 }}</td>
-                                            <td class="text-xs-center">{{ props.item.phone }}</td>
-                                            <td class="text-xs-center">{{ props.item.phone2 }}</td>
-                                            <td class="text-xs-center">{{ props.item.email }}</td>
-                                        </template>
-                                        <v-alert
+                                        :items="compContactList"
+                                        
+                                    >   
+                                    <template slot="items" slot-scope="props" >
+                                        <td class="text-xs-center" >{{props.item.USER_NM}}</td>
+                                        <td class="text-xs-center">{{props.item.TEL_NO}}</td>
+                                        <td class="text-xs-center">{{props.item.CEL_NO}}</td>
+                                        <td class="text-xs-center">{{props.item.EMAIL}}</td>
+                                       
+                                    </template>    
+                                     <v-alert
                                             v-slot:no-results
                                             :value="true"
                                             color="error"
                                             icon="warning"
-                                        >Your search for "{{ search }}" found no results.</v-alert>
+                                        ></v-alert>
                                     </v-data-table>
                                 </v-card>
                                 <v-card class="pop_bot_h"></v-card>
                             </v-card>
                             <!---발행사 담당자 연락처 팝업 내용end-->
-                        </v-dialog>
-                    </td>
-                    <td class="text-xs-left">{{ props.item.isu_kor_nm }}</td>
-                    <td class="text-xs-left">{{ props.item.req_date }}</td>
-                    <td class="text-xs-left">{{ props.item.kor_for_type }}</td>
-                    <td class="text-xs-center">
-                        <v-dialog v-model="dialog3" persistent max-width="550">
-                            <template v-slot:activator="{ on }">
-                                <v-btn small depressed dark color="#1976d2" v-on="on">기초지수</v-btn>
-                            </template>
-                            <!---발행사 담당자 연락처 팝업 내용-->
-                            <v-card>
-                                <h5>
-                                    <v-card-title ma-0>
-                                        발행사 담당자 연락처
-                                        <v-spacer></v-spacer>
-                                        <v-btn icon dark @click="dialog3 = false">
-                                            <v-icon>close</v-icon>
-                                        </v-btn>
-                                    </v-card-title>
-                                </h5>
-                                <v-card flat>
-                                    <v-data-table
-                                        :headers="headers3"
-                                        :items="desserts3"
-                                        :search="search"
-                                        hide-actions
-                                        class="elevation-1 table_line4"
-                                    >
-                                        <template v-slot:items="props">
-                                            <td class="text-xs-center">{{ props.item.name11 }}</td>
-                                            <td class="text-xs-center">{{ props.item.phone }}</td>
-                                            <td class="text-xs-center">{{ props.item.phone2 }}</td>
-                                            <td class="text-xs-center">{{ props.item.email }}</td>
-                                        </template>
-                                        <v-alert
-                                            v-slot:no-results
-                                            :value="true"
-                                            color="error"
-                                            icon="warning"
-                                        >Your search for "{{ search }}" found no results.</v-alert>
-                                    </v-data-table>
-                                </v-card>
-                                <v-card class="pop_bot_h"></v-card>
-                            </v-card>
-                            <!---발행사 담당자 연락처 팝업 내용end-->
-                        </v-dialog>
-                        <v-btn small depressed dark color="#42a4e1">iIV</v-btn>
-                    </td>
-                    </template>
-
+                    </v-dialog>
                 <div class="text-xs-right my-3">
                     <v-btn depressed color="#9e9e9e" dark>삭제</v-btn>
                     <v-btn depressed color="#48485e" dark>엑셀</v-btn>
@@ -200,12 +180,15 @@ export default {
             dialog2: false,
             dialog3: false,
             items1: ["실시간", "종가"],
+            compContactList : [],
+            idxList :[]
 
         };
     },
     components: {},
     computed: {},
-    created: function() {},
+    created: function() {
+    },
     beforeDestroy() {},
     mounted: function() {
         var vm = this;
@@ -216,7 +199,9 @@ export default {
         vm.getEtpApplyInavCnt();
     },
     methods: {
+
         getEtpApplyList: function() {
+             var vm = this;
             console.log("getEtpApplyList");
             this.loadingbar = true;
             axios
@@ -233,24 +218,32 @@ export default {
                         //console.log("response=" + JSON.stringify(items));
                         this.results = items;
                         this.list_cnt = this.results.length;
+
+                                
                           table = $("#example1").DataTable({
+                            autoWidth: false, 
                             processing: true,
                             serverSide: false,
                             info: true, // control table information display field
                             stateSave: true, //restore table state on page reload,
-                            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                 
                             paging: false,
                             searching: false,
                             data: this.results,
                             //list_cnt : this.results.length,
+                            
+                          
+                   
                                columnDefs: [
-                                 {  
-                                     "data": "num",
-                                     "render": function ( data, type, row ,meta) {
-                                        return meta.row + meta.settings._iDisplayStart + 1;
-                                    },   
-                                    "targets": 1 
-                                },  
+                                    {  
+                                        "data": "num",
+                                        "render": function ( data, type, row ,meta) {
+                                            return meta.row + meta.settings._iDisplayStart + 1;
+                                        },   
+                                        "targets": 1 
+                                    },
+                                    
+                                  
                                 {  
                                     "render": function ( data, type, row ) {
                                         var etpType = (row.etp_type == "ETN")  ? "iIV" : "iNAV" ;
@@ -264,7 +257,7 @@ export default {
                                         }
                                         return shtml;
                                     },   
-                                    "targets": 7 
+                                    "targets": 9 
                                 },  
                                                                 {  
                                     "render": function ( data, type, row ) {
@@ -284,7 +277,7 @@ export default {
                                          shtml += '</ol></div></td>' ;
                                          return shtml;
                                     },   
-                                    "targets": 8 
+                                    "targets": 10 
                                 },  
                             ],
                             columns: [
@@ -293,11 +286,14 @@ export default {
                                    data: "null",
                                    className: "td_in_center",
                                    "orderable" : false,
-                                   defaultContent:
+                                   defaultContent:[
                                         "<input type='checkbox' color='primary' v-model='selected2' label='' value=''>"
+                                   ]
                                 },
                                 { "data" : "num" , "orderable" : true },
-                                { "data": "inst_nm", "orderable" : true },
+                                { "data" : "seq" , "orderable" : false },
+                                { "data" : "inst_cd" , "orderable" : false },
+                                { "data": "inst_nm", "orderable" : true},
                                 { "data": "isu_kor_nm", "orderable" : true },
                                 { "data": "req_date", "orderable" : true },
                                 { "data": "kor_for_type_name", "orderable" : true },
@@ -309,6 +305,34 @@ export default {
                                 { data: null, className: "checks", defaultContent: "", "orderable" : false,}
                             ]
 
+                            
+                        });
+                         
+                        $('#example1 tbody tr td:nth-child(3)').hide();
+                        $('#example1 tbody tr td:nth-child(4)').hide();
+                        
+                    
+                        $("#example1 tbody").on('click', 'tr td:nth-child(6)', function(){
+                            var tr = $(this).parents();
+                            var td = tr.children();
+                            var seq = td.eq(2).text(); 
+                            console.log("##CLICK example1 > tbody > tr", td.eq(2).text());
+                            vm.$emit("moveUpdatePage", seq); 
+                        });
+
+                    
+                        $("#example1 tbody").on('click', 'tr td:nth-child(10)', function(){
+                            console.log("#CLICK example1 > tbody > tr > basic index",$(this));
+                            vm.dialog3 = true;
+                        });
+                        
+                        $("#example1 tbody").on('click', 'tr td:nth-child(5)', function(){
+                            console.log("#CLICK example1 > tbody > tr > contributor",$(this));
+                            var tr = $(this).parents();
+                            var td = tr.children();
+                            var instCd = td.eq(3).text(); 
+                            vm.getCompContactList(instCd);
+                            vm.dialog2 = true;
                         });
                     }
                    // this.loadingbar = false;
@@ -383,9 +407,42 @@ export default {
                     this.inavCnt = items['0']['inavCnt'] ;
                     console.log("responseinav=" + this.inavCnt );
                 }
-                   
+
+                 
             });
-        }, 
+
+           
+        },
+        getCompContactList: function(val) {
+            var vm = this;
+            console.log("getCompContactList");
+            axios.get(Config.base_url + "/user/etp/getCompContactList", {
+                    params: {
+                        inst_cd : val
+                    }
+            }).then(response => {
+                     console.log(response);
+
+                if (response.data.success == false) {
+                    
+                } else {
+                    vm.compContactList = response.data.results ;
+                    console.log("getCompContactList=" + vm.compContactList );
+                }
+
+                 
+            });
+
+           
+        }
+      
+       
+
+          
+       
+
+        
+    
 
 
     }
