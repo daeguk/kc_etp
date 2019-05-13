@@ -12,8 +12,9 @@
 /*.html{ width:1400px; margin:0 auto !important;overflow-x: hidden !important;}*/
 body{background: #f5f5f5}
 .v-content__wrap .v-tabs__wrapper{width:1400px; margin:0 auto;}
+.v-content__wrap .conWidth_left .v-tabs__wrapper{width:100% !important; }
 .v-content__wrap .conWidth_right .v-tabs__wrapper{width:230px !important; }
-.content_margin{width:1400px; margin:10px auto !important; overflow-x: hidden !important;}
+.content_margin{width:1400px !important; margin:10px auto !important; overflow-x: hidden !important;}
 .v-content__wrap{background: #f5f5f5 !important;}
 .theme--light.application{background:#f5f5f5 !important;color:rgba(0,0,0,.87)}
 html{font-family: 'Noto Sans', sans-serif,'Noto Sans'  !important; }
@@ -216,6 +217,7 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .flex.xs10{width:82%;overflow:hidden !important;}
 .flex.xs11{width:1200px; overflow:hidden !important;}
 .flex.xs12{width:100%; overflow:hidden !important;}
+.flex.xs13{width:1400px; overflow:hidden !important;}
 
 
 
