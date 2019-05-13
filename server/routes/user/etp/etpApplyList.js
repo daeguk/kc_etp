@@ -47,7 +47,7 @@ var getEtpApplyList = function (req, res) {
                 res.end();
             });
 
-        });
+        });        
     } catch(exception) {
         util.log("err=>", exception);
     }
@@ -194,6 +194,7 @@ var getEtpApplyInavCnt = function (req, res) {
                 util.log("Error while performing Query.", err);
                 res.json({
                     success: false,
+
                     message: err
                 });
                 res.end();
@@ -204,8 +205,50 @@ var getEtpApplyInavCnt = function (req, res) {
         util.log("err=>", exception);
     }
 };
+var getCompContactList = function (req, res) {
+    try {
+        console.log('EtpApply=>getCompContactList 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        
+        var options = { 
+            "inst_cd":  req.query.inst_cd
+         };
+
+        util.log("options", JSON.stringify(options));
+
+        var stmt = mapper.getStatement('EtpRegister', 'getCompContactList', options, {language:'sql', indent: '  '});
+        console.log(stmt);
+
+
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
+
+
 module.exports.getEtpApplyList = getEtpApplyList;
 module.exports.getEtpApplyDistCnt = getEtpApplyDistCnt;
 module.exports.getEtpApplyIndexCnt = getEtpApplyIndexCnt;
 module.exports.getEtpApplyCodeCnt = getEtpApplyCodeCnt;
 module.exports.getEtpApplyInavCnt = getEtpApplyInavCnt;
+module.exports.getCompContactList = getCompContactList;
