@@ -1,7 +1,7 @@
 <template>
     <v-layout row wrap class="content_margin con_wrap">
         <v-flex grow :class="className">
-            <IndexDetailDialog v-if="showIndexDetailDialog" :paramData="paramData"></IndexDetailDialog>
+            <IndexDetailInfo v-if="showIndexDetailDialog" :showDialog="showIndexDetailDialog" :paramData="paramData"></IndexDetailInfo>
             <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
             <marketRepresent v-if="showMarketInfo == 1" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketRepresent>               
             <marketSector v-if="showMarketInfo == 2" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketSector>                   
@@ -35,7 +35,7 @@ import Config from "@/js/config.js";
 import ComFavorItemSub from "@/components/common/control/ComFavorItemSub"; 
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
-import IndexDetailDialog from "@/components/Home/Index/Manage/IndexDetailDialog.vue";   /*지수 상세정보*/
+import IndexDetailInfo from "@/components/Home/Index/Manage/IndexDetailInfo.vue";   /*지수 상세정보*/
 import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";         /*ETP 상세정보*/
 
 import marketRepresent from "./marketRepresent.vue";                /* 001-시장대표 */
@@ -67,7 +67,7 @@ export default {
     components: {
         ComFavorItemSub : ComFavorItemSub,
         ConfirmDialog : ConfirmDialog,
-        IndexDetailDialog : IndexDetailDialog,
+        IndexDetailInfo : IndexDetailInfo,
         EtpManageDetail :   EtpManageDetail,
         marketRepresent :  marketRepresent,               /* 001-시장대표 */
         marketSector :   marketSector,                   /* 002-섹터*/

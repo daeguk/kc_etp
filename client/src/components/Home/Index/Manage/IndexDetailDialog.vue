@@ -131,7 +131,6 @@ export default {
     },
     beforeDestroy() {
         this.$EventBus.$off('changeIndexInfo');
-        this.$EventBus.$off('changeIndexInfoClose');
     },
 
     mounted: function() {
@@ -156,6 +155,9 @@ export default {
                     vm.basicData.jisu_cd      =   vm.paramData.F16257;
                     vm.basicData.large_type   =   vm.paramData.LARGE_TYPE;
                     vm.basicData.market_id    =   vm.paramData.MARKET_ID;
+                    vm.basicData.perf_class   = 'perf_chart_w2'; /* performanc 그래프 class */
+                    vm.basicData.tbl_class   = 'tbl_type ver5'; /* performanc 테이블 class */
+                    vm.basicData.chart_size  = '960'; /* performanc 차트 사이즈 */
                 }
                 else if(
                         vm.$route.query.jisu_cd  
@@ -165,6 +167,9 @@ export default {
                     vm.basicData.jisu_cd      =   vm.$route.query.jisu_cd;
                     vm.basicData.large_type   =   vm.$route.query.large_type;
                     vm.basicData.market_id    =   vm.$route.query.market_id;
+                    vm.basicData.perf_class   = 'perf_chart_w'; /* performanc 그래프 class */
+                    vm.basicData.tbl_class   = 'tbl_type ver4'; /* performanc 테이블 class */
+                    vm.basicData.chart_size  = '1180'; /* performanc 차트 사이즈 */
                 }
 
 

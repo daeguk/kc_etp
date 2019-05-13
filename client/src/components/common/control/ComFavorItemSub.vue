@@ -85,7 +85,7 @@
                     </v-flex>
                 </v-layout>
                 <!---자산추가 팝업 -->
-                <jongmokPop @selectedItem="setSelectedItem" @hideJongMokPop="hideJongMokPop" :showDialog="jongMokDialog"></jongmokPop>
+
                 <!--자산추가 팝업 end -->
             </v-list-tile-content>
         </v-list>
@@ -102,7 +102,6 @@ import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
 
-import jongmokPop from "@/components/common/popup/jongmokPopup";
 
 var favor_grid = null;
 var etf_table = null;
@@ -118,7 +117,6 @@ export default {
             tab: null,
             kindTab : null, 
             activeTab: 0, 
-            tabs: ["관심종목", "전체종목"],
             kindTabs: ["ETF", "ETN", "INDEX"],
             drawer: null,
             favorItems: [],
@@ -139,7 +137,6 @@ export default {
         };
     },
     components: {
-        jongmokPop : jongmokPop
     },
     computed: {
         

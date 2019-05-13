@@ -5,10 +5,10 @@
                 <div class="indexinfo_box01">
                     <h4 class="mb-0">Performance</h4>
                     <div class="graph_02_w">
-                        <div class="perf_chart_w" id="perf_chart"></div>
+                        <div :class="perf_class" id="perf_chart"></div>
                     </div>
                    <v-card flat>
-                     <table id="perf_table" class="tbl_type ver3" style="width:1348px">
+                     <table id="perf_table" :class="tbl_class" style="width:1348px">
                          <colgroup>
                             <col width="314px">
                             <col width="117px">
@@ -190,7 +190,10 @@ export default {
             importance_grid_id : "importance_grid",
             importance_chart_id : "importance_chart",
             performChartImages  :   ['perform_bar01.png', 'perform_bar02.png', 'perform_bar03.png', 'perform_bar04.png', 'perform_bar05.png'],
-            param: {}
+            param: {},
+            perf_class : 'perf_chart_w',
+            tbl_class : 'tbl_type ver4',
+            chart_size : '1180'
         };
     },
     mixins : [ index_common ],
@@ -224,6 +227,9 @@ export default {
                 vm.param.jisu_cd      =   vm.basicData.jisu_cd;
                 vm.param.large_type   =   vm.basicData.large_type;
                 vm.param.market_id    =   vm.basicData.market_id;
+                vm.perf_class = vm.basicData.perf_class;
+                vm.tbl_class = vm.basicData.tbl_class;
+                vm.chart_size = vm.basicData.chart_size;
             }
             else if(   
                     vm.$route.query.jisu_cd  
@@ -320,6 +326,7 @@ export default {
             }
         },
         performance_chart: function() {
+            var vm = this;
             // Load the Visualization API and the corechart package.
             google.charts.load('current', {'packages':['corechart']});
 
@@ -370,7 +377,7 @@ export default {
 
                  // Set chart options
                 var options = {'title':'',
-                            'width':'1180',
+                            'width':vm.chart_size,
                             'height':'180',
                             'colors': ['#1e99e8', '#48485e', '#ff4366', '#727281', '#b9e0f7'],                
                             'hAxis':{

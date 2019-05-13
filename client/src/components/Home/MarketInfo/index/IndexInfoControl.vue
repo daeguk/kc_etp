@@ -1,7 +1,7 @@
 <template>
     <v-layout row wrap class="content_margin con_wrap">
         <v-flex grow :class="className">
-            <IndexDetailDialog v-if="showIndexDetailDialog" :paramData="paramData"></IndexDetailDialog>
+            <IndexDetailDialog v-if="showIndexDetailDialog" :showDialog="true" :paramData="paramData"></IndexDetailDialog>
             <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
             <today v-if="showMarketInfo == 1" @showDetail="showDetail" @showMessageBox="showMessageBox"></today>         
             <ConfirmDialog ref="confirm"></ConfirmDialog>

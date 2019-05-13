@@ -1,5 +1,5 @@
 <template>
-    <div class="content_margin">
+    <div :class="contentClass">
         <v-layout row>
             <v-flex xs12>
                 <v-card flat ma-3>
@@ -12,7 +12,7 @@
                                 </h3>
                                 <div class="right_btn">
                                     <v-layout align-right>
-                                        <v-flex xs12 sm4 text-xs-center>
+                                        <v-flex xs12 sm4 text-xs-center v-if="!showDialog">
                                             <div class="btn_r">
                                                 <v-btn outline color="primary" small :to="{path:'/index/manage', query:{'activeTab':'2'}}">목록으로 돌아가기</v-btn>
                                             </div>
@@ -69,12 +69,12 @@
 
                                 <v-tabs-items v-model="tab">
                                     <v-tab-item>
-                                        <IndexDetailInfoTab1></IndexDetailInfoTab1>
+                                        <IndexDetailInfoTab1 :basicData = "basicData"    v-if="openSubIndexInfoTab"></IndexDetailInfoTab1>
                                     </v-tab-item>
                                     <v-tab-item>
-                                        <IndexDetailInfoTab2></IndexDetailInfoTab2>
+                                        <IndexDetailInfoTab2 :basicData = "basicData"    v-if="openSubIndexInfoTab"></IndexDetailInfoTab2>
                                     </v-tab-item>
-                                    <v-tab-item>
+                                    <v-tab-item  v-if="!showDialog">
                                         <IndexDetailInfoTab3></IndexDetailInfoTab3>
                                     </v-tab-item>
                                 </v-tabs-items>
@@ -95,6 +95,7 @@ import IndexDetailInfoTab3 from "./IndexDetailInfoTab3.vue";
 
 import Config from "@/js/config.js";
 export default {
+    props: ['paramData', 'showDialog'],
     data() {
         return {
             text: "center",
@@ -106,6 +107,17 @@ export default {
             items: ["기본정보", "분석정보", "정보공개 목록"],
             results:{},
             etpInfos:{},
+            index_dialog:false,
+            options: {
+                color: 'primary',
+                width: '809%',
+                zIndex: 200
+            },
+
+            openSubIndexInfoTab: false,
+            openSubPublicTab: true, 
+            basicData : {},
+            contentClass : 'content_margin'
         };
     },
     components: {
@@ -114,22 +126,96 @@ export default {
         IndexDetailInfoTab3: IndexDetailInfoTab3
     }, 
     computed: {},
-    created: function() {},
-    beforeDestroy() {},
+    created: function() {
+         var vm = this;
+
+        vm.$EventBus.$on('changeIndexInfo', data => {
+            vm.toggle_one = '1M';
+            vm.openSubIndexInfoTab = true;
+            vm.init(true);
+            vm.items = ["기본정보", "분석정보"];
+        });
+    },
+    beforeDestroy() {
+        this.$EventBus.$off('changeIndexInfo');
+    },
     mounted: function() {
-        this.getIndexBaseInfo();
-        this.Indexchart();
+        var vm = this;
+        vm.init(false);  
+
+        if (vm.showDialog) {
+            vm.items = ["기본정보", "분석정보"];
+        } else {
+            vm.items = ["기본정보", "분석정보", "정보공개 목록"];
+        }
     },
     methods: {
+        init: function(event) {
+            var vm = this;
+            vm.$nextTick().then(() => {
+
+                if(     vm.paramData 
+                    &&  vm.paramData.F16257
+                    &&  vm.paramData.LARGE_TYPE
+                    &&  vm.paramData.MARKET_ID
+                ) {
+                    vm.basicData.jisu_cd      =   vm.paramData.F16257;
+                    vm.basicData.large_type   =   vm.paramData.LARGE_TYPE;
+                    vm.basicData.market_id    =   vm.paramData.MARKET_ID;
+                    vm.basicData.perf_class   = 'perf_chart_w2'; /* performanc 그래프 class */
+                    vm.basicData.tbl_class   = 'tbl_type ver5'; /* performanc 테이블 class */
+                    vm.basicData.chart_size  = '960'; /* performanc 차트 사이즈 */
+                    vm.contentClass = '';
+                }
+                else if(
+                        vm.$route.query.jisu_cd  
+                    &&  vm.$route.query.large_type  
+                    &&  vm.$route.query.market_id  
+                ) {
+                    vm.basicData.jisu_cd      =   vm.$route.query.jisu_cd;
+                    vm.basicData.large_type   =   vm.$route.query.large_type;
+                    vm.basicData.market_id    =   vm.$route.query.market_id;
+                    vm.basicData.perf_class   = 'perf_chart_w'; /* performanc 그래프 class */
+                    vm.basicData.tbl_class   = 'tbl_type ver4'; /* performanc 테이블 class */
+                    vm.basicData.chart_size  = '1180'; /* performanc 차트 사이즈 */
+                    vm.contentClass = 'content_margin';
+                    
+                }
+
+
+                if(     vm.basicData
+                    &&  vm.basicData.jisu_cd
+                    &&  vm.basicData.large_type
+                    &&  vm.basicData.market_id
+                ) {
+                    vm.getIndexBaseInfo();
+                    vm.Indexchart();
+                }
+
+                if (event == true) {
+                    // 분석정보 실행
+                    vm.$EventBus.$emit('changeIndexAnalysisInfo');
+                    // 분석정보 실행
+                    vm.$EventBus.$emit('changeIndexBasicInfo');
+                }
+            });   
+            
+            
+        },
+
+        fn_close : function() {
+            this.$emit( "fn_closePop", "close" );
+        },
+
         getIndexBaseInfo: function() {
             var vm = this;
             console.log("getIndexBaseInfo");
             
             axios.get(Config.base_url + "/user/index/getIndexBaseInfo", {
                     params: {
-                        jisu_cd : vm.$route.query.jisu_cd,
-                        market_id : vm.$route.query.market_id,
-                        large_type : vm.$route.query.large_type
+                        jisu_cd : vm.basicData.jisu_cd,
+                        market_id : vm.basicData.market_id,
+                        large_type : vm.basicData.large_type
                     }
             }).then(response => {
                 // console.log(response);
@@ -139,6 +225,7 @@ export default {
                     var items = response.data.results;
                     vm.results = items[0];
                     
+                    vm.openSubIndexInfoTab      =   true;
                     //this.list_cnt = this.results.length;
                 }
             });
@@ -152,9 +239,9 @@ export default {
             // 주기 디폴트
             if (!term) term = '1M';
 
-            var jisu_cd = this.$route.query.jisu_cd; 
-            var market_id = this.$route.query.market_id;
-            var large_type = this.$route.query.large_type;
+            var jisu_cd = this.basicData.jisu_cd; 
+            var market_id = this.basicData.market_id;
+            var large_type = this.basicData.large_type;
 
             // Set a callback to run when the Google Visualization API is loaded.
             google.charts.setOnLoadCallback(drawChart(jisu_cd, market_id, large_type, term));

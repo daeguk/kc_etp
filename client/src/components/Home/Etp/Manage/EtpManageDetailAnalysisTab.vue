@@ -9,7 +9,7 @@
                 <div class="graph_02_w">
                     <div
                         id="etp_comboChart_div"
-                        class="perf_chart_w2"
+                        :class="perf_class"
                     ></div>
                 </div>
                 <!-- performance chart 정보 END -->
@@ -17,7 +17,7 @@
                     <v-card flat>
 
                 <!-- performance table 정보 START -->
-                        <table v-bind:id="tableName" class="tbl_type ver3" style="width:1348px">
+                        <table v-bind:id="tableName" :class="tbl_class"  style="width:1348px">
                             <colgroup>
                                 <col width="314px">                             <!-- 한글 종목명 -->
                                 <col width="122px">                             <!-- 1-Week -->
@@ -235,7 +235,10 @@ export default {
             arrEtpPerformance   :   [],
             arrIndexPerformance :   [],
             performChartColors  :   ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde'],
-            performChartImages  :   ['perform_bar01.png', 'perform_bar02.png', 'perform_bar03.png', 'perform_bar04.png', 'perform_bar05.png']
+            performChartImages  :   ['perform_bar01.png', 'perform_bar02.png', 'perform_bar03.png', 'perform_bar04.png', 'perform_bar05.png'],
+            perf_class : 'perf_chart_w',
+            tbl_class : 'tbl_type ver4',
+            chart_size : '1180'
         };
     },
     mixins : [ index_common ],
@@ -274,7 +277,10 @@ export default {
             ) {
                 vm.basicData.f16012         =   vm.paramData.f16012;            /* 국제표준코드 */
                 vm.basicData.f16257         =   vm.paramData.f16257;            /* ETP기초지수코드 */
-                vm.basicData.f34239         =   vm.paramData.f34239;            /* ETP기초지수MID */
+                vm.basicData.f34239         =   vm.paramData.f34239;            /* ETP기초지수MID */      
+                vm.perf_class = vm.paramData.perf_class;
+                vm.tbl_class = vm.paramData.tbl_class;
+                vm.chart_size = vm.paramData.chart_size;          
             }
             else if(
                     vm.$route.query.f16012
@@ -283,8 +289,11 @@ export default {
             ) {
                 vm.basicData.f16012         =   vm.$route.query.f16012;         /* 국제표준코드 */
                 vm.basicData.f16257         =   vm.$route.query.f16257;         /* ETP기초지수코드 */
-                vm.basicData.f34239         =   vm.$route.query.f34239;         /* ETP기초지수MID */
+                vm.basicData.f34239         =   vm.$route.query.f34239;         /* ETP기초지수MID */                
             }
+            
+
+            
 
             console.log( "####### vm.basicData #######" );
             console.log( vm.basicData );
@@ -520,20 +529,6 @@ export default {
             var arrToData;
 
 
-            // Set chart options
-            var options = {
-                title: " ",
-                align: "start",
-                width: $(window).width()*0.58,
-                height: 300,
-                colors: vm.performChartColors,
-                vAxis: { title: "" },
-                hAxis: { title: "" },
-                seriesType: "bars",
-                series: "",
-                legend: { position: "bottom" }
-            };
-
             // Load the Visualization API and the corechart package.
             google.charts.load("current", { packages: ["corechart"] });
 
@@ -556,7 +551,7 @@ export default {
                 );
 
                 function drawChart( basicData, arrEtpPerformance, arrIndexPerformance ) {
-
+                    
                     axios.post(Config.base_url + "/user/etp/getEtpPerformance", {
 
                         data: {
@@ -617,7 +612,7 @@ export default {
 
                             // Set chart options
                             var options = {'title':'',
-                                        'width':'1180',
+                                        'width':vm.chart_size,
                                         'height':'180',
                                         'colors': ['#1e99e8', '#48485e', '#ff4366', '#727281', '#b9e0f7'],                
                                         'hAxis':{
