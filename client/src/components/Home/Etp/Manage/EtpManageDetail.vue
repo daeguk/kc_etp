@@ -1,8 +1,8 @@
 <template>
 
     <v-container >
-        <v-layout >
-            <v-flex>
+        <v-layout row wrap>
+            <v-flex grow>
 
                 <v-card flat ma-3>
 
@@ -107,9 +107,9 @@
                     </div>
                 </v-card>
             </v-flex>
-            <v-flex class="conWidth_right">
-                <!--ComFavorItemSub    @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub-->
-            </v-flex>
+            <!--v-flex class="conWidth_right">
+                <ComFavorItemSub    @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
+            </v-flex-->
         </v-layout>
     </v-container>
 </template>
@@ -129,10 +129,71 @@ export default {
     },
     data() {
         return {
+            text: "전종목",
+            text2: "",
+            dialog: false,
+            dialog2: false,
+            drawer: true,
+            search: "",
+            tab: null,
+            tab2: null,
             tab5: null,
+            items1: ["전체", "시장대표"],
             items5: ["기본정보", "분석정보"],
-
-
+            items: [
+                { title: "Home", icon: "dashboard" },
+                { title: "About", icon: "question_answer" }
+            ],
+            items2: [
+                {
+                    title: "KODEX 200",
+                    subtitle: "069500"
+                },
+                {
+                    title: "KODEX 삼성그룹",
+                    subtitle: "102780"
+                },
+                {
+                    title: "KODEX 레버러지",
+                    subtitle: "122630"
+                },
+                {
+                    title: "KODEX 코스닥150 레버러지",
+                    subtitle: "122630"
+                }
+            ],
+            items3: [
+                {
+                    title: "KODEX 200",
+                    subtitle: "069500"
+                },
+                {
+                    title: "KODEX 삼성그룹",
+                    subtitle: "102780"
+                },
+                {
+                    title: "KODEX 레버러지",
+                    subtitle: "122630"
+                }
+            ],
+            items4: [],
+            mini: false,
+            right: null,
+            rowsPerPageItems: [10, 20, 30, 50],
+            headers: [
+                {
+                    text: "Code",
+                    align: "left",
+                    value: "name"
+                },
+                { text: "name", value: "name" },
+                { text: "BasePrc", value: "BasePrc", align: "right" },
+                { text: "Shrs", value: "Shrs", align: "right" },
+                { text: "Float rto", value: "FloatRto", align: "right" },
+                { text: "Ceiling rto", value: "CeilingRto", align: "right" },
+                { text: "Factor rto", value: "FactorRto", align: "right" }
+            ],
+            desserts: [],
             toggle_one: '1M',
 
             basicData           :   {},
