@@ -661,13 +661,16 @@ var getEtpOperPdfByRate = function(req, res) {
                             for( var i=0; i < 5; i++ ) {
                                 var temp = {};
 
-                                temp[ "now" + i ]   =
-                                        new Date().getFullYear() 
-                                    +   "." 
-                                    +   (parseInt(new Date().getMonth()) + 1) 
-                                    +   "." 
-                                    +   new Date().getDate() - i
-                                ;
+                                var nowDate     =   new Date();
+                                var tempDate    =   new Date(       nowDate.getFullYear()
+                                                                ,   nowDate.getMonth()
+                                                                ,   ( nowDate.getDate() - i ) 
+                                                );
+
+                                temp.name       =   "rate_day" + i;
+                                temp.date       =       ( parseInt( tempDate.getMonth() ) + 1 )
+                                                    +   "/" 
+                                                    +   tempDate.getDate();
 
                                 resultMsg.rateDateList.push( temp );
                             }

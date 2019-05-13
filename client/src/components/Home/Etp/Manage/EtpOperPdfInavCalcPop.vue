@@ -97,14 +97,14 @@
             </h4>
             <table id class="tbl_type" style="width:100%">
                 <colgroup>
-                    <col width="7%">
+                    <col width="9%">
                     <col width="18%">
                     <col width="12%">
                     <col width="15%">
                     <col width="10%">
                     <col width="10%">
                     <col width="10%">
-                    <col width="18%">
+                    <col width="16%">
                 </colgroup>
                 <thead>
                     <tr>

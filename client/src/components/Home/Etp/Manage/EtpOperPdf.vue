@@ -258,6 +258,23 @@ export default {
                         tblPdfList.draw();
 
                         vm.indexBasic   =   dataList[0];
+
+                        if( vm.stateInfo.pageState == "pdfByRate" ) {
+
+                            var rateDateList    =   response.data.rateDateList;
+
+                            tblPdfList.columns().every(function (index) {
+
+                                var same = rateDateList.filter(function(o, p) {
+                                    return vm.arrShowColumn[index].name === o.name;
+                                });                                
+
+                                if( same && same.length == 1 ) {
+                                    $( tblPdfList.column( index ).header() ).html( vm.arrShowColumn[index].title + "<br>" + same[0].date );
+                                }
+
+                            });
+                        }
                     }
                 }
             });
@@ -352,6 +369,8 @@ export default {
             tableObj.columnDefs = vm.arrShowColumnDef;
 
             tblPdfList = $("#tblPdfList").DataTable(tableObj);
+
+
 
             // 테이블별 이벤트
             $("#tblPdfList tbody").on( "click", "button[id=btnInav],button[id=btnEtpInfo],button[id=btnPdf]", function() {
