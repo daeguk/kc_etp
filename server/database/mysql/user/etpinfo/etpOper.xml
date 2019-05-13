@@ -31,7 +31,7 @@
                             ,   3434343434                                      AS  eval_money      /* 평가금액 */
                             ,   85.64                                           AS  rate            /* 비중 */
 
-                            ,   '11177'                                         AS  f16013
+                            ,   '62031'                                         AS  f16013          /* ETP기초지수코드  */
                             ,   'M168'                                          AS  market_id
 
                     FROM  dual
@@ -47,7 +47,7 @@
                             ,   787878                                          AS  eval_money      /* 평가금액 */
                             ,   11.22                                           AS  rate            /* 비중 */
 
-                            ,   '11178'                                         AS  f16013
+                            ,   '62031'                                         AS  f16013          /* ETP기초지수코드  */
                             ,   'M168'                                          AS  market_id                            
 
                     FROM  dual
@@ -63,7 +63,7 @@
                             ,   888888                                          AS  eval_money      /* 평가금액 */
                             ,   10.44                                           AS  rate            /* 비중 */
 
-                            ,   '11178'                                         AS  f16013
+                            ,   '11178'                                         AS  f16013          /* ETP기초지수코드  */
                             ,   'M168'                                          AS  market_id                            
 
                     FROM  dual                    
@@ -72,15 +72,28 @@
 
          INNER  JOIN    td_index_basic
             ON  (
-                            base.f16013     =   td_index_basic.f16013
+                            base.f16013     =   td_index_basic.f16013           /* ETP기초지수코드  */
                     AND     base.market_id  =   td_index_basic.market_id
                 )
 
          WHERE  1 = 1
     ]]>
         <if test= 'search_date != null  and  search_date != "" ' >
-           AND  date    =   #{search_date}
+           AND  base.date    =   #{search_date}
         </if>
+
+        <if test= 'search_nm != null  and  search_nm != "" ' >
+           AND  (
+                        td_index_basic.f16002         LIKE    CONCAT( '%', #{search_nm}, '%' )
+                    OR  td_index_basic.f16013         LIKE    CONCAT( '%', #{search_nm}, '%' )
+                )
+        </if>
+
+        <if test= '( f16257 != null  and  f16257 != "" ) and ( f34239 != null  and  f34239 != "" )' >
+           AND  td_index_basic.f16013       =       #{f16257}                   /* ETP기초지수코드  */
+           AND  td_index_basic.f34239       =       #{f34239}                   /* ETP기초지수MID  */
+        </if>
+
     </select>
 
     <!--
@@ -122,7 +135,7 @@
                             ,   33.11                                           AS  rate_day3       /* 3일전 */
                             ,   44.11                                           AS  rate_day4       /* 4일전 */
 
-                            ,   '11177'                                         AS  f16013
+                            ,   '62031'                                         AS  f16013          /* ETP기초지수코드  */
                             ,   'M168'                                          AS  market_id                            
 
                     FROM  dual
@@ -144,7 +157,7 @@
                             ,   41.22                                           AS  rate_day3       /* 3일전 */
                             ,   51.22                                           AS  rate_day4       /* 4일전 */
 
-                            ,   '11178'                                         AS  f16013
+                            ,   '62031'                                         AS  f16013          /* ETP기초지수코드  */
                             ,   'M168'                                          AS  market_id
 
                     FROM  dual
@@ -166,7 +179,7 @@
                             ,   43.33                                           AS  rate_day3       /* 3일전 */
                             ,   53.33                                           AS  rate_day4       /* 4일전 */
 
-                            ,   '11179'                                         AS  f16013
+                            ,   '11179'                                         AS  f16013          /* ETP기초지수코드  */
                             ,   'M168'                                          AS  market_id
 
                     FROM  dual                    
@@ -175,15 +188,28 @@
 
          INNER  JOIN    td_index_basic
             ON  (
-                            base.f16013     =   td_index_basic.f16013
+                            base.f16013     =   td_index_basic.f16013           /* ETP기초지수코드  */
                     AND     base.market_id  =   td_index_basic.market_id
                 )
 
          WHERE  1 = 1
     ]]>
         <if test= 'search_date != null  and  search_date != "" ' >
-           AND  date    =   #{search_date}
-        </if>    
+           AND  base.date       =   #{search_date}
+        </if>
+
+        <if test= 'search_nm != null  and  search_nm != "" ' >
+           AND  (
+                        td_index_basic.f16002         LIKE    CONCAT( '%', #{search_nm}, '%' )
+                    OR  td_index_basic.f16013         LIKE    CONCAT( '%', #{search_nm}, '%' )
+                )
+        </if>
+
+        <if test= '( f16257 != null  and  f16257 != "" ) and ( f34239 != null  and  f34239 != "" )' >
+           AND  td_index_basic.f16013       =       #{f16257}                   /* ETP기초지수코드  */
+           AND  td_index_basic.f34239       =       #{f34239}                   /* ETP기초지수MID  */
+        </if>
+
     </select>    
 
     <!--
