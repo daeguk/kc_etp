@@ -22,6 +22,7 @@ module.exports = {
         { file: './user/etp/etpApplyList', path: '/user/etp/getEtpApplyIndexCnt', method: 'getEtpApplyIndexCnt', session: 'uncheck', type: 'get' },
         { file: './user/etp/etpApplyList', path: '/user/etp/getEtpApplyCodeCnt', method: 'getEtpApplyCodeCnt', session: 'uncheck', type: 'get' },
         { file: './user/etp/etpApplyList', path: '/user/etp/getEtpApplyInavCnt', method: 'getEtpApplyInavCnt', session: 'uncheck', type: 'get' },
+        { file: './user/etp/etpApplyList', path: '/user/etp/getCompContactList', method: 'getCompContactList', session: 'uncheck', type: 'get' },
         
         { file: './user/etp/etpregister', path: '/user/etp/getEtpRegisterView', method: 'getEtpRegisterView', session: 'check', type: 'get' },
         { file: './user/etp/etpregister', path: '/user/etp/insertEtpRegister', method: 'insertEtpRegister', session: 'check', type: 'post' },
