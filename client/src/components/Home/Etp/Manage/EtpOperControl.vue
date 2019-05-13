@@ -153,6 +153,7 @@ export default {
             showEtpOperIndexErrorDialog : false,
             showEtpOperPdfEmergencyModifyPop : false,
             showEtpOperPdfInavCalcPop : false,
+            showFaver : false,
 
             showEtpOerInfo : 0,
             paramData : [],

@@ -259,6 +259,7 @@ export default {
 
                         vm.indexBasic   =   dataList[0];
 
+                        /* 비중변경 현황인 경우 비중관련 컬럼에 날짜 정보를 설정한다. */
                         if( vm.stateInfo.pageState == "pdfByRate" ) {
 
                             var rateDateList    =   response.data.rateDateList;

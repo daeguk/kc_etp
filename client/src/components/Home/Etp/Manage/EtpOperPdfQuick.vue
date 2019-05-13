@@ -251,7 +251,15 @@ export default {
         fn_showDetailPdf : function( gubun ) {
             var vm = this;
 
-            vm.$emit( "fn_showDetailPdf", gubun, {} );
+            /* PDF 긴급반영인 경우 */
+            if( gubun == 6 ) {
+                vm.$emit( "fn_showDetailPdf", gubun, vm.indexBasic );
+            }
+            /* iNAV 계산기인 경우 */
+            else if( gubun == 7 ) {
+                vm.$emit( "fn_showDetailPdf", gubun, vm.indexBasic );
+            }
+            
         }
     }
 };
