@@ -112,6 +112,7 @@ button:focus { outline: none; }
 .con_wrap{width:1400px; margin:0 auto;}
 .con_wrap .conWidth_left{width:1080px; float: left;}
 .con_wrap .conWidth_right{width:310px; padding-left:10px; float: left;}
+.con_wrap .conWidth_100{width:1400px !important;}
 
 
 /*테이블안 체크박스*/
@@ -270,7 +271,7 @@ h3.subtit p span.text_result{width:35px; text-align: right;padding-left:0px; dis
 .graph_02_w .graph_box{width:400px;padding:0 8px;  float: left; display: block}
 .perf_chart_w{ padding-left:225px;}
 .lineh{line-height:16px !important;}
-.perf_chart_w2{ padding-left:125px;}
+.perf_chart_w2{ padding-left:65px;}
 
 
 .indexlist_ww .flex{padding:0 !important;}
