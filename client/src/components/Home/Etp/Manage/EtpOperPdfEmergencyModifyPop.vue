@@ -446,6 +446,14 @@ export default {
 
             vm.$emit( "fn_closePop", "close" );
         }
-    }
+    },
+
+    mounted: function() {
+
+        var vm = this;
+
+        console.log( ">>>>>> EtpOperPdfEmergencyModifyPop.vue ==> " );
+        console.log( vm.paramData );
+    },
 };
 </script>

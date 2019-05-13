@@ -58,6 +58,7 @@
 
                     <!-- [PDF 관리] Quick 메뉴 정보 -->
                     <EtpOperPdfQuick
+                        :paramData="paramData"
                         :indexBasic = "indexBasic"
                         @showDetail="showDetail"
                         @showMessageBox="showMessageBox"
@@ -112,6 +113,9 @@ export default {
     },
     mounted: function() {
         var vm = this;
+
+console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
+console.log( vm.paramData );
 
         if( vm.paramData ) {
 
