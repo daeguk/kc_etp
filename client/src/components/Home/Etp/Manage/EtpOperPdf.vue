@@ -6,12 +6,13 @@
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
                             <v-text-field
-                                v-model="search"
-                                :label="searchParam.default_label"
+                                v-model="searchParam.show_search_nm"
+                                :label="searchParam.show_search_nm"
                                 class="pdf_search"
                                 append-icon="search"
                                 single-line
                                 hide-details
+                                @keyup.enter="searchParam.search_nm = ''; fn_getEtpOerPdf()"
                             ></v-text-field>
                             <p class="pdf_calendar">
                                 <v-menu
@@ -167,9 +168,10 @@ export default {
             arrShowColumn: [],
             arrShowColumnDef: [],
             searchParam : {
-                default_label : "TIGER 코스닥 150 레버러지 (229200)",
                 show_date : "",
                 search_date : "",
+                show_search_nm : "",
+                search_nm : ""
             }
         };
     },
@@ -187,7 +189,8 @@ export default {
             if(     vm.paramData.index_nm
                 &&  vm.paramData.f16257
             ) {
-                vm.searchParam.default_label    =   vm.paramData.index_nm + "(" + vm.paramData.f16257 + ")";
+                vm.searchParam.show_search_nm   =   vm.paramData.index_nm + "(" + vm.paramData.f16257 + ")";
+                vm.searchParam.search_nm        =   vm.paramData.index_nm;
             }
         }
         
@@ -236,6 +239,10 @@ export default {
 
             vm.searchParam.search_date  =   vm.searchParam.show_date.replace(/-/g,"");
             vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
+
+            if( !vm.searchParam.search_nm ) {
+                vm.searchParam.search_nm   =   vm.searchParam.show_search_nm;
+            }
 
             axios.post( url, {
                 data: vm.searchParam
