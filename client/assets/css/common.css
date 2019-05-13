@@ -12,7 +12,8 @@
 /*.html{ width:1400px; margin:0 auto !important;overflow-x: hidden !important;}*/
 body{background: #f5f5f5}
 .v-content__wrap .v-tabs__wrapper{width:1400px; margin:0 auto;}
-.content_margin{width:1400px; margin:10px auto !important;overflow-x: hidden !important;}
+.v-content__wrap .conWidth_right .v-tabs__wrapper{width:230px !important; }
+.content_margin{width:1400px; margin:10px auto !important; overflow-x: hidden !important;}
 .v-content__wrap{background: #f5f5f5 !important;}
 .theme--light.application{background:#f5f5f5 !important;color:rgba(0,0,0,.87)}
 html{font-family: 'Noto Sans', sans-serif,'Noto Sans'  !important; }
@@ -113,7 +114,7 @@ button:focus { outline: none; }
 .con_wrap{width:1400px; margin:0 auto;}
 .con_wrap .conWidth_left{width:1080px !important; float: left;}
 .con_wrap .conWidth_right{width:310px !important; padding-left:10px; float: left;}
-.con_wrap .conWidth_100{width:1400px !important;}
+.con_wrap .conWidth_100{width:1400px !important; margin:0 auto;}
 
 
 /*테이블안 체크박스*/
@@ -327,6 +328,10 @@ h3.subtit p span.text_result{width:35px; text-align: right;padding-left:0px; dis
 
 .indexinfo_table01 table.v-table tbody td:first-child{padding:0px !important}
 .indexinfo_table01 img{ padding-right:0px; height:100%;}
+
+
+
+.indexinfo_today .layout{display:unset !important;}
 
 .index3pop2_con .theme--light.v-list{background: #fff;}
 .index3pop2_con .v-list__tile__title{width:25%; color:#717182; font-weight: 600;}
