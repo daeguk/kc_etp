@@ -208,7 +208,7 @@ export default {
             items: ["ETF", "ETN", "INDEX"],
             jongMokDialog: false,
             importance_colors: ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde', '#B6B8BA', '#7E8083', '#FBB040', '#F58025', '#EDED8A'],
-            dialog2: false,
+            dialog: false,
             results: [],
             importance_cnt: 0,
             search: "",
