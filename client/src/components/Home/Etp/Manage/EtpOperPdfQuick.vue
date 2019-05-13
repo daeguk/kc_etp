@@ -57,174 +57,30 @@
                                 <v-list>
                                     <!---pdf긴급반영 팝업-->
 
-                                    <PdfModifyPopStep></PdfModifyPopStep>
+                                    <v-list-tile class="border_b ver2" @click="fn_showDetailPdf(6)">
+                                        <v-list-tile-avatar>
+                                            <v-icon value="긴급반영">flash_on</v-icon>
+                                        </v-list-tile-avatar>
+                                        <v-list-tile-content class="rm_con_h">
+                                            <v-list-tile-title>PDF 긴급반영</v-list-tile-title>
+                                            <v-list-tile-sub-title>종목 추가, 수량 변경 요청</v-list-tile-sub-title>
+                                        </v-list-tile-content>
+                                    </v-list-tile>
 
                                     <!---pdf긴급반영 팝업 팝업 end-->
+                                    
                                     <!---iNAV 계산기 팝업---->
-                                    <v-dialog v-model="dialog6" persistent max-width="750">
-                                        <template v-slot:activator="{ on }">
-                                            <v-list-tile class="border_b ver2" v-on="on">
-                                                <v-list-tile-avatar>
-                                                    <v-icon value="계산기" icon>exposure</v-icon>
-                                                </v-list-tile-avatar>
-                                                <v-list-tile-content class="rm_con_h">
-                                                    <v-list-tile-title>iNAV 계산기</v-list-tile-title>
-                                                    <v-list-tile-sub-title>플랫폼 상에서 iNAV계산</v-list-tile-sub-title>
-                                                </v-list-tile-content>
-                                            </v-list-tile>
-                                        </template>
-                                        <v-card>
-                                            <h5>
-                                                <v-card-title ma-0>
-                                                    ETF iNAV Realtime Calculator
-                                                    <v-spacer></v-spacer>
-                                                    <v-btn icon dark @click="dialog6 = false">
-                                                        <v-icon>close</v-icon>
-                                                    </v-btn>
-                                                </v-card-title>
-                                            </h5>
-                                            <div class="ETPInavpop1">
-                                                <v-list subheader>
-                                                    <h6>
-                                                        KODEX200
-                                                        <span>069500</span>
-                                                    </h6>
-                                                    <v-list-tile>
-                                                        <v-list-tile-title
-                                                            class="sumu_text"
-                                                        >Sumulation Mode</v-list-tile-title>
-                                                        <v-list-tile-content class="sumul_btn_w">
-                                                            <ul>
-                                                                <li>
-                                                                    <v-switch
-                                                                        v-model="switch1"
-                                                                        color="primary"
-                                                                    ></v-switch>
-                                                                </li>
-                                                                <li>
-                                                                    <v-btn small flat icon>
-                                                                        <v-icon
-                                                                            class="btn_on"
-                                                                        >play_circle_outline</v-icon>
-                                                                    </v-btn>
-                                                                </li>
-                                                                <li>
-                                                                    <v-btn small flat icon>
-                                                                        <v-icon>refresh</v-icon>
-                                                                    </v-btn>
-                                                                </li>
-                                                            </ul>
-                                                        </v-list-tile-content>
-                                                    </v-list-tile>
-                                                </v-list>
-                                            </div>
-                                            <div class="sumul_w">
-                                                <v-card flat class="sumul_card_w">
-                                                    <v-layout>
-                                                        <v-flex xs12>
-                                                            <v-layout>
-                                                                <v-flex xs6 class="sumul_card_line">
-                                                                    <ul>
-                                                                        <li class="list_tit">산출방식</li>
-                                                                        <li>PDF</li>
-                                                                    </ul>
-                                                                    <ul>
-                                                                        <li class="list_tit">전일NAV</li>
-                                                                        <li>12430.23</li>
-                                                                    </ul>
-                                                                    <ul>
-                                                                        <li class="list_tit">
-                                                                            <b>iNAV</b>
-                                                                            <br>
-                                                                            <span>외부공표</span>
-                                                                        </li>
-                                                                        <li class="text_red">
-                                                                            <b>12435.13</b>
-                                                                            <br>
-                                                                            <span
-                                                                                class="float_r"
-                                                                            >0.56%</span>
-                                                                        </li>
-                                                                    </ul>
-                                                                </v-flex>
-                                                                <v-flex xs6>
-                                                                    <ul>
-                                                                        <li class="list_tit">CU시가총액</li>
-                                                                        <li>1235879665654411111</li>
-                                                                    </ul>
-                                                                    <ul>
-                                                                        <li class="list_tit">CU당 주식수</li>
-                                                                        <li>4000</li>
-                                                                    </ul>
-                                                                    <ul>
-                                                                        <li class="list_tit">
-                                                                            <b>iNAV 계산결과</b>
-                                                                        </li>
-                                                                        <li class="text_red">
-                                                                            <b>12435.13</b>
-                                                                            <br>
-                                                                            <span
-                                                                                class="float_r"
-                                                                            >0.56%</span>
-                                                                        </li>
-                                                                    </ul>
-                                                                </v-flex>
-                                                            </v-layout>
-                                                        </v-flex>
-                                                    </v-layout>
-                                                </v-card>
-                                            </div>
-                                            <!--pdf table-->
-                                            <h4>
-                                                PDF
-                                                <span>2018.11.10</span>
-                                            </h4>
-                                            <table id class="tbl_type" style="width:100%">
-                                                <colgroup>
-                                                    <col width="7%">
-                                                    <col width="18%">
-                                                    <col width="12%">
-                                                    <col width="15%">
-                                                    <col width="10%">
-                                                    <col width="10%">
-                                                    <col width="10%">
-                                                    <col width="18%">
-                                                </colgroup>
-                                                <thead>
-                                                    <tr>
-                                                        <th class="txt_left">분류</th>
-                                                        <th class="txt_left">코드</th>
-                                                        <th>종목</th>
-                                                        <th class="txt_right">CU수량</th>
-                                                        <th class="txt_right">비중</th>
-                                                        <th class="txt_right">현재가</th>
-                                                        <th class="txt_right">기준가</th>
-                                                        <th class="txt_right">CU시가총액</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>예금</td>
-                                                        <td class="txt_left">KRD0125422222</td>
-                                                        <td>원화현금</td>
-                                                        <td>
-                                                            <input type="text" class="txt_right">
-                                                        </td>
-                                                        <td class="txt_right">3.52</td>
-                                                        <td class="txt_right">3.32</td>
-                                                        <td class="txt_right">
-                                                            220.22
-                                                            <br>
-                                                            <span class="text_S text_red">0.98%</span>
-                                                        </td>
-                                                        <td class="txt_right">2565751</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                            <!--pdf table end-->
-                                            <v-card class="pop_bot_h"></v-card>
-                                        </v-card>
-                                    </v-dialog>
+                                    <v-list-tile class="border_b ver2" @click="fn_showDetailPdf(7)">
+                                        <v-list-tile-avatar>
+                                            <v-icon value="계산기" icon>exposure</v-icon>
+                                        </v-list-tile-avatar>
+                                        <v-list-tile-content class="rm_con_h">
+                                            <v-list-tile-title>iNAV 계산기</v-list-tile-title>
+                                            <v-list-tile-sub-title>플랫폼 상에서 iNAV계산</v-list-tile-sub-title>
+                                        </v-list-tile-content>
+                                    </v-list-tile>
+
+                                    
                                     <!---iNAV 계산기 팝업 end---->
 
                                     <v-list-tile
@@ -390,13 +246,9 @@
 
 <script>
 //import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
-import PdfModifyPopStep from "./PdfModifyPopStep.vue";
 
 export default {
     props : [ "indexBasic" ],
-    components: {
-        //indexDetailrtmenupop: indexDetailrtmenupop
-    },
     data() {
         return {
             text: "전종목",
@@ -474,7 +326,7 @@ export default {
         };
     },
     components: {
-        PdfModifyPopStep: PdfModifyPopStep
+
     },
     mounted: function() {},
     created: function() {},
@@ -514,7 +366,13 @@ export default {
             paramData.togglePdfByRate    =   vm.togglePdfByRate;            
 
             vm.$emit( "fn_setEtpOperPdfByRate", paramData );
-        }        
+        },
+
+        fn_showDetailPdf : function( gubun ) {
+            var vm = this;
+
+            vm.$emit( "fn_showDetailPdf", gubun, {} );
+        }
     }
 };
 </script>

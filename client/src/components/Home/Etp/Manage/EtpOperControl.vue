@@ -1,6 +1,7 @@
 <template>
-    <v-layout row wrap>
-        <v-flex xs12>
+    <v-layout row wrap class="content_margin con_wrap">
+
+        <v-flex grow :class="className">
 
             <!-- ETP 운용정보 -->
             <EtpOperInfo    v-if="showEtpOerInfo == 0" 
@@ -25,7 +26,8 @@
                             :paramData="paramData"
                             @showDetail="showDetail" 
                             @showMessageBox="showMessageBox"
-                            @fn_showDetailIndex="fn_showDetailIndex">
+                            @fn_showDetailIndex="fn_showDetailIndex"
+                            @fn_showDetailPdf="fn_showDetailPdf">
             </EtpOperPdf>
             
 
@@ -60,7 +62,7 @@
             <EtpManageDetail    v-if="showEtpDetailDialog" 
             
                                 :paramData="paramData" 
-                                :showEtpManageDetailDialog="showEtpDetailDialog">
+                                :showEtpManageDetailDialog="showEtpManageDetailDialog">
             </EtpManageDetail>            
 
             <!-- 지수 조치현황 -->
@@ -81,20 +83,51 @@
                                     @fn_closePop="fn_close" >
             </EtpOperIndexErrorPop>
 
+
+            <!-- PDF 긴급반영 -->
+            <EtpOperPdfEmergencyModifyPop   v-if="showEtpOperPdfEmergencyModifyPop"
+
+                                            :paramData="paramData" 
+                                            :showDialog="showEtpOperPdfEmergencyModifyPop" 
+                                
+                                            @fn_closePop="fn_close" >
+            </EtpOperPdfEmergencyModifyPop>
+
+            <!-- iNAV 계산기 팝업 -->
+            <EtpOperPdfInavCalcPop          v-if="showEtpOperPdfInavCalcPop"
+
+                                            :paramData="paramData" 
+                                            :showDialog="showEtpOperPdfInavCalcPop" 
+                                
+                                            @fn_closePop="fn_close" >
+            </EtpOperPdfInavCalcPop>
+
         </v-flex>
+
+        <v-flex :class="FaverClassName">
+            <ComFavorItemSub        v-if="showFaver"   
+
+                                    @showDetail="showDetail" 
+                                    @showMessageBox="showMessageBox">
+            </ComFavorItemSub>
+        </v-flex>
+
     </v-layout> 
 </template>
 
 <script>
 
-import $ from "jquery";
-import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
-import select from "datatables.net-select";
-import _ from "lodash";
-import Config from "@/js/config.js";
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
-import ComIndexFixPopup from "@/components/common/popup/ComIndexFixPopup.vue";
+import $                            from "jquery";
+import dt                           from "datatables.net";
+import buttons                      from "datatables.net-buttons";
+import select                       from "datatables.net-select";
+import _                            from "lodash";
+import Config                       from "@/js/config.js";
+
+
+import ConfirmDialog                from "@/components/common/ConfirmDialog.vue";
+import ComIndexFixPopup             from "@/components/common/popup/ComIndexFixPopup.vue";
+import ComFavorItemSub              from "@/components/common/control/ComFavorItemSub"; 
 
 
 import IndexDetailDialog            from "@/components/Home/Index/Manage/IndexDetailDialog.vue";            /* 지수 상세정보 */
@@ -105,6 +138,8 @@ import EtpOperIndexErrorPop         from "@/components/Home/Etp/Manage/EtpOperIn
 import EtpOperInfo                  from "@/components/Home/Etp/Manage/EtpOperInfo.vue";                    /* ETP 운용정보 */
 import EtpOperIndex                 from "@/components/Home/Etp/Manage/EtpOperIndex.vue";                   /* 지수관리 */
 import EtpOperPdf                   from "@/components/Home/Etp/Manage/EtpOperPdf.vue";                     /* PDF 관리 */
+import EtpOperPdfEmergencyModifyPop from "@/components/Home/Etp/Manage/EtpOperPdfEmergencyModifyPop.vue";   /* PDF 긴급반영 팝업 */
+import EtpOperPdfInavCalcPop        from "@/components/Home/Etp/Manage/EtpOperPdfInavCalcPop.vue";          /* iNAV 계산기 팝업 */
 
 export default {
     props: ["activeTab"],
@@ -112,45 +147,63 @@ export default {
         return {
             showIndexDetailDialog : false,
             showEtpDetailDialog : false,
+            showEtpManageDetailDialog : false,
             showEtpOperIndexDetailListDialog : false,
             showEtpOperIndexFixDialog: false,
             showEtpOperIndexErrorDialog : false,
+            showEtpOperPdfEmergencyModifyPop : false,
+            showEtpOperPdfInavCalcPop : false,
 
             showEtpOerInfo : 0,
             paramData : [],
+            className: '',
+            FaverClassName: '',            
     	};
     },    
 
     components: {
         
-        IndexDetailDialog           :   IndexDetailDialog,      /* 인덱스 상세정보 */
-        EtpManageDetail             :   EtpManageDetail,        /* ETP 상세정보 */
-        EtpOperIndexDetailListPop   :   EtpOperIndexDetailListPop,
-        ComIndexFixPopup            :   ComIndexFixPopup,
-        EtpOperIndexErrorPop        :   EtpOperIndexErrorPop,
+        IndexDetailDialog               :   IndexDetailDialog,                  /* 인덱스 상세정보 */
+        EtpManageDetail                 :   EtpManageDetail,                    /* ETP 상세정보 */
+        EtpOperIndexDetailListPop       :   EtpOperIndexDetailListPop,          /* 인덱스 상세 목록 정보 */
+        ComIndexFixPopup                :   ComIndexFixPopup,                   /* 지수조치현황 */
+        EtpOperIndexErrorPop            :   EtpOperIndexErrorPop,               /* 지수오류내역 */
+        EtpOperPdfEmergencyModifyPop    :   EtpOperPdfEmergencyModifyPop,       /* PDF 긴급반영 팝업 */
+        EtpOperPdfInavCalcPop           :   EtpOperPdfInavCalcPop,              /* iNAV 계산기 팝업 */
 
-        EtpOperInfo :  EtpOperInfo,                 /* ETP 운용정보 */
-        EtpOperIndex :   EtpOperIndex,              /* 지수관리 */
-        EtpOperPdf :  EtpOperPdf,                   /* PDF 관리 */
+        EtpOperInfo                     :   EtpOperInfo,                        /* ETP 운용정보 */
+        EtpOperIndex                    :   EtpOperIndex,                       /* 지수관리 */
+        EtpOperPdf                      :   EtpOperPdf,                         /* PDF 관리 */
 
-        ConfirmDialog : ConfirmDialog,
+        ConfirmDialog                   :   ConfirmDialog,                      /* 공통 메시지창 */
+        ComFavorItemSub                 :   ComFavorItemSub,
     },
 
     mounted: function() {
         // 메시지 박스 참조
         this.$root.$confirm = this.$refs.confirm;
+
+        this.className = "conWidth_100";
     },
     created: function() {
         this.$EventBus.$on('showList', data => {
-            this.showEtpOerInfo = data.tab_id;
-            this.showEtpDetailDialog = false;
-            this.showIndexDetailDialog = false;
 
-            this.showEtpOperIndexDetailListDialog = false;
-            this.showEtpOperIndexFixDialog = false;
-            this.showEtpOperIndexErrorDialog = false;
+            this.className = "conWidth_100";
 
-            this.paramData = data.paramData;
+            this.showEtpOerInfo                     =   data.tab_id;
+            this.showEtpDetailDialog                =   false;
+            this.showEtpManageDetailDialog          =   false;
+            this.showIndexDetailDialog              =   false;
+
+            this.showEtpOperIndexDetailListDialog   =   false;
+            this.showEtpOperIndexFixDialog          =   false;
+            this.showEtpOperIndexErrorDialog        =   false;
+            this.showEtpOperPdfEmergencyModifyPop   =   false;
+            this.showEtpOperPdfInavCalcPop          =   false;
+
+            this.showFaver                          =   false;
+
+            this.paramData                          =   data.paramData;
         });
     },
     beforeUpdated: function() {
@@ -172,6 +225,7 @@ export default {
                 this.showEtpDetailDialog = true;
                 
                 this.showEtpOerInfo = -1;
+                this.showFaver = true;
                 
             } else if (gubun == '2') { 
                 this.paramData = paramData;
@@ -184,7 +238,11 @@ export default {
                 
                 this.showIndexDetailDialog = true;                
                 this.showEtpOerInfo = this.activeTab;
+                this.showFaver = false;
             } 
+
+            this.className = "conWidth_left";  
+            this.FaverClassName = "conWidth_right";
         },
         showMessageBox: function(title, msg, option, gubun) {
             this.$root.$confirm.open(title,msg, option, gubun);
@@ -279,6 +337,38 @@ export default {
             }
         },
 
+        fn_showDetailPdf(gubun, paramData) {
+
+            /* PDF 관리 -> PDF 긴급반영 팝업 */
+            if( gubun == '6' ) {
+                this.paramData = paramData;
+                this.showEtpOperPdfInavCalcPop = false;
+
+                if (this.showEtpOperPdfEmergencyModifyPop) {
+                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_close', paramData);
+
+                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfEmergencyModifyPop_call', paramData);
+                }
+                
+                this.showEtpOperPdfEmergencyModifyPop = true;
+                this.showEtpOerInfo = this.activeTab;
+            }
+            /* PDF 관리 -> iNAV 계산기 팝업 */
+            else if( gubun == '7' ) {
+                this.paramData = paramData;
+                this.showEtpOperPdfEmergencyModifyPop = false;
+
+                if (this.showEtpOperPdfInavCalcPop) {
+                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfEmergencyModifyPop_close', paramData);
+
+                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_call', paramData);
+                }
+                
+                this.showEtpOperPdfInavCalcPop = true;
+                this.showEtpOerInfo = this.activeTab;
+            }
+        },
+
         /*
          *  ETP 운용정보에서 이미지 버튼 클릭시 상세페이지로 이동시킨다.
          *  2019-05-03  bkLove(촤병국)
@@ -306,6 +396,8 @@ export default {
             vm.showEtpOperIndexDetailListDialog     =   false;
             vm.showEtpOperIndexFixDialog            =   false;
             vm.showEtpOperIndexErrorDialog          =   false;
+            vm.showEtpOperPdfEmergencyModifyPop     =   false;
+            vm.showEtpOperPdfInavCalcPop            =   false;
         }
     }
 }

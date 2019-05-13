@@ -169,7 +169,7 @@
                                             <v-list>
                                             <!---pdf긴급반영 팝업-->
                                           
-                                            <PdfModifyPopStep></PdfModifyPopStep>
+                                            <EtpOperPdfEmergencyModifyPop></EtpOperPdfEmergencyModifyPop>
                                             
                                             <!---pdf긴급반영 팝업 팝업 end-->
                                     <!---iNAV 계산기 팝업---->
@@ -424,11 +424,12 @@
 
 <script>
 //import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
-import PdfModifyPopStep from "./PdfModifyPopStep.vue";
+
+import EtpOperPdfEmergencyModifyPop from "@/components/Home/Etp/Manage/EtpOperPdfEmergencyModifyPop.vue";
 
 export default {
     components: {
-        //indexDetailrtmenupop: indexDetailrtmenupop
+        EtpOperPdfEmergencyModifyPop: EtpOperPdfEmergencyModifyPop,
     },
     data() {
         
@@ -503,9 +504,6 @@ export default {
             ],
             desserts: []
         };
-    },
-    components: {
-        PdfModifyPopStep: PdfModifyPopStep,
     },
     mounted : function() {
        
