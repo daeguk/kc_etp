@@ -30,11 +30,12 @@
     
         SELECT      /* etpOper.getEtpOperPdfEtfByRate  ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETF 인 경우 ) */
 
-                ,   base.rate_day0                                              AS  rate_day0       /* 비중 */
-                ,   base.rate_day1                                              AS  rate_day1       /* 비중 1일전 */
-                ,   base.rate_day2                                              AS  rate_day2       /* 비중 2일전 */
-                ,   base.rate_day3                                              AS  rate_day3       /* 비중 3일전 */
-                ,   base.rate_day4                                              AS  rate_day4       /* 비중 4일전 */
+                    1111                                              AS  rate_day0       /* 비중 */
+                ,   2222                                              AS  rate_day1       /* 비중 1일전 */
+                ,   3333                                              AS  rate_day2       /* 비중 2일전 */
+                ,   4444                                              AS  rate_day3       /* 비중 3일전 */
+                ,   5555                                              AS  rate_day4       /* 비중 4일전 */
+                ,
             <include    refid="sqlEtpOperPdfEtf01" />
 
     </select>
@@ -47,11 +48,12 @@
     
         SELECT      /* etpOper.getEtpOperPdfEtnByRate  ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETN 인 경우 ) */
 
-                ,   base.rate_day0                                              AS  rate_day0       /* 비중 */
-                ,   base.rate_day1                                              AS  rate_day1       /* 비중 1일전 */
-                ,   base.rate_day2                                              AS  rate_day2       /* 비중 2일전 */
-                ,   base.rate_day3                                              AS  rate_day3       /* 비중 3일전 */
-                ,   base.rate_day4                                              AS  rate_day4       /* 비중 4일전 */
+                    6666                                              AS  rate_day0       /* 비중 */
+                ,   7777                                              AS  rate_day1       /* 비중 1일전 */
+                ,   8888                                              AS  rate_day2       /* 비중 2일전 */
+                ,   9999                                              AS  rate_day3       /* 비중 3일전 */
+                ,   1010                                              AS  rate_day4       /* 비중 4일전 */
+                ,
             <include    refid="sqlEtpOperPdfEtn01" />
 
     </select>
