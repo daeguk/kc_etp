@@ -127,7 +127,7 @@ import Config from "@/js/config.js";
 import ComEtpFavorItemSub   from "@/components/common/control/ComEtpFavorItemSub.vue"; 
 
 export default {
-    props : [ "indexBasic" ],
+    props : [ "paramData", "indexBasic" ],
     data() {
         return {
             text: "전종목",
@@ -208,7 +208,12 @@ export default {
     components: {
         ComEtpFavorItemSub      :   ComEtpFavorItemSub
     },
-    mounted: function() {},
+    mounted: function() {
+        var vm = this;
+
+        console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdfQuick.vue mounted");
+        console.log( vm.paramData );        
+    },
     created: function() {},
     beforeDestory: function() {},
     methods : {
@@ -253,11 +258,11 @@ export default {
 
             /* PDF 긴급반영인 경우 */
             if( gubun == 6 ) {
-                vm.$emit( "fn_showDetailPdf", gubun, vm.indexBasic );
+                vm.$emit( "fn_showDetailPdf", gubun, vm.paramData );
             }
             /* iNAV 계산기인 경우 */
             else if( gubun == 7 ) {
-                vm.$emit( "fn_showDetailPdf", gubun, vm.indexBasic );
+                vm.$emit( "fn_showDetailPdf", gubun, vm.paramData );
             }
             
         }

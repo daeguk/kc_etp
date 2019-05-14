@@ -540,29 +540,96 @@ var getEtpOperPdf = function(req, res) {
 
             async.waterfall([
 
-                /* 1. EtpBasic 의 기본정보를 조회한다. */
+                /* 1. ETP 운용관리 - PDF관리 정보를 조회한다. ( ETF 인 경우 ) */
                 function( callback ) {
 
-                    stmt = mapper.getStatement('etpOper', 'getEtpOperPdf', paramData, format);
-                    console.log(stmt);
+                    /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                    if( paramData.f16493 == "1" || paramData.f16493  == "2" ) {
 
-                    conn.query(stmt, function( err, rows ) {
+                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtf', paramData, format);
+                        console.log(stmt);
 
-                        if( err ) {
-                            resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] etpOper.getEtpOperPdf Error while performing Query";
-                            resultMsg.err       =   err;
+                        conn.query(stmt, function( err, rows ) {
 
-                            return callback( resultMsg );
-                        }
+                            if( err ) {
+                                resultMsg.result    =   false;
+                                resultMsg.msg       =   "[error] etpOper.getEtpOperPdfEtf Error while performing Query";
+                                resultMsg.err       =   err;
 
-                        if ( rows && rows.length > 0 ) {
-                            resultMsg.dataList  = rows;
-                        }
+                                return callback( resultMsg );
+                            }
 
+                            if ( rows && rows.length > 0 ) {
+                                resultMsg.dataList  = rows;
+                            }
+
+                            callback( null, paramData );
+                        });
+                    }else{
+                        callback( null, paramData );
+                    }                    
+                },
+
+                /* 2. ETP 운용관리 - PDF관리 정보를 조회한다. ( ETN 인 경우 ) */
+                function( msg, callback ) {
+
+                    /* ETN 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                    if( paramData.f16493 == "3" || paramData.f16493  == "4" ) {
+
+                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtn', paramData, format);
+                        console.log(stmt);
+
+                        conn.query(stmt, function( err, rows ) {
+
+                            if( err ) {
+                                resultMsg.result    =   false;
+                                resultMsg.msg       =   "[error] etpOper.getEtpOperPdfEtn Error while performing Query";
+                                resultMsg.err       =   err;
+
+                                return callback( resultMsg );
+                            }
+
+                            if ( rows && rows.length > 0 ) {
+                                resultMsg.dataList  = rows;
+                            }
+
+                            callback( null, paramData );
+                        });
+
+                    }else{
+                        callback( null, paramData );
+                    }
+                },
+
+                /* 3. ETP 운용관리 - PDF관리에서 환율정보를 조회한다. */
+                function( msg, callback ) {
+
+                    if( resultMsg.dataList && resultMsg.dataList.length > 0 ) {
+
+                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfExchangeRate', paramData, format);
+                        console.log(stmt);
+
+                        conn.query(stmt, function( err, rows ) {
+
+                            if( err ) {
+                                resultMsg.result    =   false;
+                                resultMsg.msg       =   "[error] etpOper.getEtpOperPdfExchangeRate Error while performing Query";
+                                resultMsg.err       =   err;
+
+                                return callback( resultMsg );
+                            }
+
+                            if ( rows && rows.length > 0 ) {
+//                                resultMsg.dataList  = rows;
+                            }
+
+                            callback( null );
+                        });
+
+                    }else{
                         callback( null );
-                    });
-                }
+                    }
+                },                
 
             ], function (err) {
 

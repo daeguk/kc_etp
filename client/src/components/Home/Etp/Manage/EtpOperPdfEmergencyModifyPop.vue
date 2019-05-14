@@ -11,8 +11,10 @@
                     <v-icon>close</v-icon>
                 </v-btn>
 
+
+
                 <v-window-item :value="1">
-                    <!---step1-->
+<!---step1 START-->
                     <v-card flat class="listset_pop">
                         <h5>
                             <v-card-title ma-0>
@@ -25,7 +27,6 @@
                                 <v-toolbar-title class="pdf_t">
                                     <v-icon class="text_red">feedback</v-icon>PDF 수정 모드입니다.
                                 </v-toolbar-title>
-                                <v-spacer></v-spacer>
 
                                 <v-dialog v-model="dialog2" persistent max-width="500">
                                     <template v-slot:activator="{ on }">
@@ -33,6 +34,7 @@
                                             <v-icon small color="primary">add</v-icon>자산추가
                                         </v-btn>
                                     </template>
+
                                     <!---개발 중복 자산추가 팝업----->
                                     <v-card>
                                         <h5>
@@ -90,8 +92,11 @@
                                 <!---개발 중복 자산추가 팝업 end----->
                             </v-toolbar>
                         </v-card>
+                        
                         <v-card flat>
-                            <table id class="tbl_type" style="width:100%">
+
+                            <table :id="table_name" class="tbl_type" style="width:100%">
+
                                 <colgroup>
                                     <col width="6%">
                                     <col width="9%">
@@ -102,6 +107,7 @@
                                     <col width="15%">
                                     <col width="10%">
                                 </colgroup>
+
                                 <thead>
                                     <tr>
                                         <th>Date</th>
@@ -114,6 +120,7 @@
                                         <th class="txt_right">비중</th>
                                     </tr>
                                 </thead>
+
                                 <tbody>
                                     <tr class="pdfmody_acttd">
                                         <td></td>
@@ -165,12 +172,15 @@
                         <v-spacer></v-spacer>
                         <v-btn :disabled="step === 2" color="primary" depressed @click="step++">Next</v-btn>
                     </v-card-actions>
-                    <!---step1 end-->
+<!---step1 END-->
                 </v-window-item>
 
 
+
+
+
                 <v-window-item :value="2">
-                    <!---step2-->
+<!---step2 START-->
                     <v-card flat class="listset_pop">
                         <h5>
                             <v-card-title ma-0>
@@ -265,12 +275,16 @@
                     <v-card-actions>
                         <v-spacer></v-spacer>
                     </v-card-actions>
-                    <!--step2 end-->
+<!--step2 END-->
                 </v-window-item>
 
 
+
+
+
+
                 <v-window-item :value="3">
-                    <!---step3-->
+<!---step3 START-->
                     <v-card flat class="listset_pop">
                         <h5>
                             <v-card-title ma-0>
@@ -391,7 +405,7 @@
                         </v-card>
                     </v-card>
                     <v-card-actions></v-card-actions>
-                    <!--step3 end-->
+<!--step3 END-->
                 </v-window-item>
             </v-window>
 
@@ -404,6 +418,9 @@
 
 
 <script>
+
+var tblEmergeny01 = null;
+
 export default {
     props : [ "showDialog", "paramData" ],
     data() {
@@ -416,7 +433,10 @@ export default {
             panel: [],
             tab2: "",
             items4: [],
-            on: false
+            on: false,
+
+
+            table_name : "tblEmergeny01"
         };
     },
     created: function() {
@@ -434,6 +454,14 @@ export default {
         });
 
     },
+    mounted: function() {
+
+        var vm = this;
+
+        console.log( ">>>>>> EtpOperPdfEmergencyModifyPop.vue ==> " );
+        console.log( vm.paramData );
+    },
+        
     methods: {
         // Create an array the length of our items
         // with all values as true
@@ -441,11 +469,64 @@ export default {
             this.panel = [...Array(this.items).keys()].map(_ => true);
         },
 
+        fn_addAsset() {
+            var vm = this;
+
+
+                                    // <tr class="pdfmody_acttd">
+                                    //     <td></td>
+                                    //     <td></td>
+                                    //     <td colspan="6" class="txt_left">
+                                    //         <input
+                                    //             type="text"
+                                    //             class="txt_left width_fix"
+                                    //             placeholder="12자리/6자리코드"
+                                    //         >
+                                    //         <button
+                                    //             type="button"
+                                    //             class="v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01"
+                                    //             v-on="on"
+                                    //         >확인</button>
+                                    //     </td>
+                                    // </tr>
+
+            jisu_grid.row.add( {
+                'JISU_CD':'',
+                'JISU_NM':"<input type='number' name='jongmok' id='jongmok' style='width:150px'><button  id='confirm'>확인</button>",
+                null:""
+             } ).draw( false );
+           
+            $("button[id='confirm']").on('click', function () {
+              
+                var test = vm.getInfoIndex($("input[id='jongmok']").eq(0).val());
+             
+                vm.results.push({
+                    ANNO_YN: "발표",
+                    ETP_MARKET_ID: 168,
+                    ETP_NM: null,
+                    INDEX_CAL_METHOD: "시가총액방식",
+                    INST_CNT: 1,
+                    IP_DT: "2019-04-03",
+                    JISU_CD: test.JISU_CD,
+                    JISU_NM: "테스트",
+                    LARGE_TYPE: "FNGUIDE",
+                    MARKET_ID: "M168",
+                    MIDDLE_TYPE: "FNGUIDE"
+                });
+
+                jisu_grid.clear().draw();
+                jisu_grid.rows.add(vm.results).draw();
+
+                //$("input[name='jongmok']").css("color", "red");
+                
+            }); 
+        },
+
         fn_closePop() {
             var vm = this;
 
             vm.$emit( "fn_closePop", "close" );
         }
-    }
+    },
 };
 </script>

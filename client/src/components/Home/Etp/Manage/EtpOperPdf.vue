@@ -19,7 +19,7 @@
                                     ref="menu2"
                                     :close-on-content-click="false"
                                     :nudge-right="40"
-                                    :return-value.sync="date2"
+                                    :return-value.sync="searchParam.show_date"
                                     lazy
                                     transition="scale-transition"
                                     offset-y
@@ -35,15 +35,17 @@
                                             outline
                                             v-on="on"
                                             widh="100%"
+
+                                            @change.enter ="fn_getEtpOerPdf()"
                                         ></v-text-field>
                                     </template>
-                                    <v-date-picker v-model="date2" no-title scrollable>
+                                    <v-date-picker v-model="searchParam.show_date" no-title scrollable>
                                         <v-spacer></v-spacer>
                                         <v-btn flat @click="menu = false">Cancel</v-btn>
                                         <v-btn
                                             flat
                                             color="primary"
-                                            @click="$refs.menu2.save(date2)"
+                                            @click="$refs.menu2.save(searchParam.show_date);fn_getEtpOerPdf()"
                                         >OK</v-btn>
                                     </v-date-picker>
                                 </v-menu>
@@ -56,6 +58,7 @@
 
                     <!-- [PDF 관리] Quick 메뉴 정보 -->
                     <EtpOperPdfQuick
+                        :paramData="paramData"
                         :indexBasic = "indexBasic"
                         @showDetail="showDetail"
                         @showMessageBox="showMessageBox"
@@ -89,78 +92,6 @@ export default {
     },
     data() {
         return {
-            text: "전종목",
-            checkbox: true,
-            date2: new Date().toISOString().substr(0, 10),
-            menu2: false,
-            text2: "",
-            dialog: false,
-            dialog2: false,
-            dialog5: false,
-            dialog6: false,
-            drawer: true,
-            search: "",
-            tab: null,
-            tab2: null,
-            items1: ["전체", "시장대표"],
-            items: [
-                { title: "Home", icon: "dashboard" },
-                { title: "About", icon: "question_answer" }
-            ],
-            items2: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                },
-                {
-                    title: "KODEX 코스닥150 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            items3: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            mini: false,
-            right: null,
-            rowsPerPageItems: [10, 20, 30, 50],
-            headers: [
-                {
-                    text: "Code",
-                    align: "left",
-                    value: "name"
-                },
-                { text: "name", value: "name" },
-                { text: "BasePrc", value: "BasePrc", align: "right" },
-                { text: "Shrs", value: "Shrs", align: "right" },
-                { text: "Float rto", value: "FloatRto", align: "right" },
-                { text: "Ceiling rto", value: "CeilingRto", align: "right" },
-                { text: "Factor rto", value: "FactorRto", align: "right" }
-            ],
-            desserts: [],
-            items4: [],
-            switch1: "",
-
-
-
             indexBasic : {},
             stateInfo: {
                 pageState:  "pdf" /* pdf - PDF 관리, pdfByRate - 비중변경현황 */,
@@ -172,7 +103,8 @@ export default {
                 show_date : "",
                 search_date : "",
                 show_search_nm : "",
-                search_nm : ""
+                search_nm : "",
+                f16493 : "",
             }
         };
     },
@@ -182,16 +114,20 @@ export default {
     mounted: function() {
         var vm = this;
 
+console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
+console.log( vm.paramData );
+
         if( vm.paramData ) {
 
             vm.searchParam.f16013   =   vm.paramData.f16257;     /* ETP기초지수코드  */
             vm.searchParam.f34239   =   vm.paramData.f34239;     /* ETP기초지수MID  */
+            vm.searchParam.f16493   =   vm.paramData.f16493;     /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
 
             if(     vm.paramData.index_nm
                 &&  vm.paramData.f16257
             ) {
-                vm.searchParam.show_search_nm   =   vm.paramData.index_nm + "(" + vm.paramData.f16257 + ")";
-                vm.searchParam.search_nm        =   vm.paramData.index_nm;
+                vm.searchParam.show_search_nm   =   vm.paramData.f16002 + "(" + vm.paramData.f16013 + ")";  /* 한글종목명 / 단축코드 */
+                vm.searchParam.search_nm        =   vm.paramData.f16002;                                    /* 한글종목명 */
             }
         }
         
@@ -322,33 +258,33 @@ export default {
             if (vm.stateInfo.pageState == "pdf") {
 
                 vm.fn_setArrShowColumn([
-                    "date"              /* Date */,
-                    "market_gubun"      /* 시장구분  */,
-                    "jongmok_code"      /* 종목코드 */,
-                    "jongmok_nm"        /* 종목명 */,
-                    "cuShrs"            /* CU SHrs */,
-                    "org_money"         /* 액면금액 */,
-                    "eval_money"        /* 평가금액 */,
-                    "rate"              /* 비중 */
+                        "f12506"            /* 입회일 - Date */
+                    ,   "f33861"            /* ETF시장구분 - 시장구분 -  */
+                    ,   "f16316"            /* 구성종목코드 - 종목코드 */
+                    ,   "f16002"            /* 한글종목명 - 종목명 */
+                    ,   "f16499"            /* 1CU단위증권수 - CU SHrs */
+                    ,   "f34840"            /* 액면금액설정현금액 - 액면금액 */
+                    ,   "f16588"            /* 평가금액 - 평가금액 */
+                    ,   "f34743"            /* ETF_PDF비중 - 비중 */
                 ]);
             } 
             /* [비중변경현황] 을 선택한 경우 */
             else if (vm.stateInfo.pageState == "pdfByRate") {
                 
                 vm.fn_setArrShowColumn([
-                    "date"              /* 종목 */,
-                    "market_gubun"      /* 시장구분 */,
-                    "jongmok_code"      /* 종목코드 */,
-                    "jongmok_nm"        /* 종목명 */,
-                    "cuShrs"            /* CU SHrs */,
-                    "org_money"         /* 액면금액 */,
-                    "eval_money"        /* 평가금액 */,
+                        "f12506"            /* 입회일 - Date */,
+                    ,   "f33861"            /* ETF시장구분 - 시장구분 */,
+                    ,   "f16316"            /* 구성종목코드 - 종목코드 */,
+                    ,   "f16002"            /* 한글종목명 - 종목명 */,
+                    ,   "f16499"            /* 1CU단위증권수 - CU SHrs */,
+                    ,   "f34840"            /* 액면금액설정현금액 - 액면금액 */,
+                    ,   "f16588"            /* 평가금액 - 평가금액 */,
 
-                    "rate_day0"         /* 비중 당일 */,
-                    "rate_day1"         /* 비중 1일전 */,
-                    "rate_day2"         /* 비중 2일전 */,
-                    "rate_day3"         /* 비중 3일전 */,
-                    "rate_day4"         /* 비중 4일전 */,
+                    ,   "rate_day0"         /* 비중 당일 */,
+                    ,   "rate_day1"         /* 비중 1일전 */,
+                    ,   "rate_day2"         /* 비중 2일전 */,
+                    ,   "rate_day3"         /* 비중 3일전 */,
+                    ,   "rate_day4"         /* 비중 4일전 */,
                 ]);
             }
 
@@ -437,14 +373,14 @@ export default {
             var vm = this;
 
             var arrColumn  =   [
-                { 'name' : 'date'           , 'data': 'date'            ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-center'  , 'title' : 'Date'      },      /* Date */
-                { 'name' : 'market_gubun'   , 'data': 'market_gubun'    ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-center'  , 'title' : '시장구분'  },       /* 시장구분 */
-                { 'name' : 'jongmok_code'   , 'data': 'jongmok_code'    ,  'width' : '120', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목코드'  },       /* 종목코드 */
-                { 'name' : 'jongmok_nm'     , 'data': 'jongmok_nm'      ,  'width' : '200', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목명'    },       /* 종목명 */
-                { 'name' : 'cuShrs'         , 'data': 'cuShrs'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : 'CU SHrs'   },      /* CU SHrs */
-                { 'name' : 'org_money'      , 'data': 'org_money'       ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '액면금액'   },      /* 액면금액 */
-                { 'name' : 'eval_money'     , 'data': 'eval_money'      ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '평가금액'   },      /* 평가금액 */
-                { 'name' : 'rate'           , 'data': 'rate'            ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중'      },      /* 비중 */
+                { 'name' : 'f12506'         , 'data': 'f12506'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-center'  , 'title' : 'Date'      },      /* Date */
+                { 'name' : 'f33861'         , 'data': 'f33861'          ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-center'  , 'title' : '시장구분'  },       /* 시장구분 */
+                { 'name' : 'f16316'         , 'data': 'f16316'          ,  'width' : '120', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목코드'  },       /* 종목코드 */
+                { 'name' : 'f16002'         , 'data': 'f16002'          ,  'width' : '200', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목명'    },       /* 종목명 */
+                { 'name' : 'f16499'         , 'data': 'f16499'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : 'CU SHrs'   },      /* CU SHrs */
+                { 'name' : 'f34840'         , 'data': 'f34840'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '액면금액'   },      /* 액면금액 */
+                { 'name' : 'f16588'         , 'data': 'f16588'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '평가금액'   },      /* 평가금액 */
+                { 'name' : 'f34743'         , 'data': 'f34743'          ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중'      },      /* 비중 */
 
                 { 'name' : 'rate_day0'      , 'data': 'rate_day0'       ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중'       },      /* 비중 */
                 { 'name' : 'rate_day1'      , 'data': 'rate_day1'       ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중'       },      /* 비중 */
