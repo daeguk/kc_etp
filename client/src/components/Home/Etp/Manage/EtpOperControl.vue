@@ -180,7 +180,7 @@ export default {
             FaverClassName: '',
             pdfData : {},
             indexBasic : {},
-            etpOperPdfByRate : null
+            selectedQuickData : {}
     	};
     },    
 
@@ -245,7 +245,7 @@ export default {
     updated: function() {
     },
     methods: {
-        showDetail: function(gubun, paramData) {      
+        showDetail: function(gubun, paramData) {
                   
             if (gubun == '1') {
                 this.paramData = paramData;
@@ -294,6 +294,8 @@ export default {
                 this.showEtpOerInfo = this.activeTab;
                 this.showFaver = false;
             } 
+
+            this.selectedQuickData  =   paramData;
 
             this.className = "conWidth_left";  
             this.FaverClassName = "conWidth_right";
@@ -418,7 +420,7 @@ export default {
 
             /* PDF 관리 -> PDF 긴급반영 팝업 */
             if( gubun == '6' ) {
-                this.paramData = paramData;
+                this.paramData = ( this.selectedQuickData ? this.selectedQuickData : paramData );
                 this.showEtpOperPdfInavCalcPop = false;
 
                 if (this.showEtpOperPdfEmergencyModifyPop) {
@@ -446,7 +448,7 @@ export default {
             }
             /* PDF 관리 -> iNAV 계산기 팝업 */
             else if( gubun == '7' ) {
-                this.paramData = paramData;
+                this.paramData = ( this.selectedQuickData ? this.selectedQuickData : paramData );
                 this.showEtpOperPdfEmergencyModifyPop = false;
 
                 if (this.showEtpOperPdfInavCalcPop) {
