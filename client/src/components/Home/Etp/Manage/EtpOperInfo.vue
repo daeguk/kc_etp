@@ -170,8 +170,6 @@ export default {
 
                         vm.indexBasic   =    dataList[0];
 
-                        vm.$emit( "fn_setFirstData", dataList[0] );
-
                         if( typeof vm.$refs.result_cnt != "undefined" ) {
                             vm.$refs.result_cnt.textContent = dataList.length;
                         }

@@ -9,9 +9,6 @@ import IndexMainIndexDetailList   from  '@/components/Home/Index/Manage/IndexDet
 
 
 import  IndexRegisterMain   from './components/Home/Index/Register/IndexRegisterMain.vue'
-import  IndexDatepickerTestMain   from './components/Home/Index/ToastGridTest/IndexDatepickerTestMain.vue'
-import  IndexVueTableTestMain   from './components/Home/Index/ToastGridTest/IndexVueTableTestMain.vue'
-import  IndexToastGridTestMain   from './components/Home/Index/ToastGridTest/IndexToastGridTestMain.vue'
 import  IndexDetailInfo   from './components/Home/Index/Manage/IndexDetailInfo.vue'
 
 // ETP
@@ -179,26 +176,6 @@ export const routes = [
             meta: {
               requiresAuth: true,
               requiresType: ['0001', '0002', '0004', '0005']
-            },
-        },
-
-
-        {   path : '/index/datepickerTest',
-            component: IndexDatepickerTestMain,
-            meta: {
-              requiresAuth: false
-            },
-        },
-        {   path : '/index/vueTableTest',
-            component: IndexVueTableTestMain,
-            meta: {
-              requiresAuth: false
-            },
-        },
-        {   path : '/index/toastGridTest',
-            component: IndexToastGridTestMain,
-            meta: {
-              requiresAuth: false
             },
         },
         

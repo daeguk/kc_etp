@@ -6,13 +6,11 @@
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
                             <v-text-field
-                                v-model="searchParam.show_search_nm"
-                                :label="searchParam.show_search_nm"
+                                v-model="searchParam.search_nm"
                                 class="pdf_search"
-                                append-icon="search"
                                 single-line
                                 hide-details
-                                @keyup.enter="searchParam.search_nm = ''; fn_getEtpOerPdf()"
+                                :readonly="true"
                             ></v-text-field>
                             <p class="pdf_calendar">
                                 <v-menu
@@ -35,8 +33,6 @@
                                             outline
                                             v-on="on"
                                             widh="100%"
-
-                                            @change.enter ="fn_getEtpOerPdf()"
                                         ></v-text-field>
                                     </template>
                                     <v-date-picker v-model="searchParam.show_date" no-title scrollable>
@@ -56,17 +52,6 @@
                         <table id="tblPdfList" class="display table01_w"></table>
                     </v-card>
 
-                    <!-- [PDF 관리] Quick 메뉴 정보 -->
-                    <EtpOperPdfQuick
-                        :paramData="paramData"
-                        :indexBasic = "indexBasic"
-                        @showDetail="showDetail"
-                        @showMessageBox="showMessageBox"
-
-                        @fn_showDetailIndex="fn_showDetailIndex"
-                        @fn_setEtpOperPdfByRate = "fn_setEtpOperPdfByRate"
-                        @fn_showDetailPdf="fn_showDetailPdf"
-                    ></EtpOperPdfQuick>
                 </v-card>
             </v-flex>
         </v-layout>
@@ -81,18 +66,17 @@ import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 
 import Config from "@/js/config.js";
-import EtpOperPdfQuick from "@/components/Home/Etp/Manage/EtpOperPdfQuick.vue";
+
 
 var tblPdfList = null;
 
 export default {
-    props: [ "paramData" ],
+    props: [ "paramData", "etpOperPdfByRate" ],
     components: {
         //indexDetailrtmenupop: indexDetailrtmenupop
     },
     data() {
         return {
-            indexBasic : {},
             stateInfo: {
                 pageState:  "pdf" /* pdf - PDF 관리, pdfByRate - 비중변경현황 */,
                 totWidth: 0
@@ -102,14 +86,15 @@ export default {
             searchParam : {
                 show_date : "",
                 search_date : "",
-                show_search_nm : "",
                 search_nm : "",
                 f16493 : "",
-            }
+            },
+            pdfData : {},
+            rateTitleList : []
         };
     },
     components: {
-        EtpOperPdfQuick: EtpOperPdfQuick
+
     },
     mounted: function() {
         var vm = this;
@@ -117,18 +102,31 @@ export default {
 console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
 console.log( vm.paramData );
 
+        vm.fn_getEtpOperPdfTitle();
+
+        vm.$EventBus.$on('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call', data => {
+            console.log( "EventBus EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call>>>>>>>" );
+            console.log( data );
+
+            vm.fn_setEtpOperPdfByRate( data );
+        });
+
+    
         if( vm.paramData ) {
 
             vm.searchParam.f16013   =   vm.paramData.f16257;     /* ETP기초지수코드  */
             vm.searchParam.f34239   =   vm.paramData.f34239;     /* ETP기초지수MID  */
             vm.searchParam.f16493   =   vm.paramData.f16493;     /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
 
-            if(     vm.paramData.index_nm
+            if(     vm.paramData.f16002
                 &&  vm.paramData.f16257
             ) {
-                vm.searchParam.show_search_nm   =   vm.paramData.f16002 + "(" + vm.paramData.f16013 + ")";  /* 한글종목명 / 단축코드 */
-                vm.searchParam.search_nm        =   vm.paramData.f16002;                                    /* 한글종목명 */
+                vm.searchParam.search_nm   =   vm.paramData.f16002 + "(" + vm.paramData.f16013 + ")";  /* 한글종목명 / 단축코드 */
             }
+
+            vm.pdfData      =   vm.paramData;
+        }else{
+            vm.fn_getEtpOperInfoFirstData( "A" );
         }
         
 
@@ -143,8 +141,15 @@ console.log( vm.paramData );
             vm.fn_getEtpOerPdf();
         });
     },
-    created: function() {},
-    beforeDestory: function() {},
+    created: function() {
+
+    
+    },
+    beforeDestory: function() {
+        var vm = this;
+
+        vm.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
+    },
 
     methods: {
 
@@ -152,6 +157,71 @@ console.log( vm.paramData );
             var vm = this;
 
             vm.$emit( "fn_showDetailIndex", gubun, paramData );
+        },
+
+/*
+         *  ETP 운영정보 - > PDF 관리 에서 비중 변경현황시 타이틀 정보를 조회한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_getEtpOperPdfTitle() {
+
+            var vm = this;
+
+            vm.rateTitleList    =   [];
+            for( var i=0; i < 5; i++ ) {
+                var temp = {};
+
+                var nowDate     =   new Date();
+                var tempDate    =   new Date(       nowDate.getFullYear()
+                                                ,   nowDate.getMonth()
+                                                ,   ( nowDate.getDate() - i ) 
+                                );
+
+                temp.name       =   "rate_day" + i;
+                temp.date       =       ( parseInt( tempDate.getMonth() ) + 1 )
+                                    +   "/" 
+                                    +   tempDate.getDate();
+
+                vm.rateTitleList.push( temp );
+            }
+        },        
+
+        /*
+         *  ETP 운영정보를 조회한다.
+         *  param   :   ETP지표가치산출구분(K:국내,F:해외)  / A:전종목, I:관심종목
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_getEtpOperInfoFirstData( gubun ) {
+
+            var vm = this;
+
+            axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
+                data: {
+                        f34241  :   gubun
+                    ,   firstYn :   "Y"
+                }
+            }).then(function(response) {
+                console.log(response);
+
+                if (response.data) {
+                    var dataList = response.data.dataList;
+
+                    if (dataList && dataList.length == 1) {
+                        vm.searchParam.f16013   =   dataList[0].f16257;     /* ETP기초지수코드  */
+                        vm.searchParam.f34239   =   dataList[0].f34239;     /* ETP기초지수MID  */
+                        vm.searchParam.f16493   =   dataList[0].f16493;     /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+
+                        if(     dataList[0].f16002
+                            &&  dataList[0].f16257
+                        ) {
+                            vm.searchParam.search_nm   =   dataList[0].f16002 + "(" + dataList[0].f16013 + ")";  /* 한글종목명 / 단축코드 */
+                        }
+
+                        vm.pdfData  =   dataList[0]
+                        vm.$emit( "fn_setPdfQuickPdfData", vm.pdfData );
+                    }
+                }
+            });
         },
 
         /*
@@ -177,10 +247,6 @@ console.log( vm.paramData );
             vm.searchParam.search_date  =   vm.searchParam.show_date.replace(/-/g,"");
             vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
 
-            if( !vm.searchParam.search_nm ) {
-                vm.searchParam.search_nm   =   vm.searchParam.show_search_nm;
-            }
-
             axios.post( url, {
                 data: vm.searchParam
             }).then(function(response) {
@@ -193,25 +259,7 @@ console.log( vm.paramData );
                         tblPdfList.rows.add(dataList).draw();
                         tblPdfList.draw();
 
-                        vm.indexBasic   =   dataList[0];
-
-                        /* 비중변경 현황인 경우 비중관련 컬럼에 날짜 정보를 설정한다. */
-                        if( vm.stateInfo.pageState == "pdfByRate" ) {
-
-                            var rateDateList    =   response.data.rateDateList;
-
-                            tblPdfList.columns().every(function (index) {
-
-                                var same = rateDateList.filter(function(o, p) {
-                                    return vm.arrShowColumn[index].name === o.name;
-                                });                                
-
-                                if( same && same.length == 1 ) {
-                                    $( tblPdfList.column( index ).header() ).html( vm.arrShowColumn[index].title + "<br>" + same[0].date );
-                                }
-
-                            });
-                        }
+                        vm.$emit( "fn_setPdfQuickIndexBasicData", dataList[0] );
                     }
                 }
             });
@@ -307,6 +355,25 @@ console.log( vm.paramData );
 
             tblPdfList = $("#tblPdfList").DataTable(tableObj);
 
+
+            /* 비중변경 현황인 경우 비중관련 컬럼에 날짜 정보를 설정한다. */
+            if( vm.stateInfo.pageState == "pdfByRate" ) {
+
+                if( vm.rateTitleList && vm.rateTitleList.length > 0  ) {
+
+                    tblPdfList.columns().every(function (index) {
+
+                        var same = vm.rateTitleList.filter(function(o, p) {
+                            return vm.arrShowColumn[index].name === o.name;
+                        });                                
+
+                        if( same && same.length == 1 ) {
+                            $( tblPdfList.column( index ).header() ).html( vm.arrShowColumn[index].title + "<br>" + same[0].date );
+                        }
+
+                    });
+                }
+            }
 
 
             // 테이블별 이벤트
@@ -453,7 +520,7 @@ console.log( vm.paramData );
             var vm = this;
 
             vm.$emit( "fn_showDetailPdf", gubun, paramData );
-        }
+        },
     }
 };
 </script>

@@ -103,7 +103,7 @@ import _ from "lodash";
 import Config from "@/js/config.js";
 
 
-var favor_grid = null;
+
 var etf_table = null;
 var etn_table = null;
 var index_table = null;
@@ -147,57 +147,6 @@ export default {
         var vm = this;
 
 
-    /* [관심종목] 테이블 */
-        favor_grid = $('#favor_grid').DataTable( {
-            "processing": true,
-            "serverSide": false,
-            "info": false,   // control table information display field
-            "stateSave": true,  //restore table state on page reload,
-            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-            thead: {
-                display:'none'
-            },
-            "ordering": false,
-            "columnDefs": [
-                {  
-                    "render": function ( data, type, row ) {
-                        let htm = "<span>";
-                        htm += "           <b>"+data+"</b>";
-                        htm += "            <br>"+row.ITEM_CD;
-                        return htm;
-                    },
-                    "targets": 0
-                },
-            ],
-            select: {
-                style:    'single',
-                selector: 'td:first-child'
-            },
-            paging: false,
-            searching: false,
-            columns: [
-                { "data": "F16002", "orderable": false, width:'70%'},
-                { "data": null, "orderable": false, width:'15%', defaultContent:"<div class='tooltip'><button type='button' id='equalizer' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:15px;'>ETP</span></div>"},
-                { "data": null, "orderable": false, width:'15%', defaultContent:"<div class='tooltip'><button type='button' id='clear' class='btn_icon v-icon material-icons'>clear</button><span class='tooltiptext' style='width:15px;'>삭제</span></div>"},
-            ]
-        }); 
-
-
-        // 테이블
-        $('#favor_grid tbody').on('click', 'button', function () {
-            var table = $('#favor_grid').DataTable();
-
-            
-            var data = table.row($(this).parents('tr')).data();
-
-            if ($(this).attr('id') == 'clear') {
-                vm.deleteItem(data.ITEM_SEQ, data.GUBUN, data.ITEM_CD );
-            } else {
-                vm.fn_detailPop( data );
-            }
-        });
-
-
     /* [전체종목 -> ETF] 테이블 */
         etf_table = $('#etf_table').DataTable( {
             "processing": true,
@@ -205,6 +154,7 @@ export default {
             "info": false,   // control table information display field
             "stateSave": true,  //restore table state on page reload,
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+            "scrollY":        '107vh',
             thead: {
                 display:'none'
             },
@@ -283,6 +233,7 @@ export default {
             "info": false,   // control table information display field
             "stateSave": true,  //restore table state on page reload,
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+            "scrollY":        '107vh',
             thead: {
                 display:'none'
             },
@@ -360,6 +311,7 @@ export default {
             "info": false,   // control table information display field
             "stateSave": true,  //restore table state on page reload,
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+            "scrollY":        '107vh',
             thead: {
                 display:'none'
             },

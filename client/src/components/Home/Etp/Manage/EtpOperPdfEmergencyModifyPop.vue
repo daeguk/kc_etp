@@ -418,6 +418,12 @@
 
 
 <script>
+import $ from "jquery";
+import _ from "lodash";
+import dt from "datatables.net";
+import buttons from "datatables.net-buttons";
+
+import Config from "@/js/config.js";
 
 var tblEmergeny01 = null;
 
@@ -474,7 +480,7 @@ export default {
                 },
                 paging: false,
                 searching: false,
-                data : items,                            
+                data : [],                            
                 "columnDefs": [
                     {  
                         "render": function ( data, type, row ) {
@@ -526,14 +532,13 @@ export default {
                     }
                 ],
                 columns: [
-                    { "data": "f16002", "orderable": true, className:"txt_left line2"}, /*종목*/
-                    { "data": "fmt_f15301", "orderable": true }, /*INAV*/
-                    { "data": "fmt_f03329", "orderable" : true}, /*전일최종Nav*/
-                    { "data": "f15302", "orderable" : true}, /*추적오차율*/
-                    { "data": "f15304", "orderable" : true}, /*괴리율*/
-                    { "data": "f34777", "orderable" : true}, /*기초지수*/
-                    { "data": "fmt_f15318", "orderable" : true}, /*지수현재가*/
-                    { "data": null, "orderable" : true, defaultContent:""},
+                    { "data" : "f16002"         ,   "orderable" : true  ,   "className" : "txt_left line2" },   /* 구분 */
+                    { "data" : "fmt_f15301"     ,   "orderable" : true  },                                      /* 구성종목코드 */
+                    { "data" : "fmt_f03329"     ,   "orderable" : true  },                                      /* 종목명 */
+                    { "data" : "f15302"         ,   "orderable" : true  },                                      /* CU Shrs */
+                    { "data" : "f15304"         ,   "orderable" : true  },                                      /* 액면금액 */
+                    { "data" : "f34777"         ,   "orderable" : true  },                                      /* 평가금액 */
+                    { "data" : "fmt_f15318"     ,   "orderable" : true  },                                      /* 비중 */
                 ]
         }); 
 
@@ -542,14 +547,6 @@ export default {
         $('#' + vm.tblEmergeny01 + ' tbody').on('click', 'button', function () {
             var table = $('#' + vm.tblEmergeny01 ).DataTable();
             var data = table.row($(this).parents('tr')).data();
-
-            if ($(this).attr('id') == 'detail') {
-                console.log('move detailPage ');
-                vm.fn_movePageFromMarket( data );
-            } else {
-                console.log('move pdfPage ');
-            }
-                
         });        
     },
         
