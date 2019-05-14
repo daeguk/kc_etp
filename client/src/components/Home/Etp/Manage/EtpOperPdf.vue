@@ -33,8 +33,6 @@
                                             outline
                                             v-on="on"
                                             widh="100%"
-
-                                            @change.enter ="alert();fn_getEtpOerPdf()"
                                         ></v-text-field>
                                     </template>
                                     <v-date-picker v-model="searchParam.show_date" no-title scrollable>

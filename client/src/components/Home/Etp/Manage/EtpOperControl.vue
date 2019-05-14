@@ -233,8 +233,10 @@ export default {
             if( this.showEtpOerInfo == 2 ) {
                 this.showEtpOerPdfQuick =   true;
             }
-            if (data.tab_id == 0 || data.tab_id == 1)
-             this.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
+
+            if (data.tab_id == 0 || data.tab_id == 1) {
+                this.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
+            }
         });
     },
     beforeUpdated: function() {
@@ -248,11 +250,29 @@ export default {
             if (gubun == '1') {
                 this.paramData = paramData;
                 this.showIndexDetailDialog = false;
+
+                this.showEtpOperIndexFixDialog = false;
+                this.showEtpOperIndexErrorDialog = false;
+                this.showEtpOperIndexDetailListDialog = false;
+
+                this.showEtpOperPdfInavCalcPop = false;
+                this.showEtpOperPdfEmergencyModifyPop = false;
                 
                 if (this.showEtpDetailDialog) {
                     this.$EventBus.$emit('changeIndexInfoClose', paramData);
+
+                    this.$EventBus.$emit('changeEtpOperIndexFixClose', paramData);
+                    this.$EventBus.$emit('changeEtpOperIndexErrorClose', paramData);
+                    this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
+
+                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_close', paramData);
+                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfEmergencyModifyPop_close', paramData);
+
                     this.$EventBus.$emit('changeEtpInfo', paramData);
                 }
+
+                this.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
+
                 this.showEtpDetailDialog = true;
                 
                 this.showEtpOerInfo = -1;
@@ -262,10 +282,27 @@ export default {
                 this.paramData = paramData;
                 this.showEtpDetailDialog = false;
 
+                this.showEtpOperIndexFixDialog = false;
+                this.showEtpOperIndexErrorDialog = false;
+                this.showEtpOperIndexDetailListDialog = false;
+
+                this.showEtpOperPdfInavCalcPop = false;
+                this.showEtpOperPdfEmergencyModifyPop = false;                
+
                 if (this.showIndexDetailDialog) {
                     this.$EventBus.$emit('changeEtpInfoClose', paramData);
+
+                    this.$EventBus.$emit('changeEtpOperIndexFixClose', paramData);
+                    this.$EventBus.$emit('changeEtpOperIndexErrorClose', paramData);
+                    this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
+
+                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_close', paramData);
+                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfEmergencyModifyPop_close', paramData);
+
                     this.$EventBus.$emit('changeIndexInfo', paramData);
                 }
+
+                this.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
                 
                 this.showIndexDetailDialog = true;                
                 this.showEtpOerInfo = this.activeTab;
@@ -278,8 +315,7 @@ export default {
         showMessageBox: function(title, msg, option, gubun) {
             this.$root.$confirm.open(title,msg, option, gubun);
         },
-
-
+                    
         async fn_showDetailIndex(gubun, paramData) {      
 
             /* 지수관리 -> 지수구성정보 상세팝업 */
@@ -288,12 +324,26 @@ export default {
                 this.showEtpOperIndexFixDialog = false;
                 this.showEtpOperIndexErrorDialog = false;
 
+                this.showIndexDetailDialog = false;
+                this.showEtpDetailDialog = false;
+
+                this.showEtpOperPdfInavCalcPop = false;
+                this.showEtpOperPdfEmergencyModifyPop = false;                
+
                 if (this.showEtpOperIndexDetailListDialog) {
                     this.$EventBus.$emit('changeEtpOperIndexFixClose', paramData);
                     this.$EventBus.$emit('changeEtpOperIndexErrorClose', paramData);
 
+                    this.$EventBus.$emit('changeIndexInfoClose', paramData);
+                    this.$EventBus.$emit('changeEtpInfoClose', paramData);
+
+                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_close', paramData);
+                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfEmergencyModifyPop_close', paramData);
+
                     this.$EventBus.$emit('changeEtpOperIndexDetailList', paramData);
                 }
+
+                this.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
                 
                 this.showEtpOperIndexDetailListDialog = true;
                 this.showEtpOerInfo = this.activeTab;
@@ -339,12 +389,26 @@ export default {
                 this.showEtpOperIndexDetailListDialog = false;
                 this.showEtpOperIndexErrorDialog = false;
 
+                this.showEtpOperPdfInavCalcPop = false;
+                this.showEtpOperPdfEmergencyModifyPop = false;                
+
+                this.showIndexDetailDialog = false;
+                this.showEtpDetailDialog = false;                
+
                 if (this.showEtpOperIndexFixDialog) {
                     this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
                     this.$EventBus.$emit('changeEtpOperIndexErrorClose', paramData);
 
+                    this.$EventBus.$emit('changeIndexInfoClose', paramData);
+                    this.$EventBus.$emit('changeEtpInfoClose', paramData);
+
+                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_close', paramData);
+                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfEmergencyModifyPop_close', paramData);
+
                     this.$EventBus.$emit('changeEtpOperIndexFix', paramData);
                 }
+
+                this.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
 
                 this.showEtpOperIndexFixDialog = true;  
                 this.showEtpOerInfo = this.activeTab;              
@@ -356,12 +420,26 @@ export default {
                 this.showEtpOperIndexDetailListDialog = false;
                 this.showEtpOperIndexFixDialog = false;
 
+                this.showIndexDetailDialog = false;
+                this.showEtpDetailDialog = false;
+
+                this.showEtpOperPdfInavCalcPop = false;
+                this.showEtpOperPdfEmergencyModifyPop = false;
+
                 if (this.showEtpOperIndexErrorDialog) {
                     this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
                     this.$EventBus.$emit('changeEtpOperIndexFixClose', paramData);
 
+                    this.$EventBus.$emit('changeIndexInfoClose', paramData);
+                    this.$EventBus.$emit('changeEtpInfoClose', paramData);
+
+                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_close', paramData);
+                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfEmergencyModifyPop_close', paramData);
+
                     this.$EventBus.$emit('changeEtpOperIndexError', paramData);
                 }
+
+                this.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
                 
                 this.showEtpOperIndexErrorDialog = true;                
                 this.showEtpOerInfo = this.activeTab;
@@ -375,11 +453,27 @@ export default {
                 this.paramData = paramData;
                 this.showEtpOperPdfInavCalcPop = false;
 
+                this.showEtpOperIndexFixDialog = false;
+                this.showEtpOperIndexErrorDialog = false;
+
+                this.showIndexDetailDialog = false;
+                this.showEtpDetailDialog = false;
+                this.showEtpOperIndexDetailListDialog = false;
+
                 if (this.showEtpOperPdfEmergencyModifyPop) {
                     this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_close', paramData);
 
+                    this.$EventBus.$emit('changeEtpOperIndexFixClose', paramData);
+                    this.$EventBus.$emit('changeEtpOperIndexErrorClose', paramData);
+                    this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
+
+                    this.$EventBus.$emit('changeIndexInfoClose', paramData);
+                    this.$EventBus.$emit('changeEtpInfoClose', paramData);
+
                     this.$EventBus.$emit('EtpOperControl_EtpOperPdfEmergencyModifyPop_call', paramData);
                 }
+
+                this.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
                 
                 this.showEtpOperPdfEmergencyModifyPop = true;
 
@@ -392,11 +486,27 @@ export default {
                 this.paramData = paramData;
                 this.showEtpOperPdfEmergencyModifyPop = false;
 
+                this.showEtpOperIndexFixDialog = false;
+                this.showEtpOperIndexErrorDialog = false;
+
+                this.showIndexDetailDialog = false;
+                this.showEtpDetailDialog = false;
+                this.showEtpOperIndexDetailListDialog = false;
+
                 if (this.showEtpOperPdfInavCalcPop) {
                     this.$EventBus.$emit('EtpOperControl_EtpOperPdfEmergencyModifyPop_close', paramData);
 
+                    this.$EventBus.$emit('changeEtpOperIndexFixClose', paramData);
+                    this.$EventBus.$emit('changeEtpOperIndexErrorClose', paramData);
+                    this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
+
+                    this.$EventBus.$emit('changeIndexInfoClose', paramData);
+                    this.$EventBus.$emit('changeEtpInfoClose', paramData);
+
                     this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_call', paramData);
                 }
+
+                this.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
                 
                 this.showEtpOperPdfInavCalcPop = true;
 
