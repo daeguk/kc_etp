@@ -19,8 +19,9 @@
                                         
                                         <v-flex xs12>
                                             <v-card flat>
-                                                <v-card-title>
+                                                <v-card-title class="con_r_ta_serch">
                                                     <v-text-field v-model="search" v-on:keyup="filterEtfData" append-icon="search" label="Search" single-line hide-details></v-text-field>
+                                                    <button type='button' id='btn_faver' class='btn_icon_star v-icon material-icons'>star</button>
                                                 </v-card-title>    
                                                 <table id="publish_etp_table" class="tbl_type" style="width:100%">
                                                     <thead>
@@ -136,9 +137,9 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "";
                         if (data == '1') {
-                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon_star on v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
                         } else {
-                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star_border</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon_star v-icon material-icons'>star_border</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
                         }
                         
                         return htm;

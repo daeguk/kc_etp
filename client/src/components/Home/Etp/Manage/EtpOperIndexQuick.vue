@@ -1,38 +1,10 @@
 <template>
     <v-container>
-        <v-layout row wrap class="content_margin">
+        <v-layout row wrap>
             <!--rightmenu---->
-            <v-card flat class="right_menu_w2">
-                <v-navigation-drawer
-                    v-model="drawer"
-                    :mini-variant="mini"
-                    app
-                    right
-                    light
-                    clipped
-                    mini-variant-width="50"
-                    width="250"
-                >
-                    <v-list class="pa-1">
-                        <v-list-tile v-if="mini">
-                            <v-list-tile-action>
-                                <v-btn icon @click.stop="mini = !mini">
-                                    <v-icon>chevron_left</v-icon>
-                                </v-btn>
-                            </v-list-tile-action>
-                        </v-list-tile>
-                        <v-list-tile avatar tag="div">
-                            <v-list-tile-content class="rightmenu_tit">Quick Start</v-list-tile-content>
-                            <v-list-tile-content>
-                                <v-btn icon @click.stop="mini = !mini">
-                                    <v-icon>chevron_right</v-icon>
-                                </v-btn>
-                            </v-list-tile-content>
-                        </v-list-tile>
-                    </v-list>
-
-                    <v-list class="pt-0" dense>
-                        <v-list-tile-content class="rightmenu_con rightmenu_line">
+            <v-card flat class="right_menu_w2 w100">
+                 <v-list class="pt-0" dense>
+                        <v-list-tile-content class="rightmenu_con">
                             <v-subheader>
                                 <v-icon small>feedback</v-icon>지수 조치 현황
                                 <v-btn
@@ -68,7 +40,6 @@
                             </v-card>
                         </v-list-tile-content>
                     </v-list>
-                </v-navigation-drawer>
             </v-card>
             <!--rightmenu end--->
         </v-layout>
