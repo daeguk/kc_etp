@@ -41,12 +41,12 @@
 
             <!-- 지수 상세 팝업 -->
             <v-dialog v-model="showIndexDetailDialog" persistent max-width="1300">
-                <IndexDetailDialog      v-if="showIndexDetailDialog" 
+                <IndexDetailInfo        v-if="showIndexDetailDialog" 
                 
                                         :paramData="paramData" 
                                         :showDialog="showIndexDetailDialog" 
                                         @fn_closePop="fn_close">
-                </IndexDetailDialog>
+                </IndexDetailInfo>
             </v-dialog>
 
             <!-- 지수 상세정보 팝업 -->
@@ -131,7 +131,7 @@ import ComIndexFixPopup             from "@/components/common/popup/ComIndexFixP
 import ComFavorItemSub              from "@/components/common/control/ComFavorItemSub"; 
 
 
-import IndexDetailDialog            from "@/components/Home/Index/Manage/IndexDetailDialog.vue";            /* 지수 상세정보 */
+import IndexDetailInfo              from "@/components/Home/Index/Manage/IndexDetailInfo.vue";              /* 지수 상세정보 */
 import EtpOperIndexDetailListPop    from "@/components/Home/Etp/Manage/EtpOperIndexDetailListPop.vue";      /* 지수종목 상세정보 */
 import EtpManageDetail              from "@/components/Home/Etp/Manage/EtpManageDetail.vue";                /*ETP 상세정보*/
 import EtpOperIndexErrorPop         from "@/components/Home/Etp/Manage/EtpOperIndexErrorPop.vue";           /*ETP 상세정보*/
@@ -165,7 +165,7 @@ export default {
 
     components: {
         
-        IndexDetailDialog               :   IndexDetailDialog,                  /* 인덱스 상세정보 */
+        IndexDetailInfo                 :   IndexDetailInfo,                    /* 인덱스 상세정보 */
         EtpManageDetail                 :   EtpManageDetail,                    /* ETP 상세정보 */
         EtpOperIndexDetailListPop       :   EtpOperIndexDetailListPop,          /* 인덱스 상세 목록 정보 */
         ComIndexFixPopup                :   ComIndexFixPopup,                   /* 지수조치현황 */

@@ -460,6 +460,102 @@ export default {
 
         console.log( ">>>>>> EtpOperPdfEmergencyModifyPop.vue ==> " );
         console.log( vm.paramData );
+
+        $('#' + vm.table_name + ctgCodeItem.ctg_code).DataTable( {
+                "processing": true,
+                "serverSide": false,
+                "info": false,   // control table information display field
+                "stateSave": true,  //restore table state on page reload,
+                "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                
+                select: {
+                    style:    'single',
+                    selector: 'td:first-child'
+                },
+                paging: false,
+                searching: false,
+                data : items,                            
+                "columnDefs": [
+                    {  
+                        "render": function ( data, type, row ) {
+                            let htm = "<span>";
+                            htm += "           <b>"+data+"</b>";
+                            htm += "            <br>"+row.f16013;
+                            if (row.NEW_YN == "Y") {
+                                htm += "<span><div class='text_new'>new</div></span>";
+                            }
+                            return htm;
+                        },
+                        "targets": 0
+                    },
+                    {  
+                        "render": function ( data, type, row ) {
+                            let htm = ""
+                            if (row.f15004 >= 0) {
+                                htm = "<span class='align_r text_red'>"+data;
+                            } else {
+                                htm = "<span class='align_r text_blue'>"+data;
+                            }
+                            htm += "<br><span class='text_S'>"+row.f30818+"%</span>";
+                            htm += "   </span>";
+                            return htm;
+                        },
+                        "targets": 1
+                    },
+                    {  
+                        "render": function ( data, type, row ) {
+                            let htm = ""
+                            if (row.f15004 >= 0) {
+                                htm = "<span class='align_r text_red'>"+data;
+                            } else {
+                                htm = "<span class='align_r text_blue'>"+data;
+                            }
+                            htm += "<br><span class='text_S'>"+row.f30823+"%</span>";           /* ETF관련지수등락율 */
+                            htm += "   </span>";
+                            return htm;
+                        },
+                        "targets": 6
+                    },
+                    {
+                        "render": function ( data, type, row ) {
+                            let htm = "<div class='tooltip'><button type='button' id='detail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>ETP</span></div>";
+                            htm += "<div class='tooltip'><button type='button' id='pdf' class='btn_icon v-icon material-icons'>picture_as_pdf</button><span class='tooltiptext' style='width:70px;'>PDF관리</span></div>";
+                            return htm;
+                        },
+                        "targets": 7
+                    }
+                ],
+                columns: [
+                    { "data": "f16002", "orderable": true, className:"txt_left line2"}, /*종목*/
+                    { "data": "fmt_f15301", "orderable": true }, /*INAV*/
+                    { "data": "fmt_f03329", "orderable" : true}, /*전일최종Nav*/
+                    { "data": "f15302", "orderable" : true}, /*추적오차율*/
+                    { "data": "f15304", "orderable" : true}, /*괴리율*/
+                    { "data": "f34777", "orderable" : true}, /*기초지수*/
+                    { "data": "fmt_f15318", "orderable" : true}, /*지수현재가*/
+                    { "data": null, "orderable" : true, defaultContent:""},
+                ]
+        }); 
+
+        // ETP 갯수와 기준일 바인딩 
+        if (items) {
+            $("#" + vm.table_name + "_count"+ ctgCodeItem.ctg_code).html(items.length);
+            $("#" + vm.table_name + "_date" + ctgCodeItem.ctg_code).html("기준일 :"+items[0].f12506);
+        }
+
+        // 테이블별 이벤트
+        $('#' + vm.table_name + ctgCodeItem.ctg_code+' tbody').on('click', 'button', function () {
+            var table = $('#' + vm.table_name + ctgCodeItem.ctg_code).DataTable();
+            var data = table.row($(this).parents('tr')).data();
+
+            if ($(this).attr('id') == 'detail') {
+                console.log('move detailPage ');
+                vm.fn_movePageFromMarket( data );
+            } else {
+                console.log('move pdfPage ');
+            }
+                
+        });        
     },
         
     methods: {
@@ -473,24 +569,24 @@ export default {
             var vm = this;
 
 
-                                    // <tr class="pdfmody_acttd">
-                                    //     <td></td>
-                                    //     <td></td>
-                                    //     <td colspan="6" class="txt_left">
-                                    //         <input
-                                    //             type="text"
-                                    //             class="txt_left width_fix"
-                                    //             placeholder="12자리/6자리코드"
-                                    //         >
-                                    //         <button
-                                    //             type="button"
-                                    //             class="v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01"
-                                    //             v-on="on"
-                                    //         >확인</button>
-                                    //     </td>
-                                    // </tr>
+            // <tr class="pdfmody_acttd">
+            //     <td></td>
+            //     <td></td>
+            //     <td colspan="6" class="txt_left">
+            //         <input
+            //             type="text"
+            //             class="txt_left width_fix"
+            //             placeholder="12자리/6자리코드"
+            //         >
+            //         <button
+            //             type="button"
+            //             class="v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01"
+            //             v-on="on"
+            //         >확인</button>
+            //     </td>
+            // </tr>
 
-            jisu_grid.row.add( {
+            tblEmergeny01.row.add( {
                 'JISU_CD':'',
                 'JISU_NM':"<input type='number' name='jongmok' id='jongmok' style='width:150px'><button  id='confirm'>확인</button>",
                 null:""
@@ -514,8 +610,8 @@ export default {
                     MIDDLE_TYPE: "FNGUIDE"
                 });
 
-                jisu_grid.clear().draw();
-                jisu_grid.rows.add(vm.results).draw();
+                tblEmergeny01.clear().draw();
+                tblEmergeny01.rows.add(vm.results).draw();
 
                 //$("input[name='jongmok']").css("color", "red");
                 
