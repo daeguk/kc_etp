@@ -9,8 +9,7 @@
                             @showDetail="showDetail" 
                             @showMessageBox="showMessageBox"
                             @fn_showDetailIndex="fn_showDetailIndex"
-                            @fn_pageMove="fn_pageMove"
-                            @fn_setFirstData="fn_setFirstData">
+                            @fn_pageMove="fn_pageMove">
             </EtpOperInfo>
 
             <!-- 지수관리 -->
@@ -45,6 +44,7 @@
                 
                                         :paramData="paramData" 
                                         :showDialog="showIndexDetailDialog" 
+                                        :showView="false"
                                         @fn_closePop="fn_close">
                 </IndexDetailInfo>
             </v-dialog>
@@ -384,12 +384,6 @@ export default {
                             this.$emit( "fn_setActiveTab", 2, this.paramData );
                             break;
             }            
-        },
-
-        fn_setFirstData( paramData ) {
-            var vm = this;
-
-            vm.$emit( "fn_setFirstData", paramData );
         },
 
         /*
