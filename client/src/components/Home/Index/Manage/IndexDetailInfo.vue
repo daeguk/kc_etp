@@ -17,6 +17,13 @@
                                                 <v-btn outline color="primary" small :to="{path:'/index/manage', query:{'activeTab':'2'}}">목록으로 돌아가기</v-btn>
                                             </div>
                                         </v-flex>
+
+                                        <v-flex xs12 sm4 text-xs-center v-if="showDialog">
+                                            <v-btn icon @click="fn_close">
+                                                <v-icon>close</v-icon>
+                                            </v-btn>
+                                        </v-flex>
+
                                     </v-layout>
                                 </div>
                             </div>
