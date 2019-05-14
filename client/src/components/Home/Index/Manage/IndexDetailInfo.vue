@@ -18,7 +18,7 @@
                                             </div>
                                         </v-flex>
 
-                                        <v-flex xs12 sm4 text-xs-center v-if="showDialog">
+                                        <v-flex xs12 sm4 text-xs-center v-if="!showView">
                                             <v-btn icon @click="fn_close">
                                                 <v-icon>close</v-icon>
                                             </v-btn>
@@ -102,7 +102,7 @@ import IndexDetailInfoTab3 from "./IndexDetailInfoTab3.vue";
 
 import Config from "@/js/config.js";
 export default {
-    props: ['paramData', 'showDialog'],
+    props: ['paramData', 'showDialog', 'showView'],
     data() {
         return {
             text: "center",

@@ -95,7 +95,7 @@
                         
                         <v-card flat>
 
-                            <table :id="table_name" class="tbl_type" style="width:100%">
+                            <table :id="tblEmergeny01" class="tbl_type" style="width:100%">
 
                                 <colgroup>
                                     <col width="6%">
@@ -436,7 +436,7 @@ export default {
             on: false,
 
 
-            table_name : "tblEmergeny01"
+            tblEmergeny01 : "tblEmergeny01"
         };
     },
     created: function() {
@@ -461,7 +461,7 @@ export default {
         console.log( ">>>>>> EtpOperPdfEmergencyModifyPop.vue ==> " );
         console.log( vm.paramData );
 
-        $('#' + vm.table_name + ctgCodeItem.ctg_code).DataTable( {
+        $('#' + vm.tblEmergeny01 ).DataTable( {
                 "processing": true,
                 "serverSide": false,
                 "info": false,   // control table information display field
@@ -537,15 +537,10 @@ export default {
                 ]
         }); 
 
-        // ETP 갯수와 기준일 바인딩 
-        if (items) {
-            $("#" + vm.table_name + "_count"+ ctgCodeItem.ctg_code).html(items.length);
-            $("#" + vm.table_name + "_date" + ctgCodeItem.ctg_code).html("기준일 :"+items[0].f12506);
-        }
 
         // 테이블별 이벤트
-        $('#' + vm.table_name + ctgCodeItem.ctg_code+' tbody').on('click', 'button', function () {
-            var table = $('#' + vm.table_name + ctgCodeItem.ctg_code).DataTable();
+        $('#' + vm.tblEmergeny01 + ' tbody').on('click', 'button', function () {
+            var table = $('#' + vm.tblEmergeny01 ).DataTable();
             var data = table.row($(this).parents('tr')).data();
 
             if ($(this).attr('id') == 'detail') {

@@ -45,6 +45,7 @@
                 
                                         :paramData="paramData" 
                                         :showDialog="showIndexDetailDialog" 
+                                        :showView="false"
                                         @fn_closePop="fn_close">
                 </IndexDetailInfo>
             </v-dialog>
