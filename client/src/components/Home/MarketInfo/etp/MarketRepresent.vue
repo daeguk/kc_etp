@@ -1,10 +1,10 @@
 <template>
     <v-container>
-        <v-layout row wrap>
+        <v-layout row wrap class="content_margin">
+        <!--
             <v-flex xs12>
                 <v-carousel  light hide-delimiters height="250px" interval="10000">
                     <v-carousel-item  class="bg_W market_layout_w" v-if="carousel_info.carousel_cnt > 0"  v-for="n in carousel_info.carousel_cnt" :key="n">
-
                         <v-layout class="market_card_layout">
                             <v-flex  v-for="x in carousel_info.carousel_div" :key="x">
                                 <v-card flat>
@@ -39,46 +39,21 @@
                             </v-flex>                           
                         </v-layout>
                     </v-carousel-item>
-                    <v-carousel-item  class="bg_W" v-if="Object.keys(carousel_mod).length > 0">
-                        <v-layout class="market_card_layout" >
-                            <v-flex v-for="mod_item in orderedData" :key="mod_item.ctg_code">
-                                <v-card flat>
-                                    <div class="market_card_w line_l">
-                                        <div class="market_card2" wrap>
-                                            <h6>
-                                                {{fn_getDataFromMarket(mod_item, n, x, "name")}}
-                                                <p>
-                                                    {{ new Intl.NumberFormat().format( fn_getDataFromMarket(mod_item, n, x, "f15001") ) }}
-                                                    <span :class='( fn_getDataFromMarket(mod_item, n, x, "f15472") > 0 ? "text_red" : "" )'>
-                                                        {{fn_getDataFromMarket(mod_item, n, x, "f15472")}}({{fn_getDataFromMarket(mod_item, n, x, "f15004")}} %)
-                                                    </span>
-                                                </p>
-                                            </h6>
-                                            <ul>
-                                                <li>
-                                                    ETF - {{ new Intl.NumberFormat().format( fn_getDataFromMarket(mod_item, n, x, "etf_cnt") ) }}종목
-                                                    <br>
-                                                    <span>Total</span>
-                                                    <span class="text_result2">AUM {{ new Intl.NumberFormat().format( fn_getDataFromMarket(mod_item, n, x, "etf_sum")  / 1000 ) }}K</span>
-                                                </li>
-                                                <li>
-                                                    ETN - {{fn_getDataFromMarket(mod_item, n, x, "etn_cnt")}} 종목
-                                                    <br>
-                                                    <span>Total</span>
-                                                    <span class="text_result2">AUM {{ new Intl.NumberFormat().format( fn_getDataFromMarket(mod_item, n, x, "etn_sum")  / 1000 ) }}K</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                        </v-layout>
-                    </v-carousel-item>
                 </v-carousel>
             </v-flex>
-
-
-
+            -->
+            <v-flex xs12>
+              <v-layout>
+                <v-flex xs3 mr-3 v-for="(rinfo, index) in rep_info" :key="rinfo.seq">
+                  <v-card flat>
+                    <AreaIndexTextChart v-if=chartLoadFlag :chartItem="{chartId: rinfo.f16013 + rinfo.market_id,
+                       width: '350', height: '150',  marginW: 1, marginH: 40, chartColor: '#C8E6C9'}"
+                        :textItem="rinfo"
+                        :dataSet="getDataSet(index)"></AreaIndexTextChart>
+                  </v-card>
+                </v-flex>                    
+              </v-layout>
+            </v-flex>
 
             <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12 mt-3>
                 <v-card flat>
@@ -132,8 +107,10 @@ import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
+import util from "@/js/util.js";
 import { market_common } from '@/js/common/mixins/mixins_marketinfo.js';
-
+import AreaIndexTextChart   from  '@/components/Common/Chart/AreaIndexTextChart.vue';
+import AreaChart   from  '@/components/Common/Chart/AreaChart.vue';
 
 var importance_grid = null;
 
@@ -146,34 +123,141 @@ export default {
             carousel_info:[],
             carousel_data:[],
             carousel_mod:[],
-
+            intra_data:[],
+            rep_info:[{seq:0, f16013:"1", market_id:"M002", name:"KOSPI", f15001:"2,078.00", 
+                        f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#79caab", eColor:"#d8faf0"},
+              {seq:1, f16013:"51", market_id:"M002", name:"KOSPI 200", f15001:"", 
+                      f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#BA68C8", eColor:"#E1BEE7"},
+              {seq:2, f16013:"1", market_id:"M004", name:"KOSDAQ", f15001:"", 
+                      f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#DCE775", eColor:"#F0F4C3"},
+              {seq:3, f16013:"203", market_id:"M004", name:"KOSDAQ 150", f15001:"", 
+                      f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#A1887F", eColor:"#D7CCC8"}],
             options: {
                 color: 'primary',
                 width: '80%',
                 zIndex: 200
             },
+            chartLoadFlag : false,
             showEtpManageDetailDialog : false,
             paramData : {},
         };
     },
     mixins : [ market_common ],
     components: {
+      AreaIndexTextChart,
     },
     computed: {
          orderedData : function(){
-           
             return _.orderBy(this.carousel_mod, 'ctg_code', 'asc');
         }        
     },
     mounted: function() {
 
         this.fn_getEtpList( "001" );       /* 001-시장대표 */
+        for(var i=0; i<4; i++) {
+          this.getIndexBasic(this.rep_info[i]);
+          this.getEtfSumByIndex(this.rep_info[i]);
+          this.getEtnSumByIndex(this.rep_info[i]);
+        }
+        for(var i=0; i<4; i++) {
+          this.getIndexIntra(this.rep_info[i]);
+        }
     },
     created: function() {},
     beforeDestroy() {},
     methods: {
+      getIndexBasic: function(rinfo) {
+        console.log("getIndexBasic : " + rinfo.seq);
+        var vm = this;
 
-        
+        axios.get(Config.base_url + "/user/marketinfo/getIndexBasic", {
+          params: rinfo
+        }).then(function(response) {
+          console.log(response);
+          if (response.data.success == false) {
+              alert("해당 지수의 데이터가 없습니다");
+          } else {
+            rinfo.f15001 = response.data.results[0].F15001;
+            rinfo.f15472 = response.data.results[0].F15472;
+            rinfo.f15004 =  response.data.results[0].F15004;      
+          }
+        });
+      },
+      getEtfSumByIndex: function(rinfo) {
+        console.log("getEtfSumByIndex : " + rinfo.seq);
+        var vm = this;
+
+        axios.get(Config.base_url + "/user/marketinfo/getEtfSumByIndex", {
+          params: {
+            f34239: Number(rinfo.market_id.substring(1)),
+            // f34239: rinfo.market_id.substring(1),
+            f16257 : rinfo.f16013
+          }
+        }).then(function(response) {
+          // console.log(response);
+          if (response.data.success == false) {
+              // alert("해당 지수의 데이터가 없습니다");
+             rinfo.etf_sum = 0;
+          } else {
+            rinfo.etf_sum = response.data.results[0].F16500;
+            if(rinfo.etf_sum == null) rinfo.etf_sum = 0;
+            else rinfo.etf_sum = util.formatStringNum(rinfo.etf_sum);
+          }
+        });
+      },
+      getEtnSumByIndex: function(rinfo) {
+        console.log("getEtnSumByIndex : " + rinfo.seq);
+        var vm = this;
+
+        axios.get(Config.base_url + "/user/marketinfo/getEtnSumByIndex", {
+          params: {
+            f34239: Number(rinfo.market_id.substring(1)),
+            // f34239: rinfo.market_id.substring(1),
+            f16257 : rinfo.f16013
+          }
+        }).then(function(response) {
+          // console.log(response);
+          if (response.data.success == false) {
+              // alert("해당 지수의 데이터가 없습니다");
+             rinfo.etn_sum = 0;
+          } else {
+            rinfo.etn_sum = response.data.results[0].F16500;
+            if(rinfo.etn_sum == null) rinfo.etn_sum = 0;
+            else rinfo.etn_sum = util.formatStringNum(rinfo.etn_sum);
+          }
+        });
+      },
+      getIndexIntra: function(rinfo) {
+        console.log("getIndexIntra : " + rinfo.seq);
+        var vm = this;
+
+        axios.get(Config.base_url + "/user/marketinfo/getIndexIntra", {
+          params: rinfo
+        }).then(function(response) {
+          // console.log(response);
+          if (response.data.success == false) {
+              alert("해당 지수의 데이터가 없습니다");
+          } else {
+              // vm.intra_data.push = response.data.results;
+              vm.intra_data.push(response.data.results);
+              // console.log(vm.intra_data[rinfo.seq]);
+              // 데이터 없는 상태에서 getDataSet 하면 에러남.
+              // Error in render: "TypeError: undefined is not iterable (cannot read property Symbol(Symbol.iterator))
+              if(vm.intra_data.length == 4) vm.chartLoadFlag = true;
+          }
+        });
+      },
+      getDataSet: function(idx) {
+          var vm = this;
+          var intra_info = vm.intra_data[idx];
+          var items = [];
+          for (let item of intra_info) {
+            // console.log("close_idx : " + item.close_idx);
+              items.push([item.trd_his, item.close_idx, item.trd_dd]);
+          }
+
+          return items;
+      },
     }
 };
 </script>
