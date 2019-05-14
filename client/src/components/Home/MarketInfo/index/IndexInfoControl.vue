@@ -1,7 +1,7 @@
 <template>
     <v-layout row wrap class="content_margin con_wrap">
         <v-flex grow :class="className">
-            <IndexDetailDialog v-if="showIndexDetailDialog" :showDialog="true" :paramData="paramData"></IndexDetailDialog>
+            <IndexDetailInfo v-if="showIndexDetailDialog" :showDialog="true" :paramData="paramData"></IndexDetailInfo>
             <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
             <today v-if="showMarketInfo == 1" @showDetail="showDetail" @showMessageBox="showMessageBox"></today>         
             <ConfirmDialog ref="confirm"></ConfirmDialog>
@@ -23,7 +23,7 @@ import Config from "@/js/config.js";
 import ComFavorItemSub from "@/components/common/control/ComFavorItemSub"; 
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
-import IndexDetailDialog from "@/components/Home/Index/Manage/IndexDetailDialog.vue";   /*지수 상세정보*/
+import IndexDetailInfo from "@/components/Home/Index/Manage/IndexDetailInfo.vue";   /*지수 상세정보*/
 import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";         /*ETP 상세정보*/
 
 import today from "./today.vue";                /* 001-Today */
@@ -45,7 +45,7 @@ export default {
     components: {
         ComFavorItemSub : ComFavorItemSub,
         ConfirmDialog : ConfirmDialog,
-        IndexDetailDialog : IndexDetailDialog,
+        IndexDetailInfo : IndexDetailInfo,
         EtpManageDetail :   EtpManageDetail,
         today :  today,               /* 001-Today */
     },

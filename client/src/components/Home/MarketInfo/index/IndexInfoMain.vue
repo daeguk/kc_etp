@@ -18,9 +18,9 @@
                 <v-tab-item v-for="tab of tabs"  :key="tab.id" >
                 </v-tab-item>
             </v-tabs-items>
-        </v-flex>
+        
         <IndexInfoControl :activeTab="activeTab"></IndexInfoControl>
-
+        </v-flex>
     </v-layout>
 </template>
 
