@@ -60,11 +60,11 @@
 
 
     <!--
-    * ETP 운용관리 - PDF관리에서 환율정보를 조회한다.
+    * exchBasic 환율정보를 조회한다.
     * 2019-05-03  bkLove(촤병국)
     -->
-    <select id="getEtpOperPdfExchangeRate">
-        SELECT      /* etpOper.getEtpOperPdfExchangeRate  ETP 운용관리 - PDF관리에서 환율정보를 조회한다. */
+    <select id="getExchBasic">
+        SELECT      /* etpOper.getExchBasic  exchBasic 환율정보를 조회한다. */
 
                     td_exch_basic.F12506                                    AS  f12506      /* 입회일 */
                 ,   td_exch_basic.F16012                                    AS  f16012      /* 표준코드 */
