@@ -477,7 +477,7 @@ export default {
                 
                 this.showEtpOperPdfEmergencyModifyPop = true;
 
-                if( !showEtpDetailDialog ) {
+                if( !this.showEtpDetailDialog ) {
                     this.showEtpOerInfo = this.activeTab;
                 }
             }
@@ -510,7 +510,7 @@ export default {
                 
                 this.showEtpOperPdfInavCalcPop = true;
 
-                if( !showEtpDetailDialog ) {
+                if( !this.showEtpDetailDialog ) {
                     this.showEtpOerInfo = this.activeTab;
                 }
             }
