@@ -27,8 +27,24 @@
                             @showDetail="showDetail" 
                             @showMessageBox="showMessageBox"
                             @fn_showDetailIndex="fn_showDetailIndex"
-                            @fn_showDetailPdf="fn_showDetailPdf">
+                            @fn_showDetailPdf="fn_showDetailPdf"
+                            @fn_setPdfQuickPdfData="fn_setPdfQuickPdfData"
+                            @fn_setPdfQuickIndexBasicData="fn_setPdfQuickIndexBasicData">
             </EtpOperPdf>
+
+            <!-- [PDF 관리] Quick 메뉴 정보 -->
+            <EtpOperPdfQuick
+                v-if="showEtpOerPdfQuick" 
+
+                :pdfData="pdfData"
+                :indexBasic = "indexBasic"
+                @showDetail="showDetail"
+                @showMessageBox="showMessageBox"
+
+                @fn_showDetailIndex="fn_showDetailIndex"
+                @fn_setEtpOperPdfByRate = "fn_setEtpOperPdfByRate"
+                @fn_showDetailPdf="fn_showDetailPdf">
+            </EtpOperPdfQuick>
             
 
 
@@ -139,6 +155,7 @@ import EtpOperIndexErrorPop         from "@/components/Home/Etp/Manage/EtpOperIn
 import EtpOperInfo                  from "@/components/Home/Etp/Manage/EtpOperInfo.vue";                    /* ETP 운용정보 */
 import EtpOperIndex                 from "@/components/Home/Etp/Manage/EtpOperIndex.vue";                   /* 지수관리 */
 import EtpOperPdf                   from "@/components/Home/Etp/Manage/EtpOperPdf.vue";                     /* PDF 관리 */
+import EtpOperPdfQuick from "@/components/Home/Etp/Manage/EtpOperPdfQuick.vue";
 import EtpOperPdfEmergencyModifyPop from "@/components/Home/Etp/Manage/EtpOperPdfEmergencyModifyPop.vue";   /* PDF 긴급반영 팝업 */
 import EtpOperPdfInavCalcPop        from "@/components/Home/Etp/Manage/EtpOperPdfInavCalcPop.vue";          /* iNAV 계산기 팝업 */
 
@@ -154,12 +171,16 @@ export default {
             showEtpOperIndexErrorDialog : false,
             showEtpOperPdfEmergencyModifyPop : false,
             showEtpOperPdfInavCalcPop : false,
+            showEtpOerPdfQuick : false,
             showFaver : false,
 
             showEtpOerInfo : 0,
             paramData : [],
             className: '',
-            FaverClassName: '',            
+            FaverClassName: '',
+            pdfData : {},
+            indexBasic : {},
+            etpOperPdfByRate : null
     	};
     },    
 
@@ -176,6 +197,7 @@ export default {
         EtpOperInfo                     :   EtpOperInfo,                        /* ETP 운용정보 */
         EtpOperIndex                    :   EtpOperIndex,                       /* 지수관리 */
         EtpOperPdf                      :   EtpOperPdf,                         /* PDF 관리 */
+        EtpOperPdfQuick                 :   EtpOperPdfQuick,
 
         ConfirmDialog                   :   ConfirmDialog,                      /* 공통 메시지창 */
         ComFavorItemSub                 :   ComFavorItemSub,
@@ -196,6 +218,7 @@ export default {
             this.showEtpDetailDialog                =   false;
             this.showEtpManageDetailDialog          =   false;
             this.showIndexDetailDialog              =   false;
+            this.showEtpOerPdfQuick                 =   false;
 
             this.showEtpOperIndexDetailListDialog   =   false;
             this.showEtpOperIndexFixDialog          =   false;
@@ -206,6 +229,12 @@ export default {
             this.showFaver                          =   false;
 
             this.paramData                          =   data.paramData;
+
+            if( this.showEtpOerInfo == 2 ) {
+                this.showEtpOerPdfQuick =   true;
+            }
+            if (data.tab_id == 0 || data.tab_id == 1)
+             this.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
         });
     },
     beforeUpdated: function() {
@@ -227,7 +256,7 @@ export default {
                 this.showEtpDetailDialog = true;
                 
                 this.showEtpOerInfo = -1;
-                this.showFaver = true;
+//                this.showFaver = true;
                 
             } else if (gubun == '2') { 
                 this.paramData = paramData;
@@ -353,7 +382,10 @@ export default {
                 }
                 
                 this.showEtpOperPdfEmergencyModifyPop = true;
-                this.showEtpOerInfo = this.activeTab;
+
+                if( !showEtpDetailDialog ) {
+                    this.showEtpOerInfo = this.activeTab;
+                }
             }
             /* PDF 관리 -> iNAV 계산기 팝업 */
             else if( gubun == '7' ) {
@@ -367,7 +399,10 @@ export default {
                 }
                 
                 this.showEtpOperPdfInavCalcPop = true;
-                this.showEtpOerInfo = this.activeTab;
+
+                if( !showEtpDetailDialog ) {
+                    this.showEtpOerInfo = this.activeTab;
+                }
             }
         },
 
@@ -400,7 +435,33 @@ export default {
             vm.showEtpOperIndexErrorDialog          =   false;
             vm.showEtpOperPdfEmergencyModifyPop     =   false;
             vm.showEtpOperPdfInavCalcPop            =   false;
-        }
+        },
+
+        fn_setEtpOperPdfByRate : function( toggleData ) {
+            var vm = this;
+
+            vm.$nextTick().then(() => {
+                this.showEtpOerInfo = this.activeTab;
+
+                this.showIndexDetailDialog          =   false;
+                this.showEtpDetailDialog            =   false;
+
+                this.$EventBus.$emit('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call', toggleData);
+            });     
+
+        },
+
+        fn_setPdfQuickPdfData : function( pdfData )  {
+            var vm = this;
+
+            vm.pdfData      =   pdfData;
+        },
+
+        fn_setPdfQuickIndexBasicData : function( indexBasic )  {
+            var vm = this;
+
+            vm.indexBasic      =   indexBasic;
+        }        
     }
 }
 </script>

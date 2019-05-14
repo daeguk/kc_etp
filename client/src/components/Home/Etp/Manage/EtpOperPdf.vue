@@ -34,7 +34,7 @@
                                             v-on="on"
                                             widh="100%"
 
-                                            @change.enter ="fn_getEtpOerPdf()"
+                                            @change.enter ="alert();fn_getEtpOerPdf()"
                                         ></v-text-field>
                                     </template>
                                     <v-date-picker v-model="searchParam.show_date" no-title scrollable>
@@ -54,16 +54,6 @@
                         <table id="tblPdfList" class="display table01_w"></table>
                     </v-card>
 
-                    <!-- [PDF 관리] Quick 메뉴 정보 -->
-                    <EtpOperPdfQuick
-                        :indexBasic = "indexBasic"
-                        @showDetail="showDetail"
-                        @showMessageBox="showMessageBox"
-
-                        @fn_showDetailIndex="fn_showDetailIndex"
-                        @fn_setEtpOperPdfByRate = "fn_setEtpOperPdfByRate"
-                        @fn_showDetailPdf="fn_showDetailPdf"
-                    ></EtpOperPdfQuick>
                 </v-card>
             </v-flex>
         </v-layout>
@@ -78,18 +68,17 @@ import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 
 import Config from "@/js/config.js";
-import EtpOperPdfQuick from "@/components/Home/Etp/Manage/EtpOperPdfQuick.vue";
+
 
 var tblPdfList = null;
 
 export default {
-    props: [ "paramData" ],
+    props: [ "paramData", "etpOperPdfByRate" ],
     components: {
         //indexDetailrtmenupop: indexDetailrtmenupop
     },
     data() {
         return {
-            indexBasic : {},
             stateInfo: {
                 pageState:  "pdf" /* pdf - PDF 관리, pdfByRate - 비중변경현황 */,
                 totWidth: 0
@@ -101,11 +90,13 @@ export default {
                 search_date : "",
                 search_nm : "",
                 f16493 : "",
-            }
+            },
+            pdfData : {},
+            rateTitleList : []
         };
     },
     components: {
-        EtpOperPdfQuick: EtpOperPdfQuick
+
     },
     mounted: function() {
         var vm = this;
@@ -113,6 +104,16 @@ export default {
 console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
 console.log( vm.paramData );
 
+        vm.fn_getEtpOperPdfTitle();
+
+        vm.$EventBus.$on('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call', data => {
+            console.log( "EventBus EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call>>>>>>>" );
+            console.log( data );
+
+            vm.fn_setEtpOperPdfByRate( data );
+        });
+
+    
         if( vm.paramData ) {
 
             vm.searchParam.f16013   =   vm.paramData.f16257;     /* ETP기초지수코드  */
@@ -124,6 +125,8 @@ console.log( vm.paramData );
             ) {
                 vm.searchParam.search_nm   =   vm.paramData.f16002 + "(" + vm.paramData.f16013 + ")";  /* 한글종목명 / 단축코드 */
             }
+
+            vm.pdfData      =   vm.paramData;
         }else{
             vm.fn_getEtpOperInfoFirstData( "A" );
         }
@@ -140,8 +143,15 @@ console.log( vm.paramData );
             vm.fn_getEtpOerPdf();
         });
     },
-    created: function() {},
-    beforeDestory: function() {},
+    created: function() {
+
+    
+    },
+    beforeDestory: function() {
+        var vm = this;
+
+        vm.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
+    },
 
     methods: {
 
@@ -150,6 +160,33 @@ console.log( vm.paramData );
 
             vm.$emit( "fn_showDetailIndex", gubun, paramData );
         },
+
+/*
+         *  ETP 운영정보 - > PDF 관리 에서 비중 변경현황시 타이틀 정보를 조회한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_getEtpOperPdfTitle() {
+
+            var vm = this;
+
+            vm.rateTitleList    =   [];
+            for( var i=0; i < 5; i++ ) {
+                var temp = {};
+
+                var nowDate     =   new Date();
+                var tempDate    =   new Date(       nowDate.getFullYear()
+                                                ,   nowDate.getMonth()
+                                                ,   ( nowDate.getDate() - i ) 
+                                );
+
+                temp.name       =   "rate_day" + i;
+                temp.date       =       ( parseInt( tempDate.getMonth() ) + 1 )
+                                    +   "/" 
+                                    +   tempDate.getDate();
+
+                vm.rateTitleList.push( temp );
+            }
+        },        
 
         /*
          *  ETP 운영정보를 조회한다.
@@ -180,11 +217,14 @@ console.log( vm.paramData );
                             &&  dataList[0].f16257
                         ) {
                             vm.searchParam.search_nm   =   dataList[0].f16002 + "(" + dataList[0].f16013 + ")";  /* 한글종목명 / 단축코드 */
-                        }                        
+                        }
+
+                        vm.pdfData  =   dataList[0]
+                        vm.$emit( "fn_setPdfQuickPdfData", vm.pdfData );
                     }
                 }
             });
-        },        
+        },
 
         /*
          * ETP 지수관리 정보를 조회한다.
@@ -221,25 +261,7 @@ console.log( vm.paramData );
                         tblPdfList.rows.add(dataList).draw();
                         tblPdfList.draw();
 
-                        vm.indexBasic   =   dataList[0];
-
-                        /* 비중변경 현황인 경우 비중관련 컬럼에 날짜 정보를 설정한다. */
-                        if( vm.stateInfo.pageState == "pdfByRate" ) {
-
-                            var rateDateList    =   response.data.rateDateList;
-
-                            tblPdfList.columns().every(function (index) {
-
-                                var same = rateDateList.filter(function(o, p) {
-                                    return vm.arrShowColumn[index].name === o.name;
-                                });                                
-
-                                if( same && same.length == 1 ) {
-                                    $( tblPdfList.column( index ).header() ).html( vm.arrShowColumn[index].title + "<br>" + same[0].date );
-                                }
-
-                            });
-                        }
+                        vm.$emit( "fn_setPdfQuickIndexBasicData", dataList[0] );
                     }
                 }
             });
@@ -335,6 +357,25 @@ console.log( vm.paramData );
 
             tblPdfList = $("#tblPdfList").DataTable(tableObj);
 
+
+            /* 비중변경 현황인 경우 비중관련 컬럼에 날짜 정보를 설정한다. */
+            if( vm.stateInfo.pageState == "pdfByRate" ) {
+
+                if( vm.rateTitleList && vm.rateTitleList.length > 0  ) {
+
+                    tblPdfList.columns().every(function (index) {
+
+                        var same = vm.rateTitleList.filter(function(o, p) {
+                            return vm.arrShowColumn[index].name === o.name;
+                        });                                
+
+                        if( same && same.length == 1 ) {
+                            $( tblPdfList.column( index ).header() ).html( vm.arrShowColumn[index].title + "<br>" + same[0].date );
+                        }
+
+                    });
+                }
+            }
 
 
             // 테이블별 이벤트
@@ -481,7 +522,7 @@ console.log( vm.paramData );
             var vm = this;
 
             vm.$emit( "fn_showDetailPdf", gubun, paramData );
-        }
+        },
     }
 };
 </script>
