@@ -114,13 +114,6 @@
            AND  td_etp_basic.f12506                 =   #{search_date}              /* 입회일 */
         </if>
 
-        <if test= 'search_nm != null  and  search_nm != "" ' >
-           AND  (
-                        td_kspjong_basic.f16012     LIKE    CONCAT( '%', #{search_nm}, '%' )            /* 구성종목코드 */
-                    OR  td_kspjong_basic.f16002     LIKE    CONCAT( '%', #{search_nm}, '%' )            /* 한글종목명 */
-                )
-        </if>
-
     </sql>
 
 
@@ -354,6 +347,10 @@
                 )
             </when>        
         </choose>
+
+        <if test= 'firstYn != null  and  firstYn == "Y" ' >
+             LIMIT  0, 1
+        </if>
 
     </select>    
 

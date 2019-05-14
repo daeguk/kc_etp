@@ -6,13 +6,11 @@
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
                             <v-text-field
-                                v-model="searchParam.show_search_nm"
-                                :label="searchParam.show_search_nm"
+                                v-model="searchParam.search_nm"
                                 class="pdf_search"
-                                append-icon="search"
                                 single-line
                                 hide-details
-                                @keyup.enter="searchParam.search_nm = ''; fn_getEtpOerPdf()"
+                                :readonly="true"
                             ></v-text-field>
                             <p class="pdf_calendar">
                                 <v-menu
@@ -58,7 +56,6 @@
 
                     <!-- [PDF 관리] Quick 메뉴 정보 -->
                     <EtpOperPdfQuick
-                        :paramData="paramData"
                         :indexBasic = "indexBasic"
                         @showDetail="showDetail"
                         @showMessageBox="showMessageBox"
@@ -102,7 +99,6 @@ export default {
             searchParam : {
                 show_date : "",
                 search_date : "",
-                show_search_nm : "",
                 search_nm : "",
                 f16493 : "",
             }
@@ -123,12 +119,13 @@ console.log( vm.paramData );
             vm.searchParam.f34239   =   vm.paramData.f34239;     /* ETP기초지수MID  */
             vm.searchParam.f16493   =   vm.paramData.f16493;     /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
 
-            if(     vm.paramData.index_nm
+            if(     vm.paramData.f16002
                 &&  vm.paramData.f16257
             ) {
-                vm.searchParam.show_search_nm   =   vm.paramData.f16002 + "(" + vm.paramData.f16013 + ")";  /* 한글종목명 / 단축코드 */
-                vm.searchParam.search_nm        =   vm.paramData.f16002;                                    /* 한글종목명 */
+                vm.searchParam.search_nm   =   vm.paramData.f16002 + "(" + vm.paramData.f16013 + ")";  /* 한글종목명 / 단축코드 */
             }
+        }else{
+            vm.fn_getEtpOperInfoFirstData( "A" );
         }
         
 
@@ -155,6 +152,41 @@ console.log( vm.paramData );
         },
 
         /*
+         *  ETP 운영정보를 조회한다.
+         *  param   :   ETP지표가치산출구분(K:국내,F:해외)  / A:전종목, I:관심종목
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_getEtpOperInfoFirstData( gubun ) {
+
+            var vm = this;
+
+            axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
+                data: {
+                        f34241  :   gubun
+                    ,   firstYn :   "Y"
+                }
+            }).then(function(response) {
+                console.log(response);
+
+                if (response.data) {
+                    var dataList = response.data.dataList;
+
+                    if (dataList && dataList.length == 1) {
+                        vm.searchParam.f16013   =   dataList[0].f16257;     /* ETP기초지수코드  */
+                        vm.searchParam.f34239   =   dataList[0].f34239;     /* ETP기초지수MID  */
+                        vm.searchParam.f16493   =   dataList[0].f16493;     /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+
+                        if(     dataList[0].f16002
+                            &&  dataList[0].f16257
+                        ) {
+                            vm.searchParam.search_nm   =   dataList[0].f16002 + "(" + dataList[0].f16013 + ")";  /* 한글종목명 / 단축코드 */
+                        }                        
+                    }
+                }
+            });
+        },        
+
+        /*
          * ETP 지수관리 정보를 조회한다.
          * 2019-05-03  bkLove(촤병국)
          */
@@ -176,10 +208,6 @@ console.log( vm.paramData );
 
             vm.searchParam.search_date  =   vm.searchParam.show_date.replace(/-/g,"");
             vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
-
-            if( !vm.searchParam.search_nm ) {
-                vm.searchParam.search_nm   =   vm.searchParam.show_search_nm;
-            }
 
             axios.post( url, {
                 data: vm.searchParam
