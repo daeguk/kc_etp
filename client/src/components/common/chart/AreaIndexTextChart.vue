@@ -84,6 +84,18 @@ export default {
             c.font = '12px san-serif';
             c.fillText(this.textItem.f15004 + "%", 110, 60);
 
+            c.fillStyle = "#757575";
+            c.fillRect(165, 100, 30, 14);
+            c.fillStyle = "white";
+            c.font = '11px san-serif';
+            c.fillText("ETF", 170, 111);
+
+            c.fillStyle = "#424242";
+            c.fillRect(165, 120, 30, 14);
+            c.fillStyle = "white";
+            c.font = '11px san-serif';
+            c.fillText("ETN", 170, 131);
+
             c.fillStyle = "#1B5E20";
             c.font = '12px san-serif';
             c.textAlign = "end";
