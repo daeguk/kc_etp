@@ -251,13 +251,6 @@ export default {
                 this.paramData = paramData;
                 this.showIndexDetailDialog = false;
 
-                this.showEtpOperIndexFixDialog = false;
-                this.showEtpOperIndexErrorDialog = false;
-                this.showEtpOperIndexDetailListDialog = false;
-
-                this.showEtpOperPdfInavCalcPop = false;
-                this.showEtpOperPdfEmergencyModifyPop = false;
-                
                 if (this.showEtpDetailDialog) {
                     this.$EventBus.$emit('changeIndexInfoClose', paramData);
 
@@ -281,13 +274,6 @@ export default {
             } else if (gubun == '2') { 
                 this.paramData = paramData;
                 this.showEtpDetailDialog = false;
-
-                this.showEtpOperIndexFixDialog = false;
-                this.showEtpOperIndexErrorDialog = false;
-                this.showEtpOperIndexDetailListDialog = false;
-
-                this.showEtpOperPdfInavCalcPop = false;
-                this.showEtpOperPdfEmergencyModifyPop = false;                
 
                 if (this.showIndexDetailDialog) {
                     this.$EventBus.$emit('changeEtpInfoClose', paramData);
@@ -323,12 +309,6 @@ export default {
                 this.paramData = paramData;
                 this.showEtpOperIndexFixDialog = false;
                 this.showEtpOperIndexErrorDialog = false;
-
-                this.showIndexDetailDialog = false;
-                this.showEtpDetailDialog = false;
-
-                this.showEtpOperPdfInavCalcPop = false;
-                this.showEtpOperPdfEmergencyModifyPop = false;                
 
                 if (this.showEtpOperIndexDetailListDialog) {
                     this.$EventBus.$emit('changeEtpOperIndexFixClose', paramData);
@@ -389,12 +369,6 @@ export default {
                 this.showEtpOperIndexDetailListDialog = false;
                 this.showEtpOperIndexErrorDialog = false;
 
-                this.showEtpOperPdfInavCalcPop = false;
-                this.showEtpOperPdfEmergencyModifyPop = false;                
-
-                this.showIndexDetailDialog = false;
-                this.showEtpDetailDialog = false;                
-
                 if (this.showEtpOperIndexFixDialog) {
                     this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
                     this.$EventBus.$emit('changeEtpOperIndexErrorClose', paramData);
@@ -419,12 +393,6 @@ export default {
                 this.paramData = paramData;
                 this.showEtpOperIndexDetailListDialog = false;
                 this.showEtpOperIndexFixDialog = false;
-
-                this.showIndexDetailDialog = false;
-                this.showEtpDetailDialog = false;
-
-                this.showEtpOperPdfInavCalcPop = false;
-                this.showEtpOperPdfEmergencyModifyPop = false;
 
                 if (this.showEtpOperIndexErrorDialog) {
                     this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
@@ -453,13 +421,6 @@ export default {
                 this.paramData = paramData;
                 this.showEtpOperPdfInavCalcPop = false;
 
-                this.showEtpOperIndexFixDialog = false;
-                this.showEtpOperIndexErrorDialog = false;
-
-                this.showIndexDetailDialog = false;
-                this.showEtpDetailDialog = false;
-                this.showEtpOperIndexDetailListDialog = false;
-
                 if (this.showEtpOperPdfEmergencyModifyPop) {
                     this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_close', paramData);
 
@@ -477,7 +438,9 @@ export default {
                 
                 this.showEtpOperPdfEmergencyModifyPop = true;
 
-                if( !this.showEtpDetailDialog ) {
+                if(     !this.showIndexDetailDialog
+                    &&  !this.showEtpDetailDialog
+                ) {
                     this.showEtpOerInfo = this.activeTab;
                 }
             }
@@ -485,13 +448,6 @@ export default {
             else if( gubun == '7' ) {
                 this.paramData = paramData;
                 this.showEtpOperPdfEmergencyModifyPop = false;
-
-                this.showEtpOperIndexFixDialog = false;
-                this.showEtpOperIndexErrorDialog = false;
-
-                this.showIndexDetailDialog = false;
-                this.showEtpDetailDialog = false;
-                this.showEtpOperIndexDetailListDialog = false;
 
                 if (this.showEtpOperPdfInavCalcPop) {
                     this.$EventBus.$emit('EtpOperControl_EtpOperPdfEmergencyModifyPop_close', paramData);
@@ -510,7 +466,9 @@ export default {
                 
                 this.showEtpOperPdfInavCalcPop = true;
 
-                if( !this.showEtpDetailDialog ) {
+                if(     !this.showIndexDetailDialog
+                    &&  !this.showEtpDetailDialog
+                ) {
                     this.showEtpOerInfo = this.activeTab;
                 }
             }
