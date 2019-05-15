@@ -28,66 +28,9 @@
                                     <v-icon class="text_red">feedback</v-icon>PDF 수정 모드입니다.
                                 </v-toolbar-title>
 
-                                <v-dialog v-model="dialog2" persistent max-width="500">
-                                    <template v-slot:activator="{ on }">
-                                        <v-btn outline small color="primary" dark v-on="on">
-                                            <v-icon small color="primary">add</v-icon>자산추가
-                                        </v-btn>
-                                    </template>
-
-                                    <!---개발 중복 자산추가 팝업----->
-                                    <v-card>
-                                        <h5>
-                                            <v-card-title ma-0>
-                                                비교자산추가
-                                                <v-spacer></v-spacer>
-                                                <v-btn icon dark @click="dialog2 = false">
-                                                    <v-icon>close</v-icon>
-                                                </v-btn>
-                                            </v-card-title>
-                                        </h5>
-                                        <v-card-title>
-                                            <v-text-field
-                                                v-model="search"
-                                                append-icon="search"
-                                                label="Search"
-                                                single-line
-                                                hide-details
-                                            ></v-text-field>
-                                        </v-card-title>
-                                        <!--비교자산 탭--->
-                                        <v-layout row wrap>
-                                            <v-flex xs12>
-                                                <v-tabs fixed-tabs color="cyan" dark v-model="tab2">
-                                                    <v-tabs-slider color="#00fffc"></v-tabs-slider>
-                                                    <v-tab
-                                                        v-for="item in items4"
-                                                        :key="item"
-                                                    >{{ item }}</v-tab>
-                                                </v-tabs>
-                                                <!--v-tabs-items v-model="tab2">
-                                                <v-tab-item>
-                                                    <infopoptab1></infopoptab1>
-                                                </v-tab-item>
-                                                    <v-tab-item>
-                                                <infopoptab2></infopoptab2>
-                                                    </v-tab-item>
-                                                <v-tab-item>
-                                                    <infopoptab3></infopoptab3>
-                                                </v-tab-item>
-                                                </v-tabs-items-->
-                                            </v-flex>
-                                        </v-layout>
-                                        <!--비교자산 탭end--->
-                                    </v-card>
-                                    <v-card class="pop_btn_w text-xs-center">
-                                        <v-btn
-                                            depressed
-                                            color="primary"
-                                            @click="dialog = false"
-                                        >추가하기</v-btn>
-                                    </v-card>
-                                </v-dialog>
+                                <v-btn outline small color="primary" dark   @click="fn_addRow()">
+                                    <v-icon small color="primary">add</v-icon>자산추가
+                                </v-btn>
 
                                 <!---개발 중복 자산추가 팝업 end----->
                             </v-toolbar>
@@ -163,6 +106,7 @@
                                         <td class="txt_right">85.65</td>
                                     </tr>
                                 </tbody>
+                            
                             </table>
                         </v-card>
                     </v-card>
@@ -444,7 +388,9 @@ export default {
 
             tblEmergeny01 : "tblEmergeny01",
             searchParam : {},
-            etpBasic : {}
+            etpBasic : {},
+
+            dataList : [],
         };
     },
     created: function() {
@@ -470,43 +416,42 @@ export default {
         console.log( vm.paramData );
 
         tblEmergeny01   =   $('#' + vm.tblEmergeny01 ).DataTable( {
-                "processing": true,
-                "serverSide": false,
-                "info": false,   // control table information display field
-                "stateSave": true,  //restore table state on page reload,
-                "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                
-                select: {
-                    style:    'single',
-                    selector: 'td:first-child'
-                },
-                paging: false,
-                searching: false,
-                data : [],                            
-                "columnDefs": [
-                ],
-                columns: [
-
-                    { "data" : "f12506"         ,   "orderable" : true  ,   "className" : "txt_center"  },      /* Date */
-                    { "data" : "f33861"         ,   "orderable" : true  ,   "className" : "txt_center"  },      /* 시장구분 */
-                    { "data" : "f16316"         ,   "orderable" : true  ,   "className" : "txt_left"    },      /* 구성종목코드 */
-                    { "data" : "f16002"         ,   "orderable" : true  ,   "className" : "txt_left"    },      /* 종목명 */
-                    { "data" : "f16499"         ,   "orderable" : true  ,   "className" : "txt_right"   },      /* CU shrs */
-                    { "data" : "f34840"         ,   "orderable" : true  ,   "className" : "txt_right"   },      /* 액면금액 */
-                    { "data" : "f16588"         ,   "orderable" : true  ,   "className" : "txt_right"   },      /* 평가금액 */
-                    { "data" : "f34743"         ,   "orderable" : true  ,   "className" : "txt_right"   },      /* 비중 */
-                ]
+            "processing": true,
+            "serverSide": false,
+            "info": false,   // control table information display field
+            "stateSave": true,  //restore table state on page reload,
+            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+            
+            select: {
+                style:    'single',
+                selector: 'td:first-child'
+            },
+            paging: false,
+            searching: false,
+            data : [],                            
+            "columnDefs": [
+                {  
+                    /* CU shrs */
+                    "render": function ( data, type, row ) {
+                        let htm = "<input type='text' name='f16499' id='f16499' style='width:100%; text-align:right'  value='" + data + "' maxlength='15'>";
+                        return htm;
+                    },
+                    "targets": 4
+                },                
+            ],
+            columns: [
+                { "data" : "f12506"         ,   "orderable" : true  ,   "className" : "txt_center   text_blue"  },      /* Date */
+                { "data" : "f33861"         ,   "orderable" : true  ,   "className" : "txt_center   text_blue"  },      /* 시장구분 */
+                { "data" : "f16316"         ,   "orderable" : true  ,   "className" : "txt_left     text_blue"  },      /* 구성종목코드 */
+                { "data" : "f16002"         ,   "orderable" : true  ,   "className" : "txt_left     text_blue"  },      /* 종목명 */
+                { "data" : "f16499"         ,   "orderable" : true  ,   "className" : "txt_right"   },                  /* CU shrs */
+                { "data" : "f34840"         ,   "orderable" : true  ,   "className" : "txt_right"   },                  /* 액면금액 */
+                { "data" : "f16588"         ,   "orderable" : true  ,   "className" : "txt_right"   },                  /* 평가금액 */
+                { "data" : "f34743"         ,   "orderable" : true  ,   "className" : "txt_right"   },                  /* 비중 */
+            ]
         }); 
 
-
-        // 테이블별 이벤트
-        $('#' + vm.tblEmergeny01 + ' tbody').on('click', 'button', function () {
-            var table = $('#' + vm.tblEmergeny01 ).DataTable();
-            var data = table.row($(this).parents('tr')).data();
-        });
-
-
-        vm.getEtpOperPdfModify();
+        vm.fn_getEtpOperPdfModify();
     },
         
     methods: {
@@ -520,7 +465,7 @@ export default {
          * ETP 지수관리 정보를 조회한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        getEtpOperPdfModify() {
+        fn_getEtpOperPdfModify() {
             var vm = this;
 
             console.log("EtpOperPdf.vue -> fn_getEtpOperPdfEmergencyModifyPop.vue");
@@ -548,12 +493,79 @@ export default {
                     if (dataList && dataList.length > 0) {
                         tblEmergeny01.rows.add( dataList ).draw();
                         tblEmergeny01.draw();
+
+                        vm.dataList =   dataList;
                     }
                 }
             });
         },
 
-        fn_addAsset() {
+        fn_getJongmokData( param ) {
+            var vm = this;
+
+            console.log("EtpOperPdf.vue -> fn_getEtpOperPdfEmergencyModifyPop.vue");
+
+            if(     !param.val()
+                ||  param.val().length == 0
+            ) {
+                vm.$emit("showMessageBox", '확인','구성종목코드를 입력해 주세요.',{},1);
+
+                return  false;
+            }
+
+            axios.post( Config.base_url + "/user/etp/getKspjongBasic", {
+                data: { "f16012" : param.val() }
+            }).then(function(response) {
+                console.log(response);
+
+                if (response.data) {
+                    var dataList = response.data.dataList;
+
+                    if ( !dataList || dataList.length == 0 ) {
+                        vm.$emit("showMessageBox", '확인','구성종목코드(' + param.val() + ')가 존재하지 않습니다.',{},1);
+                        return  false;
+                    }
+
+                    if ( dataList && dataList.length > 1 ) {
+                        vm.$emit("showMessageBox", '확인','구성종목코드(' + param.val() + ')가 여러건 존재합니다.',{},1);
+                        return  false;
+                    }
+
+                    var filterData = _.filter(vm.dataList, function(o) {
+
+                        if ( o.f16316 == dataList[0].f16012 ) {
+                            return true; 
+                        }
+                    });
+
+                    if( filterData.length > 0 ) {
+                        vm.$emit("showMessageBox", '확인','구성종목코드(' + param.val() + ')가 이미 존재합니다.',{},1);
+                        return  false;
+                    }
+
+                // { "data" : "f12506"         ,   "orderable" : true  ,   "className" : "txt_center   text_blue"  },      /* Date */
+                // { "data" : "f33861"         ,   "orderable" : true  ,   "className" : "txt_center   text_blue"  },      /* 시장구분 */
+                // { "data" : "f16316"         ,   "orderable" : true  ,   "className" : "txt_left     text_blue"  },      /* 구성종목코드 */
+                // { "data" : "f16002"         ,   "orderable" : true  ,   "className" : "txt_left     text_blue"  },      /* 종목명 */
+                // { "data" : "f16499"         ,   "orderable" : true  ,   "className" : "txt_right"   },                  /* CU shrs */
+                // { "data" : "f34840"         ,   "orderable" : true  ,   "className" : "txt_right"   },                  /* 액면금액 */
+                // { "data" : "f16588"         ,   "orderable" : true  ,   "className" : "txt_right"   },                  /* 평가금액 */
+                // { "data" : "f34743"         ,   "orderable" : true  ,   "className" : "txt_right"   },                  /* 비중 */
+
+                //     var addData     =   {
+                //             "f12506"    :   dataList[0].f12506
+                //         ,   "f12506"    :   dataList[0].f12506
+                //     }                    
+
+                    vm.dataList.unshift( dataList[0] );
+
+                    tblEmergeny01.clear().draw();
+                    tblEmergeny01.rows.add( vm.dataList ).draw();                    
+                }
+            });
+        },
+
+        fn_addRow() {
             var vm = this;
 
 
@@ -575,14 +587,23 @@ export default {
             // </tr>
 
             tblEmergeny01.row.add( {
-                'JISU_CD':'',
-                'JISU_NM':"<input type='number' name='jongmok' id='jongmok' style='width:150px'><button  id='confirm'>확인</button>",
-                null:""
+
+                'f12506'    :   '',     /* Date */
+                'f33861'    :   '',     /* 시장구분 */
+                'f16316'    :   "<input type='text' name='jongmok' id='jongmok' style='width:100%' maxlength='15' >",       /* 구성종목코드 */
+                'f16002'    :   "<button  id='confirm'>확인</button>",                                                      /* 종목명 */
+                'f16499'    :   '',     /* CU shrs */
+                'f34840'    :   '0',    /* 액면금액 */
+                'f16588'    :   '0',    /* 평가금액 */
+                'f34743'    :   '0',    /* 비중 */
+
              } ).draw( false );
            
             $("button[id='confirm']").on('click', function () {
-              
-                var test = vm.getInfoIndex($("input[id='jongmok']").eq(0).val());
+
+                vm.fn_getJongmokData( $("input[id='jongmok']") );
+/*              
+                var test = vm.getInfoIndex( $("input[id='jongmok']" ).eq(0).val());
              
                 vm.results.push({
                     ANNO_YN: "발표",
@@ -597,13 +618,11 @@ export default {
                     MARKET_ID: "M168",
                     MIDDLE_TYPE: "FNGUIDE"
                 });
-
-                tblEmergeny01.clear().draw();
-                tblEmergeny01.rows.add(vm.results).draw();
+*/
 
                 //$("input[name='jongmok']").css("color", "red");
                 
-            }); 
+            });          
         },
 
         fn_closePop() {

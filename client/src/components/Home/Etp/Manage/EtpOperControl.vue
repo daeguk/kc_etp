@@ -103,8 +103,9 @@
             <EtpOperPdfEmergencyModifyPop   v-if="showEtpOperPdfEmergencyModifyPop"
 
                                             :paramData="paramData" 
-                                            :showDialog="showEtpOperPdfEmergencyModifyPop" 
-                                
+                                            :showDialog="showEtpOperPdfEmergencyModifyPop"
+
+                                            @showMessageBox="showMessageBox"
                                             @fn_closePop="fn_close" >
             </EtpOperPdfEmergencyModifyPop>
 
@@ -114,6 +115,7 @@
                                             :paramData="paramData" 
                                             :showDialog="showEtpOperPdfInavCalcPop" 
                                 
+                                            @showMessageBox="showMessageBox"
                                             @fn_closePop="fn_close" >
             </EtpOperPdfInavCalcPop>
 
