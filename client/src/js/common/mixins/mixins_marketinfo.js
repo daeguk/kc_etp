@@ -88,10 +88,10 @@ export  const  market_common =   {
                                         {  
                                             "render": function ( data, type, row ) {
                                                 let htm = ""
-                                                if (row.f15004 >= 0) {
-                                                    htm = "<span class='align_r text_red'>"+data;
+                                                if (row.f30818 >= 0) {
+                                                    htm = "<span class='align_r text_red'>"+row.fmt_f15301;
                                                 } else {
-                                                    htm = "<span class='align_r text_blue'>"+data;
+                                                    htm = "<span class='align_r text_blue'>"+row.fmt_f15301;
                                                 }
                                                 htm += "<br><span class='text_S'>"+row.f30818+"%</span>";
                                                 htm += "   </span>";
@@ -124,12 +124,12 @@ export  const  market_common =   {
                                     ],
                                     columns: [
                                         { "data": "f16002", "orderable": true, className:"txt_left line2"}, /*종목*/
-                                        { "data": "fmt_f15301", "orderable": true }, /*INAV*/
-                                        { "data": "fmt_f03329", "orderable" : true}, /*전일최종Nav*/
+                                        { "data": "f30818", "orderable": true }, /*INAV*/
+                                        { "data": "f03329", "orderable" : true}, /*전일최종Nav*/
                                         { "data": "f15302", "orderable" : true}, /*추적오차율*/
                                         { "data": "f15304", "orderable" : true}, /*괴리율*/
                                         { "data": "f34777", "orderable" : true}, /*기초지수*/
-                                        { "data": "fmt_f15318", "orderable" : true}, /*지수현재가*/
+                                        { "data": "f15318", "orderable" : true}, /*지수현재가*/
                                         { "data": null, "orderable" : true, defaultContent:""},
                                     ]
                             }); 
