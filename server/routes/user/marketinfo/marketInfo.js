@@ -10,6 +10,226 @@ var Promise = require("bluebird");
 var async = require('async'); 
 var util = require("util");
 
+/*
+* INDEX BASIC 조회
+*/
+
+var getIndexBasic = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getIndexBasic 호출됨.');
+
+  var options = {
+    f16013 : req.query.f16013,
+    market_id: req.query.market_id,
+  };
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('common.item', 'getIndexBasic', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+
+/*
+* INDEX INTRA 조회
+*/
+
+var getIndexIntra = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getIndexIntra 호출됨.');
+
+  var options = {
+    f16013 : req.query.f16013,
+    market_id: req.query.market_id,
+  };
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('common.item', 'getIndexIntra', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+
+/*
+* ETP BASIC 조회
+*/
+
+var getEtpBasic = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getEtpBasic 호출됨.');
+
+  var options = {
+    f16013 : req.query.f16013,
+  };
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('common.item', 'getEtpBasic', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+
+/*
+* ETP INTRA 조회
+*/
+
+var getEtpIntra = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getEtpIntra 호출됨.');
+
+  var options = {
+    f16013 : req.query.f16013,
+  };
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('common.item', 'getEtpIntra', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+
+/*
+* ETF 순자산총액 지수별 합산
+*/
+
+var getEtfSumByIndex = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getEtfSumByIndex 호출됨.');
+
+  var options = {
+    f34239 : req.query.f34239,
+    f16257 : req.query.f16257,
+  };
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('common.item', 'getEtfSumByIndex', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+
+/*
+* ETN 순자산총액 지수별 합산
+*/
+
+var getEtnSumByIndex = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getEtnSumByIndex 호출됨.');
+
+  var options = {
+    f34239 : req.query.f34239,
+    f16257 : req.query.f16257,
+  };
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('common.item', 'getEtnSumByIndex', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+
 
 
 /*
@@ -206,7 +426,7 @@ var getMarketIndexList = function (req, res) {
                         };
                 
                         util.log("현재가=", marketItem.f15001)
-                        var stmt = mapper.getStatement('common.item', 'getTodayIntraInfo', params, {language:'sql', indent: '  '});
+                        var stmt = mapper.getStatement('common.item', 'getIndexIntra', params, {language:'sql', indent: '  '});
 
 
                         conn.query(stmt, function( err, rows ) {
@@ -298,9 +518,11 @@ var getMarketIndexList = function (req, res) {
       
 };
 
-
-
-
-
+module.exports.getIndexBasic = getIndexBasic;
+module.exports.getIndexIntra = getIndexIntra;
+module.exports.getEtpBasic = getEtpBasic;
+module.exports.getEtpIntra = getEtpIntra;
+module.exports.getEtfSumByIndex = getEtfSumByIndex;
+module.exports.getEtnSumByIndex = getEtnSumByIndex;
 module.exports.getSectorEtpList = getSectorEtpList;
 module.exports.getMarketIndexList = getMarketIndexList;

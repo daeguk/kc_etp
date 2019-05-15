@@ -1,5 +1,5 @@
 /*
- * ETP REGISTER 위한 라우팅 함수 정의
+ * 인덱스 관리 요약 정보 처리
  *
  * @date 2019-02-08
  * @author ThreeOn

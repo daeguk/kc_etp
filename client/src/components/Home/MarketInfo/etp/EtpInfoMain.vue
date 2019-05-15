@@ -27,27 +27,27 @@
 <script>
 import EtpInfoControl from  '@/components/Home/MarketInfo/etp/EtpInfoControl.vue'
 export default {
-        props: [],
-        data() {
-            return {
-                activeTab: 0,
-                inx : 1,
-                tabs: [
+      props: [],
+      data() {
+          return {
+              activeTab: 0,
+              inx : 1,
+              tabs: [
 /*                { id: 1, name: "전체", route: '/info/etpinfo/marktEtpSummaryInfo' }, */
-                { id: 1, name: "시장대표"       , route: '/info/etpinfo/marketRepresent' },         /* 001-시장대표 */
-                { id: 2, name: "섹터"           , route: '/info/etpinfo/marketSector' },            /* 002-섹터*/
-                { id: 3, name: "테마"           , route: '/info/etpinfo/marketThema' },             /* 003-테마 */
-                { id: 4, name: "전략"           , route: '/info/etpinfo/marketStrategy' },          /* 004-전략 */
-                { id: 5, name: "채권"           , route: '/info/etpinfo/marketBond' },              /* 005-채권 */
-                { id: 6, name: "통화"           , route: '/info/etpinfo/marketCurrency' },          /* 006-통화 */
-                { id: 7, name: "원자재"         , route: '/info/etpinfo/marketRawMaterials' },      /* 007-원자재 */
-                { id: 8, name: "VIX"            , route: '/info/etpinfo/marketVix' },               /* 008-VIX */
+              { id: 1, name: "시장대표"       , route: '/info/etpinfo/marketRepresent' },         /* 001-시장대표 */
+              { id: 2, name: "섹터"           , route: '/info/etpinfo/marketSector' },            /* 002-섹터*/
+              { id: 3, name: "테마"           , route: '/info/etpinfo/marketThema' },             /* 003-테마 */
+              { id: 4, name: "전략"           , route: '/info/etpinfo/marketStrategy' },          /* 004-전략 */
+              { id: 5, name: "채권"           , route: '/info/etpinfo/marketBond' },              /* 005-채권 */
+              { id: 6, name: "통화"           , route: '/info/etpinfo/marketCurrency' },          /* 006-통화 */
+              { id: 7, name: "원자재"         , route: '/info/etpinfo/marketRawMaterials' },      /* 007-원자재 */
+              { id: 8, name: "VIX"            , route: '/info/etpinfo/marketVix' },               /* 008-VIX */
 
-                { id: 9, name: "부동산"         , route: '/info/etpinfo/marketRealEstate' },        /* 009-부동산 */
-                { id: 10, name: "혼합자산"      , route: '/info/etpinfo/marketMixAssets' },         /* 010-혼합자산 */
-                { id: 11, name: "해외"          , route: '/info/etpinfo/marketOversea' },           /* 101-국가 ( 탭에 노출은 '해외' ) */
-                { id: 12, name: "레버리지/인버스", route: '/info/etpinfo/marketLeverageInverse' },  /* 201-배율 ( 탭에 노출은 '레버리지/인버스' ) */
-            ],
+              { id: 9, name: "부동산"         , route: '/info/etpinfo/marketRealEstate' },        /* 009-부동산 */
+              { id: 10, name: "혼합자산"      , route: '/info/etpinfo/marketMixAssets' },         /* 010-혼합자산 */
+              { id: 11, name: "해외"          , route: '/info/etpinfo/marketOversea' },           /* 101-국가 ( 탭에 노출은 '해외' ) */
+              { id: 12, name: "레버리지/인버스", route: '/info/etpinfo/marketLeverageInverse' },  /* 201-배율 ( 탭에 노출은 '레버리지/인버스' ) */
+          ],
     	};
     },    
     mounted: function() {
