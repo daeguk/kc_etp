@@ -60,21 +60,120 @@
 
 
     <!--
-    * ETP 운용관리 - PDF관리에서 환율정보를 조회한다.
+    * exchBasic 환율정보를 조회한다.
     * 2019-05-03  bkLove(촤병국)
     -->
-    <select id="getEtpOperPdfExchangeRate">
-        SELECT      td_exch_basic.f12506                                        AS  f12506          /* 입회일 */
-                ,   td_exch_basic.f16012                                        AS  f16012          /* 표준코드 */
-                ,   td_exch_basic.f15001                                        AS  f15001          /* 현재가 */
-                ,   td_exch_basic.f14501                                        AS  f14501          /* 매도호가1 */
-                ,   td_exch_basic.f14531                                        AS  f14531          /* 매수호가1 */
-                ,   td_exch_basic.f03003                                        AS  f03003          /* 전일종가 */
+    <select id="getExchBasic">
+        SELECT      /* etpOper.getExchBasic  exchBasic 환율정보를 조회한다. */
+
+                    td_exch_basic.F12506                                    AS  f12506      /* 입회일 */
+                ,   td_exch_basic.F16012                                    AS  f16012      /* 표준코드 */
+                ,   td_exch_basic.F16013                                    AS  f16013      /* 단축코드 */
+                ,   td_exch_basic.F15472                                    AS  f15472      /* 대비 */
+                ,   td_exch_basic.F15006                                    AS  f15006      /* 등락구분(1:상한/2:상승/3:보합/4:하한/5:하락/6:기세상한/7:기세상승/8:기세하한/9:기세하락) */
+                ,   td_exch_basic.F03021                                    AS  f03021      /* 전일종매도호가 */
+                ,   td_exch_basic.F19136                                    AS  f19136      /* 전일대비(전일기준가기준)  */
+                ,   td_exch_basic.F19137                                    AS  f19137      /* 전일등락율(전일기준가기준) */
+                ,   td_exch_basic.F03025                                    AS  f03025      /* 전일종매수호가 */
+                ,   td_exch_basic.F03003                                    AS  f03003      /* 전일종가 */
+                ,   td_exch_basic.F03007                                    AS  f03007      /* 전일거래량(스프레드제외 */
+                ,   td_exch_basic.F03300                                    AS  f03300      /* 전일평균가격(국채현물가(계산)) */
+                ,   td_exch_basic.F03303                                    AS  f03303      /* 전일매매기준율 */
+                ,   td_exch_basic.F11504                                    AS  f11504      /* 장시간 */
+                ,   td_exch_basic.F15009                                    AS  f15009      /* 시가 */
+                ,   td_exch_basic.F15010                                    AS  f15010      /* 고가 */
+                ,   td_exch_basic.F15011                                    AS  f15011      /* 저가 */
+                ,   td_exch_basic.F15002                                    AS  f15002      /* 전일종가대비 */
+                ,   td_exch_basic.F14501                                    AS  f14501      /* 매도호가1 */
+                ,   td_exch_basic.F14531                                    AS  f14531      /* 매수호가1 */
+                ,   td_exch_basic.F15001                                    AS  f15001      /* 현재가 */
+                ,   td_exch_basic.F15004                                    AS  f15004      /* 등락율 */
+                ,   td_exch_basic.F16492                                    AS  f16492      /* 중계사명_국내외환 */
+                ,   td_exch_basic.F30523                                    AS  f30523      /* 최종매매기준율 */
+                ,   td_exch_basic.F15007                                    AS  f15007      /* 기준가 */
+                ,   td_exch_basic.F30555                                    AS  f30555      /* 외환현재가(전일종가/현재가/시간가치처리) */
+                ,   td_exch_basic.F16169                                    AS  f16169      /* 최근월물구분(Y:최근월물/N:else) */
+                ,   td_exch_basic.F16002                                    AS  f16002      /* 한글종목명 */
+                ,   td_exch_basic.F16003                                    AS  f16003      /* 한글종목약명 */
+                ,   td_exch_basic.F14763                                    AS  f14763      /* 중간호가 */
                 
           FROM  td_exch_basic
          WHERE  1 = 1
-           AND  td_exch_basic.f16012    IN ( '11USDSP', '11JPUSP' )    
+           AND  td_exch_basic.f16012            =   #{f16012}               /* 표준코드 */
     </select>
+
+    <!--
+    * kspjongBasic 데이터를 조회한다.
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="getKspjongBasic">
+        SELECT      /* etpOper.getKspjongBasic  kspjongBasic 데이터를 조회한다. */
+
+                    td_kspjong_basic.F12506                                  AS  f12506          /* 입회일 */
+                ,   td_kspjong_basic.F16012                                  AS  f16012          /* 국제표준코드 */
+                ,   td_kspjong_basic.F16013                                  AS  f16013          /* 단축코드 */
+                ,   td_kspjong_basic.F16002                                  AS  f16002          /* 한글종목명 */
+                ,   td_kspjong_basic.F15007                                  AS  f15007          /* 기준가 */
+                ,   td_kspjong_basic.F15006                                  AS  f15006          /* 등락구분(1:상한/2:상승/3:보합/4:하한/5:하락/6:기세상한/7:기세상승/8:기세하한/9:기세하락) */
+                ,   td_kspjong_basic.F15001                                  AS  f15001          /* 현재가 */
+                ,   td_kspjong_basic.F15003                                  AS  f15003          /* 기준가대비 */
+                ,   td_kspjong_basic.F15004                                  AS  f15004          /* 등락율 */
+                ,   td_kspjong_basic.F15009                                  AS  f15009          /* 시가 */
+                ,   td_kspjong_basic.F15010                                  AS  f15010          /* 고가 */
+                ,   td_kspjong_basic.F15011                                  AS  f15011          /* 저가 */
+                ,   td_kspjong_basic.F15015                                  AS  f15015          /* 거래량 */
+                ,   td_kspjong_basic.F15028                                  AS  f15028          /* 시가총액 */
+                ,   td_kspjong_basic.F16017                                  AS  f16017          /* 상장일 */
+                ,   td_kspjong_basic.F16109                                  AS  f16109          /* 유통주식수 */
+                ,   td_kspjong_basic.market_id                               AS  market_id       /* 거래량시장 ID */
+                
+          FROM  td_kspjong_basic
+         WHERE  1 = 1
+
+           AND  td_kspjong_basic.f16012         =   #{f16012}               /* 국제표준코드 */
+           AND  td_kspjong_basic.market_id      =   #{market_id}            /* 거래량시장 ID */
+    </select>
+
+    <!--
+    * futureBasic 데이터를 조회한다.
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="getFutureBasic">
+        SELECT      /* etpOper.getFutureBasic  futureBasic 데이터를 조회한다. */
+
+                    td_future_basic.F12506                                  AS  f12506          /* 입회일 */
+                ,   td_future_basic.F16013                                  AS  f16013          /* 단축코드 */
+                ,   td_future_basic.F16012                                  AS  f16012          /* 국제표준코드 */
+                ,   td_future_basic.F16002                                  AS  f16002          /* 한글종목명 */
+                ,   td_future_basic.F16004                                  AS  f16004          /* 영문종목명 */
+                ,   td_future_basic.F15007                                  AS  f15007          /* 기준가 */
+                ,   td_future_basic.F03003                                  AS  f03003          /* 전일종가 */
+                ,   td_future_basic.F15001                                  AS  f15001          /* 현재가 */
+                ,   td_future_basic.F15006                                  AS  f15006          /* 등락구분(1:상한/2:상승/3:보합/4:하한/5:하락/6:기세상한/7:기세상승/8:기세하한/9:기세하락 */
+                ,   td_future_basic.F15003                                  AS  f15003          /* 기준가대비 */
+                ,   td_future_basic.F15009                                  AS  f15009          /* 시가 */
+                ,   td_future_basic.F15010                                  AS  f15010          /* 고가 */
+                ,   td_future_basic.F15011                                  AS  f15011          /* 저가 */
+                ,   td_future_basic.F15015                                  AS  f15015          /* 거래량(30608과동일) */
+                ,   td_future_basic.F15023                                  AS  f15023          /* 거래대금(30609과동일) */
+                ,   td_future_basic.F15101                                  AS  f15101          /* 미결제약정수량 */
+                ,   td_future_basic.F15005                                  AS  f15005          /* 기준가등락율 */
+                ,   td_future_basic.F15472                                  AS  f15472          /* 대비 */
+                ,   td_future_basic.F15002                                  AS  f15002          /* 전일종가등락율 */
+                ,   td_future_basic.F16169                                  AS  f16169          /* 최근월물구분(Y:최근월물/N:else) */
+                ,   td_future_basic.F16189                                  AS  f16189          /* 만기년월 */
+                ,   td_future_basic.F33904                                  AS  f33904          /* 거래승수 */
+                ,   td_future_basic.F16198                                  AS  f16198          /* 옵션종류(2:CALL,3:PUT) */
+                ,   td_future_basic.F16190                                  AS  f16190          /* 행사가격 */
+                ,   td_future_basic.market_id                               AS  market_id       /* 시장 ID */
+                
+          FROM  td_future_basic
+         WHERE  1 = 1
+
+           AND  td_future_basic.f16012          =   #{f16012}               /* 국제표준코드 */
+           AND  td_future_basic.market_id       =   #{market_id}            /* 시장 ID */
+    </select>    
+
 
 
     <!--
@@ -85,6 +184,7 @@
                     td_etp_basic.f12506                                     AS  f12506      /* 입회일 */
                 ,   td_etp_basic.f16012                                     AS  f16012      /* 국제표준코드 */
                 ,   td_etp_basic.f15028                                     AS  f15028      /* 시가총액 */
+                ,   td_etp_basic.f15004                                     AS  f15004      /* 등락율 */
                         
                 ,   td_etfpdf_basic.f16316                                  AS  f16316      /* 구성종목코드 */
                 ,   td_kspjong_basic.f16002                                 AS  f16002      /* 한글종목명 */
@@ -95,16 +195,10 @@
                 ,   td_etfpdf_basic.f34840                                  AS  f34840      /* 액면금액설정현금액 */
                 ,   td_etfpdf_basic.f16588                                  AS  f16588      /* 평가금액 */
                 ,   td_etfpdf_basic.f34743                                  AS  f34743      /* ETF_PDF비중 */
-                        
-                ,   td_kspjong_basic.f15007                                 AS  f15007      /* 기준가 */
-                ,   td_kspjong_basic.f15001                                 AS  f15001      /* 현재가 */
 
           FROM          td_etp_basic
          INNER  JOIN    td_etfpdf_basic
                   ON    td_etp_basic.f16012         =   td_etfpdf_basic.f16012      /* 국제표준코드 */
-                  
-          LEFT  JOIN    td_kspjong_basic
-                  ON    td_etfpdf_basic.f16316      =   td_kspjong_basic.f16012     /* 구성종목코드 */
 
          WHERE  1 = 1
 
@@ -127,23 +221,17 @@
                     td_etp_basic.f12506                                     AS  f12506      /* 입회일 */
                 ,   td_etp_basic.f16012                                     AS  f16012      /* 국제표준코드 */
                 ,   td_etp_basic.f15028                                     AS  f15028      /* 시가총액 */
+                ,   td_etp_basic.f15004                                     AS  f15004      /* 등락율 */
                         
                 ,   td_etnpdf_basic.f16316                                  AS  f16316      /* 구성종목코드 */
                 ,   td_future_basic.f16002                                  AS  f16002      /* 한글종목명 */
                 ,   td_etnpdf_basic.f16583                                  AS  f16583      /* 사무수탁회사번호 */
                 ,   td_etnpdf_basic.f33837                                  AS  f33837      /* 구성종목수 */
-                        
-                ,   td_future_basic.f15007                                  AS  f15007      /* 기준가 */
-                ,   td_future_basic.f15001                                  AS  f15001      /* 현재가 */
-                ,   td_future_basic.f16588                                  AS  f16588      /* 평가금액 */
                 
           FROM          td_etp_basic
          INNER  JOIN    td_etnpdf_basic
                   ON    td_etp_basic.f16012         =   td_etnpdf_basic.f16012
-                  
-          LEFT  JOIN    td_future_basic
-                  ON    td_etnpdf_basic.f16316      =   td_future_basic.f16012
-                  
+
          WHERE  1 = 1
 
         <if test= 'f16012 != null  and  f16012 != "" ' >
@@ -152,13 +240,6 @@
 
         <if test= 'search_date != null  and  search_date != "" ' >
            AND  td_etp_basic.f12506                 =   #{search_date}              /* 입회일 */
-        </if>
-
-        <if test= 'search_nm != null  and  search_nm != "" ' >
-           AND  (
-                        td_etnpdf_basic.f16316      LIKE    CONCAT( '%', #{search_nm}, '%' )            /* 구성종목코드 */
-                    OR  td_etnpdf_basic.f16002      LIKE    CONCAT( '%', #{search_nm}, '%' )            /* 한글종목명 */
-                )
         </if>
 
     </select>

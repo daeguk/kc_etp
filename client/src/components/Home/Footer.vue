@@ -1,5 +1,5 @@
 <template>
-<v-footer app>
+<v-footer>
     <v-layout row wrap align-center>
     <v-flex md4>
         <span style="padding-left:30px;"></span>

@@ -41,6 +41,8 @@ export  const  market_common =   {
             }).then(function(response) {
                 console.log(response);
 
+                console.log("carousel_data..............");
+
                 if( response.data ) {
                     var etpLists = response.data.etpLists;
                     vm.carousel_data = response.data.carousel_data;
@@ -100,7 +102,7 @@ export  const  market_common =   {
                                         {  
                                             "render": function ( data, type, row ) {
                                                 let htm = ""
-                                                if (row.f15004 >= 0) {
+                                                if (row.f30823 >= 0) {
                                                     htm = "<span class='align_r text_red'>"+data;
                                                 } else {
                                                     htm = "<span class='align_r text_blue'>"+data;

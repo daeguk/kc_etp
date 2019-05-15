@@ -99,7 +99,7 @@
 
     </insert>
 
-
+<!-- 
     <select id="getTodayIntraInfo">
         SELECT concat(substr(lpad(B.F20004,8, '0'), 1, 2), ':',substr(lpad(B.F20004,8, '0'), 3, 2), ':',substr(lpad(B.F20004,8, '0'), 5, 2)) AS trd_his
                ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as trd_dd
@@ -113,7 +113,54 @@
         AND DATE_FORMAT(B.F20044, "%Y.%m.%d") = DATE_FORMAT('20190410', "%Y.%m.%d")
         ORDER BY B.F20044 desc
     </select>
+-->    
+    <select id="getIndexBasic">
+        SELECT *
+        FROM td_index_basic
+        WHERE F16013 = #{f16013}
+        AND MARKET_ID = #{market_id}
+    </select>
 
+    <select id="getIndexIntra">
+        SELECT concat(substr(lpad(B.F20004,8, '0'), 1, 2), ':',substr(lpad(B.F20004,8, '0'), 3, 2), ':',substr(lpad(B.F20004,8, '0'), 5, 2)) AS trd_his
+               ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as trd_dd
+		       ,B.F20008 as close_idx
+        FROM td_index_intra B
+        WHERE B.F16013 = #{f16013}
+        AND B.MARKET_ID = #{market_id}
+        ORDER BY B.F20044 desc, B.F20004 desc LIMIT 100
+    </select>
+
+    <select id="getEtpBasic">
+        SELECT *
+        FROM td_etp_basic
+        WHERE F16013 = #{f16013}
+    </select>
+
+    <select id="getEtpIntra">
+        SELECT concat(substr(lpad(B.F20004,8, '0'), 1, 2), ':',substr(lpad(B.F20004,8, '0'), 3, 2), ':',substr(lpad(B.F20004,8, '0'), 5, 2)) AS trd_his
+               ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as trd_dd
+		       ,B.F20008 as close_idx
+        FROM td_etp_intra B
+        WHERE B.F16013 = #{f16013}
+        ORDER BY B.F20044 desc, B.F20004 desc LIMIT 100
+    </select>
+
+    <select id="getEtfSumByIndex">
+        SELECT SUM(F16500) * 1000000 + SUM(F18001) AS F16500
+        FROM td_etp_basic
+        WHERE F16257 = #{f16257}
+        AND F34239 = #{f34239}
+        AND F16493 IN (1,2)
+    </select>
+
+    <select id="getEtnSumByIndex">
+        SELECT SUM(F16500) * 1000000 + SUM(F18001) AS F16500
+        FROM td_etp_basic
+        WHERE F16257 = #{f16257}
+        AND F34239 = #{f34239}
+        AND F16493 IN (3,4)
+    </select>
     <!-- 인덱스 기본정보-->
     <select id="getIndexBaseInfo">
     <![CDATA[

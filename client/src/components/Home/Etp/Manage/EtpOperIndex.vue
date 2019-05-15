@@ -1,7 +1,7 @@
 <template>
     <v-container>
-        <v-layout row wrap class="content_margin">
-            <v-flex grow>
+        <v-layout row wrap class="con_wrap">
+            <v-flex grow class="conWidth_left">
                 <v-card flat>
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
@@ -15,7 +15,7 @@
                     </v-card-title>
                     
                     <v-card flat>
-                        <table id="tableOperIndex" class="display table01_w"></table>
+                        <table id="tableOperIndex" class="tbl_type"></table>
 
                         <table id class="tbl_type" style="width:100%">
                             <colgroup>
@@ -215,7 +215,7 @@
                                                 <v-dialog
                                                     v-model="dialog7"
                                                     persistent
-                                                    max-width="500"
+                                                    max-width="600"
                                                 >
                                                     <template v-slot:activator="{ on }">
                                                         <v-list-tile v-on="on">
@@ -331,8 +331,10 @@
                             </tbody>
                         </table>
                     </v-card>
-
-                    <!-- [지수관리] Quick 메뉴 정보 -->
+             </v-card>
+           </v-flex>
+           <v-flex class="conWidth_right">
+                <!-- [지수관리] Quick 메뉴 정보 -->
                     <EtpOperIndexQuick  :indexBasic = "indexBasic"
 
                                         @showDetail="showDetail" 
@@ -340,9 +342,7 @@
                                         @fn_showDetailIndex="fn_showDetailIndex"
                                         @fn_setEtpOperIndexOversea="fn_setEtpOperIndexOversea">
                     </EtpOperIndexQuick>
-
-                </v-card>
-            </v-flex>
+           </v-flex>
         </v-layout>
     </v-container>
 </template>
@@ -705,23 +705,23 @@ export default {
             var vm = this;
 
             var arrColumn  =   [
-                { 'name' : 'f16002'             , 'data': 'f16002'          ,  'width' : '200', 'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '지수'      },      /* 한글종목명 */
-                { 'name' : 'large_type'         , 'data': 'large_type'      ,  'width' : '60',  'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '산출기관'  },      /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
-                { 'name' : 'vendor'             , 'data': 'vendor'          ,  'width' : '40',  'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '벤더'      },      /* 벤더 */
-                { 'name' : 'manage_type'        , 'data': 'manage_type'     ,  'width' : '60',  'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '관리유형'  },      /* 관리유형 */
-                { 'name' : 'last_date'          , 'data': 'last_date'       ,  'width' : '60',  'orderable' : true  , 'className': 'dt-body-center' , 'title' : 'Last'      },      /* Last */
-                { 'name' : 'last_time'          , 'data': 'last_time'       ,  'width' : '60',  'orderable' : true  , 'className': 'dt-body-center' , 'title' : 'Time'      },      /* Time */
-                { 'name' : 'etp_info_json'      , 'data': 'etp_info_json'   ,  'width' : '250', 'orderable' : true  , 'className': 'dt-body-left'   , 'title' : 'ETF'       },       /* ETF */
+                { 'name' : 'f16002'             , 'data': 'f16002'          ,  'width' : '200', 'orderable' : true  , 'className': 'txt_left'   , 'title' : '지수'      },      /* 한글종목명 */
+                { 'name' : 'large_type'         , 'data': 'large_type'      ,  'width' : '60',  'orderable' : true  , 'className': 'txt_left'   , 'title' : '산출기관'  },      /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
+                { 'name' : 'vendor'             , 'data': 'vendor'          ,  'width' : '40',  'orderable' : true  , 'className': 'txt_left'   , 'title' : '벤더'      },      /* 벤더 */
+                { 'name' : 'manage_type'        , 'data': 'manage_type'     ,  'width' : '60',  'orderable' : true  , 'className': ''   , 'title' : '관리유형'  },      /* 관리유형 */
+                { 'name' : 'last_date'          , 'data': 'last_date'       ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right' , 'title' : 'Last'      },      /* Last */
+                { 'name' : 'last_time'          , 'data': 'last_time'       ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right' , 'title' : 'Time'      },      /* Time */
+                { 'name' : 'etp_info_json'      , 'data': 'etp_info_json'   ,  'width' : '250', 'orderable' : true  , 'className': 'txt_left'   , 'title' : 'ETF'       },       /* ETF */
                 { 'name' : 'graph'              , 'data': null              ,  'width' : '150' },
 
-                { 'name' : 'in_out'             , 'data': 'in_out'          ,  'width' : '80', 'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '입수 구분'     },      /* 입수 구분 */
-                { 'name' : 'degree'             , 'data': 'degree'          ,  'width' : '80',  'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '차수'          },      /* 차수 */
-                { 'name' : 'real_symbol'        , 'data': 'real_symbol'     ,  'width' : '100',  'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '실시간 심볼'   },      /* 실시간 심볼 */
-                { 'name' : 'incre_symbol'       , 'data': 'incre_symbol'    ,  'width' : '100',  'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '증가 심볼'     },      /* 증가 심볼 */
-                { 'name' : 'rest_date'          , 'data': 'rest_date'       ,  'width' : '100',  'orderable' : true  , 'className': 'dt-body-center' , 'title' : '휴장일'        },      /* 휴장일 */
-                { 'name' : 'recently_date'      , 'data': 'recently_date'   ,  'width' : '100',  'orderable' : true  , 'className': 'dt-body-center' , 'title' : '최근일자'      },      /* 최근일자 */
-                { 'name' : 'incre_recently'     , 'data': 'incre_recently'  ,  'width' : '100', 'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '최근증가'      },      /* 최근증가 */                
-                { 'name' : 'base_date'          , 'data': 'base_date'       ,  'width' : '100', 'orderable' : true  , 'className': 'dt-body-left'   , 'title' : '기준일자'      },      /* 기준일자 */
+                { 'name' : 'in_out'             , 'data': 'in_out'          ,  'width' : '80', 'orderable' : true  , 'className': 'txt_left'   , 'title' : '입수 구분'     },      /* 입수 구분 */
+                { 'name' : 'degree'             , 'data': 'degree'          ,  'width' : '80',  'orderable' : true  , 'className': 'txt_left'   , 'title' : '차수'          },      /* 차수 */
+                { 'name' : 'real_symbol'        , 'data': 'real_symbol'     ,  'width' : '100',  'orderable' : true  , 'className': 'txt_left'   , 'title' : '실시간 심볼'   },      /* 실시간 심볼 */
+                { 'name' : 'incre_symbol'       , 'data': 'incre_symbol'    ,  'width' : '100',  'orderable' : true  , 'className': 'txt_left'   , 'title' : '증가 심볼'     },      /* 증가 심볼 */
+                { 'name' : 'rest_date'          , 'data': 'rest_date'       ,  'width' : '100',  'orderable' : true  , 'className': 'txt_right' , 'title' : '휴장일'        },      /* 휴장일 */
+                { 'name' : 'recently_date'      , 'data': 'recently_date'   ,  'width' : '100',  'orderable' : true  , 'className': 'txt_right' , 'title' : '최근일자'      },      /* 최근일자 */
+                { 'name' : 'incre_recently'     , 'data': 'incre_recently'  ,  'width' : '100', 'orderable' : true  , 'className': 'txt_right'   , 'title' : '최근증가'      },      /* 최근증가 */                
+                { 'name' : 'base_date'          , 'data': 'base_date'       ,  'width' : '100', 'orderable' : true  , 'className': 'txt_right'   , 'title' : '기준일자'      },      /* 기준일자 */
             ];        
 
             var arrColumnDef  =   [
