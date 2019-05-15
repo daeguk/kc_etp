@@ -18,9 +18,9 @@
            AND  td_etp_basic.f16012                 =   #{basicData.f16012}         /* 국제표준코드 */
         </if>
 
-         <if test= '( f16013 != null  and  f16013 != "" ) and ( market_id != null  and  market_id != "" )' >
-           AND  td_etp_basic.f16257         =   #f16013}                            /* ETP기초지수코드 = 단축코드 */
-           AND  td_etp_basic.f34239         =   #{market_id}                        /* ETP기초지수MID = 시장 ID  */
+         <if test= '( basicData.f16013 != null  and  basicData.f16013 != "" ) and ( basicData.market_id != null  and  basicData.market_id != "" )' >
+           AND  td_etp_basic.f16257                 =   #{basicData.f16013}         /* ETP기초지수코드 = 단축코드 */
+           AND  td_etp_basic.f34239                 =   #{basicData.market_id}      /* ETP기초지수MID = 시장 ID  */
         </if>         
 
     </select>
