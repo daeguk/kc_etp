@@ -18,15 +18,15 @@
                     </h6>
 
                     <v-list-tile>
-                        <v-list-tile-title class="sumu_text">Sumulation Mode</v-list-tile-title>
+                        <v-list-tile-title class="sumu_text">Simulation Mode</v-list-tile-title>
                         <v-list-tile-content class="sumul_btn_w">
                             <ul>
                                 <li>
-                                    <v-switch v-model="switch1" color="primary"></v-switch>
+                                    <v-switch v-model="switch1" v-on:change="SimulationMode" color="primary"></v-switch>
                                 </li>
                                 <li>
                                     <v-btn small flat icon>
-                                        <v-icon class="btn_on">play_circle_outline</v-icon>
+                                        <v-icon :class="btn_class" v-on:click="startStop">{{btn_kind}}</v-icon>
                                     </v-btn>
                                 </li>
                                 <li>
@@ -76,20 +76,20 @@
                                 <v-flex xs6>
                                     <ul>
                                         <li class="list_tit">CU시가총액</li>
-                                        <li>1235879665654411111</li>
+                                        <li>{{formatNumber(market_tot_amt)}}</li>
                                     </ul>
                                     <ul>
                                         <li class="list_tit">CU당 주식수</li>
-                                        <li>4000</li>
+                                        <li>{{formatNumber(etpBasic.f16499)}}</li>
                                     </ul>
                                     <ul>
                                         <li class="list_tit">
                                             <b>iNAV 계산결과</b>
                                         </li>
                                         <li class="text_red">
-                                            <b>12435.13</b>
+                                            <b>{{formatNumber(iNav_amt)}}</b>
                                             <br>
-                                            <span class="float_r">0.56%</span>
+                                            <span class="float_r">{{formatNumber(iNav_percent)}}%</span>
                                         </li>
                                     </ul>
                                 </v-flex>
@@ -106,7 +106,7 @@
 
             <table id="pdf_table" class="tbl_type" style="width:100%">
                 <colgroup>
-                    <col width="12%">
+                    <col width="8%">
                     <col width="15%">
                     <col width="15%">
                     <col width="15%">
@@ -158,6 +158,12 @@ export default {
             switch1: "",
             etpBasic : {}, 
             pdfList: null,
+            market_tot_amt: 0,    
+            iNav_amt: 0,
+            iNav_percent: 0,
+            nav_timer: null,
+            btn_class: 'btn_on',
+            btn_kind: 'play_circle_outline'         
         };
     },
     mixins : [ nav_cal_common ],
@@ -165,7 +171,7 @@ export default {
        
     },
     mounted: function() {
-
+        var vm = this;
         /* [전체종목 -> ETF] 테이블 */
         pdf_table = $('#pdf_table').DataTable( {
             "processing": true,
@@ -183,15 +189,15 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "";
                         if (data == 0) {
-                            htm = '유가증권';
+                            htm = 'KSP';
                         } else if (data == 1) {
-                            htm = '코스닥';
+                            htm = 'KSQ';
                         } else if (data == 2) {
                             htm = '기타';
                         } else if (data == 3) {
                             htm = '채권';
                         } else if (data == 4) {
-                            htm = '선물 및 옵션';
+                            htm = '파생';
                         }
                         return htm;
                     },
@@ -201,7 +207,7 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "";
                         
-                        htm += "<input type='text' class='txt_right' value='"+data+"'>";
+                        htm += "<input type='text' id='cu_cnt' class='txt_right' value='"+data+"'>";
                         
                         return htm;
                     },
@@ -215,7 +221,7 @@ export default {
 
                         return htm;
                     },
-                    "targets": 5
+                    "targets": [5, 7]
                 },
                 {  
                     "render": function ( data, type, row ) {
@@ -233,6 +239,7 @@ export default {
                             },
                     "targets": 6
                 },
+                
             ],
             select: {
                 style:    'single',
@@ -254,34 +261,20 @@ export default {
 
 
         //  ETF 에서 그래프 선택시
-        $('#pdf_table tbody').on('click', 'button', function () {
+        $('#pdf_table tbody').on('blur', 'input', function () {            
             var table = $('#pdf_table').DataTable();
-            var data = table.row($(this).parents('tr')).data();
+            var data = table.row($(this).parents('td').parents('tr')).data();
 
-            if ($(this).attr('id') == 'btn_faver') {
-                console.log(data.faver_seq);
-                //data.faver =  data.faver == '1' ? '0' : '1';
 
-                if (data.faver == '1') {
-                    data.faver = 0;
-                    $(this).html("star_border");
-                    vm.deleteItem(data, 'etf');
-                } else {
-                    data.faver = 1;
-                    $(this).html("star");
-                    vm.setSelectedItem(data, '1', 'etf');
-                }
-                //$(this).html("star_border");
-                //etf_table.rows.add(etf_table.rows().data()).draw();
-            } else if ($(this).attr('id') == 'btn_detail') {
-                data.GUBUN= "1";
-                vm.fn_detailPop( data );
-            }
+            data.f16499 = $(this).val();
+
+            vm.navCalcu();
+            
         });
 
 
 
-        this.getiNavData();
+        vm.getiNavData();
     },
     methods: {
         
@@ -297,7 +290,7 @@ export default {
                 params: {
                     f16012 : 'KR7322410002',
                 }
-            }).then(function(response) {
+            }).then(async function(response) {
 
                 if (response.data) {
 
@@ -306,34 +299,114 @@ export default {
 
                     var market_amt = 0;
                     var market_tot_amt = 0;
-                    var pdfResults = [];
-                    for (let item of vm.pdfList) {
-                        
-                        vm.iNavCalulator(item).then(function(market_amt) {
+                    var index = 0;
+                    for (let item of vm.pdfList) {                        
+                        await vm.iNavCalulator(item).then(function(market_amt) {
                             item.market_amt = market_amt;
                             market_tot_amt += market_amt;
 
-                            debugger;
-                            console.log("market_amt:"+market_amt);
-                        }) ;
+                            if (index == (vm.pdfList.length-1)) {                                
+                                vm.pdf_reload(vm.pdfList);                                                        
+                                vm.market_tot_amt = market_tot_amt;
 
-                        break;
+                                /*INav 계산 : CU시가총액 / CU당 주식수*/
+                                if (vm.etpBasic.f16499 > 0) {
+                                    vm.iNav_amt = vm.market_tot_amt / vm.etpBasic.f16499;
+                                } else {
+                                    vm.iNav_amt = vm.market_tot_amt;
+                                }
+                                /* INav 등락률 */
+                                vm.iNav_percent =  (vm.iNav_amt / vm.etpBasic.f03329 - 1);
+
+                                /* input box readony 처리 */
+                                $('#pdf_table tbody td input[id=cu_cnt]').attr("readonly", true);
+                            }
+                            //console.log("market_amt:"+market_amt + "idx:" + index + "lenght:" + (vm.pdfList.length-1));     
+                            
+                            index++;
+                        });                        
                     }
-
-                    pdf_table.clear().draw();
-                    pdf_table.rows.add(vm.pdfList).draw();
                 }
             });
         },        
+
+        pdf_reload: function() {
+            pdf_table.clear().draw();
+            pdf_table.rows.add(this.pdfList).draw();
+        },
         formatNumber:function(num) {
             return util.formatNumber(num);
         },
 
+        /* 반복 계산 시작 및 스톱처리 */
+        startStop: function() {
+            if (this.nav_timer == null) {   
+                this.startLoopCalcu();      
+            } else {
+                this.stopLoopCalcu();
+            }
+        },
+
+        /* 반복 계산 */
+        startLoopCalcu: function() {
+            if (this.nav_timer == null) {                
+                this.btn_kind = 'pause_circle_outline'
+                this.nav_timer = setInterval(this.navCalcu, 10000);
+            }
+        },
+        /* 반복 계산 스톱*/
+        stopLoopCalcu: function() {
+            if (this.nav_timer != null) {
+                this.btn_kind = 'play_circle_outline'
+                clearInterval(this.nav_timer);
+            }
+        },
+       
+        /* Inav 계산 처리 */
+        async navCalcu() {
+            var vm = this;
+            var market_amt = 0;
+            var market_tot_amt = 0;
+            var index = 0;
+            for (let item of vm.pdfList) {                        
+                await vm.iNavCalulator(item).then(function(market_amt) {
+                    item.market_amt = market_amt;
+                    market_tot_amt += market_amt;
+
+                    if (index == (vm.pdfList.length-1)) {                                
+                        vm.pdf_reload(vm.pdfList);
+                        vm.market_tot_amt = market_tot_amt;
+
+                        /*INav 계산 : CU시가총액 / CU당 주식수*/
+                        if (vm.etpBasic.f16499 > 0) {
+                            vm.iNav_amt = vm.market_tot_amt / vm.etpBasic.f16499;
+                        } else {
+                            vm.iNav_amt = vm.market_tot_amt;
+                        }
+                        /* INav 등락률 */
+                        vm.iNav_percent =  (vm.iNav_amt / vm.etpBasic.f03329 - 1);
+                    }
+                            //console.log("market_amt:"+market_amt + "idx:" + index + "lenght:" + (vm.pdfList.length-1));     
+                            
+                    index++;
+                });                        
+            }
+        },
+
+        SimulationMode: function() {
+            if (this.switch1) {
+                $('#pdf_table tbody td input[id=cu_cnt]').attr("readonly", false);
+            } else {
+                $('#pdf_table tbody td input[id=cu_cnt]').attr("readonly", true);
+            }
+        },
         fn_closePop() {
             var vm = this;
 
             vm.$emit("fn_closePop", "close");
-        }
+        }, 
+
+        
     }
 };
 </script>

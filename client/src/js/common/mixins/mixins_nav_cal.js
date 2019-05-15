@@ -6,7 +6,8 @@ export const nav_cal_common =   {
 
     methods: {
 
-        iNavCalulator: function(pdf_info) {
+        iNavCalulator(pdf_info) {
+            return new Promise(function(resolve, reject) {
             /*ETF 정보와 PDF 정보 
             {
                 f12506: "20190513"  => 입회 일자
@@ -34,20 +35,27 @@ export const nav_cal_common =   {
 
                 let market_tot_amt = (assetValue * Number(pdf_info.f16499));
 
-                return market_tot_amt;
+                resolve(market_tot_amt);
             }
             /*자산이 달러예금(USDZZ0000001)일 경우,
                 서울외국환중개에서 제공하는 현재가를 사용. 
                 코드값: 11USDSP*/        
             else if (pdf_info.f16316 == 'USDZZ0000001') {
-                let exchBasic = this.getExchBasic("11USDSP");
 
-                assetValue = Number(exchBasic.f15001); /* 현재가 */
-                console.log("assetValue:"+assetValue);
+                axios.get(Config.base_url + "/user/etp/getExchBasic", {
+                    params: {
+                        f16012 : '11USDSP',
+                    }
+                }).then(function(response) {
+                    let exchBasic = response.data.results[0];
+                    assetValue = Number(exchBasic.f15001); /* 현재가 */
+                    console.log("assetValue:"+assetValue);
 
-                let market_tot_amt = (assetValue * Number(pdf_info.f16499));
+                    let market_tot_amt = (assetValue * Number(pdf_info.f16499));
 
-                return market_tot_amt;
+                    resolve(market_tot_amt);
+                }) ;
+
             }
     
             /*
@@ -59,36 +67,50 @@ export const nav_cal_common =   {
             */
     
             else if (pdf_info.f16316 == 'JPYZZ0000001') {
-                /* 달러의 현재가*/
-                let exchUSBasic = this.getExchBasic("11USDSP");
-                assetValue = Number(exchUSBasic.f15001); 
                 
-                let ExchJPBasic = this.getExchBasic("11JPUSP");
-                /* JPYUSD 매수호가 */
-                var jpy_bid = Number(ExchJPBasic.f14531);
-    
-                /*JPYUSD 매도호가*/
-                var jpy_ask = Number(ExchJPBasic.f14501);   
-    
-                /*# 매수/매도 둘다 값이 있을 경우 평균값사용*/
-                if ( jpy_bid != 0 && jpy_ask != 0 ) {
-                    jpy_value = (jpy_bid + jpy_ask) / 2
-                }
-                /*# 매수/매도 둘다 값이 없을 경우 전일종가 사용*/
-                else if (jpy_bid == 0 && jpy_ask == 0) {
-                    jpy_value = ExchJPBasic.f03003;
-                }
-                /*# 매수/매도 중 한쪽만 값이 있을 경우 그 값을 사용*/
-                else {
-                    jpy_value = jpy_bid + jpy_ask
-                }
-    
-                /*# 달러 / JPYUSD를 자산의 value로 SET*/
-                assetValue = assetValue / jpy_value
+                let exchUSBasic = null;
+                let ExchJPBasic = null;
+                axios.get(Config.base_url + "/user/etp/getExchBasic", {
+                    params: {
+                        f16012 : '11USDSP',
+                    }
+                }).then(function(response) {
+                    exchUSBasic = response.data.results[0];
+                    
+                    axios.get(Config.base_url + "/user/etp/getExchBasic", {
+                        params: {
+                            f16012 : '11JPUSP',
+                        }
+                    }).then(function(response) {
+                        ExchJPBasic = response.data.results[0];
+                        
+                        /* JPYUSD 매수호가 */
+                        var jpy_bid = Number(ExchJPBasic.f14531);
+            
+                        /*JPYUSD 매도호가*/
+                        var jpy_ask = Number(ExchJPBasic.f14501);   
+            
+                        /*# 매수/매도 둘다 값이 있을 경우 평균값사용*/
+                        if ( jpy_bid != 0 && jpy_ask != 0 ) {
+                            jpy_value = (jpy_bid + jpy_ask) / 2
+                        }
+                        /*# 매수/매도 둘다 값이 없을 경우 전일종가 사용*/
+                        else if (jpy_bid == 0 && jpy_ask == 0) {
+                            jpy_value = ExchJPBasic.f03003;
+                        }
+                        /*# 매수/매도 중 한쪽만 값이 있을 경우 그 값을 사용*/
+                        else {
+                            jpy_value = jpy_bid + jpy_ask
+                        }
+            
+                        /*# 달러 / JPYUSD를 자산의 value로 SET*/
+                        assetValue = assetValue / jpy_value
 
-                let market_tot_amt = (assetValue * Number(pdf_info.f16499));
+                        let market_tot_amt = (assetValue * Number(pdf_info.f16499));
 
-                return market_tot_amt;
+                        resolve(market_tot_amt);
+                    }) ;
+                }) ;
             }
               
     
@@ -99,8 +121,14 @@ export const nav_cal_common =   {
                 f33861 => 0: 유가증권 1: 코스닥 2: 기타 3:채권 4: 선물옵션
             */
             else if (pdf_info.f33861 == "0" || pdf_info.f33861 == "1") {
-                this.getKspjongBasic(pdf_info.f16316).then(function(kspjongBasic) {
-                   
+                
+                
+                axios.get(Config.base_url + "/user/etp/getKspjongBasic", {
+                    params: {
+                        f16012 : pdf_info.f16316,
+                    }
+                }).then(function(response) {
+                    let kspjongBasic = response.data.results[0];
                     /* CU 주식수 */
                     if (pdf_info.f16499 >= 0) {
                         /* 현재가*/
@@ -112,8 +140,9 @@ export const nav_cal_common =   {
                     }
 
                     let market_tot_amt = (assetValue * Number(pdf_info.f16499));
-
-                    return market_tot_amt;
+                        
+             
+                    resolve(market_tot_amt);
                 }) ;
                 
             }
@@ -136,90 +165,21 @@ export const nav_cal_common =   {
                 (현재가 - 기준가) X 단위계약승수 를 사용한다.
             */
             else if (pdf_info.f33861 == '4') {
-                let futureBasic = this.getFutureBasic(pdf_info.f16316);
 
-                assetValue = (Number(futureBasic.f15001) - Number(futureBasic.f15007)) * Number(futureBasic.f33904);
-
-                let market_tot_amt = (assetValue * Number(pdf_info.f16499));
-
-                return market_tot_amt;
-            }
-                
-         
-        },
-        
-        /* 외환 정보 리턴 */
-        getExchBasic: function(f16316) {
-            
-            let data;
-            axios.get(Config.base_url + "/user/etp/getExchBasic", {
-                params: {
-                    f16012 : f16316,
-                }
-            }).then(function(response) {
-    
-                if (response.data.success == false) {
-                    console.log("데이터 오류");
-                    data = {};
-                } else {
-                    data = response.data.results[0];
-                }
-            });
-            return data;
-        },
-    
-        getBondBasic: function(f16316) {
-            let data;
-            axios.get(Config.base_url + "/user/etp/getBondBasic", {
-                params: {
-                    f16012 : f16316,
-                }
-            }).then(function(response) {
-    
-                if (response.data.success == false) {
-                    console.log("데이터 오류");
-                    data = {};
-                } else {
-                    data = response.data.results[0];
-                }
-            });
-            return data;
-        },
-    
-        getKspjongBasic: function(f16316) {
-            return new Promise(function(resolve, reject) {
-                axios.get(Config.base_url + "/user/etp/getKspjongBasic", {
+                axios.get(Config.base_url + "/user/etp/getFutureBasic", {
                     params: {
-                        f16012 : f16316,
+                        f16012 : pdf_info.f16316,
                     }
                 }).then(function(response) {
-        
-                    if (response.data.success == false) {
-                        console.log("데이터 오류");
-                        reject(new Error("Request is failed"));
-                    } else {
-                        resolve(response.data.results[0]);
-                    }
-                });
+                    let futureBasic = response.data.results[0];
+                    assetValue = (Number(futureBasic.f15001) - Number(futureBasic.f15007)) * Number(futureBasic.f33904);
+
+                    let market_tot_amt = (assetValue * Number(pdf_info.f16499));             
+                    resolve(market_tot_amt);
+                }) ;
+            }
+                
             });
         },
-
-        getFutureBasic: function(f16316) {
-            let data;
-            axios.get(Config.base_url + "/user/etp/getFutureBasic", {
-                params: {
-                    f16012 : f16316,
-                }
-            }).then(function(response) {
-    
-                if (response.data.success == false) {
-                    console.log("데이터 오류");
-                    data = {};
-                } else {
-                    data = response.data.results[0];
-                }
-            });
-            return data;
-        }
     },    
 }
