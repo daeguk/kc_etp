@@ -6,7 +6,7 @@ export const nav_cal_common =   {
 
     methods: {
 
-        iNavCalulator: function(data) {
+        iNavCalulator: function(pdf_info) {
             /*ETF 정보와 PDF 정보 
             {
                 f12506: "20190513"  => 입회 일자
@@ -28,18 +28,26 @@ export const nav_cal_common =   {
     
             
             /*자산이 원화예금(KRD010010001)일 경우 */
-            debugger;
             var assetValue = "";
-            if (data.f16316 == "KRD010010001") {
+            if (pdf_info.f16316 == "KRD010010001") {
                 assetValue = 1
+
+                let market_tot_amt = (assetValue * Number(pdf_info.f16499));
+
+                return market_tot_amt;
             }
             /*자산이 달러예금(USDZZ0000001)일 경우,
                 서울외국환중개에서 제공하는 현재가를 사용. 
-                코드값: 11USDSP*/
-   
-        
-            else if (data.f16316 == 'USDZZ0000001') {
-                assetValue = getExchange("11USDSP");
+                코드값: 11USDSP*/        
+            else if (pdf_info.f16316 == 'USDZZ0000001') {
+                let exchBasic = this.getExchBasic("11USDSP");
+
+                assetValue = Number(exchBasic.f15001); /* 현재가 */
+                console.log("assetValue:"+assetValue);
+
+                let market_tot_amt = (assetValue * Number(pdf_info.f16499));
+
+                return market_tot_amt;
             }
     
             /*
@@ -50,15 +58,17 @@ export const nav_cal_common =   {
                 코드값: 11USDSP, 11JPUSP
             */
     
-            else if (data.f16316 == 'JPYZZ0000001') {
+            else if (pdf_info.f16316 == 'JPYZZ0000001') {
                 /* 달러의 현재가*/
-                ///assetValue = getExchange("11USDSP").cur_prc 
-    
+                let exchUSBasic = this.getExchBasic("11USDSP");
+                assetValue = Number(exchUSBasic.f15001); 
+                
+                let ExchJPBasic = this.getExchBasic("11JPUSP");
                 /* JPYUSD 매수호가 */
-                ///var jpy_bid = getExchange("11JPUSP").bid_prc   
+                var jpy_bid = Number(ExchJPBasic.f14531);
     
                 /*JPYUSD 매도호가*/
-                ///var jpy_ask = getExchange("11JPUSP").ask_prc   
+                var jpy_ask = Number(ExchJPBasic.f14501);   
     
                 /*# 매수/매도 둘다 값이 있을 경우 평균값사용*/
                 if ( jpy_bid != 0 && jpy_ask != 0 ) {
@@ -66,7 +76,7 @@ export const nav_cal_common =   {
                 }
                 /*# 매수/매도 둘다 값이 없을 경우 전일종가 사용*/
                 else if (jpy_bid == 0 && jpy_ask == 0) {
-                    ///jpy_value = getExchange("11JPUSP").prev_prc
+                    jpy_value = ExchJPBasic.f03003;
                 }
                 /*# 매수/매도 중 한쪽만 값이 있을 경우 그 값을 사용*/
                 else {
@@ -75,6 +85,10 @@ export const nav_cal_common =   {
     
                 /*# 달러 / JPYUSD를 자산의 value로 SET*/
                 assetValue = assetValue / jpy_value
+
+                let market_tot_amt = (assetValue * Number(pdf_info.f16499));
+
+                return market_tot_amt;
             }
               
     
@@ -84,15 +98,24 @@ export const nav_cal_common =   {
                 CU주식수가 0보다 작다면 '현재가 - 기준가'를 사용한다      
                 f33861 => 0: 유가증권 1: 코스닥 2: 기타 3:채권 4: 선물옵션
             */
-            else if (data.f33861 == "0" || data.f33861 == "1") {
-                if (data.f16499 >= 0) {
-                    /* 현재가*/
-                    ///assetValue = getAssetCurrent(asset.ISIN코드).cur_prc
-                } else if (data.f16499 < 0) {
-                    /*기준가*/
-                    ///assetValue = getAssetCurrent(asset.ISIN코드).cur_prc - getAssetCurrent(asset.ISIN코드).bas_prc
-                }
-    
+            else if (pdf_info.f33861 == "0" || pdf_info.f33861 == "1") {
+                this.getKspjongBasic(pdf_info.f16316).then(function(kspjongBasic) {
+                   
+                    /* CU 주식수 */
+                    if (pdf_info.f16499 >= 0) {
+                        /* 현재가*/
+                        assetValue = Number(kspjongBasic.f15001);
+
+                    } else if (pdf_info.f16499 < 0) {
+                        /*현재가 - 기준가*/
+                        assetValue = Number(kspjongBasic.f15001) - Number(kspjongBasic.f15007)
+                    }
+
+                    let market_tot_amt = (assetValue * Number(pdf_info.f16499));
+
+                    return market_tot_amt;
+                }) ;
+                
             }
                     
     
@@ -100,61 +123,103 @@ export const nav_cal_common =   {
                 자산의 소속시장이 채권일 경우
                 채권평가사들의 T+2일기준 가격의 평균을 사용하고, 10000으로 나눠준다
             */
-    
-            else if (data.f33861 == '3') {
-                // 일단 제외
-                // assetValue = getBondCurrent(asset.ISIN코드).t2_value / 10000
+            else if (pdf_info.f33861 == '3') {
+                // 채권 일단 제외
+                ///assetValue = getBondBasic(asset.ISIN코드).t2_value / 10000
+
+                //let market_tot_amt = (assetValue * asset.액면금액)''
+
+                return 0;
             }
             /*
                 자산의 소속시장이 선물 또는 옵션일 경우
                 (현재가 - 기준가) X 단위계약승수 를 사용한다.
             */
-            else if (data.f33861 == '4') {
-                ///asset.value = (getAssetCurrent(asset.ISIN코드).cur_prc - getAssetCurrent(asset.ISIN코드).bas_prc) * getAssetCurrent(asset.ISIN코드).단위계약승수
+            else if (pdf_info.f33861 == '4') {
+                let futureBasic = this.getFutureBasic(pdf_info.f16316);
+
+                assetValue = (Number(futureBasic.f15001) - Number(futureBasic.f15007)) * Number(futureBasic.f33904);
+
+                let market_tot_amt = (assetValue * Number(pdf_info.f16499));
+
+                return market_tot_amt;
             }
                 
-            /*## [END] value 세팅작업
-    
-            ## ETF의 총 시가총액에 자산의 시가총액을 누적
-            */
-            
-            if (data.f33861 == '3') {
-                //ETF.시가총액 = ETF.시가총액 + (asset.value * asset.액면금액)
-            } else {
-                //ETF.시가총액 = ETF.시가총액 + (asset.value * asset.cu주식수)
-            }
-    
-            //## ETF INAV 계산(PDF방식)
-            
-            return ''//ETF.iNAV = ETF.시가총액 / ETF.cu당발행주식수
+         
         },
         
         /* 외환 정보 리턴 */
-        getExchangePrc: function(f16316) {
-
-            axios.get(Config.base_url + "/user/etp/getExchange", {
+        getExchBasic: function(f16316) {
+            
+            let data;
+            axios.get(Config.base_url + "/user/etp/getExchBasic", {
                 params: {
-                    f16012 : 'KR7322410002',
+                    f16012 : f16316,
                 }
             }).then(function(response) {
     
-                if (response.data) {
-                    debugger;
-                    //vm.etpBasic = response.data.etpBasic;
-                    //vm.pdfList = response.data.pdfList;
-                    //pdf_table.clear().draw();
-                    //pdf_table.rows.add().draw(vm.pdfList);
+                if (response.data.success == false) {
+                    console.log("데이터 오류");
+                    data = {};
+                } else {
+                    data = response.data.results[0];
                 }
             });
-    
+            return data;
         },
     
-        getBondCurrent: function() {
+        getBondBasic: function(f16316) {
+            let data;
+            axios.get(Config.base_url + "/user/etp/getBondBasic", {
+                params: {
+                    f16012 : f16316,
+                }
+            }).then(function(response) {
     
+                if (response.data.success == false) {
+                    console.log("데이터 오류");
+                    data = {};
+                } else {
+                    data = response.data.results[0];
+                }
+            });
+            return data;
         },
     
-        getAssetCurrent: function() {
+        getKspjongBasic: function(f16316) {
+            return new Promise(function(resolve, reject) {
+                axios.get(Config.base_url + "/user/etp/getKspjongBasic", {
+                    params: {
+                        f16012 : f16316,
+                    }
+                }).then(function(response) {
+        
+                    if (response.data.success == false) {
+                        console.log("데이터 오류");
+                        reject(new Error("Request is failed"));
+                    } else {
+                        resolve(response.data.results[0]);
+                    }
+                });
+            });
+        },
+
+        getFutureBasic: function(f16316) {
+            let data;
+            axios.get(Config.base_url + "/user/etp/getFutureBasic", {
+                params: {
+                    f16012 : f16316,
+                }
+            }).then(function(response) {
     
+                if (response.data.success == false) {
+                    console.log("데이터 오류");
+                    data = {};
+                } else {
+                    data = response.data.results[0];
+                }
+            });
+            return data;
         }
     },    
 }

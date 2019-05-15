@@ -46,6 +46,11 @@ module.exports = {
         { file: './user/etp/etpOper'        , path: '/user/etp/getFutureBasic'          , method: 'getFutureBasic'          , session: 'check', type: 'post' },
 
         { file: './user/etp/etpNavCalcu', path: '/user/etp/getiNavData', method: 'getiNavData'     , session: 'check', type: 'get' },
+        { file: './user/etp/etpNavCalcu', path: '/user/etp/getExchBasic', method: 'getExchBasic'     , session: 'check', type: 'get' },
+        { file: './user/etp/etpNavCalcu', path: '/user/etp/getKspjongBasic', method: 'getKspjongBasic'     , session: 'check', type: 'get' },
+        { file: './user/etp/etpNavCalcu', path: '/user/etp/getFutureBasic', method: 'getFutureBasic'     , session: 'check', type: 'get' },
+        { file: './user/etp/etpNavCalcu', path: '/user/etp/getBondBasic', method: 'getBondBasic'     , session: 'check', type: 'get' },
+
 
         //일반 INDEX register
 

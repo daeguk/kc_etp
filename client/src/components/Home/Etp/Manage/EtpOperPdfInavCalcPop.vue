@@ -248,7 +248,7 @@ export default {
                 { "data": "f34743", "orderable": true, className:"txt_right" }, /*비중*/
                 { "data": "f15001", "orderable": true, className:"txt_right" }, /*현재가*/
                 { "data": "f15007", "orderable": true, className:"txt_right" }, /*기준가*/
-                { "data": null, "orderable": true, className:"txt_right" }, /*CU시가총액*/
+                { "data": "market_amt", "orderable": true, className:"txt_right" }, /*CU시가총액*/
             ]
         });
 
@@ -288,7 +288,7 @@ export default {
         /*
          * ETP iNAV 계산기 데이터를 조회한다.
          */
-        getiNavData: function() {
+        async getiNavData(f16012) {
             var vm = this;
 
             console.log( "EtpOperPdfInavCalcPop.vue -> getiNavData" );
@@ -304,11 +304,24 @@ export default {
                     vm.etpBasic = response.data.etpBasic;
                     vm.pdfList = response.data.pdfList;
 
+                    var market_amt = 0;
+                    var market_tot_amt = 0;
+                    var pdfResults = [];
+                    for (let item of vm.pdfList) {
+                        
+                        await vm.iNavCalulator(item).then(function(market_amt) {
+                            item.market_amt = market_amt;
+                            market_tot_amt += market_amt;
+
+                            debugger;
+                            console.log("market_amt:"+market_amt);
+                        }) ;
+
+                        break;
+                    }
+
                     pdf_table.clear().draw();
                     pdf_table.rows.add(vm.pdfList).draw();
-
-
-                    vm.iNavCalulator(vm.pdfList[0]);
                 }
             });
         },        
