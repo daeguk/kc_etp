@@ -102,7 +102,7 @@ export default {
 
 console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
 console.log( vm.paramData );
-
+debugger;
         vm.fn_getEtpOperPdfTitle();
 
         vm.$EventBus.$on('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call', data => {
@@ -126,6 +126,8 @@ console.log( vm.paramData );
             }
 
             vm.pdfData      =   vm.paramData;
+
+            vm.$emit( "fn_setPdfQuickPdfData", vm.pdfData );
         }else{
             vm.fn_getEtpOperInfoFirstData( "A" );
         }
