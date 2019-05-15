@@ -60,11 +60,11 @@
 
 
     <!--
-    * ETP 운용관리 - PDF관리에서 환율정보를 조회한다.
+    * exchBasic 환율정보를 조회한다.
     * 2019-05-03  bkLove(촤병국)
     -->
-    <select id="getEtpOperPdfExchangeRate">
-        SELECT      /* etpOper.getEtpOperPdfExchangeRate  ETP 운용관리 - PDF관리에서 환율정보를 조회한다. */
+    <select id="getExchBasic">
+        SELECT      /* etpOper.getExchBasic  exchBasic 환율정보를 조회한다. */
 
                     td_exch_basic.F12506                                    AS  f12506      /* 입회일 */
                 ,   td_exch_basic.F16012                                    AS  f16012      /* 표준코드 */
@@ -187,7 +187,6 @@
                 ,   td_etp_basic.f15004                                     AS  f15004      /* 등락율 */
                         
                 ,   td_etfpdf_basic.f16316                                  AS  f16316      /* 구성종목코드 */
-                ,   td_kspjong_basic.f16002                                 AS  f16002      /* 한글종목명 */
                 ,   td_etfpdf_basic.f16583                                  AS  f16583      /* 사무수탁회사번호 */
                 ,   td_etfpdf_basic.f33837                                  AS  f33837      /* 구성종목수 */
                 ,   td_etfpdf_basic.f16499                                  AS  f16499      /* 1CU단위증권수 */
@@ -224,7 +223,6 @@
                 ,   td_etp_basic.f15004                                     AS  f15004      /* 등락율 */
                         
                 ,   td_etnpdf_basic.f16316                                  AS  f16316      /* 구성종목코드 */
-                ,   td_future_basic.f16002                                  AS  f16002      /* 한글종목명 */
                 ,   td_etnpdf_basic.f16583                                  AS  f16583      /* 사무수탁회사번호 */
                 ,   td_etnpdf_basic.f33837                                  AS  f33837      /* 구성종목수 */
                 

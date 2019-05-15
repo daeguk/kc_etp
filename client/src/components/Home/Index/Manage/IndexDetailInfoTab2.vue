@@ -8,19 +8,19 @@
                         <div :class="perf_class" id="perf_chart"></div>
                     </div>
                    <v-card flat>
-                     <table id="perf_table" :class="tbl_class" style="width:1348px">
+                     <table id="perf_table" :class="tbl_class">
                          <colgroup>
-                            <col width="314px">
-                            <col width="117px">
-                            <col width="122px">
-                            <col width="117px">
-                            <col width="112px">
-                            <col width="123px">
-                            <col width="118px">
-                            <col width="118px">
-                            <col width="122px">
-                            <col width="85px">
-                            <col width="10px">
+                            <col class="">
+                            <col class="">
+                            <col class="perf_t_w1">
+                            <col class="perf_t_w2">
+                            <col class="perf_t_w3">
+                            <col class="perf_t_w4">
+                            <col class="perf_t_w5">
+                            <col class="perf_t_w6">
+                            <col class="perf_t_w7">
+                            <col class="perf_t_w8">
+                            <col class="perf_t_w9">
                         </colgroup>
                          <thead>
                           <tr>
