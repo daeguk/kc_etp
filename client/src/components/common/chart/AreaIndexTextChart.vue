@@ -71,19 +71,24 @@ export default {
             c.fillStyle = this.grad;
             c.fill();
 
+            // 좌즉 상단 현재가
             c.fillStyle = "#37474F";
-            c.font = '16px san-serif';
+            c.font = '14px san-serif';
             c.fillText(this.textItem.name, 15, 30);
             c.fillStyle = "#263238";
-            c.font = '24px san-serif';
+            c.font = 'bold 24px san-serif';
             c.fillText(this.textItem.f15001, 15, 55);
+            var slen = this.textItem.f15001.length;
             c.fillStyle = "#039BE5";
-            c.font = '12px san-serif';
-            c.fillText(this.textItem.f15472, 110, 45);
+            c.font = '10px san-serif';
+            if(slen > 6) c.fillText(this.textItem.f15472, 115, 45);
+            else  c.fillText(this.textItem.f15472, 100, 45);
             c.fillStyle = "#039BE5";
-            c.font = '12px san-serif';
-            c.fillText(this.textItem.f15004 + "%", 110, 60);
+            c.font = '10px san-serif';
+            if(slen > 6) c.fillText(this.textItem.f15004 + "%", 115, 57);
+            else  c.fillText(this.textItem.f15004 + "%", 100, 57);
 
+            // 우측 하단 자산총액
             c.fillStyle = "#757575";
             c.fillRect(165, 100, 30, 14);
             c.fillStyle = "white";
