@@ -31,7 +31,7 @@
                                 </li>
                                 <li>
                                     <v-btn small flat icon>
-                                        <v-icon>refresh</v-icon>
+                                        <v-icon v-on:click="getiNavData(etpBasic.f16012)">refresh</v-icon>
                                     </v-btn>
                                 </li>
                             </ul>
@@ -155,7 +155,7 @@ export default {
     props: ["showDialog", "paramData" ],
     data() {
         return {
-            switch1: "",
+            switch1: false,
             etpBasic : {}, 
             pdfList: null,
             market_tot_amt: 0,    
@@ -319,7 +319,9 @@ export default {
                                 vm.iNav_percent =  (vm.iNav_amt / vm.etpBasic.f03329 - 1);
 
                                 /* input box readony 처리 */
-                                $('#pdf_table tbody td input[id=cu_cnt]').attr("readonly", true);
+                                if (!vm.switch1) {
+                                    $('#pdf_table tbody td input[id=cu_cnt]').attr("readonly", true);
+                                }
                             }
                             //console.log("market_amt:"+market_amt + "idx:" + index + "lenght:" + (vm.pdfList.length-1));     
                             
