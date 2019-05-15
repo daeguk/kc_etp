@@ -40,10 +40,12 @@ module.exports = {
         { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperIndexError'    , method: 'getEtpOperIndexError'    , session: 'check', type: 'post' },
         { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperPdf'           , method: 'getEtpOperPdf'           , session: 'check', type: 'post' },
         { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperPdfByRate'     , method: 'getEtpOperPdfByRate'     , session: 'check', type: 'post' },
+        { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperPdfModify'     , method: 'getEtpOperPdfModify'     , session: 'check', type: 'post' },
 
         { file: './user/etp/etpOper'        , path: '/user/etp/getExchBasic'            , method: 'getExchBasic'            , session: 'check', type: 'post' },
         { file: './user/etp/etpOper'        , path: '/user/etp/getKspjongBasic'         , method: 'getKspjongBasic'         , session: 'check', type: 'post' },
         { file: './user/etp/etpOper'        , path: '/user/etp/getFutureBasic'          , method: 'getFutureBasic'          , session: 'check', type: 'post' },
+        
 
         { file: './user/etp/etpNavCalcu', path: '/user/etp/getiNavData', method: 'getiNavData'     , session: 'check', type: 'get' },
 

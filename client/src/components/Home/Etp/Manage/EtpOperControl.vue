@@ -26,8 +26,6 @@
                             :paramData="paramData"
                             @showDetail="showDetail" 
                             @showMessageBox="showMessageBox"
-                            @fn_showDetailIndex="fn_showDetailIndex"
-                            @fn_showDetailPdf="fn_showDetailPdf"
                             @fn_setPdfQuickPdfData="fn_setPdfQuickPdfData"
                             @fn_setPdfQuickIndexBasicData="fn_setPdfQuickIndexBasicData">
             </EtpOperPdf>
@@ -420,8 +418,17 @@ export default {
 
             /* PDF 관리 -> PDF 긴급반영 팝업 */
             if( gubun == '6' ) {
-                this.paramData = ( this.selectedQuickData ? this.selectedQuickData : paramData );
+
+                this.paramData = ( this.selectedQuickData && Object.keys( this.selectedQuickData ).length > 0 ? this.selectedQuickData : paramData );
                 this.showEtpOperPdfInavCalcPop = false;
+
+                if(     !this.paramData
+                    ||  !this.paramData.f16012
+                ) {
+                    this.$emit("showMessageBox", '확인','기준코드가 존재하지 않습니다.',{},1);
+
+                    return  false;
+                }                
 
                 if (this.showEtpOperPdfEmergencyModifyPop) {
                     this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_close', paramData);
@@ -448,7 +455,7 @@ export default {
             }
             /* PDF 관리 -> iNAV 계산기 팝업 */
             else if( gubun == '7' ) {
-                this.paramData = ( this.selectedQuickData ? this.selectedQuickData : paramData );
+                this.paramData = ( this.selectedQuickData && Object.keys( this.selectedQuickData ).length > 0 ? this.selectedQuickData : paramData );
                 this.showEtpOperPdfEmergencyModifyPop = false;
 
                 if (this.showEtpOperPdfInavCalcPop) {
@@ -525,6 +532,7 @@ export default {
             var vm = this;
 
             vm.pdfData      =   pdfData;
+            vm.paramData    =   pdfData;
         },
 
         fn_setPdfQuickIndexBasicData : function( indexBasic )  {

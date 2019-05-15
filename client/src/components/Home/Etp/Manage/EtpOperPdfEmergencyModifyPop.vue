@@ -442,7 +442,8 @@ export default {
             on: false,
 
 
-            tblEmergeny01 : "tblEmergeny01"
+            tblEmergeny01 : "tblEmergeny01",
+            searchParam : {}
         };
     },
     created: function() {
@@ -547,7 +548,10 @@ export default {
         $('#' + vm.tblEmergeny01 + ' tbody').on('click', 'button', function () {
             var table = $('#' + vm.tblEmergeny01 ).DataTable();
             var data = table.row($(this).parents('tr')).data();
-        });        
+        });
+
+
+        vm.getEtpOperPdfModify();
     },
         
     methods: {
@@ -555,6 +559,40 @@ export default {
         // with all values as true
         all() {
             this.panel = [...Array(this.items).keys()].map(_ => true);
+        },
+
+        /*
+         * ETP 지수관리 정보를 조회한다.
+         * 2019-05-03  bkLove(촤병국)
+         */
+        getEtpOperPdfModify() {
+            var vm = this;
+
+            console.log("EtpOperPdf.vue -> fn_getEtpOperPdfEmergencyModifyPop.vue");
+
+            if (tblEmergeny01) {
+                tblEmergeny01.clear().draw();
+            }
+
+            vm.searchParam.f16012  =   vm.paramData.f16012;                   /* 국제표준코드 */
+
+            axios.post( Config.base_url + "/user/etp/getEtpOperPdfModify", {
+                data: vm.searchParam
+            }).then(function(response) {
+                console.log(response);
+
+                var dataJson = {};
+                if (response.data) {
+                    var dataList = response.data.dataList;
+
+                    if (dataList && dataList.length > 0) {
+                        tblEmergeny01.rows.add(dataList).draw();
+                        tblEmergeny01.draw();
+
+                        dataJson    =   dataList[0];
+                    }
+                }
+            });
         },
 
         fn_addAsset() {
