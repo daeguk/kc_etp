@@ -1,8 +1,8 @@
 <template>
 
-    <v-container >
-        <v-layout row wrap>
-            <v-flex grow>
+    <div :class="contentClass">
+        <v-layout row>
+            <v-flex xs12>
 
                 <v-card flat ma-3>
 
@@ -111,7 +111,7 @@
                 <ComFavorItemSub    @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
             </v-flex-->
         </v-layout>
-    </v-container>
+    </div>
 </template>
 
 

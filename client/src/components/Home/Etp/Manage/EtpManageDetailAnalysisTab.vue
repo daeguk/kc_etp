@@ -17,19 +17,19 @@
                     <v-card flat>
 
                 <!-- performance table 정보 START -->
-                        <table v-bind:id="tableName" :class="tbl_class"  style="width:1348px">
+                        <table v-bind:id="tableName" :class="tbl_class">
                             <colgroup>
-                                <col width="314px">                             <!-- 한글 종목명 -->
-                                <col width="122px">                             <!-- 1-Week -->
-                                <col width="117px">                             <!-- 1-Month -->
-                                <col width="112px">                             <!-- 3-Month -->
-                                <col width="123px">                             <!-- YTD -->
+                                <col width="">                             <!-- 한글 종목명 -->
+                                <col class="perf_t_w1">                             <!-- 1-Week -->
+                                <col class="perf_t_w2">                             <!-- 1-Month -->
+                                <col class="perf_t_w3">                             <!-- 3-Month -->
+                                <col class="perf_t_w4">                             <!-- YTD -->
 
-                                <col width="118px">                             <!-- 1-Year -->
-                                <col width="118px">                             <!-- 3-Year -->
-                                <col width="122px">                             <!-- 5-Year -->
-                                <col width="85px">                              <!-- 10-Year -->
-                                <col width="10px">                              <!-- 삭제버튼 -->
+                                <col class="perf_t_w5">                             <!-- 1-Year -->
+                                <col class="perf_t_w6">                             <!-- 3-Year -->
+                                <col class="perf_t_w7">                             <!-- 5-Year -->
+                                <col class="perf_t_w8">                              <!-- 10-Year -->
+                                <col class="perf_t_w9">                              <!-- 삭제버튼 -->
 
                                 <col width="10px">                              <!-- 초기화유무 -->
                                 <col width="10px">                              <!-- 국제표준코드 -->
