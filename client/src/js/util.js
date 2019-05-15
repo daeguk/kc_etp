@@ -1,7 +1,13 @@
-var util = {
+
+
+var util = {    
     formatNumber: function(num) {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
+        if (num != null) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        } else {
+            return '';
+        }
+    },
   }
   
   export default util
