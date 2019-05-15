@@ -806,6 +806,7 @@ var getEtpOperPdfModify = function(req, res) {
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
+        resultMsg.dataList  =   [];
         Promise.using(pool.connect(), conn => {
 
 
@@ -857,7 +858,12 @@ var getEtpOperPdfModify = function(req, res) {
                             }
 
                             if ( rows && rows.length > 0 ) {
-                                resultMsg.dataList  = rows;
+
+                                for( var i in rows) {
+                                    rows[i].status  =   "nomal";
+
+                                    resultMsg.dataList.push( rows[i] );
+                                }
                             }
 
                             callback( null, paramData );
@@ -889,7 +895,11 @@ var getEtpOperPdfModify = function(req, res) {
                             }
 
                             if ( rows && rows.length > 0 ) {
-                                resultMsg.dataList  = rows;
+                                for( var i in rows) {
+                                    rows[i].status  =   "nomal";
+
+                                    resultMsg.dataList.push( rows[i] );
+                                }
                             }
 
                             callback( null );

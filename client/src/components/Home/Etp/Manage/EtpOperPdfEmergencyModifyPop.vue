@@ -114,7 +114,7 @@
 
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn :disabled="step === 2" color="primary" depressed @click="step++">Next</v-btn>
+                        <v-btn color="primary" depressed @click="fn_stepCheck(1)">Next</v-btn>
                     </v-card-actions>
 <!---step1 END-->
                 </v-window-item>
@@ -389,7 +389,6 @@ export default {
             tblEmergeny01 : "tblEmergeny01",
             searchParam : {},
             etpBasic : {},
-
             dataList : [],
         };
     },
@@ -449,7 +448,48 @@ export default {
                 { "data" : "f16588"         ,   "orderable" : true  ,   "className" : "txt_right"   },                  /* 평가금액 */
                 { "data" : "f34743"         ,   "orderable" : true  ,   "className" : "txt_right"   },                  /* 비중 */
             ]
-        }); 
+        });
+
+        $("#" + vm.tblEmergeny01 + " tbody").on('click', "button[name='confirm']", function () {
+
+            var table = $("#" + vm.tblEmergeny01 ).DataTable();
+            var data = table.row($(this).parents("tr")).data();
+            var rowIndex = table.row($(this).parents("tr")).index();
+
+            var jongData = vm.fn_getJongmokData( $(this).parents("tr").find( "input[name='jongmok']" ).eq(0).val() , rowIndex  );
+
+            return  false;
+
+            // { "data" : "f12506"         ,   "orderable" : true  ,   "className" : "txt_center   text_blue"  },      /* Date */
+            // { "data" : "f33861"         ,   "orderable" : true  ,   "className" : "txt_center   text_blue"  },      /* 시장구분 */
+            // { "data" : "f16316"         ,   "orderable" : true  ,   "className" : "txt_left     text_blue"  },      /* 구성종목코드 */
+            // { "data" : "f16002"         ,   "orderable" : true  ,   "className" : "txt_left     text_blue"  },      /* 종목명 */
+            // { "data" : "f16499"         ,   "orderable" : true  ,   "className" : "txt_right"   },                  /* CU shrs */
+            // { "data" : "f34840"         ,   "orderable" : true  ,   "className" : "txt_right"   },                  /* 액면금액 */
+            // { "data" : "f16588"         ,   "orderable" : true  ,   "className" : "txt_right"   },                  /* 평가금액 */
+            // { "data" : "f34743"         ,   "orderable" : true  ,   "className" : "txt_right"   },                  /* 비중 */               
+
+/*              
+            var test = vm.getInfoIndex( $("input[id='jongmok']" ).eq(0).val());
+            
+            vm.results.push({
+                ANNO_YN: "발표",
+                ETP_MARKET_ID: 168,
+                ETP_NM: null,
+                INDEX_CAL_METHOD: "시가총액방식",
+                INST_CNT: 1,
+                IP_DT: "2019-04-03",
+                JISU_CD: test.JISU_CD,
+                JISU_NM: "테스트",
+                LARGE_TYPE: "FNGUIDE",
+                MARKET_ID: "M168",
+                MIDDLE_TYPE: "FNGUIDE"
+            });
+*/
+
+            //$("input[name='jongmok']").css("color", "red");
+            
+        });
 
         vm.fn_getEtpOperPdfModify();
     },
@@ -459,6 +499,38 @@ export default {
         // with all values as true
         all() {
             this.panel = [...Array(this.items).keys()].map(_ => true);
+        },
+
+        fn_stepCheck( step ) {
+            var vm = this;
+
+            if( step == 1) {
+
+                var table = $("#" + vm.tblEmergeny01 ).DataTable();
+                table.draw();
+debugger;
+                var temp = $("#tblEmergeny01 tbody").find("input[name='jongmok']" );
+debugger;
+                var inputData = $("#tblEmergeny01 tbody").find("input[name='jongmok']" ).parents("tr");
+
+                for( var i in tblEmergeny01.rows( inputData ) ) {
+                    debugger;
+                }
+
+                var filterData  =   _.filter( tblEmergeny01.rows( inputData ).data(), function( o ) {
+debugger;
+                    if( o.value == "" ) {
+                        return  true;
+                    }
+                });
+
+                if( filterData.length > 0 ) {
+                    vm.$emit("showMessageBox", '확인','구성종목코드가 빈 항목이 존재합니다.',{},1);
+                    return  true;
+                }
+
+                vm.step = 2;
+            }
         },
 
         /*
@@ -500,13 +572,13 @@ export default {
             });
         },
 
-        fn_getJongmokData( param ) {
+        fn_getJongmokData( codeVal, rowIndex ) {
             var vm = this;
 
             console.log("EtpOperPdf.vue -> fn_getEtpOperPdfEmergencyModifyPop.vue");
 
-            if(     !param.val()
-                ||  param.val().length == 0
+            if(     !codeVal
+                ||  codeVal.length == 0
             ) {
                 vm.$emit("showMessageBox", '확인','구성종목코드를 입력해 주세요.',{},1);
 
@@ -514,7 +586,7 @@ export default {
             }
 
             axios.post( Config.base_url + "/user/etp/getJongmokData", {
-                data: { "f16012" : param.val() }
+                data: { "f16012" : codeVal }
             }).then(function(response) {
                 console.log(response);
 
@@ -522,45 +594,40 @@ export default {
                     var dataList = response.data.dataList;
 
                     if ( !dataList || dataList.length == 0 ) {
-                        vm.$emit("showMessageBox", '확인','구성종목코드(' + param.val() + ')가 존재하지 않습니다.',{},1);
+                        vm.$emit("showMessageBox", '확인','구성종목코드(' + codeVal + ')가 존재하지 않습니다.',{},1);
                         return  false;
                     }
 
                     if ( dataList && dataList.length > 1 ) {
-                        vm.$emit("showMessageBox", '확인','구성종목코드(' + param.val() + ')가 여러건 존재합니다.',{},1);
+                        vm.$emit("showMessageBox", '확인','구성종목코드(' + codeVal + ')가 여러건 존재합니다.',{},1);
                         return  false;
                     }
 
-                    var filterData = _.filter(vm.dataList, function(o) {
-
+                    var filterData = _.filter( tblEmergeny01.rows().data() , function(o) {
                         if ( o.f16316 == dataList[0].f16012 ) {
                             return true; 
                         }
                     });
 
                     if( filterData.length > 0 ) {
-                        vm.$emit("showMessageBox", '확인','구성종목코드(' + param.val() + ')가 이미 존재합니다.',{},1);
+                        vm.$emit("showMessageBox", '확인','구성종목코드(' + codeVal + ')가 이미 존재합니다.',{},1);
                         return  false;
                     }
 
-                // { "data" : "f12506"         ,   "orderable" : true  ,   "className" : "txt_center   text_blue"  },      /* Date */
-                // { "data" : "f33861"         ,   "orderable" : true  ,   "className" : "txt_center   text_blue"  },      /* 시장구분 */
-                // { "data" : "f16316"         ,   "orderable" : true  ,   "className" : "txt_left     text_blue"  },      /* 구성종목코드 */
-                // { "data" : "f16002"         ,   "orderable" : true  ,   "className" : "txt_left     text_blue"  },      /* 종목명 */
-                // { "data" : "f16499"         ,   "orderable" : true  ,   "className" : "txt_right"   },                  /* CU shrs */
-                // { "data" : "f34840"         ,   "orderable" : true  ,   "className" : "txt_right"   },                  /* 액면금액 */
-                // { "data" : "f16588"         ,   "orderable" : true  ,   "className" : "txt_right"   },                  /* 평가금액 */
-                // { "data" : "f34743"         ,   "orderable" : true  ,   "className" : "txt_right"   },                  /* 비중 */
+                    var addData     =   {
+                            "f12506"    :   dataList[0].f12506          /* Date */
+                        ,   "f33861"    :   dataList[0].f33861          /* 시장구분 */
+                        ,   "f16316"    :   dataList[0].f16012          /* 구성종목코드 */
+                        ,   "f16002"    :   dataList[0].f16002          /* 종목명 */
 
-                //     var addData     =   {
-                //             "f12506"    :   dataList[0].f12506
-                //         ,   "f12506"    :   dataList[0].f12506
-                //     }                    
+                        ,   "f16499"    :   0                           /* CU shrs */
+                        ,   "f34840"    :   0                           /* 액면금액 */
+                        ,   "f16588"    :   0                           /* 평가금액 */
+                        ,   "f34743"    :   0                           /* 비중 */
+                        ,   "status"    :   "insert"
+                    }
 
-                    vm.dataList.unshift( dataList[0] );
-
-                    tblEmergeny01.clear().draw();
-                    tblEmergeny01.rows.add( vm.dataList ).draw();                    
+                    tblEmergeny01.row(rowIndex).data( addData ).draw(  );
                 }
             });
         },
@@ -568,61 +635,19 @@ export default {
         fn_addRow() {
             var vm = this;
 
-
-            // <tr class="pdfmody_acttd">
-            //     <td></td>
-            //     <td></td>
-            //     <td colspan="6" class="txt_left">
-            //         <input
-            //             type="text"
-            //             class="txt_left width_fix"
-            //             placeholder="12자리/6자리코드"
-            //         >
-            //         <button
-            //             type="button"
-            //             class="v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01"
-            //             v-on="on"
-            //         >확인</button>
-            //     </td>
-            // </tr>
-
             tblEmergeny01.row.add( {
 
                 'f12506'    :   '',     /* Date */
                 'f33861'    :   '',     /* 시장구분 */
                 'f16316'    :   "<input type='text' name='jongmok' id='jongmok' style='width:100%' maxlength='15' >",       /* 구성종목코드 */
-                'f16002'    :   "<button  id='confirm'>확인</button>",                                                      /* 종목명 */
+                'f16002'    :   "<button  name='confirm'>확인</button>",                                                     /* 종목명 */
                 'f16499'    :   '',     /* CU shrs */
                 'f34840'    :   '0',    /* 액면금액 */
                 'f16588'    :   '0',    /* 평가금액 */
                 'f34743'    :   '0',    /* 비중 */
 
-             } ).draw( false );
-           
-            $("button[id='confirm']").on('click', function () {
+            } ).draw(  );
 
-                vm.fn_getJongmokData( $("input[id='jongmok']") );
-/*              
-                var test = vm.getInfoIndex( $("input[id='jongmok']" ).eq(0).val());
-             
-                vm.results.push({
-                    ANNO_YN: "발표",
-                    ETP_MARKET_ID: 168,
-                    ETP_NM: null,
-                    INDEX_CAL_METHOD: "시가총액방식",
-                    INST_CNT: 1,
-                    IP_DT: "2019-04-03",
-                    JISU_CD: test.JISU_CD,
-                    JISU_NM: "테스트",
-                    LARGE_TYPE: "FNGUIDE",
-                    MARKET_ID: "M168",
-                    MIDDLE_TYPE: "FNGUIDE"
-                });
-*/
-
-                //$("input[name='jongmok']").css("color", "red");
-                
-            });          
         },
 
         fn_closePop() {
