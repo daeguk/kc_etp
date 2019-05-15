@@ -294,9 +294,7 @@ export default {
             var vm = this;
 
             axios.post(Config.base_url + "/user/etp/getEtpBasic", {
-                data: {
-                    basicData   :   vm.basicData
-                }
+                data:   vm.basicData
             }).then(function(response) {
                 console.log(response);
 
