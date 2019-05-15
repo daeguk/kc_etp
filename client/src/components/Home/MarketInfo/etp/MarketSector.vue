@@ -2,64 +2,16 @@
     <v-container>
         <v-layout row wrap class="content_margin">
             <v-flex xs12>
-                <v-carousel  light hide-delimiters height="250px" interval="10000">
-                    <v-carousel-item  class="bg_W market_layout_w" v-if="carousel_info.carousel_cnt > 0"  v-for="n in carousel_info.carousel_cnt" :key="n">
-
-                        <v-layout class="market_card_layout">
-                            <v-flex  v-for="x in 5" :key="x">
-                                <v-card flat>
-                                    <div class="market_card_w line_l">
-                                        <div class="market_card2" wrap>
-                                            <h6>{{fn_getDataFromMarket(carousel_data, n, x, "name")}}</h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">{{new Intl.NumberFormat().format((fn_getDataFromMarket(carousel_data, n, x, "total_amt")) / 1000)}}K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt><span class="etf_icon">ETF</span>  {{fn_getDataFromMarket(carousel_data, n, x, "etf_cnt")}}종목</dt>
-                                                        <dt><span class="etn_icon">ETN</span>  {{fn_getDataFromMarket(carousel_data, n, x, "etn_cnt")}}종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>                           
-                        </v-layout>
-                    </v-carousel-item>
-                    <v-carousel-item  class="bg_W" v-if="Object.keys(carousel_mod).length > 0">
-                        <v-layout class="market_card_layout" >
-                            <v-flex v-for="mod_item in orderedData" :key="mod_item.ctg_code">
-                                <v-card flat>
-                                    <div class="market_card_w line_l">
-                                        <div class="market_card2" wrap>
-                                            <h6> {{mod_item.name}} </h6>
-                                            <ul>
-                                                <li>
-                                                    <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">{{new Intl.NumberFormat().format((mod_item.total_amt) / 1000)}}K</dt>
-                                                    </dl>
-                                                </li>
-                                                <li> <dl> 
-                                                        <dt>ETF - {{mod_item.etf_cnt}}종목</dt>
-                                                        <dt>ETN - {{mod_item.etn_cnt}}종목</dt>
-                                                    </dl>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>
-                        </v-layout>
-                    </v-carousel-item>
-                </v-carousel>
+              <v-layout row wrap>
+                <v-flex xs3 v-for="(rinfo, index) in rep_info" :key="rinfo.seq">
+                    <BarSectorTextChart v-if=chartLoadFlag 
+                        :chartItem="rinfo"></BarSectorTextChart>
+                </v-flex>                    
+              </v-layout>
             </v-flex>
+
+
             <!-- 테이블1 -->
-            
             <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12 mt-3>
                 <v-card flat>
                     <v-card-title primary-title>
@@ -113,8 +65,9 @@ import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import _ from "lodash";
 import Config       from "@/js/config.js";
+import util from "@/js/util.js";
 import { market_common } from '@/js/common/mixins/mixins_marketinfo.js';
-
+import BarSectorTextChart   from  '@/components/Common/Chart/BarSectorTextChart.vue';
 
 export default {
     props: [],
@@ -125,8 +78,42 @@ export default {
             ctg_results: [],
             carousel_info:[],
             carousel_data:[],
-            carousel_mod:[],           
-            
+            carousel_mod:[],
+            data_load_cnt:0,           
+            sector_code:['010', '015', '020', '025', '030', '035', '040', '045', '050', '099'],
+            /*
+            rep_info:[{seq:1, ctg_large_code:"002", ctg_code:"010", ctg_name:"정보기술", f16002:"TEST", f15004:"3.58", 
+              etf_sum:"", etn_sum:"", up:"", down:"", bohap:"", 
+              width:230, height:150},
+              {seq:2, ctg_large_code:"002", ctg_code:"015", ctg_name:"", f16002:"", f15004:"", 
+              etf_sum:"", etn_sum:"", up:"", down:"", bohap:"", 
+              width:230, height:150},
+              {seq:3, ctg_large_code:"002", ctg_code:"020", ctg_name:"",f16002:"", f15004:"", 
+              etf_sum:"", etn_sum:"", up:"", down:"", bohap:"", 
+              width:230, height:150},
+              {seq:4, ctg_large_code:"002", ctg_code:"025", ctg_name:"",f16002:"", f15004:"", 
+              etf_sum:"", etn_sum:"", up:"", down:"", bohap:"", 
+              width:230, height:150},
+              {seq:5, ctg_large_code:"002", ctg_code:"030", ctg_name:"",f16002:"", f15004:"", 
+              etf_sum:"", etn_sum:"", up:"", down:"", bohap:"", 
+              width:230, height:150},
+              {seq:6, ctg_large_code:"002", ctg_code:"035", ctg_name:"",f16002:"", f15004:"", 
+              etf_sum:"", etn_sum:"", up:"", down:"", bohap:"", 
+              width:230, height:150},
+              {seq:7, ctg_large_code:"002", ctg_code:"040", ctg_name:"",f16002:"", f15004:"", 
+              etf_sum:"", etn_sum:"", up:"", down:"", bohap:"", 
+              width:230, height:150},
+              {seq:8, ctg_large_code:"002", ctg_code:"045", ctg_name:"",f16002:"", f15004:"", 
+              etf_sum:"", etn_sum:"", up:"", down:"", bohap:"", 
+              width:230, height:150},
+              {seq:9, ctg_large_code:"002", ctg_code:"050", ctg_name:"",f16002:"", f15004:"", 
+              etf_sum:"", etn_sum:"", up:"", down:"", bohap:"", 
+              width:230, height:150},
+              {seq:10, ctg_large_code:"002", ctg_code:"099", ctg_name:"",f16002:"", f15004:"", 
+              etf_sum:"", etn_sum:"", up:"", down:"", bohap:"", 
+              width:230, height:150},],
+*/
+            rep_info:[],                        
             options: {
                 color: 'primary',
                 width: '80%',
@@ -138,22 +125,148 @@ export default {
     },
     mixins : [ market_common ],
     components: {
+      BarSectorTextChart,
     },
     computed: {
-         orderedData : function(){
-           
-            return _.orderBy(this.carousel_mod, 'ctg_code', 'asc');
-        }
+      orderedData : function(){
+        
+        return _.orderBy(this.carousel_mod, 'ctg_code', 'asc');
+      },
+      chartLoadFlag : function(){
+        if(this.data_load_cnt == this.sector_code.length) return true;
+        else return false;        
+      }
     },
     mounted: function() {
-        var vm = this;
+      var vm = this;
 
-        vm.fn_getEtpList( "002" );
+      for(var i=0; i < this.sector_code.length; i++) {
+        var rinfo = {};
+
+        rinfo.seq = i+1;
+        rinfo.ctg_large_code = "002";
+        rinfo.ctg_code = this.sector_code[i];
+        if(i % 4 == 3) rinfo.width = 350;
+        else  rinfo.width = 340;
+        rinfo.height = 150;
+        this.rep_info.push(rinfo);
+
+        this.getEtpCtgBasic(this.rep_info[i]);
+        this.getEtpSectorMaxRate(this.rep_info[i]);
+        this.getEtfSectorSum(this.rep_info[i]);
+        this.getEtnSectorSum(this.rep_info[i]);
+        this.getEtpSectorUp(this.rep_info[i]);
+        this.getEtpSectorDown(this.rep_info[i]);
+        this.getEtpSectorBohap(this.rep_info[i]);
+
+      }
+      vm.fn_getEtpList( "002" );
         
     },
     created: function() {},
     beforeDestroy() {},
     methods: {
+      dataInit: function() {
+      },
+      getEtpCtgBasic: function(rinfo) {
+        var vm = this;
+        axios.get(Config.base_url + "/user/marketinfo/getEtpCtgBasic", {
+          params: rinfo
+        }).then(function(response) {
+          if (response.data.success == false) {
+            // alert("해당 지수의 데이터가 없습니다");
+            rinfo.ctg_name = "";
+          } else {
+            rinfo.ctg_name = response.data.results[0].ctg_name;
+          }
+        });
+      },
+      getEtpSectorMaxRate: function(rinfo) {
+        var vm = this;
+        axios.get(Config.base_url + "/user/marketinfo/getEtpSectorMaxRate", {
+          params: rinfo
+        }).then(function(response) {
+          if (response.data.success == false) {
+            // alert("해당 지수의 데이터가 없습니다");
+            rinfo.ctg_name = "";
+          } else {
+            rinfo.f15004 = response.data.results[0].F15004;
+            rinfo.f16002 = response.data.results[0].F16002;
+          }
+        });
+      },
+      getEtfSectorSum: function(rinfo) {
+        var vm = this;
+        axios.get(Config.base_url + "/user/marketinfo/getEtfSectorSum", {
+          params: rinfo
+        }).then(function(response) {
+          if (response.data.success == false) {
+              // alert("해당 지수의 데이터가 없습니다");
+             rinfo.etf_sum = 0;
+          } else {
+            rinfo.etf_sum = response.data.results[0].F16500;
+            if(rinfo.etf_sum == null) rinfo.etf_sum = 0;
+            else rinfo.etf_sum = util.formatStringNum(rinfo.etf_sum);
+          }
+        });
+      },
+      getEtnSectorSum: function(rinfo) {
+        var vm = this;
+        axios.get(Config.base_url + "/user/marketinfo/getEtnSectorSum", {
+          params: rinfo
+        }).then(function(response) {
+          if (response.data.success == false) {
+              // alert("해당 지수의 데이터가 없습니다");
+             rinfo.etn_sum = 0;
+          } else {
+            rinfo.etn_sum = response.data.results[0].F16500;
+            if(rinfo.etn_sum == null) rinfo.etn_sum = 0;
+            else rinfo.etn_sum = util.formatStringNum(rinfo.etn_sum);
+          }
+        });
+      },
+      getEtpSectorUp: function(rinfo) {
+        var vm = this;
+        axios.get(Config.base_url + "/user/marketinfo/getEtpSectorUp", {
+          params: rinfo
+        }).then(function(response) {
+          if (response.data.success == false) {
+              // alert("해당 지수의 데이터가 없습니다");
+             rinfo.etn_sum = 0;
+          } else {
+            rinfo.up = Number(response.data.results[0].Up);
+          }
+        });
+      },
+      getEtpSectorDown: function(rinfo) {
+        var vm = this;
+        axios.get(Config.base_url + "/user/marketinfo/getEtpSectorDown", {
+          params: rinfo
+        }).then(function(response) {
+          if (response.data.success == false) {
+              // alert("해당 지수의 데이터가 없습니다");
+             rinfo.etn_sum = 0;
+          } else {
+            rinfo.down = Number(response.data.results[0].Down);
+          }
+        });
+      },
+      getEtpSectorBohap: function(rinfo) {
+        var vm = this;
+        axios.get(Config.base_url + "/user/marketinfo/getEtpSectorBohap", {
+          params: rinfo
+        }).then(function(response) {
+          console.log("getEtpSectorBohap");
+          console.log(response);
+          if (response.data.success == false) {
+              // alert("해당 지수의 데이터가 없습니다");
+             rinfo.etn_sum = 0;
+          } else {
+            rinfo.bohap = Number(response.data.results[0].Bohap);
+            vm.data_load_cnt++;
+          }
+        });
+      },
         
     }
 };

@@ -1,61 +1,16 @@
 <template>
     <v-container>
         <v-layout row wrap class="content_margin">
-        <!--
             <v-flex xs12>
-                <v-carousel  light hide-delimiters height="250px" interval="10000">
-                    <v-carousel-item  class="bg_W market_layout_w" v-if="carousel_info.carousel_cnt > 0"  v-for="n in carousel_info.carousel_cnt" :key="n">
-                        <v-layout class="market_card_layout">
-                            <v-flex  v-for="x in carousel_info.carousel_div" :key="x">
-                                <v-card flat>
-                                    <div class="market_card_w line_l">
-                                        <div class="market_card2" wrap>
-                                            <h6>
-                                                {{fn_getDataFromMarket(carousel_data, n, x, "name")}}
-                                                <p>
-                                                    {{ new Intl.NumberFormat().format( fn_getDataFromMarket(carousel_data, n, x, "f15001") ) }}
-                                                    <span :class='( fn_getDataFromMarket(carousel_data, n, x, "f15472") > 0 ? "text_red" : "" )'>
-                                                        {{fn_getDataFromMarket(carousel_data, n, x, "f15472")}}({{fn_getDataFromMarket(carousel_data, n, x, "f15004")}} %)
-                                                    </span>
-                                                </p>
-                                            </h6>
-                                            <ul>
-                                                <li>
-                                                    ETF - {{ new Intl.NumberFormat().format( fn_getDataFromMarket(carousel_data, n, x, "etf_cnt") ) }}종목
-                                                    <br>
-                                                    <span>Total</span>
-                                                    <span class="text_result2">AUM {{ new Intl.NumberFormat().format( fn_getDataFromMarket(carousel_data, n, x, "etf_sum")  / 1000 ) }}K</span>
-                                                </li>
-                                                <li>
-                                                    ETN - {{fn_getDataFromMarket(carousel_data, n, x, "etn_cnt")}} 종목
-                                                    <br>
-                                                    <span>Total</span>
-                                                    <span class="text_result2">AUM {{ new Intl.NumberFormat().format( fn_getDataFromMarket(carousel_data, n, x, "etn_sum")  / 1000 ) }}K</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </v-flex>                           
-                        </v-layout>
-                    </v-carousel-item>
-                </v-carousel>
-            </v-flex>
-            -->
-            <v-flex xs12>
-              <v-layout>
-                <v-flex xs3 mr-3 v-for="(rinfo, index) in rep_info" :key="rinfo.seq">
-                  <v-card flat>
-                    <AreaIndexTextChart v-if=chartLoadFlag :chartItem="{chartId: rinfo.f16013 + rinfo.market_id,
-                       width: '350', height: '150',  marginW: 1, marginH: 40, chartColor: '#C8E6C9'}"
-                        :textItem="rinfo"
+              <v-layout row wrap>
+                <v-flex xs3 v-for="(rinfo, index) in rep_info" :key="rinfo.seq">
+                    <AreaIndexTextChart v-if=chartLoadFlag 
+                        :chartItem="rinfo"
                         :dataSet="getDataSet(index)"></AreaIndexTextChart>
-                  </v-card>
                 </v-flex>                    
               </v-layout>
             </v-flex>
-
-            <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12 mt-3>
+            <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12 mt-1>
                 <v-card flat>
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
@@ -110,7 +65,6 @@ import Config from "@/js/config.js";
 import util from "@/js/util.js";
 import { market_common } from '@/js/common/mixins/mixins_marketinfo.js';
 import AreaIndexTextChart   from  '@/components/Common/Chart/AreaIndexTextChart.vue';
-import AreaChart   from  '@/components/Common/Chart/AreaChart.vue';
 
 var importance_grid = null;
 
@@ -124,14 +78,18 @@ export default {
             carousel_data:[],
             carousel_mod:[],
             intra_data:[],
-            rep_info:[{seq:0, f16013:"1", market_id:"M002", name:"KOSPI", f15001:"2,078.00", 
-                        f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#79caab", eColor:"#d8faf0"},
-              {seq:1, f16013:"51", market_id:"M002", name:"KOSPI 200", f15001:"", 
-                      f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#BA68C8", eColor:"#E1BEE7"},
-              {seq:2, f16013:"1", market_id:"M004", name:"KOSDAQ", f15001:"", 
-                      f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#DCE775", eColor:"#F0F4C3"},
-              {seq:3, f16013:"203", market_id:"M004", name:"KOSDAQ 150", f15001:"", 
-                      f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#A1887F", eColor:"#D7CCC8"}],
+            rep_info:[{seq:1, f16013:"1", market_id:"M002", name:"KOSPI", f15001:"2,078.00", 
+                        f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#79caab", eColor:"#d8faf0",
+                        width:340, height:150, marginW:1, marginH:40},
+              {seq:2, f16013:"51", market_id:"M002", name:"KOSPI 200", f15001:"", 
+                      f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#BA68C8", eColor:"#E1BEE7",
+                      width:340, height:150, marginW:1, marginH:40},
+              {seq:3, f16013:"1", market_id:"M004", name:"KOSDAQ", f15001:"", 
+                      f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#DCE775", eColor:"#F0F4C3",
+                      width:340, height:150, marginW:1, marginH:40},
+              {seq:4, f16013:"203", market_id:"M004", name:"KOSDAQ 150", f15001:"", 
+                      f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#A1887F", eColor:"#D7CCC8",
+                      width:350, height:150, marginW:1, marginH:40}],
             options: {
                 color: 'primary',
                 width: '80%',
@@ -154,12 +112,12 @@ export default {
     mounted: function() {
 
         this.fn_getEtpList( "001" );       /* 001-시장대표 */
-        for(var i=0; i<4; i++) {
+        for(var i=0; i<this.rep_info.length; i++) {
           this.getIndexBasic(this.rep_info[i]);
           this.getEtfSumByIndex(this.rep_info[i]);
           this.getEtnSumByIndex(this.rep_info[i]);
         }
-        for(var i=0; i<4; i++) {
+        for(var i=0; i<this.rep_info.length; i++) {
           this.getIndexIntra(this.rep_info[i]);
         }
     },
@@ -243,7 +201,7 @@ export default {
               // console.log(vm.intra_data[rinfo.seq]);
               // 데이터 없는 상태에서 getDataSet 하면 에러남.
               // Error in render: "TypeError: undefined is not iterable (cannot read property Symbol(Symbol.iterator))
-              if(vm.intra_data.length == 4) vm.chartLoadFlag = true;
+              if(vm.intra_data.length == vm.rep_info.length) vm.chartLoadFlag = true;
           }
         });
       },

@@ -171,7 +171,7 @@ try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
-    var stmt = mapper.getStatement('common.item', 'getEtfSumByIndex', options, {language:'sql', indent: '  '});
+    var stmt = mapper.getStatement('etpinfo', 'getEtfSumByIndex', options, {language:'sql', indent: '  '});
     console.log(stmt);
 
     Promise.using(pool.connect(), conn => {
@@ -208,7 +208,7 @@ try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
-    var stmt = mapper.getStatement('common.item', 'getEtnSumByIndex', options, {language:'sql', indent: '  '});
+    var stmt = mapper.getStatement('etpinfo', 'getEtnSumByIndex', options, {language:'sql', indent: '  '});
     console.log(stmt);
 
     Promise.using(pool.connect(), conn => {
@@ -230,6 +230,243 @@ try {
 }
 };
 
+/*
+* ETP SECTOR 기본정보
+*/
+var getEtpCtgBasic = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getEtpCtgBasic 호출됨.');
+
+  var options = req.query;
+  console.log(options);
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('etpinfo', 'getEtpCtgBasic', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+
+/*
+* ETP SECTOR 기본정보
+*/
+var getEtpSectorMaxRate = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getEtpSectorMaxRate 호출됨.');
+
+  var options = req.query;
+  console.log(options);
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('etpinfo', 'getEtpSectorMaxRate', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+
+/*
+* ETF SECTOR 순자산 총액 합산
+*/
+var getEtfSectorSum = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getEtfSectorSum 호출됨.');
+
+  var options = req.query;
+  console.log(options);
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('etpinfo', 'getEtfSectorSum', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+
+/*
+* ETN SECTOR 순자산 총액 합산
+*/
+var getEtnSectorSum = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getEtnSectorSum 호출됨.');
+
+  var options = req.query;
+  console.log(options);
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('etpinfo', 'getEtnSectorSum', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+
+/*
+* ETP SECTOR 상승종목수
+*/
+var getEtpSectorUp = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getEtpSectorUp 호출됨.');
+
+  var options = req.query;
+  console.log(options);
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('etpinfo', 'getEtpSectorUp', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+
+/*
+* ETP SECTOR 하락종목수
+*/
+var getEtpSectorDown = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getEtpSectorDown 호출됨.');
+
+  var options = req.query;
+  console.log(options);
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('etpinfo', 'getEtpSectorDown', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+
+/*
+* ETP SECTOR 보합종목수
+*/
+var getEtpSectorBohap = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getEtpSectorBohap 호출됨.');
+
+  var options = req.query;
+  console.log(options);
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('etpinfo', 'getEtpSectorBohap', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
 
 
 /*
@@ -524,5 +761,13 @@ module.exports.getEtpBasic = getEtpBasic;
 module.exports.getEtpIntra = getEtpIntra;
 module.exports.getEtfSumByIndex = getEtfSumByIndex;
 module.exports.getEtnSumByIndex = getEtnSumByIndex;
+module.exports.getEtpCtgBasic = getEtpCtgBasic;
+module.exports.getEtpSectorMaxRate = getEtpSectorMaxRate;
+module.exports.getEtfSectorSum = getEtfSectorSum;
+module.exports.getEtnSectorSum = getEtnSectorSum;
+module.exports.getEtpSectorUp = getEtpSectorUp;
+module.exports.getEtpSectorDown = getEtpSectorDown;
+module.exports.getEtpSectorBohap = getEtpSectorBohap;
+
 module.exports.getSectorEtpList = getSectorEtpList;
 module.exports.getMarketIndexList = getMarketIndexList;

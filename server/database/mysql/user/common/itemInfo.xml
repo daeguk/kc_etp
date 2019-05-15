@@ -146,21 +146,6 @@
         ORDER BY B.F20044 desc, B.F20004 desc LIMIT 100
     </select>
 
-    <select id="getEtfSumByIndex">
-        SELECT SUM(F16500) * 1000000 + SUM(F18001) AS F16500
-        FROM td_etp_basic
-        WHERE F16257 = #{f16257}
-        AND F34239 = #{f34239}
-        AND F16493 IN (1,2)
-    </select>
-
-    <select id="getEtnSumByIndex">
-        SELECT SUM(F16500) * 1000000 + SUM(F18001) AS F16500
-        FROM td_etp_basic
-        WHERE F16257 = #{f16257}
-        AND F34239 = #{f34239}
-        AND F16493 IN (3,4)
-    </select>
     <!-- 인덱스 기본정보-->
     <select id="getIndexBaseInfo">
     <![CDATA[

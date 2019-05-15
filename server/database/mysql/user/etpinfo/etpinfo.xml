@@ -304,5 +304,81 @@
                     ,   tm_etpctg_map.F16012
     ]]>
     </select>
+    <select id="getEtfSumByIndex">
+        SELECT SUM(F16500) * 1000000 + SUM(F18001) AS F16500
+        FROM td_etp_basic
+        WHERE F16257 = #{f16257}
+        AND F34239 = #{f34239}
+        AND F16493 IN (1,2)
+    </select>
+
+    <select id="getEtnSumByIndex">
+        SELECT SUM(F16500) * 1000000 + SUM(F18001) AS F16500
+        FROM td_etp_basic
+        WHERE F16257 = #{f16257}
+        AND F34239 = #{f34239}
+        AND F16493 IN (3,4)
+    </select>
+    <select id="getEtpCtgBasic">
+        SELECT *
+        FROM tm_etpctg_code
+        WHERE ctg_large_code = #{ctg_large_code}
+        AND ctg_code = #{ctg_code}
+    </select>
+    <select id="getEtpSectorMaxRate">
+        SELECT A.*
+        FROM td_etp_basic A, tm_etpctg_map B
+        WHERE B.ctg_large_code = #{ctg_large_code}
+        AND B.ctg_code = #{ctg_code}
+        AND B.F16012 = A.F16012
+        ORDER BY A.F15004 DESC
+        LIMIT 1
+    </select>
+    <select id="getEtfSectorSum">
+        SELECT SUM(A.F16500) * 1000000 + SUM(A.F18001) AS F16500
+        FROM td_etp_basic A, tm_etpctg_map B
+        WHERE B.ctg_large_code = #{ctg_large_code}
+        AND B.ctg_code = #{ctg_code}
+        AND B.F16012 = A.F16012
+        AND A.F16493 IN (1,2)
+    </select>
+    <select id="getEtnSectorSum">
+        SELECT SUM(A.F16500) * 1000000 + SUM(A.F18001) AS F16500
+        FROM td_etp_basic A, tm_etpctg_map B
+        WHERE B.ctg_large_code = #{ctg_large_code}
+        AND B.ctg_code = #{ctg_code}
+        AND B.F16012 = A.F16012
+        AND A.F16493 IN (3,4)
+    </select>
+    <select id="getEtpSectorUp">
+        SELECT COUNT(A.F15004) AS Up
+        FROM td_etp_basic A, tm_etpctg_map B
+        WHERE B.ctg_large_code = #{ctg_large_code}
+        AND B.ctg_code = #{ctg_code}
+        AND B.F16012 = A.F16012
+        AND A.F15004 > 0
+    </select>
+    <select id="getEtpSectorDown">
+    <![CDATA[
+        SELECT COUNT(A.F15004) AS Down
+        FROM td_etp_basic A, tm_etpctg_map B
+        WHERE B.ctg_large_code = #{ctg_large_code}
+        AND B.ctg_code = #{ctg_code}
+        AND B.F16012 = A.F16012
+        AND A.F15004 < 0
+    ]]>
+    </select>
+    <select id="getEtpSectorBohap">
+    <![CDATA[
+        SELECT COUNT(A.F15004) AS Bohap
+        FROM td_etp_basic A, tm_etpctg_map B
+        WHERE B.ctg_large_code = #{ctg_large_code}
+        AND B.ctg_code = #{ctg_code}
+        AND B.F16012 = A.F16012
+        AND A.F15004 = 0
+    ]]>
+    </select>
+
+
 
 </mapper>
