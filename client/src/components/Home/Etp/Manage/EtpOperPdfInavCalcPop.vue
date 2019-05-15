@@ -261,7 +261,7 @@ export default {
 
 
         //  ETF 에서 그래프 선택시
-        $('#pdf_table tbody').on('blur', 'input', function () {            
+        $('#pdf_table tbody').on('change', 'input', function () {            
             var table = $('#pdf_table').DataTable();
             var data = table.row($(this).parents('td').parents('tr')).data();
 
