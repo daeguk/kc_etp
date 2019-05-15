@@ -513,7 +513,7 @@ export default {
                 return  false;
             }
 
-            axios.post( Config.base_url + "/user/etp/getKspjongBasic", {
+            axios.post( Config.base_url + "/user/etp/getJongmokData", {
                 data: { "f16012" : param.val() }
             }).then(function(response) {
                 console.log(response);

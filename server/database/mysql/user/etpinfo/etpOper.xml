@@ -191,6 +191,8 @@
                 ,   td_future_basic.F16198                                  AS  f16198          /* 옵션종류(2:CALL,3:PUT) */
                 ,   td_future_basic.F16190                                  AS  f16190          /* 행사가격 */
                 ,   td_future_basic.market_id                               AS  market_id       /* 시장 ID */
+
+                ,   '4'                                                     AS  f33861          /* ETF시장구분 */                
                 
           FROM  td_future_basic
          WHERE  1 = 1
