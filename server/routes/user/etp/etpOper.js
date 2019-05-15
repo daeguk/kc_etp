@@ -1394,7 +1394,7 @@ var getJongmokData = function(req, res) {
                 /* 2. FutureBasic 의 기본정보를 조회한다. */
                 function( msg, callback ) {
 
-                    
+
 
                     if( !( resultMsg.dataList && resultMsg.dataList.length > 0 ) ) {
                         stmt = mapper.getStatement('etpOper', 'getFutureBasic', paramData, format);
@@ -1465,6 +1465,7 @@ module.exports.getEtpOperIndexError = getEtpOperIndexError;
 module.exports.getEtpOperPdf = getEtpOperPdf;
 module.exports.getEtpOperPdfByRate = getEtpOperPdfByRate;
 module.exports.getEtpOperPdfModify = getEtpOperPdfModify;
+module.exports.getJongmokData = getJongmokData;
 
 
 module.exports.getExchBasic = getExchBasic;
