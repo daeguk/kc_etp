@@ -814,12 +814,6 @@ var getEtpOperPdfModify = function(req, res) {
                 /* 1. ETP 기본 정보를 조회한다. */
                 function( callback ) {
 
-                    paramData.basicData             =   {};
-                    paramData.basicData.f16012      =   paramData.f16012;           /* 국제표준코드 */
-
-
-
-                    console.log( paramData );
                     stmt = mapper.getStatement('etpDetail', 'getEtpBasic', paramData, format);
                     console.log(stmt);
 

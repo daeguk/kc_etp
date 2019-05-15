@@ -493,6 +493,7 @@ export default {
 
                 case    'btnPdf'    :
                             this.paramData  =   paramData;
+
                             this.$emit( "fn_setActiveTab", 2, this.paramData );
                             break;
             }            
