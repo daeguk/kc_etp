@@ -288,7 +288,7 @@ export default {
         /*
          * ETP iNAV 계산기 데이터를 조회한다.
          */
-        async getiNavData(f16012) {
+        getiNavData(f16012) {
             var vm = this;
 
             console.log( "EtpOperPdfInavCalcPop.vue -> getiNavData" );
@@ -309,7 +309,7 @@ export default {
                     var pdfResults = [];
                     for (let item of vm.pdfList) {
                         
-                        await vm.iNavCalulator(item).then(function(market_amt) {
+                        vm.iNavCalulator(item).then(function(market_amt) {
                             item.market_amt = market_amt;
                             market_tot_amt += market_amt;
 
