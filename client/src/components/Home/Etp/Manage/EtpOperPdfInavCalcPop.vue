@@ -22,7 +22,7 @@
                         <v-list-tile-content class="sumul_btn_w">
                             <ul>
                                 <li>
-                                    <v-switch v-model="switch1" v-on:change="SimulationMode" color="primary"></v-switch>
+                                    <v-switch v-model="SimulationSwitch" v-on:change="SimulationMode" color="primary"></v-switch>
                                 </li>
                                 <li>
                                     <v-btn small flat icon>
@@ -155,7 +155,7 @@ export default {
     props: ["showDialog", "paramData" ],
     data() {
         return {
-            switch1: false,
+            SimulationSwitch: false,
             etpBasic : {}, 
             pdfList: null,
             market_tot_amt: 0,    
@@ -319,7 +319,7 @@ export default {
                                 vm.iNav_percent =  (vm.iNav_amt / vm.etpBasic.f03329 - 1);
 
                                 /* input box readony 처리 */
-                                if (!vm.switch1) {
+                                if (!vm.SimulationSwitch) {
                                     $('#pdf_table tbody td input[id=cu_cnt]').attr("readonly", true);
                                 }
                             }
@@ -396,7 +396,7 @@ export default {
         },
 
         SimulationMode: function() {
-            if (this.switch1) {
+            if (this.SimulationSwitch) {
                 $('#pdf_table tbody td input[id=cu_cnt]').attr("readonly", false);
             } else {
                 $('#pdf_table tbody td input[id=cu_cnt]').attr("readonly", true);

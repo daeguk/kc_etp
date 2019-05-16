@@ -6,7 +6,7 @@
     -->
     <select id="userLoginCheck">
       SELECT A.type_cd, B.type_name, A.inst_cd, C.inst_name, 
-          A.email, A.emailchk, A.name, A.hp_no, A.tel_no
+          A.email, A.emailchk, A.name, A.hp_no, A.tel_no, C.krx_cd, C.large_type
         FROM tm_user_member A, tm_user_type B, tm_user_domain C 
         WHERE A.email = #{email}
         AND A.password = #{password}
@@ -49,4 +49,3 @@
         WHERE email = #{email}
     </update>
 </mapper>
-

@@ -45,22 +45,22 @@ console.log("email : " + req.body.email + " password : " + req.body.password);
           });
           res.end();
         }else {
-                            
             /*
                 세션 정보 처리;
              ============================
             */
-            /*req.session.user_id = "test1111@hanwha.com";
-            req.session.inst_cd = "03068";
-            req.session.type_cd = "0001";
-            req.session.large_type = "FNGUIDE";
-            req.session.krx_cd = '410220'; //거래소 ETP 발행사 코드
-            re.session.save();*/
-          res.json({
-            success: true,
-            results: rows
-          });
-          res.end();
+            req.session.user_id = rows[0].email;
+            req.session.inst_cd = rows[0].inst_cd;
+            req.session.type_cd = rows[0].type_cd;
+            req.session.large_type = rows[0].large_type;
+            req.session.krx_cd = rows[0].krx_cd; //거래소 ETP 발행사 코드
+            req.session.save();
+
+            res.json({
+                success: true,
+                results: rows
+            });
+            res.end();
         }
       }).catch(err => {
         util.log("Error while performing Query.", err);

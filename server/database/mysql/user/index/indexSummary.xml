@@ -24,12 +24,16 @@
                 FROM kc_etp.td_index_basic
                 WHERE F16013 = (SELECT MAX(F16013)
                                     FROM kc_etp.td_index_basic
+                                <if test="large_type != null and large_type !=''">
                                     WHERE large_type=#{large_type}
+                                </if>
                                 )
                 ) BAS,
                 kc_etp.td_index_hist HIS
         WHERE BAS.F16013 = HIS.F16013
+        <if test="large_type != null and large_type !=''">
           AND BAS.LARGE_TYPE = #{large_type}
+        </if>
           AND BAS.MARKET_ID = HIS.MARKET_ID
         ORDER BY HIS.F12506 DESC
         limit 0, 1
@@ -63,7 +67,9 @@
          LEFT OUTER JOIN td_index_basic BAS	
            ON BAS.F16013 = REQ.JISU_ID
       WHERE BAS.F16013 = REQ.JISU_ID
+    <if test="large_type != null and large_type !=''">
         AND BAS.large_type = #{large_type}
+    </if>
     <if test="jisu_cd != null and jisu_cd !=''">
         AND BAS.F16013 = #{jisu_cd}
     </if>
@@ -210,7 +216,11 @@
                                         where A.rnum = 1
                                         and A.F16013 = basic.F16013) minData
                                 FROM td_index_basic basic
-                                WHERE basic.large_type=#{large_type}) A
+       ]]>                                
+                            <if test="large_type != null and large_type !=''">                                
+                                WHERE basic.large_type=#{large_type}
+                            </if>    
+                                ) A
                                 group by F16013
                         order by max(ifnull(A.maxData/A.minData, 0)) desc
                         limit 0, 1)B
@@ -219,10 +229,12 @@
             kc_etp.td_index_hist HIS
         WHERE BAS.F16013 = HIS.F16013
             AND BAS.MARKET_ID = HIS.MARKET_ID
+        <if test="large_type != null and large_type !=''"> 
             AND BAS.large_type=#{large_type}
+        </if>
         ORDER BY HIS.F12506 DESC
         limit 0, 1
-    ]]>
+
     </select>
   
     <!-- 1년간 지수 정보(그래프정보)-->

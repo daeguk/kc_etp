@@ -22,7 +22,7 @@ var getIndexSummaryInfo = function (req, res) {
         var mapper = req.app.get("mapper");
        
         var params = {
-            large_type : req.session.large_type,
+            large_type : req.session.large_type == null ? '' : req.session.large_type,
         };
 
 
@@ -88,7 +88,7 @@ var getInfoOpenReqList = function (req, res) {
             jisu_cd = req.query.jisu_cd;
         }
         var params = {
-            large_type : req.session.large_type,
+            large_type : req.session.large_type == null ? '' : req.session.large_type,
             jisu_cd : jisu_cd,
         };
 
@@ -131,7 +131,7 @@ var getindexSubscribeList = function (req, res) {
             jisu_cd = req.query.jisu_cd;
         }
         var params = {
-            large_type : req.session.large_type,
+            large_type : req.session.large_type == null ? '' : req.session.large_type,
             jisu_cd : jisu_cd,
         };
 
@@ -275,7 +275,7 @@ var getIndexSummaryHist = function (req, res) {
         console.log("req.query");
         console.log(req.query);
         var options = {
-            large_type : req.session.large_type,
+            large_type : req.session.large_type == null ? '' : req.session.large_type,
             JISU_ID: req.query.jisu_id,
         };
 
@@ -509,7 +509,7 @@ var getIndexAnalysisInfo = function (req, res) {
         // var options = {id:'admin'};
         
         var options = {
-            large_type : req.session.large_type,
+            large_type : req.session.large_type == null ? '' : req.session.large_type,
             jisu_cd: req.query.jisu_cd,
             market_id: req.query.market_id
         };
@@ -558,7 +558,7 @@ var getIndexAnalysisData = function (req, res) {
         // var options = {id:'admin'};
         
         var options = {
-            large_type : req.session.large_type,
+            large_type : req.session.large_type == null ? '' : req.session.large_type,
             jisu_cd: req.query.jisu_cd,
             market_id: req.query.market_id
         };
@@ -685,7 +685,6 @@ var getIndexRegStateCnt = function (req, res) {
         util.log("err=>", exception);
     }
 };
-
 
 module.exports.getIndexSummaryInfo = getIndexSummaryInfo;
 module.exports.getInfoOpenReqList = getInfoOpenReqList;
