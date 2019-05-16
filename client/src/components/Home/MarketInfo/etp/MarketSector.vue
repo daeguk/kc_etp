@@ -1,36 +1,38 @@
 <template>
     <v-container>
-        <v-layout row wrap class="content_margin">
-            <v-flex xs12>
-                <v-carousel  light hide-delimiters height="250px" interval="10000">
-                    <v-carousel-item  class="bg_W market_layout_w" v-if="carousel_info.carousel_cnt > 0"  v-for="n in carousel_info.carousel_cnt" :key="n">
+ 
+                <div>
+                    <div class="market_layout_w" v-if="carousel_info.carousel_cnt > 0"  v-for="n in carousel_info.carousel_cnt" :key="n">
 
                         <v-layout class="market_card_layout">
                             <v-flex  v-for="x in 5" :key="x">
                                 <v-card flat>
-                                    <div class="market_card_w line_l">
+                                    <div class="market_card_w">
                                         <div class="market_card2" wrap>
                                             <h6>{{fn_getDataFromMarket(carousel_data, n, x, "name")}}</h6>
                                             <ul>
                                                 <li>
                                                     <dl> 
-                                                        <dt>총규모</dt>
-                                                        <dt class="txt_num text_result2">{{new Intl.NumberFormat().format((fn_getDataFromMarket(carousel_data, n, x, "total_amt")) / 1000)}}K</dt>
+                                                        <dt class="txt_num">{{new Intl.NumberFormat().format((fn_getDataFromMarket(carousel_data, n, x, "total_amt")) / 1000)}}K</dt>
+                                                        <dt>KODEX IT</dt>
                                                     </dl>
                                                 </li>
-                                                <li> <dl> 
-                                                        <dt><span class="etf_icon">ETF</span>  {{fn_getDataFromMarket(carousel_data, n, x, "etf_cnt")}}종목</dt>
-                                                        <dt><span class="etn_icon">ETN</span>  {{fn_getDataFromMarket(carousel_data, n, x, "etn_cnt")}}종목</dt>
-                                                    </dl>
-                                                </li>
+                                                <li><span class="etf_icon">ETF</span>  {{fn_getDataFromMarket(carousel_data, n, x, "etf_cnt")}}종목 <span class="unit">AUM</span></li>
+                                                <li><span class="etn_icon">ETN</span>  {{fn_getDataFromMarket(carousel_data, n, x, "etn_cnt")}}종목 <span class="unit">원</span></li>
                                             </ul>
                                         </div>
+                                        <div class="market_card_graph">
+                                                <div style="width:40%" class="market_graph_bar1"></div><div style="width:20%" class="market_graph_bar2"></div><div style="width:40%;" class="market_graph_bar3"></div>
+                                        </div>
+                                        <div class="market_card_graph">
+                                                <div class="text_w t1">상승:12</div><div class="text_w t2">보합:2</div><div class="text_w t3">하락:8</div>
+                                           </div>
                                     </div>
                                 </v-card>
                             </v-flex>                           
                         </v-layout>
-                    </v-carousel-item>
-                    <v-carousel-item  class="bg_W" v-if="Object.keys(carousel_mod).length > 0">
+                    </div>
+                    <v-card class="bg_W" v-if="Object.keys(carousel_mod).length > 0">
                         <v-layout class="market_card_layout" >
                             <v-flex v-for="mod_item in orderedData" :key="mod_item.ctg_code">
                                 <v-card flat>
@@ -55,12 +57,12 @@
                                 </v-card>
                             </v-flex>
                         </v-layout>
-                    </v-carousel-item>
-                </v-carousel>
-            </v-flex>
+                    </v-card>
+                </div>
+                   <v-layout row wrap>
             <!-- 테이블1 -->
             
-            <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12 mt-3>
+            <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12 mt-2 mb-1>
                 <v-card flat>
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>

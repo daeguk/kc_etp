@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <v-layout row wrap class="content_margin">
+        <v-layout row wrap>
         <!--
             <v-flex xs12>
                 <v-carousel  light hide-delimiters height="250px" interval="10000">
@@ -43,11 +43,11 @@
             </v-flex>
             -->
             <v-flex xs12>
-              <v-layout>
-                <v-flex xs3 mr-3 v-for="(rinfo, index) in rep_info" :key="rinfo.seq">
+              <v-layout class="marketrepre_graph">
+                <v-flex  v-for="(rinfo, index) in rep_info" :key="rinfo.seq">
                   <v-card flat>
                     <AreaIndexTextChart v-if=chartLoadFlag :chartItem="{chartId: rinfo.f16013 + rinfo.market_id,
-                       width: '350', height: '150',  marginW: 1, marginH: 40, chartColor: '#C8E6C9'}"
+                       width: '342', height: '150',  marginW: 1, marginH: 40, chartColor: '#C8E6C9'}"
                         :textItem="rinfo"
                         :dataSet="getDataSet(index)"></AreaIndexTextChart>
                   </v-card>
