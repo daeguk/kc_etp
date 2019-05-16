@@ -211,7 +211,7 @@ export default {
           var items = [];
           for (let item of intra_info) {
             // console.log("close_idx : " + item.close_idx);
-              items.push([item.trd_his, item.close_idx, item.trd_dd]);
+              items.push([item.F20044, item.F20004, item.F20008]);
           }
 
           return items;

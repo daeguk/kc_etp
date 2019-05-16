@@ -122,9 +122,9 @@
     </select>
 
     <select id="getIndexIntra">
-        SELECT concat(substr(lpad(B.F20004,8, '0'), 1, 2), ':',substr(lpad(B.F20004,8, '0'), 3, 2), ':',substr(lpad(B.F20004,8, '0'), 5, 2)) AS trd_his
-               ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as trd_dd
-		       ,B.F20008 as close_idx
+        SELECT concat(substr(lpad(B.F20004,8, '0'), 1, 2), ':',substr(lpad(B.F20004,8, '0'), 3, 2), ':',substr(lpad(B.F20004,8, '0'), 5, 2)) AS F20004
+               ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as F20044
+		       ,B.F20008 as F20008
         FROM td_index_intra B
         WHERE B.F16013 = #{f16013}
         AND B.MARKET_ID = #{market_id}
@@ -138,9 +138,9 @@
     </select>
 
     <select id="getEtpIntra">
-        SELECT concat(substr(lpad(B.F20004,8, '0'), 1, 2), ':',substr(lpad(B.F20004,8, '0'), 3, 2), ':',substr(lpad(B.F20004,8, '0'), 5, 2)) AS trd_his
-               ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as trd_dd
-		       ,B.F20008 as close_idx
+        SELECT concat(substr(lpad(B.F20004,8, '0'), 1, 2), ':',substr(lpad(B.F20004,8, '0'), 3, 2), ':',substr(lpad(B.F20004,8, '0'), 5, 2)) AS F20004
+               ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as F20044
+		       ,B.F20008 as F20008
         FROM td_etp_intra B
         WHERE B.F16013 = #{f16013}
         ORDER BY B.F20044 desc, B.F20004 desc LIMIT 100
@@ -287,7 +287,7 @@
     </select>
 
 
-    <!--ETF 리스트(관심종목 처리)-->
+      <!--ETF 리스트(관심종목 처리)-->
     <select id="getETFList">
       SELECT
             if (faver.F16012 = base.F16012, '1', '0') faver 
@@ -651,94 +651,8 @@
           AND base.F33960 = #{krx_cd}
     </select>
 
-    <!-- 관리 감독 기관 일경우 -->
-    <select id="getAllETPList">
-      SELECT
-            if (faver.F16012 = base.F16012, '1', '0') faver 
-            ,faver.item_seq faver_seq
-            ,base.F12506
-            ,base.F16012 as JISU_CD
-            ,base.F16012                    /* 국제표준코드 */
-            ,base.F16013 
-            ,base.F16002 as JISU_NM
-            ,base.F16003
-            ,base.F16017
-            ,base.F15001
-            ,base.F15472
-            ,base.F15004
-            ,base.F15006
-            ,base.F15009
-            ,base.F15010
-            ,base.F15011
-            ,base.F15015
-            ,base.F15023
-            ,base.F15028
-            ,base.F15029
-            ,base.F30812
-            ,base.F30813
-            ,base.F18438
-            ,base.F16143
-            ,base.F16073
-            ,base.F15007
-            ,base.F16493
-            ,base.F15301
-            ,base.F15302
-            ,base.F15303
-            ,base.F15304
-            ,base.F15305
-            ,base.F30818
-            ,base.F15318
-            ,base.F16497
-            ,base.F31892
-            ,base.F18450
-            ,base.F18001
-            ,base.F16500
-            ,base.F33307
-            ,base.F33308
-            ,base.F33951
-            ,base.F15319
-            ,base.F30823
-            ,base.F15602
-            ,base.F15631
-            ,base.F15632
-            ,base.F15633
-            ,base.F19288
-            ,base.F34515
-            ,base.F16499
-            ,base.F03329
-            ,base.F18439
-            ,base.F16109
-            ,base.F16257
-            ,base.F34777
-            ,base.F34521
-            ,base.F34776
-            ,base.F34514
-            ,base.F34239
-            ,base.F34241
-            ,base.F34769
-            ,base.F34770
-            ,base.F34771
-            ,base.F34772
-            ,base.F34775
-            ,base.F34778
-            ,base.F34779
-            ,base.F34780
-            ,base.F34781
-            ,base.F34782
-            ,base.F34783
-            ,base.F33960
-            ,base.F33961
-        FROM kc_etp.td_etp_basic base
-        LEFT OUTER JOIN 
-           (SELECT * 
-		          FROM tm_favor_item faver
-		         WHERE faver.gubun = 1  
-		           AND type_cd = #{type_cd}
-		           AND inst_cd = #{inst_cd}
-		           AND email = #{user_id}
-            ) faver
-          ON base.F16012 = faver.F16012
-    </select>
+
+    
     <!-- 지수 목록 정보(관심종목)-->
     <select id="getIndexList">
         SELECT faver

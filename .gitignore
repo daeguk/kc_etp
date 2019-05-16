@@ -7,7 +7,8 @@ yarn-error.log*
 *.zip
 *.doc
 *.pie
-build.js*
+build.js
+build.js.map
 
 # Runtime data
 pids
