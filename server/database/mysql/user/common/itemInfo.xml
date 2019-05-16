@@ -122,9 +122,9 @@
     </select>
 
     <select id="getIndexIntra">
-        SELECT concat(substr(lpad(B.F20004,8, '0'), 1, 2), ':',substr(lpad(B.F20004,8, '0'), 3, 2), ':',substr(lpad(B.F20004,8, '0'), 5, 2)) AS trd_his
-               ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as trd_dd
-		       ,B.F20008 as close_idx
+        SELECT concat(substr(lpad(B.F20004,8, '0'), 1, 2), ':',substr(lpad(B.F20004,8, '0'), 3, 2), ':',substr(lpad(B.F20004,8, '0'), 5, 2)) AS F20004
+               ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as F20044
+		       ,B.F20008 as F20008
         FROM td_index_intra B
         WHERE B.F16013 = #{f16013}
         AND B.MARKET_ID = #{market_id}
@@ -138,9 +138,9 @@
     </select>
 
     <select id="getEtpIntra">
-        SELECT concat(substr(lpad(B.F20004,8, '0'), 1, 2), ':',substr(lpad(B.F20004,8, '0'), 3, 2), ':',substr(lpad(B.F20004,8, '0'), 5, 2)) AS trd_his
-               ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as trd_dd
-		       ,B.F20008 as close_idx
+        SELECT concat(substr(lpad(B.F20004,8, '0'), 1, 2), ':',substr(lpad(B.F20004,8, '0'), 3, 2), ':',substr(lpad(B.F20004,8, '0'), 5, 2)) AS F20004
+               ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as F20044
+		       ,B.F20008 as F20008
         FROM td_etp_intra B
         WHERE B.F16013 = #{f16013}
         ORDER BY B.F20044 desc, B.F20004 desc LIMIT 100

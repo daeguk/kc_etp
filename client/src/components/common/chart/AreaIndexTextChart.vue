@@ -1,5 +1,6 @@
 <template>
-    <canvas :id=chartItem.seq :width=chartItem.width :height=chartItem.height>
+    <canvas :id=chartItem.seq :width=chartItem.width :height=chartItem.height 
+      v-on:mousemove.stop="drawToolTip" v-on:mouseleave.stop="clearToolTip">
     </canvas>
 </template>
 
@@ -13,11 +14,16 @@ export default {
             canvas:{},
             ctx:{},
             grad:{},
+            crect:{},
             dataArr: [],
+            chartDataPosArr: [],
+            bef_tooltip_img: {},
             maxVal: 0.0,
             minVal: 0.0,
             itemNum: 0,
             valHeight: 0.0,
+            tt_wlen: 150,
+            tt_hlen: 15,
         };
     },    
     created: function() {
@@ -25,6 +31,7 @@ export default {
     mounted: function() {
         // console.log("AreaIndexTextChart..........");
         this.canvas = document.getElementById(this.chartItem.seq);
+        this.rect = this.canvas.getBoundingClientRect();
         this.ctx = this.canvas.getContext('2d');
         this.grad = this.ctx.createLinearGradient(0,0,0,this.canvas.height);
         this.grad.addColorStop(0, this.chartItem.sColor);
@@ -33,6 +40,24 @@ export default {
         this.dataInit();
     },
     methods: {
+        dataInit: function() {
+            var vm = this;
+            this.dataArr = this.dataSet.reverse();
+            this.dataArr.forEach(function(item, index) {
+                if(index == 0) {
+                    vm.maxVal = item[2];
+                    vm.minVal = item[2];
+                }
+                if(vm.maxVal < item[2]) {
+                    vm.maxVal = item[2];
+                }else if(vm.minVal > item[2]) {
+                    vm.minVal = item[2];
+                }
+            });
+            vm.itemNum = vm.dataArr.length;
+            vm.valHeight = vm.maxVal - vm.minVal;
+            vm.draw();
+        },
         draw: function (){
             var c = this.ctx;
             var _width = this.chartItem.width - (this.chartItem.marginW * 2);
@@ -52,14 +77,16 @@ export default {
             var vm = this;
             this.dataArr.forEach(function(item, index){
                 _wpos = vm.chartItem.marginW + index * _width / (vm.itemNum-1);
-                _hpos = vm.chartItem.marginH + (_height - ((item[1] - vm.minVal)/ vm.valHeight * _height));
+                _hpos = vm.chartItem.marginH + (_height - ((item[2] - vm.minVal)/ vm.valHeight * _height));
 
+                vm.chartDataPosArr[index] = _wpos;
                 if(index == 0) {
                     c.moveTo(_wpos, _hpos);
                 }else {
                     c.lineTo(_wpos, _hpos);
                     c.stroke();
                 }
+                console.log("item[0] : " + item[0] + " item[1] : " + item[1] + " item[2] : " + item[2]);
             });
 
             // fill 을 위한 cloasePath 만들기
@@ -109,24 +136,58 @@ export default {
             c.font = '12px san-serif';
             c.textAlign = "end";
             c.fillText(this.chartItem.etn_sum + " 원", 335, 140);
+
+            this.bef_tooltip_img = c.getImageData(0, 0, this.chartItem.width, this.chartItem.height);
         },
-        dataInit: function() {
-            var vm = this;
-            this.dataArr = this.dataSet;
-            this.dataArr.forEach(function(item, index) {
-                if(index == 0) {
-                    vm.maxVal = item[1];
-                    vm.minVal = item[1];
-                }
-                if(vm.maxVal < item[1]) {
-                    vm.maxVal = item[1];
-                }else if(vm.minVal > item[1]) {
-                    vm.minVal = item[1];
-                }
-            });
-            vm.itemNum = vm.dataArr.length;
-            vm.valHeight = vm.maxVal - vm.minVal;
-            vm.draw();
+        drawToolTip: function(event) {
+          var c = this.ctx;
+          var _mwpos = event.clientX-this.rect.left;
+          var _wpos = _mwpos;
+          var _hpos = event.clientY-this.rect.top - 20;
+          var item = [];
+          var tooltip = "";
+
+          if(_wpos > 200) _wpos -= this.tt_wlen;
+
+          c.putImageData(this.bef_tooltip_img, 0, 0);
+
+          c.fillStyle = "#FFFDE7";
+          c.fillRect(_wpos, _hpos, this.tt_wlen, this.tt_hlen);
+          this.draw_tooltip_flag = true;
+
+          item = this.getDataByPos(_mwpos);
+          c.fillStyle = "black";
+          c.textAlign = "left";
+          c.font = '11px san-serif';
+          tooltip = "" + item[0] + " " + item[1] + " " + item[2];
+          c.fillText(tooltip, _wpos+2, _hpos+11);
+
+          this.drawGuideLine(c, _mwpos);
+        },
+        drawGuideLine: function(c, _mwpos) {
+          c.beginPath();
+          c.strokeStyle = "#757575";
+          c.lineWidth = 1;
+          c.setLineDash([1]);
+          c.moveTo(_mwpos, 0);
+          c.lineTo(_mwpos, this.chartItem.height);
+          c.stroke();
+        },
+        clearToolTip: function(event) {
+          this.ctx.putImageData(this.bef_tooltip_img, 0, 0);
+        },
+        getDataByPos: function(_mwpos) {
+          var i=0;
+          for(; i < this.chartDataPosArr.length; i++) {
+            var item = this.chartDataPosArr[i];
+            // console.log("item : " + item + " _wpos : " + _mwpos);
+            // console.log("index : " + i);
+            if(item > _mwpos) {
+              break;
+            }              
+          }
+          if(i == this.chartDataPosArr.length) i -= 1;
+          return this.dataArr[i];
         },
     }
 }    
