@@ -860,7 +860,9 @@ var getEtpOperPdfModify = function(req, res) {
                             if ( rows && rows.length > 0 ) {
 
                                 for( var i in rows) {
-                                    rows[i].status  =   "nomal";
+                                    rows[i].status          =   "normal";
+                                    rows[i].f16499_prev     =   rows[i].f16499;     /* 1CU단위증권수 */
+                                    rows[i].code_check      =   true;               /* 코드 체크 ( defulat : true ) */
 
                                     resultMsg.dataList.push( rows[i] );
                                 }
@@ -896,7 +898,9 @@ var getEtpOperPdfModify = function(req, res) {
 
                             if ( rows && rows.length > 0 ) {
                                 for( var i in rows) {
-                                    rows[i].status  =   "nomal";
+                                    rows[i].status          =   "normal";
+                                    rows[i].f16499_prev     =   rows[i].f16499;     /* 1CU단위증권수 */
+                                    rows[i].code_check      =   true;               /* 코드 체크 ( defulat : true ) */
 
                                     resultMsg.dataList.push( rows[i] );
                                 }

@@ -341,7 +341,7 @@ export default {
         },
 
         /* 반복 계산 시작 및 스톱처리 */
-        startStop: function() {
+        startStop: function() {            
             if (this.nav_timer == null) {   
                 this.startLoopCalcu();      
             } else {
@@ -361,6 +361,7 @@ export default {
             if (this.nav_timer != null) {
                 this.btn_kind = 'play_circle_outline'
                 clearInterval(this.nav_timer);
+                this.nav_timer = null;
             }
         },
        
@@ -403,8 +404,8 @@ export default {
             }
         },
         fn_closePop() {
-            var vm = this;
-
+            var vm = this;            
+            vm.stopLoopCalcu();
             vm.$emit("fn_closePop", "close");
         }, 
 
