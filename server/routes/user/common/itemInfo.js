@@ -16,7 +16,7 @@ var util = require("util");
 var getFavorItemInfo = function (req, res) {
     
     try {
-        console.log('marketInfo=>getFavorItemInfo 호출됨.');
+        console.log('itemInfo=>getFavorItemInfo 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -68,7 +68,7 @@ var getFavorItemInfo = function (req, res) {
 var deleteFavorItem = function (req, res) {
     
     try {
-        console.log('marketInfo=>deleteFavorItem 호출됨.');
+        console.log('itemInfo=>deleteFavorItem 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -125,7 +125,7 @@ var deleteFavorItem = function (req, res) {
 var insertFavorItem = function (req, res) {
     
     try {
-        console.log('marketInfo=>insertFavorItem 호출됨.');
+        console.log('itemInfo=>insertFavorItem 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -204,7 +204,7 @@ var insertFavorItem = function (req, res) {
 */
 var getETFList = function (req, res) {
     try {
-        console.log('indexSummary=>getETFList 호출됨.');
+        console.log('itemInfo=>getETFList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -253,7 +253,7 @@ var getETFList = function (req, res) {
 */
 var getETNList = function (req, res) {
     try {
-        console.log('indexSummary=>getETNList 호출됨.');
+        console.log('itemInfo=>getETNList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -301,7 +301,7 @@ var getETNList = function (req, res) {
 * Index 목록(관심종목)
 */
 var getIndexList = function (req, res) {
-    console.log('indexSummary=>getInfoOpenReqList 호출됨.');
+    console.log('itemInfo=>getInfoOpenReqList 호출됨.');
 
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
@@ -345,7 +345,7 @@ var getIndexList = function (req, res) {
 */
 var getPublishEtpList = function (req, res) {
     try {
-        console.log('indexSummary=>getPublishEtfList 호출됨.');
+        console.log('itemInfo=>getPublishEtfList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -371,29 +371,38 @@ var getPublishEtpList = function (req, res) {
             query_id = "getPublishEtfList";
         } else if (req.session.type_cd == '0002') {
             query_id = "getPublishEtnList";
-        }
-        var stmt = mapper.getStatement('common.item', query_id, options, {language:'sql', indent: '  '});
+        } 
         
-        util.log("stmt", stmt);
-        
+        if (query_id != "") {
+            var stmt = mapper.getStatement('common.item', query_id, options, {language:'sql', indent: '  '});
+            
+            util.log("stmt", stmt);
+            
 
-        Promise.using(pool.connect(), conn => {
-            conn.queryAsync(stmt).then(rows => {
-                res.json({
-                    success: true,
-                    results: rows
+            Promise.using(pool.connect(), conn => {
+                conn.queryAsync(stmt).then(rows => {
+                    res.json({
+                        success: true,
+                        results: rows
+                    });
+                    res.end();
+                }).catch(err => {
+                    util.log("Error while performing Query.", err);
+                    res.json({
+                        success: false,
+                        message: err
+                    });
+                    res.end();
                 });
-                res.end();
-            }).catch(err => {
-                util.log("Error while performing Query.", err);
-                res.json({
-                    success: false,
-                    message: err
-                });
-                res.end();
+
             });
-
-        });
+        } else {
+            res.json({
+                success: true,
+                results: []
+            });
+            res.end();
+        }
     } catch(exception) {
         util.log("err=>", exception);
     }
@@ -406,7 +415,7 @@ var getPublishEtpList = function (req, res) {
 */
 var getALLEtpList = function (req, res) {
     try {
-        console.log('indexSummary=>getALLEtpList 호출됨.');
+        console.log('itemInfo=>getALLEtpList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -431,27 +440,38 @@ var getALLEtpList = function (req, res) {
             query_id = "getETFList";
         } else if (req.session.type_cd == '0002') {
             query_id = "getETNList";
+        } else if (req.session.type_cd == '9998' || req.session.type_cd == '9999') {
+            query_id = "getAllETPList";
         }
-        var stmt = mapper.getStatement('common.item', query_id, options, {language:'sql', indent: '  '});
-     
 
-        Promise.using(pool.connect(), conn => {
-            conn.queryAsync(stmt).then(rows => {
-                res.json({
-                    success: true,
-                    results: rows
+        if (query_id != "") {
+            var stmt = mapper.getStatement('common.item', query_id, options, {language:'sql', indent: '  '});
+        
+
+            Promise.using(pool.connect(), conn => {
+                conn.queryAsync(stmt).then(rows => {
+                    res.json({
+                        success: true,
+                        results: rows
+                    });
+                    res.end();
+                }).catch(err => {
+                    util.log("Error while performing Query.", err);
+                    res.json({
+                        success: false,
+                        message: err
+                    });
+                    res.end();
                 });
-                res.end();
-            }).catch(err => {
-                util.log("Error while performing Query.", err);
-                res.json({
-                    success: false,
-                    message: err
-                });
-                res.end();
+
             });
-
-        });
+        } else {
+            res.json({
+                success: true,
+                results: []
+            });
+            res.end(); 
+        }
     } catch(exception) {
         util.log("err=>", exception);
     }
