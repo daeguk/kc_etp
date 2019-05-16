@@ -144,40 +144,35 @@
                             </v-card-title>
                         </h5>
                         <v-card flat>
-                            <table id class="tbl_type" style="width:100%">
-                                <colgroup>
-                                    <col width="15%">
-                                    <col width="20%">
-                                    <col width="25%">
-                                    <col width="20%">
-                                    <col width="20%">
-                                </colgroup>
-                                <thead>
-                                    <tr>
-                                        <th>구분</th>
-                                        <th class="txt_left">CODE</th>
-                                        <th class="txt_left">종목</th>
-                                        <th class="txt_right">변경전</th>
-                                        <th class="txt_right">변경후</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>변경</td>
-                                        <td class="txt_left">KRD0101220110</td>
-                                        <td class="txt_left">원화예금</td>
-                                        <td class="txt_right">985632675</td>
-                                        <td class="txt_right">12358684520</td>
-                                    </tr>
-                                    <tr>
-                                        <td>변경</td>
-                                        <td class="txt_left">KRD0101220110</td>
-                                        <td class="txt_left">원화예금</td>
-                                        <td class="txt_right">985632675</td>
-                                        <td class="txt_right">12358684520</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <v-flex xs12    v-for="subData in allDataList" :key="subData.etf_f16012">
+
+                                <h4>
+                                    {{ subData.etf_f16002           /* ETF 한글종목명 */    }}
+                                    <span>{{ subData.etf_f16013     /* ETF 단축코드 */      }}</span>
+                                </h4>
+
+                                <table v-bind:id='subData.etf_f16012' class="tbl_type" style="width:100%">
+
+                                    <colgroup>
+                                        <col width="15%">
+                                        <col width="20%">
+                                        <col width="25%">
+                                        <col width="20%">
+                                        <col width="20%">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th>구분</th>
+                                            <th class="txt_left">CODE</th>
+                                            <th class="txt_left">종목</th>
+                                            <th class="txt_right">변경전</th>
+                                            <th class="txt_right">변경후</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+
+                            </v-flex>
+
                         </v-card>
                         <v-card flat class="pdf_context">
                             <div
@@ -245,98 +240,108 @@
                                 </v-btn>
                             </v-card-title>
                         </h5>
+                        
                         <v-card flat>
-                            <h4>
-                                TIGER 코스닥 150
-                                <span>002345</span>
-                            </h4>
-                            <table id class="tbl_type" style="width:100%">
-                                <colgroup>
-                                    <col width="15%">
-                                    <col width="20%">
-                                    <col width="25%">
-                                    <col width="20%">
-                                    <col width="20%">
-                                </colgroup>
-                                <thead>
-                                    <tr>
-                                        <th>구분</th>
-                                        <th class="txt_left">CODE</th>
-                                        <th class="txt_left">종목</th>
-                                        <th class="txt_right">변경전</th>
-                                        <th class="txt_right">변경후</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>변경</td>
-                                        <td class="txt_left">KRD0101220110</td>
-                                        <td class="txt_left">원화예금</td>
-                                        <td class="txt_right">985632675</td>
-                                        <td class="txt_right">12358684520</td>
-                                    </tr>
-                                    <tr>
-                                        <td>변경</td>
-                                        <td class="txt_left">KRD0101220110</td>
-                                        <td class="txt_left">원화예금</td>
-                                        <td class="txt_right">985632675</td>
-                                        <td class="txt_right">12358684520</td>
-                                    </tr>
-                                    <tr>
-                                        <td>변경</td>
-                                        <td class="txt_left">KRD0101220110</td>
-                                        <td class="txt_left">원화예금</td>
-                                        <td class="txt_right">985632675</td>
-                                        <td class="txt_right">12358684520</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <h4>
-                                TIGER 레버러지
-                                <span>002345</span>
-                            </h4>
-                            <table id class="tbl_type" style="width:100%">
-                                <colgroup>
-                                    <col width="15%">
-                                    <col width="20%">
-                                    <col width="25%">
-                                    <col width="20%">
-                                    <col width="20%">
-                                </colgroup>
-                                <thead>
-                                    <tr>
-                                        <th>구분</th>
-                                        <th class="txt_left">CODE</th>
-                                        <th class="txt_left">종목</th>
-                                        <th class="txt_right">변경전</th>
-                                        <th class="txt_right">변경후</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>변경</td>
-                                        <td class="txt_left">KRD0101220110</td>
-                                        <td class="txt_left">원화예금</td>
-                                        <td class="txt_right">985632675</td>
-                                        <td class="txt_right">12358684520</td>
-                                    </tr>
-                                    <tr>
-                                        <td>변경</td>
-                                        <td class="txt_left">KRD0101220110</td>
-                                        <td class="txt_left">원화예금</td>
-                                        <td class="txt_right">985632675</td>
-                                        <td class="txt_right">12358684520</td>
-                                    </tr>
-                                    <tr>
-                                        <td>변경</td>
-                                        <td class="txt_left">KRD0101220110</td>
-                                        <td class="txt_left">원화예금</td>
-                                        <td class="txt_right">985632675</td>
-                                        <td class="txt_right">12358684520</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+
+                            <v-flex xs12>
+                                <h4>
+                                    TIGER 코스닥 150
+                                    <span>002345</span>
+                                </h4>
+                                <table id class="tbl_type" style="width:100%">
+                                    <colgroup>
+                                        <col width="15%">
+                                        <col width="20%">
+                                        <col width="25%">
+                                        <col width="20%">
+                                        <col width="20%">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th>구분</th>
+                                            <th class="txt_left">CODE</th>
+                                            <th class="txt_left">종목</th>
+                                            <th class="txt_right">변경전</th>
+                                            <th class="txt_right">변경후</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>변경</td>
+                                            <td class="txt_left">KRD0101220110</td>
+                                            <td class="txt_left">원화예금</td>
+                                            <td class="txt_right">985632675</td>
+                                            <td class="txt_right">12358684520</td>
+                                        </tr>
+                                        <tr>
+                                            <td>변경</td>
+                                            <td class="txt_left">KRD0101220110</td>
+                                            <td class="txt_left">원화예금</td>
+                                            <td class="txt_right">985632675</td>
+                                            <td class="txt_right">12358684520</td>
+                                        </tr>
+                                        <tr>
+                                            <td>변경</td>
+                                            <td class="txt_left">KRD0101220110</td>
+                                            <td class="txt_left">원화예금</td>
+                                            <td class="txt_right">985632675</td>
+                                            <td class="txt_right">12358684520</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </v-flex>
+
+
+                            <v-flex xs12>
+                                <h4>
+                                    TIGER 레버러지
+                                    <span>002345</span>
+                                </h4>
+                                <table id class="tbl_type" style="width:100%">
+                                    <colgroup>
+                                        <col width="15%">
+                                        <col width="20%">
+                                        <col width="25%">
+                                        <col width="20%">
+                                        <col width="20%">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th>구분</th>
+                                            <th class="txt_left">CODE</th>
+                                            <th class="txt_left">종목</th>
+                                            <th class="txt_right">변경전</th>
+                                            <th class="txt_right">변경후</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>변경</td>
+                                            <td class="txt_left">KRD0101220110</td>
+                                            <td class="txt_left">원화예금</td>
+                                            <td class="txt_right">985632675</td>
+                                            <td class="txt_right">12358684520</td>
+                                        </tr>
+                                        <tr>
+                                            <td>변경</td>
+                                            <td class="txt_left">KRD0101220110</td>
+                                            <td class="txt_left">원화예금</td>
+                                            <td class="txt_right">985632675</td>
+                                            <td class="txt_right">12358684520</td>
+                                        </tr>
+                                        <tr>
+                                            <td>변경</td>
+                                            <td class="txt_left">KRD0101220110</td>
+                                            <td class="txt_left">원화예금</td>
+                                            <td class="txt_right">985632675</td>
+                                            <td class="txt_right">12358684520</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </v-flex>
                         </v-card>
+
+
                         <v-card flat class="pdf_context">
                             <div class="pdf_coment text-xs-center text_blue">
                                 <b>
@@ -372,6 +377,7 @@ import $ from "jquery";
 import _ from "lodash";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
+import util       from "@/js/util.js";
 
 import Config from "@/js/config.js";
 
@@ -396,6 +402,7 @@ export default {
             searchParam : {},
             etpBasic : {},
             dataList : [],
+            allDataList : [],
         };
     },
     created: function() {
@@ -434,9 +441,7 @@ export default {
             paging: false,
             searching: false,
             data : [],    
-            "columnDefs": [
-
-                     
+            "columnDefs": [         
                 {  
                     "render": function ( data, type, row ) {
 
@@ -458,12 +463,10 @@ export default {
                         var htm = "";
                         if( typeof row.f16316 != "undefined" && row.f16316.length > 0 ) {
                             if( row.f16316.indexOf( "<input" ) > -1 ) {
-                                htm = data;
+                                htm = util.formatNumber( data );
                             }else{
-                                htm = "<input type='text' name='f16499' id='f16499' style='width:100%; text-align:right' value='" + data + "' maxlength='15'>";
+                                htm = "<input type='number' name='f16499' id='f16499' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='15'>";
                             }
-                        }else{
-                            html = data;
                         }
 
                         return htm;
@@ -521,6 +524,8 @@ export default {
             var rowIndex = table.row($(this).parents("tr")).index();
             var jongmokTag = $(this).parents("tr").find( "input[name='jongmok']" );
 
+            var f16499 = $(this).eq(0).val();
+            $(this).eq(0).val( util.formatNumber( f16499 ) );
             vm.fn_setStatus( data, $(this).eq(0).val(), rowIndex, ( jongmokTag ? jongmokTag.length : 0 ) );
         });        
 
@@ -536,7 +541,7 @@ export default {
         },
 
         /*
-         * ETP 지수관리 정보를 조회한다.
+         * ETP PDF 정보를 조회한다.
          * 2019-05-03  bkLove(촤병국)
          */
         fn_getEtpOperPdfModify() {
@@ -659,7 +664,8 @@ export default {
             if( !vm.fn_codeCheck() ) {
                 return  false;
             }            
-
+                                                
+                                                
             var addData     =   {
                     "status"        :   "insert"
                 ,   "code_check"    :   false
@@ -667,7 +673,7 @@ export default {
 
                 ,   'f12506'        :   ''              /* Date */
                 ,   'f33861'        :   ''              /* 시장구분 */
-                ,   'f16316'        :   "<input type='text' name='jongmok' id='jongmok' style='width:100%;' maxlength='15' >"        /* 구성종목코드 */
+                ,   'f16316'        :   "<input type='text' name='jongmok' id='jongmok' style='width:100%;' class='txt_left width_fix' placeholder='12자리/6자리코드' maxlength='15' >"        /* 구성종목코드 */
                 ,   'f16002'        :   "<button  name='confirm'>확인</button>"                                                      /* 종목명 */
                 ,   'f16499'        :   ''              /* CU shrs */
                 ,   'f34840'        :   '0'             /* 액면금액 */
@@ -703,8 +709,119 @@ export default {
                 if( !vm.fn_modifyCheck() ) {
                     return  false;
                 }
-                
-                vm.step = 2;
+
+                /* allDataList 에서 존재하는 인덱스를 확인한다. */
+                var filterIndex  =   _.findIndex( vm.allDataList,    {
+                                            "etf_f16012" : vm.etpBasic.f16012      /* ETF 국제표준코드 */
+                                        ,   "etf_f16013" : vm.etpBasic.f16013      /* ETF 단축코드 */
+                                    });
+
+                /* 변경된 데이터만 추출 */
+                var filterData  =   _.filter( vm.dataList, function( o, i ) {
+                    if( o.status == "insert" || o.status == "modify" ) {
+                        return  true;
+                    }
+                });
+
+                /* 추가할 데이터 */
+                var jsonData    =   {
+                        "etf_f16012"    :   vm.etpBasic.f16012      /* ETF 국제표준코드 */
+                    ,   "etf_f16013"    :   vm.etpBasic.f16013      /* ETF 단축코드 */
+                    ,   "etf_f16002"    :   vm.etpBasic.f16002      /* ETF 한글종목명 */
+                    ,   "data"          :   filterData
+                };                                             
+
+
+                /* 존재하지 않는 경우 */
+                if( filterIndex == -1 ) {
+                    vm.allDataList.push( jsonData );
+                }
+                /* 존재하는 경우 해당 인덱스에 데이터 교체 */
+                else{
+                    vm.allDataList[ filterIndex ]   =   jsonData;
+                }
+
+
+                if( vm.allDataList.length > 0 ) {
+
+                    var items = [];
+                    for ( let subData of vm.allDataList ) {
+
+                        vm.$nextTick().then(() => {
+
+                            if ( $.fn.DataTable.isDataTable('#' + subData.etf_f16012 ) ) {
+                                $('#' + subData.etf_f16012).DataTable().destroy();
+                                $('#' + subData.etf_f16012).empty();
+                            }   
+
+                            items = subData.data;
+                            console.log("subData.etf_f16012=[" + subData.etf_f16012 + "]");
+                            console.log( "items" );
+                            console.log( items );
+                            $( '#' + subData.etf_f16012 ).DataTable( {
+                                    "processing": true,
+                                    "serverSide": false,
+                                    "info": false,   // control table information display field
+                                    "stateSave": true,  //restore table state on page reload,
+                                    "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                                    
+                                    select: {
+                                        style:    'single',
+                                        selector: 'td:first-child'
+                                    },
+                                    paging: false,
+                                    searching: false,
+                                    data : items,
+                                    ordering : false,
+                                    "columnDefs": [
+                                        {  
+                                            /* 구분 */
+                                            "render": function ( data, type, row ) {
+
+                                                var htm = "";
+                                                if( typeof row.status != "undefined" ) {
+                                                    if( row.status == "insert" ) {
+                                                        htm = "신규";
+                                                    }else{
+                                                        htm = "변경";
+                                                    }
+                                                }
+
+                                                return htm;
+                                            },
+                                            "targets": 0
+                                        },
+                                        {  
+                                            /* 변경전 */
+                                            "render": function ( data, type, row ) {
+
+                                                var htm = "";
+                                                if( typeof row.status != "undefined" ) {
+                                                    if( row.status == "insert" ) {
+                                                        htm = "-";
+                                                    }else{
+                                                        htm = data;
+                                                    }
+                                                }
+
+                                                return htm;
+                                            },
+                                            "targets": 3
+                                        },                                        
+                                    ],
+                                    columns: [
+                                        { "data" : "status"         ,   "width" :   "15%"   ,   "orderable" : false  ,   "className" : "txt_center" ,    "title" :   "구분"     },     /* 구분 */
+                                        { "data" : "f16316"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "CODE"     },     /* 코드 */
+                                        { "data" : "f16002"         ,   "width" :   "25%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "종목"     },     /* 종목명 */
+                                        { "data" : "f16499_prev"    ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"  ,    "title" :   "변경전"   },     /* CU shrs (변경전) */
+                                        { "data" : "f16499"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"  ,    "title" :   "변경후"   },     /* CU shrs */
+                                    ]
+                            }).draw();
+                        });
+                    }                
+                    
+                    vm.step = 2;
+                }
             }
         },
 
@@ -722,7 +839,7 @@ export default {
             if( jongmokTagYn == 0 ) {
 
                 if( tableData.status != "insert" ) {
-
+                    
                     /* 이전값과 현재값이 동일한 경우 상태값 원상태로 변경 */
                     if( tableData.f16499_prev == f16499 ) {
                         table.cell( tr, 0 ).data( { "status" : "normal" } );
@@ -734,9 +851,10 @@ export default {
                     }
                 }
 
-                vm.dataList[ rowIndex ].f16499  =   f16499;
+                vm.dataList[ rowIndex ].f16499  =   util.formatNumber( f16499 );
             }else{
-                vm.dataList[ rowIndex ].code_check   =   false;
+                vm.dataList[ rowIndex ].code_check  =   false;
+                vm.dataList[ rowIndex ].f16499      =   util.formatNumber( f16499 );
             }
         },
 
