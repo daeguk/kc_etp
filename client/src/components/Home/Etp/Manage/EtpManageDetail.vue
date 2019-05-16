@@ -1,64 +1,60 @@
 <template>
-
+<!-- 해당 클래스가 없네요. (2019.05.16. ThreeOn)
     <div :class="contentClass">
-        <v-layout row>
-            <v-flex xs12>
+-->    
+  <div class="etp_manage_detail">
+    <div class="title01_w">
+        <v-card-title primary-title>
+            <div class="title_wrap01">
+                <h3 class="headline">
+                    {{this.etpBasic.f16002}}
+                    <span class="grey--text">{{etpBasic.f16013}}</span>
+                </h3>
 
-                <v-card flat ma-3>
-
-                <!-- content내용 -->
-                    <div class="title01_w">
-                        <v-card-title primary-title>
-                            <div class="title_wrap01">
-                                <h3 class="headline mb-0">
-                                    {{this.etpBasic.f16002}}
-                                    <span class="grey--text">{{etpBasic.f16013}}</span>
-                                </h3>
-
-                                <!--div class="right_btn"  v-if="showEtpManageDetailDialog">
-                                    <v-layout align-right>
-                                        <v-flex xs12 sm4 text-xs-center>                                         
-                                            <div class="btn_r">
-                                                <v-btn icon  @click.stop="fn_close">
-                                                    <v-icon>close</v-icon>
-                                                </v-btn>
-                                            </div>
-                                        </v-flex>
-                                    </v-layout>
-                                </div-->
-
-                                <div class="right_btn"  v-if="!showEtpManageDetailDialog">
-                                    <v-layout align-right>
-                                        <v-flex xs12 sm4 text-xs-center>
-                                            <div class="btn_r">
-                                                <v-btn
-                                                    outline
-                                                    color="primary"
-                                                    small
-                                                    @click="fn_goBack()"
-                                                >목록으로 돌아가기</v-btn>
-                                            </div>
-                                        </v-flex>
-                                    </v-layout>
-                                </div>
+                <!--div class="right_btn"  v-if="showEtpManageDetailDialog">
+                    <v-layout align-right>
+                        <v-flex xs12 sm4 text-xs-center>                                         
+                            <div class="btn_r">
+                                <v-btn icon  @click.stop="fn_close">
+                                    <v-icon>close</v-icon>
+                                </v-btn>
                             </div>
-                        </v-card-title>
-                        <v-card-text>
-                            <p class="title_ex">
-                                {{this.etpBasic.f16002}} 관한 내용이 들어갑니다
-                            </p>
-                        </v-card-text>
-                    </div>
+                        </v-flex>
+                    </v-layout>
+                </div-->
 
+                <div class="right_btn"  v-if="!showEtpManageDetailDialog">
+                    <v-layout align-right>
+                        <v-flex xs12 sm4 text-xs-center>
+                            <div class="btn_r">
+                                <v-btn
+                                    outline
+                                    color="primary"
+                                    small
+                                    @click="fn_goBack()"
+                                >목록으로 돌아가기</v-btn>
+                            </div>
+                        </v-flex>
+                    </v-layout>
+                </div>
+            </div>
+        </v-card-title>
+        <v-card-text>
+            <p class="title_ex">
+                {{this.etpBasic.f16002}} 관한 내용이 들어갑니다.
+            </p>
+        </v-card-text>
+    </div>
 
-                    <div class="graph_01_w">
+    <div class="graph_01_w">
+      <div class="sub_title_num">
+        {{etpBasic.f15001}}
+        <span class="text_blue">{{etpBasic.f15472}} ({{etpBasic.f15004}}%)</span>
+        <p>Last Updated : {{etpBasic.f12506}}</p>
+      </div>
+      <LineEtpMultiChart :etpBasic="etpBasic"></LineEtpMultiChart>
 
-                        <div class="sub_title_num">
-                            {{etpBasic.f15001}}
-                            <span class="text_blue">{{etpBasic.f15472}}({{etpBasic.f15004}})</span>
-                            <p>Last Updated : {{etpBasic.f12506}}</p>
-                        </div>
-
+<!--
                         <v-card flat class="graph_toggle">
                             <v-flex xs12 sm6 class="py-2">
                                 <v-btn-toggle v-model="toggle_one" class="toggle_01">
@@ -76,8 +72,11 @@
                             id="etp_chart_div"
                             class="graph_01"
                         ></div>
-                    </div>
+-->
 
+    </div>
+
+<!--
                     <div class="tab2_w">
                         <v-layout row wrap>
                             <v-flex xs12>
@@ -105,13 +104,11 @@
                             </v-flex>
                         </v-layout>
                     </div>
-                </v-card>
-            </v-flex>
+-->                    
             <!--v-flex class="conWidth_right">
                 <ComFavorItemSub    @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
             </v-flex-->
-        </v-layout>
-    </div>
+  </div>
 </template>
 
 
@@ -120,7 +117,9 @@
 import EtpManageDetailBasicInfoTab from "./EtpManageDetailBasicInfoTab.vue";
 import EtpManageDetailAnalysisTab from "./EtpManageDetailAnalysisTab.vue";
 import ComFavorItemSub from "@/components/common/control/ComFavorItemSub";
+import LineEtpMultiChart   from  '@/components/common/chart/LineEtpMultiChart.vue';
 import Config from "@/js/config.js";
+import util from "@/js/util.js";
 
 export default {
     props : [ "paramData", "showEtpManageDetailDialog" ],
@@ -138,45 +137,7 @@ export default {
             tab: null,
             tab2: null,
             tab5: null,
-            items1: ["전체", "시장대표"],
             items5: ["기본정보", "분석정보"],
-            items: [
-                { title: "Home", icon: "dashboard" },
-                { title: "About", icon: "question_answer" }
-            ],
-            items2: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                },
-                {
-                    title: "KODEX 코스닥150 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            items3: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            items4: [],
             mini: false,
             right: null,
             rowsPerPageItems: [10, 20, 30, 50],
@@ -206,9 +167,10 @@ export default {
         };
     },
     components: {
-        EtpManageDetailBasicInfoTab: EtpManageDetailBasicInfoTab,
-        EtpManageDetailAnalysisTab: EtpManageDetailAnalysisTab,
-        ComFavorItemSub: ComFavorItemSub
+        EtpManageDetailBasicInfoTab,
+        EtpManageDetailAnalysisTab,
+        ComFavorItemSub,
+        LineEtpMultiChart,
     },
     mounted: function() {
         var vm = this;
@@ -272,7 +234,7 @@ export default {
                    // vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
 
                     vm.fn_getEtpBasic();                /* ETP 의 기본정보를 조회한다. */
-                    vm.fn_getEtpChartData('1M');        /* ETP 차트 정보를 조회한다. */
+                    // vm.fn_getEtpChartData('1M');        /* ETP 차트 정보를 조회한다. */
                 }
 
 
@@ -300,6 +262,7 @@ export default {
 
                 if (response.data) {
                     vm.etpBasic = response.data.etpBasic;
+                    vm.etpBasic.f15001 = util.formatStringNum(vm.etpBasic.f15001);
                     vm.indexBasic = response.data.indexBasic;
 
                     vm.showEtpManageDetailDialogBySub   =   true;
@@ -432,3 +395,8 @@ export default {
 };
 </script>
 
+<style scoped>
+.etp_manage_detail{
+    background: #fff;
+}
+</style>

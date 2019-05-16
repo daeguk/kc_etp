@@ -224,8 +224,8 @@ export default {
         axios.get(Config.base_url + "/user/marketinfo/getEtpSectorBohap", {
           params: rinfo
         }).then(function(response) {
-          console.log("getEtpSectorBohap");
-          console.log(response);
+          // console.log("getEtpSectorBohap");
+          // console.log(response);
           if (response.data.success == false) {
               // alert("해당 지수의 데이터가 없습니다");
              rinfo.etn_sum = 0;

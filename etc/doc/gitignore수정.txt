@@ -1,0 +1,11 @@
+[gitignore 추가]
+
+1. 원격저장소에 있는 화일 삭제
+> git rm -r --cached ./client/dist/build.js
+
+2. .gitignore 수정
+
+3. commit
+> git commit -m "gitingnore modify"
+
+4. git push origin master

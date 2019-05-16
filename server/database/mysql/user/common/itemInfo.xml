@@ -122,13 +122,13 @@
     </select>
 
     <select id="getIndexIntra">
-        SELECT concat(substr(lpad(B.F20004,8, '0'), 1, 2), ':',substr(lpad(B.F20004,8, '0'), 3, 2), ':',substr(lpad(B.F20004,8, '0'), 5, 2)) AS F20004
-               ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as F20044
-		       ,B.F20008 as F20008
-        FROM td_index_intra B
-        WHERE B.F16013 = #{f16013}
-        AND B.MARKET_ID = #{market_id}
-        ORDER BY B.F20044 desc, B.F20004 desc LIMIT 100
+        SELECT concat(substr(lpad(F20004,8, '0'), 1, 2), ':',substr(lpad(F20004,8, '0'), 3, 2), ':',substr(lpad(F20004,8, '0'), 5, 2)) AS F20004
+               ,DATE_FORMAT(F20044, "%Y.%m.%d") as F20044
+		       ,F20008
+        FROM td_index_intra
+        WHERE F16013 = #{f16013}
+        AND MARKET_ID = #{market_id}
+        ORDER BY F20044 desc, F20004 desc LIMIT 100
     </select>
 
     <select id="getEtpBasic">
@@ -138,14 +138,26 @@
     </select>
 
     <select id="getEtpIntra">
-        SELECT concat(substr(lpad(B.F20004,8, '0'), 1, 2), ':',substr(lpad(B.F20004,8, '0'), 3, 2), ':',substr(lpad(B.F20004,8, '0'), 5, 2)) AS F20004
-               ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as F20044
-		       ,B.F20008 as F20008
-        FROM td_etp_intra B
-        WHERE B.F16013 = #{f16013}
-        ORDER BY B.F20044 desc, B.F20004 desc LIMIT 100
+        SELECT concat(substr(lpad(F20004,8, '0'), 1, 2), ':',substr(lpad(F20004,8, '0'), 3, 2), ':',substr(lpad(F20004,8, '0'), 5, 2)) AS F20004
+               ,DATE_FORMAT(F20044, "%Y.%m.%d") as F20044
+		       ,F20008
+        FROM td_etp_intra
+        WHERE F16013 = #{f16013}
+        ORDER BY F20044 desc, F20004 desc LIMIT 100
     </select>
 
+    <select id="getEtpMultiIntra">
+        SELECT concat(substr(lpad(A.F20004,8, '0'), 1, 2), ':',substr(lpad(A.F20004,8, '0'), 3, 2), ':',substr(lpad(A.F20004,8, '0'), 5, 2)) AS F20004
+               ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as F20044
+		       ,A.F20008 as F20008, B.F20008 as iF20008
+        FROM td_etp_intra A, td_index_intra B
+        WHERE A.F16013 = #{f16013}
+        AND B.F16013 = #{f16257}
+        AND B.market_id = #{f34239}
+        AND A.F20044 = B.F20044
+        AND A.F20004 = B.F20004
+        ORDER BY F20044 desc, F20004 desc LIMIT ${limit}
+    </select>
     <!-- 인덱스 기본정보-->
     <select id="getIndexBaseInfo">
     <![CDATA[

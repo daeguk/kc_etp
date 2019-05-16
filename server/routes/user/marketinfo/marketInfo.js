@@ -123,7 +123,6 @@ try {
 /*
 * ETP INTRA 조회
 */
-
 var getEtpIntra = function(req, res) {
   console.log('marketInfo 모듈 안에 있는 getEtpIntra 호출됨.');
 
@@ -156,6 +155,43 @@ try {
 }
 };
 
+/*
+* ETP Multi INTRA 조회
+*/
+var getEtpMultiIntra = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getEtpMultiIntra 호출됨.');
+
+  var options = {
+    f16013 : req.query.f16013,
+    f16257 : req.query.f16257,
+    f34239 : req.query.f34239,
+    limit : req.query.limit,
+  };
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('common.item', 'getEtpMultiIntra', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
 /*
 * ETF 순자산총액 지수별 합산
 */
@@ -759,6 +795,7 @@ module.exports.getIndexBasic = getIndexBasic;
 module.exports.getIndexIntra = getIndexIntra;
 module.exports.getEtpBasic = getEtpBasic;
 module.exports.getEtpIntra = getEtpIntra;
+module.exports.getEtpMultiIntra = getEtpMultiIntra;
 module.exports.getEtfSumByIndex = getEtfSumByIndex;
 module.exports.getEtnSumByIndex = getEtnSumByIndex;
 module.exports.getEtpCtgBasic = getEtpCtgBasic;
@@ -768,6 +805,5 @@ module.exports.getEtnSectorSum = getEtnSectorSum;
 module.exports.getEtpSectorUp = getEtpSectorUp;
 module.exports.getEtpSectorDown = getEtpSectorDown;
 module.exports.getEtpSectorBohap = getEtpSectorBohap;
-
 module.exports.getSectorEtpList = getSectorEtpList;
 module.exports.getMarketIndexList = getMarketIndexList;

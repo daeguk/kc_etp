@@ -58,7 +58,7 @@
                     <v-layout>
                         <v-flex xs6>
                     <v-subheader>
-                        TOP10 비중정보
+                        TOP101 비중정보
                         <v-dialog v-model="dialog" persistent max-width="500">
                             <template v-slot:activator="{ on }">
                                 <v-btn outline small color="primary" dark v-on="on">VIEW ALL</v-btn>

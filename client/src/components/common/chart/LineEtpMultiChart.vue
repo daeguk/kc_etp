@@ -1,18 +1,21 @@
 <template>
-    <canvas :id=chartItem.seq :width=chartItem.width :height=chartItem.height 
-      v-on:mousemove.stop="drawToolTip" v-on:mouseleave.stop="clearToolTip">
-    </canvas>
+  <canvas :id=chartId :width=chart.width :height=chart.height 
+    v-on:mousemove.stop="mouseMove" v-on:mouseleave.stop="mouseLeave">
+  </canvas>
 </template>
 
 <script>
 import Config       from "@/js/config.js"
+import util from "@/js/util.js";
 
 export default {
-    props:['chartItem', 'dataSet'],
+    props:['etpBasic'],
     data() {
         return {
             canvas:{},
             ctx:{},
+            chartId:"EtpMultiChart",
+            chart:{width:1050, height:400},
             grad:{},
             crect:{},
             dataArr: [],
@@ -24,24 +27,59 @@ export default {
             valHeight: 0.0,
             tt_wlen: 150,
             tt_hlen: 15,
+            intra_date:[],
         };
     },    
+    watch: {
+      'etpBasic.f16013': function() {
+        console.log("watch.........: ");
+        console.log(this.etpBasic);
+        // this.etpBasic = newEtpBasic;
+        this.dataInit();
+      }
+    },
     created: function() {
     },
     mounted: function() {
-        // console.log("AreaIndexTextChart..........");
-        this.canvas = document.getElementById(this.chartItem.seq);
+        console.log("LineEtpMultiChart..........");
+        this.canvas = document.getElementById(this.chartId);
         this.rect = this.canvas.getBoundingClientRect();
         this.ctx = this.canvas.getContext('2d');
+        this.drawInit(this.ctx);
+        /*
         this.grad = this.ctx.createLinearGradient(0,0,0,this.canvas.height);
         this.grad.addColorStop(0, this.chartItem.sColor);
-        // this.grad.addColorStop(1, "#fff");
         this.grad.addColorStop(1,  this.chartItem.eColor);
-        this.dataInit();
+        */
+        // this.dataInit();
     },
     methods: {
+        drawInit: function(c) {
+            c.strokeRect(0, 0, this.chart.width, this.chart.height);
+
+            c.beginPath();
+            c.lineWidth = 0.8;
+            c.strokeStyle = "#37474F";
+            c.moveTo(80, 50);
+            c.lineTo(80, 350);
+            c.lineTo(1000, 350);
+            c.stroke();
+            c.closePath();
+
+            c.beginPath();
+            c.strokeStyle = "#BDBDBD";
+            c.setLineDash([2]);
+            for(var i=1; i < 7; i++) {
+              c.moveTo(80, 50*i);
+              c.lineTo(1000, 50*i);
+            }
+            c.stroke();
+
+        },
+
         dataInit: function() {
             var vm = this;
+            /*
             this.dataArr = this.dataSet.reverse();
             this.dataArr.forEach(function(item, index) {
                 if(index == 0) {
@@ -56,20 +94,41 @@ export default {
             });
             vm.itemNum = vm.dataArr.length;
             vm.valHeight = vm.maxVal - vm.minVal;
-            vm.draw();
+            */
+            this.getEtpMultiIntra(0, 100);
+        },
+        getEtpMultiIntra: function(term, limit) {
+          console.log("getEtpMultiIntra : " + this.etpBasic.f16013);
+          var vm = this;
+
+          vm.etpBasic.limit = limit;
+          vm.etpBasic.f34239 = "M" + util.pad(vm.etpBasic.f34239, 3);
+
+          axios.get(Config.base_url + "/user/marketinfo/getEtpMultiIntra", {
+            params: vm.etpBasic
+          }).then(function(response) {
+            console.log(response);
+            if (response.data.success == false) {
+                alert("해당 ETP의 데이터가 없습니다");
+            } else {
+                // vm.intra_data.push = response.data.results;
+                vm.intra_data = response.data.results.reverse();
+                vm.draw();
+            }
+          });
         },
         draw: function (){
             var c = this.ctx;
+            /*
             var _width = this.chartItem.width - (this.chartItem.marginW * 2);
             var _height = this.chartItem.height - (this.chartItem.marginH * 2);
             var _dnum = this.itemNum;
             var _maxv = this.maxVal;
             var _minv = this.minVal;
             var _wpos = 0.0, _hpos = 0.0;
-
-            // c.strokeRect(0, 0, this.canvas.width, this.canvas.height);
-
+            */
             // 차트 그리기 시작
+            /*
             c.beginPath();
             c.lineWidth = 3;
             c.strokeStyle = this.chartItem.sColor;
@@ -86,7 +145,7 @@ export default {
                     c.lineTo(_wpos, _hpos);
                     c.stroke();
                 }
-                // console.log("item[0] : " + item[0] + " item[1] : " + item[1] + " item[2] : " + item[2]);
+                console.log("item[0] : " + item[0] + " item[1] : " + item[1] + " item[2] : " + item[2]);
             });
 
             // fill 을 위한 cloasePath 만들기
@@ -138,8 +197,10 @@ export default {
             c.fillText(this.chartItem.etn_sum + " 원", 335, 140);
 
             this.bef_tooltip_img = c.getImageData(0, 0, this.chartItem.width, this.chartItem.height);
+            */
         },
-        drawToolTip: function(event) {
+        mouseMove: function(event) {
+          /*
           var c = this.ctx;
           var _mwpos = event.clientX-this.rect.left;
           var _wpos = _mwpos;
@@ -163,7 +224,9 @@ export default {
           c.fillText(tooltip, _wpos+2, _hpos+11);
 
           this.drawGuideLine(c, _mwpos);
+          */
         },
+        /*
         drawGuideLine: function(c, _mwpos) {
           c.beginPath();
           c.strokeStyle = "#757575";
@@ -173,9 +236,13 @@ export default {
           c.lineTo(_mwpos, this.chartItem.height);
           c.stroke();
         },
-        clearToolTip: function(event) {
+        */
+        mouseLeave: function(event) {
+          /*
           this.ctx.putImageData(this.bef_tooltip_img, 0, 0);
+          */
         },
+        /*
         getDataByPos: function(_mwpos) {
           var i=0;
           for(; i < this.chartDataPosArr.length; i++) {
@@ -189,6 +256,7 @@ export default {
           if(i == this.chartDataPosArr.length) i -= 1;
           return this.dataArr[i];
         },
+        */
     }
 }    
 </script>

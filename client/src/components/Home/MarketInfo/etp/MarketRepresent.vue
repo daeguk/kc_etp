@@ -64,7 +64,7 @@ import _ from "lodash";
 import Config from "@/js/config.js";
 import util from "@/js/util.js";
 import { market_common } from '@/js/common/mixins/mixins_marketinfo.js';
-import AreaIndexTextChart   from  '@/components/Common/Chart/AreaIndexTextChart.vue';
+import AreaIndexTextChart   from  '@/components/common/chart/AreaIndexTextChart.vue';
 
 var importance_grid = null;
 
@@ -125,13 +125,13 @@ export default {
     beforeDestroy() {},
     methods: {
       getIndexBasic: function(rinfo) {
-        console.log("getIndexBasic : " + rinfo.seq);
+        // console.log("getIndexBasic : " + rinfo.seq);
         var vm = this;
 
         axios.get(Config.base_url + "/user/marketinfo/getIndexBasic", {
           params: rinfo
         }).then(function(response) {
-          console.log(response);
+          // console.log(response);
           if (response.data.success == false) {
               alert("해당 지수의 데이터가 없습니다");
           } else {
@@ -142,7 +142,7 @@ export default {
         });
       },
       getEtfSumByIndex: function(rinfo) {
-        console.log("getEtfSumByIndex : " + rinfo.seq);
+        // console.log("getEtfSumByIndex : " + rinfo.seq);
         var vm = this;
 
         axios.get(Config.base_url + "/user/marketinfo/getEtfSumByIndex", {
@@ -164,7 +164,7 @@ export default {
         });
       },
       getEtnSumByIndex: function(rinfo) {
-        console.log("getEtnSumByIndex : " + rinfo.seq);
+        // console.log("getEtnSumByIndex : " + rinfo.seq);
         var vm = this;
 
         axios.get(Config.base_url + "/user/marketinfo/getEtnSumByIndex", {
@@ -186,7 +186,7 @@ export default {
         });
       },
       getIndexIntra: function(rinfo) {
-        console.log("getIndexIntra : " + rinfo.seq);
+        // console.log("getIndexIntra : " + rinfo.seq);
         var vm = this;
 
         axios.get(Config.base_url + "/user/marketinfo/getIndexIntra", {
