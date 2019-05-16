@@ -76,13 +76,17 @@ var deleteFavorItem = function (req, res) {
             type_cd : req.session.type_cd,
             inst_cd : req.session.inst_cd,
             user_id : req.session.user_id,
+            gubun   : req.body.params.gubun, 
             jisu_cd : req.body.params.jisu_cd,
             market_id : req.body.params.market_id
         };
 
-        
+        console.log(JSON.stringify(req.body.params) + ":gubun");
+        console.log(req.body.gubun + ":gubun");
         if (req.session.user_id != null) {
             var stmt = mapper.getStatement('common.item', 'deleteFavorItem', params, {language:'sql', indent: '  '});
+
+            console.log(stmt);
 
             Promise.using(pool.connect(), conn => {
                 conn.beginTransaction(txerr => {

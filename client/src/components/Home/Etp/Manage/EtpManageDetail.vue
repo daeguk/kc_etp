@@ -1,23 +1,46 @@
 <template>
-<!-- 해당 클래스가 없네요. (2019.05.16. ThreeOn)
-    <div :class="contentClass">
--->    
-  <div class="etp_manage_detail">
-    <div class="title01_w">
-        <v-card-title primary-title>
-            <div class="title_wrap01">
-                <h3 class="headline">
-                    {{this.etpBasic.f16002}}
-                    <span class="grey--text">{{etpBasic.f16013}}</span>
-                </h3>
 
-                <!--div class="right_btn"  v-if="showEtpManageDetailDialog">
-                    <v-layout align-right>
-                        <v-flex xs12 sm4 text-xs-center>                                         
-                            <div class="btn_r">
-                                <v-btn icon  @click.stop="fn_close">
-                                    <v-icon>close</v-icon>
-                                </v-btn>
+    <div >
+        <v-layout row>
+            <v-flex xs12>
+
+                <v-card flat ma-3>
+
+                <!-- content내용 -->
+                    <div class="title01_w">
+                        <v-card-title primary-title>
+                            <div class="title_wrap01">
+                                <h3 class="headline mb-0">
+                                    {{this.etpBasic.f16002}}
+                                    <span class="grey--text">{{etpBasic.f16013}}</span>
+                                </h3>
+
+                                <!--div class="right_btn"  v-if="showEtpManageDetailDialog">
+                                    <v-layout align-right>
+                                        <v-flex xs12 sm4 text-xs-center>                                         
+                                            <div class="btn_r">
+                                                <v-btn icon  @click.stop="fn_close">
+                                                    <v-icon>close</v-icon>
+                                                </v-btn>
+                                            </div>
+                                        </v-flex>
+                                    </v-layout>
+                                </div-->
+
+                                <div class="right_btn"  v-if="!showEtpManageDetailDialog">
+                                    <v-layout align-right>
+                                        <v-flex xs12 sm4 text-xs-center>
+                                            <div class="btn_r">
+                                                <v-btn
+                                                    outline
+                                                    color="primary"
+                                                    small
+                                                    @click="fn_goBack()"
+                                                >목록으로 돌아가기</v-btn>
+                                            </div>
+                                        </v-flex>
+                                    </v-layout>
+                                </div>
                             </div>
                         </v-flex>
                     </v-layout>
