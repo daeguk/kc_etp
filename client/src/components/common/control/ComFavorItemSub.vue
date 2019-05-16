@@ -19,16 +19,17 @@
                                         
                                         <v-flex xs12>
                                             <v-card flat>
-                                                <v-card-title>
+                                                <v-card-title class="con_r_ta_serch">
                                                     <v-text-field v-model="search" v-on:keyup="filterEtfData" append-icon="search" label="Search" single-line hide-details></v-text-field>
+                                                    <button type='button' id='btn_faver' class='btn_icon_star v-icon material-icons'>star</button>
                                                 </v-card-title>    
                                                 <table id="etf_table" class="tbl_type" style="width:100%">
                                                     <thead>
                                                         <tr>
                                                             <th></th>
-                                                            <th></th>
-                                                            <th></th>
-                                                            <th></th>
+                                                            <th>종목명</th>
+                                                            <th>현재가</th>
+                                                            <th>거래대금</th>
                                                         </tr>
                                                     </thead>  
                                                 </table>
@@ -41,8 +42,9 @@
                                     <v-layout row>
                                         <v-flex xs12>
                                             <v-card flat>
-                                                <v-card-title>
+                                                <v-card-title class="con_r_ta_serch">
                                                     <v-text-field v-model="search" v-on:keyup="filterEtnData" append-icon="search" label="Search" single-line hide-details></v-text-field>
+                                                    <button type='button' id='btn_faver' class='btn_icon_star on v-icon material-icons'>star</button>
                                                 </v-card-title>    
                                                 <table id="etn_table" class="tbl_type" style="width:100%">
                                                     <thead>
@@ -63,8 +65,9 @@
                                     <v-layout row >
                                         <v-flex xs12>
                                             <v-card flat>
-                                                <v-card-title>
+                                                <v-card-title class="con_r_ta_serch">
                                                     <v-text-field v-model="search" v-on:keyup="filterIndexData" append-icon="search" label="Search" single-line hide-details></v-text-field>
+                                                    <button type='button' id='btn_faver' class='btn_icon_star on v-icon material-icons'>star</button>
                                                 </v-card-title>    
                                                 <table id="index_table" class="tbl_type" style="width:100%">
                                                     <thead>
@@ -191,8 +194,8 @@ export default {
             searching: false,
             columns: [
                 { "data": "faver_seq", "visible": false},
-                { "data": "faver", "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>"},
-                { "data": "JISU_NM", "orderable": false},
+                { "data": "faver", "orderable": false, width:'5%', defaultContent:"<button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button>"},
+                { "data": "JISU_NM", "orderable": false, className:'txt_left'},
                 { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_detail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>ETP</span></div>"},
             ]
         });
@@ -271,7 +274,7 @@ export default {
             columns: [
                 { "data": "faver_seq", "visible": false},
                 { "data": "faver", "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>"},
-                { "data": "JISU_NM", "orderable": false},
+                { "data": "JISU_NM", "orderable": false, className:'txt_left'},
                 { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_detail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>ETP</span></div>"},
             ]
         });
@@ -349,7 +352,7 @@ export default {
             columns: [
                 { "data": "faver_seq", "visible": false},
                 { "data": "faver", "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>"},
-                { "data": "JISU_NM", "orderable": false},
+                { "data": "JISU_NM", "orderable": false, className:'txt_left'},
                 { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_detail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>INDEX</span></div>"},
             ]
         });

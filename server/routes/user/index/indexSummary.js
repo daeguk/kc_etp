@@ -686,7 +686,6 @@ var getIndexRegStateCnt = function (req, res) {
     }
 };
 
-
 module.exports.getIndexSummaryInfo = getIndexSummaryInfo;
 module.exports.getInfoOpenReqList = getInfoOpenReqList;
 module.exports.updateIndexOpenYn = updateIndexOpenYn;
