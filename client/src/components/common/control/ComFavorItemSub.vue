@@ -20,16 +20,15 @@
                                         <v-flex xs12>
                                             <v-card flat>
                                                 <v-card-title class="con_r_ta_serch">
-                                                    <v-text-field v-model="search" v-on:keyup="filterEtfData" append-icon="search" label="Search" single-line hide-details></v-text-field>
-                                                    <button type='button' id='btn_faver' class='btn_icon_star v-icon material-icons'>star</button>
+                                                    <v-text-field v-model="search" v-on:keyup="filterEtfData(1)" append-icon="search" label="Search" single-line hide-details></v-text-field>
+                                                    <button type='button' id='btn_etn_faver' v-on:click="filterEtfData(2)" :class='etfFaverClass'>star</button>
                                                 </v-card-title>    
                                                 <table id="etf_table" class="tbl_type" style="width:100%">
                                                     <thead>
                                                         <tr>
                                                             <th></th>
+                                                            <th></th>
                                                             <th>종목명</th>
-                                                            <th>현재가</th>
-                                                            <th>거래대금</th>
                                                         </tr>
                                                     </thead>  
                                                 </table>
@@ -43,16 +42,15 @@
                                         <v-flex xs12>
                                             <v-card flat>
                                                 <v-card-title class="con_r_ta_serch">
-                                                    <v-text-field v-model="search" v-on:keyup="filterEtnData" append-icon="search" label="Search" single-line hide-details></v-text-field>
-                                                    <button type='button' id='btn_faver' class='btn_icon_star on v-icon material-icons'>star</button>
+                                                    <v-text-field v-model="search" v-on:keyup="filterEtnData(1)" append-icon="search" label="Search" single-line hide-details></v-text-field>
+                                                    <button type='button' id='btn_etf_faver' v-on:click="filterEtnData(2)" :class='etnFaverClass'>star</button>
                                                 </v-card-title>    
                                                 <table id="etn_table" class="tbl_type" style="width:100%">
                                                     <thead>
                                                         <tr>
                                                             <th></th>
                                                             <th></th>
-                                                            <th></th>
-                                                            <th></th>
+                                                            <th>종목명</th>
                                                         </tr>
                                                     </thead>  
                                                 </table>
@@ -66,16 +64,15 @@
                                         <v-flex xs12>
                                             <v-card flat>
                                                 <v-card-title class="con_r_ta_serch">
-                                                    <v-text-field v-model="search" v-on:keyup="filterIndexData" append-icon="search" label="Search" single-line hide-details></v-text-field>
-                                                    <button type='button' id='btn_faver' class='btn_icon_star on v-icon material-icons'>star</button>
+                                                    <v-text-field v-model="search" v-on:keyup="filterIndexData(1)" append-icon="search" label="Search" single-line hide-details></v-text-field>
+                                                    <button type='button' id='btn_idx_faver' v-on:click="filterIndexData(2)" :class='idxFaverClass'>star</button>
                                                 </v-card-title>    
                                                 <table id="index_table" class="tbl_type" style="width:100%">
                                                     <thead>
                                                         <tr>
                                                             <th></th>
                                                             <th></th>
-                                                            <th></th>
-                                                            <th></th>
+                                                            <th>종목명</th>
                                                         </tr>
                                                     </thead>  
                                                 </table>
@@ -136,7 +133,9 @@ export default {
             search: '',
             showIndexDetailDialog : false,
             showEtpDetailDialog : false,
-            
+            etfFaverClass: 'btn_icon_star v-icon material-icons',
+            etnFaverClass: 'btn_icon_star v-icon material-icons',
+            idxFaverClass: 'btn_icon_star v-icon material-icons',
         };
     },
     components: {
@@ -167,9 +166,9 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "";
                         if (data == '1') {
-                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon_star on v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
                         } else {
-                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star_border</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon_star v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
                         }
                         
                         return htm;
@@ -194,39 +193,43 @@ export default {
             searching: false,
             columns: [
                 { "data": "faver_seq", "visible": false},
-                { "data": "faver", "orderable": false, width:'5%', defaultContent:"<button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button>"},
+                { "data": "faver", "orderable": false, width:'5%', defaultContent:""},
                 { "data": "JISU_NM", "orderable": false, className:'txt_left'},
-                { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_detail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>ETP</span></div>"},
             ]
         });
 
-
-        //  ETF 에서 그래프 선택시
+        //  ETF 에서 관심종목 클릭시
         $('#etf_table tbody').on('click', 'button', function () {
             var table = $('#etf_table').DataTable();
             var data = table.row($(this).parents('tr')).data();
 
             if ($(this).attr('id') == 'btn_faver') {
                 console.log(data.faver_seq);
-                //data.faver =  data.faver == '1' ? '0' : '1';
+                    //data.faver =  data.faver == '1' ? '0' : '1';
 
                 if (data.faver == '1') {
-                    data.faver = 0;
-                    $(this).html("star_border");
+                    data.faver = "0";
+                    data.GUBUN= "1";
+                    $(this).attr("class", "btn_icon_star v-icon material-icons");
                     vm.deleteItem(data, 'etf');
                 } else {
-                    data.faver = 1;
-                    $(this).html("star");
+                    data.faver = "1";
+                    $(this).attr("class", "btn_icon_star on v-icon material-icons");
                     vm.setSelectedItem(data, '1', 'etf');
-                }
-                //$(this).html("star_border");
-                //etf_table.rows.add(etf_table.rows().data()).draw();
-            } else if ($(this).attr('id') == 'btn_detail') {
+                }                  
+            }            
+        });
+
+        //  ETF 에서 그래프 선택시
+        $('#etf_table tbody').on('click', 'td', function () {
+            var table = $('#etf_table').DataTable();
+            var data = table.row($(this).parents('tr')).data();
+
+            if ($(this).index() == 1) {
                 data.GUBUN= "1";
                 vm.fn_detailPop( data );
             }
         });
-
 
 
     /* [전체종목 -> ETN] 테이블 */
@@ -246,9 +249,9 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "";
                         if (data == '1') {
-                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon_star on v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
                         } else {
-                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star_border</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon_star v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
                         }
                         
                         return htm;
@@ -273,13 +276,12 @@ export default {
             searching: false,
             columns: [
                 { "data": "faver_seq", "visible": false},
-                { "data": "faver", "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>"},
-                { "data": "JISU_NM", "orderable": false, className:'txt_left'},
-                { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_detail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>ETP</span></div>"},
+                { "data": "faver", "orderable": false, width:'5%', defaultContent:""},
+                { "data": "JISU_NM", "orderable": false, className:'txt_left'},                
             ]
         });
 
-        //  ETN 에서 그래프 선택시
+        //  ETN 에서 관심종목 클릭시
         $('#etn_table tbody').on('click', 'button', function () {
             var table = $('#etn_table').DataTable();
             var data = table.row($(this).parents('tr')).data();
@@ -289,17 +291,25 @@ export default {
                 //data.faver =  data.faver == '1' ? '0' : '1';
 
                 if (data.faver == '1') {
-                    data.faver = 0;
-                    $(this).html("star_border");
+                    data.faver = "0";
+                    data.GUBUN= "1";
+                    $(this).attr("class", "btn_icon_star v-icon material-icons");
                     vm.deleteItem(data, 'etn');
                 } else {
-                    data.faver = 1;
-                    $(this).html("star");
+                    data.faver = "1";
+                    $(this).attr("class", "btn_icon_star on v-icon material-icons");
                     vm.setSelectedItem(data, '1', 'etn');
                 }
-                //$(this).html("star_border");
-                //etf_table.rows.add(etf_table.rows().data()).draw();
-            } else if ($(this).attr('id') == 'btn_detail') {
+            }
+           
+        });
+
+        //  ETN 에서 그래프 선택시
+        $('#etn_table tbody').on('click', 'td', function () {
+            var table = $('#etn_table').DataTable();
+            var data = table.row($(this).parents('tr')).data();
+           
+            if ($(this).index() == 1) {
                 data.GUBUN= "1";
                 vm.fn_detailPop( data );
             }
@@ -324,9 +334,9 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "";
                         if (data == '1') {
-                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon_star on v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
                         } else {
-                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star_border</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon_star v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
                         }
                         
                         return htm;
@@ -351,9 +361,8 @@ export default {
             searching: false,
             columns: [
                 { "data": "faver_seq", "visible": false},
-                { "data": "faver", "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>"},
+                { "data": "faver", "orderable": false, width:'5%', defaultContent:""},
                 { "data": "JISU_NM", "orderable": false, className:'txt_left'},
-                { "data": null, "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_detail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:40px;'>INDEX</span></div>"},
             ]
         });
 
@@ -362,30 +371,36 @@ export default {
             var table = $('#index_table').DataTable();
             var data = table.row($(this).parents('tr')).data();
 
-
             if ($(this).attr('id') == 'btn_faver') {
                 console.log(data.faver_seq);
                 //data.faver =  data.faver == '1' ? '0' : '1';
 
                 if (data.faver == '1') {
-                    data.faver = 0;
-                    $(this).html("star_border");
+                    data.faver = "0";
+                    data.GUBUN= "2";
+                    $(this).attr("class", "btn_icon_star v-icon material-icons");
                     vm.deleteItem(data, 'index');
                 } else {
-                    data.faver = 1;
-                    $(this).html("star");
+                    data.faver = "1";
+                    $(this).attr("class", "btn_icon_star on v-icon material-icons");
                     vm.setSelectedItem(data, '2', 'index');
                 }
                 //$(this).html("star_border");
                 //etf_table.rows.add(etf_table.rows().data()).draw();
-            } else if ($(this).attr('id') == 'btn_detail') {
+            } 
+        });
+
+        //  INDEX 에서 그래프 선택시
+        $('#index_table tbody').on('click', 'td', function () {
+            var table = $('#index_table').DataTable();
+            var data = table.row($(this).parents('tr')).data();
+
+            if ($(this).index() == 1) {
                 data.GUBUN= "2";
                 vm.fn_detailPop( data );
             }
         });
 
-
-        this.getFavorItemInfo();
         this.getEtnList();
         this.getEtfList();
         this.getIndexList();
@@ -394,32 +409,13 @@ export default {
     beforeDestroy() {},
     methods: {
 
-        getFavorItemInfo: function() {
-            console.log("getSectorEtpList");
-            var vm = this;
-            axios.get(Config.base_url + "/user/common/getFavorItemInfo", {
-                params: {
-                }
-            }).then(function(response) {
-                console.log(response);
-                if (response.data.success == false) {
-                    vm.$emit("showMessageBox", '확인','관심 종목이 없습니다.',{},1);
-                } else {
-                    //debugger;
-                    vm.favorItems = response.data.results;
-
-                    favor_grid.clear().draw();
-                    favor_grid.rows.add(vm.favorItems).draw();
-                }
-            });
-        },
-        
         deleteItem: function(data, mode) {        
             console.log("deleteItem");
             var vm = this;
 
             var jisu_cd = '';
             var market_id = '';
+          
             if (data.GUBUN == '1') {
                 jisu_cd = data.JISU_CD;
             } else {
@@ -429,71 +425,49 @@ export default {
 
             axios.post(Config.base_url + "/user/common/deleteFavorItem", {
                 params: {
+                    gubun : data.GUBUN,
                     jisu_cd : jisu_cd,
                     market_id : market_id
                 }
             }).then(function(response) {
                 if (response.data.success == false) {
                     vm.$emit("showMessageBox", '확인','삭제 중 오류가 발생했습니다.',{},1);
-                } else {
-                    //if (mode == 'etf') vm.getEtfList();
-                   // if (mode == 'etn') vm.getEtnList();
-                    //if (mode == 'index') vm.getIndexList();
-                }
+                } 
             });
 
         },
-        /* 관심 종목 추가 */
+        /* 관심 종목 추가 gubun 1: etf또는 etn 2: index*/
         setSelectedItem: function(sel_items, gubun, mode) {
             var vm = this;
 
-            vm.jongMokDialog = false;
-
             var addFavorItems = [];
 
+            /* etn 또는 etf 일경우 */
             if (gubun  == '1') {
-                var idx = - 1;
-                if (mode == 'etf') idx =  _.findIndex(vm.etfList, { 'ITEM_CD': sel_items.JISU_CD});
-                if (mode == 'etn') idx =  _.findIndex(vm.etnList, { 'ITEM_CD': sel_items.JISU_CD});
-                if (mode == 'index') idx =  _.findIndex(vm.indexList, { 'ITEM_CD': sel_items.JISU_CD});
-                    
-                if (idx == -1) {
-                    addFavorItems.push({
-                        GUBUN : gubun,
-                        F16012 : sel_items.JISU_CD,
-                        F16013 : '',
-                        F16002 : sel_items.JISU_NM,
-                        MARKET_ID : '',
-                        LARGE_TYPE : '',
-                        MIDDLE_TYPE : ''
-                    });
-                } else {
-                    vm.$emit("showMessageBox", '확인','이미 추가된 관심 종목 입니다.',{},1);
-                }
+               
+                addFavorItems.push({
+                    GUBUN : gubun,
+                    F16012 : sel_items.JISU_CD,
+                    F16013 : '',
+                    F16002 : sel_items.JISU_NM,
+                    MARKET_ID : '',
+                    LARGE_TYPE : '',
+                    MIDDLE_TYPE : ''
+                });
+               
             } else if (gubun == '2') {
-                var idx = -1;
-
-                if (mode == 'etf') idx =  _.findIndex(vm.favorItems, { 'ITEM_CD': sel_items.JISU_CD, 'MARKET_ID': sel_items.MARKET_ID });
-                if (mode == 'etn') idx =  _.findIndex(vm.favorItems, { 'ITEM_CD': sel_items.JISU_CD, 'MARKET_ID': sel_items.MARKET_ID });
-                if (mode == 'index') idx =  _.findIndex(vm.favorItems, { 'ITEM_CD': sel_items.JISU_CD, 'MARKET_ID': sel_items.MARKET_ID });
-
-                if (idx == -1) {
-                    addFavorItems.push({
-                        GUBUN : gubun,
-                        F16012 : '',
-                        F16013 : sel_items.JISU_CD,
-                        F16002 : sel_items.JISU_NM,
-                        MARKET_ID : sel_items.MARKET_ID,
-                        LARGE_TYPE : sel_items.LARGE_TYPE,
-                        MIDDLE_TYPE : sel_items.MIDDLE_TYPE
-                    });
-                } else {
-                    vm.$emit("showMessageBox", '확인','이미 추가된 관심 종목 입니다.',{},1);
-                }
+                
+                addFavorItems.push({
+                    GUBUN : gubun,
+                    F16012 : '',
+                    F16013 : sel_items.JISU_CD,
+                    F16002 : sel_items.JISU_NM,
+                    MARKET_ID : sel_items.MARKET_ID,
+                    LARGE_TYPE : sel_items.LARGE_TYPE,
+                    MIDDLE_TYPE : sel_items.MIDDLE_TYPE
+                });
             }    
 
-            
-        
 
             axios.post(Config.base_url + "/user/common/insertFavorItem", {
                     params: {
@@ -502,11 +476,7 @@ export default {
             }).then(function(response) {
                 if (response.data.success == false) {
                     vm.$emit("showMessageBox", '확인','저장 중 오류가 발생했습니다.',{},4);
-                } else {
-                    //if (mode == 'etf') vm.getEtfList();
-                    //if (mode == 'etn') vm.getEtnList();
-                    //if (mode == 'index') vm.getIndexList();
-                }
+                } 
             });
 
         },
@@ -661,18 +631,40 @@ export default {
 
             this.showEtpDetailDialog    =   false;
         },
-        filterEtfData: function() {
+        /*mode 1: 데이터 필터 2: 관심종목*/
+        filterEtfData: function(mode) {
             var vm = this;
-        
+            var faverData = '-1';
+
+            if (vm.etfFaverClass == "btn_icon_star v-icon material-icons") {                        
+                faverData = "1";
+                vm.etfFaverClass = "btn_icon_star v-icon on material-icons";
+            } else {
+                faverData = "0";
+                vm.etfFaverClass = "btn_icon_star v-icon material-icons";
+            }
+
             var filterData = _.filter(vm.etfList, function(o) { 
+                
+                if (mode == '1') {
+                    var nmIdx = o.JISU_NM.indexOf(vm.search);
+                    var cdIdx = o.JISU_CD.indexOf(vm.search);
 
-                var nmIdx = o.JISU_NM.indexOf(vm.search);
-                var cdIdx = o.JISU_CD.indexOf(vm.search);
+                    if (nmIdx > -1 || cdIdx > -1) {
+                        return true; 
+                    } else {
+                        return false;
+                    }
+                } else if (mode == '2') {          
+                    
+                    if (faverData == "0") return true;
 
-                if (nmIdx > -1 || cdIdx > -1) {
-                    return true; 
-                } else {
-                    return false;
+                    var faverIdx = o.faver.indexOf(faverData);
+                    if (faverIdx > -1) {
+                        return true; 
+                    } else {
+                        return false;
+                    }
                 }
             });
 
@@ -680,18 +672,40 @@ export default {
             etf_table.rows.add(filterData).draw();           
         },     
         
-        filterEtnData: function() {
+        filterEtnData: function(mode) {
             var vm = this;
         
+            var faverData = '-1';
+
+            if (vm.etnFaverClass == "btn_icon_star v-icon material-icons") {                        
+                faverData = "1";
+                vm.etnFaverClass = "btn_icon_star v-icon on material-icons";
+            } else {
+                faverData = "0";
+                vm.etnFaverClass = "btn_icon_star v-icon material-icons";
+            }
+
             var filterData = _.filter(vm.etnList, function(o) { 
 
-                var nmIdx = o.JISU_NM.indexOf(vm.search);
-                var cdIdx = o.JISU_CD.indexOf(vm.search);
+                if (mode == '1') {
+                    var nmIdx = o.JISU_NM.indexOf(vm.search);
+                    var cdIdx = o.JISU_CD.indexOf(vm.search);
 
-                if (nmIdx > -1 || cdIdx > -1) {
-                    return true; 
-                } else {
-                    return false;
+                    if (nmIdx > -1 || cdIdx > -1) {
+                        return true; 
+                    } else {
+                        return false;
+                    }
+                } else if (mode == '2') {          
+                    
+                    if (faverData == "0") return true;
+
+                    var faverIdx = o.faver.indexOf(faverData);
+                    if (faverIdx > -1) {
+                        return true; 
+                    } else {
+                        return false;
+                    }
                 }
             });
 
@@ -699,18 +713,40 @@ export default {
             etn_table.rows.add(filterData).draw();           
         },        
 
-        filterIndexData: function() {
+        filterIndexData: function(mode) {
             var vm = this;
         
+            var faverData = '-1';
+
+            if (vm.idxFaverClass == "btn_icon_star v-icon material-icons") {                        
+                faverData = "1";
+                vm.idxFaverClass = "btn_icon_star v-icon on material-icons";
+            } else {
+                faverData = "0";
+                vm.idxFaverClass = "btn_icon_star v-icon material-icons";
+            }
+
             var filterData = _.filter(vm.indexList, function(o) { 
 
-                var nmIdx = o.JISU_NM.indexOf(vm.search);
-                var cdIdx = o.JISU_CD.indexOf(vm.search);
+                if (mode == '1') {
+                    var nmIdx = o.JISU_NM.indexOf(vm.search);
+                    var cdIdx = o.JISU_CD.indexOf(vm.search);
 
-                if (nmIdx > -1 || cdIdx > -1) {
-                    return true; 
-                } else {
-                    return false;
+                    if (nmIdx > -1 || cdIdx > -1) {
+                        return true; 
+                    } else {
+                        return false;
+                    }
+                } else if (mode == '2') {          
+                    
+                    if (faverData == "0") return true;
+
+                    var faverIdx = o.faver.indexOf(faverData);
+                    if (faverIdx > -1) {
+                        return true; 
+                    } else {
+                        return false;
+                    }
                 }
             });
 

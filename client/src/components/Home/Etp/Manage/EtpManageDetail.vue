@@ -1,6 +1,6 @@
 <template>
 
-    <div :class="contentClass">
+    <div >
         <v-layout row>
             <v-flex xs12>
 
