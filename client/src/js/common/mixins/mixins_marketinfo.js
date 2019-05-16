@@ -88,10 +88,10 @@ export  const  market_common =   {
                                         {  
                                             "render": function ( data, type, row ) {
                                                 let htm = ""
-                                                if (row.f15004 >= 0) {
-                                                    htm = "<span class='align_r text_red'>"+data;
+                                                if (row.f30818 >= 0) {
+                                                    htm = "<span class='align_r text_red'>"+row.fmt_f15301;
                                                 } else {
-                                                    htm = "<span class='align_r text_blue'>"+data;
+                                                    htm = "<span class='align_r text_blue'>"+row.fmt_f15301;
                                                 }
                                                 htm += "<br><span class='text_S'>"+row.f30818+"%</span>";
                                                 htm += "   </span>";

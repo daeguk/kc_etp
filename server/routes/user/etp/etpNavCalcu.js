@@ -20,7 +20,7 @@ var getiNavData = function (req, res) {
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
 
-        var f16012 = req.query.f16012;
+        var f16012 = req.query.f16012;  /* 국제 표준 코드*/
             
 
         Promise.using(pool.connect(), conn => {
@@ -28,9 +28,7 @@ var getiNavData = function (req, res) {
             async.waterfall([    
                 function(callback) {
                     var params = {
-                        basicData : {
-                            "f16012" : f16012
-                        }
+                        "f16012" : f16012
                     };
                 
                     var stmt = mapper.getStatement('etpDetail', 'getEtpBasic', params, {language:'sql', indent: '  '});
@@ -94,23 +92,22 @@ var getiNavData = function (req, res) {
 *   환율 정보
 */
 
-var getExchange = function (req, res) {
+var getExchBasic = function (req, res) {
     try {
-        console.log('indexSummary=>getExchange 호출됨.');
+        console.log('etpNavCalcu=>getExchange 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
         // var options = {id:'admin'};
-        
+        var f16012 = req.query.f16012;  /* 국제 표준 코드*/
+
         var options = {
-            large_type : req.session.large_type,
-            jisu_cd: req.query.jisu_cd,
-            market_id: req.query.market_id
+            "f16012" : f16012
         };
 
         util.log("options", JSON.stringify(options));
 
-        var stmt = mapper.getStatement('index', 'getIndexAnalysisInfo', options, {language:'sql', indent: '  '});
+        var stmt = mapper.getStatement('etpOper', 'getExchBasic', options, {language:'sql', indent: '  '});
         
         // 대입 연산자 치환
         stmt = stmt.replace(/\: =/g,':='); 
@@ -141,26 +138,24 @@ var getExchange = function (req, res) {
 
 
 /*
-*   환율 정보
+*   종목별 정보(자산 정보)
 */
-
-var getExchange = function (req, res) {
+var getKspjongBasic = function (req, res) {
     try {
-        console.log('indexSummary=>getExchange 호출됨.');
+        console.log('etpNavCalcu=>getAssetCurrent 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
-        // var options = {id:'admin'};
+
+        var f16012 = req.query.f16012;  /* 국제 표준 코드*/
         
         var options = {
-            large_type : req.session.large_type,
-            jisu_cd: req.query.jisu_cd,
-            market_id: req.query.market_id
+            "f16012" : f16012
         };
 
         util.log("options", JSON.stringify(options));
 
-        var stmt = mapper.getStatement('index', 'getIndexAnalysisInfo', options, {language:'sql', indent: '  '});
+        var stmt = mapper.getStatement('etpOper', 'getKspjongBasic', options, {language:'sql', indent: '  '});
         
         // 대입 연산자 치환
         stmt = stmt.replace(/\: =/g,':='); 
@@ -188,4 +183,109 @@ var getExchange = function (req, res) {
     }
 };
 
+
+
+
+/*
+*   선물 옵션 정보
+*/
+var getFutureBasic = function (req, res) {
+    try {
+        console.log('etpNavCalcu=>getFutureCurrent 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+
+        var f16012 = req.query.f16012; /* 국제 표준 코드*/
+        var f34239 = req.query.f34239; /* 기초 지수 MID*/
+        
+        var options = {
+            "f16012" : f16012,
+            "f34239" : f34239,
+        };
+
+        util.log("options", JSON.stringify(options));
+
+        var stmt = mapper.getStatement('etpOper', 'getFutureBasic', options, {language:'sql', indent: '  '});
+        
+        // 대입 연산자 치환
+        stmt = stmt.replace(/\: =/g,':='); 
+     
+        console.log(stmt);
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
+
+
+
+/*
+*   채권정보
+*/
+var getBondBasic = function (req, res) {
+    try {
+        console.log('etpNavCalcu=>getBondCurrent 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+
+        var f16012 = req.query.f16012;
+        
+        var options = {
+            "f16012" : f16012
+        };
+
+        util.log("options", JSON.stringify(options));
+
+        var stmt = mapper.getStatement('etpOper', 'getBondBasic', options, {language:'sql', indent: '  '});
+        
+        // 대입 연산자 치환
+        stmt = stmt.replace(/\: =/g,':='); 
+     
+        console.log(stmt);
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
+
+
 module.exports.getiNavData = getiNavData;
+module.exports.getExchBasic = getExchBasic;
+module.exports.getKspjongBasic = getKspjongBasic;
+module.exports.getFutureBasic = getFutureBasic;
+module.exports.getBondBasic = getBondBasic;
+

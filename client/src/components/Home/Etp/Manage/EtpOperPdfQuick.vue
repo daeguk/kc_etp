@@ -211,7 +211,7 @@ export default {
     mounted: function() {
         var vm = this;
 
-        console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdfQuick.vue mounted");
+        console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdfQuick.vue pdfData mounted");
         console.log( vm.pdfData );        
     },
     created: function() {},

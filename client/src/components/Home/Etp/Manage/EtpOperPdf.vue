@@ -41,7 +41,7 @@
                                         <v-btn
                                             flat
                                             color="primary"
-                                            @click="$refs.menu2.save(searchParam.show_date);fn_getEtpOerPdf()"
+                                            @click="$refs.menu2.save(searchParam.show_date);fn_getEtpOerPdf( 'N' )"
                                         >OK</v-btn>
                                     </v-date-picker>
                                 </v-menu>
@@ -88,6 +88,7 @@ export default {
                 search_date : "",
                 search_nm : "",
                 f16493 : "",
+                f16012 : ""
             },
             pdfData : {},
             rateTitleList : []
@@ -101,7 +102,7 @@ export default {
 
 console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
 console.log( vm.paramData );
-
+debugger;
         vm.fn_getEtpOperPdfTitle();
 
         vm.$EventBus.$on('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call', data => {
@@ -114,9 +115,9 @@ console.log( vm.paramData );
     
         if( vm.paramData ) {
 
-            vm.searchParam.f16013   =   vm.paramData.f16257;     /* ETP기초지수코드  */
-            vm.searchParam.f34239   =   vm.paramData.f34239;     /* ETP기초지수MID  */
-            vm.searchParam.f16493   =   vm.paramData.f16493;     /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+            vm.searchParam.f16013   =   vm.paramData.f16257;    /* ETP기초지수코드  */
+            vm.searchParam.f34239   =   vm.paramData.f34239;    /* ETP기초지수MID  */
+            vm.searchParam.f16493   =   vm.paramData.f16493;    /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
 
             if(     vm.paramData.f16002
                 &&  vm.paramData.f16257
@@ -125,6 +126,8 @@ console.log( vm.paramData );
             }
 
             vm.pdfData      =   vm.paramData;
+
+            vm.$emit( "fn_setPdfQuickPdfData", vm.pdfData );
         }else{
             vm.fn_getEtpOperInfoFirstData( "A" );
         }
@@ -138,7 +141,7 @@ console.log( vm.paramData );
 
         vm.$nextTick().then(() => {
             vm.fn_setTableInfo();
-            vm.fn_getEtpOerPdf();
+            vm.fn_getEtpOerPdf( 'Y' );
         });
     },
     created: function() {
@@ -152,12 +155,6 @@ console.log( vm.paramData );
     },
 
     methods: {
-
-        fn_showDetailIndex( gubun, paramData) {
-            var vm = this;
-
-            vm.$emit( "fn_showDetailIndex", gubun, paramData );
-        },
 
 /*
          *  ETP 운영정보 - > PDF 관리 에서 비중 변경현황시 타이틀 정보를 조회한다.
@@ -217,10 +214,13 @@ console.log( vm.paramData );
                             vm.searchParam.search_nm   =   dataList[0].f16002 + "(" + dataList[0].f16013 + ")";  /* 한글종목명 / 단축코드 */
                         }
 
-                        vm.pdfData  =   dataList[0]
-                        vm.$emit( "fn_setPdfQuickPdfData", vm.pdfData );
+                        vm.pdfData  =   dataList[0];
+
+                        vm.fn_getEtpOerPdf( 'Y' );
                     }
                 }
+
+                vm.$emit( "fn_setPdfQuickPdfData", vm.pdfData );
             });
         },
 
@@ -228,8 +228,7 @@ console.log( vm.paramData );
          * ETP 지수관리 정보를 조회한다.
          * 2019-05-03  bkLove(촤병국)
          */
-
-        fn_getEtpOerPdf() {
+        fn_getEtpOerPdf( initYn ) {
             var vm = this;
 
             console.log("EtpOperPdf.vue -> fn_getEtpOperPdf");
@@ -247,11 +246,27 @@ console.log( vm.paramData );
             vm.searchParam.search_date  =   vm.searchParam.show_date.replace(/-/g,"");
             vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
 
+            vm.searchParam.search_date  =   '20190513';
+
+            
+            if( initYn == "N" ) {
+                if(     !vm.pdfData
+                    ||  !vm.pdfData.f16012
+                ) {
+                    vm.$emit("showMessageBox", '확인','기준코드가 존재하지 않습니다.',{},1);
+                    return  false;
+                }
+            }
+
+
+            vm.searchParam.f16012  =   vm.pdfData.f16012;                   /* 국제표준코드 */
+
             axios.post( url, {
                 data: vm.searchParam
             }).then(function(response) {
                 console.log(response);
 
+                var dataJson = {};
                 if (response.data) {
                     var dataList = response.data.dataList;
 
@@ -259,9 +274,11 @@ console.log( vm.paramData );
                         tblPdfList.rows.add(dataList).draw();
                         tblPdfList.draw();
 
-                        vm.$emit( "fn_setPdfQuickIndexBasicData", dataList[0] );
+                        dataJson    =   dataList[0];
                     }
                 }
+
+                vm.$emit( "fn_setPdfQuickIndexBasicData", dataJson );
             });
         },
 
@@ -279,7 +296,7 @@ console.log( vm.paramData );
             }            
 
             vm.fn_setTableInfo();
-            vm.fn_getEtpOerPdf();
+            vm.fn_getEtpOerPdf( 'N' );
         },        
 
         /*
@@ -516,11 +533,6 @@ console.log( vm.paramData );
             vm.$emit( "showMessageBox", title, msg, option, gubun );
         },
 
-        fn_showDetailPdf : function( gubun, paramData ) {
-            var vm = this;
-
-            vm.$emit( "fn_showDetailPdf", gubun, paramData );
-        },
     }
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <canvas :id=chartItem.chartId :width=chartItem.width :height=chartItem.height>
+    <canvas :id=chartItem.seq :width=chartItem.width :height=chartItem.height>
     </canvas>
 </template>
 
@@ -7,7 +7,7 @@
 import Config       from "@/js/config.js"
 
 export default {
-    props:['chartItem', 'dataSet', 'textItem'],
+    props:['chartItem', 'dataSet'],
     data() {
         return {
             canvas:{},
@@ -24,12 +24,12 @@ export default {
     },
     mounted: function() {
         // console.log("AreaIndexTextChart..........");
-        this.canvas = document.getElementById(this.chartItem.chartId);
+        this.canvas = document.getElementById(this.chartItem.seq);
         this.ctx = this.canvas.getContext('2d');
         this.grad = this.ctx.createLinearGradient(0,0,0,this.canvas.height);
-        this.grad.addColorStop(0, this.textItem.sColor);
+        this.grad.addColorStop(0, this.chartItem.sColor);
         // this.grad.addColorStop(1, "#fff");
-        this.grad.addColorStop(1,  this.textItem.eColor);
+        this.grad.addColorStop(1,  this.chartItem.eColor);
         this.dataInit();
     },
     methods: {
@@ -46,8 +46,8 @@ export default {
 
             // 차트 그리기 시작
             c.beginPath();
-            c.lineWidth = 2;
-            c.strokeStyle = this.chartItem.chartColor;
+            c.lineWidth = 3;
+            c.strokeStyle = this.chartItem.sColor;
 
             var vm = this;
             this.dataArr.forEach(function(item, index){
@@ -74,41 +74,41 @@ export default {
             // 좌즉 상단 현재가
             c.fillStyle = "#37474F";
             c.font = '14px san-serif';
-            c.fillText(this.textItem.name, 15, 30);
+            c.fillText(this.chartItem.name, 15, 30);
             c.fillStyle = "#263238";
             c.font = 'bold 24px san-serif';
-            c.fillText(this.textItem.f15001, 15, 55);
-            var slen = this.textItem.f15001.length;
+            c.fillText(this.chartItem.f15001, 15, 55);
+            var slen = this.chartItem.f15001.length;
             c.fillStyle = "#039BE5";
             c.font = '10px san-serif';
-            if(slen > 6) c.fillText(this.textItem.f15472, 115, 45);
-            else  c.fillText(this.textItem.f15472, 100, 45);
+            if(slen > 6) c.fillText(this.chartItem.f15472, 115, 45);
+            else  c.fillText(this.chartItem.f15472, 100, 45);
             c.fillStyle = "#039BE5";
             c.font = '10px san-serif';
-            if(slen > 6) c.fillText(this.textItem.f15004 + "%", 115, 57);
-            else  c.fillText(this.textItem.f15004 + "%", 100, 57);
+            if(slen > 6) c.fillText(this.chartItem.f15004 + "%", 115, 57);
+            else  c.fillText(this.chartItem.f15004 + "%", 100, 57);
 
             // 우측 하단 자산총액
             c.fillStyle = "#757575";
-            c.fillRect(165, 100, 30, 14);
+            c.fillRect(165, 110, 30, 14);
             c.fillStyle = "white";
             c.font = '11px san-serif';
-            c.fillText("ETF", 170, 111);
+            c.fillText("ETF", 170, 121);
 
             c.fillStyle = "#424242";
-            c.fillRect(165, 120, 30, 14);
+            c.fillRect(165, 130, 30, 14);
             c.fillStyle = "white";
             c.font = '11px san-serif';
-            c.fillText("ETN", 170, 131);
+            c.fillText("ETN", 170, 141);
 
             c.fillStyle = "#1B5E20";
             c.font = '12px san-serif';
             c.textAlign = "end";
-            c.fillText(this.textItem.etf_sum + " AUM", 335, 110);
+            c.fillText(this.chartItem.etf_sum + " AUM", 335, 120);
             c.fillStyle = "#1B5E20";
             c.font = '12px san-serif';
             c.textAlign = "end";
-            c.fillText(this.textItem.etn_sum + " 원", 335, 130);
+            c.fillText(this.chartItem.etn_sum + " 원", 335, 140);
         },
         dataInit: function() {
             var vm = this;
