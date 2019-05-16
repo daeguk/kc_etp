@@ -1,6 +1,6 @@
 <template>
 
-    <div >
+    <div>
         <v-layout row>
             <v-flex xs12>
 
@@ -42,23 +42,42 @@
                                     </v-layout>
                                 </div>
                             </div>
-                        </v-card-title>
-                        <v-card-text>
-                            <p class="title_ex">
-                                {{this.etpBasic.f16002}} 관한 내용이 들어갑니다
-                            </p>
-                        </v-card-text>
-                    </div>
+                        </v-flex>
+                    </v-layout>
+                </div-->
 
+                <div class="right_btn"  v-if="!showEtpManageDetailDialog">
+                    <v-layout align-right>
+                        <v-flex xs12 sm4 text-xs-center>
+                            <div class="btn_r">
+                                <v-btn
+                                    outline
+                                    color="primary"
+                                    small
+                                    @click="fn_goBack()"
+                                >목록으로 돌아가기</v-btn>
+                            </div>
+                        </v-flex>
+                    </v-layout>
+                </div>
+            </div>
+        </v-card-title>
+        <v-card-text>
+            <p class="title_ex">
+                {{this.etpBasic.f16002}} 관한 내용이 들어갑니다.
+            </p>
+        </v-card-text>
+    </div>
 
-                    <div class="graph_01_w">
+    <div class="graph_01_w">
+      <div class="sub_title_num">
+        {{etpBasic.f15001}}
+        <span class="text_blue">{{etpBasic.f15472}} ({{etpBasic.f15004}}%)</span>
+        <p>Last Updated : {{etpBasic.f12506}}</p>
+      </div>
+      <LineEtpMultiChart :etpBasic="etpBasic"></LineEtpMultiChart>
 
-                        <div class="sub_title_num">
-                            {{etpBasic.f15001}}
-                            <span class="text_blue">{{etpBasic.f15472}}({{etpBasic.f15004}})</span>
-                            <p>Last Updated : {{etpBasic.f12506}}</p>
-                        </div>
-
+<!--
                         <v-card flat class="graph_toggle">
                             <v-flex xs12 sm6 class="py-2">
                                 <v-btn-toggle v-model="toggle_one" class="toggle_01">
@@ -76,8 +95,11 @@
                             id="etp_chart_div"
                             class="graph_01"
                         ></div>
-                    </div>
+-->
 
+    </div>
+
+<!--
                     <div class="tab2_w">
                         <v-layout row wrap>
                             <v-flex xs12>
@@ -105,13 +127,14 @@
                             </v-flex>
                         </v-layout>
                     </div>
-                </v-card>
-            </v-flex>
+-->                    
             <!--v-flex class="conWidth_right">
                 <ComFavorItemSub    @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
             </v-flex-->
-        </v-layout>
-    </div>
+            </v-card>
+            </v-flex>
+            </v-layout>
+  </div>
 </template>
 
 
@@ -120,7 +143,10 @@
 import EtpManageDetailBasicInfoTab from "./EtpManageDetailBasicInfoTab.vue";
 import EtpManageDetailAnalysisTab from "./EtpManageDetailAnalysisTab.vue";
 import ComFavorItemSub from "@/components/common/control/ComFavorItemSub";
+import LineEtpMultiChart   from  '@/components/common/chart/LineEtpMultiChart.vue';
 import Config from "@/js/config.js";
+import util from "@/js/util.js";
+
 export default {
     props : [ "paramData", "showEtpManageDetailDialog" ],
     components: {
@@ -137,45 +163,7 @@ export default {
             tab: null,
             tab2: null,
             tab5: null,
-            items1: ["전체", "시장대표"],
             items5: ["기본정보", "분석정보"],
-            items: [
-                { title: "Home", icon: "dashboard" },
-                { title: "About", icon: "question_answer" }
-            ],
-            items2: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                },
-                {
-                    title: "KODEX 코스닥150 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            items3: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            items4: [],
             mini: false,
             right: null,
             rowsPerPageItems: [10, 20, 30, 50],
@@ -194,24 +182,30 @@ export default {
             ],
             desserts: [],
             toggle_one: '1M',
+
             basicData           :   {},
             etpBasic            :   {},
             indexBasic          :   {},
             etpInfos            :   {},
+
             showEtpManageDetailDialogBySub : false,
+
         };
     },
     components: {
-        EtpManageDetailBasicInfoTab: EtpManageDetailBasicInfoTab,
-        EtpManageDetailAnalysisTab: EtpManageDetailAnalysisTab,
-        ComFavorItemSub: ComFavorItemSub
+        EtpManageDetailBasicInfoTab,
+        EtpManageDetailAnalysisTab,
+        ComFavorItemSub,
+        LineEtpMultiChart,
     },
     mounted: function() {
         var vm = this;
         
         console.log( "EtpManageDetail.vue -> mounted" );
         console.log( vm.paramData );
+
         vm.init(false);
+
         
     },
     created: function() {
@@ -258,19 +252,24 @@ export default {
                     vm.paramData.tbl_class   = 'tbl_type ver4'; /* performanc 테이블 class */
                     vm.paramData.chart_size  = '1180'; /* performanc 차트 사이즈 */
                 }
+
                 if(     vm.basicData.f16012
                     ||  vm.basicData.f16257
                     ||  vm.basicData.f34239
                 )   {
                    // vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
+
                     vm.fn_getEtpBasic();                /* ETP 의 기본정보를 조회한다. */
-                    vm.fn_getEtpChartData('1M');        /* ETP 차트 정보를 조회한다. */
+                    // vm.fn_getEtpChartData('1M');        /* ETP 차트 정보를 조회한다. */
                 }
+
+
                 if (event) {
                     // 분석정보 실행
                     vm.$EventBus.$emit('changeEtpAnalysisInfo');
                 }
             });
+
             
         },
         /*
@@ -279,35 +278,46 @@ export default {
          */
         fn_getEtpBasic: function() {
             console.log("fn_getEtpBasic");
+
             var vm = this;
+
             axios.post(Config.base_url + "/user/etp/getEtpBasic", {
                 data:   vm.basicData
             }).then(function(response) {
                 console.log(response);
+
                 if (response.data) {
                     vm.etpBasic = response.data.etpBasic;
+                    vm.etpBasic.f15001 = util.formatStringNum(vm.etpBasic.f15001);
                     vm.indexBasic = response.data.indexBasic;
+
                     vm.showEtpManageDetailDialogBySub   =   true;
                 }
             });
         },
+
         /*
          * ETP 차트 정보를 조회한다.
          * 2019-04-25  bkLove(촤병국)
          */
         fn_getEtpChartData: function( term ) {
             console.log("fn_getEtpChartData");
+
             var vm = this;
+
             // Load the Visualization API and the corechart package.
             google.charts.load('current', {'packages':['corechart']});
+
             // 주기 디폴트
             if (!term) term = '1M';
+
             // Set a callback to run when the Google Visualization API is loaded.
             google.charts.setOnLoadCallback( 
                 drawChart( 
                     vm.basicData
                 )
             );
+
             // Callback that creates and populates a data table,
             // instantiates the pie chart, passes in the data and
             // draws it.
@@ -317,6 +327,7 @@ export default {
                 
                 // Create the data table.
                 var data = new google.visualization.DataTable();
+
                 // Set chart options
                 var options = {
                     'title':' ',
@@ -332,23 +343,31 @@ export default {
                         ,   term        :   term            /* 기간정보 */
                     }
                 }).then(response => {
+
                     if( response.data ) {
+
                         var chartList   =   response.data.chartList;
+
                         if( chartList == null || chartList.length == 0 ) {
                             data.addColumn('string', "date" );
                             data.addColumn('number', "" );
                         }
+
                         var items = [] 
                         if( chartList && chartList.length > 0 ) {
+
                             var fmt_yyyymmdd = chartList[0].fmt_yyyymmdd;
                             var etp_nm = chartList[0].etp_nm;
                             var index_nm = chartList[0].index_nm;
+
                             data.addColumn('string', "date" );
                             data.addColumn('number', etp_nm );
+
                             // index 정보가 있으면 추가
                             if ( index_nm != null ) {
                                 data.addColumn('number', index_nm );
                             }
+
                             for ( let item of chartList ) {
                                 // 1D 경우 가로축에 시간단위가 노출
                                 if( term == "1D" ) {
@@ -370,9 +389,11 @@ export default {
                                 }
                             }
                         }
+
                         data.addRows(
                             items
                         );
+
                         // Instantiate and draw our chart, passing in some options.
                         var chart = new google.visualization.LineChart(document.getElementById('etp_chart_div'));
                         chart.draw(data, options);
@@ -380,6 +401,7 @@ export default {
                 });   
             }
         },
+
         /*
          * 이전화면으로 되돌린다.
          * 2019-04-25  bkLove(촤병국)
@@ -387,6 +409,7 @@ export default {
         fn_goBack() {
             this.$router.go(-1);
         },
+
         /*
          * 팝업창을 종료한다.
          * 2019-04-25  bkLove(촤병국)
@@ -397,3 +420,6 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+</style>
