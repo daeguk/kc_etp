@@ -43,7 +43,7 @@
                 </v-card>
                  <!---실제적용 테이블--->
                 <v-card flat>
-                    <table id="example1" class="display table01_w">
+                    <table id="example1" class="tbl_type">
                         
                         <thead>
                             <tr>
@@ -61,9 +61,202 @@
                             </tr>
                         </thead>
                     </table>
+                     <v-card-actions flat class="mr-3">
+                         <v-spacer></v-spacer>
+                        <v-btn depressed color="#9e9e9e" dark>삭제</v-btn>
+                        <v-btn depressed color="#48485e" dark>엑셀</v-btn>
+                    </v-card-actions>
                 </v-card>
                 <!---실제적용 테이블end--->
-
+                <!---ex 테이블--->
+                <v-card flat>
+                    <table id="example1" class="tbl_type">
+                        <thead>
+                            <tr>
+                                <th width="2%"></th>
+                                <th width="1%">No</th>
+                                <th style="display: none">seq</th>
+                                <th style="display: none">inst_cd</th>
+                                <th width="15%" class="txt_left">발행사</th>
+                                <th width="40%" class="txt_left">종목명</th>
+                                <th width="15%" class="txt_left">신청현황</th>
+                                <th width="18%"></th>
+                                <th width="10%"></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                             <tr>
+                                 <td></td>
+                                  <td></td>
+                                   <td></td>
+                                    <td></td>
+                                     <td  class="txt_left"></td>
+                                      <td class="txt_left"></td>
+                                       <td class="txt_left">담당자 접수 중</td>
+                                        <td>
+                                            <div class="v-input v-input--range-slider v-input--slider v-input--slider--ticks v-input--slider--ticks-labels v-input--is-label-active v-input--is-dirty v-input--is-readonly theme--light">
+                                            <div class="v-input__control">
+                                                <div class="v-input__slot">
+                                                    <div class="v-slider">
+                                                        <input role="slider" value="0" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
+                                                        <input role="slider" value="1" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
+                                                        <input role="slider" value="2" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
+                                                        <div class="v-slider__track__container">
+                                                            <div class="v-slider__track" style="left: 0px; right: auto; width: 100%;"></div>
+                                                        </div>
+                                                    <div class="v-slider__ticks-container">
+                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 0%;"><span>신청</span></span>
+                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 33%;"><span>지수</span></span>
+                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 66%;"><span>코드</span></span>
+                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 100%;"><span>iNAV</span></span>
+                                                     </div>
+                                                         <div class="v-slider__thumb-container primary--text" style="left: 0%;">
+                                                                <div class="v-slider__thumb select_on primary"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                <td><div class='tooltip'><button type='button' id='pdf' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>기초지수</span></div>
+                                <div class='tooltip'><button type='button' id='pdf' class='btn_icon v-icon material-icons'>trending_up</button><span class='tooltiptext' style='width:70px;'>iNAV</span></div></td>
+                            </tr>
+                            <tr>
+                                 <td></td>
+                                  <td></td>
+                                   <td></td>
+                                    <td></td>
+                                     <td></td>
+                                      <td></td>
+                                       <td class="txt_left">표준코드 입력대기 중</td>
+                                        <td>
+                                            <div class="v-input v-input--range-slider v-input--slider v-input--slider--ticks v-input--slider--ticks-labels v-input--is-label-active v-input--is-dirty v-input--is-readonly theme--light">
+                                            <div class="v-input__control">
+                                                <div class="v-input__slot">
+                                                    <div class="v-slider">
+                                                        <input role="slider" value="0" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
+                                                        <input role="slider" value="1" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
+                                                        <input role="slider" value="2" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
+                                                        <div class="v-slider__track__container">
+                                                            <div class="v-slider__track" style="left: 0px; right: auto; width: 100%;"></div>
+                                                            <div class="v-slider__track-fill primary" style="left: 0%; right: auto; width: calc(33% - 0px);"></div>
+                                                        </div>
+                                                    <div class="v-slider__ticks-container">
+                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 0%;"><span>신청</span></span>
+                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 33%;"><span>지수</span></span>
+                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 66%;"><span>코드</span></span>
+                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 100%;"><span>iNAV</span></span>
+                                                     </div>
+                                                         <div class="v-slider__thumb-container primary--text" style="left: 0%;">
+                                                                <div class="v-slider__thumb primary"></div>
+                                                        </div>
+                                                         <div class="v-slider__thumb-container primary--text" style="left: 33%;">
+                                                            <div class="v-slider__thumb select_on primary "></div>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                <td></td>
+                            </tr>
+                             <tr>
+                                 <td></td>
+                                  <td></td>
+                                   <td></td>
+                                    <td></td>
+                                     <td></td>
+                                      <td></td>
+                                       <td class="txt_left">iNAV/iIV산출대기중</td>
+                                        <td>
+                                            <div class="v-input v-input--range-slider v-input--slider v-input--slider--ticks v-input--slider--ticks-labels v-input--is-label-active v-input--is-dirty v-input--is-readonly theme--light">
+                                                <div class="v-input__control">
+                                                    <div class="v-input__slot">
+                                                        <div class="v-slider">
+                                                            <input role="slider" value="0" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
+                                                            <input role="slider" value="1" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
+                                                            <input role="slider" value="2" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
+                                                            <div class="v-slider__track__container">
+                                                                <div class="v-slider__track" style="left: 0px; right: auto; width: 100%;"></div>
+                                                                <div class="v-slider__track-fill primary" style="left: 0%; right: auto; width: calc(33% - 0px);"></div>
+                                                                <div class="v-slider__track-fill primary" style="left: 0%; right: auto; width: calc(66% - 0px);"></div>
+                                                            </div>
+                                                            <div class="v-slider__ticks-container">
+                                                                <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 0%;"><span>신청</span></span>
+                                                                <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 33%;"><span>지수</span></span>
+                                                                <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 66%;"><span>코드</span></span>
+                                                                <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 100%;"><span>iNAV</span></span>
+                                                            </div>
+                                                            <div class="v-slider__thumb-container primary--text" style="left: 0%;">
+                                                                <div class="v-slider__thumb primary"></div>
+                                                            </div>
+                                                            <div class="v-slider__thumb-container primary--text" style="left: 33%;">
+                                                                <div class="v-slider__thumb primary"></div>
+                                                            </div>
+                                                            <div class="v-slider__thumb-container primary--text" style="left: 66%;">
+                                                                <div class="v-slider__thumb select_on primary"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                <tr>
+                                 <td></td>
+                                  <td></td>
+                                   <td></td>
+                                    <td></td>
+                                     <td></td>
+                                      <td></td>
+                                       <td class="txt_left">iNAV/iIV산출대기중</td>
+                                        <td>
+                                            <div class="v-input v-input--range-slider v-input--slider v-input--slider--ticks v-input--slider--ticks-labels v-input--is-label-active v-input--is-dirty v-input--is-readonly theme--light">
+                                            <div class="v-input__control">
+                                                <div class="v-input__slot">
+                                                    <div class="v-slider">
+                                                        <input role="slider" value="0" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
+                                                        <input role="slider" value="1" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
+                                                        <input role="slider" value="2" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
+                                                        
+                                                        <div class="v-slider__track__container">
+                                                            <div class="v-slider__track" style="left: 0px; right: auto; width: 100%;"></div>
+                                                            <div class="v-slider__track-fill primary" style="left: 0%; right: auto; width: calc(33% - 0px);"></div>
+                                                            <div class="v-slider__track-fill primary" style="left: 0%; right: auto; width: calc(66% - 0px);"></div>
+                                                            <div class="v-slider__track-fill primary" style="left: 0%; right: auto; width: calc(100% - 0px);"></div>
+                                                        </div>
+                                                    <div class="v-slider__ticks-container">
+                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 0%;"><span>신청</span></span>
+                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 33%;"><span>지수</span></span>
+                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 66%;"><span>코드</span></span>
+                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 100%;"><span>iNAV</span></span>
+                                                     </div>
+                                                         <div class="v-slider__thumb-container primary--text" style="left: 0%;">
+                                                                <div class="v-slider__thumb primary"></div>
+                                                        </div>
+                                                         <div class="v-slider__thumb-container primary--text" style="left: 33%;">
+                                                            <div class="v-slider__thumb primary"></div>
+                                                        </div>
+                                                        <div class="v-slider__thumb-container primary--text" style="left: 66%;">
+                                                            <div class="v-slider__thumb primary"></div>
+                                                        </div>
+                                                        <div class="v-slider__thumb-container primary--text" style="left: 100%;">
+                                                            <div class="v-slider__thumb select_on primary"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </v-card>
+                <!---ex테이블end--->
                 <template slot="items" slot-scope="props">
                     <td>
                         <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
@@ -149,10 +342,6 @@
                             </v-card>
                             <!---발행사 담당자 연락처 팝업 내용end-->
                     </v-dialog>
-                <div class="text-xs-right my-3">
-                    <v-btn depressed color="#9e9e9e" dark>삭제</v-btn>
-                    <v-btn depressed color="#48485e" dark>엑셀</v-btn>
-                </div>
             </v-flex>
         </v-layout>
     </v-container>
