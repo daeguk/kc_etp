@@ -58,7 +58,8 @@
                             <span class="text_blue">{{etpBasic.f15472}}({{etpBasic.f15004}})</span>
                             <p>Last Updated : {{etpBasic.f12506}}</p>
                         </div>
-
+                        <LineEtpMultiChart :etpBasic="etpBasic"></LineEtpMultiChart>
+<!--
                         <v-card flat class="graph_toggle">
                             <v-flex xs12 sm6 class="py-2">
                                 <v-btn-toggle v-model="toggle_one" class="toggle_01">
@@ -76,6 +77,7 @@
                             id="etp_chart_div"
                             class="graph_01"
                         ></div>
+-->                    
                     </div>
 
                     <div class="tab2_w">
@@ -120,7 +122,10 @@
 import EtpManageDetailBasicInfoTab from "./EtpManageDetailBasicInfoTab.vue";
 import EtpManageDetailAnalysisTab from "./EtpManageDetailAnalysisTab.vue";
 import ComFavorItemSub from "@/components/common/control/ComFavorItemSub";
+import LineEtpMultiChart   from  '@/components/common/chart/LineEtpMultiChart.vue';
 import Config from "@/js/config.js";
+import util from "@/js/util.js";
+
 export default {
     props : [ "paramData", "showEtpManageDetailDialog" ],
     components: {
@@ -137,44 +142,7 @@ export default {
             tab: null,
             tab2: null,
             tab5: null,
-            items1: ["전체", "시장대표"],
             items5: ["기본정보", "분석정보"],
-            items: [
-                { title: "Home", icon: "dashboard" },
-                { title: "About", icon: "question_answer" }
-            ],
-            items2: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                },
-                {
-                    title: "KODEX 코스닥150 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            items3: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                }
-            ],
             items4: [],
             mini: false,
             right: null,
@@ -202,9 +170,10 @@ export default {
         };
     },
     components: {
-        EtpManageDetailBasicInfoTab: EtpManageDetailBasicInfoTab,
-        EtpManageDetailAnalysisTab: EtpManageDetailAnalysisTab,
-        ComFavorItemSub: ComFavorItemSub
+        LineEtpMultiChart,
+        EtpManageDetailBasicInfoTab,
+        EtpManageDetailAnalysisTab,
+        ComFavorItemSub
     },
     mounted: function() {
         var vm = this;
@@ -286,7 +255,7 @@ export default {
                 console.log(response);
                 if (response.data) {
                     vm.etpBasic = response.data.etpBasic;
-                    vm.indexBasic = response.data.indexBasic;
+                    vm.etpBasic.f15001 = util.formatStringNum(vm.etpBasic.f15001);
                     vm.showEtpManageDetailDialogBySub   =   true;
                 }
             });
