@@ -197,7 +197,7 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "<span>";
                         htm += "           <b>"+data+"</b>";
-                        htm += "            <br>"+row.F16013;
+                        htm += "            <br><span class='text_s'>"+row.F16013+"</span>";
                         if (row.NEW_YN == "Y") {
                             htm += "<span><div class='text_new'>new</div></span>";
                         }
@@ -293,7 +293,7 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "<span>";
                         htm += "           <b>"+data+"</b>";
-                        htm += "            <br>"+row.F16013;
+                        htm += "            <br><span class='text_s'>"+row.F16013+"</span>";
                         if (row.NEW_YN == "Y") {
                             htm += "<span><div class='text_new'>new</div></span>";
                         }
