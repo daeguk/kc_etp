@@ -40,79 +40,6 @@
 
                             <table :id="tblEmergeny01" class="tbl_type" style="width:100%">
 
-                                <colgroup>
-                                    <col width="10%">
-                                    <col width="10%">
-                                    <col width="14%">
-                                    <col width="18%">
-                                    <col width="12%">
-                                    <col width="12%">
-                                    <col width="12%">
-                                    <col width="12%">
-                                    <col>
-                                    <col>
-                                    <col>                                    
-                                </colgroup>
-
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th>Date</th>
-                                        <th class="txt_right">시장구분</th>
-                                        <th class="txt_left">구성종목코드</th>
-                                        <th class="txt_left">종목명</th>
-                                        <th class="txt_right">CU Shrs</th>
-                                        <th class="txt_right">액면금액</th>
-                                        <th class="txt_right">평가금액</th>
-                                        <th class="txt_right">비중</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-                                    <tr class="pdfmody_acttd">
-                                        <td></td>
-                                        <td></td>
-                                        <td colspan="6" class="txt_left">
-                                            <input
-                                                type="text"
-                                                class="txt_left width_fix"
-                                                placeholder="12자리/6자리코드"
-                                            >
-                                            <button
-                                                type="button"
-                                                class="v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01"
-                                                v-on="on"
-                                            >확인</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text_blue">20181112</td>
-                                        <td class="txt_right text_blue">2</td>
-                                        <td class="txt_left text_blue">KRD010010001</td>
-                                        <td class="txt_left text_blue">원화현금</td>
-                                        <td class="txt_right">
-                                            <input type="text" class="txt_right">
-                                        </td>
-                                        <td class="txt_right">0</td>
-                                        <td class="txt_right">548521321300</td>
-                                        <td class="txt_right">85.65</td>
-                                    </tr>
-                                    <tr>
-                                        <td>20181112</td>
-                                        <td class="txt_right">2</td>
-                                        <td class="txt_left">KRD010010001</td>
-                                        <td class="txt_left">원화현금</td>
-                                        <td class="txt_right">
-                                            <input type="text" class="txt_right">
-                                        </td>
-                                        <td class="txt_right">0</td>
-                                        <td class="txt_right">548521321300</td>
-                                        <td class="txt_right">85.65</td>
-                                    </tr>
-                                </tbody>
-                            
                             </table>
                         </v-card>
                     </v-card>
@@ -474,20 +401,35 @@ export default {
                     "orderable" : false,
                     "targets": 7
                 },
+                { 
+                    "targets": 11,
+                    "render": function ( data, type, row ) {
+                        if (data) {
+                            if ( row.status == "insert" ) {
+                                return "<div class='tooltip'><button id='btnDelete' name='btnDelete' type='button' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:40px;'>삭제</span></div>";
+                            }else{
+                                return "";
+                            }
+                        } else {
+                            return "";
+                        }
+                    },
+                },                 
             ],
-            columns: [
-                { "data" : "status"         ,   "visible"   : false   },                                                    /* status */
-                { "data" : "code_check"     ,   "visible"   : false   },                                                    /* code_check */
-                { "data" : "f16499_prev"    ,   "visible"   : false   },                                                    /* CU shrs (변경전) */
+            columns: [  
+                { "data" : "status"         ,   "visible"   : false   },                                                                /* status */
+                { "data" : "code_check"     ,   "visible"   : false   },                                                                /* code_check */
+                { "data" : "f16499_prev"    ,   "visible"   : false   },                                                                /* CU shrs (변경전) */
 
-                { "data" : "f12506"         ,   "orderable" : false  ,   "className" : "txt_center"  },                     /* Date */
-                { "data" : "f33861"         ,   "orderable" : false  ,   "className" : "txt_center"  },                     /* 시장구분 */
-                { "data" : "f16316"         ,   "orderable" : false  ,   "className" : "txt_left"    },                     /* 구성종목코드 */
-                { "data" : "f16002"         ,   "orderable" : false  ,   "className" : "txt_left"    },                     /* 종목명 */
-                { "data" : "f16499"         ,   "orderable" : false  ,   "className" : "txt_right"   },                     /* CU shrs */
-                { "data" : "f34840"         ,   "orderable" : false  ,   "className" : "txt_right"   },                     /* 액면금액 */
-                { "data" : "f16588"         ,   "orderable" : false  ,   "className" : "txt_right"   },                     /* 평가금액 */
-                { "data" : "f34743"         ,   "orderable" : false  ,   "className" : "txt_right"   },                     /* 비중 */
+                { "data" : "f12506"         ,   "orderable" : false  ,   "className" : "txt_center" ,   "width" :   "10%"   , "title" :   "Date"          },   /* Date */
+                { "data" : "f33861"         ,   "orderable" : false  ,   "className" : "txt_center" ,   "width" :   "7%"    , "title" :   "시장<br>구분"      },  /* 시장구분 */
+                { "data" : "f16316"         ,   "orderable" : false  ,   "className" : "txt_left"   ,   "width" :   "15%"   , "title" :   "구성종목코드"  },  /* 구성종목코드 */
+                { "data" : "f16002"         ,   "orderable" : false  ,   "className" : "txt_left"   ,   "width" :   "18%"   , "title" :   "종목명"        },  /* 종목명 */
+                { "data" : "f16499"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "15%"   , "title" :   "CU shrs"       },  /* CU shrs */
+                { "data" : "f34840"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "10%"   , "title" :   "액면금액"      },  /* 액면금액 */
+                { "data" : "f16588"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "10%"   , "title" :   "평가금액"      },  /* 평가금액 */
+                { "data" : "f34743"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "8%"    , "title" :   "비중"          },  /* 비중 */
+                { "data": null              ,   "orderable" : false  ,   "align":"center"           ,   "width" :   "9%"    , defaultContent:"" },
             ]
         });
 
@@ -523,10 +465,22 @@ export default {
             var data = table.row($(this).parents("tr")).data();
             var rowIndex = table.row($(this).parents("tr")).index();
             var jongmokTag = $(this).parents("tr").find( "input[name='jongmok']" );
-
             var f16499 = $(this).eq(0).val();
+
             $(this).eq(0).val( util.formatNumber( f16499 ) );
             vm.fn_setStatus( data, $(this).eq(0).val(), rowIndex, ( jongmokTag ? jongmokTag.length : 0 ) );
+        });
+
+
+
+        // 삭제버튼 클릭시
+        $('#' + vm.tblEmergeny01 + ' tbody').on('click', 'button[name=btnDelete]', function () {
+            var table = $('#' + vm.tblEmergeny01 ).DataTable();
+            var data = table.row($(this).parents('tr')).data();
+            var rowIndex = table.row($(this).parents("tr")).index();
+            var jongmokTag = $(this).parents("tr").find( "input[name='jongmok']" );            
+
+            vm.fn_deleteTableData( data, $(this).eq(0).val(), rowIndex, ( jongmokTag ? jongmokTag.length : 0 ) );
         });        
 
         vm.fn_getEtpOperPdfModify();
@@ -673,8 +627,8 @@ export default {
 
                 ,   'f12506'        :   ''              /* Date */
                 ,   'f33861'        :   ''              /* 시장구분 */
-                ,   'f16316'        :   "<input type='text' name='jongmok' id='jongmok' style='width:100%;' class='txt_left width_fix' placeholder='12자리/6자리코드' maxlength='15' >"        /* 구성종목코드 */
-                ,   'f16002'        :   "<button  name='confirm'>확인</button>"                                                      /* 종목명 */
+                ,   'f16316'        :   "<input type='text' name='jongmok' id='jongmok' class='txt_left width_fix' placeholder='12자리/6자리코드' maxlength='15' >"        /* 구성종목코드 */
+                ,   'f16002'        :   "<button  name='confirm' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01'>확인</button>"                                                      /* 종목명 */
                 ,   'f16499'        :   ''              /* CU shrs */
                 ,   'f34840'        :   '0'             /* 액면금액 */
                 ,   'f16588'        :   '0'             /* 평가금액 */
@@ -826,6 +780,19 @@ export default {
         },
 
         /*
+         * 삭제버튼 클릭시 로직을 수행한다.
+         * 2019-05-03  bkLove(촤병국)
+         */
+        fn_deleteTableData( tableData, f16499, rowIndex, jongmokTagYn ) {
+            var vm = this;
+
+            var table = $("#" + vm.tblEmergeny01 ).DataTable();
+            
+            table.row( rowIndex ).remove().order( [0, "asc"] ).draw();
+            vm.dataList.splice( rowIndex, 1 );
+        },
+
+        /*
          * CU shrs 변경시 상태값을 변경한다.
          * 2019-05-03  bkLove(촤병국)
          */
@@ -851,7 +818,7 @@ export default {
                     }
                 }
 
-                vm.dataList[ rowIndex ].f16499  =   util.formatNumber( f16499 );
+                vm.dataList[ rowIndex ].f16499      =   util.formatNumber( f16499 );
             }else{
                 vm.dataList[ rowIndex ].code_check  =   false;
                 vm.dataList[ rowIndex ].f16499      =   util.formatNumber( f16499 );

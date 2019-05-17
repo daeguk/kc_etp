@@ -564,6 +564,178 @@
                 )       base
 
          WHERE  1 = 1
-    </select>    
+    </select>
+
+
+    <!--
+    * ETP 운용관리 - PDF관리 - PDF 긴급반영 내역을 조회한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <select id="getTmPdfModify">
+        SELECT      /* etpOper.getTmPdfModify  ETP 운용관리 - PDF관리 - PDF 긴급반영 내역을 조회한다. */
+
+                    tm_pdf_modify.F16583                                        AS  f16583          /* 사무수탁회사번호 */
+                ,   tm_pdf_modify.F16012                                        AS  f16012          /* ETF종목코드 */
+                ,   tm_pdf_modify.F16013                                        AS  f16013          /* ETF단축코드 */
+                ,   tm_pdf_modify.F16316                                        AS  f16316          /* 구성종목코드 */
+
+                ,   tm_pdf_modify.F16499                                        AS  f16499          /* 1CU단위증권수 */
+                ,   tm_pdf_modify.F16499_PREV                                   AS  f16499_prev     /* 1CU단위증권수 ( 변경전 ) */
+
+          FROM  tm_pdf_modify
+         WHERE  1 = 1
+
+           AND  tm_pdf_modify.f16583            =   ''          /* 사무수탁회사번호 */
+           AND  tm_pdf_modify.f16012            =   ''          /* ETF종목코드 */
+           AND  tm_pdf_modify.f16013            =   ''          /* ETF단축코드 */
+           AND  tm_pdf_modify.f16316            =   ''          /* 구성종목코드 */
+
+        <if test= 'dataLists != null  and  dataLists.length > 0' >
+           AND  (
+                        tm_pdf_modify.f16583
+                    ,   tm_pdf_modify.f16012
+                    ,   tm_pdf_modify.f16013
+                    ,   tm_pdf_modify.f16316
+                )   
+                IN
+                (
+            <foreach    collection="dataLists"   item="data"    index="index"   separator=" UNION ALL" >
+            <![CDATA[
+                    SELECT      #{data.f16583}
+                            ,   #{data.f16012}
+                            ,   #{data.f16013}
+                            ,   #{data.f16316}
+                    FROM  dual
+            ]]>
+            </foreach>
+                )
+        </if>
+    </select>
+
+    <!--
+    * [tm_pdf_modify] 테이블에 저장한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <insert     id="saveTm_pdf_modify">
+    <![CDATA[
+        INSERT  INTO    
+        /* etpOper.saveTm_pdf_modify        [tm_pdf_modify] 테이블에 저장한다. */
+        tm_pdf_modify 
+        ( 
+                F16583                      /* 사무수탁회사번호 */
+            ,   F16012                      /* ETF종목코드 */
+            ,   F16013                      /* ETF단축코드 */
+            ,   F16316                      /* 구성종목코드 */
+
+            ,   F16499                      /* 1CU단위증권수 */
+            ,   F16499_PREV                 /* 1CU단위증권수 ( 변경전 ) */
+
+            ,   reg_id                      /* 등록자 ID */
+            ,   reg_time                    /* 등록시간 */
+        ) 
+    ]]>
+        VALUES
+        <foreach    collection="dataLists"   item="data"     separator="," >
+    <![CDATA[        
+        ( 
+                #{data.f16583}              /* 사무수탁회사번호 */
+            ,   #{data.f16012}              /* ETF종목코드 */
+            ,   #{data.f16013}              /* ETF단축코드 */
+            ,   #{data.f16316}              /* 구성종목코드 */
+
+            ,   #{data.f16499}              /* 1CU단위증권수 */
+            ,   #{data.f16499_prev}         /* 1CU단위증권수 ( 변경전 ) */
+
+            ,   #{user_id}                  /* 등록자 ID */
+            ,   now()                       /* 등록시간 */
+        )
+    ]]>
+        </foreach>
+    </insert>
+
+
+    <!--
+    * [tm_pdf_modify] 테이블을 수정한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <update     id="updateTm_pdf_modify">
+    <![CDATA[
+        UPDATE      /* etpOper.updateTm_pdf_modify      [tm_pdf_modify] 테이블을 수정한다. */
+                    tm_pdf_modify 
+
+           SET      F16499                  =   #{f16499}                   /* 1CU단위증권수 */
+                ,   F16499_PREV             =   #{f16499_prev}              /* 1CU단위증권수 ( 변경전 ) */
+
+         WHERE  1 = 1
+
+           AND  f16583                      =   #{f16583}                   /* 사무수탁회사번호 */
+           AND  f16012                      =   #{f16012}                   /* ETF종목코드 */
+           AND  f16013                      =   #{f16013}                   /* ETF단축코드 */
+           AND  f16316                      =   #{f16316}                   /* 구성종목코드 */
+    ]]>
+    </update>
+
+    <!--
+    * [tm_pdf_modify] 테이블을 삭제한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <update     id="deleteTm_pdf_modify">
+    <![CDATA[      
+        DELETE  /* etpOper.deleteTm_pdf_modify      [tm_pdf_modify] 테이블을 삭제한다. */
+          FROM  tm_pdf_modify
+         WHERE  1 = 1
+
+           AND  f16583                      =   #{f16583}                   /* 사무수탁회사번호 */
+           AND  f16012                      =   #{f16012}                   /* ETF종목코드 */
+           AND  f16013                      =   #{f16013}                   /* ETF단축코드 */
+           AND  f16316                      =   #{f16316}                   /* 구성종목코드 */
+    ]]>
+    </update>    
+
+
+   <!--
+    * [tm_pdf_modify_hist] 테이블에 저장한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <insert     id="saveTm_pdf_modify_hist">
+    <![CDATA[
+        INSERT  INTO    
+        /* etpOper.saveTm_pdf_modify_hist        [tm_pdf_modify_hist] 테이블에 저장한다. */
+        tm_pdf_modify_hist 
+        ( 
+                hist_no                     /* 이력번호 */
+
+            ,   F16583                      /* 사무수탁회사번호 */
+            ,   F16012                      /* ETF종목코드 */
+            ,   F16013                      /* ETF단축코드 */
+            ,   F16316                      /* 구성종목코드 */
+
+            ,   F16499                      /* 1CU단위증권수 */
+            ,   F16499_PREV                 /* 1CU단위증권수 ( 변경전 ) */
+
+            ,   reg_id                      /* 등록자 ID */
+            ,   reg_time                    /* 등록시간 */
+        ) 
+    ]]>
+        VALUES
+        <foreach    collection="dataLists"   item="data"     separator="," >
+    <![CDATA[        
+        ( 
+                #{hist_no}                  /* 이력번호 */
+
+            ,   #{data.f16583}              /* 사무수탁회사번호 */
+            ,   #{data.f16012}              /* ETF종목코드 */
+            ,   #{data.f16013}              /* ETF단축코드 */
+            ,   #{data.f16316}              /* 구성종목코드 */
+
+            ,   #{data.f16499}              /* 1CU단위증권수 */
+            ,   #{data.f16499_prev}         /* 1CU단위증권수 ( 변경전 ) */
+
+            ,   #{user_id}                  /* 등록자 ID */
+            ,   now()                       /* 등록시간 */
+        )
+    ]]>
+        </foreach>
+    </insert>
 
 </mapper>
