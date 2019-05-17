@@ -14,42 +14,8 @@
                         </div>
                     </v-card-title>
                 </v-card>
-                <v-stepper v-model="e1">
-                    <v-stepper-header>
-                        <v-stepper-step :complete="e1 > 1" step="1">step</v-stepper-step>
-
-                        <v-divider></v-divider>
-
-                        <v-stepper-step :complete="e1 > 2" step="2">step</v-stepper-step>
-
-                        <v-divider></v-divider>
-
-                        <v-stepper-step :complete="e1 > 3" step="3">step</v-stepper-step>
-
-                        <v-divider></v-divider>
-
-
-
-                        <v-stepper-step :complete="e1 > 4" step="4">step</v-stepper-step>
-
-                        <v-divider></v-divider>
-
-                        <v-stepper-step :complete="e1 > 5" step="5">step</v-stepper-step>
-
-                        <v-divider></v-divider>
-
-                        <v-stepper-step :complete="e1 > 6" step="6">step</v-stepper-step>
-
-                        <v-divider></v-divider>
-
-                        <v-stepper-step step="7">step</v-stepper-step>
-                    </v-stepper-header>
-
-                    <v-stepper-items>   
-                        <v-form>
-                        <!---step1---><!---세션 param의 inst_cd 같은거 -->
-                        <v-stepper-content step="1">
-                            <v-card class="register_wrap" color="lighten-1" height="100%" flat xs12>
+                  <!---step1---><!---세션 param의 inst_cd 같은거 -->
+                            <v-card class="register_wrap  pt0" color="lighten-1" flat xs12>
                                 <h4>1.발행사 정보</h4>
                                 <v-container fluid>
                                     <v-layout row>
@@ -70,15 +36,13 @@
                                     </v-layout>
                                 </v-container>
                             </v-card>
-                            <div class="text-xs-center pt-3 mt-3">
+                            <!--div class="text-xs-center pt-3 mt-3">
                                 <v-btn color="primary" depressed dark @click="e1 = 2">Continue</v-btn>
-                            </div>
-                        </v-stepper-content>
+                            </div-->
 
 
                         <!---step2--->
-                        <v-stepper-content step="2" >
-                            <v-card class="register_wrap" color="lighten-1" height="100%" flat xs12 >
+                            <v-card class="register_wrap" color="lighten-1"  flat xs12 >
                                 <h4>2.기본 정보</h4>
                                 <v-container fluid>
                                     <v-layout row>
@@ -182,7 +146,7 @@
                                         <v-flex xs2>
                                             <v-subheader class="subheader_r">상장신청일</v-subheader>
                                         </v-flex>
-                                        <v-flex xs4>
+                                        <v-flex xs2>
                                             <!--달력-->
                                             <v-layout row wrap>
                                                 <v-flex xs12 sm6 md4>
@@ -239,7 +203,7 @@
                                         <v-flex xs2>
                                             <v-subheader class="subheader_r">상장일</v-subheader>
                                         </v-flex>
-                                        <v-flex xs4>
+                                        <v-flex xs2>
                                             <!--달력-->
                                             <v-layout row wrap>
                                                 <v-flex xs12 sm6 md4>
@@ -291,16 +255,14 @@
                                     </v-layout>
                                 </v-container>
                             </v-card>
-                            <div class="text-xs-center pt-3 mt-3">
+                            <!--div class="text-xs-center pt-3 mt-3">
                                 <v-btn color="primary" depressed dark @click="fn_insertEtpRegisterStep1()">Continue</v-btn>
                                 <v-btn color="grey" depressed dark @click="e1 = 1">Cancel</v-btn>
-                            </div>
-                        </v-stepper-content>
+                            </div-->
 
                         <!---step3--->
-                        <v-stepper-content step="3">
                             
-                            <v-card class="register_wrap" color="lighten-1" height="100%" flat xs12 >
+                            <v-card class="register_wrap" color="lighten-1"  flat xs12 >
                                 <div v-if="masterData.kor_for_type==='F'">
                                 <h4>
                                     3.기초지수분배처
@@ -631,16 +593,14 @@
                             </div>       
                             </v-card>
 
-                            <div class="text-xs-center pt-3 mt-3">
+                            <!--div class="text-xs-center pt-3 mt-3">
                                 <v-btn color="primary" depressed dark @click="fn_insertEtpRegisterStep2()" v-if="masterData.kor_for_type==='F'">Continue</v-btn>
                                 <v-btn color="primary" depressed dark @click="e1 = 6" v-else-if="masterData.kor_for_type==='K'">Continue</v-btn>
                                 <v-btn color="grey" depressed dark @click="e1 = 2">Cancel</v-btn>
-                            </div>
-                        </v-stepper-content>
+                            </div-->
 
                         <!---step4--->
-                        <v-stepper-content step="4">
-                            <v-card class="register_wrap" color="lighten-1" height="100%" flat xs12>
+                            <v-card class="register_wrap" color="lighten-1"  flat xs12>
                                 <h4>4.실시간 지수 분배처</h4>
                                 <v-container fluid>
                                     <v-layout row>
@@ -751,16 +711,14 @@
                                     </v-layout>
                                 </v-container>
                             </v-card>
-                            <div class="text-xs-center pt-3 mt-3">
+                            <!--div class="text-xs-center pt-3 mt-3">
                                 <v-btn color="primary" depressed dark @click="fn_insertEtpRegisterStep4()">Continue</v-btn>
 
                                 <v-btn color="grey" depressed dark @click="e1 = 3">Cancel</v-btn>
-                            </div>
-                        </v-stepper-content>
+                            </div-->
 
                         <!---step5--->
-                        <v-stepper-content step="5">
-                            <v-card class="register_wrap" color="lighten-1" height="100%" flat xs12>
+                            <v-card class="register_wrap" color="lighten-1" flat xs12>
                                 <h4>5.참고지수정보 (상품구분이 ETP일때만 입력가능 합니다.)</h4>
                                 <v-container fluid>
                                     <v-layout row>
@@ -828,16 +786,13 @@
                                     </v-layout>
                                 </v-container>
                             </v-card>
-                            <div class="text-xs-center pt-3 mt-3">
+                            <!--div class="text-xs-center pt-3 mt-3">
                                 <v-btn color="primary" depressed dark @click="e1 = 6">Continue</v-btn>
 
                                 <v-btn color="grey" depressed dark @click="e1 = 4">Cancel</v-btn>
-                            </div>
-                        </v-stepper-content>
-
+                            </div-->
                         <!---step6--->
-                        <v-stepper-content step="6">
-                            <v-card class="register_wrap" color="lighten-1" height="100%" flat xs12>
+                            <v-card class="register_wrap" color="lighten-1" flat xs12>
                                 <h4>6.iNAV/iV</h4>
                                 <v-container fluid>
                                     <v-layout row>
@@ -861,7 +816,7 @@
                                 </v-container>
                             </v-card>
 
-                            <div class="text-xs-center pt-3 mt-3">
+                            <!--div class="text-xs-center pt-3 mt-3">
                                 <v-btn color="primary" depressed dark @click="fn_insertEtpRegister()" 
                                  v-if="masterData.paramInstTypeCd  === '0001' && masterData.seq  == ''" >저장</v-btn>
                                   <v-btn color="primary" depressed dark @click="fn_updateEtpRegister()" 
@@ -870,12 +825,10 @@
 
                                 <v-btn color="grey" depressed dark @click="e1 = 5" v-if="masterData.kor_for_type === 'F'">Cancel</v-btn>
                                 <v-btn color="grey" depressed dark @click="e1 = 3" v-if="masterData.kor_for_type === 'K'">Cancel</v-btn>
-                            </div>
-                        </v-stepper-content>
+                            </div-->
 
                         <!---step7--->
-                        <v-stepper-content step="7" v-if="masterData.paramInstTypeCd === '0002'" >
-                            <v-card class="register_wrap" color="lighten-1" height="100%" flat xs12>
+                            <v-card class="register_wrap" color="lighten-1"  flat xs12>
                                 <h4>7.코스콤</h4>
                                 <v-container fluid>
                                     <v-layout row>
@@ -992,16 +945,12 @@
                                         </v-flex>
                                     </v-layout>
                                 </v-container>
-                            </v-card>
-                            <div class="text-xs-center pt-3 mt-3">
+                                <div class="text-xs-center pt-3 mt-3">
                                 <v-btn color="primary" depressed dark   v-if="masterData.seq  === ''" @click="fn_insertEtpRegister()">저장</v-btn>
                                 <v-btn color="primary" depressed dark   v-if="masterData.seq  !== ''" @click="fn_updateEtpRegister()">수정</v-btn>
                             </div>
-                          
-                        </v-stepper-content>
-                         </v-form>  
-                    </v-stepper-items>
-                </v-stepper>
+ 
+                            </v-card>
             </v-flex>
         </v-layout>
     </v-container>

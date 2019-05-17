@@ -9,15 +9,16 @@
       >
         <v-container>
           <v-layout row wrap>
-            <v-flex md12>
-              <div class="text-xs-center">
-                <span class="headline">ETP PLATFORM</span>
+            <v-flex xs12 text-xs-center>
+              <div class="intro_logo">ETP PLATFORM
+                  <p>Nam dapibu nisl vitae elit fringilla rutrum. Aenean sollicitudin, erat a elementum rutrum,<br>
+                  neque sempretium metus, quis mollisnisl nunc et massa. vestibulum sed metus inlorem</p>
               </div>
             </v-flex>
-            <v-flex md12>
+            <v-flex xs12>
               <div class="text-xs-center">
-                <v-btn outline color="blue darken-1" @click="doView">둘러보기</v-btn>
-                <v-btn color="info darken-1" @click="doLogin">LOG-IN</v-btn>
+                <v-btn outline color="#ffffff" @click="doView">둘러보기</v-btn>
+                <v-btn depressed color="info darken-1" @click="doLogin">LOG-IN</v-btn>
               </div>
             </v-flex>
           </v-layout>
