@@ -221,8 +221,9 @@
                 ,   td_etp_basic.f15028                                     AS  f15028      /* 시가총액 */
                 ,   td_etp_basic.f15004                                     AS  f15004      /* 등락율 */
                         
-                ,   td_etfpdf_basic.f16316                                  AS  f16316      /* 구성종목코드 */
                 ,   td_etfpdf_basic.f16583                                  AS  f16583      /* 사무수탁회사번호 */
+                ,   td_etfpdf_basic.f16013                                  AS  f16013      /* ETF 단축코드 */
+                ,   td_etfpdf_basic.f16316                                  AS  f16316      /* 구성종목코드 */
                 ,   td_etfpdf_basic.f33837                                  AS  f33837      /* 구성종목수 */
                 ,   FORMAT( td_etfpdf_basic.f16499, 2)                      AS  f16499      /* 1CU단위증권수 */
                 ,   td_etfpdf_basic.f33861                                  AS  f33861      /* ETF시장구분 */
@@ -257,8 +258,9 @@
                 ,   td_etp_basic.f15028                                     AS  f15028      /* 시가총액 */
                 ,   td_etp_basic.f15004                                     AS  f15004      /* 등락율 */
                         
-                ,   td_etnpdf_basic.f16316                                  AS  f16316      /* 구성종목코드 */
                 ,   td_etnpdf_basic.f16583                                  AS  f16583      /* 사무수탁회사번호 */
+                ,   td_etnpdf_basic.f16013                                  AS  f16013      /* ETF 단축코드 */
+                ,   td_etnpdf_basic.f16316                                  AS  f16316      /* 구성종목코드 */
                 ,   td_etnpdf_basic.f33837                                  AS  f33837      /* 구성종목수 */
                 
           FROM          td_etp_basic
@@ -616,17 +618,65 @@
     * [tm_pdf_modify] 테이블에 저장한다.
     * 2019-05-20  bkLove(촤병국)
     -->
-    <insert     id="saveTm_pdf_modify">
+    <insert     id="saveTmPdfModifyMast">
     <![CDATA[
         INSERT  INTO    
-        /* etpOper.saveTm_pdf_modify        [tm_pdf_modify] 테이블에 저장한다. */
-        tm_pdf_modify 
+        /* etpOper.saveTmPdfModifyMast      [tm_pdf_modify_mast] 테이블에 저장한다. */
+        tm_pdf_modify_mast 
+        ( 
+                F16583                      /* 사무수탁회사번호 */
+            ,   F16012                      /* ETF종목코드 */
+            ,   F16013                      /* ETF단축코드 */
+
+            ,   reg_id                      /* 등록자 ID */
+            ,   reg_time                    /* 등록시간 */
+        ) 
+        VALUES  
+        ( 
+                #{f16583}                   /* 사무수탁회사번호 */
+            ,   #{f16012}                   /* ETF종목코드 */
+            ,   #{f16013}                   /* ETF단축코드 */
+
+            ,   #{user_id}                  /* 등록자 ID */
+            ,   now()                       /* 등록시간 */
+        )
+    ]]>
+    </insert>
+
+    <!--
+    * [tm_pdf_modify_mast] 테이블을 삭제한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <update     id="deleteTmPdfModifyMast">
+    <![CDATA[      
+        DELETE  /* etpOper.deleteTmPdfModifyMast      [tm_pdf_modify_mast] 테이블을 삭제한다. */
+          FROM  tm_pdf_modify_mast
+         WHERE  1 = 1
+
+           AND  f16583                      =   #{f16583}                   /* 사무수탁회사번호 */
+           AND  f16012                      =   #{f16012}                   /* ETF종목코드 */
+           AND  f16013                      =   #{f16013}                   /* ETF단축코드 */
+    ]]>
+    </update>    
+
+
+
+    <!--
+    * [tm_pdf_modify] 테이블에 저장한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <insert     id="saveTmPdfModifyDtl">
+    <![CDATA[
+        INSERT  INTO    
+        /* etpOper.saveTmPdfModifyDtl      [tm_pdf_modify_dtl] 테이블에 저장한다. */
+        tm_pdf_modify_dtl 
         ( 
                 F16583                      /* 사무수탁회사번호 */
             ,   F16012                      /* ETF종목코드 */
             ,   F16013                      /* ETF단축코드 */
             ,   F16316                      /* 구성종목코드 */
 
+            ,   status                      /* insert( 신규 ), modify( 변경 ) */
             ,   F16499                      /* 1CU단위증권수 */
             ,   F16499_PREV                 /* 1CU단위증권수 ( 변경전 ) */
 
@@ -638,11 +688,12 @@
         <foreach    collection="dataLists"   item="data"     separator="," >
     <![CDATA[        
         ( 
-                #{data.f16583}              /* 사무수탁회사번호 */
-            ,   #{data.f16012}              /* ETF종목코드 */
-            ,   #{data.f16013}              /* ETF단축코드 */
+                #{f16583}                   /* 사무수탁회사번호 */
+            ,   #{f16012}                   /* ETF종목코드 */
+            ,   #{f16013}                   /* ETF단축코드 */
             ,   #{data.f16316}              /* 구성종목코드 */
 
+            ,   #{data.status}              /* insert( 신규 ), modify( 변경 ) */
             ,   #{data.f16499}              /* 1CU단위증권수 */
             ,   #{data.f16499_prev}         /* 1CU단위증권수 ( 변경전 ) */
 
@@ -658,12 +709,13 @@
     * [tm_pdf_modify] 테이블을 수정한다.
     * 2019-05-20  bkLove(촤병국)
     -->
-    <update     id="updateTm_pdf_modify">
+    <update     id="updateTmPdfModifyDtl">
     <![CDATA[
-        UPDATE      /* etpOper.updateTm_pdf_modify      [tm_pdf_modify] 테이블을 수정한다. */
-                    tm_pdf_modify 
+        UPDATE      /* etpOper.updateTmPdfModifyDtl      [tm_pdf_modify_dtl] 테이블을 수정한다. */
+                    tm_pdf_modify_dtl
 
-           SET      F16499                  =   #{f16499}                   /* 1CU단위증권수 */
+           SET      status                  =   #{status}                   /* insert( 신규 ), modify( 변경 ) */
+                ,   F16499                  =   #{f16499}                   /* 1CU단위증권수 */
                 ,   F16499_PREV             =   #{f16499_prev}              /* 1CU단위증권수 ( 변경전 ) */
 
          WHERE  1 = 1
@@ -679,10 +731,10 @@
     * [tm_pdf_modify] 테이블을 삭제한다.
     * 2019-05-20  bkLove(촤병국)
     -->
-    <update     id="deleteTm_pdf_modify">
+    <update     id="deleteTmPdfModifyDtl">
     <![CDATA[      
-        DELETE  /* etpOper.deleteTm_pdf_modify      [tm_pdf_modify] 테이블을 삭제한다. */
-          FROM  tm_pdf_modify
+        DELETE  /* etpOper.deleteTmPdfModifyDtl      [tm_pdf_modify_Dtl] 테이블을 삭제한다. */
+          FROM  tm_pdf_modify_Dtl
          WHERE  1 = 1
 
            AND  f16583                      =   #{f16583}                   /* 사무수탁회사번호 */
@@ -693,14 +745,31 @@
     </update>    
 
 
+    <!--
+    * ETF 종목코드별 이력번호 번호를 조회한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <select id="getHistNoByTmPdfModifyHist">
+    <![CDATA[
+        SELECT	/* indexRegister.getHistNoByTmPdfModifyHist ETF 종목코드별 이력번호 번호를 조회한다. */
+                IFNULL( MAX( tm_pdf_modify_hist.hist_no ), 0 ) + 1          AS  hist_no
+          FROM  tm_pdf_modify_hist
+         WHERE	1 = 1
+           AND  tm_pdf_modify_hist.f16583          =   #{f16583}#          /* 사무수탁회사번호 */
+           AND  tm_pdf_modify_hist.f16012          =   #{f16012}#          /* ETF종목코드 */
+           AND  tm_pdf_modify_hist.f16013          =   #{f16013}#          /* ETF단축코드 */
+    ]]>
+    </select>       
+
+
    <!--
     * [tm_pdf_modify_hist] 테이블에 저장한다.
     * 2019-05-20  bkLove(촤병국)
     -->
-    <insert     id="saveTm_pdf_modify_hist">
+    <insert     id="saveTmPdfModifyHist">
     <![CDATA[
         INSERT  INTO    
-        /* etpOper.saveTm_pdf_modify_hist        [tm_pdf_modify_hist] 테이블에 저장한다. */
+        /* etpOper.saveTmPdfModifyHist        [tm_pdf_modify_hist] 테이블에 저장한다. */
         tm_pdf_modify_hist 
         ( 
                 hist_no                     /* 이력번호 */
@@ -710,6 +779,7 @@
             ,   F16013                      /* ETF단축코드 */
             ,   F16316                      /* 구성종목코드 */
 
+            ,   status                      /* insert( 신규 ), modify( 변경 ) */
             ,   F16499                      /* 1CU단위증권수 */
             ,   F16499_PREV                 /* 1CU단위증권수 ( 변경전 ) */
 
@@ -723,11 +793,12 @@
         ( 
                 #{hist_no}                  /* 이력번호 */
 
-            ,   #{data.f16583}              /* 사무수탁회사번호 */
-            ,   #{data.f16012}              /* ETF종목코드 */
-            ,   #{data.f16013}              /* ETF단축코드 */
+            ,   #{f16583}                   /* 사무수탁회사번호 */
+            ,   #{f16012}                   /* ETF종목코드 */
+            ,   #{f16013}                   /* ETF단축코드 */
             ,   #{data.f16316}              /* 구성종목코드 */
 
+            ,   #{data.status}              /* insert( 신규 ), modify( 변경 ) */
             ,   #{data.f16499}              /* 1CU단위증권수 */
             ,   #{data.f16499_prev}         /* 1CU단위증권수 ( 변경전 ) */
 

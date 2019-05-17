@@ -920,6 +920,12 @@ var getEtpOperPdfModify = function(req, res) {
                     console.log( err );
                 }else{
 
+                    if( resultMsg.dataList && resultMsg.dataList.length >0 ) {
+                        if( resultMsg.etpBasic && Object.keys( resultMsg.etpBasic ).length > 0 ) {
+                            resultMsg.etpBasic.f16583   =   resultMsg.dataList[0].f16583;
+                        }
+                    }
+
                     resultMsg.result    =   true;
                     resultMsg.msg       =   "";
                     resultMsg.err       =   null;
@@ -1472,6 +1478,313 @@ var getJongmokData = function(req, res) {
 }
 
 
+/*
+ * PDF 관리 -> PDF 긴급반영 정보를 저장한다.
+ * 2019-05-20  bkLove(촤병국)
+ */
+var saveEtpOperPdfModify = function(req, res) {
+    try {
+        console.log('etpOper.saveEtpOperPdfModify 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            console.log("[error] etpOper.saveEtpOperPdfModify  req.body.data no data.");
+            console.log(req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = "[error] etpOper.saveEtpOperPdfModify  req.body.data no data.";
+            
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse( JSON.stringify(req.body.data) );
+
+        paramData.user_id       =   req.session.user_id;
+        paramData.inst_cd       =   req.session.inst_cd;
+        paramData.type_cd       =   req.session.type_cd;
+        paramData.large_type    =   req.session.large_type;
+
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+/*
+{ etf_f16012: 'KR7322410002',
+  etf_f16013: '322410',
+  etf_f16002: 'HANARO 고배당',
+  etf_f16583: '49',
+  data:
+   [ { status: 'insert',
+       code_check: true,
+       f16499_prev: 0,
+       f12506: '20190513',
+       f33861: '2',
+       f16316: 'HK0000307485',
+       f16002: 'GRT',
+       f16499: 0,
+       f34840: 0,
+       f16588: 0,
+       f34743: 0 } ] }
+*/
+        paramData.allDataList.push(
+            {       etf_f16012: 'KR7322410003'
+                ,   etf_f16013: '322413'
+                ,   etf_f16002: 'HANARO 고배당(test3)'
+                ,   etf_f16583: '03'
+                ,   data: [ 
+                        { 
+                            status: 'insert',
+                            code_check: true,
+                            f12506: '20190513',
+                            f33861: '2',
+                            f16316: 'HK0000312568',
+                            f16002: '오가닉티코스메틱',
+                            f16499_prev: 100,                        
+                            f16499: 300,
+                            f34840: 0,
+                            f16588: 0,
+                            f34743: 0 
+                        },
+                        { 
+                            status: 'insert',
+                            code_check: true,
+                            f12506: '20190513',
+                            f33861: '2',
+                            f16316: 'HK0000341732',
+                            f16002: '컬러레이',
+                            f16499_prev: 200,                        
+                            f16499: 400,
+                            f34840: 0,
+                            f16588: 0,
+                            f34743: 0 
+                        },                        
+                    ]
+            },
+            {       etf_f16012: 'KR7322410004'
+                ,   etf_f16013: '322414'
+                ,   etf_f16002: 'HANARO 고배당(test4)'
+                ,   etf_f16583: '04'
+                ,   data: [ 
+                        { 
+                            status: 'insert',
+                            code_check: true,
+                            f12506: '20190513',
+                            f33861: '2',
+                            f16316: 'HK0000449303',
+                            f16002: '윙입푸드',
+                            f16499_prev: 400,                        
+                            f16499: 500,
+                            f34840: 0,
+                            f16588: 0,
+                            f34743: 0 
+                        },
+                        { 
+                            status: 'update',
+                            code_check: true,
+                            f12506: '20190513',
+                            f33861: '1',
+                            f16316: 'KR7000020008',
+                            f16002: '동화약품',
+                            f16499_prev: 600,                        
+                            f16499: 700,
+                            f34840: 0,
+                            f16588: 0,
+                            f34743: 0 
+                        },                        
+                    ]
+            }            
+        )
+
+        resultMsg.dataList  =   [];
+        Promise.using(pool.connect(), conn => {
+
+            conn.beginTransaction(txerr => {
+
+                if( txerr ) {
+                    return console.error( txerr );
+                }            
+
+
+                async.forEachOfLimit( paramData.allDataList, 1, function ( subList, index, callback ){
+
+                    var paramData = {
+                        f16583      :   subList.etf_f16583,         /* 사무수탁회사번호 */
+                        f16012      :   subList.etf_f16012,         /* ETF종목코드 */
+                        f16013      :   subList.etf_f16013,         /* ETF단축코드 */
+
+                        dataLists   :   subList.data
+                    };
+                    
+
+                    paramData.user_id       =   req.session.user_id;
+                    paramData.inst_cd       =   req.session.inst_cd;
+                    paramData.type_cd       =   req.session.type_cd;
+                    paramData.large_type    =   req.session.large_type;
+                    paramData.hist_no       =   "";
+
+                    async.waterfall([
+
+                        /* 1. PDF 변경 마스터 정보를 저장한다. */
+                        function( callback ) {
+
+                            var stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyMast', paramData, {language:'sql', indent: '  '});
+                            console.log( stmt );
+
+                            conn.query(stmt, function( err, rows ) {
+
+                                if( err ) {
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] etpOper.saveTmPdfModifyMast Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
+
+
+                                callback( null, paramData );                             
+                            })
+                        },
+
+                        /* 2. PDF 변경 상세 정보 (구성종목) 정보를 저장한다. */
+                        function( msg, callback ) {
+
+                            try{
+
+                                var stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyDtl', paramData, {language:'sql', indent: '  '});
+                                console.log(stmt);
+
+                                conn.query(stmt, function( err, rows ) {
+
+                                    if( err ) {
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "[error] etpOper.saveTmPdfModifyDtl Error while performing Query";
+                                        resultMsg.err       =   err;
+
+                                        return callback( resultMsg );
+                                    }
+
+                                    callback( null, paramData );                             
+                                })
+
+                            }catch(err){
+                                resultMsg.result    =   false;
+                                resultMsg.msg       =   "[error] etpOper.saveTmPdfModifyDtl Error while performing Query";
+                                resultMsg.err       =   err;
+
+                                return callback( resultMsg );
+                            }
+                        },                    
+
+                        /* 3. ETF 종목코드별 이력번호 번호를 조회한다. */
+                        function( msg, callback ) {
+
+
+                            stmt = mapper.getStatement('etpOper', 'getHistNoByTmPdfModifyHist', paramData, format);
+                            console.log(stmt);
+
+                            conn.query(stmt, function( err, rows ) {
+
+                                if( err ) {
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] etpOper.getHistNoByTmPdfModifyHist Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
+
+                                if ( rows && rows.length == 1 ) {
+                                    paramData.hist_no   =   rows[0].hist_no;
+                                }
+
+                                callback( null, paramData );
+                            });
+                        },
+
+                        /* 4. PDF 변경 이력 정보를 저장한다. */
+                        function( msg, callback ) {
+
+
+                            /*  이력번호가 존재하는 경우 */
+                            if( paramData.hist_no && paramData.hist_no.length > 0 ) {
+
+                                stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyHist', paramData, format);
+                                console.log(stmt);
+
+                                conn.query(stmt, function( err, rows ) {
+
+                                    if( err ) {
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "[error] etpOper.saveTmPdfModifyHist Error while performing Query";
+                                        resultMsg.err       =   err;
+
+                                        return callback( resultMsg );
+                                    }
+
+                                    callback( null, paramData );
+                                });
+
+                            }else{
+c
+                                resultMsg.result    =   false;
+                                resultMsg.msg       =   "[error] etpOper.saveTmPdfModifyHist Error while performing Query";
+                                resultMsg.err       =   err;
+
+                                return callback( resultMsg );
+                            }                    
+                        },
+
+                    ], function (err) {
+
+                        if( err ) {
+                            return  callback( resultMsg );
+                        }
+
+                        callback( null, paramData );
+                    });                       
+
+
+                }, function(err) {
+
+                    if( err ) {
+                        console.log( err );
+                        conn.rollback();
+
+                    }else{
+                        resultMsg.result    =   true;
+                        resultMsg.msg       =   "성공적으로 저장하였습니다.";
+                        resultMsg.err       =   null;
+
+                        conn.commit();
+                    }
+
+                    res.json( resultMsg );
+                    res.end();
+                    
+                });     
+            });
+        });
+
+    } catch(expetion) {
+
+        console.log(expetion);
+
+        if( resultMsg && !resultMsg.msg ) {
+            resultMsg.result    =   false;
+            resultMsg.msg       =   "[error] etpOper.saveEtpOperPdfModify 오류가 발생하였습니다.";
+            resultMsg.err       =   expetion;
+        }
+
+        res.json({
+            resultMsg
+        });
+        res.end();  
+    }
+}
+
+
 module.exports.getEtpOperInfo = getEtpOperInfo;
 module.exports.getEtpOperIndex = getEtpOperIndex;
 module.exports.getEtpOperIndexOversea = getEtpOperIndexOversea;
@@ -1485,3 +1798,6 @@ module.exports.getJongmokData = getJongmokData;
 module.exports.getExchBasic = getExchBasic;
 module.exports.getKspjongBasic = getKspjongBasic;
 module.exports.getFutureBasic = getFutureBasic;
+
+module.exports.saveEtpOperPdfModify = saveEtpOperPdfModify;
+

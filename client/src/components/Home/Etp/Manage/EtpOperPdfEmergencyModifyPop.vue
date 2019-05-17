@@ -135,7 +135,7 @@
                                     </v-expansion-panel>
                                 </p>
                                 <p class="pdfmody_btn">
-                                    <v-btn fab dark depressed color="primary" @click="step++">
+                                    <v-btn fab dark depressed color="primary" @click="fn_stepCheck(2)">
                                         <v-icon dark large>navigate_next</v-icon>
                                     </v-btn>아니오, 지금까지 변경한 내용을 제출합니다.
                                 </p>
@@ -666,8 +666,8 @@ export default {
 
                 /* allDataList 에서 존재하는 인덱스를 확인한다. */
                 var filterIndex  =   _.findIndex( vm.allDataList,    {
-                                            "etf_f16012" : vm.etpBasic.f16012      /* ETF 국제표준코드 */
-                                        ,   "etf_f16013" : vm.etpBasic.f16013      /* ETF 단축코드 */
+                                            "etf_f16012"    :   vm.etpBasic.f16012      /* ETF 국제표준코드 */
+                                        ,   "etf_f16013"    :   vm.etpBasic.f16013      /* ETF 단축코드 */
                                     });
 
                 /* 변경된 데이터만 추출 */
@@ -682,6 +682,7 @@ export default {
                         "etf_f16012"    :   vm.etpBasic.f16012      /* ETF 국제표준코드 */
                     ,   "etf_f16013"    :   vm.etpBasic.f16013      /* ETF 단축코드 */
                     ,   "etf_f16002"    :   vm.etpBasic.f16002      /* ETF 한글종목명 */
+                    ,   "etf_f16583"    :   vm.etpBasic.f16583      /* ETF 사무수탁회사번호 */
                     ,   "data"          :   filterData
                 };                                             
 
@@ -776,8 +777,31 @@ export default {
                     
                     vm.step = 2;
                 }
+            }else if( step == 2 ) {
+
+                vm.fn_saveEtpOperPdfModify();
             }
         },
+
+        /*
+         * ETP PDF 정보를 저장한다.
+         * 2019-05-03  bkLove(촤병국)
+         */
+        fn_saveEtpOperPdfModify() {
+            var vm = this;
+
+            console.log("EtpOperPdf.vue -> fn_saveEtpOperPdfModify.vue");
+
+
+            axios.post( Config.base_url + "/user/etp/saveEtpOperPdfModify", {
+                data: { allDataList : vm.allDataList }
+            }).then(function(response) {
+
+                console.log(response);
+debugger;
+//                vm.step     =   3;
+            });
+        },        
 
         /*
          * 삭제버튼 클릭시 로직을 수행한다.
