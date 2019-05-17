@@ -165,8 +165,9 @@ var getEtpMultiIntra = function(req, res) {
     f16013 : req.query.f16013,
     f16257 : req.query.f16257,
     f34239 : req.query.f34239,
-    limit : req.query.limit,
   };
+  if(req.query.term == '1D') options.limit = 100;
+  else options.limit = 300;
 try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");

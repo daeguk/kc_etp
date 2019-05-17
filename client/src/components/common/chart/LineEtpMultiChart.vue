@@ -1,6 +1,7 @@
 <template>
   <canvas :id=chartId :width=chart.width :height=chart.height 
-    v-on:mousemove.stop="mouseMove" v-on:mouseleave.stop="mouseLeave">
+    v-on:mousemove.stop="mouseMove" v-on:mouseleave.stop="mouseLeave"
+    v-on:mousedown.stop="mouseClick">
   </canvas>
 </template>
 
@@ -9,255 +10,417 @@ import Config       from "@/js/config.js"
 import util from "@/js/util.js";
 
 export default {
-    props:['etpBasic'],
-    data() {
-        return {
-            canvas:{},
-            ctx:{},
-            chartId:"EtpMultiChart",
-            chart:{width:1050, height:400},
-            grad:{},
-            crect:{},
-            dataArr: [],
-            chartDataPosArr: [],
-            bef_tooltip_img: {},
-            maxVal: 0.0,
-            minVal: 0.0,
-            itemNum: 0,
-            valHeight: 0.0,
-            tt_wlen: 150,
-            tt_hlen: 15,
-            intra_date:[],
-        };
-    },    
-    watch: {
-      'etpBasic.f16013': function() {
-        console.log("watch.........: ");
-        console.log(this.etpBasic);
-        // this.etpBasic = newEtpBasic;
-        this.dataInit();
-      }
+  props:['etpBasic'],
+  data() {
+    return {
+      canvas:{},
+      ctx:{},
+      chartId:"EtpMultiChart",
+      chart:{width:1050, height:400},
+      grad:{},
+      mrect:{},
+      crect:{x1:80, y1:60, x2:1000, y2:360},
+      dataArr: [],
+      chartDataPosArr: [],
+      chartDataHPosArr: [],
+      bef_tooltip_img: {},
+      maxVal: 0.0,
+      minVal: 0.0,
+      itemNum: 0,
+      valHeight: 0.0,
+      term:['1D', '1W', '1M', '3M', '6M', '1Y', 'TOTAL'],
+      selterm: 0,
+      dmode:0,
+      wlen: 0,
+      hlen: 0,
+      intra_data:[],
+      sArr:[],
+      mArr:[],
+      init_mode_image:{},
+      init_term_image:{},
+      init_chart_image:{},
+      draw_chart_image:{},
+      yAxisVal:[],
+      xAxisDd:[],
+      xAxisTt:[],
+    };
+  },    
+  watch: {
+    'etpBasic.f16013': function() {
+      console.log("watch.........etpBasic.f16013: ");
+      console.log(this.etpBasic);
+      // this.etpBasic = newEtpBasic;
+      this.dataInit();
     },
-    created: function() {
-    },
-    mounted: function() {
-        console.log("LineEtpMultiChart..........");
-        this.canvas = document.getElementById(this.chartId);
-        this.rect = this.canvas.getBoundingClientRect();
-        this.ctx = this.canvas.getContext('2d');
-        this.drawInit(this.ctx);
-        /*
-        this.grad = this.ctx.createLinearGradient(0,0,0,this.canvas.height);
-        this.grad.addColorStop(0, this.chartItem.sColor);
-        this.grad.addColorStop(1,  this.chartItem.eColor);
-        */
-        // this.dataInit();
-    },
-    methods: {
-        drawInit: function(c) {
-            c.strokeRect(0, 0, this.chart.width, this.chart.height);
-
-            c.beginPath();
-            c.lineWidth = 0.8;
-            c.strokeStyle = "#37474F";
-            c.moveTo(80, 50);
-            c.lineTo(80, 350);
-            c.lineTo(1000, 350);
-            c.stroke();
-            c.closePath();
-
-            c.beginPath();
-            c.strokeStyle = "#BDBDBD";
-            c.setLineDash([2]);
-            for(var i=1; i < 7; i++) {
-              c.moveTo(80, 50*i);
-              c.lineTo(1000, 50*i);
-            }
-            c.stroke();
-
-        },
-
-        dataInit: function() {
-            var vm = this;
-            /*
-            this.dataArr = this.dataSet.reverse();
-            this.dataArr.forEach(function(item, index) {
-                if(index == 0) {
-                    vm.maxVal = item[2];
-                    vm.minVal = item[2];
-                }
-                if(vm.maxVal < item[2]) {
-                    vm.maxVal = item[2];
-                }else if(vm.minVal > item[2]) {
-                    vm.minVal = item[2];
-                }
-            });
-            vm.itemNum = vm.dataArr.length;
-            vm.valHeight = vm.maxVal - vm.minVal;
-            */
-            this.getEtpMultiIntra(0, 100);
-        },
-        getEtpMultiIntra: function(term, limit) {
-          console.log("getEtpMultiIntra : " + this.etpBasic.f16013);
-          var vm = this;
-
-          vm.etpBasic.limit = limit;
-          vm.etpBasic.f34239 = "M" + util.pad(vm.etpBasic.f34239, 3);
-
-          axios.get(Config.base_url + "/user/marketinfo/getEtpMultiIntra", {
-            params: vm.etpBasic
-          }).then(function(response) {
-            console.log(response);
-            if (response.data.success == false) {
-                alert("해당 ETP의 데이터가 없습니다");
-            } else {
-                // vm.intra_data.push = response.data.results;
-                vm.intra_data = response.data.results.reverse();
-                vm.draw();
-            }
-          });
-        },
-        draw: function (){
-            var c = this.ctx;
-            /*
-            var _width = this.chartItem.width - (this.chartItem.marginW * 2);
-            var _height = this.chartItem.height - (this.chartItem.marginH * 2);
-            var _dnum = this.itemNum;
-            var _maxv = this.maxVal;
-            var _minv = this.minVal;
-            var _wpos = 0.0, _hpos = 0.0;
-            */
-            // 차트 그리기 시작
-            /*
-            c.beginPath();
-            c.lineWidth = 3;
-            c.strokeStyle = this.chartItem.sColor;
-
-            var vm = this;
-            this.dataArr.forEach(function(item, index){
-                _wpos = vm.chartItem.marginW + index * _width / (vm.itemNum-1);
-                _hpos = vm.chartItem.marginH + (_height - ((item[2] - vm.minVal)/ vm.valHeight * _height));
-
-                vm.chartDataPosArr[index] = _wpos;
-                if(index == 0) {
-                    c.moveTo(_wpos, _hpos);
-                }else {
-                    c.lineTo(_wpos, _hpos);
-                    c.stroke();
-                }
-                console.log("item[0] : " + item[0] + " item[1] : " + item[1] + " item[2] : " + item[2]);
-            });
-
-            // fill 을 위한 cloasePath 만들기
-            _wpos = vm.chartItem.marginW + _width;
-            _hpos = vm.chartItem.marginH * 2 + _height;
-            c.lineTo(_wpos, _hpos);
-            c.lineTo(vm.chartItem.marginW, _hpos);
-            c.closePath();
-            c.fillStyle = this.grad;
-            c.fill();
-
-            // 좌즉 상단 현재가
-            c.fillStyle = "#37474F";
-            c.font = '14px san-serif';
-            c.fillText(this.chartItem.name, 15, 30);
-            c.fillStyle = "#263238";
-            c.font = 'bold 24px san-serif';
-            c.fillText(this.chartItem.f15001, 15, 55);
-            var slen = this.chartItem.f15001.length;
-            c.fillStyle = "#039BE5";
-            c.font = '10px san-serif';
-            if(slen > 6) c.fillText(this.chartItem.f15472, 115, 45);
-            else  c.fillText(this.chartItem.f15472, 100, 45);
-            c.fillStyle = "#039BE5";
-            c.font = '10px san-serif';
-            if(slen > 6) c.fillText(this.chartItem.f15004 + "%", 115, 57);
-            else  c.fillText(this.chartItem.f15004 + "%", 100, 57);
-
-            // 우측 하단 자산총액
-            c.fillStyle = "#757575";
-            c.fillRect(165, 110, 30, 14);
-            c.fillStyle = "white";
-            c.font = '11px san-serif';
-            c.fillText("ETF", 170, 121);
-
-            c.fillStyle = "#424242";
-            c.fillRect(165, 130, 30, 14);
-            c.fillStyle = "white";
-            c.font = '11px san-serif';
-            c.fillText("ETN", 170, 141);
-
-            c.fillStyle = "#1B5E20";
-            c.font = '12px san-serif';
-            c.textAlign = "end";
-            c.fillText(this.chartItem.etf_sum + " AUM", 335, 120);
-            c.fillStyle = "#1B5E20";
-            c.font = '12px san-serif';
-            c.textAlign = "end";
-            c.fillText(this.chartItem.etn_sum + " 원", 335, 140);
-
-            this.bef_tooltip_img = c.getImageData(0, 0, this.chartItem.width, this.chartItem.height);
-            */
-        },
-        mouseMove: function(event) {
-          /*
-          var c = this.ctx;
-          var _mwpos = event.clientX-this.rect.left;
-          var _wpos = _mwpos;
-          var _hpos = event.clientY-this.rect.top - 20;
-          var item = [];
-          var tooltip = "";
-
-          if(_wpos > 200) _wpos -= this.tt_wlen;
-
-          c.putImageData(this.bef_tooltip_img, 0, 0);
-
-          c.fillStyle = "#FFFDE7";
-          c.fillRect(_wpos, _hpos, this.tt_wlen, this.tt_hlen);
-          this.draw_tooltip_flag = true;
-
-          item = this.getDataByPos(_mwpos);
-          c.fillStyle = "black";
-          c.textAlign = "left";
-          c.font = '11px san-serif';
-          tooltip = "" + item[0] + " " + item[1] + " " + item[2];
-          c.fillText(tooltip, _wpos+2, _hpos+11);
-
-          this.drawGuideLine(c, _mwpos);
-          */
-        },
-        /*
-        drawGuideLine: function(c, _mwpos) {
-          c.beginPath();
-          c.strokeStyle = "#757575";
-          c.lineWidth = 1;
-          c.setLineDash([1]);
-          c.moveTo(_mwpos, 0);
-          c.lineTo(_mwpos, this.chartItem.height);
-          c.stroke();
-        },
-        */
-        mouseLeave: function(event) {
-          /*
-          this.ctx.putImageData(this.bef_tooltip_img, 0, 0);
-          */
-        },
-        /*
-        getDataByPos: function(_mwpos) {
-          var i=0;
-          for(; i < this.chartDataPosArr.length; i++) {
-            var item = this.chartDataPosArr[i];
-            // console.log("item : " + item + " _wpos : " + _mwpos);
-            // console.log("index : " + i);
-            if(item > _mwpos) {
-              break;
-            }              
-          }
-          if(i == this.chartDataPosArr.length) i -= 1;
-          return this.dataArr[i];
-        },
-        */
+    'dmode': function(newDmode) {
+      console.log("watch.........dmode: ");
+      console.log(newDmode);
+      this.drawMode(newDmode);
+      this.draw_intra(newDmode);
     }
+  },
+  created: function() {
+  },
+  mounted: function() {
+    console.log("LineEtpMultiChart..........");
+    this.canvas = document.getElementById(this.chartId);
+    this.ctx = this.canvas.getContext('2d');
+    this.mrect = this.canvas.getBoundingClientRect();
+    this.wlen = this.crect.x2 - this.crect.x1;
+    // -10 : 하단 라인 침범 수정
+    this.hlen = this.crect.y2 - this.crect.y1 - 10;
+    this.drawInit();
+    /*
+    this.grad = this.ctx.createLinearGradient(0,0,0,this.canvas.height);
+    this.grad.addColorStop(0, this.chartItem.sColor);
+    this.grad.addColorStop(1,  this.chartItem.eColor);
+    */
+    // this.dataInit();
+  },
+  methods: {
+      drawInit: function() {
+        var c = this.ctx;
+        c.strokeRect(0, 0, this.chart.width, this.chart.height);
+
+        this.drawMode(this.dmode);
+        // 차트 MAIN
+        c.beginPath();
+        c.lineWidth = 0.8;
+        c.strokeStyle = "#37474F";
+        c.moveTo(this.crect.x1, this.crect.y1);
+        c.lineTo(this.crect.x1, this.crect.y2);
+        c.lineTo(this.crect.x2, this.crect.y2);
+        c.stroke();
+        c.closePath();
+
+        c.beginPath();
+        c.strokeStyle = "#BDBDBD";
+        c.setLineDash([2]);
+        for(var i=0; i < 6; i++) {
+          c.moveTo(this.crect.x1, this.crect.y1 + 50*i);
+          c.lineTo(this.crect.x2, this.crect.y1 + 50*i);
+        }
+        c.stroke();
+
+        // 차트 골격 저장
+        this.init_chart_image = c.getImageData(this.crect.x1, this.crect.y1-2, this.crect.x2, this.crect.y2);
+      },
+
+      dataInit: function() {
+          var vm = this;
+          if(this.selterm == 0 || this.selterm == 1) this.getEtpMultiIntra(this.etpBasic, this.term[this.selterm]);
+          // else this.getEtpMultiHist(this.etpBasic, this.term[this.selterm]);
+      },
+      getEtpMultiIntra: function(etpInfo, term) {
+        console.log("getEtpMultiIntra : " + etpInfo.f16013);
+        var vm = this;
+
+        etpInfo.term = term;
+        etpInfo.f34239 = "M" + util.pad(etpInfo.f34239, 3);
+
+        axios.get(Config.base_url + "/user/marketinfo/getEtpMultiIntra", {
+          params: etpInfo
+        }).then(function(response) {
+          // console.log(response);
+          if (response.data.success == false) {
+              alert("해당 ETP의 데이터가 없습니다");
+          } else {
+              if(response.data.results.length > 0) {
+                vm.intra_data = response.data.results.reverse();
+                vm.draw_intra(vm.dmode);
+              }
+          }
+        });
+      },
+      draw_intra: function (dmode){
+        if(dmode == 0 || dmode == 1) this.draw_sintra(dmode, this.intra_data);
+        // else draw_mintra(dmode, idata);
+      },
+      draw_sintra: function (dmode, idata){
+        var c = this.ctx;
+        var vm = this;
+        var _dnum = idata.length;
+        var val = 0, maxVal = 0, minVal = 0, diffVal = 0;
+        var stepVal = 0;
+        var _wpos = 0, _hpos = 0;
+        this.sArr = [];
+
+        idata.forEach(function(item, index) {
+          var sdata = {};
+          if(dmode == 0) val = item.F20008;
+          else val = item.iF20008;
+
+          if(index == 0) {
+            maxVal = val;
+            minVal = val;
+          }else {
+            if(maxVal < val) maxVal = val;
+            else if(minVal > val) minVal = val;
+          }
+          sdata.dd = item.F20044;
+          sdata.tt = item.F20004;
+          sdata.vv = val;
+          vm.sArr.push(sdata);
+        });
+        diffVal = maxVal - minVal;
+        stepVal = diffVal / 6;
+
+        // Y Axis 데이터 
+        vm.yAxisVal[0] = minVal;
+        for(var i=1; i < 6; i++) {
+          console.log("i : " + i + " minVal : " + minVal + " maxVal : " + maxVal + " stepVal : " + stepVal);
+          vm.yAxisVal[i] = Number(minVal) + stepVal * i;
+          if((diffVal * 100 % 100) !== 0) {
+            vm.yAxisVal[i] = vm.yAxisVal[i].toFixed(2);
+          }else {
+            vm.yAxisVal[i] = vm.yAxisVal[i].toFixed(0);
+          }
+          console.log("yAxis : " + vm.yAxisVal[i]);
+        }
+        vm.yAxisVal[6] = maxVal;
+        for(var i=0; i < 7; i++) {
+          vm.yAxisVal[i] = util.formatStringNum(vm.yAxisVal[i].toString());
+        }
+
+        // X Axis 데이터
+        var stepX = Math.floor(_dnum / 5);
+        for(var i=1; i < 5; i++) {
+          vm.xAxisDd.push(vm.sArr[stepX*i].dd);
+          vm.xAxisTt.push(vm.sArr[stepX*i].tt);
+        }
+
+        c.clearRect(0, vm.crect.y1-6, vm.chart.width, vm.chart.height-vm.crect.y1+6);
+
+        c.beginPath();
+        var grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
+        if(this.dmode == 0) {
+          grd.addColorStop(0, "#C5E1A5");
+          grd.addColorStop(1, "#0D47A1");
+        }else {
+          grd.addColorStop(0, "#FFEA00");
+          grd.addColorStop(1, "#FF5252");
+        }
+        c.lineWidth = 3;
+        c.setLineDash([]);
+        c.strokeStyle = grd ;
+        vm.sArr.forEach(function(item, index) {
+          // console.log("draw_sintra... : " + index);
+          // console.log(item);
+          // _dnum - 1 : 오른쪽 마지막 픽셀 표현
+          _wpos = index / (_dnum-1) * vm.wlen + vm.crect.x1;
+          _hpos = vm.crect.y1 + (vm.hlen - ((item.vv - minVal) / diffVal * vm.hlen)) ;
+          vm.chartDataPosArr[index] = _wpos;
+          vm.chartDataHPosArr[index] = _hpos;
+
+          if(index == 0) {
+            c.moveTo(_wpos, _hpos);
+          }else {
+            c.lineTo(_wpos, _hpos);
+          }
+          // console.log("_wpos : " + _wpos + " _hpos : " + _hpos);
+        });
+        c.putImageData(vm.init_chart_image, vm.crect.x1, vm.crect.y1-2);
+        c.stroke();
+
+        //Y-Axis 그리기
+        c.fillStyle = "#424242";
+        c.textBaseline = "middle";
+        c.textAlign = "end";
+        c.font = '12px san-serif';
+        for(var i=0; i < 7; i++) {
+          console.log("yAxis : " + vm.yAxisVal[i]);
+          c.fillText(vm.yAxisVal[6-i], 75, vm.crect.y1 + 50 * i);
+        }
+        //X-Axis 그리기
+        c.fillStyle = "#424242";
+        c.textBaseline = "middle";
+        c.textAlign = "center";
+        c.font = '12px san-serif';
+        
+        for(var i=0; i < 4; i++) {
+          console.log("xAxis : " + vm.xAxisDd[i] + " " + vm.xAxisTt[i]);
+          c.fillText(vm.xAxisDd[i], vm.crect.x1 + (vm.crect.x2-vm.crect.x1) / 5 * (i+1), vm.crect.y2+10);
+          c.fillText(vm.xAxisTt[i], vm.crect.x1 + (vm.crect.x2-vm.crect.x1) / 5 * (i+1), vm.crect.y2+25);
+        }
+
+        this.draw_chart_image = c.getImageData(this.crect.x1, this.crect.y1-10, this.crect.x2, this.crect.y2);
+
+      },
+      mouseMove: function(event) {
+        var c = this.ctx;
+        var _mwpos = event.clientX-this.mrect.left;
+        var _mhpos = event.clientY-this.mrect.top;
+        c.putImageData(this.draw_chart_image, this.crect.x1, this.crect.y1-10);
+        if(this.selectGuideCheck(_mwpos, _mhpos) !== -1) {
+          // console.log("Got.......... guide");
+          this.drawToolTip(_mwpos, _mhpos);
+          this.drawGuideLine(_mwpos);
+        }
+      },
+      drawGuideLine: function(_mwpos) {
+        var c = this.ctx;
+        c.beginPath();
+        c.strokeStyle = "#757575";
+        c.lineWidth = 1;
+        c.setLineDash([1]);
+        c.moveTo(_mwpos, this.crect.y1);
+        c.lineTo(_mwpos, this.crect.y2);
+        c.stroke();
+      },
+      drawToolTip: function(wpos, hpos) {
+        var c = this.ctx;
+        var twpos = wpos;
+        var tt_wlen = 70;
+        var tt_hlen = 40;
+        var item = {};
+        var dhpos = 0;
+
+        // 툴팁 박스 그리기
+        if(wpos + tt_wlen >= this.crect.x2) twpos -= (tt_wlen + 20);
+        c.fillStyle = "#FFFDE7";
+        c.fillRect(twpos+10, hpos+20, tt_wlen, tt_hlen);
+
+        // 툴팁 텍스트 그리기
+        item = this.getDataByPos(wpos);
+        c.fillStyle = "black";
+        c.textAlign = "right";
+        c.font = '11px san-serif';
+        c.fillText(item.dd, twpos+tt_wlen, hpos+31);
+        c.fillText(item.tt, twpos+tt_wlen, hpos+43);
+        c.fillText(item.vv, twpos+tt_wlen, hpos+55);
+
+        // 포인트 원 그리기
+        if((wpos - this.crect.x1) > 5) {   // Y-Axis 침범 방지
+          dhpos = this.getHPosByPos(wpos);
+          c.beginPath();
+          c.fillStyle = "#FFAB00";
+          c.arc(wpos, dhpos, 5, 0, Math.PI*2);
+          c.fill();
+          c.stroke();
+        }
+      },
+      mouseLeave: function(event) {
+        var c = this.ctx;
+        c.putImageData(this.draw_chart_image, this.crect.x1, this.crect.y1-10);
+      },
+      getDataByPos: function(wpos) {
+        var i=0;
+        for(; i < this.chartDataPosArr.length; i++) {
+          var item = this.chartDataPosArr[i];
+          // console.log("item : " + item + " wpos : " + wpos);
+          // console.log("index : " + i);
+          if(item > wpos) {
+            break;
+          }              
+        }
+        if(i == this.chartDataPosArr.length) i -= 1;
+        return this.sArr[i];
+      },
+      getHPosByPos: function(wpos) {
+        var i=0;
+        for(; i < this.chartDataPosArr.length; i++) {
+          var item = this.chartDataPosArr[i];
+          // console.log("item : " + item + " wpos : " + wpos);
+          // console.log("index : " + i);
+          if(item > wpos) {
+            break;
+          }              
+        }
+        if(i == this.chartDataPosArr.length) i -= 1;
+        return this.chartDataHPosArr[i];
+      },
+      mouseClick: function(event) {
+        console.log("mouseClick..........");
+        var _mwpos = event.clientX-this.mrect.left;
+        var _mhpos = event.clientY-this.mrect.top;
+        var selectMode = this.selectModeCheck(_mwpos, _mhpos);
+
+        console.log("selectMode : " + selectMode);
+        if(selectMode !== -1) {
+          if(selectMode !== this.dmode) {
+            this.dmode = selectMode;
+            return;
+          }
+        }
+
+      },
+      selectModeCheck: function(wpos, hpos) {
+        var iw = 60;
+        var ih = 25;
+        var ix = [this.crect.x1, this.crect.x1+iw, this.crect.x1+iw*2];
+        var iy = 16;
+        // console.log("selectModeCheck........");
+        // console.log("wpos : " + wpos + " hpos : " + hpos);
+
+        if(hpos >= iy && hpos <= (iy + ih)) {
+          if(wpos >= ix[0] && wpos <= ix[1]) return 0;
+          else if(wpos > ix[1] && wpos <= ix[2]) return 1;
+          else if(wpos > ix[2] && wpos <= (ix[2] + iw)) return 2;
+          else return -1;
+        }else {
+          return -1;
+        }
+      },
+
+      selectGuideCheck: function(wpos, hpos) {
+        console.log("selectGuideCheck........");
+        console.log("wpos : " + wpos + " hpos : " + hpos);
+        console.log("this.crect.y1 : " + this.crect.y1 + " this.crect.y2 : " + this.crect.y2);
+
+        if(hpos >= this.crect.y1 && hpos <= this.crect.y2) {
+          if(wpos >= this.crect.x1 && wpos <= this.crect.x2) return 0;
+          else return -1;
+        }else {
+          return -1;
+        }
+      },
+
+      drawMode: function(dmode) {
+        console.log("dmode : " + dmode + " this.dmode : " + this.dmode);
+        var c = this.ctx;
+        var tword = ["ETP", "INDEX", "MULTI"];
+        var iw = 60;
+        var ih = 25;
+        var ix = [this.crect.x1, this.crect.x1+iw, this.crect.x1+iw*2];
+        var iy = 16;
+        var tx = [ix[0] + 20, ix[1] + 12, ix[2] + 12];
+        var ty = 35;
+
+        c.clearRect(ix[0], iy, iw*3, ih);
+
+        // 테두리
+        c.beginPath();
+        c.strokeStyle = "#37474F";
+        c.lineWidth = 0.7;
+        c.moveTo(ix[0], iy);
+        c.lineTo(ix[2]+iw, iy);
+        c.lineTo(ix[2]+iw, iy+ih);
+        c.lineTo(ix[0], iy+ih);
+        c.lineTo(ix[0], iy);
+        c.moveTo(ix[1], iy);
+        c.lineTo(ix[1], iy+ih);
+        c.moveTo(ix[2], iy);
+        c.lineTo(ix[2], iy+ih);
+        c.stroke();
+        c.closePath();
+
+        // Text
+        c.fillStyle = "#37474F";
+        c.font = '12px san-serif';
+        c.textBaseline = "bottom";
+        c.textAlign = "left";
+        tword.forEach(function(item, index) {
+          c.fillText(item, tx[index], ty);
+        });
+
+        // Active
+        c.fillStyle = "#039BE5";
+        c.fillRect(ix[dmode], iy, iw, ih);
+
+        c.fillStyle = "#FFFFFF";
+        c.fillText(tword[dmode], tx[dmode], ty);
+      },
+  }
 }    
 </script>
 
