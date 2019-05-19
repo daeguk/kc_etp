@@ -1511,92 +1511,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";
-/*
-{ etf_f16012: 'KR7322410002',
-  etf_f16013: '322410',
-  etf_f16002: 'HANARO 고배당',
-  etf_f16583: '49',
-  data:
-   [ { status: 'insert',
-       code_check: true,
-       f16499_prev: 0,
-       f12506: '20190513',
-       f33861: '2',
-       f16316: 'HK0000307485',
-       f16002: 'GRT',
-       f16499: 0,
-       f34840: 0,
-       f16588: 0,
-       f34743: 0 } ] }
-*/
-        paramData.allDataList.push(
-            {       etf_f16012: 'KR7322410003'
-                ,   etf_f16013: '322413'
-                ,   etf_f16002: 'HANARO 고배당(test3)'
-                ,   etf_f16583: '03'
-                ,   data: [ 
-                        { 
-                            status: 'insert',
-                            code_check: true,
-                            f12506: '20190513',
-                            f33861: '2',
-                            f16316: 'HK0000312568',
-                            f16002: '오가닉티코스메틱',
-                            f16499_prev: 100,                        
-                            f16499: 300,
-                            f34840: 0,
-                            f16588: 0,
-                            f34743: 0 
-                        },
-                        { 
-                            status: 'insert',
-                            code_check: true,
-                            f12506: '20190513',
-                            f33861: '2',
-                            f16316: 'HK0000341732',
-                            f16002: '컬러레이',
-                            f16499_prev: 200,                        
-                            f16499: 400,
-                            f34840: 0,
-                            f16588: 0,
-                            f34743: 0 
-                        },                        
-                    ]
-            },
-            {       etf_f16012: 'KR7322410004'
-                ,   etf_f16013: '322414'
-                ,   etf_f16002: 'HANARO 고배당(test4)'
-                ,   etf_f16583: '04'
-                ,   data: [ 
-                        { 
-                            status: 'insert',
-                            code_check: true,
-                            f12506: '20190513',
-                            f33861: '2',
-                            f16316: 'HK0000449303',
-                            f16002: '윙입푸드',
-                            f16499_prev: 400,                        
-                            f16499: 500,
-                            f34840: 0,
-                            f16588: 0,
-                            f34743: 0 
-                        },
-                        { 
-                            status: 'update',
-                            code_check: true,
-                            f12506: '20190513',
-                            f33861: '1',
-                            f16316: 'KR7000020008',
-                            f16002: '동화약품',
-                            f16499_prev: 600,                        
-                            f16499: 700,
-                            f34840: 0,
-                            f16588: 0,
-                            f34743: 0 
-                        },                        
-                    ]
-            }            
-        )
+
 
         resultMsg.dataList  =   [];
         Promise.using(pool.connect(), conn => {
@@ -1727,7 +1642,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                 });
 
                             }else{
-c
+
                                 resultMsg.result    =   false;
                                 resultMsg.msg       =   "[error] etpOper.saveTmPdfModifyHist Error while performing Query";
                                 resultMsg.err       =   err;
