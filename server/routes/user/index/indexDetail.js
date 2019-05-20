@@ -43,6 +43,7 @@ var getIndexJongmokList = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -145,6 +146,7 @@ var getIndexDetailList = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -273,6 +275,7 @@ var getIndexFixList = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -427,6 +430,7 @@ var getIndexList = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };

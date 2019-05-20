@@ -79,7 +79,7 @@
                         ></div>
 -->                    
                     </div>
-
+<!--
                     <div class="tab2_w">
                         <v-layout row wrap>
                             <v-flex xs12>
@@ -107,6 +107,7 @@
                             </v-flex>
                         </v-layout>
                     </div>
+-->                    
                 </v-card>
             </v-flex>
             <!--v-flex class="conWidth_right">
@@ -233,7 +234,7 @@ export default {
                 )   {
                    // vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
                     vm.fn_getEtpBasic();                /* ETP 의 기본정보를 조회한다. */
-                    vm.fn_getEtpChartData('1M');        /* ETP 차트 정보를 조회한다. */
+                    // vm.fn_getEtpChartData('1M');        /* ETP 차트 정보를 조회한다. */
                 }
                 if (event) {
                     // 분석정보 실행

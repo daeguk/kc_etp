@@ -179,7 +179,7 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "<span>";
                         htm += "           "+data+"";
-                        htm += "            <br>"+row.JISU_CD;
+                        htm += "            <br><span class='text_s'>"+row.JISU_CD+"</span>";
                         return htm;
                     },
                     "targets": 2
@@ -262,7 +262,7 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "<span>";
                         htm += "           <b>"+data+"</b>";
-                        htm += "            <br>"+row.JISU_CD;
+                        htm += "            <br><span class='text_s'>"+row.JISU_CD+"</span>";
                         return htm;
                     },
                     "targets": 2
@@ -347,7 +347,7 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "<span>";
                         htm += "           <b>"+data+"</b>";
-                        htm += "            <br>"+row.JISU_CD;
+                        htm += "            <br><span class='text_s'>"+row.JISU_CD+"</span>";
                         return htm;
                     },
                     "targets": 2

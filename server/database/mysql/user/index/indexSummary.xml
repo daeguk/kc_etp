@@ -464,16 +464,24 @@
         AND base.F16257 = #{jisu_cd}
     </select>
 
-    <!--비중 정보 리스트-->
+    <!--비중 정보 리스트
+        1.m168uidxmap 테이블의 가장 최근 일자, UP_CODE (지수코드 임)
+        2.지수 코드를 맵핑 시켜줘야 됨. 60001  MFI001 / 62001  WFN001 
+        3.지수코드로 종목코드/ CEILING비중 / 스타일포함비중 를 fetch 함.
+        4.m168uidxmap 테이블에서 종목코드 정보로 전일종가/상장주식수/유동비율 가져옴.
+        5.종목별 시가총액 = 전일종가 * 상장주식수 * 유동비율 * CEILING비중 * 스타일포함비중
+        6.종목별 시가총액으로 비중 산출
+    -->
     <select id="getIndexImportanceList">
     <![CDATA[
        SELECT ITEM.ISIN_CODE
             , ITEM.JOING_NM
-            , TRUNCATE((ITEM.ITEM_AMT/TOT_ITEM.TOT_AMT) * 100, 2) PERCNT
-            , ITEM.GUBUN   	 
+            , ROUND((ITEM.ITEM_AMT/TOT_ITEM.TOT_AMT * 100), 2) AS PERCNT
+            , ITEM.GUBUN 
+        /* 종목별 시가 총액*/  	 
         FROM(SELECT MAP.ISIN_CODE
                     ,MAP.F16002 JOING_NM
-                    ,ROUND((COMP.F03003 * COMP.F30812 * COMP.F30813 * COMP.MAP.CEILING_PERCNT * MAP.STYLE_INCLUD_PERCNT)) ITEM_AMT
+                    ,(COMP.F03003 * COMP.F30812 * COMP.F30813 * COMP.MAP.CEILING_PERCNT * MAP.STYLE_INCLUD_PERCNT) ITEM_AMT
                     ,MAP.GUBUN
                     FROM (SELECT F12506
                                 , ISIN_CODE
@@ -489,28 +497,31 @@
                                     , A.STYLE_INCLUD_PERCNT
                                     , A.GUBUN
                                     , B.F16002
-                                    , (CASE @vISIN_CODE WHEN A.ISIN_CODE THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum
-                                    , (@vISIN_CODE:=A.ISIN_CODE) vISIN_CODE
                                     FROM m168uidxmap A
                                 INNER JOIN td_kspjong_basic B
                                     ON A.ISIN_CODE = B.F16012 
-                                INNER JOIN (SELECT @vISIN_CODE:='', @rownum:=0 FROM DUAL) C
+                                WHERE UP_CODE = CONCAT(IF(substr(#{jisu_cd}, 1, 2) = '60', 'MFI', 'WFN'), substr(#{jisu_cd}, 3))
                                 ORDER BY A.ISIN_CODE, A.F12506 DESC
                                 ) a
-                    WHERE a.rnum = 1
-                    AND UP_CODE = CONCAT(IF(substr(#{jisu_cd}, 1, 2) = '60', 'MFI', 'WFN'), substr(#{jisu_cd}, 3))) MAP
+                          WHERE a.F12506 = (SELECT MAX(AA.F12506) /* 최근 일자 */
+										       FROM m168uidxmap AA
+									          INNER JOIN td_kspjong_basic BB
+                                                 ON AA.ISIN_CODE = BB.F16012  
+									           WHERE AA.UP_CODE = CONCAT(IF(substr(#{jisu_cd}, 1, 2) = '60', 'MFI', 'WFN'), substr(#{jisu_cd}, 3)))
+                          ) MAP
                     INNER JOIN m168uidxcomp COMP
                     ON MAP.F12506 = COMP.F12506
                     AND MAP.ISIN_CODE = COMP.F16013
                     AND MAP.GUBUN = COMP.GUBUN) ITEM
-        INNER JOIN (SELECT SUM(ROUND((COMP.F03003 * COMP.F30812 * COMP.F30813 * COMP.MAP.CEILING_PERCNT * MAP.STYLE_INCLUD_PERCNT))) TOT_AMT
+        /* 지수에 속한 전체 종목 시가 총액 */
+        INNER JOIN (SELECT SUM((COMP.F03003 * COMP.F30812 * COMP.F30813 * COMP.MAP.CEILING_PERCNT * MAP.STYLE_INCLUD_PERCNT)) TOT_AMT
                     FROM (SELECT F12506
                                 , ISIN_CODE
                                 , UP_CODE
                                 , CEILING_PERCNT
                                 , STYLE_INCLUD_PERCNT
                                 , GUBUN
-                                , F16002
+                                , F16002                            
                             FROM (SELECT A.F12506
                                     , A.ISIN_CODE
                                     , A.UP_CODE
@@ -518,16 +529,18 @@
                                     , A.STYLE_INCLUD_PERCNT
                                     , A.GUBUN
                                     , B.F16002
-                                    , (CASE @vISIN_CODE WHEN A.ISIN_CODE THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum
-                                    , (@vISIN_CODE:=A.ISIN_CODE) vISIN_CODE
                                     FROM m168uidxmap A
                                 INNER JOIN td_kspjong_basic B
                                     ON A.ISIN_CODE = B.F16012 
-                                INNER JOIN (SELECT @vISIN_CODE:='', @rownum:=0 FROM DUAL) C
+                                WHERE UP_CODE = CONCAT(IF(substr(#{jisu_cd}, 1, 2) = '60', 'MFI', 'WFN'), substr(#{jisu_cd}, 3))
                                 ORDER BY A.ISIN_CODE, A.F12506 DESC
                                 ) a
-                    WHERE a.rnum = 1
-                    AND UP_CODE = CONCAT(IF(substr(#{jisu_cd}, 1, 2) = '60', 'MFI', 'WFN'), substr(#{jisu_cd}, 3))) MAP
+                           WHERE a.F12506 = (SELECT MAX(AA.F12506) /* 최근 일자 */
+										       FROM m168uidxmap AA
+									          INNER JOIN td_kspjong_basic BB
+                                                 ON AA.ISIN_CODE = BB.F16012  
+									           WHERE AA.UP_CODE = CONCAT(IF(substr(#{jisu_cd}, 1, 2) = '60', 'MFI', 'WFN'), substr(#{jisu_cd}, 3)))
+                          ) MAP
                     INNER JOIN m168uidxcomp COMP
                     ON MAP.F12506 = COMP.F12506
                     AND MAP.ISIN_CODE = COMP.F16013

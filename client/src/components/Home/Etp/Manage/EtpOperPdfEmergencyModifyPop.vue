@@ -108,10 +108,12 @@
                             <p class="text-xs-center">다른 ETF의 PDF를 변경하시겠습니까?</p>
                             <div class="pop_btn_w">
                                 <p class="pdfmody_btn">
-                                    <v-btn fab dark depressed color="primary" @click="all">
+
+                                    <v-btn fab dark depressed color="primary" :disabled="disabledAddEtfOperPdf" @click="fn_showEtfOperPdf()">
                                         <v-icon dark large>add</v-icon>
                                     </v-btn>네, 추가 변경 작업을 진행합니다.
-                                    <v-expansion-panel v-model="panel" expand>
+
+                                    <v-expansion-panel v-model="showAddEtfOperPdfPanel" expand>
                                         <v-expansion-panel-content flat>
                                             <v-card flat>
                                                 <v-card-text>
@@ -122,11 +124,16 @@
                                                                 value
                                                                 outline
                                                                 class="width_fix2"
+                                                                v-model="txtAddEtpCode"
+                                                                maxlength="15"
                                                             ></v-text-field>
                                                         </span>
                                                         <span>
-                                                            <v-btn outline small color="primary">확인</v-btn>
-                                                            <v-btn outline small color="#9e9e9e">취소</v-btn>
+                                                            <v-btn outline small color="primary" @click="fn_addEtfOperPdfModify">확인</v-btn>
+                                                            <v-btn outline small color="#9e9e9e" @click="fn_addEtfOperPdfModifyCancel">취소</v-btn>
+                                                        </span>
+                                                        <span style="color:red">
+                                                            {{ result.msg }}
                                                         </span>
                                                     </div>
                                                 </v-card-text>
@@ -135,7 +142,7 @@
                                     </v-expansion-panel>
                                 </p>
                                 <p class="pdfmody_btn">
-                                    <v-btn fab dark depressed color="primary" @click="step++">
+                                    <v-btn fab dark depressed color="primary" :disabled="disabledSubmit2" @click="fn_stepCheck(2)">
                                         <v-icon dark large>navigate_next</v-icon>
                                     </v-btn>아니오, 지금까지 변경한 내용을 제출합니다.
                                 </p>
@@ -326,10 +333,17 @@ export default {
 
 
             tblEmergeny01 : "tblEmergeny01",
-            searchParam : {},
             etpBasic : {},
             dataList : [],
             allDataList : [],
+            disabledAddEtfOperPdf : false,
+            showAddEtfOperPdfPanel : [false],
+            disabledSubmit2 : false,
+            txtAddEtpCode : "",
+            result : {
+                    flag : true
+                ,   msg: ""
+            }
         };
     },
     created: function() {
@@ -481,9 +495,15 @@ export default {
             var jongmokTag = $(this).parents("tr").find( "input[name='jongmok']" );            
 
             vm.fn_deleteTableData( data, $(this).eq(0).val(), rowIndex, ( jongmokTag ? jongmokTag.length : 0 ) );
-        });        
+        });
 
-        vm.fn_getEtpOperPdfModify();
+
+        var searchParam                 =   {}
+        searchParam.f16012              =   vm.paramData.f16012;                   /* 국제표준코드 */
+        searchParam.f16012              =   "KR7322410002";
+        searchParam.initYn              =   "Y";
+
+        vm.fn_getEtpOperPdfModify( searchParam );
     },
         
     methods: {
@@ -492,26 +512,30 @@ export default {
         // with all values as true
         all() {
             this.panel = [...Array(this.items).keys()].map(_ => true);
-        },
+        },        
 
         /*
          * ETP PDF 정보를 조회한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_getEtpOperPdfModify() {
+        fn_getEtpOperPdfModify( searchParam ) {
+
             var vm = this;
 
-            console.log("EtpOperPdf.vue -> fn_getEtpOperPdfEmergencyModifyPop.vue");
+            console.log("EtpOperPdfEmergencyModifyPop -> fn_getEtpOperPdfModify");
 
             if (tblEmergeny01) {
                 tblEmergeny01.clear().draw();
             }
 
-            vm.searchParam.f16012   =   vm.paramData.f16012;                   /* 국제표준코드 */
-            vm.searchParam.f16012   =   "KR7322410002";
+            vm.etpBasic =   {};
+            vm.dataList =   [];
+
+            vm.result.flag  =   true;
+            vm.result.msg   =   '';
 
             axios.post( Config.base_url + "/user/etp/getEtpOperPdfModify", {
-                data: vm.searchParam
+                data: searchParam
             }).then(function(response) {
                 console.log(response);
 
@@ -520,8 +544,29 @@ export default {
                     var dataList = response.data.dataList;
 
                     if( etpBasic && Object.keys( etpBasic ).length > 0 ) {
+
+                        if( searchParam.initYn == "N" ) {
+                            if( etpBasic.login_f33960_check != "Y" ) {
+                                vm.result.flag  =   false;
+                                vm.result.msg   =   '타 발행사의 종목은 변경하실수 없습니다.';
+
+                                return  false;
+                            }
+                        }
+
                         vm.etpBasic =   etpBasic;
+                        
+                    }else{
+
+                        if( searchParam.initYn == "N" ) {
+                            vm.result.flag  =   false;
+                            vm.result.msg   =   '해당코드의 데이터가 존재하지 않습니다.';
+
+                            return  false;
+                        }
                     }
+
+                    vm.step = 1;
 
                     if (dataList && dataList.length > 0) {
                         tblEmergeny01.rows.add( dataList ).draw();
@@ -540,7 +585,7 @@ export default {
         fn_getJongmokData( codeVal, rowIndex ) {
             var vm = this;
 
-            console.log("EtpOperPdf.vue -> fn_getEtpOperPdfEmergencyModifyPop.vue");
+            console.log("EtpOperPdfEmergencyModifyPop -> fn_getJongmokData");
 
             if(     !codeVal
                 ||  codeVal.length == 0
@@ -660,39 +705,32 @@ export default {
                 }
 
                 /* 추가 또는 수정건이 존재하는지 체크한다. */
-                if( !vm.fn_modifyCheck() ) {
-                    return  false;
-                }
-
-                /* allDataList 에서 존재하는 인덱스를 확인한다. */
-                var filterIndex  =   _.findIndex( vm.allDataList,    {
-                                            "etf_f16012" : vm.etpBasic.f16012      /* ETF 국제표준코드 */
-                                        ,   "etf_f16013" : vm.etpBasic.f16013      /* ETF 단축코드 */
-                                    });
-
-                /* 변경된 데이터만 추출 */
-                var filterData  =   _.filter( vm.dataList, function( o, i ) {
-                    if( o.status == "insert" || o.status == "modify" ) {
-                        return  true;
+                if(     !vm.allDataList 
+                    ||  vm.allDataList.length == 0  
+                ) {
+                    if( !vm.fn_modifyCheck() ) {
+                        return  false;
                     }
-                });
-
-                /* 추가할 데이터 */
-                var jsonData    =   {
-                        "etf_f16012"    :   vm.etpBasic.f16012      /* ETF 국제표준코드 */
-                    ,   "etf_f16013"    :   vm.etpBasic.f16013      /* ETF 단축코드 */
-                    ,   "etf_f16002"    :   vm.etpBasic.f16002      /* ETF 한글종목명 */
-                    ,   "data"          :   filterData
-                };                                             
-
-
-                /* 존재하지 않는 경우 */
-                if( filterIndex == -1 ) {
-                    vm.allDataList.push( jsonData );
                 }
-                /* 존재하는 경우 해당 인덱스에 데이터 교체 */
-                else{
-                    vm.allDataList[ filterIndex ]   =   jsonData;
+
+
+                vm.fn_modifyAllDataList();
+
+
+                /* 이전건 + 현재건 데이터가 존재하는 경우 */
+                if( vm.allDataList.length > 0 ) {
+
+                    /* 현재 수정된 건이 없는 경우 */
+                    if( vm.dataList.length == 0 ) {
+
+                        var filterIndex  =   _.findIndex( vm.allDataList,    {
+                                                    "etf_f16012"    :   vm.etpBasic.f16012      /* ETF 국제표준코드 */
+                                                ,   "etf_f16013"    :   vm.etpBasic.f16013      /* ETF 단축코드 */
+                                            });
+
+                        /* 현재건 삭제 */
+                        vm.allDataList.splice( filterIndex, 1 );
+                    }
                 }
 
 
@@ -772,11 +810,84 @@ export default {
                                     ]
                             }).draw();
                         });
-                    }                
-                    
+                    }
+
+                    vm.fn_addEtfOperPdfModifyCancel();
+
                     vm.step = 2;
                 }
+            }else if( step == 2 ) {
+
+                vm.fn_saveEtpOperPdfModify();
             }
+        },
+
+        /*
+         * ETP PDF 정보를 저장한다.
+         * 2019-05-03  bkLove(촤병국)
+         */
+        fn_saveEtpOperPdfModify() {
+            var vm = this;
+
+            console.log("EtpOperPdfEmergencyModifyPop -> fn_saveEtpOperPdfModify");
+
+
+            axios.post( Config.base_url + "/user/etp/saveEtpOperPdfModify", {
+                data: { allDataList : vm.allDataList }
+            }).then(function(response) {
+
+                console.log(response);
+
+                if (response.data) {
+
+                    if( !response.data.result ) {
+                        vm.$emit("showMessageBox", '확인', response.data.msg,{},1);
+                        return  false;
+                    }
+
+                    vm.step     =   3;
+                }
+            });
+        },
+
+        fn_showEtfOperPdf() {
+            var vm = this;
+
+            console.log("EtpOperPdfEmergencyModifyPop.vue -> fn_showEtfOperPdf");
+
+
+            vm.disabledAddEtfOperPdf    =   false;
+            vm.showAddEtfOperPdfPanel   =   [ true ];
+
+            vm.disabledSubmit2          =   true;
+        },
+
+        fn_addEtfOperPdfModifyCancel() {
+            var vm = this;
+
+            console.log("EtpOperPdfEmergencyModifyPop.vue -> fn_showEtfOperPdf");
+
+            vm.disabledAddEtfOperPdf    =   false;
+            vm.showAddEtfOperPdfPanel   =   [ false ];
+
+            vm.disabledSubmit2          =   false;
+        },        
+
+        fn_addEtfOperPdfModify() {
+            var vm = this;
+
+            console.log("EtpOperPdfEmergencyModifyPop.vue -> fn_addEtfOperPdfModify");
+
+            if( !vm.txtAddEtpCode ) {
+                vm.$emit("showMessageBox", '확인','구성종목코드가 빈 항목이 존재합니다.',{},1);
+                return  false;                
+            }
+
+            var searchParam                 =   {}
+            searchParam.f16012              =   vm.txtAddEtpCode;
+            searchParam.initYn              =   "N";
+
+            vm.fn_getEtpOperPdfModify( searchParam );
         },
 
         /*
@@ -790,6 +901,8 @@ export default {
             
             table.row( rowIndex ).remove().order( [0, "asc"] ).draw();
             vm.dataList.splice( rowIndex, 1 );
+
+            vm.fn_modifyAllDataList();
         },
 
         /*
@@ -891,7 +1004,44 @@ export default {
             }
 
             return  true;
-        },        
+        },
+
+        fn_modifyAllDataList() {
+
+            var vm = this;
+
+            /* allDataList 에서 존재하는 인덱스를 확인한다. */
+            var filterIndex  =   _.findIndex( vm.allDataList,    {
+                                        "etf_f16012"    :   vm.etpBasic.f16012      /* ETF 국제표준코드 */
+                                    ,   "etf_f16013"    :   vm.etpBasic.f16013      /* ETF 단축코드 */
+                                });
+
+            /* 변경된 데이터만 추출 */
+            var filterData  =   _.filter( vm.dataList, function( o, i ) {
+                if( o.status == "insert" || o.status == "modify" ) {
+                    return  true;
+                }
+            });
+
+            /* 추가할 데이터 */
+            var jsonData    =   {
+                    "etf_f16012"    :   vm.etpBasic.f16012      /* ETF 국제표준코드 */
+                ,   "etf_f16013"    :   vm.etpBasic.f16013      /* ETF 단축코드 */
+                ,   "etf_f16002"    :   vm.etpBasic.f16002      /* ETF 한글종목명 */
+                ,   "etf_f16583"    :   vm.etpBasic.f16583      /* ETF 사무수탁회사번호 */
+                ,   "data"          :   filterData
+            };                                             
+
+
+            /* 존재하지 않는 경우 */
+            if( filterIndex == -1 ) {
+                vm.allDataList.push( jsonData );
+            }
+            /* 존재하는 경우 해당 인덱스에 데이터 교체 */
+            else{
+                vm.allDataList[ filterIndex ]   =   jsonData;
+            }
+        },
 
         /*
          * 팝업창을 종료한다.

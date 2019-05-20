@@ -48,7 +48,8 @@ module.exports = {
       { file: './user/etp/etpOper'        , path: '/user/etp/getExchBasic'            , method: 'getExchBasic'            , session: 'check', type: 'post' },
       { file: './user/etp/etpOper'        , path: '/user/etp/getKspjongBasic'         , method: 'getKspjongBasic'         , session: 'check', type: 'post' },
       { file: './user/etp/etpOper'        , path: '/user/etp/getFutureBasic'          , method: 'getFutureBasic'          , session: 'check', type: 'post' },
-      
+      { file: './user/etp/etpOper'        , path: '/user/etp/saveEtpOperPdfModify'    , method: 'saveEtpOperPdfModify'    , session: 'check', type: 'post' },
+
 
       { file: './user/etp/etpNavCalcu', path: '/user/etp/getiNavData', method: 'getiNavData'     , session: 'check', type: 'get' },
       { file: './user/etp/etpNavCalcu', path: '/user/etp/getExchBasic', method: 'getExchBasic'     , session: 'check', type: 'get' },
@@ -106,6 +107,7 @@ module.exports = {
       { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpBasic', method: 'getEtpBasic', session: 'uncheck', type: 'get' },
       { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpIntra', method: 'getEtpIntra', session: 'uncheck', type: 'get' },
       { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpMultiIntra', method: 'getEtpMultiIntra', session: 'uncheck', type: 'get' },
+      { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpMultiHist', method: 'getEtpMultiHist', session: 'uncheck', type: 'get' },
       { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtfSumByIndex', method: 'getEtfSumByIndex', session: 'uncheck', type: 'get' },
       { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtnSumByIndex', method: 'getEtnSumByIndex', session: 'uncheck', type: 'get' },
       { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpCtgBasic', method: 'getEtpCtgBasic', session: 'uncheck', type: 'get' },

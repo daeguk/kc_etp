@@ -77,7 +77,7 @@ export  const  market_common =   {
                                             "render": function ( data, type, row ) {
                                                 let htm = "<span>";
                                                 htm += "           <b>"+data+"</b>";
-                                                htm += "            <br>"+row.f16013;
+                                                htm += "            <br><span class='text_s'>"+row.f16013+"</span>";
                                                 if (row.NEW_YN == "Y") {
                                                     htm += "<span><div class='text_new'>new</div></span>";
                                                 }

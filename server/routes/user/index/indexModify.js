@@ -37,6 +37,7 @@ var getRegistedJisuData = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
         console.log( req.body.data );
 
@@ -281,6 +282,7 @@ var modifyJisu = function(req, res) {
                 paramData.inst_cd       =   req.session.inst_cd;
                 paramData.type_cd       =   req.session.type_cd;
                 paramData.large_type    =   req.session.large_type;
+                paramData.krx_cd        =   req.session.krx_cd;
 
                 console.log( paramData );
 
@@ -891,6 +893,7 @@ var deleteJisu = function(req, res) {
             paramData.inst_cd       =   req.session.inst_cd;
             paramData.type_cd       =   req.session.type_cd;
             paramData.large_type    =   req.session.large_type;
+            paramData.krx_cd        =   req.session.krx_cd;
 
             console.log( paramData );
 
