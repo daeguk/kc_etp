@@ -81,14 +81,14 @@ export default {
   methods: {
       drawInit: function() {
         var c = this.ctx;
-        c.strokeRect(0, 0, this.chart.width, this.chart.height);
+        // c.strokeRect(0, 0, this.chart.width, this.chart.height);
 
         this.drawMode(this.dmode);
         this.drawTerm(this.dterm);
         // 차트 MAIN
         c.beginPath();
-        c.lineWidth = 0.8;
         c.strokeStyle = "#37474F";
+        c.lineWidth = 1;
         c.moveTo(this.crect.x1, this.crect.y1);
         c.lineTo(this.crect.x1, this.crect.y2);
         c.lineTo(this.crect.x2, this.crect.y2);
@@ -105,7 +105,8 @@ export default {
         c.stroke();
 
         // 차트 골격 저장
-        this.init_chart_image = c.getImageData(this.crect.x1, this.crect.y1-2, this.crect.x2, this.crect.y2);
+        var vm = this;
+        this.init_chart_image = c.getImageData(this.crect.x1-1, this.crect.y1-2, this.crect.x2+1, this.crect.y2);
       },
 
       dataInit: function() {
@@ -250,7 +251,7 @@ export default {
           }
           // console.log("_wpos : " + _wpos + " _hpos : " + _hpos);
         });
-        c.putImageData(vm.init_chart_image, vm.crect.x1, vm.crect.y1-2);
+        c.putImageData(vm.init_chart_image, vm.crect.x1-1, vm.crect.y1-2);
         c.stroke();
 
         //Y-Axis 그리기
@@ -359,7 +360,7 @@ export default {
           }
           // console.log("_wpos : " + _wpos + " _hpos : " + _hpos);
         });
-        c.putImageData(vm.init_chart_image, vm.crect.x1, vm.crect.y1-2);
+        c.putImageData(vm.init_chart_image, vm.crect.x1-1, vm.crect.y1-2);
         c.stroke();
 
         //Y-Axis 그리기
@@ -383,7 +384,6 @@ export default {
         }
 
         this.draw_chart_image = c.getImageData(this.crect.x1, this.crect.y1-10, this.crect.x2, this.crect.y2);
-
       },
       draw_mintra: function (dmode, idata){
         var c = this.ctx;
@@ -490,7 +490,7 @@ export default {
             c.lineTo(_wpos, _hpos);
           }
         });
-        c.putImageData(vm.init_chart_image, vm.crect.x1, vm.crect.y1-2);
+        c.putImageData(vm.init_chart_image, vm.crect.x1-1, vm.crect.y1-2);
         c.stroke();
 
         // INDEX 차트 그리기
@@ -538,7 +538,6 @@ export default {
         }
 
         this.draw_chart_image = c.getImageData(this.crect.x1, this.crect.y1-10, this.crect.x2, this.crect.y2);
-
       },
 
       draw_mhist: function (dmode, idata){
@@ -645,7 +644,7 @@ export default {
             c.lineTo(_wpos, _hpos);
           }
         });
-        c.putImageData(vm.init_chart_image, vm.crect.x1, vm.crect.y1-2);
+        c.putImageData(vm.init_chart_image, vm.crect.x1-1, vm.crect.y1-2);
         c.stroke();
 
         // INDEX 차트 그리기
