@@ -476,12 +476,12 @@
     <![CDATA[
        SELECT ITEM.ISIN_CODE
             , ITEM.JOING_NM
-            , TRUNCATE((ITEM.ITEM_AMT/TOT_ITEM.TOT_AMT) * 100, 2) PERCNT
+            , ROUND((ITEM.ITEM_AMT/TOT_ITEM.TOT_AMT * 100), 2) AS PERCNT
             , ITEM.GUBUN 
         /* 종목별 시가 총액*/  	 
         FROM(SELECT MAP.ISIN_CODE
                     ,MAP.F16002 JOING_NM
-                    ,ROUND((COMP.F03003 * COMP.F30812 * COMP.F30813 * COMP.MAP.CEILING_PERCNT * MAP.STYLE_INCLUD_PERCNT)) ITEM_AMT
+                    ,(COMP.F03003 * COMP.F30812 * COMP.F30813 * COMP.MAP.CEILING_PERCNT * MAP.STYLE_INCLUD_PERCNT) ITEM_AMT
                     ,MAP.GUBUN
                     FROM (SELECT F12506
                                 , ISIN_CODE
@@ -514,7 +514,7 @@
                     AND MAP.ISIN_CODE = COMP.F16013
                     AND MAP.GUBUN = COMP.GUBUN) ITEM
         /* 지수에 속한 전체 종목 시가 총액 */
-        INNER JOIN (SELECT SUM(ROUND((COMP.F03003 * COMP.F30812 * COMP.F30813 * COMP.MAP.CEILING_PERCNT * MAP.STYLE_INCLUD_PERCNT))) TOT_AMT
+        INNER JOIN (SELECT SUM((COMP.F03003 * COMP.F30812 * COMP.F30813 * COMP.MAP.CEILING_PERCNT * MAP.STYLE_INCLUD_PERCNT)) TOT_AMT
                     FROM (SELECT F12506
                                 , ISIN_CODE
                                 , UP_CODE
