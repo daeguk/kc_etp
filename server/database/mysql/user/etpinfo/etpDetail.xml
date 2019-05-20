@@ -11,10 +11,12 @@
 
         SELECT      /* etpDetail.getEtpBasic EtpBasic 의 기본정보를 조회한다. */
                     <include    refid="sqlEtpBasic01" />
+        <if test = '( krx_cd != null  krx_cd != "" )' >
                 ,   CASE    WHEN    td_etp_basic.f33960 =   #{krx_cd}
                             THEN    'Y'
                             ELSE    'N'
                     END                                             AS  login_f33960_check
+        </if>
           FROM  td_etp_basic
          WHERE  1 = 1
          
