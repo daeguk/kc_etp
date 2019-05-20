@@ -147,7 +147,16 @@
           FROM  td_kspjong_basic
          WHERE  1 = 1
 
+        <if test= 'f16012 != null  and  f16012 != "" ' >
            AND  td_kspjong_basic.f16012         =   #{f16012}               /* 국제표준코드 */
+        </if>
+
+        <if test= 'searchCode != null  and  searchCode != "" ' >
+           AND  (  
+                        td_kspjong_basic.f16012         LIKE    CONCAT( #{searchCode}, '%' )        /* 국제표준코드 */
+                    OR  td_kspjong_basic.f16013         LIKE    CONCAT( #{searchCode}, '%' )        /* 단축코드 */
+                )
+        </if>
 
         <if test= 'f34239 != null  and  f34239 != "" ' >
            AND  td_kspjong_basic.market_id      LIKE    CONCAT( '_' , LPAD( #{f34239}, 3, '0' ) , '%' )      /* 거래량시장 ID = ETP기초지수MID */           
@@ -197,7 +206,16 @@
           FROM  td_future_basic
          WHERE  1 = 1
 
+        <if test= 'f16012 != null  and  f16012 != "" ' >
            AND  td_future_basic.f16012          =   #{f16012}               /* 국제표준코드 */
+        </if>
+
+        <if test= 'searchCode != null  and  searchCode != "" ' >
+           AND  (  
+                        td_future_basic.f16012          LIKE    CONCAT( #{searchCode}, '%' )        /* 국제표준코드 */
+                    OR  td_future_basic.f16013          LIKE    CONCAT( #{searchCode}, '%' )        /* 단축코드 */
+                )
+        </if>
 
         <if test= 'f34239 != null  and  f34239 != "" ' >
            AND  td_future_basic.market_id       LIKE    CONCAT( '_' , LPAD( #{f34239}, 3, '0' ) , '%' )      /* 시장 ID = ETP기초지수MID */
