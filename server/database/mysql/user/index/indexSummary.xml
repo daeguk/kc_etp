@@ -475,12 +475,12 @@
     <select id="getIndexImportanceList">
     <![CDATA[
        SELECT ITEM.ISIN_CODE
-            , ITEM.JOING_NM
+            , ITEM.JONG_NM
             , ROUND((ITEM.ITEM_AMT/TOT_ITEM.TOT_AMT * 100), 2) AS PERCNT
             , ITEM.GUBUN 
         /* 종목별 시가 총액*/  	 
         FROM(SELECT MAP.ISIN_CODE
-                    ,MAP.F16002 JOING_NM
+                    ,MAP.F16002 JONG_NM
                     ,(COMP.F03003 * COMP.F30812 * COMP.F30813 * COMP.MAP.CEILING_PERCNT * MAP.STYLE_INCLUD_PERCNT) ITEM_AMT
                     ,MAP.GUBUN
                     FROM (SELECT F12506

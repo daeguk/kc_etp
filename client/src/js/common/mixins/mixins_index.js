@@ -72,7 +72,7 @@ export  const  index_common =   {
                             data : this.results,
                             columns: [
                                 { "data": "ISIN_CODE", "orderable": true},
-                                { "data": "JOING_NM", "orderable": true },
+                                { "data": "JONG_NM", "orderable": true },
                                 { "data": "PERCNT", "orderable" : true},
                                 { "data": "GUBUN", "orderable" : true},
                             ]
@@ -141,7 +141,7 @@ export  const  index_common =   {
                     
                     if (items.length >= 10) break;
 
-                    items.push([item.JOING_NM, Number( item.PERCNT ) ]);
+                    items.push([item.JONG_NM, Number( item.PERCNT ) ]);
 
                 }
                 
