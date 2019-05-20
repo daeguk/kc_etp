@@ -11,6 +11,12 @@
 
         SELECT      /* etpDetail.getEtpBasic EtpBasic 의 기본정보를 조회한다. */
                     <include    refid="sqlEtpBasic01" />
+        <if test = '( krx_cd != null and krx_cd != "" )' >
+                ,   CASE    WHEN    td_etp_basic.f33960 =   #{krx_cd}
+                            THEN    'Y'
+                            ELSE    'N'
+                    END                                             AS  login_f33960_check
+        </if>
           FROM  td_etp_basic
          WHERE  1 = 1
          
@@ -21,7 +27,11 @@
         <if test = '( f16013 != null  and  f16013 != "" ) and ( market_id != null  and  market_id != "" )' >
            AND  td_etp_basic.f16257                 =   #{f16013}                   /* ETP기초지수코드 = 단축코드 */
            AND  td_etp_basic.f34239                 =   #{market_id}                /* ETP기초지수MID = 시장 ID  */
-        </if>         
+        </if>
+
+        <if test = '(login_f33960_check != null and login_f33960_check == "Y")' >
+           AND  td_etp_basic.f33960                 =   #{krx_cd}                   /* ETP운용사코드 */
+        </if>
 
     </select>
 
