@@ -244,6 +244,46 @@ var getCompContactList = function (req, res) {
         util.log("err=>", exception);
     }
 };
+var getIdxList = function (req, res) {
+    try {
+        console.log('EtpApply=>getIdxList 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        
+        var options = { 
+                       "idxTable":  req.query.idxTable,
+                       "idx_sym_code":  req.query.idx_sym_code
+                       };
+
+        util.log("options", JSON.stringify(options));
+
+        var stmt = mapper.getStatement('EtpRegister', 'getIdxList', options, {language:'sql', indent: '  '});
+        console.log(stmt);
+
+
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
 
 
 module.exports.getEtpApplyList = getEtpApplyList;
@@ -252,3 +292,4 @@ module.exports.getEtpApplyIndexCnt = getEtpApplyIndexCnt;
 module.exports.getEtpApplyCodeCnt = getEtpApplyCodeCnt;
 module.exports.getEtpApplyInavCnt = getEtpApplyInavCnt;
 module.exports.getCompContactList = getCompContactList;
+module.exports.getIdxList = getIdxList;

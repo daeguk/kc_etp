@@ -121,8 +121,6 @@
 ]]>	        
 </select>
 
-
-
 <select id="getMaster">
  <![CDATA[
         SELECT
@@ -387,4 +385,12 @@
    
 </insert>
 
+<select id="getIdxList" >
+    <![CDATA[
+    SELECT F12506 time, F15001 value FROM 
+    ${idxTable} 
+    WHERE TRIM(F16013) = #{idx_sym_code}   
+    ORDER BY 1 DESC LIMIT 20
+    ]]>	
+</select>
 </mapper>

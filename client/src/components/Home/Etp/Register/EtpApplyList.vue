@@ -44,20 +44,23 @@
                  <!---실제적용 테이블--->
                 <v-card flat>
                     <table id="example1" class="tbl_type">
-                        
-                        <thead>
+                         <thead>
                             <tr>
-                                <th width="2%"></th>
+                                <th width="1%"></th>
                                 <th width="1%">No</th>
                                 <th style="display: none">seq</th>
                                 <th style="display: none">inst_cd</th>
-                                <th width="15%">발행사</th>
-                                <th width="40%">종목명</th>
-                                <th>신청일</th>
-                                <th width="10%">국내/해외</th>
-                                <th width="10%">기초지수</th>
-                                <th></th>
-                                <th></th>
+                                <th style="display: none">idx_mid</th>
+                                <th style="display: none">idx_sym_code</th>
+                                <th style="display: none">ridx_dist_sym_code</th>
+                                <th width="12%">발행사</th>
+                                <th width="20%">종목명</th>
+                                <th width="8%">신청일</th>
+                                <th width="8%">국내/해외</th>
+                                <th width="10">기초지수</th>
+                                <th width="14%" class="txt_left">신청현황</th>
+                                <th width="18%"></th>
+                                <th width="08%"></th>
                             </tr>
                         </thead>
                     </table>
@@ -68,281 +71,13 @@
                     </v-card-actions>
                 </v-card>
                 <!---실제적용 테이블end--->
-                <!---ex 테이블--->
-                <v-card flat>
-                    <table id="example1" class="tbl_type">
-                        <thead>
-                            <tr>
-                                <th width="2%"></th>
-                                <th width="1%">No</th>
-                                <th style="display: none">seq</th>
-                                <th style="display: none">inst_cd</th>
-                                <th width="15%" class="txt_left">발행사</th>
-                                <th width="40%" class="txt_left">종목명</th>
-                                <th width="15%" class="txt_left">신청현황</th>
-                                <th width="18%"></th>
-                                <th width="10%"></th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                             <tr>
-                                 <td></td>
-                                  <td></td>
-                                   <td></td>
-                                    <td></td>
-                                     <td  class="txt_left"></td>
-                                      <td class="txt_left"></td>
-                                       <td class="txt_left">담당자 접수 중</td>
-                                        <td>
-                                            <div class="v-input v-input--range-slider v-input--slider v-input--slider--ticks v-input--slider--ticks-labels v-input--is-label-active v-input--is-dirty v-input--is-readonly theme--light">
-                                            <div class="v-input__control">
-                                                <div class="v-input__slot">
-                                                    <div class="v-slider">
-                                                        <input role="slider" value="0" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
-                                                        <input role="slider" value="1" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
-                                                        <input role="slider" value="2" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
-                                                        <div class="v-slider__track__container">
-                                                            <div class="v-slider__track" style="left: 0px; right: auto; width: 100%;"></div>
-                                                        </div>
-                                                    <div class="v-slider__ticks-container">
-                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 0%;"><span>신청</span></span>
-                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 33%;"><span>지수</span></span>
-                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 66%;"><span>코드</span></span>
-                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 100%;"><span>iNAV</span></span>
-                                                     </div>
-                                                         <div class="v-slider__thumb-container primary--text" style="left: 0%;">
-                                                                <div class="v-slider__thumb select_on primary"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                <td><div class='tooltip'><button type='button' id='pdf' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>기초지수</span></div>
-                                <div class='tooltip'><button type='button' id='pdf' class='btn_icon v-icon material-icons'>trending_up</button><span class='tooltiptext' style='width:70px;'>iNAV</span></div></td>
-                            </tr>
-                            <tr>
-                                 <td></td>
-                                  <td></td>
-                                   <td></td>
-                                    <td></td>
-                                     <td></td>
-                                      <td></td>
-                                       <td class="txt_left">표준코드 입력대기 중</td>
-                                        <td>
-                                            <div class="v-input v-input--range-slider v-input--slider v-input--slider--ticks v-input--slider--ticks-labels v-input--is-label-active v-input--is-dirty v-input--is-readonly theme--light">
-                                            <div class="v-input__control">
-                                                <div class="v-input__slot">
-                                                    <div class="v-slider">
-                                                        <input role="slider" value="0" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
-                                                        <input role="slider" value="1" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
-                                                        <input role="slider" value="2" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
-                                                        <div class="v-slider__track__container">
-                                                            <div class="v-slider__track" style="left: 0px; right: auto; width: 100%;"></div>
-                                                            <div class="v-slider__track-fill primary" style="left: 0%; right: auto; width: calc(33% - 0px);"></div>
-                                                        </div>
-                                                    <div class="v-slider__ticks-container">
-                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 0%;"><span>신청</span></span>
-                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 33%;"><span>지수</span></span>
-                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 66%;"><span>코드</span></span>
-                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 100%;"><span>iNAV</span></span>
-                                                     </div>
-                                                         <div class="v-slider__thumb-container primary--text" style="left: 0%;">
-                                                                <div class="v-slider__thumb primary"></div>
-                                                        </div>
-                                                         <div class="v-slider__thumb-container primary--text" style="left: 33%;">
-                                                            <div class="v-slider__thumb select_on primary "></div>
-                                                        </div>
-                                                        
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                <td></td>
-                            </tr>
-                             <tr>
-                                 <td></td>
-                                  <td></td>
-                                   <td></td>
-                                    <td></td>
-                                     <td></td>
-                                      <td></td>
-                                       <td class="txt_left">iNAV/iIV산출대기중</td>
-                                        <td>
-                                            <div class="v-input v-input--range-slider v-input--slider v-input--slider--ticks v-input--slider--ticks-labels v-input--is-label-active v-input--is-dirty v-input--is-readonly theme--light">
-                                                <div class="v-input__control">
-                                                    <div class="v-input__slot">
-                                                        <div class="v-slider">
-                                                            <input role="slider" value="0" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
-                                                            <input role="slider" value="1" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
-                                                            <input role="slider" value="2" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
-                                                            <div class="v-slider__track__container">
-                                                                <div class="v-slider__track" style="left: 0px; right: auto; width: 100%;"></div>
-                                                                <div class="v-slider__track-fill primary" style="left: 0%; right: auto; width: calc(33% - 0px);"></div>
-                                                                <div class="v-slider__track-fill primary" style="left: 0%; right: auto; width: calc(66% - 0px);"></div>
-                                                            </div>
-                                                            <div class="v-slider__ticks-container">
-                                                                <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 0%;"><span>신청</span></span>
-                                                                <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 33%;"><span>지수</span></span>
-                                                                <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 66%;"><span>코드</span></span>
-                                                                <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 100%;"><span>iNAV</span></span>
-                                                            </div>
-                                                            <div class="v-slider__thumb-container primary--text" style="left: 0%;">
-                                                                <div class="v-slider__thumb primary"></div>
-                                                            </div>
-                                                            <div class="v-slider__thumb-container primary--text" style="left: 33%;">
-                                                                <div class="v-slider__thumb primary"></div>
-                                                            </div>
-                                                            <div class="v-slider__thumb-container primary--text" style="left: 66%;">
-                                                                <div class="v-slider__thumb select_on primary"></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td></td>
-                                    </tr>
-                                <tr>
-                                 <td></td>
-                                  <td></td>
-                                   <td></td>
-                                    <td></td>
-                                     <td></td>
-                                      <td></td>
-                                       <td class="txt_left">iNAV/iIV산출대기중</td>
-                                        <td>
-                                            <div class="v-input v-input--range-slider v-input--slider v-input--slider--ticks v-input--slider--ticks-labels v-input--is-label-active v-input--is-dirty v-input--is-readonly theme--light">
-                                            <div class="v-input__control">
-                                                <div class="v-input__slot">
-                                                    <div class="v-slider">
-                                                        <input role="slider" value="0" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
-                                                        <input role="slider" value="1" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
-                                                        <input role="slider" value="2" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">
-                                                        
-                                                        <div class="v-slider__track__container">
-                                                            <div class="v-slider__track" style="left: 0px; right: auto; width: 100%;"></div>
-                                                            <div class="v-slider__track-fill primary" style="left: 0%; right: auto; width: calc(33% - 0px);"></div>
-                                                            <div class="v-slider__track-fill primary" style="left: 0%; right: auto; width: calc(66% - 0px);"></div>
-                                                            <div class="v-slider__track-fill primary" style="left: 0%; right: auto; width: calc(100% - 0px);"></div>
-                                                        </div>
-                                                    <div class="v-slider__ticks-container">
-                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 0%;"><span>신청</span></span>
-                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 33%;"><span>지수</span></span>
-                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 66%;"><span>코드</span></span>
-                                                            <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 100%;"><span>iNAV</span></span>
-                                                     </div>
-                                                         <div class="v-slider__thumb-container primary--text" style="left: 0%;">
-                                                                <div class="v-slider__thumb primary"></div>
-                                                        </div>
-                                                         <div class="v-slider__thumb-container primary--text" style="left: 33%;">
-                                                            <div class="v-slider__thumb primary"></div>
-                                                        </div>
-                                                        <div class="v-slider__thumb-container primary--text" style="left: 66%;">
-                                                            <div class="v-slider__thumb primary"></div>
-                                                        </div>
-                                                        <div class="v-slider__thumb-container primary--text" style="left: 100%;">
-                                                            <div class="v-slider__thumb select_on primary"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </v-card>
-                <!---ex테이블end--->
-                <template slot="items" slot-scope="props">
-                    <td>
-                        <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
-                    </td>
-                    <td class="text-xs-center">{{ props.index+1 }}</td>
-                    <td class="text-xs-left" >{{ props.item.isu_kor_nm }}</td>
-                    <td class="text-xs-left">{{ props.item.req_date }}</td>
-                    <td class="text-xs-left">{{ props.item.kor_for_type }}</td>
-                    <td class="text-xs-center"></td>
-
-                </template>
-                        <v-dialog v-model="dialog3" persistent max-width="550">
-                            <!---기초지수 팝업 내용-->
-                            <v-card>
-                                <h5>
-                                    <v-card-title ma-0>
-                                        기초지수 
-                                        <v-spacer></v-spacer>
-                                        <v-btn icon dark @click="dialog3 = false">
-                                            <v-icon>close</v-icon>
-                                        </v-btn>
-                                    </v-card-title>
-                                </h5>
-                                <v-card flat>
-                                  <v-data-table
-                                        class="elevation-1 table_line4"
-                                        :items="idxList"
-                                      
-                                    >
-                                      <template slot="items" slot-scope="props" >
-                                            <td class="text-xs-center">>{{props.item.idx}}</td>
-                                            <td class="text-xs-center"></td>
-                                            <td class="text-xs-center"></td>
-                                            <td class="text-xs-center"></td>
-                                        <v-alert
-                                            v-slot:no-results
-                                            :value="true"
-                                            color="error"
-                                            icon="warning"
-                                        ></v-alert>
-                                     </template>    
-                                    </v-data-table>
-                                </v-card>
-                                <v-card class="pop_bot_h"></v-card>
-                            </v-card>
-                            <!---기초지수 팝업 내용-end-->
-                        </v-dialog>
-                        <v-dialog v-model="dialog2" persistent max-width="550">
-                            <!---발행사 담당자 연락처 팝업 내용-->
-                            <v-card>
-                                <h5>
-                                    <v-card-title ma-0>
-                                        발행사 담당자 연락처
-                                        <v-spacer></v-spacer>
-                                        <v-btn icon dark @click="dialog2 = false">
-                                            <v-icon>close</v-icon>
-                                        </v-btn>
-                                    </v-card-title>
-                                </h5>
-                                <v-card flat>
-                                    <v-data-table
-                                        hide-actions
-                                        class="elevation-1 table_line4"
-                                        :items="compContactList"
-                                        
-                                    >   
-                                    <template slot="items" slot-scope="props" >
-                                        <td class="text-xs-center" >{{props.item.USER_NM}}</td>
-                                        <td class="text-xs-center">{{props.item.TEL_NO}}</td>
-                                        <td class="text-xs-center">{{props.item.CEL_NO}}</td>
-                                        <td class="text-xs-center">{{props.item.EMAIL}}</td>
-                                       
-                                    </template>    
-                                     <v-alert
-                                            v-slot:no-results
-                                            :value="true"
-                                            color="error"
-                                            icon="warning"
-                                        ></v-alert>
-                                    </v-data-table>
-                                </v-card>
-                                <v-card class="pop_bot_h"></v-card>
-                            </v-card>
-                            <!---발행사 담당자 연락처 팝업 내용end-->
-                    </v-dialog>
-            </v-flex>
+                <!---회사 연락처 팝업 --->
+                <companyContactModal :companyContactModal="this.companyContactModal" @close="hideContactkPop"></companyContactModal>
+                <!-- 회사 연락처 팝업   end  -->
+                <!---기초지수 팝업 내용 --->
+                <idxConfirmModal :idxConfirmModal="this.idxConfirmModal" @close="hideIdxListPop"></idxConfirmModal>
+                <!-- 기초지수 팝업 내용  end  -->
+             </v-flex>
         </v-layout>
     </v-container>
 </template>
@@ -352,6 +87,8 @@ import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import Config from "@/js/config.js";
+import companyContactModal from "./companyContactModal";
+import idxConfirmModal from "./idxConfirmModal";
 var table = null;
 
 export default {
@@ -369,12 +106,24 @@ export default {
             dialog2: false,
             dialog3: false,
             items1: ["실시간", "종가"],
-            compContactList : [],
+             companyContactModal:{
+                dialog: false,
+                instCd: '',
+            },
+            idxConfirmModal:{
+                dialog: false,
+                idxTable: '',
+                idxSymCode: '',
+                ridxDistSymCode: '',
+            },
             idxList :[]
 
         };
     },
-    components: {},
+    components: {
+        companyContactModal,
+        idxConfirmModal
+    },
     computed: {},
     created: function() {
     },
@@ -424,53 +173,130 @@ export default {
                           
                    
                                columnDefs: [
-                                    {  
+                                {  
                                         "data": "num",
                                         "render": function ( data, type, row ,meta) {
                                             return meta.row + meta.settings._iDisplayStart + 1;
                                         },   
                                         "targets": 1 
-                                    },
-                                    
-                                  
+                                },
+                                // {
+                                //     "render": function ( data, type, row ) {
+                                //        let shtml = '' ;
+                                //        return shtml = "<a href='#' ></a>";
+                                //     },
+                                //      "targets": 7
+                                // },
                                 {  
                                     "render": function ( data, type, row ) {
-                                        var etpType = (row.etp_type == "ETN")  ? "iIV" : "iNAV" ;
-                                        let shtml = "" ;
-                                        if (row.isin_stat_cd == "0001"|| row.isin_stat_cd == "0008" ) {
-                                            shtml += "<button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='off'>기초지수</button><button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='off'>" + etpType + "</button>"; 
-                                        }else if(row.isin_stat_cd == "0002" || row.isin_stat_cd == "0003" ){
-                                             shtml += "<button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='on'>기초지수</button><button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='off'>" + etpType + "</button>"; 
+                                        let shtml = '' ;
+                                        if (row.isin_stat_cd == "0001"){ 
+                                           shtml += '담당자 접수 중' ;
+                                        }else if(row.isin_stat_cd == "0002"){
+                                           shtml += '표준코드 입력대기 중' ;                                            
+                                        }else if(row.isin_stat_cd == "0003"){
+                                           shtml += 'iNAV/iIV산출대기중' ;                                            
                                         }else if(row.isin_stat_cd == "0004"){
-                                            shtml += "<button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='on'>기초지수</button><button type='button' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01' v-on='on'>" + etpType + "</button>"; 
+                                           shtml += 'iNAV/iIV 산출테스트 중' ;                                            
+                                        }else if(row.isin_stat_cd == "0008"){
+                                           shtml += '상장보류' ;                                            
                                         }
                                         return shtml;
-                                    },   
-                                    "targets": 9 
-                                },  
+                                        }, 
+                                    "targets": 12
+                                },
                                                                 {  
-                                    "render": function ( data, type, row ) {
-                                         let shtml = '' ;
-                                         shtml += '<td> <div class="progress"> <ol>' ;
-                                         if (row.isin_stat_cd == "0001"){ 
-                                            shtml += '<li class="on"><span><b>신청</b> : 담당자 접수중</span></li><li ><span> <b>지수</b></span></li><li ><span> <b>코드</b></span></li><li class="last"><span><b>iNAV</b></span></li>' ;
-                                         }else if(row.isin_stat_cd == "0002"){
-                                            shtml += '<li class="on"><span><b>신청</b></span></li><li class="on"><span> <b>지수 </b>: 표준코드 입력대기중</span></li><li ><span> <b>코드</b></span></li><li class="last"><span><b>iNAV</b></span></li>' ;                                            
-                                         }else if(row.isin_stat_cd == "0003"){
-                                            shtml += '<li class="on"><span><b>신청</b></span></li><li class="on"><span> <b>지수 </b></span></li><li class="on"><span> <b>코드</b>: iNAV/iIV 산출대기중</span></li><li class="last"><span><b>iNAV</b></span></li>' ;                                            
-                                         }else if(row.isin_stat_cd == "0004"){
-                                            shtml += '<li class="on"><span><b>신청</b></span></li><li class="on"><span> <b>지수</b></span></li><li class="on"><span><b>코드</b></span></li><li class="on_last"><span><b>iNAV</b> : iNAV/iIV 산출테스트 중 </span></li>' ;                                            
-                                         }else if(row.isin_stat_cd == "0008"){
-                                            shtml += '상장보류' ;                                            
-                                         }
-                                         shtml += '</ol></div></td>' ;
-                                         return shtml;
-                                    },   
-                                    "targets": 10 
-                                },  
-                            ],
+                                "render": function ( data, type, row ) {
+                                        var shtml = '' ;
+                                        shtml += '<div class="v-input v-input--range-slider v-input--slider v-input--slider--ticks v-input--slider--ticks-labels v-input--is-label-active v-input--is-dirty v-input--is-readonly theme--light">'
+                                        shtml += ' <div class="v-input__control"> ' 
+                                        shtml += '        <div class="v-input__slot">'
+                                        shtml += '            <div class="v-slider">'
+                                        shtml += '                <input role="slider" value="0" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">'
+                                        shtml += '                <input role="slider" value="1" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">'
+                                        shtml += '                <input role="slider" value="2" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">'
+                                        shtml += '                <div class="v-slider__track__container">'
+    
+                                        var ahtml1='',ahtml2='',ahtml3='',ahtml4 = '' ;
+                                        ahtml1 = '                <div class="v-slider__track" style="left: 0px; right: auto; width: 100%;"></div>' ;
+                                        ahtml2 = '                <div class="v-slider__track-fill primary" style="left: 0%; right: auto; width: calc(33% - 0px);"></div>' ;
+                                        ahtml3 = '                <div class="v-slider__track-fill primary" style="left: 0%; right: auto; width: calc(66% - 0px);"></div>'  ;
+                                        ahtml4 = '                <div class="v-slider__track-fill primary" style="left: 0%; right: auto; width: calc(100% - 0px);"></div>'  ;
+    
+                                        if (row.isin_stat_cd == "0001"){    
+                                            shtml += ahtml1 
+                                        } else if (row.isin_stat_cd == "0002"){    
+                                            shtml += ahtml1 + ahtml2               
+                                        } else if (row.isin_stat_cd == "0003"){    
+                                            shtml += ahtml1 + ahtml2 + ahtml3              
+                                        } else if (row.isin_stat_cd == "0004"){    
+                                            shtml += ahtml1 + ahtml2 + ahtml3 +  ahtml4                           
+                                        }        
+                                        shtml += '            </div>'
+                                        shtml += '            <div class="v-slider__ticks-container">'
+                                        shtml += '                    <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 0%;"><span>신청</span></span>'
+                                        shtml += '                    <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 33%;"><span>지수</span></span>'
+                                        shtml += '                    <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 66%;"><span>코드</span></span>'
+                                        shtml += '                    <span class="v-slider__ticks v-slider__ticks--always-show" style="border-width: 1px; left: 100%;"><span>iNAV</span></span>'
+                                        shtml += '             </div>'
+                                        var bhtml1='',bhtml2='',bhtml3='',bhtml4 = '' ;
+                                        var selecTag1 = '',selecTag2 = '',selecTag3 = '',selecTag4 = '' ;
+                                        if (row.isin_stat_cd == "0001"){    
+                                            selecTag1  = 'select_on'   ;
+                                            selecTag2  = ''   ;
+                                            selecTag3  = ''   ;
+                                            selecTag4  = ''   ;
+                                        } else if (row.isin_stat_cd == "0002"){    
+                                            selecTag1  = ''   ;
+                                            selecTag2  = 'select_on'   ;
+                                            selecTag3  = ''   ;
+                                            selecTag4  = ''   ;
+                                        } else if (row.isin_stat_cd == "0003"){    
+                                            selecTag1  = ''   ;
+                                            selecTag2  = ''   ;
+                                            selecTag3  = 'select_on'   ;
+                                            selecTag4  = ''   ;
+                                        } else if (row.isin_stat_cd == "0004"){    
+                                            selecTag1  = ''   ;
+                                            selecTag2  = ''   ;
+                                            selecTag3  = ''   ;
+                                            selecTag4  = 'select_on'   ;                       
+                                        }                                                
+                                        bhtml1 += '                 <div class="v-slider__thumb-container primary--text" style="left: 0%;">'
+                                        bhtml1 += '                        <div class="v-slider__thumb ' + selecTag1 + ' primary"></div>'
+                                        bhtml1 += '                 </div>'
+                                        bhtml2 += '                 <div class="v-slider__thumb-container primary--text" style="left: 33%;">'
+                                        bhtml2 += '                               <div class="v-slider__thumb ' + selecTag2 +  ' primary "></div>'
+                                        bhtml2 += '                  </div>'
+                                        bhtml3 += '                 <div class="v-slider__thumb-container primary--text" style="left: 66%;">'
+                                        bhtml3 += '                        <div class="v-slider__thumb ' + selecTag3 +  ' primary"></div>'
+                                        bhtml3 += '                  </div>'
+                                        bhtml4 += '                 <div class="v-slider__thumb-container primary--text" style="left: 100%;">'
+                                        bhtml4 += '                        <div class="v-slider__thumb ' + selecTag4 +  ' primary"></div>' 
+                                        bhtml4 += '                  </div>'                                       
+                                       if (row.isin_stat_cd == "0001"){    
+                                            shtml += bhtml1 
+                                        } else if (row.isin_stat_cd == "0002"){    
+                                            shtml += bhtml1 + bhtml2               
+                                        } else if (row.isin_stat_cd == "0003"){    
+                                            shtml += bhtml1 + bhtml2 + bhtml3              
+                                        } else if (row.isin_stat_cd == "0004"){    
+                                            shtml += bhtml1 + bhtml2 + bhtml3 +  bhtml4                           
+                                        }                                                
+
+                                        shtml += '            </div>'
+                                        shtml += '        </div>'
+                                        shtml += '    </div>'
+                                        shtml += '</div>'
+                                        if(row.isin_stat_cd == "0008"){
+                                           shtml = '상장보류' ;                                            
+                                        }
+                                        return shtml;
+                                        }, 
+                                    "targets": 13
+                                },
+                             ],
                             columns: [
-                                //{ "defaultContent": "<button type='button' class='btn btn-primary btn-xs'>Trial Run</button>" },
                                 {
                                    data: "null",
                                    className: "td_in_center",
@@ -482,16 +308,23 @@ export default {
                                 { "data" : "num" , "orderable" : true },
                                 { "data" : "seq" , "orderable" : false },
                                 { "data" : "inst_cd" , "orderable" : false },
-                                { "data": "inst_nm", "orderable" : true},
-                                { "data": "isu_kor_nm", "orderable" : true },
-                                { "data": "req_date", "orderable" : true },
-                                { "data": "kor_for_type_name", "orderable" : true },
-                                { "data": "basic_idx", "orderable": true },
-                                {  data: null,className: "td_in_center", 
+                                { "data" : "idx_mid" , "orderable" : false },
+                                { "data" : "idx_sym_code" , "orderable" : false },
+                                { "data" : "ridx_dist_sym_code" , "orderable" : false },
+                                { "data" : "inst_nm", "orderable" : true, defaultContent:["<a href='#' ></a>"]},
+                                { "data" : "isu_kor_nm", "orderable" : true },
+                                { "data" : "req_date", "orderable" : true },
+                                { "data" : "kor_for_type_name", "orderable" : true },
+                                { "data" : "basic_idx", "orderable": true },
+                                {  data: null,className: "txt_left", 
                                      "orderable" : false,
                                    defaultContent: ""
                                   },
-                                { data: null, className: "checks", defaultContent: "", "orderable" : false,}
+                                { data: null, className: "", defaultContent:"" , "orderable" : false,},
+                                { data: null, className: "", defaultContent:[
+                                        '<td><div class="tooltip"><button type="button" id="pdf" class="btn_icon v-icon material-icons">equalizer</button><span class="tooltiptext" style="width:70px;">기초지수</span></div>'
+                                        + '<div class="tooltip"><button type="button" id="pdf" class="btn_icon v-icon material-icons">trending_up</button><span class="tooltiptext" style="width:70px;">iNAV</span></div></td> '
+                                        ] , "orderable" : false,}
                             ]
 
                             
@@ -499,6 +332,9 @@ export default {
                          
                         $('#example1 tbody tr td:nth-child(3)').hide();
                         $('#example1 tbody tr td:nth-child(4)').hide();
+                        $('#example1 tbody tr td:nth-child(5)').hide();
+                        $('#example1 tbody tr td:nth-child(6)').hide();
+                        $('#example1 tbody tr td:nth-child(7)').hide();
                         
                     
                         $("#example1 tbody").on('click', 'tr td:nth-child(6)', function(){
@@ -510,18 +346,32 @@ export default {
                         });
 
                     
-                        $("#example1 tbody").on('click', 'tr td:nth-child(10)', function(){
+                        //기초지수 확인팝업 
+                        $("#example1 tbody").on('click', 'tr td:nth-child(15)', function(){
                             console.log("#CLICK example1 > tbody > tr > basic index",$(this));
-                            vm.dialog3 = true;
-                        });
+                            var tr = $(this).parents();
+                            var td = tr.children();
+                            var idxMid = td.eq(4).text();
+                            var idxSymCode = td.eq(5).text();
+                            var ridxDistSymCode = td.eq(6).text();
+                            var idxTable= 'm' + idxMid + 'hbased'  ;
+                            console.log("idxModal : " + idxMid + ": " + idxTable + ": " + idxSymCode + ": " + ridxDistSymCode )
+                            vm.idxConfirmModal.idxTable = idxTable;
+                            vm.idxConfirmModal.idxSymCode = idxSymCode;
+                            vm.idxConfirmModal.ridxDistSymCode = ridxDistSymCode;
+                            vm.idxConfirmModal.dialog = true;
+                            vm.showIdxListPop();
+
+                        });                        
                         
-                        $("#example1 tbody").on('click', 'tr td:nth-child(5)', function(){
+                       //회사 연락처 팝업 
+                        $("#example1 tbody").on('click', 'tr td:nth-child(8)', function(){
                             console.log("#CLICK example1 > tbody > tr > contributor",$(this));
                             var tr = $(this).parents();
                             var td = tr.children();
-                            var instCd = td.eq(3).text(); 
-                            vm.getCompContactList(instCd);
-                            vm.dialog2 = true;
+                            var instCd = td.eq(3).text();
+                            vm.companyContactModal.instCd = instCd;
+                            vm.showContactPop();
                         });
                     }
                    // this.loadingbar = false;
@@ -602,29 +452,21 @@ export default {
 
            
         },
-        getCompContactList: function(val) {
-            var vm = this;
-            console.log("getCompContactList");
-            axios.get(Config.base_url + "/user/etp/getCompContactList", {
-                    params: {
-                        inst_cd : val
-                    }
-            }).then(response => {
-                     console.log(response);
-
-                if (response.data.success == false) {
-                    
-                } else {
-                    vm.compContactList = response.data.results ;
-                    console.log("getCompContactList=" + vm.compContactList );
-                }
-
-                 
-            });
-
-           
-        }
-      
+       showContactPop: function() {
+           this.companyContactModal.dialog = true;
+           this.$EventBus.$emit('contactModal');
+           //this.$refs.refCompanyContactModal.getCompanyContactList();
+        },
+        hideContactkPop: function() {
+            this.companyContactModal.dialog = false;
+        },
+        showIdxListPop: function() {
+           this.idxConfirmModal.dialog = true;
+           this.$EventBus.$emit('idxListModal');
+         },
+        hideIdxListPop: function() {
+            this.idxConfirmModal.dialog = false;
+        },      
        
 
           
