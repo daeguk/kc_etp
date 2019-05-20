@@ -111,38 +111,38 @@
                     <div class="indexinfo_box01">
                     <v-card flat class="indexinfo_list_table">
                         <v-layout v-if="results.length >= 1">
-                                <v-flex xs3><v-icon :style="{color:importance_colors[0]}" class="lineh">fiber_manual_record</v-icon>{{results[0].JOING_NM}}</v-flex>
+                                <v-flex xs3><v-icon :style="{color:importance_colors[0]}" class="lineh">fiber_manual_record</v-icon>{{results[0].JONG_NM}}</v-flex>
                                 <v-flex xs2 class="text_r">{{results[0].PERCNT}}%</v-flex>
                                 <v-flex xs2></v-flex>
-                                <v-flex xs3 v-if="results.length >= 2"><v-icon :style="{color:importance_colors[1]}" class="lineh">fiber_manual_record</v-icon>{{results[1].JOING_NM}}</v-flex>
+                                <v-flex xs3 v-if="results.length >= 2"><v-icon :style="{color:importance_colors[1]}" class="lineh">fiber_manual_record</v-icon>{{results[1].JONG_NM}}</v-flex>
                                 <v-flex xs2 class="text_r" v-if="results.length >= 2">{{results[1].PERCNT}}%</v-flex>     
                         </v-layout>    
                         <v-layout v-if="results.length >= 3">
-                                <v-flex xs3><v-icon :style="{color:importance_colors[2]}" class="lineh">fiber_manual_record</v-icon>{{results[2].JOING_NM}}</v-flex>
+                                <v-flex xs3><v-icon :style="{color:importance_colors[2]}" class="lineh">fiber_manual_record</v-icon>{{results[2].JONG_NM}}</v-flex>
                                 <v-flex xs2 class="text_r">{{results[2].PERCNT}}%</v-flex>
                                 <v-flex xs2></v-flex>
-                                <v-flex xs3 v-if="results.length >= 4"><v-icon :style="{color:importance_colors[3]}" class="lineh">fiber_manual_record</v-icon>{{results[3].JOING_NM}}</v-flex>
+                                <v-flex xs3 v-if="results.length >= 4"><v-icon :style="{color:importance_colors[3]}" class="lineh">fiber_manual_record</v-icon>{{results[3].JONG_NM}}</v-flex>
                                 <v-flex xs2 class="text_r" v-if="results.length >= 4">{{results[3].PERCNT}}%</v-flex>     
                         </v-layout>    
                         <v-layout v-if="results.length >= 5">
-                                <v-flex xs3><v-icon :style="{color:importance_colors[4]}" class="lineh">fiber_manual_record</v-icon>{{results[4].JOING_NM}}</v-flex>
+                                <v-flex xs3><v-icon :style="{color:importance_colors[4]}" class="lineh">fiber_manual_record</v-icon>{{results[4].JONG_NM}}</v-flex>
                                 <v-flex xs2 class="text_r">{{results[4].PERCNT}}%</v-flex>
                                 <v-flex xs2></v-flex>
-                                <v-flex xs3 v-if="results.length >= 6"><v-icon :style="{color:importance_colors[5]}" class="lineh">fiber_manual_record</v-icon>{{results[5].JOING_NM}}</v-flex>
+                                <v-flex xs3 v-if="results.length >= 6"><v-icon :style="{color:importance_colors[5]}" class="lineh">fiber_manual_record</v-icon>{{results[5].JONG_NM}}</v-flex>
                                 <v-flex xs2 class="text_r" v-if="results.length >= 6">{{results[5].PERCNT}}%</v-flex>     
                         </v-layout>    
                         <v-layout v-if="results.length >= 7">
-                                <v-flex xs3><v-icon :style="{color:importance_colors[6]}" class="lineh">fiber_manual_record</v-icon>{{results[6].JOING_NM}}</v-flex>
+                                <v-flex xs3><v-icon :style="{color:importance_colors[6]}" class="lineh">fiber_manual_record</v-icon>{{results[6].JONG_NM}}</v-flex>
                                 <v-flex xs2 class="text_r">{{results[6].PERCNT}}%</v-flex>
                                 <v-flex xs2></v-flex>
-                                <v-flex xs3 v-if="results.length >= 8"><v-icon :style="{color:importance_colors[7]}" class="lineh">fiber_manual_record</v-icon>{{results[7].JOING_NM}}</v-flex>
+                                <v-flex xs3 v-if="results.length >= 8"><v-icon :style="{color:importance_colors[7]}" class="lineh">fiber_manual_record</v-icon>{{results[7].JONG_NM}}</v-flex>
                                 <v-flex xs2 class="text_r" v-if="results.length >= 8">{{results[7].PERCNT}}%</v-flex>     
                         </v-layout>    
                         <v-layout v-if="results.length >= 9">
-                                <v-flex xs3><v-icon :style="{color:importance_colors[8]}" class="lineh">fiber_manual_record</v-icon>{{results[8].JOING_NM}}</v-flex>
+                                <v-flex xs3><v-icon :style="{color:importance_colors[8]}" class="lineh">fiber_manual_record</v-icon>{{results[8].JONG_NM}}</v-flex>
                                 <v-flex xs2 class="text_r">{{results[8].PERCNT}}%</v-flex>
                                 <v-flex xs2></v-flex>
-                                <v-flex xs3 v-if="results.length >= 10"><v-icon :style="{color:importance_colors[9]}" class="lineh">fiber_manual_record</v-icon>{{results[9].JOING_NM}}</v-flex>
+                                <v-flex xs3 v-if="results.length >= 10"><v-icon :style="{color:importance_colors[9]}" class="lineh">fiber_manual_record</v-icon>{{results[9].JONG_NM}}</v-flex>
                                 <v-flex xs2 class="text_r" v-if="results.length >= 10">{{results[9].PERCNT}}%</v-flex>     
                         </v-layout>                       
                     </v-card>
