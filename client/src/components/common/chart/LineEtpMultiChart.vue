@@ -696,8 +696,8 @@ export default {
       // 마우스 이동시 툴팁 처리
       mouseMove: function(event) {
         var c = this.ctx;
-        var _mwpos = event.clientX-this.mrect.left;
-        var _mhpos = event.clientY-this.mrect.top;
+        var _mwpos = event.pageX-this.mrect.left;
+        var _mhpos = event.pageY-this.mrect.top;
         c.putImageData(this.draw_chart_image, this.crect.x1, this.crect.y1-10);
         if(this.selectGuideCheck(_mwpos, _mhpos) !== -1) {
           // console.log("Got.......... guide");
@@ -857,15 +857,18 @@ export default {
         return this.chartDataHPosArr1[i];
       },
       mouseClick: function(event) {
-        // console.log("mouseClick..........");
-        var _mwpos = event.clientX-this.mrect.left;
-        var _mhpos = event.clientY-this.mrect.top;
+        console.log("mouseClick..........");
+        var _mwpos = event.pageX-this.mrect.left;
+        var _mhpos = event.pageY-this.mrect.top;
         var selectMode = 0;
         var selectTerm = 0;
 
+console.log("pageX : " + event.pageX + " pageY : " +event.pageY);
+console.log("left : " + this.mrect.left + " top : " + this.mrect.top);
+console.log("wpos : " + _mwpos + " hpos : " + _mhpos);
         selectMode = this.selectModeCheck(_mwpos, _mhpos);
         if(selectMode !== -1) {
-          // console.log("selectMode : " + selectMode);
+          console.log("selectMode : " + selectMode);
           if(selectMode !== this.dmode) {
             this.dmode = selectMode;
             return;
@@ -874,7 +877,7 @@ export default {
 
         selectTerm = this.selectTermCheck(_mwpos, _mhpos);
         if(selectTerm !== -1) {
-          // console.log("selectTerm : " + selectTerm);
+          console.log("selectTerm : " + selectTerm);
           if(selectTerm !== this.dterm) {
             this.dterm = selectTerm;
             return;

@@ -929,12 +929,6 @@ var getEtpOperPdfModify = function(req, res) {
                     console.log( err );
                 }else{
 
-                    if( resultMsg.dataList && resultMsg.dataList.length >0 ) {
-                        if( resultMsg.etpBasic && Object.keys( resultMsg.etpBasic ).length > 0 ) {
-                            resultMsg.etpBasic.f16583   =   resultMsg.dataList[0].f16583;
-                        }
-                    }
-
                     resultMsg.result    =   true;
                     resultMsg.msg       =   "";
                     resultMsg.err       =   null;
@@ -1536,8 +1530,8 @@ var saveEtpOperPdfModify = function(req, res) {
                 if( txerr ) {
                     return console.error( txerr );
                 }            
-
-
+console.log( ">>>>>>>>>>>>>>>>>>>>>>>>>>" );
+console.log( paramData.allDataList );
                 async.forEachOfLimit( paramData.allDataList, 1, function ( subList, index, callback ){
 
                     var paramData = {
@@ -1555,6 +1549,8 @@ var saveEtpOperPdfModify = function(req, res) {
                     paramData.large_type    =   req.session.large_type;
                     paramData.krx_cd        =   req.session.krx_cd;
                     paramData.hist_no       =   "";
+
+                    console.log( paramData );
 
                     async.waterfall([
 

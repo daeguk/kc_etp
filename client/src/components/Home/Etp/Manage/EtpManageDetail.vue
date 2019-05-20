@@ -59,23 +59,6 @@
                             <p>Last Updated : {{etpBasic.f12506}}</p>
                         </div>
                         <LineEtpMultiChart :etpBasic="etpBasic"></LineEtpMultiChart>
-                        <v-card flat class="graph_toggle">
-                            <v-flex xs12 sm6 class="py-2">
-                                <v-btn-toggle v-model="toggle_one" class="toggle_01">
-                                    <v-btn flat value="1D" v-on:click="fn_getEtpChartData('1D')">1D</v-btn>
-                                    <v-btn flat value="1W" v-on:click="fn_getEtpChartData('1W')">1W</v-btn>
-                                    <v-btn ref="etpBtn_1m" flat value="1M" v-on:click.stop="fn_getEtpChartData('1M')">1M</v-btn>
-                                    <v-btn flat value="3M" v-on:click="fn_getEtpChartData('3M')">3M</v-btn>
-                                    <v-btn flat value="6M" v-on:click="fn_getEtpChartData('6M')">6M</v-btn>
-                                    <v-btn flat value="1Y" v-on:click="fn_getEtpChartData('1Y')">1Y</v-btn>
-                                    <v-btn flat value="Total" v-on:click="fn_getEtpChartData('TOTAL')">Total</v-btn>
-                                </v-btn-toggle>
-                            </v-flex>
-                        </v-card>
-                        <div
-                            id="etp_chart_div"
-                            class="graph_01"
-                        ></div>
                     </div>
                     <div class="tab2_w">
                         <v-layout row wrap>
@@ -230,7 +213,6 @@ export default {
                 )   {
                    // vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
                     vm.fn_getEtpBasic();                /* ETP 의 기본정보를 조회한다. */
-                    // vm.fn_getEtpChartData('1M');        /* ETP 차트 정보를 조회한다. */
                 }
                 if (event) {
                     // 분석정보 실행
@@ -256,95 +238,6 @@ export default {
                     vm.showEtpManageDetailDialogBySub   =   true;
                 }
             });
-        },
-        /*
-         * ETP 차트 정보를 조회한다.
-         * 2019-04-25  bkLove(촤병국)
-         */
-        fn_getEtpChartData: function( term ) {
-            console.log("fn_getEtpChartData");
-            var vm = this;
-            // Load the Visualization API and the corechart package.
-            google.charts.load('current', {'packages':['corechart']});
-            // 주기 디폴트
-            if (!term) term = '1M';
-            // Set a callback to run when the Google Visualization API is loaded.
-            google.charts.setOnLoadCallback( 
-                drawChart( 
-                    vm.basicData
-                )
-            );
-            // Callback that creates and populates a data table,
-            // instantiates the pie chart, passes in the data and
-            // draws it.
-      
-            function drawChart( basicData ) {
-                
-                
-                // Create the data table.
-                var data = new google.visualization.DataTable();
-                // Set chart options
-                var options = {
-                    'title':' ',
-                    'width':'100%',
-                    'height':'300px',
-                    'hAxis':{format:'yyyy-MM-dd HH:mm:ss'}
-                };
- 
-                
-                axios.post(Config.base_url + "/user/etp/getEtpChartData", {                    
-                    data: {
-                            basicData   :   basicData
-                        ,   term        :   term            /* 기간정보 */
-                    }
-                }).then(response => {
-                    if( response.data ) {
-                        var chartList   =   response.data.chartList;
-                        if( chartList == null || chartList.length == 0 ) {
-                            data.addColumn('string', "date" );
-                            data.addColumn('number', "" );
-                        }
-                        var items = [] 
-                        if( chartList && chartList.length > 0 ) {
-                            var fmt_yyyymmdd = chartList[0].fmt_yyyymmdd;
-                            var etp_nm = chartList[0].etp_nm;
-                            var index_nm = chartList[0].index_nm;
-                            data.addColumn('string', "date" );
-                            data.addColumn('number', etp_nm );
-                            // index 정보가 있으면 추가
-                            if ( index_nm != null ) {
-                                data.addColumn('number', index_nm );
-                            }
-                            for ( let item of chartList ) {
-                                // 1D 경우 가로축에 시간단위가 노출
-                                if( term == "1D" ) {
-                                    // index 정보가 있으면 추가
-                                    if ( index_nm != null ) {
-                                        items.push( [ item.hh24, Number( item.now_price ), Number( item.index_now_price ) ] );
-                                    }else{
-                                        items.push( [ item.hh24, Number( item.now_price ) ] );
-                                    }
-                                }
-                                // 1D가 아닌 경우 가로축에 일자단위 노출
-                                else{
-                                    // index 정보가 있으면 추가
-                                    if ( index_nm != null ) {
-                                        items.push( [ item.fmt_yyyymmdd, Number( item.now_price ), Number( item.index_now_price ) ] );
-                                    }else{
-                                        items.push( [ item.fmt_yyyymmdd, Number( item.now_price ) ] );
-                                    }
-                                }
-                            }
-                        }
-                        data.addRows(
-                            items
-                        );
-                        // Instantiate and draw our chart, passing in some options.
-                        var chart = new google.visualization.LineChart(document.getElementById('etp_chart_div'));
-                        chart.draw(data, options);
-                    }
-                });   
-            }
         },
         /*
          * 이전화면으로 되돌린다.
