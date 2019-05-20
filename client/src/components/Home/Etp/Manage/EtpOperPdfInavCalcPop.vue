@@ -313,7 +313,7 @@ export default {
 
                             market_tot_amt += jongItem.market_amt;
 
-                            console.log("index:" + index + "length:" + vm.pdfList.length-1);
+                            
                             if (index == (vm.pdfList.length-1)) {                                
                                 vm.pdf_reload(vm.pdfList);                                                        
                                 vm.market_tot_amt = market_tot_amt;
@@ -392,7 +392,7 @@ export default {
 
                     market_tot_amt += jongItem.market_amt;
 
-                    console.log("index:" + index + "length:" + vm.pdfList.length-1);
+                    
                     if (index == (vm.pdfList.length-1)) {                                
                         vm.pdf_reload(vm.pdfList);
                         vm.market_tot_amt = market_tot_amt;
