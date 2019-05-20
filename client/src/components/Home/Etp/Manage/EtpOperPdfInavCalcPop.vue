@@ -107,8 +107,8 @@
             <table id="pdf_table" class="tbl_type" style="width:100%">
                 <colgroup>
                     <col width="8%">
-                    <col width="15%">
-                    <col width="15%">
+                    <col width="10%">
+                    <col width="20%">
                     <col width="15%">
                     <col width="7%">
                     <col width="10%">
@@ -217,17 +217,7 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = ""
                             
-                        htm = util.formatNumber(data);
-
-                        return htm;
-                    },
-                    "targets": [5, 7]
-                },
-                {  
-                    "render": function ( data, type, row ) {
-                        let htm = ""
-                            
-                            htm = util.formatNumber(data);
+                            htm += util.formatNumber(data);
 
                             if (row.f15004 >= 0) {
                                 htm += "<br><span class='text_S text_red'>"+row.f15004+"%</span>";
@@ -237,8 +227,19 @@ export default {
 
                             return htm;
                             },
-                    "targets": 6
+                    "targets": 5
                 },
+                {  
+                    "render": function ( data, type, row ) {
+                        let htm = ""
+                            
+                        htm = util.formatNumber(data);
+
+                        return htm;
+                    },
+                    "targets": [6, 7]
+                },
+                
                 
             ],
             select: {
@@ -249,7 +250,7 @@ export default {
             searching: false,
             columns: [
                 { "data": "f33861", "orderable": true},  /* 분류 */
-                { "data": "f16316", "orderable": true, className:"txt_left" }, /*코드*/
+                { "data": "f16013", "orderable": true, className:"txt_left" }, /*코드*/
                 { "data": "f16002", "orderable": true}, /*종목*/
                 { "data": "f16499", "orderable": true, defaultContent:""}, /*cu 수량*/
                 { "data": "f34743", "orderable": true, className:"txt_right" }, /*비중*/
@@ -296,15 +297,23 @@ export default {
 
                     vm.etpBasic = response.data.etpBasic;
                     vm.pdfList = response.data.pdfList;
-
+                    
                     var market_amt = 0;
                     var market_tot_amt = 0;
                     var index = 0;
                     for (let item of vm.pdfList) {                        
-                        await vm.iNavCalulator(item).then(function(market_amt) {
-                            item.market_amt = market_amt;
-                            market_tot_amt += market_amt;
+                        await vm.iNavCalulator(item).then(function(jongItem) {
+                            /* 종목 정보 바인딩 */                            
+                            item.market_amt = jongItem.market_amt; /* 시가 총액 */
+                            item.f15001 = jongItem.f15001;  /* 현재가 */
+                            item.f15007 = jongItem.f15007;  /* 기준가 */
+                            item.f15004 = jongItem.f15004;  /* 등락률 */
+                            item.f15472 = jongItem.f15472;  /* 대비 */
+                            item.f16013 = jongItem.f16013;  /* 단축코드 */
 
+                            market_tot_amt += jongItem.market_amt;
+
+                            console.log("index:" + index + "length:" + vm.pdfList.length-1);
                             if (index == (vm.pdfList.length-1)) {                                
                                 vm.pdf_reload(vm.pdfList);                                                        
                                 vm.market_tot_amt = market_tot_amt;
@@ -372,10 +381,18 @@ export default {
             var market_tot_amt = 0;
             var index = 0;
             for (let item of vm.pdfList) {                        
-                await vm.iNavCalulator(item).then(function(market_amt) {
-                    item.market_amt = market_amt;
-                    market_tot_amt += market_amt;
+                await vm.iNavCalulator(item).then(function(jongItem) {
+                    /* 종목 정보 바인딩 */                            
+                    item.market_amt = jongItem.market_amt; /* 시가 총액 */
+                    item.f15001 = jongItem.f15001;  /* 현재가 */
+                    item.f15007 = jongItem.f15007;  /* 기준가 */
+                    item.f15004 = jongItem.f15004;  /* 등락률 */
+                    item.f15472 = jongItem.f15472;  /* 대비 */
+                    item.f16013 = jongItem.f16013;  /* 단축코드 */
 
+                    market_tot_amt += jongItem.market_amt;
+
+                    console.log("index:" + index + "length:" + vm.pdfList.length-1);
                     if (index == (vm.pdfList.length-1)) {                                
                         vm.pdf_reload(vm.pdfList);
                         vm.market_tot_amt = market_tot_amt;

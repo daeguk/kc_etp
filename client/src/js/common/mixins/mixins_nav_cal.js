@@ -33,9 +33,22 @@ export const nav_cal_common =   {
             if (pdf_info.f16316 == "KRD010010001") {
                 assetValue = 1
 
-                let market_tot_amt = (assetValue * Number(pdf_info.f16499));
+                let market_tot_amt = (assetValue * Number(pdf_info.f16499));  /* 시가총액 */
+                let f15001 = market_tot_amt;       /* 현재가 */
+                let f15007 = market_tot_amt;                  /* 기준가 */
+                let f15004 = 0;                     /* 등락률 */
+                let f15472 = 0;                     /* 대비 */
+                let f16013 = 'KRD';                     /* 종목코드 */
 
-                resolve(market_tot_amt);
+                let jongItem = {};
+                jongItem.market_amt = market_tot_amt;
+                jongItem.f15001 = f15001;
+                jongItem.f15007 = f15007;
+                jongItem.f15004 = f15004;
+                jongItem.f15472 = f15472;
+                jongItem.f16013 = f16013;
+
+                resolve(jongItem);
             }
             /*자산이 달러예금(USDZZ0000001)일 경우,
                 서울외국환중개에서 제공하는 현재가를 사용. 
@@ -49,11 +62,24 @@ export const nav_cal_common =   {
                 }).then(function(response) {
                     let exchBasic = response.data.results[0];
                     assetValue = Number(exchBasic.f15001); /* 현재가 */
-                    console.log("assetValue:"+assetValue);
+                    console.log("assetValue:"+assetValue);                    
+                    let market_tot_amt = (assetValue * Number(pdf_info.f16499));  /* 시가총액 */
+                    let f15001 = exchBasic.f15001;       /* 현재가 */
+                    let f15007 = exchBasic.f15007;                    /* 기준가 */
+                    let f15004 = exchBasic.f15004;                     /* 등락률 */
+                    let f15472 = exchBasic.f15472;                     /* 대비 */
+                    let f16013 = exchBasic.f16013;                     /* 종목코드 */
 
-                    let market_tot_amt = (assetValue * Number(pdf_info.f16499));
+                    let jongItem = {};
+                    jongItem.market_amt = market_tot_amt;
+                    jongItem.f15001 = f15001;
+                    jongItem.f15007 = f15007;
+                    jongItem.f15004 = f15004;
+                    jongItem.f15472 = f15472;
+                    jongItem.f16013 = f16013;
 
-                    resolve(market_tot_amt);
+
+                    resolve(jongItem);
                 }) ;
 
             }
@@ -106,9 +132,25 @@ export const nav_cal_common =   {
                         /*# 달러 / JPYUSD를 자산의 value로 SET*/
                         assetValue = assetValue / jpy_value
 
-                        let market_tot_amt = (assetValue * Number(pdf_info.f16499));
+                        let market_tot_amt = (assetValue * Number(pdf_info.f16499));  /* 시가총액 */
+                        
+                        let f15001 = ExchJPBasic.f15001;       /* 현재가 */
+                        let f15007 = ExchJPBasic.f15007;                    /* 기준가 */
+                        let f15004 = ExchJPBasic.f15004;                     /* 등락률 */
+                        let f15472 = ExchJPBasic.f15472;                     /* 대비 */
+                        let f16013 = ExchJPBasic.f16013;                     /* 종목코드 */
 
-                        resolve(market_tot_amt);
+                        let jongItem = {};
+                        jongItem.market_amt = market_tot_amt;
+                        jongItem.f15001 = f15001;
+                        jongItem.f15007 = f15007;
+                        jongItem.f15004 = f15004;
+                        jongItem.f15472 = f15472;
+                        jongItem.f16013 = f16013;
+
+
+                        resolve(jongItem);
+                        
                     }) ;
                 }) ;
             }
@@ -139,10 +181,23 @@ export const nav_cal_common =   {
                         assetValue = Number(kspjongBasic.f15001) - Number(kspjongBasic.f15007)
                     }
 
-                    let market_tot_amt = (assetValue * Number(pdf_info.f16499));
-                        
-             
-                    resolve(market_tot_amt);
+                    let market_tot_amt = (assetValue * Number(pdf_info.f16499)); /* 시가 총액 */
+                    let f15001 = kspjongBasic.f15001;       /* 현재가 */
+                    let f15007 = kspjongBasic.f15007;                    /* 기준가 */
+                    let f15004 = kspjongBasic.f15004;                     /* 등락률 */
+                    let f15472 = kspjongBasic.f15472;                     /* 대비 */
+                    let f16013 = kspjongBasic.f16013;                     /* 종목코드 */
+
+                    let jongItem = {};
+                    jongItem.market_amt = market_tot_amt;
+                    jongItem.f15001 = f15001;
+                    jongItem.f15007 = f15007;
+                    jongItem.f15004 = f15004;
+                    jongItem.f15472 = f15472;
+                    jongItem.f16013 = f16013;
+
+
+                    resolve(jongItem);
                 }) ;
                 
             }
@@ -156,9 +211,18 @@ export const nav_cal_common =   {
                 // 채권 일단 제외
                 ///assetValue = getBondBasic(asset.ISIN코드).t2_value / 10000
 
-                //let market_tot_amt = (assetValue * asset.액면금액)''
+                //let market_tot_amt = (assetValue * asset.액면금액)''              
+                let jongItem = {};
+                jongItem.market_amt = 0;
+                jongItem.f15001 = 0;
+                jongItem.f15007 = 0;
+                jongItem.f15004 = 0;
+                jongItem.f15472 = 0;
+                jongItem.f16013 = '';
 
-                return 0;
+                
+                resolve(jongItem);
+
             }
             /*
                 자산의 소속시장이 선물 또는 옵션일 경우
@@ -174,8 +238,23 @@ export const nav_cal_common =   {
                     let futureBasic = response.data.results[0];
                     assetValue = (Number(futureBasic.f15001) - Number(futureBasic.f15007)) * Number(futureBasic.f33904);
 
-                    let market_tot_amt = (assetValue * Number(pdf_info.f16499));             
-                    resolve(market_tot_amt);
+                    let market_tot_amt = (assetValue * Number(pdf_info.f16499)); /* 시가 총액 */
+                    let f15001 = futureBasic.f15001;       /* 현재가 */
+                    let f15007 = futureBasic.f15007;                    /* 기준가 */            
+                    let f15004 = futureBasic.f15004;                     /* 등락률 */
+                    let f15472 = futureBasic.f15472;                     /* 대비 */
+                    let f16013 = futureBasic.f16013;                     /* 종목코드 */
+
+                    let jongItem = {};
+                    jongItem.market_amt = market_tot_amt;
+                    jongItem.f15001 = f15001;
+                    jongItem.f15007 = f15007;
+                    jongItem.f15004 = f15004;
+                    jongItem.f15472 = f15472;
+                    jongItem.f16013 = f16013;
+
+                        
+                    resolve(jongItem);
                 }) ;
             }
                 
