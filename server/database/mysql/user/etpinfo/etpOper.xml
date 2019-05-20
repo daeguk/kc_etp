@@ -734,6 +734,7 @@
     <update     id="deleteTmPdfModifyDtl">
     <![CDATA[      
         DELETE  /* etpOper.deleteTmPdfModifyDtl      [tm_pdf_modify_Dtl] 테이블을 삭제한다. */
+        
           FROM  tm_pdf_modify_Dtl
          WHERE  1 = 1
 
@@ -752,9 +753,12 @@
     <select id="getHistNoByTmPdfModifyHist">
     <![CDATA[
         SELECT	/* indexRegister.getHistNoByTmPdfModifyHist ETF 종목코드별 이력번호 번호를 조회한다. */
+
                 IFNULL( MAX( tm_pdf_modify_hist.hist_no ), 0 ) + 1          AS  hist_no
+
           FROM  tm_pdf_modify_hist
          WHERE	1 = 1
+
            AND  tm_pdf_modify_hist.f16583          =   #{f16583}#          /* 사무수탁회사번호 */
            AND  tm_pdf_modify_hist.f16012          =   #{f16012}#          /* ETF종목코드 */
            AND  tm_pdf_modify_hist.f16013          =   #{f16013}#          /* ETF단축코드 */
@@ -772,11 +776,10 @@
         /* etpOper.saveTmPdfModifyHist        [tm_pdf_modify_hist] 테이블에 저장한다. */
         tm_pdf_modify_hist 
         ( 
-                hist_no                     /* 이력번호 */
-
-            ,   F16583                      /* 사무수탁회사번호 */
+                F16583                      /* 사무수탁회사번호 */
             ,   F16012                      /* ETF종목코드 */
             ,   F16013                      /* ETF단축코드 */
+            ,   hist_no                     /* 이력번호 */
             ,   F16316                      /* 구성종목코드 */
 
             ,   status                      /* insert( 신규 ), modify( 변경 ) */
@@ -791,11 +794,10 @@
         <foreach    collection="dataLists"   item="data"     separator="," >
     <![CDATA[        
         ( 
-                #{hist_no}                  /* 이력번호 */
-
-            ,   #{f16583}                   /* 사무수탁회사번호 */
+                #{f16583}                   /* 사무수탁회사번호 */
             ,   #{f16012}                   /* ETF종목코드 */
             ,   #{f16013}                   /* ETF단축코드 */
+            ,   #{hist_no}                  /* 이력번호 */
             ,   #{data.f16316}              /* 구성종목코드 */
 
             ,   #{data.status}              /* insert( 신규 ), modify( 변경 ) */
