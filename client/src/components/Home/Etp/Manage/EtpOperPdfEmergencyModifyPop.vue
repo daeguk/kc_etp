@@ -554,8 +554,6 @@ export default {
                             }
                         }
 
-                        vm.etpBasic =   etpBasic;
-                        
                     }else{
 
                         if( searchParam.initYn == "N" ) {
@@ -567,6 +565,7 @@ export default {
                     }
 
                     vm.step = 1;
+                    vm.etpBasic =   etpBasic;
 
                     if (dataList && dataList.length > 0) {
                         tblEmergeny01.rows.add( dataList ).draw();
@@ -828,7 +827,7 @@ export default {
          */
         fn_saveEtpOperPdfModify() {
             var vm = this;
-
+debugger;
             console.log("EtpOperPdfEmergencyModifyPop -> fn_saveEtpOperPdfModify");
 
 
@@ -845,7 +844,7 @@ export default {
                         return  false;
                     }
 
-                    vm.step     =   3;
+                    vm.step     =   2;
                 }
             });
         },
