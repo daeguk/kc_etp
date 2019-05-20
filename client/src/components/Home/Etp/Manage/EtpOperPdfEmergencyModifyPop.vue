@@ -6,12 +6,6 @@
 
             <v-window v-model="step">
 
-                <v-spacer></v-spacer>
-                <v-btn icon @click="fn_closePop">
-                    <v-icon>close</v-icon>
-                </v-btn>
-
-
 
                 <v-window-item :value="1">
 <!---step1 START-->
@@ -20,8 +14,15 @@
                             <v-card-title ma-0>
                                 {{ etpBasic.f16002          /* 한글종목명 */ }}
                                 <span>{{ etpBasic.f16013    /* 단축코드 */ }}</span>
+
+                                <v-spacer></v-spacer>
+                                <v-btn icon @click="fn_close">
+                                    <v-icon>close</v-icon>
+                                </v-btn>                                
                             </v-card-title>
+
                         </h5>
+
                         <v-card flat class="pdf_mody_w">
                             <v-toolbar card prominent>
                                 <v-toolbar-title class="pdf_t">
@@ -64,8 +65,9 @@
                                 <v-btn icon :disabled="step === 1" flat @click="step--">
                                     <v-icon>arrow_back_ios</v-icon>
                                 </v-btn>PDF 변경신청 현황
+
                                 <v-spacer></v-spacer>
-                                <v-btn icon @click="dialog5 = false">
+                                <v-btn icon @click="fn_close">
                                     <v-icon>close</v-icon>
                                 </v-btn>
                             </v-card-title>
@@ -78,25 +80,7 @@
                                     <span>{{ subData.etf_f16013     /* ETF 단축코드 */      }}</span>
                                 </h4>
 
-                                <table v-bind:id='"step2_" + subData.etf_f16012' class="tbl_type" style="width:100%">
-
-                                    <colgroup>
-                                        <col width="15%">
-                                        <col width="20%">
-                                        <col width="25%">
-                                        <col width="20%">
-                                        <col width="20%">
-                                    </colgroup>
-                                    <thead>
-                                        <tr>
-                                            <th>구분</th>
-                                            <th class="txt_left">CODE</th>
-                                            <th class="txt_left">종목</th>
-                                            <th class="txt_right">변경전</th>
-                                            <th class="txt_right">변경후</th>
-                                        </tr>
-                                    </thead>
-                                </table>
+                                <table v-bind:id='"step2_" + subData.etf_f16012' class="tbl_type" style="width:100%"></table>
 
                             </v-flex>
 
@@ -169,7 +153,8 @@
                             <v-card-title ma-0>
                                 PDF 변경신청 완료
                                 <v-spacer></v-spacer>
-                                <v-btn icon @click="dialog5 = false">
+
+                                <v-btn icon @click="fn_close">
                                     <v-icon>close</v-icon>
                                 </v-btn>
                             </v-card-title>
@@ -183,25 +168,7 @@
                                     <span>{{ subData.etf_f16013     /* ETF 단축코드 */      }}</span>
                                 </h4>
 
-                                <table v-bind:id='"step3_" + subData.etf_f16012' class="tbl_type" style="width:100%">
-
-                                    <colgroup>
-                                        <col width="15%">
-                                        <col width="20%">
-                                        <col width="25%">
-                                        <col width="20%">
-                                        <col width="20%">
-                                    </colgroup>
-                                    <thead>
-                                        <tr>
-                                            <th>구분</th>
-                                            <th class="txt_left">CODE</th>
-                                            <th class="txt_left">종목</th>
-                                            <th class="txt_right">변경전</th>
-                                            <th class="txt_right">변경후</th>
-                                        </tr>
-                                    </thead>
-                                </table>
+                                <table v-bind:id='"step3_" + subData.etf_f16012' class="tbl_type" style="width:100%"></table>
 
                             </v-flex>
 
@@ -221,7 +188,7 @@
                                 <br>오춘교 대리 767-0000
                             </div>
                             <p class="text-xs-center">
-                                <v-btn dark depressed color="primary" @click="dialog5 = false">닫기</v-btn>
+                                <v-btn dark depressed color="primary" @click="fn_close">닫기</v-btn>
                             </p>
                         </v-card>
                     </v-card>
@@ -431,9 +398,9 @@ export default {
 
 
         var searchParam                 =   {}
-        searchParam.f16012              =   vm.paramData.f16012;                   /* 국제표준코드 */
+        searchParam.searchCode          =   vm.paramData.f16012;                   /* 국제표준코드 */
 /* 여러종류의 ETF 코드 데이터 저장을 위해 임시로 처리함 */
-searchParam.f16012              =   "KR7322410002";
+searchParam.searchCode              =   "KR7322410002";
         searchParam.initYn              =   "Y";
 
         vm.fn_getEtpOperPdfModify( searchParam );
@@ -485,7 +452,7 @@ searchParam.f16012              =   "KR7322410002";
                                     "etf_f16012"    :   etpBasic.f16012      /* ETF 국제표준코드 */
                                 ,   "etf_f16013"    :   etpBasic.f16013      /* ETF 단축코드 */
                             });
-debugger;
+
                             if( filterIndex > -1 ) {
                                 vm.result.flag  =   false;
                                 vm.result.msg   =   '해당 코드는 이미 변경작업에 존재합니다. 다른 코드를 선택해 주세요.';
@@ -684,9 +651,15 @@ etpBasic.f16583 = 10;
                 /* 이전건 + 현재건 데이터가 존재하는 경우 */
                 if( vm.allDataList.length > 0 ) {
 
-                    /* 현재 수정된 건이 없는 경우 */
-                    if( vm.dataList.length == 0 ) {
+                    /* 변경된 데이터만 추출 */
+                    var filterData  =   _.filter( vm.dataList, function( o, i ) {
+                        if( o.status == "insert" || o.status == "modify" ) {
+                            return  true;
+                        }
+                    });
 
+                    /* 현재 수정된 건이 없는 경우 */
+                    if( filterData.length == 0 ) {
                         var filterIndex  =   _.findIndex( vm.allDataList,    {
                                                     "etf_f16012"    :   vm.etpBasic.f16012      /* ETF 국제표준코드 */
                                                 ,   "etf_f16013"    :   vm.etpBasic.f16013      /* ETF 단축코드 */
@@ -696,6 +669,8 @@ etpBasic.f16583 = 10;
                         vm.allDataList.splice( filterIndex, 1 );
                     }
                 }
+
+
 
 
                 if( vm.allDataList.length > 0 ) {
@@ -950,7 +925,7 @@ etpBasic.f16583 = 10;
             }            
 
             var searchParam                 =   {}
-            searchParam.f16012              =   vm.txtAddEtpCode;
+            searchParam.searchCode          =   vm.txtAddEtpCode;
             searchParam.initYn              =   "N";
 
             vm.fn_getEtpOperPdfModify( searchParam );
@@ -1113,7 +1088,7 @@ etpBasic.f16583 = 10;
          * 팝업창을 종료한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_closePop() {
+        fn_close() {
             var vm = this;
 
             vm.$emit( "fn_closePop", "close" );
