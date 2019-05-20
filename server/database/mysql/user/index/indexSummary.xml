@@ -503,7 +503,7 @@
                                 WHERE UP_CODE = CONCAT(IF(substr(#{jisu_cd}, 1, 2) = '60', 'MFI', 'WFN'), substr(#{jisu_cd}, 3))
                                 ORDER BY A.ISIN_CODE, A.F12506 DESC
                                 ) a
-                          WHERE a.F12506 = (SELECT MAX(AA.F12506) 
+                          WHERE a.F12506 = (SELECT MAX(AA.F12506) /* 최근 일자 */
 										       FROM m168uidxmap AA
 									          INNER JOIN td_kspjong_basic BB
                                                  ON AA.ISIN_CODE = BB.F16012  
@@ -535,7 +535,7 @@
                                 WHERE UP_CODE = CONCAT(IF(substr(#{jisu_cd}, 1, 2) = '60', 'MFI', 'WFN'), substr(#{jisu_cd}, 3))
                                 ORDER BY A.ISIN_CODE, A.F12506 DESC
                                 ) a
-                           WHERE a.F12506 = (SELECT MAX(AA.F12506) 
+                           WHERE a.F12506 = (SELECT MAX(AA.F12506) /* 최근 일자 */
 										       FROM m168uidxmap AA
 									          INNER JOIN td_kspjong_basic BB
                                                  ON AA.ISIN_CODE = BB.F16012  
