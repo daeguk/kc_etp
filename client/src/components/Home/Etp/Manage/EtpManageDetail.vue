@@ -59,7 +59,6 @@
                             <p>Last Updated : {{etpBasic.f12506}}</p>
                         </div>
                         <LineEtpMultiChart :etpBasic="etpBasic"></LineEtpMultiChart>
-<!--
                         <v-card flat class="graph_toggle">
                             <v-flex xs12 sm6 class="py-2">
                                 <v-btn-toggle v-model="toggle_one" class="toggle_01">
@@ -77,9 +76,7 @@
                             id="etp_chart_div"
                             class="graph_01"
                         ></div>
--->                    
                     </div>
-<!--
                     <div class="tab2_w">
                         <v-layout row wrap>
                             <v-flex xs12>
@@ -107,7 +104,6 @@
                             </v-flex>
                         </v-layout>
                     </div>
--->                    
                 </v-card>
             </v-flex>
             <!--v-flex class="conWidth_right">
