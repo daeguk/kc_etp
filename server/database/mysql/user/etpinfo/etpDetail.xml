@@ -17,6 +17,7 @@
                              FROM  td_etfpdf_basic
                             WHERE  td_etfpdf_basic.f16012       =   td_etp_basic.f16012         /* 국제표준코드 */
                               AND  td_etfpdf_basic.f16013       =   td_etp_basic.f16013         /* ETF단축코드 */
+                            LIMIT  0, 1
                         )
                         , ''
                     )                                               AS  f16583                  /* 사무수탁회사번호 */   

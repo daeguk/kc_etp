@@ -543,20 +543,28 @@ export default {
                     var etpBasic = response.data.etpBasic;
                     var dataList = response.data.dataList;
 
-                    if( etpBasic && Object.keys( etpBasic ).length > 0 ) {
+                    if( searchParam.initYn == "N" ) {
 
-                        if( searchParam.initYn == "N" ) {
+                        if( etpBasic && Object.keys( etpBasic ).length > 0 ) {
+
+                            /* 로그인 운용사코드와 동일한지 체크 */
                             if( etpBasic.login_f33960_check != "Y" ) {
                                 vm.result.flag  =   false;
                                 vm.result.msg   =   '타 발행사의 종목은 변경하실수 없습니다.';
 
                                 return  false;
                             }
-                        }
 
-                    }else{
+                            /* 사무수탁회사번호 가 없는 경우 */
+                            if( etpBasic.f16583 == "" ) {
+                                vm.result.flag  =   false;
+                                vm.result.msg   =   '해당코드의 데이터가 존재하지 않습니다.';
 
-                        if( searchParam.initYn == "N" ) {
+                                return  false;
+                            }
+
+                        }else{
+
                             vm.result.flag  =   false;
                             vm.result.msg   =   '해당코드의 데이터가 존재하지 않습니다.';
 
@@ -564,7 +572,7 @@ export default {
                         }
                     }
 
-                    vm.step = 1;
+                    vm.step     =   1;
                     vm.etpBasic =   etpBasic;
 
                     if (dataList && dataList.length > 0) {
