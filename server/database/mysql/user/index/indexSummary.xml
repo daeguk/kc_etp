@@ -497,16 +497,18 @@
                                     , A.STYLE_INCLUD_PERCNT
                                     , A.GUBUN
                                     , B.F16002
-                                    , (CASE @vISIN_CODE WHEN A.ISIN_CODE THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum
-                                    , (@vISIN_CODE:=A.ISIN_CODE) vISIN_CODE
                                     FROM m168uidxmap A
                                 INNER JOIN td_kspjong_basic B
                                     ON A.ISIN_CODE = B.F16012 
-                                INNER JOIN (SELECT @vISIN_CODE:='', @rownum:=0 FROM DUAL) C
                                 WHERE UP_CODE = CONCAT(IF(substr(#{jisu_cd}, 1, 2) = '60', 'MFI', 'WFN'), substr(#{jisu_cd}, 3))
                                 ORDER BY A.ISIN_CODE, A.F12506 DESC
                                 ) a
-                    WHERE a.rnum = 1) MAP
+                          WHERE a.F12506 = (SELECT MAX(AA.F12506) 
+										       FROM m168uidxmap AA
+									          INNER JOIN td_kspjong_basic BB
+                                                 ON AA.ISIN_CODE = BB.F16012  
+									           WHERE AA.UP_CODE = CONCAT(IF(substr(#{jisu_cd}, 1, 2) = '60', 'MFI', 'WFN'), substr(#{jisu_cd}, 3)))
+                          ) MAP
                     INNER JOIN m168uidxcomp COMP
                     ON MAP.F12506 = COMP.F12506
                     AND MAP.ISIN_CODE = COMP.F16013
@@ -527,16 +529,18 @@
                                     , A.STYLE_INCLUD_PERCNT
                                     , A.GUBUN
                                     , B.F16002
-                                    , (CASE @vISIN_CODE WHEN A.ISIN_CODE THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum
-                                    , (@vISIN_CODE:=A.ISIN_CODE) vISIN_CODE
                                     FROM m168uidxmap A
                                 INNER JOIN td_kspjong_basic B
                                     ON A.ISIN_CODE = B.F16012 
-                                INNER JOIN (SELECT @vISIN_CODE:='', @rownum:=0 FROM DUAL) C
                                 WHERE UP_CODE = CONCAT(IF(substr(#{jisu_cd}, 1, 2) = '60', 'MFI', 'WFN'), substr(#{jisu_cd}, 3))
                                 ORDER BY A.ISIN_CODE, A.F12506 DESC
                                 ) a
-                    WHERE a.rnum = 1) MAP
+                           WHERE a.F12506 = (SELECT MAX(AA.F12506) 
+										       FROM m168uidxmap AA
+									          INNER JOIN td_kspjong_basic BB
+                                                 ON AA.ISIN_CODE = BB.F16012  
+									           WHERE AA.UP_CODE = CONCAT(IF(substr(#{jisu_cd}, 1, 2) = '60', 'MFI', 'WFN'), substr(#{jisu_cd}, 3)))
+                          ) MAP
                     INNER JOIN m168uidxcomp COMP
                     ON MAP.F12506 = COMP.F12506
                     AND MAP.ISIN_CODE = COMP.F16013
