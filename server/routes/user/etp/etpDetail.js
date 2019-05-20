@@ -43,6 +43,7 @@ var getEtpBasic = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -167,6 +168,7 @@ var getExistEtpBasicCnt = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -265,6 +267,7 @@ var getEtpPerformance = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -440,7 +443,7 @@ var getEtpInfo = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
-
+        paramData.krx_cd        =   req.session.krx_cd;
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";
@@ -861,6 +864,7 @@ var getEtpChartData = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };

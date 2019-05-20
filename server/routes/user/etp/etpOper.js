@@ -43,6 +43,7 @@ var getEtpOperInfo = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -141,6 +142,7 @@ var getEtpOperIndex = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -298,6 +300,7 @@ var getEtpOperIndexOversea = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -396,6 +399,7 @@ var getEtpOperIndexError = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -530,6 +534,7 @@ var getEtpOperPdf = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -666,6 +671,7 @@ var getEtpOperPdfByRate = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -801,6 +807,7 @@ var getEtpOperPdfModify = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -985,6 +992,7 @@ var getExchBasic = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -1083,6 +1091,7 @@ var getExchBasic = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -1181,6 +1190,7 @@ var getKspjongBasic = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -1279,6 +1289,7 @@ var getFutureBasic = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -1377,6 +1388,7 @@ var getJongmokData = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -1507,6 +1519,7 @@ var saveEtpOperPdfModify = function(req, res) {
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
         paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -1538,6 +1551,7 @@ var saveEtpOperPdfModify = function(req, res) {
                     paramData.inst_cd       =   req.session.inst_cd;
                     paramData.type_cd       =   req.session.type_cd;
                     paramData.large_type    =   req.session.large_type;
+                    paramData.krx_cd        =   req.session.krx_cd;
                     paramData.hist_no       =   "";
 
                     async.waterfall([

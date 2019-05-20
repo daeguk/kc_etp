@@ -41,7 +41,8 @@ var getStatusList = function(req, res) {
         paramData.user_id       =   req.session.user_id;
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.inst_type_cd  =   req.session.inst_type_cd;
-        paramData.large_type    =   req.session.large_type;        
+        paramData.large_type    =   req.session.large_type;      
+        paramData.krx_cd        =   req.session.krx_cd;  
 
 
         /* 2. 지수 등록 상태정보를 조회한다. */
@@ -125,7 +126,8 @@ var getIndexSelectList = function(req, res) {
         paramData.user_id       =   req.session.user_id;
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.type_cd       =   req.session.type_cd;
-        paramData.large_type    =   req.session.large_type;        
+        paramData.large_type    =   req.session.large_type;      
+        paramData.krx_cd        =   req.session.krx_cd;  
 
         /* 1. 기관정보를 조회한다. */
         var format = { language: 'sql', indent: '' };

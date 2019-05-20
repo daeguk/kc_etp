@@ -326,7 +326,6 @@ export default {
 
 
             tblEmergeny01 : "tblEmergeny01",
-            searchParam : {},
             etpBasic : {},
             dataList : [],
             allDataList : [],
@@ -483,7 +482,13 @@ export default {
             vm.fn_deleteTableData( data, $(this).eq(0).val(), rowIndex, ( jongmokTag ? jongmokTag.length : 0 ) );
         });        
 
-        vm.fn_getEtpOperPdfModify();
+
+        var searchParam         =   {}
+        searchParam.f16012      =   vm.paramData.f16012;                   /* 국제표준코드 */
+        searchParam.f16012      =   "KR7322410002";
+        searchParam.initYn      =   "Y";
+
+        vm.fn_getEtpOperPdfModify( searchParam );
     },
         
     methods: {
@@ -498,7 +503,8 @@ export default {
          * ETP PDF 정보를 조회한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_getEtpOperPdfModify() {
+        fn_getEtpOperPdfModify( searchParam ) {
+
             var vm = this;
 
             console.log("EtpOperPdf.vue -> fn_getEtpOperPdfEmergencyModifyPop.vue");
@@ -507,11 +513,11 @@ export default {
                 tblEmergeny01.clear().draw();
             }
 
-            vm.searchParam.f16012   =   vm.paramData.f16012;                   /* 국제표준코드 */
-            vm.searchParam.f16012   =   "KR7322410002";
+            vm.etpBasic =   {};
+            vm.dataList =   [];
 
             axios.post( Config.base_url + "/user/etp/getEtpOperPdfModify", {
-                data: vm.searchParam
+                data: searchParam
             }).then(function(response) {
                 console.log(response);
 
