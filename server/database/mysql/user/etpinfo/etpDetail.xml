@@ -11,7 +11,7 @@
 
         SELECT      /* etpDetail.getEtpBasic EtpBasic 의 기본정보를 조회한다. */
                     <include    refid="sqlEtpBasic01" />
-        <if test = '( krx_cd != null  krx_cd != "" )' >
+        <if test = '( krx_cd != null and krx_cd != "" )' >
                 ,   CASE    WHEN    td_etp_basic.f33960 =   #{krx_cd}
                             THEN    'Y'
                             ELSE    'N'
