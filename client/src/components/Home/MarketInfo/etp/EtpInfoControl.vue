@@ -104,7 +104,8 @@ export default {
     updated: function() {
     },
     methods: {
-        showDetail: function(gubun, paramData) {               
+        showDetail: function(gubun, paramData) {  
+            /* ETP 정보 */             
             if (gubun == '1') {
                 this.paramData = paramData;
                 this.showIndexDetailDialog = false;
@@ -117,7 +118,7 @@ export default {
                 
                 this.showMarketInfo = 0;
                 this.showFaver = true;
-                
+            /* 인덱스 정보 */                 
             } else if (gubun == '2') { 
                 this.paramData = paramData;
                 this.showEtpDetailDialog = false;

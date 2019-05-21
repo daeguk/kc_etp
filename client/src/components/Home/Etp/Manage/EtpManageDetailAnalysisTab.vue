@@ -638,8 +638,7 @@ export default {
                     });
                 }
             }else{
-
-                alert( "PRICE 또는 NAV 중 1개는 존재해야 합니다. 데이터를 다시 조회 해 주세요." );
+                vm.$emit("showMessageBox", '확인','PRICE 또는 NAV 중 1개는 존재해야 합니다. 데이터를 다시 조회 해 주세요.',{},1);
                 vm.$router.go( -1 );                
             }
         },       
@@ -664,9 +663,12 @@ export default {
             var vm = this;
 
             vm.hideJongMokPop();
-            for (let i = 0; i < sel_items.length; i++) {
 
-                if ( table01.rows().count() <= 4 ) {
+            if ((table01.rows().count()) + sel_items.length > 5) {
+                vm.$emit("showMessageBox", '확인','자산 비교는 5개 까지 가능 합니다.',{},1);
+                return;
+            } 
+            for (let i = 0; i < sel_items.length; i++) {
 
                     let checkList = table01.columns( [0,1,2] ).data();
                     var compare_cnt =   -1;
@@ -702,9 +704,8 @@ export default {
                     }
 
                     if (compare_cnt > 0) {
-                        alert(
-                            sel_items[i].JISU_NM + "은 이미 추가된 자산입니다."
-                        );
+                       
+                        vm.$emit("showMessageBox", '확인',sel_items[i].JISU_NM +"은 이미 추가된 자산입니다.",{},1);
 
                         return false;
                     }
@@ -725,10 +726,7 @@ export default {
                         });
                     }
                     
-                } else {
-                    alert("자산 비교는 총 5개 까지 가능 합니다.");
-                    return false;
-                }
+                
             }
 
 

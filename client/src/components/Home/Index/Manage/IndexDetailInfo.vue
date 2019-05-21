@@ -76,19 +76,20 @@
 
                                 <v-tabs-items v-model="tab">
                                     <v-tab-item>
-                                        <IndexDetailInfoTab1 :basicData = "basicData"    v-if="openSubIndexInfoTab"></IndexDetailInfoTab1>
+                                        <IndexDetailInfoTab1 :basicData = "basicData" @showMessageBox="showMessageBox"    v-if="openSubIndexInfoTab"></IndexDetailInfoTab1>
                                     </v-tab-item>
                                     <v-tab-item>
-                                        <IndexDetailInfoTab2 :basicData = "basicData"    v-if="openSubIndexInfoTab"></IndexDetailInfoTab2>
+                                        <IndexDetailInfoTab2 :basicData = "basicData" @showMessageBox="showMessageBox"   v-if="openSubIndexInfoTab"></IndexDetailInfoTab2>
                                     </v-tab-item>
                                     <v-tab-item  v-if="!showDialog">
-                                        <IndexDetailInfoTab3></IndexDetailInfoTab3>
+                                        <IndexDetailInfoTab3 @showMessageBox="showMessageBox"></IndexDetailInfoTab3>
                                     </v-tab-item>
                                 </v-tabs-items>
                             </v-flex>
                         </v-layout>
                     </div>
                 </v-card>
+                <ConfirmDialog ref="confirm"></ConfirmDialog>
             </v-flex>
         </v-layout>
     </div>
@@ -99,6 +100,7 @@
 import IndexDetailInfoTab1 from "./IndexDetailInfoTab1.vue";
 import IndexDetailInfoTab2 from "./IndexDetailInfoTab2.vue";
 import IndexDetailInfoTab3 from "./IndexDetailInfoTab3.vue";
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 import Config from "@/js/config.js";
 export default {
@@ -128,6 +130,7 @@ export default {
         };
     },
     components: {
+        ConfirmDialog : ConfirmDialog,
         IndexDetailInfoTab1: IndexDetailInfoTab1,
         IndexDetailInfoTab2: IndexDetailInfoTab2,
         IndexDetailInfoTab3: IndexDetailInfoTab3
@@ -147,7 +150,10 @@ export default {
         this.$EventBus.$off('changeIndexInfo');
     },
     mounted: function() {
+        // 메시지 박스 참조
+        this.$root.$confirm = this.$refs.confirm;
         var vm = this;
+        
         vm.init(false);  
 
         if (vm.showDialog) {
@@ -350,6 +356,9 @@ export default {
                 });
             }
         },
+        showMessageBox: function(title, msg, option, gubun) {
+            this.$root.$confirm.open(title,msg, option, gubun);
+        }
     } 
 
 };

@@ -414,7 +414,7 @@ export default {
             }).then(response => {
                     // console.log(response);
                 if (response.data.success == false) {
-                    alert("데이터가 없습니다");
+                    //alert("데이터가 없습니다");
                 } else {
                     var items = response.data.results;
                     console.log("response=" + JSON.stringify(items));
@@ -436,10 +436,14 @@ export default {
             var vm = this;
             vm.jongMokDialog = false;
             
+            if ((perf_table.rows().count()) + sel_items.length > 5) {
+
+                vm.$emit("showMessageBox", '확인','자산 비교는 5개 까지 가능 합니다.',{},1);
+                return;
+            } 
+
             for (let i = 0; i < sel_items.length; i++) {
                 
-                if (perf_table.rows().count() <= 4) {
-
                     let compare_cnt = perf_table.column(0).data().filter(
                         function(value, index) {
                             return sel_items[i].JISU_CD == value ? true : false;
@@ -467,7 +471,7 @@ export default {
                         }).then(response => {
                                 // console.log(response);
                             if (response.data.success == false) {
-                                alert("비중 목록이 없습니다");
+                                vm.$emit("showMessageBox", '확인','데이터가 없습니다.',{},1);
                             } else {
                                 var items = response.data.results[0];
                                                 
@@ -489,14 +493,10 @@ export default {
                             }
                        
                         });
-                    } else {
-                            alert(sel_items[i].JISU_NM +"은 이미 추가된 자산입니다.");    
+                    } else {                            
+                            vm.$emit("showMessageBox", '확인',sel_items[i].JISU_NM +"은 이미 추가된 자산입니다.",{},1);
                     }
                    
-                } else {
-                    alert("자산 비교는 총 5개 까지 가능 합니다.");
-                    break;
-                }
             }
 
             
