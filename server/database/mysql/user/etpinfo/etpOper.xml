@@ -76,11 +76,13 @@
     <![CDATA[
         SELECT  /* etpOper.getEtpOperPdfEtfHistByRateTitle  ETP 운용관리 - 비중변경현황 - 최근 5개 날짜 정보를 조회한다. ( ETF 인 경우 ) */
 
-                td_etfpdf_hist.f12506                   AS  f12506
+                    td_etfpdf_hist.f12506                               AS  f12506
+                ,   DATE_FORMAT( td_etfpdf_hist.f12506, '%m/%d' )       AS  show_date
           FROM  td_etfpdf_hist
 
          WHERE  1 = 1
-           AND  td_etfpdf_hist.f12506                   >=   DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m%d' )
+           AND  td_etfpdf_hist.f12506                   >=  DATE_FORMAT( DATE_SUB( #{search_date}, INTERVAL 1 MONTH ), '%Y%m%d' )
+           AND  td_etfpdf_hist.f12506                   <=  DATE_FORMAT( #{search_date}, '%Y%m%d')
 
          GROUP  BY  td_etfpdf_hist.f12506
 
@@ -98,11 +100,13 @@
     <![CDATA[
         SELECT  /* etpOper.getEtpOperPdfEtnHistByRateTitle  ETP 운용관리 - 비중변경현황 - 최근 5개 날짜 정보를 조회한다. ( ETN 인 경우 ) */
 
-                td_etnpdf_hist.f12506                   AS  f12506
+                    td_etnpdf_hist.f12506                               AS  f12506
+                ,   DATE_FORMAT( td_etnpdf_hist.f12506, '%m/%d' )       AS  show_date
           FROM  td_etnpdf_hist
 
          WHERE  1 = 1
-           AND  td_etnpdf_hist.f12506                   >=   DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m%d' )
+           AND  td_etnpdf_hist.f12506                   >=  DATE_FORMAT( DATE_SUB( #{search_date}, INTERVAL 1 MONTH ), '%Y%m%d' )
+           AND  td_etnpdf_hist.f12506                   <=  DATE_FORMAT( #{search_date}, '%Y%m%d')
 
          GROUP  BY  td_etnpdf_hist.f12506
 
@@ -121,26 +125,26 @@
     
         SELECT      /* etpOper.getEtpOperPdfEtfHistByRate  ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETF 인 경우 ) */
 
-                    1111                                              AS  rate_day0       /* 비중 */
+                    1                                               AS  temp_data
+                ,
+            <foreach    collection="rateTitleList"   item="data"    separator="," >
+                    FORMAT(
+                            IFNULL(
+                                    (
+                                        SELECT  td_etfpdf_hist_sub.f34743
+                                        FROM  td_etfpdf_hist  td_etfpdf_hist_sub
+                                        WHERE  td_etfpdf_hist_sub.f12506       =   #{data.date}
 
-                ,   IFNULL(
-                        (
-                            SELECT  td_etfpdf_hist_sub.f34743
-                                FROM  td_etfpdf_hist  td_etfpdf_hist_sub
-                                WHERE  td_etfpdf_hist_sub.f12506       =   '20190510'
-
-                                AND  td_etfpdf_hist_sub.f16583       =   td_etfpdf_hist.f16583
-                                AND  td_etfpdf_hist_sub.f16012       =   td_etfpdf_hist.f16012
-                                AND  td_etfpdf_hist_sub.f16013       =   td_etfpdf_hist.f16013
-                                AND  td_etfpdf_hist_sub.f16316       =   td_etfpdf_hist.f16316
-                        ) 
-                        , 0 
-                    ) / 100                                           AS  rate_day1
-
-                ,   2222                                              AS  rate_day1       /* 비중 1일전 */
-                ,   3333                                              AS  rate_day2       /* 비중 2일전 */
-                ,   4444                                              AS  rate_day3       /* 비중 3일전 */
-                ,   5555                                              AS  rate_day4       /* 비중 4일전 */
+                                        AND  td_etfpdf_hist_sub.f16583       =   td_etfpdf_hist.f16583
+                                        AND  td_etfpdf_hist_sub.f16012       =   td_etfpdf_hist.f16012
+                                        AND  td_etfpdf_hist_sub.f16013       =   td_etfpdf_hist.f16013
+                                        AND  td_etfpdf_hist_sub.f16316       =   td_etfpdf_hist.f16316
+                                    ) 
+                                ,   0 
+                            ) / 100
+                        ,   2 
+                    )                                               AS  "rate_day${data.index}"
+            </foreach>
                 ,
             <include    refid="sqlEtpOperPdfEtfHist01" />
 
@@ -154,11 +158,23 @@
     
         SELECT      /* etpOper.getEtpOperPdfEtnHistByRate  ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETN 인 경우 ) */
 
-                    6666                                              AS  rate_day0       /* 비중 */
-                ,   7777                                              AS  rate_day1       /* 비중 1일전 */
-                ,   8888                                              AS  rate_day2       /* 비중 2일전 */
-                ,   9999                                              AS  rate_day3       /* 비중 3일전 */
-                ,   1010                                              AS  rate_day4       /* 비중 4일전 */
+                    1                                               AS  temp_data
+                ,
+            <foreach    collection="rateTitleList"   item="data"    separator="," >
+                    IFNULL(
+                        (
+                            SELECT  td_etnpdf_hist_sub.f34743
+                              FROM  td_etnpdf_hist  td_etfpdf_hist_sub
+                             WHERE  td_etnpdf_hist_sub.f12506       =   #{data.date}
+
+                               AND  td_etnpdf_hist_sub.f16583       =   td_etnpdf_hist.f16583
+                               AND  td_etnpdf_hist_sub.f16012       =   td_etnpdf_hist.f16012
+                               AND  td_etnpdf_hist_sub.f16013       =   td_etnpdf_hist.f16013
+                               AND  td_etnpdf_hist_sub.f16316       =   td_etnpdf_hist.f16316
+                        ) 
+                        , 0 
+                    ) / 100                                           AS  "rate_day${data.index}"
+            </foreach>
                 ,
             <include    refid="sqlEtpOperPdfEtnHist01" />
 
