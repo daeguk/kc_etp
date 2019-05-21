@@ -40,6 +40,7 @@ module.exports = {
       { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperIndexOversea'  , method: 'getEtpOperIndexOversea'  , session: 'check', type: 'post' },
       { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperIndexError'    , method: 'getEtpOperIndexError'    , session: 'check', type: 'post' },
       { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperPdf'           , method: 'getEtpOperPdf'           , session: 'check', type: 'post' },
+      { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperPdfByRateTitle', method: 'getEtpOperPdfByRateTitle', session: 'check', type: 'post' },
       { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperPdfByRate'     , method: 'getEtpOperPdfByRate'     , session: 'check', type: 'post' },
       { file: './user/etp/etpOper'        , path: '/user/etp/getEtpOperPdfModify'     , method: 'getEtpOperPdfModify'     , session: 'check', type: 'post' },
       { file: './user/etp/etpOper'        , path: '/user/etp/getJongmokData'          , method: 'getJongmokData'          , session: 'check', type: 'post' },

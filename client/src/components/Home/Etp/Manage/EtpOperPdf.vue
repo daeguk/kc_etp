@@ -103,8 +103,6 @@ export default {
 console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
 console.log( vm.paramData );
 
-        vm.fn_getEtpOperPdfTitle();
-
         vm.$EventBus.$on('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call', data => {
             console.log( "EventBus EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call>>>>>>>" );
             console.log( data );
@@ -160,32 +158,6 @@ console.log( vm.paramData );
 
     methods: {
 
-/*
-         *  ETP 운영정보 - > PDF 관리 에서 비중 변경현황시 타이틀 정보를 조회한다.
-         *  2019-05-03  bkLove(촤병국)
-         */
-        fn_getEtpOperPdfTitle() {
-
-            var vm = this;
-
-            vm.rateTitleList    =   [];
-            for( var i=0; i < 5; i++ ) {
-                var temp = {};
-
-                var nowDate     =   new Date();
-                var tempDate    =   new Date(       nowDate.getFullYear()
-                                                ,   nowDate.getMonth()
-                                                ,   ( nowDate.getDate() - i ) 
-                                );
-
-                temp.name       =   "rate_day" + i;
-                temp.date       =       ( parseInt( tempDate.getMonth() ) + 1 )
-                                    +   "/" 
-                                    +   tempDate.getDate();
-
-                vm.rateTitleList.push( temp );
-            }
-        },        
 
         /*
          *  ETP 운영정보를 조회한다.
@@ -284,6 +256,36 @@ console.log( vm.paramData );
             });
         },
 
+
+        /*
+         *  ETP 운영정보 - > PDF 관리 에서 비중 변경현황시 타이틀 정보를 조회한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_getEtpOperPdfByRateTitle() {
+
+            var vm = this;
+
+            console.log("EtpOperPdf.vue -> fn_getEtpOperPdfByRateTitle");
+
+            vm.searchParam.search_date  =   vm.searchParam.show_date.replace(/-/g,"");
+            vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
+
+            axios.post(  Config.base_url + "/user/etp/getEtpOperPdfByRateTitle", {
+                data: vm.searchParam
+            }).then(function(response) {
+                console.log(response);
+
+                if (response.data) {
+                    var rateTitleList = response.data.rateTitleList;
+
+                    vm.rateTitleList =   rateTitleList;
+                }
+
+                vm.fn_setTableInfo();
+                vm.fn_getEtpOerPdf( 'N' );                
+            });
+        },        
+
         fn_setEtpOperPdfByRate : function( paramData ) {
 
             var vm = this;
@@ -297,8 +299,8 @@ console.log( vm.paramData );
                 vm.stateInfo.pageState  =  'pdf';
             }            
 
-            vm.fn_setTableInfo();
-            vm.fn_getEtpOerPdf( 'N' );
+
+            vm.fn_getEtpOperPdfByRateTitle();
         },        
 
         /*
@@ -328,7 +330,7 @@ console.log( vm.paramData );
                         "f12506"            /* 입회일 - Date */
                     ,   "f33861"            /* ETF시장구분 - 시장구분 -  */
                     ,   "f16316"            /* 구성종목코드 - 종목코드 */
-                    ,   "f16002"            /* 한글종목명 - 종목명 */
+                    ,   "f16004"            /* 해외시장종목명 - 종목명 */
                     ,   "f16499"            /* 1CU단위증권수 - CU SHrs */
                     ,   "f34840"            /* 액면금액설정현금액 - 액면금액 */
                     ,   "f16588"            /* 평가금액 - 평가금액 */
@@ -342,7 +344,7 @@ console.log( vm.paramData );
                         "f12506"            /* 입회일 - Date */,
                     ,   "f33861"            /* ETF시장구분 - 시장구분 */,
                     ,   "f16316"            /* 구성종목코드 - 종목코드 */,
-                    ,   "f16002"            /* 한글종목명 - 종목명 */,
+                    ,   "f16004"            /* 해외시장종목명 - 종목명 */,
                     ,   "f16499"            /* 1CU단위증권수 - CU SHrs */,
                     ,   "f34840"            /* 액면금액설정현금액 - 액면금액 */,
                     ,   "f16588"            /* 평가금액 - 평가금액 */,
@@ -387,7 +389,7 @@ console.log( vm.paramData );
                         });                                
 
                         if( same && same.length == 1 ) {
-                            $( tblPdfList.column( index ).header() ).html( vm.arrShowColumn[index].title + "<br>" + same[0].date );
+                            $( tblPdfList.column( index ).header() ).html( vm.arrShowColumn[index].title + "<br>" + same[0].show_date );
                         }
 
                     });
@@ -462,7 +464,7 @@ console.log( vm.paramData );
                 { 'name' : 'f12506'         , 'data': 'f12506'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-center'  , 'title' : 'Date'      },      /* Date */
                 { 'name' : 'f33861'         , 'data': 'f33861'          ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-center'  , 'title' : '시장구분'  },       /* 시장구분 */
                 { 'name' : 'f16316'         , 'data': 'f16316'          ,  'width' : '120', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목코드'  },       /* 종목코드 */
-                { 'name' : 'f16002'         , 'data': 'f16002'          ,  'width' : '200', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목명'    },       /* 종목명 */
+                { 'name' : 'f16004'         , 'data': 'f16002'          ,  'width' : '200', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목명'    },       /* 종목명 ( 해외시장종목명 ) */
                 { 'name' : 'f16499'         , 'data': 'f16499'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : 'CU SHrs'   },      /* CU SHrs */
                 { 'name' : 'f34840'         , 'data': 'f34840'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '액면금액'   },      /* 액면금액 */
                 { 'name' : 'f16588'         , 'data': 'f16588'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '평가금액'   },      /* 평가금액 */
@@ -473,7 +475,6 @@ console.log( vm.paramData );
                 { 'name' : 'rate_day2'      , 'data': 'rate_day2'       ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중'       },      /* 비중 */
                 { 'name' : 'rate_day3'      , 'data': 'rate_day3'       ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중'       },      /* 비중 */
                 { 'name' : 'rate_day4'      , 'data': 'rate_day4'       ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중'       },      /* 비중 */
-
             ];        
 
             var arrColumnDef  =   [

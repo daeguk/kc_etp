@@ -641,6 +641,127 @@ var getEtpOperPdf = function(req, res) {
     }
 }
 
+/*
+ * ETP 운용관리 - 비중변경현황 정보를 조회한다.
+ * 2019-05-03  bkLove(촤병국)
+ */
+var getEtpOperPdfByRateTitle = function(req, res) {
+    try {
+        console.log('etpOper.getEtpOperPdfByRateTitle 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            console.log("[error] etpOper.getEtpOperPdfByRateTitle  req.body.data no data.");
+            console.log(req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = "[error] etpOper.getEtpOperPdfByRateTitle  req.body.data no data.";
+            
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse( JSON.stringify(req.body.data) );
+
+        paramData.user_id       =   req.session.user_id;
+        paramData.inst_cd       =   req.session.inst_cd;
+        paramData.type_cd       =   req.session.type_cd;
+        paramData.large_type    =   req.session.large_type;
+        paramData.krx_cd        =   req.session.krx_cd;
+
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+
+        
+        var rateTitleList =   [];
+        Promise.using(pool.connect(), conn => {
+
+
+            async.waterfall([
+
+                /* 1. ETP 운용관리 - 비중변경현황 - 최근 5개 날짜 정보를 조회한다. ( ETF 인 경우 ) */
+                function( callback ) {
+
+                    var queryId = "getEtpOperPdfEtfHistByRateTitle";
+
+                    /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                    if( paramData.f16493 == "3" || paramData.f16493  == "4" ) {
+                        queryId = "getEtpOperPdfEtnHistByRateTitle";
+                    }                    
+
+                    stmt = mapper.getStatement('etpOper', queryId, paramData, format);
+                    console.log(stmt);
+
+                    conn.query(stmt, function( err, rows ) {
+
+                        if( err ) {
+                            resultMsg.result    =   false;
+                            resultMsg.msg       =   "[error] etpOper.getEtpOperPdfEtnHistByRate Error while performing Query";
+                            resultMsg.err       =   err;
+
+                            return callback( resultMsg );
+                        }
+
+                        if ( rows && rows.length > 0 ) {
+                            for( var i=0; i < rows.length; i++ ) {
+                                var temp = {};
+
+                                temp.index      =   i;
+                                temp.name       =   "rate_day" + i;
+                                temp.show_date  =   rows[i].show_date;
+                                temp.date       =   rows[i].f12506;
+
+                                rateTitleList.push( temp );
+                            }
+
+                            resultMsg.rateTitleList =   rateTitleList;
+                        }
+
+                        callback( null, paramData );
+                    });
+
+                },                
+
+            ], function (err) {
+
+                if( err ) {
+                    console.log( err );
+                }else{
+
+                    resultMsg.result    =   true;
+                    resultMsg.msg       =   "";
+                    resultMsg.err       =   null;
+                }
+
+                res.json( resultMsg );
+                res.end();
+            });
+        });
+
+    } catch(expetion) {
+
+        console.log(expetion);
+
+        if( resultMsg && !resultMsg.msg ) {
+            resultMsg.result    =   false;
+            resultMsg.msg       =   "[error] etpOper.getEtpOperPdfByRateTitle 오류가 발생하였습니다.";
+            resultMsg.err       =   expetion;
+        }
+
+        resultMsg.rateTitleList =   [];
+
+        res.json({
+            resultMsg
+        });
+        res.end();  
+    }
+}
+
 
 /*
  * ETP 운용관리 - 비중변경현황 정보를 조회한다.
@@ -677,18 +798,73 @@ var getEtpOperPdfByRate = function(req, res) {
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
+
+        
+        var rateTitleList =   [];
         Promise.using(pool.connect(), conn => {
 
 
             async.waterfall([
 
-                /* 1. ETP 운용관리 - PDF관리 정보를 조회한다. ( ETF 인 경우 ) */
+                /* 1. ETP 운용관리 - 비중변경현황 - 최근 5개 날짜 정보를 조회한다. ( ETF 인 경우 ) */
                 function( callback ) {
 
-                    /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                    if( paramData.f16493 == "1" || paramData.f16493  == "2" ) {
+                    var queryId = "getEtpOperPdfEtfHistByRateTitle";
 
-                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtfHistByRate', paramData, format);
+                    /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                    if( paramData.f16493 == "3" || paramData.f16493  == "4" ) {
+                        queryId = "getEtpOperPdfEtnHistByRateTitle";
+                    }                    
+
+                    stmt = mapper.getStatement('etpOper', queryId, paramData, format);
+                    console.log(stmt);
+
+                    conn.query(stmt, function( err, rows ) {
+
+                        if( err ) {
+                            resultMsg.result    =   false;
+                            resultMsg.msg       =   "[error] etpOper.getEtpOperPdfEtnHistByRate Error while performing Query";
+                            resultMsg.err       =   err;
+
+                            return callback( resultMsg );
+                        }
+
+                        if ( rows && rows.length > 0 ) {
+                            for( var i=0; i < rows.length; i++ ) {
+                                var temp = {};
+
+                                temp.index      =   i;
+                                temp.name       =   "rate_day" + i;
+                                temp.show_date  =   rows[i].show_date;
+                                temp.date       =   rows[i].f12506;
+
+                                rateTitleList.push( temp );
+                            }
+
+                            resultMsg.rateTitleList =   rateTitleList;
+                        }
+
+                        callback( null, paramData );
+                    });
+
+                },                
+
+                /* 2. ETP 운용관리 - PDF관리 정보를 조회한다. ( ETF 인 경우 ) */
+                function( msg, callback ) {
+
+                    if( resultMsg.rateTitleList && resultMsg.rateTitleList.length > 0 ) {
+
+                        var queryId = "getEtpOperPdfEtfHistByRate";
+
+                        /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                        if( paramData.f16493 == "3" || paramData.f16493  == "4" ) {
+                            queryId = "getEtpOperPdfEtnHistByRate";
+                        }
+
+
+                        paramData.rateTitleList     =   resultMsg.rateTitleList;
+
+                        stmt = mapper.getStatement('etpOper', queryId, paramData, format);
                         console.log(stmt);
 
                         conn.query(stmt, function( err, rows ) {
@@ -705,43 +881,14 @@ var getEtpOperPdfByRate = function(req, res) {
                                 resultMsg.dataList  = rows;
                             }
 
-                            callback( null, paramData );
-                        });
-                    }else{
-                        callback( null, paramData );
-                    }                    
-                },
-
-                /* 2. ETP 운용관리 - PDF관리 정보를 조회한다. ( ETN 인 경우 ) */
-                function( msg, callback ) {
-
-                    /* ETN 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                    if( paramData.f16493 == "3" || paramData.f16493  == "4" ) {
-
-                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtnHistByRate', paramData, format);
-                        console.log(stmt);
-
-                        conn.query(stmt, function( err, rows ) {
-
-                            if( err ) {
-                                resultMsg.result    =   false;
-                                resultMsg.msg       =   "[error] etpOper.getEtpOperPdfEtnHistByRate Error while performing Query";
-                                resultMsg.err       =   err;
-
-                                return callback( resultMsg );
-                            }
-
-                            if ( rows && rows.length > 0 ) {
-                                resultMsg.dataList  = rows;
-                            }
-
                             callback( null );
                         });
 
                     }else{
+
                         callback( null );
                     }
-                }           
+                }
 
             ], function (err) {
 
@@ -769,6 +916,7 @@ var getEtpOperPdfByRate = function(req, res) {
             resultMsg.err       =   expetion;
         }
 
+        resultMsg.rateTitleList =   [];
         resultMsg.dataList      =   [];
 
         res.json({
@@ -1717,6 +1865,7 @@ module.exports.getEtpOperIndex = getEtpOperIndex;
 module.exports.getEtpOperIndexOversea = getEtpOperIndexOversea;
 module.exports.getEtpOperIndexError = getEtpOperIndexError;
 module.exports.getEtpOperPdf = getEtpOperPdf;
+module.exports.getEtpOperPdfByRateTitle = getEtpOperPdfByRateTitle;
 module.exports.getEtpOperPdfByRate = getEtpOperPdfByRate;
 module.exports.getEtpOperPdfModify = getEtpOperPdfModify;
 module.exports.getJongmokData = getJongmokData;
