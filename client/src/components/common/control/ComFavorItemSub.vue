@@ -200,7 +200,7 @@ export default {
                             
                             htm += "<div class='text_S'>" + util.formatNumber(data) + "</div>";
 
-                            if (row.f15004 >= 0) {
+                            if (row.F15004 >= 0) {
                                 htm += "<br><span class='text_S text_red'>"+row.F15004+"%</span>";
                             } else {
                                 htm += "<br><span class='text_S text_blue'>"+row.F15004+"%</span>";
@@ -297,9 +297,9 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = ""
                             
-                            htm += "<div class='text_S'>" + util.formatNumber(data) + "</div>";
+                            htm += "<div>" + util.formatNumber(data) + "</div>";
 
-                            if (row.f15004 >= 0) {
+                            if (row.F15004 >= 0) {
                                 htm += "<br><span class='text_S text_red'>"+row.F15004+"%</span>";
                             } else {
                                 htm += "<br><span class='text_S text_blue'>"+row.F15004+"%</span>";
@@ -398,9 +398,9 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = ""
                             
-                            htm += "<div class='text_S'>" + util.formatNumber(data) + "</div>";
+                            htm += "<div>" + util.formatNumber(data) + "</div>";
 
-                            if (row.f15004 >= 0) {
+                            if (row.F15004 >= 0) {
                                 htm += "<br><span class='text_S text_red'>"+row.F15004+"%</span>";
                             } else {
                                 htm += "<br><span class='text_S text_blue'>"+row.F15004+"%</span>";

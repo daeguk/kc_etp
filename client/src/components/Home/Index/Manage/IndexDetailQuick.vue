@@ -78,14 +78,19 @@
                                     <v-card flat>
 
                                         <table id="jisuTable" class="tbl_type ver2">
+                                            <colgroup>
+                                                <col width="70%">
+                                                <col width="30%">
+                                            </colgroup>
                                             <thead>
                                                 <tr>
                                                     <th class="txt_left">지수명</th>
+                                                    <th class="txt_right">현재가</th>
                                                 </tr>
                                             </thead>  
                                         </table> 
                                         <!---ppt09버전 수정 테이블--->
-                                        <table id="jisuTable" class="tbl_type ver2">
+                                        <!--table id="jisuTable" class="tbl_type ver2">
                                             <colgroup>
                                                 <col width="70%">
                                                 <col width="30%">
@@ -110,7 +115,7 @@
                                                         <td class="txt_right">1234.56<br><span class='text_blue text_S'>-2.5</span></td>
                                                 </tr>
                                             </tbody> 
-                                        </table> 
+                                        </table--> 
                                       <!---ppt09버전 수정 테이블--->
                                     </v-card>
                                 </v-flex>
@@ -134,7 +139,7 @@ import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
 import ComIndexFixPopup from "@/components/common/popup/ComIndexFixPopup.vue";
-
+import util       from "@/js/util.js";
 
 var jisuTable = null;
 
@@ -190,16 +195,31 @@ export default {
                 lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
                 ordering: false,
                 columnDefs: [
-                    {
-                        render: function(data, type, row) {
-                            let htm =   "<span>";
-                            htm     +=      "<b>" + data + "</b>";
-                            htm     +=      "<br>" + row.f16013;
-                            htm     +=  "</span>";
+                    {  
+                        "render": function ( data, type, row ) {
+                            let htm = "<div>";
+                            htm += "           "+data+"";
+                            htm += "            <br><span class='text_S'>"+row.f16013+"</div>";
                             return htm;
                         },
-                        targets: 0
-                    }
+                        "targets": 0
+                    },
+                    {  
+                        "render": function ( data, type, row ) {
+                            let htm = ""
+                                
+                                htm += "<div>" + util.formatNumber(data) + "</div>";
+
+                                if (row.f15004 >= 0) {
+                                    htm += "<br><span class='text_S text_red'>"+row.f15004+"%</span>";
+                                } else {
+                                    htm += "<br><span class='text_S text_blue'>"+row.f15004+"%</span>";
+                                }
+
+                                return htm;
+                                },
+                        "targets": 1
+                    },
                 ],
                 select: {
 
@@ -207,7 +227,8 @@ export default {
                 paging: false,
                 searching: false,
                 columns: [
-                    { data: "f16002", orderable: false, className:"txt_left"},
+                    { data: "f16002", orderable: false, className:"txt_left line2 in_icon"},
+                    { "data": "f15001", "orderable": false, className:'txt_right'},            
                 ]
             });
 
