@@ -217,7 +217,7 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "";
                         
-                        htm += (Number(data) / 100) + "%";
+                        htm += Number(data) + "%";
                         
                         return htm;
                     },
@@ -325,8 +325,7 @@ export default {
 
                             market_tot_amt += jongItem.market_amt;
                             
-                            if (index == (vm.pdfList.length-1)) {                                
-                                vm.pdf_reload(vm.pdfList);                                                        
+                            if (index == (vm.pdfList.length-1)) {                                                
                                 vm.market_tot_amt = market_tot_amt;
 
                                 /*INav 계산 : CU시가총액 / CU당 주식수*/
@@ -337,6 +336,13 @@ export default {
                                 }
                                 /* INav 등락률 */
                                 vm.iNav_percent =  (vm.iNav_amt / vm.etpBasic.f03329 - 1);
+
+                                /* 비중 정보 산출*/
+                                for (let item of vm.pdfList) {         
+                                    item.f34743 = (((item.f16588 /  vm.market_tot_amt) * 100).toFixed(2));                                    
+                                }
+                                vm.pdf_reload(vm.pdfList);
+                                
 
                                 /* input box readony 처리 */
                                 if (!vm.SimulationSwitch) {
@@ -405,7 +411,7 @@ export default {
 
                     
                     if (index == (vm.pdfList.length-1)) {                                
-                        vm.pdf_reload(vm.pdfList);
+                        
                         vm.market_tot_amt = market_tot_amt;
 
                         /*INav 계산 : CU시가총액 / CU당 주식수*/
@@ -416,6 +422,13 @@ export default {
                         }
                         /* INav 등락률 */
                         vm.iNav_percent =  (vm.iNav_amt / vm.etpBasic.f03329 - 1);
+
+                        /* 비중 정보 산출*/
+                        for (let item of vm.pdfList) {         
+                            item.f34743 = (((item.f16588 /  vm.market_tot_amt) * 100).toFixed(2));
+                        }
+
+                        vm.pdf_reload(vm.pdfList);
                     }
                             //console.log("market_amt:"+market_amt + "idx:" + index + "lenght:" + (vm.pdfList.length-1));     
                             
