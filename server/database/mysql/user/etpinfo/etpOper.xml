@@ -48,7 +48,7 @@
                 ,   4444                                              AS  rate_day3       /* 비중 3일전 */
                 ,   5555                                              AS  rate_day4       /* 비중 4일전 */
                 ,
-            <include    refid="sqlEtpOperPdfEtf01" />
+            <include    refid="sqlEtpOperPdfEtfHist01" />
 
     </select>
 
@@ -66,7 +66,7 @@
                 ,   9999                                              AS  rate_day3       /* 비중 3일전 */
                 ,   1010                                              AS  rate_day4       /* 비중 4일전 */
                 ,
-            <include    refid="sqlEtpOperPdfEtn01" />
+            <include    refid="sqlEtpOperPdfEtnHist01" />
 
     </select>
 
@@ -404,7 +404,7 @@
                     </if>
 
                 )       td_etnpdf_hist
-         INNER  JOIN    td_etnpdf_hist
+         INNER  JOIN    td_etp_basic
                   ON    td_etnpdf_hist.f16012       =   td_etp_basic.f16012         /* 국제표준코드 */
 
          WHERE  1 = 1                    

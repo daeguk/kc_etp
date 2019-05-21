@@ -726,6 +726,7 @@ export default {
 
             var arrColumnDef  =   [
 
+                    /* 지수 */
                     {       
                             'name' : 'f16002'   
                         ,   "render": function ( data, type, row, meta ) {
@@ -749,6 +750,8 @@ export default {
                                 return  content;
                             }
                     },
+                    
+                    /* Last */
                     {      
                             'name' : 'last_date'   
                         ,   "render": function ( data, type, row, meta ) {
@@ -764,6 +767,7 @@ export default {
                             }
                     },                    
 
+                    /* ETF */
                     {       
                             'name' : 'etp_info_json'   
                         ,   "render": function ( data, type, row, meta ) {
@@ -782,6 +786,7 @@ export default {
                             }
                     },
 
+                    /* 그래프 영역 */
                     {       
                             'name' : 'graph'   
                         ,   "render": function ( data, type, row ) {
