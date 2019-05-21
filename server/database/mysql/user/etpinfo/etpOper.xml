@@ -12,7 +12,7 @@
                         (
                             SELECT  td_kspjong_basic.f16002                                 AS  f16002          /* 한글종목명 */
                               FROM  td_kspjong_basic
-                             WHERE  td_kspjong_basic.f16012     =   td_etfpdf_baisc.f16316   /* 구성종목코드 */
+                             WHERE  td_kspjong_basic.f16012     =   td_etfpdf_basic.f16316   /* 구성종목코드 */
                         )                                                                   AS  f16002          /* 한글종목명 */
                     ,
         <include    refid="sqlEtpOperPdfEtf01" />
@@ -28,7 +28,7 @@
                         (
                             SELECT  td_future_basic.f16002                                  AS  f16002          /* 한글종목명 */
                               FROM  td_future_basic
-                             WHERE  td_future_basic.f16012     =   td_etnpdf_basic.f16316   /* 구성종목코드 */
+                             WHERE  td_future_basic.f16012     =   td_etfpdf_basic.f16316   /* 구성종목코드 */
                         )                                                                   AS  f16002          /* 한글종목명 */
                     ,        
         <include    refid="sqlEtpOperPdfEtn01" />
