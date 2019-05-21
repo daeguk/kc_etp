@@ -12,10 +12,10 @@
                         (
                             SELECT  td_kspjong_basic.f16002                                 AS  f16002          /* 한글종목명 */
                               FROM  td_kspjong_basic
-                             WHERE  td_kspjong_basic.f16012     =   td_etfpdf_hist.f16316   /* 구성종목코드 */
+                             WHERE  td_kspjong_basic.f16012     =   td_etfpdf_basic.f16316   /* 구성종목코드 */
                         )                                                                   AS  f16002          /* 한글종목명 */
                     ,
-        <include    refid="sqlEtpOperPdfEtfHist01" />
+        <include    refid="sqlEtpOperPdfEtf01" />
     </select>
     
 
@@ -28,21 +28,115 @@
                         (
                             SELECT  td_future_basic.f16002                                  AS  f16002          /* 한글종목명 */
                               FROM  td_future_basic
+                             WHERE  td_future_basic.f16012     =   td_etnpdf_basic.f16316   /* 구성종목코드 */
+                        )                                                                   AS  f16002          /* 한글종목명 */
+                    ,        
+        <include    refid="sqlEtpOperPdfEtn01" />
+    </select>
+
+
+    <!--
+    * ETP 운용관리 - PDF관리 정보를 조회한다. ( ETF 인 경우 )
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="getEtpOperPdfEtfHist">
+        SELECT      /* etpOper.getEtpOperPdfEtfHist  ETP 운용관리 - PDF관리 정보를 조회한다. ( ETF 인 경우 ) */
+                        (
+                            SELECT  td_kspjong_basic.f16002                                 AS  f16002          /* 한글종목명 */
+                              FROM  td_kspjong_basic
+                             WHERE  td_kspjong_basic.f16012     =   td_etfpdf_hist.f16316   /* 구성종목코드 */
+                        )                                                                   AS  f16002          /* 한글종목명 */
+                    ,
+        <include    refid="sqlEtpOperPdfEtfHist01" />
+    </select>
+    
+
+    <!--
+    * ETP 운용관리 - PDF관리 정보를 조회한다. ( ETN 인 경우 )
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="getEtpOperPdfEtnHist">
+        SELECT      /* etpOper.getEtpOperPdfEtnHist  ETP 운용관리 - PDF관리 정보를 조회한다. ( ETN 인 경우 ) */
+                        (
+                            SELECT  td_future_basic.f16002                                  AS  f16002          /* 한글종목명 */
+                              FROM  td_future_basic
                              WHERE  td_future_basic.f16012     =   td_etnpdf_hist.f16316   /* 구성종목코드 */
                         )                                                                   AS  f16002          /* 한글종목명 */
                     ,        
         <include    refid="sqlEtpOperPdfEtnHist01" />
+    </select>    
+
+
+
+    <!--
+    * ETP 운용관리 - 비중변경현황 - 최근 5개 날짜 정보를 조회한다. ( ETF 인 경우 )
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="getEtpOperPdfEtfHistByRateTitle">
+    <![CDATA[
+        SELECT  /* etpOper.getEtpOperPdfEtfHistByRateTitle  ETP 운용관리 - 비중변경현황 - 최근 5개 날짜 정보를 조회한다. ( ETF 인 경우 ) */
+
+                td_etfpdf_hist.f12506                   AS  f12506
+          FROM  td_etfpdf_hist
+
+         WHERE  1 = 1
+           AND  td_etfpdf_hist.f12506                   >=   DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m%d' )
+
+         GROUP  BY  td_etfpdf_hist.f12506
+
+        HAVING  COUNT(*) > 0
+         ORDER  BY  td_etfpdf_hist.f12506   DESC
+         LIMIT  5
+    ]]>
     </select>
+
+    <!--
+    * ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETN 인 경우 )
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="getEtpOperPdfEtnHistByRateTitle">
+    <![CDATA[
+        SELECT  /* etpOper.getEtpOperPdfEtnHistByRateTitle  ETP 운용관리 - 비중변경현황 - 최근 5개 날짜 정보를 조회한다. ( ETN 인 경우 ) */
+
+                td_etnpdf_hist.f12506                   AS  f12506
+          FROM  td_etnpdf_hist
+
+         WHERE  1 = 1
+           AND  td_etnpdf_hist.f12506                   >=   DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m%d' )
+
+         GROUP  BY  td_etnpdf_hist.f12506
+
+        HAVING  COUNT(*) > 0
+         ORDER  BY  td_etnpdf_hist.f12506   DESC
+         LIMIT  5
+    ]]>
+    </select>
+
 
     <!--
     * ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETP 인 경우 )
     * 2019-05-03  bkLove(촤병국)
     -->
-    <select id="getEtpOperPdfEtfByRate">
+    <select id="getEtpOperPdfEtfHistByRate">
     
-        SELECT      /* etpOper.getEtpOperPdfEtfByRate  ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETF 인 경우 ) */
+        SELECT      /* etpOper.getEtpOperPdfEtfHistByRate  ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETF 인 경우 ) */
 
                     1111                                              AS  rate_day0       /* 비중 */
+
+                ,   IFNULL(
+                        (
+                            SELECT  td_etfpdf_hist_sub.f34743
+                                FROM  td_etfpdf_hist  td_etfpdf_hist_sub
+                                WHERE  td_etfpdf_hist_sub.f12506       =   '20190510'
+
+                                AND  td_etfpdf_hist_sub.f16583       =   td_etfpdf_hist.f16583
+                                AND  td_etfpdf_hist_sub.f16012       =   td_etfpdf_hist.f16012
+                                AND  td_etfpdf_hist_sub.f16013       =   td_etfpdf_hist.f16013
+                                AND  td_etfpdf_hist_sub.f16316       =   td_etfpdf_hist.f16316
+                        ) 
+                        , 0 
+                    ) / 100                                           AS  rate_day1
+
                 ,   2222                                              AS  rate_day1       /* 비중 1일전 */
                 ,   3333                                              AS  rate_day2       /* 비중 2일전 */
                 ,   4444                                              AS  rate_day3       /* 비중 3일전 */
@@ -56,9 +150,9 @@
     * ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETN 인 경우 )
     * 2019-05-03  bkLove(촤병국)
     -->
-    <select id="getEtpOperPdfEtnByRate">
+    <select id="getEtpOperPdfEtnHistByRate">
     
-        SELECT      /* etpOper.getEtpOperPdfEtnByRate  ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETN 인 경우 ) */
+        SELECT      /* etpOper.getEtpOperPdfEtnHistByRate  ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETN 인 경우 ) */
 
                     6666                                              AS  rate_day0       /* 비중 */
                 ,   7777                                              AS  rate_day1       /* 비중 1일전 */
@@ -69,6 +163,8 @@
             <include    refid="sqlEtpOperPdfEtnHist01" />
 
     </select>
+
+    
 
 
     <!--
