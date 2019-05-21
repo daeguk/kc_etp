@@ -42,9 +42,7 @@ var getiNavData = function (req, res) {
 
                 function(etpBasic, callback) {
                     var params = {
-                        basicData : {
-                            "f16012" : f16012
-                        }
+                        "f16012" : f16012
                     };
                     var etpItem = etpBasic[0];
 
@@ -57,8 +55,12 @@ var getiNavData = function (req, res) {
                     } else if (etpItem.f16493 == '3' || etpItem.f16493 == '4') {
                         query_id = "getEtpOperPdfEtn";
                     }
+
+                    console.log("query_id:" + query_id);
                     var stmt = mapper.getStatement('etpOper', query_id, params, {language:'sql', indent: '  '});
                     
+                    console.log("stmt:" + stmt);
+
                     conn.query(stmt, function( err, rows ) {
                         callback(null, etpItem, rows);                                 
                     });    

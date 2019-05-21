@@ -208,16 +208,19 @@ export default {
                 },
                 {  
                     "render": function ( data, type, row ) {
+
                         let htm = ""
-                            if (row.F15004 >= 0) {
-                                htm = "<span class='align_r text_red'>"+util.formatNumber(data);
-                            } else {
-                                htm = "<span class='align_r text_blue'>"+util.formatNumber(data);
-                            }
-                            htm += "<br><span class='text_S'>"+row.F15004+"%</span>";
-                            htm += "   </span>";
-                            return htm;
-                            },
+                            
+                        htm += util.formatNumber(data);
+
+                        if (row.F15004 >= 0) {
+                            htm += "<br><span class='text_S text_red'>"+row.F15004+"%</span>";
+                        } else {
+                            htm += "<br><span class='text_S text_blue'>"+row.F15004+"%</span>"; /* ETF관련지수등락율 */
+                        }
+
+                        return htm;
+                    },
                     "targets": 1
                 },
                 {
@@ -236,7 +239,7 @@ export default {
                         }      
                         return htm;                   
                     },
-                    "targets": [3, 4, 5, 6, 7, 8]
+                    "targets": [3]
                 },
                 {
                     "render": function ( data, type, row ) {
@@ -304,16 +307,21 @@ export default {
                 },
                 {  
                     "render": function ( data, type, row ) {
+
                         let htm = ""
-                            if (row.F15004 >= 0) {
-                                htm = "<span class='align_r text_red'>"+util.formatNumber(data);
-                            } else {
-                                htm = "<span class='align_r text_blue'>"+util.formatNumber(data);
-                            }
-                            htm += "<br><span class='text_S'>"+row.F15004+"%</span>";
-                            htm += "   </span>";
-                            return htm;
-                            },
+                            
+                        htm += util.formatNumber(data);
+
+                        if (row.F15004 >= 0) {
+                            htm += "<br><span class='text_S text_red'>"+row.F15004+"%</span>";
+                        } else {
+                            htm += "<br><span class='text_S text_blue'>"+row.F15004+"%</span>"; /* ETF관련지수등락율 */
+                        }
+
+                        return htm;
+
+
+                    },
                     "targets": 1
                 },
                 {
@@ -332,7 +340,7 @@ export default {
                         }      
                         return htm;                   
                     },
-                    "targets": [3, 4, 5, 6, 7, 8]
+                    "targets": [3]
                 },
                 {
                     "render": function ( data, type, row ) {

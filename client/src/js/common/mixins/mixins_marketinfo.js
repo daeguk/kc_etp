@@ -1,7 +1,7 @@
 
 import $      from 'jquery'
 import Config from "@/js/config.js";
-
+import util       from "@/js/util.js";
 
 
 /*
@@ -88,28 +88,35 @@ export  const  market_common =   {
                                         {  
                                             "render": function ( data, type, row ) {
                                                 let htm = ""
+                            
+                                                htm += util.formatNumber(data);
+
                                                 if (row.f30818 >= 0) {
-                                                    htm = "<span class='align_r text_red'>"+row.fmt_f15301;
+                                                    htm += "<br><span class='text_S text_red'>"+row.f30818+"%</span>";
                                                 } else {
-                                                    htm = "<span class='align_r text_blue'>"+row.fmt_f15301;
+                                                    htm += "<br><span class='text_S text_blue'>"+row.f30818+"%</span>"; /* ETF관련지수등락율 */
                                                 }
-                                                htm += "<br><span class='text_S'>"+row.f30818+"%</span>";
-                                                htm += "   </span>";
+
                                                 return htm;
+                                                
                                             },
                                             "targets": 1
                                         },
                                         {  
                                             "render": function ( data, type, row ) {
+
                                                 let htm = ""
+                            
+                                                htm += util.formatNumber(data);
+
                                                 if (row.f30823 >= 0) {
-                                                    htm = "<span class='align_r text_red'>"+data;
+                                                    htm += "<br><span class='text_S text_red'>"+row.f30823+"%</span>";
                                                 } else {
-                                                    htm = "<span class='align_r text_blue'>"+data;
+                                                    htm += "<br><span class='text_S text_blue'>"+row.f30823+"%</span>"; /* ETF관련지수등락율 */
                                                 }
-                                                htm += "<br><span class='text_S'>"+row.f30823+"%</span>";           /* ETF관련지수등락율 */
-                                                htm += "   </span>";
+
                                                 return htm;
+                                                
                                             },
                                             "targets": 6
                                         },
@@ -124,12 +131,12 @@ export  const  market_common =   {
                                     ],
                                     columns: [
                                         { "data": "f16002", "orderable": true, className:"txt_left line2"}, /*종목*/
-                                        { "data": "fmt_f15301", "orderable": true, className:"txt_right" }, /*INAV*/
-                                        { "data": "fmt_f03329", "orderable" : true, className:"txt_right" }, /*전일최종Nav*/
+                                        { "data": "f15301", "orderable": true, className:"txt_right" }, /*INAV*/
+                                        { "data": "f03329", "orderable" : true, className:"txt_right" }, /*전일최종Nav*/
                                         { "data": "f15302", "orderable" : true, className:"txt_right" }, /*추적오차율*/
                                         { "data": "f15304", "orderable" : true, className:"txt_right" }, /*괴리율*/
                                         { "data": "f34777", "orderable" : true, className:"txt_left" }, /*기초지수*/
-                                        { "data": "fmt_f15318", "orderable" : true, className:"txt_right" }, /*지수현재가*/
+                                        { "data": "f15318", "orderable" : true, className:"txt_right" }, /*지수현재가*/
                                         { "data": null, "orderable" : true, defaultContent:""},
                                     ]
                             }); 

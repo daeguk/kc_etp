@@ -2,7 +2,8 @@
 
 var util = {    
     formatNumber: function(num) {
-        if (num != null) {
+    
+        if (num != null && typeof num !== 'undefined') {
             num = Number(num).toFixed(2);
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         } else {
