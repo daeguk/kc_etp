@@ -6,12 +6,6 @@
 
             <v-window v-model="step">
 
-                <v-spacer></v-spacer>
-                <v-btn icon @click="fn_closePop">
-                    <v-icon>close</v-icon>
-                </v-btn>
-
-
 
                 <v-window-item :value="1">
 <!---step1 START-->
@@ -20,8 +14,15 @@
                             <v-card-title ma-0>
                                 {{ etpBasic.f16002          /* 한글종목명 */ }}
                                 <span>{{ etpBasic.f16013    /* 단축코드 */ }}</span>
+
+                                <v-spacer></v-spacer>
+                                <v-btn icon @click="fn_close">
+                                    <v-icon>close</v-icon>
+                                </v-btn>                                
                             </v-card-title>
+
                         </h5>
+
                         <v-card flat class="pdf_mody_w">
                             <v-toolbar card prominent>
                                 <v-toolbar-title class="pdf_t">
@@ -64,39 +65,22 @@
                                 <v-btn icon :disabled="step === 1" flat @click="step--">
                                     <v-icon>arrow_back_ios</v-icon>
                                 </v-btn>PDF 변경신청 현황
+
                                 <v-spacer></v-spacer>
-                                <v-btn icon @click="dialog5 = false">
+                                <v-btn icon @click="fn_close">
                                     <v-icon>close</v-icon>
                                 </v-btn>
                             </v-card-title>
                         </h5>
                         <v-card flat>
-                            <v-flex xs12    v-for="subData in allDataList" :key="subData.etf_f16012">
+                            <v-flex xs12    v-for="subData in allDataList" :key='"step2_" + subData.etf_f16012'>
 
                                 <h4>
                                     {{ subData.etf_f16002           /* ETF 한글종목명 */    }}
                                     <span>{{ subData.etf_f16013     /* ETF 단축코드 */      }}</span>
                                 </h4>
 
-                                <table v-bind:id='subData.etf_f16012' class="tbl_type" style="width:100%">
-
-                                    <colgroup>
-                                        <col width="15%">
-                                        <col width="20%">
-                                        <col width="25%">
-                                        <col width="20%">
-                                        <col width="20%">
-                                    </colgroup>
-                                    <thead>
-                                        <tr>
-                                            <th>구분</th>
-                                            <th class="txt_left">CODE</th>
-                                            <th class="txt_left">종목</th>
-                                            <th class="txt_right">변경전</th>
-                                            <th class="txt_right">변경후</th>
-                                        </tr>
-                                    </thead>
-                                </table>
+                                <table v-bind:id='"step2_" + subData.etf_f16012' class="tbl_type" style="width:100%"></table>
 
                             </v-flex>
 
@@ -109,7 +93,7 @@
                             <div class="pop_btn_w">
                                 <p class="pdfmody_btn">
 
-                                    <v-btn fab dark depressed color="primary" :disabled="disabledAddEtfOperPdf" @click="fn_showEtfOperPdf()">
+                                    <v-btn fab dark depressed color="primary" :disabled="disabledAddEtfOperPdf" @click="fn_showAddEtfOperPdf()">
                                         <v-icon dark large>add</v-icon>
                                     </v-btn>네, 추가 변경 작업을 진행합니다.
 
@@ -169,110 +153,25 @@
                             <v-card-title ma-0>
                                 PDF 변경신청 완료
                                 <v-spacer></v-spacer>
-                                <v-btn icon @click="dialog5 = false">
+
+                                <v-btn icon @click="fn_close">
                                     <v-icon>close</v-icon>
                                 </v-btn>
                             </v-card-title>
                         </h5>
-                        
+
                         <v-card flat>
+                            <v-flex xs12    v-for="subData in allDataList" :key='"step3_"  + subData.etf_f16012'>
 
-                            <v-flex xs12>
                                 <h4>
-                                    TIGER 코스닥 150
-                                    <span>002345</span>
+                                    {{ subData.etf_f16002           /* ETF 한글종목명 */    }}
+                                    <span>{{ subData.etf_f16013     /* ETF 단축코드 */      }}</span>
                                 </h4>
-                                <table id class="tbl_type" style="width:100%">
-                                    <colgroup>
-                                        <col width="15%">
-                                        <col width="20%">
-                                        <col width="25%">
-                                        <col width="20%">
-                                        <col width="20%">
-                                    </colgroup>
-                                    <thead>
-                                        <tr>
-                                            <th>구분</th>
-                                            <th class="txt_left">CODE</th>
-                                            <th class="txt_left">종목</th>
-                                            <th class="txt_right">변경전</th>
-                                            <th class="txt_right">변경후</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>변경</td>
-                                            <td class="txt_left">KRD0101220110</td>
-                                            <td class="txt_left">원화예금</td>
-                                            <td class="txt_right">985632675</td>
-                                            <td class="txt_right">12358684520</td>
-                                        </tr>
-                                        <tr>
-                                            <td>변경</td>
-                                            <td class="txt_left">KRD0101220110</td>
-                                            <td class="txt_left">원화예금</td>
-                                            <td class="txt_right">985632675</td>
-                                            <td class="txt_right">12358684520</td>
-                                        </tr>
-                                        <tr>
-                                            <td>변경</td>
-                                            <td class="txt_left">KRD0101220110</td>
-                                            <td class="txt_left">원화예금</td>
-                                            <td class="txt_right">985632675</td>
-                                            <td class="txt_right">12358684520</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+
+                                <table v-bind:id='"step3_" + subData.etf_f16012' class="tbl_type" style="width:100%"></table>
+
                             </v-flex>
 
-
-                            <v-flex xs12>
-                                <h4>
-                                    TIGER 레버러지
-                                    <span>002345</span>
-                                </h4>
-                                <table id class="tbl_type" style="width:100%">
-                                    <colgroup>
-                                        <col width="15%">
-                                        <col width="20%">
-                                        <col width="25%">
-                                        <col width="20%">
-                                        <col width="20%">
-                                    </colgroup>
-                                    <thead>
-                                        <tr>
-                                            <th>구분</th>
-                                            <th class="txt_left">CODE</th>
-                                            <th class="txt_left">종목</th>
-                                            <th class="txt_right">변경전</th>
-                                            <th class="txt_right">변경후</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>변경</td>
-                                            <td class="txt_left">KRD0101220110</td>
-                                            <td class="txt_left">원화예금</td>
-                                            <td class="txt_right">985632675</td>
-                                            <td class="txt_right">12358684520</td>
-                                        </tr>
-                                        <tr>
-                                            <td>변경</td>
-                                            <td class="txt_left">KRD0101220110</td>
-                                            <td class="txt_left">원화예금</td>
-                                            <td class="txt_right">985632675</td>
-                                            <td class="txt_right">12358684520</td>
-                                        </tr>
-                                        <tr>
-                                            <td>변경</td>
-                                            <td class="txt_left">KRD0101220110</td>
-                                            <td class="txt_left">원화예금</td>
-                                            <td class="txt_right">985632675</td>
-                                            <td class="txt_right">12358684520</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </v-flex>
                         </v-card>
 
 
@@ -289,7 +188,7 @@
                                 <br>오춘교 대리 767-0000
                             </div>
                             <p class="text-xs-center">
-                                <v-btn dark depressed color="primary" @click="dialog5 = false">닫기</v-btn>
+                                <v-btn dark depressed color="primary" @click="fn_close">닫기</v-btn>
                             </p>
                         </v-card>
                     </v-card>
@@ -499,8 +398,9 @@ export default {
 
 
         var searchParam                 =   {}
-        searchParam.f16012              =   vm.paramData.f16012;                   /* 국제표준코드 */
-        searchParam.f16012              =   "KR7322410002";
+        searchParam.searchCode          =   vm.paramData.f16012;                   /* 국제표준코드 */
+/* 여러종류의 ETF 코드 데이터 저장을 위해 임시로 처리함 */
+searchParam.searchCode              =   "KR7322410002";
         searchParam.initYn              =   "Y";
 
         vm.fn_getEtpOperPdfModify( searchParam );
@@ -547,6 +447,19 @@ export default {
 
                         if( etpBasic && Object.keys( etpBasic ).length > 0 ) {
 
+                            /* allDataList 에서 존재하는 인덱스를 확인한다. */
+                            var filterIndex  =   _.findIndex( vm.allDataList,    {
+                                    "etf_f16012"    :   etpBasic.f16012      /* ETF 국제표준코드 */
+                                ,   "etf_f16013"    :   etpBasic.f16013      /* ETF 단축코드 */
+                            });
+
+                            if( filterIndex > -1 ) {
+                                vm.result.flag  =   false;
+                                vm.result.msg   =   '해당 코드는 이미 변경작업에 존재합니다. 다른 코드를 선택해 주세요.';
+
+                                return  false;
+                            }
+
                             /* 로그인 운용사코드와 동일한지 체크 */
                             if( etpBasic.login_f33960_check != "Y" ) {
                                 vm.result.flag  =   false;
@@ -556,6 +469,8 @@ export default {
                             }
 
                             /* 사무수탁회사번호 가 없는 경우 */
+/* 여러종류의 ETF 코드 데이터 저장을 위해 임시로 처리함 */
+etpBasic.f16583 = 10;
                             if( etpBasic.f16583 == "" ) {
                                 vm.result.flag  =   false;
                                 vm.result.msg   =   '해당코드의 데이터가 존재하지 않습니다.';
@@ -572,8 +487,10 @@ export default {
                         }
                     }
 
-                    vm.step     =   1;
-                    vm.etpBasic =   etpBasic;
+                    vm.txtAddEtpCode    =   "";
+
+                    vm.step             =   1;
+                    vm.etpBasic         =   etpBasic;
 
                     if (dataList && dataList.length > 0) {
                         tblEmergeny01.rows.add( dataList ).draw();
@@ -602,8 +519,15 @@ export default {
                 return  false;
             }
 
+            if(  codeVal.length < 6
+            ) {
+                vm.$emit("showMessageBox", '확인','구성종목코드를 6자리 이상 입력해 주세요.',{},1);
+
+                return  false;
+            }            
+
             axios.post( Config.base_url + "/user/etp/getJongmokData", {
-                data: { "f16012" : codeVal }
+                data: { "searchCode" : codeVal }
             }).then(function(response) {
                 console.log(response);
 
@@ -727,9 +651,15 @@ export default {
                 /* 이전건 + 현재건 데이터가 존재하는 경우 */
                 if( vm.allDataList.length > 0 ) {
 
-                    /* 현재 수정된 건이 없는 경우 */
-                    if( vm.dataList.length == 0 ) {
+                    /* 변경된 데이터만 추출 */
+                    var filterData  =   _.filter( vm.dataList, function( o, i ) {
+                        if( o.status == "insert" || o.status == "modify" ) {
+                            return  true;
+                        }
+                    });
 
+                    /* 현재 수정된 건이 없는 경우 */
+                    if( filterData.length == 0 ) {
                         var filterIndex  =   _.findIndex( vm.allDataList,    {
                                                     "etf_f16012"    :   vm.etpBasic.f16012      /* ETF 국제표준코드 */
                                                 ,   "etf_f16013"    :   vm.etpBasic.f16013      /* ETF 단축코드 */
@@ -741,6 +671,8 @@ export default {
                 }
 
 
+
+
                 if( vm.allDataList.length > 0 ) {
 
                     var items = [];
@@ -748,16 +680,18 @@ export default {
 
                         vm.$nextTick().then(() => {
 
-                            if ( $.fn.DataTable.isDataTable('#' + subData.etf_f16012 ) ) {
-                                $('#' + subData.etf_f16012).DataTable().destroy();
-                                $('#' + subData.etf_f16012).empty();
+                            if ( $.fn.DataTable.isDataTable('#step2_' + subData.etf_f16012 ) ) {
+                                $('#step2_' + subData.etf_f16012).DataTable().destroy();
+                                $('#step2_' + subData.etf_f16012).empty();
                             }   
 
                             items = subData.data;
+
                             console.log("subData.etf_f16012=[" + subData.etf_f16012 + "]");
                             console.log( "items" );
                             console.log( items );
-                            $( '#' + subData.etf_f16012 ).DataTable( {
+                            
+                            $( '#step2_' + subData.etf_f16012 ).DataTable( {
                                     "processing": true,
                                     "serverSide": false,
                                     "info": false,   // control table information display field
@@ -835,7 +769,7 @@ export default {
          */
         fn_saveEtpOperPdfModify() {
             var vm = this;
-debugger;
+
             console.log("EtpOperPdfEmergencyModifyPop -> fn_saveEtpOperPdfModify");
 
 
@@ -852,15 +786,101 @@ debugger;
                         return  false;
                     }
 
-                    vm.step     =   2;
+
+
+                    vm.step     =   3;
+                    if( vm.allDataList.length > 0 ) {
+
+                        var items = [];
+                        for ( let subData of vm.allDataList ) {
+
+                            vm.$nextTick().then(() => {
+
+                                if ( $.fn.DataTable.isDataTable('#step3_' + subData.etf_f16012 ) ) {
+                                    $('#step3_' + subData.etf_f16012).DataTable().destroy();
+                                    $('#step3_' + subData.etf_f16012).empty();
+                                }   
+
+                                items = subData.data;
+
+                                console.log("subData.etf_f16012=[" + subData.etf_f16012 + "]");
+                                console.log( "items" );
+                                console.log( items );
+                                
+                                $( '#step3_' + subData.etf_f16012 ).DataTable( {
+                                        "processing": true,
+                                        "serverSide": false,
+                                        "info": false,   // control table information display field
+                                        "stateSave": true,  //restore table state on page reload,
+                                        "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                                        
+                                        select: {
+                                            style:    'single',
+                                            selector: 'td:first-child'
+                                        },
+                                        paging: false,
+                                        searching: false,
+                                        data : items,
+                                        ordering : false,
+                                        "columnDefs": [
+                                            {  
+                                                /* 구분 */
+                                                "render": function ( data, type, row ) {
+
+                                                    var htm = "";
+                                                    if( typeof row.status != "undefined" ) {
+                                                        if( row.status == "insert" ) {
+                                                            htm = "신규";
+                                                        }else{
+                                                            htm = "변경";
+                                                        }
+                                                    }
+
+                                                    return htm;
+                                                },
+                                                "targets": 0
+                                            },
+                                            {  
+                                                /* 변경전 */
+                                                "render": function ( data, type, row ) {
+
+                                                    var htm = "";
+                                                    if( typeof row.status != "undefined" ) {
+                                                        if( row.status == "insert" ) {
+                                                            htm = "-";
+                                                        }else{
+                                                            htm = data;
+                                                        }
+                                                    }
+
+                                                    return htm;
+                                                },
+                                                "targets": 3
+                                            },                                        
+                                        ],
+                                        columns: [
+                                            { "data" : "status"         ,   "width" :   "15%"   ,   "orderable" : false  ,   "className" : "txt_center" ,    "title" :   "구분"     },     /* 구분 */
+                                            { "data" : "f16316"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "CODE"     },     /* 코드 */
+                                            { "data" : "f16002"         ,   "width" :   "25%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "종목"     },     /* 종목명 */
+                                            { "data" : "f16499_prev"    ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"  ,    "title" :   "변경전"   },     /* CU shrs (변경전) */
+                                            { "data" : "f16499"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"  ,    "title" :   "변경후"   },     /* CU shrs */
+                                        ]
+                                }).draw();
+                            });
+                        }
+                    }
                 }
             });
         },
 
-        fn_showEtfOperPdf() {
+        /*
+         * [추가변경 작업] 버튼을 누르는 경우 저장버튼은 비활성화 처리한다.
+         * 2019-05-03  bkLove(촤병국)
+         */
+        fn_showAddEtfOperPdf() {
             var vm = this;
 
-            console.log("EtpOperPdfEmergencyModifyPop.vue -> fn_showEtfOperPdf");
+            console.log("EtpOperPdfEmergencyModifyPop.vue -> fn_showAddEtfOperPdf");
 
 
             vm.disabledAddEtfOperPdf    =   false;
@@ -872,12 +892,16 @@ debugger;
         fn_addEtfOperPdfModifyCancel() {
             var vm = this;
 
-            console.log("EtpOperPdfEmergencyModifyPop.vue -> fn_showEtfOperPdf");
+            console.log("EtpOperPdfEmergencyModifyPop.vue -> fn_addEtfOperPdfModifyCancel");
 
             vm.disabledAddEtfOperPdf    =   false;
             vm.showAddEtfOperPdfPanel   =   [ false ];
 
             vm.disabledSubmit2          =   false;
+
+            vm.result.flag              =   true;
+            vm.result.msg               =   "";
+            vm.txtAddEtpCode            =   "";
         },        
 
         fn_addEtfOperPdfModify() {
@@ -885,13 +909,23 @@ debugger;
 
             console.log("EtpOperPdfEmergencyModifyPop.vue -> fn_addEtfOperPdfModify");
 
-            if( !vm.txtAddEtpCode ) {
-                vm.$emit("showMessageBox", '확인','구성종목코드가 빈 항목이 존재합니다.',{},1);
-                return  false;                
+            if(     !vm.txtAddEtpCode
+                ||  vm.txtAddEtpCode.length == 0
+            ) {
+                vm.$emit("showMessageBox", '확인','ETF 코드를 입력해 주세요.',{},1);
+
+                return  false;
             }
 
+            if(  vm.txtAddEtpCode.length < 6
+            ) {
+                vm.$emit("showMessageBox", '확인','ETF 코드를 6자리 이상 입력해 주세요.',{},1);
+
+                return  false;
+            }            
+
             var searchParam                 =   {}
-            searchParam.f16012              =   vm.txtAddEtpCode;
+            searchParam.searchCode          =   vm.txtAddEtpCode;
             searchParam.initYn              =   "N";
 
             vm.fn_getEtpOperPdfModify( searchParam );
@@ -1054,7 +1088,7 @@ debugger;
          * 팝업창을 종료한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_closePop() {
+        fn_close() {
             var vm = this;
 
             vm.$emit( "fn_closePop", "close" );
