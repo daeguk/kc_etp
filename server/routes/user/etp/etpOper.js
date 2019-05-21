@@ -551,14 +551,14 @@ var getEtpOperPdf = function(req, res) {
                     /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
                     if( paramData.f16493 == "1" || paramData.f16493  == "2" ) {
 
-                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtf', paramData, format);
+                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtfHist', paramData, format);
                         console.log(stmt);
 
                         conn.query(stmt, function( err, rows ) {
 
                             if( err ) {
                                 resultMsg.result    =   false;
-                                resultMsg.msg       =   "[error] etpOper.getEtpOperPdfEtf Error while performing Query";
+                                resultMsg.msg       =   "[error] etpOper.getEtpOperPdfEtfHist Error while performing Query";
                                 resultMsg.err       =   err;
 
                                 return callback( resultMsg );
@@ -581,14 +581,14 @@ var getEtpOperPdf = function(req, res) {
                     /* ETN 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
                     if( paramData.f16493 == "3" || paramData.f16493  == "4" ) {
 
-                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtn', paramData, format);
+                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtnHist', paramData, format);
                         console.log(stmt);
 
                         conn.query(stmt, function( err, rows ) {
 
                             if( err ) {
                                 resultMsg.result    =   false;
-                                resultMsg.msg       =   "[error] etpOper.getEtpOperPdfEtn Error while performing Query";
+                                resultMsg.msg       =   "[error] etpOper.getEtpOperPdfEtnHist Error while performing Query";
                                 resultMsg.err       =   err;
 
                                 return callback( resultMsg );
@@ -688,14 +688,14 @@ var getEtpOperPdfByRate = function(req, res) {
                     /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
                     if( paramData.f16493 == "1" || paramData.f16493  == "2" ) {
 
-                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtfByRate', paramData, format);
+                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtfHistByRate', paramData, format);
                         console.log(stmt);
 
                         conn.query(stmt, function( err, rows ) {
 
                             if( err ) {
                                 resultMsg.result    =   false;
-                                resultMsg.msg       =   "[error] etpOper.getEtpOperPdfEtfByRate Error while performing Query";
+                                resultMsg.msg       =   "[error] etpOper.getEtpOperPdfEtfHistByRate Error while performing Query";
                                 resultMsg.err       =   err;
 
                                 return callback( resultMsg );
@@ -718,14 +718,14 @@ var getEtpOperPdfByRate = function(req, res) {
                     /* ETN 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
                     if( paramData.f16493 == "3" || paramData.f16493  == "4" ) {
 
-                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtnByRate', paramData, format);
+                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtnHistByRate', paramData, format);
                         console.log(stmt);
 
                         conn.query(stmt, function( err, rows ) {
 
                             if( err ) {
                                 resultMsg.result    =   false;
-                                resultMsg.msg       =   "[error] etpOper.getEtpOperPdfEtnByRate Error while performing Query";
+                                resultMsg.msg       =   "[error] etpOper.getEtpOperPdfEtnHistByRate Error while performing Query";
                                 resultMsg.err       =   err;
 
                                 return callback( resultMsg );

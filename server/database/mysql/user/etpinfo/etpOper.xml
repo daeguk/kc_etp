@@ -72,9 +72,9 @@
     * ETP 운용관리 - 비중변경현황 - 최근 5개 날짜 정보를 조회한다. ( ETF 인 경우 )
     * 2019-05-03  bkLove(촤병국)
     -->
-    <select id="getEtpOperPdfEtfByRateTitle">
+    <select id="getEtpOperPdfEtfHistByRateTitle">
     <![CDATA[
-        SELECT  /* etpOper.getEtpOperPdfEtfByRateTitle  ETP 운용관리 - 비중변경현황 - 최근 5개 날짜 정보를 조회한다. ( ETF 인 경우 ) */
+        SELECT  /* etpOper.getEtpOperPdfEtfHistByRateTitle  ETP 운용관리 - 비중변경현황 - 최근 5개 날짜 정보를 조회한다. ( ETF 인 경우 ) */
 
                 td_etfpdf_hist.f12506                   AS  f12506
           FROM  td_etfpdf_hist
@@ -94,9 +94,9 @@
     * ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETN 인 경우 )
     * 2019-05-03  bkLove(촤병국)
     -->
-    <select id="getEtpOperPdfEtnByRateTitle">
+    <select id="getEtpOperPdfEtnHistByRateTitle">
     <![CDATA[
-        SELECT  /* etpOper.getEtpOperPdfEtnByRateTitle  ETP 운용관리 - 비중변경현황 - 최근 5개 날짜 정보를 조회한다. ( ETN 인 경우 ) */
+        SELECT  /* etpOper.getEtpOperPdfEtnHistByRateTitle  ETP 운용관리 - 비중변경현황 - 최근 5개 날짜 정보를 조회한다. ( ETN 인 경우 ) */
 
                 td_etnpdf_hist.f12506                   AS  f12506
           FROM  td_etnpdf_hist
@@ -117,9 +117,9 @@
     * ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETP 인 경우 )
     * 2019-05-03  bkLove(촤병국)
     -->
-    <select id="getEtpOperPdfEtfByRate">
+    <select id="getEtpOperPdfEtfHistByRate">
     
-        SELECT      /* etpOper.getEtpOperPdfEtfByRate  ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETF 인 경우 ) */
+        SELECT      /* etpOper.getEtpOperPdfEtfHistByRate  ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETF 인 경우 ) */
 
                     1111                                              AS  rate_day0       /* 비중 */
 
@@ -150,9 +150,9 @@
     * ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETN 인 경우 )
     * 2019-05-03  bkLove(촤병국)
     -->
-    <select id="getEtpOperPdfEtnByRate">
+    <select id="getEtpOperPdfEtnHistByRate">
     
-        SELECT      /* etpOper.getEtpOperPdfEtnByRate  ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETN 인 경우 ) */
+        SELECT      /* etpOper.getEtpOperPdfEtnHistByRate  ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETN 인 경우 ) */
 
                     6666                                              AS  rate_day0       /* 비중 */
                 ,   7777                                              AS  rate_day1       /* 비중 1일전 */
