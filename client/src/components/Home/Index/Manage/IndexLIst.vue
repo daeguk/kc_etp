@@ -158,7 +158,7 @@ export default {
                                 { "data": "ANNO_YN", "orderable" : true, className: 'txt_left' },
                                 { "data": "INDEX_CAL_METHOD", "orderable" : true, className: 'txt_left' },
                                 { "data": "ETP_NM", "orderable": true, className: 'txt_left' },
-                                { "data": "INST_CNT", "orderable": true, className: 'txt_left' },
+                                { "data": "INST_CNT", "orderable": true, className: 'txt_right' },
                                 { "data": null, "orderable": false, className: 'checks', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:50px;'>지수정보</span></div>" } 
                             ]
                         }); 

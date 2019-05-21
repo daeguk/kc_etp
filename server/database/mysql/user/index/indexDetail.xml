@@ -12,6 +12,8 @@
         SELECT      /* indexDetail.getIndexJongmokList 지수종목상세 정보를 조회한다. */
 
                     m168uidxmap.isin_code                                   AS  isin_code               /* 종목코드 */
+                ,   td_index_basic.f16013                                   AS  f16013                  /* 한글종목명 */
+                
                 ,   td_index_basic.f16002                                   AS  f16002                  /* 한글종목명 */
 
                 ,   0                                                       AS  in_out_rate             /* 편입비중 */
@@ -184,7 +186,7 @@
         SELECT      /* indexDetail.getIndexDetailList 검색영역에 일치하는 지수정보를 조회한다. */
                     m168uidxmap.isin_code                                   AS  isin_code               /* 종목코드 */
                 ,   m168uidxmap.ceiling_percnt                              AS  ceiling_percnt          /* CEILING비중 */
-                ,   td_index_basic.f16002                                   AS  f16002                  /* 한글종목명 */
+                ,   td_kspjong_basic.f16002                                   AS  f16002                  /* 한글종목명 */
                 ,   m168uidxmap.style_includ_percnt                         AS  style_includ_percnt     /* 스타일포함비중 */
                 ,   m168uidxcomp.f30812                                     AS  f30812                  /* 상장주식수 */
                 ,   m168uidxcomp.f30813                                     AS  f30813                  /* 유동주식비율 */
@@ -199,21 +201,27 @@
                             AND     m168uidxmap.gubun       =   m168uidxcomp.gubun
                             AND     m168uidxmap.isin_code   =   m168uidxcomp.f16013
                         )
-         INNER  JOIN    td_index_basic
-                  ON    m168uidxmap.up_code     =   CASE    WHEN    td_index_basic.f16013   LIKE    '60___'                     /* 단축코드 */
-                                                            THEN    CONCAT( 'MFI' , SUBSTR( td_index_basic.f16013, -3 ) )
-                                                        
-                                                            WHEN    td_index_basic.f16013   LIKE    '62___'                     /* 단축코드 */
-                                                            THEN    CONCAT( 'WFN' , SUBSTR( td_index_basic.f16013, -3 ) )
-                                                    END
-                                                
+         INNER  JOIN    td_kspjong_basic 
+                  ON m168uidxmap.ISIN_CODE = td_kspjong_basic.F16012 
+                                                                  
          WHERE  1 = 1
            AND  m168uidxmap.up_code =   CASE    WHEN    #{f16013}   LIKE    '60___'                     /* 단축코드 */
                                                 THEN    CONCAT( 'MFI' , SUBSTR( #{f16013}, -3 ) )
                                             
                                                 WHEN    #{f16013}   LIKE    '62___'                     /* 단축코드 */
                                                 THEN    CONCAT( 'WFN' , SUBSTR( #{f16013}, -3 ) )
-                                        END                
+                                        END        
+           AND  m168uidxmap.F12506 = (SELECT MAX(AA.F12506) 
+										FROM m168uidxmap AA
+									  INNER JOIN td_kspjong_basic BB
+                                         ON AA.ISIN_CODE = BB.F16012  
+									  WHERE AA.UP_CODE =  CASE    WHEN    #{f16013}   LIKE    '60___'                     /* 단축코드 */
+                                                                  THEN    CONCAT( 'MFI' , SUBSTR( #{f16013}, -3 ) )
+                                            
+                                                                  WHEN    #{f16013}   LIKE    '62___'                     /* 단축코드 */
+                                                                  THEN    CONCAT( 'WFN' , SUBSTR( #{f16013}, -3 ) )
+                                                          END        
+                                    )        
 
          ORDER  BY  m168uidxmap.isin_code       DESC            /* 입회일 */
     ]]>

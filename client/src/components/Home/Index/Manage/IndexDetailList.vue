@@ -45,7 +45,7 @@
 import $      from 'jquery'
 import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
-
+import util       from "@/js/util.js";
 import Config from '@/js/config.js';
 import IndexDetailQuick from "@/components/Home/Index/Manage/IndexDetailQuick.vue";
 
@@ -111,7 +111,14 @@ export default {
                 paging: false,
                 searching: false,
                 data : [],
-                "columnDefs": [ {} ],
+                "columnDefs": [ 
+                    {
+                    "render": function ( data, type, row ) {
+                        return util.formatNumber(data);;
+                    },
+                    "targets": [2,3]
+                    } 
+                ],
                 columns: [
                     { "title"   :   "code"          ,   "data": "isin_code"             ,   "orderable" : true, className:"txt_left" },      /* 종목코드 */
                     { "title"   :   "name"          ,   "data": "f16002"                ,   "orderable" : true, className:"txt_left"  },      /* 한글종목명 */
@@ -162,15 +169,22 @@ export default {
                 paging: false,
                 searching: false,
                 data : [],
-                "columnDefs": [ {} ],
+                "columnDefs": [ 
+                    {
+                    "render": function ( data, type, row ) {
+                        return util.formatNumber(data);;
+                    },
+                    "targets": [3,4]
+                    } 
+                ],
                 columns: [
-                    { "title"   :   "id"            ,   "data": "isin_code"             ,   "orderable" : true  },      /* ID */
-                    { "title"   :   "name"          ,   "data": "f16002"                ,   "orderable" : true  },      /* 지수명 */
-                    { "title"   :   "편입비중(%)"    ,   "data": "in_out_rate"           ,   "orderable" : true  },      /* 편입비중(%) */
-                    { "title"   :   "shrs"          ,   "data": "f30812"                ,   "orderable" : true  },      /* shrs */
-                    { "title"   :   "float_rto"     ,   "data": "style_includ_percnt"   ,   "orderable" : true  },      /* float_rto */
-                    { "title"   :   "ceiling_rto"   ,   "data": "ceiling_percnt"        ,   "orderable" : true  },      /* ceiling_rto */
-                    { "title"   :   "factor_rto"    ,   "data": "f30813"                ,   "orderable" : true  }       /* factor_rto */
+                    { "title"   :   "id"            ,   "data": "f16013"             ,   "orderable" : true, className:"txt_left"  },      /* ID */
+                    { "title"   :   "name"          ,   "data": "f16002"                ,   "orderable" : true, className:"txt_left"  },      /* 지수명 */
+                    { "title"   :   "편입비중(%)"    ,   "data": "in_out_rate"           ,   "orderable" : true, className:"txt_right"  },      /* 편입비중(%) */
+                    { "title"   :   "shrs"          ,   "data": "f30812"                ,   "orderable" : true, className:"txt_right"  },      /* shrs */
+                    { "title"   :   "float_rto"     ,   "data": "style_includ_percnt"   ,   "orderable" : true, className:"txt_right"  },      /* float_rto */
+                    { "title"   :   "ceiling_rto"   ,   "data": "ceiling_percnt"        ,   "orderable" : true, className:"txt_right"  },      /* ceiling_rto */
+                    { "title"   :   "factor_rto"    ,   "data": "f30813"                ,   "orderable" : true, className:"txt_right"  }       /* factor_rto */
                 ]
             });
 
