@@ -136,6 +136,11 @@
               ,A.INST_CNT
               ,A.LARGE_TYPE
 			  ,A.MIDDLE_TYPE
+              ,A.F16013 /* 단축코드 */
+              ,A.F15001 /* 현재가 */
+              ,A.F15007 /* 기준가 */
+              ,A.F15472 /* 대비 */
+              ,A.F15004 /* 등락률 */
               ,(SELECT GROUP_CONCAT(F16002)
                   FROM td_etp_basic
 		         WHERE F34239 = A.ETP_MARKET_ID
@@ -152,6 +157,11 @@
                     ,BAS.MARKET_ID
                     ,BAS.LARGE_TYPE
                     ,BAS.MIDDLE_TYPE
+                    ,BAS.F16013 /* 단축코드 */
+                    ,BAS.F15001 /* 현재가 */
+                    ,BAS.F15007 /* 기준가 */
+                    ,BAS.F15472 /* 대비 */
+                    ,BAS.F15004 /* 등락률 */
                     ,CAST(substr(BAS.MARKET_ID, 2) AS SIGNED) ETP_MARKET_ID
                     ,(SELECT COUNT(*) FROM kc_etp.tm_jisu_share_req
                         WHERE JISU_ID = BAS.F16013

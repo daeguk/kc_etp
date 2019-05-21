@@ -690,6 +690,11 @@
               ,A.ETP_MARKET_ID
               ,A.LARGE_TYPE
 			  ,A.MIDDLE_TYPE
+              ,A.F16013 /* 단축코드 */
+              ,A.F15001 /* 현재가 */
+              ,A.F15007 /* 기준가 */
+              ,A.F15472 /* 대비 */
+              ,A.F15004 /* 등락률 */
               ,A.F16012                                                 AS  F16012      /* 국제표준코드 */
               ,A.F16257                                                 AS  F16257      /* ETP기초지수코드 */
               ,A.F34239                                                 AS  F34239      /* ETP기초지수MID */                   
@@ -704,6 +709,11 @@
                     ,BAS.MARKET_ID
                     ,BAS.LARGE_TYPE
                     ,BAS.MIDDLE_TYPE
+                    ,BAS.F16013 /* 단축코드 */
+                    ,BAS.F15001 /* 현재가 */
+                    ,BAS.F15007 /* 기준가 */
+                    ,BAS.F15472 /* 대비 */
+                    ,BAS.F15004 /* 등락률 */
                     ,CAST(substr(BAS.MARKET_ID, 2) AS SIGNED) ETP_MARKET_ID
                     ,''                                               AS  F16012        /* 국제표준코드 */
                     , BAS.F16013                                      AS  F16257        /* ETP기초지수코드 */

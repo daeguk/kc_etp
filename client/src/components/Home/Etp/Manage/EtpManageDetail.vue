@@ -75,12 +75,14 @@
 
                                                                         :paramData="paramData"
                                                                         :etpBasic="etpBasic"
-                                                                        :indexBasic="indexBasic">
+                                                                        :indexBasic="indexBasic"
+                                                                        @showMessageBox="showMessageBox">
                                         </EtpManageDetailBasicInfoTab>
                                     </v-tab-item>
                                     <v-tab-item>
                                         <EtpManageDetailAnalysisTab     v-if="showEtpManageDetailDialogBySub"
-                                                                        :paramData="paramData" >
+                                                                        :paramData="paramData" 
+                                                                        @showMessageBox="showMessageBox">
                                         </EtpManageDetailAnalysisTab>
                                     </v-tab-item>
                                 </v-tabs-items>
@@ -92,6 +94,7 @@
             <!--v-flex class="conWidth_right">
                 <ComFavorItemSub    @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
             </v-flex-->
+            <ConfirmDialog ref="confirm"></ConfirmDialog>
         </v-layout>
     </div>
 </template>
@@ -103,6 +106,7 @@ import EtpManageDetailBasicInfoTab from "./EtpManageDetailBasicInfoTab.vue";
 import EtpManageDetailAnalysisTab from "./EtpManageDetailAnalysisTab.vue";
 import ComFavorItemSub from "@/components/common/control/ComFavorItemSub";
 import LineEtpMultiChart   from  '@/components/common/chart/LineEtpMultiChart.vue';
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import Config from "@/js/config.js";
 import util from "@/js/util.js";
 
@@ -150,12 +154,16 @@ export default {
         };
     },
     components: {
+        ConfirmDialog : ConfirmDialog,
         LineEtpMultiChart,
         EtpManageDetailBasicInfoTab,
         EtpManageDetailAnalysisTab,
         ComFavorItemSub
     },
     mounted: function() {
+        // 메시지 박스 참조
+        this.$root.$confirm = this.$refs.confirm;
+        
         var vm = this;
         
         console.log( "EtpManageDetail.vue -> mounted" );
@@ -252,7 +260,11 @@ export default {
          */
         fn_close : function() {
             this.$emit( "fn_closePop", "close" );
-        },        
+        },
+        showMessageBox: function(title, msg, option, gubun) {
+            this.$root.$confirm.open(title,msg, option, gubun);
+        }        
     }
+    
 };
 </script>

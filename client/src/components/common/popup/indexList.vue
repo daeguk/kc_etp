@@ -96,7 +96,7 @@ var jisu_grid = null;
                                     'className': 'select-checkbox',
                                 },],
                                 select: {
-                                    style:    'single',
+                                    style:    'multi',
                                     selector: 'td:first-child'
                                 },
                                 paging: false,

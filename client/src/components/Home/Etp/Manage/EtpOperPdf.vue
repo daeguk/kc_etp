@@ -102,7 +102,7 @@ export default {
 
 console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
 console.log( vm.paramData );
-debugger;
+
         vm.fn_getEtpOperPdfTitle();
 
         vm.$EventBus.$on('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call', data => {
@@ -111,6 +111,10 @@ debugger;
 
             vm.fn_setEtpOperPdfByRate( data );
         });
+
+        vm.$EventBus.$on('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_close', data => {
+            vm.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
+        });        
 
     
         if( vm.paramData ) {
@@ -245,8 +249,6 @@ debugger;
 
             vm.searchParam.search_date  =   vm.searchParam.show_date.replace(/-/g,"");
             vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
-
-            vm.searchParam.search_date  =   '20190513';
 
             
             if( initYn == "N" ) {

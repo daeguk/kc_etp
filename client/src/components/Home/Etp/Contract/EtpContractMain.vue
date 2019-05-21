@@ -38,7 +38,15 @@
     <li>      
        <v-btn depressed color="primary">테스트</v-btn>
     </li>
-    
+    <div class="tooltip">
+        <button    id="btnIndexFix" type="button" class="btn_icon v-icon material-icons" >insert_comment</button>
+        <span class="tooltiptext" style="width:70px;" >지수조치내역</span>
+    </div>
+
+    <div class="tooltip">
+        <button    id="btnIndexError" type="button" class="btn_icon v-icon material-icons" >assignment_turned_in</button>
+        <span class="tooltiptext" style="width:70px;" >지수오류내역</span>
+    </div>    
   </ul>
 </template>
 
