@@ -4,7 +4,12 @@
             <v-list-tile-content class="rightmenu_con2 rightmenu_line">
                 <v-layout class="w100">
                     <v-flex xs12>
-                       
+                                <v-card>
+                                    <v-card-title class="con_r_ta_serch">
+                                            <v-text-field v-model="search" v-on:keyup="filterData(1)" append-icon="search" label="Search" single-line hide-details></v-text-field>
+                                            <button type='button' id='btn_idx_faver' v-on:click="filterData(2)" :class='faverClass'>star</button>
+                                    </v-card-title>    
+                                </v-card>
 
                                 <v-tabs v-model="activeTab" centered>
                                     <v-tabs-slider color="#1976d2"></v-tabs-slider>
@@ -19,16 +24,18 @@
                                         
                                         <v-flex xs12>
                                             <v-card flat>
-                                                <v-card-title class="con_r_ta_serch">
-                                                    <v-text-field v-model="search" v-on:keyup="filterEtfData(1)" append-icon="search" label="Search" single-line hide-details></v-text-field>
-                                                    <button type='button' id='btn_etn_faver' v-on:click="filterEtfData(2)" :class='etfFaverClass'>star</button>
-                                                </v-card-title>    
-                                                <table id="etf_table" class="tbl_type" style="width:100%">
+                                               
+                                                <table id="etf_table" class="tbl_type ver2">
+                                                    <colgroup>
+                                                        <col width="3%"/>
+                                                        <col width="70%"/>
+                                                        <col width="27%"/>
+                                                    </colgroup>
                                                     <thead>
                                                         <tr>
                                                             <th></th>
-                                                            <th></th>
                                                             <th>종목명</th>
+                                                            <th>현재가</th>
                                                         </tr>
                                                     </thead>  
                                                 </table>
@@ -41,16 +48,19 @@
                                     <v-layout row>
                                         <v-flex xs12>
                                             <v-card flat>
-                                                <v-card-title class="con_r_ta_serch">
-                                                    <v-text-field v-model="search" v-on:keyup="filterEtnData(1)" append-icon="search" label="Search" single-line hide-details></v-text-field>
-                                                    <button type='button' id='btn_etf_faver' v-on:click="filterEtnData(2)" :class='etnFaverClass'>star</button>
-                                                </v-card-title>    
-                                                <table id="etn_table" class="tbl_type" style="width:100%">
+                                               
+                                                <table id="etn_table" class="tbl_type ver2" style="width:100%">
+                                                    <colgroup>
+                                                        <col width="3%">
+                                                        <col width="70%">
+                                                        <col width="27%">
+                                                    </colgroup>
                                                     <thead>
                                                         <tr>
-                                                            <th></th>
-                                                            <th></th>
+                                                           
                                                             <th>종목명</th>
+                                                            <th>종목명</th>
+                                                            <th>현재가</th>
                                                         </tr>
                                                     </thead>  
                                                 </table>
@@ -63,16 +73,18 @@
                                     <v-layout row >
                                         <v-flex xs12>
                                             <v-card flat>
-                                                <v-card-title class="con_r_ta_serch">
-                                                    <v-text-field v-model="search" v-on:keyup="filterIndexData(1)" append-icon="search" label="Search" single-line hide-details></v-text-field>
-                                                    <button type='button' id='btn_idx_faver' v-on:click="filterIndexData(2)" :class='idxFaverClass'>star</button>
-                                                </v-card-title>    
-                                                <table id="index_table" class="tbl_type" style="width:100%">
+                                                
+                                                <table id="index_table" class="tbl_type ver2" style="width:100%">
+                                                    <colgroup>
+                                                        <col width="3%">
+                                                        <col width="70%">
+                                                        <col width="27%">
+                                                    </colgroup>
                                                     <thead>
                                                         <tr>
                                                             <th></th>
-                                                            <th></th>
                                                             <th>종목명</th>
+                                                            <th>현재가</th>
                                                         </tr>
                                                     </thead>  
                                                 </table>
@@ -101,7 +113,7 @@ import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
-
+import util       from "@/js/util.js";
 
 
 var etf_table = null;
@@ -132,10 +144,8 @@ export default {
             paramData : {},
             search: '',
             showIndexDetailDialog : false,
-            showEtpDetailDialog : false,
-            etfFaverClass: 'btn_icon_star v-icon material-icons',
-            etnFaverClass: 'btn_icon_star v-icon material-icons',
-            idxFaverClass: 'btn_icon_star v-icon material-icons',
+            showEtpDetailDialog : false,            
+            faverClass: 'btn_icon_star v-icon material-icons',
         };
     },
     components: {
@@ -156,7 +166,7 @@ export default {
             "info": false,   // control table information display field
             "stateSave": true,  //restore table state on page reload,
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-            "scrollY":        '107vh',
+            "scrollY":        '125vh',
             thead: {
                 display:'none'
             },
@@ -173,15 +183,31 @@ export default {
                         
                         return htm;
                     },
+                    "targets": 0
+                },
+                 {  
+                    "render": function ( data, type, row ) {
+                        let htm = "<div>";
+                        htm += "           "+data+"";
+                        htm += "            <br><span class='text_S'>"+row.F16013+"</div>";
+                        return htm;
+                    },
                     "targets": 1
                 },
                 {  
                     "render": function ( data, type, row ) {
-                        let htm = "<span>";
-                        htm += "           "+data+"";
-                        htm += "            <br><span class='text_s'>"+row.JISU_CD+"</span>";
-                        return htm;
-                    },
+                        let htm = ""
+                            
+                            htm += "<div class='text_S'>" + util.formatNumber(data) + "</div>";
+
+                            if (row.f15004 >= 0) {
+                                htm += "<br><span class='text_S text_red'>"+row.F15004+"%</span>";
+                            } else {
+                                htm += "<br><span class='text_S text_blue'>"+row.F15004+"%</span>";
+                            }
+
+                            return htm;
+                            },
                     "targets": 2
                 },
             ],
@@ -192,9 +218,9 @@ export default {
             paging: false,
             searching: false,
             columns: [
-                { "data": "faver_seq", "visible": false},
-                { "data": "faver", "orderable": false, width:'5%', defaultContent:""},
-                { "data": "JISU_NM", "orderable": false, className:'txt_left'},
+                { "data": "faver", "orderable": false, width:'5%'},    
+                { "data": "JISU_NM", "orderable": false, className:'txt_left line2'},                
+                { "data": "F15001", "orderable": false, className:'txt_right'},            
             ]
         });
 
@@ -239,7 +265,7 @@ export default {
             "info": false,   // control table information display field
             "stateSave": true,  //restore table state on page reload,
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-            "scrollY":        '107vh',
+            "scrollY":        '125vh',
             thead: {
                 display:'none'
             },
@@ -256,15 +282,31 @@ export default {
                         
                         return htm;
                     },
+                    "targets": 0
+                },
+                {  
+                    "render": function ( data, type, row ) {
+                        let htm = "<div>";
+                        htm += "           "+data+"";
+                        htm += "            <br><span class='text_S'>"+row.F16013+"</div>";
+                        return htm;
+                    },
                     "targets": 1
                 },
                 {  
                     "render": function ( data, type, row ) {
-                        let htm = "<span>";
-                        htm += "           <b>"+data+"</b>";
-                        htm += "            <br><span class='text_s'>"+row.JISU_CD+"</span>";
-                        return htm;
-                    },
+                        let htm = ""
+                            
+                            htm += "<div class='text_S'>" + util.formatNumber(data) + "</div>";
+
+                            if (row.f15004 >= 0) {
+                                htm += "<br><span class='text_S text_red'>"+row.F15004+"%</span>";
+                            } else {
+                                htm += "<br><span class='text_S text_blue'>"+row.F15004+"%</span>";
+                            }
+
+                            return htm;
+                            },
                     "targets": 2
                 },
             ],
@@ -275,9 +317,9 @@ export default {
             paging: false,
             searching: false,
             columns: [
-                { "data": "faver_seq", "visible": false},
                 { "data": "faver", "orderable": false, width:'5%', defaultContent:""},
-                { "data": "JISU_NM", "orderable": false, className:'txt_left'},                
+                { "data": "JISU_NM", "orderable": false, className:'txt_left line2 in_icon'},                
+                { "data": "F15001", "orderable": false, className:'txt_right'},                
             ]
         });
 
@@ -324,7 +366,7 @@ export default {
             "info": false,   // control table information display field
             "stateSave": true,  //restore table state on page reload,
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-            "scrollY":        '107vh',
+            "scrollY":        '125vh',
             thead: {
                 display:'none'
             },
@@ -341,15 +383,31 @@ export default {
                         
                         return htm;
                     },
+                    "targets": 0
+                },
+                {  
+                    "render": function ( data, type, row ) {
+                        let htm = "<div>";
+                        htm += "           "+data+"";
+                        htm += "            <br><span class='text_S'>"+row.F16013+"</div>";
+                        return htm;
+                    },
                     "targets": 1
                 },
                 {  
                     "render": function ( data, type, row ) {
-                        let htm = "<span>";
-                        htm += "           <b>"+data+"</b>";
-                        htm += "            <br><span class='text_s'>"+row.JISU_CD+"</span>";
-                        return htm;
-                    },
+                        let htm = ""
+                            
+                            htm += "<div class='text_S'>" + util.formatNumber(data) + "</div>";
+
+                            if (row.f15004 >= 0) {
+                                htm += "<br><span class='text_S text_red'>"+row.F15004+"%</span>";
+                            } else {
+                                htm += "<br><span class='text_S text_blue'>"+row.F15004+"%</span>";
+                            }
+
+                            return htm;
+                            },
                     "targets": 2
                 },
             ],
@@ -360,9 +418,9 @@ export default {
             paging: false,
             searching: false,
             columns: [
-                { "data": "faver_seq", "visible": false},
                 { "data": "faver", "orderable": false, width:'5%', defaultContent:""},
-                { "data": "JISU_NM", "orderable": false, className:'txt_left'},
+                { "data": "JISU_NM", "orderable": false, className:'txt_left line2 in_icon'},                
+                { "data": "F15001", "orderable": false, className:'txt_right'},                
             ]
         });
 
@@ -632,19 +690,20 @@ export default {
             this.showEtpDetailDialog    =   false;
         },
         /*mode 1: 데이터 필터 2: 관심종목*/
-        filterEtfData: function(mode) {
+        filterData: function(mode) {
             var vm = this;
             var faverData = '-1';
 
-            if (vm.etfFaverClass == "btn_icon_star v-icon material-icons") {                        
+            if (vm.faverClass == "btn_icon_star v-icon material-icons") {                        
                 faverData = "1";
-                vm.etfFaverClass = "btn_icon_star v-icon on material-icons";
+                vm.faverClass = "btn_icon_star v-icon on material-icons";
             } else {
                 faverData = "0";
-                vm.etfFaverClass = "btn_icon_star v-icon material-icons";
+                vm.faverClass = "btn_icon_star v-icon material-icons";
             }
 
-            var filterData = _.filter(vm.etfList, function(o) { 
+            /* eft 필터링 */
+            var etfFilterData = _.filter(vm.etfList, function(o) { 
                 
                 if (mode == '1') {
                     var nmIdx = o.JISU_NM.indexOf(vm.search);
@@ -668,24 +727,10 @@ export default {
                 }
             });
 
-            etf_table.clear().draw();
-            etf_table.rows.add(filterData).draw();           
-        },     
-        
-        filterEtnData: function(mode) {
-            var vm = this;
-        
-            var faverData = '-1';
-
-            if (vm.etnFaverClass == "btn_icon_star v-icon material-icons") {                        
-                faverData = "1";
-                vm.etnFaverClass = "btn_icon_star v-icon on material-icons";
-            } else {
-                faverData = "0";
-                vm.etnFaverClass = "btn_icon_star v-icon material-icons";
-            }
-
-            var filterData = _.filter(vm.etnList, function(o) { 
+               
+            
+            /* etn 필터링*/
+            var etnFilterData = _.filter(vm.etnList, function(o) { 
 
                 if (mode == '1') {
                     var nmIdx = o.JISU_NM.indexOf(vm.search);
@@ -708,51 +753,45 @@ export default {
                     }
                 }
             });
+
+              
+            
+            /* idx 필터링*/
+            var idxFilterData = _.filter(vm.indexList, function(o) { 
+
+                if (mode == '1') {
+                    var nmIdx = o.JISU_NM.indexOf(vm.search);
+                    var cdIdx = o.JISU_CD.indexOf(vm.search);
+
+                    if (nmIdx > -1 || cdIdx > -1) {
+                        return true; 
+                    } else {
+                        return false;
+                    }
+                } else if (mode == '2') {          
+                    
+                    if (faverData == "0") return true;
+
+                    var faverIdx = o.faver.indexOf(faverData);
+                    if (faverIdx > -1) {
+                        return true; 
+                    } else {
+                        return false;
+                    }
+                }
+            });
+
+            etf_table.clear().draw();
+            etf_table.rows.add(etfFilterData).draw();   
 
             etn_table.clear().draw();
-            etn_table.rows.add(filterData).draw();           
-        },        
-
-        filterIndexData: function(mode) {
-            var vm = this;
-        
-            var faverData = '-1';
-
-            if (vm.idxFaverClass == "btn_icon_star v-icon material-icons") {                        
-                faverData = "1";
-                vm.idxFaverClass = "btn_icon_star v-icon on material-icons";
-            } else {
-                faverData = "0";
-                vm.idxFaverClass = "btn_icon_star v-icon material-icons";
-            }
-
-            var filterData = _.filter(vm.indexList, function(o) { 
-
-                if (mode == '1') {
-                    var nmIdx = o.JISU_NM.indexOf(vm.search);
-                    var cdIdx = o.JISU_CD.indexOf(vm.search);
-
-                    if (nmIdx > -1 || cdIdx > -1) {
-                        return true; 
-                    } else {
-                        return false;
-                    }
-                } else if (mode == '2') {          
-                    
-                    if (faverData == "0") return true;
-
-                    var faverIdx = o.faver.indexOf(faverData);
-                    if (faverIdx > -1) {
-                        return true; 
-                    } else {
-                        return false;
-                    }
-                }
-            });
+            etn_table.rows.add(etnFilterData).draw();       
 
             index_table.clear().draw();
-            index_table.rows.add(filterData).draw();           
-        }        
+            index_table.rows.add(idxFilterData).draw();    
+        },     
+        
+        
     }
 };
 </script>
