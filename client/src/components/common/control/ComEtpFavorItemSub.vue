@@ -574,68 +574,80 @@ export default {
 
             var faverData = '-1';
 
-            if (vm.allFaverClass == "btn_icon_star v-icon material-icons") {                        
-                faverData = "1";
-                vm.allFaverClass = "btn_icon_star v-icon on material-icons";
-            } else {
-                faverData = "0";
-                vm.allFaverClass = "btn_icon_star v-icon material-icons";
-            }
-            /* 운영 종목 필터링 */
-            var filterData = _.filter(vm.pubList, function(o) { 
+            /* 이벤트 delay이로 부하 줄임 */
+            var delay = (function(){
+                var timer = 0;
+                return function(callback, ms){
+                    clearTimeout (timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
 
-                if (mode == '1') {
-                    var nmIdx = o.JISU_NM.indexOf(vm.search);
-                    var cdIdx = o.JISU_CD.indexOf(vm.search);
-
-                    if (nmIdx > -1 || cdIdx > -1) {
-                        return true; 
-                    } else {
-                        return false;
-                    }
-                } else if (mode == '2') {          
-                    
-                    if (faverData == "0") return true;
-
-                    var faverIdx = o.faver.indexOf(faverData);
-                    if (faverIdx > -1) {
-                        return true; 
-                    } else {
-                        return false;
-                    }
+            delay(function(){
+                if (vm.allFaverClass == "btn_icon_star v-icon material-icons") {                        
+                    faverData = "1";
+                    vm.allFaverClass = "btn_icon_star v-icon on material-icons";
+                } else {
+                    faverData = "0";
+                    vm.allFaverClass = "btn_icon_star v-icon material-icons";
                 }
-            });
+                /* 운영 종목 필터링 */
+                var filterData = _.filter(vm.pubList, function(o) { 
 
-            publish_etp_table.clear().draw();
-            publish_etp_table.rows.add(filterData).draw();       
+                    if (mode == '1') {
+                        var nmIdx = o.JISU_NM.indexOf(vm.search);
+                        var cdIdx = o.JISU_CD.indexOf(vm.search);
+
+                        if (nmIdx > -1 || cdIdx > -1) {
+                            return true; 
+                        } else {
+                            return false;
+                        }
+                    } else if (mode == '2') {          
+                        
+                        if (faverData == "0") return true;
+
+                        var faverIdx = o.faver.indexOf(faverData);
+                        if (faverIdx > -1) {
+                            return true; 
+                        } else {
+                            return false;
+                        }
+                    }
+                });
+
+                publish_etp_table.clear().draw();
+                publish_etp_table.rows.add(filterData).draw();       
+                
+                /* 전 종목 필터링 */
+                var AllFilterData = _.filter(vm.allList, function(o) { 
+
+                    if (mode == '1') {
+                        var nmIdx = o.JISU_NM.indexOf(vm.search);
+                        var cdIdx = o.JISU_CD.indexOf(vm.search);
+
+                        if (nmIdx > -1 || cdIdx > -1) {
+                            return true; 
+                        } else {
+                            return false;
+                        }
+                    } else if (mode == '2') {          
+                        
+                        if (faverData == "0") return true;
+
+                        var faverIdx = o.faver.indexOf(faverData);
+                        if (faverIdx > -1) {
+                            return true; 
+                        } else {
+                            return false;
+                        }
+                    }
+                });
+
+                all_etp_table.clear().draw();
+                all_etp_table.rows.add(AllFilterData).draw();    
             
-             /* 전 종목 필터링 */
-            var AllFilterData = _.filter(vm.allList, function(o) { 
-
-                if (mode == '1') {
-                    var nmIdx = o.JISU_NM.indexOf(vm.search);
-                    var cdIdx = o.JISU_CD.indexOf(vm.search);
-
-                    if (nmIdx > -1 || cdIdx > -1) {
-                        return true; 
-                    } else {
-                        return false;
-                    }
-                } else if (mode == '2') {          
-                    
-                    if (faverData == "0") return true;
-
-                    var faverIdx = o.faver.indexOf(faverData);
-                    if (faverIdx > -1) {
-                        return true; 
-                    } else {
-                        return false;
-                    }
-                }
-            });
-
-            all_etp_table.clear().draw();
-            all_etp_table.rows.add(AllFilterData).draw();           
+            }, 1000 );
         },        
 
      

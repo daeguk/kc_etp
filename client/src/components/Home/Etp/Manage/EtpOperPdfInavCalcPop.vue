@@ -215,18 +215,28 @@ export default {
                 },
                 {  
                     "render": function ( data, type, row ) {
+                        let htm = "";
+                        
+                        htm += Number(data) + "%";
+                        
+                        return htm;
+                    },
+                    "targets": 4
+                },
+                {  
+                    "render": function ( data, type, row ) {
                         let htm = ""
                             
-                            htm += util.formatNumber(data);
+                        htm += util.formatNumber(data);
 
-                            if (row.f15004 >= 0) {
-                                htm += "<br><span class='text_S text_red'>"+row.f15004+"%</span>";
-                            } else {
-                                htm += "<br><span class='text_S text_blue'>"+row.f15004+"%</span>";
-                            }
+                        if (row.f15004 >= 0) {
+                            htm += "<br><span class='text_S text_red'>"+row.f15004+"%</span>";
+                        } else {
+                            htm += "<br><span class='text_S text_blue'>"+row.f15004+"%</span>";
+                        }
 
-                            return htm;
-                            },
+                        return htm;
+                    },
                     "targets": 5
                 },
                 {  
@@ -256,7 +266,7 @@ export default {
                 { "data": "f34743", "orderable": true, className:"txt_right" }, /*비중*/
                 { "data": "f15001", "orderable": true, className:"txt_right" }, /*현재가*/
                 { "data": "f15007", "orderable": true, className:"txt_right" }, /*기준가*/
-                { "data": "market_amt", "orderable": true, className:"txt_right" }, /*CU시가총액*/
+                { "data": "f16588", "orderable": true, className:"txt_right" }, /*CU시가총액*/
             ]
         });
 
@@ -289,6 +299,7 @@ export default {
 
             axios.get( Config.base_url + "/user/etp/getiNavData", {
                 params: {
+                    //f16012 : 'KRG701800010',
                     f16012 : 'KR7322410002',
                 }
             }).then(async function(response) {
@@ -298,13 +309,14 @@ export default {
                     vm.etpBasic = response.data.etpBasic;
                     vm.pdfList = response.data.pdfList;
                     
+                    
                     var market_amt = 0;
                     var market_tot_amt = 0;
                     var index = 0;
-                    for (let item of vm.pdfList) {                        
+                    for (let item of vm.pdfList) {                                            
                         await vm.iNavCalulator(item).then(function(jongItem) {
                             /* 종목 정보 바인딩 */                            
-                            item.market_amt = jongItem.market_amt; /* 시가 총액 */
+                            item.f16588 = jongItem.market_amt; /* 시가 총액 (처음 로딩시는 etp 평가 금액으로 세팅)*/
                             item.f15001 = jongItem.f15001;  /* 현재가 */
                             item.f15007 = jongItem.f15007;  /* 기준가 */
                             item.f15004 = jongItem.f15004;  /* 등락률 */
@@ -312,10 +324,8 @@ export default {
                             item.f16013 = jongItem.f16013;  /* 단축코드 */
 
                             market_tot_amt += jongItem.market_amt;
-
                             
-                            if (index == (vm.pdfList.length-1)) {                                
-                                vm.pdf_reload(vm.pdfList);                                                        
+                            if (index == (vm.pdfList.length-1)) {                                                
                                 vm.market_tot_amt = market_tot_amt;
 
                                 /*INav 계산 : CU시가총액 / CU당 주식수*/
@@ -326,6 +336,13 @@ export default {
                                 }
                                 /* INav 등락률 */
                                 vm.iNav_percent =  (vm.iNav_amt / vm.etpBasic.f03329 - 1);
+
+                                /* 비중 정보 산출*/
+                                for (let item of vm.pdfList) {         
+                                    item.f34743 = (((item.f16588 /  vm.market_tot_amt) * 100).toFixed(2));                                    
+                                }
+                                vm.pdf_reload(vm.pdfList);
+                                
 
                                 /* input box readony 처리 */
                                 if (!vm.SimulationSwitch) {
@@ -383,7 +400,7 @@ export default {
             for (let item of vm.pdfList) {                        
                 await vm.iNavCalulator(item).then(function(jongItem) {
                     /* 종목 정보 바인딩 */                            
-                    item.market_amt = jongItem.market_amt; /* 시가 총액 */
+                    item.f16588 = jongItem.market_amt; /* 시가 총액 */
                     item.f15001 = jongItem.f15001;  /* 현재가 */
                     item.f15007 = jongItem.f15007;  /* 기준가 */
                     item.f15004 = jongItem.f15004;  /* 등락률 */
@@ -394,7 +411,7 @@ export default {
 
                     
                     if (index == (vm.pdfList.length-1)) {                                
-                        vm.pdf_reload(vm.pdfList);
+                        
                         vm.market_tot_amt = market_tot_amt;
 
                         /*INav 계산 : CU시가총액 / CU당 주식수*/
@@ -405,6 +422,13 @@ export default {
                         }
                         /* INav 등락률 */
                         vm.iNav_percent =  (vm.iNav_amt / vm.etpBasic.f03329 - 1);
+
+                        /* 비중 정보 산출*/
+                        for (let item of vm.pdfList) {         
+                            item.f34743 = (((item.f16588 /  vm.market_tot_amt) * 100).toFixed(2));
+                        }
+
+                        vm.pdf_reload(vm.pdfList);
                     }
                             //console.log("market_amt:"+market_amt + "idx:" + index + "lenght:" + (vm.pdfList.length-1));     
                             

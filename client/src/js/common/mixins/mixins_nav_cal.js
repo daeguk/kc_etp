@@ -256,6 +256,17 @@ export const nav_cal_common =   {
                         
                     resolve(jongItem);
                 }) ;
+            } else {
+                let jongItem = {};
+                    jongItem.market_amt = 0;
+                    jongItem.f15001 = 0;
+                    jongItem.f15007 = 0;
+                    jongItem.f15004 = 0;
+                    jongItem.f15472 = 0;
+                    jongItem.f16013 = pdf_info.f16013;
+
+                        
+                    resolve(jongItem);
             }
                 
             });

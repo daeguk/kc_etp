@@ -58,7 +58,7 @@
                                                     <thead>
                                                         <tr>
                                                            
-                                                            <th>종목명</th>
+                                                            <th></th>
                                                             <th>종목명</th>
                                                             <th>현재가</th>
                                                         </tr>
@@ -154,8 +154,6 @@ export default {
         
     },
     mounted: function() {
-
-        
         var vm = this;
 
 
@@ -693,102 +691,116 @@ export default {
         filterData: function(mode) {
             var vm = this;
             var faverData = '-1';
+            
+            /* 이벤트 delay이로 부하 줄임 */
+            var delay = (function(){
+                var timer = 0;
+                return function(callback, ms){
+                    clearTimeout (timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
 
-            if (vm.faverClass == "btn_icon_star v-icon material-icons") {                        
-                faverData = "1";
-                vm.faverClass = "btn_icon_star v-icon on material-icons";
-            } else {
-                faverData = "0";
-                vm.faverClass = "btn_icon_star v-icon material-icons";
-            }
+            delay(function(){
+            
 
-            /* eft 필터링 */
-            var etfFilterData = _.filter(vm.etfList, function(o) { 
+                if (vm.faverClass == "btn_icon_star v-icon material-icons") {                        
+                    faverData = "1";
+                    vm.faverClass = "btn_icon_star v-icon on material-icons";
+                } else {
+                    faverData = "0";
+                    vm.faverClass = "btn_icon_star v-icon material-icons";
+                }
+
+                /* eft 필터링 */
+                var etfFilterData = _.filter(vm.etfList, function(o) { 
+                    
+                    if (mode == '1') {
+                        var nmIdx = o.JISU_NM.indexOf(vm.search);
+                        var cdIdx = o.JISU_CD.indexOf(vm.search);
+
+                        if (nmIdx > -1 || cdIdx > -1) {
+                            return true; 
+                        } else {
+                            return false;
+                        }
+                    } else if (mode == '2') {          
+                        
+                        if (faverData == "0") return true;
+
+                        var faverIdx = o.faver.indexOf(faverData);
+                        if (faverIdx > -1) {
+                            return true; 
+                        } else {
+                            return false;
+                        }
+                    }
+                });
+
                 
-                if (mode == '1') {
-                    var nmIdx = o.JISU_NM.indexOf(vm.search);
-                    var cdIdx = o.JISU_CD.indexOf(vm.search);
+                
+                /* etn 필터링*/
+                var etnFilterData = _.filter(vm.etnList, function(o) { 
 
-                    if (nmIdx > -1 || cdIdx > -1) {
-                        return true; 
-                    } else {
-                        return false;
+                    if (mode == '1') {
+                        var nmIdx = o.JISU_NM.indexOf(vm.search);
+                        var cdIdx = o.JISU_CD.indexOf(vm.search);
+
+                        if (nmIdx > -1 || cdIdx > -1) {
+                            return true; 
+                        } else {
+                            return false;
+                        }
+                    } else if (mode == '2') {          
+                        
+                        if (faverData == "0") return true;
+
+                        var faverIdx = o.faver.indexOf(faverData);
+                        if (faverIdx > -1) {
+                            return true; 
+                        } else {
+                            return false;
+                        }
                     }
-                } else if (mode == '2') {          
-                    
-                    if (faverData == "0") return true;
+                });
 
-                    var faverIdx = o.faver.indexOf(faverData);
-                    if (faverIdx > -1) {
-                        return true; 
-                    } else {
-                        return false;
+                
+                
+                /* idx 필터링*/
+                var idxFilterData = _.filter(vm.indexList, function(o) { 
+
+                    if (mode == '1') {
+                        var nmIdx = o.JISU_NM.indexOf(vm.search);
+                        var cdIdx = o.JISU_CD.indexOf(vm.search);
+
+                        if (nmIdx > -1 || cdIdx > -1) {
+                            return true; 
+                        } else {
+                            return false;
+                        }
+                    } else if (mode == '2') {          
+                        
+                        if (faverData == "0") return true;
+
+                        var faverIdx = o.faver.indexOf(faverData);
+                        if (faverIdx > -1) {
+                            return true; 
+                        } else {
+                            return false;
+                        }
                     }
-                }
-            });
+                });
 
-               
-            
-            /* etn 필터링*/
-            var etnFilterData = _.filter(vm.etnList, function(o) { 
+                etf_table.clear().draw();
+                etf_table.rows.add(etfFilterData).draw();   
 
-                if (mode == '1') {
-                    var nmIdx = o.JISU_NM.indexOf(vm.search);
-                    var cdIdx = o.JISU_CD.indexOf(vm.search);
+                etn_table.clear().draw();
+                etn_table.rows.add(etnFilterData).draw();       
 
-                    if (nmIdx > -1 || cdIdx > -1) {
-                        return true; 
-                    } else {
-                        return false;
-                    }
-                } else if (mode == '2') {          
-                    
-                    if (faverData == "0") return true;
+                index_table.clear().draw();
+                index_table.rows.add(idxFilterData).draw();    
 
-                    var faverIdx = o.faver.indexOf(faverData);
-                    if (faverIdx > -1) {
-                        return true; 
-                    } else {
-                        return false;
-                    }
-                }
-            });
-
-              
-            
-            /* idx 필터링*/
-            var idxFilterData = _.filter(vm.indexList, function(o) { 
-
-                if (mode == '1') {
-                    var nmIdx = o.JISU_NM.indexOf(vm.search);
-                    var cdIdx = o.JISU_CD.indexOf(vm.search);
-
-                    if (nmIdx > -1 || cdIdx > -1) {
-                        return true; 
-                    } else {
-                        return false;
-                    }
-                } else if (mode == '2') {          
-                    
-                    if (faverData == "0") return true;
-
-                    var faverIdx = o.faver.indexOf(faverData);
-                    if (faverIdx > -1) {
-                        return true; 
-                    } else {
-                        return false;
-                    }
-                }
-            });
-
-            etf_table.clear().draw();
-            etf_table.rows.add(etfFilterData).draw();   
-
-            etn_table.clear().draw();
-            etn_table.rows.add(etnFilterData).draw();       
-
-            index_table.clear().draw();
-            index_table.rows.add(idxFilterData).draw();    
+            }, 1000 );
         },     
         
         
