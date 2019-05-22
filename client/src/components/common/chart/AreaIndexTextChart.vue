@@ -104,38 +104,38 @@ export default {
             c.fillText(this.chartItem.name, 15, 30);
             c.fillStyle = "#263238";
             c.font = 'bold 28px san-serif';
-            c.fillText(this.chartItem.f15001, 15, 55);
+            c.fillText(this.chartItem.f15001, 15, 60);
             var slen = this.chartItem.f15001.length;
             c.fillStyle = "#039BE5";
             c.font = '12px san-serif';
-            if(slen > 6) c.fillText(this.chartItem.f15472, 115, 45);
-            else  c.fillText(this.chartItem.f15472, 100, 45);
+            if(slen > 6) c.fillText(this.chartItem.f15472, 125, 47);
+            else  c.fillText(this.chartItem.f15472, 125, 47);
             c.fillStyle = "#039BE5";
             c.font = '12px san-serif';
-            if(slen > 6) c.fillText(this.chartItem.f15004 + "%", 115, 57);
-            else  c.fillText(this.chartItem.f15004 + "%", 100, 57);
+            if(slen > 6) c.fillText(this.chartItem.f15004 + "%", 125, 60);
+            else  c.fillText(this.chartItem.f15004 + "%", 125, 60);
 
             // 우측 하단 자산총액
             c.fillStyle = "#757575";
-            c.fillRect(165, 110, 30, 14);
+            c.fillRect(140, 108, 30, 14);
             c.fillStyle = "white";
             c.font = '11px san-serif';
-            c.fillText("ETF", 170, 121);
+            c.fillText("ETF", 147, 119);
 
             c.fillStyle = "#424242";
-            c.fillRect(165, 130, 30, 14);
+            c.fillRect(140, 125, 30, 14);
             c.fillStyle = "white";
             c.font = '11px san-serif';
-            c.fillText("ETN", 170, 141);
+            c.fillText("ETN", 146, 136);
 
-            c.fillStyle = "#6c9a10";
+            c.fillStyle = "#5e870b";
             c.font = '14px san-serif';
             c.textAlign = "end";
-            c.fillText(this.chartItem.etf_sum + " AUM", 335, 120);
-            c.fillStyle = "#6c9a10";
+            c.fillText(this.chartItem.etf_sum + " AUM", 330, 120);
+            c.fillStyle = "#5e870b";
             c.font = '14px san-serif';
             c.textAlign = "end";
-            c.fillText(this.chartItem.etn_sum + " 원", 335, 140);
+            c.fillText(this.chartItem.etn_sum + " 원", 330, 137);
 
             this.bef_tooltip_img = c.getImageData(0, 0, this.chartItem.width, this.chartItem.height);
         },
