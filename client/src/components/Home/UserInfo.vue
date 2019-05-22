@@ -2,7 +2,7 @@
 <div>
   <div v-if="login_flag">
     <v-toolbar-items class="hidden-sm-and-down">
-      <v-btn flat color="white"><v-badge overlap color="orange">
+      <v-btn flat color="white"><v-badge overlap color="#56bf98">
         <span slot="badge">3</span>
         <v-icon large color="grey">notifications</v-icon>
       </v-badge></v-btn>
@@ -14,7 +14,7 @@
         <img src="/assets/img/avatar.png" alt="avatar">
       </v-avatar></v-btn>
       -->
-      <v-btn flat color="primary" @click="updateUserInfo">[{{user_inst_name}}] {{user_name}}</v-btn>
+      <v-btn flat color="#ffffff" @click="updateUserInfo">[{{user_inst_name}}] {{user_name}}</v-btn>
       <v-btn flat @click="outService">LOG-OUT</v-btn>
     </v-toolbar-items>
     <UserUpdateModal v-if="updateUser_flag"></UserUpdateModal>

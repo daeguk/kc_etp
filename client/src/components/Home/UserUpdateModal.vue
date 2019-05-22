@@ -3,10 +3,13 @@
   <v-card>
     <v-container grid-list-md>
       <v-layout wrap>
-      <v-flex xs12 offset-xs10>
-        <v-btn flat @click.stop="closeModal">
-          <v-icon>close</v-icon>
-        </v-btn>
+     <v-flex xs12 class="login_pop_pad">
+          <v-card-title> 개인 정보 수정
+                <v-spacer></v-spacer>
+                <v-btn icon small flat @click.stop="closeModal">
+                    <v-icon>close</v-icon>
+                </v-btn>
+          </v-card-title>
       </v-flex>
       <v-flex xs12 md6>
         <v-text-field readonly v-model="editedItem.type_name"></v-text-field>
@@ -32,8 +35,11 @@
       <v-flex xs12 md6>
         <v-text-field v-model="editedItem.tel_no" label="TEL"></v-text-field>
       </v-flex>
-      <v-flex xs12 offset-xs9>
-        <v-btn color="success darken-1" flat @click="updateUserInfo">UPDATE</v-btn>
+      <v-flex xs12 class="login_pop_pad">
+          <v-card-title> 
+                <v-spacer></v-spacer>
+                <v-btn depressed color="primary" outline @click="updateUserInfo">UPDATE</v-btn>
+          </v-card-title>
       </v-flex>
       </v-layout>
     </v-container>

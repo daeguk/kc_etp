@@ -103,15 +103,15 @@ export default {
             c.font = '14px san-serif';
             c.fillText(this.chartItem.name, 15, 30);
             c.fillStyle = "#263238";
-            c.font = 'bold 24px san-serif';
+            c.font = 'bold 28px san-serif';
             c.fillText(this.chartItem.f15001, 15, 55);
             var slen = this.chartItem.f15001.length;
             c.fillStyle = "#039BE5";
-            c.font = '10px san-serif';
+            c.font = '12px san-serif';
             if(slen > 6) c.fillText(this.chartItem.f15472, 115, 45);
             else  c.fillText(this.chartItem.f15472, 100, 45);
             c.fillStyle = "#039BE5";
-            c.font = '10px san-serif';
+            c.font = '12px san-serif';
             if(slen > 6) c.fillText(this.chartItem.f15004 + "%", 115, 57);
             else  c.fillText(this.chartItem.f15004 + "%", 100, 57);
 
@@ -128,12 +128,12 @@ export default {
             c.font = '11px san-serif';
             c.fillText("ETN", 170, 141);
 
-            c.fillStyle = "#1B5E20";
-            c.font = '12px san-serif';
+            c.fillStyle = "#6c9a10";
+            c.font = '14px san-serif';
             c.textAlign = "end";
             c.fillText(this.chartItem.etf_sum + " AUM", 335, 120);
-            c.fillStyle = "#1B5E20";
-            c.font = '12px san-serif';
+            c.fillStyle = "#6c9a10";
+            c.font = '14px san-serif';
             c.textAlign = "end";
             c.fillText(this.chartItem.etn_sum + " 원", 335, 140);
 

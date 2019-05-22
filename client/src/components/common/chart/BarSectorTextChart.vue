@@ -37,19 +37,19 @@ export default {
             var bohaplen = (this.chartItem.bohap / totcnt) * _width;
             // 좌즉 상단 현재가
             c.fillStyle = "#37474F";
-            c.font = 'bold 18px san-serif';
+            c.font = 'bold 16px  Noto Sans,san-serif';
             c.fillText(this.chartItem.ctg_name, 15, 30);
             
-            if(Number(this.chartItem.f15004) > 0) c.fillStyle = "#F57F17";
-            else  c.fillStyle = "#40C4FF"
-            c.font = 'bold 24px san-serif';
+            if(Number(this.chartItem.f15004) > 0) c.fillStyle = "#ff4366";
+            else  c.fillStyle = "#1e99e8"
+            c.font = 'bold 26px san-serif';
             c.fillText(this.chartItem.f15004+"%", 15, 55);
             c.fillStyle = "#37474F";
-            c.font = '10px san-serif';
+            c.font = '10px  Noto Sans,san-serif';
             c.fillText(this.chartItem.f16002, 100, 55);
             
             // 자산총액
-            c.font = '11px san-serif';
+            c.font = '11px  Noto Sans,san-serif';
             c.fillStyle = "#757575";
             c.fillRect(25, 70, 30, 14);
             c.fillStyle = "white";
@@ -60,23 +60,23 @@ export default {
             c.fillStyle = "white";
             c.fillText("ETN", 30, 101);
 
-            c.font = '12px san-serif';
+            c.font = '16px  Noto Sans,san-serif';
             c.textAlign = "end";
-            c.fillStyle = "#1B5E20";
+            c.fillStyle = "#29a275";
             c.fillText(this.chartItem.etf_sum + " AUM", 200, 80);
-            c.fillStyle = "#1B5E20";
+            c.fillStyle = "#29a275";
             c.fillText(this.chartItem.etn_sum + " 원", 200, 100);
 
             // Bar Chart
             c.textAlign = "left";
-            c.font = '11px san-serif';
-            c.fillStyle = "#F57F17";
+            c.font = '12px  Noto Sans,san-serif';
+            c.fillStyle = "#ff4366";
             c.fillText("상승 " + this.chartItem.up, 20, 140);
             c.fillRect(20, 115, uplen, 4);
-            c.fillStyle = "#37474F";
+            c.fillStyle = "#959EB1";
             c.fillText("보합 " + this.chartItem.bohap, 160, 140);
             c.fillRect(20+uplen+2, 115, bohaplen, 4);
-            c.fillStyle = "#40C4FF";
+            c.fillStyle = "#1e99e8";
             c.fillText("하락 " + this.chartItem.down, 290, 140);
             c.fillRect(20+uplen+bohaplen+4, 115, downlen, 4);
             // console.log("up : " + this.chartItem.up);

@@ -3,10 +3,13 @@
   <v-card>
     <v-container grid-list-md>
       <v-layout wrap>
-      <v-flex xs12 offset-xs10>
-        <v-btn flat @click.stop="closeModal">
+     <v-flex xs12 class="login_pop_pad">
+            <v-card-title>회원가입
+                <v-spacer></v-spacer>
+        <v-btn icon small flat @click.stop="closeModal">
           <v-icon>close</v-icon>
         </v-btn>
+            </v-card-title>
       </v-flex>
       <v-flex xs12 md6>
         <v-select
@@ -50,8 +53,11 @@
       <v-flex xs12 md6>
           <v-text-field v-model="editedItem.tel_no" label="TEL"></v-text-field>
       </v-flex>
-      <v-flex xs12 offset-xs9>
-          <v-btn color="success darken-1" flat @click="newAccount">REGISTER</v-btn>
+      <v-flex xs12 class="login_pop_pad">
+            <v-card-title>
+                <v-spacer></v-spacer>
+                <v-btn  depressed color="#85c406" outline flat @click="newAccount">REGISTER</v-btn>
+            </v-card-title>
       </v-flex>
       </v-layout>
     </v-container>
