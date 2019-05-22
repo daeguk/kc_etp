@@ -30,19 +30,6 @@
                             @fn_setPdfQuickIndexBasicData="fn_setPdfQuickIndexBasicData">
             </EtpOperPdf>
 
-            <!-- [PDF 관리] Quick 메뉴 정보 -->
-            <EtpOperPdfQuick
-                v-if="showEtpOerPdfQuick" 
-
-                :pdfData="pdfData"
-                :indexBasic = "indexBasic"
-                @showDetail="showDetail"
-                @showMessageBox="showMessageBox"
-
-                @fn_showDetailIndex="fn_showDetailIndex"
-                @fn_setEtpOperPdfByRate = "fn_setEtpOperPdfByRate"
-                @fn_showDetailPdf="fn_showDetailPdf">
-            </EtpOperPdfQuick>
             
 
 
@@ -127,6 +114,19 @@
                                     @showDetail="showDetail" 
                                     @showMessageBox="showMessageBox">
             </ComFavorItemSub>
+             <!-- [PDF 관리] Quick 메뉴 정보 -->
+            <EtpOperPdfQuick
+                v-if="showEtpOerPdfQuick" 
+
+                :pdfData="pdfData"
+                :indexBasic = "indexBasic"
+                @showDetail="showDetail"
+                @showMessageBox="showMessageBox"
+
+                @fn_showDetailIndex="fn_showDetailIndex"
+                @fn_setEtpOperPdfByRate = "fn_setEtpOperPdfByRate"
+                @fn_showDetailPdf="fn_showDetailPdf">
+            </EtpOperPdfQuick>
         </v-flex>
 
     </v-layout> 
