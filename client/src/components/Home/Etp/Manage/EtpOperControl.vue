@@ -250,7 +250,7 @@ export default {
     methods: {
         showDetail: function(gubun, paramData) {
             
-            this.showEtpOerPdfQuick =   false;
+            this.showFaver =   false;
 
             if (gubun == '1') {
                 this.paramData = paramData;
@@ -272,7 +272,7 @@ export default {
                 this.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
 
                 this.showEtpDetailDialog = true;
-                this.showEtpOerPdfQuick =   true;
+                this.showFaver =   true;
                 
                 this.showEtpOerInfo = -1;
 //                this.showFaver = true;
