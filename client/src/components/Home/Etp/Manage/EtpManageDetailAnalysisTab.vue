@@ -231,6 +231,7 @@ export default {
             jongmokPopYn        :   false,
             basicData           :   {
                 arrNavPriceGubun    :   [],
+                showYn              :   "Y"
             },
             arrEtpPerformance   :   [],
             arrIndexPerformance :   [],
@@ -471,12 +472,14 @@ export default {
 
                 /* 'INDEX' 인 경우 */
                 else if( rowData.etpIndexGubun   === "INDEX" ) {
-                    if(     vm.basicData.f16257     ==  rowData.f16257          /* ETP기초지수코드 */
-                        &&  vm.basicData.f34239     ==  rowData.f34239          /* ETP기초지수MID */
+
+                    if(     vm.basicData.f16257             ==  rowData.f16257              /* ETP기초지수코드 */
+                        &&  Number( vm.basicData.f34239 )   ==  Number( rowData.f34239 )    /* ETP기초지수MID */
                     )   {
                         /* 초기데이터 지수정보 초기화 */
                         vm.basicData.f16257 =   "";     /* ETP기초지수코드 */
                         vm.basicData.f34239 =   "";     /* ETP기초지수MID */
+                        vm.basicData.showYn =   "N";
                     }
                 }
             }
@@ -499,9 +502,11 @@ export default {
 
                 /* 'INDEX' 인 경우 */
                 else if( rowData.etpIndexGubun   === "INDEX" ) {
+
                     var selData =   vm.arrIndexPerformance.filter( function(item) {
-                        return      rowData.f16257   === item.f16257            /* ETP기초지수코드 */
-                                &&  rowData.f34239   === item.f34239;           /* ETP기초지수MID */
+
+                        return      rowData.f16257              === item.f16257            /* ETP기초지수코드 */
+                                &&  Number( rowData.f34239 )    === Number( item.f34239 );           /* ETP기초지수MID */
                     });
 
                     vm.arrIndexPerformance   =   vm.arrIndexPerformance.filter( function(item) { 
