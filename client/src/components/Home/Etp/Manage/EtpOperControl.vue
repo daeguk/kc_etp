@@ -249,7 +249,7 @@ export default {
     },
     methods: {
         showDetail: function(gubun, paramData) {
-            
+
             this.showFaver =   false;
 
             if (gubun == '1') {
@@ -271,7 +271,10 @@ export default {
                 }
 
                 this.showEtpDetailDialog = true;
-                this.showFaver =   true;
+
+                if( this.activeTab != 2 ) {
+                    this.showFaver =   true;
+                }
                 
                 this.showEtpOerInfo = -1;
 //                this.showFaver = true;
