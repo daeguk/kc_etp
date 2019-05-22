@@ -1,12 +1,15 @@
 <template>
 <v-dialog v-model="findpwdDialog" persistent max-width="600px">
   <v-card>
-    <v-container grid-list-md>
+    <v-container>
       <v-layout wrap>
-      <v-flex xs12 offset-xs10>
-        <v-btn flat @click.stop="closeModal">
-          <v-icon>close</v-icon>
-        </v-btn>
+      <v-flex xs12 class="login_pop_pad">
+          <v-card-title> 비밀번호 찾기
+                <v-spacer></v-spacer>
+                <v-btn flat small icon @click.stop="closeModal">
+                    <v-icon>close</v-icon>
+                </v-btn>
+          </v-card-title>
       </v-flex>
       <v-flex xs12 md6>
         <v-select
@@ -35,8 +38,11 @@
       <v-flex xs12 md6>
         <v-text-field readonly v-model="editedItem.domain_url"></v-text-field>
       </v-flex>
-      <v-flex xs12 offset-xs9>
-          <v-btn color="success darken-1" flat @click="findPassword">FIND PASSWORD</v-btn>
+      <v-flex xs12 class="login_pop_pad">
+        <v-card-title>
+            <v-spacer></v-spacer>
+            <v-btn  depressed color="primary" outline @click="findPassword">FIND PASSWORD</v-btn>
+        </v-card-title>
       </v-flex>
       </v-layout>
     </v-container>

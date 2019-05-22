@@ -17,8 +17,8 @@
             </v-flex>
             <v-flex xs12>
               <div class="text-xs-center">
-                <v-btn outline color="#ffffff" @click="doView">둘러보기</v-btn>
-                <v-btn depressed color="info darken-1" @click="doLogin">LOG-IN</v-btn>
+                <v-btn outline color="#85c406" @click="doView">둘러보기</v-btn>
+                <v-btn depressed color="#85c406" dark @click="doLogin">LOG-IN</v-btn>
               </div>
             </v-flex>
           </v-layout>

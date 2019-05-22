@@ -1,13 +1,14 @@
 <template>
 <v-dialog v-model="loginDialog" persistent max-width="600px">
     <v-card>
-        <v-card-text>
-        <v-container grid-list-md>
+        <v-container>
           <v-layout wrap>
-            <v-flex xs12 offset-xs10>
-              <v-btn flat @click.stop="closeModal">
+            <v-flex xs12 class="login_pop_pad">
+            <v-card-title>LOGIN
+                <v-spacer></v-spacer>
+                <v-btn icon small flat @click.stop="closeModal">
                 <v-icon>close</v-icon>
-              </v-btn>
+              </v-btn></v-card-title>
             </v-flex>
             <v-flex xs12>
                 <v-text-field label="Sign in with your e-mail address" v-model="email"></v-text-field>
@@ -16,25 +17,29 @@
                 <v-text-field label="Password" type="password" v-model="password" @keyup.enter="loginCheck"></v-text-field>
             </v-flex>
             </v-layout>
-        </v-container>
-        </v-card-text>
-        <v-card-actions>
+        <v-card flat>
             <v-layout wrap>
-            <v-flex xs12 offset-xs6>
-          <v-btn color="success darken-1" flat @click="loginCheck">LOG-IN to ETP PLATFORM</v-btn>
+            <v-flex xs12 class="login_pop_pad">
+                <v-card-title>
+                <v-spacer></v-spacer>
+              <v-btn depressed color="#85c406" dark @click="loginCheck">LOG-IN to ETP PLATFORM</v-btn>
+                </v-card-title>
             </v-flex>
-            <v-flex xs8>
-              <div>
-                New to ETP Platform? <a @click="newAccount">Create an account.</a>
-              </div>
+            <v-flex xs12  class="login_pop_pad2">
+                <v-layout>
+                    <v-flex>
+                         New to ETP Platform? <a @click="newAccount">Create an account.</a>
+                    </v-flex>
+                    <v-flex>
+                        <a @click="forgotPassword">Forgot password.</a>
+                    </v-flex>
+                </v-layout>
             </v-flex>
             <v-flex xs4>
-              <div>
-                <a @click="forgotPassword">Forgot password.</a>
-              </div>
             </v-flex>
             </v-layout>
-        </v-card-actions>
+        </v-card>
+      </v-container>
     </v-card>
 </v-dialog>
 

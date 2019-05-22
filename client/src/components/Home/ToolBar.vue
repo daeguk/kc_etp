@@ -1,5 +1,5 @@
 <template>
-<v-toolbar fixed app clipped-left clipped-right dark color="#48485e" class="elevation-0"  style="z-index:100;">
+<v-toolbar fixed app clipped-left clipped-right dark color="#323232" class="elevation-0"  style="z-index:100;">
   <!--v-toolbar-side-icon @click="menuClick"></v-toolbar-side-icon-->
   <v-toolbar-title>
     <a class="routerlink logo" @click="outService">ETP PLATFORM</a>
@@ -14,7 +14,7 @@
       </template>
       <v-list>
         <v-list-tile>
-          <v-list-tile-title><router-link class="routerlink" to="/info/etpinfo"><v-icon>apps</v-icon>MARKET ETP INFO</router-link></v-list-tile-title>
+          <v-list-tile-title><router-link class="routerlink" to="/info/etpinfo"><img src="/assets/img/icons/icons8-agreement-new-filled.svg" width="24px" height="24px" class="svg_icon">MARKET ETP INFO</router-link></v-list-tile-title>
         </v-list-tile>
         <v-list-tile>
           <v-list-tile-title><router-link class="routerlink" to="/info/indexinfo"><v-icon>apps</v-icon>MARKET INDEX INFO</router-link></v-list-tile-title>

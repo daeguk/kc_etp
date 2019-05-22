@@ -21,9 +21,8 @@ body{background: #f5f5f5; }
 html{font-family: 'Noto Sans', sans-serif,'Noto Sans'  !important; }
 body  { font-family: 'Roboto','sans-serif','Noto Sans'  !important; }
 .application{font-family: 'Roboto','sans-serif','Noto Sans' !important; }
-.application a{font-family: 'Roboto','sans-serif','Noto Sans' !important;  }*/
+.application a{font-family: 'Roboto','sans-serif','Noto Sans' !important;}
 a{text-decoration: none;}
-
 * {
     /*
     margin: 0;
@@ -42,6 +41,8 @@ ol, ul{padding:0 !important;}
     color: #6c6c7d;
 }
 
+.svg_icon path{fill:#6c9a10}
+
 .v-toolbar__content{height:60px !important;}
 .v-content{padding-top:60px !important;}
 .v-toolbar__content, .v-toolbar__extension{width:1400px !important; margin:0 auto !important; overflow: hidden !important;}
@@ -52,7 +53,7 @@ ol, ul{padding:0 !important;}
 .v-content__wrap .container{padding:0px;}
 .v-form>.container {background:#ffffff !important;}
 
-.logo{color:#ffffff;}
+.logo{color:#56bf98;}
 
 .text_color_blue{color:#1e99e8}
 .txt_left{text-align:left;}
@@ -60,7 +61,7 @@ ol, ul{padding:0 !important;}
 
 .text-xs-center{text-align: center;}
 .v-badge__badge{height: 18px !important; width: 18px !important; font-size: 12px !important;}
-.v-badge__badge.primary{background-color:#92d114 !important;}
+.v-badge__badge.primary{background-color:#56bf98 !important;}
 .v-badge--overlap .v-badge__badge{top:0px !important; right:-5px !important;}
 
 h3 span{font-size:14px; width:100%; font-weight:400; color:#959EB1}
@@ -81,7 +82,7 @@ button:focus { outline: none; }
 .btn_blue01{background-color:#3158a1 !important;}
 .btn_orange01{background-color:#ff821d !important;}
 
-.v-tabs__slider, .v-tabs__slider.accent{background-color:#1e99e8 !important; border-color:#1e99e8 !important}
+.v-tabs__slider, .v-tabs__slider.accent{background-color:#56bf98 !important; border-color:#1e99e8 !important}
 
 
 
@@ -110,7 +111,7 @@ button:focus { outline: none; }
 .btn_icon{width:35px; height:35px;border-radius: 20px; color:#7e7e94}
 .btn_icon:hover{align-items: center;
     border-radius: 20px;
-    color:#1976d2;
+    color:#56bf98;
     }
 .btn_icon_star{color:#ccd0d4; padding-left:0px;}
 .btn_icon_star:hover{color:#f1be15}
@@ -186,27 +187,28 @@ table.dataTable.table01_w tr td{height:26px !important;}
 .table_line2{border-top:1px solid #808080;}
 .table_line3{border-top:0px;}
 .table_line4{border-top:1px solid #808080;}
-.text_result{color:#1e99e8 !important;}
-.text_result2{color:#1e99e8 !important;}
+.text_result{color:#6c9a10 !important;}
+.text_result2{color:#6c9a10 !important;}
 .text_info1{color:#ff821d; font-weight: 600;}
 .text_info1 .theme--light.v-icon{color:#ff821d;}
 
 table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type,.tbl_type th,.tbl_type td{border:0}
-.tbl_type{border-bottom:1px solid #dcdcdc;font-size:14px;text-align:center}
+.tbl_type{border-bottom:1px solid #eeeeee;font-size:14px;text-align:center}
 .tbl_type caption{display:none}
-.tbl_type th{padding:8px 17px 8px 12px; border-top:1px solid #dcdcdc;border-bottom:1px solid #c2c2c2; color:#878793; font-size:12px; font-weight:400; line-height:12px;}
+.tbl_type th{padding:8px 17px 8px 12px; border-top:1px solid #eeeeee;border-bottom:1px solid #eeeeee; color:#878793; font-size:12px; font-weight:400; line-height:12px;}
 .tbl_type th.th_line{border-top:none;}
 .tbl_type th.txt_left{text-align: left;}
 .tbl_type th.txt_right{text-align: right;}
 
-.tbl_type td{padding:6px 17px 4px 12px;border-bottom:1px solid #e5e5e5;color:#101010; line-height: 16px; font-size:14px !important; }
+.tbl_type td{padding:6px 17px 4px 12px;border-bottom:1px solid #eeeeee;color:#263147; line-height: 16px; font-size:14px !important; font-weight: 600; }
+.tbl_type.ver2 td{font-size:12px !important; font-weight: 400; }
 .tbl_type td.txt_left{text-align: left;}
 .tbl_type td.txt_right{text-align: right;}
 .tbl_type td.line2 span{ display: inline-block; font-weight: 600;}
 .tbl_type td.line2 span.text_s{font-size: 12px !important;font-weight: 400 !important;}
 .tbl_type td.line2 img{vertical-align:top; }
-.tbl_type tbody tr:hover{background:#edf3f6}
+.tbl_type tbody tr:hover{background:#fafbfb}
 .tbl_type tbody tr.selected{background:#edf3f6 !important;}
 
 .tbl_type.ver2{width:270px;}
@@ -264,10 +266,15 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .img_align{vertical-align: middle;}
 
 /*intro*/
-.intro_logo{color:#ffffff; font-size: 42px; margin:0 auto; width:800px; font-weight:bold; margin-top:250px;}
-.intro_logo p{font-size: 20px; font-weight: 400;}
+.intro_logo{color:#85c406; font-size: 42px; margin:0 auto; width:800px; font-weight:bold; margin-top:250px;}
+.intro_logo p{font-size: 20px; font-weight: 400; color:#ffffff;}
 
 
+/*로그인 팝업*/
+.login_pop_pad .v-card__title{font-size:24px; padding:0px; font-weight: 600;}
+.login_pop_pad2{padding:16px 0;}
+.login_pop_pad2 a{text-decoration: underline; margin-right:10px; color:#85c406;}
+.login_pop_pad2 div{display: inline-block;}
 
 /*지수정보 조회페이지 2019.03.20*/
 h3.subtit p{font-size: 16px;  margin: 0px; font-weight: 400;}
