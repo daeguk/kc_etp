@@ -91,7 +91,6 @@ import buttons from "datatables.net-buttons";
 import Config from "@/js/config.js";
 import companyContactModal from "./companyContactModal";
 import idxConfirmModal from "./idxConfirmModal";
-import JsonExcel from 'vue-json-excel';
 var table = null;
 
 export default {
