@@ -231,6 +231,9 @@ export default {
             this.paramData                          =   data.paramData;
 
             if( this.showEtpOerInfo == 2 ) {
+                this.className      =   "conWidth_left";
+                this.FaverClassName = "conWidth_right";
+
                 this.showEtpOerPdfQuick =   true;
             }
 
@@ -246,7 +249,9 @@ export default {
     },
     methods: {
         showDetail: function(gubun, paramData) {
-                  
+            
+            this.showEtpOerPdfQuick =   false;
+
             if (gubun == '1') {
                 this.paramData = paramData;
                 this.showIndexDetailDialog = false;
@@ -267,6 +272,7 @@ export default {
                 this.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
 
                 this.showEtpDetailDialog = true;
+                this.showEtpOerPdfQuick =   true;
                 
                 this.showEtpOerInfo = -1;
 //                this.showFaver = true;
@@ -297,7 +303,7 @@ export default {
 
             this.selectedQuickData  =   paramData;
 
-            this.className = "conWidth_left";  
+            this.className = "conWidth_left";
             this.FaverClassName = "conWidth_right";
         },
         showMessageBox: function(title, msg, option, gubun) {
