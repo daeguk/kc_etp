@@ -151,7 +151,7 @@ export default {
                 },
                 {  
                     "render": function ( data, type, row ) {
-                        let htm = "<div>";
+                        let htm = "<div style='cursor:pointer'>";
                         htm += "           "+data+"";
                         htm += "            <br><span class='text_S'>"+row.F16013+"</div>";
                         return htm;
@@ -248,7 +248,7 @@ export default {
                 },
                 {  
                     "render": function ( data, type, row ) {
-                        let htm = "<div>";
+                        let htm = "<div style='cursor:pointer'>";
                         htm += "           "+data+"";
                         htm += "            <br><span class='text_S'>"+row.F16013+"</div>";
                         return htm;
