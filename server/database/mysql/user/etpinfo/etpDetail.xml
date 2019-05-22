@@ -592,7 +592,7 @@
                     UNION   ALL
 
                 /* INDEX 정보 */
-                    SELECT      td_etp_basic.F16012                                                   AS  f16012          /* 국제표준코드 */
+                    SELECT      td_etp_basic.F16012                                 AS  f16012          /* 국제표준코드 */
                             ,   td_index_basic.F16013                               AS  f16013          /* 단축코드 */
                             ,   td_index_basic.F16002                               AS  f16002          /* 한글종목명 */
                             ,   td_index_basic.F16002                               AS  chartTitle      /* 차트에 표시될 타이틀 정보 */
@@ -622,6 +622,8 @@
                       AND td_index_basic.MARKET_ID LIKE CONCAT( '_' , LPAD(td_etp_basic.F34239, 3, '0' ) , '%' ) /* 시장 ID = ETP기초지수MID */
                      WHERE  1 = 1
                        AND  td_etp_basic.F16012 = #{basicData.f16012}     /* 국제표준코드 */
+
+                       AND  'N' != #{basicData.showYn}
 
                 )   BASE
 

@@ -232,7 +232,7 @@ export default {
 
             if( this.showEtpOerInfo == 2 ) {
                 this.className      =   "conWidth_left";
-                this.FaverClassName = "conWidth_right";
+                this.FaverClassName =   "conWidth_right";
 
                 this.showEtpOerPdfQuick =   true;
             }
