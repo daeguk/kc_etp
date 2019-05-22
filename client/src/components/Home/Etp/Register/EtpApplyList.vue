@@ -336,8 +336,8 @@ export default {
                         $('#example1 tbody tr td:nth-child(6)').hide();
                         $('#example1 tbody tr td:nth-child(7)').hide();
                         
-                    
-                        $("#example1 tbody").on('click', 'tr td:nth-child(6)', function(){
+                        //상세페이지 이동
+                        $("#example1 tbody").on('click', 'tr td:nth-child(9)', function(){
                             var tr = $(this).parents();
                             var td = tr.children();
                             var seq = td.eq(2).text(); 
