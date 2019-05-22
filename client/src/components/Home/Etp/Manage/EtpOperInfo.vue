@@ -503,8 +503,12 @@ export default {
                                 /* ETF 상세정보 */
                                 graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnEtpInfo", "btnContent" : "equalizer", "btnSpanContent" : "ETP정보" } );
 
-                                /* PDF 정보 */
-                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnPdf", "btnContent" : "picture_as_pdf", "btnSpanContent" : "PDF관리" } );                                
+                                /* ETF 인 경우에만 PDF 아이콘 노출 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                                if( row.f16493 == "1" || row.f16493 == "2" ) {
+
+                                    /* PDF 정보 */
+                                    graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnPdf", "btnContent" : "picture_as_pdf", "btnSpanContent" : "PDF관리" } );
+                                }
 
                                 return  graphContent;
                             }
