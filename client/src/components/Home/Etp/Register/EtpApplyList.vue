@@ -125,7 +125,7 @@ export default {
     components: {
         companyContactModal,
         idxConfirmModal,
-        JsonExcel
+    
     },
     computed: {},
     created: function() {
