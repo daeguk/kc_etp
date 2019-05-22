@@ -9,7 +9,7 @@
                             ETP 운용 정보
                             <p>
                                 Total
-                                <span class="text_result" ref="result_cnt" >0</span> results
+                                <span class="text_result">{{ result_cnt }}</span> results
                                 <span class="toggle2">
                                     <v-btn-toggle v-model="text" class="toggle_01">
                                         <v-btn flat value="전종목"      @click="fn_getEtpOperInfo('A')">전종목</v-btn>
@@ -107,6 +107,7 @@ export default {
             arrShowColumnDef   :   [],
             etpOperInfoQuickYn : true,
 
+            result_cnt  :   0,
             indexBasic  :   {},
             paramData   :   {},
             etpRow      :   {},
@@ -150,10 +151,6 @@ export default {
                 table01.clear().draw();
             }
 
-            if( typeof vm.$refs.result_cnt != "undefined" ) {
-                vm.$refs.result_cnt.textContent = "0";
-            }
-
             axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
                 data: {
                     f34241 : vm.stateInfo.gubun
@@ -168,11 +165,8 @@ export default {
                         table01.rows.add( dataList ).draw();
                         table01.draw();
 
-                        vm.indexBasic   =    dataList[0];
-
-                        if( typeof vm.$refs.result_cnt != "undefined" ) {
-                            vm.$refs.result_cnt.textContent = dataList.length;
-                        }
+                        vm.indexBasic   =   dataList[0];
+                        vm.result_cnt   =   dataList.length;
                     }
                 }
             });

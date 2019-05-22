@@ -683,6 +683,11 @@
 
            AND  td_etp_basic.f33960                 =   #{krx_cd}                   /* ETP운용사코드 가 로그인한 운용사 코드와 동일한 정보만 추출 */
 
+        
+        <if test= 'isEtfYn != null  and  isEtfYn == "Y" ' >
+           AND  td_etp_basic.f16493                 IN  ( '1', '2' )                /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+        </if>
+
         <choose>
             <when   test=' f34241 != null  and f34241 == "A" '>
             </when>
@@ -711,8 +716,11 @@
             </when>        
         </choose>
 
+         ORDER  BY      td_etp_basic.f16002         /* 한글종목명 */
+                    ,   td_etp_basic.f16012         /* 국제표준코드 */
+
         <if test= 'firstYn != null  and  firstYn == "Y" ' >
-             LIMIT  0, 1
+        LIMIT  0, 1
         </if>
 
     </select>    

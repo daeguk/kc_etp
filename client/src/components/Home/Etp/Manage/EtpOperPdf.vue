@@ -101,7 +101,6 @@ export default {
         var vm = this;
 
 console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
-console.log( vm.paramData );
 
         vm.$EventBus.$on('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call', data => {
             console.log( "EventBus EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call>>>>>>>" );
@@ -171,6 +170,7 @@ console.log( vm.paramData );
             axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
                 data: {
                         f34241  :   gubun
+                    ,   isEtfYn :   "Y"
                     ,   firstYn :   "Y"
                 }
             }).then(function(response) {
