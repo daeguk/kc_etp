@@ -176,11 +176,13 @@ export default {
     created: function() {
         var vm = this;
         vm.$EventBus.$on('changeEtpInfo', data => {
-
             vm.toggle_one = '1M';
             vm.init(true);
-            
         });
+
+        vm.$EventBus.$on('changeEtpInfoClose', data => {
+            this.$EventBus.$off('changeEtpInfo');
+        });        
     },
     updated: function() {
         console.log("Etp_updated================");
