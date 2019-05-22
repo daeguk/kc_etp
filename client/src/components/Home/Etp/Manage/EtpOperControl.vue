@@ -236,10 +236,13 @@ export default {
 
                 this.showEtpOerPdfQuick =   true;
             }
-
+/*
             if (data.tab_id == 0 || data.tab_id == 1) {
                 this.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
+            }else{
+                this.$EventBus.$off('changeEtpAnalysisInfo');
             }
+*/            
         });
     },
     beforeUpdated: function() {
@@ -285,6 +288,7 @@ console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
                 this.showEtpDetailDialog = false;
 
                 if (this.showIndexDetailDialog) {
+                    this.$EventBus.$emit('changeEtpAnalysisInfoClose', paramData);
                     this.$EventBus.$emit('changeEtpInfoClose', paramData);
 
                     this.$EventBus.$emit('changeEtpOperIndexFixClose', paramData);
@@ -325,6 +329,7 @@ console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
                     this.$EventBus.$emit('changeEtpOperIndexErrorClose', paramData);
 
                     this.$EventBus.$emit('changeIndexInfoClose', paramData);
+                    this.$EventBus.$emit('changeEtpAnalysisInfoClose', paramData);
                     this.$EventBus.$emit('changeEtpInfoClose', paramData);
 
                     this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_close', paramData);
@@ -383,6 +388,7 @@ console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
                     this.$EventBus.$emit('changeEtpOperIndexErrorClose', paramData);
 
                     this.$EventBus.$emit('changeIndexInfoClose', paramData);
+                    this.$EventBus.$emit('changeEtpAnalysisInfoClose', paramData);
                     this.$EventBus.$emit('changeEtpInfoClose', paramData);
 
                     this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_close', paramData);
@@ -407,6 +413,7 @@ console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
                     this.$EventBus.$emit('changeEtpOperIndexFixClose', paramData);
 
                     this.$EventBus.$emit('changeIndexInfoClose', paramData);
+                    this.$EventBus.$emit('changeEtpAnalysisInfoClose', paramData);
                     this.$EventBus.$emit('changeEtpInfoClose', paramData);
 
                     this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_close', paramData);
@@ -445,6 +452,7 @@ console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
                     this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
 
                     this.$EventBus.$emit('changeIndexInfoClose', paramData);
+                    this.$EventBus.$emit('changeEtpAnalysisInfoClose', paramData);
                     this.$EventBus.$emit('changeEtpInfoClose', paramData);
 
                     this.$EventBus.$emit('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_close');
@@ -473,6 +481,7 @@ console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
                     this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
 
                     this.$EventBus.$emit('changeIndexInfoClose', paramData);
+                    this.$EventBus.$emit('changeEtpAnalysisInfoClose', paramData);
                     this.$EventBus.$emit('changeEtpInfoClose', paramData);
 
                     this.$EventBus.$emit('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_close');

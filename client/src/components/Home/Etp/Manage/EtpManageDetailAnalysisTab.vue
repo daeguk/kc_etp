@@ -249,8 +249,15 @@ export default {
         var vm = this;
 
         vm.$EventBus.$on('changeEtpAnalysisInfo', data => {
+
+            console.log( "EtpManageDetailAnalysisTab.vue -> changeEtpAnalysisInfo" );
             vm.init();
         });
+
+        vm.$EventBus.$on('changeEtpAnalysisInfoClose', data => {
+            console.log( "EtpManageDetailAnalysisTab.vue -> changeEtpAnalysisInfoClose" );
+            vm.$EventBus.$off('changeEtpAnalysisInfo');
+        });        
     },
     beforeDestroy() {
         this.$EventBus.$off('changeEtpAnalysisInfo')
