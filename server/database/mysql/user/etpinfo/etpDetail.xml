@@ -834,4 +834,58 @@
     ) BAS
     </select>    
 
+
+    <!--
+    * ETP 비중 정보 조회시 공통 SQL 을 정의한다.
+    * 2019-04-25  bkLove(촤병국)
+    -->
+    <sql    id="sqlEtpImportance">
+    <![CDATA[
+                      FROM  td_etfpdf_hist
+                     WHERE  (
+                                    td_etfpdf_hist.f12506
+                                ,   td_etfpdf_hist.f16583
+                                ,   td_etfpdf_hist.f16012
+                                ,   td_etfpdf_hist.F16013
+                            )   IN
+                            (
+                                SELECT      MAX( td_etfpdf_hist.f12506 )                AS  f12506              /* 일자 */
+                                        ,   MAX( td_etfpdf_hist.f16583 )                AS  f16583              /* 사무수탁회사번호 */
+                                        ,   td_etfpdf_hist.f16012                       AS  f16012              /* ETF종목코드 */
+                                        ,   MAX( td_etfpdf_hist.f16013 )                AS  f16013              /* ETF단축코드 */
+
+                                  FROM  td_etfpdf_hist
+                                 WHERE  td_etfpdf_hist.f16012       =   #{f16012}       /* ETF종목코드 */
+                            )
+    ]]>
+    </sql>
+
+    <!--
+    * ETP 비중 정보를 조회한다.
+    * 2019-04-25  bkLove(촤병국)
+    -->
+    <select id="getEtpImportanceList">
+        SELECT      /* etpDetail.getEtpImportanceList    ETP 비중 정보를 조회한다. */
+
+                    sub.ISIN_CODE                                                       AS  ISIN_CODE
+                ,   sub.JONG_NM                                                         AS  JONG_NM
+                ,   ROUND( ( sub.PERCNT / tot_sub.TOT_PERCNT ) * 100, 2 )               AS  PERCNT
+                ,   'ETF'                                                               AS  GUBUN
+
+          FROM  (
+                    SELECT      td_etfpdf_hist.f16316                                   AS  ISIN_CODE
+                            ,   td_etfpdf_hist.f16004                                   AS  JONG_NM
+                            ,   ROUND( td_etfpdf_hist.f34743 / 100, 2 )                 AS  PERCNT
+
+                      <include    refid="sqlEtpImportance" />
+                )       sub
+         INNER  JOIN    
+                (
+                    SELECT  SUM( ROUND( td_etfpdf_hist.f34743 / 100, 2 ) )              AS  TOT_PERCNT
+
+                      <include    refid="sqlEtpImportance" />
+                )       tot_sub
+         ORDER  BY  sub.PERCNT / tot_sub.TOT_PERCNT     DESC
+    </select>
+
 </mapper>

@@ -89,7 +89,7 @@
                             <v-card>
                                 <h5>
                                     <v-card-title ma-0>
-                                        종목 비중정보 (KODEX 200)
+                                        종목 비중정보 ({{ etpBasic.f16002 }})
                                         <v-spacer></v-spacer>
                                         <v-btn icon dark @click="dialog = false">
                                             <v-icon>close</v-icon>
@@ -194,13 +194,13 @@ import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
-import { index_common } from '@/js/common/mixins/mixins_index.js';
 
 var table01 = null;
 var chart01 = null;
 
+var importance_grid = null;
 export default {
-    props   :   [ "paramData" ],
+    props   :   [ "paramData", "etpBasic" ],
 
     data() {
         return {
@@ -241,7 +241,6 @@ export default {
             chart_size : '1180'
         };
     },
-    mixins : [ index_common ],
     components: {
         jongmokPopup: jongmokPopup, 
     },
@@ -309,10 +308,7 @@ export default {
                 this.$nextTick().then(() => {
 
                     /* 비중정보 및 차트정보 조회 */
-                    var paramData   =   {};
-                    paramData.jisu_cd   =   vm.basicData.f16257 ;
-                    paramData.market_id =   vm.basicData.f34239;
-                    vm.getIndexImportanceList( paramData );            
+                    vm.fn_getEtpImportanceList( vm.basicData );
 
 
                     chart01 = new google.visualization.ComboChart(document.getElementById('etp_comboChart_div'));
@@ -739,7 +735,126 @@ export default {
 
                 this.fn_getEtpPerformance();
             }
-        }
+        },
+
+
+        fn_getEtpImportanceList: function( paramData ) {
+
+            var vm  =   this;
+debugger;
+            console.log("getEtpImportanceList");
+            axios.post( Config.base_url + "/user/etp/getEtpImportanceList", {
+                data: paramData
+            }).then(response => {
+debugger;                    
+                // console.log(response);
+                if (response.data.success == false) {
+                    alert("비중 목록이 없습니다");
+                } else {
+                    var items = response.data.dataList;
+                    
+                    //console.log("response=" + JSON.stringify(items));
+                    this.results = items;
+                    this.importance_cnt = this.results.length;
+
+                    // 차트 호출
+                    this.fn_importance_chart(items);
+                    
+                    if (importance_grid) {
+                        importance_grid.destroy()
+                    }
+                    importance_grid = $('#' + vm.importance_grid_id).DataTable( {
+                        "processing": true,
+                        "serverSide": false,
+                        "info": false,   // control table information display field
+                        "stateSave": true,  //restore table state on page reload,
+                        "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                        scrollY:        '500px',
+                        scrollCollapse: true,
+                        select: {
+                            style:    'multi',
+                            selector: 'td:first-child'
+                        },
+                        paging: false,
+                        searching: false,
+                        data : this.results,
+                        columns: [
+                            { "data": "ISIN_CODE", "orderable": true},
+                            { "data": "JONG_NM", "orderable": true },
+                            { "data": "PERCNT", "orderable" : true},
+                            { "data": "GUBUN", "orderable" : true},
+                        ]
+                    }); 
+
+                    
+                }
+                
+            });
+        }, 
+
+
+        fn_importance_chart: function(results) {
+
+            var     vm  =   this;
+
+            // Load the Visualization API and the corechart package.
+            google.charts.load('current', {'packages':['corechart']});
+
+           
+            // Set a callback to run when the Google Visualization API is loaded.
+            google.charts.setOnLoadCallback(drawChart());
+
+            // Callback that creates and populates a data table,
+            // instantiates the pie chart, passes in the data and
+            // draws it.
+      
+            function drawChart() {
+                
+                
+                // Create the data table.
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', '');
+                data.addColumn('number', 'PERCNT');
+
+               
+                // Set chart options
+                var options = {'title':'',
+                            'width':'700',
+                            'height':'350',
+                            'colors': ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde', '#B6B8BA', '#7E8083', '#FBB040', '#F58025', '#EDED8A'],        
+                                       
+                            'legend': {
+                                position: 'right',
+                                color: '#ffffff',
+                               
+                            },
+                            'lineWidth': 5
+                            
+                };
+                
+                
+                var items = [] 
+
+                for (let item of results) {
+                    
+                    if (items.length >= 10) break;
+
+                    items.push([item.JONG_NM, Number( item.PERCNT ) ]);
+
+                }
+                
+            
+
+                
+                data.addRows(
+                    items
+                );
+
+                // Instantiate and draw our chart, passing in some options.
+                var chart = new google.visualization.PieChart( document.getElementById( vm.importance_chart_id ) );
+                chart.draw(data, options);
+            }
+        },        
         
     }
 };
