@@ -284,6 +284,47 @@ var getIdxList = function (req, res) {
         util.log("err=>", exception);
     }
 };
+var getRidxList = function (req, res) {
+    try {
+        console.log('EtpApply=>getRidxList 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        
+        var options = { 
+                       "market_id":  req.query.market_id,
+                       "ridx_dist_sym_code":  req.query.ridx_dist_sym_code
+                       };
+
+        util.log("options", JSON.stringify(options));
+
+        var stmt = mapper.getStatement('EtpRegister', 'getRidxList', options, {language:'sql', indent: '  '});
+        console.log(stmt);
+
+
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
+
 
 
 module.exports.getEtpApplyList = getEtpApplyList;
@@ -293,3 +334,4 @@ module.exports.getEtpApplyCodeCnt = getEtpApplyCodeCnt;
 module.exports.getEtpApplyInavCnt = getEtpApplyInavCnt;
 module.exports.getCompContactList = getCompContactList;
 module.exports.getIdxList = getIdxList;
+module.exports.getRidxList = getRidxList;

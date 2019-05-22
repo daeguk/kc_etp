@@ -99,8 +99,8 @@ export default {
                             data: this.results,
                             destroy: true,
                                 columns: [
-                                   { "data": "USER_NM", "orderable": true },
-                                   { "data": "TEL_NO", "orderable" : true },
+                                   { "data": "USER_NM", "orderable": true,className: "td_in_center", },
+                                   { "data": "TEL_NO", "orderable" : true,className: "td_in_center", },
                                    { "data": "CEL_NO", "orderable": true },
                                    { "data": "EMAIL", "orderable" : true },
                                 ]
