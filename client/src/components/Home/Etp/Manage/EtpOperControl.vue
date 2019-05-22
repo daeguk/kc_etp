@@ -109,11 +109,11 @@
         </v-flex>
 
         <v-flex :class="FaverClassName">
-            <ComFavorItemSub        v-if="showFaver"   
+            <ComEtpFavorItemSub        v-if="showFaver"   
 
                                     @showDetail="showDetail" 
                                     @showMessageBox="showMessageBox">
-            </ComFavorItemSub>
+            </ComEtpFavorItemSub>
              <!-- [PDF 관리] Quick 메뉴 정보 -->
             <EtpOperPdfQuick
                 v-if="showEtpOerPdfQuick" 
@@ -144,7 +144,7 @@ import Config                       from "@/js/config.js";
 
 import ConfirmDialog                from "@/components/common/ConfirmDialog.vue";
 import ComIndexFixPopup             from "@/components/common/popup/ComIndexFixPopup.vue";
-import ComFavorItemSub              from "@/components/common/control/ComFavorItemSub"; 
+import ComEtpFavorItemSub              from "@/components/common/control/ComEtpFavorItemSub"; 
 
 
 import IndexDetailInfo              from "@/components/Home/Index/Manage/IndexDetailInfo.vue";              /* 지수 상세정보 */
@@ -200,7 +200,7 @@ export default {
         EtpOperPdfQuick                 :   EtpOperPdfQuick,
 
         ConfirmDialog                   :   ConfirmDialog,                      /* 공통 메시지창 */
-        ComFavorItemSub                 :   ComFavorItemSub,
+        ComEtpFavorItemSub                 :   ComEtpFavorItemSub,
     },
 
     mounted: function() {
@@ -216,7 +216,7 @@ export default {
 
             this.showEtpOerInfo                     =   data.tab_id;
             this.showEtpDetailDialog                =   false;
-            this.showEtpManageDetailDialog          =   false;
+            this.showEtpManageDetailDialog          =   true;
             this.showIndexDetailDialog              =   false;
             this.showEtpOerPdfQuick                 =   false;
 

@@ -460,7 +460,7 @@ export default {
 
             console.log( "ComFavorItem.vue -> fn_detailPop" );
             console.log( param );
-
+                     
             /* ETP 인 경우 */
             if( param.GUBUN == "1" ) {
 
@@ -482,7 +482,7 @@ export default {
                 vm.paramData.f16257       =   param.F16257;           /* ETP기초지수코드 */
                 vm.paramData.f34239       =   param.F34239;           /* ETP기초지수MID */
 
-             
+
                 vm.$emit('showDetail', 1, vm.paramData);
             }
             /* 인덱스인 경우 */
