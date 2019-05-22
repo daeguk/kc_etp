@@ -81,7 +81,9 @@
                                     </v-tab-item>
                                     <v-tab-item>
                                         <EtpManageDetailAnalysisTab     v-if="showEtpManageDetailDialogBySub"
+
                                                                         :paramData="paramData" 
+                                                                        :etpBasic="etpBasic"
                                                                         @showMessageBox="showMessageBox">
                                         </EtpManageDetailAnalysisTab>
                                     </v-tab-item>
