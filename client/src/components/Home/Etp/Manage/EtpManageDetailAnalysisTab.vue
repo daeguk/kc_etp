@@ -741,12 +741,12 @@ export default {
         fn_getEtpImportanceList: function( paramData ) {
 
             var vm  =   this;
-debugger;
+
             console.log("getEtpImportanceList");
             axios.post( Config.base_url + "/user/etp/getEtpImportanceList", {
                 data: paramData
             }).then(response => {
-debugger;                    
+
                 // console.log(response);
                 if (response.data.success == false) {
                     alert("비중 목록이 없습니다");

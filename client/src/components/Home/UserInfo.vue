@@ -2,10 +2,10 @@
 <div>
   <div v-if="login_flag">
     <v-toolbar-items class="hidden-sm-and-down">
-      <v-btn flat color="white"><v-badge overlap color="#56bf98">
+      <!--v-btn flat color="white"><v-badge overlap color="#56bf98">
         <span slot="badge">3</span>
         <v-icon large color="grey">notifications</v-icon>
-      </v-badge></v-btn>
+      </v-badge></v-btn-->
       <!--
       <v-btn flat color="white"><v-avatar
         :tile="tile"

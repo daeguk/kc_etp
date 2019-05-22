@@ -975,7 +975,7 @@ var getEtpImportanceList = function(req, res) {
 
             async.waterfall([
 
-                /* 1. 지수정보를 조회한다. */
+                /* 1. 비중정보를 조회한다. */
                 function( callback ) {
 
                     stmt = mapper.getStatement('etpDetail', 'getEtpImportanceList', paramData, format);
