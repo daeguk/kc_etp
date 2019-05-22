@@ -289,7 +289,7 @@ console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
         fn_setEtpOperPdfByRate : function( paramData ) {
 
             var vm = this;
-
+debugger;
             /* 해외지수 종가 모니터링 버튼이 체크된 경우에는 해외지수 종가 모니터링 정보를 노출한다. */
             if( paramData && paramData.togglePdfByRate ) {
                 vm.stateInfo.pageState  =  'pdfByRate';               /* pdf - PDF 관리 , pdfByRate - 비중변경현황 */
