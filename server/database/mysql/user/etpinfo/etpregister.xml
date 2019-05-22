@@ -153,193 +153,77 @@
         ,#{ridx_comp_dist_yn},#{ridx_krx_dist_yn},#{ridx_ksd_dist_yn},#{ridx_mirae_dist_yn},#{ex_hedge_yn},#{ridx_dist_term}
         ,#{refidx_sym_code},#{refidx_nm},#{refidx_inst_cd},#{refidx_file_nm},#{refidx_blom_ticker},#{refidx_req},#{inav_calc_cd}
         ,#{idx_rec_yn},#{idx_dis_yn},#{inav_calc_yn},#{idx_mid},#{ridx_mid},#{close_file},#{real_idx_tr},#{proc_stat}
-        ,#{isin_stat_cd},#{req_date},#{insert_id}, date_format(now(), '%Y%m%d%H%i%s')	
+        ,#{isin_stat_cd}, date_format(now(), '%Y%m%d%H%i%s'),#{insert_id}, date_format(now(), '%Y%m%d%H%i%s')	
         ,#{kor_for_type},#{agent_cd},#{idx_comp_cd},#{krx_up_code},#{agent_up_code}
     )
  ]]>     
 </insert>
 
 <update id="updateMaster" >
-    <![CDATA[ UPDATE m001uetpmaster ]]> 
+     UPDATE m001uetpmaster 
     <set>
-        <if test="isu_kor_nm != null and isu_kor_nm !=''">	
-         <![CDATA[ ISU_KOR_NM 				= #{isu_kor_nm} ]]> 
-        </if>	
-        <if test="isu_eng_nm != null and isu_eng_nm !=''">			
-        <![CDATA[,ISU_ENG_NM 			= #{isu_eng_nm}]]> 
-        </if>
-        <if test="isin_code != null and isin_code !=''">			
-        <![CDATA[,ISIN_CODE 				= #{isin_code}	]]> 
-        </if>		
-        <if test="isu_srt_cd != null and isu_srt_cd !=''">
+    <![CDATA[
+         ISU_KOR_NM 				= #{isu_kor_nm}
+        ,ISU_ENG_NM 			= #{isu_eng_nm}
+        ,ISIN_CODE 				= #{isin_code}
         ,ISU_SRT_CD 			= #{isu_srt_cd}	
-         </if>	
-        <if test="etp_type != null and etp_type !=''">		
         ,ETP_TYPE 				= #{etp_type}
-        </if>			
-        <if test="listReqDate != null and listReqDate !=''">		
         ,LIST_REQ_DATE 			= #{listReqDate}	
-        </if>
-        <if test="listDate != null and listDate !=''">		
-        ,LIST_DATE 				= #{listDate}			
-        </if> 
-        <if test="idx_sym_code != null and idx_sym_code !=''">                                                       
+        ,LIST_DATE 				= #{list_date}			
         ,IDX_SYM_CODE 			= #{idx_sym_code}
-        </if>		
-        <if test="idx_nm != null and idx_nm !=''"> 
         ,IDX_NM 				= #{idx_nm}
-         </if>
-        <if test="idx_inst_cd != null and idx_inst_cd !=''"> 				
         ,IDX_INST_CD 			= #{idx_inst_cd}
-        </if>
-        <if test="idx_dist_inst_cd != null and idx_dist_inst_cd !=''"> 				
-        ,IDX_DIST_INST_CD 		= #{idx_dist_inst_cd}
-        </if>
-        <if test="idx_holy_cd != null and idx_holy_cd !=''"> 		
+          ,IDX_DIST_INST_CD 		= #{idx_dist_inst_cd} 
         ,IDX_HOLY_CD 			= #{idx_holy_cd}		
-        </if>
-        <if test="idx_trace_yd_mult_type != null and idx_trace_yd_mult_type !=''"> 	
         ,IDX_TRACE_YD_MULT_TYPE = #{idx_trace_yd_mult_type}
-        </if>
-        <if test="idx_close_type != null and idx_close_type !=''"> 
         ,IDX_CLOSE_TYPE 		= #{idx_close_type}
-        </if>
-        <if test="pre_idx_type != null and pre_idx_type !=''"> 		 
         ,PRE_IDX_TYPE 			= #{pre_idx_type}			
-        </if>
-        <if test="idx_file_nm != null and idx_file_nm !=''"> 	
         ,IDX_FILE_NM 			= #{idx_file_nm}
-        </if>
-        <if test="idx_comp_ksd_dist_yn != null and idx_comp_ksd_dist_yn !=''">			
         ,IDX_COMP_KSD_DIST_YN 	= #{idx_comp_ksd_dist_yn}
-        </if>
-        <if test="idx_comp_mirae_dist_yn != null and idx_comp_mirae_dist_yn !=''">	
         ,IDX_COMP_MIRAE_DIST_YN = #{idx_comp_mirae_dist_yn}
-        </if>
-        <if test="blom_ticker != null and blom_ticker !=''">	
         ,BLOM_TICKER 			= #{blom_ticker}
-        </if>
-        <if test="ex_rate_cd != null and ex_rate_cd !=''">			
         ,EX_RATE_CD 			= #{ex_rate_cd}			 
-        </if>
-        <if test="comp_dist_yn != null and comp_dist_yn !=''">	
         ,COMP_DIST_YN 			= #{comp_dist_yn}
-        </if>
-        <if test="krx_dist_yn != null and krx_dist_yn !=''">			
         ,KRX_DIST_YN 			= #{krx_dist_yn}
-        </if>
-        <if test="ksd_dist_yn != null and ksd_dist_yn !=''">			
         ,KSD_DIST_YN 			= #{ksd_dist_yn}
-        </if>
-        <if test="mirae_dist_yn != null and mirae_dist_yn !=''">				
         ,MIRAE_DIST_YN 			= #{mirae_dist_yn}
-        </if>
-        <if test="user_req != null and user_req !=''">			
         ,USER_REQ 				= #{user_req}			 
-        </if>
-        <if test="real_yn != null and real_yn !=''">	
         ,REAL_YN				= #{real_yn}
-        </if>
-        <if test="ridx_inst_cd != null and ridx_inst_cd !=''">			
         ,RIDX_INST_CD 			= #{ridx_inst_cd}
-        </if>
-        <if test="ridx_crt_sym_code != null and ridx_crt_sym_code !=''">		
         ,RIDX_CRT_SYM_CODE 		= #{ridx_crt_sym_code}
-        </if>
-        <if test="ridx_dist_inst_cd != null and ridx_dist_inst_cd !=''">		
         ,RIDX_DIST_INST_CD 		= #{ridx_dist_inst_cd}
-        </if>
-        <if test="ridx_dist_sym_code != null and ridx_dist_sym_code !=''">	
         ,RIDX_DIST_SYM_CODE 	= #{ridx_dist_sym_code}
-        </if>
-        <if test="ridx_holy_cd != null and ridx_holy_cd !=''">	
         ,RIDX_HOLY_CD 			= #{ridx_holy_cd}
-        </if>
-        <if test="ridx_comp_dist_yn != null and ridx_comp_dist_yn !=''">			
         ,RIDX_COMP_DIST_YN 		= #{ridx_comp_dist_yn}
-        </if>
-        <if test="ridx_krx_dist_yn != null and ridx_krx_dist_yn !=''">	
         ,RIDX_KRX_DIST_YN 		= #{ridx_krx_dist_yn}
-        </if>	
-        <if test="ridx_ksd_dist_yn != null and ridx_ksd_dist_yn !=''">
         ,RIDX_KSD_DIST_YN 		= #{ridx_ksd_dist_yn}
-        </if>
-        <if test="ridx_mirae_dist_yn != null and ridx_mirae_dist_yn !=''">	
         ,RIDX_MIRAE_DIST_YN 	= #{ridx_mirae_dist_yn}	
-        </if>
-        <if test="ex_hedge_yn != null and ex_hedge_yn !=''">	
         ,EX_HEDGE_YN 			= #{ex_hedge_yn}
-        </if>
-        <if test="ridx_dist_term != null and ridx_dist_term !=''">		
         ,RIDX_DIST_TERM 		= #{ridx_dist_term}		
-        </if> 
-        <if test="refidx_sym_code != null and refidx_sym_code !=''">                                              
         ,REFIDX_SYM_CODE 		= #{refidx_sym_code}
-        </if>
-        <if test="refidx_nm != null and refidx_nm !=''">    	
         ,REFIDX_NM 				= #{refidx_nm}			
-        </if>
-        <if test="refidx_inst_cd != null and refidx_inst_cd !=''">  
         ,REFIDX_INST_CD 		= #{refidx_inst_cd}
-        </if>
-        <if test="refidx_file_nm != null and refidx_file_nm !=''"> 		
         ,REFIDX_FILE_NM 		= #{refidx_file_nm}		
-        </if>
-        <if test="refidx_blom_ticker != null and refidx_blom_ticker !=''"> 	
         ,REFIDX_BLOM_TICKER 	= #{refidx_blom_ticker}
-        </if>
-        <if test="refidx_req != null and refidx_req !=''">	
         ,REFIDX_REQ 			= #{refidx_req}				
-        </if>
-        <if test="inav_calc_cd != null and inav_calc_cd !=''">	
         ,INAV_CALC_CD 			= #{inav_calc_cd}		
-        </if>
-        <if test="idx_rec_yn != null and idx_rec_yn !=''">
         ,IDX_REC_YN 			= #{idx_rec_yn}
-        </if>
-        <if test="idx_dis_yn != null and idx_dis_yn !=''">			 
         ,IDX_DIS_YN 			= #{idx_dis_yn}			 
-        </if>
-        <if test="inav_calc_yn != null and inav_calc_yn !=''">
         ,INAV_CALC_YN 			= #{inav_calc_yn}
-        </if>
-        <if test="idx_mid != null and idx_mid !=''">			
         ,IDX_MID 				= #{idx_mid}
-        </if>				
-        <if test="ridx_mid != null and ridx_mid !=''">			
         ,RIDX_MID 				= #{ridx_mid}	
-        </if>
-        <if test="close_file != null and close_file !=''">
         ,CLOSE_FILE 			= #{close_file}
-        </if>
-        <if test="real_idx_tr != null and real_idx_tr !=''">		
         ,REAL_IDX_TR 			= #{real_idx_tr}
-        </if>
-        <if test="proc_stat != null and proc_stat !=''">
         ,PROC_STAT 				= #{proc_stat}			 
-        </if>
-        <if test="user_id != null and user_id !=''">
         ,UPDATE_ID				= #{user_id}
-        </if>					 
         ,UPDATE_TIME			=  date_format(now(), '%Y%m%d%H%i%s')	
-        <if test="isin_stat_cd != null and isin_stat_cd !=''">
         ,ISIN_STAT_CD			= #{isin_stat_cd}
-        </if>	
-        <if test="kor_for_type != null and kor_for_type !=''">		
         ,KOR_FOR_TYPE			= #{kor_for_type}
-        </if>
-        <if test="agent_cd != null and agent_cd !=''">				
         ,AGENT_CD				= #{agent_cd}
-        </if>
-        <if test="idx_comp_cd != null and idx_comp_cd !=''">				 
         ,IDX_COMP_CD			= #{idx_comp_cd}			
-        </if>
-        <if test="krx_up_code != null and krx_up_code !=''">	
         ,KRX_UP_CODE			= #{krx_up_code}
-        </if>
-        <if test="agent_up_code != null and agent_up_code !=''">			
         ,AGENT_UP_CODE			= #{agent_up_code}
-        </if>
+        ]]> 
     </set> 	
     WHERE SEQ = #{seq}
 </update>
@@ -356,13 +240,8 @@
         ,REFIDX_SYM_CODE, REFIDX_NM, REFIDX_INST_CD, REFIDX_FILE_NM, REFIDX_BLOM_TICKER, REFIDX_REQ, INAV_CALC_CD
         ,IDX_REC_YN, IDX_DIS_YN, INAV_CALC_YN, IDX_MID, RIDX_MID, CLOSE_FILE, REAL_IDX_TR, PROC_STAT, REAL_YN
         ,ISIN_STAT_CD, REQ_DATE, INSERT_ID, INSERT_TIME, UPDATE_ID, UPDATE_TIME
-        ,KOR_FOR_TYPE, AGENT_CD, IDX_COMP_CD, KRX_UP_CODE, AGENT_UP_CODE
-        <if test="listReqDate != null and listReqDate !=''">
-        , LIST_REQ_DATE, 
-         </if>
-        <if test="listDate != null and agent_up_listDatecode !=''">	
-        ,LIST_DATE
-        </if>
+        ,KOR_FOR_TYPE, AGENT_CD, IDX_COMP_CD, KRX_UP_CODE, AGENT_UP_CODE, list_req_date, list_date
+      
     ) VALUES (
       
             #{seq}, #{seq_hist},#{inst_cd},#{isu_kor_nm},#{isu_eng_nm},#{isin_code},#{isu_srt_cd},#{etp_type}
@@ -373,14 +252,8 @@
             ,#{ridx_comp_dist_yn},#{ridx_krx_dist_yn},#{ridx_ksd_dist_yn},#{ridx_mirae_dist_yn},#{ex_hedge_yn},#{ridx_dist_term}
             ,#{refidx_sym_code},#{refidx_nm},#{refidx_inst_cd},#{refidx_file_nm},#{refidx_blom_ticker},#{refidx_req},#{inav_calc_cd}
             ,#{idx_rec_yn},#{idx_dis_yn},#{inav_calc_yn},#{idx_mid},#{ridx_mid},#{close_file},#{real_idx_tr},#{proc_stat},#{real_yn}
-            ,#{isin_stat_cd},#{req_date},#{insert_id} ,date_format(now(), '%Y%m%d%H%i%s'), #{update_id} ,date_format(now(), '%Y%m%d%H%i%s') 
-            ,#{kor_for_type},#{agent_cd},#{idx_comp_cd},#{krx_up_code},#{agent_up_code}
-            <if test="listReqDate != null and listReqDate !=''">	
-                ,#{listReqDate},
-            </if>
-            <if test="listDate != null and agent_up_listDatecode !=''">	
-                #{listDate}
-            </if>
+            ,#{isin_stat_cd},date_format(now(), '%Y%m%d%H%i%s'),#{insert_id} ,#{insert_time}, #{update_id} ,#{update_time}
+            ,#{kor_for_type},#{agent_cd},#{idx_comp_cd},#{krx_up_code},#{agent_up_code}, #{list_req_date}, #{list_date}
     )
    
 </insert>
@@ -400,5 +273,10 @@
     WHERE TRIM(F16013) = #{ridx_dist_sym_code}  AND market_id =  #{market_id}
     ORDER BY 1 DESC LIMIT 20
     ]]>	
+</select>
+<select id="getMasterHistoryNextSeq">
+  <![CDATA[
+    SELECT ifnull(MAX(SEQ_HIST),0)+1 AS SEQ_HIST FROM m001uetpmasterh WHERE seq_master = #{seq}
+      ]]>
 </select>
 </mapper>
