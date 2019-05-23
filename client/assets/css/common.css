@@ -110,6 +110,7 @@ button:focus { outline: none; }
 
 
 .btn_pad1 .v-btn{margin:6px 4px !important; position: relative;}
+.btn_pad2{margin-left:170px; margin-top:15px;}
 
 
 .btn_icon{width:35px; height:35px;border-radius: 20px; color:#7e7e94}

@@ -77,11 +77,11 @@
                                 </v-btn>
                             </v-flex>
                         </v-layout>
-                        <v-layout style="border:none;">
-                            <v-flex class="text-xs-center">
+                       
+                                <div class="btn_pad2">
                                 <v-btn depressed dark color="primary">지수정보확인</v-btn>
-                            </v-flex>
-                        </v-layout>
+                                </div>
+                            
                     </v-card>
                 </div>
             </v-flex>
