@@ -131,6 +131,8 @@ export default {
               if(response.data.results.length > 0) {
                 vm.intra_data = response.data.results.reverse();
                 vm.draw_intra(vm.dmode);
+              }else {
+                alert("해당 ETP의 데이터가 없습니다");
               }
           }
         });
@@ -153,6 +155,8 @@ export default {
                 vm.hist_data = [];
                 vm.hist_data = response.data.results.reverse();
                 vm.draw_hist(vm.dmode);
+              }else {
+                alert("해당 ETP의 데이터가 없습니다");
               }
           }
         });
@@ -695,21 +699,30 @@ export default {
       },
       // 마우스 이동시 툴팁 처리
       mouseMove: function(event) {
-        var c = this.ctx;
-        var _mwpos = event.pageX-this.mrect.left;
-        var _mhpos = event.pageY-this.mrect.top;
-        c.putImageData(this.draw_chart_image, this.crect.x1, this.crect.y1-10);
-        if(this.selectGuideCheck(_mwpos, _mhpos) !== -1) {
-          // console.log("Got.......... guide");
-          this.drawGuideLine(_mwpos);
-          if(this.dmode == 2) this.drawMToolTip(_mwpos, _mhpos);
-          else  this.drawToolTip(_mwpos, _mhpos);
+        if(Object.keys(this.draw_chart_image).length === 0) {
+
+        }else {
+          var c = this.ctx;
+          var _mwpos = event.pageX-this.mrect.left;
+          var _mhpos = event.pageY-this.mrect.top;
+          c.putImageData(this.draw_chart_image, this.crect.x1, this.crect.y1-10);
+          if(this.selectGuideCheck(_mwpos, _mhpos) !== -1) {
+            // console.log("Got.......... guide");
+            this.drawGuideLine(_mwpos);
+            if(this.dmode == 2) this.drawMToolTip(_mwpos, _mhpos);
+            else  this.drawToolTip(_mwpos, _mhpos);
+          }
         }
+
       },
       // 마우스 OUT 툴팁 처리
       mouseLeave: function(event) {
-        var c = this.ctx;
-        c.putImageData(this.draw_chart_image, this.crect.x1, this.crect.y1-10);
+        if(Object.keys(this.draw_chart_image).length === 0) {
+
+        }else {
+          var c = this.ctx;
+          c.putImageData(this.draw_chart_image, this.crect.x1, this.crect.y1-10);
+        }
       },
 
       // 세로 가이드 라인 처리
