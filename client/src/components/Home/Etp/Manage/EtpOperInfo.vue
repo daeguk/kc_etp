@@ -9,7 +9,7 @@
                             ETP 운용 정보
                             <p>
                                 Total
-                                <span class="text_result" ref="result_cnt" >0</span> results
+                                <span class="text_result">{{ result_cnt }}</span> results
                                 <span class="toggle2">
                                     <v-btn-toggle v-model="text" class="toggle_01">
                                         <v-btn flat value="전종목"      @click="fn_getEtpOperInfo('A')">전종목</v-btn>
@@ -107,6 +107,7 @@ export default {
             arrShowColumnDef   :   [],
             etpOperInfoQuickYn : true,
 
+            result_cnt  :   0,
             indexBasic  :   {},
             paramData   :   {},
             etpRow      :   {},
@@ -150,10 +151,6 @@ export default {
                 table01.clear().draw();
             }
 
-            if( typeof vm.$refs.result_cnt != "undefined" ) {
-                vm.$refs.result_cnt.textContent = "0";
-            }
-
             axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
                 data: {
                     f34241 : vm.stateInfo.gubun
@@ -168,11 +165,8 @@ export default {
                         table01.rows.add( dataList ).draw();
                         table01.draw();
 
-                        vm.indexBasic   =    dataList[0];
-
-                        if( typeof vm.$refs.result_cnt != "undefined" ) {
-                            vm.$refs.result_cnt.textContent = dataList.length;
-                        }
+                        vm.indexBasic   =   dataList[0];
+                        vm.result_cnt   =   dataList.length;
                     }
                 }
             });
@@ -464,12 +458,12 @@ export default {
                 { 'name' : 'f16002'             , 'data': 'f16002'           ,  'width' : '220', 'orderable' : true  , 'className': 'txt_left',  'title' : '종목'           },      /* 한글종목명 */
                 { 'name' : 'index_cal_method'   , 'data': 'index_cal_method' ,  'width' : '100', 'orderable' : true  , 'className': 'txt_left',  'title' : '지수<br>산출방식'   },      /* 지수산출방식 */
                 { 'name' : 'f15301'             , 'data': 'f15301'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : 'iNAV'          },      /* ETP지표가치(NAV/IV) */
-                { 'name' : 'f03329'             , 'data': 'f03329'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '전일최종<br>NAV'},      /* 전일ETP지표가치(예탁원)(NAV/IV) */
-                { 'name' : 'f15302'             , 'data': 'f15302'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '추적<br>오차율' },      /* 추적오차율 */
+                { 'name' : 'f03329'             , 'data': 'f03329'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '전일NAV'},      /* 전일ETP지표가치(예탁원)(NAV/IV) */
+                { 'name' : 'f15302'             , 'data': 'f15302'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : 'TE' },      /* 추적오차율 */
                                                                                                                                                     
                 { 'name' : 'f15304'             , 'data': 'f15304'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '괴리율'        },      /* ETP괴리율 */
                 { 'name' : 'index_nm'           , 'data': 'index_nm'         ,  'width' : '200', 'orderable' : true  , 'className': 'txt_left' , 'title' : '기초지수'      },      /* 기초지수명 */
-                { 'name' : 'index_f15001'       , 'data': 'index_f15001'     ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '지수<br>현재가' },      /* 지수 현재가 */
+                { 'name' : 'index_f15001'       , 'data': 'index_f15001'     ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '지수' },      /* 지수 현재가 */
                 { 'name' : 'f18438'             , 'data': 'f18438'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '환율'          },      /* 적용환율 */
                 { 'name' : 'f18001'             , 'data': 'f18001'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : 'ETF 전일가'    },      /* 전일ETF순자산총액(원)  */
 
@@ -479,7 +473,7 @@ export default {
                 { 'name' : 'ytd'                , 'data': 'ytd'              ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '<br>연환산'     },      /* ytd  */
                                                                                                                                                     
                 { 'name' : 'f30812'             , 'data': 'f30812'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : 'AUM'           },      /* 유동시가총액  */
-                { 'name' : 'prev_f15001'        , 'data': 'prev_f15001'      ,  'width' : '90',  'orderable' : true  , 'className': 'txt_right', 'title' : '기초지수<br>전일가'},     /* 기초지수 전일가  */
+                { 'name' : 'prev_f15001'        , 'data': 'prev_f15001'      ,  'width' : '90',  'orderable' : true  , 'className': 'txt_right', 'title' : '지수<br>전일가'},     /* 기초지수 전일가  */
                 { 'name' : 'f15007'             , 'data': 'f15007'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '과표기준가'    },      /* 기준가  */
                 { 'name' : 'f15001'             , 'data': 'f15001'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : 'ETF 현재가'    },      /* 현재가  */
                 { 'name' : 'f16073'             , 'data': 'f16073'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '과세구분'      },      /* 락구분코드  */
@@ -503,8 +497,12 @@ export default {
                                 /* ETF 상세정보 */
                                 graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnEtpInfo", "btnContent" : "equalizer", "btnSpanContent" : "ETP정보" } );
 
-                                /* PDF 정보 */
-                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnPdf", "btnContent" : "picture_as_pdf", "btnSpanContent" : "PDF관리" } );                                
+                                /* ETF 인 경우에만 PDF 아이콘 노출 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                                if( row.f16493 == "1" || row.f16493 == "2" ) {
+
+                                    /* PDF 정보 */
+                                    graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnPdf", "btnContent" : "picture_as_pdf", "btnSpanContent" : "PDF관리" } );
+                                }
 
                                 return  graphContent;
                             }

@@ -215,7 +215,7 @@ export default {
         },
 
         fn_setEtpOperPdfByRate : function() {
-
+debugger;
             var vm = this;
             vm.togglePdfByRate  =   !vm.togglePdfByRate;
 

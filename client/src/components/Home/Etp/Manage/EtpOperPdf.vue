@@ -101,7 +101,6 @@ export default {
         var vm = this;
 
 console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
-console.log( vm.paramData );
 
         vm.$EventBus.$on('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call', data => {
             console.log( "EventBus EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call>>>>>>>" );
@@ -171,6 +170,7 @@ console.log( vm.paramData );
             axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
                 data: {
                         f34241  :   gubun
+                    ,   isEtfYn :   "Y"
                     ,   firstYn :   "Y"
                 }
             }).then(function(response) {
@@ -289,7 +289,7 @@ console.log( vm.paramData );
         fn_setEtpOperPdfByRate : function( paramData ) {
 
             var vm = this;
-
+debugger;
             /* 해외지수 종가 모니터링 버튼이 체크된 경우에는 해외지수 종가 모니터링 정보를 노출한다. */
             if( paramData && paramData.togglePdfByRate ) {
                 vm.stateInfo.pageState  =  'pdfByRate';               /* pdf - PDF 관리 , pdfByRate - 비중변경현황 */

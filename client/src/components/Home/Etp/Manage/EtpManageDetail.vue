@@ -178,8 +178,11 @@ export default {
         vm.$EventBus.$on('changeEtpInfo', data => {
             vm.toggle_one = '1M';
             vm.init(true);
-            
         });
+
+        vm.$EventBus.$on('changeEtpInfoClose', data => {
+            this.$EventBus.$off('changeEtpInfo');
+        });        
     },
     updated: function() {
         console.log("Etp_updated================");
@@ -191,6 +194,7 @@ export default {
     methods: {
         init: function(event) {
             var vm = this;
+            
             vm.$nextTick().then(() => {
                 if(     vm.paramData 
                     &&  (       vm.paramData.f16012
@@ -201,6 +205,7 @@ export default {
                     vm.basicData.f16012         =   vm.paramData.f16012;            /* 국제표준코드 */
                     vm.basicData.f16257         =   vm.paramData.f16257;            /* ETP기초지수코드 */
                     vm.basicData.f34239         =   vm.paramData.f34239;            /* ETP기초지수MID */
+                                        
                     vm.paramData.perf_class   = 'perf_chart_w2'; /* performanc 그래프 class */
                     vm.paramData.tbl_class   = 'tbl_type ver5'; /* performanc 테이블 class */
                     vm.paramData.chart_size  = '960'; /* performanc 차트 사이즈 */

@@ -14,23 +14,32 @@
            <v-card flat>
                <table id="idxConfirm" class="display table01_w">
                    <colgroup>
-                       <col width="20%">
-                       <col width="20%">
-                       <col width="60%">
+                       <col width="25%">
+                       <col width="25%">
+                       <col width="50%">
                    </colgroup>
                    <thead>
                        <tr>
                            <th>심플코드</th>
                            <th>
-                               <v-select
-                                   :items="items1"
-                                   value
-                                   placeholder="실시간종가"
-                               ></v-select>
+                               <v-select 
+                                    :items="items"
+                                    @change="onChange()"
+                                    :selected="this.defaultSelected"
+                                    v-model="items.value"
+                                >
+                              </v-select>
                            </th>
                            <th>지수명</th>
                        </tr>
                    </thead>
+                   <tbody>
+                       <tr>
+                           <td>{{ this.idxConfirmModal.idxSymCode }}</td>
+                           <td>{{ this.items.text }}</td>
+                           <td>{{ this.idxConfirmModal.idxNm }}</td>
+                       </tr> 
+                   </tbody>
                </table>
                <table id="example3" class="display table01_w">
                    <colgroup>
@@ -39,12 +48,12 @@
                    </colgroup>
                     <thead>
                        <tr>
-                           <th>일자</th>
-                           <th>현재가</th>
+                           <th></th>
+                           <th></th>
                        </tr>
                    </thead>
                </table>
-           </v-card>
+             </v-card>
            <v-card class="pop_bot_h"></v-card>
        </v-card>
        <!--기초지수 팝업 내용end-->
@@ -57,7 +66,7 @@ import $      from 'jquery'
 import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 import Config from '@/js/config.js'
-var contact_grid = null;
+var table = null;
 export default {
     props: {
         idxConfirmModal: {
@@ -66,8 +75,9 @@ export default {
     },
     data() {
         return {
-           items1: ["실시간", "종가"],
-        }
+            items: [{value: "1", text: "종가" }, {value: "2" , text: "실시간" }],
+            defaultSelected: "1",
+          }
     },
     components: {
 
@@ -76,43 +86,49 @@ export default {
         dialog() {
             return this.idxConfirmModal.dialog;
         },
-        idxTable() {
-            return this.idxConfirmModal.idxTable;
-        },
-        idxSymCode() {
-            return this.idxConfirmModal.idxSymCode;
-        },
-        ridxDistSymCode() {
-            return this.idxConfirmModal.ridxDistSymCode;
-        }
     },
     created: function() {
         var vm = this;
         this.$EventBus.$on('idxListModal', function() {
         vm.getIdxList();
+        //vm.getRidxList();
         });
     },
   
     beforeDestroy() {
      },
     mounted: function() {
-        //var vm = this;
-        //vm.getIdxList();   
-    },
+     },
     methods: {
-           getIdxList: function() {
+        onChange() {
+            var vm = this;
+             console.log("this.items.value==>" + this.items.value);
+             if(this.items.value == "2"){
+                this.items.text= "실시간" ;
+                vm.getRidxList();
+            }else{
+                this.items.text= "종가" ;   
+                vm.getIdxList();
+            }
+        },
+        //종가
+        getIdxList: function() {
                 axios.get(Config.base_url + "/user/etp/getIdxList", {
                   params:{idxTable: this.idxConfirmModal.idxTable,
                           idx_sym_code: this.idxConfirmModal.idxSymCode,
                          }
-                 }).then(response => {
+                }).then(response => {
                      if (response.data.success == false) {
-                        alert("연락처가  없습니다");
+                        //alert("데이터에 이상이 있습니다.잠시후 다시 시도해주시기 바랍니다.");
+                        //table.clear() ;
                     } else {
                         var items = response.data.results;
                         this.results = items;
+                        if(this.results.length == 0){
+                         alert("기초지수 산출전입니다..");   
+                        }
                         console.log("getIdxList=" + JSON.stringify(items));
-                        contact_grid = $('#idxList_grid').DataTable( {
+                        table = $('#example3').DataTable( {
                             autoWidth: false, 
                             processing: true,
                             serverSide: false,
@@ -123,16 +139,54 @@ export default {
                             data: this.results,
                             destroy: true,
                                 columns: [
-                                   { "data": "USER_NM", "orderable": true },
-                                   { "data": "TEL_NO", "orderable" : true },
-                                   { "data": "CEL_NO", "orderable": true },
-                                   { "data": "EMAIL", "orderable" : true },
+                                   { "data": "time", "orderable": true,"title" : "일자"  ,className: "td_in_center", },
+                                   { "data": "value","orderable" :true,"title" : "현재가",className: "td_in_center", },
                                 ]
                             }); 
                     }
                    
                 });
         }, 
+        //실시간
+        getRidxList: function() {
+                console.log("ridx_dist_sym_code : " + this.idxConfirmModal.ridxDistSymCode)
+                axios.get(Config.base_url + "/user/etp/getRidxList", {
+                  params:{market_id: this.idxConfirmModal.marketId,
+                          ridx_dist_sym_code: this.idxConfirmModal.ridxDistSymCode,
+                         }
+                 }).then(response => {
+                     if (response.data.success == false) {
+                       // alert("실시간 데이터가 없습니다.");
+                    } else {
+                        var items = response.data.results;
+                        this.results = items;
+                        if(this.results.length == 0){
+                         alert("iNav 산출전입니다..");   
+                        }
+                        console.log("getRidxList=" + JSON.stringify(items));
+                        table = $('#example3').DataTable( {
+                            autoWidth: false, 
+                            processing: true,
+                            serverSide: false,
+                            info: true, // control table information display field
+                            stateSave: true, //restore table state on page reload,
+                            paging: false,
+                            searching: false,
+                            data: this.results,
+                            destroy: true,
+                                columns: [
+                                   { "data": "time", "orderable" : true , "title"  : "시간"   ,className: "td_in_center", },
+                                   { "data": "value","orderable" : true , "title"  : "현재가" ,className: "td_in_center",},
+                                 ]
+                            }); 
+                    }
+                   
+                });
+        },
+
+
+
+
 
     }
 }

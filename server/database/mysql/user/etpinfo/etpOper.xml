@@ -681,6 +681,13 @@
                 )
          WHERE  1 = 1
 
+           AND  td_etp_basic.f33960                 =   #{krx_cd}                   /* ETP운용사코드 가 로그인한 운용사 코드와 동일한 정보만 추출 */
+
+        
+        <if test= 'isEtfYn != null  and  isEtfYn == "Y" ' >
+           AND  td_etp_basic.f16493                 IN  ( '1', '2' )                /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+        </if>
+
         <choose>
             <when   test=' f34241 != null  and f34241 == "A" '>
             </when>
@@ -709,8 +716,11 @@
             </when>        
         </choose>
 
+         ORDER  BY      td_etp_basic.f16002         /* 한글종목명 */
+                    ,   td_etp_basic.f16012         /* 국제표준코드 */
+
         <if test= 'firstYn != null  and  firstYn == "Y" ' >
-             LIMIT  0, 1
+        LIMIT  0, 1
         </if>
 
     </select>    
@@ -731,7 +741,18 @@
 
           FROM  td_index_basic
 
-         WHERE  1 = 1         
+         WHERE  1 = 1
+
+                /* 해당 지수가 td_etp_basic 에 속하고 로그인 운용사 코드와 동일한 정보만 추출 */
+           AND  EXISTS
+                (
+                    SELECT  1
+                      FROM  td_etp_basic
+                     WHERE  td_index_basic.F16013           =  td_etp_basic.f16257                                                 /* 단축코드 = ETP기초지수코드 */
+                       AND  td_index_basic.MARKET_ID        LIKE    CONCAT( '_' , LPAD( td_etp_basic.f34239, 3, '0' ) , '%' )      /* 시장 ID = ETP기초지수MID */
+
+                       AND  td_etp_basic.f33960             =   #{krx_cd}                   /* ETP운용사코드 가 로그인한 운용사 코드와 동일한 정보만 추출 */
+                )
 
     </select>
 
@@ -809,52 +830,6 @@
                 )       base
 
          WHERE  1 = 1
-    </select>
-
-
-    <!--
-    * ETP 운용관리 - PDF관리 - PDF 긴급반영 내역을 조회한다.
-    * 2019-05-20  bkLove(촤병국)
-    -->
-    <select id="getTmPdfModify">
-        SELECT      /* etpOper.getTmPdfModify  ETP 운용관리 - PDF관리 - PDF 긴급반영 내역을 조회한다. */
-
-                    tm_pdf_modify.F16583                                        AS  f16583          /* 사무수탁회사번호 */
-                ,   tm_pdf_modify.F16012                                        AS  f16012          /* ETF종목코드 */
-                ,   tm_pdf_modify.F16013                                        AS  f16013          /* ETF단축코드 */
-                ,   tm_pdf_modify.F16316                                        AS  f16316          /* 구성종목코드 */
-
-                ,   tm_pdf_modify.F16499                                        AS  f16499          /* 1CU단위증권수 */
-                ,   tm_pdf_modify.F16499_PREV                                   AS  f16499_prev     /* 1CU단위증권수 ( 변경전 ) */
-
-          FROM  tm_pdf_modify
-         WHERE  1 = 1
-
-           AND  tm_pdf_modify.f16583            =   ''          /* 사무수탁회사번호 */
-           AND  tm_pdf_modify.f16012            =   ''          /* ETF종목코드 */
-           AND  tm_pdf_modify.f16013            =   ''          /* ETF단축코드 */
-           AND  tm_pdf_modify.f16316            =   ''          /* 구성종목코드 */
-
-        <if test= 'dataLists != null  and  dataLists.length > 0' >
-           AND  (
-                        tm_pdf_modify.f16583
-                    ,   tm_pdf_modify.f16012
-                    ,   tm_pdf_modify.f16013
-                    ,   tm_pdf_modify.f16316
-                )   
-                IN
-                (
-            <foreach    collection="dataLists"   item="data"    index="index"   separator=" UNION ALL" >
-            <![CDATA[
-                    SELECT      #{data.f16583}
-                            ,   #{data.f16012}
-                            ,   #{data.f16013}
-                            ,   #{data.f16316}
-                    FROM  dual
-            ]]>
-            </foreach>
-                )
-        </if>
     </select>
 
     <!--

@@ -266,11 +266,17 @@
     ORDER BY 1 DESC LIMIT 20
     ]]>	
 </select>
-
+<select id="getRidxList" >
+    <![CDATA[
+    SELECT F12506 time, F15001 value FROM 
+    td_index_basic 
+    WHERE TRIM(F16013) = #{ridx_dist_sym_code}  AND market_id =  #{market_id}
+    ORDER BY 1 DESC LIMIT 20
+    ]]>	
+</select>
 <select id="getMasterHistoryNextSeq">
   <![CDATA[
     SELECT ifnull(MAX(SEQ_HIST),0)+1 AS SEQ_HIST FROM m001uetpmasterh WHERE seq_master = #{seq}
       ]]>
 </select>
-
 </mapper>
