@@ -50,7 +50,7 @@
 <div id="context-menu" v-on:mouseleave="hideContextMenu()">
   <v-list>
         <v-list-tile v-on:click="movePage('/info/etpinfo')">
-          <v-list-tile-title>MARKET ETP INFO</v-list-tile-title>
+          <v-list-tile-title><v-icon>apps</v-icon>MARKET ETP INFO</v-list-tile-title>
         </v-list-tile>
         <v-list-tile v-on:click="movePage('/info/indexinfo')">
           <v-list-tile-title><v-icon>apps</v-icon>MARKET INDEX INFO</v-list-tile-title>
@@ -68,7 +68,7 @@
           <v-list-tile-title><v-icon>apps</v-icon>ETP 신규 등록</v-list-tile-title>
         </v-list-tile>
         <v-list-tile v-on:click="movePage('/etp/contract')">
-          <v-list-tile-title><v-icon>apps</v-icon>운용 지원</router-link></v-list-tile-title>
+          <v-list-tile-title><v-icon>apps</v-icon>운용 지원</v-list-tile-title>
         </v-list-tile>
       </v-list>
 </div>
@@ -94,6 +94,7 @@
   background-color: white;
   border: 1px solid #ebebeb;
   border-bottom-width: 0px;
+  color: white;
 }
 
 #context-menu.active {
