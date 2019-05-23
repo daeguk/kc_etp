@@ -132,41 +132,41 @@
                     </v-subheader>
                     <v-card flat>
                     <div class="indexinfo_box01">
-                    <v-card flat class="indexinfo_list_table">
+                    <v-card flat class="indexinfo_list_table case2">
                         <v-layout v-if="results.length >= 1">
-                                <v-flex xs3><v-icon :style="{color:importance_colors[0]}" class="lineh">fiber_manual_record</v-icon>{{results[0].JONG_NM}}</v-flex>
-                                <v-flex xs2 class="text_r">{{results[0].PERCNT}}%</v-flex>
-                                <v-flex xs2></v-flex>
-                                <v-flex xs3 v-if="results.length >= 2"><v-icon :style="{color:importance_colors[1]}" class="lineh">fiber_manual_record</v-icon>{{results[1].JONG_NM}}</v-flex>
-                                <v-flex xs2 class="text_r" v-if="results.length >= 2">{{results[1].PERCNT}}%</v-flex>     
+                                <v-flex class="w1"><v-icon :style="{color:importance_colors[0]}" class="lineh">fiber_manual_record</v-icon>{{results[0].JONG_NM}}</v-flex>
+                                <v-flex class="w2 text_r">{{results[0].PERCNT}}%</v-flex>
+                                <v-flex class="w3"></v-flex>
+                                <v-flex class="w1" v-if="results.length >= 2"><v-icon :style="{color:importance_colors[1]}" class="lineh">fiber_manual_record</v-icon>{{results[1].JONG_NM}}</v-flex>
+                                <v-flex class="w2 text_r" v-if="results.length >= 2">{{results[1].PERCNT}}%</v-flex>     
                         </v-layout>    
                         <v-layout v-if="results.length >= 3">
-                                <v-flex xs3><v-icon :style="{color:importance_colors[2]}" class="lineh">fiber_manual_record</v-icon>{{results[2].JONG_NM}}</v-flex>
-                                <v-flex xs2 class="text_r">{{results[2].PERCNT}}%</v-flex>
-                                <v-flex xs2></v-flex>
-                                <v-flex xs3 v-if="results.length >= 4"><v-icon :style="{color:importance_colors[3]}" class="lineh">fiber_manual_record</v-icon>{{results[3].JONG_NM}}</v-flex>
-                                <v-flex xs2 class="text_r" v-if="results.length >= 4">{{results[3].PERCNT}}%</v-flex>     
+                                <v-flex class="w1"><v-icon :style="{color:importance_colors[2]}" class="lineh">fiber_manual_record</v-icon>{{results[2].JONG_NM}}</v-flex>
+                                <v-flex class="w2 text_r">{{results[2].PERCNT}}%</v-flex>
+                                <v-flex class="w3"></v-flex>
+                                <v-flex class="w1" v-if="results.length >= 4"><v-icon :style="{color:importance_colors[3]}" class="lineh">fiber_manual_record</v-icon>{{results[3].JONG_NM}}</v-flex>
+                                <v-flex class="w2 text_r" v-if="results.length >= 4">{{results[3].PERCNT}}%</v-flex>     
                         </v-layout>    
                         <v-layout v-if="results.length >= 5">
-                                <v-flex xs3><v-icon :style="{color:importance_colors[4]}" class="lineh">fiber_manual_record</v-icon>{{results[4].JONG_NM}}</v-flex>
-                                <v-flex xs2 class="text_r">{{results[4].PERCNT}}%</v-flex>
-                                <v-flex xs2></v-flex>
-                                <v-flex xs3 v-if="results.length >= 6"><v-icon :style="{color:importance_colors[5]}" class="lineh">fiber_manual_record</v-icon>{{results[5].JONG_NM}}</v-flex>
-                                <v-flex xs2 class="text_r" v-if="results.length >= 6">{{results[5].PERCNT}}%</v-flex>     
+                                <v-flex class="w1"><v-icon :style="{color:importance_colors[4]}" class="lineh">fiber_manual_record</v-icon>{{results[4].JONG_NM}}</v-flex>
+                                <v-flex class="w2 text_r">{{results[4].PERCNT}}%</v-flex>
+                                <v-flex class="w3"></v-flex>
+                                <v-flex class="w1" v-if="results.length >= 6"><v-icon :style="{color:importance_colors[5]}" class="lineh">fiber_manual_record</v-icon>{{results[5].JONG_NM}}</v-flex>
+                                <v-flex class="w2 text_r" v-if="results.length >= 6">{{results[5].PERCNT}}%</v-flex>     
                         </v-layout>    
                         <v-layout v-if="results.length >= 7">
-                                <v-flex xs3><v-icon :style="{color:importance_colors[6]}" class="lineh">fiber_manual_record</v-icon>{{results[6].JONG_NM}}</v-flex>
-                                <v-flex xs2 class="text_r">{{results[6].PERCNT}}%</v-flex>
-                                <v-flex xs2></v-flex>
-                                <v-flex xs3 v-if="results.length >= 8"><v-icon :style="{color:importance_colors[7]}" class="lineh">fiber_manual_record</v-icon>{{results[7].JONG_NM}}</v-flex>
-                                <v-flex xs2 class="text_r" v-if="results.length >= 8">{{results[7].PERCNT}}%</v-flex>     
+                                <v-flex class="w1"><v-icon :style="{color:importance_colors[6]}" class="lineh">fiber_manual_record</v-icon>{{results[6].JONG_NM}}</v-flex>
+                                <v-flex class="w2 text_r">{{results[6].PERCNT}}%</v-flex>
+                                <v-flex class="w3"></v-flex>
+                                <v-flex class="w1" v-if="results.length >= 8"><v-icon :style="{color:importance_colors[7]}" class="lineh">fiber_manual_record</v-icon>{{results[7].JONG_NM}}</v-flex>
+                                <v-flex class="w2 text_r" v-if="results.length >= 8">{{results[7].PERCNT}}%</v-flex>     
                         </v-layout>    
                         <v-layout v-if="results.length >= 9">
-                                <v-flex xs3><v-icon :style="{color:importance_colors[8]}" class="lineh">fiber_manual_record</v-icon>{{results[8].JONG_NM}}</v-flex>
-                                <v-flex xs2 class="text_r">{{results[8].PERCNT}}%</v-flex>
-                                <v-flex xs2></v-flex>
-                                <v-flex xs3 v-if="results.length >= 10"><v-icon :style="{color:importance_colors[9]}" class="lineh">fiber_manual_record</v-icon>{{results[9].JONG_NM}}</v-flex>
-                                <v-flex xs2 class="text_r" v-if="results.length >= 10">{{results[9].PERCNT}}%</v-flex>     
+                                <v-flex class="w1"><v-icon :style="{color:importance_colors[8]}" class="lineh">fiber_manual_record</v-icon>{{results[8].JONG_NM}}</v-flex>
+                                <v-flex class="w2 text_r">{{results[8].PERCNT}}%</v-flex>
+                                <v-flex class="w3"></v-flex>
+                                <v-flex class="w1" v-if="results.length >= 10"><v-icon :style="{color:importance_colors[9]}" class="lineh">fiber_manual_record</v-icon>{{results[9].JONG_NM}}</v-flex>
+                                <v-flex class="w2 text_r" v-if="results.length >= 10">{{results[9].PERCNT}}%</v-flex>     
                         </v-layout>                       
                     </v-card>
                 </div>
@@ -177,9 +177,12 @@
                             <div class="graph_02_w"  id="importance_chart"></div>
                         </v-flex>
                     </v-layout>
-                    <v-card flat></v-card>
                 </div>
                 <!---비중정보 팝업end-->
+                <div class="indexinfo_box01 v1">
+                    <h4 class="mb-0">섹터비중</h4>
+                    <div class="graph_03_w">섹터 비중 그래프 들어갑니다.</div>
+                </div>
             </v-flex>
 
             <v-flex xs12></v-flex>
@@ -622,7 +625,7 @@ export default {
                             var options = {'title':'',
                                         'width':vm.chart_size,
                                         'height':'180',
-                                        'colors': ['#1e99e8', '#48485e', '#ff4366', '#727281', '#b9e0f7'],                
+                                        'colors': ['#85c406', '#1e99e8', '#323232', '#ff4366', '#fbb040'],                
                                         'hAxis':{
                                             textStyle: {
                                                 color:'#ffffff'
@@ -832,7 +835,7 @@ export default {
                 // Set chart options
                 var options = {'title':'',
                             'width':'700',
-                            'height':'350',
+                            'height':'330',
                             'colors': ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde', '#B6B8BA', '#7E8083', '#FBB040', '#F58025', '#EDED8A'],        
                                        
                             'legend': {

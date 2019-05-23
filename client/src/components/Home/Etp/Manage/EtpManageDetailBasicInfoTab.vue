@@ -49,31 +49,32 @@
             <v-flex xs6     v-if="fn_indexExistsYn">
 
                 <!-- INDEX Info -->
-                <div class="indexinfo_box01">
+                <div class="indexinfo_box01 v2">
                     <h4 class="mb-0">INDEX Info</h4>
                     <v-card flat class="indexinfo_list_table">
                         <v-layout row>
-                            <v-flex xs6>기초지수</v-flex>
-                            <v-flex xs6 class="text_r">{{ indexBasic.f16002     /* 한글종목명 */ }}</v-flex>
+                            <v-flex xs3>기초지수</v-flex>
+                            <v-flex xs7 class="text_r">{{ indexBasic.f16002     /* 한글종목명 */ }}</v-flex>
                         </v-layout>
                         <v-layout row>
-                            <v-flex xs6>지수산출기관</v-flex>
-                            <v-flex xs6 class="text_r">{{ indexBasic.index_cal_method   /* 지수산출방식 */ }}</v-flex>
+                            <v-flex xs3>지수산출기관</v-flex>
+                            <v-flex xs7 class="text_r">{{ indexBasic.index_cal_method   /* 지수산출방식 */ }}</v-flex>
                         </v-layout>
                         <v-layout row>
-                            <v-flex xs6>기준지수</v-flex>
-                            <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( indexBasic.std_index )     /* 지수산출방식 */ }}</v-flex>
+                            <v-flex xs3>기준지수</v-flex>
+                            <v-flex xs7 class="text_r">{{ new Intl.NumberFormat().format( indexBasic.std_index )     /* 지수산출방식 */ }}</v-flex>
                         </v-layout>
                         <v-layout row>
-                            <v-flex xs6>기준일</v-flex>
-                            <v-flex xs6 class="text_r">{{  indexBasic.fmt_std_date  /* 기준일 */ }}</v-flex>
+                            <v-flex xs3>기준일</v-flex>
+                            <v-flex xs7 class="text_r">{{  indexBasic.fmt_std_date  /* 기준일 */ }}</v-flex>
                         </v-layout>
                         <v-layout row class="pa-0">
-                            <v-flex xs6 style="padding:12px !important">지수방법론</v-flex>
-                            <v-flex xs6 class="text_r btn_pad1">
+                            <v-flex xs3 style="padding:12px !important">지수방법론</v-flex>
+                            <v-flex xs7 class="text_r btn_pad1">
+                                DBF_Bio_Theme_Methodology.pdf
                                 <v-btn flat icon color="primary">
                                     <v-icon>move_to_inbox</v-icon>
-                                </v-btn>DBF_Bio_Theme_Methodology.pdf
+                                </v-btn>
                             </v-flex>
                         </v-layout>
                         <v-layout style="border:none;">
