@@ -426,12 +426,13 @@ export default {
                                     content +=      "<br>";
                                     content +=      row.f16013;                         /* 단축코드 */
                                     content +=  "</div>";
-
+/*
                                     if( true ) {
                                         content +=  "<div class='in_icon_r'>";
                                         content +=      "<span class='btn_icon v-icon material-icons text_red'>feedback</span>";
                                         content +=  "</div>";                                        
                                     }
+*/                                    
                                 }
 
                                 return  content;
