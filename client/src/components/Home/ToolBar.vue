@@ -47,7 +47,7 @@
         </v-btn>
 
 <template id="template-context-menu">
-<div id="context-menu">
+<div id="context-menu" v-on:mouseleave="hideContextMenu()">
   <v-list>
         <v-list-tile v-on:click="hideContextMenu()">
           <v-list-tile-title><router-link class="routerlink" to="/info/etpinfo"><img src="/assets/img/icons/icons8-agreement-new-filled.svg" width="24px" height="24px" class="svg_icon">MARKET ETP INFO</router-link></v-list-tile-title>
