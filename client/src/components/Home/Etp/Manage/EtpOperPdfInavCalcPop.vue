@@ -283,9 +283,7 @@ export default {
             
         });
 
-
-
-        vm.getiNavData();
+        vm.getiNavData( vm.paramData.f16012 );
     },
     methods: {
         
@@ -300,7 +298,7 @@ export default {
             axios.get( Config.base_url + "/user/etp/getiNavData", {
                 params: {
                     //f16012 : 'KRG701800010',
-                    f16012 : 'KR7322410002',
+                    f16012 : f16012,
                 }
             }).then(async function(response) {
 
