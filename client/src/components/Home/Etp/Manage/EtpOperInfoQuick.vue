@@ -41,7 +41,7 @@
                                             <v-icon value="산출 현황">exposure</v-icon>
                                         </v-list-tile-avatar>
                                         <v-list-tile-content class="rm_con_h">
-                                            <v-list-tile-title>iNAV 산출 현황</v-list-tile-title>
+                                            <v-list-tile-title>실시간투자지표산출현황</v-list-tile-title>
                                         </v-list-tile-content>
                                     </v-list-tile>
 
@@ -55,7 +55,7 @@
                                         </v-list-tile-avatar>
 
                                         <v-list-tile-content class="rm_con_h">
-                                            <v-list-tile-title>ETP Performance</v-list-tile-title>
+                                            <v-list-tile-title>Performance</v-list-tile-title>
                                         </v-list-tile-content>
                                     </v-list-tile>
 
