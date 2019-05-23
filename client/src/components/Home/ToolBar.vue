@@ -42,8 +42,8 @@
 <v-btn
           icon
           dark
-          @click.prevent="showContextMenu($event)"
-        ><v-icon>apps</v-icon>
+          
+        ><v-icon @mouseover="showContextMenu($event)">apps</v-icon>
         </v-btn>
 
 <template id="template-context-menu">
