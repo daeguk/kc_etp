@@ -288,7 +288,7 @@
      ]]>
     <foreach    collection="seqValues"   item="seq"  index="index"  separator="," >
       <![CDATA[ 
-        ${seq.value}  
+        ${seq}  
       ]]>
     </foreach>
 </update>
