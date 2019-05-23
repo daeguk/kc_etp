@@ -353,6 +353,7 @@ export default {
          */        
         showMessageBox: function(title, msg, option, gubun) {
             var vm = this;
+
             vm.$emit( "showMessageBox", title, msg, option, gubun );
         }        
     }
