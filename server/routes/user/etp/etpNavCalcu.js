@@ -30,7 +30,8 @@ var getiNavData = function (req, res) {
                     var params = {
                         "f16012" : f16012
                     };
-                
+console.log( "etpNavCalc.js -> getiNavData   << params >>" );
+console.log( params );
                     var stmt = mapper.getStatement('etpDetail', 'getEtpBasic', params, {language:'sql', indent: '  '});
                     
                     util.log("getEtpBasic:", stmt);
