@@ -133,7 +133,7 @@
                                                 <v-flex xs3>
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
-                                                        label="기초지수현재가"
+                                                        label="지수"
                                                         value="index_f15001"
                                                     ></v-checkbox>
                                                 </v-flex>
@@ -154,7 +154,7 @@
                                                 <v-flex xs3>
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
-                                                        label="추적오차율"
+                                                        label="TE"
                                                         value="f15302"
                                                     ></v-checkbox>
                                                 </v-flex>
