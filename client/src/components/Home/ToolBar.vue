@@ -3,7 +3,7 @@
   <!--v-toolbar-side-icon @click="menuClick"></v-toolbar-side-icon-->
   <v-toolbar-title>
     <a class="routerlink logo" @click="outService">ETP PLATFORM</a>
-    <v-menu offset-y open-on-hover class="top_menu" >
+    <!--v-menu offset-y open-on-hover class="top_menu" >
       <template v-slot:activator="{ on }">
         <v-btn
           icon
@@ -35,7 +35,7 @@
           <v-list-tile-title><router-link class="routerlink" to="/etp/contract"><v-icon>apps</v-icon>운용 지원</router-link></v-list-tile-title>
         </v-list-tile>
       </v-list>
-    </v-menu>
+    </v-menu-->
   </v-toolbar-title>
 
 
@@ -47,28 +47,28 @@
         </v-btn>
 
 <template id="template-context-menu">
-<div id="context-menu" v-on:mouseleave="hideContextMenu()">
+<div id="context-menu" v-on:mouseleave="hideContextMenu()" class="top_menu">
   <v-list>
-        <v-list-tile v-on:click="movePage('/info/etpinfo')">
-          <v-list-tile-title><img src="/assets/img/icons/icons8-agreement-new-filled.svg" width="24px" height="24px" class="svg_icon">MARKET ETP INFO</v-list-tile-title>
+        <v-list-tile v-on:click="hideContextMenu()">
+          <v-list-tile-title><router-link class="menu_list" to="/info/etpinfo"><!--img src="/assets/img/icons/icons8-agreement-new-filled.svg" width="24px" height="24px" class="svg_icon"--><v-icon>apps</v-icon>MARKET ETP INFO</router-link></v-list-tile-title>
         </v-list-tile>
-        <v-list-tile v-on:click="movePage('/info/indexinfo')">
-          <v-list-tile-title><v-icon>apps</v-icon>MARKET INDEX INFO</v-list-tile-title>
+        <v-list-tile v-on:click="hideContextMenu()">
+          <v-list-tile-title><router-link class="menu_list" to="/info/indexinfo"><v-icon>apps</v-icon>MARKET INDEX INFO</router-link></v-list-tile-title>
         </v-list-tile>
-        <v-list-tile v-on:click="movePage('/index/manage/indexSummary')">
-          <v-list-tile-title><v-icon>apps</v-icon>지수 관리</v-list-tile-title>
+        <v-list-tile v-on:click="hideContextMenu()">
+          <v-list-tile-title><router-link class="menu_list" to="/index/manage/indexSummary"><v-icon>apps</v-icon>지수 관리</router-link></v-list-tile-title>
         </v-list-tile>
-        <v-list-tile v-on:click="movePage('/index/register')">
-          <v-list-tile-title><v-icon>apps</v-icon>지수 등록</v-list-tile-title>
+        <v-list-tile v-on:click="hideContextMenu()">
+          <v-list-tile-title><router-link class="menu_list" to="/index/register"><v-icon>apps</v-icon>지수 등록</router-link></v-list-tile-title>
         </v-list-tile>
-        <v-list-tile v-on:click="movePage('/etp/manage')">
-          <v-list-tile-title><v-icon>apps</v-icon>ETP 운용 관리</v-list-tile-title>
+        <v-list-tile v-on:click="hideContextMenu()">
+          <v-list-tile-title><router-link class="menu_list" to="/etp/manage"><v-icon>apps</v-icon>ETP 운용 관리</router-link></v-list-tile-title>
         </v-list-tile>
-        <v-list-tile v-on:click="movePage('/etp/register')">
-          <v-list-tile-title><v-icon>apps</v-icon>ETP 신규 등록</v-list-tile-title>
+        <v-list-tile v-on:click="hideContextMenu()">
+          <v-list-tile-title><router-link class="menu_list" to="/etp/register"><v-icon>apps</v-icon>ETP 신규 등록</router-link></v-list-tile-title>
         </v-list-tile>
-        <v-list-tile v-on:click="movePage('/etp/contract')">
-          <v-list-tile-title><v-icon>apps</v-icon>운용 지원</router-link></v-list-tile-title>
+        <v-list-tile v-on:click="hideContextMenu()">
+          <v-list-tile-title><router-link class="menu_list" to="/etp/contract"><v-icon>apps</v-icon>운용 지원</router-link></v-list-tile-title>
         </v-list-tile>
       </v-list>
 </div>
@@ -186,10 +186,6 @@ export default {
         },
         hideContextMenu: function() {
             document.getElementById("context-menu").classList.remove('active');
-        },
-
-        movePage: function(link) {
-            this.$router.push({path:link});
         }
   }
 }  
