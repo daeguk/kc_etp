@@ -15,6 +15,7 @@
                 ,ITEM.F16012                                        AS  F16012       /* 국제표준코드 */
                 ,ITEM.F16257                                        AS  F16257       /* ETP기초지수코드 */
                 ,ITEM.F34239                                        AS  F34239       /* ETP기초지수MID */
+                ,ITEM.F16583                                        AS  F16583       /* 사무수탁회사번호 */
             FROM (SELECT A.ITEM_SEQ 
                         ,A.GUBUN
                         ,A.TYPE_CD 
@@ -28,6 +29,30 @@
                         ,B.F16012                                   AS  F16012       /* 국제표준코드 */
                         ,B.F16257                                   AS  F16257       /* ETP기초지수코드 */
                         ,B.F34239                                   AS  F34239       /* ETP기초지수MID */
+                        ,   IFNULL(
+                                    CASE    WHEN    /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                                                    /* ETP 상품구분이 ETF 인 경우 */
+                                                    B.f16493                     IN  ( '1', '2' ) 
+                                            THEN    (
+                                                        SELECT  td_etfpdf_basic.f16583
+                                                          FROM  td_etfpdf_basic
+                                                         WHERE  td_etfpdf_basic.f16012      =   B.f16012         /* 국제표준코드 */
+                                                           AND  td_etfpdf_basic.f16013      =   B.f16013         /* ETF단축코드 */
+                                                         LIMIT  1
+                                                    )
+
+                                                    /* ETP 상품구분이 ETN 인 경우 */
+                                            WHEN    B.f16493                     IN  ( '3', '4' )
+                                            THEN    (
+                                                        SELECT  td_etnpdf_basic.f16583
+                                                          FROM  td_etnpdf_basic
+                                                         WHERE  td_etnpdf_basic.f16012      =   B.f16012         /* 국제표준코드 */
+                                                           AND  td_etnpdf_basic.f16013      =   B.f16013         /* ETF단축코드 */
+                                                         LIMIT  1
+                                                    )
+                                    END
+                                ,   ''
+                            )                                       AS  F16583              /* 사무수탁회사번호 */
                 FROM tm_favor_item A
                 INNER JOIN td_etp_basic B
                     ON A.F16012 = B.F16012
@@ -46,6 +71,7 @@
                     , ''                                            AS  F16012      /* 국제표준코드 */
                     , B.F16013                                      AS  F16257      /* ETP기초지수코드 */
                     , LPAD( SUBSTR( B.MARKET_ID, 2 ), 3, '0' )      AS  F34239      /* ETP기초지수MID */
+                    , ''                                            AS  F16583      /* 사무수탁회사번호 */
                 FROM tm_favor_item A
                 INNER JOIN td_index_basic B
                 ON A.F16013 = B.F16013
@@ -390,6 +416,16 @@
             ,base.F34783
             ,base.F33960
             ,base.F33961
+            ,   IFNULL(
+                        (
+                            SELECT  td_etfpdf_basic.f16583
+                              FROM  td_etfpdf_basic
+                             WHERE  td_etfpdf_basic.f16012      =   base.f16012         /* 국제표준코드 */
+                               AND  td_etfpdf_basic.f16013      =   base.f16013         /* ETF단축코드 */
+                             LIMIT  1
+                        )
+                    ,   ''
+                )                                                               AS  F16583              /* 사무수탁회사번호 */            
         FROM kc_etp.td_etp_basic base
         LEFT OUTER JOIN 
            (SELECT * 
@@ -480,6 +516,16 @@
             ,base.F34783
             ,base.F33960
             ,base.F33961
+            ,   IFNULL(
+                        (
+                            SELECT  td_etnpdf_basic.f16583
+                              FROM  td_etnpdf_basic
+                             WHERE  td_etnpdf_basic.f16012      =   base.f16012         /* 국제표준코드 */
+                               AND  td_etnpdf_basic.f16013      =   base.f16013         /* ETF단축코드 */
+                             LIMIT  1
+                        )
+                    ,   ''
+                )                                                               AS  F16583              /* 사무수탁회사번호 */            
         FROM kc_etp.td_etp_basic base
         LEFT OUTER JOIN 
            (SELECT * 
@@ -572,6 +618,16 @@
             ,base.F34783
             ,base.F33960
             ,base.F33961
+            ,   IFNULL(
+                        (
+                            SELECT  td_etfpdf_basic.f16583
+                              FROM  td_etfpdf_basic
+                             WHERE  td_etfpdf_basic.f16012      =   base.f16012         /* 국제표준코드 */
+                               AND  td_etfpdf_basic.f16013      =   base.f16013         /* ETF단축코드 */
+                             LIMIT  1
+                        )
+                    ,   ''
+                )                                                               AS  F16583              /* 사무수탁회사번호 */
         FROM kc_etp.td_etp_basic base
         LEFT OUTER JOIN 
            (SELECT * 
@@ -663,6 +719,16 @@
             ,base.F34783
             ,base.F33960
             ,base.F33961
+            ,   IFNULL(
+                        (
+                            SELECT  td_etnpdf_basic.f16583
+                              FROM  td_etnpdf_basic
+                             WHERE  td_etnpdf_basic.f16012      =   base.f16012         /* 국제표준코드 */
+                               AND  td_etnpdf_basic.f16013      =   base.f16013         /* ETF단축코드 */
+                             LIMIT  1
+                        )
+                    ,   ''
+                )                                                               AS  F16583              /* 사무수탁회사번호 */
         FROM kc_etp.td_etp_basic base
         LEFT OUTER JOIN 
            (SELECT * 

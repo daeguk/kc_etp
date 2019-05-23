@@ -153,7 +153,7 @@ export default {
 
             axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
                 data: {
-                    f34241 : vm.stateInfo.gubun
+                        f34241 : vm.stateInfo.gubun
                 }
             }).then(function(response) {
                 console.log(response);

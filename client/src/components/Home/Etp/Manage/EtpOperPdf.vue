@@ -1,7 +1,7 @@
 <template>
     <v-container>
-        <v-layout row wrap>
-            <v-flex grow>
+        <v-layout row wrap class="con_wrap">
+            <v-flex grow class="conWidth_left">
                 <v-card flat>
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
@@ -54,6 +54,23 @@
 
                 </v-card>
             </v-flex>
+
+           <v-flex class="conWidth_right">
+                <!-- [PDF 관리] Quick 메뉴 정보 -->
+                <EtpOperPdfQuick
+
+                    :pdfData="pdfData"
+                    :indexBasic = "indexBasic"
+
+                    @showDetail="showDetail"
+                    @showMessageBox="showMessageBox"
+
+                    @fn_showDetailIndex="fn_showDetailIndex"
+                    @fn_setEtpOperPdfByRate="fn_setEtpOperPdfByRate"
+                    @fn_showDetailPdf="fn_showDetailPdf">
+                </EtpOperPdfQuick>
+           </v-flex>
+
         </v-layout>
     </v-container>
 </template>
@@ -66,14 +83,15 @@ import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 
 import Config from "@/js/config.js";
+import EtpOperPdfQuick from "@/components/Home/Etp/Manage/EtpOperPdfQuick.vue";
 
 
 var tblPdfList = null;
 
 export default {
-    props: [ "paramData", "etpOperPdfByRate" ],
+    props: [ "paramData" ],
     components: {
-        //indexDetailrtmenupop: indexDetailrtmenupop
+        EtpOperPdfQuick                 :   EtpOperPdfQuick,
     },
     data() {
         return {
@@ -91,63 +109,18 @@ export default {
                 f16012 : ""
             },
             pdfData : {},
+            indexBasic : {},
             rateTitleList : []
         };
-    },
-    components: {
-
     },
     mounted: function() {
         var vm = this;
 
-console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
+        console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
 
-        vm.$EventBus.$on('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call', data => {
-            console.log( "EventBus EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call>>>>>>>" );
-            console.log( data );
+        vm.pdfData  =   vm.paramData;
 
-            vm.fn_setEtpOperPdfByRate( data );
-        });
-
-        vm.$EventBus.$on('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_close', data => {
-            vm.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
-        });        
-
-        new Promise(function(resolve, reject) {
-            if( vm.paramData ) {
-
-                vm.searchParam.f16013   =   vm.paramData.f16257;    /* ETP기초지수코드  */
-                vm.searchParam.f34239   =   vm.paramData.f34239;    /* ETP기초지수MID  */
-                vm.searchParam.f16493   =   vm.paramData.f16493;    /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-
-                if(     vm.paramData.f16002
-                    &&  vm.paramData.f16257
-                ) {
-                    vm.searchParam.search_nm   =   vm.paramData.f16002 + "(" + vm.paramData.f16013 + ")";  /* 한글종목명 / 단축코드 */
-                }
-
-                vm.pdfData      =   vm.paramData;
-
-                vm.$emit( "fn_setPdfQuickPdfData", vm.pdfData );
-            }else{
-                vm.fn_getEtpOperInfoFirstData( "A", resolve, reject );
-            }
-
-        }).catch( function(e) {
-
-            console.log( e );
-
-        }).then( function() {
-
-            vm.searchParam.show_date    =       new Date().getFullYear() 
-                                            +   "-" 
-                                            +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
-                                            +   "-" 
-                                            +   new Date().getDate();
-
-            vm.fn_setTableInfo();
-            vm.fn_getEtpOerPdf( 'Y' );
-        });
+        vm.fn_init();
 
     },
     created: function() {
@@ -156,11 +129,48 @@ console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
     },
     beforeDestory: function() {
         var vm = this;
-
-        vm.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
     },
 
     methods: {
+
+        fn_init() {
+
+            var vm = this;
+
+            new Promise(function(resolve, reject) {
+
+                if( vm.pdfData ) {
+
+                    vm.searchParam.f16002       =   vm.pdfData.f16002;          /* 한글종목명 */
+                    vm.searchParam.f16013       =   vm.pdfData.f16013;          /* 단축코드 */
+
+                    vm.searchParam.f16493       =   vm.pdfData.f16493;          /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                    vm.searchParam.f16012       =   vm.pdfData.f16012;          /* 국제표준코드 */
+
+                    vm.searchParam.search_nm    =   vm.searchParam.f16002 + "(" + vm.searchParam.f16013 + ")";  /* 한글종목명 / 단축코드 */
+
+                    resolve();
+
+                }else{
+                    vm.fn_getEtpOperInfoFirstData( "A", resolve, reject );
+                }
+
+            }).catch( function(e) {
+
+                console.log( e );
+
+            }).then( function() {
+debugger;
+                vm.searchParam.show_date    =       new Date().getFullYear() 
+                                                +   "-" 
+                                                +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
+                                                +   "-" 
+                                                +   new Date().getDate();
+
+                vm.fn_setTableInfo();
+                vm.fn_getEtpOerPdf( 'Y' );
+            });            
+        },
 
 
         /*
@@ -187,22 +197,17 @@ console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
                         var dataList = response.data.dataList;
 
                         if (dataList && dataList.length == 1) {
-                            vm.searchParam.f16013   =   dataList[0].f16257;     /* ETP기초지수코드  */
-                            vm.searchParam.f34239   =   dataList[0].f34239;     /* ETP기초지수MID  */
-                            vm.searchParam.f16493   =   dataList[0].f16493;     /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                            vm.searchParam.f16002       =   dataList[0].f16002;     /* 한글종목명 */
+                            vm.searchParam.f16013       =   dataList[0].f16013;     /* 단축코드 */
 
-                            if(     dataList[0].f16002
-                                &&  dataList[0].f16257
-                            ) {
-                                vm.searchParam.search_nm   =   dataList[0].f16002 + "(" + dataList[0].f16013 + ")";  /* 한글종목명 / 단축코드 */
-                            }
+                            vm.searchParam.f16493       =   dataList[0].f16493;     /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                            vm.searchParam.f16012       =   dataList[0].f16012;     /* 국제표준코드 */
+
+                            vm.searchParam.search_nm    =   vm.searchParam.f16002 + "(" + vm.searchParam.f16013 + ")";      /* 한글종목명 / 단축코드 */
 
                             vm.pdfData  =   dataList[0];
                         }
                     }
-
-
-                    vm.$emit( "fn_setPdfQuickPdfData", vm.pdfData );
 
                     resolve();
                 });
@@ -235,26 +240,20 @@ console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
                 vm.searchParam.search_date  =   vm.searchParam.show_date.replace(/-/g,"");
                 vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
 
-                
                 if( initYn == "N" ) {
-                    if(     !vm.pdfData.f16012
-                        ||  !vm.pdfData.f16493          /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                    if(     !vm.searchParam.f16012          /* 국제표준코드 */
+                        ||  !vm.searchParam.f16493          /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
                     ) {
                         vm.$emit("showMessageBox", '확인','기준코드가 존재하지 않습니다.',{},1);
                         return  false;
                     }
                 }
-
-
-                vm.searchParam.f16012  =   vm.pdfData.f16012;                   /* 국제표준코드 */
-                vm.searchParam.f16493  =   vm.pdfData.f16493;                   /* 국제표준코드 */
-
+debugger;
                 axios.post( url, {
                     data: vm.searchParam
                 }).then(function(response) {
                     console.log(response);
 
-                    var dataJson = {};
                     if (response.data) {
                         var dataList = response.data.dataList;
 
@@ -262,11 +261,9 @@ console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
                             tblPdfList.rows.add(dataList).draw();
                             tblPdfList.draw();
 
-                            dataJson    =   dataList[0];
+                            vm.indexBasic      =   dataList[0];
                         }
                     }
-
-                    vm.$emit( "fn_setPdfQuickIndexBasicData", dataJson );
                 });
             }
             
@@ -540,10 +537,15 @@ console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
             }
         },        
 
-        showDetail: function(gubun, paramData) {      
+        showDetail: function(gubun, paramData) {
+
             var vm = this;
 
-            vm.$emit( "showDetail", gubun, paramData );
+            if (gubun == '1') {
+                vm.pdfData = paramData;
+                
+                vm.fn_init();
+            }
         },
 
         showMessageBox: function(title, msg, option, gubun) {
@@ -551,7 +553,25 @@ console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
 
             vm.$emit( "showMessageBox", title, msg, option, gubun );
         },
+        
+        fn_showDetailIndex(gubun, paramData) {
+            var vm = this;
 
+            vm.$emit( "fn_showDetailIndex", gubun, paramData );
+        },
+
+        fn_showDetailPdf(gubun, paramData) {
+            var vm = this;
+
+            vm.$emit( "fn_showDetailPdf", gubun, paramData );
+        },
+
+        fn_setEtpOperPdfByRate : function( toggleData ) {
+            var vm = this;
+
+            vm.$emit( "fn_setEtpOperPdfByRate", toggleData );
+
+        },                
     }
 };
 </script>

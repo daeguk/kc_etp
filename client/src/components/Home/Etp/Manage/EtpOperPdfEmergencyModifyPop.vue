@@ -248,17 +248,6 @@ export default {
     created: function() {
 
         var vm = this;
-
-        vm.$EventBus.$on('EtpOperControl_EtpOperPdfEmergencyModifyPop_call', data => {
-            console.log( "EventBus EtpOperControl_EtpOperPdfEmergencyModifyPop_call>>>>>>>" );
-            console.log( data );
-
-        });
-
-        vm.$EventBus.$on('EtpOperControl_EtpOperPdfEmergencyModifyPop_close', data => {
-            vm.$EventBus.$off('EtpOperControl_EtpOperPdfEmergencyModifyPop_call');         
-        });
-
     },
     mounted: function() {
 

@@ -218,7 +218,7 @@ export default {
         },
 
         fn_setEtpOperPdfByRate : function() {
-debugger;
+
             var vm = this;
 
 
@@ -254,7 +254,6 @@ debugger;
 console.log( " EtpOperPdfQuick.vue -> fn_showDetailPdf #################" );
 console.log( vm.pdfData );
 
-debugger;
             /* 기초 데이터가 존재하는지 체크 */
             if( !vm.pdfData || Object.keys( vm.pdfData ).length == 0 ) {
                 vm.$emit("showMessageBox", '확인','기초 데이터가 존재하지 않습니다.',{},1);
@@ -277,7 +276,7 @@ debugger;
                 vm.$emit("showMessageBox", '확인','사무수탁회사번호가 존재하지 않습니다.',{},1);
                 return  false;
             }            
-debugger;
+
             /* PDF 긴급반영인 경우 */
             if( gubun == 6 ) {
                 vm.$emit( "fn_showDetailPdf", gubun, vm.pdfData );

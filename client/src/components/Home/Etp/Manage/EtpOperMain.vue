@@ -61,10 +61,6 @@ export default {
             this.$EventBus.$off('changeEtpOperIndexError');
             this.$EventBus.$off('changeEtpOperIndexDetailList');
 
-            this.$EventBus.$off('EtpOperControl_EtpOperPdfInavCalcPop_call');
-            this.$EventBus.$off('EtpOperControl_EtpOperPdfEmergencyModifyPop_call');
-            this.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
-
 
             this.$EventBus.$emit("showList", {tab_id:tab_id, paramData : paramData });
             //this.activeTab = id + 1;
