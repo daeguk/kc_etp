@@ -564,14 +564,7 @@ debugger;
             var vm = this;
 
             vm.$emit( "fn_showDetailPdf", gubun, paramData );
-        },
-
-        fn_setEtpOperPdfByRate : function( toggleData ) {
-            var vm = this;
-
-            vm.$emit( "fn_setEtpOperPdfByRate", toggleData );
-
-        },                
+        },            
     }
 };
 </script>
