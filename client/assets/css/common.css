@@ -77,6 +77,7 @@ h6{font-size:16px;  color:#717182;}
 button:focus { outline: none; }
 .text_blue{color:#1e99e8 !important}
 .text_red{color:#ff4366 !important}
+.text_green{color:#5e870b   !important}
 .text_orange{color:#ff821d !important;}
 .v-btn.primary{background-color:#1e99e8 !important}
 .btn_blue01{background-color:#3158a1 !important;}
@@ -293,8 +294,18 @@ h3.subtit p span.text_result{width:30px; text-align: right;padding-left:0px; dis
 .title_wrap01 .right_btn{float:right; display: block; }
 .title_ex{color:#878793;padding:0px; font-weight:bold; position: relative; width:100%;}
 
-.graph_01_w{ padding:0 24px 0px;}
-.graph_01_w .sub_title_num{font-size:30px;  font-weight:bold; color:#101010;}
+.graph_01_w{ padding:15px 24px 0px;}
+.graph_01_w div{display: inline-block;}
+.graph_01_w .index_nums{float:right;}
+.graph_01_w .index_nums .flex ul{vertical-align:text-top;}
+.graph_01_w .index_nums .flex{width:105px; vertical-align: top; margin-right: 20px;}
+.graph_01_w .index_nums .flex.ver1{width:155px;}
+.graph_01_w .index_nums .flex.ver2{width:165px;}
+.graph_01_w .index_nums .flex.ver3{width:130px;}
+.graph_01_w .index_nums .flex .number{font-size: 24px; font-weight: 600; line-height: 26px;text-align: right;}
+.graph_01_w .index_nums .flex .number2{font-size: 12px;text-align: right;}
+
+.graph_01_w .sub_title_num{font-size:32px;  font-weight:bold; color:#101010;}
 .graph_01_w .sub_title_num span{font-size:14px; color:red;}
 .graph_01_w .sub_title_num p{font-size: 14px; color:#959EB1; font-weight: 400; }
 .graph_01_w .graph_01{width:100%;}
