@@ -71,7 +71,35 @@ export default {
     mounted () {
 
         var vm = this;
-
+        
+        /* 유형에 따라 컬럼 헤더 변경 */
+        tableIndexList = $('#tableIndexList').DataTable( {
+                "processing": true,
+                "serverSide": false,
+                "info": false,   // control table information display field
+                "stateSave": true,  //restore table state on page reload,
+                "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                paging: false,
+                searching: false,                
+                data : [],
+                "columnDefs": [ 
+                    {
+                    "render": function ( data, type, row ) {
+                        return util.formatNumber(data);;
+                    },
+                    "targets": [2,3]
+                    } 
+                ],
+                columns: [
+                    { "title"   :   "code"          ,   "data": "isin_code"             ,   "orderable" : true, className:"txt_left" },      /* 종목코드 */
+                    { "title"   :   "name"          ,   "data": "f16002"                ,   "orderable" : true, className:"txt_left"  },      /* 한글종목명 */
+                    { "title"   :   "base_prc"      ,   "data": "f03003"                ,   "orderable" : true, className:"txt_right"  },      /* 전일종가 */
+                    { "title"   :   "shrs"          ,   "data": "f30812"                ,   "orderable" : true, className:"txt_right"  },      /* 상장주식수 */
+                    { "title"   :   "float_rto"     ,   "data": "style_includ_percnt"   ,   "orderable" : true, className:"txt_right"  },      /* 스타일포함비중 */
+                    { "title"   :   "ceiling_rto"   ,   "data": "ceiling_percnt"        ,   "orderable" : true, className:"txt_right"  },      /* CEILING비중 */
+                    { "title"   :   "factor_rto"    ,   "data": "f30813"                ,   "orderable" : true, className:"txt_right"  }       /* 유동주식비율 */
+                ]
+        });
         console.log( "IndexDetailList.vue -> mounted" );
     },
     created: function() {},
@@ -101,40 +129,13 @@ export default {
                 tableIndexList.destroy();
             }
 
-            /* 유형에 따라 컬럼 헤더 변경 */
-            tableIndexList = $('#tableIndexList').DataTable( {
-                "processing": true,
-                "serverSide": false,
-                "info": false,   // control table information display field
-                "stateSave": true,  //restore table state on page reload,
-                "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                paging: false,
-                searching: false,
-                data : [],
-                "columnDefs": [ 
-                    {
-                    "render": function ( data, type, row ) {
-                        return util.formatNumber(data);;
-                    },
-                    "targets": [2,3]
-                    } 
-                ],
-                columns: [
-                    { "title"   :   "code"          ,   "data": "isin_code"             ,   "orderable" : true, className:"txt_left" },      /* 종목코드 */
-                    { "title"   :   "name"          ,   "data": "f16002"                ,   "orderable" : true, className:"txt_left"  },      /* 한글종목명 */
-                    { "title"   :   "base_prc"      ,   "data": "f03003"                ,   "orderable" : true, className:"txt_right"  },      /* 전일종가 */
-                    { "title"   :   "shrs"          ,   "data": "f30812"                ,   "orderable" : true, className:"txt_right"  },      /* 상장주식수 */
-                    { "title"   :   "float_rto"     ,   "data": "style_includ_percnt"   ,   "orderable" : true, className:"txt_right"  },      /* 스타일포함비중 */
-                    { "title"   :   "ceiling_rto"   ,   "data": "ceiling_percnt"        ,   "orderable" : true, className:"txt_right"  },      /* CEILING비중 */
-                    { "title"   :   "factor_rto"    ,   "data": "f30813"                ,   "orderable" : true, className:"txt_right"  }       /* 유동주식비율 */
-                ]
-            });
+            
 
 
             if( paramIndexDetailList ) {
                 tableIndexList.clear().draw();
                 tableIndexList.rows.add(paramIndexDetailList).draw();
-                tableIndexList.draw();
+                //tableIndexList.draw();
             }
 
             vm.form.resultsCnt  =   paramIndexDetailList.length;
@@ -191,7 +192,7 @@ export default {
             if( paramJongmokDataList ) {
                 tableIndexList.clear().draw();
                 tableIndexList.rows.add( paramJongmokDataList ).draw();
-                tableIndexList.draw();
+                //tableIndexList.draw();
 
                 vm.form.resultsCnt  =   paramJongmokDataList.length;
             }
