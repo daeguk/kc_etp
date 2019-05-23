@@ -113,37 +113,42 @@ console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
             vm.$EventBus.$off('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call');
         });        
 
-    
-        if( vm.paramData ) {
+        new Promise(function(resolve, reject) {
+            if( vm.paramData ) {
 
-            vm.searchParam.f16013   =   vm.paramData.f16257;    /* ETP기초지수코드  */
-            vm.searchParam.f34239   =   vm.paramData.f34239;    /* ETP기초지수MID  */
-            vm.searchParam.f16493   =   vm.paramData.f16493;    /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                vm.searchParam.f16013   =   vm.paramData.f16257;    /* ETP기초지수코드  */
+                vm.searchParam.f34239   =   vm.paramData.f34239;    /* ETP기초지수MID  */
+                vm.searchParam.f16493   =   vm.paramData.f16493;    /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
 
-            if(     vm.paramData.f16002
-                &&  vm.paramData.f16257
-            ) {
-                vm.searchParam.search_nm   =   vm.paramData.f16002 + "(" + vm.paramData.f16013 + ")";  /* 한글종목명 / 단축코드 */
+                if(     vm.paramData.f16002
+                    &&  vm.paramData.f16257
+                ) {
+                    vm.searchParam.search_nm   =   vm.paramData.f16002 + "(" + vm.paramData.f16013 + ")";  /* 한글종목명 / 단축코드 */
+                }
+
+                vm.pdfData      =   vm.paramData;
+
+                vm.$emit( "fn_setPdfQuickPdfData", vm.pdfData );
+            }else{
+                vm.fn_getEtpOperInfoFirstData( "A", resolve, reject );
             }
 
-            vm.pdfData      =   vm.paramData;
+        }).catch( function(e) {
 
-            vm.$emit( "fn_setPdfQuickPdfData", vm.pdfData );
-        }else{
-            vm.fn_getEtpOperInfoFirstData( "A" );
-        }
-        
+            console.log( e );
 
-        vm.searchParam.show_date    =       new Date().getFullYear() 
-                                        +   "-" 
-                                        +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
-                                        +   "-" 
-                                        +   new Date().getDate();
+        }).then( function() {
 
-        vm.$nextTick().then(() => {
+            vm.searchParam.show_date    =       new Date().getFullYear() 
+                                            +   "-" 
+                                            +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
+                                            +   "-" 
+                                            +   new Date().getDate();
+
             vm.fn_setTableInfo();
             vm.fn_getEtpOerPdf( 'Y' );
         });
+
     },
     created: function() {
 
@@ -163,41 +168,47 @@ console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
          *  param   :   ETP지표가치산출구분(K:국내,F:해외)  / A:전종목, I:관심종목
          *  2019-05-03  bkLove(촤병국)
          */
-        fn_getEtpOperInfoFirstData( gubun ) {
+        fn_getEtpOperInfoFirstData( gubun, resolve, reject ) {
 
             var vm = this;
 
-            axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
-                data: {
-                        f34241  :   gubun
-                    ,   isEtfYn :   "Y"
-                    ,   firstYn :   "Y"
-                }
-            }).then(function(response) {
-                console.log(response);
+            try{
 
-                if (response.data) {
-                    var dataList = response.data.dataList;
-
-                    if (dataList && dataList.length == 1) {
-                        vm.searchParam.f16013   =   dataList[0].f16257;     /* ETP기초지수코드  */
-                        vm.searchParam.f34239   =   dataList[0].f34239;     /* ETP기초지수MID  */
-                        vm.searchParam.f16493   =   dataList[0].f16493;     /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-
-                        if(     dataList[0].f16002
-                            &&  dataList[0].f16257
-                        ) {
-                            vm.searchParam.search_nm   =   dataList[0].f16002 + "(" + dataList[0].f16013 + ")";  /* 한글종목명 / 단축코드 */
-                        }
-
-                        vm.pdfData  =   dataList[0];
-
-                        vm.fn_getEtpOerPdf( 'Y' );
+                axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
+                    data: {
+                            f34241  :   gubun
+                        ,   isEtfYn :   "Y"
+                        ,   firstYn :   "Y"
                     }
-                }
+                }).then(function(response) {
+                    console.log(response);
 
-                vm.$emit( "fn_setPdfQuickPdfData", vm.pdfData );
-            });
+                    if (response.data) {
+                        var dataList = response.data.dataList;
+
+                        if (dataList && dataList.length == 1) {
+                            vm.searchParam.f16013   =   dataList[0].f16257;     /* ETP기초지수코드  */
+                            vm.searchParam.f34239   =   dataList[0].f34239;     /* ETP기초지수MID  */
+                            vm.searchParam.f16493   =   dataList[0].f16493;     /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+
+                            if(     dataList[0].f16002
+                                &&  dataList[0].f16257
+                            ) {
+                                vm.searchParam.search_nm   =   dataList[0].f16002 + "(" + dataList[0].f16013 + ")";  /* 한글종목명 / 단축코드 */
+                            }
+
+                            vm.pdfData  =   dataList[0];
+                        }
+                    }
+
+
+                    vm.$emit( "fn_setPdfQuickPdfData", vm.pdfData );
+
+                    resolve();
+                });
+            }catch(e) {
+                reject( e );
+            }
         },
 
         /*
@@ -219,41 +230,46 @@ console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
                 tblPdfList.clear().draw();
             }
 
-            vm.searchParam.search_date  =   vm.searchParam.show_date.replace(/-/g,"");
-            vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
+            if( vm.pdfData && Object.keys( vm.pdfData ).length > 0 ) {
 
-            
-            if( initYn == "N" ) {
-                if(     !vm.pdfData
-                    ||  !vm.pdfData.f16012
-                ) {
-                    vm.$emit("showMessageBox", '확인','기준코드가 존재하지 않습니다.',{},1);
-                    return  false;
-                }
-            }
+                vm.searchParam.search_date  =   vm.searchParam.show_date.replace(/-/g,"");
+                vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
 
-
-            vm.searchParam.f16012  =   vm.pdfData.f16012;                   /* 국제표준코드 */
-
-            axios.post( url, {
-                data: vm.searchParam
-            }).then(function(response) {
-                console.log(response);
-
-                var dataJson = {};
-                if (response.data) {
-                    var dataList = response.data.dataList;
-
-                    if (dataList && dataList.length > 0) {
-                        tblPdfList.rows.add(dataList).draw();
-                        tblPdfList.draw();
-
-                        dataJson    =   dataList[0];
+                
+                if( initYn == "N" ) {
+                    if(     !vm.pdfData.f16012
+                        ||  !vm.pdfData.f16493          /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                    ) {
+                        vm.$emit("showMessageBox", '확인','기준코드가 존재하지 않습니다.',{},1);
+                        return  false;
                     }
                 }
 
-                vm.$emit( "fn_setPdfQuickIndexBasicData", dataJson );
-            });
+
+                vm.searchParam.f16012  =   vm.pdfData.f16012;                   /* 국제표준코드 */
+                vm.searchParam.f16493  =   vm.pdfData.f16493;                   /* 국제표준코드 */
+
+                axios.post( url, {
+                    data: vm.searchParam
+                }).then(function(response) {
+                    console.log(response);
+
+                    var dataJson = {};
+                    if (response.data) {
+                        var dataList = response.data.dataList;
+
+                        if (dataList && dataList.length > 0) {
+                            tblPdfList.rows.add(dataList).draw();
+                            tblPdfList.draw();
+
+                            dataJson    =   dataList[0];
+                        }
+                    }
+
+                    vm.$emit( "fn_setPdfQuickIndexBasicData", dataJson );
+                });
+            }
+            
         },
 
 
@@ -289,7 +305,7 @@ console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
         fn_setEtpOperPdfByRate : function( paramData ) {
 
             var vm = this;
-debugger;
+
             /* 해외지수 종가 모니터링 버튼이 체크된 경우에는 해외지수 종가 모니터링 정보를 노출한다. */
             if( paramData && paramData.togglePdfByRate ) {
                 vm.stateInfo.pageState  =  'pdfByRate';               /* pdf - PDF 관리 , pdfByRate - 비중변경현황 */

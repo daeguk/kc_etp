@@ -279,4 +279,17 @@
     SELECT ifnull(MAX(SEQ_HIST),0)+1 AS SEQ_HIST FROM m001uetpmasterh WHERE seq_master = #{seq}
       ]]>
 </select>
+<update id="deleteEtpApply" >
+    <![CDATA[
+     update  m001uetpmaster 
+     set  
+       isin_stat_cd = '0009', update_id = ${user_id}  ,  update_time = DATE_FORMAT(now(), '%Y%m%d%H%i')
+       where seq = 
+     ]]>
+    <foreach    collection="seqValues"   item="seq"  index="index"  separator="," >
+      <![CDATA[ 
+        ${seq}  
+      ]]>
+    </foreach>
+</update>
 </mapper>

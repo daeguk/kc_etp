@@ -4,6 +4,8 @@
             <!--rightmenu---->
             <v-card flat class="right_menu_w2">
                 <v-list class="pt-0" dense>
+<!--
+TODO:   2차에서 개발예정
                         <v-list-tile-content class="rightmenu_con">
                             <v-subheader>
                                 <v-icon small>feedback</v-icon>지수 조치 현황
@@ -21,6 +23,7 @@
                                 <v-icon small>arrow_right</v-icon>3개 지수에 대한 조치 발생
                             </p>
                         </v-list-tile-content>
+-->
                         <v-list-tile-content class="rightmenu_con Oper_menu">
                             <v-subheader>
                                 <v-icon small>build</v-icon>PDF Tools
@@ -217,6 +220,26 @@ export default {
         fn_setEtpOperPdfByRate : function() {
 debugger;
             var vm = this;
+
+
+            /* 기초 데이터가 존재하는지 체크 */
+            if( !vm.pdfData || Object.keys( vm.pdfData ).length == 0 ) {
+                vm.$emit("showMessageBox", '확인','기초 데이터가 존재하지 않습니다.',{},1);
+                return  false;
+            }
+
+            /* 기준 데이터가 존재하는지 체크 */
+            if( !vm.pdfData.f16012 || !vm.pdfData.f16493 ) {
+                vm.$emit("showMessageBox", '확인','기준 데이터가 존재하지 않습니다.',{},1);
+                return  false;
+            }
+
+            /* ETF 인지 체크 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+            if( !( vm.pdfData.f16493 == "1" || vm.pdfData.f16493 == "2" ) ) {
+                vm.$emit("showMessageBox", '확인','ETF 상품만 가능합니다.',{},1);
+                return  false;
+            }
+
             vm.togglePdfByRate  =   !vm.togglePdfByRate;
 
             var paramData   =   {};
@@ -228,6 +251,33 @@ debugger;
         fn_showDetailPdf : function( gubun ) {
             var vm = this;
 
+console.log( " EtpOperPdfQuick.vue -> fn_showDetailPdf #################" );
+console.log( vm.pdfData );
+
+debugger;
+            /* 기초 데이터가 존재하는지 체크 */
+            if( !vm.pdfData || Object.keys( vm.pdfData ).length == 0 ) {
+                vm.$emit("showMessageBox", '확인','기초 데이터가 존재하지 않습니다.',{},1);
+                return  false;
+            }
+
+            /* 기준 데이터가 존재하는지 체크 */
+            if( !vm.pdfData.f16012 || !vm.pdfData.f16493 ) {
+                vm.$emit("showMessageBox", '확인','기준 데이터가 존재하지 않습니다.',{},1);
+                return  false;
+            }
+
+            /* ETF 인지 체크 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+            if( !( vm.pdfData.f16493 == "1" || vm.pdfData.f16493 == "2" ) ) {
+                vm.$emit("showMessageBox", '확인','ETF 상품만 가능합니다.',{},1);
+                return  false;
+            }
+
+            if( !vm.pdfData.f16583 ) {
+                vm.$emit("showMessageBox", '확인','사무수탁회사번호가 존재하지 않습니다.',{},1);
+                return  false;
+            }            
+debugger;
             /* PDF 긴급반영인 경우 */
             if( gubun == 6 ) {
                 vm.$emit( "fn_showDetailPdf", gubun, vm.pdfData );
