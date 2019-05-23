@@ -649,6 +649,30 @@
         SELECT      /* etpOper.getEtpOperInfo  ETP 운용관리 - ETP 운영정보를 조회한다. */
                     <include    refid="sqlEtpBasic01" />
 
+                ,   IFNULL(
+                            CASE    WHEN    /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                                            /* ETP 상품구분이 ETF 인 경우 */
+                                            td_etp_basic.f16493                     IN  ( '1', '2' ) 
+                                    THEN    (
+                                                SELECT  td_etfpdf_basic.f16583
+                                                  FROM  td_etfpdf_basic
+                                                 WHERE  td_etfpdf_basic.f16012      =   td_etp_basic.f16012         /* 국제표준코드 */
+                                                   AND  td_etfpdf_basic.f16013      =   td_etp_basic.f16013         /* ETF단축코드 */
+                                                 LIMIT  1
+                                            )
+
+                                            /* ETP 상품구분이 ETN 인 경우 */
+                                    WHEN    td_etp_basic.f16493                     IN  ( '3', '4' )
+                                    THEN    (
+                                                SELECT  td_etnpdf_basic.f16583
+                                                  FROM  td_etnpdf_basic
+                                                 WHERE  td_etnpdf_basic.f16012      =   td_etp_basic.f16012         /* 국제표준코드 */
+                                                   AND  td_etnpdf_basic.f16013      =   td_etp_basic.f16013         /* ETF단축코드 */
+                                                 LIMIT  1
+                                            )
+                            END
+                        ,   ''
+                    )                                                               AS  f16583              /* 사무수탁회사번호 */
                 ,   td_index_basic.f16002                                           AS  index_nm            /* 지수명 */
                 ,   td_index_basic.f15001                                           AS  index_f15001        /* 지수 현재가 */
                 ,   td_index_basic.index_cal_method                                 AS  index_cal_method    /* 지수 산출방식 */
@@ -831,6 +855,35 @@
 
          WHERE  1 = 1
     </select>
+
+    <!--
+    * ETP 운용관리 - PDF 긴급반영 - 저장시 이미 등록된 데이터가 존재하는지 체크한다.
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="getTmPdfModifyExistsCheck">
+        SELECT   COUNT(*)                               AS  exists_cnt   /* 존재 건수 */
+
+          FROM  (
+                <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
+                <![CDATA[              
+                    SELECT      #{f16583}               AS  f16583      /* 사무수탁회사번호 */
+                            ,   #{f16012}               AS  f16012      /* ETF종목코드 */
+                            ,   #{f16013}               AS  f16013      /* ETF단축코드 */
+                            ,   #{data.f16316}          AS  f16316      /* 구성종목코드 */
+                      FROM  DUAL
+                ]]>
+                </foreach>
+                )       base
+         INNER  JOIN    tm_pdf_modify_dtl
+         WHERE  1 = 1
+
+           AND  tm_pdf_modify_dtl.f16583            =   base.f16583     /* 사무수탁회사번호 */
+           AND  tm_pdf_modify_dtl.f16012            =   base.f16012     /* ETF종목코드 */
+           AND  tm_pdf_modify_dtl.f16013            =   base.f16013     /* ETF단축코드 */
+           AND  tm_pdf_modify_dtl.f16316            =   base.f16316     /* 구성종목코드 */
+
+         LIMIT  1
+    </select>    
 
     <!--
     * [tm_pdf_modify] 테이블에 저장한다.

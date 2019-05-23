@@ -398,9 +398,9 @@ export default {
 
 
         var searchParam                 =   {}
-        searchParam.searchCode          =   vm.paramData.f16012;                   /* 국제표준코드 */
+        searchParam.f16012              =   vm.paramData.f16012;                   /* 국제표준코드 */
 /* 여러종류의 ETF 코드 데이터 저장을 위해 임시로 처리함 */
-searchParam.searchCode              =   "KR7322410002";
+//        searchParam.f16012              =   "KR7322410002";
         searchParam.initYn              =   "Y";
 
         vm.fn_getEtpOperPdfModify( searchParam );
@@ -470,10 +470,10 @@ searchParam.searchCode              =   "KR7322410002";
 
                             /* 사무수탁회사번호 가 없는 경우 */
 /* 여러종류의 ETF 코드 데이터 저장을 위해 임시로 처리함 */
-etpBasic.f16583 = 10;
+//etpBasic.f16583 = 10;
                             if( etpBasic.f16583 == "" ) {
                                 vm.result.flag  =   false;
-                                vm.result.msg   =   '해당코드의 데이터가 존재하지 않습니다.';
+                                vm.result.msg   =   '사무수탁회사번호가 존재하지 않습니다.';
 
                                 return  false;
                             }

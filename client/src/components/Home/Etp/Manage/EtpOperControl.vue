@@ -246,9 +246,11 @@ export default {
         });
     },
     beforeUpdated: function() {
-        
     },
     updated: function() {
+
+        // 메시지 박스 참조
+        this.$root.$confirm = this.$refs.confirm;    
     },
     methods: {
         showDetail: function(gubun, paramData) {
@@ -313,6 +315,7 @@ console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
             this.FaverClassName = "conWidth_right";
         },
         showMessageBox: function(title, msg, option, gubun) {
+debugger;            
             this.$root.$confirm.open(title,msg, option, gubun);
         },
                     

@@ -1702,8 +1702,40 @@ console.log( paramData.allDataList );
 
                     async.waterfall([
 
-                        /* 1. PDF 변경 마스터 정보를 저장한다. */
+                        /* 1. 이미 등록되어 있는지 체크한다. */
                         function( callback ) {
+
+                            var stmt = mapper.getStatement('etpOper', 'getTmPdfModifyExistsCheck', paramData, {language:'sql', indent: '  '});
+                            console.log( stmt );
+
+                            conn.query(stmt, function( err, rows ) {
+
+                                if( err ) {
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] etpOper.getTmPdfModifyExistsCheck Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
+
+                                if( rows && rows.length == 0 ) {
+
+                                    if(  rows[0].exists_cnt > 0 ) {
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "(" + rows[0].f16316 + ") 이미 등록되어 있습니다.";
+                                        resultMsg.err       =   err;
+
+                                        return callback( resultMsg );
+                                    }
+                                }
+
+
+                                callback( null, paramData );                             
+                            })
+                        },                        
+
+                        /* 2. PDF 변경 마스터 정보를 저장한다. */
+                        function( msg, callback ) {
 
                             var stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyMast', paramData, {language:'sql', indent: '  '});
                             console.log( stmt );
@@ -1723,7 +1755,7 @@ console.log( paramData.allDataList );
                             })
                         },
 
-                        /* 2. PDF 변경 상세 정보 (구성종목) 정보를 저장한다. */
+                        /* 3. PDF 변경 상세 정보 (구성종목) 정보를 저장한다. */
                         function( msg, callback ) {
 
                             try{
@@ -1753,7 +1785,7 @@ console.log( paramData.allDataList );
                             }
                         },                    
 
-                        /* 3. ETF 종목코드별 이력번호 번호를 조회한다. */
+                        /* 4. ETF 종목코드별 이력번호 번호를 조회한다. */
                         function( msg, callback ) {
 
 
@@ -1778,7 +1810,7 @@ console.log( paramData.allDataList );
                             });
                         },
 
-                        /* 4. PDF 변경 이력 정보를 저장한다. */
+                        /* 5. PDF 변경 이력 정보를 저장한다. */
                         function( msg, callback ) {
 
 
