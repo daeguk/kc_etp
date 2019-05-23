@@ -80,7 +80,7 @@ export default {
                 "stateSave": true,  //restore table state on page reload,
                 "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
                 paging: false,
-                searching: false,
+                searching: false,                
                 data : [],
                 "columnDefs": [ 
                     {
@@ -135,7 +135,7 @@ export default {
             if( paramIndexDetailList ) {
                 tableIndexList.clear().draw();
                 tableIndexList.rows.add(paramIndexDetailList).draw();
-                tableIndexList.draw();
+                //tableIndexList.draw();
             }
 
             vm.form.resultsCnt  =   paramIndexDetailList.length;
@@ -192,7 +192,7 @@ export default {
             if( paramJongmokDataList ) {
                 tableIndexList.clear().draw();
                 tableIndexList.rows.add( paramJongmokDataList ).draw();
-                tableIndexList.draw();
+                //tableIndexList.draw();
 
                 vm.form.resultsCnt  =   paramJongmokDataList.length;
             }
