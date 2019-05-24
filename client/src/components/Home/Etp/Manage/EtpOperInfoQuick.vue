@@ -15,12 +15,13 @@
                                     outline
                                     color="primary"
                                     @click="fn_showDetailIndex"
+                                    :disabled = "true"
                                 >내역확인</v-btn>
                             </v-subheader>
 
 
                             <p class="text_red">
-                                <v-icon small>arrow_right</v-icon>3개 지수에 대한 조치 발생
+                                <v-icon small>arrow_right</v-icon>없음
                             </p>
                         </v-list-tile-content>
 

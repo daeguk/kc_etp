@@ -45,25 +45,6 @@
                                         @showMessageBox="showMessageBox"
                                         @fn_showDetailIndex="fn_showDetailIndex">
                     </EtpOperInfoQuick>
-
-                <!-- [ETP 운영정보] -> Quick Menu iNAV 산출현황 선택 -> 그리드에서 Pdf 선택시 -->
-                <v-dialog   v-model="showInavPdfYn"     persistent  max-width="500" >
-                    <EtpOperInfoInavPdf     v-if="inavGubun == 'pdf'"
-
-                                            :paramData = "etpRow"
-                                            @fn_close = "fn_close">
-                    </EtpOperInfoInavPdf>
-                </v-dialog>
-
-                <!-- [ETP 운영정보] -> Quick Menu iNAV 산출현황 선택 -> 그리드에서 Index 선택시 -->
-                <v-dialog  v-model="showInavIndexYn"  persistent  max-width="500" >
-                    <EtpOperInfoInavIndex   v-if="inavGubun == 'index'"
-
-                                            :paramData = "etpRow"
-                                            @fn_close = "fn_close">
-                    </EtpOperInfoInavIndex>
-                </v-dialog>   
-
             </v-flex>       
         </v-layout>
     </v-container>
@@ -71,9 +52,10 @@
 
 
 <script>
-import $      from 'jquery'
-import dt      from 'datatables.net'
-import buttons from 'datatables.net-buttons'
+import $      from 'jquery';
+import dt      from 'datatables.net';
+import buttons from 'datatables.net-buttons';
+import util       from "@/js/util.js";
 
 import Config from '@/js/config.js';
 import EtpOperInfoQuick         from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
@@ -214,7 +196,7 @@ export default {
 
                 vm.fn_setArrShowColumn( [ 
                         'f16002'                        /* 종목 */
-                    ,   'index_cal_method'              /* 산출방식  <---- ADDED */
+                    ,   'f33929_nm'                     /* 산출방식  <---- ADDED */
                     ,   'f15301'                        /* iNAV */
                     ,   'f03329'                        /* 전일최종NAV */
                     ,   'f15302'                        /* 추적오차율 */
@@ -288,25 +270,20 @@ export default {
                 vm.paramData.f34239         =   data.f34239;        /* ETP기초지수MID  */
                 vm.paramData.rowIndex       =   rowInx;
 
-                /* 산출방식 컬럼값이 없어 레코드 행이 짝수이면 pdf, 홀수이면 index 로 임시 처리함. TODO: 추후 변경 필요. */
-                var gubun = "";
-                if( rowInx %2 ==0 ) {
-                    gubun = "btnInavPdfPop";
-                }else{
-                    gubun = "btnInavIndexPop";
-                }
-
                 switch( btnId ) {
 
                     case    'btnInav'       :
 
-                                if( gubun == "btnInavPdfPop" ) {
-                                    vm.inavGubun    =   "pdf";
-                                    vm.showInavPdfYn   =   true;
-                                }else if( gubun == "btnInavIndexPop" ) {
-                                    vm.inavGubun    =   "index";
-                                    vm.showInavIndexYn =   true;
+                                var gubun   =   "7";
+
+                                /* 0-PDF, 1-지수 수익율 */
+                                if( data.f33929 == "0" ) {
+                                    gubun   =   "7";
+                                }else if( data.f33929 == "1" ) {
+                                    gubun   =   "8";
                                 }
+
+                                vm.$emit( "fn_showDetailPdf", gubun, data );
 
                                 break;
 
@@ -456,7 +433,7 @@ export default {
 
             var arrColumn  =   [
                 { 'name' : 'f16002'             , 'data': 'f16002'           ,  'width' : '220', 'orderable' : true  , 'className': 'txt_left',  'title' : '종목'           },      /* 한글종목명 */
-                { 'name' : 'index_cal_method'   , 'data': 'index_cal_method' ,  'width' : '100', 'orderable' : true  , 'className': 'txt_left',  'title' : '지수<br>산출방식'   },      /* 지수산출방식 */
+                { 'name' : 'f33929_nm'          , 'data': 'f33929_nm'        ,  'width' : '100', 'orderable' : true  , 'className': 'txt_left',  'title' : '지표산출방식'   },      /* 지표산출방식 */
                 { 'name' : 'f15301'             , 'data': 'f15301'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : 'iNAV'          },      /* ETP지표가치(NAV/IV) */
                 { 'name' : 'f03329'             , 'data': 'f03329'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '전일NAV'},      /* 전일ETP지표가치(예탁원)(NAV/IV) */
                 { 'name' : 'f15302'             , 'data': 'f15302'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : 'TE' },      /* 추적오차율 */
@@ -482,7 +459,79 @@ export default {
             ];        
 
             var arrColumnDef  =   [
+                    /* 종목 */
+                    {       'name' : 'f16002'   
+                        ,   "render": function ( data, type, row ) {
 
+                                let htm = "<span>";
+                                htm += "           <b>"+data+"</b>";
+                                htm += "            <br><span class='text_s'>"+row.f16013+"</span>";        /* ETF단축코드 */
+                                if (row.NEW_YN == "Y") {
+                                    htm += "<span><div class='text_new'>new</div></span>";
+                                }
+                                return htm;
+                            }
+                    },
+
+                    /* iNAV */
+                    {       'name' : 'f15301'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+            
+                                htm += util.formatNumber(data);
+
+                                if (row.f30818 >= 0) {
+                                    htm += "<br><span class='text_S text_red'>"+row.f30818+"%</span>";      /* 장중지표가치(iNAV/iIV)등락율 */
+                                } else {
+                                    htm += "<br><span class='text_S text_blue'>"+row.f30818+"%</span>";     /* 장중지표가치(iNAV/iIV)등락율 */
+                                }
+
+                                return htm;
+                            },
+                    },
+
+                    /* 전일NAV */
+                    {       'name' : 'f03329'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+            
+                                htm += util.formatNumber(data);
+
+                                return htm;
+                            },
+                    },
+
+                    /* 지수 */
+                    {       'name' : 'index_f15001'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+            
+                                htm += util.formatNumber(data);
+
+                                if (row.f30818 >= 0) {
+                                    htm += "<br><span class='text_S text_red'>"+row.f30818+"%</span>";      /* 장중지표가치(iNAV/iIV)등락율 */
+                                } else {
+                                    htm += "<br><span class='text_S text_blue'>"+row.f30818+"%</span>";     /* 장중지표가치(iNAV/iIV)등락율 */
+                                }
+
+                                return htm;
+                            },
+                    },
+
+                    /* 환율 */
+                    {       'name' : 'f18438'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+            
+                                htm += data;
+                                htm += "<br>";
+                                htm += "<span class='text_s'>" + row.f18450 + "</span>";                    /* 해외ETF원주자산기준통화코드 */
+
+                                return htm;
+                            },
+                    },                    
+                
+                    /* 그래프 */
                     {       'name' : 'graph'   
                         ,   "render": function ( data, type, row ) {
 
@@ -509,7 +558,7 @@ export default {
                     },                
 
 /*            
-                {       'name' : 'index_cal_method'   
+                {       'name' : 'F33929'   
                     ,   "render": function ( data, type, row ) {
                             if (data) {
                                 return "<img src='/assets/img/icon_bar01.png'><span>&nbsp;&nbsp;&nbsp;" + data + "</span>";
