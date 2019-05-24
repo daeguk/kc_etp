@@ -704,6 +704,7 @@
                 ,   td_etp_basic.W00013                                             AS  month1
                 ,   td_etp_basic.W00014                                             AS  month3
                 ,   td_etp_basic.W00015                                             AS  ytd
+                ,   td_etffor_mast.EX_RATE_CODE                                     AS ex_rate_code     /* 환율 코드 */        
 
           FROM          td_etp_basic
           LEFT  JOIN    td_index_basic
@@ -711,6 +712,9 @@
                          td_index_basic.F16013           =  td_etp_basic.f16257                                                 /* 단축코드 = ETP기초지수코드 */
                     AND  td_index_basic.MARKET_ID        LIKE    CONCAT( '_' , LPAD( td_etp_basic.f34239, 3, '0' ) , '%' )      /* 시장 ID = ETP기초지수MID */
                 )
+          LEFT OUTER JOIN td_etffor_mast ON (
+  		                 td_etp_basic.f16012 = td_etffor_mast.ISIN_CODE
+          ) 
          WHERE  1 = 1
 
            AND  td_etp_basic.f33960                 =   #{krx_cd}                   /* ETP운용사코드 가 로그인한 운용사 코드와 동일한 정보만 추출 */
