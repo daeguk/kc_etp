@@ -78,14 +78,14 @@
                                         <ul>
                                             <li>거래량</li>
                                             <li class="number">{{formatNumber(etpBasic.f15015)}}주</li>
-                                            <li class="number2 text_green">AVG(3M):999.999.999</li>
+                                            <li class="number2 text_green">AVG(60일):{{formatNumber(etpBasic.f13510)}}</li>
                                         </ul>
                                 </v-flex>
                                 <v-flex class="ver3">
                                     <ul>
                                             <li>거래대금</li>
-                                            <li class="number">{{formatNumber(etpBasic.f15023/1000)}}천</li>
-                                            <li class="number2 text_green">AVG(3M):9.999.999.999</li>
+                                            <li class="number">{{formatNumber(etpBasic.f15023/10000000)}}억</li>
+                                            <li class="number2 text_green">AVG(60일):{{formatNumber(etpBasic.f13516/10000000)}}억</li>
                                         </ul>
                                 </v-flex>
                             </v-layout>
