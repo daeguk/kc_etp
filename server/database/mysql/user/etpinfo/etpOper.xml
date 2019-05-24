@@ -602,6 +602,14 @@
                 ,   td_etp_basic.F34783                                 AS  f34783              /* ETP지수자산소분류2 */
                 ,   td_etp_basic.F33960                                 AS  f33960              /* ETP운용사코드 */
                 ,   td_etp_basic.F33961                                 AS  f33961              /* ETP운용사명(한글명) */
+
+                ,   td_etp_basic.F33929                                 AS  f33929              /* ETP_iNAV산출방식(0:PDF,1:지수수익율) */
+                ,   (
+                        SELECT  tm_code_dtl.com_dtl_name
+                          FROM  tm_code_dtl
+                         WHERE  tm_code_dtl.com_mst_cd  =   'COM005'
+                           AND  tm_code_dtl.com_dtl_cd  =   td_etp_basic.F33929
+                    )                                                   AS  f33929_nm           /* ETP_iNAV산출방식(0:PDF,1:지수수익율) */
     ]]>
     </sql>
 

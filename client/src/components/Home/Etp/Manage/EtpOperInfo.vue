@@ -71,9 +71,10 @@
 
 
 <script>
-import $      from 'jquery'
-import dt      from 'datatables.net'
-import buttons from 'datatables.net-buttons'
+import $      from 'jquery';
+import dt      from 'datatables.net';
+import buttons from 'datatables.net-buttons';
+import util       from "@/js/util.js";
 
 import Config from '@/js/config.js';
 import EtpOperInfoQuick         from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
@@ -214,7 +215,7 @@ export default {
 
                 vm.fn_setArrShowColumn( [ 
                         'f16002'                        /* 종목 */
-                    ,   'index_cal_method'              /* 산출방식  <---- ADDED */
+                    ,   'f33929_nm'                     /* 산출방식  <---- ADDED */
                     ,   'f15301'                        /* iNAV */
                     ,   'f03329'                        /* 전일최종NAV */
                     ,   'f15302'                        /* 추적오차율 */
@@ -456,7 +457,7 @@ export default {
 
             var arrColumn  =   [
                 { 'name' : 'f16002'             , 'data': 'f16002'           ,  'width' : '220', 'orderable' : true  , 'className': 'txt_left',  'title' : '종목'           },      /* 한글종목명 */
-                { 'name' : 'index_cal_method'   , 'data': 'index_cal_method' ,  'width' : '100', 'orderable' : true  , 'className': 'txt_left',  'title' : '지수<br>산출방식'   },      /* 지수산출방식 */
+                { 'name' : 'f33929_nm'          , 'data': 'f33929_nm'        ,  'width' : '100', 'orderable' : true  , 'className': 'txt_left',  'title' : '지표산출방식'   },      /* 지표산출방식 */
                 { 'name' : 'f15301'             , 'data': 'f15301'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : 'iNAV'          },      /* ETP지표가치(NAV/IV) */
                 { 'name' : 'f03329'             , 'data': 'f03329'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '전일NAV'},      /* 전일ETP지표가치(예탁원)(NAV/IV) */
                 { 'name' : 'f15302'             , 'data': 'f15302'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : 'TE' },      /* 추적오차율 */
@@ -482,7 +483,66 @@ export default {
             ];        
 
             var arrColumnDef  =   [
+                    /* 종목 */
+                    {       'name' : 'f16002'   
+                        ,   "render": function ( data, type, row ) {
 
+                                let htm = "<span>";
+                                htm += "           <b>"+data+"</b>";
+                                htm += "            <br><span class='text_s'>"+row.f16013+"</span>";        /* ETF단축코드 */
+                                if (row.NEW_YN == "Y") {
+                                    htm += "<span><div class='text_new'>new</div></span>";
+                                }
+                                return htm;
+                            }
+                    },
+
+                    /* iNAV */
+                    {       'name' : 'f15301'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+            
+                                htm += util.formatNumber(data);
+
+                                if (row.f30818 >= 0) {
+                                    htm += "<br><span class='text_S text_red'>"+row.f30818+"%</span>";      /* 장중지표가치(iNAV/iIV)등락율 */
+                                } else {
+                                    htm += "<br><span class='text_S text_blue'>"+row.f30818+"%</span>";     /* 장중지표가치(iNAV/iIV)등락율 */
+                                }
+
+                                return htm;
+                            },
+                    },
+
+                    /* 전일NAV */
+                    {       'name' : 'f03329'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+            
+                                htm += util.formatNumber(data);
+
+                                return htm;
+                            },
+                    },
+
+                    /* 지수 */
+                    {       'name' : 'index_f15001'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+            
+                                htm += util.formatNumber(data);
+
+                                if (row.f30818 >= 0) {
+                                    htm += "<br><span class='text_S text_red'>"+row.f30818+"%</span>";      /* 장중지표가치(iNAV/iIV)등락율 */
+                                } else {
+                                    htm += "<br><span class='text_S text_blue'>"+row.f30818+"%</span>";     /* 장중지표가치(iNAV/iIV)등락율 */
+                                }
+
+                                return htm;
+                            },
+                    },
+                
+                    /* 그래프 */
                     {       'name' : 'graph'   
                         ,   "render": function ( data, type, row ) {
 
@@ -509,7 +569,7 @@ export default {
                     },                
 
 /*            
-                {       'name' : 'index_cal_method'   
+                {       'name' : 'F33929'   
                     ,   "render": function ( data, type, row ) {
                             if (data) {
                                 return "<img src='/assets/img/icon_bar01.png'><span>&nbsp;&nbsp;&nbsp;" + data + "</span>";
