@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <v-card flat>
         <h5>
             <v-card-title ma-0>
                 ETF iNAV Realtime Calculator
@@ -161,7 +161,7 @@
                 </v-layout>
             </v-card>
         </div>
-    </v-container>
+    </v-card>
 </template>   
 
 <script>
