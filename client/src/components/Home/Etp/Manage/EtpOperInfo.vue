@@ -279,7 +279,7 @@ export default {
                                 /* 0-PDF, 1-지수 수익율 */
                                 if( data.f33929 == "0" ) {
                                     gubun   =   "7";
-                                }else if( gubun == "btnInavIndexPop" ) {
+                                }else if( data.f33929 == "1" ) {
                                     gubun   =   "8";
                                 }
 
