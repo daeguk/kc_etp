@@ -36,6 +36,7 @@
                                     color="primary"
                                     v-on="on"
                                     @click="fn_openJisuJixPopup()"
+                                    :disabled = "fix_info.fix_disabled"
                                 >내역확인</v-btn>
 
                                 <v-card flat>
@@ -50,14 +51,8 @@
                                 </v-card>
                             </v-subheader>
                             
-                            <p>
-                                <v-icon small color="primary">arrow_right</v-icon>기준시가 총액변동
-                            </p>
-                            <p>
-                                <v-icon small color="primary">arrow_right</v-icon>종목편출입
-                            </p>
-                            <p>
-                                <v-icon small color="primary">arrow_right</v-icon>종목비중조절
+                            <p class="text_red">
+                                <v-icon small>arrow_right</v-icon>{{ fix_info.fix_msg }}
                             </p>
                         </v-list-tile-content>
 
@@ -164,6 +159,12 @@ export default {
                 ,   jisuSearchYn : "Y"
                 ,   jongmokSearch: ""           /* quick Menu 에서 종목검색 데이터 */
             },
+
+            /* 지수 조치현황 */
+            fix_info : {
+                fix_disabled : true,
+                fix_msg : "조치현황 없음"
+            }            
         };
     },
     components: {
