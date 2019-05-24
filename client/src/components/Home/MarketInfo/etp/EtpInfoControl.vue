@@ -3,6 +3,8 @@
         <v-flex grow :class="className">
             <IndexDetailInfo v-if="showIndexDetailDialog" :showDialog="showIndexDetailDialog" :paramData="paramData" :showView="true"></IndexDetailInfo>
             <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
+            <EtpInfoPdfDetail v-if="showEtpInfoPdfDetail" :paramData="paramData" :showEtpInfoPdfDetail="showEtpInfoPdfDetail"></EtpInfoPdfDetail>
+            
             <marketRepresent v-if="showMarketInfo == 1" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketRepresent>               
             <marketSector v-if="showMarketInfo == 2" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketSector>                   
             <marketThema v-if="showMarketInfo == 3" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketThema>                       
@@ -37,6 +39,7 @@ import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 import IndexDetailInfo from "@/components/Home/Index/Manage/IndexDetailInfo.vue";   /*지수 상세정보*/
 import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";         /*ETP 상세정보*/
+import EtpInfoPdfDetail         from  "@/components/Home/MarketInfo/etp/EtpInfoPdfDetail.vue";                         /* PDF 상세 */
 
 import marketRepresent from "./marketRepresent.vue";                /* 001-시장대표 */
 import marketSector from "./marketSector.vue";                      /* 002-섹터*/
@@ -56,6 +59,8 @@ export default {
         return {
             showIndexDetailDialog : false,
             showEtpDetailDialog : false,
+            showEtpInfoPdfDetail : false,
+
             showMarketInfo : 0,
             paramData : [],
             showFaver : false,
@@ -69,18 +74,20 @@ export default {
         ConfirmDialog : ConfirmDialog,
         IndexDetailInfo : IndexDetailInfo,
         EtpManageDetail :   EtpManageDetail,
-        marketRepresent :  marketRepresent,               /* 001-시장대표 */
-        marketSector :   marketSector,                   /* 002-섹터*/
-        marketThema :  marketThema,                       /* 003-테마 */
-        marketStrategy : marketStrategy,                 /* 004-전략 */
-        marketBond : marketBond,                         /* 005-채권 */
-        marketCurrency : marketCurrency,                 /* 006-통화 */
-        marketRawMaterials : marketRawMaterials,         /* 007-원자재 */
-        marketVix : marketVix,                          /* 008-VIX */
-        marketRealEstate : marketRealEstate,             /* 009-부동산 */
-        marketMixAssets : marketMixAssets,               /* 010-혼합자산 */
-        marketOversea : marketOversea,                   /* 101-국가 ( 탭에 노출은 '해외' ) */
-        marketLeverageInverse : marketLeverageInverse   /* 201-배율 ( 탭에 노출은 '레버리지/인버스' ) */
+        EtpInfoPdfDetail: EtpInfoPdfDetail,                 /* PDF 상세 */
+
+        marketRepresent :  marketRepresent,                 /* 001-시장대표 */
+        marketSector :   marketSector,                      /* 002-섹터*/
+        marketThema :  marketThema,                         /* 003-테마 */
+        marketStrategy : marketStrategy,                    /* 004-전략 */
+        marketBond : marketBond,                            /* 005-채권 */
+        marketCurrency : marketCurrency,                    /* 006-통화 */
+        marketRawMaterials : marketRawMaterials,            /* 007-원자재 */
+        marketVix : marketVix,                              /* 008-VIX */
+        marketRealEstate : marketRealEstate,                /* 009-부동산 */
+        marketMixAssets : marketMixAssets,                  /* 010-혼합자산 */
+        marketOversea : marketOversea,                      /* 101-국가 ( 탭에 노출은 '해외' ) */
+        marketLeverageInverse : marketLeverageInverse       /* 201-배율 ( 탭에 노출은 '레버리지/인버스' ) */
     },
 
     mounted: function() {
@@ -95,6 +102,7 @@ export default {
             this.showMarketInfo = data.tab_id;
             this.showEtpDetailDialog = false;
             this.showIndexDetailDialog = false;
+            this.showEtpInfoPdfDetail = false;
             this.showFaver = false;
         });
     },
@@ -109,9 +117,11 @@ export default {
             if (gubun == '1') {
                 this.paramData = paramData;
                 this.showIndexDetailDialog = false;
+                this.showEtpInfoPdfDetail = false;
                 
                 if (this.showEtpDetailDialog) {
                     this.$EventBus.$off('changeIndexInfo', paramData);
+                    this.$EventBus.$off('changeEtpInfoPdfDetail', paramData);
                     this.$EventBus.$emit('changeEtpInfo', paramData);
                 }
                 this.showEtpDetailDialog = true;
@@ -122,15 +132,30 @@ export default {
             } else if (gubun == '2') { 
                 this.paramData = paramData;
                 this.showEtpDetailDialog = false;
+                this.showEtpInfoPdfDetail = false;
 
                 if (this.showIndexDetailDialog) {
                     this.$EventBus.$off('changeEtpInfo', paramData);
+                    this.$EventBus.$off('changeEtpInfoPdfDetail', paramData);
                     this.$EventBus.$emit('changeIndexInfo', paramData);
                 }
                 
                 this.showIndexDetailDialog = true;                
                 this.showMarketInfo = 0;
                 this.showFaver = true;
+            } else if( gubun == '3' ) {
+                this.paramData = paramData;
+                this.showIndexDetailDialog = false;
+                this.showEtpDetailDialog = false;
+
+                if (this.showEtpInfoPdfDetail) {
+                    this.$EventBus.$off('changeEtpInfo', paramData);
+                    this.$EventBus.$off('changeIndexInfo', paramData);
+                    this.$EventBus.$emit('changeEtpInfoPdfDetail', paramData);
+                }
+                
+                this.showEtpInfoPdfDetail = true;                
+                this.showMarketInfo = 0;
             }
 
             this.className = "conWidth_left";  

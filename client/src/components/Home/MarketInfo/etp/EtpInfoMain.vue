@@ -84,6 +84,7 @@ export default {
             this.$EventBus.$off('changeIndexAnalysisInfo');
             this.$EventBus.$off('changeEtpAnalysisInfo');
             
+            this.$EventBus.$off('changeEtpInfoPdfDetail');
 
             this.$EventBus.$emit("showList", {tab_id:tab_id});
         }
