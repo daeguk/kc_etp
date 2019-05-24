@@ -462,9 +462,7 @@ export default {
                                 var content = "";
 
                                 if( data ) {
-console.log( data );
                                     var arrData = JSON.parse( data );
-console.log( arrData );
 
                                     for( var i in arrData ) {
                                         content +=      arrData[i].f16002;
@@ -490,10 +488,16 @@ console.log( arrData );
                                 graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexDetailList", "btnContent" : "equalizer"        , "btnSpanContent" : "지수구성정보" } );
 
                                 /* 지수조치내역 */
+/*
+    TODO:   2차에서 개발 ( 버튼 숨김 처리 )
                                 graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexFix"   , "btnContent" : "insert_comment"   , "btnSpanContent" : "지수조치내역" } );
+*/                                
 
                                 /* 지수오류내역 */
+/*
+    TODO:   2차에서 개발 ( 버튼 숨김 처리 )
                                 graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexError" , "btnContent" : "assignment_turned_in", "btnSpanContent" : "지수오류내역" } );
+*/                                
 
                                 return  graphContent;
                             }
