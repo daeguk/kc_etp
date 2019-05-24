@@ -462,7 +462,9 @@ export default {
                                 var content = "";
 
                                 if( data ) {
+console.log( data );
                                     var arrData = JSON.parse( data );
+console.log( arrData );
 
                                     for( var i in arrData ) {
                                         content +=      arrData[i].f16002;

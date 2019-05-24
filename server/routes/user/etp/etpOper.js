@@ -148,6 +148,8 @@ var getEtpOperIndex = function(req, res) {
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
+
+        resultMsg.dataList  =   [];
         Promise.using(pool.connect(), conn => {
 
 
@@ -155,6 +157,27 @@ var getEtpOperIndex = function(req, res) {
 
                 /* 1. Etp 운용관리 - 지수관리 기본정보를 조회한다. */
                 function( callback ) {
+
+                    paramData.group_concat_max_len  =   1000000;
+                    stmt = mapper.getStatement('etpOper', 'setGroupConcatMaxLen', paramData, format);
+                    console.log(stmt);
+
+                    conn.query(stmt, function( err, rows ) {
+
+                        if( err ) {
+                            resultMsg.result    =   false;
+                            resultMsg.msg       =   "[error] etpOper.setGroupConcatMaxLen Error while performing Query";
+                            resultMsg.err       =   err;
+
+                            return callback( resultMsg );
+                        }
+
+                        callback( null, paramData );
+                    });
+                },
+
+                /* 2. Etp 운용관리 - 지수관리 기본정보를 조회한다. */
+                function( msg, callback ) {
 
                     stmt = mapper.getStatement('etpOper', 'getEtpOperIndex', paramData, format);
                     console.log(stmt);
@@ -170,70 +193,12 @@ var getEtpOperIndex = function(req, res) {
                         }
 
                         if ( rows && rows.length > 0 ) {
-                            resultMsg.dataList  = rows;
+                            resultMsg.dataList  =   rows;
                         }
 
                         callback( null, paramData );
                     });
                 },
-                /* 2. ETP Basic 정보를 조회한다. */
-                function( msg, callback ) {
-
-                    if( resultMsg.dataList && resultMsg.dataList.length > 0 ) {
-
-                        stmt = mapper.getStatement('etpDetail', 'getEtpBasic', paramData, format);
-
-                        // 대입 문자 치환
-                        stmt = stmt.replace(/\: =/g,':='); 
-
-                        console.log(stmt);
-
-                        conn.query(stmt, function( err, rows ) {
-
-                            if( err ) {
-                                resultMsg.result    =   false;
-                                resultMsg.msg       =   "[error] etpDetail.getEtpBasic Error while performing Query";
-                                resultMsg.err       =   err;
-
-                                return callback( resultMsg );
-                            }
-
-                            if ( rows && rows.length > 0 ) {
-
-                                resultMsg.dataList.forEach(function( indexRow, i ) {
-                                    
-                                    var same = rows.filter(function( etpRow, p ) {
-                                        return      etpRow.f16257       ==  indexRow.f16013                 /* ETP기초지수코드 = 단축코드 */
-                                                &&  etpRow.f34239_pad   ==  indexRow.market_id.substr(1);   /* ETP기초지수MID = 시장 ID  */
-                                    });
-
-                                    if( same.length > 0 ) {
-                                        var arrTemp = [];
-
-                                        same.forEach( function( etpRow, p ) {
-                                            var arrJson = {};
-
-                                            arrJson.f16012      =   etpRow.f16012;      /* 국제표준코드 */
-                                            arrJson.f16002      =   etpRow.f16002;      /* 한글종목명 */
-                                            arrJson.f16257      =   etpRow.f16257;      /* ETP기초지수코드 */
-                                            arrJson.f34239      =   etpRow.f34239;      /* ETP기초지수MID */
-                                            arrJson.f34239_pad  =   etpRow.f34239_pad;  /* ETP기초지수MID */
-
-                                            arrTemp.push( arrJson );
-                                        });
-
-                                        indexRow.etp_info_json  =   JSON.stringify( arrTemp );
-                                    }
-                                });
-                            }
-
-                            callback( null );
-                        });
-
-                    }else{
-                        callback( null );
-                    }
-                },                
 
             ], function (err) {
 

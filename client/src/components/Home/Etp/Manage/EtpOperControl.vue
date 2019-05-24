@@ -111,7 +111,7 @@
             <v-dialog  v-model="showEtpOperIndexInavCalcPop"  persistent  max-width="600" >
                 <EtpOperInfoInavIndex   v-if="showEtpOperIndexInavCalcPop"
 
-                                        :paramData = "etpRow"
+                                        :paramData = "paramData"
                                         @fn_close = "fn_close">
                 </EtpOperInfoInavIndex>
             </v-dialog>
