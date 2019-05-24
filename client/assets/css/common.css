@@ -41,7 +41,6 @@ ol, ul{padding:0 !important;}
     color: #6c6c7d;
 }
 
-.svg_icon path{fill:#6c9a10}
 
 .v-toolbar__content{height:60px !important;}
 .v-content{padding-top:60px !important;}
@@ -90,7 +89,8 @@ button:focus { outline: none; }
 
 
 .top_menu{background-color:#79799a !important; }
-.top_menu .menu_list{color:#ffffff;}
+.menu_list .v-list__tile__title{color:#ffffff !important;}
+.menu_list .meunlist_icon_svg object path{fill:#85c406;}
 .theme--light.v-footer{background:#e8e8e8 !important; color:#717182 !important; font-size:12px !important}
 
 /*스텝퍼 색상 수정*/

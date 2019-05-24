@@ -56,7 +56,7 @@
                 </v-dialog>
 
                 <!-- [ETP 운영정보] -> Quick Menu iNAV 산출현황 선택 -> 그리드에서 Index 선택시 -->
-                <v-dialog  v-model="showInavIndexYn"  persistent  max-width="500" >
+                <v-dialog  v-model="showInavIndexYn"  persistent  max-width="600" >
                     <EtpOperInfoInavIndex   v-if="inavGubun == 'index'"
 
                                             :paramData = "etpRow"
