@@ -260,7 +260,7 @@ export default {
 
             if (gubun == '1') {
                 this.paramData = paramData;
-debugger;
+
                 if( this.activeTab != 2 ) {                
                     this.showIndexDetailDialog = false;
     console.log( "this.showEtpDetailDialog=====>" + this.showEtpDetailDialog);

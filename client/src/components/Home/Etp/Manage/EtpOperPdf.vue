@@ -160,7 +160,7 @@ export default {
                 console.log( e );
 
             }).then( function() {
-debugger;
+
                 vm.searchParam.show_date    =       new Date().getFullYear() 
                                                 +   "-" 
                                                 +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
@@ -248,7 +248,7 @@ debugger;
                         return  false;
                     }
                 }
-debugger;
+
                 axios.post( url, {
                     data: vm.searchParam
                 }).then(function(response) {
@@ -540,7 +540,7 @@ debugger;
         showDetail: function(gubun, paramData) {
 
             var vm = this;
-debugger;
+
             if (gubun == '1') {
                 vm.pdfData = paramData;
                 
