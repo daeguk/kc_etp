@@ -149,7 +149,7 @@
                 ,   td_etp_basic.F33961                                 AS  f33961              /* ETP운용사명(한글명) */
                 ,   td_etp_basic.F33929                                 AS  f33929              /* ETP_iNAV산출방식(0:PDF,1:지수수익율) */
                 ,   td_etp_basic.F13510                                 AS  f13510              /* 거래량60일이동평균 */
-                ,   td_etp_basic.F13516                                 AS  f13516              /* 거래대금60일이동평균 */
+                ,   td_etp_basic.F13516                                 AS  f13516              /* 거래대금60일이동평균 */                
     ]]>
     </sql>
 

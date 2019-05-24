@@ -602,7 +602,7 @@
                 ,   td_etp_basic.F34783                                 AS  f34783              /* ETP지수자산소분류2 */
                 ,   td_etp_basic.F33960                                 AS  f33960              /* ETP운용사코드 */
                 ,   td_etp_basic.F33961                                 AS  f33961              /* ETP운용사명(한글명) */
-
+                ,   td_etp_basic.F34240                                 AS  f34240              /* ETP계산유형 */
                 ,   td_etp_basic.F33929                                 AS  f33929              /* ETP_iNAV산출방식(0:PDF,1:지수수익율) */
                 ,   (
                         SELECT  tm_code_dtl.com_dtl_name
@@ -683,6 +683,8 @@
                     )                                                               AS  f16583              /* 사무수탁회사번호 */
                 ,   td_index_basic.f16002                                           AS  index_nm            /* 지수명 */
                 ,   td_index_basic.f15001                                           AS  index_f15001        /* 지수 현재가 */
+                ,   td_index_basic.f15007                                           AS  index_f15007        /* 지수 기준가 */
+                ,   DATE_FORMAT(td_index_basic.std_date, '%Y.%m.%d' )              AS   index_std_date        /* 지수 기준일 */
                 ,   td_index_basic.index_cal_method                                 AS  index_cal_method    /* 지수 산출방식 */
 
                 ,   (
