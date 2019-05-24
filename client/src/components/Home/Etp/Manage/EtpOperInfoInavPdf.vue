@@ -236,7 +236,7 @@ export default {
     },
 
     methods: {
-
+        
         fn_close() {
             var vm = this;
 
