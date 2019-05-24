@@ -15,13 +15,11 @@
                                     outline
                                     color="primary"
                                     @click="fn_showDetailIndex"
-                                    :disabled = "true"
+                                    :disabled = "fix_info.fix_disabled"
                                 >내역확인</v-btn>
                             </v-subheader>
-
-
                             <p class="text_red">
-                                <v-icon small>arrow_right</v-icon>없음
+                                <v-icon small>arrow_right</v-icon>{{ fix_info.fix_msg }}
                             </p>
                         </v-list-tile-content>
 
@@ -255,6 +253,12 @@ export default {
 
             indexFixDialog : false,
             showFaver : true,
+
+            /* 지수 조치현황 */
+            fix_info : {
+                fix_disabled : true,
+                fix_msg : "조치현황 없음"
+            }
         };
     },
     mounted: function() {},

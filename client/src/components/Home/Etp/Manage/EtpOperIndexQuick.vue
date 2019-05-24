@@ -13,10 +13,11 @@
                                     outline
                                     color="primary"
                                     @click="fn_showDetailIndex"
+                                    :disabled = "fix_info.fix_disabled"
                                 >내역확인</v-btn>
                             </v-subheader>
                             <p class="text_red">
-                                <v-icon small>arrow_right</v-icon>3개 지수에 대한 조치 발생
+                                <v-icon small>arrow_right</v-icon> {{ fix_info.fix_msg }}
                             </p>
                         </v-list-tile-content>
                         <v-list-tile-content class="rightmenu_con Oper_menu">
@@ -62,6 +63,12 @@ export default {
             dialog: false,
 
             toggleIndexOversea : false,
+
+            /* 지수 조치현황 */
+            fix_info : {
+                fix_disabled : true,
+                fix_msg : "조치현황 없음"
+            }
         };
     },
     mounted: function() {},
