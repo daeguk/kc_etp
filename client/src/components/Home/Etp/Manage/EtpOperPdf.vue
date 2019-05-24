@@ -540,7 +540,7 @@ debugger;
         showDetail: function(gubun, paramData) {
 
             var vm = this;
-
+debugger;
             if (gubun == '1') {
                 vm.pdfData = paramData;
                 

@@ -168,7 +168,6 @@ export default {
             FaverClassName: '',
             pdfData : {},
             indexBasic : {},
-            selectedQuickData : {}
     	};
     },    
 
@@ -315,8 +314,6 @@ debugger;
                 this.showFaver = false;
             } 
 
-            this.selectedQuickData  =   paramData;
-
             this.className = "conWidth_left";
             this.FaverClassName = "conWidth_right";
         },
@@ -382,7 +379,7 @@ debugger;
         fn_showDetailPdf(gubun, paramData) {
 
 
-            this.paramData = ( this.selectedQuickData && Object.keys( this.selectedQuickData ).length > 0 ? this.selectedQuickData : paramData );
+            this.paramData = paramData;
 
             /* PDF 관리 -> PDF 긴급반영 팝업 */
             if( gubun == '6' ) {
