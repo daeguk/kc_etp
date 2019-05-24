@@ -541,6 +541,19 @@ export default {
                                 return htm;
                             },
                     },
+
+                    /* 환율 */
+                    {       'name' : 'f18438'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+            
+                                htm += data;
+                                htm += "<br>";
+                                htm += "<span class='text_s'>" + row.f18450 + "</span>";                    /* 해외ETF원주자산기준통화코드 */
+
+                                return htm;
+                            },
+                    },                    
                 
                     /* 그래프 */
                     {       'name' : 'graph'   
