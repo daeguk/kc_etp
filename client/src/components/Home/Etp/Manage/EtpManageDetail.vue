@@ -46,7 +46,8 @@
 
                         <div class="sub_title_num">
                             {{etpBasic.f15001}}
-                            <span class="text_blue">{{etpBasic.f15472}}({{etpBasic.f15004}})</span>
+                            <span v-if="etpBasic.f15472 <= 0" class="text_blue">{{etpBasic.f15472}}({{etpBasic.f15004}})</span>
+                            <span v-else class="text_red">{{etpBasic.f15472}}({{etpBasic.f15004}})</span>
                             <p>Last Updated : {{etpBasic.f12506}}</p>
                         </div>
                         <div class="index_nums">
@@ -54,34 +55,36 @@
                                 <v-flex>
                                         <ul>
                                             <li>iNAV</li>
-                                            <li class="number"> 99999.99</li>
-                                            <li class="number2 text_blue"> -99.99%</li>
+                                            <li class="number">{{formatNumber(etpBasic.f15301)}}</li>
+                                            <li v-if="etpBasic.f30818 <= 0" class="number2 text_blue"> {{formatNumber(etpBasic.f30818)}}%</li>
+                                            <li v-else class="number2 text_red"> {{formatNumber(etpBasic.f30818)}}%</li>
                                         </ul>
                                 </v-flex>
                                 <v-flex><ul>
                                             <li>기초지수</li>
-                                            <li class="number"> 99999.99</li>
-                                            <li class="number2 text_blue">-99.99%</li>
+                                            <li class="number">{{formatNumber(etpBasic.f15318)}}</li>
+                                            <li v-if="etpBasic.f30823 <= 0" class="number2 text_blue"> {{formatNumber(etpBasic.f30823)}}%</li>
+                                            <li v-else class="number2 text_red"> {{formatNumber(etpBasic.f30823)}}%</li>
                                         </ul>
                                 </v-flex>
                                 <v-flex class="ver1">
                                     <ul>
                                             <li>시가총액</li>
-                                            <li class="number"> 99999.99십억</li>
+                                            <li class="number"> {{formatNumber(etpBasic.f15028 / 1000000000)}}십억</li>
                                             <li></li>
                                         </ul>
                                 </v-flex>
                                 <v-flex class="ver2">
                                         <ul>
                                             <li>거래량</li>
-                                            <li class="number"> 999.999.999주</li>
+                                            <li class="number">{{formatNumber(etpBasic.f15015)}}주</li>
                                             <li class="number2 text_green">AVG(3M):999.999.999</li>
                                         </ul>
                                 </v-flex>
                                 <v-flex class="ver3">
                                     <ul>
                                             <li>거래대금</li>
-                                            <li class="number"> 99999.99천</li>
+                                            <li class="number">{{formatNumber(etpBasic.f15023/1000)}}천</li>
                                             <li class="number2 text_green">AVG(3M):9.999.999.999</li>
                                         </ul>
                                 </v-flex>
@@ -294,7 +297,11 @@ export default {
         },
         showMessageBox: function(title, msg, option, gubun) {
             this.$root.$confirm.open(title,msg, option, gubun);
-        }        
+        },
+        formatNumber:function(num) {
+            return util.formatNumber(num);
+        },
+        
     }
     
 };
