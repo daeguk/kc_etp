@@ -757,6 +757,11 @@
     </select>    
 
 
+    <insert id="setGroupConcatMaxLen">
+        SET SESSION group_concat_max_len = CAST( #{group_concat_max_len} AS SIGNED );
+    </insert>
+    
+
     <!--
     * ETP 운용관리 - 지수관리 를 조회한다.
     * 2019-05-03  bkLove(촤병국)
@@ -769,6 +774,34 @@
                 ,   '1'                                                 AS  manage_type
                 ,   '2018.09.05'                                        AS  last_date
                 ,   '18:00:01'                                          AS  last_time
+                ,   IFNULL(
+                            (
+                                SELECT  CONCAT(
+                                                '['
+                                            ,   COALESCE(
+                                                        GROUP_CONCAT(
+                                                            CONCAT(
+                                                                    '{'
+                                                                ,       '\"f16012\": \"', REPLACE( REPLACE(                 f16012, '"', '\\\\"'),'\n','\\\\n'), '\", '                 /* 국제표준코드 */
+                                                                ,       '\"f16002\": \"', REPLACE( REPLACE(                 f16002, '"', '\\\\"'),'\n','\\\\n'), '\", '                 /* 한글종목명 */
+                                                                ,       '\"f16257\": \"', REPLACE( REPLACE(                 f16257, '"', '\\\\"'),'\n','\\\\n'), '\", '                 /* ETP기초지수코드 */
+                                                                ,       '\"f34239\": \"', REPLACE( REPLACE( LPAD( f34239, 3, '0' ), '"', '\\\\"'),'\n','\\\\n'), '\"'    /* ETP기초지수MID */
+                                                                ,   '}'
+                                                            )
+                                                            ORDER   BY  f16002  ASC
+                                                            SEPARATOR ','
+                                                        )
+                                                    ,   ''
+                                                )
+                                            ,   ']'
+                                        )
+                                  FROM  td_etp_basic
+                                 WHERE  td_etp_basic.f16257     =   td_index_basic.f16013                                       /* 단축코드 */
+                                   AND  td_etp_basic.f34239     =   CAST( SUBSTR( td_index_basic.MARKET_ID , 2 ) AS SIGNED )    /* 시장 ID */
+                                 GROUP  BY F16257
+                            )
+                        ,   ''
+                    )                                                   AS  etp_info_json
 
           FROM  td_index_basic
 
