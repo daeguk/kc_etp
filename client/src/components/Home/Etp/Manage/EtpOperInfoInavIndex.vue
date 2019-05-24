@@ -253,6 +253,8 @@ export default {
         var vm = this;
 
         console.log( "########## EtpOperInfoInavIndex.vue #################" );
+        console.log( "paramData");
+        console.log( vm.paramData );
     },
     created: function() {},
     beforeDestory: function() {
