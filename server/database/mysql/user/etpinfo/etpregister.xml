@@ -283,13 +283,11 @@
     <![CDATA[
      update  m001uetpmaster 
      set  
-       isin_stat_cd = '0009', update_id = ${user_id}  ,  update_time = DATE_FORMAT(now(), '%Y%m%d%H%i')
-       where seq = 
+       isin_stat_cd = '0009', update_id = #{user_id}  ,  update_time = DATE_FORMAT(now(), '%Y%m%d%H%i')
+       where seq in 
      ]]>
-    <foreach    collection="seqValues"   item="seq"  index="index"  separator="," >
-      <![CDATA[ 
-        ${seq}  
-      ]]>
-    </foreach>
+     (
+    <foreach    collection="seqValues"   item="seq"  index="index"  separator="," >${seq}</foreach>
+     )
 </update>
 </mapper>
