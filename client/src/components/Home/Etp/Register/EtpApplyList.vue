@@ -68,7 +68,7 @@
                      <v-card-actions flat class="mr-3">
                          <v-spacer></v-spacer>
                         <v-btn depressed color="#9e9e9e" dark @click="deleteEtpApply()">삭제</v-btn>
-                        <v-btn depressed color="#48485e" dark @click="download-excel">엑셀</v-btn>
+                        <v-btn depressed color="#48485e" dark @click="downloadExcel">엑셀</v-btn>
                     </v-card-actions>
                 </v-card>
                 <!---실제적용 테이블end--->
@@ -91,6 +91,7 @@ import buttons from "datatables.net-buttons";
 import Config from "@/js/config.js";
 import companyContactModal from "./companyContactModal";
 import idxConfirmModal from "./idxConfirmModal";
+import excel from "xlsx";
 var table = null;
 
 export default {
@@ -185,13 +186,7 @@ export default {
                                         },   
                                         "targets": 1 
                                 },
-                                // {
-                                //     "render": function ( data, type, row ) {
-                                //        let shtml = '' ;
-                                //        return shtml = "<a href='#' ></a>";
-                                //     },
-                                //      "targets": 7
-                                // },
+
                                 {  
                                     "render": function ( data, type, row ) {
                                         let shtml = '' ;
@@ -339,7 +334,7 @@ export default {
                         $('#example1 tbody tr td:nth-child(16)').hide();
                         
                     
-                        $("#example1 tbody").on('click', 'tr td:nth-child(6)', function(){
+                        $("#example1 tbody").on('click', 'tr td:nth-child(9)', function(){
                             var tr = $(this).parents();
                             var td = tr.children();
                             var seq = td.eq(2).text(); 
@@ -490,9 +485,20 @@ export default {
                 if (response.data.success == false) {
                     vm.$emit("showMessageBox", '확인','삭제 중 오류가 발생했습니다.',{},1);
                 } 
+                location.reload();
             });
 
         },
+        downloadExcel: function() {
+            var vm = this;
+
+            var dataWS = excel.utils.json_to_sheet(vm.results);
+            var wb = excel.utils.book_new();
+            
+            excel.utils.book_append_sheet(wb, dataWS, "신청목록");
+            excel.writeFile(wb, "해외ETP신청목록.xlsx");
+
+        }
     }
     
 };
