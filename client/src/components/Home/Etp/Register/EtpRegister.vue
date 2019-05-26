@@ -181,7 +181,7 @@
                                                         transition="scale-transition"
                                                         offset-y
                                                         full-width
-                                                        min-width="500px"
+                                                        min-width="290px"
                                                     >
                                                      
                                                         <template v-slot:activator="{ on }">
@@ -240,7 +240,7 @@
                                                         transition="scale-transition"
                                                         offset-y
                                                         full-width
-                                                        min-width="500px"
+                                                        min-width="290px"
                                                     >
                                                         <template v-slot:activator="{ on }">
                                                             <v-text-field v-bind:disabled = inputDisabled
