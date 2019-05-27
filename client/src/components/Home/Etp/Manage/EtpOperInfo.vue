@@ -528,6 +528,8 @@ export default {
                     {       'name' : 'f18438'   
                         ,   "render": function ( data, type, row ) {
                                 let htm = ""
+
+                                htm += util.formatNumber(data);
             
                                 htm += data;
                                 htm += "<br>";
