@@ -263,16 +263,9 @@ export default {
 
                 if( this.activeTab != 2 ) {                
                     this.showIndexDetailDialog = false;
-    console.log( "this.showEtpDetailDialog=====>" + this.showEtpDetailDialog);
 
                     if (this.showEtpDetailDialog) {
-    console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& #1");                    
                         this.$EventBus.$off('changeIndexInfo', paramData);
-
-                        this.$EventBus.$off('changeEtpOperIndexFix', paramData);
-                        this.$EventBus.$off('changeEtpOperIndexError', paramData);
-                        this.$EventBus.$off('changeEtpOperIndexDetailList', paramData);
-
                         this.$EventBus.$emit('changeEtpInfo', paramData);
                     }
 
@@ -288,15 +281,9 @@ export default {
                     this.showEtpOerInfo = -1;
 
                     this.$nextTick().then(() => {
-
-                        if (this.showEtpOerPdfMain) {
-        console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& #2");                    
+                        if (this.showEtpOerPdfMain) {         
                             this.$EventBus.$off('changeIndexInfo', paramData);
                             this.$EventBus.$off('changeEtpInfo', paramData);
-
-                            this.$EventBus.$off('changeEtpOperIndexFix', paramData);
-                            this.$EventBus.$off('changeEtpOperIndexError', paramData);
-                            this.$EventBus.$off('changeEtpOperIndexDetailList', paramData);
                         }
 
                         this.showEtpOerPdfMain = true;
@@ -305,9 +292,6 @@ export default {
                     });
                 }
 
-
-//                this.showFaver = true;
-                
             } else if (gubun == '2') { 
                 this.paramData = paramData;
                 this.showEtpDetailDialog = false;
@@ -315,10 +299,6 @@ export default {
                 if (this.showIndexDetailDialog) {
                     this.$EventBus.$off('changeEtpAnalysisInfo', paramData);
                     this.$EventBus.$off('changeEtpInfo', paramData);
-
-                    this.$EventBus.$off('changeEtpOperIndexFix', paramData);
-                    this.$EventBus.$off('changeEtpOperIndexError', paramData);
-                    this.$EventBus.$off('changeEtpOperIndexDetailList', paramData);
 
                     this.$EventBus.$emit('changeIndexInfo', paramData);
                 }
