@@ -174,7 +174,10 @@
 
                         </v-flex>
                         <v-flex xs6>
+                        <!--
                             <div class="graph_02_w"  id="importance_chart"></div>
+                            -->
+                            <PieEtpWeightChart :etpWeight="results"></PieEtpWeightChart>
                         </v-flex>
                     </v-layout>
                 </div>
@@ -192,6 +195,7 @@
 
 <script>
 import jongmokPopup from "@/components/common/popup/jongmokPopup";
+import PieEtpWeightChart from "@/components/common/chart/PieEtpWeightChart";
 import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
@@ -246,7 +250,8 @@ export default {
         };
     },
     components: {
-        jongmokPopup: jongmokPopup, 
+        jongmokPopup, 
+        PieEtpWeightChart,
     },
     created: function() {
         var vm = this;
@@ -625,7 +630,8 @@ export default {
                             var options = {'title':'',
                                         'width':vm.chart_size,
                                         'height':'180',
-                                        'colors': ['#85c406', '#1e99e8', '#323232', '#ff4366', '#fbb040'],                
+                                        // 'colors': ['#85c406', '#1e99e8', '#323232', '#ff4366', '#fbb040'],                
+                                        'colors': ['#4FC3F7', '#FB8C00', '#1A237E', '#ff4366', '#fbb040'],                
                                         'hAxis':{
                                             textStyle: {
                                                 color:'#ffffff'
@@ -766,14 +772,11 @@ export default {
                 if (response.data.success == false) {
                     alert("비중 목록이 없습니다");
                 } else {
-                    var items = response.data.dataList;
-                    
-                    //console.log("response=" + JSON.stringify(items));
-                    this.results = items;
+                    this.results = response.data.dataList;
                     this.importance_cnt = this.results.length;
 
                     // 차트 호출
-                    this.fn_importance_chart(items);
+                    // this.fn_importance_chart(items);
                     
                     if (importance_grid) {
                         importance_grid.destroy()
