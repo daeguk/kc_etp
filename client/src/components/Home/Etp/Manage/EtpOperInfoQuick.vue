@@ -243,9 +243,6 @@ export default {
     },
     data() {
         return {
-            text: "전종목",
-            mini: false,
-
             toggleINav : false,
             toggleEtpPerformance : false,
             arrCustomizeColumn : [],

@@ -58,10 +58,6 @@ export default {
     },
     data() {
         return {
-            mini: false,
-            drawer : true,
-            dialog: false,
-
             toggleIndexOversea : false,
 
             /* 지수 조치현황 */
