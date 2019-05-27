@@ -228,7 +228,7 @@ export default {
                     ,   'month1'                        /* 1개월 */
                     ,   'month3'                        /* 3개월 */
                     ,   'month6'                        /* 6개월 */
-                    ,   'year1'                         /* 연환산 */
+                    ,   'ytd'                           /* ytd */
                     ,   'graph'                         /* 그래프 영역 */
                 ] );
             }
@@ -453,7 +453,7 @@ export default {
                 { 'name' : 'week1'              , 'data': 'week1'            ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '<br>1주'        },      /* 1주  */
                 { 'name' : 'month1'             , 'data': 'month1'           ,  'width' : '90',  'orderable' : true  , 'className': 'txt_right', 'title' : '수익률<br>1개월'      },     /* 1개월  */
                 { 'name' : 'month3'             , 'data': 'month3'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '<br>3개월' },      /* 3개월  */
-                { 'name' : 'ytd'                , 'data': 'ytd'              ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '<br>연환산'     },      /* ytd  */
+                { 'name' : 'ytd'                , 'data': 'ytd'              ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '<br>YTD'     },      /* ytd  */
                                                                                                                                                     
                 { 'name' : 'f30812'             , 'data': 'f30812'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : 'AUM'           },      /* 유동시가총액  */
                 { 'name' : 'prev_f15001'        , 'data': 'prev_f15001'      ,  'width' : '90',  'orderable' : true  , 'className': 'txt_right', 'title' : '지수<br>전일가'},     /* 기초지수 전일가  */
@@ -537,8 +537,52 @@ export default {
 
                                 return htm;
                             },
-                    },                    
-                
+                    },
+
+                    /* week1 */
+                    {       'name' : 'week1'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+
+                                htm += util.formatNumber(data);
+
+                                return htm;
+                            },
+                    },
+
+                    /* month1 */
+                    {       'name' : 'month1'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+
+                                htm += util.formatNumber(data);
+
+                                return htm;
+                            },
+                    },
+
+                    /* month3 */
+                    {       'name' : 'month3'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+
+                                htm += util.formatNumber(data);
+
+                                return htm;
+                            },
+                    },
+
+                    /* ytd */
+                    {       'name' : 'ytd'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+
+                                htm += util.formatNumber(data);
+
+                                return htm;
+                            },
+                    },
+
                     /* 그래프 */
                     {       'name' : 'graph'   
                         ,   "render": function ( data, type, row ) {
