@@ -151,34 +151,9 @@ export default {
     },
     data() {
         return {
-            text: "전종목",
-            text2: "",
-            dialog: false,
-            dialog2: false,
-            drawer: true,
-            search: "",
-            tab: null,
-            tab2: null,
             tab5: null,
             items5: ["분석정보", "기본정보"],
-            items4: [],
-            mini: false,
-            right: null,
-            rowsPerPageItems: [10, 20, 30, 50],
-            headers: [
-                {
-                    text: "Code",
-                    align: "left",
-                    value: "name"
-                },
-                { text: "name", value: "name" },
-                { text: "BasePrc", value: "BasePrc", align: "right" },
-                { text: "Shrs", value: "Shrs", align: "right" },
-                { text: "Float rto", value: "FloatRto", align: "right" },
-                { text: "Ceiling rto", value: "CeilingRto", align: "right" },
-                { text: "Factor rto", value: "FactorRto", align: "right" }
-            ],
-            desserts: [],
+
             toggle_one: '1M',
             basicData           :   {},
             etpBasic            :   {},
