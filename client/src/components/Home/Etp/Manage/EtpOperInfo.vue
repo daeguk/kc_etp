@@ -29,7 +29,7 @@
 
 
                     <v-card flat>
-                        <table id="table01" class="tbl_type"    style="width:100%"/>
+                        <table id="table01" class="tbl_type ver7"    style="width:100%"/>
                     </v-card>
                 </v-card>
             </v-flex>  
@@ -446,8 +446,8 @@ export default {
                                                                                                                                                     
                 { 'name' : 'f15304'             , 'data': 'f15304'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '괴리율'        },      /* ETP괴리율 */
                 { 'name' : 'index_nm'           , 'data': 'index_nm'         ,  'width' : '120', 'orderable' : true  , 'className': 'txt_left' , 'title' : '기초지수'      },      /* 기초지수명 */
-                { 'name' : 'index_f15001'       , 'data': 'index_f15001'     ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '지수' },      /* 지수 현재가 */
-                { 'name' : 'f18438'             , 'data': 'f18438'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '환율'          },      /* 적용환율 */
+                { 'name' : 'index_f15001'       , 'data': 'index_f15001'     ,  'width' : '70',  'orderable' : true  , 'className': 'txt_right', 'title' : '지수' },      /* 지수 현재가 */
+                { 'name' : 'f18438'             , 'data': 'f18438'           ,  'width' : '70',  'orderable' : true  , 'className': 'txt_right', 'title' : '환율'          },      /* 적용환율 */
                 { 'name' : 'f18001'             , 'data': 'f18001'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : 'ETF 전일가'    },      /* 전일ETF순자산총액(원)  */
 
                 { 'name' : 'week1'              , 'data': 'week1'            ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '<br>1주'        },      /* 1주  */
