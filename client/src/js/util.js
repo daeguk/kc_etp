@@ -29,6 +29,22 @@ var util = {
         } else {
             return 0;
         }
-    }
+    },
+    getToFixNum: function(diffVal) {
+      var toFixNum = 0;
+      var tVal = diffVal * 10000;
+
+      tVal = tVal.toFixed(0);
+
+      if((tVal % 10000) == 0) {
+        toFixNum = 0;
+      }else if((tVal % 100) == 0) {
+        toFixNum = 2;
+      }else {
+        toFixNum = 4;
+      }
+      return toFixNum;
+  }
+
 }  
   export default util
