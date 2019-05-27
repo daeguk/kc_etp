@@ -29,7 +29,7 @@
                                 <v-list>
                                     <!---pdf긴급반영 팝업-->
 
-                                    <v-list-tile class="border_b ver2" @click="fn_showDetailPdf(6)">
+                                    <v-list-tile class="border_b ver2" @click.stop="fn_showDetailPdf(6)">
                                         <v-list-tile-avatar>
                                             <v-icon value="긴급반영">flash_on</v-icon>
                                         </v-list-tile-avatar>
@@ -42,7 +42,7 @@
                                     <!---pdf긴급반영 팝업 팝업 end-->
                                     
                                     <!---iNAV 계산기 팝업---->
-                                    <v-list-tile class="border_b ver2" @click="fn_showDetailPdf(7)">
+                                    <v-list-tile class="border_b ver2" @click.stop="fn_showDetailPdf(7)">
                                         <v-list-tile-avatar>
                                             <v-icon value="계산기" icon>exposure</v-icon>
                                         </v-list-tile-avatar>
@@ -58,6 +58,7 @@
                                     <v-list-tile
                                         class="border_b ver2 importance"
                                         @click="fn_setEtpOperPdfByRate"
+                                        v-model="togglePdfByRate"
                                     >
                                         <v-list-tile-avatar>
                                             <v-icon value="비중변경현황" icon>find_replace</v-icon>
