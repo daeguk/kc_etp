@@ -67,7 +67,7 @@ export default {
          */
         this.$EventBus.$on("quickmenucon_IndexRegisterMain_call", res => {
             var vm = this;
-debugger;
+
             if( res && res.jisu_id ) {
                 vm.editYn   = true;
                 vm.editData = res;
