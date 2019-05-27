@@ -330,7 +330,7 @@ var deleteEtpApply = function (req, res) {
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
-        util.log("params.seqValues:::", JSON.stringify(req.query.seqValues));
+        util.log("params.seqValues:::", JSON.stringify(req.session));
 
         var params = { 
                         "user_id":  req.session.user_id,
