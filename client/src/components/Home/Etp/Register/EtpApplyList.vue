@@ -91,7 +91,7 @@ import buttons from "datatables.net-buttons";
 import Config from "@/js/config.js";
 import companyContactModal from "./companyContactModal";
 import idxConfirmModal from "./idxConfirmModal";
-import excel from "xlsx";
+//import excel from "xlsx";
 var table = null;
 
 export default {
