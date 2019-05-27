@@ -261,6 +261,7 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 
 .tbl_type.ver6 th{background-color:#f3f3f3; border-bottom:1px solid #e5e5e5}
 .tbl_type.ver6 td{font-weight: 400 !important;}
+.tbl_type.ver7 td{font-size:12px !important; font-weight: 400 !important;}
 
 
 
@@ -323,7 +324,8 @@ h3.subtit p{font-size: 16px;  margin: 0px; font-weight: 400;}
 h3.subtit p span{padding-left:20px; color:#959EB1;}
 h3.subtit p.sub_txt{font-size:14px; font-weight: normal;color:#959EB1;}
 h3.subtit p span.text_result{width:30px; text-align: right;padding-left:0px; display:inline-block;}
-
+h3.subtit span.text_result{width:30px; text-align: right;padding-left:0px; display:inline-block;}
+h3.subtit span.text_result_t{color:#5a667C; margin-right:15px;}
 .index_subtoolbar h3{ padding-top:24px;}
 
 
