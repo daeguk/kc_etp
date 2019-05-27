@@ -32,6 +32,7 @@
                                             box
                                             outline
                                             v-on="on"
+                                            @change="$refs.menu2.save(searchParam.show_date);fn_getEtpOerPdf( 'N' )"
                                             widh="100%"
                                         ></v-text-field>
                                     </template>
@@ -81,6 +82,7 @@ import $ from "jquery";
 import _ from "lodash";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
+import dtFc from "datatables.net-fixedcolumns";
 
 import Config from "@/js/config.js";
 import EtpOperPdfQuick from "@/components/Home/Etp/Manage/EtpOperPdfQuick.vue";
@@ -329,10 +331,15 @@ export default {
                 info: false, // control table information display field
                 stateSave: true, //restore table state on page reload,
                 lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                "scrollY": '60vh',
                 paging: false,
                 searching: false,
                 data: [],
-                autoWidth: false
+                autoWidth: false,
+
+                fixedColumns:   {
+                    leftColumns: 4,
+                }
             };
 
             /* pdf - PDF 관리, pdfByRate - 비중변경현황 */

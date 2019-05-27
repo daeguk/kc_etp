@@ -56,7 +56,7 @@ import $      from 'jquery';
 import dt      from 'datatables.net';
 import buttons from 'datatables.net-buttons';
 import util       from "@/js/util.js";
-import dtfx from "datatables.net-fixedcolumns";
+import dtFc from "datatables.net-fixedcolumns";
 
 import Config from '@/js/config.js';
 import EtpOperInfoQuick         from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
