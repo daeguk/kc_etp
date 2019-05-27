@@ -12,7 +12,7 @@
                     </v-card-title>
                 </h5>
                 <v-card flat>
-                    <table id="companyContact_grid" class="display table01_w">
+                    <table id="companyContact_grid" class="tbl_type ver6">
                         <colgroup>
                             <col width="25%">
                             <col width="25%">
