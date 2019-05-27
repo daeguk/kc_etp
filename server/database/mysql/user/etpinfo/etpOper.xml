@@ -602,6 +602,14 @@
                 ,   td_etp_basic.F34783                                 AS  f34783              /* ETP지수자산소분류2 */
                 ,   td_etp_basic.F33960                                 AS  f33960              /* ETP운용사코드 */
                 ,   td_etp_basic.F33961                                 AS  f33961              /* ETP운용사명(한글명) */
+                ,   td_etp_basic.F34240                                 AS  f34240              /* ETP계산유형 */
+                ,   td_etp_basic.F33929                                 AS  f33929              /* ETP_iNAV산출방식(0:PDF,1:지수수익율) */
+                ,   (
+                        SELECT  tm_code_dtl.com_dtl_name
+                          FROM  tm_code_dtl
+                         WHERE  tm_code_dtl.com_mst_cd  =   'COM005'
+                           AND  tm_code_dtl.com_dtl_cd  =   td_etp_basic.F33929
+                    )                                                   AS  f33929_nm           /* ETP_iNAV산출방식(0:PDF,1:지수수익율) */
     ]]>
     </sql>
 
@@ -649,8 +657,34 @@
         SELECT      /* etpOper.getEtpOperInfo  ETP 운용관리 - ETP 운영정보를 조회한다. */
                     <include    refid="sqlEtpBasic01" />
 
+                ,   IFNULL(
+                            CASE    WHEN    /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                                            /* ETP 상품구분이 ETF 인 경우 */
+                                            td_etp_basic.f16493                     IN  ( '1', '2' ) 
+                                    THEN    (
+                                                SELECT  td_etfpdf_basic.f16583
+                                                  FROM  td_etfpdf_basic
+                                                 WHERE  td_etfpdf_basic.f16012      =   td_etp_basic.f16012         /* 국제표준코드 */
+                                                   AND  td_etfpdf_basic.f16013      =   td_etp_basic.f16013         /* ETF단축코드 */
+                                                 LIMIT  1
+                                            )
+
+                                            /* ETP 상품구분이 ETN 인 경우 */
+                                    WHEN    td_etp_basic.f16493                     IN  ( '3', '4' )
+                                    THEN    (
+                                                SELECT  td_etnpdf_basic.f16583
+                                                  FROM  td_etnpdf_basic
+                                                 WHERE  td_etnpdf_basic.f16012      =   td_etp_basic.f16012         /* 국제표준코드 */
+                                                   AND  td_etnpdf_basic.f16013      =   td_etp_basic.f16013         /* ETF단축코드 */
+                                                 LIMIT  1
+                                            )
+                            END
+                        ,   ''
+                    )                                                               AS  f16583              /* 사무수탁회사번호 */
                 ,   td_index_basic.f16002                                           AS  index_nm            /* 지수명 */
                 ,   td_index_basic.f15001                                           AS  index_f15001        /* 지수 현재가 */
+                ,   td_index_basic.f15007                                           AS  index_f15007        /* 지수 기준가 */
+                ,   DATE_FORMAT(td_index_basic.std_date, '%Y.%m.%d' )              AS   index_std_date        /* 지수 기준일 */
                 ,   td_index_basic.index_cal_method                                 AS  index_cal_method    /* 지수 산출방식 */
 
                 ,   (
@@ -672,6 +706,7 @@
                 ,   td_etp_basic.W00013                                             AS  month1
                 ,   td_etp_basic.W00014                                             AS  month3
                 ,   td_etp_basic.W00015                                             AS  ytd
+                ,   td_etffor_mast.EX_RATE_CODE                                     AS ex_rate_code     /* 환율 코드 */        
 
           FROM          td_etp_basic
           LEFT  JOIN    td_index_basic
@@ -679,10 +714,12 @@
                          td_index_basic.F16013           =  td_etp_basic.f16257                                                 /* 단축코드 = ETP기초지수코드 */
                     AND  td_index_basic.MARKET_ID        LIKE    CONCAT( '_' , LPAD( td_etp_basic.f34239, 3, '0' ) , '%' )      /* 시장 ID = ETP기초지수MID */
                 )
+          LEFT OUTER JOIN td_etffor_mast ON (
+  		                 td_etp_basic.f16012 = td_etffor_mast.ISIN_CODE
+          ) 
          WHERE  1 = 1
 
            AND  td_etp_basic.f33960                 =   #{krx_cd}                   /* ETP운용사코드 가 로그인한 운용사 코드와 동일한 정보만 추출 */
-
         
         <if test= 'isEtfYn != null  and  isEtfYn == "Y" ' >
            AND  td_etp_basic.f16493                 IN  ( '1', '2' )                /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
@@ -726,6 +763,11 @@
     </select>    
 
 
+    <insert id="setGroupConcatMaxLen">
+        SET SESSION group_concat_max_len = CAST( #{group_concat_max_len} AS SIGNED );
+    </insert>
+    
+
     <!--
     * ETP 운용관리 - 지수관리 를 조회한다.
     * 2019-05-03  bkLove(촤병국)
@@ -738,6 +780,34 @@
                 ,   '1'                                                 AS  manage_type
                 ,   '2018.09.05'                                        AS  last_date
                 ,   '18:00:01'                                          AS  last_time
+                ,   IFNULL(
+                            (
+                                SELECT  CONCAT(
+                                                '['
+                                            ,   COALESCE(
+                                                        GROUP_CONCAT(
+                                                            CONCAT(
+                                                                    '{'
+                                                                ,       '\"f16012\": \"', REPLACE( REPLACE(                 f16012, '"', '\\\\"'),'\n','\\\\n'), '\", '                 /* 국제표준코드 */
+                                                                ,       '\"f16002\": \"', REPLACE( REPLACE(                 f16002, '"', '\\\\"'),'\n','\\\\n'), '\", '                 /* 한글종목명 */
+                                                                ,       '\"f16257\": \"', REPLACE( REPLACE(                 f16257, '"', '\\\\"'),'\n','\\\\n'), '\", '                 /* ETP기초지수코드 */
+                                                                ,       '\"f34239\": \"', REPLACE( REPLACE( LPAD( f34239, 3, '0' ), '"', '\\\\"'),'\n','\\\\n'), '\"'    /* ETP기초지수MID */
+                                                                ,   '}'
+                                                            )
+                                                            ORDER   BY  f16002  ASC
+                                                            SEPARATOR ','
+                                                        )
+                                                    ,   ''
+                                                )
+                                            ,   ']'
+                                        )
+                                  FROM  td_etp_basic
+                                 WHERE  td_etp_basic.f16257     =   td_index_basic.f16013                                       /* 단축코드 */
+                                   AND  td_etp_basic.f34239     =   CAST( SUBSTR( td_index_basic.MARKET_ID , 2 ) AS SIGNED )    /* 시장 ID */
+                                 GROUP  BY F16257
+                            )
+                        ,   ''
+                    )                                                   AS  etp_info_json
 
           FROM  td_index_basic
 
@@ -831,6 +901,35 @@
 
          WHERE  1 = 1
     </select>
+
+    <!--
+    * ETP 운용관리 - PDF 긴급반영 - 저장시 이미 등록된 데이터가 존재하는지 체크한다.
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="getTmPdfModifyExistsCheck">
+        SELECT   COUNT(*)                               AS  exists_cnt   /* 존재 건수 */
+
+          FROM  (
+                <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
+                <![CDATA[              
+                    SELECT      #{f16583}               AS  f16583      /* 사무수탁회사번호 */
+                            ,   #{f16012}               AS  f16012      /* ETF종목코드 */
+                            ,   #{f16013}               AS  f16013      /* ETF단축코드 */
+                            ,   #{data.f16316}          AS  f16316      /* 구성종목코드 */
+                      FROM  DUAL
+                ]]>
+                </foreach>
+                )       base
+         INNER  JOIN    tm_pdf_modify_dtl
+         WHERE  1 = 1
+
+           AND  tm_pdf_modify_dtl.f16583            =   base.f16583     /* 사무수탁회사번호 */
+           AND  tm_pdf_modify_dtl.f16012            =   base.f16012     /* ETF종목코드 */
+           AND  tm_pdf_modify_dtl.f16013            =   base.f16013     /* ETF단축코드 */
+           AND  tm_pdf_modify_dtl.f16316            =   base.f16316     /* 구성종목코드 */
+
+         LIMIT  1
+    </select>    
 
     <!--
     * [tm_pdf_modify] 테이블에 저장한다.

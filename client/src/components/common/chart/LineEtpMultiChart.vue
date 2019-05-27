@@ -131,6 +131,8 @@ export default {
               if(response.data.results.length > 0) {
                 vm.intra_data = response.data.results.reverse();
                 vm.draw_intra(vm.dmode);
+              }else {
+                alert("해당 ETP의 데이터가 없습니다");
               }
           }
         });
@@ -153,6 +155,8 @@ export default {
                 vm.hist_data = [];
                 vm.hist_data = response.data.results.reverse();
                 vm.draw_hist(vm.dmode);
+              }else {
+                alert("해당 ETP의 데이터가 없습니다");
               }
           }
         });
@@ -227,10 +231,10 @@ export default {
         var grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
         if(this.dmode == 0) {
           grd.addColorStop(0, "#C5E1A5");
-          grd.addColorStop(1, "#0D47A1");
+          grd.addColorStop(1, "#85c406");
         }else {
-          grd.addColorStop(0, "#FFEA00");
-          grd.addColorStop(1, "#FF5252");
+          grd.addColorStop(0, "#78c6f8");
+          grd.addColorStop(1, "#1e99e8");
         }
         c.lineWidth = 3;
         c.setLineDash([]);
@@ -336,10 +340,10 @@ export default {
         var grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
         if(this.dmode == 0) {
           grd.addColorStop(0, "#C5E1A5");
-          grd.addColorStop(1, "#0D47A1");
+          grd.addColorStop(1, "#85c406");
         }else {
-          grd.addColorStop(0, "#FFEA00");
-          grd.addColorStop(1, "#FF5252");
+          grd.addColorStop(0, "#78c6f8");
+          grd.addColorStop(1, "#1e99e8");
         }
         c.lineWidth = 3;
         c.setLineDash([]);
@@ -472,7 +476,7 @@ export default {
         c.beginPath();
         var grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
         grd.addColorStop(0, "#C5E1A5");
-        grd.addColorStop(1, "#0D47A1");
+        grd.addColorStop(1, "#85c406");
 
         c.lineWidth = 3;
         c.setLineDash([]);
@@ -496,8 +500,8 @@ export default {
         // INDEX 차트 그리기
         c.beginPath();
         grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
-        grd.addColorStop(0, "#FFEA00");
-        grd.addColorStop(1, "#FF5252");
+        grd.addColorStop(0, "#78c6f8");
+        grd.addColorStop(1, "#1e99e8");
         c.strokeStyle = grd ;
         vm.sArr.forEach(function(item, index) {
           // console.log("draw_mintra... : " + index);
@@ -626,7 +630,7 @@ export default {
         c.beginPath();
         var grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
         grd.addColorStop(0, "#C5E1A5");
-        grd.addColorStop(1, "#0D47A1");
+        grd.addColorStop(1, "#85c406");
 
         c.lineWidth = 3;
         c.setLineDash([]);
@@ -650,8 +654,8 @@ export default {
         // INDEX 차트 그리기
         c.beginPath();
         grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
-        grd.addColorStop(0, "#FFEA00");
-        grd.addColorStop(1, "#FF5252");
+        grd.addColorStop(0, "#78c6f8");
+        grd.addColorStop(1, "#1e99e8");
         c.strokeStyle = grd ;
         vm.sArr.forEach(function(item, index) {
           // console.log("draw_mintra... : " + index);
@@ -695,21 +699,30 @@ export default {
       },
       // 마우스 이동시 툴팁 처리
       mouseMove: function(event) {
-        var c = this.ctx;
-        var _mwpos = event.pageX-this.mrect.left;
-        var _mhpos = event.pageY-this.mrect.top;
-        c.putImageData(this.draw_chart_image, this.crect.x1, this.crect.y1-10);
-        if(this.selectGuideCheck(_mwpos, _mhpos) !== -1) {
-          // console.log("Got.......... guide");
-          this.drawGuideLine(_mwpos);
-          if(this.dmode == 2) this.drawMToolTip(_mwpos, _mhpos);
-          else  this.drawToolTip(_mwpos, _mhpos);
+        if(Object.keys(this.draw_chart_image).length === 0) {
+
+        }else {
+          var c = this.ctx;
+          var _mwpos = event.pageX-this.mrect.left;
+          var _mhpos = event.pageY-this.mrect.top;
+          c.putImageData(this.draw_chart_image, this.crect.x1, this.crect.y1-10);
+          if(this.selectGuideCheck(_mwpos, _mhpos) !== -1) {
+            // console.log("Got.......... guide");
+            this.drawGuideLine(_mwpos);
+            if(this.dmode == 2) this.drawMToolTip(_mwpos, _mhpos);
+            else  this.drawToolTip(_mwpos, _mhpos);
+          }
         }
+
       },
       // 마우스 OUT 툴팁 처리
       mouseLeave: function(event) {
-        var c = this.ctx;
-        c.putImageData(this.draw_chart_image, this.crect.x1, this.crect.y1-10);
+        if(Object.keys(this.draw_chart_image).length === 0) {
+
+        }else {
+          var c = this.ctx;
+          c.putImageData(this.draw_chart_image, this.crect.x1, this.crect.y1-10);
+        }
       },
 
       // 세로 가이드 라인 처리
@@ -803,7 +816,7 @@ export default {
           // ETP POINT
           dhpos = this.getHPosByPos(wpos);
           c.beginPath();
-          c.fillStyle = "#42A5F5";
+          c.fillStyle = "#85c406";
           c.arc(wpos, dhpos, 5, 0, Math.PI*2);
           c.fill();
           c.stroke();
@@ -811,7 +824,7 @@ export default {
           // INDEX POINT
           dhpos = this.getHPosByPos1(wpos);
           c.beginPath();
-          c.fillStyle = "#FFAB00";
+          c.fillStyle = "#1e99e8";
           c.arc(wpos, dhpos, 5, 0, Math.PI*2);
           c.fill();
           c.stroke();
@@ -952,7 +965,7 @@ console.log("wpos : " + _mwpos + " hpos : " + _mhpos);
 
         // 테두리
         c.beginPath();
-        c.strokeStyle = "#37474F";
+        c.strokeStyle = "#cacaca";
         c.lineWidth = 0.7;
         c.moveTo(ix[0], iy);
         c.lineTo(ix[2]+iw, iy);
@@ -976,7 +989,7 @@ console.log("wpos : " + _mwpos + " hpos : " + _mhpos);
         });
 
         // Active
-        c.fillStyle = "#039BE5";
+        c.fillStyle = "#85c406";
         c.fillRect(ix[dmode], iy, iw, ih);
 
         c.fillStyle = "#FFFFFF";
@@ -1002,8 +1015,8 @@ console.log("wpos : " + _mwpos + " hpos : " + _mhpos);
 
         // 테두리
         c.beginPath();
-        c.strokeStyle = "#37474F";
-        c.lineWidth = 0.7;
+        c.strokeStyle = "#ffffff";
+        c.lineWidth = 1;
         c.moveTo(ix[0], iy);
         c.lineTo(ix[tnum -1]+iw, iy);
         c.lineTo(ix[tnum -1]+iw, iy+ih);
@@ -1027,7 +1040,7 @@ console.log("wpos : " + _mwpos + " hpos : " + _mhpos);
         });
 
         // Active
-        c.fillStyle = "#039BE5";
+        c.fillStyle = "#85c406";
         c.fillRect(ix[dterm], iy, iw, ih);
 
         c.fillStyle = "#FFFFFF";

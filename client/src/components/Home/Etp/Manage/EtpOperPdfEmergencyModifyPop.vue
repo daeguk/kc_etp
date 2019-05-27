@@ -220,17 +220,7 @@ export default {
     props : [ "showDialog", "paramData" ],
     data() {
         return {
-            dialog2: false,
-            dialog5: false,
-            drawer: true,
-            search: "",
             step: 1,
-            panel: [],
-            tab2: "",
-            items4: [],
-            on: false,
-
-
             tblEmergeny01 : "tblEmergeny01",
             etpBasic : {},
             dataList : [],
@@ -248,17 +238,6 @@ export default {
     created: function() {
 
         var vm = this;
-
-        vm.$EventBus.$on('EtpOperControl_EtpOperPdfEmergencyModifyPop_call', data => {
-            console.log( "EventBus EtpOperControl_EtpOperPdfEmergencyModifyPop_call>>>>>>>" );
-            console.log( data );
-
-        });
-
-        vm.$EventBus.$on('EtpOperControl_EtpOperPdfEmergencyModifyPop_close', data => {
-            vm.$EventBus.$off('EtpOperControl_EtpOperPdfEmergencyModifyPop_call');         
-        });
-
     },
     mounted: function() {
 
@@ -335,8 +314,8 @@ export default {
                 { "data" : "f16499_prev"    ,   "visible"   : false   },                                                                /* CU shrs (변경전) */
 
                 { "data" : "f12506"         ,   "orderable" : false  ,   "className" : "txt_center" ,   "width" :   "10%"   , "title" :   "Date"          },   /* Date */
-                { "data" : "f33861"         ,   "orderable" : false  ,   "className" : "txt_center" ,   "width" :   "7%"    , "title" :   "시장<br>구분"      },  /* 시장구분 */
-                { "data" : "f16316"         ,   "orderable" : false  ,   "className" : "txt_left"   ,   "width" :   "15%"   , "title" :   "구성종목코드"  },  /* 구성종목코드 */
+                { "data" : "f33861"         ,   "orderable" : false  ,   "className" : "txt_center" ,   "width" :   "8%"    , "title" :   "시장<br>구분"      },  /* 시장구분 */
+                { "data" : "f16316"         ,   "orderable" : false  ,   "className" : "txt_left"   ,   "width" :   "14%"   , "title" :   "구성종목코드"  },  /* 구성종목코드 */
                 { "data" : "f16002"         ,   "orderable" : false  ,   "className" : "txt_left"   ,   "width" :   "18%"   , "title" :   "종목명"        },  /* 종목명 */
                 { "data" : "f16499"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "15%"   , "title" :   "CU shrs"       },  /* CU shrs */
                 { "data" : "f34840"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "10%"   , "title" :   "액면금액"      },  /* 액면금액 */
@@ -398,9 +377,9 @@ export default {
 
 
         var searchParam                 =   {}
-        searchParam.searchCode          =   vm.paramData.f16012;                   /* 국제표준코드 */
+        searchParam.f16012              =   vm.paramData.f16012;                   /* 국제표준코드 */
 /* 여러종류의 ETF 코드 데이터 저장을 위해 임시로 처리함 */
-searchParam.searchCode              =   "KR7322410002";
+//        searchParam.f16012              =   "KR7322410002";
         searchParam.initYn              =   "Y";
 
         vm.fn_getEtpOperPdfModify( searchParam );
@@ -470,10 +449,10 @@ searchParam.searchCode              =   "KR7322410002";
 
                             /* 사무수탁회사번호 가 없는 경우 */
 /* 여러종류의 ETF 코드 데이터 저장을 위해 임시로 처리함 */
-etpBasic.f16583 = 10;
+//etpBasic.f16583 = 10;
                             if( etpBasic.f16583 == "" ) {
                                 vm.result.flag  =   false;
-                                vm.result.msg   =   '해당코드의 데이터가 존재하지 않습니다.';
+                                vm.result.msg   =   '사무수탁회사번호가 존재하지 않습니다.';
 
                                 return  false;
                             }

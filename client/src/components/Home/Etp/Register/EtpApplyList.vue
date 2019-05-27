@@ -54,7 +54,7 @@
                                 <th style="display: none">idx_sym_code</th>
                                 <th style="display: none">ridx_dist_sym_code</th>
                                 <th width="12%">발행사</th>
-                                <th width="20%">종목명</th>
+                                <th width="18%">종목명</th>
                                 <th width="8%">신청일</th>
                                 <th width="8%">국내/해외</th>
                                 <th width="10">기초지수</th>
@@ -67,8 +67,8 @@
                     </table>
                      <v-card-actions flat class="mr-3">
                          <v-spacer></v-spacer>
-                        <v-btn depressed color="#9e9e9e" dark @click="deleteEtpApplyList()">삭제</v-btn>
-                        <v-btn depressed color="#48485e" dark @click="download-excel">엑셀</v-btn>
+                        <v-btn depressed color="#9e9e9e" dark @click="deleteEtpApply()">삭제</v-btn>
+                        <v-btn depressed color="#48485e" dark @click="downloadExcel">엑셀</v-btn>
                     </v-card-actions>
                 </v-card>
                 <!---실제적용 테이블end--->
@@ -91,6 +91,7 @@ import buttons from "datatables.net-buttons";
 import Config from "@/js/config.js";
 import companyContactModal from "./companyContactModal";
 import idxConfirmModal from "./idxConfirmModal";
+import excel from "xlsx";
 var table = null;
 
 export default {
@@ -173,19 +174,19 @@ export default {
 
                                columnDefs: [
                                 {  
+                                       "render": function ( data, type, row ,meta) {
+                                        return "<input type='checkbox' color='primary' name='seq'   value='" + row.seq + "'>";
+                                        },   
+                                        "targets": 0 
+                                },
+                                {  
                                         "data": "num",
                                         "render": function ( data, type, row ,meta) {
                                             return meta.row + meta.settings._iDisplayStart + 1;
                                         },   
                                         "targets": 1 
                                 },
-                                // {
-                                //     "render": function ( data, type, row ) {
-                                //        let shtml = '' ;
-                                //        return shtml = "<a href='#' ></a>";
-                                //     },
-                                //      "targets": 7
-                                // },
+
                                 {  
                                     "render": function ( data, type, row ) {
                                         let shtml = '' ;
@@ -299,10 +300,7 @@ export default {
                                 {
                                    data: "null",
                                    className: "td_in_center",
-                                   "orderable" : false,
-                                   defaultContent:[
-                                        "<input type='checkbox' color='primary' v-model='seqValues' name= 'seqValues 'label='' value=''>"
-                                   ],
+                                   "orderable" : false
                                 },
                                 { "data" : "num" , "orderable" : true },
                                 { "data" : "seq" , "orderable" : false },
@@ -321,8 +319,8 @@ export default {
                                   },
                                 { data: null, className: "", defaultContent:"" , "orderable" : false,},
                                 { data: null, className: "", defaultContent:[
-                                        '<td><div class="tooltip"><button type="button" id="pdf" class="btn_icon v-icon material-icons">equalizer</button><span class="tooltiptext" style="width:70px;">기초지수</span></div>'
-                                        + '<div class="tooltip"><button type="button" id="pdf" class="btn_icon v-icon material-icons">trending_up</button><span class="tooltiptext" style="width:70px;">iNAV</span></div></td> '
+                                        '<td><div class="tooltip"><button type="button" name="popIdx" class="btn_icon v-icon material-icons">equalizer</button><span class="tooltiptext" style="width:70px;">기초지수</span></div>'
+                                        + '<div class="tooltip"><button type="button" name="popInav" class="btn_icon v-icon material-icons">trending_up</button><span class="tooltiptext" style="width:70px;">iNAV</span></div></td> '
                                         ] , "orderable" : false,},
                                 { "data" : "idx_nm", "orderable": false },        
                             ],
@@ -336,7 +334,7 @@ export default {
                         $('#example1 tbody tr td:nth-child(16)').hide();
                         
                     
-                        $("#example1 tbody").on('click', 'tr td:nth-child(6)', function(){
+                        $("#example1 tbody").on('click', 'tr td:nth-child(9)', function(){
                             var tr = $(this).parents();
                             var td = tr.children();
                             var seq = td.eq(2).text(); 
@@ -345,13 +343,13 @@ export default {
                         });
                     
                         //기초지수 확인팝업 
-                        $("#example1 tbody").on('click', 'tr td:nth-child(15)', function(){
+                        $("button[name=popIdx]").on('click', function(){
                             console.log("#CLICK example1 > tbody > tr > basic index",$(this));
-                            var tr = $(this).parents();
-                            var td = tr.children();
-                            var idxMid = td.eq(4).text();
-                            var idxSymCode = td.eq(5).text();
-                            var ridxDistSymCode = td.eq(6).text();
+
+                            var tr = $(this).parent().parent().parent();
+                            var idxMid = $(tr).find("td:eq(4)").text();
+                            var idxSymCode = $(tr).find("td:eq(5)").text();
+                            var ridxDistSymCode = $(tr).find("td:eq(6)").text();
                             var idxTable= 'm' + idxMid + 'hbased'  ;
                             var marketId= 'M' + idxMid  ;
                             console.log("idxModal : " + idxMid + ": " + idxTable + ": " + idxSymCode + ": " + ridxDistSymCode + " :" +  marketId)
@@ -359,7 +357,7 @@ export default {
                             vm.idxConfirmModal.idxSymCode = idxSymCode;
                             vm.idxConfirmModal.ridxDistSymCode = ridxDistSymCode;
                             vm.idxConfirmModal.marketId = marketId;
-                            vm.idxConfirmModal.idxNm = td.eq(15).text();;
+                            vm.idxConfirmModal.idxNm = $(tr).find("td:eq(15)").text();;
                             vm.idxConfirmModal.dialog = true;
                             vm.showIdxListPop();
                         });                        
@@ -466,24 +464,41 @@ export default {
         hideIdxListPop: function() {
             this.idxConfirmModal.dialog = false;
         },      
-        deleteEtpApplyList: function() {        
+        deleteEtpApply: function() {        
             var vm = this;
-            //var tr = $(this).parents();
-            //var td = tr.children();
-            //var seq = td.eq(2).text(); 
-            console.log("seqValues: " + this.seqValues );
-            
-            axios.post(Config.base_url + "/user/etp/deleteEtpApplyList", {
+            var delList = $('input[name=seq]:checked');
+             console.log("delList: " + delList.length );
+            if(delList.length == 0){
+                alert('삭제할 항목을 선택하여 주십시요');
+                return;
+            }
+            var seqValues = [];
+            $('input[name=seq]:checked').each(function(){
+               seqValues.push($(this).val());     
+            });
+            console.log("seqValues: " + seqValues );
+            axios.get(Config.base_url + "/user/etp/deleteEtpApply", {
                 params: {
-                    seqValues : this.seqValues,
+                    seqValues : seqValues
                 }
             }).then(function(response) {
                 if (response.data.success == false) {
                     vm.$emit("showMessageBox", '확인','삭제 중 오류가 발생했습니다.',{},1);
                 } 
+                location.reload();
             });
 
         },
+        downloadExcel: function() {
+            var vm = this;
+
+            var dataWS = excel.utils.json_to_sheet(vm.results);
+            var wb = excel.utils.book_new();
+            
+            excel.utils.book_append_sheet(wb, dataWS, "신청목록");
+            excel.writeFile(wb, "해외ETP신청목록.xlsx");
+
+        }
     }
     
 };

@@ -324,6 +324,43 @@ var getRidxList = function (req, res) {
         util.log("err=>", exception);
     }
 };
+var deleteEtpApply = function (req, res) {
+    try {
+        console.log('EtpApply=>deleteEtpApply 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        util.log("params.seqValues:::", JSON.stringify(req.query.seqValues));
+
+        var params = { 
+                        "user_id":  req.session.user_id,
+                        "seqValues":  req.query.seqValues
+                       };
+
+        util.log("params:::", JSON.stringify(params));
+
+        var stmt = mapper.getStatement('EtpRegister', 'deleteEtpApply', params, {language:'sql', indent: '  '});
+        console.log(stmt);
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    result: true
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while deleteEtpApply.", err);
+                res.json({
+                    result: false
+                    ,msg: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
 
 
 
@@ -335,3 +372,4 @@ module.exports.getEtpApplyInavCnt = getEtpApplyInavCnt;
 module.exports.getCompContactList = getCompContactList;
 module.exports.getIdxList = getIdxList;
 module.exports.getRidxList = getRidxList;
+module.exports.deleteEtpApply = deleteEtpApply;

@@ -9,6 +9,7 @@
                             @showDetail="showDetail" 
                             @showMessageBox="showMessageBox"
                             @fn_showDetailIndex="fn_showDetailIndex"
+                            @fn_showDetailPdf="fn_showDetailPdf"
                             @fn_pageMove="fn_pageMove">
             </EtpOperInfo>
 
@@ -24,10 +25,10 @@
             <EtpOperPdf     v-if="showEtpOerInfo == 2" 
 
                             :paramData="paramData"
-                            @showDetail="showDetail" 
                             @showMessageBox="showMessageBox"
-                            @fn_setPdfQuickPdfData="fn_setPdfQuickPdfData"
-                            @fn_setPdfQuickIndexBasicData="fn_setPdfQuickIndexBasicData">
+
+                            @fn_showDetailIndex="fn_showDetailIndex"
+                            @fn_showDetailPdf="fn_showDetailPdf">
             </EtpOperPdf>
 
             
@@ -96,7 +97,7 @@
                                             @fn_closePop="fn_close" >
             </EtpOperPdfEmergencyModifyPop>
 
-            <!-- iNAV 계산기 팝업 -->
+            <!-- (PDF) iNAV 계산기 팝업 -->
             <EtpOperPdfInavCalcPop          v-if="showEtpOperPdfInavCalcPop"
 
                                             :paramData="paramData" 
@@ -106,6 +107,15 @@
                                             @fn_closePop="fn_close" >
             </EtpOperPdfInavCalcPop>
 
+            <!-- (지수 수익율) iNAV 계산기 팝업 -->
+            <v-dialog  v-model="showEtpOperIndexInavCalcPop"  persistent  max-width="600" >
+                <EtpOperInfoInavIndex   v-if="showEtpOperIndexInavCalcPop"
+
+                                        :paramData = "paramData"
+                                        @fn_close = "fn_close">
+                </EtpOperInfoInavIndex>
+            </v-dialog>
+
         </v-flex>
 
         <v-flex :class="FaverClassName">
@@ -114,19 +124,6 @@
                                     @showDetail="showDetail" 
                                     @showMessageBox="showMessageBox">
             </ComEtpFavorItemSub>
-             <!-- [PDF 관리] Quick 메뉴 정보 -->
-            <EtpOperPdfQuick
-                v-if="showEtpOerPdfQuick" 
-
-                :pdfData="pdfData"
-                :indexBasic = "indexBasic"
-                @showDetail="showDetail"
-                @showMessageBox="showMessageBox"
-
-                @fn_showDetailIndex="fn_showDetailIndex"
-                @fn_setEtpOperPdfByRate = "fn_setEtpOperPdfByRate"
-                @fn_showDetailPdf="fn_showDetailPdf">
-            </EtpOperPdfQuick>
         </v-flex>
 
     </v-layout> 
@@ -155,9 +152,10 @@ import EtpOperIndexErrorPop         from "@/components/Home/Etp/Manage/EtpOperIn
 import EtpOperInfo                  from "@/components/Home/Etp/Manage/EtpOperInfo.vue";                    /* ETP 운용정보 */
 import EtpOperIndex                 from "@/components/Home/Etp/Manage/EtpOperIndex.vue";                   /* 지수관리 */
 import EtpOperPdf                   from "@/components/Home/Etp/Manage/EtpOperPdf.vue";                     /* PDF 관리 */
-import EtpOperPdfQuick from "@/components/Home/Etp/Manage/EtpOperPdfQuick.vue";
+
 import EtpOperPdfEmergencyModifyPop from "@/components/Home/Etp/Manage/EtpOperPdfEmergencyModifyPop.vue";   /* PDF 긴급반영 팝업 */
-import EtpOperPdfInavCalcPop        from "@/components/Home/Etp/Manage/EtpOperPdfInavCalcPop.vue";          /* iNAV 계산기 팝업 */
+import EtpOperPdfInavCalcPop        from "@/components/Home/Etp/Manage/EtpOperPdfInavCalcPop.vue";          /* (PDF) iNAV 계산기 팝업 */
+import EtpOperInfoInavIndex     from    "@/components/Home/Etp/Manage/EtpOperInfoInavIndex.vue";            /* (지수 수익율) iNAV 계산기 팝업 */
 
 export default {
     props: ["activeTab"],
@@ -169,8 +167,10 @@ export default {
             showEtpOperIndexDetailListDialog : false,
             showEtpOperIndexFixDialog: false,
             showEtpOperIndexErrorDialog : false,
+            showEtpOerPdfMain : false,
             showEtpOperPdfEmergencyModifyPop : false,
             showEtpOperPdfInavCalcPop : false,
+            showEtpOperIndexInavCalcPop : false,
             showEtpOerPdfQuick : false,
             showFaver : false,
 
@@ -180,7 +180,6 @@ export default {
             FaverClassName: '',
             pdfData : {},
             indexBasic : {},
-            selectedQuickData : {}
     	};
     },    
 
@@ -192,15 +191,15 @@ export default {
         ComIndexFixPopup                :   ComIndexFixPopup,                   /* 지수조치현황 */
         EtpOperIndexErrorPop            :   EtpOperIndexErrorPop,               /* 지수오류내역 */
         EtpOperPdfEmergencyModifyPop    :   EtpOperPdfEmergencyModifyPop,       /* PDF 긴급반영 팝업 */
-        EtpOperPdfInavCalcPop           :   EtpOperPdfInavCalcPop,              /* iNAV 계산기 팝업 */
+        EtpOperPdfInavCalcPop           :   EtpOperPdfInavCalcPop,              /* (PDF) iNAV 계산기 팝업 */
+        EtpOperInfoInavIndex            :   EtpOperInfoInavIndex,               /* (지수수익율) iNAV 계산기 팝업 */
 
         EtpOperInfo                     :   EtpOperInfo,                        /* ETP 운용정보 */
         EtpOperIndex                    :   EtpOperIndex,                       /* 지수관리 */
         EtpOperPdf                      :   EtpOperPdf,                         /* PDF 관리 */
-        EtpOperPdfQuick                 :   EtpOperPdfQuick,
 
         ConfirmDialog                   :   ConfirmDialog,                      /* 공통 메시지창 */
-        ComEtpFavorItemSub                 :   ComEtpFavorItemSub,
+        ComEtpFavorItemSub              :   ComEtpFavorItemSub,
     },
 
     mounted: function() {
@@ -219,12 +218,14 @@ export default {
             this.showEtpManageDetailDialog          =   true;
             this.showIndexDetailDialog              =   false;
             this.showEtpOerPdfQuick                 =   false;
+            this.showEtpOerPdfMain                  =   false;
 
             this.showEtpOperIndexDetailListDialog   =   false;
             this.showEtpOperIndexFixDialog          =   false;
             this.showEtpOperIndexErrorDialog        =   false;
             this.showEtpOperPdfEmergencyModifyPop   =   false;
             this.showEtpOperPdfInavCalcPop          =   false;
+            this.showEtpOperIndexInavCalcPop        =   false;
 
             this.showFaver                          =   false;
 
@@ -246,9 +247,11 @@ export default {
         });
     },
     beforeUpdated: function() {
-        
     },
     updated: function() {
+
+        // 메시지 박스 참조
+        this.$root.$confirm = this.$refs.confirm;    
     },
     methods: {
         showDetail: function(gubun, paramData) {
@@ -257,30 +260,52 @@ export default {
 
             if (gubun == '1') {
                 this.paramData = paramData;
-                this.showIndexDetailDialog = false;
-console.log( "this.showEtpDetailDialog=====>" + this.showEtpDetailDialog);
-                if (this.showEtpDetailDialog) {
-console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");                    
-                    this.$EventBus.$emit('changeIndexInfoClose', paramData);
 
-                    this.$EventBus.$emit('changeEtpOperIndexFixClose', paramData);
-                    this.$EventBus.$emit('changeEtpOperIndexErrorClose', paramData);
-                    this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
+                if( this.activeTab != 2 ) {                
+                    this.showIndexDetailDialog = false;
+    console.log( "this.showEtpDetailDialog=====>" + this.showEtpDetailDialog);
 
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_close', paramData);
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfEmergencyModifyPop_close', paramData);
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_close');
+                    if (this.showEtpDetailDialog) {
+    console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& #1");                    
+                        this.$EventBus.$off('changeIndexInfo', paramData);
 
-                    this.$EventBus.$emit('changeEtpInfo', paramData);
+                        this.$EventBus.$off('changeEtpOperIndexFix', paramData);
+                        this.$EventBus.$off('changeEtpOperIndexError', paramData);
+                        this.$EventBus.$off('changeEtpOperIndexDetailList', paramData);
+
+                        this.$EventBus.$emit('changeEtpInfo', paramData);
+                    }
+
+                    this.showEtpDetailDialog = true;
+
+                    if( this.activeTab != 2 ) {
+                        this.showFaver =   true;
+                    }
+                    
+                    this.showEtpOerInfo = -1;
+                    
+                }else{
+                    this.showEtpOerInfo = -1;
+
+                    this.$nextTick().then(() => {
+
+                        if (this.showEtpOerPdfMain) {
+        console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& #2");                    
+                            this.$EventBus.$off('changeIndexInfo', paramData);
+                            this.$EventBus.$off('changeEtpInfo', paramData);
+
+                            this.$EventBus.$off('changeEtpOperIndexFix', paramData);
+                            this.$EventBus.$off('changeEtpOperIndexError', paramData);
+                            this.$EventBus.$off('changeEtpOperIndexDetailList', paramData);
+                        }
+
+                        this.showEtpOerPdfMain = true;
+
+                        this.showEtpOerInfo = this.activeTab;
+                    });
                 }
 
-                this.showEtpDetailDialog = true;
 
-                if( this.activeTab != 2 ) {
-                    this.showFaver =   true;
-                }
-                
-                this.showEtpOerInfo = -1;
 //                this.showFaver = true;
                 
             } else if (gubun == '2') { 
@@ -288,16 +313,12 @@ console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
                 this.showEtpDetailDialog = false;
 
                 if (this.showIndexDetailDialog) {
-                    this.$EventBus.$emit('changeEtpAnalysisInfoClose', paramData);
-                    this.$EventBus.$emit('changeEtpInfoClose', paramData);
+                    this.$EventBus.$off('changeEtpAnalysisInfo', paramData);
+                    this.$EventBus.$off('changeEtpInfo', paramData);
 
-                    this.$EventBus.$emit('changeEtpOperIndexFixClose', paramData);
-                    this.$EventBus.$emit('changeEtpOperIndexErrorClose', paramData);
-                    this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
-
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_close', paramData);
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfEmergencyModifyPop_close', paramData);
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_close');
+                    this.$EventBus.$off('changeEtpOperIndexFix', paramData);
+                    this.$EventBus.$off('changeEtpOperIndexError', paramData);
+                    this.$EventBus.$off('changeEtpOperIndexDetailList', paramData);
 
                     this.$EventBus.$emit('changeIndexInfo', paramData);
                 }
@@ -306,8 +327,6 @@ console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
                 this.showEtpOerInfo = this.activeTab;
                 this.showFaver = false;
             } 
-
-            this.selectedQuickData  =   paramData;
 
             this.className = "conWidth_left";
             this.FaverClassName = "conWidth_right";
@@ -321,26 +340,7 @@ console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
             /* 지수관리 -> 지수구성정보 상세팝업 */
             if( gubun == '3' ) {
                 this.paramData = paramData;
-                this.showEtpOperIndexFixDialog = false;
-                this.showEtpOperIndexErrorDialog = false;
-
-                if (this.showEtpOperIndexDetailListDialog) {
-                    this.$EventBus.$emit('changeEtpOperIndexFixClose', paramData);
-                    this.$EventBus.$emit('changeEtpOperIndexErrorClose', paramData);
-
-                    this.$EventBus.$emit('changeIndexInfoClose', paramData);
-                    this.$EventBus.$emit('changeEtpAnalysisInfoClose', paramData);
-                    this.$EventBus.$emit('changeEtpInfoClose', paramData);
-
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_close', paramData);
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfEmergencyModifyPop_close', paramData);
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_close');
-
-                    this.$EventBus.$emit('changeEtpOperIndexDetailList', paramData);
-                }
-                
                 this.showEtpOperIndexDetailListDialog = true;
-                this.showEtpOerInfo = this.activeTab;
             }
             /* 지수관리 -> 지수조치내역 팝업 */
             else if( gubun == '4' ) {
@@ -380,122 +380,32 @@ console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
                 }
                 
                 this.paramData = paramData;
-                this.showEtpOperIndexDetailListDialog = false;
-                this.showEtpOperIndexErrorDialog = false;
-
-                if (this.showEtpOperIndexFixDialog) {
-                    this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
-                    this.$EventBus.$emit('changeEtpOperIndexErrorClose', paramData);
-
-                    this.$EventBus.$emit('changeIndexInfoClose', paramData);
-                    this.$EventBus.$emit('changeEtpAnalysisInfoClose', paramData);
-                    this.$EventBus.$emit('changeEtpInfoClose', paramData);
-
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_close', paramData);
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfEmergencyModifyPop_close', paramData);
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_close');
-
-                    this.$EventBus.$emit('changeEtpOperIndexFix', paramData);
-                }
-
                 this.showEtpOperIndexFixDialog = true;  
-                this.showEtpOerInfo = this.activeTab;              
             
             }
             /* 지수관리 -> 지수오류내역 */
             else if ( gubun == '5' ) {
                 this.paramData = paramData;
-                this.showEtpOperIndexDetailListDialog = false;
-                this.showEtpOperIndexFixDialog = false;
-
-                if (this.showEtpOperIndexErrorDialog) {
-                    this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
-                    this.$EventBus.$emit('changeEtpOperIndexFixClose', paramData);
-
-                    this.$EventBus.$emit('changeIndexInfoClose', paramData);
-                    this.$EventBus.$emit('changeEtpAnalysisInfoClose', paramData);
-                    this.$EventBus.$emit('changeEtpInfoClose', paramData);
-
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_close', paramData);
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfEmergencyModifyPop_close', paramData);
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_close');
-
-                    this.$EventBus.$emit('changeEtpOperIndexError', paramData);
-                }
-                
-                this.showEtpOperIndexErrorDialog = true;                
-                this.showEtpOerInfo = this.activeTab;
+                this.showEtpOperIndexErrorDialog = true;
             }
         },
 
         fn_showDetailPdf(gubun, paramData) {
 
+
+            this.paramData = paramData;
+
             /* PDF 관리 -> PDF 긴급반영 팝업 */
             if( gubun == '6' ) {
-
-                this.paramData = ( this.selectedQuickData && Object.keys( this.selectedQuickData ).length > 0 ? this.selectedQuickData : paramData );
-                this.showEtpOperPdfInavCalcPop = false;
-
-                if(     !this.paramData
-                    ||  !this.paramData.f16012
-                ) {
-                    this.$emit("showMessageBox", '확인','기준코드가 존재하지 않습니다.',{},1);
-
-                    return  false;
-                }                
-
-                if (this.showEtpOperPdfEmergencyModifyPop) {
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_close', paramData);
-
-                    this.$EventBus.$emit('changeEtpOperIndexFixClose', paramData);
-                    this.$EventBus.$emit('changeEtpOperIndexErrorClose', paramData);
-                    this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
-
-                    this.$EventBus.$emit('changeIndexInfoClose', paramData);
-                    this.$EventBus.$emit('changeEtpAnalysisInfoClose', paramData);
-                    this.$EventBus.$emit('changeEtpInfoClose', paramData);
-
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_close');
-
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfEmergencyModifyPop_call', paramData);
-                }
-                
                 this.showEtpOperPdfEmergencyModifyPop = true;
-
-                if(     !this.showIndexDetailDialog
-                    &&  !this.showEtpDetailDialog
-                ) {
-                    this.showEtpOerInfo = this.activeTab;
-                }
             }
-            /* PDF 관리 -> iNAV 계산기 팝업 */
+            /* (PDF) iNAV 계산기 팝업 */
             else if( gubun == '7' ) {
-                this.paramData = ( this.selectedQuickData && Object.keys( this.selectedQuickData ).length > 0 ? this.selectedQuickData : paramData );
-                this.showEtpOperPdfEmergencyModifyPop = false;
-
-                if (this.showEtpOperPdfInavCalcPop) {
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfEmergencyModifyPop_close', paramData);
-
-                    this.$EventBus.$emit('changeEtpOperIndexFixClose', paramData);
-                    this.$EventBus.$emit('changeEtpOperIndexErrorClose', paramData);
-                    this.$EventBus.$emit('changeEtpOperIndexDetailListClose', paramData);
-
-                    this.$EventBus.$emit('changeIndexInfoClose', paramData);
-                    this.$EventBus.$emit('changeEtpAnalysisInfoClose', paramData);
-                    this.$EventBus.$emit('changeEtpInfoClose', paramData);
-
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_close');
-
-                    this.$EventBus.$emit('EtpOperControl_EtpOperPdfInavCalcPop_call', paramData);
-                }
-                
                 this.showEtpOperPdfInavCalcPop = true;
-
-                if(     !this.showIndexDetailDialog
-                    &&  !this.showEtpDetailDialog
-                ) {
-                    this.showEtpOerInfo = this.activeTab;
-                }
+            }
+            /* (지수 수익율) iNAV 계산기 팝업 */
+            else if( gubun == '8' ) {
+                this.showEtpOperIndexInavCalcPop = true;
             }
         },
 
@@ -529,34 +439,8 @@ console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
             vm.showEtpOperIndexErrorDialog          =   false;
             vm.showEtpOperPdfEmergencyModifyPop     =   false;
             vm.showEtpOperPdfInavCalcPop            =   false;
+            vm.showEtpOperIndexInavCalcPop          =   false;
         },
-
-        fn_setEtpOperPdfByRate : function( toggleData ) {
-            var vm = this;
-
-            vm.$nextTick().then(() => {
-                this.showEtpOerInfo = this.activeTab;
-
-                this.showIndexDetailDialog          =   false;
-                this.showEtpDetailDialog            =   false;
-
-                this.$EventBus.$emit('EtpOperControl_EtpOperPdf_setEtpOperPdfByRate_call', toggleData);
-            });     
-
-        },
-
-        fn_setPdfQuickPdfData : function( pdfData )  {
-            var vm = this;
-
-            vm.pdfData      =   pdfData;
-            vm.paramData    =   pdfData;
-        },
-
-        fn_setPdfQuickIndexBasicData : function( indexBasic )  {
-            var vm = this;
-
-            vm.indexBasic      =   indexBasic;
-        }        
     }
 }
 </script>

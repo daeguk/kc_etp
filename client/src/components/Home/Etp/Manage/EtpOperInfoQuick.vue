@@ -15,12 +15,11 @@
                                     outline
                                     color="primary"
                                     @click="fn_showDetailIndex"
+                                    :disabled = "fix_info.fix_disabled"
                                 >내역확인</v-btn>
                             </v-subheader>
-
-
                             <p class="text_red">
-                                <v-icon small>arrow_right</v-icon>3개 지수에 대한 조치 발생
+                                <v-icon small>arrow_right</v-icon>{{ fix_info.fix_msg }}
                             </p>
                         </v-list-tile-content>
 
@@ -244,9 +243,6 @@ export default {
     },
     data() {
         return {
-            text: "전종목",
-            mini: false,
-
             toggleINav : false,
             toggleEtpPerformance : false,
             arrCustomizeColumn : [],
@@ -254,6 +250,12 @@ export default {
 
             indexFixDialog : false,
             showFaver : true,
+
+            /* 지수 조치현황 */
+            fix_info : {
+                fix_disabled : true,
+                fix_msg : "조치현황 없음"
+            }
         };
     },
     mounted: function() {},
@@ -353,6 +355,7 @@ export default {
          */        
         showMessageBox: function(title, msg, option, gubun) {
             var vm = this;
+
             vm.$emit( "showMessageBox", title, msg, option, gubun );
         }        
     }

@@ -3,7 +3,7 @@
   <!--v-toolbar-side-icon @click="menuClick"></v-toolbar-side-icon-->
   <v-toolbar-title>
     <a class="routerlink logo" @click="outService">ETP PLATFORM</a>
-    <v-menu offset-y open-on-hover class="top_menu" >
+    <!--v-menu offset-y open-on-hover class="top_menu" >
       <template v-slot:activator="{ on }">
         <v-btn
           icon
@@ -35,13 +35,124 @@
           <v-list-tile-title><router-link class="routerlink" to="/etp/contract"><v-icon>apps</v-icon>운용 지원</router-link></v-list-tile-title>
         </v-list-tile>
       </v-list>
-    </v-menu>
+    </v-menu-->
   </v-toolbar-title>
+
+
+<v-btn
+          icon
+          dark
+          
+        ><v-icon @mouseover="showContextMenu($event)">apps</v-icon>
+        </v-btn>
+
+<template id="template-context-menu">
+    <div id="context-menu"  v-on:mouseleave="hideContextMenu()">
+        <v-list  two-line  class="menu_list">
+            <v-list-tile v-on:click="movePage('/info/etpinfo')">
+                <v-list-tile-avatar class="meunlist_icon_svg"><object type="image/svg+xml" data="/assets/img/icons/icons8-heat-map.svg" ></object></v-list-tile-avatar>
+            <v-list-tile-content>
+                <v-list-tile-title>MARKET ETP INFO</v-list-tile-title>
+                <v-list-tile-sub-title>MARKET ETP 정보 조회</v-list-tile-sub-title>
+            </v-list-tile-content>
+        </v-list-tile>
+        <v-list-tile v-on:click="movePage('/info/indexinfo')">
+        <v-list-tile-avatar><v-icon>apps</v-icon>
+            </v-list-tile-avatar>
+            <v-list-tile-content>
+          <v-list-tile-title>MARKET INDEX INFO</v-list-tile-title>
+          <v-list-tile-sub-title>INDEX INFO 정보 조회</v-list-tile-sub-title>
+            </v-list-tile-content>
+        </v-list-tile>
+        <v-list-tile v-on:click="movePage('/index/manage/indexSummary')">
+        <v-list-tile-avatar><v-icon>apps</v-icon>
+            </v-list-tile-avatar>
+            <v-list-tile-content>
+          <v-list-tile-title>지수 관리</v-list-tile-title>
+          <v-list-tile-sub-title>지수 관리 정보 조회</v-list-tile-sub-title>
+            </v-list-tile-content>
+        </v-list-tile>
+        <v-list-tile v-on:click="movePage('/index/register')">
+        <v-list-tile-avatar><v-icon>apps</v-icon>
+            </v-list-tile-avatar>
+            <v-list-tile-content>
+          <v-list-tile-title>지수 등록</v-list-tile-title>
+          <v-list-tile-sub-title>지수 등록 정보 조회</v-list-tile-sub-title>
+            </v-list-tile-content>
+        </v-list-tile>
+        <v-list-tile v-on:click="movePage('/etp/manage')">
+        <v-list-tile-avatar><v-icon>apps</v-icon>
+            </v-list-tile-avatar>
+            <v-list-tile-content>
+          <v-list-tile-title>ETP 운용 관리</v-list-tile-title>
+          <v-list-tile-sub-title>ETP 운용 정보 조회</v-list-tile-sub-title>
+            </v-list-tile-content>
+        </v-list-tile>
+        <v-list-tile v-on:click="movePage('/etp/register')">
+        <v-list-tile-avatar><v-icon>apps</v-icon>
+            </v-list-tile-avatar>
+            <v-list-tile-content>
+          <v-list-tile-title>ETP 신규 등록</v-list-tile-title>
+          <v-list-tile-sub-title>ETP 신규 정보 조회</v-list-tile-sub-title>
+            </v-list-tile-content>
+        </v-list-tile>
+        <v-list-tile v-on:click="movePage('/etp/contract')">
+        <v-list-tile-avatar><v-icon>apps</v-icon>
+            </v-list-tile-avatar>
+            <v-list-tile-content>
+          <v-list-tile-title>운용 지원</v-list-tile-title>
+          <v-list-tile-sub-title>운용 지원 정보 조회</v-list-tile-sub-title>
+            </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+</div>
+</template>
+
   <v-spacer></v-spacer>
   <UserInfo></UserInfo>
 </v-toolbar>
 
 </template>
+
+
+<style>
+#context-menu {
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  display: none;
+  list-style: none;
+  position: absolute;
+  z-index: 2147483647;
+  background-color: white;
+  border: 1px solid #ebebeb;
+  border-bottom-width: 0px;
+  color: white;
+}
+
+#context-menu.active {
+  display: block;
+}
+
+.context-menu-icon {
+  top: 1px;
+  position: relative;
+  margin-right: 10px;
+}
+
+.context-menu-item {
+  display: flex;
+  cursor: pointer;
+  padding: 8px 15px;
+  align-items: center;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.context-menu-item:hover {
+  background-color: #ebebeb;
+}
+</style>
 
 <script>
 import UserInfo          from './UserInfo.vue';
@@ -74,7 +185,46 @@ export default {
       console.log("UserInfo.vue....... outService...");
       // Home.vue
       this.$EventBus.$emit("outService");
-    }
+    },
+    showContextMenu: function(e) {
+            
+            
+            var menu = document.getElementById("context-menu");
+
+            if (menu.className == "active") {
+                menu.classList.remove('active');
+            } else {
+                if(!this.contextMenuWidth || !this.contextMenuHeight) {
+                    menu.style.visibility = "hidden";
+                    menu.style.display = "block";
+                    this.contextMenuWidth = menu.offsetWidth;
+                    this.contextMenuHeight = menu.offsetHeight;
+                    menu.removeAttribute("style");
+                }
+
+                
+
+                if((this.contextMenuWidth + e.pageX) >= window.innerWidth) {
+                    menu.style.left = (e.pageX - this.contextMenuWidth) + "px";
+                } else {
+                    var left = e.pageX - 50;
+                    menu.style.left = left + "px";
+                }
+                
+            
+                menu.style.top = "50px";                
+
+
+                menu.classList.add('active');
+            }
+
+        },
+        hideContextMenu: function() {
+            document.getElementById("context-menu").classList.remove('active');
+        },
+        movePage: function(link) {
+            this.$router.push({path:link});
+        }
   }
 }  
 </script>

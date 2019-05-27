@@ -1,11 +1,9 @@
 <template>
 
-    <div >
+    <div>
         <v-layout row>
             <v-flex xs12>
-
                 <v-card flat ma-3>
-
                 <!-- content내용 -->
                     <div class="title01_w">
                         <v-card-title primary-title>
@@ -14,7 +12,6 @@
                                     {{this.etpBasic.f16002}}
                                     <span class="grey--text">{{etpBasic.f16013}}</span>
                                 </h3>
-
                                 <!--div class="right_btn"  v-if="showEtpManageDetailDialog">
                                     <v-layout align-right>
                                         <v-flex xs12 sm4 text-xs-center>                                         
@@ -26,7 +23,6 @@
                                         </v-flex>
                                     </v-layout>
                                 </div-->
-
                                 <div class="right_btn"  v-if="!showEtpManageDetailDialog">
                                     <v-layout align-right>
                                         <v-flex xs12 sm4 text-xs-center>
@@ -43,11 +39,6 @@
                                 </div>
                             </div>
                         </v-card-title>
-                        <v-card-text>
-                            <p class="title_ex">
-                                {{this.etpBasic.f16002}} 관한 내용이 들어갑니다
-                            </p>
-                        </v-card-text>
                     </div>
 
 
@@ -55,11 +46,52 @@
 
                         <div class="sub_title_num">
                             {{etpBasic.f15001}}
-                            <span class="text_blue">{{etpBasic.f15472}}({{etpBasic.f15004}})</span>
+                            <span v-if="etpBasic.f15472 <= 0" class="text_blue">{{etpBasic.f15472}}({{etpBasic.f15004}})</span>
+                            <span v-else class="text_red">{{etpBasic.f15472}}({{etpBasic.f15004}})</span>
                             <p>Last Updated : {{etpBasic.f12506}}</p>
                         </div>
-                        <LineEtpMultiChart :etpBasic="etpBasic"></LineEtpMultiChart>
+                        <div class="index_nums">
+                            <v-layout>
+                                <v-flex>
+                                        <ul>
+                                            <li>iNAV</li>
+                                            <li class="number">{{formatNumber(etpBasic.f15301)}}</li>
+                                            <li v-if="etpBasic.f30818 <= 0" class="number2 text_blue"> {{formatNumber(etpBasic.f30818)}}%</li>
+                                            <li v-else class="number2 text_red"> {{formatNumber(etpBasic.f30818)}}%</li>
+                                        </ul>
+                                </v-flex>
+                                <v-flex><ul>
+                                            <li>기초지수</li>
+                                            <li class="number">{{formatNumber(etpBasic.f15318)}}</li>
+                                            <li v-if="etpBasic.f30823 <= 0" class="number2 text_blue"> {{formatNumber(etpBasic.f30823)}}%</li>
+                                            <li v-else class="number2 text_red"> {{formatNumber(etpBasic.f30823)}}%</li>
+                                        </ul>
+                                </v-flex>
+                                <v-flex class="ver1">
+                                    <ul>
+                                            <li>시가총액</li>
+                                            <li class="number"> {{formatNumber(etpBasic.f15028 / 1000000000)}}십억</li>
+                                            <li></li>
+                                        </ul>
+                                </v-flex>
+                                <v-flex class="ver2">
+                                        <ul>
+                                            <li>거래량</li>
+                                            <li class="number">{{formatNumber(etpBasic.f15015)}}주</li>
+                                            <li class="number2 text_green">AVG(60일):{{formatNumber(etpBasic.f13510)}}</li>
+                                        </ul>
+                                </v-flex>
+                                <v-flex class="ver3">
+                                    <ul>
+                                            <li>거래대금</li>
+                                            <li class="number">{{formatNumber(etpBasic.f15023/10000000)}}억</li>
+                                            <li class="number2 text_green">AVG(60일):{{formatNumber(etpBasic.f13516/10000000)}}억</li>
+                                        </ul>
+                                </v-flex>
+                            </v-layout>
+                        </div>
                     </div>
+                    <LineEtpMultiChart :etpBasic="etpBasic"></LineEtpMultiChart>
                     <div class="tab2_w">
                         <v-layout row wrap>
                             <v-flex xs12>
@@ -71,6 +103,14 @@
 
                                 <v-tabs-items v-model="tab5">
                                     <v-tab-item>
+                                        <EtpManageDetailAnalysisTab     v-if="showEtpManageDetailDialogBySub"
+
+                                                                        :paramData="paramData" 
+                                                                        :etpBasic="etpBasic"
+                                                                        @showMessageBox="showMessageBox">
+                                        </EtpManageDetailAnalysisTab>
+                                    </v-tab-item>
+                                    <v-tab-item>
                                         <EtpManageDetailBasicInfoTab    v-if="showEtpManageDetailDialogBySub"
 
                                                                         :paramData="paramData"
@@ -78,14 +118,6 @@
                                                                         :indexBasic="indexBasic"
                                                                         @showMessageBox="showMessageBox">
                                         </EtpManageDetailBasicInfoTab>
-                                    </v-tab-item>
-                                    <v-tab-item>
-                                        <EtpManageDetailAnalysisTab     v-if="showEtpManageDetailDialogBySub"
-
-                                                                        :paramData="paramData" 
-                                                                        :etpBasic="etpBasic"
-                                                                        @showMessageBox="showMessageBox">
-                                        </EtpManageDetailAnalysisTab>
                                     </v-tab-item>
                                 </v-tabs-items>
                             </v-flex>
@@ -119,34 +151,9 @@ export default {
     },
     data() {
         return {
-            text: "전종목",
-            text2: "",
-            dialog: false,
-            dialog2: false,
-            drawer: true,
-            search: "",
-            tab: null,
-            tab2: null,
             tab5: null,
-            items5: ["기본정보", "분석정보"],
-            items4: [],
-            mini: false,
-            right: null,
-            rowsPerPageItems: [10, 20, 30, 50],
-            headers: [
-                {
-                    text: "Code",
-                    align: "left",
-                    value: "name"
-                },
-                { text: "name", value: "name" },
-                { text: "BasePrc", value: "BasePrc", align: "right" },
-                { text: "Shrs", value: "Shrs", align: "right" },
-                { text: "Float rto", value: "FloatRto", align: "right" },
-                { text: "Ceiling rto", value: "CeilingRto", align: "right" },
-                { text: "Factor rto", value: "FactorRto", align: "right" }
-            ],
-            desserts: [],
+            items5: ["분석정보", "기본정보"],
+
             toggle_one: '1M',
             basicData           :   {},
             etpBasic            :   {},
@@ -178,11 +185,8 @@ export default {
         vm.$EventBus.$on('changeEtpInfo', data => {
             vm.toggle_one = '1M';
             vm.init(true);
+            
         });
-
-        vm.$EventBus.$on('changeEtpInfoClose', data => {
-            this.$EventBus.$off('changeEtpInfo');
-        });        
     },
     updated: function() {
         console.log("Etp_updated================");
@@ -194,7 +198,6 @@ export default {
     methods: {
         init: function(event) {
             var vm = this;
-            
             vm.$nextTick().then(() => {
                 if(     vm.paramData 
                     &&  (       vm.paramData.f16012
@@ -205,7 +208,6 @@ export default {
                     vm.basicData.f16012         =   vm.paramData.f16012;            /* 국제표준코드 */
                     vm.basicData.f16257         =   vm.paramData.f16257;            /* ETP기초지수코드 */
                     vm.basicData.f34239         =   vm.paramData.f34239;            /* ETP기초지수MID */
-                                        
                     vm.paramData.perf_class   = 'perf_chart_w2'; /* performanc 그래프 class */
                     vm.paramData.tbl_class   = 'tbl_type ver5'; /* performanc 테이블 class */
                     vm.paramData.chart_size  = '960'; /* performanc 차트 사이즈 */
@@ -270,7 +272,11 @@ export default {
         },
         showMessageBox: function(title, msg, option, gubun) {
             this.$root.$confirm.open(title,msg, option, gubun);
-        }        
+        },
+        formatNumber:function(num) {
+            return util.formatNumber(num);
+        },
+        
     }
     
 };

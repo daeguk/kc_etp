@@ -32,6 +32,7 @@
                                             box
                                             outline
                                             v-on="on"
+                                            @change ="$refs.menu2.save(searchParam.show_date);fn_getEtpOerPdf( 'N' )"
                                             widh="100%"
                                         ></v-text-field>
                                     </template>
@@ -55,22 +56,6 @@
                 </v-card>
             </v-flex>
 
-           <v-flex class="conWidth_right">
-                <!-- [PDF 관리] Quick 메뉴 정보 -->
-                <EtpOperPdfQuick
-
-                    :pdfData="pdfData"
-                    :indexBasic = "indexBasic"
-
-                    @showDetail="showDetail"
-                    @showMessageBox="showMessageBox"
-
-                    @fn_showDetailIndex="fn_showDetailIndex"
-                    @fn_setEtpOperPdfByRate="fn_setEtpOperPdfByRate"
-                    @fn_showDetailPdf="fn_showDetailPdf">
-                </EtpOperPdfQuick>
-           </v-flex>
-
         </v-layout>
     </v-container>
 </template>
@@ -83,15 +68,12 @@ import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 
 import Config from "@/js/config.js";
-import EtpOperPdfQuick from "@/components/Home/Etp/Manage/EtpOperPdfQuick.vue";
-
 
 var tblPdfList = null;
 
 export default {
     props: [ "paramData" ],
     components: {
-        EtpOperPdfQuick                 :   EtpOperPdfQuick,
     },
     data() {
         return {
@@ -109,14 +91,14 @@ export default {
                 f16012 : ""
             },
             pdfData : {},
-            indexBasic : {},
-            rateTitleList : []
         };
     },
     mounted: function() {
         var vm = this;
 
         console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
+        debugger;
+        console.log( vm.paramData );
 
         vm.pdfData  =   vm.paramData;
 
@@ -124,7 +106,11 @@ export default {
 
     },
     created: function() {
+        var vm = this;
 
+        vm.$EventBus.$on('changeEtpInfoPdfDetail', data => {
+            vm.fn_init();
+        });
     
     },
     beforeDestory: function() {
@@ -148,12 +134,9 @@ export default {
                     vm.searchParam.f16012       =   vm.pdfData.f16012;          /* 국제표준코드 */
 
                     vm.searchParam.search_nm    =   vm.searchParam.f16002 + "(" + vm.searchParam.f16013 + ")";  /* 한글종목명 / 단축코드 */
-
-                    resolve();
-
-                }else{
-                    vm.fn_getEtpOperInfoFirstData( "A", resolve, reject );
                 }
+
+                resolve();
 
             }).catch( function(e) {
 
@@ -172,50 +155,6 @@ export default {
             });            
         },
 
-
-        /*
-         *  ETP 운영정보를 조회한다.
-         *  param   :   ETP지표가치산출구분(K:국내,F:해외)  / A:전종목, I:관심종목
-         *  2019-05-03  bkLove(촤병국)
-         */
-        fn_getEtpOperInfoFirstData( gubun, resolve, reject ) {
-
-            var vm = this;
-
-            try{
-
-                axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
-                    data: {
-                            f34241  :   gubun
-                        ,   isEtfYn :   "Y"
-                        ,   firstYn :   "Y"
-                    }
-                }).then(function(response) {
-                    console.log(response);
-
-                    if (response.data) {
-                        var dataList = response.data.dataList;
-
-                        if (dataList && dataList.length == 1) {
-                            vm.searchParam.f16002       =   dataList[0].f16002;     /* 한글종목명 */
-                            vm.searchParam.f16013       =   dataList[0].f16013;     /* 단축코드 */
-
-                            vm.searchParam.f16493       =   dataList[0].f16493;     /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                            vm.searchParam.f16012       =   dataList[0].f16012;     /* 국제표준코드 */
-
-                            vm.searchParam.search_nm    =   vm.searchParam.f16002 + "(" + vm.searchParam.f16013 + ")";      /* 한글종목명 / 단축코드 */
-
-                            vm.pdfData  =   dataList[0];
-                        }
-                    }
-
-                    resolve();
-                });
-            }catch(e) {
-                reject( e );
-            }
-        },
-
         /*
          * ETP 지수관리 정보를 조회한다.
          * 2019-05-03  bkLove(촤병국)
@@ -226,10 +165,6 @@ export default {
             console.log("EtpOperPdf.vue -> fn_getEtpOperPdf");
 
             var  url = Config.base_url + "/user/etp/getEtpOperPdf";
-
-            if( vm.stateInfo.pageState == "pdfByRate" ) {
-                url = Config.base_url + "/user/etp/getEtpOperPdfByRate";
-            }            
 
             if (tblPdfList) {
                 tblPdfList.clear().draw();
@@ -260,61 +195,12 @@ export default {
                         if (dataList && dataList.length > 0) {
                             tblPdfList.rows.add(dataList).draw();
                             tblPdfList.draw();
-
-                            vm.indexBasic      =   dataList[0];
                         }
                     }
                 });
             }
             
         },
-
-
-        /*
-         *  ETP 운영정보 - > PDF 관리 에서 비중 변경현황시 타이틀 정보를 조회한다.
-         *  2019-05-03  bkLove(촤병국)
-         */
-        fn_getEtpOperPdfByRateTitle() {
-
-            var vm = this;
-
-            console.log("EtpOperPdf.vue -> fn_getEtpOperPdfByRateTitle");
-
-            vm.searchParam.search_date  =   vm.searchParam.show_date.replace(/-/g,"");
-            vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
-
-            axios.post(  Config.base_url + "/user/etp/getEtpOperPdfByRateTitle", {
-                data: vm.searchParam
-            }).then(function(response) {
-                console.log(response);
-
-                if (response.data) {
-                    var rateTitleList = response.data.rateTitleList;
-
-                    vm.rateTitleList =   rateTitleList;
-                }
-
-                vm.fn_setTableInfo();
-                vm.fn_getEtpOerPdf( 'N' );                
-            });
-        },        
-
-        fn_setEtpOperPdfByRate : function( paramData ) {
-
-            var vm = this;
-
-            /* 해외지수 종가 모니터링 버튼이 체크된 경우에는 해외지수 종가 모니터링 정보를 노출한다. */
-            if( paramData && paramData.togglePdfByRate ) {
-                vm.stateInfo.pageState  =  'pdfByRate';               /* pdf - PDF 관리 , pdfByRate - 비중변경현황 */
-            }
-            /* 해외지수 종가 모니터링 버튼이 두번 눌러 체크해제된 경우 지수관리 기본 정보를 노출한다.  */
-            else{
-                vm.stateInfo.pageState  =  'pdf';
-            }            
-
-
-            vm.fn_getEtpOperPdfByRateTitle();
-        },        
 
         /*
          *  테이블 기본정보를 설정한다.
@@ -350,26 +236,6 @@ export default {
                     ,   "f34743"            /* ETF_PDF비중 - 비중 */
                 ]);
             } 
-            /* [비중변경현황] 을 선택한 경우 */
-            else if (vm.stateInfo.pageState == "pdfByRate") {
-                
-                vm.fn_setArrShowColumn([
-                        "f12506"            /* 입회일 - Date */,
-                    ,   "f33861"            /* ETF시장구분 - 시장구분 */,
-                    ,   "f16316"            /* 구성종목코드 - 종목코드 */,
-                    ,   "f16004"            /* 해외시장종목명 - 종목명 */,
-                    ,   "f16499"            /* 1CU단위증권수 - CU SHrs */,
-                    ,   "f34840"            /* 액면금액설정현금액 - 액면금액 */,
-                    ,   "f16588"            /* 평가금액 - 평가금액 */,
-
-                    ,   "rate_day0"         /* 비중 당일 */,
-                    ,   "rate_day1"         /* 비중 1일전 */,
-                    ,   "rate_day2"         /* 비중 2일전 */,
-                    ,   "rate_day3"         /* 비중 3일전 */,
-                    ,   "rate_day4"         /* 비중 4일전 */,
-                ]);
-            }
-
 
             if ($.fn.DataTable.isDataTable("#tblPdfList")) {
                 $("#tblPdfList").DataTable().destroy();
@@ -388,35 +254,6 @@ export default {
             tableObj.columnDefs = vm.arrShowColumnDef;
 
             tblPdfList = $("#tblPdfList").DataTable(tableObj);
-
-
-            /* 비중변경 현황인 경우 비중관련 컬럼에 날짜 정보를 설정한다. */
-            if( vm.stateInfo.pageState == "pdfByRate" ) {
-
-                if( vm.rateTitleList && vm.rateTitleList.length > 0  ) {
-
-                    tblPdfList.columns().every(function (index) {
-
-                        var same = vm.rateTitleList.filter(function(o, p) {
-                            return vm.arrShowColumn[index].name === o.name;
-                        });                                
-
-                        if( same && same.length == 1 ) {
-                            $( tblPdfList.column( index ).header() ).html( vm.arrShowColumn[index].title + "<br>" + same[0].show_date );
-                        }
-
-                    });
-                }
-            }
-
-
-            // 테이블별 이벤트
-            $("#tblPdfList tbody").on( "click", "button[id=btnInav],button[id=btnEtpInfo],button[id=btnPdf]", function() {
-                var table = $("#tblPdfList").DataTable();
-                var data = table.row($(this).parents("tr")).data();
-                var rowInx = table.row($(this)).index();
-                var btnId = $(this).attr("id");
-            });
         },
 
         /*
@@ -516,7 +353,6 @@ export default {
             }
 
 
-
             if( vm.arrShowColumn.length > 0 )  {
 
                 /* 설정한 columnDefs 가 존재하는 경우 */
@@ -535,36 +371,7 @@ export default {
                     });
                 }
             }
-        },        
-
-        showDetail: function(gubun, paramData) {
-
-            var vm = this;
-
-            if (gubun == '1') {
-                vm.pdfData = paramData;
-                
-                vm.fn_init();
-            }
         },
-
-        showMessageBox: function(title, msg, option, gubun) {
-            var vm = this;
-
-            vm.$emit( "showMessageBox", title, msg, option, gubun );
-        },
-        
-        fn_showDetailIndex(gubun, paramData) {
-            var vm = this;
-
-            vm.$emit( "fn_showDetailIndex", gubun, paramData );
-        },
-
-        fn_showDetailPdf(gubun, paramData) {
-            var vm = this;
-
-            vm.$emit( "fn_showDetailPdf", gubun, paramData );
-        },            
     }
 };
 </script>

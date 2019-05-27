@@ -11,8 +11,8 @@
             <v-list-tile-content class="w_1">
                 <v-toolbar flat>
                     <v-toolbar-title>{{item.jisu_kor_nm}}</v-toolbar-title>
-                    <v-spacer></v-spacer>
-                    <v-btn icon @click>
+<!--                <v-spacer></v-spacer> -->
+                    <v-btn icon>
                         <v-icon color="primary" @click="fn_showJisuEdit({ 'jisu_id' : item.jisu_id, 'jisu_seq' : item.jisu_seq } )">edit</v-icon>
                     </v-btn>
                 </v-toolbar>
