@@ -19,7 +19,7 @@
                     <v-list-tile-content class="sumul_btn_w">
                         <ul>
                             <li>
-                                <v-switch v-model="SimulationSwitch" color="primary"></v-switch>
+                                <v-switch v-model="SimulationSwitch" v-on:change="SimulationMode" color="primary"></v-switch>
                             </li>
                             <li>
                                 <v-btn small flat icon>
@@ -28,7 +28,7 @@
                             </li>
                             <li>
                                 <v-btn small flat icon>
-                                    <v-icon>refresh</v-icon>
+                                    <v-icon v-on:click="init()">refresh</v-icon>
                                 </v-btn>
                             </li>
                         </ul>
@@ -83,13 +83,13 @@
                         <ul>
                             <li class="list_tit case2 txt_point">전일NAV</li>
                             <li class="input_mid">
-                                <v-text-field :value="formatNumber(paramData.f03329)" outline class="txt_right"></v-text-field>
+                                <v-text-field :readonly="readonly" v-on:blur="indexInavCal();" v-model="f03329"  outline class="txt_right"></v-text-field>
                             </li>
                         </ul>
                         <ul>
                             <li class="list_tit case2 txt_point">추적수익률</li>
                             <li class="input_mid">
-                                <v-text-field :value="formatNumber(paramData.f15302)" outline class="txt_right"></v-text-field>
+                                <v-text-field :readonly="readonly" v-on:blur="indexInavCal();" v-model="f15302" outline class="txt_right"></v-text-field>
                             </li>
                         </ul>
                     </v-flex>
@@ -102,7 +102,7 @@
                         </ul>
                         <ul class="bot_line1">
                             <li class="list_tit">지수현재가</li>
-                            <li class="align_r text_red">{{formatNumber(paramData.f15318)}}</li>
+                            <li class="align_r text_red">{{f15318}}</li>
                         </ul>
                         <!--ul class="bot_line2">
                                                     <li class="list_tit"><b>지수기준가</b><br><span>기준일</span></li>
@@ -116,7 +116,7 @@
                             </li>
                             <li>
                                 <div>
-                                    <v-text-field :value="formatNumber(paramData.f15318 - paramData.f15319)" outline class="txt_right"></v-text-field>
+                                    <v-text-field :readonly="readonly" v-on:blur="indexInavCal();" v-model="f15007" outline class="txt_right"></v-text-field>
                                     <span class="float_r">{{paramData.index_std_date}}</span>
                                 </div>
                             </li>
@@ -124,7 +124,7 @@
                         <ul>
                             <li class="list_tit txt_point">등락률(%)</li>
                             <li class="align_r">
-                                <b>{{formatNumber(paramData.f30823)}}%</b>
+                                <b>{{f30823}}%</b>
                             </li>
                         </ul>
                     </v-flex>
@@ -137,26 +137,18 @@
                         </ul>
                         <ul class="bot_line1">
                             <li class="list_tit">매매기준율</li>
-                            <li class="align_r text_red">{{formatNumber(paramData.f30819)}}</li>
-                        </ul>
-                        <ul>
-                            <li class="list_tit">KRW-USD</li>
-                            <li class="align_r">{{formatNumber(paramData.f18438)}}</li>
-                        </ul>
-                        <ul class="bot_line1">
-                            <li class="list_tit">USD-CNY</li>
-                            <li class="align_r"></li>
+                            <li class="align_r text_red">{{f30819}}</li>
                         </ul>
                         <ul class="bot_line2">
                             <li class="list_tit case2">장전기준율</li>
                             <li class="input_mid">
-                                <v-text-field :value="formatNumber(paramData.f30824)" outline class="txt_right"></v-text-field>
+                                <v-text-field :readonly="readonly" v-on:blur="indexInavCal();" v-model="f30824" outline class="txt_right"></v-text-field>
                             </li>
                         </ul>
                         <ul>
                             <li class="list_tit txt_point">변동률</li>
                             <li class="align_r">
-                                <b>0.98</b>
+                                <b>{{f15004}}</b>
                             </li>
                         </ul>
                         <ul class="bot_line3">
@@ -168,9 +160,9 @@
                         <ul class="result">
                             <li class="list_tit txt_point1">iNAV 계산결과</li>
                             <li class="align_r text_red">
-                                <b>12435.13</b>
+                                <b>{{iNav}}</b>
                                 <br>
-                                <span class="float_r">0.58%</span>
+                                <span class="float_r">{{iNavRate}}%</span>
                             </li>
                         </ul>
                     </v-flex>
@@ -193,19 +185,28 @@ export default {
     props : [ "paramData" ],
     data() {
         return {
-            SimulationSwitch: []
-
+            SimulationSwitch: [],
+            f15318: 0,  /* 기초지수 현재가 */
+            f30823: 0,  /* 기초지수 등락률 */
+            f03329: 0,  /* 전일Nav */
+            f15302: 0,  /* 추적수익률 */
+            f15007: 0,  /* 지수기준가  */
+            f30824: 0,  /* 장전기준율 */
+            f30819: 0,  /* 매매기준율 */
+            f15004: 0,  /* 변동률 */ 
+            f34374: 0,  /* 전일ETP기초지수등락율 */
+            f18101: 0,  /* 예상배당수익률 : 배당율 */
+            f18453: 0,  /* ETP 배율 */
+            iNav: 0,    /* INav 계산결과 */
+            iNavRate: 0, /* INav 계산결과 율 */
+            readonly: true
         };
     },   
     components: {
 
     },    
     mounted: function() {
-        debugger;
-        var vm = this;
-        console.log( "########## EtpOperInfoInavIndex.vue #################" );
-        console.log( "paramData");
-        console.log( vm.paramData );
+        this.init();
     },
     created: function() {},
     beforeDestory: function() {
@@ -213,62 +214,122 @@ export default {
     },
 
     methods: {
-        indexInavCal : function() {
-            // ETP 계산 유형(H: 환햇지, F: 환노출, A: 지수환노출, T: 복합배율, K: 복합배율2, I: 인도레버리지, J: KINDEX합성일본인버스)
+        init: function() {
+            var vm = this;
+            // 전일 Nav
+            vm.f03329 = vm.formatNumber(vm.paramData.f03329);
+            // 추적수익률
+            vm.f15302 = vm.formatNumber(vm.paramData.f15302);
+            // 기준가
+            vm.f15007 = vm.formatNumber(vm.paramData.f15318 - vm.paramData.f15319);
+            // 매매기준율
+            vm.f30819 = vm.formatNumber(vm.paramData.f30819);
+            // 장전 기준윻
+            vm.f30824 = vm.formatNumber(vm.paramData.f30824);
+            
+            // 기초 지수 현재가
+            vm.f15318 = vm.formatNumber(vm.paramData.f15318);
+            //기초지수 등락률 
+            vm.f30823 = vm.formatNumber(vm.paramData.f30823);
+            // 전일ETP기초지수등락율
+            vm.f34374 = vm.formatNumber(vm.paramData.f34374);
+            // 예상배당수익률 : 배당율
+            vm.f18101 = vm.paramData.f18101;
+            // ETP 배율 
+            vm.f18453 = vm.paramData.f18453;
+            // 변동률 
+            vm.f15004 = (1 - vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824)) * 100;
+            vm.f15004 = vm.formatNumber(vm.f15004);
 
+            // INav 계산결과
+            vm.iNav = vm.formatNumber(0);    
+            // INav 계산결과 율
+            vm.iNavRate = vm.formatNumber(0);    
+            
+
+            vm.indexInavCal();
+        },
+        indexInavCal : function() {
+            var vm = this;
+            
+            // 지수 등락률
+            vm.f30823 = (1 - vm.NtoS(vm.f15318) / vm.NtoS(vm.f15007)) * 100;
+
+            // 변동률 
+            vm.f15004 = (1 - vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824)) * 100;
+
+            // ETP 계산 유형(H: 환햇지, F: 환노출, A: 지수환노출, T: 복합배율, K: 복합배율2, I: 인도레버리지, J: KINDEX합성일본인버스)
             /* 
                H. 환헷지
                iNAV=전일NAV*(1+기초지수등락율*배율)
             */
-            if (paramData.f34240 == 'H') {
-                
+            if (vm.paramData.f34240 == 'H') {
+                vm.iNav = vm.NtoS(vm.f03329) * ( 1 + vm.f30823 * vm.f18453 );
             /* 
                F. 환노출일반
                iNAV=전일NAV*(1+기초지수등락율*배율)*(매매기준율/장전매매기준율)
             */           
-            } else if (paramData.f34240 == 'F') {
-            
+            } else if (vm.paramData.f34240 == 'F') {
+                vm.iNav = vm.NtoS(vm.f03329) * ( 1 + vm.f30823 * vm.NtoS(vm.f18453) ) * ( vm.NtoS(vm.f30819)	* vm.NtoS(vm.f30824) );
+                
             /* 
                A.지수환노출 : ARIRAN차이나H레버리지(합성)
                iNAV=전일NAV*(1+기초지수등락율*배율*매매기준율/장전매매기준율)
             */
-            } else if (paramData.f34240 == 'A') {
-            
+            } else if (vm.paramData.f34240 == 'A') {
+                vm.iNav = vm.NtoS(vm.f03329) * ( 1 + vm.f30823 * vm.NtoS(vm.f18453)  * vm.NtoS(vm.f30819)	/ vm.NtoS(vm.f30824) );
             /* 
                K. 복합배율2 : KINDEX 중국본토 레버리지 CSI300
                iNAV=전일NAV*(1+((1+기초지수등락율)*매매기준율/장전매매기준율-1)*배율)
             */
-            } else if (paramData.f34240 == 'T') {
-            
+            } else if (vm.paramData.f34240 == 'T') {
+                vm.iNav = vm.NtoS(vm.f03329) * ( 1 + (( 1 + vm.f30823 ) * vm.NtoS(vm.f30819) /  vm.NtoS(vm.f30824) - 1 ) * vm.NtoS(vm.f18453) );
             /* 
                T.복합배율 :  TIGER 차이나A레버리지(합성)
                iNAV=전일NAV*(1+기초지수등락율*배율)*(1+(매매기준율-장전매매기준율)/장전매매기준율*배율)               
             */
-            } else if (paramData.f34240 == 'K') {
-
+            } else if (vm.paramData.f34240 == 'K') {
+                vm.iNav = vm.NtoS(vm.f03329) * ( 1 + vm.f30823 * vm.NtoS(vm.f18453) ) * (1 + (vm.NtoS(vm.f30819)  - vm.NtoS(vm.f30824)) / vm.NtoS(vm.f30824)	* vm.NtoS(vm.f18453) );
             /*
                 I. 인도레버리지, 전일ETP기초지수등락율(FID 34374 사용 하드코딩되있음)
                 iNAV=전일NAV*(1+((1+기초지수등락율)*매매기준율/장전매매기준율-1)*배율) *(1+전일등락율*배율)
             */
-            } else if (paramData.f34240 == 'I') {
-            
+            } else if (vm.paramData.f34240 == 'I') {
+                vm.iNav = vm.NtoS(vm.f03329) * ( 1 + (( 1 + vm.f30823 ) * vm.NtoS(vm.f30819) /  vm.NtoS(vm.f30824) - 1 ) * vm.NtoS(vm.f18453) ) * (1 + vm.NtoS(f34374) * vm.NtoS(vm.f18453));
             /* 
                J. KINDEX합성일본인버스, 1년에 2번 inav를 예상배당수익률(FID 18101 (주의)DEC -6)로 조정한다.
                iNAV=전일NAV*(1+기초지수등락율*배율-예상배당수익률)
             */
-            } else if (paramData.f34240 == 'J') {
-                
+            } else if (vm.paramData.f34240 == 'J') {
+                vm.iNav = vm.NtoS(vm.f03329) * (1 + vm.f30823 * vm.NtoS(vm.f18453) - vm.NtoS(vm.f18101)); 
             } 
+
+            /* iNav 등락률 */
+            vm.iNavRate =  (1 - (vm.iNav / vm.paramData.f15301)) * 100;
+
+            vm.iNav = vm.formatNumber(vm.iNav);
+            vm.iNavRate = vm.formatNumber(vm.iNavRate);
+            vm.f30823 = vm.formatNumber(vm.f30823);  /* 등락률 */
+            vm.f15004 = vm.formatNumber(vm.f15004);  /* 변동률 */
         },
         formatNumber:function(num) {
             return util.formatNumber(num);
         },
-
+        NtoS: function(num) {
+            return util.NumtoStr(num);
+        },
         fn_close() {
             var vm = this;
 
             vm.$emit( "fn_close", "index" );
-        }
+        },
+        SimulationMode: function() {
+            if (this.SimulationSwitch) {
+                this.readonly = false;
+            } else {
+                this.readonly = true;
+            }
+        },
     }
 };
 </script>

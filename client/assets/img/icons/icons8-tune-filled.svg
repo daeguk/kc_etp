@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px">
+<style type="text/css">
+    <![CDATA[
+    .svg_icon path{fill:#85c406;}
+    ]]>
+</style>
+    <path style="line-height:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000;text-transform:none;block-progression:tb;isolation:auto;mix-blend-mode:normal" d="M 10.5 2 C 9.672 2 9 2.672 9 3.5 L 9 4 L 3 4 A 1.0001 1.0001 0 1 0 3 6 L 9 6 L 9 6.5 C 9 7.328 9.672 8 10.5 8 C 11.328 8 12 7.328 12 6.5 L 12 3.5 C 12 2.672 11.328 2 10.5 2 z M 14 4 L 14 6 L 21 6 A 1 1 0 0 0 22 5 A 1 1 0 0 0 21 4 L 14 4 z M 15.5 9 C 14.672 9 14 9.672 14 10.5 L 14 11 L 3 11 A 1.0001 1.0001 0 1 0 3 13 L 14 13 L 14 13.5 C 14 14.328 14.672 15 15.5 15 C 16.328 15 17 14.328 17 13.5 L 17 10.5 C 17 9.672 16.328 9 15.5 9 z M 19 11 L 19 13 L 21 13 A 1 1 0 0 0 22 12 A 1 1 0 0 0 21 11 L 19 11 z M 5.5 16 C 4.672 16 4 16.672 4 17.5 L 4 18 L 3 18 A 1.0001 1.0001 0 1 0 3 20 L 4 20 L 4 20.5 C 4 21.328 4.672 22 5.5 22 C 6.328 22 7 21.328 7 20.5 L 7 17.5 C 7 16.672 6.328 16 5.5 16 z M 9 18 L 9 20 L 21 20 A 1 1 0 0 0 22 19 A 1 1 0 0 0 21 18 L 9 18 z"/>
+</svg>

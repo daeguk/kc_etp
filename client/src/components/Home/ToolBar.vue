@@ -1,5 +1,5 @@
 <template>
-<v-toolbar fixed app clipped-left clipped-right dark color="#323232" class="elevation-0"  style="z-index:100;">
+<v-toolbar fixed app clipped-left clipped-right dark color="#434343" class="elevation-0"  style="z-index:100;">
   <!--v-toolbar-side-icon @click="menuClick"></v-toolbar-side-icon-->
   <v-toolbar-title>
     <a class="routerlink logo" @click="outService">ETP PLATFORM</a>
@@ -42,63 +42,58 @@
 <v-btn
           icon
           dark
-          
+          class="topmenu_icon"
         ><v-icon @mouseover="showContextMenu($event)">apps</v-icon>
         </v-btn>
 
 <template id="template-context-menu">
-    <div id="context-menu"  v-on:mouseleave="hideContextMenu()">
+    <!--div id="context-menu"  v-on:mouseleave="hideContextMenu()"-->
+    <div id="context-menu" v-on:mouseleave="hideContextMenu()">
         <v-list  two-line  class="menu_list">
             <v-list-tile v-on:click="movePage('/info/etpinfo')">
-                <v-list-tile-avatar class="meunlist_icon_svg"><object type="image/svg+xml" data="/assets/img/icons/icons8-heat-map.svg" ></object></v-list-tile-avatar>
+                <v-list-tile-avatar><object type="image/svg+xml" data="/assets/img/icons/icons8-heat-map.svg" width="36px" height="36px" ></object></v-list-tile-avatar>
             <v-list-tile-content>
                 <v-list-tile-title>MARKET ETP INFO</v-list-tile-title>
                 <v-list-tile-sub-title>MARKET ETP 정보 조회</v-list-tile-sub-title>
             </v-list-tile-content>
         </v-list-tile>
         <v-list-tile v-on:click="movePage('/info/indexinfo')">
-        <v-list-tile-avatar><v-icon>apps</v-icon>
-            </v-list-tile-avatar>
+        <v-list-tile-avatar><object type="image/svg+xml" data="/assets/img/icons/icons8-heat-map.svg" width="36px" height="36px"></object></v-list-tile-avatar>
             <v-list-tile-content>
           <v-list-tile-title>MARKET INDEX INFO</v-list-tile-title>
           <v-list-tile-sub-title>INDEX INFO 정보 조회</v-list-tile-sub-title>
             </v-list-tile-content>
         </v-list-tile>
         <v-list-tile v-on:click="movePage('/index/manage/indexSummary')">
-        <v-list-tile-avatar><v-icon>apps</v-icon>
-            </v-list-tile-avatar>
+        <v-list-tile-avatar><object type="image/svg+xml"  data="/assets/img/icons/icons8-dashboard.svg" width="32px" height="32px" ></object></v-list-tile-avatar>
             <v-list-tile-content>
           <v-list-tile-title>지수 관리</v-list-tile-title>
           <v-list-tile-sub-title>지수 관리 정보 조회</v-list-tile-sub-title>
             </v-list-tile-content>
         </v-list-tile>
         <v-list-tile v-on:click="movePage('/index/register')">
-        <v-list-tile-avatar><v-icon>apps</v-icon>
-            </v-list-tile-avatar>
+        <v-list-tile-avatar><object type="image/svg+xml" data="/assets/img/icons/icons8-login-rounded.svg" width="32px" height="32px" ></object></v-list-tile-avatar>
             <v-list-tile-content>
           <v-list-tile-title>지수 등록</v-list-tile-title>
           <v-list-tile-sub-title>지수 등록 정보 조회</v-list-tile-sub-title>
             </v-list-tile-content>
         </v-list-tile>
         <v-list-tile v-on:click="movePage('/etp/manage')">
-        <v-list-tile-avatar><v-icon>apps</v-icon>
-            </v-list-tile-avatar>
+        <v-list-tile-avatar><object type="image/svg+xml" data="/assets/img/icons/icons8-investment-portfolio.svg" width="32px" height="32px" ></object></v-list-tile-avatar>
             <v-list-tile-content>
           <v-list-tile-title>ETP 운용 관리</v-list-tile-title>
           <v-list-tile-sub-title>ETP 운용 정보 조회</v-list-tile-sub-title>
             </v-list-tile-content>
         </v-list-tile>
         <v-list-tile v-on:click="movePage('/etp/register')">
-        <v-list-tile-avatar><v-icon>apps</v-icon>
-            </v-list-tile-avatar>
+        <v-list-tile-avatar><object type="image/svg+xml" data="/assets/img/icons/icons8-agreement-new-filled.svg" width="32px" height="32px" ></object></v-list-tile-avatar>
             <v-list-tile-content>
           <v-list-tile-title>ETP 신규 등록</v-list-tile-title>
           <v-list-tile-sub-title>ETP 신규 정보 조회</v-list-tile-sub-title>
             </v-list-tile-content>
         </v-list-tile>
         <v-list-tile v-on:click="movePage('/etp/contract')">
-        <v-list-tile-avatar><v-icon>apps</v-icon>
-            </v-list-tile-avatar>
+        <v-list-tile-avatar><object type="image/svg+xml" data="/assets/img/icons/icons8-gg.svg" width="32px" height="32px" ></object></v-list-tile-avatar>
             <v-list-tile-content>
           <v-list-tile-title>운용 지원</v-list-tile-title>
           <v-list-tile-sub-title>운용 지원 정보 조회</v-list-tile-sub-title>
@@ -115,44 +110,6 @@
 </template>
 
 
-<style>
-#context-menu {
-  top: 0;
-  left: 0;
-  margin: 0;
-  padding: 0;
-  display: none;
-  list-style: none;
-  position: absolute;
-  z-index: 2147483647;
-  background-color: white;
-  border: 1px solid #ebebeb;
-  border-bottom-width: 0px;
-  color: white;
-}
-
-#context-menu.active {
-  display: block;
-}
-
-.context-menu-icon {
-  top: 1px;
-  position: relative;
-  margin-right: 10px;
-}
-
-.context-menu-item {
-  display: flex;
-  cursor: pointer;
-  padding: 8px 15px;
-  align-items: center;
-  border-bottom: 1px solid #ebebeb;
-}
-
-.context-menu-item:hover {
-  background-color: #ebebeb;
-}
-</style>
 
 <script>
 import UserInfo          from './UserInfo.vue';
@@ -215,6 +172,7 @@ export default {
                 menu.style.top = "50px";                
 
 
+                menu.classList.add('active');
                 menu.classList.add('active');
             }
 

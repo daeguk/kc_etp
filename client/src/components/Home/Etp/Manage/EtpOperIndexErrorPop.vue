@@ -88,18 +88,6 @@ export default {
     created: function() {
 
         var vm = this;
-
-        vm.$EventBus.$on('changeEtpOperIndexError', data => {
-            console.log( "EventBus changeEtpOperIndexError>>>>>>>" );
-            console.log( data );
-
-            vm.fn_getIndexErrorList();
-        });
-
-        vm.$EventBus.$on('changeEtpOperIndexErrorClose', data => {
-            vm.$EventBus.$off('changeEtpOperIndexError');         
-        });
-
     },
     beforeDestory: function() {},
 

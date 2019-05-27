@@ -604,6 +604,11 @@
                 ,   td_etp_basic.F33961                                 AS  f33961              /* ETP운용사명(한글명) */
                 ,   td_etp_basic.F34240                                 AS  f34240              /* ETP계산유형 */
                 ,   td_etp_basic.F33929                                 AS  f33929              /* ETP_iNAV산출방식(0:PDF,1:지수수익율) */
+                ,   td_etp_basic.F34374                                 AS  f34374              /* 전일ETP기초지수등락율 */
+                ,   td_etp_basic.F30824                                 AS  f30824              /* 전일ETP기초지수등락율 */
+                ,   td_etp_basic.F30819                                 AS  f30819              /* 해외ETP매매기준율 */
+                ,   td_etp_basic.F18453                                 AS  f18453              /* ETP 배율 */ 
+                ,   td_etp_basic.F18101                                 AS  f18101              /* 예상배당수익률 : 배당율 */ 
                 ,   (
                         SELECT  tm_code_dtl.com_dtl_name
                           FROM  tm_code_dtl
