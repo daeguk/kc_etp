@@ -319,6 +319,9 @@
                                     </v-layout>
                                 </v-flex>
 
+
+
+
                                 <v-flex xs4 ml-3 v-show="!jisuUploadResult" v-if="modForm.status != '03'">
                                     <p>
                                         <v-icon color="#1976d2">check</v-icon>
@@ -338,38 +341,37 @@
                                     </p>
                                 </v-flex>
 
+
                                 <v-flex mb-3 v-show="!!jisuUploadResult">
-                                    <v-flex>
-                                        <v-btn
-                                            @click="fn_clearFile()"
 
-                                            v-if="modForm.status != '03'"
-                                        >X</v-btn>
-                                    </v-flex>
-
-                                    <v-flex xs16 class="drag_box_w">
+                                    <v-flex xs4 class="drag_box_w">
                                         <v-layout flat class="drag_box list">
-                                            <v-data-table
-                                                :headers="headers"
-                                                :items="jisuDataList"
-                                                :pagination.sync="pagination"
-                                                class="regist_table"
-                                            >
-                                                <template v-slot:items="props">
-                                                    <td
-                                                        class="text-xs-center"
-                                                    >{{ props.item.file_id }}</td>
-                                                    <td
-                                                        class="text-xs-center"
-                                                    >{{ props.item.row_no }}</td>
-                                                    <td class="text-xs-left">{{ props.item.col01 }}</td>
-                                                    <td class="text-xs-leftt">{{ props.item.col02 }}</td>
-                                                    <td class="text-xs-left">{{ props.item.col03 }}</td>
-                                                </template>
-                                            </v-data-table>
+
+                                            <table v-bind:id="tableName" class="tbl_type" style="width:100%">
+                                                <colgroup>
+                                                    <col width="20%">
+                                                    <col width="20%">
+                                                    <col width="20%">
+                                                    <col width="20%">
+                                                    <col width="20%">
+                                                </colgroup>
+                                                <thead>
+                                                    <tr>
+                                                        <th class="txt_left">파일ID</th>
+                                                        <th class="txt_center">행번호</th>
+                                                        <th class="txt_left">col01</th>
+                                                        <th class="txt_left">col02</th>
+                                                        <th class="txt_left">col03</th>
+                                                    </tr>
+                                                </thead>   
+                                            </table>
                                         </v-layout>
                                     </v-flex>
+                                     <v-flex xs2 class="drag_box_close">
+                                        <v-btn icon @click="fn_clearFile()"><v-icon>close</v-icon></v-btn>
+                                    </v-flex>
                                 </v-flex>
+
                             </v-layout>
 
                             <!-- 요청사항 -->
@@ -570,7 +572,13 @@
 
 <script>
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
+import $ from "jquery";
+import dt from "datatables.net";
+import buttons from "datatables.net-buttons";
+import select from "datatables.net-select";
 import Config from "@/js/config.js";
+
+var table01 = null;
 
 export default {
     props: [ "editData" ],
@@ -598,6 +606,7 @@ export default {
             pagination : {
                 rowsPerPage : -1
             },
+            tableName : "table01",
             jisuDataList : [],          /* 소급지수 업로드 후 목록정보 */
             jisuUploadResult : false,   /* 소급지수 업로드 결과 여부 */
 
@@ -814,6 +823,37 @@ export default {
         /* 팝업창에 노출할 전체 기관정보 조회 */
         this.fn_getDomainInst();
 
+        /* 테이블 렌더링 */
+        table01 =  $("#" + this.tableName ).DataTable({
+            processing: true,
+            serverSide: false,
+            info: false, // control table information display field
+            stateSave: false, //restore table state on page reload,
+            lengthMenu: [
+                [10, 20, 50, -1],
+                [10, 20, 50, "All"]
+            ],
+
+            select: {
+                style: "single",
+                selector: "td:first-child"
+            },
+            "scrollY": '30vh',
+            paging: false,
+            searching: false,
+            data: [],
+            ordering: false,
+            columnDefs: [
+            ],
+            columns: [
+                { "data": "file_id"     , "orderable" : false , className: "txt_left"   },              /* 파일ID */
+                { "data": "row_no"      , "orderable" : false , className: 'txt_center' },              /* 행번호 */
+                { "data": "col01"       , "orderable" : false , className: 'txt_right'  },              /* col01 */
+                { "data": "col02"       , "orderable" : false , className: 'txt_right'  },              /* col02 */
+                { "data": "col03"       , "orderable" : false , className: 'txt_right'  },              /* col03 */
+            ]
+        });        
+
         this.$nextTick().then(() => {
 
             /* 등록된 지수정보 조회 */
@@ -970,7 +1010,7 @@ export default {
 
                     msgTitle = "[연동신청] 요청시 ";
                 }else if( this.modForm.status == "02" ) {
-                    msgTitle = "[연동신청] 완료된 상입니다.";
+                    msgTitle = "연동신청된 상태입니다.";
                 }
 
 
@@ -1046,7 +1086,8 @@ export default {
                         }
 
                         if( resultData.result ) {
-                            vm.$router.push( "/index/manage" );
+                            vm.$emit( "fn_refresh" );
+                            vm.$router.push( "/index/register" );
                         }
                     }
                 });
@@ -1091,6 +1132,7 @@ export default {
                 }
             });
         },
+        
 
         determineDragAndDropCapable() {
 
@@ -1185,6 +1227,10 @@ export default {
 
             let formData = new FormData();
             formData.append("files", file);
+
+            if( table01 ) {
+                table01.clear().draw();
+            }                  
             
             axios.post(
                 Config.base_url + "/user/index/fileuploadSingle",
@@ -1216,6 +1262,10 @@ export default {
                     if( response.data.result ) {
                         selfThis.modForm.jisu_file_id = response.data.jisu_file_id;
                         selfThis.jisuDataList = response.data.dataList;
+
+                        if( table01 ) {
+                            table01.rows.add( selfThis.jisuDataList ).draw();                        
+                        }                        
                     }
                 }
 
@@ -1342,6 +1392,10 @@ export default {
 
             var selfThis = this;
 
+            if( table01 ) {
+                table01.clear().draw();
+            }            
+
             /* 1. 기관정보를 조회한다. */
             axios.post(Config.base_url + "/user/index/getRegistedJisuData", {
                 data: selfThis.editData
@@ -1370,6 +1424,10 @@ export default {
                     if( response.data.jisuDataList && response.data.jisuDataList.length > 0 ) {
                         selfThis.jisuDataList               =   response.data.jisuDataList;     /* 소급지수 업로드 후 목록정보 */
                         selfThis.jisuUploadResult           =   true;                           /* 소급지수 업로드 결과 여부 */
+
+                        if( table01 ) {
+                            table01.rows.add( selfThis.jisuDataList ).draw();                        
+                        }
                     }
                 }
             });            

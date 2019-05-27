@@ -9,8 +9,8 @@
                             <span class="grey--text">지수의 기본정보 및 소급지수를 등록합니다.</span>
                         </h3>
                     </v-card-title>
-                    <registrationModify v-if="editYn" :editData="editData" :key="editData.jisu_id"></registrationModify>
-                    <registration v-show="!editYn"></registration>
+                    <registrationModify v-if="editYn" :editData="editData" :key="editData.jisu_id" @fn_refresh="fn_refresh"></registrationModify>
+                    <registration v-show="!editYn" @fn_refresh="fn_refresh" ></registration>
                 </v-card>
             </v-flex>
             <v-flex shrink   class="conWidth_right">
@@ -21,7 +21,7 @@
                                     <v-btn nomal depressed class="btn_orange01" dark  @click="fn_jisuRegister()">신규지수등록</v-btn>
                                 </v-list-tile-content>
                             </v-list-tile>
-                            <quickmenucon></quickmenucon>
+                            <quickmenucon v-if="refreshYn"></quickmenucon>
                         </v-list>
                 </v-card>
             </v-flex>
@@ -49,7 +49,8 @@ export default {
             mini: false,
 
             editYn : false,
-            editData : { jisu_id: "", jisu_seq : -1 }
+            editData : { jisu_id: "", jisu_seq : -1 },
+            refreshYn : true,
         };
     },
     
@@ -103,6 +104,16 @@ export default {
 
             vm.editYn = false;
             vm.$EventBus.$emit( "indexRegisterMain_registration_call", "clear" );            
+        },
+
+        fn_refresh() {
+            var vm = this;
+
+            vm.refreshYn = false;
+
+            vm.$nextTick().then(() => {
+                vm.refreshYn = true;
+            });
         }
     }
 };

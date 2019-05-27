@@ -1260,7 +1260,10 @@ var deleteJisu = function(req, res) {
 
                                     callback( null, paramData );
                                 });
+                            }else{
+                                callback( null, paramData );
                             }
+                            
 
                         },
 
@@ -1309,6 +1312,8 @@ var deleteJisu = function(req, res) {
 
                                     callback( null, paramData );
                                 });
+                            }else{
+                                callback( null, paramData );
                             }
 
                         },
@@ -1356,8 +1361,10 @@ var deleteJisu = function(req, res) {
                                         return callback( resultMsg );
                                     }
 
-                                    callback( null, paramData );
+                                    callback( null );
                                 });
+                            }else{
+                                callback( null );
                             }
 
                         }
