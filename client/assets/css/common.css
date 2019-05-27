@@ -233,7 +233,7 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type,.tbl_type th,.tbl_type td{border:0}
 .tbl_type{border-bottom:1px solid #eeeeee;font-size:14px;text-align:center}
 .tbl_type caption{display:none}
-.tbl_type th{padding:8px 17px 8px 12px; border-top:1px solid #eeeeee;border-bottom:1px solid #eeeeee; color:#878793; font-size:12px; font-weight:400; line-height:12px;}
+.tbl_type th{padding:8px 17px 8px 12px; border-top:1px solid #eeeeee;border-bottom:1px solid #eeeeee; color:#878793; font-size:12px; font-weight:400; line-height:12px;background:#ffffff;}
 .tbl_type th.th_line{border-top:none;}
 .tbl_type th.txt_left{text-align: left;}
 .tbl_type th.txt_right{text-align: right;}
