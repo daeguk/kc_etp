@@ -22,8 +22,9 @@ var getEtpApplyList = function (req, res) {
         var options = { 
             large_type : req.session.large_type,
             jisu_cd: req.query.jisu_cd,
-            market_id: req.query.market_id
-        };
+            market_id: req.query.market_id,
+            inst_cd : req.session.inst_cd,
+          };
 
         util.log("options", JSON.stringify(options));
 
@@ -61,6 +62,7 @@ var getEtpApplyDistCnt = function (req, res) {
         // var options = {id:'admin'};
         
         var options = { 
+            inst_cd : req.session.inst_cd
          };
 
         util.log("options", JSON.stringify(options));
@@ -99,6 +101,7 @@ var getEtpApplyIndexCnt = function (req, res) {
         // var options = {id:'admin'};
         
         var options = { 
+            inst_cd : req.session.inst_cd
          };
 
         util.log("options", JSON.stringify(options));
@@ -134,9 +137,8 @@ var getEtpApplyCodeCnt = function (req, res) {
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
-        // var options = {id:'admin'};
-        
-        var options = { 
+         var options = { 
+            inst_cd : req.session.inst_cd
          };
 
         util.log("options", JSON.stringify(options));
@@ -172,9 +174,8 @@ var getEtpApplyInavCnt = function (req, res) {
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
-        // var options = {id:'admin'};
-        
-        var options = { 
+         var options = { 
+            inst_cd : req.session.inst_cd
          };
 
         util.log("options", JSON.stringify(options));
@@ -213,7 +214,7 @@ var getCompContactList = function (req, res) {
         var mapper = req.app.get("mapper");
         
         var options = { 
-            "inst_cd":  req.query.inst_cd
+            "inst_cd":  req.session.inst_cd
          };
 
         util.log("options", JSON.stringify(options));
