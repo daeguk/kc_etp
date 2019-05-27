@@ -15,27 +15,27 @@
                 <v-card flat>
                     <v-layout row wrap class="etp_apply_w">
                         <v-flex xs2 mt-2 ml-3 mb-3 mr-2>
-                            <v-card dark flat color="#42a4e1" class="apply_pre">
+                            <v-card dark flat class="apply_pre bgcolor1">
                                 <v-icon>border_color</v-icon>신청:  {{ list_cnt }}건
                             </v-card>
                         </v-flex>
                         <v-flex xs2 ma-2>
-                            <v-card dark flat color="#1976d2">
+                            <v-card dark flat class="bgcolor2">
                                 <v-icon>assessment</v-icon>지수입수:  {{ indexCnt }}건
                             </v-card>
                         </v-flex>
                         <v-flex xs2 ma-2>
-                            <v-card dark flat color="#466eb9">
+                            <v-card dark flat class="bgcolor3">
                                 <v-icon>assignment</v-icon>지수분배: {{ distCnt }}건
                             </v-card>
                         </v-flex>
                         <v-flex xs2 ma-2>
-                            <v-card dark flat color="#48485e">
+                            <v-card dark flat  class="bgcolor4">
                                 <v-icon>insert_drive_file</v-icon>종목코드 신청:  {{ codeCnt }}건
                             </v-card>
                         </v-flex>
                         <v-flex xs2 ma-2>
-                            <v-card dark flat color="#727281">
+                            <v-card dark flat class="bgcolor5">
                                 <v-icon>exposure</v-icon>iNAV산출 :{{ inavCnt }}건
                             </v-card>
                         </v-flex>
@@ -67,8 +67,8 @@
                     </table>
                      <v-card-actions flat class="mr-3">
                          <v-spacer></v-spacer>
-                        <v-btn depressed color="#9e9e9e" dark @click="deleteEtpApply()">삭제</v-btn>
-                        <v-btn depressed color="#48485e" dark @click="downloadExcel">엑셀</v-btn>
+                        <v-btn depressed color="grey" dark @click="deleteEtpApply()">삭제</v-btn>
+                        <v-btn depressed color="primary" dark @click="download-excel">엑셀</v-btn>
                     </v-card-actions>
                 </v-card>
                 <!---실제적용 테이블end--->
@@ -91,7 +91,7 @@ import buttons from "datatables.net-buttons";
 import Config from "@/js/config.js";
 import companyContactModal from "./companyContactModal";
 import idxConfirmModal from "./idxConfirmModal";
-import excel from "xlsx";
+//import excel from "xlsx";
 var table = null;
 
 export default {
@@ -306,21 +306,21 @@ export default {
                                 { "data" : "seq" , "orderable" : false },
                                 { "data" : "inst_cd" , "orderable" : false },
                                 { "data" : "idx_mid" , "orderable" : false },
-                                { "data" : "idx_sym_code" , "orderable" : false },
+                                { "data" : "idx_sym_code" , "orderable" : false  },
                                 { "data" : "ridx_dist_sym_code" , "orderable" : false },
-                                { "data" : "inst_nm", "orderable" : true,},
-                                { "data" : "isu_kor_nm", "orderable" : true },
+                                { "data" : "inst_nm", "orderable" : true,className: "txt_left t_link"},
+                                { "data" : "isu_kor_nm", "orderable" : true,className: "txt_left" },
                                 { "data" : "req_date", "orderable" : true },
                                 { "data" : "kor_for_type_name", "orderable" : true },
-                                { "data" : "basic_idx", "orderable": true },
+                                { "data" : "basic_idx", "orderable": true,className: "txt_left" },
                                 {  data: null,className: "txt_left", 
                                      "orderable" : false,
                                    defaultContent: ""
                                   },
                                 { data: null, className: "", defaultContent:"" , "orderable" : false,},
                                 { data: null, className: "", defaultContent:[
-                                        '<td><div class="tooltip"><button type="button" name="popIdx" class="btn_icon v-icon material-icons">equalizer</button><span class="tooltiptext" style="width:70px;">기초지수</span></div>'
-                                        + '<div class="tooltip"><button type="button" name="popInav" class="btn_icon v-icon material-icons">trending_up</button><span class="tooltiptext" style="width:70px;">iNAV</span></div></td> '
+                                        '<td><div class="tooltip"><button type="button" name="popIdx" class="btn_icon v-icon material-icons">equalizer</button><span class="tooltiptext" style="width:50px;">기초지수</span></div>'
+                                        + '<div class="tooltip"><button type="button" name="popInav" class="btn_icon v-icon material-icons">trending_up</button><span class="tooltiptext" style="width:50px;">iNAV</span></div></td> '
                                         ] , "orderable" : false,},
                                 { "data" : "idx_nm", "orderable": false },        
                             ],

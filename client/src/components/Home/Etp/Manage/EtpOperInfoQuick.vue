@@ -35,6 +35,7 @@
                                     <v-list-tile
                                         class="border_b"
                                         @click="fn_setInavData"
+                                        v-model="toggleINav"
                                     >
                                         <v-list-tile-avatar>
                                             <v-icon value="산출 현황">exposure</v-icon>
@@ -48,6 +49,7 @@
                                     <v-list-tile
                                         class="border_b"
                                         @click="fn_setEtpPerformanceData"
+                                        v-model="toggleEtpPerformance"
                                     >
                                         <v-list-tile-avatar>
                                             <v-icon value="Performance" icon>loop</v-icon>
@@ -82,6 +84,8 @@
                                                 <v-card-title ma-0>
                                                     ETP 운용화면 항목설정
                                                     <v-spacer></v-spacer>
+                                                    <v-btn @click="arrCustomizeColumn = arrAllCustomizedTextData">전체선택</v-btn>
+                                                    <v-btn @click="arrCustomizeColumn = []">전체해제</v-btn>
                                                     <v-btn icon @click="customizeDialog = false">
                                                         <v-icon>close</v-icon>
                                                     </v-btn>
@@ -247,6 +251,7 @@ export default {
             toggleEtpPerformance : false,
             arrCustomizeColumn : [],
             customizeDialog : false,
+            arrAllCustomizedTextData : [ "f15301", "index_nm", "f18001", "f03329", "index_f15001", "f30812", "f15302", "prev_f15001", "f15007", "f15304", "f15001", "f16073"  ],
 
             indexFixDialog : false,
             showFaver : true,
@@ -286,6 +291,9 @@ export default {
          */
         fn_setInavData() {
             var vm = this;
+
+            vm.toggleEtpPerformance =   false;
+
             vm.toggleINav  =   !vm.toggleINav;
 
             var paramData   =   {};
@@ -302,6 +310,9 @@ export default {
          */
         fn_setEtpPerformanceData() {
             var vm = this;
+
+            vm.toggleINav  =   false;
+
             vm.toggleEtpPerformance  =   !vm.toggleEtpPerformance;
 
             var paramData   =   {};
@@ -319,6 +330,9 @@ export default {
         fn_setCustomizeData() {
             var vm = this;
             var arrFixTitle = [ "f16002" ];     /* 종목은 선택하지 않아도 출력되게 수정 */
+
+            vm.toggleINav  =   false;
+            vm.toggleEtpPerformance =   false;
 
             console.log("########## EtpOperInfoQuick.vue -> fn_setCustomizeData START ############");
 

@@ -126,6 +126,11 @@
         SELECT      /* etpOper.getEtpOperPdfEtfHistByRate  ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETF 인 경우 ) */
 
                     1                                               AS  temp_data
+                ,   (
+                        SELECT  td_kspjong_basic.f16002
+                          FROM  td_kspjong_basic
+                         WHERE  td_kspjong_basic.f16012     =   td_etfpdf_hist.f16316   /* 구성종목코드 */
+                    )                                               AS  f16002          /* 한글종목명 */
                 ,
             <foreach    collection="rateTitleList"   item="data"    separator="," >
                     FORMAT(
@@ -159,6 +164,11 @@
         SELECT      /* etpOper.getEtpOperPdfEtnHistByRate  ETP 운용관리 - 비중변경현황 정보를 조회한다. ( ETN 인 경우 ) */
 
                     1                                               AS  temp_data
+                ,   (
+                        SELECT  td_future_basic.f16002
+                          FROM  td_future_basic
+                         WHERE  td_future_basic.f16012      =   td_etnpdf_hist.f16316   /* 구성종목코드 */
+                    )                                               AS  f16002          /* 한글종목명 */ 
                 ,
             <foreach    collection="rateTitleList"   item="data"    separator="," >
                     IFNULL(
@@ -350,6 +360,7 @@
                 ,   td_etp_basic.f16012                                     AS  f16012      /* 국제표준코드 */
                 ,   td_etp_basic.f15028                                     AS  f15028      /* 시가총액 */
                 ,   td_etp_basic.f15004                                     AS  f15004      /* 등락율 */
+                ,   td_etp_basic.f33929                                     AS  f33929      /* ETP_iNAV산출방식(0:PDF,1:지수수익율) */
                         
                 ,   td_etfpdf_basic.f16583                                  AS  f16583      /* 사무수탁회사번호 */
                 ,   td_etfpdf_basic.f16013                                  AS  f16013      /* ETF 단축코드 */
@@ -387,6 +398,7 @@
 
                     td_etp_basic.f15028                                     AS  f15028      /* 시가총액 */
                 ,   td_etp_basic.f15004                                     AS  f15004      /* 등락율 */
+                ,   td_etp_basic.f33929                                     AS  f33929      /* ETP_iNAV산출방식(0:PDF,1:지수수익율) */
 
                 ,   td_etfpdf_hist.f12506                                   AS  f12506      /* 일자 */
                 ,   td_etfpdf_hist.f16583                                   AS  f16583      /* 사무수탁회사번호 */
@@ -452,6 +464,7 @@
                 ,   td_etp_basic.f16012                                     AS  f16012      /* 국제표준코드 */
                 ,   td_etp_basic.f15028                                     AS  f15028      /* 시가총액 */
                 ,   td_etp_basic.f15004                                     AS  f15004      /* 등락율 */
+                ,   td_etp_basic.f33929                                     AS  f33929      /* ETP_iNAV산출방식(0:PDF,1:지수수익율) */
                         
                 ,   td_etnpdf_basic.f16583                                  AS  f16583      /* 사무수탁회사번호 */
                 ,   td_etnpdf_basic.f16013                                  AS  f16013      /* ETF 단축코드 */
@@ -483,6 +496,7 @@
 
                     td_etp_basic.f15028                                     AS  f15028      /* 시가총액 */
                 ,   td_etp_basic.f15004                                     AS  f15004      /* 등락율 */
+                ,   td_etp_basic.f33929                                     AS  f33929      /* ETP_iNAV산출방식(0:PDF,1:지수수익율) */
 
                 ,   td_etnpdf_hist.f12506                                   AS  f12506      /* 일자 */
                 ,   td_etnpdf_hist.f16583                                   AS  f16583      /* 사무수탁회사번호 */
@@ -604,6 +618,11 @@
                 ,   td_etp_basic.F33961                                 AS  f33961              /* ETP운용사명(한글명) */
                 ,   td_etp_basic.F34240                                 AS  f34240              /* ETP계산유형 */
                 ,   td_etp_basic.F33929                                 AS  f33929              /* ETP_iNAV산출방식(0:PDF,1:지수수익율) */
+                ,   td_etp_basic.F34374                                 AS  f34374              /* 전일ETP기초지수등락율 */
+                ,   td_etp_basic.F30824                                 AS  f30824              /* 전일ETP기초지수등락율 */
+                ,   td_etp_basic.F30819                                 AS  f30819              /* 해외ETP매매기준율 */
+                ,   td_etp_basic.F18453                                 AS  f18453              /* ETP 배율 */ 
+                ,   td_etp_basic.F18101                                 AS  f18101              /* 예상배당수익률 : 배당율 */ 
                 ,   (
                         SELECT  tm_code_dtl.com_dtl_name
                           FROM  tm_code_dtl

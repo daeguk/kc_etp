@@ -163,7 +163,9 @@ export default {
             iNav_percent: 0,
             nav_timer: null,
             btn_class: 'btn_on',
-            btn_kind: 'play_circle_outline'         
+            btn_kind: 'play_circle_outline',
+            SimulationRender: {}, 
+            DefaultRender: {},
         };
     },
     mixins : [ nav_cal_common ],
@@ -172,8 +174,8 @@ export default {
     },
     mounted: function() {
         var vm = this;
-        /* [전체종목 -> ETF] 테이블 */
-        pdf_table = $('#pdf_table').DataTable( {
+        /* 시뮬레이션 모드 */
+        vm.SimulationRender = {
             "processing": true,
             "serverSide": false,
             "info": false,   // control table information display field
@@ -268,7 +270,97 @@ export default {
                 { "data": "f15007", "orderable": true, className:"txt_right" }, /*기준가*/
                 { "data": "f16588", "orderable": true, className:"txt_right" }, /*CU시가총액*/
             ]
-        });
+        };
+
+        /* 기본 모드 */
+        vm.DefaultRender = {
+            "processing": true,
+            "serverSide": false,
+            "info": false,   // control table information display field
+            "stateSave": true,  //restore table state on page reload,
+            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+            "scrollY":        '40vh',
+            thead: {
+                display:'none'
+            },
+            "ordering": false,
+            "columnDefs": [
+                 {  
+                    "render": function ( data, type, row ) {
+                        let htm = "";
+                        if (data == 0) {
+                            htm = 'KSP';
+                        } else if (data == 1) {
+                            htm = 'KSQ';
+                        } else if (data == 2) {
+                            htm = '기타';
+                        } else if (data == 3) {
+                            htm = '채권';
+                        } else if (data == 4) {
+                            htm = '파생';
+                        }
+                        return htm;
+                    },
+                    "targets": 0
+                },
+                {  
+                    "render": function ( data, type, row ) {
+                        let htm = "";
+                        
+                        htm += Number(data) + "%";
+                        
+                        return htm;
+                    },
+                    "targets": 4
+                },
+                {  
+                    "render": function ( data, type, row ) {
+                        let htm = ""
+                            
+                        htm += util.formatNumber(data);
+
+                        if (row.f15004 >= 0) {
+                            htm += "<br><span class='text_S text_red'>"+row.f15004+"%</span>";
+                        } else {
+                            htm += "<br><span class='text_S text_blue'>"+row.f15004+"%</span>";
+                        }
+
+                        return htm;
+                    },
+                    "targets": 5
+                },
+                {  
+                    "render": function ( data, type, row ) {
+                        let htm = ""
+                            
+                        htm = util.formatNumber(data);
+
+                        return htm;
+                    },
+                    "targets": [6, 7]
+                },
+                
+                
+            ],
+            select: {
+                style:    'single',
+                selector: 'td:first-child'
+            },
+            paging: false,
+            searching: false,
+            columns: [
+                { "data": "f33861", "orderable": true},  /* 분류 */
+                { "data": "f16013", "orderable": true, className:"txt_left" }, /*코드*/
+                { "data": "f16002", "orderable": true}, /*종목*/
+                { "data": "f16499", "orderable": true, defaultContent:""}, /*cu 수량*/
+                { "data": "f34743", "orderable": true, className:"txt_right" }, /*비중*/
+                { "data": "f15001", "orderable": true, className:"txt_right" }, /*현재가*/
+                { "data": "f15007", "orderable": true, className:"txt_right" }, /*기준가*/
+                { "data": "f16588", "orderable": true, className:"txt_right" }, /*CU시가총액*/
+            ]
+        };
+
+        pdf_table = $('#pdf_table').DataTable(vm.DefaultRender);
 
 
         //  ETF 에서 그래프 선택시
@@ -437,9 +529,13 @@ export default {
 
         SimulationMode: function() {
             if (this.SimulationSwitch) {
-                $('#pdf_table tbody td input[id=cu_cnt]').attr("readonly", false);
+                pdf_table.destroy();                
+                pdf_table = $('#pdf_table').DataTable(this.SimulationRender);
+                this.pdf_reload(this.pdfList);
             } else {
-                $('#pdf_table tbody td input[id=cu_cnt]').attr("readonly", true);
+                pdf_table.destroy();                
+                pdf_table = $('#pdf_table').DataTable(this.DefaultRender);
+                this.pdf_reload(this.pdfList);
             }
         },
         fn_closePop() {

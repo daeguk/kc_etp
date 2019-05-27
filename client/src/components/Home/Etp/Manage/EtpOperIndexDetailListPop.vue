@@ -110,17 +110,6 @@ export default {
 
         var vm = this;
 
-        vm.$EventBus.$on('changeEtpOperIndexDetailList', data => {
-            console.log( "EventBus changeEtpOperIndexDetailList>>>>>>>" );
-            console.log( data );
-
-            vm.fn_getIndexDetailList();
-        });
-
-        vm.$EventBus.$on('changeEtpOperIndexDetailListClose', data => {
-            vm.$EventBus.$off('changeEtpOperIndexDetailList');         
-        });
-
     },
     beforeDestory: function() {},
 

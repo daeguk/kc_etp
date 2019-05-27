@@ -29,7 +29,7 @@
 
 
                     <v-card flat>
-                        <table id="table01" class="tbl_type"    style="width:100%"/>
+                        <table id="table01" class="tbl_type ver7"    style="width:100%"/>
                     </v-card>
                 </v-card>
             </v-flex>  
@@ -56,6 +56,7 @@ import $      from 'jquery';
 import dt      from 'datatables.net';
 import buttons from 'datatables.net-buttons';
 import util       from "@/js/util.js";
+import dtFc from "datatables.net-fixedcolumns";
 
 import Config from '@/js/config.js';
 import EtpOperInfoQuick         from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
@@ -173,6 +174,10 @@ export default {
                 searching: false,
                 data : [],
                 autoWidth: false,
+
+                fixedColumns:   {
+                    leftColumns: 2,
+                }
             };
 
 
@@ -223,7 +228,7 @@ export default {
                     ,   'month1'                        /* 1개월 */
                     ,   'month3'                        /* 3개월 */
                     ,   'month6'                        /* 6개월 */
-                    ,   'year1'                         /* 연환산 */
+                    ,   'ytd'                           /* ytd */
                     ,   'graph'                         /* 그래프 영역 */
                 ] );
             }
@@ -433,22 +438,22 @@ export default {
             var vm = this;
 
             var arrColumn  =   [
-                { 'name' : 'f16002'             , 'data': 'f16002'           ,  'width' : '220', 'orderable' : true  , 'className': 'txt_left',  'title' : '종목'           },      /* 한글종목명 */
-                { 'name' : 'f33929_nm'          , 'data': 'f33929_nm'        ,  'width' : '100', 'orderable' : true  , 'className': 'txt_left',  'title' : '지표산출방식'   },      /* 지표산출방식 */
-                { 'name' : 'f15301'             , 'data': 'f15301'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : 'iNAV'          },      /* ETP지표가치(NAV/IV) */
-                { 'name' : 'f03329'             , 'data': 'f03329'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '전일NAV'},      /* 전일ETP지표가치(예탁원)(NAV/IV) */
-                { 'name' : 'f15302'             , 'data': 'f15302'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : 'TE' },      /* 추적오차율 */
+                { 'name' : 'f16002'             , 'data': 'f16002'           ,  'width' : '120', 'orderable' : true  , 'className': 'txt_left',  'title' : '종목'           },      /* 한글종목명 */
+                { 'name' : 'f33929_nm'          , 'data': 'f33929_nm'        ,  'width' : '70', 'orderable' : true  , 'className': 'txt_left',  'title' : '산출방식'   },      /* 지표산출방식 */
+                { 'name' : 'f15301'             , 'data': 'f15301'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : 'iNAV'          },      /* ETP지표가치(NAV/IV) */
+                { 'name' : 'f03329'             , 'data': 'f03329'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : '전일NAV'},      /* 전일ETP지표가치(예탁원)(NAV/IV) */
+                { 'name' : 'f15302'             , 'data': 'f15302'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : 'TE' },      /* 추적오차율 */
                                                                                                                                                     
-                { 'name' : 'f15304'             , 'data': 'f15304'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '괴리율'        },      /* ETP괴리율 */
-                { 'name' : 'index_nm'           , 'data': 'index_nm'         ,  'width' : '200', 'orderable' : true  , 'className': 'txt_left' , 'title' : '기초지수'      },      /* 기초지수명 */
-                { 'name' : 'index_f15001'       , 'data': 'index_f15001'     ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '지수' },      /* 지수 현재가 */
-                { 'name' : 'f18438'             , 'data': 'f18438'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '환율'          },      /* 적용환율 */
+                { 'name' : 'f15304'             , 'data': 'f15304'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : '괴리율'        },      /* ETP괴리율 */
+                { 'name' : 'index_nm'           , 'data': 'index_nm'         ,  'width' : '100', 'orderable' : true  , 'className': 'txt_left' , 'title' : '기초지수'      },      /* 기초지수명 */
+                { 'name' : 'index_f15001'       , 'data': 'index_f15001'     ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '지수' },      /* 지수 현재가 */
+                { 'name' : 'f18438'             , 'data': 'f18438'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '환율'          },      /* 적용환율 */
                 { 'name' : 'f18001'             , 'data': 'f18001'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : 'ETF 전일가'    },      /* 전일ETF순자산총액(원)  */
 
                 { 'name' : 'week1'              , 'data': 'week1'            ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '<br>1주'        },      /* 1주  */
                 { 'name' : 'month1'             , 'data': 'month1'           ,  'width' : '90',  'orderable' : true  , 'className': 'txt_right', 'title' : '수익률<br>1개월'      },     /* 1개월  */
                 { 'name' : 'month3'             , 'data': 'month3'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '<br>3개월' },      /* 3개월  */
-                { 'name' : 'ytd'                , 'data': 'ytd'              ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '<br>연환산'     },      /* ytd  */
+                { 'name' : 'ytd'                , 'data': 'ytd'              ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '<br>YTD'     },      /* ytd  */
                                                                                                                                                     
                 { 'name' : 'f30812'             , 'data': 'f30812'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : 'AUM'           },      /* 유동시가총액  */
                 { 'name' : 'prev_f15001'        , 'data': 'prev_f15001'      ,  'width' : '90',  'orderable' : true  , 'className': 'txt_right', 'title' : '지수<br>전일가'},     /* 기초지수 전일가  */
@@ -456,7 +461,7 @@ export default {
                 { 'name' : 'f15001'             , 'data': 'f15001'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : 'ETF 현재가'    },      /* 현재가  */
                 { 'name' : 'f16073'             , 'data': 'f16073'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '과세구분'      },      /* 락구분코드  */
 
-                { 'name' : 'graph'              , 'data': null               ,  'width' : '150', 'orderable' : false  },
+                { 'name' : 'graph'              , 'data': null               ,  'width' : '120', 'orderable' : false  },
             ];        
 
             var arrColumnDef  =   [
@@ -523,15 +528,61 @@ export default {
                     {       'name' : 'f18438'   
                         ,   "render": function ( data, type, row ) {
                                 let htm = ""
+
+                                htm += util.formatNumber(data);
             
-                                htm += data;
+//                                htm += data;
                                 htm += "<br>";
                                 htm += "<span class='text_s'>" + row.f18450 + "</span>";                    /* 해외ETF원주자산기준통화코드 */
 
                                 return htm;
                             },
-                    },                    
-                
+                    },
+
+                    /* week1 */
+                    {       'name' : 'week1'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+
+                                htm += util.formatNumber(data);
+
+                                return htm;
+                            },
+                    },
+
+                    /* month1 */
+                    {       'name' : 'month1'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+
+                                htm += util.formatNumber(data);
+
+                                return htm;
+                            },
+                    },
+
+                    /* month3 */
+                    {       'name' : 'month3'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+
+                                htm += util.formatNumber(data);
+
+                                return htm;
+                            },
+                    },
+
+                    /* ytd */
+                    {       'name' : 'ytd'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+
+                                htm += util.formatNumber(data);
+
+                                return htm;
+                            },
+                    },
+
                     /* 그래프 */
                     {       'name' : 'graph'   
                         ,   "render": function ( data, type, row ) {
