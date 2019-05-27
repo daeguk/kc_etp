@@ -12,76 +12,58 @@
     * 
     -->
 <select id="selectEtpApplyList" >
-        <![CDATA[
-       SELECT a.*, 
-        (select inst_nm from m001uetpinstcode where inst_cd = a.inst_cd limit 1) inst_nm, 
-        (select m_cd_nm from m001uetpcode where l_cd= '002' and m_cd = a.isin_stat_cd) m_cd_nm,
-        timestampdiff(day,req_date,now()) lapse_date,
-        timestampdiff(day,ifnull(list_date,"29991231")  ,now()) list_lapse_date, 
-        ifnull(a.ridx_dist_sym_code,a.idx_sym_code) basic_idx,
-        case a.kor_for_type
-        when "K" then "국내"
-        when "F" then "해외"        
-        else ""
-        end kor_for_type_name 
-        from m001uetpmaster a
-        WHERE (a.list_date    >=   current_date( )  or      a.list_date is null) 
-        and a.isin_stat_cd != "0009" 
-       ]]>
-        <if test=" userType == '0001' "> 
        <![CDATA[
-        and    a.inst_cd = #{instCd} 
+       SELECT a.*, 
+            (select inst_nm from m001uetpinstcode where inst_cd = a.inst_cd limit 1) inst_nm, 
+            (select m_cd_nm from m001uetpcode where l_cd= '002' and m_cd = a.isin_stat_cd) m_cd_nm,
+            timestampdiff(day,req_date,now()) lapse_date,
+            timestampdiff(day,ifnull(list_date,"29991231")  ,now()) list_lapse_date, 
+            ifnull(a.ridx_dist_sym_code,a.idx_sym_code) basic_idx,
+            case a.kor_for_type
+            when "K" then "국내"
+            when "F" then "해외"        
+            else ""
+            end kor_for_type_name 
+        from m001uetpmaster a
+        where (a.list_date    >=   current_date( )  or      a.list_date is null) 
+            and a.isin_stat_cd != "0009" 
+            and a.inst_cd = #{inst_cd} 
+            order by a.seq asc
        ]]>
-       </if> 
-       order by a.seq asc
-   
+          
 </select>
 
 <select id="getEtpApplyDistCnt">
        <![CDATA[
-       select count(1)  distCnt from m001uetpmaster where (list_date >=   current_date( )  or   list_date is null  )
-       ]]>
-       <if test=" userType == '0001' "> 
-       <![CDATA[
-        and    a.inst_cd = #{instCd} 
-       ]]>
-       </if> 
-        and idx_dis_yn = 'Y' and isin_stat_cd != '0009'
+        select count(1)  distCnt from m001uetpmaster where (list_date >=   current_date( )  or   list_date is null  )
+           and a.inst_cd = #{inst_cd} 
+           and idx_dis_yn = 'Y' and isin_stat_cd != '0009'
+        ]]>
 </select>
 <select id="getEtpApplyIndexCnt" >
        <![CDATA[
-       select count(1) indexCnt from m001uetpmaster where  (list_date >=   current_date( )  or   list_date is null  )
+        select count(1) indexCnt from m001uetpmaster where  (list_date >=   current_date( )  or   list_date is null  )
+            and a.inst_cd = #{inst_cd}
+            and idx_rec_yn = 'Y' and isin_stat_cd != '0009'  
        ]]>
-       <if test=" userType == '0001' "> 
-       <![CDATA[
-        and    a.inst_cd = #{instCd} 
-       ]]>
-       </if> 
-        and idx_rec_yn = 'Y' and isin_stat_cd != '0009'
 </select>
 
 <select id="getEtpApplyCodeCnt">
        <![CDATA[
-       select count(1) codeCnt from m001uetpmaster where  (list_date >=   current_date( )  or   list_date is null  )
+        select count(1) codeCnt from m001uetpmaster where  (list_date >=   current_date( )  or   list_date is null  )
+            and a.inst_cd = #{inst_cd} 
+            and isin_code is not null and isin_stat_cd != '0009'
        ]]>
-       <if test=" userType == '0001' "> 
-       <![CDATA[
-        and    a.inst_cd = #{instCd} 
-       ]]>
-       </if>
-       and isin_code is not null and isin_stat_cd != '0009'
 </select>
 
 <select id="getEtpApplyInavCnt" >
        <![CDATA[
-       select count(1) inavCnt from m001uetpmaster where  (list_date >=   current_date( )  or   list_date is null  )
-       ]]>
-       <if test=" userType == '0001' "> 
-       <![CDATA[
-        and    a.inst_cd = #{instCd} 
+        select count(1) inavCnt from m001uetpmaster where  (list_date >=   current_date( )  or   list_date is null  )
+            and    a.inst_cd = #{inst_cd} 
+            and inav_calc_yn = 'Y' and isin_stat_cd != '0009'
        ]]>
        </if>
-       and inav_calc_yn = 'Y' and isin_stat_cd != '0009'
+    
 </select>
 <select id="getCodeList">
  <![CDATA[
@@ -306,18 +288,18 @@
 
 <select id="getIdxList" >
     <![CDATA[
-    SELECT F12506 time, F15001 value FROM 
-    ${idxTable} 
-    WHERE TRIM(F16013) = #{idx_sym_code}   
-    ORDER BY 1 DESC LIMIT 20
+    select F12506 time, F15001 value FROM 
+        ${idxTable} 
+        WHERE TRIM(F16013) = #{idx_sym_code}   
+        ORDER BY 1 DESC LIMIT 20
     ]]>	
 </select>
 <select id="getRidxList" >
     <![CDATA[
-    SELECT F12506 time, F15001 value FROM 
-    td_index_basic 
-    WHERE TRIM(F16013) = #{ridx_dist_sym_code}  AND market_id =  #{market_id}
-    ORDER BY 1 DESC LIMIT 20
+    select  F12506 time, F15001 value FROM 
+        td_index_basic 
+        where TRIM(F16013) = #{ridx_dist_sym_code}  AND market_id =  #{market_id}
+        ORDER BY 1 DESC LIMIT 20
     ]]>	
 </select>
 <select id="getMasterHistoryNextSeq">

@@ -56,7 +56,7 @@ import $      from 'jquery';
 import dt      from 'datatables.net';
 import buttons from 'datatables.net-buttons';
 import util       from "@/js/util.js";
-import dtfx from "datatables.net-fixedcolumns";
+import dtFc from "datatables.net-fixedcolumns";
 
 import Config from '@/js/config.js';
 import EtpOperInfoQuick         from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
@@ -528,6 +528,8 @@ export default {
                     {       'name' : 'f18438'   
                         ,   "render": function ( data, type, row ) {
                                 let htm = ""
+
+                                htm += util.formatNumber(data);
             
                                 htm += data;
                                 htm += "<br>";

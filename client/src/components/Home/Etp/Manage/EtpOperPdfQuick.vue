@@ -216,6 +216,16 @@ console.log( vm.pdfData );
             }
             /* iNAV 계산기인 경우 */
             else if( gubun == 7 ) {
+
+                var gubun   =   "7";
+
+                /* 0-PDF, 1-지수 수익율 */
+                if( vm.pdfData.f33929 == "0" ) {
+                    gubun   =   "7";
+                }else if( vm.pdfData.f33929 == "1" ) {
+                    gubun   =   "8";
+                }
+
                 vm.$emit( "fn_showDetailPdf", gubun, vm.pdfData );
             }
             
