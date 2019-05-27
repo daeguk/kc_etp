@@ -318,7 +318,7 @@ var insertEtpRegister = function(req, res) {
 
         //일반->  세션
         //코스콤->선택값
-        if(req.session.inst_type_cd !=='0002'){
+        if(req.session.type_cd !=='0002'){
             paramData.inst_cd       =   paramData.paramInstCd;
         }
         
@@ -345,7 +345,7 @@ var insertEtpRegister = function(req, res) {
             return;
         }
         util.log("###ETP INSERT CALL HUDLE JUMP SUCCESS");
-        paramData.list_req_date = paramData.listReqDate;
+        paramData.list_req_date = paramData.listReqDate; //##이값만 바인딩이 안된다..이상하다..
         paramData.list_date = paramData.listDate;
 
         var isin_code       = paramData.isin_code;      //단축코드
@@ -485,7 +485,7 @@ var updateEtpRegister = function(req, res) {
     
     paramData.user_id       =   req.session.user_id;
 
-    if(req.session.inst_type_cd !=='0002'){
+    if(req.session.type_cd !=='0002'){
         paramData.inst_cd       =   paramData.paramInstCd;
     }
     
@@ -607,7 +607,7 @@ var updateEtpRegister = function(req, res) {
                         dbMasterData  = rows[0];
                         console.log("UPDATE BEFORE MASTER Data:::", dbMasterData.isin_stat_cd);
                         
-                            if(dbMasterData.inst_cd !== paramData.paramInstCd && req.session.inst_type_cd !=='0002' ){
+                            if(dbMasterData.inst_cd !== paramData.paramInstCd && req.session.type_cd !=='0002' ){
                                 return callback( "해당 발행사나 코스콤만 수정이 가능합니다." );
                             }    
 

@@ -78,14 +78,14 @@
                                         <ul>
                                             <li>거래량</li>
                                             <li class="number">{{formatNumber(etpBasic.f15015)}}주</li>
-                                            <li class="number2 text_green">AVG(3M):999.999.999</li>
+                                            <li class="number2 text_green">AVG(60일):{{formatNumber(etpBasic.f13510)}}</li>
                                         </ul>
                                 </v-flex>
                                 <v-flex class="ver3">
                                     <ul>
                                             <li>거래대금</li>
-                                            <li class="number">{{formatNumber(etpBasic.f15023/1000)}}천</li>
-                                            <li class="number2 text_green">AVG(3M):9.999.999.999</li>
+                                            <li class="number">{{formatNumber(etpBasic.f15023/10000000)}}억</li>
+                                            <li class="number2 text_green">AVG(60일):{{formatNumber(etpBasic.f13516/10000000)}}억</li>
                                         </ul>
                                 </v-flex>
                             </v-layout>
@@ -151,34 +151,9 @@ export default {
     },
     data() {
         return {
-            text: "전종목",
-            text2: "",
-            dialog: false,
-            dialog2: false,
-            drawer: true,
-            search: "",
-            tab: null,
-            tab2: null,
             tab5: null,
             items5: ["분석정보", "기본정보"],
-            items4: [],
-            mini: false,
-            right: null,
-            rowsPerPageItems: [10, 20, 30, 50],
-            headers: [
-                {
-                    text: "Code",
-                    align: "left",
-                    value: "name"
-                },
-                { text: "name", value: "name" },
-                { text: "BasePrc", value: "BasePrc", align: "right" },
-                { text: "Shrs", value: "Shrs", align: "right" },
-                { text: "Float rto", value: "FloatRto", align: "right" },
-                { text: "Ceiling rto", value: "CeilingRto", align: "right" },
-                { text: "Factor rto", value: "FactorRto", align: "right" }
-            ],
-            desserts: [],
+
             toggle_one: '1M',
             basicData           :   {},
             etpBasic            :   {},

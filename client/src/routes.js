@@ -16,13 +16,10 @@ import  EtpOperMain                         from './components/Home/Etp/Manage/E
 import  EtpOperInfo                         from "./components/Home/Etp/Manage/EtpOperInfo.vue";                        /* ETP 운용정보 */
 import  EtpOperIndex                        from "./components/Home/Etp/Manage/EtpOperIndex.vue";                       /* 지수관리 */
 import  EtpOperPdf                          from "./components/Home/Etp/Manage/EtpOperPdf.vue";                         /* PDF 관리 */
-import  EtpOperInfoQuickPerformance         from './components/Home/Etp/Manage/EtpOperInfoQuickPerformance.vue';        /* ETP 운용정보 -> ETP Performance */
 
 import  EtpRegisterMain                     from './components/Home/Etp/Register/EtpRegisterMain.vue';
 import  EtpContractMain                     from './components/Home/Etp/Contract/EtpContractMain.vue';
 import  EtpManageDetail                     from './components/Home/Etp/Manage/EtpManageDetail.vue';
-import  OverseasIndex                       from './components/Home/Etp/Manage/OverseasIndex.vue';
-import  PdfModifyImportance                       from './components/Home/Etp/Manage/PdfModifyImportance.vue';
 
 // MARKET INFO
 import EtpInfoMain              from  './components/Home/MarketInfo/etp/EtpInfoMain.vue'
@@ -152,27 +149,6 @@ export const routes = [
         },
         {   path : 'etp/etpManageDetail',
             component: EtpManageDetail,
-            meta: {
-              requiresAuth: true,
-              requiresType: ['0001', '0002', '0004', '0005']
-            },
-        },
-        {   path : 'etp/manage/etpOperInfoQuickPerformance',
-            component: EtpOperInfoQuickPerformance,
-            meta: {
-              requiresAuth: true,
-              requiresType: ['0001', '0002', '0004', '0005']
-            },
-        },
-        {   path : 'etp/manage/overseasIndex',
-            component: OverseasIndex,
-            meta: {
-              requiresAuth: true,
-              requiresType: ['0001', '0002', '0004', '0005']
-            },
-        },
-        {   path : 'etp/manage/PdfModifyImportance',
-            component: PdfModifyImportance,
             meta: {
               requiresAuth: true,
               requiresType: ['0001', '0002', '0004', '0005']

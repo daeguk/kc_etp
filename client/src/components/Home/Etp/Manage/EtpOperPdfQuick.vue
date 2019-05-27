@@ -4,26 +4,23 @@
             <!--rightmenu---->
             <v-card flat class="right_menu_w2">
                 <v-list class="pt-0" dense>
-<!--
-TODO:   2차에서 개발예정
                         <v-list-tile-content class="rightmenu_con">
                             <v-subheader>
                                 <v-icon small>feedback</v-icon>지수 조치 현황
-
                                 <v-btn
                                     small
                                     depressed
                                     outline
                                     color="primary"
                                     @click="fn_showDetailIndex"
+                                    :disabled = "fix_info.fix_disabled"
                                 >내역확인</v-btn>
 
                             </v-subheader>
                             <p class="text_red">
-                                <v-icon small>arrow_right</v-icon>3개 지수에 대한 조치 발생
+                                <v-icon small>arrow_right</v-icon>{{ fix_info.fix_msg }}
                             </p>
                         </v-list-tile-content>
--->
                         <v-list-tile-content class="rightmenu_con Oper_menu">
                             <v-subheader>
                                 <v-icon small>build</v-icon>PDF Tools
@@ -32,7 +29,7 @@ TODO:   2차에서 개발예정
                                 <v-list>
                                     <!---pdf긴급반영 팝업-->
 
-                                    <v-list-tile class="border_b ver2" @click="fn_showDetailPdf(6)">
+                                    <v-list-tile class="border_b ver2" @click.stop="fn_showDetailPdf(6)">
                                         <v-list-tile-avatar>
                                             <v-icon value="긴급반영">flash_on</v-icon>
                                         </v-list-tile-avatar>
@@ -45,7 +42,7 @@ TODO:   2차에서 개발예정
                                     <!---pdf긴급반영 팝업 팝업 end-->
                                     
                                     <!---iNAV 계산기 팝업---->
-                                    <v-list-tile class="border_b ver2" @click="fn_showDetailPdf(7)">
+                                    <v-list-tile class="border_b ver2" @click.stop="fn_showDetailPdf(7)">
                                         <v-list-tile-avatar>
                                             <v-icon value="계산기" icon>exposure</v-icon>
                                         </v-list-tile-avatar>
@@ -61,6 +58,7 @@ TODO:   2차에서 개발예정
                                     <v-list-tile
                                         class="border_b ver2 importance"
                                         @click="fn_setEtpOperPdfByRate"
+                                        v-model="togglePdfByRate"
                                     >
                                         <v-list-tile-avatar>
                                             <v-icon value="비중변경현황" icon>find_replace</v-icon>
@@ -83,7 +81,7 @@ TODO:   2차에서 개발예정
                         </ComEtpFavorItemSub>
 
                     </v-list>
-                </v-navigation-drawer>
+
             </v-card>
             <!--rightmenu end--->
         </v-layout>
@@ -105,79 +103,14 @@ export default {
     props : [ "pdfData", "indexBasic" ],
     data() {
         return {
-            text: "전종목",
-            checkbox: true,
-            date2: new Date().toISOString().substr(0, 10),
-            menu2: false,
-            text2: "",
-            dialog: false,
-            dialog2: false,
-            dialog5: false,
-            dialog6: false,
-            drawer: true,
-            search: "",
-            tab: null,
-            tab2: null,
-            items1: ["전체", "시장대표"],
-            items: [
-                { title: "Home", icon: "dashboard" },
-                { title: "About", icon: "question_answer" }
-            ],
-            items2: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                },
-                {
-                    title: "KODEX 코스닥150 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            items3: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            mini: false,
-            right: null,
-            rowsPerPageItems: [10, 20, 30, 50],
-            headers: [
-                {
-                    text: "Code",
-                    align: "left",
-                    value: "name"
-                },
-                { text: "name", value: "name" },
-                { text: "BasePrc", value: "BasePrc", align: "right" },
-                { text: "Shrs", value: "Shrs", align: "right" },
-                { text: "Float rto", value: "FloatRto", align: "right" },
-                { text: "Ceiling rto", value: "CeilingRto", align: "right" },
-                { text: "Factor rto", value: "FactorRto", align: "right" }
-            ],
-            desserts: [],
-            items4: [],
-            switch1: "",
-
-
             showFaver : true,
             togglePdfByRate   : false,
+
+            /* 지수 조치현황 */
+            fix_info : {
+                fix_disabled : true,
+                fix_msg : "조치현황 없음"
+            }            
         };
     },
     components: {

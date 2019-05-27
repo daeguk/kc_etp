@@ -8,7 +8,7 @@
                             <v-subheader>Register ID</v-subheader>
                         </v-flex>
                         <v-flex xs4 mt-2>
-                            <span>{{ modForm.reg_id }}fdsfds</span>
+                            <span>{{ modForm.reg_id }}</span>
                         </v-flex>
                     </v-layout>
 

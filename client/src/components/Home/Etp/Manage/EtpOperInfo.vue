@@ -45,25 +45,6 @@
                                         @showMessageBox="showMessageBox"
                                         @fn_showDetailIndex="fn_showDetailIndex">
                     </EtpOperInfoQuick>
-
-                <!-- [ETP 운영정보] -> Quick Menu iNAV 산출현황 선택 -> 그리드에서 Pdf 선택시 -->
-                <v-dialog   v-model="showInavPdfYn"     persistent  max-width="500" >
-                    <EtpOperInfoInavPdf     v-if="inavGubun == 'pdf'"
-
-                                            :paramData = "etpRow"
-                                            @fn_close = "fn_close">
-                    </EtpOperInfoInavPdf>
-                </v-dialog>
-
-                <!-- [ETP 운영정보] -> Quick Menu iNAV 산출현황 선택 -> 그리드에서 Index 선택시 -->
-                <v-dialog  v-model="showInavIndexYn"  persistent  max-width="600" >
-                    <EtpOperInfoInavIndex   v-if="inavGubun == 'index'"
-
-                                            :paramData = "etpRow"
-                                            @fn_close = "fn_close">
-                    </EtpOperInfoInavIndex>
-                </v-dialog>   
-
             </v-flex>       
         </v-layout>
     </v-container>
@@ -187,6 +168,7 @@ export default {
                 "info": false,   // control table information display field
                 "stateSave": true,  //restore table state on page reload,
                 "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                "scrollY": '60vh',
                 paging: false,
                 searching: false,
                 data : [],
@@ -289,25 +271,20 @@ export default {
                 vm.paramData.f34239         =   data.f34239;        /* ETP기초지수MID  */
                 vm.paramData.rowIndex       =   rowInx;
 
-                /* 산출방식 컬럼값이 없어 레코드 행이 짝수이면 pdf, 홀수이면 index 로 임시 처리함. TODO: 추후 변경 필요. */
-                var gubun = "";
-                if( rowInx %2 ==0 ) {
-                    gubun = "btnInavPdfPop";
-                }else{
-                    gubun = "btnInavIndexPop";
-                }
-
                 switch( btnId ) {
 
                     case    'btnInav'       :
 
-                                if( gubun == "btnInavPdfPop" ) {
-                                    vm.inavGubun    =   "pdf";
-                                    vm.showInavPdfYn   =   true;
-                                }else if( gubun == "btnInavIndexPop" ) {
-                                    vm.inavGubun    =   "index";
-                                    vm.showInavIndexYn =   true;
+                                var gubun   =   "7";
+
+                                /* 0-PDF, 1-지수 수익율 */
+                                if( data.f33929 == "0" ) {
+                                    gubun   =   "7";
+                                }else if( data.f33929 == "1" ) {
+                                    gubun   =   "8";
                                 }
+
+                                vm.$emit( "fn_showDetailPdf", gubun, data );
 
                                 break;
 

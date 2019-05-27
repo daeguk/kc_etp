@@ -9,6 +9,7 @@
                             @showDetail="showDetail" 
                             @showMessageBox="showMessageBox"
                             @fn_showDetailIndex="fn_showDetailIndex"
+                            @fn_showDetailPdf="fn_showDetailPdf"
                             @fn_pageMove="fn_pageMove">
             </EtpOperInfo>
 
@@ -96,7 +97,7 @@
                                             @fn_closePop="fn_close" >
             </EtpOperPdfEmergencyModifyPop>
 
-            <!-- iNAV 계산기 팝업 -->
+            <!-- (PDF) iNAV 계산기 팝업 -->
             <EtpOperPdfInavCalcPop          v-if="showEtpOperPdfInavCalcPop"
 
                                             :paramData="paramData" 
@@ -105,6 +106,15 @@
                                             @showMessageBox="showMessageBox"
                                             @fn_closePop="fn_close" >
             </EtpOperPdfInavCalcPop>
+
+            <!-- (지수 수익율) iNAV 계산기 팝업 -->
+            <v-dialog  v-model="showEtpOperIndexInavCalcPop"  persistent  max-width="600" >
+                <EtpOperInfoInavIndex   v-if="showEtpOperIndexInavCalcPop"
+
+                                        :paramData = "paramData"
+                                        @fn_close = "fn_close">
+                </EtpOperInfoInavIndex>
+            </v-dialog>
 
         </v-flex>
 
@@ -144,7 +154,8 @@ import EtpOperIndex                 from "@/components/Home/Etp/Manage/EtpOperIn
 import EtpOperPdf                   from "@/components/Home/Etp/Manage/EtpOperPdf.vue";                     /* PDF 관리 */
 
 import EtpOperPdfEmergencyModifyPop from "@/components/Home/Etp/Manage/EtpOperPdfEmergencyModifyPop.vue";   /* PDF 긴급반영 팝업 */
-import EtpOperPdfInavCalcPop        from "@/components/Home/Etp/Manage/EtpOperPdfInavCalcPop.vue";          /* iNAV 계산기 팝업 */
+import EtpOperPdfInavCalcPop        from "@/components/Home/Etp/Manage/EtpOperPdfInavCalcPop.vue";          /* (PDF) iNAV 계산기 팝업 */
+import EtpOperInfoInavIndex     from    "@/components/Home/Etp/Manage/EtpOperInfoInavIndex.vue";            /* (지수 수익율) iNAV 계산기 팝업 */
 
 export default {
     props: ["activeTab"],
@@ -159,6 +170,7 @@ export default {
             showEtpOerPdfMain : false,
             showEtpOperPdfEmergencyModifyPop : false,
             showEtpOperPdfInavCalcPop : false,
+            showEtpOperIndexInavCalcPop : false,
             showEtpOerPdfQuick : false,
             showFaver : false,
 
@@ -179,14 +191,15 @@ export default {
         ComIndexFixPopup                :   ComIndexFixPopup,                   /* 지수조치현황 */
         EtpOperIndexErrorPop            :   EtpOperIndexErrorPop,               /* 지수오류내역 */
         EtpOperPdfEmergencyModifyPop    :   EtpOperPdfEmergencyModifyPop,       /* PDF 긴급반영 팝업 */
-        EtpOperPdfInavCalcPop           :   EtpOperPdfInavCalcPop,              /* iNAV 계산기 팝업 */
+        EtpOperPdfInavCalcPop           :   EtpOperPdfInavCalcPop,              /* (PDF) iNAV 계산기 팝업 */
+        EtpOperInfoInavIndex            :   EtpOperInfoInavIndex,               /* (지수수익율) iNAV 계산기 팝업 */
 
         EtpOperInfo                     :   EtpOperInfo,                        /* ETP 운용정보 */
         EtpOperIndex                    :   EtpOperIndex,                       /* 지수관리 */
         EtpOperPdf                      :   EtpOperPdf,                         /* PDF 관리 */
 
         ConfirmDialog                   :   ConfirmDialog,                      /* 공통 메시지창 */
-        ComEtpFavorItemSub                 :   ComEtpFavorItemSub,
+        ComEtpFavorItemSub              :   ComEtpFavorItemSub,
     },
 
     mounted: function() {
@@ -212,6 +225,7 @@ export default {
             this.showEtpOperIndexErrorDialog        =   false;
             this.showEtpOperPdfEmergencyModifyPop   =   false;
             this.showEtpOperPdfInavCalcPop          =   false;
+            this.showEtpOperIndexInavCalcPop        =   false;
 
             this.showFaver                          =   false;
 
@@ -246,19 +260,12 @@ export default {
 
             if (gubun == '1') {
                 this.paramData = paramData;
-debugger;
+
                 if( this.activeTab != 2 ) {                
                     this.showIndexDetailDialog = false;
-    console.log( "this.showEtpDetailDialog=====>" + this.showEtpDetailDialog);
 
                     if (this.showEtpDetailDialog) {
-    console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& #1");                    
                         this.$EventBus.$off('changeIndexInfo', paramData);
-
-                        this.$EventBus.$off('changeEtpOperIndexFix', paramData);
-                        this.$EventBus.$off('changeEtpOperIndexError', paramData);
-                        this.$EventBus.$off('changeEtpOperIndexDetailList', paramData);
-
                         this.$EventBus.$emit('changeEtpInfo', paramData);
                     }
 
@@ -274,15 +281,9 @@ debugger;
                     this.showEtpOerInfo = -1;
 
                     this.$nextTick().then(() => {
-
-                        if (this.showEtpOerPdfMain) {
-        console.log( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& #2");                    
+                        if (this.showEtpOerPdfMain) {         
                             this.$EventBus.$off('changeIndexInfo', paramData);
                             this.$EventBus.$off('changeEtpInfo', paramData);
-
-                            this.$EventBus.$off('changeEtpOperIndexFix', paramData);
-                            this.$EventBus.$off('changeEtpOperIndexError', paramData);
-                            this.$EventBus.$off('changeEtpOperIndexDetailList', paramData);
                         }
 
                         this.showEtpOerPdfMain = true;
@@ -291,9 +292,6 @@ debugger;
                     });
                 }
 
-
-//                this.showFaver = true;
-                
             } else if (gubun == '2') { 
                 this.paramData = paramData;
                 this.showEtpDetailDialog = false;
@@ -301,10 +299,6 @@ debugger;
                 if (this.showIndexDetailDialog) {
                     this.$EventBus.$off('changeEtpAnalysisInfo', paramData);
                     this.$EventBus.$off('changeEtpInfo', paramData);
-
-                    this.$EventBus.$off('changeEtpOperIndexFix', paramData);
-                    this.$EventBus.$off('changeEtpOperIndexError', paramData);
-                    this.$EventBus.$off('changeEtpOperIndexDetailList', paramData);
 
                     this.$EventBus.$emit('changeIndexInfo', paramData);
                 }
@@ -385,9 +379,13 @@ debugger;
             if( gubun == '6' ) {
                 this.showEtpOperPdfEmergencyModifyPop = true;
             }
-            /* PDF 관리 -> iNAV 계산기 팝업 */
+            /* (PDF) iNAV 계산기 팝업 */
             else if( gubun == '7' ) {
                 this.showEtpOperPdfInavCalcPop = true;
+            }
+            /* (지수 수익율) iNAV 계산기 팝업 */
+            else if( gubun == '8' ) {
+                this.showEtpOperIndexInavCalcPop = true;
             }
         },
 
@@ -421,6 +419,7 @@ debugger;
             vm.showEtpOperIndexErrorDialog          =   false;
             vm.showEtpOperPdfEmergencyModifyPop     =   false;
             vm.showEtpOperPdfInavCalcPop            =   false;
+            vm.showEtpOperIndexInavCalcPop          =   false;
         },
     }
 }

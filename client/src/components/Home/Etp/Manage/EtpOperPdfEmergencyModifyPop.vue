@@ -220,17 +220,7 @@ export default {
     props : [ "showDialog", "paramData" ],
     data() {
         return {
-            dialog2: false,
-            dialog5: false,
-            drawer: true,
-            search: "",
             step: 1,
-            panel: [],
-            tab2: "",
-            items4: [],
-            on: false,
-
-
             tblEmergeny01 : "tblEmergeny01",
             etpBasic : {},
             dataList : [],

@@ -23,7 +23,8 @@
         "vue-router": "^3.0.1",
         "vuelidate": "^0.7.4",
         "vuetify": "^1.5.9",
-        "vuex": "^3.0.1"
+        "vuex": "^3.0.1",
+        "xlsx": "^0.14.3"
     },
     "browserslist": [
         "> 1%",

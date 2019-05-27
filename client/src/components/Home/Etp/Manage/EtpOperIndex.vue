@@ -51,76 +51,6 @@ export default {
 
     data() {
         return {
-            text: "전종목",
-            checkbox: true,
-            text2: "",
-            dialog: false,
-            dialog2: false,
-            dialog3: false,
-            dialog5: false,
-            dialog6: false,
-            dialog7: false,
-            dialog8: false,
-            drawer: true,
-            search: "",
-            tab: null,
-            tab2: null,
-            items1: ["전체", "시장대표"],
-            items: [
-                { title: "Home", icon: "dashboard" },
-                { title: "About", icon: "question_answer" }
-            ],
-            items2: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                },
-                {
-                    title: "KODEX 코스닥150 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            items3: [
-                {
-                    title: "KODEX 200",
-                    subtitle: "069500"
-                },
-                {
-                    title: "KODEX 삼성그룹",
-                    subtitle: "102780"
-                },
-                {
-                    title: "KODEX 레버러지",
-                    subtitle: "122630"
-                }
-            ],
-            mini: false,
-            right: null,
-            rowsPerPageItems: [10, 20, 30, 50],
-            headers: [
-                {
-                    text: "Code",
-                    align: "left",
-                    value: "name"
-                },
-                { text: "name", value: "name" },
-                { text: "BasePrc", value: "BasePrc", align: "right" },
-                { text: "Shrs", value: "Shrs", align: "right" },
-                { text: "Float rto", value: "FloatRto", align: "right" },
-                { text: "Ceiling rto", value: "CeilingRto", align: "right" },
-                { text: "Factor rto", value: "FactorRto", align: "right" }
-            ],
-            desserts: [],
-
-
             indexBasic  :   {},
             paramData   :   {},
             stateInfo   :   {
@@ -488,10 +418,16 @@ export default {
                                 graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexDetailList", "btnContent" : "equalizer"        , "btnSpanContent" : "지수구성정보" } );
 
                                 /* 지수조치내역 */
+/*
+    TODO:   2차에서 개발 ( 버튼 숨김 처리 )
                                 graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexFix"   , "btnContent" : "insert_comment"   , "btnSpanContent" : "지수조치내역" } );
+*/                                
 
                                 /* 지수오류내역 */
+/*
+    TODO:   2차에서 개발 ( 버튼 숨김 처리 )
                                 graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexError" , "btnContent" : "assignment_turned_in", "btnSpanContent" : "지수오류내역" } );
+*/                                
 
                                 return  graphContent;
                             }
