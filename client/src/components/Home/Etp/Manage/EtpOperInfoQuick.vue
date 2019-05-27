@@ -35,6 +35,7 @@
                                     <v-list-tile
                                         class="border_b"
                                         @click="fn_setInavData"
+                                        v-model="toggleINav"
                                     >
                                         <v-list-tile-avatar>
                                             <v-icon value="산출 현황">exposure</v-icon>
@@ -48,6 +49,7 @@
                                     <v-list-tile
                                         class="border_b"
                                         @click="fn_setEtpPerformanceData"
+                                        v-model="toggleEtpPerformance"
                                     >
                                         <v-list-tile-avatar>
                                             <v-icon value="Performance" icon>loop</v-icon>

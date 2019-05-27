@@ -29,6 +29,7 @@
                                     <v-list-tile
                                         class="border_b"
                                         @click="fn_setEtpOperIndexOversea"
+                                        v-model="toggleIndexOversea"
                                     >
                                         <v-list-tile-avatar>
                                             <v-icon value="해외지수">exposure</v-icon>
