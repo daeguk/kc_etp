@@ -148,7 +148,7 @@
                         <ul>
                             <li class="list_tit txt_point">변동률</li>
                             <li class="align_r">
-                                <b>{{f34374}}</b>
+                                <b>{{f15004}}</b>
                             </li>
                         </ul>
                         <ul class="bot_line3">
@@ -193,7 +193,8 @@ export default {
             f15007: 0,  /* 지수기준가  */
             f30824: 0,  /* 장전기준율 */
             f30819: 0,  /* 매매기준율 */
-            f34374: 0,  /* 변동율 */
+            f15004: 0,  /* 변동률 */ 
+            f34374: 0,  /* 전일ETP기초지수등락율 */
             f18101: 0,  /* 예상배당수익률 : 배당율 */
             f18453: 0,  /* ETP 배율 */
             iNav: 0,    /* INav 계산결과 */
@@ -230,17 +231,21 @@ export default {
             vm.f15318 = vm.formatNumber(vm.paramData.f15318);
             //기초지수 등락률 
             vm.f30823 = vm.formatNumber(vm.paramData.f30823);
-            // 변동률 (전일ETP기초지수등락율)
+            // 전일ETP기초지수등락율
             vm.f34374 = vm.formatNumber(vm.paramData.f34374);
             // 예상배당수익률 : 배당율
             vm.f18101 = vm.paramData.f18101;
             // ETP 배율 
             vm.f18453 = vm.paramData.f18453;
+            // 변동률 
+            vm.f15004 = (1 - vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824)) * 100;
+            vm.f15004 = vm.formatNumber(vm.f15004);
 
             // INav 계산결과
             vm.iNav = vm.formatNumber(0);    
             // INav 계산결과 율
             vm.iNavRate = vm.formatNumber(0);    
+            
 
             vm.indexInavCal();
         },
@@ -249,6 +254,9 @@ export default {
             
             // 지수 등락률
             vm.f30823 = (1 - vm.NtoS(vm.f15318) / vm.NtoS(vm.f15007)) * 100;
+
+            // 변동률 
+            vm.f15004 = (1 - vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824)) * 100;
 
             // ETP 계산 유형(H: 환햇지, F: 환노출, A: 지수환노출, T: 복합배율, K: 복합배율2, I: 인도레버리지, J: KINDEX합성일본인버스)
             /* 
@@ -301,7 +309,8 @@ export default {
 
             vm.iNav = vm.formatNumber(vm.iNav);
             vm.iNavRate = vm.formatNumber(vm.iNavRate);
-            vm.f30823 = vm.formatNumber(vm.f30823);
+            vm.f30823 = vm.formatNumber(vm.f30823);  /* 등락률 */
+            vm.f15004 = vm.formatNumber(vm.f15004);  /* 변동률 */
         },
         formatNumber:function(num) {
             return util.formatNumber(num);
