@@ -19,11 +19,11 @@
                     <v-list-tile-content class="sumul_btn_w">
                         <ul>
                             <li>
-                                <v-switch v-model="SimulationSwitch" v-on:change="SimulationMode" color="primary"></v-switch>
+                                <v-switch v-model="SimulationSwitch" color="primary"></v-switch>
                             </li>
                             <li>
                                 <v-btn small flat icon>
-                                    <v-icon class="btn_on">play_circle_outline</v-icon>
+                                    <v-icon class="btn_on" v-on:click="indexInavCal()">play_circle_outline</v-icon>
                                 </v-btn>
                             </li>
                             <li>
@@ -69,28 +69,37 @@
                                 <br>
                                 <span>외부공표</span>
                             </li>
-                            <li class="text_red" v-if="paramData.f30818 >= 0">                                        
+                            <li class="text_red align_r" v-if="paramData.f30818 >= 0">                                        
                                 <b>{{formatNumber(paramData.f15301)}}</b>
                                 <br>
                                 <span class="float_r">{{formatNumber(paramData.f30818)}}</span>
                             </li>
-                            <li class="text_blue" v-if="paramData.f30818 < 0">                                        
+                            <li class="text_blue align_r" v-if="paramData.f30818 < 0">                                        
                                 <b>{{formatNumber(paramData.f15301)}}</b>
                                 <br>
                                 <span class="float_r">{{formatNumber(paramData.f30818)}}</span>
                             </li>
                         </ul>
-                        <ul>
+                        <ul v-if="SimulationSwitch == true">
                             <li class="list_tit case2 txt_point">전일NAV</li>
                             <li class="input_mid">
-                                <v-text-field :readonly="readonly" v-on:blur="indexInavCal();" v-model="f03329"  outline class="txt_right"></v-text-field>
+                                <v-text-field  v-model="f03329"  outline class="txt_right"></v-text-field>
                             </li>
                         </ul>
-                        <ul>
-                            <li class="list_tit case2 txt_point">추적수익률</li>
+                        <ul v-else>
+                            <li class="list_tit case2 txt_point">전일NAV</li>
+                            <li class="align_r">{{f03329}}</li>
+                        </ul>
+
+                        <ul v-if="SimulationSwitch == true">
+                            <li class="list_tit case2 txt_point">배율</li>
                             <li class="input_mid">
-                                <v-text-field :readonly="readonly" v-on:blur="indexInavCal();" v-model="f15302" outline class="txt_right"></v-text-field>
-                            </li>
+                                <v-text-field v-model="f18453" outline class="txt_right"></v-text-field>
+                            </li>                            
+                        </ul>
+                        <ul v-else>
+                            <li class="list_tit case2 txt_point">배율</li>
+                            <li class="align_r">{{f18453}}</li>
                         </ul>
                     </v-flex>
                 </v-layout>
@@ -115,8 +124,14 @@
                                 <span>기준일</span>
                             </li>
                             <li>
-                                <div>
-                                    <v-text-field :readonly="readonly" v-on:blur="indexInavCal();" v-model="f15007" outline class="txt_right"></v-text-field>
+                                <div v-if="SimulationSwitch == true">
+                                    <v-text-field   v-model="f15007" outline class="txt_right"></v-text-field>
+                                    <span class="float_r">{{paramData.index_std_date}}</span>
+                                </div>
+                                <div v-else>
+                                    <li class="align_r">
+                                        {{f15007}}
+                                    </li>
                                     <span class="float_r">{{paramData.index_std_date}}</span>
                                 </div>
                             </li>
@@ -141,8 +156,11 @@
                         </ul>
                         <ul class="bot_line2">
                             <li class="list_tit case2">장전기준율</li>
-                            <li class="input_mid">
-                                <v-text-field :readonly="readonly" v-on:blur="indexInavCal();" v-model="f30824" outline class="txt_right"></v-text-field>
+                            <li class="input_mid" v-if="SimulationSwitch == true">
+                                <v-text-field v-model="f30824" outline class="txt_right"></v-text-field>
+                            </li>
+                            <li class="align_r" v-else>
+                                {{f30824}}
                             </li>
                         </ul>
                         <ul>
@@ -185,7 +203,7 @@ export default {
     props : [ "paramData" ],
     data() {
         return {
-            SimulationSwitch: [],
+            SimulationSwitch: false,
             f15318: 0,  /* 기초지수 현재가 */
             f30823: 0,  /* 기초지수 등락률 */
             f03329: 0,  /* 전일Nav */
@@ -253,10 +271,10 @@ export default {
             var vm = this;
             
             // 지수 등락률
-            vm.f30823 = (1 - vm.NtoS(vm.f15318) / vm.NtoS(vm.f15007)) * 100;
+            vm.f30823 = (1 - vm.NtoS(vm.f15318) / vm.NtoS(vm.f15007)) ;
 
             // 변동률 
-            vm.f15004 = (1 - vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824)) * 100;
+            vm.f15004 = (1 - vm.NtoS(vm.f30824) / vm.NtoS(vm.f30819)) * 100;
 
             // ETP 계산 유형(H: 환햇지, F: 환노출, A: 지수환노출, T: 복합배율, K: 복합배율2, I: 인도레버리지, J: KINDEX합성일본인버스)
             /* 
@@ -270,7 +288,8 @@ export default {
                iNAV=전일NAV*(1+기초지수등락율*배율)*(매매기준율/장전매매기준율)
             */           
             } else if (vm.paramData.f34240 == 'F') {
-                vm.iNav = vm.NtoS(vm.f03329) * ( 1 + vm.f30823 * vm.NtoS(vm.f18453) ) * ( vm.NtoS(vm.f30819)	* vm.NtoS(vm.f30824) );
+
+                vm.iNav = vm.NtoS(vm.f03329) * ( 1 + vm.f30823 * vm.NtoS(vm.f18453) ) * ( vm.NtoS(vm.f30819)	/ vm.NtoS(vm.f30824) );
                 
             /* 
                A.지수환노출 : ARIRAN차이나H레버리지(합성)
@@ -309,7 +328,7 @@ export default {
 
             vm.iNav = vm.formatNumber(vm.iNav);
             vm.iNavRate = vm.formatNumber(vm.iNavRate);
-            vm.f30823 = vm.formatNumber(vm.f30823);  /* 등락률 */
+            vm.f30823 = vm.formatNumber(vm.f30823*100);  /* 등락률 */
             vm.f15004 = vm.formatNumber(vm.f15004);  /* 변동률 */
         },
         formatNumber:function(num) {
@@ -322,14 +341,7 @@ export default {
             var vm = this;
 
             vm.$emit( "fn_close", "index" );
-        },
-        SimulationMode: function() {
-            if (this.SimulationSwitch) {
-                this.readonly = false;
-            } else {
-                this.readonly = true;
-            }
-        },
+        },       
     }
 };
 </script>
