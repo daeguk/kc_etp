@@ -21,12 +21,12 @@
                             <li>
                                 <v-switch v-model="SimulationSwitch" color="primary"></v-switch>
                             </li>
-                            <li>
+                            <li v-if="SimulationSwitch == true">
                                 <v-btn small flat icon>
                                     <v-icon class="btn_on" v-on:click="indexInavCal()">play_circle_outline</v-icon>
                                 </v-btn>
                             </li>
-                            <li>
+                            <li v-if="SimulationSwitch == true">
                                 <v-btn small flat icon>
                                     <v-icon v-on:click="init()">refresh</v-icon>
                                 </v-btn>
