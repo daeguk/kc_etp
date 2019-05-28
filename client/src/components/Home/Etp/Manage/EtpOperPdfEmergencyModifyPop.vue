@@ -238,16 +238,6 @@ export default {
     created: function() {
 
         var vm = this;
-
-
-        $(document).keyup(function (e) {
-            e.preventDefault();
-
-            if (e.which == 13) {
-                return  false;
-            }
-        });
-
     },
     mounted: function() {
 
