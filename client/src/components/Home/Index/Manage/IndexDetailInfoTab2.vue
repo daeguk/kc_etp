@@ -537,7 +537,7 @@ export default {
                         if (importance_grid) {
                             importance_grid.destroy()
                         }
-debugger;
+
                         importance_grid = $('#' + vm.importance_grid_id).DataTable( {
                             "processing": true,
                             "serverSide": false,
