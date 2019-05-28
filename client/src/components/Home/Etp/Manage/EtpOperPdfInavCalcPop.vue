@@ -283,7 +283,7 @@ export default {
             thead: {
                 display:'none'
             },
-            "ordering": false,
+            "ordering": true,
             "columnDefs": [
                  {  
                     "render": function ( data, type, row ) {
@@ -385,6 +385,7 @@ export default {
         getiNavData(f16012) {
             var vm = this;
 
+            util.processing(true);
             console.log( "EtpOperPdfInavCalcPop.vue -> getiNavData" );
 
             axios.get( Config.base_url + "/user/etp/getiNavData", {
@@ -425,7 +426,7 @@ export default {
                                     vm.iNav_amt = vm.market_tot_amt;
                                 }
                                 /* INav 등락률 */
-                                vm.iNav_percent =  (vm.iNav_amt / vm.etpBasic.f03329 - 1);
+                                vm.iNav_percent =  (1 - (vm.iNav_amt / vm.etpBasic.f03329)) * 100;
 
                                 /* 비중 정보 산출*/
                                 for (let item of vm.pdfList) {         
@@ -451,6 +452,8 @@ export default {
         pdf_reload: function() {
             pdf_table.clear().draw();
             pdf_table.rows.add(this.pdfList).draw();
+
+            util.processing(false);
         },
         formatNumber:function(num) {
             return util.formatNumber(num);
@@ -487,6 +490,7 @@ export default {
             var market_amt = 0;
             var market_tot_amt = 0;
             var index = 0;
+            util.processing(true);
             for (let item of vm.pdfList) {                        
                 await vm.iNavCalulator(item).then(function(jongItem) {
                     /* 종목 정보 바인딩 */                            
@@ -511,7 +515,7 @@ export default {
                             vm.iNav_amt = vm.market_tot_amt;
                         }
                         /* INav 등락률 */
-                        vm.iNav_percent =  (vm.iNav_amt / vm.etpBasic.f03329 - 1);
+                        vm.iNav_percent =  (1 - (vm.iNav_amt / vm.etpBasic.f03329)) * 100;
 
                         /* 비중 정보 산출*/
                         for (let item of vm.pdfList) {         
@@ -529,6 +533,7 @@ export default {
 
         SimulationMode: function() {
             if (this.SimulationSwitch) {
+                this.stopLoopCalcu();
                 pdf_table.destroy();                
                 pdf_table = $('#pdf_table').DataTable(this.SimulationRender);
                 this.pdf_reload(this.pdfList);

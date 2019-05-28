@@ -36,14 +36,14 @@
 <select id="getEtpApplyDistCnt">
        <![CDATA[
         select count(1)  distCnt from m001uetpmaster where (list_date >=   current_date( )  or   list_date is null  )
-           and a.inst_cd = #{inst_cd} 
+           and inst_cd = #{inst_cd} 
            and idx_dis_yn = 'Y' and isin_stat_cd != '0009'
         ]]>
 </select>
 <select id="getEtpApplyIndexCnt" >
        <![CDATA[
         select count(1) indexCnt from m001uetpmaster where  (list_date >=   current_date( )  or   list_date is null  )
-            and a.inst_cd = #{inst_cd}
+            and inst_cd = #{inst_cd}
             and idx_rec_yn = 'Y' and isin_stat_cd != '0009'  
        ]]>
 </select>
@@ -51,7 +51,7 @@
 <select id="getEtpApplyCodeCnt">
        <![CDATA[
         select count(1) codeCnt from m001uetpmaster where  (list_date >=   current_date( )  or   list_date is null  )
-            and a.inst_cd = #{inst_cd} 
+            and inst_cd = #{inst_cd} 
             and isin_code is not null and isin_stat_cd != '0009'
        ]]>
 </select>
@@ -59,7 +59,7 @@
 <select id="getEtpApplyInavCnt" >
        <![CDATA[
         select count(1) inavCnt from m001uetpmaster where  (list_date >=   current_date( )  or   list_date is null  )
-            and    a.inst_cd = #{inst_cd} 
+            and inst_cd = #{inst_cd} 
             and inav_calc_yn = 'Y' and isin_stat_cd != '0009'
        ]]>
        </if>
