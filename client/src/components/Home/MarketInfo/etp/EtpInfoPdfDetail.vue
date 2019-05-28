@@ -1,18 +1,25 @@
 <template>
-    <v-container>
-        <v-layout row wrap class="con_wrap">
-            <v-flex grow class="conWidth_left">
+    <v-card flat>
+        <v-layout row wrap >
+            <v-flex grow>
                 <v-card flat>
-                    <v-card-title primary-title>
-                        <h3 class="headline subtit" pb-0>
+                        <h5>
+                            <v-card-title class="pop_pdf">
                             <v-text-field
                                 v-model="searchParam.search_nm"
-                                class="pdf_search"
+                                class="pdf_search ver2"
                                 single-line
                                 hide-details
                                 :readonly="true"
                             ></v-text-field>
-                        
+                            <v-spacer></v-spacer>
+
+                            <v-btn icon dark  @click="fn_close">
+                                <v-icon>close</v-icon>
+                            </v-btn>
+                            </v-card-title>
+                        </h5>  
+                        <v-card flat class="pop_left_pad">    
                             <p class="pdf_calendar">
                                 <v-menu
                                     ref="menu2"
@@ -48,24 +55,16 @@
                                     </v-date-picker>
                                 </v-menu>                            
                             </p>
-                        </h3>
-
-                        <div>
-                            <v-btn icon  @click="fn_close">
-                                <v-icon>close</v-icon>
-                            </v-btn>       
-                        </div>                 
-                    </v-card-title>
-
+                        </v-card>
                     <v-card flat>
-                        <table id="tblPdfList" class="display table01_w"></table>
+                        <table id="tblPdfList" class="tbl_type"></table>
                     </v-card>
 
                 </v-card>
             </v-flex>
 
         </v-layout>
-    </v-container>
+    </v-card>
 </template>
 
 
@@ -247,10 +246,10 @@ export default {
             }
 
             if (vm.stateInfo.totWidth > 900) {
-                $("#tblPdfList").attr( "style", "width: 1500px; table-layout: fixed;" );
+                $("#tblPdfList").attr( "style", "table-layout: fixed;" );
                 tableObj.scrollX = true;
             } else {
-                $("#tblPdfList").attr("style", "width: 100%; ");
+                $("#tblPdfList").attr("style", " ");
                 tableObj.scrollX = false;
             }
 
@@ -315,20 +314,14 @@ export default {
             var vm = this;
 
             var arrColumn  =   [
-                { 'name' : 'f12506'         , 'data': 'f12506'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-center'  , 'title' : 'Date'      },      /* Date */
-                { 'name' : 'f33861'         , 'data': 'f33861'          ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-center'  , 'title' : '시장구분'  },       /* 시장구분 */
-                { 'name' : 'f16316'         , 'data': 'f16316'          ,  'width' : '120', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목코드'  },       /* 종목코드 */
-                { 'name' : 'f16004'         , 'data': 'f16002'          ,  'width' : '200', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목명'    },       /* 종목명 ( 해외시장종목명 ) */
-                { 'name' : 'f16499'         , 'data': 'f16499'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : 'CU SHrs'   },      /* CU SHrs */
-                { 'name' : 'f34840'         , 'data': 'f34840'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '액면금액'   },      /* 액면금액 */
-                { 'name' : 'f16588'         , 'data': 'f16588'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '평가금액'   },      /* 평가금액 */
-                { 'name' : 'f34743'         , 'data': 'f34743'          ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중'      },      /* 비중 */
-
-                { 'name' : 'rate_day0'      , 'data': 'rate_day0'       ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중'       },      /* 비중 */
-                { 'name' : 'rate_day1'      , 'data': 'rate_day1'       ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중'       },      /* 비중 */
-                { 'name' : 'rate_day2'      , 'data': 'rate_day2'       ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중'       },      /* 비중 */
-                { 'name' : 'rate_day3'      , 'data': 'rate_day3'       ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중'       },      /* 비중 */
-                { 'name' : 'rate_day4'      , 'data': 'rate_day4'       ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중'       },      /* 비중 */
+                { 'name' : 'f12506'         , 'data': 'f12506'          ,  'width' : '19%', 'orderable' : true , 'className': 'dt-body-center'  , 'title' : 'Date'      },      /* Date */
+                { 'name' : 'f33861'         , 'data': 'f33861'          ,  'width' : '9%' , 'orderable' : true , 'className': 'dt-body-center'  , 'title' : '시장구분'  },       /* 시장구분 */
+                { 'name' : 'f16316'         , 'data': 'f16316'          ,  'width' : '9%', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목코드'  },       /* 종목코드 */
+                { 'name' : 'f16004'         , 'data': 'f16002'          ,  'width' : '9%', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목명'    },       /* 종목명 ( 해외시장종목명 ) */
+                { 'name' : 'f16499'         , 'data': 'f16499'          ,  'width' : '9%', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : 'CU SHrs'   },      /* CU SHrs */
+                { 'name' : 'f34840'         , 'data': 'f34840'          ,  'width' : '9%', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '액면금액'   },      /* 액면금액 */
+                { 'name' : 'f16588'         , 'data': 'f16588'          ,  'width' : '9%', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '평가금액'   },      /* 평가금액 */
+                { 'name' : 'f34743'         , 'data': 'f34743'          ,  'width' : '9%' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중'      },      /* 비중 */
             ];        
 
             var arrColumnDef  =   [

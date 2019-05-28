@@ -4,7 +4,7 @@
             <IndexDetailInfo v-if="showIndexDetailDialog" :showDialog="showIndexDetailDialog" :paramData="paramData" :showView="true"></IndexDetailInfo>
             <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
 
-            <v-dialog v-model="showEtpInfoPdfDetail" persistent max-width="1500">
+            <v-dialog v-model="showEtpInfoPdfDetail" persistent max-width="1100">
                 <EtpInfoPdfDetail v-if="showEtpInfoPdfDetail" :paramData="paramData" :showEtpInfoPdfDetail="showEtpInfoPdfDetail" @fn_closePop="fn_close"></EtpInfoPdfDetail>
             </v-dialog>
             
