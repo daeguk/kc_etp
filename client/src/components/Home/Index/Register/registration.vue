@@ -884,7 +884,7 @@ export default {
          */
         async   fn_registerJisu() {
             var vm = this;
-debugger;
+
             if (!this.form.duplCheckResult) {
 
                 if( await this.$root.$confirm1.open(

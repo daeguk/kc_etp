@@ -41,7 +41,8 @@ ol, ul{padding:0 !important;}
     color: #6c6c7d;
 }
 
-
+.progressbar_w{box-shadow: none !important; overflow-y:hidden !important; background: transparent !important; max-width: 60px;}
+.progressbar_w .v-progress-circular{color:#afff0f; caret-color:#afff0f;}
 .v-toolbar__content{height:60px !important;}
 .v-content{padding-top:60px !important;}
 .v-toolbar__content, .v-toolbar__extension{width:1400px !important; margin:0 auto !important; overflow: hidden !important;}
@@ -103,7 +104,7 @@ button:focus { outline: none; }
 .menu_list .v-list--two-line .v-list__tile{height:60px !important;}
 /*.menu_list.theme--dark.v-list .v-list__tile--link:hover{ background-color: #1c1c1c !important; color:#85c406 !important}*/
 .menu_list .v-list__tile__avatar{min-width: 46px !important}
-.menu_list .v-list__tile__sub-title{font-size: 12px;}
+.menu_list .v-list__tile__sub-title{font-size: 12px; }
 #context-menu {
     top: 57px !important;
     left:0px;
@@ -264,6 +265,7 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type.ver6 th{background-color:#f3f3f3; border-bottom:1px solid #e5e5e5}
 .tbl_type.ver6 td{font-weight: 400 !important;}
 .tbl_type.ver7 td{font-size:12px !important; font-weight: 400 !important;}
+.tbl_type.ver8 td{font-size:14px !important; font-weight: 400 !important;}
 
 
 
@@ -328,6 +330,7 @@ h3.subtit p.sub_txt{font-size:14px; font-weight: normal;color:#959EB1;}
 h3.subtit p span.text_result{width:30px; text-align: right;padding-left:0px; display:inline-block;}
 h3.subtit span.text_result{width:30px; text-align: right;padding-left:0px; display:inline-block;}
 h3.subtit span.text_result_t{color:#5a667C; margin-right:15px;}
+h3.subtit span.text_result_t2{color:#959eb1; margin-right:15px;margin-left:15px;}
 .index_subtoolbar h3{ padding-top:24px;}
 
 
@@ -379,7 +382,7 @@ h3.subtit span.text_result_t{color:#5a667C; margin-right:15px;}
 .tbl_type.ver4 .perf_t_w9{width:80px;}
 
 
-
+.tbl_type.ver5 .perf_t_w0{width:200px;}
 .tbl_type.ver5 .perf_t_w1{width:100px;}
 .tbl_type.ver5 .perf_t_w2{width:98px;}
 .tbl_type.ver5 .perf_t_w3{width:95px;}

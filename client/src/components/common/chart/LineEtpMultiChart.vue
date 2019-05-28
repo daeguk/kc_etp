@@ -127,13 +127,13 @@ export default {
         }).then(function(response) {
           // console.log(response);
           if (response.data.success == false) {
-              alert("해당 ETP의 데이터가 없습니다");
+//              alert("해당 ETP의 데이터가 없습니다");
           } else {
               if(response.data.results.length > 0) {
                 vm.intra_data = response.data.results.reverse();
                 vm.draw_intra(vm.dmode);
               }else {
-                alert("해당 ETP의 데이터가 없습니다");
+//                alert("해당 ETP의 데이터가 없습니다");
               }
           }
         });
@@ -150,14 +150,14 @@ export default {
         }).then(function(response) {
           // console.log(response);
           if (response.data.success == false) {
-              alert("해당 ETP의 데이터가 없습니다");
+//              alert("해당 ETP의 데이터가 없습니다");
           } else {
               if(response.data.results.length > 0) {
                 vm.hist_data = [];
                 vm.hist_data = response.data.results.reverse();
                 vm.draw_hist(vm.dmode);
               }else {
-                alert("해당 ETP의 데이터가 없습니다");
+//                alert("해당 ETP의 데이터가 없습니다");
               }
           }
         });

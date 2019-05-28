@@ -19,7 +19,7 @@
                 <!-- performance table 정보 START -->
                         <table v-bind:id="tableName" :class="tbl_class">
                             <colgroup>
-                                <col width="">                             <!-- 한글 종목명 -->
+                                <col class="perf_t_w0">                             <!-- 한글 종목명 -->
                                 <col class="perf_t_w1">                             <!-- 1-Week -->
                                 <col class="perf_t_w2">                             <!-- 1-Month -->
                                 <col class="perf_t_w3">                             <!-- 3-Month -->
