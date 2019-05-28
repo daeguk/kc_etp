@@ -3,7 +3,10 @@
         <v-flex grow :class="className">
             <IndexDetailInfo v-if="showIndexDetailDialog" :showDialog="showIndexDetailDialog" :paramData="paramData" :showView="true"></IndexDetailInfo>
             <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
-            <EtpInfoPdfDetail v-if="showEtpInfoPdfDetail" :paramData="paramData" :showEtpInfoPdfDetail="showEtpInfoPdfDetail"></EtpInfoPdfDetail>
+
+            <v-dialog v-model="showEtpInfoPdfDetail" persistent max-width="1500">
+                <EtpInfoPdfDetail v-if="showEtpInfoPdfDetail" :paramData="paramData" :showEtpInfoPdfDetail="showEtpInfoPdfDetail" @fn_closePop="fn_close"></EtpInfoPdfDetail>
+            </v-dialog>
             
             <marketRepresent v-if="showMarketInfo == 1" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketRepresent>               
             <marketSector v-if="showMarketInfo == 2" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketSector>                   
@@ -121,7 +124,6 @@ export default {
                 
                 if (this.showEtpDetailDialog) {
                     this.$EventBus.$off('changeIndexInfo', paramData);
-                    this.$EventBus.$off('changeEtpInfoPdfDetail', paramData);
                     this.$EventBus.$emit('changeEtpInfo', paramData);
                 }
                 this.showEtpDetailDialog = true;
@@ -136,7 +138,6 @@ export default {
 
                 if (this.showIndexDetailDialog) {
                     this.$EventBus.$off('changeEtpInfo', paramData);
-                    this.$EventBus.$off('changeEtpInfoPdfDetail', paramData);
                     this.$EventBus.$emit('changeIndexInfo', paramData);
                 }
                 
@@ -145,17 +146,8 @@ export default {
                 this.showFaver = true;
             } else if( gubun == '3' ) {
                 this.paramData = paramData;
-                this.showIndexDetailDialog = false;
-                this.showEtpDetailDialog = false;
 
-                if (this.showEtpInfoPdfDetail) {
-                    this.$EventBus.$off('changeEtpInfo', paramData);
-                    this.$EventBus.$off('changeIndexInfo', paramData);
-                    this.$EventBus.$emit('changeEtpInfoPdfDetail', paramData);
-                }
-                
-                this.showEtpInfoPdfDetail = true;                
-                this.showMarketInfo = 0;
+                this.showEtpInfoPdfDetail = true;
             }
 
             this.className = "conWidth_left";  
@@ -163,7 +155,17 @@ export default {
         },
         showMessageBox: function(title, msg, option, gubun) {
             this.$root.$confirm.open(title,msg, option, gubun);
-        }
+        },
+
+        /*
+         *  지소관리 상세 팝업에서 종료시 해당 팝업을 종료한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_close( param ) {
+            var vm = this;
+
+            vm.showEtpInfoPdfDetail                =   false;
+        },        
     }   
 
 

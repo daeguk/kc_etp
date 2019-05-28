@@ -12,6 +12,7 @@
                                 hide-details
                                 :readonly="true"
                             ></v-text-field>
+                        
                             <p class="pdf_calendar">
                                 <v-menu
                                     ref="menu2"
@@ -45,10 +46,17 @@
                                             @click="$refs.menu2.save(searchParam.show_date);fn_getEtpOerPdf( 'N' )"
                                         >OK</v-btn>
                                     </v-date-picker>
-                                </v-menu>
+                                </v-menu>                            
                             </p>
                         </h3>
+
+                        <div>
+                            <v-btn icon  @click="fn_close">
+                                <v-icon>close</v-icon>
+                            </v-btn>       
+                        </div>                 
                     </v-card-title>
+
                     <v-card flat>
                         <table id="tblPdfList" class="display table01_w"></table>
                     </v-card>
@@ -72,7 +80,7 @@ import Config from "@/js/config.js";
 var tblPdfList = null;
 
 export default {
-    props: [ "paramData" ],
+    props: [ "paramData", "showEtpInfoPdfDetail" ],
     components: {
     },
     data() {
@@ -108,10 +116,6 @@ export default {
     created: function() {
         var vm = this;
 
-        vm.$EventBus.$on('changeEtpInfoPdfDetail', data => {
-            vm.fn_init();
-        });
-    
     },
     beforeDestory: function() {
         var vm = this;
@@ -372,6 +376,16 @@ export default {
                 }
             }
         },
+
+        /*
+         * 팝업창을 종료한다.
+         * 2019-05-03  bkLove(촤병국)
+         */
+        fn_close() {
+            var vm = this;
+
+            vm.$emit( "fn_closePop", "close" );
+        }        
     }
 };
 </script>
