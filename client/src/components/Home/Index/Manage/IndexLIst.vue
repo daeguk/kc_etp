@@ -48,7 +48,6 @@ import $      from 'jquery'
 import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 import Config from '@/js/config.js';
-import util       from "@/js/util.js";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 var table = null;
 
@@ -150,7 +149,7 @@ export default {
     methods: {
         getInfoIndexList: function() {
             console.log("getInfoIndexList");
-            util.processing(true);
+            
             axios.get(Config.base_url + "/user/index/getInfoIndexList", {
                     params: {
                     }
@@ -168,10 +167,9 @@ export default {
 
                         table.clear().draw();
                         table.rows.add(this.results).draw();
-                    }   
-                    util.processing(false);
+                        
+                    }                    
                 });
-                
         }, 
         getReplace: function(text) {
             if (text) {
