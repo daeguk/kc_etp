@@ -48,6 +48,7 @@ import $      from 'jquery'
 import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 import Config from '@/js/config.js';
+import util       from "@/js/util.js";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 var table = null;
 
@@ -89,6 +90,41 @@ export default {
     mounted: function() {
 
         var vm = this;
+
+        table = $('#index_table').DataTable( {
+            "processing": true,
+            "serverSide": false,
+            "info": true,   // control table information display field
+                           
+            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+            paging: false,
+            searching: false,
+            data : [],
+            "columnDefs": [
+                {  
+                    "render": function ( data, type, row ) {
+                        if (data) {
+                            return data.replace(/,/gi,"</br>");
+                        } else {
+                            return "";
+                        }
+                    },
+                    "targets": 5
+                },
+            ],
+            columns: [
+                { "data": "JISU_CD", "orderable": true, className: 'txt_left' },
+                { "data": "JISU_NM", "orderable" : true, className: 'txt_left' },
+                { "data": "IP_DT", "orderable" : true, className: 'txt_left' },
+                { "data": "ANNO_YN", "orderable" : true, className: 'txt_left' },
+                { "data": "INDEX_CAL_METHOD", "orderable" : true, className: 'txt_left' },
+                { "data": "ETP_NM", "orderable": true, className: 'txt_left' },
+                { "data": "INST_CNT", "orderable": true, className: 'txt_right' },
+                { "data": null, "orderable": false, className: 'checks', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:50px;'>지수정보</span></div>" } 
+            ]
+         }); 
+
+
         vm.getInfoIndexList();
 
         $('#index_table, tbody').on('click', 'button', function () {
@@ -114,7 +150,7 @@ export default {
     methods: {
         getInfoIndexList: function() {
             console.log("getInfoIndexList");
-            this.loadingbar = true;
+            util.processing(true);
             axios.get(Config.base_url + "/user/index/getInfoIndexList", {
                     params: {
                     }
@@ -130,41 +166,12 @@ export default {
                         this.results = items;
                         this.list_cnt = this.results.length;
 
-                        table = $('#index_table').DataTable( {
-                            "processing": true,
-                            "serverSide": false,
-                            "info": true,   // control table information display field
-                           
-                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                            paging: false,
-                            searching: false,
-                            data : this.results,
-                            "columnDefs": [
-                             {  
-                                "render": function ( data, type, row ) {
-                                    if (data) {
-                                        return data.replace(/,/gi,"</br>");
-                                    } else {
-                                        return "";
-                                    }
-                                },
-                                "targets": 5
-                            },],
-                            columns: [
-                                //{ "defaultContent": "<button type='button' class='btn btn-primary btn-xs'>Trial Run</button>" },
-                                { "data": "JISU_CD", "orderable": true, className: 'txt_left' },
-                                { "data": "JISU_NM", "orderable" : true, className: 'txt_left' },
-                                { "data": "IP_DT", "orderable" : true, className: 'txt_left' },
-                                { "data": "ANNO_YN", "orderable" : true, className: 'txt_left' },
-                                { "data": "INDEX_CAL_METHOD", "orderable" : true, className: 'txt_left' },
-                                { "data": "ETP_NM", "orderable": true, className: 'txt_left' },
-                                { "data": "INST_CNT", "orderable": true, className: 'txt_right' },
-                                { "data": null, "orderable": false, className: 'checks', defaultContent:"<div class='tooltip'><button type='button' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:50px;'>지수정보</span></div>" } 
-                            ]
-                        }); 
-                    }
-                    this.loadingbar = false;
+                        table.clear().draw();
+                        table.rows.add(this.results).draw();
+                    }   
+                    util.processing(false);
                 });
+                
         }, 
         getReplace: function(text) {
             if (text) {
