@@ -67,8 +67,8 @@
                     </table>
                      <v-card-actions flat class="mr-3">
                          <v-spacer></v-spacer>
-                        <v-btn depressed color="grey" dark @click="deleteEtpApply()">삭제</v-btn>
-                        <v-btn depressed color="primary" dark @click="download-excel">엑셀</v-btn>
+                        <v-btn depressed color="grey" dark @click="deleteEtpApply">삭제</v-btn>
+                        <v-btn depressed color="primary" dark @click="downloadExcel">엑셀</v-btn>
                     </v-card-actions>
                 </v-card>
                 <!---실제적용 테이블end--->
@@ -91,7 +91,7 @@ import buttons from "datatables.net-buttons";
 import Config from "@/js/config.js";
 import companyContactModal from "./companyContactModal";
 import idxConfirmModal from "./idxConfirmModal";
-//import excel from "xlsx";
+import excel from "xlsx";
 var table = null;
 
 export default {
@@ -485,7 +485,7 @@ export default {
                 if (response.data.success == false) {
                     vm.$emit("showMessageBox", '확인','삭제 중 오류가 발생했습니다.',{},1);
                 } 
-                location.reload();
+                //location.reload();
             });
 
         },
