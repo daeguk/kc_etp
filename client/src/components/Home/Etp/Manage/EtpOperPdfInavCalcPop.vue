@@ -104,7 +104,7 @@
                 {{etpBasic.f33929 == '0' ? 'PDF' : '지수수익율'}} <span>{{etpBasic.f12506}}</span>
             </h4>
 
-            <table id="pdf_table" class="tbl_type" style="width:100%">
+            <table id="pdf_table" class="tbl_type ver2" style="width:100%">
                 <colgroup>
                     <col width="8%">
                     <col width="10%">
@@ -264,7 +264,7 @@ export default {
                 { "data": "f33861", "orderable": true},  /* 분류 */
                 { "data": "f16013", "orderable": true, className:"txt_left" }, /*코드*/
                 { "data": "f16002", "orderable": true}, /*종목*/
-                { "data": "f16499", "orderable": true, defaultContent:""}, /*cu 수량*/
+                { "data": "f16499", "orderable": true, defaultContent:"" }, /*cu 수량*/
                 { "data": "f34743", "orderable": true, className:"txt_right" }, /*비중*/
                 { "data": "f15001", "orderable": true, className:"txt_right" }, /*현재가*/
                 { "data": "f15007", "orderable": true, className:"txt_right" }, /*기준가*/
