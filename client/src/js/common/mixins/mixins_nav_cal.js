@@ -61,6 +61,7 @@ export const nav_cal_common =   {
                     jongItem.f16013 = 0;
 
                     resolve(jongItem);
+                    console.log(e);
                 }
             }
             /*자산이 달러예금(USDZZ0000001)일 경우,
@@ -105,6 +106,8 @@ export const nav_cal_common =   {
                         jongItem.f16013 = 0;
 
                         resolve(jongItem);
+
+                        console.log(e);
                     }
                 }) ;
 
@@ -188,6 +191,7 @@ export const nav_cal_common =   {
                             jongItem.f16013 = 0;
         
                             resolve(jongItem);
+                            console.log(e);
                         }
                         
                     }) ;
@@ -249,6 +253,7 @@ export const nav_cal_common =   {
                         jongItem.f16013 = 0;
 
                         resolve(jongItem);
+                        console.log(e);
                     }
                 }) ;
                 
@@ -319,6 +324,7 @@ export const nav_cal_common =   {
                         jongItem.f16013 = 0;
 
                         resolve(jongItem);
+                        console.log(e);
                     }
                 }) ;
             } else {
