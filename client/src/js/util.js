@@ -1,4 +1,5 @@
 
+import $      from 'jquery'
 
 var util = {    
     /* 천단위 콤마 처리 */
@@ -44,7 +45,15 @@ var util = {
         toFixNum = 4;
       }
       return toFixNum;
-  }
+    },
+
+    processing: function(visible) {
+        if (visible) {
+            $('.dataTables_processing').css('display', 'block');
+        } else {
+            $('.dataTables_processing').css('display', 'none');
+        }
+    },
 
 }  
   export default util

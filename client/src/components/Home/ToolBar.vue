@@ -164,7 +164,7 @@ export default {
                 if((this.contextMenuWidth + e.pageX) >= window.innerWidth) {
                     menu.style.left = (e.pageX - this.contextMenuWidth) + "px";
                 } else {
-                    var left = e.pageX - 50;
+                    var left = e.pageX - 31;
                     menu.style.left = left + "px";
                 }
                 
@@ -172,7 +172,6 @@ export default {
                 menu.style.top = "50px";                
 
 
-                menu.classList.add('active');
                 menu.classList.add('active');
             }
 
