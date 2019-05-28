@@ -186,7 +186,6 @@ export default {
                                         },   
                                         "targets": 1 
                                 },
-
                                 {  
                                     "render": function ( data, type, row ) {
                                         let shtml = '' ;
@@ -309,7 +308,7 @@ export default {
                                 { "data" : "idx_sym_code" , "orderable" : false  },
                                 { "data" : "ridx_dist_sym_code" , "orderable" : false },
                                 { "data" : "inst_nm", "orderable" : true,className: "txt_left t_link"},
-                                { "data" : "isu_kor_nm", "orderable" : true,className: "txt_left" },
+                                { "data" : "isu_kor_nm", "orderable" : true,className: "txt_left t_link" },
                                 { "data" : "req_date", "orderable" : true },
                                 { "data" : "kor_for_type_name", "orderable" : true },
                                 { "data" : "basic_idx", "orderable": true,className: "txt_left" },
