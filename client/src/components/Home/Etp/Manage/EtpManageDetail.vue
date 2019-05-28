@@ -1,6 +1,18 @@
 <template>
 
     <div>
+
+        <!-- 지수 상세 팝업 -->
+        <v-dialog v-model="showIndexDetailDialog" persistent max-width="1300">
+            <IndexDetailInfo        v-if="showIndexDetailDialog" 
+            
+                                    :paramData="indexBasic" 
+                                    :showDialog="showIndexDetailDialog" 
+                                    :showView="false"
+                                    @fn_closePop="fn_close">
+            </IndexDetailInfo>
+        </v-dialog>
+
         <v-layout row>
             <v-flex xs12>
                 <v-card flat ma-3>
@@ -116,7 +128,8 @@
                                                                         :paramData="paramData"
                                                                         :etpBasic="etpBasic"
                                                                         :indexBasic="indexBasic"
-                                                                        @showMessageBox="showMessageBox">
+                                                                        @showMessageBox="showMessageBox"
+                                                                        @showDetail="showDetail">
                                         </EtpManageDetailBasicInfoTab>
                                     </v-tab-item>
                                 </v-tabs-items>
@@ -143,12 +156,10 @@ import LineEtpMultiChart   from  '@/components/common/chart/LineEtpMultiChart.vu
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import Config from "@/js/config.js";
 import util from "@/js/util.js";
+import IndexDetailInfo from "@/components/Home/Index/Manage/IndexDetailInfo.vue";   /*지수 상세정보*/
 
 export default {
     props : [ "paramData", "showEtpManageDetailDialog" ],
-    components: {
-        //indexDetailrtmenupop: indexDetailrtmenupop
-    },
     data() {
         return {
             tab5: null,
@@ -160,10 +171,12 @@ export default {
             indexBasic          :   {},
             etpInfos            :   {},
             showEtpManageDetailDialogBySub : false,
+            showIndexDetailDialog : false
         };
     },
     components: {
         ConfirmDialog : ConfirmDialog,
+        IndexDetailInfo : IndexDetailInfo,    
         LineEtpMultiChart,
         EtpManageDetailBasicInfoTab,
         EtpManageDetailAnalysisTab,
@@ -252,6 +265,13 @@ export default {
                 if (response.data) {
                     vm.etpBasic = response.data.etpBasic;
                     vm.etpBasic.f15001 = util.formatStringNum(vm.etpBasic.f15001);
+                    vm.indexBasic = response.data.indexBasic;
+debugger;
+                    vm.indexBasic.F16257        =   vm.etpBasic.f16257;
+                    vm.indexBasic.LARGE_TYPE    =   vm.indexBasic.large_type;
+                    vm.indexBasic.MARKET_ID     =   vm.indexBasic.market_id;
+
+
                     vm.showEtpManageDetailDialogBySub   =   true;
                 }
             });
@@ -268,7 +288,8 @@ export default {
          * 2019-04-25  bkLove(촤병국)
          */
         fn_close : function() {
-            this.$emit( "fn_closePop", "close" );
+            var vm = this;
+            vm.showIndexDetailDialog = false;
         },
         showMessageBox: function(title, msg, option, gubun) {
             this.$root.$confirm.open(title,msg, option, gubun);
@@ -276,7 +297,10 @@ export default {
         formatNumber:function(num) {
             return util.formatNumber(num);
         },
-        
+        showDetail:function() {
+            var vm = this;
+            vm.showIndexDetailDialog = true;
+        }
     }
     
 };

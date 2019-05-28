@@ -89,8 +89,9 @@ export default {
         c.beginPath();
         c.strokeStyle = "#37474F";
         c.lineWidth = 1;
-        c.moveTo(this.crect.x1, this.crect.y1);
-        c.lineTo(this.crect.x1, this.crect.y2);
+        // c.moveTo(this.crect.x1, this.crect.y1);
+        // c.lineTo(this.crect.x1, this.crect.y2);
+        c.moveTo(this.crect.x1, this.crect.y2);
         c.lineTo(this.crect.x2, this.crect.y2);
         c.stroke();
         c.closePath();
@@ -178,6 +179,7 @@ export default {
         var val = 0, maxVal = 0, minVal = 0, diffVal = 0;
         var stepVal = 0;
         var _wpos = 0, _hpos = 0;
+        var toFixNum = 0;
 
         this.sArr = [];
         idata.forEach(function(item, index) {
@@ -186,6 +188,7 @@ export default {
           if(dmode == 0) val = item.F20008;
           else val = item.iF20008;
 
+          val = Number(val);
           if(index == 0) {
             maxVal = val;
             minVal = val;
@@ -198,24 +201,22 @@ export default {
           sdata.vv = val;
           vm.sArr.push(sdata);
         });
-        diffVal = maxVal - minVal;
-        stepVal = diffVal / 6;
-
+        // console.log("maxval : " + maxVal + " minVal : " + minVal);
+        // 부동소수점 연산 오류 수정
+        diffVal = (maxVal * 10000 - minVal * 10000) /  10000;
+        toFixNum = util.getToFixNum(diffVal);
         // Y Axis 데이터 
+        stepVal = diffVal / 6;
         vm.yAxisVal[0] = minVal;
         for(var i=1; i < 6; i++) {
           // console.log("i : " + i + " minVal : " + minVal + " maxVal : " + maxVal + " stepVal : " + stepVal);
-          vm.yAxisVal[i] = Number(minVal) + stepVal * i;
-          if((diffVal * 100 % 100) !== 0) {
-            vm.yAxisVal[i] = vm.yAxisVal[i].toFixed(2);
-          }else {
-            vm.yAxisVal[i] = vm.yAxisVal[i].toFixed(0);
-          }
-          // console.log("yAxis : " + vm.yAxisVal[i]);
+          vm.yAxisVal[i] = minVal + stepVal * i;
         }
         vm.yAxisVal[6] = maxVal;
         for(var i=0; i < 7; i++) {
+          vm.yAxisVal[i] = vm.yAxisVal[i].toFixed(toFixNum);
           vm.yAxisVal[i] = util.formatStringNum(vm.yAxisVal[i].toString());
+          // vm.yAxisVal[i] = vm.yAxisVal[i].toString();
         }
 
         // X Axis 데이터
@@ -289,6 +290,7 @@ export default {
         var val = 0, maxVal = 0, minVal = 0, diffVal = 0;
         var stepVal = 0;
         var _wpos = 0, _hpos = 0;
+        var toFixNum = 0;
 
         this.sArr = [];
         idata.forEach(function(item, index) {
@@ -297,6 +299,7 @@ export default {
           if(dmode == 0) val = item.F15001;
           else val = item.iF15001;
 
+          val = Number(val);
           if(index == 0) {
             maxVal = val;
             minVal = val;
@@ -308,24 +311,23 @@ export default {
           sdata.vv = val;
           vm.sArr.push(sdata);
         });
-        diffVal = maxVal - minVal;
-        stepVal = diffVal / 6;
+        // console.log("maxval : " + maxVal + " minVal : " + minVal);
+        // 부동소수점 연산 오류 수정
+        diffVal = (maxVal * 10000 - minVal * 10000) /  10000;
+        toFixNum = util.getToFixNum(diffVal);
 
         // Y Axis 데이터 
+        stepVal = diffVal / 6;
         vm.yAxisVal[0] = minVal;
         for(var i=1; i < 6; i++) {
           // console.log("i : " + i + " minVal : " + minVal + " maxVal : " + maxVal + " stepVal : " + stepVal);
-          vm.yAxisVal[i] = Number(minVal) + stepVal * i;
-          if((diffVal * 100 % 100) !== 0) {
-            vm.yAxisVal[i] = vm.yAxisVal[i].toFixed(2);
-          }else {
-            vm.yAxisVal[i] = vm.yAxisVal[i].toFixed(0);
-          }
-          // console.log("yAxis : " + vm.yAxisVal[i]);
+          vm.yAxisVal[i] = minVal + stepVal * i;
         }
         vm.yAxisVal[6] = maxVal;
         for(var i=0; i < 7; i++) {
+          vm.yAxisVal[i] = vm.yAxisVal[i].toFixed(toFixNum);
           vm.yAxisVal[i] = util.formatStringNum(vm.yAxisVal[i].toString());
+          // vm.yAxisVal[i] = vm.yAxisVal[i].toString();
         }
 
         // X Axis 데이터
@@ -876,9 +878,9 @@ export default {
         var selectMode = 0;
         var selectTerm = 0;
 
-console.log("pageX : " + event.pageX + " pageY : " +event.pageY);
-console.log("left : " + this.mrect.left + " top : " + this.mrect.top);
-console.log("wpos : " + _mwpos + " hpos : " + _mhpos);
+// console.log("pageX : " + event.pageX + " pageY : " +event.pageY);
+// console.log("left : " + this.mrect.left + " top : " + this.mrect.top);
+// console.log("wpos : " + _mwpos + " hpos : " + _mhpos);
         selectMode = this.selectModeCheck(_mwpos, _mhpos);
         if(selectMode !== -1) {
           console.log("selectMode : " + selectMode);

@@ -79,7 +79,7 @@
                         </v-layout>
                        
                                 <div class="btn_pad2">
-                                <v-btn depressed dark color="primary">지수정보확인</v-btn>
+                                <v-btn depressed dark color="primary" @click="showDetail()">지수정보확인</v-btn>
                                 </div>
                             
                     </v-card>
@@ -204,7 +204,10 @@ export default {
     },
     
     methods: {
-        
+        showDetail: function() {
+            var vm = this;
+            vm.$emit("showDetail");
+        }
     }
 };
 </script>
