@@ -266,7 +266,7 @@ export default {
                     vm.etpBasic = response.data.etpBasic;
                     vm.etpBasic.f15001 = util.formatStringNum(vm.etpBasic.f15001);
                     vm.indexBasic = response.data.indexBasic;
-debugger;
+
                     vm.indexBasic.F16257        =   vm.etpBasic.f16257;
                     vm.indexBasic.LARGE_TYPE    =   vm.indexBasic.large_type;
                     vm.indexBasic.MARKET_ID     =   vm.indexBasic.market_id;

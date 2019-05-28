@@ -10,13 +10,26 @@
                             <h3 class="headline mb-0">
                                 Index List |
                                 <span class="grey--text">total {{list_cnt}} index</span>
+                            
                             </h3>
                         </div>
                     </v-card-title>
+
+<!--------------프로그래스바---------------------->
+<v-dialog v-model="dialog" persistent  content-class="progressbar_w">
+      <template v-slot:activator="{ on }">
+        <v-btn color="primary" dark v-on="on">Open Dialog</v-btn>
+      </template>
+      <template>
+        <v-progress-circular :size="50" indeterminate></v-progress-circular>
+          </template>
+</v-dialog>
+<!--------------프로그래스바 end---------------------->
+
                 </v-card>
                 <v-card flat>
                
-                 <table id="index_table"  class="tbl_type" width="100%">
+                 <table id="index_table"  class="tbl_type ver8" width="100%">
                      <thead>
                         <tr>
                             <th class="txt_left">ID</th>
@@ -57,6 +70,8 @@ export default {
 
     data() {
         return {
+            dialog: false,
+            dialog2: false,
            
             rowsPerPageItems: [10, 20, 30],
             headers: [

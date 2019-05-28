@@ -104,7 +104,6 @@ export default {
         var vm = this;
 
         console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
-        debugger;
         console.log( vm.paramData );
 
         vm.pdfData  =   vm.paramData;

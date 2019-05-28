@@ -165,7 +165,7 @@ export default {
     methods: {
         init: function(event) {
             var vm = this;
-           
+        
             vm.$nextTick().then(() => {
 
                 if(     vm.paramData 
