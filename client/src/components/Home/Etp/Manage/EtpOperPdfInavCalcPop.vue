@@ -283,7 +283,7 @@ export default {
             thead: {
                 display:'none'
             },
-            "ordering": false,
+            "ordering": true,
             "columnDefs": [
                  {  
                     "render": function ( data, type, row ) {
@@ -426,7 +426,7 @@ export default {
                                     vm.iNav_amt = vm.market_tot_amt;
                                 }
                                 /* INav 등락률 */
-                                vm.iNav_percent =  (vm.iNav_amt / vm.etpBasic.f03329 - 1);
+                                vm.iNav_percent =  (1 - (vm.iNav_amt / vm.etpBasic.f03329)) * 100;
 
                                 /* 비중 정보 산출*/
                                 for (let item of vm.pdfList) {         
@@ -515,7 +515,7 @@ export default {
                             vm.iNav_amt = vm.market_tot_amt;
                         }
                         /* INav 등락률 */
-                        vm.iNav_percent =  (vm.iNav_amt / vm.etpBasic.f03329 - 1);
+                        vm.iNav_percent =  (1 - (vm.iNav_amt / vm.etpBasic.f03329)) * 100;
 
                         /* 비중 정보 산출*/
                         for (let item of vm.pdfList) {         
