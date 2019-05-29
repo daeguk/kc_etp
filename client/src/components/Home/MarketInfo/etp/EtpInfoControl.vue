@@ -120,6 +120,7 @@ export default {
     },
     methods: {
         showDetail: function(gubun, paramData) {  
+
             /* ETP 정보 */             
             if (gubun == '1') {
                 this.paramData = paramData;
@@ -134,8 +135,12 @@ export default {
                 
                 this.showMarketInfo = 0;
                 this.showFaver = true;
-            /* 인덱스 정보 */                 
-            } else if (gubun == '2') { 
+
+                this.className = "conWidth_left";  
+                this.FaverClassName = "conWidth_right";
+            } 
+            /* 인덱스 정보 */
+            else if (gubun == '2') { 
                 this.paramData = paramData;
                 this.showEtpDetailDialog = false;
                 this.showEtpInfoPdfDetail = false;
@@ -148,14 +153,20 @@ export default {
                 this.showIndexDetailDialog = true;                
                 this.showMarketInfo = 0;
                 this.showFaver = true;
-            } else if( gubun == '3' ) {
+
+                this.className = "conWidth_left";  
+                this.FaverClassName = "conWidth_right";
+
+            } 
+            /* PDF 상세 */
+            else if( gubun == '3' ) {
                 this.paramData = paramData;
 
                 this.showEtpInfoPdfDetail = true;
-            }
 
-            this.className = "conWidth_left";  
-            this.FaverClassName = "conWidth_right";       
+                this.className = "conWidth_100";  
+                this.FaverClassName = "conWidth_right";                
+            }
         },
         showMessageBox: function(title, msg, option, gubun) {
             this.$root.$confirm.open(title,msg, option, gubun);
