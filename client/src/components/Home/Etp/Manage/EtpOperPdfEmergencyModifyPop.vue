@@ -1,7 +1,7 @@
 <template>
     <v-container>
     <v-flex>
-    <v-dialog v-model="showDialog" persistent max-width="900">
+    <v-dialog v-model="showDialog" persistent max-width="900" @keydown.enter.prevent="fn_prevent_event">
         
         <v-card class="mx-auto">
 
@@ -1087,6 +1087,10 @@ export default {
             var vm = this;
 
             vm.$emit( "fn_closePop", "close" );
+        },
+
+        fn_prevent_event() {
+            return  true;
         }
     },
 };
