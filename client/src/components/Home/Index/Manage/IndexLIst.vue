@@ -14,18 +14,6 @@
                             </h3>
                         </div>
                     </v-card-title>
-
-<!--------------프로그래스바---------------------->
-<v-dialog v-model="dialog" persistent  content-class="progressbar_w">
-      <template v-slot:activator="{ on }">
-        <v-btn color="primary" dark v-on="on">Open Dialog</v-btn>
-      </template>
-      <template>
-        <v-progress-circular :size="50" indeterminate></v-progress-circular>
-          </template>
-</v-dialog>
-<!--------------프로그래스바 end---------------------->
-
                 </v-card>
                 <v-card flat>
                
@@ -50,6 +38,7 @@
         </v-layout>
          <v-flex>
              <ConfirmDialog ref="confirm"></ConfirmDialog>
+             <ProgressBar ref="progress"></ProgressBar>
         </v-flex>
     </v-container>
    
@@ -61,7 +50,9 @@ import $      from 'jquery'
 import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 import Config from '@/js/config.js';
+import util       from "@/js/util.js";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
+import ProgressBar from "@/components/common/ProgressBar.vue";
 var table = null;
 
 export default {
@@ -70,9 +61,6 @@ export default {
 
     data() {
         return {
-            dialog: false,
-            dialog2: false,
-           
             rowsPerPageItems: [10, 20, 30],
             headers: [
                 {
@@ -91,18 +79,17 @@ export default {
             ],
 
             results: [],
-            loadingbar: false,
             list_cnt: 0
         };
     },
     components: {
-        ConfirmDialog: ConfirmDialog
+        ConfirmDialog: ConfirmDialog,
+        ProgressBar: ProgressBar
     },
     computed: {},
     created: function() {},
     beforeDestroy() {},
-    mounted: function() {
-
+    mounted: function() {       
         var vm = this;
 
         table = $('#index_table').DataTable( {
@@ -156,7 +143,6 @@ export default {
             var data = table.row($(this).parents('tr')).data();
            // alert("Name = " + JSON.stringify(data));
 
-
            
         });
        
@@ -165,6 +151,7 @@ export default {
         getInfoIndexList: function() {
             console.log("getInfoIndexList");
             
+            util.processing(this.$refs.progress, true);
             axios.get(Config.base_url + "/user/index/getInfoIndexList", {
                     params: {
                     }
@@ -184,6 +171,7 @@ export default {
                         table.rows.add(this.results).draw();
                         
                     }                    
+                    util.processing(this.$refs.progress, false);
                 });
         }, 
         getReplace: function(text) {
