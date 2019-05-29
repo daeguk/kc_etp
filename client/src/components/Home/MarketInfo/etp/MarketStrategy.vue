@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <v-layout row wrap class="content_margin">
+        <v-layout row wrap>
             <v-flex xs12>
                 <v-carousel  light hide-delimiters height="250px" interval="10000">
                     <v-carousel-item  class="bg_W market_layout_w" v-if="carousel_info.carousel_cnt > 0"  v-for="n in carousel_info.carousel_cnt" :key="n">
@@ -65,11 +65,9 @@
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
                            {{item.ctg_name}}
-                            <p>
-                                Total
-                                <span class="text_result" v-bind:id="table_name + '_count'+item.ctg_code">120</span> results
+                                <span class="text_result" v-bind:id="table_name + '_count'+item.ctg_code">120</span>
+                                <span class="text_result_t">results</span>
                                 <span v-bind:id="table_name + '_date'+item.ctg_code">기준일 :2018.10.20</span>
-                            </p>
                         </h3>
                     </v-card-title>
                     <v-card flat>
