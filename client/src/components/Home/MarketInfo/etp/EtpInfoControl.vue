@@ -8,19 +8,20 @@
                 <EtpInfoPdfDetail v-if="showEtpInfoPdfDetail" :paramData="paramData" :showEtpInfoPdfDetail="showEtpInfoPdfDetail" @fn_closePop="fn_close"></EtpInfoPdfDetail>
             </v-dialog>
             
-            <marketRepresent v-if="showMarketInfo == 1" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketRepresent>               
-            <marketSector v-if="showMarketInfo == 2" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketSector>                   
-            <marketThema v-if="showMarketInfo == 3" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketThema>                       
-            <marketStrategy v-if="showMarketInfo == 4" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketStrategy>                 
-            <marketBond v-if="showMarketInfo == 5" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketBond>                         
-            <marketCurrency v-if="showMarketInfo == 6" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketCurrency>                 
-            <marketRawMaterials v-if="showMarketInfo == 7" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketRawMaterials>         
-            <marketVix v-if="showMarketInfo == 8" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketVix>                          
-            <marketRealEstate v-if="showMarketInfo == 9" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketRealEstate>             
-            <marketMixAssets v-if="showMarketInfo == 10" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketMixAssets>               
-            <marketOversea v-if="showMarketInfo == 11" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketOversea>                   
-            <marketLeverageInverse v-if="showMarketInfo == 12" @showDetail="showDetail" @showMessageBox="showMessageBox"></marketLeverageInverse>   
+            <marketRepresent v-if="showMarketInfo == 1" @showDetail="showDetail" @showMessageBox="showMessageBox" @showProgress="showProgress"></marketRepresent>               
+            <marketSector v-if="showMarketInfo == 2" @showDetail="showDetail" @showMessageBox="showMessageBox" @showProgress="showProgress"></marketSector>                   
+            <marketThema v-if="showMarketInfo == 3" @showDetail="showDetail" @showMessageBox="showMessageBox" @showProgress="showProgress"></marketThema>                       
+            <marketStrategy v-if="showMarketInfo == 4" @showDetail="showDetail" @showMessageBox="showMessageBox" @showProgress="showProgress"></marketStrategy>                 
+            <marketBond v-if="showMarketInfo == 5" @showDetail="showDetail" @showMessageBox="showMessageBox" @showProgress="showProgress"></marketBond>                         
+            <marketCurrency v-if="showMarketInfo == 6" @showDetail="showDetail" @showMessageBox="showMessageBox" @showProgress="showProgress"></marketCurrency>                 
+            <marketRawMaterials v-if="showMarketInfo == 7" @showDetail="showDetail" @showMessageBox="showMessageBox" @showProgress="showProgress"></marketRawMaterials>         
+            <marketVix v-if="showMarketInfo == 8" @showDetail="showDetail" @showMessageBox="showMessageBox" @showProgress="showProgress"></marketVix>                          
+            <marketRealEstate v-if="showMarketInfo == 9" @showDetail="showDetail" @showMessageBox="showMessageBox" @showProgress="showProgress"></marketRealEstate>             
+            <marketMixAssets v-if="showMarketInfo == 10" @showDetail="showDetail" @showMessageBox="showMessageBox" @showProgress="showProgress"></marketMixAssets>               
+            <marketOversea v-if="showMarketInfo == 11" @showDetail="showDetail" @showMessageBox="showMessageBox" @showProgress="showProgress"></marketOversea>                   
+            <marketLeverageInverse v-if="showMarketInfo == 12" @showDetail="showDetail" @showMessageBox="showMessageBox" @showProgress="showProgress"></marketLeverageInverse>   
             <ConfirmDialog ref="confirm"></ConfirmDialog>
+            <ProgressBar ref="progress"></ProgressBar>
         </v-flex>
         <v-flex :class="FaverClassName">
                 <ComFavorItemSub v-if="showFaver"   @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
@@ -36,9 +37,11 @@ import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import _ from "lodash";
+import util       from "@/js/util.js";
 import Config from "@/js/config.js";
 import ComFavorItemSub from "@/components/common/control/ComFavorItemSub"; 
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
+import ProgressBar from "@/components/common/ProgressBar.vue";
 
 import IndexDetailInfo from "@/components/Home/Index/Manage/IndexDetailInfo.vue";   /*지수 상세정보*/
 import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";         /*ETP 상세정보*/
@@ -75,6 +78,7 @@ export default {
     components: {
         ComFavorItemSub : ComFavorItemSub,
         ConfirmDialog : ConfirmDialog,
+        ProgressBar : ProgressBar,
         IndexDetailInfo : IndexDetailInfo,
         EtpManageDetail :   EtpManageDetail,
         EtpInfoPdfDetail: EtpInfoPdfDetail,                 /* PDF 상세 */
@@ -157,6 +161,9 @@ export default {
             this.$root.$confirm.open(title,msg, option, gubun);
         },
 
+        showProgress: function(visible) {
+            util.processing(this.$refs.progress, visible);
+        },
         /*
          *  지소관리 상세 팝업에서 종료시 해당 팝업을 종료한다.
          *  2019-05-03  bkLove(촤병국)

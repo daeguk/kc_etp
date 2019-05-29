@@ -3,8 +3,9 @@
         <v-flex grow :class="className">
             <IndexDetailInfo v-if="showIndexDetailDialog" :showDialog="true" :showView="true"  :paramData="paramData"></IndexDetailInfo>
             <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
-            <today v-if="showMarketInfo == 1" @showDetail="showDetail" @showMessageBox="showMessageBox"></today>         
+            <today v-if="showMarketInfo == 1" @showDetail="showDetail" @showMessageBox="showMessageBox" @showProgress="showProgress"></today>         
             <ConfirmDialog ref="confirm"></ConfirmDialog>
+            <ProgressBar ref="progress"></ProgressBar>
         </v-flex>
         <v-flex :class="FaverClassName">
                 <ComFavorItemSub v-if="showFaver"   @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
@@ -19,9 +20,11 @@ import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import _ from "lodash";
+import util       from "@/js/util.js";
 import Config from "@/js/config.js";
 import ComFavorItemSub from "@/components/common/control/ComFavorItemSub"; 
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
+import ProgressBar from "@/components/common/ProgressBar.vue";
 
 import IndexDetailInfo from "@/components/Home/Index/Manage/IndexDetailInfo.vue";   /*지수 상세정보*/
 import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";         /*ETP 상세정보*/
@@ -45,6 +48,7 @@ export default {
     components: {
         ComFavorItemSub : ComFavorItemSub,
         ConfirmDialog : ConfirmDialog,
+        ProgressBar : ProgressBar,
         IndexDetailInfo : IndexDetailInfo,
         EtpManageDetail :   EtpManageDetail,
         today :  today,               /* 001-Today */
@@ -104,7 +108,10 @@ export default {
         },
         showMessageBox: function(title, msg, option, gubun) {
             this.$root.$confirm.open(title,msg, option, gubun);
-        }
+        },
+        showProgress: function(visible) {
+            util.processing(this.$refs.progress, visible);
+        },
     }   
 
 
