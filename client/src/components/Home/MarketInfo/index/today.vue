@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <v-layout row wrap class="content_margin">
+        <v-layout row wrap>
             <v-flex xs12>
                 <v-layout>
                     <v-flex xs3 pr-2 v-for="(marketRep, index) in marketRepList" :key="marketRep.f16002">
@@ -28,7 +28,7 @@
             </v-flex>
 
             <!---테이블1 -->
-            <v-flex grow xs12 mt-3>
+            <v-flex grow xs12 mt-2>
                 <v-card flat>
                     <v-card-title primary-title class="tbl_w2">
                         <v-list-tile>
@@ -45,16 +45,16 @@
                     <v-card flat>
                         <table id="krxIndexTable" class="tbl_type" style="width:100%">
                             <colgroup>
-                                <col width="20%">
-                                <col width="10%">
-                                <col width="10%">
-                                <col width="%">
-                                <col width="%">
-                                <col width="%">
-                                <col width="%">
-                                <col width="%">
-                                <col width="%">
-                                <col width="%">
+                                <col width="21%">
+                                <col width="9%">
+                                <col width="9%">
+                                <col width="9%">
+                                <col  width="9%">
+                                <col  width="9%">
+                                <col  width="9%">
+                                <col  width="9%">
+                                <col  width="9%">
+                                <col  width="7%">
                             </colgroup>
                             <thead>
                                 <tr>
@@ -80,7 +80,7 @@
             <!---테이블1 end -->
 
             <!-- 테이블2 -->
-            <v-flex grow xs12 mt-3>
+            <v-flex grow xs12 mt-2>
                 <v-card flat>
                     <v-card-title primary-title class="tbl_w2">
                         <v-list-tile>
@@ -97,16 +97,16 @@
                     <v-card flat>
                         <table id="fnGuideIndexTable" class="tbl_type" style="width:100%">
                             <colgroup>
-                                <col width="20%">
-                                <col width="10%">
-                                <col width="10%">
-                                <col width="%">
-                                <col width="%">
-                                <col width="%">
-                                <col width="%">
-                                <col width="%">
-                                <col width="%">
-                                <col width="%">
+                                <col width="21%">
+                                <col width="9%">
+                                <col width="9%">
+                                <col width="9%">
+                                <col  width="9%">
+                                <col  width="9%">
+                                <col  width="9%">
+                                <col  width="9%">
+                                <col  width="9%">
+                                <col  width="7%">
                             </colgroup>
                             <thead>
                                 <tr>
@@ -243,7 +243,7 @@ export default {
                 },
                 {
                     "render": function ( data, type, row ) {
-                        let htm = "<div class='tooltip'><button type='button' id='btnIndexDetail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>";                            
+                        let htm = "<div class='tooltip'><button type='button' id='btnIndexDetail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:50px;'>지수정보</span></div>";                            
                         return htm;
                     },
                     "targets": 9
@@ -251,14 +251,14 @@ export default {
             ],              
             columns: [
                 { "data": "F16002", "orderable": true, className:"txt_left line2"}, /*종목*/
-                { "data": 'F15001', "orderable": true }, /*현재가*/
-                { "data": 'F15009', "orderable" : true}, /*전일가*/
-                { "data": 'daily', "orderable" : true }, /*Daily*/
-                { "data": '1week', "orderable" : true}, /*1Week*/
-                { "data": '1month', "orderable" : true}, /*1Month*/
-                { "data": 'ytd', "orderable" : true}, /*YTD*/
-                { "data": '1year', "orderable" : true}, /*1Year*/
-                { "data": '3year', "orderable" : true}, /*3Year*/
+                { "data": 'F15001', "orderable": true , className:"txt_right"}, /*현재가*/
+                { "data": 'F15009', "orderable" : true, className:"txt_right"}, /*전일가*/
+                { "data": 'daily', "orderable" : true, className:"txt_right" }, /*Daily*/
+                { "data": '1week', "orderable" : true, className:"txt_right"}, /*1Week*/
+                { "data": '1month', "orderable" : true, className:"txt_right"}, /*1Month*/
+                { "data": 'ytd', "orderable" : true, className:"txt_right"}, /*YTD*/
+                { "data": '1year', "orderable" : true, className:"txt_right"}, /*1Year*/
+                { "data": '3year', "orderable" : true, className:"txt_right"}, /*3Year*/
                 { "data": null, "orderable" : true, defaultContent:""},
             ]
         }); 
@@ -344,7 +344,7 @@ export default {
                 },
                 {
                     "render": function ( data, type, row ) {
-                        let htm = "<div class='tooltip'><button type='button' id='btnIndexDetail'  class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:70px;'>지수정보</span></div>";                            
+                        let htm = "<div class='tooltip'><button type='button' id='btnIndexDetail'  class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:50px;'>지수정보</span></div>";                            
                         return htm;
                     },
                     "targets": 9
@@ -352,14 +352,14 @@ export default {
             ],                                    
             columns: [
                 { "data": "F16002", "orderable": true, className:"txt_left line2"}, /*종목*/
-                { "data": 'F15001', "orderable": true }, /*현재가*/
-                { "data": 'F15009', "orderable" : true}, /*전일가*/
-                { "data": 'daily', "orderable" : true }, /*Daily*/
-                { "data": '1week', "orderable" : true}, /*1Week*/
-                { "data": '1month', "orderable" : true}, /*1Month*/
-                { "data": 'ytd', "orderable" : true}, /*YTD*/
-                { "data": '1year', "orderable" : true}, /*1Year*/
-                { "data": '3year', "orderable" : true}, /*3Year*/
+                { "data": 'F15001', "orderable": true, className:"txt_right" }, /*현재가*/
+                { "data": 'F15009', "orderable" : true, className:"txt_right"}, /*전일가*/
+                { "data": 'daily', "orderable" : true, className:"txt_right" }, /*Daily*/
+                { "data": '1week', "orderable" : true, className:"txt_right"}, /*1Week*/
+                { "data": '1month', "orderable" : true, className:"txt_right"}, /*1Month*/
+                { "data": 'ytd', "orderable" : true, className:"txt_right"}, /*YTD*/
+                { "data": '1year', "orderable" : true, className:"txt_right"}, /*1Year*/
+                { "data": '3year', "orderable" : true, className:"txt_right"}, /*3Year*/
                 { "data": null, "orderable" : true},
             ]
         });

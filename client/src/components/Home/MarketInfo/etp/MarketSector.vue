@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <v-layout row wrap class="content_margin">
+        <v-layout row wrap>
             <v-flex xs12>
               <v-layout row wrap>
                 <v-flex xs3 v-for="(rinfo, index) in rep_info" :key="rinfo.seq">
@@ -12,16 +12,14 @@
 
 
             <!-- 테이블1 -->
-            <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12 mt-3>
+            <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12 mt-2>
                 <v-card flat>
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
                            {{item.ctg_name}}
-                            <p>
-                                Total
-                                <span class="text_result" v-bind:id="table_name + '_count'+item.ctg_code">120</span> results
+                                <span class="text_result" v-bind:id="table_name + '_count'+item.ctg_code">120</span>
+                                <span class="text_result_t">results</span>
                                 <span v-bind:id="table_name + '_date'+item.ctg_code">기준일 :2018.10.20</span>
-                            </p>
                         </h3>
                     </v-card-title>
                     <v-card flat>

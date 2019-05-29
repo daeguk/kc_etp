@@ -36,7 +36,7 @@
         </v-list-tile>
       </v-list>
     </v-menu-->
-  </v-toolbar-title>
+
 
 
 <v-btn
@@ -45,9 +45,9 @@
           class="topmenu_icon"
         ><v-icon @mouseover="showContextMenu($event)">apps</v-icon>
         </v-btn>
-
+        <span class="top_cont_title">MARKET ETP INFO</span>
+  </v-toolbar-title>
 <template id="template-context-menu">
-    <!--div id="context-menu"  v-on:mouseleave="hideContextMenu()"-->
     <div id="context-menu" v-on:mouseleave="hideContextMenu()">
         <v-list  two-line  class="menu_list">
             <v-list-tile v-on:click="movePage('/info/etpinfo')">

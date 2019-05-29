@@ -11,10 +11,10 @@
             <v-list-tile-content class="w_1">
                 <v-toolbar flat>
                     <v-toolbar-title>{{item.jisu_kor_nm}}</v-toolbar-title>
-<!--                <v-spacer></v-spacer> -->
-                    <v-btn icon>
-                        <v-icon color="primary" @click="fn_showJisuEdit({ 'jisu_id' : item.jisu_id, 'jisu_seq' : item.jisu_seq } )">edit</v-icon>
-                    </v-btn>
+               <v-spacer></v-spacer> 
+                    
+                        <button type="button" class="btn_icon v-icon material-icons" @click="fn_showJisuEdit({ 'jisu_id' : item.jisu_id, 'jisu_seq' : item.jisu_seq } )">edit</button>
+
                 </v-toolbar>
                 <v-range-slider
                     :tick-labels="statusList"

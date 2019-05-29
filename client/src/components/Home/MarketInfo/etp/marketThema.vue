@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <v-layout row wrap class="content_margin">
+        <v-layout row wrap>
             <v-flex xs12>
                 <v-card flat>
                     <img src="/assets/img/strategy_img.png" height="200px">
@@ -14,11 +14,9 @@
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
                            {{item.ctg_name}}
-                            <p>
-                                Total
-                                <span class="text_result" v-bind:id="table_name + '_count'+item.ctg_code">120</span> results
+                                <span class="text_result" v-bind:id="table_name + '_count'+item.ctg_code">120</span>
+                                <span class="text_result_t">results</span>
                                 <span v-bind:id="table_name + '_date'+item.ctg_code">기준일 :2018.10.20</span>
-                            </p>
                         </h3>
                     </v-card-title>
                     <v-card flat>

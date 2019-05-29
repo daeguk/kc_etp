@@ -376,18 +376,16 @@ export default {
                                     if( row.etpIndexGubun == "ETP" ) {
 
                                             html +=  "<span>"
-                                            html +=     "&nbsp;&nbsp;&nbsp;";
                                             html +=     data;
-                                            html +=     "<br>";
-                                            html +=     "&nbsp;&nbsp;&nbsp;";
+                                            html +=     "<span class='line2_ts'>";
                                             html +=     "(" + row.navPriceGubun + ")";
+                                            html +=     "</span>";
                                             html +=  "</span>";
 
                                             return html;
                                         }else{
 
-                                            html += "<span>";
-                                            html +=     "&nbsp;&nbsp;&nbsp;";
+                                            html += "<span class='line2_ts2'>";
                                             html +=     data;
                                             html += "</span>";
 
