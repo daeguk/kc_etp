@@ -29,7 +29,35 @@
 
 
                     <v-card flat>
-                        <table id="table01" class="tbl_type ver7"    style="width:100%"/>
+                        <div v-show='stateInfo.pageState != "performance"' >
+                            <table id="table01" class="tbl_type ver7"    style="width:100%"/>
+                        </div>
+
+                        <div v-show='stateInfo.pageState == "performance"' >
+                            <table id="table02" class="tbl_type ver7"    style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th class="txt_left"    rowspan="2">종목</th>
+                                        <th class="txt_right"   rowspan="2">iNAV</th>
+                                        <th class="txt_right"   rowspan="2">전일NAV</th>
+                                        <th class="txt_right"   rowspan="2">TE</th>
+                                        <th class="txt_right"   rowspan="2">괴리율</th>
+
+                                        <th class="txt_center"  colspan="5">수익율</th>
+                                        <th rowspan="2"></th>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="txt_right">1주</th>
+                                        <th class="txt_right">1개월</th>
+                                        <th class="txt_right">3개월</th>
+                                        <th class="txt_right">6개월</th>
+                                        <th class="txt_right">YTD</th>
+                                    </tr>
+                                </thead>                                
+                            </table>
+                            
+                        </div>                        
                     </v-card>
                 </v-card>
             </v-flex>  
@@ -64,6 +92,7 @@ import EtpOperInfoInavPdf       from    "@/components/Home/Etp/Manage/EtpOperInf
 import EtpOperInfoInavIndex     from    "@/components/Home/Etp/Manage/EtpOperInfoInavIndex.vue";
 
 var table01 = null;
+var table02 = null;
 
 export default {
     components: {
@@ -96,16 +125,110 @@ export default {
             etpRow      :   {},
             inavGubun   :   "",
             showInavPdfYn : false,
-            showInavIndexYn : false
+            showInavIndexYn : false,
         };
     },
     mounted: function() {
         var vm = this;
 
         console.log( "######### EtpOperInfo.vue mounted ");
-        vm.$nextTick().then(() => {
+
+
+        new Promise(function(resolve, reject) {
+
+        /* [ETP Performance] 테이블 정보 */
+            vm.fn_setArrShowColumn( [
+                    'f16002'                        /* 종목 */
+                ,   'f15301'                        /* iNAV */
+                ,   'f03329'                        /* 전일최종NAV */
+                ,   'f15302'                        /* 추적오차율 */
+                ,   'f15304'                        /* 괴리율 */
+
+                ,   'week1'                         /* 1주 */
+                ,   'month1'                        /* 1개월 */
+                ,   'month3'                        /* 3개월 */
+                ,   'month6'                        /* 6개월 */
+                ,   'ytd'                           /* ytd */
+
+                ,   'graph'                         /* 그래프 영역 */
+            ]);
+
+            for( var i in vm.arrShowColumn ) {
+                vm.arrShowColumn[i].title   =   undefined;
+            }
+
+            table02 = $('#table02').DataTable( {
+                "processing": true,
+                "serverSide": false,
+                "info": false,   // control table information display field
+                "stateSave": true,  //restore table state on page reload,
+                "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                "scrollY": '70vh',
+                paging: false,
+                searching: false,
+                data : [],
+                autoWidth: false,
+                columns     :   vm.arrShowColumn,
+                columnDefs  :   vm.arrShowColumnDef
+            });
+
+            // 테이블별 이벤트
+            $('#table02 tbody').on('click', 'button[id=btnInav],button[id=btnEtpInfo],button[id=btnPdf]', function () {
+
+                var table = $('#table02').DataTable();
+                var data = table.row($(this).parents('tr')).data();
+                var rowInx = table.row($(this)).index();
+                var btnId   =   $(this).attr('id');
+
+                console.log("########## EtpOperInfo.vue -> pageMove START ############");
+                console.log( "data.f16012=[" + data.f16012 + "] /* 국제표준코드  */" );
+                console.log( "data.f16257=[" + data.f16257 + "] /* ETP기초지수코드  */" );
+                console.log( "data.f34239=[" + data.f34239 + "] /* ETP기초지수MID  */" );
+
+                vm.paramData.f16012         =   data.f16012;        /* 국제표준코드  */
+                vm.paramData.f16257         =   data.f16257;        /* ETP기초지수코드  */
+                vm.paramData.f34239         =   data.f34239;        /* ETP기초지수MID  */
+                vm.paramData.rowIndex       =   rowInx;
+
+                switch( btnId ) {
+
+                    case    'btnInav'       :
+
+                                var gubun   =   "7";
+
+                                /* 0-PDF, 1-지수 수익율 */
+                                if( data.f33929 == "0" ) {
+                                    gubun   =   "7";
+                                }else if( data.f33929 == "1" ) {
+                                    gubun   =   "8";
+                                }
+
+                                vm.$emit( "fn_showDetailPdf", gubun, data );
+
+                                break;
+
+                    case    'btnEtpInfo'    :
+                                vm.$emit('showDetail', 1, data );
+                                break;
+
+                    case    'btnPdf'    :
+                                vm.$emit('fn_pageMove', btnId, data);
+                                break;
+                }
+                
+                console.log("########## EtpOperInfo.vue -> pageMove END ############");
+            });            
+
+            resolve();
+
+        }).catch( function(e) {
+
+            console.log( e );
+
+        }).then( function() {
+
             vm.fn_setTableInfo();
-            vm.fn_getEtpOperInfo( vm.stateInfo.gubun );        
+            vm.fn_getEtpOperInfo( vm.stateInfo.gubun );
         });
     },
     created: function() {},
@@ -130,13 +253,19 @@ export default {
                 vm.stateInfo.gubun   =   gubun;        /* A-전종목, K-국내, F-해외, I-관심종목 */
             }
 
-            if( table01 ) {
-                table01.clear().draw();
+            if( vm.stateInfo.pageState == "performance" ) {
+                if( table02 ) {
+                    table02.clear().draw();
+                }
+            }else{
+                if( table01 ) {
+                    table01.clear().draw();
+                }
             }
 
             axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
                 data: {
-                        f34241 : vm.stateInfo.gubun
+                    f34241 : vm.stateInfo.gubun
                 }
             }).then(function(response) {
                 console.log(response);
@@ -145,8 +274,14 @@ export default {
                     var dataList = response.data.dataList;
                     
                     if( dataList && dataList.length > 0 ) {
-                        table01.rows.add( dataList ).draw();
-                        table01.draw();
+
+                        if( vm.stateInfo.pageState == "performance" ) {
+                            table02.rows.add( dataList ).draw();
+                            table02.draw();
+                        }else{
+                            table01.rows.add( dataList ).draw();
+                            table01.draw();
+                        }
 
                         vm.indexBasic   =   dataList[0];
                         vm.result_cnt   =   dataList.length;
@@ -162,23 +297,6 @@ export default {
         fn_setTableInfo( arrCustomizeColumn ) {
 
             var vm = this;
-
-            var tableObj    =    {
-                "processing": true,
-                "serverSide": false,
-                "info": false,   // control table information display field
-                "stateSave": true,  //restore table state on page reload,
-                "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                "scrollY": '70vh',
-                paging: false,
-                searching: false,
-                data : [],
-                autoWidth: false,
-
-                fixedColumns:   {
-                    leftColumns: 2,
-                }
-            };
 
 
             /* [기본 ETP 운용정보] 를 선택한 경우 */
@@ -214,24 +332,6 @@ export default {
                     ,   'graph'                         /* 그래프 영역 */
                 ] );
             }
-            /* [ETP Performance] 를 선택한 경우 */
-            else if( vm.stateInfo.pageState == "performance" ) {
-
-                vm.fn_setArrShowColumn( [ 
-                        'f16002'                        /* 종목 */
-                    ,   'f15301'                        /* iNAV */
-                    ,   'f03329'                        /* 전일최종NAV */
-                    ,   'f15302'                        /* 추적오차율 */
-                    ,   'f15304'                        /* 괴리율 */
-
-                    ,   'week1'                         /* 1주 */
-                    ,   'month1'                        /* 1개월 */
-                    ,   'month3'                        /* 3개월 */
-                    ,   'month6'                        /* 6개월 */
-                    ,   'ytd'                           /* ytd */
-                    ,   'graph'                         /* 그래프 영역 */
-                ] );
-            }
             /* customize 를 선택한 경우 */
             else if( vm.stateInfo.pageState == "customize" ) {
                 
@@ -240,23 +340,45 @@ export default {
 
 
 
-            if ( $.fn.DataTable.isDataTable('#table01') ) {
-                $('#table01').DataTable().destroy();
-                $('#table01').empty();
-            }        
 
-            if( vm.stateInfo.totWidth > 900 ) {
-                $('#table01').attr( "style", "width: 1500px; table-layout: fixed;");
-                tableObj.scrollX    =   true;
-            }else{
-                $('#table01').attr( "style", "width: 100%; ");
-                tableObj.scrollX    =   false;
+            if( vm.stateInfo.pageState != "performance" ) {
+
+                var tableObj    =    {
+                    "processing": true,
+                    "serverSide": false,
+                    "info": false,   // control table information display field
+                    "stateSave": true,  //restore table state on page reload,
+                    "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                    "scrollY": '70vh',
+                    paging: false,
+                    searching: false,
+                    data : [],
+                    autoWidth: false,
+
+                    fixedColumns:   {
+                        leftColumns: 2,
+                    }
+                };
+
+                if ( $.fn.DataTable.isDataTable('#table01') ) {
+                    $('#table01').DataTable().destroy();
+                    $('#table01').empty();
+                }
+
+                if( vm.stateInfo.totWidth > 900 ) {
+                    $('#table01').attr( "style", "width: 1500px; table-layout: fixed;");
+                    tableObj.scrollX    =   true;
+                }else{
+                    $('#table01').attr( "style", "width: 100%; ");
+                    tableObj.scrollX    =   false;
+                }
+
+                tableObj.columns    =   vm.arrShowColumn ;
+                tableObj.columnDefs =   vm.arrShowColumnDef ;
+
+                table01 = $('#table01').DataTable( tableObj );
             }
 
-            tableObj.columns    =   vm.arrShowColumn ;
-            tableObj.columnDefs =   vm.arrShowColumnDef ;
-
-            table01 = $('#table01').DataTable( tableObj );
 
             // 테이블별 이벤트
             $('#table01 tbody').on('click', 'button[id=btnInav],button[id=btnEtpInfo],button[id=btnPdf]', function () {
@@ -423,7 +545,7 @@ export default {
             graphContent    +=      '           type="button" ';
             graphContent    +=      '           class="' + btnClass + '" ';
             graphContent    +=      '>' + btnContent + '</button>';
-            graphContent    +=      '<span class="' + btnSpanClass + '" style="' + btnSpanStyle + '" >' + btnSpanContent + '</span>';
+            graphContent    +=      '<span class="' + btnSpanClass + '" style="' + btnSpanStyle + '">' + btnSpanContent + '</span>';
             graphContent    +=  '</div>';            
 
             return  graphContent;
@@ -453,6 +575,7 @@ export default {
                 { 'name' : 'week1'              , 'data': 'week1'            ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '<br>1주'        },      /* 1주  */
                 { 'name' : 'month1'             , 'data': 'month1'           ,  'width' : '90',  'orderable' : true  , 'className': 'txt_right', 'title' : '수익률<br>1개월'      },     /* 1개월  */
                 { 'name' : 'month3'             , 'data': 'month3'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '<br>3개월' },      /* 3개월  */
+                { 'name' : 'month6'             , 'data': 'month6'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '<br>6개월' },      /* 6개월  */
                 { 'name' : 'ytd'                , 'data': 'ytd'              ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '<br>YTD'     },      /* ytd  */
                                                                                                                                                     
                 { 'name' : 'f30812'             , 'data': 'f30812'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : 'AUM'           },      /* 유동시가총액  */
@@ -571,6 +694,17 @@ export default {
                                 return htm;
                             },
                     },
+
+                    /* month6 */
+                    {       'name' : 'month6'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+
+                                htm += util.formatNumber(data);
+
+                                return htm;
+                            },
+                    },                    
 
                     /* ytd */
                     {       'name' : 'ytd'   
