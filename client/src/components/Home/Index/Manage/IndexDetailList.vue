@@ -1,4 +1,5 @@
 <template>
+
     <v-container class="IndexRegi_w">
         <v-layout row wrap class="content_margin  con_wrap">
             <v-flex grow class="conWidth_left">
@@ -33,9 +34,17 @@
             <v-flex  class="conWidth_right">
                 <IndexDetailQuick   @fn_getIndexDetailList="fn_getIndexDetailList"
                                     @fn_getIndexJongmokList="fn_getIndexJongmokList">
-                </IndexDetailQuick>
+                </IndexDetailQuick>                
             </v-flex>
+            
         </v-layout>
+
+        <v-dialog v-model="progress" persistent  content-class="progressbar_w">     
+                        <template>
+                            <v-progress-circular :size="50" indeterminate></v-progress-circular>
+                            </template>
+                    </v-dialog>
+            </v-flex>
     </v-container>
 </template>
 
@@ -53,11 +62,11 @@ var tableIndexList = null;
 
 export default {
     components: {
-        IndexDetailQuick     :   IndexDetailQuick
+        IndexDetailQuick     :   IndexDetailQuick,
     },
     data() {
         return {
-
+            progress: true,
             indexBasic : {},                    /* 선택된 지수의 마스터 정보 */
       
             form: {
@@ -70,8 +79,9 @@ export default {
     },
     mounted () {
 
-        var vm = this;
-        
+       // this.$root.$progress = this.$refs.progress;
+
+        var vm = this;        
         /* 유형에 따라 컬럼 헤더 변경 */
         tableIndexList = $('#tableIndexList').DataTable( {
                 "processing": true,
@@ -112,9 +122,9 @@ export default {
          * 2019-04-16  bkLove(촤병국)
          */
         fn_getIndexDetailList : function( paramIndexBasic, paramIndexDetailList, paramForm ) {
-
+            
             var vm = this;
-
+            vm.progress = true;
             console.log( "IndexDetail.vue -> fn_getIndexDetailList" );
 
             if( paramIndexBasic ) {
@@ -139,17 +149,18 @@ export default {
             }
 
             vm.form.resultsCnt  =   paramIndexDetailList.length;
+            vm.progress = false;
         },
 
 
         /*
-         * 조회된 종목데이터를 설정한다.
+         * 조회된 종목데이터를 설정한다. 
          * 2019-04-16  bkLove(촤병국)
          */
         fn_getIndexJongmokList : function( paramJongmokDataList, paramForm ) {
 
             var vm = this;
-
+            vm.progress = true;
             console.log( "IndexDetail.vue -> fn_getIndexJongmokList" );
 
             if( paramForm ) {
@@ -196,6 +207,7 @@ export default {
 
                 vm.form.resultsCnt  =   paramJongmokDataList.length;
             }
+            vm.progress = false;
         },
              
 

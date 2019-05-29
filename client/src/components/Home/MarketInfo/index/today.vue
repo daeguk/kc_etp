@@ -387,6 +387,7 @@ export default {
             var vm = this;
             var idx = 0;
 
+            vm.$emit('showProgress', true);
             axios.get(Config.base_url + "/user/marketinfo/getMarketIndexList", {
                     params: {
                        
@@ -425,6 +426,7 @@ export default {
                         });
                     }*/
                 }
+                vm.$emit('showProgress', false);
             });
         },
         

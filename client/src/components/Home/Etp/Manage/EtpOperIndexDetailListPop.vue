@@ -48,6 +48,10 @@
 
         </v-dialog>
 
+        <v-flex>
+            <ProgressBar ref="progress"></ProgressBar>
+        </v-flex>             
+
     </v-container>
 </template>
 
@@ -56,9 +60,11 @@
 
 import $      from 'jquery'
 import dt      from 'datatables.net'
-import buttons from 'datatables.net-buttons'
+import buttons from 'datatables.net-buttons';
+import util       from "@/js/util.js";
 
 import Config from '@/js/config.js';
+import ProgressBar from "@/components/common/ProgressBar.vue";
 
 var tableIndexDetailList = null;
 
@@ -75,7 +81,9 @@ export default {
                         +   new Date().getDate(),
         };
     },
-    components : {},
+    components : {
+        ProgressBar: ProgressBar
+    },
     mounted () {
 
         var vm = this;
@@ -86,6 +94,7 @@ export default {
             "info": false,   // control table information display field
             "stateSave": true,  //restore table state on page reload,
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+            "scrollY": '60vh',
             paging: false,
             searching: false,
             data : [],
@@ -123,6 +132,9 @@ export default {
 
             var vm = this;
 
+            util.processing(vm.$refs.progress, true);
+
+            tableIndexDetailList.clear().draw();
             axios.post(Config.base_url + "/user/index/getIndexDetailList", {
                 data:  vm.paramData
             }).then(response => {
@@ -137,11 +149,11 @@ export default {
                     var indexDetailList =   response.data.indexDetailList;
 
                     if( indexDetailList ) {
-                        tableIndexDetailList.clear().draw();
                         tableIndexDetailList.rows.add( indexDetailList ).draw();
-                        tableIndexDetailList.draw();
                     }
                 }
+
+                util.processing(vm.$refs.progress, false);
             });            
         },
 

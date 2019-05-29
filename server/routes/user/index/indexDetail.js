@@ -436,6 +436,9 @@ var getIndexList = function(req, res) {
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
+        var dataList        =   [];
+
+        resultMsg.dataList  =   [];
         Promise.using(pool.connect(), conn => {
 
 
@@ -458,12 +461,56 @@ var getIndexList = function(req, res) {
                         }
 
                         if ( rows ) {
-                            resultMsg.dataList = rows;
+                            dataList    =   rows;
                         }
 
-                        callback( null );
+                        callback( null, paramData );
                     });
-                }
+                },
+
+                /* 2. m168uidxList 를 조회한다. */
+                function( data, callback ) {
+
+                    if( dataList && dataList.length > 0 ) {
+
+                        stmt = mapper.getStatement('indexDetail', 'getM168uidxList', paramData, format);
+                        console.log(stmt);
+
+                        conn.query(stmt, function( err, rows ) {
+
+                            if( err ) {
+                                resultMsg.result    =   false;
+                                resultMsg.msg       =   "[error] indexDetail.getM168uidxList Error while performing Query";
+                                resultMsg.err       =   err;
+
+                                return callback( resultMsg );
+                            }
+
+                            if ( rows ) {
+
+                                for( var i in dataList ) {
+                                    var same = rows.filter(function(o, p) {
+                                        var upCodeFornt     =   dataList[i].f16013.substr( 0, 2 );
+                                        var upcodeReal      =   dataList[i].f16013.substr( 2 );
+
+                                        return o.up_code == ( ( upCodeFornt == "60" ? "MFI" : "WFN" ) + upcodeReal );
+                                    });
+
+
+                                    if( same.length > 0 ) {
+                                        resultMsg.dataList.push( dataList[i] );
+
+                                        if( paramData.firstYn && paramData.firstYn == "Y" ) {
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
+                            callback( null );
+                        });
+                    }
+                }                
 
             ], function (err) {
 

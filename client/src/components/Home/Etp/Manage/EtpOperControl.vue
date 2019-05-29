@@ -8,6 +8,8 @@
             
                             @showDetail="showDetail" 
                             @showMessageBox="showMessageBox"
+                            @fn_showProgress="fn_showProgress"
+
                             @fn_showDetailIndex="fn_showDetailIndex"
                             @fn_showDetailPdf="fn_showDetailPdf"
                             @fn_pageMove="fn_pageMove">
@@ -17,6 +19,8 @@
             <EtpOperIndex   v-if="showEtpOerInfo == 1" 
                             
                             @showDetail="showDetail" 
+
+                            @fn_showProgress="fn_showProgress"
                             @showMessageBox="showMessageBox"
                             @fn_showDetailIndex="fn_showDetailIndex">
             </EtpOperIndex>
@@ -27,6 +31,7 @@
                             :paramData="paramData"
                             @showMessageBox="showMessageBox"
 
+                            @fn_showProgress="fn_showProgress"
                             @fn_showDetailIndex="fn_showDetailIndex"
                             @fn_showDetailPdf="fn_showDetailPdf">
             </EtpOperPdf>
@@ -39,6 +44,8 @@
 
             <!-- 메시지 관리 -->
             <ConfirmDialog ref="confirm"></ConfirmDialog>
+
+            <ProgressBar ref="progress"></ProgressBar>
 
             <!-- 지수 상세 팝업 -->
             <v-dialog v-model="showIndexDetailDialog" persistent max-width="1300">
@@ -137,9 +144,11 @@ import buttons                      from "datatables.net-buttons";
 import select                       from "datatables.net-select";
 import _                            from "lodash";
 import Config                       from "@/js/config.js";
+import util                         from "@/js/util.js";
 
 
 import ConfirmDialog                from "@/components/common/ConfirmDialog.vue";
+import ProgressBar                  from "@/components/common/ProgressBar.vue";
 import ComIndexFixPopup             from "@/components/common/popup/ComIndexFixPopup.vue";
 import ComEtpFavorItemSub              from "@/components/common/control/ComEtpFavorItemSub"; 
 
@@ -199,6 +208,7 @@ export default {
         EtpOperPdf                      :   EtpOperPdf,                         /* PDF 관리 */
 
         ConfirmDialog                   :   ConfirmDialog,                      /* 공통 메시지창 */
+        ProgressBar                     :   ProgressBar,
         ComEtpFavorItemSub              :   ComEtpFavorItemSub,
     },
 
@@ -314,6 +324,9 @@ export default {
         showMessageBox: function(title, msg, option, gubun) {
             this.$root.$confirm.open(title,msg, option, gubun);
         },
+        fn_showProgress: function(visible) {
+            util.processing(this.$refs.progress, visible);
+        },      
                     
         async fn_showDetailIndex(gubun, paramData) {      
 

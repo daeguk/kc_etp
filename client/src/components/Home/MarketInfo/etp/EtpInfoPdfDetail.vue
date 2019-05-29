@@ -63,8 +63,14 @@
                 </v-card>
             </v-flex>
 
+            <v-flex>
+                <ProgressBar ref="progress"></ProgressBar>
+            </v-flex>            
+
         </v-layout>
+
     </v-card>
+     
 </template>
 
 
@@ -73,14 +79,17 @@ import $ from "jquery";
 import _ from "lodash";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
+import util       from "@/js/util.js";
 
 import Config from "@/js/config.js";
+import ProgressBar from "@/components/common/ProgressBar.vue";
 
 var tblPdfList = null;
 
 export default {
     props: [ "paramData", "showEtpInfoPdfDetail" ],
-    components: {
+    components : {
+        ProgressBar: ProgressBar
     },
     data() {
         return {
@@ -158,7 +167,7 @@ export default {
         },
 
         /*
-         * ETP 지수관리 정보를 조회한다.
+         * ETP PDF 정보를 조회한다.
          * 2019-05-03  bkLove(촤병국)
          */
         fn_getEtpOerPdf( initYn ) {
@@ -186,6 +195,7 @@ export default {
                     }
                 }
 
+                util.processing(vm.$refs.progress, true);
                 axios.post( url, {
                     data: vm.searchParam
                 }).then(function(response) {
@@ -196,9 +206,9 @@ export default {
 
                         if (dataList && dataList.length > 0) {
                             tblPdfList.rows.add(dataList).draw();
-                            tblPdfList.draw();
                         }
                     }
+                    util.processing(vm.$refs.progress, false);
                 });
             }
             
