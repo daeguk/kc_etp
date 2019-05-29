@@ -1090,6 +1090,7 @@ export default {
         },
 
         fn_prevent_event() {
+
             return  true;
         }
     },
