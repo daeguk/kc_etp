@@ -84,8 +84,10 @@
                                                 <v-card-title ma-0>
                                                     ETP 운용화면 항목설정
                                                     <v-spacer></v-spacer>
+<!--
                                                     <v-btn @click="arrCustomizeColumn = arrAllCustomizedTextData">전체선택</v-btn>
                                                     <v-btn @click="arrCustomizeColumn = []">전체해제</v-btn>
+-->
                                                     <v-btn icon @click="customizeDialog = false">
                                                         <v-icon>close</v-icon>
                                                     </v-btn>
