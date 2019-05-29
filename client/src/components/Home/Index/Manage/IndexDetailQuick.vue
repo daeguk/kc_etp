@@ -313,8 +313,7 @@ export default {
         fn_getIndexJongmokList : function() {
 
             var vm = this;
-            
-            vm.progress = true;
+
             console.log( "ComIndexJongmok.vue -> fn_getIndexJongmokList" );
 
             if( vm.form.jongmokSearch.length < 2 ) {
@@ -322,6 +321,7 @@ export default {
                 return false;
             }
 
+            vm.progress = true;
             axios.post(Config.base_url + "/user/index/getIndexJongmokList", {
                 data: {
                     searchData : vm.form.jongmokSearch
