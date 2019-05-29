@@ -42,11 +42,11 @@
 
          WHERE  1 = 1
 
-           AND  EXISTS
+           AND  m168uidxmap.isin_code       IN
                 (
-                    SELECT  1
+                    SELECT  td_kspjong_basic.F16012
                       FROM  td_kspjong_basic
-                     WHERE  td_kspjong_basic.F16012     =   m168uidxmap.isin_code
+                     WHERE  1 = 1
     ]]>
         <if test= 'searchData != null  and  searchData != "" ' >
     <![CDATA[
@@ -96,28 +96,6 @@
           FROM  td_index_basic
          WHERE  1 = 1
 
-                /* mapping 테이블에 존재하는 경우에만 지수 마스터 정보 조회 */
-           AND  EXISTS
-                (
-                    SELECT  1
-                      FROM          m168uidxmap
-                     INNER  JOIN    m168uidxcomp
-                              ON    (
-                                                m168uidxmap.f12506      =   m168uidxcomp.f12506
-                                        AND     m168uidxmap.gubun       =   m168uidxcomp.gubun
-                                        AND     m168uidxmap.isin_code   =   m168uidxcomp.f16013
-                                    )
-
-                     WHERE  1 = 1
-
-                       AND  m168uidxmap.up_code     =   CASE    WHEN    td_index_basic.f16013   LIKE    '60___'                     /* 단축코드 */
-                                                                THEN    CONCAT( 'MFI' , SUBSTR( td_index_basic.f16013, -3 ) )
-                                                            
-                                                                WHEN    td_index_basic.f16013   LIKE    '62___'                     /* 단축코드 */
-                                                                THEN    CONCAT( 'WFN' , SUBSTR( td_index_basic.f16013, -3 ) )
-                                                        END
-                     LIMIT  0, 1
-                )
     ]]>
         <if test= 'searchData != null  and  searchData != "" ' >
                AND  (           
@@ -128,10 +106,6 @@
 
              ORDER  BY      td_index_basic.F16013
                         ,   td_index_basic.market_id
-
-        <if test= 'firstYn != null  and  firstYn == "Y" ' >
-             LIMIT  0, 1
-        </if>
 
     </select>
 
@@ -186,7 +160,11 @@
         SELECT      /* indexDetail.getIndexDetailList 검색영역에 일치하는 지수정보를 조회한다. */
                     m168uidxmap.isin_code                                   AS  isin_code               /* 종목코드 */
                 ,   m168uidxmap.ceiling_percnt                              AS  ceiling_percnt          /* CEILING비중 */
-                ,   td_kspjong_basic.f16002                                   AS  f16002                  /* 한글종목명 */
+                ,   (
+                        SELECT  td_kspjong_basic.f16002
+                          FROM  td_kspjong_basic
+                         WHERE  td_kspjong_basic.F16012     =   m168uidxmap.ISIN_CODE
+                    )                                                       AS  f16002                  /* 한글종목명 */
                 ,   m168uidxmap.style_includ_percnt                         AS  style_includ_percnt     /* 스타일포함비중 */
                 ,   m168uidxcomp.f30812                                     AS  f30812                  /* 상장주식수 */
                 ,   m168uidxcomp.f30813                                     AS  f30813                  /* 유동주식비율 */
@@ -201,8 +179,6 @@
                             AND     m168uidxmap.gubun       =   m168uidxcomp.gubun
                             AND     m168uidxmap.isin_code   =   m168uidxcomp.f16013
                         )
-         INNER  JOIN    td_kspjong_basic 
-                  ON m168uidxmap.ISIN_CODE = td_kspjong_basic.F16012 
                                                                   
          WHERE  1 = 1
            AND  m168uidxmap.up_code =   CASE    WHEN    #{f16013}   LIKE    '60___'                     /* 단축코드 */
@@ -367,6 +343,39 @@
 
                 )       base
     ]]>
-    </select>    
+    </select>
+
+
+    <!--
+    * m168uidx 에 속한 정보를 조회한다.
+    * 2019-04-16  bkLove(촤병국)
+    -->
+    <select id="getM168uidxList">
+    <![CDATA[
+        SELECT      /* indexDetail.getM168uidxList 검색영역에 일치하는 지수정보를 조회한다. */
+                    m168uidxmap.f12506                                  AS  f12506                      /* 일자 */
+                ,   m168uidxmap.gubun                                   AS  gubun                       /* WISEFN/FNGUIDE */
+
+                ,   m168uidxmap.up_code                                 AS  up_code                     /* 업종코드  */
+                ,   m168uidxmap.isin_code                               AS  isin_code                   /* 종목코드  */
+                ,   m168uidxmap.ceiling_percnt                          AS  ceiling_percnt              /* CEILING비중 */
+                ,   m168uidxmap.style_includ_percnt                     AS  style_includ_percnt         /* 스타일포함비중 */
+
+                ,   m168uidxcomp.f16013                                 AS  f16013                      /* 종목코드 */
+                ,   m168uidxcomp.f33711                                 AS  f33711                      /* 시장구분(1:유가2:코스닥) */
+                ,   m168uidxcomp.f03003                                 AS  f03003                      /* 전일종가  */
+                ,   m168uidxcomp.f34241                                 AS  f34241                      /* 가격산정구분(0:실시간1:종가) */
+                ,   m168uidxcomp.f30812                                 AS  f30812                      /* 상장주식수 */
+                ,   m168uidxcomp.f30813                                 AS  f30813                      /* 유동주식비율 */
+
+          FROM          m168uidxmap
+         INNER  JOIN    m168uidxcomp
+                  ON    (
+                                    m168uidxmap.f12506      =   m168uidxcomp.f12506
+                            AND     m168uidxmap.gubun       =   m168uidxcomp.gubun
+                            AND     m168uidxmap.isin_code   =   m168uidxcomp.f16013
+                        )    
+    ]]>
+    </select>
 
 </mapper>
