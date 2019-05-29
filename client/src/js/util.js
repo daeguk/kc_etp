@@ -1,6 +1,4 @@
 
-import $      from 'jquery'
-
 var util = {    
     /* 천단위 콤마 처리 */
     formatNumber: function(num) {
@@ -47,11 +45,11 @@ var util = {
       return toFixNum;
     },
 
-    processing: function(visible) {
+    processing: function(component, visible) {
         if (visible) {
-            $('.dataTables_processing').css('display', 'block');
+            component.open();
         } else {
-            $('.dataTables_processing').css('display', 'none');
+            component.close();
         }
     },
 

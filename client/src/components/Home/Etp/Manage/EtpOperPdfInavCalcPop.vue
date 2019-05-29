@@ -1,4 +1,6 @@
 <template>
+    <v-container>
+    <v-flex>
     <v-dialog v-model="showDialog" persistent max-width="750">
         <v-card>
             <h5>
@@ -134,6 +136,11 @@
             <v-card class="pop_bot_h"></v-card>
         </v-card>
     </v-dialog>
+    </v-flex>
+    <v-flex>
+        <ProgressBar ref="progress"></ProgressBar>
+    </v-flex>
+    </v-container>
 </template>
 
 
@@ -149,6 +156,7 @@ import _ from "lodash";
 import Config from "@/js/config.js";
 import util       from "@/js/util.js";
 import { nav_cal_common } from '@/js/common/mixins/mixins_nav_cal.js';
+import ProgressBar from "@/components/common/ProgressBar.vue";
 
 var pdf_table = null;
 export default {
@@ -167,6 +175,9 @@ export default {
             SimulationRender: {}, 
             DefaultRender: {},
         };
+    },
+    components: {
+        ProgressBar: ProgressBar
     },
     mixins : [ nav_cal_common ],
     created: function() {
@@ -385,7 +396,7 @@ export default {
         getiNavData(f16012) {
             var vm = this;
 
-            util.processing(true);
+            util.processing(vm.$refs.progress, true);
             console.log( "EtpOperPdfInavCalcPop.vue -> getiNavData" );
 
             axios.get( Config.base_url + "/user/etp/getiNavData", {
@@ -453,7 +464,7 @@ export default {
             pdf_table.clear().draw();
             pdf_table.rows.add(this.pdfList).draw();
 
-            util.processing(false);
+            util.processing(this.$refs.progress, false);
         },
         formatNumber:function(num) {
             return util.formatNumber(num);
@@ -490,7 +501,7 @@ export default {
             var market_amt = 0;
             var market_tot_amt = 0;
             var index = 0;
-            util.processing(true);
+            util.processing(vm.$refs.progress, true);
             for (let item of vm.pdfList) {                        
                 await vm.iNavCalulator(item).then(function(jongItem) {
                     /* 종목 정보 바인딩 */                            

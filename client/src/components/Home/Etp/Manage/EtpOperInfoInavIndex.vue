@@ -187,6 +187,7 @@
                 </v-layout>
             </v-card>
         </div>
+        <ProgressBar ref="progress"></ProgressBar>        
     </v-card>
 </template>   
 
@@ -196,6 +197,7 @@ import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 import util       from "@/js/util.js";
 import Config from '@/js/config.js';
+import ProgressBar from "@/components/common/ProgressBar.vue";
 
 var table01 = null;
 
@@ -221,7 +223,7 @@ export default {
         };
     },   
     components: {
-
+        ProgressBar: ProgressBar
     },    
     mounted: function() {
         this.init();
@@ -269,7 +271,7 @@ export default {
         },
         indexInavCal : function() {
             var vm = this;
-            
+            util.processing(vm.$refs.progress, true);
             // 지수 등락률
             vm.f30823 = (1 - vm.NtoS(vm.f15318) / vm.NtoS(vm.f15007)) ;
 
@@ -330,6 +332,8 @@ export default {
             vm.iNavRate = vm.formatNumber(vm.iNavRate);
             vm.f30823 = vm.formatNumber(vm.f30823*100);  /* 등락률 */
             vm.f15004 = vm.formatNumber(vm.f15004);  /* 변동률 */
+
+            util.processing(vm.$refs.progress, false);
         },
         formatNumber:function(num) {
             return util.formatNumber(num);
