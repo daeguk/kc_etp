@@ -251,6 +251,7 @@ export default {
                     }
                 }
 
+                vm.$emit( "fn_showProgress", true );
                 axios.post( url, {
                     data: vm.searchParam
                 }).then(function(response) {
@@ -261,11 +262,12 @@ export default {
 
                         if (dataList && dataList.length > 0) {
                             tblPdfList.rows.add(dataList).draw();
-                            tblPdfList.draw();
 
                             vm.indexBasic      =   dataList[0];
                         }
                     }
+
+                    vm.$emit( "fn_showProgress", false );
                 });
             }
             

@@ -103,6 +103,7 @@ export default {
                 tableOperIndex.clear().draw();
             }            
 
+            vm.$emit( "fn_showProgress", true );
             axios.post( url, {
                 data: {}
             }).then(function(response) {
@@ -114,12 +115,13 @@ export default {
 
                     if( dataList && dataList.length > 0 ) {
                         tableOperIndex.rows.add( dataList ).draw();
-                        tableOperIndex.draw();
 
                         vm.indexBasic   =   dataList[0];
                         vm.result_cnt   =   dataList.length;
                     }
                 }
+
+                vm.$emit( "fn_showProgress", false );
             });
         },
 

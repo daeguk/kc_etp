@@ -1,5 +1,6 @@
 <template>
-
+    <v-container>
+    <v-flex>
     <v-dialog v-model="showDialog" persistent max-width="900">
         
         <v-card class="mx-auto">
@@ -200,6 +201,11 @@
         </v-card>
 
     </v-dialog>
+    </v-flex>
+    <v-flex>
+        <ProgressBar ref="progress"></ProgressBar>
+    </v-flex>    
+    </v-container>    
 
 </template>
 
@@ -213,11 +219,15 @@ import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
 
 import Config from "@/js/config.js";
+import ProgressBar from "@/components/common/ProgressBar.vue";
 
 var tblEmergeny01 = null;
 
 export default {
     props : [ "showDialog", "paramData" ],
+    components : {
+        ProgressBar: ProgressBar
+    },
     data() {
         return {
             step: 1,
@@ -413,6 +423,7 @@ export default {
             vm.result.flag  =   true;
             vm.result.msg   =   '';
 
+            util.processing(vm.$refs.progress, true);
             axios.post( Config.base_url + "/user/etp/getEtpOperPdfModify", {
                 data: searchParam
             }).then(function(response) {
@@ -478,6 +489,8 @@ export default {
                         vm.dataList =   dataList;
                     }
                 }
+
+                util.processing(vm.$refs.progress, false);
             });
         },
 
@@ -505,10 +518,13 @@ export default {
                 return  false;
             }            
 
+            util.processing(vm.$refs.progress, true);
             axios.post( Config.base_url + "/user/etp/getJongmokData", {
                 data: { "searchCode" : codeVal }
             }).then(function(response) {
                 console.log(response);
+
+                util.processing(vm.$refs.progress, false);
 
                 if (response.data) {
                     var dataList = response.data.dataList;

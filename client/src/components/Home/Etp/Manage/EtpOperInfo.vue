@@ -263,6 +263,9 @@ export default {
                 }
             }
 
+
+            vm.$emit( "fn_showProgress", true );
+
             axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
                 data: {
                     f34241 : vm.stateInfo.gubun
@@ -277,16 +280,16 @@ export default {
 
                         if( vm.stateInfo.pageState == "performance" ) {
                             table02.rows.add( dataList ).draw();
-                            table02.draw();
                         }else{
                             table01.rows.add( dataList ).draw();
-                            table01.draw();
                         }
 
                         vm.indexBasic   =   dataList[0];
                         vm.result_cnt   =   dataList.length;
                     }
                 }
+
+                vm.$emit( "fn_showProgress", false );
             });
         },
 
@@ -572,14 +575,14 @@ export default {
                 { 'name' : 'f18438'             , 'data': 'f18438'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '환율'          },      /* 적용환율 */
                 { 'name' : 'f18001'             , 'data': 'f18001'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : 'ETF 전일가'    },      /* 전일ETF순자산총액(원)  */
 
-                { 'name' : 'week1'              , 'data': 'week1'            ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '<br>1주'        },      /* 1주  */
-                { 'name' : 'month1'             , 'data': 'month1'           ,  'width' : '90',  'orderable' : true  , 'className': 'txt_right', 'title' : '수익률<br>1개월'      },     /* 1개월  */
-                { 'name' : 'month3'             , 'data': 'month3'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '<br>3개월' },      /* 3개월  */
-                { 'name' : 'month6'             , 'data': 'month6'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '<br>6개월' },      /* 6개월  */
-                { 'name' : 'ytd'                , 'data': 'ytd'              ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '<br>YTD'     },      /* ytd  */
+                { 'name' : 'week1'              , 'data': 'week1'            ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '1주'        },      /* 1주  */
+                { 'name' : 'month1'             , 'data': 'month1'           ,  'width' : '90',  'orderable' : true  , 'className': 'txt_right', 'title' : '1개월'      },     /* 1개월  */
+                { 'name' : 'month3'             , 'data': 'month3'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '3개월' },      /* 3개월  */
+                { 'name' : 'month6'             , 'data': 'month6'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '6개월' },      /* 6개월  */
+                { 'name' : 'ytd'                , 'data': 'ytd'              ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : 'YTD'     },      /* ytd  */
                                                                                                                                                     
                 { 'name' : 'f30812'             , 'data': 'f30812'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : 'AUM'           },      /* 유동시가총액  */
-                { 'name' : 'prev_f15001'        , 'data': 'prev_f15001'      ,  'width' : '90',  'orderable' : true  , 'className': 'txt_right', 'title' : '지수<br>전일가'},     /* 기초지수 전일가  */
+                { 'name' : 'prev_f15001'        , 'data': 'prev_f15001'      ,  'width' : '90',  'orderable' : true  , 'className': 'txt_right', 'title' : '지수전일가'},     /* 기초지수 전일가  */
                 { 'name' : 'f15007'             , 'data': 'f15007'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '과표기준가'    },      /* 기준가  */
                 { 'name' : 'f15001'             , 'data': 'f15001'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : 'ETF 현재가'    },      /* 현재가  */
                 { 'name' : 'f16073'             , 'data': 'f16073'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '과세구분'      },      /* 락구분코드  */
