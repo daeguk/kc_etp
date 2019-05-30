@@ -107,6 +107,10 @@
              ORDER  BY      td_index_basic.F16013
                         ,   td_index_basic.market_id
 
+        <if test= 'firstYn != null  and  firstYn == "Y" ' >
+             LIMIT  0, 1
+        </if>
+
     </select>
 
 

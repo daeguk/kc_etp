@@ -387,7 +387,7 @@ export default {
                 } else {
                     var items = response.data.results ;
                     this.distCnt = items['0']['distCnt'] ;
-                    console.log("response=" + this.distCnt );
+                    console.log("getIdxList=" + JSON.stringify(items));
                 }
                    
             });
