@@ -169,22 +169,21 @@
                                         </v-flex>
                                         <v-flex xs4>
                                             <!--달력-->
-                                            <v-layout row wrap>
-                                                <v-flex xs12 sm6 md4>
-                                                    <v-menu
+                                            <v-layout row wrap >
+                                                <v-flex xs12 sm6 md4 >
+                                                    <v-menu   
                                                     ref="menu"
                                                         v-model="menu"
                                                         :close-on-content-click="false"
                                                         :nudge-right="40"
-                                                        :return-value.sync="masterData.list_req_date"
                                                         lazy
-                                                        transition="scale-transition"
+                                                        transition="v-scale-transition"
                                                         offset-y
                                                         full-width
                                                         min-width="290px"
                                                     >
                                                      
-                                                        <template v-slot:activator="{ on }">
+                                                        <template v-slot:activator="{ on }" >
                                                             <v-text-field v-bind:disabled = inputDisabled
                                                                 v-model="masterData.list_req_date"
                                                                 label="Picker in menu"
@@ -192,15 +191,17 @@
                                                                 box
                                                                 outline
                                                                 v-on="on"
-                                                                widh="100%"
+                                                                width="100%"
                                                                 ref="list_req_date"
+                                                                maxlength="10"
+                                                              
                                                             ></v-text-field>
                                                              {{errors.list_req_date}}
                                                         </template>
                                                         <v-date-picker
-                                                            v-model="masterData.list_req_date"
                                                             no-title
                                                             scrollable
+                                                            v-model="masterData.list_req_date"
                                                         >
                                                             <v-spacer></v-spacer>
                                                             <v-btn
@@ -235,12 +236,12 @@
                                                         v-model="menu2"
                                                         :close-on-content-click="false"
                                                         :nudge-right="40"
-                                                        :return-value.sync="masterData.list_date"
                                                         lazy
                                                         transition="scale-transition"
                                                         offset-y
                                                         full-width
                                                         min-width="290px"
+                                                        
                                                     >
                                                         <template v-slot:activator="{ on }">
                                                             <v-text-field v-bind:disabled = inputDisabled
@@ -250,15 +251,16 @@
                                                                 box
                                                                 outline
                                                                 v-on="on"
-                                                                widh="100%"
+                                                                width="100%"
                                                                 ref="list_date"
+                                                                maxlength="10"
                                                             ></v-text-field>
                                                              {{errors.list_date}}
                                                         </template>
                                                         <v-date-picker
-                                                            v-model="masterData.list_date"
                                                             no-title
                                                             scrollable
+                                                             v-model="masterData.list_date"
                                                         >
                                                             <v-spacer></v-spacer>
                                                             <v-btn
@@ -1006,7 +1008,7 @@
 <script>
 import Config from "@/js/config.js";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
-
+import moment from "moment";
 export default {
     data() {
         return {
@@ -1019,53 +1021,50 @@ export default {
             menu2: false,
             modal: false,
             e1: 0,
-            compList :[],
-            code004List :[],
-            code0041List :[],
-            code005List :[],
-            code006List :[],
-            code007List :[],
-            code008List :[],
-            code009List :[],
-            code010List :[],
+            compList :[],       //발행사
+            code004List :[],    //지수입수기관
+            code0041List :[],   //실시간 지수입수기관(숫자)
+            code005List :[],    //실시간휴장일기준
+            code006List :[],    //Hedge여부/적용환율
+            code007List :[],    //산출식
+            code008List :[],    //국내지수산출기관
+            code009List :[],    //국내지수타입
+            code010List :[],    //사무수탁사
             items2: [{value: "F", text: "해외" }, {value: "K" , text: "국내" }],
-            items4: [{value: "ETF", text: "ETF" }, {value: "ETN" , text: "ETN" }],
-            items7: [{value: "1", text: "1" }, {value: "-1", text: "-1" },{value: "2", text: "2" },{value: "-2", text: "-2" },{value: "3", text: "3" },{value: "-3", text: "-3" }],
-            items8: [{value: "SP", text: "SP" },{value: "TR", text: "TR" },{value: "ER", text: "ER" }],
-            items9: [{value: "0", text: "T" },{value: "-1", text: "T-1" },{value: "-2", text: "T-2" },{value: "-3", text: "T-3" }],
+            items4: [{value: "", text: "선택하세요." },{value: "ETF", text: "ETF" }, {value: "ETN" , text: "ETN" }],
+            //지수추적배수
+            items7: [{value: "", text: "선택하세요." },{value: "1", text: "1" }, {value: "-1", text: "-1" },{value: "2", text: "2" },{value: "-2", text: "-2" },{value: "3", text: "3" },{value: "-3", text: "-3" }],
+            //지수종가타입
+            items8: [{value: "", text: "선택하세요." },{value: "SP", text: "SP" },{value: "TR", text: "TR" },{value: "ER", text: "ER" }],
+            //전일기초지수구분
+            items9: [{value: "", text: "선택하세요." },{value: "0", text: "T" },{value: "-1", text: "T-1" },{value: "-2", text: "T-2" },{value: "-3", text: "T-3" }],
             items10: [{value: "Y", text: "YES" },{value: "N", text: "NO" }],
-            masterData :{
-                paramInstCd:"0000"
-               ,paramInstTypeCd:"0001"
-               ,seq_hist:"", seq:"", isu_kor_nm:"",isu_eng_nm:"",isin_code:"",isu_srt_cd:"",etp_type:"",inst_cd:"",req_date:"",list_req_date:"",list_date:"",krx_dist_yn:"",comp_dist_yn:"",ksd_dist_yn:"",mirae_dist_yn:"",idx_inst_cd:"",idx_sym_code:"",idx_nm:"",idx_dist_inst_cd:"",idx_close_type:"",idx_holy_cd:"",idx_trace_yd_mult_type:"",pre_idx_type:"",idx_file_nm:"",idx_comp_ksd_dist_yn:"",idx_comp_mirae_dist_yn:"",blom_ticker:"",user_req:"",real_yn:"N",ridx_inst_cd:"",ridx_dist_inst_cd:"",ridx_crt_sym_code:"",ridx_dist_sym_code:"",ridx_holy_cd:"",ridx_krx_dist_yn:"",ridx_comp_dist_yn:"",ridx_ksd_dist_yn:"",ridx_mirae_dist_yn:"",ridx_dist_term:"",refidx_sym_code:"",refidx_nm:"",refidx_inst_cd:"",refidx_file_nm:"",refidx_req:"",refidx_blom_ticker:"",ex_rate_cd:"",ex_hedge_yn:"",isin_stat_cd:"",inav_calc_cd:"",idx_rec_yn:"",idx_dis_yn:"",inav_calc_yn:"",idx_mid:"",ridx_mid:"",close_file:"",real_idx_tr:"",proc_stat:"",insert_id:"",insert_time:"",update_id:"",update_time:"",kor_for_type:"F",agent_cd:"",idx_comp_cd:"",krx_up_code:"",agent_up_code:""
-               ,idx_file_path:""
-               ,listDate:"", listReqDate:""
-               ,kor_idx_sym_code:"", kor_idx_nm:"", kor_user_req:""
-            },
+            masterData :{},
             inputDisabled: false,
             compInputDisabled: false,
             idxCompDistYn : "N",
             errors: {},
-            seq : 0
-
+            seq : 0,
+            dateFormat:""
         };
     },
     mounted: function() {
-        // 메시지 박스 참조
-        this.$root.$confirm = this.$refs.confirm;
         this.getEtpRegisterView();
-
     },
     created: function() {
+    },
+    computed: {
     }, 
+    
     methods: {
+        
 
         //지수구성종목분배여부 N일때 기존 checked 해제
         updateIdxDistCheckBox: function(){
             var vm = this;
             if(vm.idxCompDistYn =='N'){
-                vm.masterData.idx_comp_ksd_dist_yn = false;
-                vm.masterData.idx_comp_mirae_dist_yn = false;
+                vm.masterData.idx_comp_ksd_dist_yn = "N";
+                vm.masterData.idx_comp_mirae_dist_yn = "N";
             }
         }
         ,getEtpRegisterView : function(){
@@ -1086,53 +1085,61 @@ export default {
                         ,listDate:"", listReqDate:""
                         ,kor_idx_sym_code:"", kor_idx_nm:"", kor_user_req:""
                         };
-                    vm.masterData.list_req_date = new Date().toISOString().substr(0, 10);
-                    vm.masterData.list_date = new Date().toISOString().substr(0, 10); 
+                   //상장신청일, 상장일 디폴트 공백.     
+                   // vm.masterData.list_req_date = new Date().toISOString().substr(0, 10);
+                   // vm.masterData.list_date = new Date().toISOString().substr(0, 10); 
                     vm.e1= 1;
                     vm.inputDisabled = false;
                   
-                    var compList = response.data.compList;
+                    var compList = response.data.compList; //발행사
                     for (let i = 0; i < compList.length; i++) {
                         vm.compList.push({ value: compList[i].INST_CD, text: compList[i].INST_NM });
                     }
 
-
-                    var code004List = response.data.code004List;
+                    var code004List = response.data.code004List; //지수입수기관
+                         vm.code004List.push({ value: "", text: "선택하세요." });
                     for (let i = 0; i < code004List.length; i++) {
                         vm.code004List.push({ value: code004List[i].M_CD, text: code004List[i].M_CD_NM });
                     }
 
                     var code0041List = response.data.code004List; //지수입수기관(숫자)
+                        vm.code0041List.push({ value: "", text: "선택하세요." });
                     for (let i = 0; i < code004List.length; i++) {
                         vm.code0041List.push({ value: code004List[i].M_CD.substr(2,4), text: code004List[i].M_CD_NM });
                     }
 
-                    var code005List = response.data.code005List;
+                    var code005List = response.data.code005List; //실시간휴장일기준
+                        vm.code005List.push({ value: "", text: "선택하세요." });
                     for (let i = 0; i < code005List.length; i++) {
                         vm.code005List.push({ value: code005List[i].M_CD, text: code005List[i].M_CD_NM });
                     }
 
-                    var code006List = response.data.code006List;
+                    var code006List = response.data.code006List; //Hedge여부/적용환율
+                         vm.code006List.push({ value: "", text: "선택하세요." });
                     for (let i = 0; i < code006List.length; i++) {
                         vm.code006List.push({ value: code006List[i].M_CD, text: code006List[i].M_CD_NM });
                     }
 
-                    var code007List = response.data.code007List;
+                    var code007List = response.data.code007List; //산출식
+                         vm.code007List.push({ value: "", text: "선택하세요." });
                     for (let i = 0; i < code007List.length; i++) {
                         vm.code007List.push({ value: code007List[i].M_CD, text: code007List[i].M_CD_NM });
                     }
 
-                    var code008List = response.data.code008List;
+                    var code008List = response.data.code008List;//국내지수산출기관
+                        vm.code008List.push({ value: "", text: "선택하세요." });
                     for (let i = 0; i < code008List.length; i++) {
                         vm.code008List.push({ value: code008List[i].M_CD, text: code008List[i].M_CD_NM });
                     }
 
-                    var code009List = response.data.code009List;
+                    var code009List = response.data.code009List;//국내지수타입
+                       vm.code009List.push({ value: "", text: "선택하세요." });
                     for (let i = 0; i < code009List.length; i++) {
                         vm.code009List.push({ value: code009List[i].M_CD, text: code009List[i].M_CD_NM });
                     }
 
-                    var code010List = response.data.code010List;
+                    var code010List = response.data.code010List; //사무수탁사
+                     vm.code010List.push({ value: "", text: "선택하세요." });
                     for (let i = 0; i < code010List.length; i++) {
                         vm.code010List.push({ value: code010List[i].M_CD, text: code010List[i].M_CD_NM });
                     }
@@ -1352,7 +1359,8 @@ export default {
                     return;
                 }
             }
-            
+
+            //날짜형식체크
             if(vm.masterData.list_req_date !==undefined && vm.masterData.list_req_date!==null && vm.masterData.list_req_date!=="") {
                 vm.masterData.listReqDate = vm.masterData.list_req_date.replace(/-/gi, "");
             }else{
@@ -1402,8 +1410,20 @@ export default {
             if(arg ==='S'){
                 console.log("fn_insertEtpRegister 호출>> this.masterData ", vm.masterData);
                 if(confirm("등록하시겠습니까?") == false){ return; }
+
+                if(vm.masterData.idx_file_path !=='' || vm.masterData.idx_file_path !==null){ 
+                    vm.masterData.idx_file_nm= vm.masterData.idx_file_path + "/" + vm.masterData.idx_file_nm;
+                }
                 
-                vm.masterData.idx_file_nm= vm.masterData.idx_file_path + "/" + vm.masterData.idx_file_nm;
+                //int type파라미터 값 없을 시 null저장
+                // idx_trace_yd_mult_type
+                // pre_idx_type
+                // ridx_dist_term(지수제공주기)
+                // idx_mid
+                // ridx_mid
+                // krx_up_code
+                // agent_up_code
+
                 axios({
                     method: 'post',
                     url: Config.base_url + "/user/etp/insertEtpRegister",
@@ -1431,7 +1451,9 @@ export default {
                     }
                 }
                 if(confirm("수정하시겠습니까?") == false){ return; }
-                vm.masterData.idx_file_nm= vm.masterData.idx_file_path + "/" + vm.masterData.idx_file_nm;
+                if(vm.masterData.idx_file_path !=='' || vm.masterData.idx_file_path !==null){ 
+                    vm.masterData.idx_file_nm= vm.masterData.idx_file_path + "/" + vm.masterData.idx_file_nm;
+                }
                 function replacer(name, val) {
                     if ( val == null || val==undefined ) {
                         return ""; 
