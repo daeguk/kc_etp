@@ -64,7 +64,8 @@ export default {
                         +   (parseInt(new Date().getMonth()) + 1) 
                         +   "." 
                         +   new Date().getDate(),
-            result_cnt  :   0
+            result_cnt  :   0,
+            arrOverseaMarketList    :   []
         };
     },
     components: {
@@ -95,17 +96,30 @@ export default {
 
             var  url = Config.base_url + "/user/etp/getEtpOperIndex";
 
+            vm.arrOverseaMarketList =   [];
             if( vm.stateInfo.pageState == "oversea" ) {
                 url = Config.base_url + "/user/etp/getEtpOperIndexOversea";
+
+                vm.arrOverseaMarketList =   [
+                        { "jisu_mid" : "79" }
+                    ,   { "jisu_mid" : "80" }
+                    ,   { "jisu_mid" : "81" }
+                    ,   { "jisu_mid" : "82" }
+                    ,   { "jisu_mid" : "86" }
+                    ,   { "jisu_mid" : "94" }
+                ];
+
             }
 
             if( tableOperIndex ) {
                 tableOperIndex.clear().draw();
-            }            
+            }
 
             vm.$emit( "fn_showProgress", true );
             axios.post( url, {
-                data: {}
+                data: {
+                    arrOverseaMarketList    :   vm.arrOverseaMarketList
+                }
             }).then(function(response) {
                 console.log(response);
 
@@ -184,15 +198,14 @@ export default {
 
                 vm.fn_setArrShowColumn( [ 
                         'in_out'                        /* 입수 구분 */
-                    ,   'degree'                        /* 차수 */
-                    ,   'real_symbol'                   /* 실시간 심볼 */
+                    ,   'f16002'                        /* 지수 */
+                    ,   'f16013'                        /* 실시간 심볼 */
                     ,   'incre_symbol'                  /* 증가 심볼 */
                     ,   'rest_date'                     /* 휴장일 */
-                    ,   'recently_date'                 /* 최근일자 */
+                    ,   'f15001'                        /* 최근종가 */
 
-                    ,   'incre_recently'                /* 최근증가 */
+                    ,   'f12506'                        /* 최근증가 */
                     ,   'base_date'                     /* 기준일자 */
-                    ,   'f18438'                        /* 환율 */
                 ] );
             }
 
@@ -325,23 +338,22 @@ export default {
             var vm = this;
 
             var arrColumn  =   [
-                { 'name' : 'f16002'             , 'data': 'f16002'          ,  'width' : '200', 'orderable' : true  , 'className': 'txt_left'   , 'title' : '지수'      },      /* 한글종목명 */
-                { 'name' : 'large_type'         , 'data': 'large_type'      ,  'width' : '60',  'orderable' : true  , 'className': 'txt_left'   , 'title' : '산출기관'  },      /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
-                { 'name' : 'vendor'             , 'data': 'vendor'          ,  'width' : '40',  'orderable' : true  , 'className': 'txt_left'   , 'title' : '벤더'      },      /* 벤더 */
-                { 'name' : 'manage_type'        , 'data': 'manage_type'     ,  'width' : '60',  'orderable' : true  , 'className': ''           , 'title' : '관리유형'  },      /* 관리유형 */
-                { 'name' : 'last_date'          , 'data': 'last_date'       ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right' , 'title' : 'Last'      },      /* Last */
-                { 'name' : 'last_time'          , 'data': 'last_time'       ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right' , 'title' : 'Time'      },      /* Time */
-                { 'name' : 'etp_info_json'      , 'data': 'etp_info_json'   ,  'width' : '250', 'orderable' : true  , 'className': 'txt_left'  , 'title' : 'ETF'       },       /* ETF */
+                { 'name' : 'f16002'             , 'data': 'f16002'          ,  'width' : '200', 'orderable' : true  , 'className': 'txt_left'   , 'title' : '지수'          },      /* 한글종목명 */
+                { 'name' : 'large_type'         , 'data': 'large_type'      ,  'width' : '60',  'orderable' : true  , 'className': 'txt_left'   , 'title' : '산출기관'      },      /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
+                { 'name' : 'vendor'             , 'data': 'vendor'          ,  'width' : '40',  'orderable' : true  , 'className': 'txt_left'   , 'title' : '벤더'          },      /* 벤더 */
+                { 'name' : 'manage_type'        , 'data': 'manage_type'     ,  'width' : '60',  'orderable' : true  , 'className': ''           , 'title' : '관리유형'      },      /* 관리유형 */
+                { 'name' : 'last_date'          , 'data': 'last_date'       ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right'  , 'title' : 'Last'          },      /* Last */
+                { 'name' : 'last_time'          , 'data': 'last_time'       ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right'  , 'title' : 'Time'          },      /* Time */
+                { 'name' : 'etp_info_json'      , 'data': 'etp_info_json'   ,  'width' : '250', 'orderable' : true  , 'className': 'txt_left'   , 'title' : 'ETF'           },       /* ETF */
                 { 'name' : 'graph'              , 'data': null              ,  'width' : '150', 'orderable' : false },
 
-                { 'name' : 'in_out'             , 'data': 'in_out'          ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_left'   , 'title' : '입수 구분'     },      /* 입수 구분 */
-                { 'name' : 'degree'             , 'data': 'degree'          ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_left'   , 'title' : '차수'          },      /* 차수 */
-                { 'name' : 'real_symbol'        , 'data': 'real_symbol'     ,  'width' : '100', 'orderable' : true  , 'className': 'txt_left'   , 'title' : '실시간 심볼'   },      /* 실시간 심볼 */
-                { 'name' : 'incre_symbol'       , 'data': 'incre_symbol'    ,  'width' : '100', 'orderable' : true  , 'className': 'txt_left'   , 'title' : '증가 심볼'     },      /* 증가 심볼 */
-                { 'name' : 'rest_date'          , 'data': 'rest_date'       ,  'width' : '100', 'orderable' : true  , 'className': 'txt_right' , 'title' : '휴장일'        },      /* 휴장일 */
-                { 'name' : 'recently_date'      , 'data': 'recently_date'   ,  'width' : '100', 'orderable' : true  , 'className': 'txt_right' , 'title' : '최근일자'      },      /* 최근일자 */
-                { 'name' : 'incre_recently'     , 'data': 'incre_recently'  ,  'width' : '100', 'orderable' : true  , 'className': 'txt_right'   , 'title' : '최근증가'      },      /* 최근증가 */                
-                { 'name' : 'base_date'          , 'data': 'base_date'       ,  'width' : '100', 'orderable' : true  , 'className': 'txt_right'   , 'title' : '기준일자'      },      /* 기준일자 */
+                { 'name' : 'in_out'             , 'data': 'in_out'          ,  'width' : '60' , 'orderable' : true  , 'className': 'txt_left'   , 'title' : '입수 구분'     },      /* 입수 구분 */
+                { 'name' : 'f16013'             , 'data': 'f16013'          ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_left'   , 'title' : '실시간 심볼'   },      /* 단축코드 */
+                { 'name' : 'incre_symbol'       , 'data': 'incre_symbol'    ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_left'   , 'title' : '증가 심볼'     },      /* 증가 심볼 */
+                { 'name' : 'rest_date'          , 'data': 'rest_date'       ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_right'  , 'title' : '휴장일'        },       /* 휴장일 */
+                { 'name' : 'f12506'             , 'data': 'f12506'          ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_right'  , 'title' : '최근일자'      },       /* 입회일 */
+                { 'name' : 'f15001'             , 'data': 'f15001'          ,  'width' : '100', 'orderable' : true  , 'className': 'txt_right'  , 'title' : '최근종가'      },     /* 현재가 */
+                { 'name' : 'std_date'           , 'data': 'std_date'        ,  'width' : '100', 'orderable' : true  , 'className': 'txt_center' , 'title' : '기준일자'      },     /* 기준일자 */
             ];        
 
             var arrColumnDef  =   [

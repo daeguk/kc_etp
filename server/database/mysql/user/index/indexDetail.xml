@@ -47,13 +47,25 @@
                                                             END
 
          WHERE  1 = 1
+    ]]>
+
+        <if test= 'large_type != null  and  large_type == "FNGUIDE" ' >
+                /* 로그인 사용자의 large_type 이 'FNGUIDE' 인 경우 */
+           AND  td_index_basic.large_type       =   #{large_type}
+           AND  td_index_basic.market_id        IN  ( 'M168' )
+        </if>
+
+        <if test= 'large_type != null  and  large_type == "KRX" ' >
+                /* 로그인 사용자의 large_type 이 'KRX' 인 경우 */
+           AND  td_index_basic.large_type       =   #{large_type}
+        </if>
 
            AND  m168uidxmap.isin_code       IN
                 (
                     SELECT  td_kspjong_basic.F16012
                       FROM  td_kspjong_basic
                      WHERE  1 = 1
-    ]]>
+
         <if test= 'searchData != null  and  searchData != "" ' >
     <![CDATA[
                        AND  (
@@ -102,24 +114,19 @@
 
           FROM  td_index_basic
          WHERE  1 = 1
-
-           AND  td_index_basic.f16013       IN
-                (
-                    SELECT  CASE    WHEN    m168uidxmap.up_code     LIKE    CONCAT( 'MFI', '%' )
-                                    THEN    CONCAT( '60' , SUBSTR( m168uidxmap.up_code, 4 ) )
-                                
-                                    WHEN    m168uidxmap.up_code     LIKE    CONCAT( 'WFN', '%' )
-                                    THEN    CONCAT( '62' , SUBSTR( m168uidxmap.up_code, 4 ) )
-                            END
-                      FROM  m168uidxmap
-                     WHERE  m168uidxmap.F12506      =   
-                            (
-                                SELECT  MAX( m168uidxmap.F12506 )
-                                  FROM  m168uidxmap
-                            )
-                       AND  m168uidxmap.GUBUN       =   #{m168uidxmap_gubun}
-                )
     ]]>
+
+        <if test= 'large_type != null  and  large_type == "FNGUIDE" ' >
+                /* 로그인 사용자의 large_type 이 'FNGUIDE' 인 경우 */
+           AND  td_index_basic.large_type       =   #{large_type}
+           AND  td_index_basic.market_id        IN  ( 'M168' )
+        </if>
+
+        <if test= 'large_type != null  and  large_type == "KRX" ' >
+                /* 로그인 사용자의 large_type 이 'KRX' 인 경우 */
+           AND  td_index_basic.large_type       =   #{large_type}
+        </if>
+
         <if test= 'searchData != null  and  searchData != "" ' >
                AND  (           
                                 td_index_basic.f16013       LIKE    CONCAT( '%' , #{searchData} , '%' )     /* 단축코드 */
