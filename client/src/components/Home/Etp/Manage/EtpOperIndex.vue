@@ -15,7 +15,7 @@
                     </v-card-title>
                     
                     <v-card flat>
-                        <table id="tableOperIndex" class="tbl_type"></table>
+                        <table id="tableOperIndex" class="tbl_type ver7"></table>
 
                     </v-card>
              </v-card>
@@ -157,6 +157,9 @@ export default {
                 "stateSave": true,  //restore table state on page reload,
                 "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
                 "scrollY": '70vh',
+                thead: {
+                    display:'none'
+                },                
                 paging: false,
                 searching: false,
                 data : [],
@@ -332,7 +335,7 @@ export default {
                 { 'name' : 'last_date'          , 'data': 'last_date'       ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right' , 'title' : 'Last'      },      /* Last */
                 { 'name' : 'last_time'          , 'data': 'last_time'       ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right' , 'title' : 'Time'      },      /* Time */
                 { 'name' : 'etp_info_json'      , 'data': 'etp_info_json'   ,  'width' : '250', 'orderable' : true  , 'className': 'txt_left'  , 'title' : 'ETF'       },       /* ETF */
-                { 'name' : 'graph'              , 'data': null              ,  'width' : '150' },
+                { 'name' : 'graph'              , 'data': null              ,  'width' : '150', 'orderable' : false },
 
                 { 'name' : 'in_out'             , 'data': 'in_out'          ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_left'   , 'title' : '입수 구분'     },      /* 입수 구분 */
                 { 'name' : 'degree'             , 'data': 'degree'          ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_left'   , 'title' : '차수'          },      /* 차수 */
