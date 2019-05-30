@@ -12,7 +12,7 @@
                </v-card-title>
            </h5>
            <v-card flat>
-               <table id="idxConfirm" class="tbl_type  ver6">
+               <table id="idxConfirm" class="display table01_w">
                    <colgroup>
                        <col width="25%">
                        <col width="25%">
@@ -21,13 +21,11 @@
                    <thead>
                        <tr>
                            <th>심플코드</th>
-                           <th class="in_select">
+                           <th>
                                <v-select 
                                     :items="items"
-                                    @change="onChange()"
-                                    :selected="this.defaultSelected"
-                                    v-model="items.value"
-                                    class="select_table_in"
+                                    @change="selectItem"
+                                    v-model="selectedItem.value"
                                 >
                               </v-select>
                            </th>
@@ -36,14 +34,13 @@
                    </thead>
                    <tbody>
                        <tr>
-                           <td>{{ this.idxConfirmModal.idxSymCode }}</td>
-                           <td>{{ this.items.text }}</td>
-                           <td>{{ this.idxConfirmModal.idxNm }}</td>
+                           <td>{{ idxConfirmModal.idxSymCode }}</td>
+                           <td>{{ selectedItem.text }}</td>
+                           <td>{{ idxConfirmModal.idxNm }}</td>
                        </tr> 
                    </tbody>
                </table>
-               <v-card flat class="pop_bot_h"></v-card>
-               <table id="example3" class="tbl_type ver6">
+               <table id="example3" class="display table01_w">
                    <colgroup>
                        <col width="50%">
                        <col width="50%">
@@ -78,7 +75,10 @@ export default {
     data() {
         return {
             items: [{value: "1", text: "종가" }, {value: "2" , text: "실시간" }],
-            defaultSelected: "1",
+            selectedItem: {
+                value: "1",
+                text: "종가"
+            }
           }
     },
     components: {
@@ -92,7 +92,11 @@ export default {
     created: function() {
         var vm = this;
         this.$EventBus.$on('idxListModal', function() {
-        vm.getIdxList();
+            if(table != null){
+                 table.clear();
+            }
+            vm.selectedItem.value = "1";
+            vm.getIdxList();        
         //vm.getRidxList();
         });
     },
@@ -102,14 +106,17 @@ export default {
     mounted: function() {
      },
     methods: {
-        onChange() {
+        selectItem: function() {
             var vm = this;
-             console.log("this.items.value==>" + this.items.value);
-             if(this.items.value == "2"){
-                this.items.text= "실시간" ;
+            if(table != null){
+                table.clear();
+            }
+
+            if(vm.selectedItem.value == "2"){
+                vm.selectedItem.text = "실시간";
                 vm.getRidxList();
             }else{
-                this.items.text= "종가" ;   
+                vm.selectedItem.text = "종가";
                 vm.getIdxList();
             }
         },
@@ -142,7 +149,7 @@ export default {
                             destroy: true,
                                 columns: [
                                    { "data": "time", "orderable": true,"title" : "일자"  ,className: "td_in_center", },
-                                   { "data": "value","orderable" :true,"title" : "현재가",className: "txt_right", },
+                                   { "data": "value","orderable" :true,"title" : "현재가",className: "td_in_center", },
                                 ]
                             }); 
                     }
