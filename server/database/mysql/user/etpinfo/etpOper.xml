@@ -853,21 +853,46 @@
     <select id="getEtpOperIndexOversea">
 
         SELECT      /* etpOper.geEtpOperIndexOversea  ETP 운용관리 - 지수관리 - 해외지수 종가 모니터링을 조회한다. */
-                    <include    refid="sqlEtpBasic01" />
+                    <include    refid="sqlIndexBasic01" />
     <![CDATA[
                 ,   'OK'                                            AS  in_out          /* 입수 구분 */
-                ,   'S&P GCCI1'                                     AS  degree          /* 차수 */
-                ,   'S&P GCCI1'                                     AS  real_symbol     /* 실시간 심볼 */
-                ,   'S&P GCCI1'                                     AS  incre_symbol    /* 증가 심볼 */
-                ,   '2018.04.01'                                    AS  rest_date       /* 휴장일 */
-                ,   '2018.04.01'                                    AS  recently_date   /* 최근일자 */
-                ,   11111111                                        AS  incre_recently  /* 최근증가 */
-                ,   '2018.04.01'                                    AS  base_date       /* 기준일자 */
+                ,   td_index_basic.f16002                           AS  f16002          /* 한글종목명 */
+                ,   td_index_basic.f16013                           AS  f16013          /* 단축코드 */
+                ,   ''                                              AS  incre_symbol    /* 증가 심볼 */
+                ,   ''                                              AS  rest_date       /* 휴장일 */
+                ,   td_index_basic.f12506                           AS  f12506          /* 입회일 */
+                ,   td_index_basic.f15001                           AS  f15001          /* 현재가 */
+                ,   td_index_basic.std_date                         AS  std_date        /* 기준일자 */
     ]]>
-          FROM  td_etp_basic
+          FROM  td_index_basic
          WHERE  1 = 1
-           AND  td_etp_basic.f16257     REGEXP  '[^0-9]'       /* 첫글자가 0-9가 아닌 것 해외지수로 임시 간주. 추후 수정 필요. */
 
+           AND  td_index_basic.f12506       IN
+                (
+                    SELECT  MAX( f12506 )
+                      FROM  td_index_basic
+                )
+
+                /* 해외지수 mid 에 존재하는 정보만 추출  */
+           AND  EXISTS
+                (
+            <foreach    collection="arrOverseaMarketList"   item="item"    index="index"   separator=" UNION ALL" >
+                    SELECT  1  
+                      FROM  DUAL 
+                     WHERE  td_index_basic.market_id  LIKE CONCAT( '_', LPAD( #{item.jisu_mid}, 3, '0' ), '%' )
+            </foreach>
+                )
+
+                /* 해당 지수가 td_etp_basic 에 속하고 로그인 운용사 코드와 동일한 정보만 추출 */
+           AND  EXISTS
+                (
+                    SELECT  1
+                      FROM  td_etp_basic
+                     WHERE  td_index_basic.F16013           =   td_etp_basic.f16257                                                 /* 단축코드 = ETP기초지수코드 */
+                       AND  td_index_basic.MARKET_ID        LIKE    CONCAT( '_' , LPAD( td_etp_basic.f34239, 3, '0' ) , '%' )       /* 시장 ID = ETP기초지수MID */
+
+                       AND  td_etp_basic.f33960             =   #{krx_cd}                   /* ETP운용사코드 가 로그인한 운용사 코드와 동일한 정보만 추출 */
+                )
     </select>
 
     <!--
