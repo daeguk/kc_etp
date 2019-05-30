@@ -43,8 +43,7 @@
                         <template>
                             <v-progress-circular :size="50" indeterminate></v-progress-circular>
                             </template>
-                    </v-dialog>
-            </v-flex>
+        </v-dialog>
     </v-container>
 </template>
 
