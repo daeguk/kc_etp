@@ -471,6 +471,7 @@ var getIndexList = function(req, res) {
                 /* 2. m168uidxList 를 조회한다. */
                 function( data, callback ) {
 
+/*
                     if( dataList && dataList.length > 0 ) {
 
                         stmt = mapper.getStatement('indexDetail', 'getM168uidxList', paramData, format);
@@ -509,8 +510,16 @@ var getIndexList = function(req, res) {
 
                             callback( null );
                         });
+
+                    }else{
+
                     }
-                }                
+*/ 
+
+                    resultMsg.dataList  =   dataList;
+
+                    callback( null );
+                }
 
             ], function (err) {
 
