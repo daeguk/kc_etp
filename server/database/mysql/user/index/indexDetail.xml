@@ -161,49 +161,61 @@
     -->
     <select id="getIndexDetailList">
     <![CDATA[
+
         SELECT      /* indexDetail.getIndexDetailList 검색영역에 일치하는 지수정보를 조회한다. */
-                    m168uidxmap.isin_code                                   AS  isin_code               /* 종목코드 */
-                ,   m168uidxmap.ceiling_percnt                              AS  ceiling_percnt          /* CEILING비중 */
-                ,   (
-                        SELECT  td_kspjong_basic.f16002
-                          FROM  td_kspjong_basic
-                         WHERE  td_kspjong_basic.F16012     =   m168uidxmap.ISIN_CODE
-                    )                                                       AS  f16002                  /* 한글종목명 */
-                ,   m168uidxmap.style_includ_percnt                         AS  style_includ_percnt     /* 스타일포함비중 */
-                ,   m168uidxcomp.f30812                                     AS  f30812                  /* 상장주식수 */
-                ,   m168uidxcomp.f30813                                     AS  f30813                  /* 유동주식비율 */
 
-                ,   m168uidxcomp.f03003                                     AS  f03003                  /* 전일종가 */
-                ,   m168uidxcomp.f34241                                     AS  f34241                  /* 가격산정구분(0:실시간1:종가) */
+                    MAP.isin_code                                           AS  isin_code               /* 종목코드 */
+                ,   MAP.ceiling_percnt                                      AS  ceiling_percnt          /* CEILING비중 */
+                ,   MAP.F16002                                              AS  f16002                  /* 한글종목명 */
+                ,   MAP.style_includ_percnt                                 AS  style_includ_percnt     /* 스타일포함비중 */
 
-          FROM          m168uidxmap
-         INNER  JOIN    m168uidxcomp
-                  ON    (
-                                    m168uidxmap.f12506      =   m168uidxcomp.f12506
-                            AND     m168uidxmap.gubun       =   m168uidxcomp.gubun
-                            AND     m168uidxmap.isin_code   =   m168uidxcomp.f16013
-                        )
-                                                                  
-         WHERE  1 = 1
-           AND  m168uidxmap.up_code =   CASE    WHEN    #{f16013}   LIKE    '60___'                     /* 단축코드 */
-                                                THEN    CONCAT( 'MFI' , SUBSTR( #{f16013}, -3 ) )
-                                            
-                                                WHEN    #{f16013}   LIKE    '62___'                     /* 단축코드 */
-                                                THEN    CONCAT( 'WFN' , SUBSTR( #{f16013}, -3 ) )
-                                        END        
-           AND  m168uidxmap.F12506 = (SELECT MAX(AA.F12506) 
-										FROM m168uidxmap AA
-									  INNER JOIN td_kspjong_basic BB
-                                         ON AA.ISIN_CODE = BB.F16012  
-									  WHERE AA.UP_CODE =  CASE    WHEN    #{f16013}   LIKE    '60___'                     /* 단축코드 */
-                                                                  THEN    CONCAT( 'MFI' , SUBSTR( #{f16013}, -3 ) )
-                                            
-                                                                  WHEN    #{f16013}   LIKE    '62___'                     /* 단축코드 */
-                                                                  THEN    CONCAT( 'WFN' , SUBSTR( #{f16013}, -3 ) )
-                                                          END        
-                                    )        
+                ,   COMP.f30812                                             AS  f30812                  /* 상장주식수 */
+                ,   COMP.f30813                                             AS  f30813                  /* 유동주식비율 */
+                ,   COMP.f03003                                             AS  f03003                  /* 전일종가 */
+                ,   COMP.f34241                                             AS  f34241                  /* 가격산정구분(0:실시간1:종가) */
 
-         ORDER  BY  m168uidxmap.isin_code       DESC            /* 입회일 */
+          FROM  (
+                    SELECT      F12506
+                            ,   ISIN_CODE
+                            ,   UP_CODE
+                            ,   CEILING_PERCNT
+                            ,   STYLE_INCLUD_PERCNT
+                            ,   GUBUN
+                            ,   F16002
+                      FROM  (
+                                SELECT      A.F12506
+                                        ,   A.ISIN_CODE
+                                        ,   A.UP_CODE
+                                        ,   A.CEILING_PERCNT
+                                        ,   A.STYLE_INCLUD_PERCNT
+                                        ,   A.GUBUN
+                                        ,   B.F16002
+
+                                  FROM          m168uidxmap         A
+                                 INNER  JOIN    td_kspjong_basic    B
+                                          ON    A.ISIN_CODE         =   B.F16012 
+
+                                 WHERE  UP_CODE     =   CONCAT( IF( SUBSTR(#{f16013}, 1, 2 ) = '60', 'MFI', 'WFN' ), substr(#{f16013}, 3) )
+                                 ORDER  BY      A.ISIN_CODE
+                                            ,   A.F12506    DESC
+                            )   a
+                     WHERE  a.F12506    =   
+                            (
+                                SELECT  MAX(AA.F12506) /* 최근 일자 */
+                                  FROM          m168uidxmap         AA
+                                 INNER  JOIN    td_kspjong_basic    BB
+                                          ON    AA.ISIN_CODE        =   BB.F16012
+
+                                 WHERE  AA.UP_CODE  =   CONCAT( IF(substr(#{f16013}, 1, 2) = '60', 'MFI', 'WFN'), substr(#{f16013}, 3)) 
+                            )
+                )   MAP
+
+         INNER  JOIN    m168uidxcomp    COMP
+                  ON        MAP.F12506      =   COMP.F12506
+                        AND MAP.ISIN_CODE   =   COMP.F16013
+                        AND MAP.GUBUN       =   COMP.GUBUN                                               
+
+         ORDER  BY      MAP.isin_code       DESC            /* 입회일 */
     ]]>
     </select>
 
