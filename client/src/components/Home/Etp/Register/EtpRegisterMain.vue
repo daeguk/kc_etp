@@ -16,7 +16,7 @@
 
             <v-tabs-items v-model="tabs" >
                 <v-tab-item>
-                    <EtpApplyList @moveUpdatePage="moveUpdatePage" :seq= "seq"></EtpApplyList>
+                    <EtpApplyList @moveUpdatePage="moveUpdatePage" :seq= "seq" ref="list"></EtpApplyList>
                 </v-tab-item>
                 <v-tab-item >
                     <EtpResiter @movePage="movePage()" :seq= "seq" ref="form" ></EtpResiter>
@@ -57,10 +57,16 @@ export default {
             
          },
 
-         movePage: function() { //조회페이지 연결
-
+         movePage: function() { //조회페이지 연결 후 리로딩
             var vm = this;
             vm.tabs = 0;
+            if( vm.$refs.list!==undefined){
+                vm.$refs.list.getEtpApplyList();
+                vm.$refs.list.getEtpApplyDistCnt();
+                vm.$refs.list.getEtpApplyIndexCnt();
+                vm.$refs.list.getEtpApplyCodeCnt();
+                vm.$refs.list.getEtpApplyInavCnt();
+            }
          },
 
          moveTab : function(){ //탭이동
@@ -69,7 +75,6 @@ export default {
                 if(vm.tabs ==0){
                     if( vm.$refs.form!==undefined){
                     vm.$refs.form.seq = 0;
-                    vm.$refs.form.e1 = 1;
                     vm.$refs.form.getEtpRegisterView();
                     }
                 }
