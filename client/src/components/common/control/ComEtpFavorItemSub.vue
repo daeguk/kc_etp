@@ -73,7 +73,7 @@
                 </v-layout>
             </v-list-tile-content>
         </v-list>
-
+        <ProgressBar ref="progress"></ProgressBar>
     </v-container>
 </template>
 
@@ -86,7 +86,7 @@ import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
 import util       from "@/js/util.js";
-
+import ProgressBar from "@/components/common/ProgressBar.vue";
 
 var publish_etp_table = null;
 var all_etp_table = null;
@@ -115,6 +115,7 @@ export default {
         };
     },
     components: {
+        ProgressBar : ProgressBar
     },
     computed: {
         
@@ -408,6 +409,7 @@ export default {
 
         /* 전체 종목 etn 종목리스트 */
         getPublicEtpList: function() {
+            util.processing(this.$refs.progress, true);
             console.log("etn_grid");
             axios.get(Config.base_url + "/user/common/getPublishEtpList", {
                 params: {
@@ -423,13 +425,14 @@ export default {
                     publish_etp_table.rows.add(items).draw();
                                         
                 }
-                
+                util.processing(this.$refs.progress, false);
             });
         }, 
 
         /* 전체 종목 etf 종목리스트 */
         getALLEtpList: function() {
             console.log("etn_grid");
+            util.processing(this.$refs.progress, true);
             axios.get(Config.base_url + "/user/common/getALLEtpList", {
                 params: {
                 }
@@ -445,7 +448,7 @@ export default {
                     all_etp_table.rows.add(items).draw();
             
                 }
-                
+                util.processing(this.$refs.progress, false);
             });
         }, 
 
