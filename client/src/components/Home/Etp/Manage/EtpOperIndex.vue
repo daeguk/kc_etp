@@ -15,7 +15,7 @@
                     </v-card-title>
                     
                     <v-card flat>
-                        <table id="tableOperIndex" class="tbl_type"></table>
+                        <table id="tableOperIndex" class="tbl_type ver7"></table>
 
                     </v-card>
              </v-card>
@@ -156,7 +156,7 @@ export default {
                 "info": false,   // control table information display field
                 "stateSave": true,  //restore table state on page reload,
                 "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                "scrollY": '70vh',
+                "scrollY": '70vh',         
                 paging: false,
                 searching: false,
                 data : [],
@@ -325,14 +325,14 @@ export default {
             var vm = this;
 
             var arrColumn  =   [
-                { 'name' : 'f16002'             , 'data': 'f16002'          ,  'width' : '200', 'orderable' : true  , 'className': 'txt_left line2 in_icon'   , 'title' : '지수'      },      /* 한글종목명 */
+                { 'name' : 'f16002'             , 'data': 'f16002'          ,  'width' : '200', 'orderable' : true  , 'className': 'txt_left'   , 'title' : '지수'      },      /* 한글종목명 */
                 { 'name' : 'large_type'         , 'data': 'large_type'      ,  'width' : '60',  'orderable' : true  , 'className': 'txt_left'   , 'title' : '산출기관'  },      /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
                 { 'name' : 'vendor'             , 'data': 'vendor'          ,  'width' : '40',  'orderable' : true  , 'className': 'txt_left'   , 'title' : '벤더'      },      /* 벤더 */
                 { 'name' : 'manage_type'        , 'data': 'manage_type'     ,  'width' : '60',  'orderable' : true  , 'className': ''           , 'title' : '관리유형'  },      /* 관리유형 */
                 { 'name' : 'last_date'          , 'data': 'last_date'       ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right' , 'title' : 'Last'      },      /* Last */
                 { 'name' : 'last_time'          , 'data': 'last_time'       ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right' , 'title' : 'Time'      },      /* Time */
                 { 'name' : 'etp_info_json'      , 'data': 'etp_info_json'   ,  'width' : '250', 'orderable' : true  , 'className': 'txt_left'  , 'title' : 'ETF'       },       /* ETF */
-                { 'name' : 'graph'              , 'data': null              ,  'width' : '150' },
+                { 'name' : 'graph'              , 'data': null              ,  'width' : '150', 'orderable' : false },
 
                 { 'name' : 'in_out'             , 'data': 'in_out'          ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_left'   , 'title' : '입수 구분'     },      /* 입수 구분 */
                 { 'name' : 'degree'             , 'data': 'degree'          ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_left'   , 'title' : '차수'          },      /* 차수 */
