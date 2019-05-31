@@ -111,40 +111,85 @@
 </select>
 
 <insert id="insertMaster" >
-
-    INSERT INTO m001uetpmaster (
-        SEQ, INST_CD, ISU_KOR_NM, ISU_ENG_NM, ISIN_CODE, ISU_SRT_CD, ETP_TYPE
-        ,IDX_SYM_CODE, IDX_NM, IDX_INST_CD, IDX_DIST_INST_CD, IDX_HOLY_CD, IDX_TRACE_YD_MULT_TYPE
-        ,IDX_CLOSE_TYPE, PRE_IDX_TYPE, IDX_FILE_NM, IDX_COMP_KSD_DIST_YN, IDX_COMP_MIRAE_DIST_YN
-        ,BLOM_TICKER, EX_RATE_CD, COMP_DIST_YN, KRX_DIST_YN, KSD_DIST_YN, MIRAE_DIST_YN, USER_REQ
-        ,REAL_YN, RIDX_INST_CD, RIDX_CRT_SYM_CODE, RIDX_DIST_INST_CD, RIDX_DIST_SYM_CODE, RIDX_HOLY_CD
-        ,RIDX_COMP_DIST_YN, RIDX_KRX_DIST_YN, RIDX_KSD_DIST_YN, RIDX_MIRAE_DIST_YN, EX_HEDGE_YN, RIDX_DIST_TERM
-        ,REFIDX_SYM_CODE, REFIDX_NM, REFIDX_INST_CD, REFIDX_FILE_NM, REFIDX_BLOM_TICKER, REFIDX_REQ, INAV_CALC_CD
-        ,IDX_REC_YN, IDX_DIS_YN, INAV_CALC_YN, IDX_MID, RIDX_MID, CLOSE_FILE, REAL_IDX_TR, PROC_STAT
-        ,ISIN_STAT_CD, REQ_DATE, INSERT_ID, INSERT_TIME
-        ,KOR_FOR_TYPE, AGENT_CD, IDX_COMP_CD, KRX_UP_CODE, AGENT_UP_CODE
+<![CDATA[
+    insert into m001uetpmaster (
+    seq, inst_cd, isu_kor_nm, isu_eng_nm, isin_code, isu_srt_cd, etp_type
+        ,idx_sym_code, idx_nm, idx_inst_cd, idx_dist_inst_cd, idx_holy_cd
+        ,idx_close_type, idx_file_nm, idx_comp_ksd_dist_yn, idx_comp_mirae_dist_yn
+        ,blom_ticker, ex_rate_cd, comp_dist_yn, krx_dist_yn, ksd_dist_yn, mirae_dist_yn, user_req
+        ,real_yn, ridx_inst_cd, ridx_crt_sym_code, ridx_dist_inst_cd, ridx_dist_sym_code, ridx_holy_cd
+        ,ridx_comp_dist_yn, ridx_krx_dist_yn, ridx_ksd_dist_yn, ridx_mirae_dist_yn, ex_hedge_yn
+        ,refidx_sym_code, refidx_nm, refidx_inst_cd, refidx_file_nm, refidx_blom_ticker, refidx_req, inav_calc_cd
+        ,idx_rec_yn, idx_dis_yn, inav_calc_yn, close_file, real_idx_tr, proc_stat
+        ,isin_stat_cd, req_date, insert_id, insert_time
+        ,kor_for_type, agent_cd, idx_comp_cd
+     ]]> 
+        <if test="ridx_dist_term!= null and ridx_dist_term != ''">
+        , ridx_dist_term
+        </if>
+        <if test="krx_up_code!= null and krx_up_code != ''">
+        ,krx_up_code
+        </if>
+        <if test="agent_up_code!= null and agent_up_code != ''">
+        ,agent_up_code
+        </if>
+        <if test="idx_mid!= null and idx_mid != ''">  
+        , idx_mid
+        </if>
+        <if test="ridx_mid!= null and ridx_mid != ''">  
+        , ridx_mid
+        </if>
+        <if test="idx_trace_yd_mult_type!= null and idx_trace_yd_mult_type != ''">   
+        ,idx_trace_yd_mult_type
+        </if>
+        <if test="pre_idx_type!= null and pre_idx_type != ''">
+        ,pre_idx_type
+        </if>
         <if test="listReqDate != null and listReqDate != ''">
-        ,LIST_REQ_DATE
+        ,list_req_date
         </if>
         <if test="list_date != null and list_date != ''">
-        ,LIST_DATE
+        ,list_date
         </if>
-    ) VALUES (
+    <![CDATA[      
+    ) values (
         #{seq},#{inst_cd},#{isu_kor_nm},#{isu_eng_nm},#{isin_code},#{isu_srt_cd},#{etp_type}
-        ,#{idx_sym_code},#{idx_nm},#{idx_inst_cd},#{idx_dist_inst_cd},#{idx_holy_cd},#{idx_trace_yd_mult_type}
-        ,#{idx_close_type},#{pre_idx_type},#{idx_file_nm},#{idx_comp_ksd_dist_yn},#{idx_comp_mirae_dist_yn}
+        ,#{idx_sym_code},#{idx_nm},#{idx_inst_cd},#{idx_dist_inst_cd},#{idx_holy_cd}
+        ,#{idx_close_type},#{idx_file_nm},#{idx_comp_ksd_dist_yn},#{idx_comp_mirae_dist_yn}
         ,#{blom_ticker},#{ex_rate_cd},#{comp_dist_yn},#{krx_dist_yn},#{ksd_dist_yn},#{mirae_dist_yn},#{user_req}
         ,#{real_yn},#{ridx_inst_cd},#{ridx_crt_sym_code},#{ridx_dist_inst_cd},#{ridx_dist_sym_code},#{ridx_holy_cd}
-        ,#{ridx_comp_dist_yn},#{ridx_krx_dist_yn},#{ridx_ksd_dist_yn},#{ridx_mirae_dist_yn},#{ex_hedge_yn},#{ridx_dist_term}
+        ,#{ridx_comp_dist_yn},#{ridx_krx_dist_yn},#{ridx_ksd_dist_yn},#{ridx_mirae_dist_yn},#{ex_hedge_yn}
         ,#{refidx_sym_code},#{refidx_nm},#{refidx_inst_cd},#{refidx_file_nm},#{refidx_blom_ticker},#{refidx_req},#{inav_calc_cd}
-        ,#{idx_rec_yn},#{idx_dis_yn},#{inav_calc_yn},#{idx_mid},#{ridx_mid},#{close_file},#{real_idx_tr},#{proc_stat}
+        ,#{idx_rec_yn},#{idx_dis_yn},#{inav_calc_yn},#{close_file},#{real_idx_tr},#{proc_stat}
         ,#{isin_stat_cd}, date_format(now(), '%Y%m%d%H%i%s'),#{user_id}, date_format(now(), '%Y%m%d%H%i%s')	
-        ,#{kor_for_type},#{agent_cd},#{idx_comp_cd},#{krx_up_code},#{agent_up_code}
+        ,#{kor_for_type},#{agent_cd},#{idx_comp_cd}
+       ]]> 
+       <if test="ridx_dist_term!= null and ridx_dist_term != ''">
+         ,#{ridx_dist_term}
+        </if>
+        <if test="krx_up_code!= null and krx_up_code != ''">
+        ,#{krx_up_code}
+        </if>
+        <if test="agent_up_code!= null and agent_up_code != ''">
+        ,#{agent_up_code}
+        </if>
+        <if test="idx_mid!= null and idx_mid != ''">  
+        ,#{idx_mid}
+        </if>
+        <if test="ridx_mid!= null and ridx_mid != ''">  
+        ,#{ridx_mid}
+        </if>
+        <if test="idx_trace_yd_mult_type!= null and idx_trace_yd_mult_type != ''">
+        ,#{idx_trace_yd_mult_type}
+        </if>
+        <if test="pre_idx_type!= null and pre_idx_type != ''">
+        ,#{pre_idx_type}
+        </if>
         <if test="listReqDate != null and listReqDate != ''">
-            ,#{listReqDate}
+        ,#{listReqDate}
         </if>
         <if test="list_date != null and list_date != ''">
-            ,#{list_date}
+        ,#{list_date}
         </if>    
     )
    
@@ -164,9 +209,7 @@
         ,IDX_INST_CD 			= #{idx_inst_cd}
         ,IDX_DIST_INST_CD 		= #{idx_dist_inst_cd} 
         ,IDX_HOLY_CD 			= #{idx_holy_cd}		
-        ,IDX_TRACE_YD_MULT_TYPE = #{idx_trace_yd_mult_type}
         ,IDX_CLOSE_TYPE 		= #{idx_close_type}
-        ,PRE_IDX_TYPE 			= #{pre_idx_type}			
         ,IDX_FILE_NM 			= #{idx_file_nm}
         ,IDX_COMP_KSD_DIST_YN 	= #{idx_comp_ksd_dist_yn}
         ,IDX_COMP_MIRAE_DIST_YN = #{idx_comp_mirae_dist_yn}
@@ -188,7 +231,6 @@
         ,RIDX_KSD_DIST_YN 		= #{ridx_ksd_dist_yn}
         ,RIDX_MIRAE_DIST_YN 	= #{ridx_mirae_dist_yn}	
         ,EX_HEDGE_YN 			= #{ex_hedge_yn}
-        ,RIDX_DIST_TERM 		= #{ridx_dist_term}		
         ,REFIDX_SYM_CODE 		= #{refidx_sym_code}
         ,REFIDX_NM 				= #{refidx_nm}			
         ,REFIDX_INST_CD 		= #{refidx_inst_cd}
@@ -199,8 +241,6 @@
         ,IDX_REC_YN 			= #{idx_rec_yn}
         ,IDX_DIS_YN 			= #{idx_dis_yn}			 
         ,INAV_CALC_YN 			= #{inav_calc_yn}
-        ,IDX_MID 				= #{idx_mid}
-        ,RIDX_MID 				= #{ridx_mid}	
         ,CLOSE_FILE 			= #{close_file}
         ,REAL_IDX_TR 			= #{real_idx_tr}
         ,PROC_STAT 				= #{proc_stat}			 
@@ -210,9 +250,49 @@
         ,KOR_FOR_TYPE			= #{kor_for_type}
         ,AGENT_CD				= #{agent_cd}
         ,IDX_COMP_CD			= #{idx_comp_cd}			
-        ,KRX_UP_CODE			= #{krx_up_code}
-        ,AGENT_UP_CODE			= #{agent_up_code}
          ]]> 
+        <if test="ridx_dist_term!= null and ridx_dist_term != ''">
+         ,ridx_dist_term = #{ridx_dist_term}
+        </if>
+        <if test="ridx_dist_term == null and ridx_dist_term == ''">
+         ,ridx_dist_term = null
+        </if>
+        <if test="krx_up_code!= null and krx_up_code != ''">
+        ,krx_up_code= #{krx_up_code}
+        </if>
+        <if test="krx_up_code == null and krx_up_code == ''">
+        ,krx_up_code= null
+        </if>
+        <if test="agent_up_code!= null and agent_up_code != ''">
+        ,agent_up_code = #{agent_up_code}
+        </if>
+        <if test="agent_up_code == null and agent_up_code == ''">
+        ,agent_up_code = null
+        </if>
+        <if test="idx_mid!= null and idx_mid != ''">  
+        ,idx_mid = #{idx_mid}
+        </if>
+         <if test="idx_mid== null and idx_mid == ''">  
+        ,idx_mid = null
+        </if>
+        <if test="ridx_mid!= null and ridx_mid != ''">  
+        ,ridx_mid = #{ridx_mid}
+        </if>
+        <if test="ridx_mid== null and ridx_mid == ''">  
+        ,ridx_mid = null
+        </if>
+        <if test="idx_trace_yd_mult_type!= null and idx_trace_yd_mult_type != ''">
+        ,idx_trace_yd_mult_type = #{idx_trace_yd_mult_type}
+        </if>
+         <if test="idx_trace_yd_mult_type == null and idx_trace_yd_mult_type == ''">
+        ,idx_trace_yd_mult_type = null
+        </if>
+        <if test="pre_idx_type!= null and pre_idx_type != ''">
+        ,pre_idx_type = #{pre_idx_type}
+        </if>
+        <if test="pre_idx_type == null and pre_idx_type == ''">
+        ,pre_idx_type = null
+        </if>
         <if test="listReqDate != null and listReqDate != ''">
             ,LIST_REQ_DATE 			= #{listReqDate}	
         </if>

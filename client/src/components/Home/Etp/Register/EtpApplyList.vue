@@ -170,6 +170,7 @@ export default {
                             paging: false,
                             searching: false,
                             data: this.results,
+                            destroy: true,
                             //list_cnt : this.results.length,
 
                                columnDefs: [
