@@ -1775,7 +1775,40 @@ console.log( paramData.allDataList );
                             });
                         },
 
-                        /* 5. PDF 변경 이력 상세 정보를 저장한다. */
+                        /* 5. PDF 변경 이력 마스터 정보를 저장한다. */
+                        function( msg, callback ) {
+
+                            /*  이력번호가 존재하는 경우 */
+                            if( paramData.hist_no && paramData.hist_no.length > 0 ) {                            
+
+                                var stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyHistMast', paramData, {language:'sql', indent: '  '});
+                                console.log( stmt );
+
+                                conn.query(stmt, function( err, rows ) {
+
+                                    if( err ) {
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "[error] etpOper.saveTmPdfModifyHistMast Error while performing Query";
+                                        resultMsg.err       =   err;
+
+                                        return callback( resultMsg );
+                                    }
+
+
+                                    callback( null, paramData );                             
+                                })
+
+                            }else{
+
+                                resultMsg.result    =   false;
+                                resultMsg.msg       =   "[error] etpOper.saveTmPdfModifyHistMast Error while performing Query";
+                                resultMsg.err       =   err;
+
+                                return callback( resultMsg );
+                            }                                
+                        },                        
+
+                        /* 6. PDF 변경 이력 상세 정보를 저장한다. */
                         function( msg, callback ) {
 
 
@@ -1805,7 +1838,7 @@ console.log( paramData.allDataList );
                                 resultMsg.err       =   err;
 
                                 return callback( resultMsg );
-                            }                    
+                            }
                         },
 
                     ], function (err) {
