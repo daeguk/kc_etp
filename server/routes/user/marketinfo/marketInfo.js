@@ -768,6 +768,8 @@ var getMarketIndexList = function (req, res) {
                     var stmt = mapper.getStatement('common.item', 'getIndexBaseInfo', params, {language:'sql', indent: '  '});
                     // 대입 문자 치환
                     stmt = stmt.replace(/\: =/g,':='); 
+                    
+                    console.log(stmt);
 
                     conn.query(stmt, function( err, rows ) {
                             
