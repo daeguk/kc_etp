@@ -273,7 +273,7 @@ export default {
         fn_getIndexDetailList : function( rowData, paramForm ) {
 
             var vm = this;
-
+            this.$emit("showProgress", true);
             console.log( "ComIndexJongmok.vue -> fn_getIndexDetailList" );
             
             axios.post(Config.base_url + "/user/index/getIndexDetailList", {
@@ -292,7 +292,7 @@ export default {
                     vm.form.jisuSearchYn    =   "Y";
                     vm.$emit( "fn_getIndexDetailList", vm.indexBasic, indexDetailList, vm.form );
                 }
-
+                this.$emit("showProgress", false);
             });
         },        
 
@@ -304,7 +304,7 @@ export default {
         fn_getIndexJongmokList : function() {
 
             var vm = this;
-
+            
             console.log( "ComIndexJongmok.vue -> fn_getIndexJongmokList" );
 
             if( vm.form.jongmokSearch.length < 2 ) {
@@ -324,7 +324,7 @@ export default {
                     vm.form.jisuSearchYn =   "N";
                     vm.$emit( "fn_getIndexJongmokList", jongmokDataList, vm.form );
                 }
-                
+               
             });
             
         },
@@ -337,6 +337,7 @@ export default {
         fn_getIndexListByFirst : function() {
 
             var vm = this;
+            
             console.log( "ComIndexJongmok.vue -> fn_getIndexListByFirst" );
 
             axios.post(Config.base_url + "/user/index/getIndexList", {
@@ -354,6 +355,7 @@ export default {
                         vm.fn_getIndexDetailList( rowData, vm.form );
                     }
                 }
+                
             });
             
         },
@@ -366,6 +368,7 @@ export default {
         fn_getIndexList : function() {
 
             var vm = this;
+           
             console.log( "ComIndexJongmok.vue -> fn_getIndexList" );
 
             if( jisuTable ) {
@@ -384,6 +387,7 @@ export default {
                     jisuTable.clear().draw();
                     jisuTable.rows.add( indexDataList ).draw();                    
                 }
+                
             });
            
         },

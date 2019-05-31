@@ -33,7 +33,8 @@
             </v-flex >
             <v-flex  class="conWidth_right">
                 <IndexDetailQuick   @fn_getIndexDetailList="fn_getIndexDetailList"
-                                    @fn_getIndexJongmokList="fn_getIndexJongmokList">
+                                    @fn_getIndexJongmokList="fn_getIndexJongmokList"
+                                    @showProgress="showProgress">
                 </IndexDetailQuick>                
             </v-flex>
             
@@ -211,7 +212,9 @@ export default {
             vm.progress = false;
         },
              
-
+        showProgress: function(visible) {
+            this.progress = visible;
+        },
         fn_closePop() {
             var vm = this;
 
