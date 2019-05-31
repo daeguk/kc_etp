@@ -1750,7 +1750,7 @@ console.log( paramData.allDataList );
                             }
                         },                    
 
-                        /* 4. ETF 종목코드별 이력번호 번호를 조회한다. */
+                        /* 4. 이력번호 번호를 조회한다. */
                         function( msg, callback ) {
 
 
@@ -1775,21 +1775,21 @@ console.log( paramData.allDataList );
                             });
                         },
 
-                        /* 5. PDF 변경 이력 정보를 저장한다. */
+                        /* 5. PDF 변경 이력 상세 정보를 저장한다. */
                         function( msg, callback ) {
 
 
                             /*  이력번호가 존재하는 경우 */
                             if( paramData.hist_no && paramData.hist_no.length > 0 ) {
 
-                                stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyHist', paramData, format);
+                                stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyHistDtl', paramData, format);
                                 console.log(stmt);
 
                                 conn.query(stmt, function( err, rows ) {
 
                                     if( err ) {
                                         resultMsg.result    =   false;
-                                        resultMsg.msg       =   "[error] etpOper.saveTmPdfModifyHist Error while performing Query";
+                                        resultMsg.msg       =   "[error] etpOper.saveTmPdfModifyHistDtl Error while performing Query";
                                         resultMsg.err       =   err;
 
                                         return callback( resultMsg );
@@ -1801,7 +1801,7 @@ console.log( paramData.allDataList );
                             }else{
 
                                 resultMsg.result    =   false;
-                                resultMsg.msg       =   "[error] etpOper.saveTmPdfModifyHist Error while performing Query";
+                                resultMsg.msg       =   "[error] etpOper.saveTmPdfModifyHistDtl Error while performing Query";
                                 resultMsg.err       =   err;
 
                                 return callback( resultMsg );

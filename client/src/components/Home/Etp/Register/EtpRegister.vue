@@ -1008,7 +1008,7 @@
 <script>
 import Config from "@/js/config.js";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
-import moment from "moment";
+//import moment from "moment";
 export default {
     data() {
         return {
