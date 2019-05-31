@@ -105,6 +105,14 @@ export  const  market_common =   {
                                         },
                                         {  
                                             "render": function ( data, type, row ) {
+                                                
+                                                return util.formatNumber(data);
+                                                
+                                            },
+                                            "targets": 2
+                                        },
+                                        {  
+                                            "render": function ( data, type, row ) {
 
                                                 let htm = ""
                             
