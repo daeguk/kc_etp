@@ -108,7 +108,7 @@
         FROM m001uetpinstcode
 ]]>	            
     <if test="inst_cd != null and inst_cd !='' ">
-        WHERE and inst_cd = #{inst_cd} 
+        WHERE inst_cd = #{inst_cd} 
     </if>                     
 </select>
 
