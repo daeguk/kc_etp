@@ -72,7 +72,7 @@ function initRoutes(app, router) {
 			
 		// 모듈 파일에서 모듈 불러옴
 		var curModule = require(curItem.file);
-		// console.log('%s 파일에서 모듈정보를 읽어옴.', curItem.file);
+		 console.log('%s 파일에서 모듈정보를 읽어옴.', curItem.file);
 		
 		//  라우팅 처리
 		if (curItem.type == 'get') {
