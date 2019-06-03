@@ -853,21 +853,46 @@
     <select id="getEtpOperIndexOversea">
 
         SELECT      /* etpOper.geEtpOperIndexOversea  ETP 운용관리 - 지수관리 - 해외지수 종가 모니터링을 조회한다. */
-                    <include    refid="sqlEtpBasic01" />
+                    <include    refid="sqlIndexBasic01" />
     <![CDATA[
                 ,   'OK'                                            AS  in_out          /* 입수 구분 */
-                ,   'S&P GCCI1'                                     AS  degree          /* 차수 */
-                ,   'S&P GCCI1'                                     AS  real_symbol     /* 실시간 심볼 */
-                ,   'S&P GCCI1'                                     AS  incre_symbol    /* 증가 심볼 */
-                ,   '2018.04.01'                                    AS  rest_date       /* 휴장일 */
-                ,   '2018.04.01'                                    AS  recently_date   /* 최근일자 */
-                ,   11111111                                        AS  incre_recently  /* 최근증가 */
-                ,   '2018.04.01'                                    AS  base_date       /* 기준일자 */
+                ,   td_index_basic.f16002                           AS  f16002          /* 한글종목명 */
+                ,   td_index_basic.f16013                           AS  f16013          /* 단축코드 */
+                ,   ''                                              AS  incre_symbol    /* 증가 심볼 */
+                ,   ''                                              AS  rest_date       /* 휴장일 */
+                ,   td_index_basic.f12506                           AS  f12506          /* 입회일 */
+                ,   td_index_basic.f15001                           AS  f15001          /* 현재가 */
+                ,   td_index_basic.std_date                         AS  std_date        /* 기준일자 */
     ]]>
-          FROM  td_etp_basic
+          FROM  td_index_basic
          WHERE  1 = 1
-           AND  td_etp_basic.f16257     REGEXP  '[^0-9]'       /* 첫글자가 0-9가 아닌 것 해외지수로 임시 간주. 추후 수정 필요. */
 
+           AND  td_index_basic.f12506       IN
+                (
+                    SELECT  MAX( f12506 )
+                      FROM  td_index_basic
+                )
+
+                /* 해외지수 mid 에 존재하는 정보만 추출  */
+           AND  EXISTS
+                (
+            <foreach    collection="arrOverseaMarketList"   item="item"    index="index"   separator=" UNION ALL" >
+                    SELECT  1  
+                      FROM  DUAL 
+                     WHERE  td_index_basic.market_id  LIKE CONCAT( '_', LPAD( #{item.jisu_mid}, 3, '0' ), '%' )
+            </foreach>
+                )
+
+                /* 해당 지수가 td_etp_basic 에 속하고 로그인 운용사 코드와 동일한 정보만 추출 */
+           AND  EXISTS
+                (
+                    SELECT  1
+                      FROM  td_etp_basic
+                     WHERE  td_index_basic.F16013           =   td_etp_basic.f16257                                                 /* 단축코드 = ETP기초지수코드 */
+                       AND  td_index_basic.MARKET_ID        LIKE    CONCAT( '_' , LPAD( td_etp_basic.f34239, 3, '0' ) , '%' )       /* 시장 ID = ETP기초지수MID */
+
+                       AND  td_etp_basic.f33960             =   #{krx_cd}                   /* ETP운용사코드 가 로그인한 운용사 코드와 동일한 정보만 추출 */
+                )
     </select>
 
     <!--
@@ -922,11 +947,34 @@
     </select>
 
     <!--
-    * ETP 운용관리 - PDF 긴급반영 - 저장시 이미 등록된 데이터가 존재하는지 체크한다.
+    * ETP 운용관리 - PDF 긴급반영 - 저장시 마스터에 이미 등록된 데이터가 존재하는지 체크한다.
     * 2019-05-03  bkLove(촤병국)
     -->
-    <select id="getTmPdfModifyExistsCheck">
+    <select id="getTmPdfModifyMastExistsCheck">
         SELECT   COUNT(*)                               AS  exists_cnt   /* 존재 건수 */
+
+          FROM  (         
+                    SELECT      #{f16583}               AS  f16583      /* 사무수탁회사번호 */
+                            ,   #{f16012}               AS  f16012      /* ETF종목코드 */
+                            ,   #{f16013}               AS  f16013      /* ETF단축코드 */
+                      FROM  DUAL
+                )       base
+         INNER  JOIN    tm_pdf_modify_mast
+         WHERE  1 = 1
+
+           AND  tm_pdf_modify_mast.f16583           =   base.f16583     /* 사무수탁회사번호 */
+           AND  tm_pdf_modify_mast.f16012           =   base.f16012     /* ETF종목코드 */
+           AND  tm_pdf_modify_mast.f16013           =   base.f16013     /* ETF단축코드 */
+
+         LIMIT  1
+    </select>    
+
+    <!--
+    * ETP 운용관리 - PDF 긴급반영 - 저장시 상세에 이미 등록된 데이터가 존재하는지 체크한다.
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="getTmPdfModifyDtlExistsCheck">
+        SELECT      COUNT(*)                                AS  exists_cnt   /* 존재 건수 */
 
           FROM  (
                 <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
@@ -948,7 +996,7 @@
            AND  tm_pdf_modify_dtl.f16316            =   base.f16316     /* 구성종목코드 */
 
          LIMIT  1
-    </select>    
+    </select>
 
     <!--
     * [tm_pdf_modify] 테이블에 저장한다.
@@ -960,21 +1008,33 @@
         /* etpOper.saveTmPdfModifyMast      [tm_pdf_modify_mast] 테이블에 저장한다. */
         tm_pdf_modify_mast 
         ( 
-                F16583                      /* 사무수탁회사번호 */
+                email                       /* 이메일 */
+            ,   F16583                      /* 사무수탁회사번호 */
             ,   F16012                      /* ETF종목코드 */
             ,   F16013                      /* ETF단축코드 */
 
+            ,   type_cd                     /* 사용자 그룹 코드 */
+            ,   inst_cd                     /* 기관구분코드 */
+
             ,   reg_id                      /* 등록자 ID */
             ,   reg_time                    /* 등록시간 */
+            ,   upd_id                      /* 수정자 ID */
+            ,   upd_time                    /* 수정시간 */
         ) 
         VALUES  
         ( 
-                #{f16583}                   /* 사무수탁회사번호 */
+                #{user_id}                  /* 이메일 */
+            ,   #{f16583}                   /* 사무수탁회사번호 */
             ,   #{f16012}                   /* ETF종목코드 */
             ,   #{f16013}                   /* ETF단축코드 */
 
+            ,   #{type_cd}                  /* 사용자 그룹 코드 */
+            ,   #{inst_cd}                  /* 기관구분코드 */
+
             ,   #{user_id}                  /* 등록자 ID */
             ,   now()                       /* 등록시간 */
+            ,   #{user_id}                  /* 수정자 ID */
+            ,   now()                       /* 수정시간 */
         )
     ]]>
     </insert>
@@ -989,6 +1049,7 @@
           FROM  tm_pdf_modify_mast
          WHERE  1 = 1
 
+           AND  email                       =   #{user_id}                  /* 이메일 */
            AND  f16583                      =   #{f16583}                   /* 사무수탁회사번호 */
            AND  f16012                      =   #{f16012}                   /* ETF종목코드 */
            AND  f16013                      =   #{f16013}                   /* ETF단축코드 */
@@ -998,7 +1059,7 @@
 
 
     <!--
-    * [tm_pdf_modify] 테이블에 저장한다.
+    * [tm_pdf_modify_dtl] 테이블에 저장한다.
     * 2019-05-20  bkLove(촤병국)
     -->
     <insert     id="saveTmPdfModifyDtl">
@@ -1007,34 +1068,48 @@
         /* etpOper.saveTmPdfModifyDtl      [tm_pdf_modify_dtl] 테이블에 저장한다. */
         tm_pdf_modify_dtl 
         ( 
-                F16583                      /* 사무수탁회사번호 */
+                email                       /* 이메일 */
+            ,   F16583                      /* 사무수탁회사번호 */
             ,   F16012                      /* ETF종목코드 */
             ,   F16013                      /* ETF단축코드 */
             ,   F16316                      /* 구성종목코드 */
 
+            ,   type_cd                     /* 사용자 그룹 코드 */
+            ,   inst_cd                     /* 기관구분코드 */
             ,   status                      /* insert( 신규 ), modify( 변경 ) */
             ,   F16499                      /* 1CU단위증권수 */
             ,   F16499_PREV                 /* 1CU단위증권수 ( 변경전 ) */
+            ,   F34840                      /* 액면금액 */
+            ,   F34840_PREV                 /* 액면금액 ( 변경전 ) */
 
             ,   reg_id                      /* 등록자 ID */
             ,   reg_time                    /* 등록시간 */
+            ,   upd_id                      /* 수정자 ID */
+            ,   upd_time                    /* 수정시간 */            
         ) 
     ]]>
         VALUES
         <foreach    collection="dataLists"   item="data"     separator="," >
     <![CDATA[        
         ( 
-                #{f16583}                   /* 사무수탁회사번호 */
+                #{user_id}                  /* 이메일 */
+            ,   #{f16583}                   /* 사무수탁회사번호 */
             ,   #{f16012}                   /* ETF종목코드 */
             ,   #{f16013}                   /* ETF단축코드 */
             ,   #{data.f16316}              /* 구성종목코드 */
 
+            ,   #{type_cd}                  /* 사용자 그룹 코드 */
+            ,   #{inst_cd}                  /* 기관구분코드 */
             ,   #{data.status}              /* insert( 신규 ), modify( 변경 ) */
             ,   #{data.f16499}              /* 1CU단위증권수 */
             ,   #{data.f16499_prev}         /* 1CU단위증권수 ( 변경전 ) */
+            ,   #{data.f34840}              /* 액면금액 */
+            ,   #{data.f34840_prev}         /* 액면금액 ( 변경전 ) */
 
             ,   #{user_id}                  /* 등록자 ID */
             ,   now()                       /* 등록시간 */
+            ,   #{user_id}                  /* 수정자 ID */
+            ,   now()                       /* 수정시간 */
         )
     ]]>
         </foreach>
@@ -1056,6 +1131,7 @@
 
          WHERE  1 = 1
 
+           AND  email                       =   #{email}                    /* 이메일 */
            AND  f16583                      =   #{f16583}                   /* 사무수탁회사번호 */
            AND  f16012                      =   #{f16012}                   /* ETF종목코드 */
            AND  f16013                      =   #{f16013}                   /* ETF단축코드 */
@@ -1083,44 +1159,83 @@
 
 
     <!--
-    * ETF 종목코드별 이력번호 번호를 조회한다.
+    * 사용자별 처리한 그룹번호를 조회한다.
     * 2019-05-20  bkLove(촤병국)
     -->
-    <select id="getHistNoByTmPdfModifyHist">
+    <select id="getTmPdfModifyHistMastGroupNo">
     <![CDATA[
-        SELECT	/* indexRegister.getHistNoByTmPdfModifyHist ETF 종목코드별 이력번호 번호를 조회한다. */
-
-                IFNULL( MAX( tm_pdf_modify_hist.hist_no ), 0 ) + 1          AS  hist_no
-
-          FROM  tm_pdf_modify_hist
+        SELECT	/* etpOper.getTmPdfModifyHistMastGroupNo 사용자별 처리한 그룹번호를 조회한다. */
+                IFNULL( MAX( tm_pdf_modify_hist_mast.group_no ), 0 ) + 1        AS  group_no
+          FROM  tm_pdf_modify_hist_mast
          WHERE	1 = 1
-
-           AND  tm_pdf_modify_hist.f16583          =   #{f16583}#          /* 사무수탁회사번호 */
-           AND  tm_pdf_modify_hist.f16012          =   #{f16012}#          /* ETF종목코드 */
-           AND  tm_pdf_modify_hist.f16013          =   #{f16013}#          /* ETF단축코드 */
+           AND  tm_pdf_modify_hist_mast.email       =   #{user_id}
     ]]>
-    </select>       
+    </select>
+
+    <!--
+    * [tm_pdf_modify_hist_mast] 테이블에 저장한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <insert     id="saveTmPdfModifyHistMast">
+    <![CDATA[
+        INSERT  INTO    
+        /* etpOper.saveTmPdfModifyHistMast      [tm_pdf_modify_hist_mast] 테이블에 저장한다. */
+        tm_pdf_modify_hist_mast 
+        ( 
+                email                       /* 이메일 */
+            ,   F16583                      /* 사무수탁회사번호 */
+            ,   F16012                      /* ETF종목코드 */
+            ,   F16013                      /* ETF단축코드 */
+            ,   group_no                    /* 사용자별 처리한 그룹번호 */
+
+            ,   type_cd                     /* 사용자 그룹 코드 */
+            ,   inst_cd                     /* 기관구분코드 */
+            ,   reg_id                      /* 등록자 ID */
+            ,   reg_time                    /* 등록시간 */
+        ) 
+        VALUES  
+        ( 
+                #{user_id}                  /* 이메일 */
+            ,   #{f16583}                   /* 사무수탁회사번호 */
+            ,   #{f16012}                   /* ETF종목코드 */
+            ,   #{f16013}                   /* ETF단축코드 */
+            ,   #{group_no}                 /* 사용자별 처리한 그룹번호 */
+
+            ,   #{type_cd}                  /* 사용자 그룹 코드 */
+            ,   #{inst_cd}                  /* 기관구분코드 */
+            ,   #{user_id}                  /* 등록자 ID */
+            ,   now()                       /* 등록시간 */
+        )
+    ]]>
+    </insert>    
 
 
    <!--
-    * [tm_pdf_modify_hist] 테이블에 저장한다.
+    * [tm_pdf_modify_hist_dtl] 테이블에 저장한다.
     * 2019-05-20  bkLove(촤병국)
     -->
-    <insert     id="saveTmPdfModifyHist">
+    <insert     id="saveTmPdfModifyHistDtl">
     <![CDATA[
         INSERT  INTO    
-        /* etpOper.saveTmPdfModifyHist        [tm_pdf_modify_hist] 테이블에 저장한다. */
-        tm_pdf_modify_hist 
+        /* etpOper.saveTmPdfModifyHistDtl        [tm_pdf_modify_hist_dtl] 테이블에 저장한다. */
+        tm_pdf_modify_hist_dtl
         ( 
-                F16583                      /* 사무수탁회사번호 */
+                hist_no                     /* 이력번호 */
+            ,   email                       /* 이메일 */
+            ,   F16583                      /* 사무수탁회사번호 */
             ,   F16012                      /* ETF종목코드 */
             ,   F16013                      /* ETF단축코드 */
-            ,   hist_no                     /* 이력번호 */
+            ,   group_no                    /* 사용자별 처리한 그룹번호 */
             ,   F16316                      /* 구성종목코드 */
+
+            ,   type_cd                     /* 사용자 그룹 코드 */
+            ,   inst_cd                     /* 기관구분코드 */
 
             ,   status                      /* insert( 신규 ), modify( 변경 ) */
             ,   F16499                      /* 1CU단위증권수 */
             ,   F16499_PREV                 /* 1CU단위증권수 ( 변경전 ) */
+            ,   F34840                      /* 액면금액 */
+            ,   F34840_PREV                 /* 액면금액 ( 변경전 ) */
 
             ,   reg_id                      /* 등록자 ID */
             ,   reg_time                    /* 등록시간 */
@@ -1130,15 +1245,22 @@
         <foreach    collection="dataLists"   item="data"     separator="," >
     <![CDATA[        
         ( 
-                #{f16583}                   /* 사무수탁회사번호 */
+                #{hist_no}                  /* 이력번호 */
+            ,   #{user_id}                  /* 이메일 */
+            ,   #{f16583}                   /* 사무수탁회사번호 */
             ,   #{f16012}                   /* ETF종목코드 */
             ,   #{f16013}                   /* ETF단축코드 */
-            ,   #{hist_no}                  /* 이력번호 */
+            ,   #{group_no}                 /* 사용자별 처리한 그룹번호 */
             ,   #{data.f16316}              /* 구성종목코드 */
+
+            ,   #{type_cd}                  /* 사용자 그룹 코드 */
+            ,   #{inst_cd}                  /* 기관구분코드 */            
 
             ,   #{data.status}              /* insert( 신규 ), modify( 변경 ) */
             ,   #{data.f16499}              /* 1CU단위증권수 */
             ,   #{data.f16499_prev}         /* 1CU단위증권수 ( 변경전 ) */
+            ,   #{data.f34840}              /* 액면금액 */
+            ,   #{data.f34840_prev}         /* 액면금액 ( 변경전 ) */
 
             ,   #{user_id}                  /* 등록자 ID */
             ,   now()                       /* 등록시간 */

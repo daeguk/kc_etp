@@ -120,13 +120,7 @@
                     </v-list>
             </v-card>
             <!--rightmenu end -->
-            <v-flex>
-            <v-dialog v-model="progress" persistent  content-class="progressbar_w">     
-                        <template>
-                            <v-progress-circular :size="50" indeterminate></v-progress-circular>
-                            </template>
-                    </v-dialog>
-            </v-flex>
+           
         </v-layout>
     </v-container>
 </template>
@@ -148,7 +142,6 @@ export default {
     props: [  ],
     data() {
         return {
-            progress: false, 
             drawer: true,
             mini: false,
             on : false,
@@ -280,10 +273,9 @@ export default {
         fn_getIndexDetailList : function( rowData, paramForm ) {
 
             var vm = this;
-
+            this.$emit("showProgress", true);
             console.log( "ComIndexJongmok.vue -> fn_getIndexDetailList" );
             
-            vm.progress = true;
             axios.post(Config.base_url + "/user/index/getIndexDetailList", {
                 data:  rowData
             }).then(response => {
@@ -300,8 +292,7 @@ export default {
                     vm.form.jisuSearchYn    =   "Y";
                     vm.$emit( "fn_getIndexDetailList", vm.indexBasic, indexDetailList, vm.form );
                 }
-
-                vm.progress = false;
+                this.$emit("showProgress", false);
             });
         },        
 
@@ -313,7 +304,7 @@ export default {
         fn_getIndexJongmokList : function() {
 
             var vm = this;
-
+            
             console.log( "ComIndexJongmok.vue -> fn_getIndexJongmokList" );
 
             if( vm.form.jongmokSearch.length < 2 ) {
@@ -321,7 +312,6 @@ export default {
                 return false;
             }
 
-            vm.progress = true;
             axios.post(Config.base_url + "/user/index/getIndexJongmokList", {
                 data: {
                     searchData : vm.form.jongmokSearch
@@ -334,7 +324,7 @@ export default {
                     vm.form.jisuSearchYn =   "N";
                     vm.$emit( "fn_getIndexJongmokList", jongmokDataList, vm.form );
                 }
-                vm.progress = false;
+               
             });
             
         },
@@ -347,7 +337,7 @@ export default {
         fn_getIndexListByFirst : function() {
 
             var vm = this;
-            vm.progress = true;
+            
             console.log( "ComIndexJongmok.vue -> fn_getIndexListByFirst" );
 
             axios.post(Config.base_url + "/user/index/getIndexList", {
@@ -365,7 +355,7 @@ export default {
                         vm.fn_getIndexDetailList( rowData, vm.form );
                     }
                 }
-                vm.progress = false;
+                
             });
             
         },
@@ -378,7 +368,7 @@ export default {
         fn_getIndexList : function() {
 
             var vm = this;
-            vm.progress = true;
+           
             console.log( "ComIndexJongmok.vue -> fn_getIndexList" );
 
             if( jisuTable ) {
@@ -397,7 +387,7 @@ export default {
                     jisuTable.clear().draw();
                     jisuTable.rows.add( indexDataList ).draw();                    
                 }
-                 vm.progress = false;
+                
             });
            
         },

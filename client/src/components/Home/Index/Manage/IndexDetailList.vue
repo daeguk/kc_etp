@@ -27,13 +27,14 @@
                     </v-card-title>                    
 
 
-                    <table id="tableIndexList" class="tbl_type" width="100%"></table>
+                    <table id="tableIndexList" class="tbl_type ver7" width="100%"></table>
                     
                 </v-card>
             </v-flex >
             <v-flex  class="conWidth_right">
                 <IndexDetailQuick   @fn_getIndexDetailList="fn_getIndexDetailList"
-                                    @fn_getIndexJongmokList="fn_getIndexJongmokList">
+                                    @fn_getIndexJongmokList="fn_getIndexJongmokList"
+                                    @showProgress="showProgress">
                 </IndexDetailQuick>                
             </v-flex>
             
@@ -43,8 +44,7 @@
                         <template>
                             <v-progress-circular :size="50" indeterminate></v-progress-circular>
                             </template>
-                    </v-dialog>
-            </v-flex>
+        </v-dialog>
     </v-container>
 </template>
 
@@ -82,34 +82,7 @@ export default {
        // this.$root.$progress = this.$refs.progress;
 
         var vm = this;        
-        /* 유형에 따라 컬럼 헤더 변경 */
-        tableIndexList = $('#tableIndexList').DataTable( {
-                "processing": true,
-                "serverSide": false,
-                "info": false,   // control table information display field
-                "stateSave": true,  //restore table state on page reload,
-                "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                paging: false,
-                searching: false,                
-                data : [],
-                "columnDefs": [ 
-                    {
-                    "render": function ( data, type, row ) {
-                        return util.formatNumber(data);;
-                    },
-                    "targets": [2,3]
-                    } 
-                ],
-                columns: [
-                    { "title"   :   "code"          ,   "data": "isin_code"             ,   "orderable" : true, className:"txt_left" },      /* 종목코드 */
-                    { "title"   :   "name"          ,   "data": "f16002"                ,   "orderable" : true, className:"txt_left"  },      /* 한글종목명 */
-                    { "title"   :   "base_prc"      ,   "data": "f03003"                ,   "orderable" : true, className:"txt_right"  },      /* 전일종가 */
-                    { "title"   :   "shrs"          ,   "data": "f30812"                ,   "orderable" : true, className:"txt_right"  },      /* 상장주식수 */
-                    { "title"   :   "float_rto"     ,   "data": "style_includ_percnt"   ,   "orderable" : true, className:"txt_right"  },      /* 스타일포함비중 */
-                    { "title"   :   "ceiling_rto"   ,   "data": "ceiling_percnt"        ,   "orderable" : true, className:"txt_right"  },      /* CEILING비중 */
-                    { "title"   :   "factor_rto"    ,   "data": "f30813"                ,   "orderable" : true, className:"txt_right"  }       /* 유동주식비율 */
-                ]
-        });
+
         console.log( "IndexDetailList.vue -> mounted" );
     },
     created: function() {},
@@ -139,7 +112,35 @@ export default {
                 tableIndexList.destroy();
             }
 
-            
+            /* 유형에 따라 컬럼 헤더 변경 */
+            tableIndexList = $('#tableIndexList').DataTable( {
+                    "processing": true,
+                    "serverSide": false,
+                    "info": false,   // control table information display field
+                    "stateSave": true,  //restore table state on page reload,
+                    "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                    "scrollY": '68vh',
+                    paging: false,
+                    searching: false,                
+                    data : [],
+                    "columnDefs": [ 
+                        {
+                        "render": function ( data, type, row ) {
+                            return util.formatNumber(data);;
+                        },
+                        "targets": [2,3]
+                        } 
+                    ],
+                    columns: [
+                        { "title"   :   "Code"          ,   "data": "isin_code"             ,   "orderable" : true, "width" : "12%", className:"txt_left" },      /* 종목코드 */
+                        { "title"   :   "Name"          ,   "data": "f16002"                ,   "orderable" : true, "width" : "18%", className:"txt_left"  },      /* 한글종목명 */
+                        { "title"   :   "BasePrc"       ,   "data": "f03003"                ,   "orderable" : true, "width" : "14%", className:"txt_right"  },      /* 전일종가 */
+                        { "title"   :   "Shrs"          ,   "data": "f30812"                ,   "orderable" : true, "width" : "14%", className:"txt_right"  },      /* 상장주식수 */
+                        { "title"   :   "Float rto"     ,   "data": "style_includ_percnt"   ,   "orderable" : true, "width" : "14%", className:"txt_right"  },      /* 스타일포함비중 */
+                        { "title"   :   "Ceiling rto"   ,   "data": "ceiling_percnt"        ,   "orderable" : true, "width" : "14%", className:"txt_right"  },      /* CEILING비중 */
+                        { "title"   :   "Factor rto"    ,   "data": "f30813"                ,   "orderable" : true, "width" : "14%", className:"txt_right"  }       /* 유동주식비율 */
+                    ]
+            });            
 
 
             if( paramIndexDetailList ) {
@@ -178,6 +179,7 @@ export default {
                 "info": false,   // control table information display field
                 "stateSave": true,  //restore table state on page reload,
                 "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                "scrollY": '68vh',
                 paging: false,
                 searching: false,
                 data : [],
@@ -190,13 +192,13 @@ export default {
                     } 
                 ],
                 columns: [
-                    { "title"   :   "id"            ,   "data": "f16013"             ,   "orderable" : true, className:"txt_left"  },      /* ID */
-                    { "title"   :   "name"          ,   "data": "f16002"                ,   "orderable" : true, className:"txt_left"  },      /* 지수명 */
-                    { "title"   :   "편입비중(%)"    ,   "data": "in_out_rate"           ,   "orderable" : true, className:"txt_right"  },      /* 편입비중(%) */
-                    { "title"   :   "shrs"          ,   "data": "f30812"                ,   "orderable" : true, className:"txt_right"  },      /* shrs */
-                    { "title"   :   "float_rto"     ,   "data": "style_includ_percnt"   ,   "orderable" : true, className:"txt_right"  },      /* float_rto */
-                    { "title"   :   "ceiling_rto"   ,   "data": "ceiling_percnt"        ,   "orderable" : true, className:"txt_right"  },      /* ceiling_rto */
-                    { "title"   :   "factor_rto"    ,   "data": "f30813"                ,   "orderable" : true, className:"txt_right"  }       /* factor_rto */
+                    { "title"   :   "ID"            ,   "data": "f16013"                ,   "orderable" : true, "width" : "12%", className:"txt_left"  },      /* ID */
+                    { "title"   :   "지수명"         ,   "data": "f16002"                ,   "orderable" : true, "width" : "18%",className:"txt_left"  },      /* 지수명 */
+                    { "title"   :   "편입비중(%)"    ,   "data": "in_out_rate"           ,   "orderable" : true, "width" : "14%",className:"txt_right"  },      /* 편입비중(%) */
+                    { "title"   :   "Shrs"          ,   "data": "f30812"                ,   "orderable" : true, "width" : "14%",className:"txt_right"  },      /* shrs */
+                    { "title"   :   "Float rto"     ,   "data": "style_includ_percnt"   ,   "orderable" : true, "width" : "14%",className:"txt_right"  },      /* float_rto */
+                    { "title"   :   "Ceiling rto"   ,   "data": "ceiling_percnt"        ,   "orderable" : true, "width" : "14%",className:"txt_right"  },      /* ceiling_rto */
+                    { "title"   :   "Factor rto"    ,   "data": "f30813"                ,   "orderable" : true, "width" : "14%",className:"txt_right"  }       /* factor_rto */
                 ]
             });
 
@@ -210,7 +212,9 @@ export default {
             vm.progress = false;
         },
              
-
+        showProgress: function(visible) {
+            this.progress = visible;
+        },
         fn_closePop() {
             var vm = this;
 

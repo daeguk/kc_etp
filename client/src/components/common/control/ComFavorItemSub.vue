@@ -100,6 +100,7 @@
 
                 <!--자산추가 팝업 end -->
             </v-list-tile-content>
+            <ProgressBar ref="progress"></ProgressBar>
         </v-list>
 
     </v-container>
@@ -114,7 +115,7 @@ import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
 import util       from "@/js/util.js";
-
+import ProgressBar from "@/components/common/ProgressBar.vue";
 
 var etf_table = null;
 var etn_table = null;
@@ -149,6 +150,7 @@ export default {
         };
     },
     components: {
+        ProgressBar : ProgressBar
     },
     computed: {
         
@@ -546,6 +548,7 @@ export default {
 
         /* 전체 종목 etn 종목리스트 */
         getEtnList: function() {
+            util.processing(this.$refs.progress, true);
             console.log("etn_grid");
             axios.get(Config.base_url + "/user/common/getETNList", {
                 params: {
@@ -561,13 +564,14 @@ export default {
                     etn_table.rows.add(items).draw();
                                         
                 }
-                
+                util.processing(this.$refs.progress, false);
             });
         }, 
 
         /* 전체 종목 etf 종목리스트 */
         getEtfList: function() {
             console.log("etn_grid");
+            util.processing(this.$refs.progress, true);
             axios.get(Config.base_url + "/user/common/getETFList", {
                 params: {
                 }
@@ -583,13 +587,14 @@ export default {
                     etf_table.rows.add(items).draw();
             
                 }
-                
+                util.processing(this.$refs.progress, false);
             });
         }, 
 
         /* 전체 종목 index 종목리스트 */
         getIndexList: function() {
             console.log("etn_grid");
+            util.processing(this.$refs.progress, true);
             axios.get(Config.base_url + "/user/common/getIndexList", {
                 params: {
                 }
@@ -605,7 +610,7 @@ export default {
                     index_table.rows.add(items).draw();
                     
                 }
-                
+                util.processing(this.$refs.progress, false);
             });
         },
 

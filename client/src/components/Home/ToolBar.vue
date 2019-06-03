@@ -43,7 +43,8 @@
           icon
           dark
           class="topmenu_icon"
-        ><v-icon @mouseover="showContextMenu($event)">apps</v-icon>
+          v-on:mouseover="showContextMenu($event)"
+        ><v-icon>apps</v-icon>
         </v-btn>
         <span class="top_cont_title">MARKET ETP INFO</span>
   </v-toolbar-title>
@@ -145,7 +146,7 @@ export default {
     },
     showContextMenu: function(e) {
             
-            
+            console.log("showContextMenu");
             var menu = document.getElementById("context-menu");
 
             if (menu.className == "active") {

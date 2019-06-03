@@ -99,10 +99,10 @@ export default {
                             data: this.results,
                             destroy: true,
                                 columns: [
-                                   { "data": "USER_NM", "orderable": true,className: "td_in_center", },
-                                   { "data": "TEL_NO", "orderable" : true,className: "td_in_center", },
-                                   { "data": "CEL_NO", "orderable": true },
-                                   { "data": "EMAIL", "orderable" : true },
+                                   { "data": "user_nm", "orderable": true,className: "td_in_center" },
+                                   { "data": "tel_no", "orderable" : true,className: "td_in_center" },
+                                   { "data": "cel_no", "orderable": true ,className: "td_in_center"},
+                                   { "data": "email", "orderable" : true ,className: "td_in_center" },
                                 ]
                             }); 
                     }
