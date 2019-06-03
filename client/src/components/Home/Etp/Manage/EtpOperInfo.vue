@@ -4,12 +4,16 @@
             <v-flex grow class="conWidth_left">
 
                 <v-card flat>
+                <div class="title01_w case2">
                     <v-card-title primary-title>
-                        <h3 class="headline subtit" pb-0>
+                        <div class="title_wrap01">
+                            <h3 class="headline subtit">
                             ETP 운용 정보
-                            <p>
-                                Total
-                                <span class="text_result">{{ result_cnt }}</span> results
+                                <span class="text_result">{{ result_cnt }}</span>
+                                <span class="text_result_t">results</span>
+                                <span class="sub_txt">기준일 : {{ nowDate }}</span>
+                            </h3>
+                            <div class="right_btn">
                                 <span class="toggle2">
                                     <v-btn-toggle v-model="text" class="toggle_01">
                                         <v-btn flat value="전종목"      @click="fn_getEtpOperInfo('A')">전종목</v-btn>
@@ -18,15 +22,10 @@
                                         <v-btn flat value="관심종목"    @click="fn_getEtpOperInfo('I')">관심종목</v-btn>
                                     </v-btn-toggle>
                                 </span>
-                            </p>
-                            <!--오른쪽 메뉴 종목으로 찾기 검색 후 
-                            <p class="text_result">
-                                6 results
-                            </p--->
-                            <p class="sub_txt">기준일 : {{ nowDate }}</p>
-                        </h3>
+                            </div>
+                        </div>
                     </v-card-title>
-
+                </div>
 
                     <v-card flat>
                         <div v-show='stateInfo.pageState != "performance"' >

@@ -947,26 +947,56 @@
     </select>
 
     <!--
-    * ETP 운용관리 - PDF 긴급반영 - 저장시 마스터에 이미 등록된 데이터가 존재하는지 체크한다.
+    * ETP 운용관리 - PDF 긴급반영 - 저장시 마스터 상태정보를 조회한다.
     * 2019-05-03  bkLove(촤병국)
     -->
-    <select id="getTmPdfModifyMastExistsCheck">
-        SELECT   COUNT(*)                               AS  exists_cnt   /* 존재 건수 */
+    <select id="getTmPdfModifyMastCheck">
 
-          FROM  (         
-                    SELECT      #{f16583}               AS  f16583      /* 사무수탁회사번호 */
-                            ,   #{f16012}               AS  f16012      /* ETF종목코드 */
-                            ,   #{f16013}               AS  f16013      /* ETF단축코드 */
+        SELECT      /* etpOper.getTmPdfModifyMastCheck  ETP 운용관리 - PDF 긴급반영 - 저장시 마스터 상태정보를 조회한다. */
+
+                    CASE    WHEN    tm_pdf_modify_mast.email     IS  NULL
+                            THEN    'insert'
+                            ELSE    'modify'
+                    END                                         AS  mast_status /* 마스터 상태 */
+                ,   base.*
+
+          FROM  (
+                    SELECT      #{user_id}                      AS  email       /* 이메일 */
+                            ,   #{f16583}                       AS  f16583      /* 사무수탁회사번호 */
+                            ,   #{f16012}                       AS  f16012      /* ETF종목코드 */
+                            ,   #{f16013}                       AS  f16013      /* ETF단축코드 */
                       FROM  DUAL
                 )       base
-         INNER  JOIN    tm_pdf_modify_mast
+                
+          LEFT  OUTER   JOIN    tm_pdf_modify_mast
+                          ON    (
+                                            1 = 1                
+                                    AND     tm_pdf_modify_mast.email        =   base.email      /* 이메일 */
+                                    AND     tm_pdf_modify_mast.F16583       =   base.F16583     /* 사무수탁회사번호 */
+                                    AND     tm_pdf_modify_mast.F16012       =   base.F16012     /* ETF종목코드 */
+                                    AND     tm_pdf_modify_mast.F16013       =   base.F16013     /* ETF단축코드 */
+                                )
+         WHERE  1 = 1                           
+
+    </select>
+
+    <!--
+    * ETP 운용관리 - PDF 긴급반영 - 저장시 상세에 이미 등록된 데이터가 존재하는지 체크한다.
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="getTmPdfModifyDtlExistsCheck">
+
+        SELECT      /* etpOper.getTmPdfModifyDtlCheck  ETP 운용관리 - PDF 긴급반영 - 저장시 상세 상태정보를 조회한다. */
+
+                    COUNT( tm_pdf_modify_dtl.email )            AS  detail_cnt      /* 상세건수 */
+
+          FROM  tm_pdf_modify_dtl
          WHERE  1 = 1
+           AND  tm_pdf_modify_dtl.email             =   #{user_id}      /* 이메일 */
+           AND  tm_pdf_modify_dtl.f16583            =   #{f16583}       /* 사무수탁회사번호 */
+           AND  tm_pdf_modify_dtl.f16012            =   #{f16012}       /* ETF종목코드 */
+           AND  tm_pdf_modify_dtl.f16013            =   #{f16013}       /* ETF단축코드 */
 
-           AND  tm_pdf_modify_mast.f16583           =   base.f16583     /* 사무수탁회사번호 */
-           AND  tm_pdf_modify_mast.f16012           =   base.f16012     /* ETF종목코드 */
-           AND  tm_pdf_modify_mast.f16013           =   base.f16013     /* ETF단축코드 */
-
-         LIMIT  1
     </select>    
 
     <!--
@@ -974,28 +1004,39 @@
     * 2019-05-03  bkLove(촤병국)
     -->
     <select id="getTmPdfModifyDtlExistsCheck">
-        SELECT      COUNT(*)                                AS  exists_cnt   /* 존재 건수 */
 
-          FROM  (
+        SELECT      /* etpOper.getTmPdfModifyDtlCheck  ETP 운용관리 - PDF 긴급반영 - 저장시 상세 상태정보를 조회한다. */
+
+                    CASE    WHEN    tm_pdf_modify_dtl.email     IS  NULL
+                            THEN    'insert'
+                            ELSE    'modify'
+                    END                                         AS  dtl_status   /* 상세 상태 */
+                ,   base.*
+
+          FROM  (        
                 <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
                 <![CDATA[              
-                    SELECT      #{f16583}               AS  f16583      /* 사무수탁회사번호 */
-                            ,   #{f16012}               AS  f16012      /* ETF종목코드 */
-                            ,   #{f16013}               AS  f16013      /* ETF단축코드 */
-                            ,   #{data.f16316}          AS  f16316      /* 구성종목코드 */
+                    SELECT      #{user_id}                      AS  email       /* 이메일 */
+                            ,   #{f16583}                       AS  f16583      /* 사무수탁회사번호 */
+                            ,   #{f16012}                       AS  f16012      /* ETF종목코드 */
+                            ,   #{f16013}                       AS  f16013      /* ETF단축코드 */
+                            ,   #{data.f16316}                  AS  f16316      /* 구성종목코드 */
                       FROM  DUAL
                 ]]>
                 </foreach>
                 )       base
-         INNER  JOIN    tm_pdf_modify_dtl
+
+          LEFT  OUTER   JOIN    tm_pdf_modify_dtl
+                          ON    (
+                                            1 = 1
+                                    AND     tm_pdf_modify_dtl.email             =   base.email      /* 이메일 */
+                                    AND     tm_pdf_modify_dtl.f16583            =   base.f16583     /* 사무수탁회사번호 */
+                                    AND     tm_pdf_modify_dtl.f16012            =   base.f16012     /* ETF종목코드 */
+                                    AND     tm_pdf_modify_dtl.f16013            =   base.f16013     /* ETF단축코드 */
+                                    AND     tm_pdf_modify_dtl.f16316            =   base.f16316     /* 구성종목코드 */
+                                )
          WHERE  1 = 1
 
-           AND  tm_pdf_modify_dtl.f16583            =   base.f16583     /* 사무수탁회사번호 */
-           AND  tm_pdf_modify_dtl.f16012            =   base.f16012     /* ETF종목코드 */
-           AND  tm_pdf_modify_dtl.f16013            =   base.f16013     /* ETF단축코드 */
-           AND  tm_pdf_modify_dtl.f16316            =   base.f16316     /* 구성종목코드 */
-
-         LIMIT  1
     </select>
 
     <!--

@@ -11,8 +11,8 @@
                                     </v-card-title>    
                                 </v-card>
 
-                                <v-tabs v-model="activeTab" centered>
-                                    <v-tabs-slider color="#1976d2"></v-tabs-slider>
+                                <v-tabs v-model="activeTab" centered grow>
+                                    <v-tabs-slider></v-tabs-slider>
 
                                     <v-tab v-for="item in kindTabs" :key="item">{{ item }}</v-tab>
                                 </v-tabs>
@@ -25,11 +25,11 @@
                                         <v-flex xs12>
                                             <v-card flat>
                                                
-                                                <table id="etf_table" class="tbl_type ver2">
+                                                <table id="etf_table" class="tbl_type ver2" style="width:100%">
                                                     <colgroup>
-                                                        <col width="3%"/>
-                                                        <col width="70%"/>
-                                                        <col width="27%"/>
+                                                        <col width="3%">
+                                                        <col width="70%">
+                                                        <col width="27%">
                                                     </colgroup>
                                                     <thead>
                                                         <tr>
@@ -176,9 +176,9 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "";
                         if (data == '1') {
-                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon_star on v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                            htm += "<button type='button' id='btn_faver' class='btn_icon_star on v-icon material-icons'>star</button>";
                         } else {
-                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon_star v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                            htm += "<button type='button' id='btn_faver' class='btn_icon_star v-icon material-icons'>star</button>";
                         }
                         
                         return htm;
@@ -187,7 +187,7 @@ export default {
                 },
                  {  
                     "render": function ( data, type, row ) {
-                        let htm = "<div>";
+                        let htm = "<div class='td_ellipsis'>";
                         htm += "           "+data+"";
                         htm += "            <br><span class='text_S'>"+row.F16013+"</div>";
                         return htm;
@@ -198,12 +198,12 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = ""
                             
-                            htm += "<div class='text_S'>" + util.formatNumber(data) + "</div>";
+                            htm += "<div>" + util.formatNumber(data) + "</div>";
 
                             if (row.F15004 >= 0) {
-                                htm += "<br><span class='text_S text_red'>"+row.F15004+"%</span>";
+                                htm += "<span class='text_S text_red'>"+row.F15004+"%</span>";
                             } else {
-                                htm += "<br><span class='text_S text_blue'>"+row.F15004+"%</span>";
+                                htm += "<span class='text_S text_blue'>"+row.F15004+"%</span>";
                             }
 
                             return htm;
@@ -218,8 +218,8 @@ export default {
             paging: false,
             searching: false,
             columns: [
-                { "data": "faver", "orderable": false, width:'5%'},    
-                { "data": "JISU_NM", "orderable": false, className:'txt_left line2'},                
+                { "data": "faver", "orderable": false, width:'5%', defaultContent:""},    
+                { "data": "JISU_NM", "orderable": false, className:'txt_left line2 in_icon'},                
                 { "data": "F15001", "orderable": false, className:'txt_right'},            
             ]
         });
@@ -275,9 +275,9 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "";
                         if (data == '1') {
-                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon_star on v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                            htm += "<button type='button' id='btn_faver' class='btn_icon_star on v-icon material-icons'>star</button>";
                         } else {
-                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon_star v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                            htm += "<button type='button' id='btn_faver' class='btn_icon_star v-icon material-icons'>star</button>";
                         }
                         
                         return htm;
@@ -286,7 +286,7 @@ export default {
                 },
                 {  
                     "render": function ( data, type, row ) {
-                        let htm = "<div>";
+                        let htm = "<div class='td_ellipsis'>";
                         htm += "           "+data+"";
                         htm += "            <br><span class='text_S'>"+row.F16013+"</div>";
                         return htm;
@@ -300,9 +300,9 @@ export default {
                             htm += "<div>" + util.formatNumber(data) + "</div>";
 
                             if (row.F15004 >= 0) {
-                                htm += "<br><span class='text_S text_red'>"+row.F15004+"%</span>";
+                                htm += "<span class='text_S text_red'>"+row.F15004+"%</span>";
                             } else {
-                                htm += "<br><span class='text_S text_blue'>"+row.F15004+"%</span>";
+                                htm += "<span class='text_S text_blue'>"+row.F15004+"%</span>";
                             }
 
                             return htm;
@@ -376,9 +376,9 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "";
                         if (data == '1') {
-                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon_star on v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                            htm += "<button type='button' id='btn_faver' class='btn_icon_star on v-icon material-icons'>star</button>";
                         } else {
-                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon_star v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                            htm += "<button type='button' id='btn_faver' class='btn_icon_star v-icon material-icons'>star</button>";
                         }
                         
                         return htm;
@@ -387,7 +387,7 @@ export default {
                 },
                 {  
                     "render": function ( data, type, row ) {
-                        let htm = "<div>";
+                        let htm = "<div class='td_ellipsis'>";
                         htm += "           "+data+"";
                         htm += "            <br><span class='text_S'>"+row.F16013+"</div>";
                         return htm;
@@ -401,9 +401,9 @@ export default {
                             htm += "<div>" + util.formatNumber(data) + "</div>";
 
                             if (row.F15004 >= 0) {
-                                htm += "<br><span class='text_S text_red'>"+row.F15004+"%</span>";
+                                htm += "<span class='text_S text_red'>"+row.F15004+"%</span>";
                             } else {
-                                htm += "<br><span class='text_S text_blue'>"+row.F15004+"%</span>";
+                                htm += "<span class='text_S text_blue'>"+row.F15004+"%</span>";
                             }
 
                             return htm;

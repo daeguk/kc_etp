@@ -6,11 +6,9 @@
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
                             지수관리
-                            <p>
-                                Total
-                                <span class="text_result">{{ result_cnt }}</span> results
-                            </p>
-                            <p class="sub_txt">기준일 : {{ nowDate }}</p>
+                                <span class="text_result">{{ result_cnt }}</span>
+                                <span class="text_result_t"> results</span>
+                                <span class="sub_txt">기준일 : {{ nowDate }}</span>
                         </h3>
                     </v-card-title>
                     
