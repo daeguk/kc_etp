@@ -640,9 +640,9 @@ export default {
                                 htm += util.formatNumber(data);
 
                                 if (row.f30818 >= 0) {
-                                    htm += "<br><span class='text_S text_red'>"+row.f30818+"%</span>";      /* 장중지표가치(iNAV/iIV)등락율 */
+                                    htm += "<br><span class='text_S text_red'>"+row.f30823+"%</span>";      /* ETF관련지수등락율 */
                                 } else {
-                                    htm += "<br><span class='text_S text_blue'>"+row.f30818+"%</span>";     /* 장중지표가치(iNAV/iIV)등락율 */
+                                    htm += "<br><span class='text_S text_blue'>"+row.f30823+"%</span>";     /* ETF관련지수등락율 */
                                 }
 
                                 return htm;
