@@ -24,12 +24,12 @@
                             <v-card flat class="w100">
                                 <v-list>
                                     <v-list-tile
-                                        class="border_b"
+                                         :class="( toggleIndexOversea ? 'border_b select' : 'border_b' )"
                                         @click="fn_setEtpOperIndexOversea"
                                         v-model="toggleIndexOversea"
                                     >
                                         <v-list-tile-avatar>
-                                            <div class="oper_list_icon"><span class="icon4"></span></div>
+                                            <div :class="( toggleIndexOversea ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon4"></span></div>
                                         </v-list-tile-avatar>
                                         <v-list-tile-content class="rm_con_h">
                                             <v-list-tile-title>해외지수 종가 모니터링</v-list-tile-title>

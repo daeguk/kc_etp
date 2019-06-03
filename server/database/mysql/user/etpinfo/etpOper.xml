@@ -373,6 +373,8 @@
                 ,   td_etfpdf_basic.f16588                                  AS  f16588      /* 평가금액 */
                 ,   td_etfpdf_basic.f34743                                  AS  f34743      /* ETF_PDF비중 */
 
+                ,   td_etfpdf_basic.f16004                                  AS  f16004      /* 해외시장종목명 */
+
           FROM          td_etp_basic
          INNER  JOIN    td_etfpdf_basic
                   ON    td_etp_basic.f16012         =   td_etfpdf_basic.f16012      /* 국제표준코드 */
@@ -470,6 +472,8 @@
                 ,   td_etnpdf_basic.f16013                                  AS  f16013      /* ETF 단축코드 */
                 ,   td_etnpdf_basic.f16316                                  AS  f16316      /* 구성종목코드 */
                 ,   td_etnpdf_basic.f33837                                  AS  f33837      /* 구성종목수 */
+
+                ,   td_etnpdf_basic.f16541                                  AS  f16004      /* 종목명 */
                 
           FROM          td_etp_basic
          INNER  JOIN    td_etnpdf_basic
@@ -505,7 +509,9 @@
                 ,   td_etnpdf_hist.f16316                                   AS  f16316      /* 구성종목코드 */
                 ,   td_etnpdf_hist.f33837                                   AS  f33837      /* 구성종목수 */
                 ,   td_etnpdf_hist.f16541                                   AS  f16541      /* 구성종목명 */
-                ,   td_etnpdf_hist.f16311                                   AS  f16311      /* 구성비 */                
+                ,   td_etnpdf_hist.f16311                                   AS  f16311      /* 구성비 */
+
+                ,   td_etnpdf_hist.f16541                                   AS  f16004      /* 종목명 */
 
           FROM  (
                     SELECT      td_etnpdf_hist.f12506                       AS  f12506      /* 일자 */
@@ -977,6 +983,25 @@
                                     AND     tm_pdf_modify_mast.F16013       =   base.F16013     /* ETF단축코드 */
                                 )
          WHERE  1 = 1                           
+
+    </select>
+
+    <!--
+    * ETP 운용관리 - PDF 긴급반영 - 저장시 상세에 이미 등록된 데이터가 존재하는지 체크한다.
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="getTmPdfModifyDtlExistsCheck">
+
+        SELECT      /* etpOper.getTmPdfModifyDtlCheck  ETP 운용관리 - PDF 긴급반영 - 저장시 상세 상태정보를 조회한다. */
+
+                    COUNT( tm_pdf_modify_dtl.email )            AS  detail_cnt      /* 상세건수 */
+
+          FROM  tm_pdf_modify_dtl
+         WHERE  1 = 1
+           AND  tm_pdf_modify_dtl.email             =   #{user_id}      /* 이메일 */
+           AND  tm_pdf_modify_dtl.f16583            =   #{f16583}       /* 사무수탁회사번호 */
+           AND  tm_pdf_modify_dtl.f16012            =   #{f16012}       /* ETF종목코드 */
+           AND  tm_pdf_modify_dtl.f16013            =   #{f16013}       /* ETF단축코드 */
 
     </select>    
 

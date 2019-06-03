@@ -2,12 +2,16 @@
 var util = {    
     /* 천단위 콤마 처리 */
     formatNumber: function(num) {
-    
         if (num != null && typeof num !== 'undefined') {
-            num = Number(num).toFixed(2);
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            if (isNaN(num)) {
+              return "0.00"              
+            } else {
+              num = Number(num).toFixed(2);
+              return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+            
         } else {
-            return '';
+            return "0.00" 
         }
     },
     formatStringNum: function(num) {

@@ -274,7 +274,7 @@ export default {
             columns: [
                 { "data": "f33861", "orderable": true},  /* 분류 */
                 { "data": "f16013", "orderable": true, className:"txt_left" }, /*코드*/
-                { "data": "f16002", "orderable": true}, /*종목*/
+                { "data": "f16004", "orderable": true}, /*종목*/
                 { "data": "f16499", "orderable": true, defaultContent:"" }, /*cu 수량*/
                 { "data": "f34743", "orderable": true, className:"txt_right" }, /*비중*/
                 { "data": "f15001", "orderable": true, className:"txt_right" }, /*현재가*/
@@ -362,7 +362,7 @@ export default {
             columns: [
                 { "data": "f33861", "orderable": true},  /* 분류 */
                 { "data": "f16013", "orderable": true, className:"txt_left" }, /*코드*/
-                { "data": "f16002", "orderable": true}, /*종목*/
+                { "data": "f16004", "orderable": true}, /*종목*/
                 { "data": "f16499", "orderable": true, defaultContent:""}, /*cu 수량*/
                 { "data": "f34743", "orderable": true, className:"txt_right" }, /*비중*/
                 { "data": "f15001", "orderable": true, className:"txt_right" }, /*현재가*/
@@ -436,12 +436,12 @@ export default {
                                 } else {
                                     vm.iNav_amt = vm.market_tot_amt;
                                 }
-                                /* INav 등락률 */
-                                vm.iNav_percent =  (1 - (vm.iNav_amt / vm.etpBasic.f03329)) * 100;
+                                /* INav 등락률 */                                
+                                vm.iNav_percent =  ((vm.iNav_amt / vm.etpBasic.f03329) - 1) * 100;
 
                                 /* 비중 정보 산출*/
                                 for (let item of vm.pdfList) {         
-                                    item.f34743 = (((item.f16588 /  vm.market_tot_amt) * 100).toFixed(2));                                    
+                                    item.f34743 = ((item.f16588 /  vm.market_tot_amt) * 100).toFixed(2);                                    
                                 }
                                 vm.pdf_reload(vm.pdfList);
                                 
@@ -526,11 +526,11 @@ export default {
                             vm.iNav_amt = vm.market_tot_amt;
                         }
                         /* INav 등락률 */
-                        vm.iNav_percent =  (1 - (vm.iNav_amt / vm.etpBasic.f03329)) * 100;
+                        vm.iNav_percent =  ((vm.iNav_amt / vm.etpBasic.f03329) - 1) * 100;
 
                         /* 비중 정보 산출*/
                         for (let item of vm.pdfList) {         
-                            item.f34743 = (((item.f16588 /  vm.market_tot_amt) * 100).toFixed(2));
+                            item.f34743 = ((item.f16588 /  vm.market_tot_amt) * 100).toFixed(2);
                         }
 
                         vm.pdf_reload(vm.pdfList);

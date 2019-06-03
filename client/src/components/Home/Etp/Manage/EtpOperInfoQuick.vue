@@ -30,13 +30,13 @@
                             <v-card flat class="w100">
                                 <v-list>
                                     <v-list-tile
-                                        class="border_b select"
+                                        :class="( toggleINav ? 'border_b select' : 'border_b' )"
                                         @click="fn_setInavData"
                                         v-model="toggleINav"
                                     >
                                         <v-list-tile-avatar>
                                             <!---click,hover시 select 클래스 추가--->
-                                            <div class="oper_list_icon select"><span class="icon1"></span></div>
+                                            <div :class="( toggleINav ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon1"></span></div>
                                         </v-list-tile-avatar>
                                         <v-list-tile-content class="rm_con_h">
                                             <v-list-tile-title>실시간투자지표산출현황</v-list-tile-title>
@@ -45,12 +45,12 @@
 
 
                                     <v-list-tile
-                                        class="border_b"
+                                        :class="( toggleEtpPerformance ? 'border_b select' : 'border_b' )"
                                         @click="fn_setEtpPerformanceData"
                                         v-model="toggleEtpPerformance"
                                     >
                                         <v-list-tile-avatar>
-                                           <div class="oper_list_icon"><span class="icon2"></span></div>
+                                           <div :class="( toggleEtpPerformance ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon2"></span></div>
                                         </v-list-tile-avatar>
 
                                         <v-list-tile-content class="rm_con_h">
@@ -63,9 +63,9 @@
 
                                     <v-dialog v-model="customizeDialog" persistent max-width="550">
                                         <template v-slot:activator="{ on }">
-                                            <v-list-tile v-on="on" class="border_b">
+                                            <v-list-tile v-on="on" @click="toggleCustomize=true;toggleINav=false;toggleEtpPerformance=false;" :class="( toggleCustomize ? 'border_b select' : 'border_b' )">
                                                 <v-list-tile-avatar>
-                                                   <div class="oper_list_icon"><span class="icon3"></span></div>
+                                                   <div :class="( toggleCustomize ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon3"></span></div>
                                                 </v-list-tile-avatar>
 
                                                 <v-list-tile-content class="rm_con_h">
@@ -249,6 +249,8 @@ export default {
         return {
             toggleINav : false,
             toggleEtpPerformance : false,
+            toggleCustomize : false,
+
             arrCustomizeColumn : [],
             customizeDialog : false,
             arrAllCustomizedTextData : [ "f15301", "index_nm", "f18001", "f03329", "index_f15001", "f30812", "f15302", "prev_f15001", "f15007", "f15304", "f15001", "f16073"  ],
@@ -294,7 +296,8 @@ export default {
 
             vm.toggleEtpPerformance =   false;
 
-            vm.toggleINav  =   !vm.toggleINav;
+            vm.toggleINav       =   !vm.toggleINav;
+            vm.toggleCustomize  =   false;
 
             var paramData   =   {};
             paramData.toggleINav    =   vm.toggleINav;
@@ -313,7 +316,8 @@ export default {
 
             vm.toggleINav  =   false;
 
-            vm.toggleEtpPerformance  =   !vm.toggleEtpPerformance;
+            vm.toggleEtpPerformance =   !vm.toggleEtpPerformance;
+            vm.toggleCustomize      =   false;
 
             var paramData   =   {};
             paramData.toggleEtpPerformance    =   vm.toggleEtpPerformance;            
@@ -333,6 +337,8 @@ export default {
 
             vm.toggleINav  =   false;
             vm.toggleEtpPerformance =   false;
+            vm.toggleCustomize      =   true;
+            
 
             console.log("########## EtpOperInfoQuick.vue -> fn_setCustomizeData START ############");
 

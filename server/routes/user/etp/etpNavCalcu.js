@@ -199,11 +199,17 @@ var getFutureBasic = function (req, res) {
         var mapper = req.app.get("mapper");
 
         var f16012 = req.query.f16012; /* 국제 표준 코드*/
-        var f34239 = req.query.f34239; /* 기초 지수 MID*/
+/*
+        호출하는 쪽에서 f34239 값을 넘겨주지 않아 주석 처리함.
+        var f34239 = req.query.f34239;
+*/
         
         var options = {
             "f16012" : f16012,
+/*
+            호출하는 쪽에서 f34239 값을 넘겨주지 않아 주석 처리함.
             "f34239" : f34239,
+*/
         };
 
         util.log("options", JSON.stringify(options));
