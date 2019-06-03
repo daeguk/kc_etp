@@ -59,15 +59,16 @@ export default {
         };
     },
     mounted: function() {
-        var vm = this;
-        
-        // 메시지 박스 참조
+         // 메시지 박스 참조
         this.$root.$confirm = this.$refs.confirm;
+
+        var vm = this;
 
         $('#index_table, tbody').on('click', 'button', function () {
             var data = reqTable.row($(this).parents('tr')).data();
             vm.selected = data;
-           // alert("Name = " + JSON.stringify(data));
+            console.log("Name = " + $(this).attr('name'));
+          
             if ($(this).attr('name') == "ok") {
                 vm.dialogOpen('1', data);
             } else {
@@ -142,7 +143,7 @@ export default {
 
             if (await this.$root.$confirm.open(
 					'승인',
-					'정보 공개 요청 승인 하시겠습니까?',
+					this.message,
                     {}
                     ,2
 				)
