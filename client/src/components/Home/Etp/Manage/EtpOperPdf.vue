@@ -5,14 +5,16 @@
                 <v-card flat>
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
-                            <v-text-field
+                            ARIRANG 200 |
+                            <!--v-text-field
                                 v-model="searchParam.search_nm"
                                 class="pdf_search"
                                 single-line
                                 hide-details
                                 :readonly="true"
-                            ></v-text-field>
-                            <p class="pdf_calendar">
+                            ></v-text-field-->
+                            <span class="grey--text"> 2012545</span>
+                            <span class="text_result_t pdf_calendar">
                                 <v-menu
                                     ref="menu2"
                                     :close-on-content-click="false"
@@ -21,7 +23,6 @@
                                     lazy
                                     transition="scale-transition"
                                     offset-y
-                                    full-width
                                     min-width="290px"
                                 >
                                     <template v-slot:activator="{ on }">
@@ -46,7 +47,7 @@
                                         >OK</v-btn>
                                     </v-date-picker>
                                 </v-menu>
-                            </p>
+                            </span>
                         </h3>
                     </v-card-title>
                     <v-card flat>
@@ -167,7 +168,7 @@ export default {
                                                 +   "-" 
                                                 +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
                                                 +   "-" 
-                                                +   new Date().getDate();
+                                                +   _.padStart( new Date().getDate(), 2, '0' ) ;
 
                 vm.fn_setTableInfo();
                 vm.fn_getEtpOerPdf( 'Y' );
@@ -333,7 +334,7 @@ export default {
                 info: false, // control table information display field
                 stateSave: true, //restore table state on page reload,
                 lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                "scrollY": '70vh',
+                "scrollY": '75vh',
                 paging: false,
                 searching: false,
                 data: [],

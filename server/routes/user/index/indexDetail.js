@@ -57,6 +57,7 @@ var getIndexJongmokList = function(req, res) {
                 /* 1. 지수종목상세 정보를 조회한다. */
                 function( callback ) {
 
+                    paramData.m168uidxmap_gubun =   "FNGUIDE";
                     stmt = mapper.getStatement('indexDetail', 'getIndexJongmokList', paramData, format);
                     console.log(stmt);
 
@@ -184,6 +185,7 @@ var getIndexDetailList = function(req, res) {
                 /* 2. 선택된 지수의 상세 목록을 조회한다. */
                 function( data, callback ) {                    
 
+                    paramData.m168uidxmap_gubun =   "FNGUIDE";
                     stmt = mapper.getStatement('indexDetail', 'getIndexDetailList', paramData, format);
                     console.log(stmt);
 
@@ -436,7 +438,6 @@ var getIndexList = function(req, res) {
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
-        var dataList        =   [];
 
         resultMsg.dataList  =   [];
         Promise.using(pool.connect(), conn => {
@@ -447,6 +448,7 @@ var getIndexList = function(req, res) {
                 /* 1. 지수정보를 조회한다. */
                 function( callback ) {
 
+                    paramData.m168uidxmap_gubun =   "FNGUIDE";
                     stmt = mapper.getStatement('indexDetail', 'getIndexList', paramData, format);
                     console.log(stmt);
 
@@ -461,56 +463,12 @@ var getIndexList = function(req, res) {
                         }
 
                         if ( rows ) {
-                            dataList    =   rows;
+                            resultMsg.dataList    =   rows;
                         }
 
-                        callback( null, paramData );
+                        callback( null );
                     });
                 },
-
-                /* 2. m168uidxList 를 조회한다. */
-                function( data, callback ) {
-
-                    if( dataList && dataList.length > 0 ) {
-
-                        stmt = mapper.getStatement('indexDetail', 'getM168uidxList', paramData, format);
-                        console.log(stmt);
-
-                        conn.query(stmt, function( err, rows ) {
-
-                            if( err ) {
-                                resultMsg.result    =   false;
-                                resultMsg.msg       =   "[error] indexDetail.getM168uidxList Error while performing Query";
-                                resultMsg.err       =   err;
-
-                                return callback( resultMsg );
-                            }
-
-                            if ( rows ) {
-
-                                for( var i in dataList ) {
-                                    var same = rows.filter(function(o, p) {
-                                        var upCodeFornt     =   dataList[i].f16013.substr( 0, 2 );
-                                        var upcodeReal      =   dataList[i].f16013.substr( 2 );
-
-                                        return o.up_code == ( ( upCodeFornt == "60" ? "MFI" : "WFN" ) + upcodeReal );
-                                    });
-
-
-                                    if( same.length > 0 ) {
-                                        resultMsg.dataList.push( dataList[i] );
-
-                                        if( paramData.firstYn && paramData.firstYn == "Y" ) {
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-
-                            callback( null );
-                        });
-                    }
-                }                
 
             ], function (err) {
 

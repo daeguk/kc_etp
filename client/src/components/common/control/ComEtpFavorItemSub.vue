@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <v-list class="pt-0" dense>
-            <v-list-tile-content class="rightmenu_con2 rightmenu_line">
+            <v-list-tile-content class="rightmenu_con2">
                 <v-layout class="w100">
                     <v-flex xs12>
                        <v-card>
@@ -11,8 +11,8 @@
                             </v-card-title>    
                        </v-card>
                                 
-                                <v-tabs v-model="activeTab" centered>
-                                    <v-tabs-slider color="#1976d2"></v-tabs-slider>
+                                <v-tabs v-model="activeTab" centered grow>
+                                    <v-tabs-slider ></v-tabs-slider>
 
                                     <v-tab v-for="item in kindTabs" :key="item">{{ item }}</v-tab>
                                 </v-tabs>
@@ -73,7 +73,7 @@
                 </v-layout>
             </v-list-tile-content>
         </v-list>
-
+        <ProgressBar ref="progress"></ProgressBar>
     </v-container>
 </template>
 
@@ -86,13 +86,13 @@ import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
 import util       from "@/js/util.js";
-
+import ProgressBar from "@/components/common/ProgressBar.vue";
 
 var publish_etp_table = null;
 var all_etp_table = null;
 
 export default {
-    props: [],
+    props: ["faverSize"],
     data() {
         return {
             jongMokDialog: false,
@@ -115,12 +115,12 @@ export default {
         };
     },
     components: {
+        ProgressBar : ProgressBar
     },
     computed: {
         
     },
     mounted: function() {
-
         
         var vm = this;
 
@@ -131,6 +131,7 @@ export default {
             "info": false,   // control table information display field
             "stateSave": true,  //restore table state on page reload,
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+            "scrollY": vm.faverSize +'vh',
             thead: {
                 display:'none'
             },
@@ -140,9 +141,9 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "";
                         if (data == '1') {
-                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon_star on v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                            htm += "<button type='button' id='btn_faver' class='btn_icon_star on v-icon material-icons'>star</button>";
                         } else {
-                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon_star v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                            htm += "<button type='button' id='btn_faver' class='btn_icon_star v-icon material-icons'>star</button>";
                         }
                         
                         return htm;
@@ -151,7 +152,7 @@ export default {
                 },
                 {  
                     "render": function ( data, type, row ) {
-                        let htm = "<div>";
+                        let htm = "<div class='td_ellipsis'>";
                         htm += "           "+data+"";
                         htm += "            <br><span class='text_S'>"+row.F16013+"</div>";
                         return htm;
@@ -165,9 +166,9 @@ export default {
                             htm += "<div>" + util.formatNumber(data) + "</div>";
 
                             if (row.F15004 >= 0) {
-                                htm += "<br><span class='text_S text_red'>"+row.F15004+"%</span>";
+                                htm += "<span class='text_S text_red'>"+row.F15004+"%</span>";
                             } else {
-                                htm += "<br><span class='text_S text_blue'>"+row.F15004+"%</span>";
+                                htm += "<span class='text_S text_blue'>"+row.F15004+"%</span>";
                             }
 
                             return htm;
@@ -182,9 +183,9 @@ export default {
             paging: false,
             searching: false,
             columns: [
-                { "data": "faver", "orderable": false, width:'5%', defaultContent:"<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>"},
-                { "data": "JISU_NM", "orderable": false, className:'txt_left line2 in_icon'},                
-                { "data": "F15001", "orderable": false, className:'txt_right'},                
+                { "data": "faver", "orderable": false, width:'5%', defaultContent:"<button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button>"},
+                { "data": "JISU_NM", "orderable": false,width:'65%', className:'txt_left line2 in_icon'},                
+                { "data": "F15001", "orderable": false, width:'30%',className:'txt_right'},                
             ]
         });
 
@@ -228,6 +229,7 @@ export default {
             "info": false,   // control table information display field
             "stateSave": true,  //restore table state on page reload,
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+            "scrollY": '50vh',
             thead: {
                 display:'none'
             },
@@ -237,9 +239,9 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "";
                         if (data == '1') {
-                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon_star on v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                            htm += "<button type='button' id='btn_faver' class='btn_icon_star on v-icon material-icons'>star</button>";
                         } else {
-                            htm += "<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon_star v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>";
+                            htm += "<button type='button' id='btn_faver' class='btn_icon_star v-icon material-icons'>star</button>";
                         }
                         
                         return htm;
@@ -248,7 +250,7 @@ export default {
                 },
                 {  
                     "render": function ( data, type, row ) {
-                        let htm = "<div>";
+                        let htm = "<div class='td_ellipsis'>";
                         htm += "           "+data+"";
                         htm += "            <br><span class='text_S'>"+row.F16013+"</div>";
                         return htm;
@@ -262,9 +264,9 @@ export default {
                             htm += "<div>" + util.formatNumber(data) + "</div>";
 
                             if (row.F15004 >= 0) {
-                                htm += "<br><span class='text_S text_red'>"+row.F15004+"%</span>";
+                                htm += "<span class='text_S text_red'>"+row.F15004+"%</span>";
                             } else {
-                                htm += "<br><span class='text_S text_blue'>"+row.F15004+"%</span>";
+                                htm += "<span class='text_S text_blue'>"+row.F15004+"%</span>";
                             }
 
                             return htm;
@@ -279,8 +281,8 @@ export default {
             paging: false,
             searching: false,
             columns: [
-                { "data": "faver", "orderable": false,  defaultContent:"<div class='tooltip'><button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button><span class='tooltiptext' style='width:40px;'>즐겨찾기</span></div>"},
-                { "data": "JISU_NM", "orderable": false, className:'txt_left'},      
+                { "data": "faver", "orderable": false,  defaultContent:"<button type='button' id='btn_faver' class='btn_icon v-icon material-icons'>star</button>"},
+                { "data": "JISU_NM", "orderable": false, className:'txt_left line2'},      
                 { "data": "F15001", "orderable": false, className:'txt_right'},                         
             ]
         });
@@ -408,6 +410,7 @@ export default {
 
         /* 전체 종목 etn 종목리스트 */
         getPublicEtpList: function() {
+            util.processing(this.$refs.progress, true);
             console.log("etn_grid");
             axios.get(Config.base_url + "/user/common/getPublishEtpList", {
                 params: {
@@ -423,13 +426,14 @@ export default {
                     publish_etp_table.rows.add(items).draw();
                                         
                 }
-                
+                util.processing(this.$refs.progress, false);
             });
         }, 
 
         /* 전체 종목 etf 종목리스트 */
         getALLEtpList: function() {
             console.log("etn_grid");
+            util.processing(this.$refs.progress, true);
             axios.get(Config.base_url + "/user/common/getALLEtpList", {
                 params: {
                 }
@@ -445,7 +449,7 @@ export default {
                     all_etp_table.rows.add(items).draw();
             
                 }
-                
+                util.processing(this.$refs.progress, false);
             });
         }, 
 

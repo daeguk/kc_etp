@@ -17,21 +17,13 @@ var getEtpApplyList = function (req, res) {
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
-        // var options = {id:'admin'};
-        
+
         var options = { 
-            large_type : req.session.large_type,
-            jisu_cd: req.query.jisu_cd,
-            market_id: req.query.market_id,
-            inst_cd : req.session.inst_cd,
-          };
-
-        util.log("options", JSON.stringify(options));
-
+            inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd,
+            };
+        util.log("options", JSON.stringify(options.inst_cd));
         var stmt = mapper.getStatement('EtpRegister', 'selectEtpApplyList', options, {language:'sql', indent: '  '});
         console.log(stmt);
-
-
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -59,18 +51,13 @@ var getEtpApplyDistCnt = function (req, res) {
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
-        // var options = {id:'admin'};
-        
         var options = { 
-            inst_cd : req.session.inst_cd
+            inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd
          };
-
         util.log("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('EtpRegister', 'getEtpApplyDistCnt', options, {language:'sql', indent: '  '});
         console.log(stmt);
-
-
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -98,18 +85,12 @@ var getEtpApplyIndexCnt = function (req, res) {
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
-        // var options = {id:'admin'};
-        
         var options = { 
-            inst_cd : req.session.inst_cd
+            inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd
          };
-
         util.log("options", JSON.stringify(options));
-
         var stmt = mapper.getStatement('EtpRegister', 'getEtpApplyIndexCnt', options, {language:'sql', indent: '  '});
         console.log(stmt);
-
-
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -138,15 +119,11 @@ var getEtpApplyCodeCnt = function (req, res) {
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
          var options = { 
-            inst_cd : req.session.inst_cd
+            inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd
          };
-
         util.log("options", JSON.stringify(options));
-
         var stmt = mapper.getStatement('EtpRegister', 'getEtpApplyCodeCnt', options, {language:'sql', indent: '  '});
         console.log(stmt);
-
-
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -175,15 +152,11 @@ var getEtpApplyInavCnt = function (req, res) {
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
          var options = { 
-            inst_cd : req.session.inst_cd
+            inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd
          };
-
         util.log("options", JSON.stringify(options));
-
         var stmt = mapper.getStatement('EtpRegister', 'getEtpApplyInavCnt', options, {language:'sql', indent: '  '});
         console.log(stmt);
-
-
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -212,17 +185,12 @@ var getCompContactList = function (req, res) {
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
-        
         var options = { 
-            "inst_cd":  req.session.inst_cd
+            inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd,
          };
-
         util.log("options", JSON.stringify(options));
-
         var stmt = mapper.getStatement('EtpRegister', 'getCompContactList', options, {language:'sql', indent: '  '});
         console.log(stmt);
-
-
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -261,7 +229,6 @@ var getIdxList = function (req, res) {
 
         var stmt = mapper.getStatement('EtpRegister', 'getIdxList', options, {language:'sql', indent: '  '});
         console.log(stmt);
-
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {

@@ -5,8 +5,7 @@
             <v-card flat class="right_menu_w2">
                 <v-list class="pt-0" dense>
                         <v-list-tile-content class="rightmenu_con">
-                            <v-subheader>
-                                <v-icon small>feedback</v-icon>지수 조치 현황
+                            <v-subheader>지수 조치 현황
                                 <v-btn
                                     small
                                     depressed
@@ -17,21 +16,20 @@
                                 >내역확인</v-btn>
 
                             </v-subheader>
-                            <p class="text_red">
+                            <!--p class="text_red">
                                 <v-icon small>arrow_right</v-icon>{{ fix_info.fix_msg }}
-                            </p>
+                            </p-->
                         </v-list-tile-content>
-                        <v-list-tile-content class="rightmenu_con Oper_menu">
+                        <v-list-tile-content class="rightmenu_con case2 Oper_menu">
                             <v-subheader>
                                 <v-icon small>build</v-icon>PDF Tools
                             </v-subheader>
-                            <v-card flat class="w100">
+                            <v-card flat class="w100  ver2">
                                 <v-list>
                                     <!---pdf긴급반영 팝업-->
-
-                                    <v-list-tile class="border_b ver2" @click.stop="fn_showDetailPdf(6)">
+                                    <v-list-tile :class="( togglePdfEmergencyPop ? 'border_b select' : 'border_b' )" @click.stop="fn_showDetailPdf(6)">
                                         <v-list-tile-avatar>
-                                            <v-icon value="긴급반영">flash_on</v-icon>
+                                            <div :class="( togglePdfEmergencyPop ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon5"></span></div>
                                         </v-list-tile-avatar>
                                         <v-list-tile-content class="rm_con_h">
                                             <v-list-tile-title>PDF 긴급반영</v-list-tile-title>
@@ -42,9 +40,9 @@
                                     <!---pdf긴급반영 팝업 팝업 end-->
                                     
                                     <!---iNAV 계산기 팝업---->
-                                    <v-list-tile class="border_b ver2" @click.stop="fn_showDetailPdf(7)">
+                                    <v-list-tile :class="( toggleIanvPop ? 'border_b select' : 'border_b' )" @click.stop="fn_showDetailPdf(7)">
                                         <v-list-tile-avatar>
-                                            <v-icon value="계산기" icon>exposure</v-icon>
+                                            <div :class="( toggleIanvPop ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon6"></span></div>
                                         </v-list-tile-avatar>
                                         <v-list-tile-content class="rm_con_h">
                                             <v-list-tile-title>iNAV 계산기</v-list-tile-title>
@@ -56,12 +54,12 @@
                                     <!---iNAV 계산기 팝업 end---->
 
                                     <v-list-tile
-                                        class="border_b ver2 importance"
+                                        :class="( togglePdfByRate ? 'border_b select' : 'border_b' )"
                                         @click="fn_setEtpOperPdfByRate"
                                         v-model="togglePdfByRate"
                                     >
                                         <v-list-tile-avatar>
-                                            <v-icon value="비중변경현황" icon>find_replace</v-icon>
+                                           <div :class="( togglePdfByRate ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon7"></span></div>
                                         </v-list-tile-avatar>
                                         <v-list-tile-content class="rm_con_h">
                                             <v-list-tile-title>비중 변경현황</v-list-tile-title>
@@ -75,7 +73,7 @@
 
                         <!-- 관심종목 영역 -->
                         <ComEtpFavorItemSub     v-if="showFaver" 
-                        
+                                                :faverSize = "faverSize"
                                                 @showDetail="showDetail" 
                                                 @showMessageBox="showMessageBox">
                         </ComEtpFavorItemSub>
@@ -104,13 +102,16 @@ export default {
     data() {
         return {
             showFaver : true,
+            togglePdfEmergencyPop : false,
+            toggleIanvPop : false,
             togglePdfByRate   : false,
 
             /* 지수 조치현황 */
             fix_info : {
                 fix_disabled : true,
                 fix_msg : "조치현황 없음"
-            }            
+            },
+            faverSize : 50,            
         };
     },
     components: {
@@ -175,6 +176,9 @@ export default {
 
             vm.togglePdfByRate  =   !vm.togglePdfByRate;
 
+            vm.togglePdfEmergencyPop    =   false;
+            vm.toggleIanvPop            =   false;
+
             var paramData   =   {};
             paramData.togglePdfByRate    =   vm.togglePdfByRate;            
 
@@ -212,10 +216,19 @@ console.log( vm.pdfData );
 
             /* PDF 긴급반영인 경우 */
             if( gubun == 6 ) {
+
+                vm.togglePdfEmergencyPop    =   true;
+                vm.toggleIanvPop            =   false;
+                vm.togglePdfByRate          =   false;
+
                 vm.$emit( "fn_showDetailPdf", gubun, vm.pdfData );
             }
             /* iNAV 계산기인 경우 */
             else if( gubun == 7 ) {
+
+                vm.togglePdfEmergencyPop    =   false;
+                vm.toggleIanvPop            =   true;
+                vm.togglePdfByRate          =   false;                
 
                 var gubun   =   "7";
 

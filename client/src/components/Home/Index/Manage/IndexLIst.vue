@@ -95,8 +95,8 @@ export default {
         table = $('#index_table').DataTable( {
             "processing": true,
             "serverSide": false,
-            "info": true,   // control table information display field
-                           
+            "info": false,   // control table information display field
+            "scrollY": '75vh',                                                      
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
             paging: false,
             searching: false,

@@ -1,34 +1,31 @@
 <template>
     <v-container>
-        <v-layout row>
+        <v-layout row xs12>
 
             <v-flex grow>
                 <v-card flat lite pb-0></v-card>
             </v-flex>
 
             <!-- rightmenu -->
-            <v-card flat class="right_menu_w2">
+            <v-card flat class="right_menu_w2 ver3">
                     <v-list class="pt-0" dense>
                         <v-list-tile-content class="rightmenu_con">
-                            <v-subheader>
-                                <v-icon small color="primary">flash_on</v-icon>종목으로 찾기
-                            </v-subheader>
+                            <v-subheader>종목으로 찾기</v-subheader>
                             <v-text-field
                                 v-model="form.jongmokSearch"
                                 append-icon="search"
                                 placeholder="e.g.005930, 삼성전자"
                                 value="e.g.005930, 삼성전자"
-                                outline
-                                hide-details
+                                 single-line
+                                class="w100 pt-0"
                                 @keyup.enter="fn_getIndexJongmokList()"
                             ></v-text-field>
                         </v-list-tile-content>
 
 
-                        <v-list-tile-content class="rightmenu_con ver2">
+                        <v-list-tile-content class="rightmenu_con mb-2">
                             <v-subheader>
-                                <v-icon small color="primary">feedback</v-icon>지수 조치 현황
-
+                                지수 조치 현황
                                 <v-btn
                                     small
                                     depressed
@@ -51,9 +48,9 @@
                                 </v-card>
                             </v-subheader>
                             
-                            <p class="text_red">
+                            <!--p class="text_red">
                                 <v-icon small>arrow_right</v-icon>{{ fix_info.fix_msg }}
-                            </p>
+                            </p-->
                         </v-list-tile-content>
 
                         <v-list-tile-content class="rightmenu_con">
@@ -62,17 +59,13 @@
                                 append-icon="search"
                                 placeholder="e.g.005930, 삼성전자"
                                 value="e.g.005930, 삼성전자"
-                                outline
-                                hide-details
+                                single-line
+                                class="w100"
                                 @keyup.enter="fn_getIndexList()"
                             ></v-text-field>
-
-                            <!--오른쪽 메뉴 하단 리스트 영역 -->
-                            <v-layout row class="w100 pt-3 pr-2">
-                                <v-flex xs12>
-                                    <v-card flat>
-
-                                        <table id="jisuTable" class="tbl_type ver2">
+                        </v-list-tile-content>
+                         <!--오른쪽 메뉴 하단 리스트 영역 -->
+                          <table id="jisuTable" class="tbl_type ver2">
                                             <colgroup>
                                                 <col width="70%">
                                                 <col width="30%">
@@ -112,21 +105,12 @@
                                             </tbody> 
                                         </table--> 
                                       <!---ppt09버전 수정 테이블--->
-                                    </v-card>
-                                </v-flex>
-                            </v-layout>
+
                             <!--오른쪽 메뉴 하단 리스트 영역 -->
-                        </v-list-tile-content>
                     </v-list>
             </v-card>
             <!--rightmenu end -->
-            <v-flex>
-            <v-dialog v-model="progress" persistent  content-class="progressbar_w">     
-                        <template>
-                            <v-progress-circular :size="50" indeterminate></v-progress-circular>
-                            </template>
-                    </v-dialog>
-            </v-flex>
+           
         </v-layout>
     </v-container>
 </template>
@@ -148,7 +132,6 @@ export default {
     props: [  ],
     data() {
         return {
-            progress: false, 
             drawer: true,
             mini: false,
             on : false,
@@ -205,7 +188,7 @@ export default {
                 columnDefs: [
                     {  
                         "render": function ( data, type, row ) {
-                            let htm = "<div>";
+                            let htm = "<div class='td_ellipsis2'>";
                             htm += "           "+data+"";
                             htm += "            <br><span class='text_S'>"+row.f16013+"</div>";
                             return htm;
@@ -219,9 +202,9 @@ export default {
                                 htm += "<div>" + util.formatNumber(data) + "</div>";
 
                                 if (row.f15004 >= 0) {
-                                    htm += "<br><span class='text_S text_red'>"+row.f15004+"%</span>";
+                                    htm += "<span class='text_S text_red'>"+row.f15004+"%</span>";
                                 } else {
-                                    htm += "<br><span class='text_S text_blue'>"+row.f15004+"%</span>";
+                                    htm += "<span class='text_S text_blue'>"+row.f15004+"%</span>";
                                 }
 
                                 return htm;
@@ -280,10 +263,9 @@ export default {
         fn_getIndexDetailList : function( rowData, paramForm ) {
 
             var vm = this;
-
+            this.$emit("showProgress", true);
             console.log( "ComIndexJongmok.vue -> fn_getIndexDetailList" );
             
-            vm.progress = true;
             axios.post(Config.base_url + "/user/index/getIndexDetailList", {
                 data:  rowData
             }).then(response => {
@@ -300,8 +282,7 @@ export default {
                     vm.form.jisuSearchYn    =   "Y";
                     vm.$emit( "fn_getIndexDetailList", vm.indexBasic, indexDetailList, vm.form );
                 }
-
-                vm.progress = false;
+                this.$emit("showProgress", false);
             });
         },        
 
@@ -314,7 +295,6 @@ export default {
 
             var vm = this;
             
-            vm.progress = true;
             console.log( "ComIndexJongmok.vue -> fn_getIndexJongmokList" );
 
             if( vm.form.jongmokSearch.length < 2 ) {
@@ -334,7 +314,7 @@ export default {
                     vm.form.jisuSearchYn =   "N";
                     vm.$emit( "fn_getIndexJongmokList", jongmokDataList, vm.form );
                 }
-                vm.progress = false;
+               
             });
             
         },
@@ -347,7 +327,7 @@ export default {
         fn_getIndexListByFirst : function() {
 
             var vm = this;
-            vm.progress = true;
+            
             console.log( "ComIndexJongmok.vue -> fn_getIndexListByFirst" );
 
             axios.post(Config.base_url + "/user/index/getIndexList", {
@@ -365,7 +345,7 @@ export default {
                         vm.fn_getIndexDetailList( rowData, vm.form );
                     }
                 }
-                vm.progress = false;
+                
             });
             
         },
@@ -378,7 +358,7 @@ export default {
         fn_getIndexList : function() {
 
             var vm = this;
-            vm.progress = true;
+           
             console.log( "ComIndexJongmok.vue -> fn_getIndexList" );
 
             if( jisuTable ) {
@@ -397,7 +377,7 @@ export default {
                     jisuTable.clear().draw();
                     jisuTable.rows.add( indexDataList ).draw();                    
                 }
-                 vm.progress = false;
+                
             });
            
         },

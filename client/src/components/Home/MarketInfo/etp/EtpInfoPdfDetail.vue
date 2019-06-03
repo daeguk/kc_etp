@@ -159,7 +159,7 @@ export default {
                                                 +   "-" 
                                                 +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
                                                 +   "-" 
-                                                +   new Date().getDate();
+                                                +   _.padStart( new Date().getDate(), 2, '0' )
 
                 vm.fn_setTableInfo();
                 vm.fn_getEtpOerPdf( 'Y' );

@@ -5,8 +5,7 @@
             <v-card flat class="right_menu_w2 w100">
                  <v-list class="pt-0" dense>
                         <v-list-tile-content class="rightmenu_con">
-                            <v-subheader>
-                                <v-icon small>feedback</v-icon>지수 조치 현황
+                            <v-subheader>지수 조치 현황
                                 <v-btn
                                     small
                                     depressed
@@ -16,23 +15,21 @@
                                     :disabled = "fix_info.fix_disabled"
                                 >내역확인</v-btn>
                             </v-subheader>
-                            <p class="text_red">
+                            <!--p class="text_red">
                                 <v-icon small>arrow_right</v-icon> {{ fix_info.fix_msg }}
-                            </p>
+                            </p-->
                         </v-list-tile-content>
-                        <v-list-tile-content class="rightmenu_con Oper_menu">
-                            <v-subheader>
-                                <v-icon small>build</v-icon>Operation Tools
-                            </v-subheader>
+                        <v-list-tile-content class="rightmenu_con case2 Oper_menu">
+                            <v-subheader>Operation Tools</v-subheader>
                             <v-card flat class="w100">
                                 <v-list>
                                     <v-list-tile
-                                        class="border_b"
+                                         :class="( toggleIndexOversea ? 'border_b select' : 'border_b' )"
                                         @click="fn_setEtpOperIndexOversea"
                                         v-model="toggleIndexOversea"
                                     >
                                         <v-list-tile-avatar>
-                                            <v-icon value="해외지수">exposure</v-icon>
+                                            <div :class="( toggleIndexOversea ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon4"></span></div>
                                         </v-list-tile-avatar>
                                         <v-list-tile-content class="rm_con_h">
                                             <v-list-tile-title>해외지수 종가 모니터링</v-list-tile-title>

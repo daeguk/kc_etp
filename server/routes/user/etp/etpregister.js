@@ -10,7 +10,7 @@ var format = { language: 'sql', indent: '' };
 
 var getEtpRegisterView = function(req, res) {
     try {
-        util.log('###ETP VIEW CALL###', req.query.seq);
+        //util.log('###ETP VIEW CALL###', req.query.seq);
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper"); 
@@ -19,8 +19,8 @@ var getEtpRegisterView = function(req, res) {
         var resultMsg = {};
         paramData.seq = req.query.seq*1;
 
-        util.log('###ETP VIEW CALL paramData.seq###', paramData.seq);
-        util.log('###ETP VIEW CALL  req.session###',  req.session);
+       // util.log('###ETP VIEW CALL paramData.seq###', paramData.seq);
+       // util.log('###ETP VIEW CALL  req.session###',  req.session);
         paramData.user_id       =   req.session.user_id;
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.inst_type_cd  =   req.session.type_cd;
@@ -480,7 +480,7 @@ var updateEtpRegister = function(req, res) {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
    
-    util.log('###ETP UPDATE JSONPARSE BEFORE>>>###'+req.body.data);
+    //util.log('###ETP UPDATE JSONPARSE BEFORE>>>###'+req.body.data);
     var paramData = JSON.parse(req.body.data);
     
     paramData.user_id       =   req.session.user_id;
@@ -501,7 +501,7 @@ var updateEtpRegister = function(req, res) {
     //개발용 세팅 
     // paramData.inst_cd       =   '04870';
     // paramData.inst_type_cd  =   '0002';
-    util.log('###ETP UPDATE JSONPARSE HUDLE1>>>###',req.session);
+    //util.log('###ETP UPDATE JSONPARSE HUDLE1>>>###',req.session);
    
     paramData.list_req_date = paramData.listReqDate;
     paramData.list_date = paramData.listDate;
@@ -590,8 +590,25 @@ var updateEtpRegister = function(req, res) {
     if(paramData.inav_calc_yn == 'Y'){
         paramData.isin_stat_cd ='0004';
     }
+/*
+    // iNAV산출여부 : N  
+    // 상태코드      :0004
+    // => 상태코드 종목코드(0003)
+    if(paramData.isin_stat_cd =='0004' && paramData.inav_calc_yn == 'N'){
+        paramData.isin_stat_cd ='0003';
+    }
 
-    console.log('###ETP UPDATE JSONPARSE LAST>>>###', paramData);
+    // 상태코드      :0002 OR 0001
+    // 기초지수입수여부 : N 
+    // 기초지수입수여부가 우선 
+    // => 상태코드 종목코드(0001)
+    if((paramData.isin_stat_cd =='0001' || paramData.isin_stat_cd =='0002')
+        &&paramData.idx_rec_yn == 'N'){
+        paramData.isin_stat_cd ='0003';
+    }
+ */   
+
+    //console.log('###ETP UPDATE JSONPARSE LAST>>>###', paramData);
     var dbMasterData ;
     var stmt='';
     Promise.using(pool.connect(), conn => {
@@ -605,7 +622,7 @@ var updateEtpRegister = function(req, res) {
                         if ( rows ) {
                         
                         dbMasterData  = rows[0];
-                        console.log("UPDATE BEFORE MASTER Data:::", dbMasterData.isin_stat_cd);
+                        //console.log("UPDATE BEFORE MASTER Data:::", dbMasterData.isin_stat_cd);
                         
                             if(dbMasterData.inst_cd !== paramData.paramInstCd && req.session.type_cd !=='0002' ){
                                 return callback( "해당 발행사나 코스콤만 수정이 가능합니다." );
@@ -635,6 +652,7 @@ var updateEtpRegister = function(req, res) {
 
                 },
                 function( data, callback ) {
+                    console.log(paramData);
                     stmt = mapper.getStatement('EtpRegister', 'updateMaster', paramData, format);
                     console.log(stmt);
                     conn.query(stmt, function( err, rows ) {  
@@ -653,10 +671,10 @@ var updateEtpRegister = function(req, res) {
                     stmt = mapper.getStatement('EtpRegister', 'getMasterHistoryNextSeq', paramData, format);
                     conn.query(stmt, function( err, rows ) {
                         if ( rows ) {
-                            console.log( "getMasterHistoryNextSeq", rows[0].SEQ_HIST);
+                           // console.log( "getMasterHistoryNextSeq", rows[0].SEQ_HIST);
 
                             paramData.seq_hist = rows[0].SEQ_HIST;
-                            console.log("EtpRegister paramData", paramData);
+                          //  console.log("EtpRegister paramData", paramData);
                         }
                         if( err ) {
                             return callback( err );
@@ -669,6 +687,7 @@ var updateEtpRegister = function(req, res) {
                 function( data, callback ) {
                     console.log("EtpRegister paramData insertMasterHistory before", paramData);
                     stmt = mapper.getStatement('EtpRegister', 'insertMasterHistory', paramData, format);
+                    console.log(stmt);
                     conn.query(stmt, function( err, rows ) {
                         if ( rows ) {
                             console.log( "insertMasterHistory", rows );
