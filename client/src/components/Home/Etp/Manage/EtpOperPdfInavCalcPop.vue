@@ -436,12 +436,12 @@ export default {
                                 } else {
                                     vm.iNav_amt = vm.market_tot_amt;
                                 }
-                                /* INav 등락률 */
-                                vm.iNav_percent =  (1 - (vm.iNav_amt / vm.etpBasic.f03329)) * 100;
+                                /* INav 등락률 */                                
+                                vm.iNav_percent =  ((vm.iNav_amt / vm.etpBasic.f03329) - 1) * 100;
 
                                 /* 비중 정보 산출*/
                                 for (let item of vm.pdfList) {         
-                                    item.f34743 = (((item.f16588 /  vm.market_tot_amt) * 100).toFixed(2));                                    
+                                    item.f34743 = ((item.f16588 /  vm.market_tot_amt) * 100).toFixed(2);                                    
                                 }
                                 vm.pdf_reload(vm.pdfList);
                                 
@@ -526,11 +526,11 @@ export default {
                             vm.iNav_amt = vm.market_tot_amt;
                         }
                         /* INav 등락률 */
-                        vm.iNav_percent =  (1 - (vm.iNav_amt / vm.etpBasic.f03329)) * 100;
+                        vm.iNav_percent =  ((vm.iNav_amt / vm.etpBasic.f03329) - 1) * 100;
 
                         /* 비중 정보 산출*/
                         for (let item of vm.pdfList) {         
-                            item.f34743 = (((item.f16588 /  vm.market_tot_amt) * 100).toFixed(2));
+                            item.f34743 = ((item.f16588 /  vm.market_tot_amt) * 100).toFixed(2);
                         }
 
                         vm.pdf_reload(vm.pdfList);
