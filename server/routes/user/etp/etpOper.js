@@ -1702,9 +1702,19 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                 console.log(paramData);
 
+                                var arrInsertDtl  =   [];
+                                var arrModifyDtl  =   [];
+                                var arrDeleteDtl  =   [];
+
                                 async.waterfall([
 
-                                    /* 2. ETP 운용관리 - PDF 긴급반영 - 저장시 상세 상태정보를 조회한다.  */
+                                    /* 1. ETP 운용관리 - PDF 긴급반영 - 저장시 상세에 이미 등록된 데이터가 존재하는지 체크한다.  
+                                    *
+                                    * 1) tm_pdf_modify_dtl 에 없는 경우에는 'insert'
+                                    * 2) tm_pdf_modify_dtl 에 존재하고 CU수량과 액면금액 모두 td_etfpdf_basic 의 값과 동일한 경우 'delete'
+                                    * 3) tm_pdf_modify_dtl 에 존재하고 CU수량과 액면금액이 td_etfpdf_basic 의 값과 다른 경우 'update'
+                                    *                             
+                                    */
                                     function(callback) {
 
                                         var stmt = mapper.getStatement('etpOper', 'getTmPdfModifyDtlExistsCheck', paramData, { language: 'sql', indent: '  ' });
@@ -1720,42 +1730,47 @@ var saveEtpOperPdfModify = function(req, res) {
                                                 return callback(resultMsg);
                                             }
 
-                                            if (rows && rows.length == 1) {
+                                            if (rows && rows.length > 0) {
+                                                for( var i in rows ) {
 
-                                                if (rows[0].exists_cnt > 0) {
-                                                    resultMsg.result = false;
-                                                    resultMsg.msg = "(" + rows[0].f16316 + ") 이미 등록되어 있습니다.";
-                                                    resultMsg.err = err;
-
-                                                    return callback(resultMsg);
+                                                    if( rows[i].dtl_status == "insert" ) {
+                                                        arrInsertDtl.push( rows[i] );
+                                                    }else if( rows[i].dtl_status == "modify" ) {
+                                                        arrModifyDtl.push( rows[i] );
+                                                    }else if( rows[i].dtl_status == "delete" ) {
+                                                        arrDeleteDtl.push( rows[i] );
+                                                    }
                                                 }
                                             }
-
 
                                             callback(null, paramData);
                                         })
                                     },
 
-                                    /* 5. PDF 변경 상세 정보 (구성종목) 정보를 저장한다. */
+                                    /* 2. PDF 변경 상세 정보 (구성종목) 정보를 저장한다. */
                                     function(msg, callback) {
 
                                         try {
 
-                                            var stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyDtl', paramData, { language: 'sql', indent: '  ' });
-                                            console.log(stmt);
+                                            if( arrInsertDtl && arrInsertDtl.length > 0 ) {
+                                                paramData.dataLists =   arrInsertDtl;
+                                                var stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyDtl', paramData, { language: 'sql', indent: '  ' });
+                                                console.log(stmt);
 
-                                            conn.query(stmt, function(err, rows) {
+                                                conn.query(stmt, function(err, rows) {
 
-                                                if (err) {
-                                                    resultMsg.result = false;
-                                                    resultMsg.msg = "[error] etpOper.saveTmPdfModifyDtl Error while performing Query";
-                                                    resultMsg.err = err;
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = "[error] etpOper.saveTmPdfModifyDtl Error while performing Query";
+                                                        resultMsg.err = err;
 
-                                                    return callback(resultMsg);
-                                                }
+                                                        return callback(resultMsg);
+                                                    }
 
-                                                callback(null, paramData);
-                                            })
+                                                    callback(null, paramData);
+                                                })
+
+                                            }
 
                                         } catch (err) {
                                             resultMsg.result = false;
@@ -1765,6 +1780,40 @@ var saveEtpOperPdfModify = function(req, res) {
                                             return callback(resultMsg);
                                         }
                                     },
+
+                                    /* 5. PDF 변경 상세 정보 (구성종목) 정보를 수정한다. */
+                                    function(msg, callback) {
+
+                                        try {
+
+                                            if( arrInsertDtl && arrInsertDtl.length > 0 ) {
+                                                paramData.dataLists =   arrInsertDtl;
+                                                var stmt = mapper.getStatement('etpOper', 'modifyTmPdfModifyDtl', paramData, { language: 'sql', indent: '  ' });
+                                                console.log(stmt);
+
+                                                conn.query(stmt, function(err, rows) {
+
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = "[error] etpOper.modifyTmPdfModifyDtl Error while performing Query";
+                                                        resultMsg.err = err;
+
+                                                        return callback(resultMsg);
+                                                    }
+
+                                                    callback(null, paramData);
+                                                })
+
+                                            }
+
+                                        } catch (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] etpOper.modifyTmPdfModifyDtl Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+                                    },                                    
 
                                     /* 3. ETP 운용관리 - PDF 긴급반영 - 저장시 마스터 상태정보를 조회한다. */
                                     function(msg, callback) {
