@@ -5,8 +5,7 @@
             <v-card flat class="right_menu_w2">
                 <v-list class="pt-0" dense>
                         <v-list-tile-content class="rightmenu_con">
-                            <v-subheader>
-                                <v-icon small>feedback</v-icon>지수 조치 현황
+                            <v-subheader>지수 조치 현황
                                 <v-btn
                                     small
                                     depressed
@@ -17,11 +16,11 @@
                                 >내역확인</v-btn>
 
                             </v-subheader>
-                            <p class="text_red">
+                            <!--p class="text_red">
                                 <v-icon small>arrow_right</v-icon>{{ fix_info.fix_msg }}
-                            </p>
+                            </p-->
                         </v-list-tile-content>
-                        <v-list-tile-content class="rightmenu_con Oper_menu">
+                        <v-list-tile-content class="rightmenu_con case2 Oper_menu">
                             <v-subheader>
                                 <v-icon small>build</v-icon>PDF Tools
                             </v-subheader>
@@ -31,7 +30,7 @@
 
                                     <v-list-tile class="border_b ver2" @click.stop="fn_showDetailPdf(6)">
                                         <v-list-tile-avatar>
-                                            <v-icon value="긴급반영">flash_on</v-icon>
+                                            <div class="oper_list_icon"><span class="icon5"></span></div>
                                         </v-list-tile-avatar>
                                         <v-list-tile-content class="rm_con_h">
                                             <v-list-tile-title>PDF 긴급반영</v-list-tile-title>
@@ -44,7 +43,7 @@
                                     <!---iNAV 계산기 팝업---->
                                     <v-list-tile class="border_b ver2" @click.stop="fn_showDetailPdf(7)">
                                         <v-list-tile-avatar>
-                                            <v-icon value="계산기" icon>exposure</v-icon>
+                                            <div class="oper_list_icon"><span class="icon6"></span></div>
                                         </v-list-tile-avatar>
                                         <v-list-tile-content class="rm_con_h">
                                             <v-list-tile-title>iNAV 계산기</v-list-tile-title>
@@ -61,7 +60,7 @@
                                         v-model="togglePdfByRate"
                                     >
                                         <v-list-tile-avatar>
-                                            <v-icon value="비중변경현황" icon>find_replace</v-icon>
+                                           <div class="oper_list_icon"><span class="icon7"></span></div>
                                         </v-list-tile-avatar>
                                         <v-list-tile-content class="rm_con_h">
                                             <v-list-tile-title>비중 변경현황</v-list-tile-title>

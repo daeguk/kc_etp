@@ -7,8 +7,7 @@
                     <v-list class="pt-0" dense>
 
                         <v-list-tile-content class="rightmenu_con">
-                            <v-subheader>
-                                <v-icon small>feedback</v-icon>지수 조치 현황
+                            <v-subheader>지수 조치 현황
                                 <v-btn
                                     small
                                     depressed
@@ -18,17 +17,15 @@
                                     :disabled = "fix_info.fix_disabled"
                                 >내역확인</v-btn>
                             </v-subheader>
-                            <p class="text_red">
+                            <!--p class="text_red">
                                 <v-icon small>arrow_right</v-icon>{{ fix_info.fix_msg }}
-                            </p>
+                            </p-->
                         </v-list-tile-content>
 
 
-                        <v-list-tile-content class="rightmenu_con Oper_menu">
+                        <v-list-tile-content class="rightmenu_con case2 Oper_menu">
 
-                            <v-subheader>
-                                <v-icon small>build</v-icon>Operation Tools
-                            </v-subheader>
+                            <v-subheader>Operation Tools</v-subheader>
 
                             <v-card flat class="w100">
                                 <v-list>
@@ -38,7 +35,8 @@
                                         v-model="toggleINav"
                                     >
                                         <v-list-tile-avatar>
-                                            <v-icon value="산출 현황">exposure</v-icon>
+                                            <!---click,hover시 select 클래스 추가--->
+                                            <div class="oper_list_icon"><span class="icon1"></span></div>
                                         </v-list-tile-avatar>
                                         <v-list-tile-content class="rm_con_h">
                                             <v-list-tile-title>실시간투자지표산출현황</v-list-tile-title>
@@ -52,7 +50,7 @@
                                         v-model="toggleEtpPerformance"
                                     >
                                         <v-list-tile-avatar>
-                                            <v-icon value="Performance" icon>loop</v-icon>
+                                           <div class="oper_list_icon"><span class="icon2"></span></div>
                                         </v-list-tile-avatar>
 
                                         <v-list-tile-content class="rm_con_h">
@@ -67,7 +65,7 @@
                                         <template v-slot:activator="{ on }">
                                             <v-list-tile v-on="on" class="border_b">
                                                 <v-list-tile-avatar>
-                                                    <v-icon value="Customize" icon>poll</v-icon>
+                                                   <div class="oper_list_icon"><span class="icon3"></span></div>
                                                 </v-list-tile-avatar>
 
                                                 <v-list-tile-content class="rm_con_h">
