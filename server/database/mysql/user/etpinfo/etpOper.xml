@@ -952,58 +952,13 @@
          WHERE  1 = 1
     </select>
 
-    <!--
-    * ETP 운용관리 - PDF 긴급반영 - 저장시 마스터 상태정보를 조회한다.
-    * 2019-05-03  bkLove(촤병국)
-    -->
-    <select id="getTmPdfModifyMastCheck">
 
-        SELECT      /* etpOper.getTmPdfModifyMastCheck  ETP 운용관리 - PDF 긴급반영 - 저장시 마스터 상태정보를 조회한다. */
 
-                    CASE    WHEN    tm_pdf_modify_mast.email     IS  NULL
-                            THEN    'insert'
-                            ELSE    'modify'
-                    END                                         AS  mast_status /* 마스터 상태 */
-                ,   base.*
-
-          FROM  (
-                    SELECT      #{user_id}                      AS  email       /* 이메일 */
-                            ,   #{f16583}                       AS  f16583      /* 사무수탁회사번호 */
-                            ,   #{f16012}                       AS  f16012      /* ETF종목코드 */
-                            ,   #{f16013}                       AS  f16013      /* ETF단축코드 */
-                      FROM  DUAL
-                )       base
-                
-          LEFT  OUTER   JOIN    tm_pdf_modify_mast
-                          ON    (
-                                            1 = 1                
-                                    AND     tm_pdf_modify_mast.email        =   base.email      /* 이메일 */
-                                    AND     tm_pdf_modify_mast.F16583       =   base.F16583     /* 사무수탁회사번호 */
-                                    AND     tm_pdf_modify_mast.F16012       =   base.F16012     /* ETF종목코드 */
-                                    AND     tm_pdf_modify_mast.F16013       =   base.F16013     /* ETF단축코드 */
-                                )
-         WHERE  1 = 1                           
-
-    </select>
-
-    <!--
-    * ETP 운용관리 - PDF 긴급반영 - 저장시 상세에 이미 등록된 데이터가 존재하는지 체크한다.
-    * 2019-05-03  bkLove(촤병국)
-    -->
-    <select id="getTmPdfModifyDtlExistsCheck">
-
-        SELECT      /* etpOper.getTmPdfModifyDtlCheck  ETP 운용관리 - PDF 긴급반영 - 저장시 상세 상태정보를 조회한다. */
-
-                    COUNT( tm_pdf_modify_dtl.email )            AS  detail_cnt      /* 상세건수 */
-
-          FROM  tm_pdf_modify_dtl
-         WHERE  1 = 1
-           AND  tm_pdf_modify_dtl.email             =   #{user_id}      /* 이메일 */
-           AND  tm_pdf_modify_dtl.f16583            =   #{f16583}       /* 사무수탁회사번호 */
-           AND  tm_pdf_modify_dtl.f16012            =   #{f16012}       /* ETF종목코드 */
-           AND  tm_pdf_modify_dtl.f16013            =   #{f16013}       /* ETF단축코드 */
-
-    </select>    
+<!-- 
+***************************************************************
+*   tm_pdf_modify_dtl ( PDF 변경 상세 정보 )  
+***************************************************************
+-->
 
     <!--
     * ETP 운용관리 - PDF 긴급반영 - 저장시 상세에 이미 등록된 데이터가 존재하는지 체크한다.
@@ -1078,66 +1033,6 @@
          WHERE  1 = 1                                
 
     </select>
-
-    <!--
-    * [tm_pdf_modify] 테이블에 저장한다.
-    * 2019-05-20  bkLove(촤병국)
-    -->
-    <insert     id="saveTmPdfModifyMast">
-    <![CDATA[
-        INSERT  INTO    
-        /* etpOper.saveTmPdfModifyMast      [tm_pdf_modify_mast] 테이블에 저장한다. */
-        tm_pdf_modify_mast 
-        ( 
-                email                       /* 이메일 */
-            ,   F16583                      /* 사무수탁회사번호 */
-            ,   F16012                      /* ETF종목코드 */
-            ,   F16013                      /* ETF단축코드 */
-
-            ,   type_cd                     /* 사용자 그룹 코드 */
-            ,   inst_cd                     /* 기관구분코드 */
-
-            ,   reg_id                      /* 등록자 ID */
-            ,   reg_time                    /* 등록시간 */
-            ,   upd_id                      /* 수정자 ID */
-            ,   upd_time                    /* 수정시간 */
-        ) 
-        VALUES  
-        ( 
-                #{user_id}                  /* 이메일 */
-            ,   #{f16583}                   /* 사무수탁회사번호 */
-            ,   #{f16012}                   /* ETF종목코드 */
-            ,   #{f16013}                   /* ETF단축코드 */
-
-            ,   #{type_cd}                  /* 사용자 그룹 코드 */
-            ,   #{inst_cd}                  /* 기관구분코드 */
-
-            ,   #{user_id}                  /* 등록자 ID */
-            ,   now()                       /* 등록시간 */
-            ,   #{user_id}                  /* 수정자 ID */
-            ,   now()                       /* 수정시간 */
-        )
-    ]]>
-    </insert>
-
-    <!--
-    * [tm_pdf_modify_mast] 테이블을 삭제한다.
-    * 2019-05-20  bkLove(촤병국)
-    -->
-    <update     id="deleteTmPdfModifyMast">
-    <![CDATA[      
-        DELETE  /* etpOper.deleteTmPdfModifyMast      [tm_pdf_modify_mast] 테이블을 삭제한다. */
-          FROM  tm_pdf_modify_mast
-         WHERE  1 = 1
-
-           AND  email                       =   #{user_id}                  /* 이메일 */
-           AND  f16583                      =   #{f16583}                   /* 사무수탁회사번호 */
-           AND  f16012                      =   #{f16012}                   /* ETF종목코드 */
-           AND  f16013                      =   #{f16013}                   /* ETF단축코드 */
-    ]]>
-    </update>    
-
-
 
     <!--
     * [tm_pdf_modify_dtl] 테이블에 저장한다.
@@ -1244,48 +1139,186 @@
 
     </update>
 
-
-    <!--
-    * [tm_pdf_modify] 테이블을 수정한다.
-    * 2019-05-20  bkLove(촤병국)
-    -->
-    <update     id="updateTmPdfModifyDtl">
-    <![CDATA[
-        UPDATE      /* etpOper.updateTmPdfModifyDtl      [tm_pdf_modify_dtl] 테이블을 수정한다. */
-                    tm_pdf_modify_dtl
-
-           SET      status                  =   #{status}                   /* insert( 신규 ), modify( 변경 ) */
-                ,   F16499                  =   #{f16499}                   /* 1CU단위증권수 */
-                ,   F16499_PREV             =   #{f16499_prev}              /* 1CU단위증권수 ( 변경전 ) */
-
-         WHERE  1 = 1
-
-           AND  email                       =   #{email}                    /* 이메일 */
-           AND  f16583                      =   #{f16583}                   /* 사무수탁회사번호 */
-           AND  f16012                      =   #{f16012}                   /* ETF종목코드 */
-           AND  f16013                      =   #{f16013}                   /* ETF단축코드 */
-           AND  f16316                      =   #{f16316}                   /* 구성종목코드 */
-    ]]>
-    </update>
-
     <!--
     * [tm_pdf_modify] 테이블을 삭제한다.
     * 2019-05-20  bkLove(촤병국)
     -->
-    <update     id="deleteTmPdfModifyDtl">
-    <![CDATA[      
-        DELETE  /* etpOper.deleteTmPdfModifyDtl      [tm_pdf_modify_Dtl] 테이블을 삭제한다. */
+    <delete     id="deleteTmPdfModifyDtl">
+
+        DELETE  /* etpOper.deleteTmPdfModifyDtl      [tm_pdf_modify_dtl] 테이블을 수정한다. */
+
+          FROM  tm_pdf_modify_dtl
         
-          FROM  tm_pdf_modify_Dtl
+         INNER  JOIN    (
+                            <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
+                            <![CDATA[              
+                                SELECT      #{user_id}                      AS  email           /* 이메일 */
+                                        ,   #{f16583}                       AS  f16583          /* 사무수탁회사번호 */
+                                        ,   #{f16012}                       AS  f16012          /* ETF종목코드 */
+                                        ,   #{f16013}                       AS  f16013          /* ETF단축코드 */
+                                        ,   #{data.f16316}                  AS  f16316          /* 구성종목코드 */
+                                FROM  DUAL
+                            ]]>
+                            </foreach>
+                        )       base
+                        
+                  ON            1 = 1
+
+                        AND     tm_pdf_modify_dtl.email     =   base.email      /* 이메일 */
+                        AND     tm_pdf_modify_dtl.f16583    =   base.f16583     /* 사무수탁회사번호 */
+                        AND     tm_pdf_modify_dtl.f16012    =   base.f16012     /* ETF종목코드 */
+                        AND     tm_pdf_modify_dtl.f16013    =   base.f16013     /* ETF단축코드 */
+                        AND     tm_pdf_modify_dtl.f16316    =   base.f16316     /* 구성종목코드 */
+
+    </delete>
+
+
+
+<!--
+***************************************************************
+*   tm_pdf_modify_mast ( PDF 변경 마스터 정보 )
+***************************************************************
+-->
+
+    <!--
+    * ETP 운용관리 - PDF 긴급반영 - 저장시 마스터 상태정보를 조회한다.
+    *
+    * 1) tm_pdf_modify_mast 에 없는 경우에는 'insert'
+    * 2) tm_pdf_modify_mast 에 존재하고 tm_pdf_modify_dtl 건수가 0 인 경우 'delete'
+    * 3) tm_pdf_modify_mast 에 존재하고 tm_pdf_modify_dtl 건수가 0 이 아닌 경우 'update'
+    *    
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="getTmPdfModifyMastCheck">
+
+        SELECT      /* etpOper.getTmPdfModifyMastCheck  ETP 운용관리 - PDF 긴급반영 - 저장시 마스터 상태정보를 조회한다. */
+
+                    CASE    WHEN    tm_pdf_modify_mast.email     IS  NULL
+                            THEN    'insert'
+                            ELSE    CASE    WHEN    (
+                                                        SELECT  COUNT(*)
+                                                          FROM  tm_pdf_modify_dtl
+                                                         WHERE  1 = 1
+                                                           AND  tm_pdf_modify_dtl.email         =   base.email      /* 이메일 */
+                                                           AND  tm_pdf_modify_dtl.f16583        =   base.f16583     /* 사무수탁회사번호 */
+                                                           AND  tm_pdf_modify_dtl.f16012        =   base.f16012     /* ETF종목코드 */
+                                                           AND  tm_pdf_modify_dtl.f16013        =   base.f16013     /* ETF단축코드 */
+                                                    )   =   0
+                                            THEN    'delete'
+                                            ELSE    'modify'
+                                    END
+                    END                                         AS  mast_status /* 마스터 상태 */
+                ,   base.*
+
+          FROM  (
+                    SELECT      #{user_id}                      AS  email       /* 이메일 */
+                            ,   #{f16583}                       AS  f16583      /* 사무수탁회사번호 */
+                            ,   #{f16012}                       AS  f16012      /* ETF종목코드 */
+                            ,   #{f16013}                       AS  f16013      /* ETF단축코드 */
+                      FROM  DUAL
+                )       base
+                
+          LEFT  OUTER   JOIN    tm_pdf_modify_mast
+                          ON    (
+                                            1 = 1                
+                                    AND     tm_pdf_modify_mast.email        =   base.email      /* 이메일 */
+                                    AND     tm_pdf_modify_mast.F16583       =   base.F16583     /* 사무수탁회사번호 */
+                                    AND     tm_pdf_modify_mast.F16012       =   base.F16012     /* ETF종목코드 */
+                                    AND     tm_pdf_modify_mast.F16013       =   base.F16013     /* ETF단축코드 */
+                                )
          WHERE  1 = 1
 
+    </select>    
+
+    <!--
+    * [tm_pdf_modify] 테이블에 저장한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <insert     id="saveTmPdfModifyMast">
+    <![CDATA[
+        INSERT  INTO    
+        /* etpOper.saveTmPdfModifyMast      [tm_pdf_modify_mast] 테이블에 저장한다. */
+        tm_pdf_modify_mast 
+        ( 
+                email                       /* 이메일 */
+            ,   F16583                      /* 사무수탁회사번호 */
+            ,   F16012                      /* ETF종목코드 */
+            ,   F16013                      /* ETF단축코드 */
+
+            ,   type_cd                     /* 사용자 그룹 코드 */
+            ,   inst_cd                     /* 기관구분코드 */
+
+            ,   reg_id                      /* 등록자 ID */
+            ,   reg_time                    /* 등록시간 */
+            ,   upd_id                      /* 수정자 ID */
+            ,   upd_time                    /* 수정시간 */
+        ) 
+        VALUES  
+        ( 
+                #{user_id}                  /* 이메일 */
+            ,   #{f16583}                   /* 사무수탁회사번호 */
+            ,   #{f16012}                   /* ETF종목코드 */
+            ,   #{f16013}                   /* ETF단축코드 */
+
+            ,   #{type_cd}                  /* 사용자 그룹 코드 */
+            ,   #{inst_cd}                  /* 기관구분코드 */
+
+            ,   #{user_id}                  /* 등록자 ID */
+            ,   now()                       /* 등록시간 */
+            ,   #{user_id}                  /* 수정자 ID */
+            ,   now()                       /* 수정시간 */
+        )
+    ]]>
+    </insert>
+
+    <!--
+    * [tm_pdf_modify_mast] 테이블을 삭제한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <update     id="modifyTmPdfModifyMast">
+    <![CDATA[      
+        UPDATE  /* etpOper.deleteTmPdfModifyMast      [tm_pdf_modify_mast] 테이블을 삭제한다. */
+
+                tm_pdf_modify_mast
+
+           SET      upd_id                  =   #{user_id}                  /* 수정자 ID */
+                ,   upd_time                =   now()                       /* 수정시간 */
+
+         WHERE  1 = 1
+
+           AND  email                       =   #{user_id}                  /* 이메일 */
            AND  f16583                      =   #{f16583}                   /* 사무수탁회사번호 */
            AND  f16012                      =   #{f16012}                   /* ETF종목코드 */
            AND  f16013                      =   #{f16013}                   /* ETF단축코드 */
-           AND  f16316                      =   #{f16316}                   /* 구성종목코드 */
     ]]>
     </update>    
 
+    <!--
+    * [tm_pdf_modify_mast] 테이블을 삭제한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <delete     id="deleteTmPdfModifyMast">
+    <![CDATA[      
+        DELETE  /* etpOper.deleteTmPdfModifyMast      [tm_pdf_modify_mast] 테이블을 삭제한다. */
+          FROM  tm_pdf_modify_mast
+         WHERE  1 = 1
+
+           AND  email                       =   #{user_id}                  /* 이메일 */
+           AND  f16583                      =   #{f16583}                   /* 사무수탁회사번호 */
+           AND  f16012                      =   #{f16012}                   /* ETF종목코드 */
+           AND  f16013                      =   #{f16013}                   /* ETF단축코드 */
+    ]]>
+    </delete>
+
+
+
+
+
+<!--
+***************************************************************
+*   tm_pdf_modify_hist_mast ( PDF 변경 이력 마스터 정보 )
+***************************************************************
+-->
 
     <!--
     * 사용자별 처리한 그룹번호를 조회한다.
@@ -1336,8 +1369,17 @@
             ,   now()                       /* 등록시간 */
         )
     ]]>
-    </insert>    
+    </insert>
 
+
+
+
+
+<!--
+***************************************************************
+*   tm_pdf_modify_hist_dtl ( PDF 변경 이력 상세 정보 )
+***************************************************************
+-->
 
    <!--
     * [tm_pdf_modify_hist_dtl] 테이블에 저장한다.

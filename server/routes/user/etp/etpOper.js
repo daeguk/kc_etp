@@ -1702,13 +1702,15 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                 console.log(paramData);
 
-                                var arrInsertDtl  =   [];
-                                var arrModifyDtl  =   [];
-                                var arrDeleteDtl  =   [];
+                                var arrInsertDtl    =   [];
+                                var arrModifyDtl    =   [];
+                                var arrDeleteDtl    =   [];
+
+                                var mastData        =   {};
 
                                 async.waterfall([
 
-                                    /* 1. ETP 운용관리 - PDF 긴급반영 - 저장시 상세에 이미 등록된 데이터가 존재하는지 체크한다.  
+                                    /* 2. ETP 운용관리 - PDF 긴급반영 - 저장시 상세에 이미 등록된 데이터가 존재하는지 체크한다.  
                                     *
                                     * 1) tm_pdf_modify_dtl 에 없는 경우에는 'insert'
                                     * 2) tm_pdf_modify_dtl 에 존재하고 CU수량과 액면금액 모두 td_etfpdf_basic 의 값과 동일한 경우 'delete'
@@ -1747,7 +1749,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         })
                                     },
 
-                                    /* 2. PDF 변경 상세 정보 (구성종목) 정보를 저장한다. */
+                                    /* 3. PDF 변경 상세 정보 (구성종목) 정보를 저장한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -1770,6 +1772,8 @@ var saveEtpOperPdfModify = function(req, res) {
                                                     callback(null, paramData);
                                                 })
 
+                                            }else{
+                                                callback(null, paramData);
                                             }
 
                                         } catch (err) {
@@ -1781,7 +1785,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 5. PDF 변경 상세 정보 (구성종목) 정보를 수정한다. */
+                                    /* 4. PDF 변경 상세 정보 (구성종목) 정보를 수정한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -1804,6 +1808,8 @@ var saveEtpOperPdfModify = function(req, res) {
                                                     callback(null, paramData);
                                                 })
 
+                                            }else{
+                                                callback(null, paramData);
                                             }
 
                                         } catch (err) {
@@ -1813,45 +1819,100 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                             return callback(resultMsg);
                                         }
-                                    },                                    
-
-                                    /* 3. ETP 운용관리 - PDF 긴급반영 - 저장시 마스터 상태정보를 조회한다. */
-                                    function(msg, callback) {
-
-                                        var stmt = mapper.getStatement('etpOper', 'getTmPdfModifyMastCheck', paramData, { language: 'sql', indent: '  ' });
-                                        console.log(stmt);
-
-                                        conn.query(stmt, function(err, rows) {
-
-                                            if (err) {
-                                                resultMsg.result = false;
-                                                resultMsg.msg = "[error] etpOper.getTmPdfModifyMastCheck Error while performing Query";
-                                                resultMsg.err = err;
-
-                                                return callback(resultMsg);
-                                            }
-
-                                            if (rows && rows.length == 1) {
-                                                paramData.exists_mast_cnt = rows[0].exists_cnt;
-                                            }
-
-                                            callback(null, paramData);
-                                        })
                                     },
 
-                                    /* 4. PDF 변경 마스터 정보를 저장한다. */
+                                    /* 5. PDF 변경 상세 정보 (구성종목) 정보를 삭제한다. */
                                     function(msg, callback) {
-                                        console.log("paramData.exists_mast_cnt=[" + paramData.exists_mast_cnt + "]");
-                                        if (paramData.exists_mast_cnt == 0) {
 
-                                            var stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyMast', paramData, { language: 'sql', indent: '  ' });
+                                        try {
+
+                                            if( arrDeleteDtl && arrDeleteDtl.length > 0 ) {
+                                                paramData.dataLists =   arrDeleteDtl;
+                                                var stmt = mapper.getStatement('etpOper', 'deleteTmPdfModifyDtl', paramData, { language: 'sql', indent: '  ' });
+                                                console.log(stmt);
+
+                                                conn.query(stmt, function(err, rows) {
+
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = "[error] etpOper.deleteTmPdfModifyDtl Error while performing Query";
+                                                        resultMsg.err = err;
+
+                                                        return callback(resultMsg);
+                                                    }
+
+                                                    callback(null, paramData);
+                                                })
+
+                                            }else{
+                                                callback(null, paramData);
+                                            }
+
+                                        } catch (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] etpOper.deleteTmPdfModifyDtl Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+                                    },                                    
+
+                                    /* 6. ETP 운용관리 - PDF 긴급반영 - 저장시 마스터 상태정보를 조회한다. */
+                                    function(msg, callback) {
+
+                                        try {
+                                            var stmt = mapper.getStatement('etpOper', 'getTmPdfModifyMastCheck', paramData, { language: 'sql', indent: '  ' });
                                             console.log(stmt);
 
                                             conn.query(stmt, function(err, rows) {
 
                                                 if (err) {
                                                     resultMsg.result = false;
-                                                    resultMsg.msg = "[error] etpOper.saveTmPdfModifyMast Error while performing Query";
+                                                    resultMsg.msg = "[error] etpOper.getTmPdfModifyMastCheck Error while performing Query";
+                                                    resultMsg.err = err;
+
+                                                    return callback(resultMsg);
+                                                }
+
+                                                if ( rows && rows.length == 1 ) {
+                                                    paramData.mast_status   =   rows[0].mast_status;
+                                                }
+
+                                                callback(null, paramData);
+                                            })
+
+                                        } catch (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] etpOper.getTmPdfModifyMastCheck Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+                                    },
+
+                                    /* 7. PDF 변경 마스터 정보를 변경한다. */
+                                    function(msg, callback) {
+                                        console.log("paramData=[" + paramData + "]");
+
+                                        var queryId =   "saveTmPdfModifyMast";
+                                        try {
+
+                                            if (paramData.mast_status == "insert") {
+                                                queryId =   "saveTmPdfModifyMast";
+                                            }else if(paramData.mast_status == "modify") {
+                                                queryId =   "modifyTmPdfModifyMast";
+                                            }else if(paramData.mast_status == "delete") {
+                                                queryId =   "deleteTmPdfModifyMast";
+                                            }
+
+                                            var stmt = mapper.getStatement('etpOper', queryId, paramData, { language: 'sql', indent: '  ' });
+                                            console.log(stmt);
+
+                                            conn.query(stmt, function(err, rows) {
+
+                                                if (err) {
+                                                    resultMsg.result = false;
+                                                    resultMsg.msg = "[error] etpOper." + queryId + " Error while performing Query";
                                                     resultMsg.err = err;
 
                                                     return callback(resultMsg);
@@ -1860,13 +1921,16 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                                 callback(null, paramData);
                                             })
+                                        } catch (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] etpOper." + queryId + " Error while performing Query";
+                                            resultMsg.err = err;
 
-                                        } else {
-                                            callback(null, paramData);
-                                        }
+                                            return callback(resultMsg);
+                                        }                                            
                                     },                                    
 
-                                    /* 6. PDF 변경 이력 마스터 정보를 저장한다. */
+                                    /* 8. PDF 변경 이력 마스터 정보를 저장한다. */
                                     function(msg, callback) {
 
                                         var stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyHistMast', paramData, { language: 'sql', indent: '  ' });
@@ -1891,7 +1955,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                     },
 
-                                    /* 7. PDF 변경 이력 상세 정보를 저장한다. */
+                                    /* 9. PDF 변경 이력 상세 정보를 저장한다. */
                                     function(msg, callback) {
 
                                         stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyHistDtl', paramData, format);
@@ -1915,7 +1979,6 @@ var saveEtpOperPdfModify = function(req, res) {
                                 ], function(err) {
 
                                     if (err) {
-                                        console.log("#####1");
                                         return callback(resultMsg);
                                     }
 
@@ -1926,7 +1989,6 @@ var saveEtpOperPdfModify = function(req, res) {
                             }, function(err) {
 
                                 if (err) {
-                                    console.log("#####2");
                                     return callback(resultMsg);
                                 }
 
@@ -1939,7 +2001,6 @@ var saveEtpOperPdfModify = function(req, res) {
                 ], function(err) {
 
                     if (err) {
-                        console.log("#####3");
                         console.log(err);
                         conn.rollback();
 
