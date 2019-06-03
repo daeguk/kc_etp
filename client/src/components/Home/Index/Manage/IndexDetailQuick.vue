@@ -1,34 +1,31 @@
 <template>
     <v-container>
-        <v-layout row>
+        <v-layout row xs12>
 
             <v-flex grow>
                 <v-card flat lite pb-0></v-card>
             </v-flex>
 
             <!-- rightmenu -->
-            <v-card flat class="right_menu_w2">
+            <v-card flat class="right_menu_w2 ver3">
                     <v-list class="pt-0" dense>
                         <v-list-tile-content class="rightmenu_con">
-                            <v-subheader>
-                                <v-icon small color="primary">flash_on</v-icon>종목으로 찾기
-                            </v-subheader>
+                            <v-subheader>종목으로 찾기</v-subheader>
                             <v-text-field
                                 v-model="form.jongmokSearch"
                                 append-icon="search"
                                 placeholder="e.g.005930, 삼성전자"
                                 value="e.g.005930, 삼성전자"
-                                outline
-                                hide-details
+                                 single-line
+                                class="w100 pt-0"
                                 @keyup.enter="fn_getIndexJongmokList()"
                             ></v-text-field>
                         </v-list-tile-content>
 
 
-                        <v-list-tile-content class="rightmenu_con ver2">
+                        <v-list-tile-content class="rightmenu_con mb-2">
                             <v-subheader>
-                                <v-icon small color="primary">feedback</v-icon>지수 조치 현황
-
+                                지수 조치 현황
                                 <v-btn
                                     small
                                     depressed
@@ -51,9 +48,9 @@
                                 </v-card>
                             </v-subheader>
                             
-                            <p class="text_red">
+                            <!--p class="text_red">
                                 <v-icon small>arrow_right</v-icon>{{ fix_info.fix_msg }}
-                            </p>
+                            </p-->
                         </v-list-tile-content>
 
                         <v-list-tile-content class="rightmenu_con">
@@ -62,17 +59,13 @@
                                 append-icon="search"
                                 placeholder="e.g.005930, 삼성전자"
                                 value="e.g.005930, 삼성전자"
-                                outline
-                                hide-details
+                                single-line
+                                class="w100"
                                 @keyup.enter="fn_getIndexList()"
                             ></v-text-field>
-
-                            <!--오른쪽 메뉴 하단 리스트 영역 -->
-                            <v-layout row class="w100 pt-3 pr-2">
-                                <v-flex xs12>
-                                    <v-card flat>
-
-                                        <table id="jisuTable" class="tbl_type ver2">
+                        </v-list-tile-content>
+                         <!--오른쪽 메뉴 하단 리스트 영역 -->
+                          <table id="jisuTable" class="tbl_type ver2">
                                             <colgroup>
                                                 <col width="70%">
                                                 <col width="30%">
@@ -112,11 +105,8 @@
                                             </tbody> 
                                         </table--> 
                                       <!---ppt09버전 수정 테이블--->
-                                    </v-card>
-                                </v-flex>
-                            </v-layout>
+
                             <!--오른쪽 메뉴 하단 리스트 영역 -->
-                        </v-list-tile-content>
                     </v-list>
             </v-card>
             <!--rightmenu end -->
@@ -198,7 +188,7 @@ export default {
                 columnDefs: [
                     {  
                         "render": function ( data, type, row ) {
-                            let htm = "<div>";
+                            let htm = "<div class='td_ellipsis2'>";
                             htm += "           "+data+"";
                             htm += "            <br><span class='text_S'>"+row.f16013+"</div>";
                             return htm;
@@ -212,9 +202,9 @@ export default {
                                 htm += "<div>" + util.formatNumber(data) + "</div>";
 
                                 if (row.f15004 >= 0) {
-                                    htm += "<br><span class='text_S text_red'>"+row.f15004+"%</span>";
+                                    htm += "<span class='text_S text_red'>"+row.f15004+"%</span>";
                                 } else {
-                                    htm += "<br><span class='text_S text_blue'>"+row.f15004+"%</span>";
+                                    htm += "<span class='text_S text_blue'>"+row.f15004+"%</span>";
                                 }
 
                                 return htm;
