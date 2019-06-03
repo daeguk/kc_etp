@@ -1,7 +1,7 @@
 <template>
 <v-toolbar fixed app clipped-left clipped-right dark color="#434343" class="elevation-0"  style="z-index:100;">
   <!--v-toolbar-side-icon @click="menuClick"></v-toolbar-side-icon-->
-  <v-toolbar-title>
+  <v-toolbar-title v-on:mouseover="showContextMenu($event)">
     <a class="routerlink logo" @click="outService">ETP PLATFORM</a>
     <!--v-menu offset-y open-on-hover class="top_menu" >
       <template v-slot:activator="{ on }">
@@ -43,7 +43,6 @@
           icon
           dark
           class="topmenu_icon"
-          v-on:mouseover="showContextMenu($event)"
         ><v-icon>apps</v-icon>
         </v-btn>
         <span class="top_cont_title">MARKET ETP INFO</span>
@@ -93,13 +92,13 @@
           <v-list-tile-sub-title>ETP 신규 정보 조회</v-list-tile-sub-title>
             </v-list-tile-content>
         </v-list-tile>
-        <v-list-tile v-on:click="movePage('/etp/contract')">
+        <!--v-list-tile v-on:click="movePage('/etp/contract')">
         <v-list-tile-avatar><object type="image/svg+xml" data="/assets/img/icons/icons8-gg.svg" width="32px" height="32px" ></object></v-list-tile-avatar>
             <v-list-tile-content>
           <v-list-tile-title>운용 지원</v-list-tile-title>
           <v-list-tile-sub-title>운용 지원 정보 조회</v-list-tile-sub-title>
             </v-list-tile-content>
-        </v-list-tile>
+        </v-list-tile-->
       </v-list>
 </div>
 </template>
