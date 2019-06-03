@@ -1527,7 +1527,6 @@ var getJongmokData = function(req, res) {
                         if (rows && rows.length > 0) {
                             resultMsg.dataList = rows;
                         }
-                        f
 
                         callback(null, paramData);
                     });

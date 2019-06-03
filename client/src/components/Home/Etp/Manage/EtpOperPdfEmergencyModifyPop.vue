@@ -40,8 +40,32 @@
                         
                         <v-card flat>
 
-                            <table :id="tblEmergeny01" class="tbl_type" style="width:100%">
+                            <table :id="tblEmergeny01" class="tbl_type ver7" style="width:100%" >
 
+                                <colgroup>
+                                    <col width="10%">
+                                    <col width="8%">
+                                    <col width="14%">
+                                    <col width="14%">
+                                    <col width="12">
+                                    <col width="12%">
+                                    <col width="12%">
+                                    <col width="8%">
+                                    <col width="9%">
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th class="txt_center">Date</th>
+                                        <th class="txt_center">시장<br>구분</th>
+                                        <th class="txt_left">구성종목코드</th>
+                                        <th class="txt_left">종목명</th>
+                                        <th class="txt_right">CU shrs</th>
+                                        <th class="txt_right">액면금액</th>
+                                        <th class="txt_right">평가금액</th>
+                                        <th class="txt_right">비중</th>
+                                        <th class="txt_right"></th>
+                                    </tr>
+                                </thead>                                
                             </table>
                         </v-card>
                     </v-card>
@@ -81,7 +105,7 @@
                                     <span>{{ subData.etf_f16013     /* ETF 단축코드 */      }}</span>
                                 </h4>
 
-                                <table v-bind:id='"step2_" + subData.etf_f16012' class="tbl_type" style="width:100%"></table>
+                                <table v-bind:id='"step2_" + subData.etf_f16012' class="tbl_type ver7" style="width:100%"></table>
 
                             </v-flex>
 
@@ -169,7 +193,7 @@
                                     <span>{{ subData.etf_f16013     /* ETF 단축코드 */      }}</span>
                                 </h4>
 
-                                <table v-bind:id='"step3_" + subData.etf_f16012' class="tbl_type" style="width:100%"></table>
+                                <table v-bind:id='"step3_" + subData.etf_f16012' class="tbl_type ver7" style="width:100%"></table>
 
                             </v-flex>
 
@@ -283,7 +307,7 @@ export default {
 
                         return htm;
                     },
-                    "targets": [3, 4, 5, 6]
+                    "targets": [0, 1, 2, 3]
                 },
                 {  
                     /* CU shrs */
@@ -301,10 +325,10 @@ export default {
                         return htm;
                     },
                     "orderable" : false,
-                    "targets": 7
+                    "targets": 4
                 },
                 { 
-                    "targets": 11,
+                    "targets": 8,
                     "render": function ( data, type, row ) {
                         if (data) {
                             if ( row.status == "insert" ) {
@@ -319,17 +343,13 @@ export default {
                 },                 
             ],
             columns: [  
-                { "data" : "status"         ,   "visible"   : false   },                                                                /* status */
-                { "data" : "code_check"     ,   "visible"   : false   },                                                                /* code_check */
-                { "data" : "f16499_prev"    ,   "visible"   : false   },                                                                /* CU shrs (변경전) */
-
                 { "data" : "f12506"         ,   "orderable" : false  ,   "className" : "txt_center" ,   "width" :   "10%"   , "title" :   "Date"          },   /* Date */
                 { "data" : "f33861"         ,   "orderable" : false  ,   "className" : "txt_center" ,   "width" :   "8%"    , "title" :   "시장<br>구분"      },  /* 시장구분 */
                 { "data" : "f16316"         ,   "orderable" : false  ,   "className" : "txt_left"   ,   "width" :   "14%"   , "title" :   "구성종목코드"  },  /* 구성종목코드 */
-                { "data" : "f16002"         ,   "orderable" : false  ,   "className" : "txt_left"   ,   "width" :   "18%"   , "title" :   "종목명"        },  /* 종목명 */
-                { "data" : "f16499"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "15%"   , "title" :   "CU shrs"       },  /* CU shrs */
-                { "data" : "f34840"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "10%"   , "title" :   "액면금액"      },  /* 액면금액 */
-                { "data" : "f16588"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "10%"   , "title" :   "평가금액"      },  /* 평가금액 */
+                { "data" : "f16004"         ,   "orderable" : false  ,   "className" : "txt_left"   ,   "width" :   "14%"   , "title" :   "종목명"        },  /* 종목명 */
+                { "data" : "f16499"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "12%"   , "title" :   "CU shrs"       },  /* CU shrs */
+                { "data" : "f34840"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "12%"   , "title" :   "액면금액"      },  /* 액면금액 */
+                { "data" : "f16588"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "12%"   , "title" :   "평가금액"      },  /* 평가금액 */
                 { "data" : "f34743"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "8%"    , "title" :   "비중"          },  /* 비중 */
                 { "data": null              ,   "orderable" : false  ,   "align":"center"           ,   "width" :   "9%"    , defaultContent:"" },
             ]
@@ -429,6 +449,8 @@ export default {
             }).then(function(response) {
                 console.log(response);
 
+                util.processing(vm.$refs.progress, false);
+
                 if (response.data) {
                     var etpBasic = response.data.etpBasic;
                     var dataList = response.data.dataList;
@@ -489,8 +511,7 @@ export default {
                         vm.dataList =   dataList;
                     }
                 }
-
-                util.processing(vm.$refs.progress, false);
+                
             });
         },
 
@@ -511,8 +532,7 @@ export default {
                 return  false;
             }
 
-            if(  codeVal.length < 6
-            ) {
+            if(  codeVal.length < 6 ) {
                 vm.$emit("showMessageBox", '확인','구성종목코드를 6자리 이상 입력해 주세요.',{},1);
 
                 return  false;
@@ -558,7 +578,7 @@ export default {
                         ,   "f12506"        :   dataList[0].f12506          /* Date */
                         ,   "f33861"        :   dataList[0].f33861          /* 시장구분 */
                         ,   "f16316"        :   dataList[0].f16012          /* 구성종목코드 */
-                        ,   "f16002"        :   dataList[0].f16002          /* 종목명 */
+                        ,   "f16004"        :   dataList[0].f16002          /* 종목명 */
 
                         ,   "f16499"        :   0                           /* CU shrs */
                         ,   "f34840"        :   0                           /* 액면금액 */
@@ -599,7 +619,7 @@ export default {
                 ,   'f12506'        :   ''              /* Date */
                 ,   'f33861'        :   ''              /* 시장구분 */
                 ,   'f16316'        :   "<input type='text' name='jongmok' id='jongmok' class='txt_left width_fix' placeholder='12자리/6자리코드' maxlength='15' >"        /* 구성종목코드 */
-                ,   'f16002'        :   "<button  name='confirm' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01'>확인</button>"                                                      /* 종목명 */
+                ,   'f16004'        :   "<button  name='confirm' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01'>확인</button>"                                                      /* 종목명 */
                 ,   'f16499'        :   ''              /* CU shrs */
                 ,   'f34840'        :   '0'             /* 액면금액 */
                 ,   'f16588'        :   '0'             /* 평가금액 */
@@ -740,7 +760,7 @@ export default {
                                     columns: [
                                         { "data" : "status"         ,   "width" :   "15%"   ,   "orderable" : false  ,   "className" : "txt_center" ,    "title" :   "구분"     },     /* 구분 */
                                         { "data" : "f16316"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "CODE"     },     /* 코드 */
-                                        { "data" : "f16002"         ,   "width" :   "25%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "종목"     },     /* 종목명 */
+                                        { "data" : "f16004"         ,   "width" :   "25%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "종목"     },     /* 종목명 */
                                         { "data" : "f16499_prev"    ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"  ,    "title" :   "변경전"   },     /* CU shrs (변경전) */
                                         { "data" : "f16499"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"  ,    "title" :   "변경후"   },     /* CU shrs */
                                     ]
@@ -856,7 +876,7 @@ export default {
                                         columns: [
                                             { "data" : "status"         ,   "width" :   "15%"   ,   "orderable" : false  ,   "className" : "txt_center" ,    "title" :   "구분"     },     /* 구분 */
                                             { "data" : "f16316"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "CODE"     },     /* 코드 */
-                                            { "data" : "f16002"         ,   "width" :   "25%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "종목"     },     /* 종목명 */
+                                            { "data" : "f16004"         ,   "width" :   "25%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "종목"     },     /* 종목명 */
                                             { "data" : "f16499_prev"    ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"  ,    "title" :   "변경전"   },     /* CU shrs (변경전) */
                                             { "data" : "f16499"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"  ,    "title" :   "변경후"   },     /* CU shrs */
                                         ]
@@ -920,7 +940,7 @@ export default {
             }            
 
             var searchParam                 =   {}
-            searchParam.searchCode          =   vm.txtAddEtpCode;
+            searchParam.f16012              =   vm.txtAddEtpCode;
             searchParam.initYn              =   "N";
 
             vm.fn_getEtpOperPdfModify( searchParam );
