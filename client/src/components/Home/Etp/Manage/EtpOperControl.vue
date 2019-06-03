@@ -127,7 +127,7 @@
 
         <v-flex :class="FaverClassName">
             <ComEtpFavorItemSub        v-if="showFaver"   
-
+                                    :faverSize = "faverSize"
                                     @showDetail="showDetail" 
                                     @showMessageBox="showMessageBox">
             </ComEtpFavorItemSub>
@@ -189,6 +189,7 @@ export default {
             FaverClassName: '',
             pdfData : {},
             indexBasic : {},
+            faverSize : 80,
     	};
     },    
 

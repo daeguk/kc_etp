@@ -219,7 +219,7 @@
 
                         <!-- 관심종목 영역 -->
                         <ComEtpFavorItemSub     v-if="showFaver" 
-                        
+                                                :faverSize = "faverSize"
                                                 @showDetail="showDetail" 
                                                 @showMessageBox="showMessageBox">
                         </ComEtpFavorItemSub>
@@ -262,7 +262,8 @@ export default {
             fix_info : {
                 fix_disabled : true,
                 fix_msg : "조치현황 없음"
-            }
+            },
+            faverSize : 50,
         };
     },
     mounted: function() {},
