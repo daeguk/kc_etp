@@ -131,7 +131,7 @@
                                 <div v-else>
                                     <li class="align_r">
                                         {{f15007}}
-                                    </li>
+                                    </li><br>
                                     <span class="float_r">{{paramData.index_std_date}}</span>
                                 </div>
                             </li>
@@ -272,11 +272,12 @@ export default {
         indexInavCal : function() {
             var vm = this;
             util.processing(vm.$refs.progress, true);
+
             // 지수 등락률
-            vm.f30823 = (1 - vm.NtoS(vm.f15318) / vm.NtoS(vm.f15007)) ;
+            vm.f30823 = (vm.NtoS(vm.f15318) / vm.NtoS(vm.f15007)) - 1 ;
 
             // 변동률 
-            vm.f15004 = (1 - vm.NtoS(vm.f30824) / vm.NtoS(vm.f30819)) * 100;
+            vm.f15004 = (vm.NtoS(vm.f30824) / vm.NtoS(vm.f30819) - 1) * 100;
 
             // ETP 계산 유형(H: 환햇지, F: 환노출, A: 지수환노출, T: 복합배율, K: 복합배율2, I: 인도레버리지, J: KINDEX합성일본인버스)
             /* 
@@ -326,7 +327,7 @@ export default {
             } 
 
             /* iNav 등락률 */
-            vm.iNavRate =  (1 - (vm.iNav / vm.paramData.f15301)) * 100;
+            vm.iNavRate =  ((vm.iNav / vm.NtoS(vm.f03329)) - 1) * 100;
 
             vm.iNav = vm.formatNumber(vm.iNav);
             vm.iNavRate = vm.formatNumber(vm.iNavRate);
