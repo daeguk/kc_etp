@@ -723,7 +723,7 @@ input[type='file']{
 
 .toggle2 .v-btn-toggle{border:1px solid #c9c9c9; font-family: 'Roboto','sans-serif' !important; color:#717182}
 .toggle2 .v-btn-toggle--selected{ box-shadow: none !important; }
-.toggle2 .v-btn-toggle .v-btn.v-btn--active{background-color:#48485e; color:#ffffff; border-right:1px solid #48485e; }
+.toggle2 .v-btn-toggle .v-btn.v-btn--active{background-color:#85c406; color:#ffffff; border-right:1px solid #85c406; }
 .toggle2 .v-btn-toggle .v-btn{padding:0 15px; opacity: 0.7; height:26px; font-size:13px !important;}
 
 
@@ -822,7 +822,7 @@ input[type='file']{
 .pdf_search.ver2{max-width:500px !important;}
 .pdf_search .v-text-field__slot .v-label{height:50px !important; font-size:24px !important; color:#717182 !important; line-height: 24px !important;}
 .v-card__title.pop_pdf{padding-bottom:0px !important;padding-top:16px !important}
-.pdf_calendar{width:150px;font-weight: 400;}
+.pdf_calendar{width:150px;font-weight: 400; display:inline-block;}
 .pdf_calendar .v-messages{display:none;}
 .pdf_mody_w .v-toolbar{ border-top:1px solid #a3cbe3 !important;  background-color:#f4fbff !important;}
 .pdf_mody_w .pdf_t{font-size: 16px !important; color:#ff4366; font-weight: 600;}

@@ -24,7 +24,7 @@
                             <v-subheader>
                                 <v-icon small>build</v-icon>PDF Tools
                             </v-subheader>
-                            <v-card flat class="w100">
+                            <v-card flat class="w100  ver2">
                                 <v-list>
                                     <!---pdf긴급반영 팝업-->
                                     <v-list-tile :class="( togglePdfEmergencyPop ? 'border_b select' : 'border_b' )" @click.stop="fn_showDetailPdf(6)">
