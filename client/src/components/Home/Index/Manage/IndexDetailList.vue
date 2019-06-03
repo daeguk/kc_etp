@@ -10,8 +10,8 @@
                         <h3 class="headline subtit" pb-0>
                             {{ indexBasic.f16002 }} |
                             <span class="grey--text">{{ indexBasic.f16013 }}</span>
-                            <p>기준일 : {{ indexBasic.fmt_f12506 }}</p>
-                            <p class="sub_txt">Last Updated : </p>
+                            <span class="text_result_t">기준일 : {{ indexBasic.fmt_f12506 }}</span>
+                            <span class="sub_txt">Last Updated : </span>
                         </h3>
                     </v-card-title>
 
