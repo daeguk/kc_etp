@@ -274,7 +274,7 @@ export default {
             columns: [
                 { "data": "f33861", "orderable": true},  /* 분류 */
                 { "data": "f16013", "orderable": true, className:"txt_left" }, /*코드*/
-                { "data": "f16002", "orderable": true}, /*종목*/
+                { "data": "f16004", "orderable": true}, /*종목*/
                 { "data": "f16499", "orderable": true, defaultContent:"" }, /*cu 수량*/
                 { "data": "f34743", "orderable": true, className:"txt_right" }, /*비중*/
                 { "data": "f15001", "orderable": true, className:"txt_right" }, /*현재가*/
@@ -362,7 +362,7 @@ export default {
             columns: [
                 { "data": "f33861", "orderable": true},  /* 분류 */
                 { "data": "f16013", "orderable": true, className:"txt_left" }, /*코드*/
-                { "data": "f16002", "orderable": true}, /*종목*/
+                { "data": "f16004", "orderable": true}, /*종목*/
                 { "data": "f16499", "orderable": true, defaultContent:""}, /*cu 수량*/
                 { "data": "f34743", "orderable": true, className:"txt_right" }, /*비중*/
                 { "data": "f15001", "orderable": true, className:"txt_right" }, /*현재가*/
