@@ -28,9 +28,9 @@
                                 <v-list>
                                     <!---pdf긴급반영 팝업-->
 
-                                    <v-list-tile class="border_b ver2" @click.stop="fn_showDetailPdf(6)">
+                                    <v-list-tile class="border_b ver2 select" @click.stop="fn_showDetailPdf(6)">
                                         <v-list-tile-avatar>
-                                            <div class="oper_list_icon"><span class="icon5"></span></div>
+                                            <div class="oper_list_icon select"><span class="icon5"></span></div>
                                         </v-list-tile-avatar>
                                         <v-list-tile-content class="rm_con_h">
                                             <v-list-tile-title>PDF 긴급반영</v-list-tile-title>

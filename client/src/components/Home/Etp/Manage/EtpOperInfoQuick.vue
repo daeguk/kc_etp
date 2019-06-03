@@ -30,13 +30,13 @@
                             <v-card flat class="w100">
                                 <v-list>
                                     <v-list-tile
-                                        class="border_b"
+                                        class="border_b select"
                                         @click="fn_setInavData"
                                         v-model="toggleINav"
                                     >
                                         <v-list-tile-avatar>
                                             <!---click,hover시 select 클래스 추가--->
-                                            <div class="oper_list_icon"><span class="icon1"></span></div>
+                                            <div class="oper_list_icon select"><span class="icon1"></span></div>
                                         </v-list-tile-avatar>
                                         <v-list-tile-content class="rm_con_h">
                                             <v-list-tile-title>실시간투자지표산출현황</v-list-tile-title>
