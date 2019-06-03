@@ -181,7 +181,7 @@
                                 <b>{{f15004}}</b>
                             </li>
                         </ul>
-                        <ul class="bot_line3">
+                        <ul class="bot_line3" v-if="paramData.f34240 == 'J'" >
                             <li class="list_tit txt_point">Other Factor</li>
                             <li class="align_r">
                                 <b>{{f18101}}</b>
