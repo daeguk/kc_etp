@@ -57,7 +57,7 @@
                             </p>
                         </v-card>
                     <v-card flat>
-                        <table id="tblPdfList" class="tbl_type"></table>
+                        <table id="tblPdfList" class="tbl_type ver7"></table>
                     </v-card>
 
                 </v-card>
@@ -80,6 +80,7 @@ import _ from "lodash";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
+import dtFc from "datatables.net-fixedcolumns";
 
 import Config from "@/js/config.js";
 import ProgressBar from "@/components/common/ProgressBar.vue";
@@ -239,14 +240,14 @@ export default {
             if (vm.stateInfo.pageState == "pdf") {
 
                 vm.fn_setArrShowColumn([
-                        "f12506"            /* 입회일 - Date */
+                        "fmt_f12506"        /* 입회일 - Date */
                     ,   "f33861"            /* ETF시장구분 - 시장구분 -  */
                     ,   "f16316"            /* 구성종목코드 - 종목코드 */
                     ,   "f16004"            /* 해외시장종목명 - 종목명 */
                     ,   "f16499"            /* 1CU단위증권수 - CU SHrs */
                     ,   "f34840"            /* 액면금액설정현금액 - 액면금액 */
                     ,   "f16588"            /* 평가금액 - 평가금액 */
-                    ,   "f34743"            /* ETF_PDF비중 - 비중 */
+                    ,   "fmt_f34743"        /* ETF_PDF비중 - 비중 */
                 ]);
             } 
 
@@ -324,17 +325,52 @@ export default {
             var vm = this;
 
             var arrColumn  =   [
-                { 'name' : 'f12506'         , 'data': 'f12506'          ,  'width' : '19%', 'orderable' : true , 'className': 'dt-body-center'  , 'title' : 'Date'      },      /* Date */
+                { 'name' : 'fmt_f12506'     , 'data': 'fmt_f12506'      ,  'width' : '9%', 'orderable' : true , 'className': 'dt-body-center'  , 'title' : 'Date'      },      /* Date */
                 { 'name' : 'f33861'         , 'data': 'f33861'          ,  'width' : '9%' , 'orderable' : true , 'className': 'dt-body-center'  , 'title' : '시장구분'  },       /* 시장구분 */
-                { 'name' : 'f16316'         , 'data': 'f16316'          ,  'width' : '9%', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목코드'  },       /* 종목코드 */
-                { 'name' : 'f16004'         , 'data': 'f16002'          ,  'width' : '9%', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목명'    },       /* 종목명 ( 해외시장종목명 ) */
-                { 'name' : 'f16499'         , 'data': 'f16499'          ,  'width' : '9%', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : 'CU SHrs'   },      /* CU SHrs */
-                { 'name' : 'f34840'         , 'data': 'f34840'          ,  'width' : '9%', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '액면금액'   },      /* 액면금액 */
-                { 'name' : 'f16588'         , 'data': 'f16588'          ,  'width' : '9%', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '평가금액'   },      /* 평가금액 */
-                { 'name' : 'f34743'         , 'data': 'f34743'          ,  'width' : '9%' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중'      },      /* 비중 */
+                { 'name' : 'f16316'         , 'data': 'f16316'          ,  'width' : '9%' , 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목코드'  },       /* 종목코드 */
+                { 'name' : 'f16004'         , 'data': 'f16004'          ,  'width' : '19%', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목명'    },       /* 종목명 ( 해외시장종목명 ) */
+                { 'name' : 'f16499'         , 'data': 'f16499'          ,  'width' : '9%' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : 'CU SHrs'   },      /* CU SHrs */
+                { 'name' : 'f34840'         , 'data': 'f34840'          ,  'width' : '9%' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '액면금액'   },      /* 액면금액 */
+                { 'name' : 'f16588'         , 'data': 'f16588'          ,  'width' : '9%' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '평가금액'   },      /* 평가금액 */
+                { 'name' : 'fmt_f34743'     , 'data': 'fmt_f34743'      ,  'width' : '9%' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중 (%)'  },      /* 비중 */
             ];        
 
             var arrColumnDef  =   [
+                    /* CU SHrs */
+                    {      
+                            'name' : 'f16499'   
+                        ,   "render": function ( data, type, row, meta ) {
+                                let htm = "";
+
+                                htm += util.formatNumber(data);
+
+                                return  htm;
+                            }
+                    },
+
+                    /* 액면금액 */
+                    {      
+                            'name' : 'f34840'   
+                        ,   "render": function ( data, type, row, meta ) {
+                                let htm = "";
+
+                                htm += util.formatNumber(data);
+
+                                return  htm;
+                            }
+                    },
+
+                    /* 평가금액 */
+                    {      
+                            'name' : 'f16588'   
+                        ,   "render": function ( data, type, row, meta ) {
+                                let htm = "";
+
+                                htm += util.formatNumber(data);
+
+                                return  htm;
+                            }
+                    },
             ];
 
             vm.stateInfo.totWidth    =   0;
