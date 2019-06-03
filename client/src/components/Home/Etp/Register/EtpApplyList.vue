@@ -170,7 +170,6 @@ export default {
                             paging: false,
                             searching: false,
                             data: this.results,
-                            destroy: true,
                             //list_cnt : this.results.length,
 
                                columnDefs: [
@@ -216,7 +215,6 @@ export default {
                                         shtml += '                <input role="slider" value="1" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">'
                                         shtml += '                <input role="slider" value="2" readonly="readonly" aria-readonly="true" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0,1">'
                                         shtml += '                <div class="v-slider__track__container">'
-    
                                         var ahtml1='',ahtml2='',ahtml3='',ahtml4 = '' ;
                                         ahtml1 = '                <div class="v-slider__track" style="left: 0px; right: auto; width: 100%;"></div>' ;
                                         ahtml2 = '                <div class="v-slider__track-fill primary" style="left: 0%; right: auto; width: calc(33% - 0px);"></div>' ;
@@ -350,9 +348,9 @@ export default {
                             var idxMid = $(tr).find("td:eq(4)").text();
                             var idxSymCode = $(tr).find("td:eq(5)").text();
                             var ridxDistSymCode = $(tr).find("td:eq(6)").text();
-                            var idxTable= 'm' + idxMid + 'hbased'  ;
+                            var idxTable= 'm' + ('0' + idxMid).slice(-3) + 'hbased'  ;
                             var marketId= 'M' + idxMid  ;
-                            console.log("idxModal : " + idxMid + ": " + idxTable + ": " + idxSymCode + ": " + ridxDistSymCode + " :" +  marketId)
+                            console.log("idxMid : " + idxMid + " idxTable: " + idxTable + ": " + idxSymCode + ": " + ridxDistSymCode + "idxMid:" ) ;
                             vm.idxConfirmModal.idxTable = idxTable;
                             vm.idxConfirmModal.idxSymCode = idxSymCode;
                             vm.idxConfirmModal.ridxDistSymCode = ridxDistSymCode;

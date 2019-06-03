@@ -26,7 +26,7 @@
                                     :items="items"
                                     @change="selectItem"
                                     v-model="selectedItem.value"
-                                >
+                                 >
                               </v-select>
                            </th>
                            <th>지수명</th>
@@ -34,9 +34,9 @@
                    </thead>
                    <tbody>
                        <tr>
-                           <td>{{ idxConfirmModal.idxSymCode }}</td>
-                           <td>{{ selectedItem.text }}</td>
-                           <td>{{ idxConfirmModal.idxNm }}</td>
+                           <td align="center">{{ idxConfirmModal.idxSymCode }}</td>
+                           <td align="center">{{ selectedItem.text }}</td>
+                           <td align="center">{{ idxConfirmModal.idxNm }}</td>
                        </tr> 
                    </tbody>
                </table>
@@ -78,8 +78,8 @@ export default {
             selectedItem: {
                 value: "1",
                 text: "종가"
-            }
-          }
+            },
+        }
     },
     components: {
 
@@ -96,6 +96,7 @@ export default {
                  table.clear();
             }
             vm.selectedItem.value = "1";
+            vm.selectedItem.text = "종가";
             vm.getIdxList();        
         //vm.getRidxList();
         });
@@ -192,10 +193,6 @@ export default {
                    
                 });
         },
-
-
-
-
 
     }
 }

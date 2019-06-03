@@ -863,6 +863,7 @@
                                 <v-btn color="primary" depressed dark   v-if="masterData.seq  === ''&& !inputDisabled" @click="fn_insertEtpRegister('S')">저장</v-btn>
                                 <v-btn color="primary" depressed dark   v-if="masterData.seq  !== ''&& !inputDisabled" @click="fn_insertEtpRegister('U')">수정</v-btn>
                                 </div>
+                                  <ConfirmDialog ref="confirm" ></ConfirmDialog>
                             </v-card>
 
                             <!--div class="text-xs-center pt-3 mt-3">
@@ -1045,11 +1046,14 @@ export default {
             idxCompDistYn : "N",
             errors: {},
             seq : 0,
-            dateFormat:""
         };
+    },
+    components: {
+        ConfirmDialog : ConfirmDialog,
     },
     mounted: function() {
         this.getEtpRegisterView();
+        this.$root.$confirm = this.$refs.confirm;        // 메시지 박스 참조
     },
     created: function() {
     },
@@ -1199,7 +1203,7 @@ export default {
 
             });
         },
-        fn_insertEtpRegister: function(arg) {
+         fn_insertEtpRegister: async function(arg) {
             console.log("###fn_insertEtpRegister:::",arg);
             var vm = this;
             vm.errors = {};
@@ -1409,9 +1413,19 @@ export default {
 
             if(arg ==='S'){
                 console.log("fn_insertEtpRegister 호출>> this.masterData ", vm.masterData);
-                if(confirm("등록하시겠습니까?") == false){ return; }
-
-                if(vm.masterData.idx_file_path !=='' || vm.masterData.idx_file_path !==null){ 
+                if( await this.$root.$confirm.open(
+                        "[저장]",
+                        "저장하시겠습니까?",
+                        {}
+                    ,   2
+                    )
+                ){
+                    if( "Y" != this.$root.$confirm.val ) {
+                        return false;
+                    }
+                } 
+                var origin_file_nm =  vm.masterData.idx_file_nm;
+                if(vm.masterData.idx_file_path !=='' && vm.masterData.idx_file_path !=null){ 
                     vm.masterData.idx_file_nm= vm.masterData.idx_file_path + "/" + vm.masterData.idx_file_nm;
                 }
                 
@@ -1424,7 +1438,7 @@ export default {
                 // krx_up_code
                 // agent_up_code
 
-                axios({
+                await axios({
                     method: 'post',
                     url: Config.base_url + "/user/etp/insertEtpRegister",
                     data: { "data" : JSON.stringify(vm.masterData)},
@@ -1435,23 +1449,58 @@ export default {
                         
                         console.log("insertEtpRegister result>>>", response);
                         if( response.data.result ) {
-                            alert('저장이 완료되었습니다.');
-                            vm.$emit("movePage", 0); 
+                            if(  vm.$root.$confirm.open(
+                                '[저장]',
+                                '저장이 완료되었습니다.',
+                                {}
+                            ,   1
+                                )
+                            ) {
+                                if( "Y" == vm.$root.$confirm.val ) {
+                                     vm.$emit("movePage", 0); 
+                                }
+                            }
                         }else{
-                            console.log(response.data.msg);
-                            alert(response.data.msg);
+                            if( vm.$root.$confirm.open(
+                                '[오류]',
+                                response.data.msg,
+                                {}
+                            ,   1
+                                )
+                            ) {
+                                vm.masterData.idx_file_nm = origin_file_nm;
+                                return false;
+                            }
                         }
 
                     });
             }else if(arg ==='U'){
                 console.log("fn_updateEtpRegister 호출>> this.masterData ", vm.masterData);
                 if(vm.masterData.isin_stat_cd =='0002' && vm.masterData.idx_rec_yn =='N'){
-                    if(confirm('기초지수입수여부가 "N"으로 변경되어 종목신청상태로 돌아갑니다.') == false){
-                        return false;
-                    }
+                    if( await this.$root.$confirm.open(
+                            '[저장]',
+                            '기초지수입수여부가 "N"으로 변경되어 종목신청상태로 돌아갑니다.',
+                            {}
+                        ,   2
+                            )
+                        ) {
+                            if( "Y" != this.$root.$confirm.val ) {
+                                return false;
+                            }
+                        }
                 }
-                if(confirm("수정하시겠습니까?") == false){ return; }
-                if(vm.masterData.idx_file_path !=='' || vm.masterData.idx_file_path !==null){ 
+                  if( await this.$root.$confirm.open(
+                            '[수정]',
+                            '수정하시겠습니까',
+                            {}
+                        ,   2
+                            )
+                        ) {
+                            if( "Y" != this.$root.$confirm.val ) {
+                                return false;
+                            }
+                        }
+                if(vm.masterData.idx_file_path !=='' && vm.masterData.idx_file_path !=null){ 
                     vm.masterData.idx_file_nm= vm.masterData.idx_file_path + "/" + vm.masterData.idx_file_nm;
                 }
                 function replacer(name, val) {
@@ -1462,7 +1511,7 @@ export default {
                     }
                 }
 
-                axios({
+                await axios({
                     method: 'post',
                     url: Config.base_url + "/user/etp/updateEtpRegister",
                     data: { "data" : JSON.stringify(vm.masterData, replacer)},
@@ -1473,11 +1522,31 @@ export default {
                             
                             console.log("updateEtpRegister result>>>", response);
                         if( response.data.result ) {
-                            alert('수정이 완료되었습니다.');
-                            vm.$emit("movePage", 0); 
+                            if( vm.$root.$confirm.open(
+                                '[수정]',
+                                '수정이 완료되었습니다.',
+                                {}
+                            ,   1
+                                )
+                            ) {
+                                 if( "Y" == vm.$root.$confirm.val ) {
+                                        vm.$emit("movePage", 0); 
+                                 }
+                                  
+                            }
+                            //alert('수정이 완료되었습니다.');
+                        
                         }else{
-                            console.log(response.data.msg);
-                            alert(response.data.msg);
+                            if( vm.$root.$confirm.open(
+                                '[오류]',
+                                response.data.msg,
+                                {}
+                            ,   1
+                                )
+                            ) {
+                                vm.masterData.idx_file_nm = origin_file_nm;
+                                 return false;
+                            }
                         }
                 });
             }

@@ -12,8 +12,8 @@
     * 
     -->
 <select id="selectEtpApplyList" >
-    <![CDATA[
-        SELECT a.*, 
+<![CDATA[
+    SELECT a.*, 
         (select inst_nm from m001uetpinstcode where inst_cd = a.inst_cd limit 1) inst_nm, 
         (select m_cd_nm from m001uetpcode where l_cd= '002' and m_cd = a.isin_stat_cd) m_cd_nm,
         timestampdiff(day,req_date,now()) lapse_date,
@@ -24,43 +24,53 @@
         when "F" then "해외"        
         else ""
         end kor_for_type_name 
-        from m001uetpmaster a
-        WHERE (a.list_date    >=   current_date( )  or      a.list_date is null) 
+    from m001uetpmaster a
+    WHERE (a.list_date    >=   current_date( )  or  a.list_date is null ) 
         and a.isin_stat_cd != "0009" 
+]]>
+    <if test="inst_cd != null and inst_cd !='' ">
         and a.inst_cd = #{inst_cd} 
+    </if> 
         order by a.seq asc
-    ]]>
 </select>
 
 <select id="getEtpApplyDistCnt">
-    <![CDATA[
-        select  count(1)  distCnt from m001uetpmaster where (list_date >=   current_date( )  or   list_date is null  )
-            and inst_cd = #{inst_cd} 
-            and idx_dis_yn = 'Y' and isin_stat_cd != '0009'
-    ]]>        
+<![CDATA[
+    select  count(1)  distCnt from m001uetpmaster where (list_date >=   current_date( )  or   list_date is null  )
+        and idx_dis_yn = 'Y' and isin_stat_cd != '0009'
+]]>
+    <if test="inst_cd != null and inst_cd !='' ">
+        and inst_cd = #{inst_cd} 
+    </if>         
 </select>
 <select id="getEtpApplyIndexCnt" >
-    <![CDATA[
-        select count(1) indexCnt from m001uetpmaster where  (list_date >=   current_date( )  or   list_date is null  )
-        and inst_cd = #{inst_cd} 
+<![CDATA[
+    select count(1) indexCnt from m001uetpmaster where  (list_date >=   current_date( )  or   list_date is null  )
         and idx_rec_yn = 'Y' and isin_stat_cd != '0009'
-    ]]>            
+]]>
+    <if test="inst_cd != null and inst_cd !='' ">
+        and inst_cd = #{inst_cd} 
+    </if>                     
 </select>
 
 <select id="getEtpApplyCodeCnt">
-    <![CDATA[
-       select count(1) codeCnt from m001uetpmaster where  (list_date >=   current_date( )  or   list_date is null  )
-       and inst_cd = #{inst_cd} 
-       and isin_code is not null and isin_stat_cd != '0009'
-    ]]>        
+<![CDATA[
+    select count(1) codeCnt from m001uetpmaster where  (list_date >=   current_date( )  or   list_date is null  )
+        and isin_code is not null and isin_stat_cd != '0009'
+]]>
+    <if test="inst_cd != null and inst_cd !='' ">
+        and inst_cd = #{inst_cd} 
+    </if>                 
 </select>
 
 <select id="getEtpApplyInavCnt" >
-    <![CDATA[
-       select count(1) inavCnt from m001uetpmaster where  (list_date >=   current_date( )  or   list_date is null  )
-       and  inst_cd = #{inst_cd} 
+<![CDATA[
+    select count(1) inavCnt from m001uetpmaster where  (list_date >=   current_date( )  or   list_date is null  )
         and inav_calc_yn = 'Y' and isin_stat_cd != '0009'
-    ]]>
+]]>
+    <if test="inst_cd != null and inst_cd !='' ">
+        and inst_cd = #{inst_cd} 
+    </if>         
 </select>
 <select id="getCodeList">
  <![CDATA[
@@ -94,10 +104,12 @@
 
 <select id="getCompContactList">
 <![CDATA[   
-    SELECT USER_NM,TEL_NO,CEL_NO,EMAIL 
+    select user_nm, tel_no,cel_no , email 
         FROM m001uetpinstcode
-        WHERE INST_CD = #{inst_cd}
-]]>	        
+]]>	            
+    <if test="inst_cd != null and inst_cd !='' ">
+        WHERE inst_cd = #{inst_cd} 
+    </if>                     
 </select>
 
 <select id="getMaster">
