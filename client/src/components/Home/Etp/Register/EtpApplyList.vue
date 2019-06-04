@@ -472,8 +472,15 @@ export default {
             var delList = $('input[name=seq]:checked');
              console.log("delList: " + delList.length );
             if(delList.length == 0){
-                alert('삭제할 항목을 선택하여 주십시요');
-                return;
+                 if( vm.$root.$confirm.open(
+                        '[오류]',
+                        '삭제할 항목을 선택하여 주십시요',
+                        {}
+                    ,   1
+                        )
+                    ) {
+                        return false;
+                    }
             }
             var seqValues = [];
             $('input[name=seq]:checked').each(function(){
