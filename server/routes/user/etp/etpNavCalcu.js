@@ -51,13 +51,13 @@ var getiNavData = function (req, res) {
 
                     
                     if (etpItem.f16493 == '1' || etpItem.f16493 == '2') {
-                        query_id = "getEtpOperPdfEtf";
+                        query_id = "getEtpPdfEtf";
                     } else if (etpItem.f16493 == '3' || etpItem.f16493 == '4') {
-                        query_id = "getEtpOperPdfEtn";
+                        query_id = "getEtpPdfEtn";
                     }
 
                     console.log("query_id:" + query_id);
-                    var stmt = mapper.getStatement('etpOper', query_id, params, {language:'sql', indent: '  '});
+                    var stmt = mapper.getStatement('etpNav', query_id, params, {language:'sql', indent: '  '});
                     
                     console.log("stmt:" + stmt);
 
@@ -202,7 +202,7 @@ var getFutureBasic = function (req, res) {
 /*
         호출하는 쪽에서 f34239 값을 넘겨주지 않아 주석 처리함.
         var f34239 = req.query.f34239;
-*/
+*/  
         
         var options = {
             "f16012" : f16012,

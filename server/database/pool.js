@@ -84,6 +84,7 @@ module.exports = class {
         ibatisMapper.createMapper(['./database/mysql/user/etpinfo/etpDetail.xml']);
         ibatisMapper.createMapper(['./database/mysql/user/etpinfo/etpOper.xml']);
 
+        ibatisMapper.createMapper(['./database/mysql/user/etpinfo/etpNavCalcu.xml']);
         ibatisMapper.createMapper(['./database/mysql/user/marketInfo/marketInfo.xml']);
 
         // 공통으로 사용되는 종목 정보

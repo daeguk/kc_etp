@@ -37,6 +37,8 @@
 import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
+import util       from "@/js/util.js";
+import dtFc from "datatables.net-fixedcolumns";
 
 import Config from "@/js/config.js";
 //import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
@@ -202,8 +204,8 @@ export default {
                     ,   'rest_date'                     /* 휴장일 */
                     ,   'f15001'                        /* 최근종가 */
 
-                    ,   'f12506'                        /* 최근증가 */
-                    ,   'base_date'                     /* 기준일자 */
+                    ,   'fmt_f12506'                    /* 최근일자 */
+                    ,   'fmt_std_date'                  /* 기준일자 */
                 ] );
             }
 
@@ -349,9 +351,9 @@ export default {
                 { 'name' : 'f16013'             , 'data': 'f16013'          ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_left'   , 'title' : '실시간 심볼'   },      /* 단축코드 */
                 { 'name' : 'incre_symbol'       , 'data': 'incre_symbol'    ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_left'   , 'title' : '증가 심볼'     },      /* 증가 심볼 */
                 { 'name' : 'rest_date'          , 'data': 'rest_date'       ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_right'  , 'title' : '휴장일'        },       /* 휴장일 */
-                { 'name' : 'f12506'             , 'data': 'f12506'          ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_right'  , 'title' : '최근일자'      },       /* 입회일 */
+                { 'name' : 'fmt_f12506'         , 'data': 'fmt_f12506'      ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_right'  , 'title' : '최근일자'      },       /* 입회일 */
                 { 'name' : 'f15001'             , 'data': 'f15001'          ,  'width' : '100', 'orderable' : true  , 'className': 'txt_right'  , 'title' : '최근종가'      },     /* 현재가 */
-                { 'name' : 'std_date'           , 'data': 'std_date'        ,  'width' : '100', 'orderable' : true  , 'className': 'txt_center' , 'title' : '기준일자'      },     /* 기준일자 */
+                { 'name' : 'fmt_std_date'       , 'data': 'fmt_std_date'    ,  'width' : '100', 'orderable' : true  , 'className': 'txt_center' , 'title' : '기준일자'      },     /* 기준일자 */
             ];        
 
             var arrColumnDef  =   [
@@ -386,17 +388,19 @@ export default {
                     {      
                             'name' : 'last_date'   
                         ,   "render": function ( data, type, row, meta ) {
-                                var content = "";
+                                let htm = "";
+  
+                                htm += data;           /* 한글종목명 */
 
-                                if( data ) {
-                                    content +=      data;           /* 한글종목명 */
-                                    content +=      "<br>";
-                                    content +=      "<span class='text_S text_red'>" + row.f15004 + "%</span>";     /* 등락율 */
+                                if (row.f15004 >= 0) {
+                                    htm += "<br><span class='text_S text_red'>"+row.f15004+"%</span>";      /* 등락율 */
+                                } else {
+                                    htm += "<br><span class='text_S text_blue'>"+row.f15004+"%</span>";     /* 등락율 */
                                 }
 
-                                return  content;
+                                return  htm;
                             }
-                    },                    
+                    },
 
                     /* ETF */
                     {       
@@ -414,6 +418,24 @@ export default {
                                 }
 
                                 return  content;
+                            }
+                    },
+
+                    /* 최근종가 */
+                    {      
+                            'name' : 'f15001'   
+                        ,   "render": function ( data, type, row, meta ) {
+                                let htm = "";
+
+                                htm += util.formatNumber(data);
+
+                                if (row.f15004 >= 0) {
+                                    htm += "<br><span class='text_S text_red'>"+row.f15004+"%</span>";      /* 등락율 */
+                                } else {
+                                    htm += "<br><span class='text_S text_blue'>"+row.f15004+"%</span>";     /* 등락율 */
+                                }
+
+                                return  htm;
                             }
                     },
 

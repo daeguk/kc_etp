@@ -127,7 +127,7 @@
 
         <v-flex :class="FaverClassName">
             <ComEtpFavorItemSub        v-if="showFaver"   
-
+                                    :faverSize = "faverSize"
                                     @showDetail="showDetail" 
                                     @showMessageBox="showMessageBox">
             </ComEtpFavorItemSub>
@@ -189,6 +189,7 @@ export default {
             FaverClassName: '',
             pdfData : {},
             indexBasic : {},
+            faverSize : 80,
     	};
     },    
 
@@ -328,7 +329,7 @@ export default {
             util.processing(this.$refs.progress, visible);
         },      
                     
-        async fn_showDetailIndex(gubun, paramData) {      
+        async fn_showDetailIndex(gubun, paramData) {
 
             /* 지수관리 -> 지수구성정보 상세팝업 */
             if( gubun == '3' ) {

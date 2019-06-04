@@ -563,7 +563,7 @@ export default {
 
             var arrColumn  =   [
                 { 'name' : 'f16002'             , 'data': 'f16002'           ,  'width' : '120', 'orderable' : true  , 'className': 'txt_left',  'title' : '종목'           },      /* 한글종목명 */
-                { 'name' : 'f33929_nm'          , 'data': 'f33929_nm'        ,  'width' : '70', 'orderable' : true  , 'className': 'txt_left',  'title' : '산출방식'   },      /* 지표산출방식 */
+                { 'name' : 'f33929_nm'          , 'data': 'f33929_nm'        ,  'width' : '70',  'orderable' : true  , 'className': 'txt_left',  'title' : '산출방식'   },      /* 지표산출방식 */
                 { 'name' : 'f15301'             , 'data': 'f15301'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : 'iNAV'          },      /* ETP지표가치(NAV/IV) */
                 { 'name' : 'f03329'             , 'data': 'f03329'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : '전일NAV'},      /* 전일ETP지표가치(예탁원)(NAV/IV) */
                 { 'name' : 'f15302'             , 'data': 'f15302'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : 'TE' },      /* 추적오차율 */
@@ -607,7 +607,7 @@ export default {
                     /* iNAV */
                     {       'name' : 'f15301'   
                         ,   "render": function ( data, type, row ) {
-                                let htm = ""
+                                let htm = "";
             
                                 htm += util.formatNumber(data);
 
@@ -635,11 +635,11 @@ export default {
                     /* 지수 */
                     {       'name' : 'index_f15001'   
                         ,   "render": function ( data, type, row ) {
-                                let htm = ""
+                                let htm = "";
             
                                 htm += util.formatNumber(data);
 
-                                if (row.f30818 >= 0) {
+                                if (row.f30823 >= 0) {
                                     htm += "<br><span class='text_S text_red'>"+row.f30823+"%</span>";      /* ETF관련지수등락율 */
                                 } else {
                                     htm += "<br><span class='text_S text_blue'>"+row.f30823+"%</span>";     /* ETF관련지수등락율 */
