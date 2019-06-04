@@ -31,7 +31,7 @@ var getIndexSummaryInfo = function (req, res) {
 
         // 대입 문자 치환
         stmt2 = stmt2.replace(/\: =/g,':=');
-        
+ 
 
         Promise.using(pool.connect(), conn => {
 
