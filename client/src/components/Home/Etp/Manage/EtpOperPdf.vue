@@ -5,15 +5,10 @@
                 <v-card flat>
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
-                            ARIRANG 200 |
-                            <!--v-text-field
-                                v-model="searchParam.search_nm"
-                                class="pdf_search"
-                                single-line
-                                hide-details
-                                :readonly="true"
-                            ></v-text-field-->
-                            <span class="grey--text"> 2012545</span>
+                            
+                            {{ searchParam.f16002 }} |
+                            <span class="grey--text"> {{ searchParam.f16013 }}</span>
+
                             <span class="text_result_t pdf_calendar">
                                 <v-menu
                                     ref="menu2"

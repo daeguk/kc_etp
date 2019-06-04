@@ -182,69 +182,50 @@
     <!-- 성과가 가장 좋은 지수-->
     <select id="indexSummaryResult">
     <![CDATA[
-        SELECT BAS.F16013
-            ,BAS.F16002
-            ,BAS.LARGE_TYPE
-            ,BAS.MIDDLE_TYPE
-            ,BAS.MARKET_ID
-            ,HIS.F12506
-            ,HIS.F15009
-            ,HIS.F15010
-            ,HIS.F15011
-            ,HIS.F15001
-            ,HIS.F15472
-            ,HIS.F15006
-            ,HIS.F15004
-            ,HIS.F15015
-            ,HIS.F15023 
-        FROM (SELECT A.F16013
-                    ,A.F16002
-                    ,A.LARGE_TYPE
-                    ,A.MIDDLE_TYPE
+        SELECT A.F12506
+              ,A.F15009
+              ,A.F15010
+              ,A.F15011
+              ,A.F15001
+              ,A.F15472
+              ,A.F15006
+              ,A.F15004
+              ,A.F15015
+              ,A.F15023 
+              ,A.F16013
+              ,A.F16002
+              ,A.LARGE_TYPE
+              ,A.MIDDLE_TYPE
+              ,A.MARKET_ID            
+        FROM kc_etp.td_index_basic A,
+            (SELECT  A.F16013
                     ,A.MARKET_ID
-                FROM kc_etp.td_index_basic A,
-                    (SELECT  A.F16013
-                        FROM (SELECT basic.F16013
-                                    , (SELECT F15009
-                                        FROM (SELECT F16013, F12506, F15009
-                                        , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
-                                        , (@vF16013:= a.F16013) vF16013
-                                    FROM td_index_hist a
-                                    INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
-                                    where  F12506 >= date_format(DATE_SUB(now(), INTERVAL 1 YEAR), '%Y%m%d')
-                                    order by F16013, F12506 DESC) A
-                                    where A.rnum = 1
-                                    And A.F16013 = basic.F16013) maxData
-                                    , (SELECT F15009 
-                                        FROM (SELECT F16013, F12506, F15009
-                                                    , (CASE @vF16013 WHEN a.F16013 THEN @rownum:=@rownum+1 ELSE @rownum:=1 END) rnum 
-                                                    , (@vF16013:= a.F16013) vF16013
-                                                FROM td_index_hist a
-                                                INNER JOIN (SELECT @vF16013:='', @rownum:=0 FROM DUAL) b
-                                                where F12506 >= date_format(DATE_SUB(now(), INTERVAL 1 YEAR), '%Y%m%d')
-                                                order by F16013, F12506 ASC) A
-                                        where A.rnum = 1
-                                        and A.F16013 = basic.F16013) minData
-                                FROM td_index_basic basic
+              FROM (SELECT basic.F16013
+                         ,basic.MARKET_ID
+                         , (SELECT a.F15009
+                              FROM td_index_hist a
+                             where a.F12506 = (SELECT MAX(F12506) FROM td_index_hist WHERE F12506 >= date_format(DATE_SUB(now(), INTERVAL 1 YEAR), '%Y%m%d'))
+                               AND a.F16013 = basic.F16013
+                               AND a.MARKET_ID = basic.MARKET_ID
+                            ) maxData
+                          , (SELECT a.F15009
+                               FROM td_index_hist a
+                              where a.F12506 = (SELECT MIN(F12506) FROM td_index_hist WHERE F12506 >= date_format(DATE_SUB(now(), INTERVAL 1 YEAR), '%Y%m%d'))
+                                AND a.F16013 = basic.F16013
+                                AND a.MARKET_ID = basic.MARKET_ID
+                            ) minData
+                       FROM td_index_basic basic
        ]]>                                
-                            <if test="large_type != null and large_type !=''">                                
-                                WHERE basic.large_type=#{large_type}
-                            </if>    
-                                ) A
-                                group by F16013
-                        order by max(ifnull(A.maxData/A.minData, 0)) desc
-                        limit 0, 1)B
-                WHERE A.F16013 = B.F16013
-            ) BAS,
-            kc_etp.td_index_hist HIS
-        WHERE BAS.F16013 = HIS.F16013
-            AND BAS.MARKET_ID = HIS.MARKET_ID
-        <if test="large_type != null and large_type !=''"> 
-            AND BAS.large_type=#{large_type}
-        </if>
-        ORDER BY HIS.F12506 DESC
-        limit 0, 1
-
+                <if test="large_type != null and large_type !=''">                                
+                     WHERE basic.large_type=#{large_type}
+                </if>    
+                    ) A
+                GROUP BY F16013, MARKET_ID
+                order by max(ifnull(A.maxData/A.minData, 0)) desc
+                limit 0, 1
+            )B
+          WHERE A.F16013 = B.F16013
+            AND A.MARKET_ID = B.MARKET_ID
     </select>
   
     <!-- 1년간 지수 정보(그래프정보)-->

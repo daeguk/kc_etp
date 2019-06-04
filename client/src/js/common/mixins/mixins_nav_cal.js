@@ -125,6 +125,8 @@ export const nav_cal_common =   {
                 
                 let exchUSBasic = null;
                 let ExchJPBasic = null;
+                let assetValue = 0;
+                let jpy_value = 0;
                 axios.get(Config.base_url + "/user/etp/getExchBasic", {
                     params: {
                         f16012 : '11USDSP',
@@ -138,10 +140,12 @@ export const nav_cal_common =   {
                         }
                     }).then(function(response) {
                         try {
+                            assetValue = Number(exchUSBasic.f15001); /* 현재가 */
+
                             ExchJPBasic = response.data.results[0];
                             
                             /* JPYUSD 매수호가 */
-                            var jpy_bid = Number(ExchJPBasic.f14531);
+                            var jpy_bid = Number(ExchJPBasic.f14531);                            
                 
                             /*JPYUSD 매도호가*/
                             var jpy_ask = Number(ExchJPBasic.f14501);   
@@ -206,31 +210,24 @@ export const nav_cal_common =   {
                 f33861 => 0: 유가증권 1: 코스닥 2: 기타 3:채권 4: 선물옵션
             */
             else if (pdf_info.f33861 == "0" || pdf_info.f33861 == "1") {
-                
-                
-                axios.get(Config.base_url + "/user/etp/getKspjongBasic", {
-                    params: {
-                        f16012 : pdf_info.f16316,
-                    }
-                }).then(function(response) {
+             
                     try {
-                        let kspjongBasic = response.data.results[0];
                         /* CU 주식수 */
                         if (pdf_info.f16499 >= 0) {
                             /* 현재가*/
-                            assetValue = Number(kspjongBasic.f15001);
+                            assetValue = Number(pdf_info.f15001);
 
                         } else if (pdf_info.f16499 < 0) {
                             /*현재가 - 기준가*/
-                            assetValue = Number(kspjongBasic.f15001) - Number(kspjongBasic.f15007)
+                            assetValue = Number(pdf_info.f15001) - Number(pdf_info.f15007)
                         }
 
                         let market_tot_amt = (assetValue * Number(pdf_info.f16499)); /* 시가 총액 */
-                        let f15001 = kspjongBasic.f15001;       /* 현재가 */
-                        let f15007 = kspjongBasic.f15007;                    /* 기준가 */
-                        let f15004 = kspjongBasic.f15004;                     /* 등락률 */
-                        let f15472 = kspjongBasic.f15472;                     /* 대비 */
-                        let f16013 = kspjongBasic.f16013;                     /* 종목코드 */
+                        let f15001 = pdf_info.f15001;       /* 현재가 */
+                        let f15007 = pdf_info.f15007;                    /* 기준가 */
+                        let f15004 = pdf_info.f15004;                     /* 등락률 */
+                        let f15472 = pdf_info.f15472;                     /* 대비 */
+                        let f16013 = pdf_info.f16013;                     /* 종목코드 */
 
                         let jongItem = {};
                         jongItem.market_amt = market_tot_amt;
@@ -255,8 +252,6 @@ export const nav_cal_common =   {
                         resolve(jongItem);
                         console.log(e);
                     }
-                }) ;
-                
             }
                     
     
@@ -285,8 +280,7 @@ export const nav_cal_common =   {
                 자산의 소속시장이 선물 또는 옵션일 경우
                 (현재가 - 기준가) X 단위계약승수 를 사용한다.
             */
-            else if (pdf_info.f33861 == '4') {
-
+            else if (pdf_info.f33861 == '4') {                
                 axios.get(Config.base_url + "/user/etp/getFutureBasic", {
                     params: {
                         f16012 : pdf_info.f16316,
@@ -295,8 +289,10 @@ export const nav_cal_common =   {
                     try {
                         let futureBasic = response.data.results[0];
                         assetValue = (Number(futureBasic.f15001) - Number(futureBasic.f15007)) * Number(futureBasic.f33904);
-
+                        
+                        /*시가총액 = assetValue * cu 주식수 */
                         let market_tot_amt = (assetValue * Number(pdf_info.f16499)); /* 시가 총액 */
+                        
                         let f15001 = futureBasic.f15001;       /* 현재가 */
                         let f15007 = futureBasic.f15007;                    /* 기준가 */            
                         let f15004 = futureBasic.f15004;                     /* 등락률 */

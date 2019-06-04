@@ -242,10 +242,11 @@ export default {
                             
                         htm += util.formatNumber(data);
 
+                        
                         if (row.f15004 >= 0) {
-                            htm += "<br><span class='text_S text_red'>"+row.f15004+"%</span>";
+                            htm += "<br><span class='text_S text_red'>"+util.formatNumber(row.f15004)+"%</span>";
                         } else {
-                            htm += "<br><span class='text_S text_blue'>"+row.f15004+"%</span>";
+                            htm += "<br><span class='text_S text_blue'>"+util.formatNumber(row.f15004)+"%</span>";                    
                         }
 
                         return htm;
@@ -274,7 +275,7 @@ export default {
             columns: [
                 { "data": "f33861", "orderable": true},  /* 분류 */
                 { "data": "f16013", "orderable": true, className:"txt_left" }, /*코드*/
-                { "data": "f16004", "orderable": true}, /*종목*/
+                { "data": "f16004", "orderable": true, className:"txt_left"}, /*종목*/
                 { "data": "f16499", "orderable": true, defaultContent:"" }, /*cu 수량*/
                 { "data": "f34743", "orderable": true, className:"txt_right" }, /*비중*/
                 { "data": "f15001", "orderable": true, className:"txt_right" }, /*현재가*/
@@ -331,9 +332,9 @@ export default {
                         htm += util.formatNumber(data);
 
                         if (row.f15004 >= 0) {
-                            htm += "<br><span class='text_S text_red'>"+row.f15004+"%</span>";
+                            htm += "<br><span class='text_S text_red'>"+util.formatNumber(row.f15004)+"%</span>";
                         } else {
-                            htm += "<br><span class='text_S text_blue'>"+row.f15004+"%</span>";
+                            htm += "<br><span class='text_S text_blue'>"+util.formatNumber(row.f15004)+"%</span>";
                         }
 
                         return htm;
@@ -362,7 +363,7 @@ export default {
             columns: [
                 { "data": "f33861", "orderable": true},  /* 분류 */
                 { "data": "f16013", "orderable": true, className:"txt_left" }, /*코드*/
-                { "data": "f16004", "orderable": true}, /*종목*/
+                { "data": "f16004", "orderable": true, className:"txt_left"}, /*종목*/
                 { "data": "f16499", "orderable": true, defaultContent:""}, /*cu 수량*/
                 { "data": "f34743", "orderable": true, className:"txt_right" }, /*비중*/
                 { "data": "f15001", "orderable": true, className:"txt_right" }, /*현재가*/
@@ -401,7 +402,7 @@ export default {
 
             axios.get( Config.base_url + "/user/etp/getiNavData", {
                 params: {
-                    //f16012 : 'KRG701800010',
+                    //f16012 : 'KR7261110001',
                     f16012 : f16012,
                 }
             }).then(async function(response) {

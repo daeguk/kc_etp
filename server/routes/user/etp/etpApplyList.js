@@ -295,39 +295,127 @@ var deleteEtpApply = function (req, res) {
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
-        util.log("params.seqValues:::", JSON.stringify(req.session));
 
         var params = { 
-                        "user_id":  req.session.user_id,
-                        "seqValues":  req.query.seqValues
+                        "user_id"   :   req.session.user_id,
+                        "seqValues" :   req.query.seqValues,
+                        "seq"       :  "",
+                        "type_cd"   :   req.session.type_cd
                        };
+        //*** 운영반영시 주석제거***               
+        // if(params.type_cd !=='0002'){
+        //     res.json({
+        //         result: false
+        //         ,msg: "코스콤만 삭제가 가능합니다."
+        //     });
+        //     res.end();
+        //     return;
+        // }
 
-        util.log("params:::", JSON.stringify(params));
+        var stmt = "";
+        var async = require('async');
+        var format = { language: 'sql', indent: ' ' };
+        function replacer(name, val) {
+            if ( val == null || val==undefined ) {
+                return ""; 
+            }  else {
+                return val; // return unchanged
+            }
+        }
+   
+        async.forEachOfLimit(req.query.seqValues, 1, function(seq, index, cb) {
+        console.log(index + ': ' + seq);
 
-        var stmt = mapper.getStatement('EtpRegister', 'deleteEtpApply', params, {language:'sql', indent: '  '});
-        console.log(stmt);
-        Promise.using(pool.connect(), conn => {
-            conn.queryAsync(stmt).then(rows => {
-                res.json({
-                    result: true
+           Promise.using(pool.connect(), conn => {  
+                async.waterfall([
+                    function( callback ) { //삭제
+                        params.seq = seq;
+                        console.log(params.seq);
+                        stmt = mapper.getStatement('EtpRegister', 'deleteEtpApply' ,params, format);
+                        console.log(stmt);
+                        conn.query(stmt, function( err, rows ) {
+                            if ( rows ) {
+                                console.log( "deleteEtpApply", rows );
+                            } if( err ) {
+                                return callback( err );
+                            }
+                            callback( null, params );
+                        });
+                    },
+                    function( data, callback ) { //db 마스터조회
+
+                        stmt = mapper.getStatement('EtpRegister', 'getMaster', params, format);
+                        console.log(stmt);
+                        conn.query(stmt, function( err, rows ) {
+                            if ( rows ) {
+                                params.dbMasterData = rows[0];
+                            }
+                            if( err ) {
+                                return callback( err );
+                            }
+                            callback( null, params );
+                        });
+                    },
+                    function( data, callback ) { //히스토리 시퀀스확인
+
+                        stmt = mapper.getStatement('EtpRegister', 'getMasterHistoryNextSeq', params, format);
+                        console.log(stmt);
+                        conn.query(stmt, function( err, rows ) {
+                            if ( rows ) {
+                                params.dbMasterData.seq_hist = rows[0].SEQ_HIST;
+                            }
+                            if( err ) {
+                                return callback( err );
+                            }
+                            callback( null, params );
+                        });
+                    },
+                    function( data, callback ) { //히스토리쌓기
+                      
+                        stmt = mapper.getStatement('EtpRegister', 'insertMasterHistory',  JSON.parse(JSON.stringify(params.dbMasterData, replacer)), format);
+                        console.log(stmt);
+                        conn.query(stmt, function( err, rows ) {
+                            if ( rows ) {
+                                console.log( "insertMasterHistory", rows );
+                            }
+                            if( err ) {
+                                return callback( err );
+                            }
+                            callback( null, params );
+                        });
+                    }
+                ],function (err) {
+                    if(err){
+                        console.log("[err] EtpRegister.deleteEtpApply Error while performing Query.", err);
+                        res.json({
+                            result: false
+                            ,msg: err
+                        });
+                        res.end();
+                    }else{
+                        console.log(index + ": done")
+                        cb();
+                    }
+                   
                 });
-                res.end();
-            }).catch(err => {
-                util.log("Error while deleteEtpApply.", err);
-                res.json({
-                    result: false
-                    ,msg: err
-                });
-                res.end();
+            });  
+        }, function() {
+            console.log('ALL done');
+            res.json({
+                result: true
             });
-
+            res.end();
         });
-    } catch(exception) {
-        util.log("err=>", exception);
-    }
-};
-
-
+        
+    }catch(exception) {
+            util.log("err=>", exception);
+            res.json({
+                result: false
+                ,msg: exception
+            });
+            res.end();
+    }    
+}    
 
 module.exports.getEtpApplyList = getEtpApplyList;
 module.exports.getEtpApplyDistCnt = getEtpApplyDistCnt;
