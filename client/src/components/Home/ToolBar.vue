@@ -68,58 +68,9 @@ export default {
       // Home.vue
       this.$EventBus.$emit("outService");
     },
-<<<<<<< HEAD
     movePage: function(link) {
         this.$router.push({path:link});
     }
-=======
-    showContextMenu: function(e) {
-            
-            console.log("showContextMenu");
-            var menu = document.getElementById("context-menu");
-
-            if (menu.className == "active") {
-                //menu.classList.remove('active');
-                return;
-            } else {
-                if(!this.contextMenuWidth || !this.contextMenuHeight) {
-                    menu.style.visibility = "hidden";
-                    menu.style.display = "block";
-                    this.contextMenuWidth = menu.offsetWidth;
-                    this.contextMenuHeight = menu.offsetHeight;
-                    menu.removeAttribute("style");
-                }
-
-                
-
-                if((this.contextMenuWidth + e.pageX) >= window.innerWidth) {
-                    menu.style.left = (e.pageX - this.contextMenuWidth) + "px";
-                } else {
-                    var left = 0;
-                    if (e.pageX >= 441) {
-                        left = 441;
-                    } else {
-                        left = e.pageX - 31;
-                    }
-                     
-                    menu.style.left = left + "px";
-                }
-                
-            
-                menu.style.top = "50px";                
-
-
-                menu.classList.add('active');
-            }
-
-        },
-        hideContextMenu: function() {
-            document.getElementById("context-menu").classList.remove('active');
-        },
-        movePage: function(link) {
-            this.$router.push({path:link});
-        }
->>>>>>> 831595454de01951ec8e7b676bf08c2e506e70e1
   }
 }  
 </script>
