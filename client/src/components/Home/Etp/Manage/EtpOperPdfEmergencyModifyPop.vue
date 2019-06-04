@@ -312,14 +312,13 @@ export default {
                 {  
                     /* CU shrs */
                     "render": function ( data, type, row ) {
-
                         var htm = "";
                         if( typeof row.f16316 != "undefined" && row.f16316.length > 0 ) {       /* 구성종목코드 */
                             if( row.f16316.indexOf( "<input" ) > -1 ) {
                                 htm = util.formatNumber( data );
                             }else{
                                 /* 1CU단위증권수 */
-                                htm = "<input type='number' name='f16499' id='f16499' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='15'>";
+                                htm = "<input type='text' name='f16499' id='f16499' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='15'>";
                             }
                         }
 
@@ -331,14 +330,13 @@ export default {
                 {  
                     /* 액면금액 */
                     "render": function ( data, type, row ) {
-
                         var htm = "";
                         if( typeof row.f16316 != "undefined" && row.f16316.length > 0 ) {       /* 구성종목코드 */
                             if( row.f16316.indexOf( "<input" ) > -1 ) {
                                 htm = util.formatNumber( data );
                             }else{
                                 /* 액면금액 */
-                                htm = "<input type='number' name='f34840' id='f34840' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='15'>";
+                                htm = "<input type='text' name='f34840' id='f34840' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='15'>";
                             }
                         }
 
@@ -388,7 +386,8 @@ export default {
 
                 { "data" : "status"         ,   "visible"   : false   },                                                                /* status */
                 { "data" : "code_check"     ,   "visible"   : false   },                                                                /* code_check */
-                { "data" : "f16499_prev"    ,   "visible"   : false   },                                                                /* CU shrs (변경전) */                
+                { "data" : "f16499_prev"    ,   "visible"   : false   },                                                                /* CU shrs (변경전) */
+                { "data" : "f34840_prev"    ,   "visible"   : false   },                                                                /* 액면금액 (변경전) */
             ]
         });
 
@@ -430,21 +429,26 @@ export default {
 
             /* CU shrs */
             if ( $(this).attr('name') == 'f16499' ) {
-                var tdData = $(this).eq(0).val();
-                $(this).eq(0).val( util.formatNumber( tdData ) );
+
+                var tdData = _.replace( $(this).eq(0).val(), /,/g, "" );
+                $(this).eq(0).val( tdData );
 
                 nowData.name = "f16499";
-                nowData.f16499  =   $(this).eq(0).val();
+                nowData.f16499  =   tdData;
+
+                $(this).eq(0).val( util.formatNumber( tdData ) );
             }
             /* 액면금액 */
             else if( $(this).attr('name') == 'f34840' ) {
-                var tdData = $(this).eq(0).val();
-                $(this).eq(0).val( util.formatNumber( tdData ) );
+
+                var tdData = _.replace( $(this).eq(0).val(), /,/g, "" );
+                $(this).eq(0).val( tdData );
 
                 nowData.name = "f34840";
-                nowData.f34840  =   $(this).eq(0).val();
-            }
+                nowData.f34840  =   tdData;
 
+                $(this).eq(0).val( util.formatNumber( tdData ) );
+            }
 
             vm.fn_setStatus( data, nowData, rowIndex, ( jongmokTag ? jongmokTag.length : 0 ) );
         });
@@ -640,7 +644,8 @@ export default {
 
                         ,   "status"        :   "insert"
                         ,   "code_check"    :   true
-                        ,   "f16499_prev"   :   0                           /* CU shrs ( 변경전 ) */                        
+                        ,   "f16499_prev"   :   ''                          /* CU shrs ( 변경전 ) */
+                        ,   "f34840_prev"   :   ''                          /* 액면금액 ( 변경전 ) */
                     }
 
                     tblEmergeny01.row(rowIndex).data( addData ).order( [0, "asc"] ).draw(  );
@@ -680,7 +685,8 @@ export default {
 
                 ,   "status"        :   "insert"
                 ,   "code_check"    :   false
-                ,   "f16499_prev"   :   ''              /* CU shrs ( 변경전 ) */                
+                ,   "f16499_prev"   :   ''              /* CU shrs ( 변경전 ) */
+                ,   "f34840_prev"   :   ''              /* 액면금액 ( 변경전 ) */
             }
 
             tblEmergeny01.row.add( addData ).order( [0, "asc"] ).draw(  );            
@@ -1037,7 +1043,7 @@ debugger;
                     if( tableData.status != "insert" ) {
                         
                         /* DB 에 저장된 값이 존재하면 상태값은 변경 상태 */
-                        if(  tableData.f16499_exist ) {
+                        if(  tableData.f16499_exist == "Y" ) {
                             table.cell( tr, 9 ).data( { "status" : "modify" } );
                             vm.dataList[ rowIndex ].status  =   "modify";
                         }
@@ -1058,7 +1064,7 @@ debugger;
                         }
                     }
 
-                    vm.dataList[ rowIndex ].f16499      =   util.formatNumber( nowData.f16499 );
+                    vm.dataList[ rowIndex ].f16499      =   nowData.f16499;
                 }
                 /* 액면금액 */
                 else if( nowData.name == "f34840" ) {
@@ -1066,7 +1072,7 @@ debugger;
                     if( tableData.status != "insert" ) {
                         
                         /* DB 에 저장된 값이 존재하면 상태값은 변경 상태 */
-                        if(  tableData.f34840_exist ) {
+                        if(  tableData.f34840_exist ==  "Y" ) {
                             table.cell( tr, 9 ).data( { "status" : "modify" } );
                             vm.dataList[ rowIndex ].status  =   "modify";
                         }                        
@@ -1087,16 +1093,16 @@ debugger;
                         }
                     }
 
-                    vm.dataList[ rowIndex ].f34840      =   util.formatNumber( nowData.f34840 );
+                    vm.dataList[ rowIndex ].f34840      =   nowData.f34840;
                 }
 
             }else{
                 vm.dataList[ rowIndex ].code_check  =   false;
 
                 if( nowData.name == "f16499" ) {
-                    vm.dataList[ rowIndex ].f16499      =   util.formatNumber( nowData.f16499 );
+                    vm.dataList[ rowIndex ].f16499      =   nowData.f16499;
                 }else{
-                    vm.dataList[ rowIndex ].f34840      =   util.formatNumber( nowData.f34840 );
+                    vm.dataList[ rowIndex ].f34840      =   nowData.f34840;
                 }                
             }
         },
