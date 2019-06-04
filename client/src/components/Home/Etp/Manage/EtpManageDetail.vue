@@ -3,7 +3,7 @@
     <div>
 
         <!-- 지수 상세 팝업 -->
-        <v-dialog v-model="showIndexDetailDialog" persistent max-width="1300">
+        <v-dialog v-model="showIndexDetailDialog" persistent max-width="1400">
             <IndexDetailInfo        v-if="showIndexDetailDialog" 
             
                                     :paramData="indexBasic" 

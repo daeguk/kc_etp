@@ -7,7 +7,7 @@
                                 <v-dialog v-model="showDialog" persistent max-width="500">                                   
                                     <v-card flat>
                                         <h5>
-                                            <v-card-title ma-0>
+                                            <v-card-title class="pb-0">
                                                 비교자산추가
                                                 <v-spacer></v-spacer>
                                                 <v-btn icon dark @click="hideJongMokPop">
@@ -21,6 +21,7 @@
                                         <v-layout row wrap>
                                             <v-flex xs12>
                                                 <v-tabs
+                                                    grow
                                                     fixed-tabs
                                                     light
                                                     v-model="tab"

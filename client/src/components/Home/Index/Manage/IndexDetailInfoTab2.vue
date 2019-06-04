@@ -1,5 +1,4 @@
 <template>
-    <v-container fluid grid-list-md pa-0 mb-4>
         <v-layout row wrap>
             <v-flex xs12 flat>
                 <div class="indexinfo_box01">
@@ -11,7 +10,7 @@
                      <table id="perf_table" :class="tbl_class">
                          <colgroup>
                             <col class="">
-                            <col class="">
+                            <col class="perf_t_w0">
                             <col class="perf_t_w1">
                             <col class="perf_t_w2">
                             <col class="perf_t_w3">
@@ -154,14 +153,10 @@
                             <div class="graph_02_w"  id="importance_chart"></div>
                         </v-flex>
                     </v-layout>
-                    <v-card flat></v-card>
                 </div>
                 <!---비중정보 팝업end-->
             </v-flex>
-
-            <v-flex xs12></v-flex>
         </v-layout>
-    </v-container>
 </template>
 
 
@@ -176,7 +171,7 @@ import Config from '@/js/config.js'
 var perf_table = null;
 var importance_grid = null;
 export default {
-    props: ["basicData"],
+    props: ["basicData", "showDialog", "showView"],
     data() {
         return {
             tab: null,
@@ -226,9 +221,12 @@ export default {
                     vm.param.jisu_cd      =   vm.basicData.jisu_cd;
                     vm.param.large_type   =   vm.basicData.large_type;
                     vm.param.market_id    =   vm.basicData.market_id;
-                    vm.perf_class = vm.basicData.perf_class;
-                    vm.tbl_class = vm.basicData.tbl_class;
-                    vm.chart_size = vm.basicData.chart_size;
+
+                    if( vm.showView ) {
+                        vm.perf_class = vm.basicData.perf_class;
+                        vm.tbl_class = vm.basicData.tbl_class;
+                        vm.chart_size = vm.basicData.chart_size;
+                    }
                 }
                 else if(   
                         vm.$route.query.jisu_cd  
@@ -264,7 +262,7 @@ export default {
                         {  
                             "render": function ( data, type, row, meta ) {
                                 if (data) {
-                                    return "<img src='/assets/img/" + vm.performChartImages[ meta.row ] + "'><span>&nbsp;&nbsp;&nbsp;" + data + "</span>";
+                                    return "<img src='/assets/img/" + vm.performChartImages[ meta.row ] + "'><span class='line2_ts2'>" + data + "</span>";
                                 } else {
                                     return "";
                                 }
@@ -292,7 +290,7 @@ export default {
                     data : [],
                     columns: [
                         { "data": "F16013", "orderable": false}, 
-                        { "data": "F16002", "orderable": false,  "width":"30%", className: 'txt_left line2'}, 
+                        { "data": "F16002", "orderable": false,  className: 'txt_left line2 perf_t_w0'}, 
                         { "data": "Week1", "orderable": false, className: 'txt_right'},
                         { "data": "Month1", "orderable": false, className: 'txt_right'},
                         { "data": "Month3", "orderable": false, className: 'txt_right'},
@@ -379,7 +377,7 @@ export default {
                 var options = {'title':'',
                             'width':vm.chart_size,
                             'height':'180',
-                            'colors': ['#1e99e8', '#48485e', '#ff4366', '#727281', '#b9e0f7'],                
+                            'colors': ['#85c406', '#1e99e8', '#434343', '#ff4366', '#fbb040'],                
                             'hAxis':{
                                 textStyle: {
                                     color:'#ffffff'

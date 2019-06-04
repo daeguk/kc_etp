@@ -1,7 +1,7 @@
 <template>
 <v-card flat>
     <v-card-title>
-        <v-text-field v-model="search" v-on:keyup="filterData" append-icon="search" label="Search" single-line hide-details></v-text-field>
+        <v-text-field class="pt-0" v-model="search" v-on:keyup="filterData" append-icon="search" label="Search" single-line hide-details></v-text-field>
     </v-card-title>   
 
  <v-card flat>
