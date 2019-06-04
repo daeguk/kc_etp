@@ -78,7 +78,7 @@
                 <!---기초지수 팝업 내용 --->
                 <idxConfirmModal :idxConfirmModal="this.idxConfirmModal" @close="hideIdxListPop"></idxConfirmModal>
                 <!-- 기초지수 팝업 내용  end  -->
-
+                <ConfirmDialog ref="confirm" ></ConfirmDialog>
              </v-flex>
         </v-layout>
     </v-container>
@@ -92,6 +92,8 @@ import Config from "@/js/config.js";
 import companyContactModal from "./companyContactModal";
 import idxConfirmModal from "./idxConfirmModal";
 import excel from "xlsx";
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
+
 var table = null;
 
 export default {
@@ -126,6 +128,7 @@ export default {
     components: {
         companyContactModal,
         idxConfirmModal,
+        ConfirmDialog : ConfirmDialog
     
     },
     computed: {},
@@ -139,6 +142,7 @@ export default {
         vm.getEtpApplyIndexCnt();
         vm.getEtpApplyCodeCnt();
         vm.getEtpApplyInavCnt();
+        this.$root.$confirm = this.$refs.confirm;
     },
     methods: {
 
@@ -463,7 +467,7 @@ export default {
         hideIdxListPop: function() {
             this.idxConfirmModal.dialog = false;
         },      
-        deleteEtpApply: function() {        
+        deleteEtpApply: async function() {        
             var vm = this;
             var delList = $('input[name=seq]:checked');
              console.log("delList: " + delList.length );
@@ -476,15 +480,36 @@ export default {
                seqValues.push($(this).val());     
             });
             console.log("seqValues: " + seqValues );
-            axios.get(Config.base_url + "/user/etp/deleteEtpApply", {
+            await axios.get(Config.base_url + "/user/etp/deleteEtpApply", {
                 params: {
                     seqValues : seqValues
                 }
             }).then(function(response) {
-                if (response.data.success == false) {
-                    vm.$emit("showMessageBox", '확인','삭제 중 오류가 발생했습니다.',{},1);
-                } 
-                //location.reload();
+                if (response.data.result == false) {
+                   if( vm.$root.$confirm.open(
+                                '[오류]',
+                                response.data.msg,
+                                {}
+                            ,   1
+                                )
+                            ) {
+                                return false;
+                            }
+                    
+                }else if (response.data.result == true) {
+                        vm.getEtpApplyList();
+                        vm.getEtpApplyDistCnt();
+                        vm.getEtpApplyIndexCnt();
+                        vm.getEtpApplyCodeCnt();
+                        vm.getEtpApplyInavCnt();
+                    if(  vm.$root.$confirm.open(
+                            '[삭제]',
+                            '삭제가 완료되었습니다.',
+                            {}
+                        ,   1
+                            )
+                        ){}                
+                }
             });
 
         },
