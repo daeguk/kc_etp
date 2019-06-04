@@ -18,7 +18,7 @@
                                             </div>
                                         </v-flex>
 
-                                        <v-flex xs12 text-xs-center v-if="!showView">
+                                        <v-flex xs12 text-xs-center v-if="showDialog">
                                             <v-btn icon @click="fn_close">
                                                 <v-icon>close</v-icon>
                                             </v-btn>
