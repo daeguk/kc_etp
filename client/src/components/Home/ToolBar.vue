@@ -1,8 +1,8 @@
 <template>
 <v-toolbar fixed app clipped-left clipped-right dark color="#434343" class="elevation-0"  style="z-index:100;">
   <!--v-toolbar-side-icon @click="menuClick"></v-toolbar-side-icon-->
-  <v-toolbar-title>
-    <a class="routerlink logo" @click="outService" v-on:mouseleave="hideContextMenu()">ETP PLATFORM</a>
+  <v-toolbar-title v-on:mouseleave="hideContextMenu()">
+    <a class="routerlink logo" @click="outService">ETP PLATFORM</a>
     <!--v-menu offset-y open-on-hover class="top_menu" >
       <template v-slot:activator="{ on }">
         <v-btn
@@ -46,10 +46,10 @@
           v-on:mouseover="showContextMenu($event)"
         ><v-icon>apps</v-icon>
         </v-btn>
-        <span class="top_cont_title" v-on:mouseleave="hideContextMenu()">MARKET ETP INFO</span>
+        <span class="top_cont_title">MARKET ETP INFO</span>
   </v-toolbar-title>
 <template id="template-context-menu">
-    <div id="context-menu" v-on:mouseleave="hideContextMenu()">
+    <div id="context-menu" v-on:mouseleave="hideContextMenu()" v-on:mouseover="showContextMenu($event)">
         <v-list  two-line  class="menu_list">
             <v-list-tile v-on:click="movePage('/info/etpinfo')">
                 <v-list-tile-avatar><object type="image/svg+xml" data="/assets/img/icons/icons8-heat-map.svg" width="36px" height="36px" ></object></v-list-tile-avatar>
@@ -166,7 +166,13 @@ export default {
                 if((this.contextMenuWidth + e.pageX) >= window.innerWidth) {
                     menu.style.left = (e.pageX - this.contextMenuWidth) + "px";
                 } else {
-                    var left = e.pageX - 31;
+                    var left = 0;
+                    if (e.pageX >= 441) {
+                        left = 441;
+                    } else {
+                        left = e.pageX - 31;
+                    }
+                     
                     menu.style.left = left + "px";
                 }
                 
