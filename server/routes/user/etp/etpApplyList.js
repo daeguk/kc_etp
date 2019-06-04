@@ -186,7 +186,7 @@ var getCompContactList = function (req, res) {
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
         var options = { 
-            inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd,
+            inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd
          };
         util.log("options", JSON.stringify(options));
         var stmt = mapper.getStatement('EtpRegister', 'getCompContactList', options, {language:'sql', indent: '  '});
@@ -221,7 +221,7 @@ var getIdxList = function (req, res) {
         var mapper = req.app.get("mapper");
         
         var options = { 
-                       "idxTable":  req.query.idxTable,
+                       "market_id":  req.query.market_id,
                        "idx_sym_code":  req.query.idx_sym_code
                        };
 
@@ -260,16 +260,13 @@ var getRidxList = function (req, res) {
         var mapper = req.app.get("mapper");
         
         var options = { 
-                       "market_id":  req.query.market_id,
+                       "rMarket_id":  req.query.rMarket_id,
                        "ridx_dist_sym_code":  req.query.ridx_dist_sym_code
                        };
 
         util.log("options", JSON.stringify(options));
-
         var stmt = mapper.getStatement('EtpRegister', 'getRidxList', options, {language:'sql', indent: '  '});
         console.log(stmt);
-
-
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
