@@ -940,6 +940,7 @@
             ,   F16013                      /* ETF단축코드 */
             ,   F16316                      /* 구성종목코드 */
 
+            ,   group_no                    /* 사용자별 처리한 그룹번호 */
             ,   type_cd                     /* 사용자 그룹 코드 */
             ,   inst_cd                     /* 기관구분코드 */
             ,   status                      /* insert( 신규 ), modify( 변경 ) */
@@ -964,6 +965,7 @@
             ,   #{f16013}                   /* ETF단축코드 */
             ,   #{data.f16316}              /* 구성종목코드 */
 
+            ,   #{group_no}                 /* 사용자별 처리한 그룹번호 */
             ,   #{type_cd}                  /* 사용자 그룹 코드 */
             ,   #{inst_cd}                  /* 기관구분코드 */
             ,   #{data.status}              /* insert( 신규 ), modify( 변경 ) */
@@ -1001,6 +1003,7 @@
                                         ,   #{f16013}                       AS  f16013          /* ETF단축코드 */
                                         ,   #{data.f16316}                  AS  f16316          /* 구성종목코드 */
 
+                                        ,   #{group_no}                     AS  group_no        /* 사용자별 처리한 그룹번호 */
                                         ,   #{data.f16499}                  AS  f16499          /* 1CU단위증권수 */
                                         ,   #{data.f16499_prev}             AS  f16499_prev     /* 1CU단위증권수 ( 변경전 ) */
                                         ,   #{data.f34840}                  AS  f34840          /* 액면금액 */
@@ -1024,6 +1027,7 @@
                 ,   tm_pdf_modify_dtl.f34840        =   base.f34840             /* 액면금액 */
                 ,   tm_pdf_modify_dtl.f34840_prev   =   base.f34840_prev        /* 액면금액 ( 변경전 ) */
 
+                ,   tm_pdf_modify_dtl.group_no      =   base.group_no           /* 사용자별 처리한 그룹번호 */
                 ,   tm_pdf_modify_dtl.upd_id        =   #{user_id}              /* 수정자 ID */
                 ,   tm_pdf_modify_dtl.upd_time      =   now()                   /* 수정시간 */
 
@@ -1125,6 +1129,7 @@
             ,   F16012                      /* ETF종목코드 */
             ,   F16013                      /* ETF단축코드 */
 
+            ,   group_no                    /* 사용자별 처리한 그룹번호 */
             ,   type_cd                     /* 사용자 그룹 코드 */
             ,   inst_cd                     /* 기관구분코드 */
 
@@ -1140,6 +1145,7 @@
             ,   #{f16012}                   /* ETF종목코드 */
             ,   #{f16013}                   /* ETF단축코드 */
 
+            ,   #{group_no}                 /* 사용자별 처리한 그룹번호 */
             ,   #{type_cd}                  /* 사용자 그룹 코드 */
             ,   #{inst_cd}                  /* 기관구분코드 */
 
@@ -1161,7 +1167,8 @@
 
                 tm_pdf_modify_mast
 
-           SET      upd_id                  =   #{user_id}                  /* 수정자 ID */
+           SET      group_no                =   #{group_no}                 /* 사용자별 처리한 그룹번호 */
+                ,   upd_id                  =   #{user_id}                  /* 수정자 ID */
                 ,   upd_time                =   now()                       /* 수정시간 */
 
          WHERE  1 = 1
