@@ -149,7 +149,8 @@ export default {
             var menu = document.getElementById("context-menu");
 
             if (menu.className == "active") {
-                menu.classList.remove('active');
+                //menu.classList.remove('active');
+                return;
             } else {
                 if(!this.contextMenuWidth || !this.contextMenuHeight) {
                     menu.style.visibility = "hidden";
