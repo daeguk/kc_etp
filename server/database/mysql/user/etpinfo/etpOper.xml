@@ -1327,4 +1327,179 @@
         </foreach>
     </insert>
 
+
+    <!--
+    * 최근에 저장된 group_no 를 조회한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <select id="getMaxGroupNo">
+    <![CDATA[
+        SELECT  /* etpOper.getMaxGroupNo    최근에 저장된 group_no 를 조회한다. */
+
+                MAX( tm_pdf_modify_mast.group_no )                      AS  group_no        /* 사용자별 처리한 그룹번호 */
+          FROM  tm_pdf_modify_mast
+         WHERE  tm_pdf_modify_mast.email      =   #{user_id}            /* 이메일 */
+    ]]>
+    </select>
+
+    <!--
+    * group_no 에 속한 tm_pdf_modify_hist_mast 정보를 조회한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <select id="getTmPdfModifyHistMastByGroupNo">
+    <![CDATA[
+        SELECT      /* etpOper.getTmPdfModifyHistMastByGroupNo    group_no 에 속한 tm_pdf_modify_hist_mast 정보를 조회한다. */
+
+                    tm_pdf_modify_hist_mast.hist_no                     AS  hist_no         /* 이력번호 */
+                ,   tm_pdf_modify_hist_mast.email                       AS  email           /* 이메일 */
+                ,   tm_pdf_modify_hist_mast.f16583                      AS  f16583          /* 사무수탁회사번호 */
+                ,   tm_pdf_modify_hist_mast.f16012                      AS  f16012          /* ETF종목코드 */
+                ,   tm_pdf_modify_hist_mast.f16013                      AS  f16013          /* ETF단축코드 */
+                ,   tm_pdf_modify_hist_mast.group_no                    AS  group_no        /* 사용자별 처리한 그룹번호 */
+                ,   tm_pdf_modify_hist_mast.type_cd                     AS  type_cd         /* 사용자 그룹 코드 */
+                ,   tm_pdf_modify_hist_mast.inst_cd                     AS  inst_cd         /* 기관구분코드 */
+
+                ,   (
+                        SELECT  td_etp_basic.f16002
+                          FROM  td_etp_basic
+                         WHERE  1 = 1
+                           AND  td_etp_basic.f16012     =   tm_pdf_modify_hist_mast.f16012
+                    )                                                   AS  f16002          /* 한글종목명 */
+
+          FROM  tm_pdf_modify_hist_mast
+         WHERE  1 = 1
+           AND  (    
+                        tm_pdf_modify_hist_mast.email
+                    ,   tm_pdf_modify_hist_mast.f16583
+                    ,   tm_pdf_modify_hist_mast.f16012
+                    ,   tm_pdf_modify_hist_mast.f16013
+                    ,   tm_pdf_modify_hist_mast.group_no
+                )
+                IN
+                (
+                    SELECT      tm_pdf_modify_mast.email
+                            ,   tm_pdf_modify_mast.f16583
+                            ,   tm_pdf_modify_mast.f16012
+                            ,   tm_pdf_modify_mast.f16013
+                            ,   tm_pdf_modify_mast.group_no
+                      FROM  tm_pdf_modify_mast
+                     WHERE  1 = 1
+                       AND  tm_pdf_modify_mast.email        =   #{user_id}                  /* 이메일 */
+                       AND  tm_pdf_modify_mast.group_no     =   #{group_no}                 /* 사용자별 처리한 그룹번호 */
+                )
+         ORDER  BY  tm_pdf_modify_hist_mast.hist_no
+    ]]>
+    </select>
+
+    <!--
+    * group_no 에 속한 tm_pdf_modify_hist_dtl 정보를 조회한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <select id="getTmPdfModifyHistDtlByGroupNo">
+    <![CDATA[
+        SELECT      /* etpOper.getTmPdfModifyHistDtlByGroupNo    group_no 에 속한 tm_pdf_modify_hist_dtl 정보를 조회한다. */
+
+                    tm_pdf_modify_hist_dtl.hist_no                      AS  hist_no         /* 이력번호 */
+                ,   tm_pdf_modify_hist_dtl.email                        AS  email           /* 이메일 */
+                ,   tm_pdf_modify_hist_dtl.f16583                       AS  f16583          /* 사무수탁회사번호 */
+                ,   tm_pdf_modify_hist_dtl.f16012                       AS  f16012          /* ETF종목코드 */
+                ,   tm_pdf_modify_hist_dtl.f16013                       AS  f16013          /* ETF단축코드 */
+                ,   tm_pdf_modify_hist_dtl.f16316                       AS  f16316          /* 구성종목코드 */
+                ,   tm_pdf_modify_hist_dtl.group_no                     AS  group_no        /* 사용자별 처리한 그룹번호 */
+                    
+                ,   tm_pdf_modify_hist_dtl.type_cd                      AS  type_cd         /* 사용자 그룹 코드 */
+                ,   tm_pdf_modify_hist_dtl.inst_cd                      AS  inst_cd         /* 기관구분코드 */
+                ,   tm_pdf_modify_hist_dtl.status                       AS  status          /* insert( 신규 ), modify( 변경 ) */
+            
+                ,   tm_pdf_modify_hist_dtl.f16499                       AS  f16499          /* 1CU단위증권수 */
+                ,   tm_pdf_modify_hist_dtl.f16499_prev                  AS  f16499_prev     /* 1CU단위증권수 (변경전) */
+                ,   tm_pdf_modify_hist_dtl.f34840                       AS  f34840          /* 액면금액 */
+                ,   tm_pdf_modify_hist_dtl.f34840_prev                  AS  f34840_prev     /* 액면금액 ( 변경전 ) */
+
+                ,   (
+						SELECT  td_etfpdf_basic.f16004
+						  FROM  td_etfpdf_basic
+						 WHERE  1 = 1
+                           AND  td_etfpdf_basic.f16583      =   tm_pdf_modify_hist_dtl.f16583   /* 사무수탁회사번호 */
+                           AND  td_etfpdf_basic.f16012      =   tm_pdf_modify_hist_dtl.f16012   /* ETF종목코드 */
+						   AND  td_etfpdf_basic.f16013      =   tm_pdf_modify_hist_dtl.f16013   /* ETF단축코드 */
+                           AND  td_etfpdf_basic.f16316      =   tm_pdf_modify_hist_dtl.f16316   /* 구성종목코드 */
+						 LIMIT  1
+					)                                                   AS  f16004              /* 해외시장종목명 */
+
+          FROM  tm_pdf_modify_hist_dtl
+         WHERE  1 = 1
+           AND  (
+                        tm_pdf_modify_hist_dtl.hist_no
+                    ,   tm_pdf_modify_hist_dtl.email
+                    ,   tm_pdf_modify_hist_dtl.f16583
+                    ,   tm_pdf_modify_hist_dtl.f16012
+                    ,   tm_pdf_modify_hist_dtl.f16013
+                    ,   tm_pdf_modify_hist_dtl.group_no
+                )
+                IN
+                (
+                    SELECT      tm_pdf_modify_hist_mast.hist_no
+                            ,   tm_pdf_modify_hist_mast.email
+                            ,   tm_pdf_modify_hist_mast.f16583
+                            ,   tm_pdf_modify_hist_mast.f16012
+                            ,   tm_pdf_modify_hist_mast.f16013
+                            ,   tm_pdf_modify_hist_mast.group_no
+                      FROM  tm_pdf_modify_hist_mast
+                     WHERE  1 = 1
+                       AND  (    
+                                    tm_pdf_modify_hist_mast.email
+                                ,   tm_pdf_modify_hist_mast.f16583
+                                ,   tm_pdf_modify_hist_mast.f16012
+                                ,   tm_pdf_modify_hist_mast.f16013
+                                ,   tm_pdf_modify_hist_mast.group_no
+                            )
+                            IN
+                            (
+                                SELECT      tm_pdf_modify_mast.email
+                                        ,   tm_pdf_modify_mast.f16583
+                                        ,   tm_pdf_modify_mast.f16012
+                                        ,   tm_pdf_modify_mast.f16013
+                                        ,   tm_pdf_modify_mast.group_no
+                                  FROM  tm_pdf_modify_mast
+                                 WHERE  1 = 1
+                                   AND  tm_pdf_modify_mast.email        =   #{user_id}      /* 이메일 */
+                                   AND  tm_pdf_modify_mast.group_no     =   #{group_no}     /* 사용자별 처리한 그룹번호 */
+                            )
+                     ORDER  BY  tm_pdf_modify_hist_mast.hist_no
+                )
+         ORDER  BY      tm_pdf_modify_hist_dtl.hist_no
+                    ,   tm_pdf_modify_hist_dtl.f16316
+    ]]>
+    </select>
+
+    <!--
+    * 현재일자에 PDF 변경건이 존재하는지 반환한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <select id="getPdfExistYnByNow">
+    <![CDATA[
+		SELECT  /* etpOper.getPdfExistYnByNow   현재일자에 PDF 변경건이 존재하는지 반환한다. */
+
+                CASE    WHEN    COUNT(*)    =   1
+						THEN    'Y'
+						ELSE    'N'
+				END                             AS  exist_yn
+		  FROM  (
+					SELECT  *
+					  FROM  tm_pdf_modify_mast
+					 WHERE  1 = 1
+					   AND  tm_pdf_modify_mast.email                =   #{user_id}
+					   AND  (
+									tm_pdf_modify_mast.reg_time     BETWEEN     STR_TO_DATE( CONCAT( DATE_FORMAT(now(), '%Y%m%d'), ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
+																	    AND     STR_TO_DATE( CONCAT( DATE_FORMAT(now(), '%Y%m%d'), ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
+					
+								OR  tm_pdf_modify_mast.upd_time     BETWEEN     STR_TO_DATE( CONCAT( DATE_FORMAT(now(), '%Y%m%d'), ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
+																	    AND     STR_TO_DATE( CONCAT( DATE_FORMAT(now(), '%Y%m%d'), ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
+							)
+					 LIMIT  1
+				)   base    
+    ]]>
+    </select>
+
 </mapper>
