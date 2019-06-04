@@ -166,7 +166,13 @@ export default {
                 if((this.contextMenuWidth + e.pageX) >= window.innerWidth) {
                     menu.style.left = (e.pageX - this.contextMenuWidth) + "px";
                 } else {
-                    var left = e.pageX - 31;
+                    var left = 0;
+                    if (e.pageX >= 441) {
+                        left = 441;
+                    } else {
+                        left = e.pageX - 31;
+                    }
+                     
                     menu.style.left = left + "px";
                 }
                 
