@@ -1,8 +1,8 @@
 <template>
 <v-toolbar fixed app clipped-left clipped-right dark color="#434343" class="elevation-0"  style="z-index:100;">
   <!--v-toolbar-side-icon @click="menuClick"></v-toolbar-side-icon-->
-  <v-toolbar-title v-on:mouseover="showContextMenu($event)">
-    <a class="routerlink logo" @click="outService">ETP PLATFORM</a>
+  <v-toolbar-title>
+    <a class="routerlink logo" @click="outService" v-on:mouseleave="hideContextMenu()">ETP PLATFORM</a>
     <!--v-menu offset-y open-on-hover class="top_menu" >
       <template v-slot:activator="{ on }">
         <v-btn
@@ -43,9 +43,10 @@
           icon
           dark
           class="topmenu_icon"
+          v-on:mouseover="showContextMenu($event)"
         ><v-icon>apps</v-icon>
         </v-btn>
-        <span class="top_cont_title">MARKET ETP INFO</span>
+        <span class="top_cont_title" v-on:mouseleave="hideContextMenu()">MARKET ETP INFO</span>
   </v-toolbar-title>
 <template id="template-context-menu">
     <div id="context-menu" v-on:mouseleave="hideContextMenu()">
