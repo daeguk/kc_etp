@@ -234,8 +234,8 @@ export default {
           grd.addColorStop(0, "#C5E1A5");
           grd.addColorStop(1, "#85c406");
         }else {
-          grd.addColorStop(0, "#78c6f8");
-          grd.addColorStop(1, "#1e99e8");
+          grd.addColorStop(0, "#b8b8b8");
+          grd.addColorStop(1, "#8c8c8c");
         }
         c.lineWidth = 3;
         c.setLineDash([]);
@@ -344,8 +344,8 @@ export default {
           grd.addColorStop(0, "#C5E1A5");
           grd.addColorStop(1, "#85c406");
         }else {
-          grd.addColorStop(0, "#78c6f8");
-          grd.addColorStop(1, "#1e99e8");
+          grd.addColorStop(0, "#b8b8b8");
+          grd.addColorStop(1, "#8c8c8c");
         }
         c.lineWidth = 3;
         c.setLineDash([]);
@@ -502,8 +502,8 @@ export default {
         // INDEX 차트 그리기
         c.beginPath();
         grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
-        grd.addColorStop(0, "#78c6f8");
-        grd.addColorStop(1, "#1e99e8");
+        grd.addColorStop(0, "#b8b8b8");
+        grd.addColorStop(1, "#8c8c8c");
         c.strokeStyle = grd ;
         vm.sArr.forEach(function(item, index) {
           // console.log("draw_mintra... : " + index);
@@ -656,8 +656,8 @@ export default {
         // INDEX 차트 그리기
         c.beginPath();
         grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
-        grd.addColorStop(0, "#78c6f8");
-        grd.addColorStop(1, "#1e99e8");
+        grd.addColorStop(0, "#b8b8b8");
+        grd.addColorStop(1, "#8c8c8c");
         c.strokeStyle = grd ;
         vm.sArr.forEach(function(item, index) {
           // console.log("draw_mintra... : " + index);
@@ -826,7 +826,7 @@ export default {
           // INDEX POINT
           dhpos = this.getHPosByPos1(wpos);
           c.beginPath();
-          c.fillStyle = "#1e99e8";
+          c.fillStyle = "#9e9e9e";
           c.arc(wpos, dhpos, 5, 0, Math.PI*2);
           c.fill();
           c.stroke();
