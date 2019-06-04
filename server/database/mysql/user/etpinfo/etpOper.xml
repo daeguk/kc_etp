@@ -1455,4 +1455,33 @@
     ]]>
     </select>
 
+    <!--
+    * 현재일자에 PDF 변경건이 존재하는지 반환한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <select id="getPdfExistYnByNow">
+    <![CDATA[
+		SELECT  /* etpOper.getPdfExistYnByNow   현재일자에 PDF 변경건이 존재하는지 반환한다. */
+
+                CASE    WHEN    COUNT(*)    =   1
+						THEN    'Y'
+						ELSE    'N'
+				END                             AS  exist_yn
+		  FROM  (
+					SELECT  *
+					  FROM  tm_pdf_modify_mast
+					 WHERE  1 = 1
+					   AND  tm_pdf_modify_mast.email                =   #{user_id}
+					   AND  (
+									tm_pdf_modify_mast.reg_time     BETWEEN     STR_TO_DATE( CONCAT( DATE_FORMAT(now(), '%Y%m%d'), ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
+																	    AND     STR_TO_DATE( CONCAT( DATE_FORMAT(now(), '%Y%m%d'), ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
+					
+								OR  tm_pdf_modify_mast.upd_time     BETWEEN     STR_TO_DATE( CONCAT( DATE_FORMAT(now(), '%Y%m%d'), ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
+																	    AND     STR_TO_DATE( CONCAT( DATE_FORMAT(now(), '%Y%m%d'), ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
+							)
+					 LIMIT  1
+				)   base    
+    ]]>
+    </select>
+
 </mapper>
