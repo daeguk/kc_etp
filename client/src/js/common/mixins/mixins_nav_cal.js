@@ -291,8 +291,8 @@ export const nav_cal_common =   {
                         assetValue = (Number(futureBasic.f15001) - Number(futureBasic.f15007)) * Number(futureBasic.f33904);
                         
                         /*시가총액 = assetValue * cu 주식수 */
-                        //let market_tot_amt = (assetValue * Number(pdf_info.f16499)); /* 시가 총액 */
-                        let market_tot_amt = (assetValue); /* 시가 총액 */
+                        let market_tot_amt = (assetValue * Number(pdf_info.f16499)); /* 시가 총액 */
+                        
                         let f15001 = futureBasic.f15001;       /* 현재가 */
                         let f15007 = futureBasic.f15007;                    /* 기준가 */            
                         let f15004 = futureBasic.f15004;                     /* 등락률 */
