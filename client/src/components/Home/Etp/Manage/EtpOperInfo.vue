@@ -738,7 +738,7 @@ export default {
                                 if( row.f16493 == "1" || row.f16493 == "2" ) {
 
                                     /* PDF 정보 */
-                                    graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnPdf", "btnContent" : "picture_as_pdf", "btnSpanContent" : "PDF관리" } );
+                                    graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnPdf", "btnContent" : "pie_chart", "btnSpanContent" : "PDF관리" } );
                                 }
 
                                 return  graphContent;

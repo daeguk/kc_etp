@@ -312,14 +312,13 @@ export default {
                 {  
                     /* CU shrs */
                     "render": function ( data, type, row ) {
-
                         var htm = "";
                         if( typeof row.f16316 != "undefined" && row.f16316.length > 0 ) {       /* 구성종목코드 */
                             if( row.f16316.indexOf( "<input" ) > -1 ) {
                                 htm = util.formatNumber( data );
                             }else{
                                 /* 1CU단위증권수 */
-                                htm = "<input type='number' name='f16499' id='f16499' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='15'>";
+                                htm = "<input type='text' name='f16499' id='f16499' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='15'>";
                             }
                         }
 
@@ -331,14 +330,13 @@ export default {
                 {  
                     /* 액면금액 */
                     "render": function ( data, type, row ) {
-
                         var htm = "";
                         if( typeof row.f16316 != "undefined" && row.f16316.length > 0 ) {       /* 구성종목코드 */
                             if( row.f16316.indexOf( "<input" ) > -1 ) {
                                 htm = util.formatNumber( data );
                             }else{
                                 /* 액면금액 */
-                                htm = "<input type='number' name='f34840' id='f34840' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='15'>";
+                                htm = "<input type='text' name='f34840' id='f34840' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='15'>";
                             }
                         }
 
@@ -388,7 +386,8 @@ export default {
 
                 { "data" : "status"         ,   "visible"   : false   },                                                                /* status */
                 { "data" : "code_check"     ,   "visible"   : false   },                                                                /* code_check */
-                { "data" : "f16499_prev"    ,   "visible"   : false   },                                                                /* CU shrs (변경전) */                
+                { "data" : "f16499_prev"    ,   "visible"   : false   },                                                                /* CU shrs (변경전) */
+                { "data" : "f34840_prev"    ,   "visible"   : false   },                                                                /* 액면금액 (변경전) */
             ]
         });
 
@@ -418,7 +417,7 @@ export default {
 
 
         /* CU shrs 수정시 */
-        $("#" + vm.tblEmergeny01 + " tbody").on('blur', "input[name='f16499'],input[name='f34840']", function () {
+        $("#" + vm.tblEmergeny01 + " tbody").on('change', "input[name='f16499'],input[name='f34840']", function () {
 
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
             var data = table.row($(this).parents("tr")).data();
@@ -428,23 +427,22 @@ export default {
 
             var nowData = {};
 
+
+            var tdData = _.replace( $(this).eq(0).val(), /,/g, "" );
+            $(this).eq(0).val( tdData );            
+
             /* CU shrs */
             if ( $(this).attr('name') == 'f16499' ) {
-                var tdData = $(this).eq(0).val();
-                $(this).eq(0).val( util.formatNumber( tdData ) );
-
-                nowData.name = "f16499";
-                nowData.f16499  =   $(this).eq(0).val();
+                nowData.name    =   "f16499";
+                nowData.f16499  =   tdData;
             }
             /* 액면금액 */
             else if( $(this).attr('name') == 'f34840' ) {
-                var tdData = $(this).eq(0).val();
-                $(this).eq(0).val( util.formatNumber( tdData ) );
-
-                nowData.name = "f34840";
-                nowData.f34840  =   $(this).eq(0).val();
+                nowData.name    =   "f34840";
+                nowData.f34840  =   tdData;
             }
 
+            $(this).eq(0).val( util.formatNumber( tdData ) );
 
             vm.fn_setStatus( data, nowData, rowIndex, ( jongmokTag ? jongmokTag.length : 0 ) );
         });
@@ -640,7 +638,8 @@ export default {
 
                         ,   "status"        :   "insert"
                         ,   "code_check"    :   true
-                        ,   "f16499_prev"   :   0                           /* CU shrs ( 변경전 ) */                        
+                        ,   "f16499_prev"   :   ''                          /* CU shrs ( 변경전 ) */
+                        ,   "f34840_prev"   :   ''                          /* 액면금액 ( 변경전 ) */
                     }
 
                     tblEmergeny01.row(rowIndex).data( addData ).order( [0, "asc"] ).draw(  );
@@ -680,7 +679,8 @@ export default {
 
                 ,   "status"        :   "insert"
                 ,   "code_check"    :   false
-                ,   "f16499_prev"   :   ''              /* CU shrs ( 변경전 ) */                
+                ,   "f16499_prev"   :   ''              /* CU shrs ( 변경전 ) */
+                ,   "f34840_prev"   :   ''              /* 액면금액 ( 변경전 ) */
             }
 
             tblEmergeny01.row.add( addData ).order( [0, "asc"] ).draw(  );            
@@ -707,18 +707,6 @@ export default {
                     return  false;
                 }
 
-                /* 추가 또는 수정건이 존재하는지 체크한다. */
-                if(     !vm.allDataList 
-                    ||  vm.allDataList.length == 0  
-                ) {
-                    if( !vm.fn_modifyCheck() ) {
-                        return  false;
-                    }
-                }
-
-
-                vm.fn_modifyAllDataList();
-
 
                 /* 이전건 + 현재건 데이터가 존재하는 경우 */
                 if( vm.allDataList.length > 0 ) {
@@ -740,9 +728,21 @@ export default {
                         /* 현재건 삭제 */
                         vm.allDataList.splice( filterIndex, 1 );
                     }
+                }                
+
+
+
+                /* 추가 또는 수정건이 존재하는지 체크한다. */
+                if(     !vm.allDataList 
+                    ||  vm.allDataList.length == 0  
+                ) {
+                    if( !vm.fn_modifyCheck() ) {
+                        return  false;
+                    }
                 }
 
 
+                vm.fn_modifyAllDataList();
 
 
                 if( vm.allDataList.length > 0 ) {
@@ -1033,22 +1033,17 @@ export default {
 
                 /* 1CU단위증권수 */
                 if( nowData.name == "f16499" ) {
-debugger;
+
                     if( tableData.status != "insert" ) {
                         
-                        /* DB 에 저장된 값이 존재하면 상태값은 변경 상태 */
-                        if(  tableData.f16499_exist ) {
-                            table.cell( tr, 9 ).data( { "status" : "modify" } );
-                            vm.dataList[ rowIndex ].status  =   "modify";
-                        }
                         /* 
                         *   상태값 normal 로 변경
                         *
                         *   수정한 [1CU단위증권수] 와 원본 [1CU단위증권수] 이 같고
                         *   수정했던 [액면금액] 과 원본 [액면금액] 이 같은 경우
                         */
-                        else if(   tableData.f16499_prev == nowData.f16499 
-                                &&  tableData.f34840_prev == tableData.f34840 ) {
+                        if(     Number( tableData.f16499_prev ) == Number( nowData.f16499 )
+                            &&  Number( tableData.f34840_prev ) == Number( tableData.f34840 ) ) {
                             table.cell( tr, 9 ).data( { "status" : "normal" } );
                             vm.dataList[ rowIndex ].status  =   "normal";
                         }
@@ -1058,26 +1053,21 @@ debugger;
                         }
                     }
 
-                    vm.dataList[ rowIndex ].f16499      =   util.formatNumber( nowData.f16499 );
+                    vm.dataList[ rowIndex ].f16499      =   nowData.f16499;
                 }
                 /* 액면금액 */
                 else if( nowData.name == "f34840" ) {
 
                     if( tableData.status != "insert" ) {
-                        
-                        /* DB 에 저장된 값이 존재하면 상태값은 변경 상태 */
-                        if(  tableData.f34840_exist ) {
-                            table.cell( tr, 9 ).data( { "status" : "modify" } );
-                            vm.dataList[ rowIndex ].status  =   "modify";
-                        }                        
+                                            
                         /* 
                         *   상태값 normal 로 변경
                         *
                         *   수정한 [액면금액] 과 원본 [액면금액] 이 같고
                         *   수정했던 [1CU단위증권수] 과 원본 [1CU단위증권수] 이 같은 경우
                         */
-                        else if(    tableData.f34840_prev == nowData.f34840 
-                                &&  tableData.f16499_prev == tableData.f16499 ) {
+                        if(     Number( tableData.f34840_prev ) == Number( nowData.f34840 )
+                            &&  Number( tableData.f16499_prev ) == Number( tableData.f16499 ) ) {
                             table.cell( tr, 9 ).data( { "status" : "normal" } );
                             vm.dataList[ rowIndex ].status  =   "normal";
                         }
@@ -1087,16 +1077,16 @@ debugger;
                         }
                     }
 
-                    vm.dataList[ rowIndex ].f34840      =   util.formatNumber( nowData.f34840 );
+                    vm.dataList[ rowIndex ].f34840      =   nowData.f34840;
                 }
 
             }else{
                 vm.dataList[ rowIndex ].code_check  =   false;
 
                 if( nowData.name == "f16499" ) {
-                    vm.dataList[ rowIndex ].f16499      =   util.formatNumber( nowData.f16499 );
+                    vm.dataList[ rowIndex ].f16499      =   nowData.f16499;
                 }else{
-                    vm.dataList[ rowIndex ].f34840      =   util.formatNumber( nowData.f34840 );
+                    vm.dataList[ rowIndex ].f34840      =   nowData.f34840;
                 }                
             }
         },
@@ -1173,12 +1163,6 @@ debugger;
 
             var vm = this;
 
-            /* allDataList 에서 존재하는 인덱스를 확인한다. */
-            var filterIndex  =   _.findIndex( vm.allDataList,    {
-                                        "etf_f16012"    :   vm.etpBasic.f16012      /* ETF 국제표준코드 */
-                                    ,   "etf_f16013"    :   vm.etpBasic.f16013      /* ETF 단축코드 */
-                                });
-
             /* 변경된 데이터만 추출 */
             var filterData  =   _.filter( vm.dataList, function( o, i ) {
                 if( o.status == "insert" || o.status == "modify" ) {
@@ -1193,8 +1177,15 @@ debugger;
                 ,   "etf_f16002"    :   vm.etpBasic.f16002      /* ETF 한글종목명 */
                 ,   "etf_f16583"    :   vm.etpBasic.f16583      /* ETF 사무수탁회사번호 */
                 ,   "data"          :   filterData
-            };                                             
+            };
 
+
+
+            /* allDataList 에서 존재하는 인덱스를 확인한다. */
+            var filterIndex  =   _.findIndex( vm.allDataList,    {
+                                        "etf_f16012"    :   vm.etpBasic.f16012      /* ETF 국제표준코드 */
+                                    ,   "etf_f16013"    :   vm.etpBasic.f16013      /* ETF 단축코드 */
+                                });
 
             /* 존재하지 않는 경우 */
             if( filterIndex == -1 ) {

@@ -51,6 +51,7 @@
                                 <th style="display: none">seq</th>
                                 <th style="display: none">inst_cd</th>
                                 <th style="display: none">idx_mid</th>
+                                <th style="display: none">ridx_mid</th>
                                 <th style="display: none">idx_sym_code</th>
                                 <th style="display: none">ridx_dist_sym_code</th>
                                 <th width="12%">발행사</th>
@@ -78,7 +79,9 @@
                 <!---기초지수 팝업 내용 --->
                 <idxConfirmModal :idxConfirmModal="this.idxConfirmModal" @close="hideIdxListPop"></idxConfirmModal>
                 <!-- 기초지수 팝업 내용  end  -->
-
+                <!---inav 팝업 내용 --->
+                <iNavConfirmModal :iNavConfirmModal="this.iNavConfirmModal" @close="hideInavListPop"></iNavConfirmModal>
+                <!-- inav 팝업 내용  end  -->
              </v-flex>
         </v-layout>
     </v-container>
@@ -91,7 +94,10 @@ import buttons from "datatables.net-buttons";
 import Config from "@/js/config.js";
 import companyContactModal from "./companyContactModal";
 import idxConfirmModal from "./idxConfirmModal";
+import iNavConfirmModal from "./iNavConfirmModal";
 import excel from "xlsx";
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
+
 var table = null;
 
 export default {
@@ -113,19 +119,27 @@ export default {
             },
             idxConfirmModal:{
                 dialog: false,
-                idxTable: '',
                 idxSymCode: '',
                 idxNm : '',
                 ridxDistSymCode: '',
                 marketId:'',
+                rMarketId:''
+            },
+            iNavConfirmModal:{
+                dialog: false,
+                idxSymCode: '',
+                idxNm : '',
+                ridxDistSymCode: '',
+                marketId:'',
+                rMarketId:''
             },
             seqValues :[],
-
         };
     },
     components: {
         companyContactModal,
         idxConfirmModal,
+        iNavConfirmModal
     
     },
     computed: {},
@@ -139,6 +153,7 @@ export default {
         vm.getEtpApplyIndexCnt();
         vm.getEtpApplyCodeCnt();
         vm.getEtpApplyInavCnt();
+        this.$root.$confirm = this.$refs.confirm;
     },
     methods: {
 
@@ -166,14 +181,12 @@ export default {
                             serverSide: false,
                             info: true, // control table information display field
                             stateSave: true, //restore table state on page reload,
-                 
                             paging: false,
                             searching: false,
                             data: this.results,
                             destroy: true,
                             //list_cnt : this.results.length,
-
-                               columnDefs: [
+                                columnDefs: [
                                 {  
                                        "render": function ( data, type, row ,meta) {
                                         return "<input type='checkbox' color='primary' name='seq'   value='" + row.seq + "'>";
@@ -203,9 +216,9 @@ export default {
                                         }
                                         return shtml;
                                         }, 
-                                    "targets": 12
+                                    "targets": 13
                                 },
-                                                                {  
+                                {  
                                 "render": function ( data, type, row ) {
                                         var shtml = '' ;
                                         shtml += '<div class="v-input v-input--range-slider v-input--slider v-input--slider--ticks v-input--slider--ticks-labels v-input--is-label-active v-input--is-dirty v-input--is-readonly theme--light">'
@@ -292,7 +305,7 @@ export default {
                                         }
                                         return shtml;
                                         }, 
-                                    "targets": 13
+                                    "targets": 14
                                 },
                              ],
                             columns: [
@@ -305,7 +318,8 @@ export default {
                                 { "data" : "seq" , "orderable" : false },
                                 { "data" : "inst_cd" , "orderable" : false },
                                 { "data" : "idx_mid" , "orderable" : false },
-                                { "data" : "idx_sym_code" , "orderable" : false  },
+                                { "data" : "ridx_mid" , "orderable" : false },
+                                { "data" : "basic_idx" , "orderable" : false  },
                                 { "data" : "ridx_dist_sym_code" , "orderable" : false },
                                 { "data" : "inst_nm", "orderable" : true,className: "txt_left t_link"},
                                 { "data" : "isu_kor_nm", "orderable" : true,className: "txt_left t_link" },
@@ -330,39 +344,59 @@ export default {
                         $('#example1 tbody tr td:nth-child(5)').hide();
                         $('#example1 tbody tr td:nth-child(6)').hide();
                         $('#example1 tbody tr td:nth-child(7)').hide();
-                        $('#example1 tbody tr td:nth-child(16)').hide();
+                        $('#example1 tbody tr td:nth-child(8)').hide();
+                        $('#example1 tbody tr td:nth-child(17)').hide();
                         
                     
-                        $("#example1 tbody").on('click', 'tr td:nth-child(9)', function(){
+                        $("#example1 tbody").on('click', 'tr td:nth-child(10)', function(){
                             var tr = $(this).parents();
                             var td = tr.children();
                             var seq = td.eq(2).text(); 
                             console.log("##CLICK example1 > tbody > tr", td.eq(2).text());
                             vm.$emit("moveUpdatePage", seq); 
                         });
-                    
                         //기초지수 확인팝업 
                         $("button[name=popIdx]").on('click', function(){
                             console.log("#CLICK example1 > tbody > tr > basic index",$(this));
-
                             var tr = $(this).parent().parent().parent();
                             var idxMid = $(tr).find("td:eq(4)").text();
-                            var idxSymCode = $(tr).find("td:eq(5)").text();
-                            var ridxDistSymCode = $(tr).find("td:eq(6)").text();
-                            var idxTable= 'm' + ('0' + idxMid).slice(-3) + 'hbased'  ;
-                            var marketId= 'M' + idxMid  ;
-                            console.log("idxMid : " + idxMid + " idxTable: " + idxTable + ": " + idxSymCode + ": " + ridxDistSymCode + "idxMid:" ) ;
-                            vm.idxConfirmModal.idxTable = idxTable;
+                            var rIdxMid = $(tr).find("td:eq(5)").text();
+                            var idxSymCode = $(tr).find("td:eq(6)").text();
+                            var ridxDistSymCode = $(tr).find("td:eq(7)").text();
+                            //var idxTable= 'm' + ('0' + idxMid).slice(-3) + 'hbased'  ;
+                            var marketId= 'M' + ('0' + idxMid).slice(-3)  ;
+                            var rMarketId= 'M' + ('0' + rIdxMid).slice(-3)  ;
+                            console.log("idxMid : " + idxMid + " marketId: " + marketId + ": " + rMarketId + "rMarketId:" + "idxSymCode:"+  idxSymCode  + ": " + "ridxDistSymCode:" +  ridxDistSymCode) ;
+                            //vm.idxConfirmModal.idxTable = idxTable;
                             vm.idxConfirmModal.idxSymCode = idxSymCode;
                             vm.idxConfirmModal.ridxDistSymCode = ridxDistSymCode;
                             vm.idxConfirmModal.marketId = marketId;
-                            vm.idxConfirmModal.idxNm = $(tr).find("td:eq(15)").text();;
+                            vm.idxConfirmModal.rMarketId = rMarketId;
+                            vm.idxConfirmModal.idxNm = $(tr).find("td:eq(17)").text();;
                             vm.idxConfirmModal.dialog = true;
                             vm.showIdxListPop();
                         });                        
-                        
+                        //inav 확인팝업 
+                        $("button[name=popInav]").on('click', function(){
+                            console.log("#CLICK example1 > tbody > tr > basic index",$(this));
+                            var tr = $(this).parent().parent().parent();
+                            var idxMid = $(tr).find("td:eq(4)").text();
+                            var rIdxMid = $(tr).find("td:eq(5)").text();
+                            var idxSymCode = $(tr).find("td:eq(6)").text();
+                            var ridxDistSymCode = $(tr).find("td:eq(7)").text();
+                            var marketId= 'M' + ('0' + idxMid).slice(-3)  ;
+                            var rMarketId= 'M' + ('0' + rIdxMid).slice(-3)  ;
+                            console.log("inav : " + idxMid + " marketId: " + marketId + ": " + rMarketId + "rMarketId:" + "idxSymCode:"+  idxSymCode  + ": " + "ridxDistSymCode:" +  ridxDistSymCode) ;
+                            vm.iNavConfirmModal.idxSymCode = idxSymCode;
+                            vm.iNavConfirmModal.ridxDistSymCode = ridxDistSymCode;
+                            vm.iNavConfirmModal.marketId = marketId;
+                            vm.iNavConfirmModal.rMarketId = rMarketId;
+                            vm.iNavConfirmModal.idxNm = $(tr).find("td:eq(17)").text();;
+                            vm.iNavConfirmModal.dialog = true;
+                            vm.showInavListPop();
+                        });                                               
                        //회사 연락처 팝업 
-                        $("#example1 tbody").on('click', 'tr td:nth-child(8)', function(){
+                        $("#example1 tbody").on('click', 'tr td:nth-child(9)', function(){
                             console.log("#CLICK example1 > tbody > tr > contributor",$(this));
                             var tr = $(this).parents();
                             var td = tr.children();
@@ -463,28 +497,63 @@ export default {
         hideIdxListPop: function() {
             this.idxConfirmModal.dialog = false;
         },      
-        deleteEtpApply: function() {        
+        showInavListPop: function() {
+           this.iNavConfirmModal.dialog = true;
+           this.$EventBus.$emit('iNavListModal');
+         },
+        hideInavListPop: function() {
+            this.iNavConfirmModal.dialog = false;
+        },      
+        deleteEtpApply: async function() {   
             var vm = this;
             var delList = $('input[name=seq]:checked');
              console.log("delList: " + delList.length );
             if(delList.length == 0){
-                alert('삭제할 항목을 선택하여 주십시요');
-                return;
+                if( vm.$root.$confirm.open(
+                        '[오류]',
+                        '삭제할 항목을 선택하여 주십시요',
+                        {}
+                    ,   1
+                        )
+                    ) {
+                        return false;
+                }
             }
             var seqValues = [];
             $('input[name=seq]:checked').each(function(){
                seqValues.push($(this).val());     
             });
             console.log("seqValues: " + seqValues );
-            axios.get(Config.base_url + "/user/etp/deleteEtpApply", {
+            await axios.get(Config.base_url + "/user/etp/deleteEtpApply", {
                 params: {
                     seqValues : seqValues
                 }
             }).then(function(response) {
-                if (response.data.success == false) {
-                    vm.$emit("showMessageBox", '확인','삭제 중 오류가 발생했습니다.',{},1);
-                } 
-                //location.reload();
+                if (response.data.result == false) {
+                   if( vm.$root.$confirm.open(
+                                '[오류]',
+                                response.data.msg,
+                                {}
+                            ,   1
+                                )
+                            ) {
+                                return false;
+                            }
+                    
+                }else if (response.data.result == true) {
+                        vm.getEtpApplyList();
+                        vm.getEtpApplyDistCnt();
+                        vm.getEtpApplyIndexCnt();
+                        vm.getEtpApplyCodeCnt();
+                        vm.getEtpApplyInavCnt();
+                    if(  vm.$root.$confirm.open(
+                            '[삭제]',
+                            '삭제가 완료되었습니다.',
+                            {}
+                        ,   1
+                            )
+                        ){}                
+                }
             });
 
         },

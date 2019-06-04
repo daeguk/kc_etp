@@ -533,43 +533,12 @@ var getEtpOperPdf = function(req, res) {
                                 resultMsg.dataList = rows;
                             }
 
-                            callback(null, paramData);
-                        });
-                    } else {
-                        callback(null, paramData);
-                    }
-                },
-
-                /* 2. ETP 운용관리 - PDF관리 정보를 조회한다. ( ETN 인 경우 ) */
-                function(msg, callback) {
-
-                    /* ETN 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                    if (paramData.f16493 == "3" || paramData.f16493 == "4") {
-
-                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtnHist', paramData, format);
-                        console.log(stmt);
-
-                        conn.query(stmt, function(err, rows) {
-
-                            if (err) {
-                                resultMsg.result = false;
-                                resultMsg.msg = "[error] etpOper.getEtpOperPdfEtnHist Error while performing Query";
-                                resultMsg.err = err;
-
-                                return callback(resultMsg);
-                            }
-
-                            if (rows && rows.length > 0) {
-                                resultMsg.dataList = rows;
-                            }
-
                             callback(null);
                         });
-
                     } else {
                         callback(null);
                     }
-                }
+                },
 
             ], function(err) {
 
@@ -652,21 +621,14 @@ var getEtpOperPdfByRateTitle = function(req, res) {
                 /* 1. ETP 운용관리 - 비중변경현황 - 최근 5개 날짜 정보를 조회한다. ( ETF 인 경우 ) */
                 function(callback) {
 
-                    var queryId = "getEtpOperPdfEtfHistByRateTitle";
-
-                    /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                    if (paramData.f16493 == "3" || paramData.f16493 == "4") {
-                        queryId = "getEtpOperPdfEtnHistByRateTitle";
-                    }
-
-                    stmt = mapper.getStatement('etpOper', queryId, paramData, format);
+                    stmt = mapper.getStatement('etpOper', "getEtpOperPdfEtfHistByRateTitle", paramData, format);
                     console.log(stmt);
 
                     conn.query(stmt, function(err, rows) {
 
                         if (err) {
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] etpOper.getEtpOperPdfEtnHistByRate Error while performing Query";
+                            resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHistByRateTitle Error while performing Query";
                             resultMsg.err = err;
 
                             return callback(resultMsg);
@@ -774,21 +736,14 @@ var getEtpOperPdfByRate = function(req, res) {
                 /* 1. ETP 운용관리 - 비중변경현황 - 최근 5개 날짜 정보를 조회한다. ( ETF 인 경우 ) */
                 function(callback) {
 
-                    var queryId = "getEtpOperPdfEtfHistByRateTitle";
-
-                    /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                    if (paramData.f16493 == "3" || paramData.f16493 == "4") {
-                        queryId = "getEtpOperPdfEtnHistByRateTitle";
-                    }
-
-                    stmt = mapper.getStatement('etpOper', queryId, paramData, format);
+                    stmt = mapper.getStatement('etpOper', "getEtpOperPdfEtfHistByRateTitle", paramData, format);
                     console.log(stmt);
 
                     conn.query(stmt, function(err, rows) {
 
                         if (err) {
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] etpOper.getEtpOperPdfEtnHistByRate Error while performing Query";
+                            resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHistByRateTitle Error while performing Query";
                             resultMsg.err = err;
 
                             return callback(resultMsg);
@@ -819,17 +774,9 @@ var getEtpOperPdfByRate = function(req, res) {
 
                     if (resultMsg.rateTitleList && resultMsg.rateTitleList.length > 0) {
 
-                        var queryId = "getEtpOperPdfEtfHistByRate";
-
-                        /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                        if (paramData.f16493 == "3" || paramData.f16493 == "4") {
-                            queryId = "getEtpOperPdfEtnHistByRate";
-                        }
-
-
                         paramData.rateTitleList = resultMsg.rateTitleList;
 
-                        stmt = mapper.getStatement('etpOper', queryId, paramData, format);
+                        stmt = mapper.getStatement('etpOper', "getEtpOperPdfEtfHistByRate", paramData, format);
                         console.log(stmt);
 
                         conn.query(stmt, function(err, rows) {
@@ -982,55 +929,11 @@ var getEtpOperPdfModify = function(req, res) {
                                 for (var i in rows) {
                                     rows[i].status = "normal";
 
-                                    rows[i].f16499 = rows[i].fmt_f16499; /* 1CU단위증권수 */
-                                    rows[i].f16499_prev = rows[i].fmt_f16499; /* 1CU단위증권수 */
+                                    rows[i].f16499 = rows[i].f16499; /* 1CU단위증권수 */
+                                    rows[i].f16499_prev = rows[i].f16499; /* 1CU단위증권수 */
 
-                                    rows[i].f34840 = rows[i].fmt_f34840; /* 액면금액설정현금액 */
-                                    rows[i].f34840_prev = rows[i].fmt_f34840; /* 액면금액설정현금액 */
-
-                                    rows[i].code_check = true; /* 코드 체크 ( defulat : true ) */
-
-                                    resultMsg.dataList.push(rows[i]);
-                                }
-                            }
-
-                            callback(null, paramData);
-                        });
-                    } else {
-                        callback(null, paramData);
-                    }
-                },
-
-                /* 3. ETN 정보를 조회한다. */
-                function(msg, callback) {
-
-                    /* ETN 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                    if (resultMsg.etpBasic &&
-                        (resultMsg.etpBasic.f16493 == "3" || resultMsg.etpBasic.f16493 == "4")
-                    ) {
-
-                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtnEmergency', paramData, format);
-                        console.log(stmt);
-
-                        conn.query(stmt, function(err, rows) {
-
-                            if (err) {
-                                resultMsg.result = false;
-                                resultMsg.msg = "[error] etpOper.getEtpOperPdfEtnEmergency Error while performing Query";
-                                resultMsg.err = err;
-
-                                return callback(resultMsg);
-                            }
-
-                            if (rows && rows.length > 0) {
-                                for (var i in rows) {
-                                    rows[i].status = "normal";
-
-                                    rows[i].f16499 = rows[i].fmt_f16499; /* 1CU단위증권수 */
-                                    rows[i].f16499_prev = rows[i].fmt_f16499; /* 1CU단위증권수 */
-
-                                    rows[i].f34840 = rows[i].fmt_f34840; /* 액면금액설정현금액 */
-                                    rows[i].f34840_prev = rows[i].fmt_f34840; /* 액면금액설정현금액 */
+                                    rows[i].f34840 = rows[i].f34840; /* 액면금액설정현금액 */
+                                    rows[i].f34840_prev = rows[i].f34840; /* 액면금액설정현금액 */
 
                                     rows[i].code_check = true; /* 코드 체크 ( defulat : true ) */
 
@@ -1040,11 +943,10 @@ var getEtpOperPdfModify = function(req, res) {
 
                             callback(null);
                         });
-
                     } else {
                         callback(null);
                     }
-                }
+                },
 
             ], function(err) {
 
@@ -1703,14 +1605,9 @@ var saveEtpOperPdfModify = function(req, res) {
                                 paramData.f16013 = subList.etf_f16013; /* ETF단축코드 */
                                 paramData.dataLists = subList.data;
 
-                                paramData.hist_no = "";
-                                for (var i in paramData.dataLists) {
-                                    paramData.dataLists[i].f34840_prev = 0;
-                                    paramData.dataLists[i].f34840 = 0;
-                                }
-
                                 console.log(paramData);
 
+                                var arrAllDtl       =   [];
                                 var arrInsertDtl    =   [];
                                 var arrModifyDtl    =   [];
                                 var arrDeleteDtl    =   [];
@@ -1743,7 +1640,6 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                             if (rows && rows.length > 0) {
                                                 for( var i in rows ) {
-
                                                     if( rows[i].dtl_status == "insert" ) {
                                                         arrInsertDtl.push( rows[i] );
                                                     }else if( rows[i].dtl_status == "modify" ) {
@@ -1752,6 +1648,8 @@ var saveEtpOperPdfModify = function(req, res) {
                                                         arrDeleteDtl.push( rows[i] );
                                                     }
                                                 }
+
+                                                arrAllDtl   =   rows;
                                             }
 
                                             callback(null, paramData);
@@ -1966,6 +1864,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                     /* 9. PDF 변경 이력 상세 정보를 저장한다. */
                                     function(msg, callback) {
 
+                                        paramData.dataLists =   arrAllDtl;
                                         stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyHistDtl', paramData, format);
                                         console.log(stmt);
 

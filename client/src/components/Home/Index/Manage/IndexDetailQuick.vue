@@ -185,6 +185,7 @@ export default {
                 stateSave: false, //restore table state on page reload,
                 lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
                 ordering: false,
+                scrollY: '58vh',
                 columnDefs: [
                     {  
                         "render": function ( data, type, row ) {
