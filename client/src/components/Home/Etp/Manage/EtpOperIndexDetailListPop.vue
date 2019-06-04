@@ -41,7 +41,7 @@
 
 
                 <v-card flat>
-                    <table id="tableIndexDetailList" class="display table01_w"    style="width:100%"></table>
+                    <table id="tableIndexDetailList" class="tbl_type ver7"    style="width:100%"></table>
                 </v-card>
 
             </v-card>
@@ -100,13 +100,13 @@ export default {
             data : [],
             "columnDefs": [ {} ],
             columns: [
-                { "data": "isin_code"             ,   "orderable" : true, "width" :   "80" , "title"   :   "code"          },      /* 종목코드 */
-                { "data": "f16002"                ,   "orderable" : true, "width" :   "200", "title"   :   "name"           },      /* 한글종목명 */
-                { "data": "f03003"                ,   "orderable" : true, "width" :   "70" , "title"   :   "base_prc"      },      /* 전일종가 */
-                { "data": "f30812"                ,   "orderable" : true, "width" :   "70" , "title"   :   "shrs"          },      /* 상장주식수 */
-                { "data": "style_includ_percnt"   ,   "orderable" : true, "width" :   "70" , "title"   :   "float_rto"     },      /* 스타일포함비중 */
-                { "data": "ceiling_percnt"        ,   "orderable" : true, "width" :   "70" , "title"   :   "ceiling_rto"   },      /* CEILING비중 */
-                { "data": "f30813"                ,   "orderable" : true, "width" :   "70" , "title"   :   "factor_rto"    }       /* 유동주식비율 */
+                { "data": "isin_code"             ,   "orderable" : true, 'className': 'txt_left'  ,  "width" :   "12%" , "title"   :   "Code"          },      /* 종목코드 */
+                { "data": "f16002"                ,   "orderable" : true, 'className': 'txt_left'  ,  "width" :   "18%" , "title"   :   "Name"           },     /* 한글종목명 */
+                { "data": "f03003"                ,   "orderable" : true, 'className': 'txt_right' ,  "width" :   "14%" , "title"   :   "BasePrc"       },      /* 전일종가 */
+                { "data": "f30812"                ,   "orderable" : true, 'className': 'txt_right' ,  "width" :   "14%" , "title"   :   "Shrs"          },      /* 상장주식수 */
+                { "data": "style_includ_percnt"   ,   "orderable" : true, 'className': 'txt_right' ,  "width" :   "14%" , "title"   :   "Float rto"     },      /* 스타일포함비중 */
+                { "data": "ceiling_percnt"        ,   "orderable" : true, 'className': 'txt_right' ,  "width" :   "14%" , "title"   :   "Ceiling rto"   },      /* CEILING비중 */
+                { "data": "f30813"                ,   "orderable" : true, 'className': 'txt_right' ,  "width" :   "14%" , "title"   :   "Factor rto"    }       /* 유동주식비율 */
             ]
         });
 

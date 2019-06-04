@@ -964,14 +964,14 @@ var getEtpOperPdfModify = function(req, res) {
                         (resultMsg.etpBasic.f16493 == "1" || resultMsg.etpBasic.f16493 == "2")
                     ) {
 
-                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtf', paramData, format);
+                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtfEmergency', paramData, format);
                         console.log(stmt);
 
                         conn.query(stmt, function(err, rows) {
 
                             if (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] etpOper.getEtpOperPdfEtf Error while performing Query";
+                                resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfEmergency Error while performing Query";
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -981,8 +981,13 @@ var getEtpOperPdfModify = function(req, res) {
 
                                 for (var i in rows) {
                                     rows[i].status = "normal";
+
                                     rows[i].f16499 = rows[i].fmt_f16499; /* 1CU단위증권수 */
                                     rows[i].f16499_prev = rows[i].fmt_f16499; /* 1CU단위증권수 */
+
+                                    rows[i].f34840 = rows[i].fmt_f34840; /* 액면금액설정현금액 */
+                                    rows[i].f34840_prev = rows[i].fmt_f34840; /* 액면금액설정현금액 */
+
                                     rows[i].code_check = true; /* 코드 체크 ( defulat : true ) */
 
                                     resultMsg.dataList.push(rows[i]);
@@ -1004,14 +1009,14 @@ var getEtpOperPdfModify = function(req, res) {
                         (resultMsg.etpBasic.f16493 == "3" || resultMsg.etpBasic.f16493 == "4")
                     ) {
 
-                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtn', paramData, format);
+                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtnEmergency', paramData, format);
                         console.log(stmt);
 
                         conn.query(stmt, function(err, rows) {
 
                             if (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] etpOper.getEtpOperPdfEtn Error while performing Query";
+                                resultMsg.msg = "[error] etpOper.getEtpOperPdfEtnEmergency Error while performing Query";
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -1020,8 +1025,13 @@ var getEtpOperPdfModify = function(req, res) {
                             if (rows && rows.length > 0) {
                                 for (var i in rows) {
                                     rows[i].status = "normal";
+
                                     rows[i].f16499 = rows[i].fmt_f16499; /* 1CU단위증권수 */
                                     rows[i].f16499_prev = rows[i].fmt_f16499; /* 1CU단위증권수 */
+
+                                    rows[i].f34840 = rows[i].fmt_f34840; /* 액면금액설정현금액 */
+                                    rows[i].f34840_prev = rows[i].fmt_f34840; /* 액면금액설정현금액 */
+
                                     rows[i].code_check = true; /* 코드 체크 ( defulat : true ) */
 
                                     resultMsg.dataList.push(rows[i]);
@@ -1527,7 +1537,6 @@ var getJongmokData = function(req, res) {
                         if (rows && rows.length > 0) {
                             resultMsg.dataList = rows;
                         }
-                        f
 
                         callback(null, paramData);
                     });
@@ -1714,7 +1723,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                     *
                                     * 1) tm_pdf_modify_dtl 에 없는 경우에는 'insert'
                                     * 2) tm_pdf_modify_dtl 에 존재하고 CU수량과 액면금액 모두 td_etfpdf_basic 의 값과 동일한 경우 'delete'
-                                    * 3) tm_pdf_modify_dtl 에 존재하고 CU수량과 액면금액이 td_etfpdf_basic 의 값과 다른 경우 'update'
+                                    * 3) tm_pdf_modify_dtl 에 존재하고 CU수량과 액면금액이 td_etfpdf_basic 의 값과 다른 경우 'modify'
                                     *                             
                                     */
                                     function(callback) {
@@ -1790,8 +1799,8 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                         try {
 
-                                            if( arrInsertDtl && arrInsertDtl.length > 0 ) {
-                                                paramData.dataLists =   arrInsertDtl;
+                                            if( arrModifyDtl && arrModifyDtl.length > 0 ) {
+                                                paramData.dataLists =   arrModifyDtl;
                                                 var stmt = mapper.getStatement('etpOper', 'modifyTmPdfModifyDtl', paramData, { language: 'sql', indent: '  ' });
                                                 console.log(stmt);
 
@@ -1892,7 +1901,6 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                     /* 7. PDF 변경 마스터 정보를 변경한다. */
                                     function(msg, callback) {
-                                        console.log("paramData=[" + paramData + "]");
 
                                         var queryId =   "saveTmPdfModifyMast";
                                         try {

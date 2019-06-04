@@ -18,7 +18,7 @@
                                             </div>
                                         </v-flex>
 
-                                        <v-flex xs12 sm4 text-xs-center v-if="!showView">
+                                        <v-flex xs12 text-xs-center v-if="!showView">
                                             <v-btn icon @click="fn_close">
                                                 <v-icon>close</v-icon>
                                             </v-btn>
@@ -41,7 +41,7 @@
                             <p>Last Updated : {{results.F12506}}</p>
                         </div>
                         <v-card flat class="graph_toggle">
-                            <v-flex xs12 sm6 class="py-2">
+                            <v-flex xs12  class="py-2">
                                 <v-btn-toggle v-model="toggle_one" class="toggle_01">
                                     <v-btn flat value="1D" v-on:click="Indexchart('1D')">1D</v-btn>
                                     <v-btn flat value="1W" v-on:click="Indexchart('1W')">1W</v-btn>

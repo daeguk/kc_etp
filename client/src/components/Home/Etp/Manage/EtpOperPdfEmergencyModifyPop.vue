@@ -40,8 +40,32 @@
                         
                         <v-card flat>
 
-                            <table :id="tblEmergeny01" class="tbl_type" style="width:100%">
+                            <table :id="tblEmergeny01" class="tbl_type ver7" style="width:100%" >
 
+                                <colgroup>
+                                    <col width="10%">
+                                    <col width="8%">
+                                    <col width="12%">
+                                    <col width="14%">
+                                    <col width="12">
+                                    <col width="12%">
+                                    <col width="12%">
+                                    <col width="10%">
+                                    <col width="9%">
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th class="txt_center">Date</th>
+                                        <th class="txt_center">시장<br>구분</th>
+                                        <th class="txt_left">구성종목코드</th>
+                                        <th class="txt_left">종목명</th>
+                                        <th class="txt_right">CU shrs</th>
+                                        <th class="txt_right">액면금액</th>
+                                        <th class="txt_right">평가금액</th>
+                                        <th class="txt_right">비중</th>
+                                        <th class="txt_right"></th>
+                                    </tr>
+                                </thead>                                
                             </table>
                         </v-card>
                     </v-card>
@@ -81,7 +105,7 @@
                                     <span>{{ subData.etf_f16013     /* ETF 단축코드 */      }}</span>
                                 </h4>
 
-                                <table v-bind:id='"step2_" + subData.etf_f16012' class="tbl_type" style="width:100%"></table>
+                                <table v-bind:id='"step2_" + subData.etf_f16012' class="tbl_type ver7" style="width:100%"></table>
 
                             </v-flex>
 
@@ -169,7 +193,7 @@
                                     <span>{{ subData.etf_f16013     /* ETF 단축코드 */      }}</span>
                                 </h4>
 
-                                <table v-bind:id='"step3_" + subData.etf_f16012' class="tbl_type" style="width:100%"></table>
+                                <table v-bind:id='"step3_" + subData.etf_f16012' class="tbl_type ver7" style="width:100%"></table>
 
                             </v-flex>
 
@@ -283,17 +307,18 @@ export default {
 
                         return htm;
                     },
-                    "targets": [3, 4, 5, 6]
+                    "targets": [0, 1, 2, 3]
                 },
                 {  
                     /* CU shrs */
                     "render": function ( data, type, row ) {
 
                         var htm = "";
-                        if( typeof row.f16316 != "undefined" && row.f16316.length > 0 ) {
+                        if( typeof row.f16316 != "undefined" && row.f16316.length > 0 ) {       /* 구성종목코드 */
                             if( row.f16316.indexOf( "<input" ) > -1 ) {
                                 htm = util.formatNumber( data );
                             }else{
+                                /* 1CU단위증권수 */
                                 htm = "<input type='number' name='f16499' id='f16499' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='15'>";
                             }
                         }
@@ -301,10 +326,42 @@ export default {
                         return htm;
                     },
                     "orderable" : false,
-                    "targets": 7
+                    "targets": 4
                 },
+                {  
+                    /* 액면금액 */
+                    "render": function ( data, type, row ) {
+
+                        var htm = "";
+                        if( typeof row.f16316 != "undefined" && row.f16316.length > 0 ) {       /* 구성종목코드 */
+                            if( row.f16316.indexOf( "<input" ) > -1 ) {
+                                htm = util.formatNumber( data );
+                            }else{
+                                /* 액면금액 */
+                                htm = "<input type='number' name='f34840' id='f34840' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='15'>";
+                            }
+                        }
+
+                        return htm;
+                    },
+                    "orderable" : false,
+                    "targets": 5
+                },
+                {  
+                    /* 평가금액 */
+                    "render": function ( data, type, row ) {
+
+                        var htm = "";
+
+                        htm += util.formatNumber(data);
+
+                        return htm;
+                    },
+                    "orderable" : false,
+                    "targets": 6
+                },                
                 { 
-                    "targets": 11,
+                    "targets": 8,
                     "render": function ( data, type, row ) {
                         if (data) {
                             if ( row.status == "insert" ) {
@@ -319,19 +376,19 @@ export default {
                 },                 
             ],
             columns: [  
+                { "data" : "fmt_f12506"     ,   "orderable" : false  ,   "className" : "txt_center" ,   "width" :   "10%"   , "title" :   "Date"          },   /* Date */
+                { "data" : "f33861"         ,   "orderable" : false  ,   "className" : "txt_center" ,   "width" :   "8%"    , "title" :   "시장<br>구분"      },  /* 시장구분 */
+                { "data" : "f16316"         ,   "orderable" : false  ,   "className" : "txt_left"   ,   "width" :   "12%"   , "title" :   "구성종목코드"  },  /* 구성종목코드 */
+                { "data" : "f16004"         ,   "orderable" : false  ,   "className" : "txt_left"   ,   "width" :   "14%"   , "title" :   "종목명"        },  /* 종목명 */
+                { "data" : "f16499"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "12%"   , "title" :   "CU shrs"       },  /* CU shrs */
+                { "data" : "f34840"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "12%"   , "title" :   "액면금액"      },  /* 액면금액 */
+                { "data" : "f16588"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "12%"   , "title" :   "평가금액"      },  /* 평가금액 */
+                { "data" : "fmt_f34743"     ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "10%"    , "title" :   "비중(%)"      },  /* 비중 */
+                { "data": null              ,   "orderable" : false  ,   "align":"center"           ,   "width" :   "9%"    , defaultContent:"" },
+
                 { "data" : "status"         ,   "visible"   : false   },                                                                /* status */
                 { "data" : "code_check"     ,   "visible"   : false   },                                                                /* code_check */
-                { "data" : "f16499_prev"    ,   "visible"   : false   },                                                                /* CU shrs (변경전) */
-
-                { "data" : "f12506"         ,   "orderable" : false  ,   "className" : "txt_center" ,   "width" :   "10%"   , "title" :   "Date"          },   /* Date */
-                { "data" : "f33861"         ,   "orderable" : false  ,   "className" : "txt_center" ,   "width" :   "8%"    , "title" :   "시장<br>구분"      },  /* 시장구분 */
-                { "data" : "f16316"         ,   "orderable" : false  ,   "className" : "txt_left"   ,   "width" :   "14%"   , "title" :   "구성종목코드"  },  /* 구성종목코드 */
-                { "data" : "f16002"         ,   "orderable" : false  ,   "className" : "txt_left"   ,   "width" :   "18%"   , "title" :   "종목명"        },  /* 종목명 */
-                { "data" : "f16499"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "15%"   , "title" :   "CU shrs"       },  /* CU shrs */
-                { "data" : "f34840"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "10%"   , "title" :   "액면금액"      },  /* 액면금액 */
-                { "data" : "f16588"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "10%"   , "title" :   "평가금액"      },  /* 평가금액 */
-                { "data" : "f34743"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "8%"    , "title" :   "비중"          },  /* 비중 */
-                { "data": null              ,   "orderable" : false  ,   "align":"center"           ,   "width" :   "9%"    , defaultContent:"" },
+                { "data" : "f16499_prev"    ,   "visible"   : false   },                                                                /* CU shrs (변경전) */                
             ]
         });
 
@@ -361,16 +418,35 @@ export default {
 
 
         /* CU shrs 수정시 */
-        $("#" + vm.tblEmergeny01 + " tbody").on('change', "input[name='f16499']", function () {
+        $("#" + vm.tblEmergeny01 + " tbody").on('blur', "input[name='f16499'],input[name='f34840']", function () {
 
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
             var data = table.row($(this).parents("tr")).data();
             var rowIndex = table.row($(this).parents("tr")).index();
             var jongmokTag = $(this).parents("tr").find( "input[name='jongmok']" );
-            var f16499 = $(this).eq(0).val();
 
-            $(this).eq(0).val( util.formatNumber( f16499 ) );
-            vm.fn_setStatus( data, $(this).eq(0).val(), rowIndex, ( jongmokTag ? jongmokTag.length : 0 ) );
+
+            var nowData = {};
+
+            /* CU shrs */
+            if ( $(this).attr('name') == 'f16499' ) {
+                var tdData = $(this).eq(0).val();
+                $(this).eq(0).val( util.formatNumber( tdData ) );
+
+                nowData.name = "f16499";
+                nowData.f16499  =   $(this).eq(0).val();
+            }
+            /* 액면금액 */
+            else if( $(this).attr('name') == 'f34840' ) {
+                var tdData = $(this).eq(0).val();
+                $(this).eq(0).val( util.formatNumber( tdData ) );
+
+                nowData.name = "f34840";
+                nowData.f34840  =   $(this).eq(0).val();
+            }
+
+
+            vm.fn_setStatus( data, nowData, rowIndex, ( jongmokTag ? jongmokTag.length : 0 ) );
         });
 
 
@@ -428,6 +504,8 @@ export default {
                 data: searchParam
             }).then(function(response) {
                 console.log(response);
+
+                util.processing(vm.$refs.progress, false);
 
                 if (response.data) {
                     var etpBasic = response.data.etpBasic;
@@ -489,8 +567,7 @@ export default {
                         vm.dataList =   dataList;
                     }
                 }
-
-                util.processing(vm.$refs.progress, false);
+                
             });
         },
 
@@ -511,8 +588,7 @@ export default {
                 return  false;
             }
 
-            if(  codeVal.length < 6
-            ) {
+            if(  codeVal.length < 6 ) {
                 vm.$emit("showMessageBox", '확인','구성종목코드를 6자리 이상 입력해 주세요.',{},1);
 
                 return  false;
@@ -551,19 +627,20 @@ export default {
                     }
 
                     var addData     =   {
-                            "status"        :   "insert"
-                        ,   "code_check"    :   true
-                        ,   "f16499_prev"   :   0                           /* CU shrs ( 변경전 ) */
 
-                        ,   "f12506"        :   dataList[0].f12506          /* Date */
+                            "fmt_f12506"    :   dataList[0].fmt_f12506      /* Date */
                         ,   "f33861"        :   dataList[0].f33861          /* 시장구분 */
                         ,   "f16316"        :   dataList[0].f16012          /* 구성종목코드 */
-                        ,   "f16002"        :   dataList[0].f16002          /* 종목명 */
+                        ,   "f16004"        :   dataList[0].f16002          /* 종목명 */
 
                         ,   "f16499"        :   0                           /* CU shrs */
                         ,   "f34840"        :   0                           /* 액면금액 */
                         ,   "f16588"        :   0                           /* 평가금액 */
-                        ,   "f34743"        :   0                           /* 비중 */
+                        ,   "fmt_f34743"    :   0                           /* 비중 */
+
+                        ,   "status"        :   "insert"
+                        ,   "code_check"    :   true
+                        ,   "f16499_prev"   :   0                           /* CU shrs ( 변경전 ) */                        
                     }
 
                     tblEmergeny01.row(rowIndex).data( addData ).order( [0, "asc"] ).draw(  );
@@ -592,18 +669,18 @@ export default {
                                                 
                                                 
             var addData     =   {
-                    "status"        :   "insert"
-                ,   "code_check"    :   false
-                ,   "f16499_prev"   :   ''              /* CU shrs ( 변경전 ) */
-
-                ,   'f12506'        :   ''              /* Date */
+                    'fmt_f12506'    :   ''              /* Date */
                 ,   'f33861'        :   ''              /* 시장구분 */
-                ,   'f16316'        :   "<input type='text' name='jongmok' id='jongmok' class='txt_left width_fix' placeholder='12자리/6자리코드' maxlength='15' >"        /* 구성종목코드 */
-                ,   'f16002'        :   "<button  name='confirm' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01'>확인</button>"                                                      /* 종목명 */
+                ,   'f16316'        :   "<input type='text' name='jongmok' id='jongmok' class='txt_left' style='width:100%' placeholder='12자리/6자리코드' maxlength='15' >"            /* 구성종목코드 */
+                ,   'f16004'        :   "<button  name='confirm' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01'>확인</button>"                              /* 종목명 */
                 ,   'f16499'        :   ''              /* CU shrs */
-                ,   'f34840'        :   '0'             /* 액면금액 */
+                ,   'f34840'        :   ''              /* 액면금액 */
                 ,   'f16588'        :   '0'             /* 평가금액 */
-                ,   'f34743'        :   '0'             /* 비중 */
+                ,   'fmt_f34743'    :   '0'             /* 비중 */
+
+                ,   "status"        :   "insert"
+                ,   "code_check"    :   false
+                ,   "f16499_prev"   :   ''              /* CU shrs ( 변경전 ) */                
             }
 
             tblEmergeny01.row.add( addData ).order( [0, "asc"] ).draw(  );            
@@ -740,7 +817,7 @@ export default {
                                     columns: [
                                         { "data" : "status"         ,   "width" :   "15%"   ,   "orderable" : false  ,   "className" : "txt_center" ,    "title" :   "구분"     },     /* 구분 */
                                         { "data" : "f16316"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "CODE"     },     /* 코드 */
-                                        { "data" : "f16002"         ,   "width" :   "25%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "종목"     },     /* 종목명 */
+                                        { "data" : "f16004"         ,   "width" :   "25%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "종목"     },     /* 종목명 */
                                         { "data" : "f16499_prev"    ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"  ,    "title" :   "변경전"   },     /* CU shrs (변경전) */
                                         { "data" : "f16499"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"  ,    "title" :   "변경후"   },     /* CU shrs */
                                     ]
@@ -856,7 +933,7 @@ export default {
                                         columns: [
                                             { "data" : "status"         ,   "width" :   "15%"   ,   "orderable" : false  ,   "className" : "txt_center" ,    "title" :   "구분"     },     /* 구분 */
                                             { "data" : "f16316"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "CODE"     },     /* 코드 */
-                                            { "data" : "f16002"         ,   "width" :   "25%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "종목"     },     /* 종목명 */
+                                            { "data" : "f16004"         ,   "width" :   "25%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "종목"     },     /* 종목명 */
                                             { "data" : "f16499_prev"    ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"  ,    "title" :   "변경전"   },     /* CU shrs (변경전) */
                                             { "data" : "f16499"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"  ,    "title" :   "변경후"   },     /* CU shrs */
                                         ]
@@ -920,7 +997,7 @@ export default {
             }            
 
             var searchParam                 =   {}
-            searchParam.searchCode          =   vm.txtAddEtpCode;
+            searchParam.f16012              =   vm.txtAddEtpCode;
             searchParam.initYn              =   "N";
 
             vm.fn_getEtpOperPdfModify( searchParam );
@@ -945,7 +1022,7 @@ export default {
          * CU shrs 변경시 상태값을 변경한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_setStatus( tableData, f16499, rowIndex, jongmokTagYn ) {
+        fn_setStatus( tableData, nowData, rowIndex, jongmokTagYn ) {
             var vm = this;
 
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
@@ -954,23 +1031,73 @@ export default {
             /* 종목코드 태그가 존재하지 않는 경우 */
             if( jongmokTagYn == 0 ) {
 
-                if( tableData.status != "insert" ) {
-                    
-                    /* 이전값과 현재값이 동일한 경우 상태값 원상태로 변경 */
-                    if( tableData.f16499_prev == f16499 ) {
-                        table.cell( tr, 0 ).data( { "status" : "normal" } );
-                        vm.dataList[ rowIndex ].status  =   "normal";
+                /* 1CU단위증권수 */
+                if( nowData.name == "f16499" ) {
+debugger;
+                    if( tableData.status != "insert" ) {
+                        
+                        /* DB 에 저장된 값이 존재하면 상태값은 변경 상태 */
+                        if(  tableData.f16499_exist ) {
+                            table.cell( tr, 9 ).data( { "status" : "modify" } );
+                            vm.dataList[ rowIndex ].status  =   "modify";
+                        }
+                        /* 
+                        *   상태값 normal 로 변경
+                        *
+                        *   수정한 [1CU단위증권수] 와 원본 [1CU단위증권수] 이 같고
+                        *   수정했던 [액면금액] 과 원본 [액면금액] 이 같은 경우
+                        */
+                        else if(   tableData.f16499_prev == nowData.f16499 
+                                &&  tableData.f34840_prev == tableData.f34840 ) {
+                            table.cell( tr, 9 ).data( { "status" : "normal" } );
+                            vm.dataList[ rowIndex ].status  =   "normal";
+                        }
+                        else{
+                            table.cell( tr, 9 ).data( { "status" : "modify" } );
+                            vm.dataList[ rowIndex ].status  =   "modify";
+                        }
                     }
-                    else if( tableData.f16499_prev != f16499 ) {
-                        table.cell( tr, 0 ).data( { "status" : "modify" } );
-                        vm.dataList[ rowIndex ].status  =   "modify";
+
+                    vm.dataList[ rowIndex ].f16499      =   util.formatNumber( nowData.f16499 );
+                }
+                /* 액면금액 */
+                else if( nowData.name == "f34840" ) {
+
+                    if( tableData.status != "insert" ) {
+                        
+                        /* DB 에 저장된 값이 존재하면 상태값은 변경 상태 */
+                        if(  tableData.f34840_exist ) {
+                            table.cell( tr, 9 ).data( { "status" : "modify" } );
+                            vm.dataList[ rowIndex ].status  =   "modify";
+                        }                        
+                        /* 
+                        *   상태값 normal 로 변경
+                        *
+                        *   수정한 [액면금액] 과 원본 [액면금액] 이 같고
+                        *   수정했던 [1CU단위증권수] 과 원본 [1CU단위증권수] 이 같은 경우
+                        */
+                        else if(    tableData.f34840_prev == nowData.f34840 
+                                &&  tableData.f16499_prev == tableData.f16499 ) {
+                            table.cell( tr, 9 ).data( { "status" : "normal" } );
+                            vm.dataList[ rowIndex ].status  =   "normal";
+                        }
+                        else{
+                            table.cell( tr, 9 ).data( { "status" : "modify" } );
+                            vm.dataList[ rowIndex ].status  =   "modify";
+                        }
                     }
+
+                    vm.dataList[ rowIndex ].f34840      =   util.formatNumber( nowData.f34840 );
                 }
 
-                vm.dataList[ rowIndex ].f16499      =   util.formatNumber( f16499 );
             }else{
                 vm.dataList[ rowIndex ].code_check  =   false;
-                vm.dataList[ rowIndex ].f16499      =   util.formatNumber( f16499 );
+
+                if( nowData.name == "f16499" ) {
+                    vm.dataList[ rowIndex ].f16499      =   util.formatNumber( nowData.f16499 );
+                }else{
+                    vm.dataList[ rowIndex ].f34840      =   util.formatNumber( nowData.f34840 );
+                }                
             }
         },
 
