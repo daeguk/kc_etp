@@ -242,7 +242,7 @@ export default {
             },
             arrEtpPerformance   :   [],
             arrIndexPerformance :   [],
-            performChartColors  :   ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde'],
+            performChartColors  :   ['#85c406', '#1e99e8', '#434343', '#ff4366', '#fbb040'],
             performChartImages  :   ['perform_bar01.png', 'perform_bar02.png', 'perform_bar03.png', 'perform_bar04.png', 'perform_bar05.png'],
             perf_class : 'perf_chart_w',
             tbl_class : 'tbl_type ver4',
@@ -628,8 +628,8 @@ export default {
                             var options = {'title':'',
                                         'width':vm.chart_size,
                                         'height':'180',
-                                        // 'colors': ['#85c406', '#1e99e8', '#323232', '#ff4366', '#fbb040'],                
-                                        'colors': ['#4FC3F7', '#FB8C00', '#1A237E', '#ff4366', '#fbb040'],                
+                                        'colors': ['#85c406', '#1e99e8', '#434343', '#ff4366', '#fbb040'],                
+                                        // 'colors': ['#4FC3F7', '#FB8C00', '#1A237E', '#ff4366', '#fbb040'],                
                                         'hAxis':{
                                             textStyle: {
                                                 color:'#ffffff'

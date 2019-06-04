@@ -292,7 +292,7 @@ export default {
             var divClass = "tooltip";
             var btnClass = "btn_icon v-icon material-icons";
             var btnSpanClass = "tooltiptext";
-            var btnSpanStyle = "width:70px;";
+            var btnSpanStyle = "width:75px;";
 
             var btnId = "";
             var btnContent = "";
@@ -425,10 +425,10 @@ export default {
                                 var graphContent = "";
 
                                 /* 지수정보 */
-                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndex"      , "btnContent" : "visibility"       , "btnSpanContent" : "지수정보" } );
+                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndex"      , "btnContent" : "equalizer"       , "btnSpanContent" : "지수정보" } );
                                 
                                 /* 지수구성정보 */
-                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexDetailList", "btnContent" : "equalizer"        , "btnSpanContent" : "지수구성정보" } );
+                                graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnIndexDetailList", "btnContent" : "pie_chart"        , "btnSpanContent" : "지수구성정보" } );
 
                                 /* 지수조치내역 */
 /*

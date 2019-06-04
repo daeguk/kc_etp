@@ -79,7 +79,7 @@
                                         <IndexDetailInfoTab1 :basicData = "basicData" @showMessageBox="showMessageBox"    v-if="openSubIndexInfoTab"></IndexDetailInfoTab1>
                                     </v-tab-item>
                                     <v-tab-item>
-                                        <IndexDetailInfoTab2 :basicData = "basicData" @showMessageBox="showMessageBox"   v-if="openSubIndexInfoTab"></IndexDetailInfoTab2>
+                                        <IndexDetailInfoTab2 :basicData = "basicData"  :showDialog="showDialog" :showView="showView" @showMessageBox="showMessageBox"   v-if="openSubIndexInfoTab"></IndexDetailInfoTab2>
                                     </v-tab-item>
                                     <v-tab-item  v-if="!showDialog">
                                         <IndexDetailInfoTab3 @showMessageBox="showMessageBox"></IndexDetailInfoTab3>
@@ -304,7 +304,7 @@ export default {
                          // Set chart options
                         var options = {'title':' ',
                                 'height':'300',
-                                'colors':['#1e99e8', '#48485e', '#ff4366', '#727281'],
+                                'colors':['#85c406', '#787878', '#ff4366', '#727281'],
                                 'hAxis':{
                                     format: "MM.dd",
                                     ticks: data.getDistinctValues(0),
@@ -337,7 +337,7 @@ export default {
                          // Set chart options
                         var options = {'title':' ',
                                 'height':'300',
-                                'colors':['#1e99e8', '#48485e', '#ff4366', '#727281'],
+                                'colors':['#85c406', '#787878', '#ff4366', '#727281'],
                                 'hAxis':{
                                     format: "MM.dd",
                                     ticks: data.getDistinctValues(0),
