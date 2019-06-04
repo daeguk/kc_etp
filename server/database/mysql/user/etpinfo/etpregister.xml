@@ -25,8 +25,9 @@
         else ""
         end kor_for_type_name 
     from m001uetpmaster a
-    WHERE (a.list_date    >=   current_date( )  or  a.list_date is null ) 
+    WHERE ((a.list_date    >=   current_date( ))   ||    a.list_date is null   )  
         and a.isin_stat_cd != "0009" 
+        and length(a.isin_stat_cd) = 4
 ]]>
     <if test="inst_cd != null and inst_cd !='' ">
         and a.inst_cd = #{inst_cd} 
@@ -378,16 +379,16 @@
 <select id="getIdxList" >
     <![CDATA[
         SELECT F12506 time, F15001 value FROM 
-        ${idxTable} 
-        WHERE TRIM(F16013) = #{idx_sym_code}   
+        td_index_hist 
+        WHERE TRIM(F16013) = #{idx_sym_code}  AND market_id =  #{market_id}  
         ORDER BY 1 DESC LIMIT 20
     ]]>	
 </select>
 <select id="getRidxList" >
     <![CDATA[
         SELECT F12506 time, F15001 value FROM 
-        td_index_basic 
-        WHERE TRIM(F16013) = #{ridx_dist_sym_code}  AND market_id =  #{market_id}
+        td_index_hist
+        WHERE TRIM(F16013) = #{ridx_dist_sym_code}  AND market_id =  #{rMarket_id}
         ORDER BY 1 DESC LIMIT 20
     ]]>	
 </select>

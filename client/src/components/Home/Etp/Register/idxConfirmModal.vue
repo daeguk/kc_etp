@@ -20,7 +20,7 @@
                    </colgroup>
                    <thead>
                        <tr>
-                           <th>심플코드</th>
+                           <th>심볼코드</th>
                            <th>
                                <v-select 
                                     :items="items"
@@ -40,7 +40,7 @@
                        </tr> 
                    </tbody>
                </table>
-               <table id="example3" class="display table01_w">
+               <table id="idxConfirmData" class="display table01_w">
                    <colgroup>
                        <col width="50%">
                        <col width="50%">
@@ -97,9 +97,8 @@ export default {
             }
             vm.selectedItem.value = "1";
             vm.selectedItem.text = "종가";
-            vm.getIdxList();        
-        //vm.getRidxList();
-        });
+             vm.getIdxList();        
+         });
     },
   
     beforeDestroy() {
@@ -112,9 +111,12 @@ export default {
             if(table != null){
                 table.clear();
             }
-
             if(vm.selectedItem.value == "2"){
                 vm.selectedItem.text = "실시간";
+                if( vm.ridx_dist_sym_code == null || vm.ridx_dist_sym_code.length == 0 ){
+                     alert("신청한 실시간 심볼코드가 없습니다.");  
+                    return;   
+                }
                 vm.getRidxList();
             }else{
                 vm.selectedItem.text = "종가";
@@ -124,8 +126,8 @@ export default {
         //종가
         getIdxList: function() {
                 axios.get(Config.base_url + "/user/etp/getIdxList", {
-                  params:{idxTable: this.idxConfirmModal.idxTable,
-                          idx_sym_code: this.idxConfirmModal.idxSymCode,
+                  params:{idx_sym_code: this.idxConfirmModal.idxSymCode,
+                          market_id: this.idxConfirmModal.marketId
                          }
                 }).then(response => {
                      if (response.data.success == false) {
@@ -138,7 +140,7 @@ export default {
                          alert("기초지수 산출전입니다..");   
                         }
                         console.log("getIdxList=" + JSON.stringify(items));
-                        table = $('#example3').DataTable( {
+                        table = $('#idxConfirmData').DataTable( {
                             autoWidth: false, 
                             processing: true,
                             serverSide: false,
@@ -159,9 +161,9 @@ export default {
         }, 
         //실시간
         getRidxList: function() {
-                console.log("ridx_dist_sym_code : " + this.idxConfirmModal.ridxDistSymCode)
+                console.log("ridx_dist_sym_code : " + this.idxConfirmModal.ridxDistSymCode);
                 axios.get(Config.base_url + "/user/etp/getRidxList", {
-                  params:{market_id: this.idxConfirmModal.marketId,
+                  params:{rMarket_id: this.idxConfirmModal.rMarketId,
                           ridx_dist_sym_code: this.idxConfirmModal.ridxDistSymCode,
                          }
                  }).then(response => {
@@ -171,10 +173,10 @@ export default {
                         var items = response.data.results;
                         this.results = items;
                         if(this.results.length == 0){
-                         alert("iNav 산출전입니다..");   
+                         alert("기초지수  산출 전입니다..");   
                         }
                         console.log("getRidxList=" + JSON.stringify(items));
-                        table = $('#example3').DataTable( {
+                        table = $('#idxConfirm').DataTable( {
                             autoWidth: false, 
                             processing: true,
                             serverSide: false,
@@ -185,7 +187,7 @@ export default {
                             data: this.results,
                             destroy: true,
                                 columns: [
-                                   { "data": "time", "orderable" : true , "title"  : "시간"   ,className: "td_in_center", },
+                                   { "data": "time", "orderable" : true , "title"  : "일자"   ,className: "td_in_center", },
                                    { "data": "value","orderable" : true , "title"  : "현재가" ,className: "td_in_center",},
                                  ]
                             }); 
