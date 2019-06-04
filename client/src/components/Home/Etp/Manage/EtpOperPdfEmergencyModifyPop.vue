@@ -65,7 +65,8 @@
                                         <th class="txt_right">비중</th>
                                         <th class="txt_right"></th>
                                     </tr>
-                                </thead>                                
+                                </thead> 
+
                             </table>
                         </v-card>
                     </v-card>
@@ -105,7 +106,34 @@
                                     <span>{{ subData.etf_f16013     /* ETF 단축코드 */      }}</span>
                                 </h4>
 
-                                <table v-bind:id='"step2_" + subData.etf_f16012' class="tbl_type ver7" style="width:100%"></table>
+                                <table v-bind:id='"step2_" + subData.etf_f16012' class="tbl_type ver7" style="width:100%">
+                                    <colgroup>
+                                        <col width="10%">       <!-- 구분 -->
+                                        <col width="15%">       <!-- CODE -->
+                                        <col width="15%">       <!-- 종목 -->
+
+                                        <col width="15%">       <!-- CU shrs -->
+                                        <col width="15%">
+
+                                        <col width="15%">       <!-- 액면금액 -->
+                                        <col width="15%">                                        
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th class="txt_center"  rowspan="2">구분</th>
+                                            <th class="txt_center"  rowspan="2">CODE</th>
+                                            <th class="txt_left"    rowspan="2">종목</th>
+                                            <th class="txt_center"  colspan="2">CU shrs</th>
+                                            <th class="txt_center"  colspan="2">액면금액</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="txt_right">변경전</th>
+                                            <th class="txt_right">변경후</th>
+                                            <th class="txt_right">변경전</th>
+                                            <th class="txt_right">변경후</th>                                            
+                                        </tr>
+                                    </thead> 
+                                </table>
 
                             </v-flex>
 
@@ -193,7 +221,34 @@
                                     <span>{{ subData.etf_f16013     /* ETF 단축코드 */      }}</span>
                                 </h4>
 
-                                <table v-bind:id='"step3_" + subData.etf_f16012' class="tbl_type ver7" style="width:100%"></table>
+                                <table v-bind:id='"step3_" + subData.etf_f16012' class="tbl_type ver7" style="width:100%">
+                                    <colgroup>
+                                        <col width="10%">       <!-- 구분 -->
+                                        <col width="15%">       <!-- CODE -->
+                                        <col width="15%">       <!-- 종목 -->
+
+                                        <col width="15%">       <!-- CU shrs -->
+                                        <col width="15%">
+
+                                        <col width="15%">       <!-- 액면금액 -->
+                                        <col width="15%">                                        
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th class="txt_center"  rowspan="2">구분</th>
+                                            <th class="txt_center"  rowspan="2">CODE</th>
+                                            <th class="txt_left"    rowspan="2">종목</th>
+                                            <th class="txt_center"  colspan="2">CU shrs</th>
+                                            <th class="txt_center"  colspan="2">액면금액</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="txt_right">변경전</th>
+                                            <th class="txt_right">변경후</th>
+                                            <th class="txt_right">변경전</th>
+                                            <th class="txt_right">변경후</th>                                            
+                                        </tr>
+                                    </thead>
+                                </table>
 
                             </v-flex>
 
@@ -748,14 +803,16 @@ export default {
                 if( vm.allDataList.length > 0 ) {
 
                     var items = [];
+
+                    for ( let subData of vm.allDataList ) {
+                        if ( $.fn.DataTable.isDataTable('#step2_' + subData.etf_f16012 ) ) {
+                            $('#step2_' + subData.etf_f16012).DataTable().destroy();
+                        }
+                    }
+
                     for ( let subData of vm.allDataList ) {
 
                         vm.$nextTick().then(() => {
-
-                            if ( $.fn.DataTable.isDataTable('#step2_' + subData.etf_f16012 ) ) {
-                                $('#step2_' + subData.etf_f16012).DataTable().destroy();
-                                $('#step2_' + subData.etf_f16012).empty();
-                            }   
 
                             items = subData.data;
 
@@ -797,7 +854,7 @@ export default {
                                             "targets": 0
                                         },
                                         {  
-                                            /* 변경전 */
+                                            /* CU shrs (변경전) */
                                             "render": function ( data, type, row ) {
 
                                                 var htm = "";
@@ -805,21 +862,64 @@ export default {
                                                     if( row.status == "insert" ) {
                                                         htm = "-";
                                                     }else{
-                                                        htm = data;
+                                                        htm = util.formatNumber( data );
                                                     }
                                                 }
 
                                                 return htm;
                                             },
                                             "targets": 3
-                                        },                                        
+                                        },
+                                        {  
+                                            /* CU shrs (변경후) */
+                                            "render": function ( data, type, row ) {
+
+                                                var htm = "";
+                                                htm    +=  util.formatNumber( data );
+
+                                                return htm;
+                                            },
+                                            "targets": 4
+                                        },
+                                        {  
+                                            /* 액면금액 (변경전) */
+                                            "render": function ( data, type, row ) {
+
+                                                var htm = "";
+                                                if( typeof row.status != "undefined" ) {
+                                                    if( row.status == "insert" ) {
+                                                        htm = "-";
+                                                    }else{
+                                                        htm = util.formatNumber( data );
+                                                    }
+                                                }
+
+                                                return htm;
+                                            },
+                                            "targets": 5
+                                        },
+                                        {  
+                                            /* 액면금액 (변경후) */
+                                            "render": function ( data, type, row ) {
+
+                                                var htm = "";
+                                                htm    +=  util.formatNumber( data );
+
+                                                return htm;
+                                            },
+                                            "targets": 6
+                                        },
                                     ],
                                     columns: [
-                                        { "data" : "status"         ,   "width" :   "15%"   ,   "orderable" : false  ,   "className" : "txt_center" ,    "title" :   "구분"     },     /* 구분 */
-                                        { "data" : "f16316"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "CODE"     },     /* 코드 */
-                                        { "data" : "f16004"         ,   "width" :   "25%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "종목"     },     /* 종목명 */
-                                        { "data" : "f16499_prev"    ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"  ,    "title" :   "변경전"   },     /* CU shrs (변경전) */
-                                        { "data" : "f16499"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"  ,    "title" :   "변경후"   },     /* CU shrs */
+                                        { "data" : "status"         ,   "width" :   "15%"   ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 구분 */
+                                        { "data" : "f16316"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 코드 */
+                                        { "data" : "f16004"         ,   "width" :   "25%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 종목명 */
+                                        
+                                        { "data" : "f16499_prev"    ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs (변경전) */
+                                        { "data" : "f16499"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs */
+
+                                        { "data" : "f34840_prev"    ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 (변경전) */
+                                        { "data" : "f34840"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 */
                                     ]
                             }).draw();
                         });
@@ -864,13 +964,20 @@ export default {
                     if( vm.allDataList.length > 0 ) {
 
                         var items = [];
+
+                        for ( let subData of vm.allDataList ) {
+                            if ( $.fn.DataTable.isDataTable('#step3_' + subData.etf_f16012 ) ) {
+                                $('#step3_' + subData.etf_f16012).DataTable().destroy();
+                            }
+                        }
+
                         for ( let subData of vm.allDataList ) {
 
                             vm.$nextTick().then(() => {
 
                                 if ( $.fn.DataTable.isDataTable('#step3_' + subData.etf_f16012 ) ) {
                                     $('#step3_' + subData.etf_f16012).DataTable().destroy();
-                                    $('#step3_' + subData.etf_f16012).empty();
+//                                    $('#step3_' + subData.etf_f16012).empty();
                                 }   
 
                                 items = subData.data;
@@ -913,7 +1020,7 @@ export default {
                                                 "targets": 0
                                             },
                                             {  
-                                                /* 변경전 */
+                                                /* CU shrs (변경전) */
                                                 "render": function ( data, type, row ) {
 
                                                     var htm = "";
@@ -921,21 +1028,64 @@ export default {
                                                         if( row.status == "insert" ) {
                                                             htm = "-";
                                                         }else{
-                                                            htm = data;
+                                                            htm = util.formatNumber( data );
                                                         }
                                                     }
 
                                                     return htm;
                                                 },
                                                 "targets": 3
-                                            },                                        
+                                            },
+                                            {  
+                                                /* CU shrs (변경후) */
+                                                "render": function ( data, type, row ) {
+
+                                                    var htm = "";
+                                                    htm    +=  util.formatNumber( data );
+
+                                                    return htm;
+                                                },
+                                                "targets": 4
+                                            },
+                                            {  
+                                                /* 액면금액 (변경전) */
+                                                "render": function ( data, type, row ) {
+
+                                                    var htm = "";
+                                                    if( typeof row.status != "undefined" ) {
+                                                        if( row.status == "insert" ) {
+                                                            htm = "-";
+                                                        }else{
+                                                            htm = util.formatNumber( data );
+                                                        }
+                                                    }
+
+                                                    return htm;
+                                                },
+                                                "targets": 5
+                                            },
+                                            {  
+                                                /* 액면금액 (변경후) */
+                                                "render": function ( data, type, row ) {
+
+                                                    var htm = "";
+                                                    htm    +=  util.formatNumber( data );
+
+                                                    return htm;
+                                                },
+                                                "targets": 6
+                                            },
                                         ],
                                         columns: [
-                                            { "data" : "status"         ,   "width" :   "15%"   ,   "orderable" : false  ,   "className" : "txt_center" ,    "title" :   "구분"     },     /* 구분 */
-                                            { "data" : "f16316"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "CODE"     },     /* 코드 */
-                                            { "data" : "f16004"         ,   "width" :   "25%"   ,   "orderable" : false  ,   "className" : "txt_left"   ,    "title" :   "종목"     },     /* 종목명 */
-                                            { "data" : "f16499_prev"    ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"  ,    "title" :   "변경전"   },     /* CU shrs (변경전) */
-                                            { "data" : "f16499"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"  ,    "title" :   "변경후"   },     /* CU shrs */
+                                            { "data" : "status"         ,   "width" :   "15%"   ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 구분 */
+                                            { "data" : "f16316"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 코드 */
+                                            { "data" : "f16004"         ,   "width" :   "25%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 종목명 */
+
+                                            { "data" : "f16499_prev"    ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs (변경전) */
+                                            { "data" : "f16499"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs */
+
+                                            { "data" : "f34840_prev"    ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 (변경전) */
+                                            { "data" : "f34840"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 */
                                         ]
                                 }).draw();
                             });
