@@ -229,16 +229,17 @@
   
     <!-- 1년간 지수 정보(그래프정보)-->
     <select id="selectIndexSummaryHist">
-    <![CDATA[
         SELECT a.F12506 as trd_dd, a.F15009 as close_idx
           FROM td_index_hist a
          INNER JOIN td_index_basic b
            on  a.F16013 = b.F16013
 		  and  a.market_id = b.market_id
+      <if test="large_type != null and large_type !=''">
           and  b.large_type = #{large_type}
+      </if>
          WHERE a.F12506 >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 YEAR), '%Y%m%d')
            AND a.F16013 = #{JISU_ID}
-    ]]>
+           AND a.market_id = #{MARKET_ID}
     </select>
 
     <!-- 인덱스 기본정보-->
@@ -270,9 +271,11 @@
               ,BAS.FLOWRATE_YN                                      /*유동비율적용여부*/
         FROM  td_index_basic BAS
         WHERE BAS.F16013 = #{jisu_cd}
-          and BAS.MARKET_ID = #{market_id}
-          AND BAS.large_type = #{large_type}
+          and BAS.MARKET_ID = #{market_id}        
     ]]>
+          <if test="large_type != null and large_type !=''">
+            AND BAS.large_type = #{large_type}
+          </if>
     </select>
 
     <!-- 기간 지수와 ETP 정보(그래프정보)-->
@@ -297,7 +300,7 @@
                             AND A.MARKET_ID = B.MARKET_ID
                             AND A.F16013 = #{jisu_cd}
                             AND A.MARKET_ID = #{market_id}
-                            AND A.large_type = #{large_type}) INDX
+                            ) INDX
                 Left outer Join   
                     (select hist.F20044 as trd_dd
                                 ,LPAD(hist.F20004,8, '0') AS trd_hh
@@ -334,7 +337,7 @@
                             AND A.MARKET_ID = B.MARKET_ID
                             AND A.F16013 = #{jisu_cd}
                             AND A.MARKET_ID = #{market_id}
-                            AND A.large_type = #{large_type}) INDX
+                            ) INDX
                 Left outer Join   
                         (select hist.F12506 as trd_dd
                                ,0 as close_idx
