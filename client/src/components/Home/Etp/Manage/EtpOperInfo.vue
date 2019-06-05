@@ -36,17 +36,17 @@
                             <table id="table02" class="tbl_type ver7"    style="width:100%">
 
                                 <colgroup>
-                                    <col width="20%">
+                                    <col width="20%">       <!-- 종목 -->
 
-                                    <col width="8%">
-                                    <col width="8%">
-                                    <col width="8%">
-                                    <col width="8%">
+                                    <col width="8%">        <!-- 1주 -->
+                                    <col width="8%">        <!-- 1개월 -->
+                                    <col width="8%">        <!-- 3개월 -->
+                                    <col width="8%">        <!-- YTD -->
 
-                                    <col width="8%">
-                                    <col width="8%">
-                                    <col width="8%">
-                                    <col width="8%">
+                                    <col width="8%">        <!-- 1주 -->
+                                    <col width="8%">        <!-- 1개월 -->
+                                    <col width="8%">        <!-- 3개월 -->
+                                    <col width="8%">        <!-- YTD -->
 
                                     <col width="14%">
                                 </colgroup>
