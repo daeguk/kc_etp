@@ -277,6 +277,7 @@ var getIndexSummaryHist = function (req, res) {
         var options = {
             large_type : req.session.large_type == null ? '' : req.session.large_type,
             JISU_ID: req.query.jisu_id,
+            MARKET_ID: req.query.market_id
         };
 
         var stmt = mapper.getStatement('index', 'selectIndexSummaryHist', options, {language:'sql', indent: '  '});
