@@ -11,7 +11,7 @@
     </v-btn>
     <span class="top_cont_title">{{menuTitle}}</span>
   </v-toolbar-title>
-  <ContextMenu v-if="isContext" @menuClick="menuClick"></ContextMenu>
+  <ContextMenu v-show="isContext" @menuClick="menuClick"></ContextMenu>
   <v-spacer></v-spacer>
   <UserInfo></UserInfo>
 </v-toolbar>
