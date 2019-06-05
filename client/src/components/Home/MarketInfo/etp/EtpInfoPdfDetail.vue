@@ -7,8 +7,8 @@
                         <v-card-title primary-title>
                             <div class="title_wrap01">
                                 <h3 class="headline mb-0">
-                                  ARIRANG 코스피
-                                    <span class="grey--text">(227830)</span>
+                                  {{ searchParam.f16002 }} |
+                                    <span class="grey--text">({{ searchParam.f16013 }})</span>
                                     <span class="pdf_calendar">
                                 <v-menu
                                     ref="menu2"
@@ -190,6 +190,7 @@ export default {
 
                 vm.searchParam.search_date  =   vm.searchParam.show_date.replace(/-/g,"");
                 vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
+                vm.searchParam.isInstCd     =   "N";        /* 기관에 속한 정보만 노출하는지 */
 
                 if( initYn == "N" ) {
                     if(     !vm.searchParam.f16012          /* 국제표준코드 */
@@ -232,7 +233,7 @@ export default {
                 info: false, // control table information display field
                 stateSave: true, //restore table state on page reload,
                 lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                "scrollY": '60vh',
+                "scrollY": '50vh',
                 paging: false,
                 searching: false,
                 data: [],

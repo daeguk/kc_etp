@@ -5,9 +5,9 @@
                 <v-card flat>
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
-                            
+
                             {{ searchParam.f16002 }} |
-                            <span class="grey--text"> {{ searchParam.f16013 }}</span>
+                            <span class="grey--text">({{ searchParam.f16013 }})</span>
 
                             <span class="text_result_t pdf_calendar">
                                 <v-menu
@@ -45,6 +45,22 @@
                             </span>
                         </h3>
                     </v-card-title>
+
+
+                <!-- inst_cd (기관코드) 가 같은 사용자가 작성한 PDF 수정건이 있는지 -->
+                    <v-card flat class="pdf_mody_w" v-if='emergency_exist_yn == "Y"'>
+                        <v-toolbar card prominent>
+                            <v-toolbar-title class="pdf_t">
+                                <v-icon class="text_red">feedback</v-icon>PDF 수정된 내용이 있습니다.
+                            </v-toolbar-title>
+
+                            <v-btn outline small color="primary" dark   @click="fn_addRow()">
+                                <v-icon small color="primary">add</v-icon>수정내역 보기
+                            </v-btn>
+                        </v-toolbar>
+                    </v-card>
+
+
                     <v-card flat>
                         <table id="tblPdfList" class="tbl_type ver7"></table>
                     </v-card>
@@ -109,7 +125,8 @@ export default {
             },
             pdfData : {},
             indexBasic : {},
-            rateTitleList : []
+            rateTitleList : [],
+            emergency_exist_yn : "N",
         };
     },
     mounted: function() {
@@ -119,8 +136,8 @@ export default {
 
         vm.pdfData  =   vm.paramData;
 
+        vm.fn_getPdfExistYnByNow();
         vm.fn_init();
-
     },
     created: function() {
 
@@ -238,6 +255,7 @@ export default {
 
                 vm.searchParam.search_date  =   vm.searchParam.show_date.replace(/-/g,"");
                 vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
+                vm.searchParam.isInstCd     =   "N";        /* 기관에 속한 정보만 노출하는지 */
 
                 if( initYn == "N" ) {
                     if(     !vm.searchParam.f16012          /* 국제표준코드 */
@@ -315,6 +333,33 @@ export default {
 
 
             vm.fn_getEtpOperPdfByRateTitle();
+        },
+
+        /*
+         * 현재일자에 PDF 변경건이 존재하는지 반환한다.
+         * 2019-05-03  bkLove(촤병국)
+         */
+        fn_getPdfExistYnByNow() {
+
+            var vm = this;
+
+            console.log( "fn_getPdfExistYnByNow called" );
+            
+            vm.$emit( "fn_showProgress", true );
+
+            axios.post( Config.base_url + "/user/etp/getPdfExistYnByNow", {
+                data: {  }
+            }).then(function(response) {
+                console.log(response);
+
+                vm.$emit( "fn_showProgress", false );
+
+                if (response.data) {
+                    if( response.data.emergency_exist_yn ) {
+                        vm.emergency_exist_yn   =   response.data.emergency_exist_yn;
+                    }
+                }
+            });
         },        
 
         /*
@@ -330,7 +375,7 @@ export default {
                 info: false, // control table information display field
                 stateSave: true, //restore table state on page reload,
                 lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                "scrollY": '75vh',
+                "scrollY": '70vh',
                 paging: false,
                 searching: false,
                 data: [],

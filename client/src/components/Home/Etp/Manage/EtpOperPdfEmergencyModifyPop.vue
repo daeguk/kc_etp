@@ -983,7 +983,7 @@ export default {
                         vm.$emit("showMessageBox", '확인', response.data.msg,{},1);
                         return  false;
                     }
-debugger;
+
                     if( response.data.allDataList.length > 0 ) {
                         vm.allDataList  =   response.data.allDataList;
 

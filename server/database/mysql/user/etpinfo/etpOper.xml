@@ -176,11 +176,11 @@
 
 
     <!--
-    * ETP 운용관리 - PDF관리 - 긴급반영 정보를 조회한다. ( ETF 인 경우 )
+    * ETP 운용관리 - PDF관리 - 긴급반영 이력 정보를 조회한다. ( ETF 인 경우 )
     * 2019-05-03  bkLove(촤병국)
     -->
-    <select id="getEtpOperPdfEmergencyyHist">
-        SELECT      /* etpOper.getEtpOperPdfEmergencyyHist  ETP 운용관리 - PDF관리 - 긴급반영 정보를 조회한다. ( ETF 인 경우 ) */
+    <select id="getEtpOperPdfEmergencyHist">
+        SELECT      /* etpOper.getEtpOperPdfEmergencyHist  ETP 운용관리 - PDF관리 - 긴급반영 이력 정보를 조회한다. ( ETF 인 경우 ) */
 
                     tm_pdf_modify_hist_dtl.hist_no              AS  hist_no         /* 이력번호 */
                 ,   tm_pdf_modify_hist_dtl.email                AS  email           /* 이메일 */
@@ -199,9 +199,23 @@
                 ,   tm_pdf_modify_hist_dtl.f34840               AS  f34840          /* 액면금액 */
                 ,   tm_pdf_modify_hist_dtl.f34840_prev          AS  f34840_prev     /* 액면금액 ( 변경전 ) */
                 
-                ,   CAST( DATE_FORMAT( tm_pdf_modify_hist_dtl.reg_time, '%Y%m%d' ) AS UNSIGNED )   AS  f12506                
+                ,   CAST( DATE_FORMAT( tm_pdf_modify_hist_dtl.reg_time, '%Y%m%d' ) AS UNSIGNED )    AS  f12506          /* 입회일 */
+                ,   DATE_FORMAT( tm_pdf_modify_hist_dtl.reg_time, '%Y.%m.%d' )                      AS  fmt_f12506      /* 입회일 */
+
+                ,   td_etfpdf_basic.f16004                      AS  f16004          /* 해외시장종목명 */
+                ,   td_etfpdf_basic.f16588                      AS  f16588          /* 평가금액 */
+                ,   td_etfpdf_basic.f34743                      AS  f34743          /* ETF_PDF비중 */
+                ,   FORMAT( td_etfpdf_basic.f34743 / 100, 2 )   AS  fmt_f34743      /* ETF_PDF비중 */
+                ,   td_etfpdf_basic.f33861                      AS  f33861          /* ETF시장구분 */
                 
           FROM  tm_pdf_modify_hist_dtl
+          LEFT  OUTER   JOIN    td_etfpdf_basic
+                          ON    (
+                                            tm_pdf_modify_hist_dtl.f16583       =   td_etfpdf_basic.f16583
+                                    AND     tm_pdf_modify_hist_dtl.f16012       =   td_etfpdf_basic.f16012
+                                    AND     tm_pdf_modify_hist_dtl.f16013       =   td_etfpdf_basic.f16013
+                                    AND     tm_pdf_modify_hist_dtl.f16316       =   td_etfpdf_basic.f16316
+                                )
          WHERE  1 = 1
            AND  (
                         tm_pdf_modify_hist_dtl.hist_no
@@ -221,9 +235,19 @@
                             ,   tm_pdf_modify_hist_mast.group_no
                       FROM  tm_pdf_modify_hist_mast
                      WHERE  1 = 1
-                       AND  tm_pdf_modify_hist_mast.email       =   'test1111@hanwha.com'
-                       AND  tm_pdf_modify_hist_mast.reg_time    BETWEEN     STR_TO_DATE( CONCAT( '20190605', ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
-                    						                        AND     STR_TO_DATE( CONCAT( '20190605', ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
+
+        <choose>
+            <when   test='isInstCd != null and isInstCd = "Y"'>
+                       AND  tm_pdf_modify_hist_mast.inst_cd     =   #{inst_cd}
+            </when>
+
+            <otherwise>                     
+                       AND  tm_pdf_modify_hist_mast.email       =   #{user_id}
+            </otherwise>
+        </choose>
+
+                       AND  tm_pdf_modify_hist_mast.reg_time    BETWEEN     STR_TO_DATE( CONCAT( #{search_date}, ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
+                    						                        AND     STR_TO_DATE( CONCAT( #{search_date}, ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
                 )
     </select>
     
@@ -1540,12 +1564,12 @@
                 CASE    WHEN    COUNT(*)    =   1
 						THEN    'Y'
 						ELSE    'N'
-				END                             AS  exist_yn
+				END                             AS  emergency_exist_yn
 		  FROM  (
 					SELECT  *
 					  FROM  tm_pdf_modify_mast
 					 WHERE  1 = 1
-					   AND  tm_pdf_modify_mast.email                =   #{user_id}
+					   AND  tm_pdf_modify_mast.inst_cd              =   #{inst_cd}
 					   AND  (
 									tm_pdf_modify_mast.reg_time     BETWEEN     STR_TO_DATE( CONCAT( DATE_FORMAT(now(), '%Y%m%d'), ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
 																	    AND     STR_TO_DATE( CONCAT( DATE_FORMAT(now(), '%Y%m%d'), ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
