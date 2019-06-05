@@ -52,7 +52,8 @@ export default {
             
                 axios.get(Config.base_url+'/user/index/getindexsummaryhist', {
                     params: {
-                        "jisu_id" : vm.chartItem.code
+                        "jisu_id" : vm.chartItem.code,
+                        "market_id" : vm.chartItem.market_id
                     }
                 }).then(function(response) {
                     // console.log(response);

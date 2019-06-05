@@ -505,6 +505,8 @@ var getEtpOperPdf = function(req, res) {
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
+
+        resultMsg.dataList  =   [];
         Promise.using(pool.connect(), conn => {
 
 
@@ -513,32 +515,114 @@ var getEtpOperPdf = function(req, res) {
                 /* 1. ETP 운용관리 - PDF관리 정보를 조회한다. ( ETF 인 경우 ) */
                 function(callback) {
 
-                    /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                    if (paramData.f16493 == "1" || paramData.f16493 == "2") {
+                    try{
+                        /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                        if (paramData.f16493 == "1" || paramData.f16493 == "2") {
 
-                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtfHist', paramData, format);
-                        console.log(stmt);
+                            stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtfHist', paramData, format);
+                            console.log(stmt);
 
-                        conn.query(stmt, function(err, rows) {
+                            conn.query(stmt, function(err, rows) {
 
-                            if (err) {
-                                resultMsg.result = false;
-                                resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHist Error while performing Query";
-                                resultMsg.err = err;
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHist Error while performing Query";
+                                    resultMsg.err = err;
 
-                                return callback(resultMsg);
-                            }
+                                    return callback(resultMsg);
+                                }
 
-                            if (rows && rows.length > 0) {
-                                resultMsg.dataList = rows;
-                            }
+                                if (rows && rows.length > 0) {
+                                    resultMsg.dataList = rows;
+                                }
 
-                            callback(null);
-                        });
-                    } else {
-                        callback(null);
-                    }
+                                callback(null, paramData);
+                            });
+                        } else {
+                            callback(null, paramData);
+                        }
+
+                    } catch (err) {
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHist Error while performing Query";
+                        resultMsg.err = err;
+
+                        return callback(resultMsg);
+                    }                    
                 },
+
+                /* 2. ETP 운용관리 - PDF관리 - 긴급반영 이력 정보를 조회한다. ( ETF 인 경우 ) */
+                function(msg, callback) {
+
+                    try{
+                        /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                        if (paramData.f16493 == "1" || paramData.f16493 == "2") {
+
+                            stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEmergencyHist', paramData, format);
+                            console.log(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] etpOper.getEtpOperPdfEmergencyHist Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( rows && rows.length > 0 ) {
+
+                                    if( !resultMsg.dataList || resultMsg.dataList.length == 0 ) {
+                                        resultMsg.dataList  =   rows;
+                                    }else{
+                                        for( var i in resultMsg.dataList ) {
+
+                                            /* 긴급반영 수정건에 존재하는 건 */
+                                            var same = rows.filter(function(o, p) {
+                                                return (    o.f12506 === resultMsg.dataList[i].f12506 /* 일자 */
+                                                        &&  o.f16583 === resultMsg.dataList[i].f16583 /* 사무수탁회사번호 */
+                                                        &&  o.f16012 === resultMsg.dataList[i].f16012 /* ETF종목코드 */
+                                                        &&  o.f16316 === resultMsg.dataList[i].f16316 /* 구성종목코드 */
+                                                );
+                                            });
+
+                                            if (same.length > 0) {
+                                                resultMsg.allDataList[i].data = [];
+                                                resultMsg.allDataList[i].data = same;
+                                            }
+
+                                            /* 긴급반영 수정건에 존재하지 않는 건 */
+                                            var diff = rows.filter(function(o, p) {
+                                                return (    o.f12506 != resultMsg.dataList[i].f12506 /* 일자 */
+                                                        &&  o.f16583 != resultMsg.dataList[i].f16583 /* 사무수탁회사번호 */
+                                                        &&  o.f16012 != resultMsg.dataList[i].f16012 /* ETF종목코드 */
+                                                        &&  o.f16316 != resultMsg.dataList[i].f16316 /* 구성종목코드 */
+                                                );
+                                            });
+
+                                            if (diff.length > 0) {
+                                                resultMsg.allDataList[i].data = [];
+                                                resultMsg.allDataList[i].data = diff;
+                                            }                                            
+                                        }
+                                    }
+                                }
+
+                                callback(null);
+                            });
+                        } else {
+                            callback(null);
+                        }
+
+                    } catch (err) {
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getEtpOperPdfEmergencyHist Error while performing Query";
+                        resultMsg.err = err;
+
+                        return callback(resultMsg);
+                    }
+                },                
 
             ], function(err) {
 
@@ -2092,12 +2176,12 @@ var getPdfByGroupNo = function(req, res) {
                                         resultMsg.allDataList[i].etf_f16583 = resultMsg.allDataList[i].f16583; /* ETF 사무수탁회사번호 */
 
                                         var same = rows.filter(function(o, p) {
-                                            return (o.hist_no === resultMsg.allDataList[i].hist_no /* 이력번호 */ &&
-                                                o.email === resultMsg.allDataList[i].email /* 이메일 */ &&
-                                                o.f16583 === resultMsg.allDataList[i].f16583 /* 사무수탁회사번호 */ &&
-                                                o.f16012 === resultMsg.allDataList[i].f16012 /* ETF종목코드 */ &&
-                                                o.f16013 === resultMsg.allDataList[i].f16013 /* ETF단축코드 */ &&
-                                                o.group_no === resultMsg.allDataList[i].group_no /* 사용자별 처리한 그룹번호 */
+                                            return (    o.hist_no === resultMsg.allDataList[i].hist_no /* 이력번호 */
+                                                    &&  o.email === resultMsg.allDataList[i].email /* 이메일 */
+                                                    &&  o.f16583 === resultMsg.allDataList[i].f16583 /* 사무수탁회사번호 */
+                                                    &&  o.f16012 === resultMsg.allDataList[i].f16012 /* ETF종목코드 */
+                                                    &&  o.f16013 === resultMsg.allDataList[i].f16013 /* ETF단축코드 */
+                                                    &&  o.group_no === resultMsg.allDataList[i].group_no /* 사용자별 처리한 그룹번호 */
                                             );
                                         });
 
@@ -2160,6 +2244,123 @@ var getPdfByGroupNo = function(req, res) {
 }
 
 
+/*
+ * 현재일자에 PDF 변경건이 존재하는지 반환한다.
+ * 2019-05-03  bkLove(촤병국)
+ */
+var getPdfExistYnByNow = function(req, res) {
+
+    try {
+        console.log('etpOper.getPdfExistYnByNow 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            console.log("[error] etpOper.getPdfExistYnByNow  req.body.data no data.");
+            console.log(req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = "[error] etpOper.getPdfExistYnByNow  req.body.data no data.";
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = req.session.user_id;
+        paramData.inst_cd = req.session.inst_cd;
+        paramData.type_cd = req.session.type_cd;
+        paramData.large_type = req.session.large_type;
+        paramData.krx_cd = req.session.krx_cd;
+
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        resultMsg.emergency_exist_yn    =   "N";
+        Promise.using(pool.connect(), conn => {
+
+
+            async.waterfall([
+
+                /* 1. 현재일자에 PDF 변경건이 존재하는지 반환한다. */
+                function(callback) {
+
+                    try {
+                        stmt = mapper.getStatement('etpOper', 'getPdfExistYnByNow', paramData, format);
+                        console.log(stmt);
+
+                        conn.query(stmt, function(err, rows) {
+
+                            if (err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "[error] etpOper.getPdfExistYnByNow Error while performing Query";
+                                resultMsg.err = err;
+
+                                return callback(resultMsg);
+                            }
+
+                            if (!rows || rows.length != 1) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "[error] etpOper.getMaxGroupNo emergency_exist_yn 가 존재하지 않습니다.";
+                                resultMsg.err = err;
+
+                                return callback(resultMsg);
+                            }
+
+                            if (rows && rows.length == 1) {
+                                resultMsg.emergency_exist_yn    =   rows[0].emergency_exist_yn;
+                            }
+
+                            callback(null, paramData);
+                        });
+
+                    } catch (err) {
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getPdfExistYnByNow Error while performing Query";
+                        resultMsg.err = err;
+
+                        return callback(resultMsg);
+                    }
+                },
+
+            ], function(err) {
+
+                if (err) {
+                    console.log(err);
+                } else {
+
+                    resultMsg.result = true;
+                    resultMsg.msg = "";
+                    resultMsg.err = null;
+                }
+
+                res.json(resultMsg);
+                res.end();
+            });
+        });
+
+    } catch (expetion) {
+
+        console.log(expetion);
+
+        if (resultMsg && !resultMsg.msg) {
+            resultMsg.result = false;
+            resultMsg.msg = "[error] etpOper.getPdfExistYnByNow 오류가 발생하였습니다.";
+            resultMsg.err = expetion;
+        }
+
+        res.json({
+            resultMsg
+        });
+        res.end();
+    }
+}
+
+
 module.exports.getEtpOperInfo = getEtpOperInfo;
 module.exports.getEtpOperIndex = getEtpOperIndex;
 module.exports.getEtpOperIndexOversea = getEtpOperIndexOversea;
@@ -2177,3 +2378,5 @@ module.exports.getFutureBasic = getFutureBasic;
 
 module.exports.saveEtpOperPdfModify = saveEtpOperPdfModify;
 module.exports.getPdfByGroupNo = getPdfByGroupNo;
+module.exports.getPdfExistYnByNow = getPdfExistYnByNow;
+

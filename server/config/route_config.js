@@ -11,7 +11,7 @@ module.exports = {
         // 사용자 로그인처리(threeon. 2019.04.19)
         { file: './user/member/users', path: '/user/member/getmembertypelist', method: 'getMemberTypeList', session: 'uncheck', type: 'get' },
         { file: './user/member/users', path: '/user/member/getmemberdomainlist', method: 'getMemberDomainList', session: 'uncheck', type: 'get' },
-        { file: './user/member/users', path: '/user/member/userlogincheck', method: 'userLoginCheck', session: 'check', type: 'post' },
+        { file: './user/member/users', path: '/user/member/userlogincheck', method: 'userLoginCheck', session: 'uncheck', type: 'post' },
         { file: './user/member/users', path: '/user/member/usernewaccount', method: 'userNewAccount', session: 'check', type: 'post' },
         { file: './user/member/users', path: '/user/member/userfindpwd', method: 'userFindPwd', session: 'check', type: 'post' },
         { file: './user/member/users', path: '/user/member/userupdateinfo', method: 'userUpdateInfo', session: 'check', type: 'post' },
@@ -55,6 +55,7 @@ module.exports = {
         { file: './user/etp/etpOper', path: '/user/etp/getFutureBasic', method: 'getFutureBasic', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/saveEtpOperPdfModify', method: 'saveEtpOperPdfModify', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getPdfByGroupNo', method: 'getPdfByGroupNo', session: 'check', type: 'post' },
+        { file: './user/etp/etpOper', path: '/user/etp/getPdfExistYnByNow', method: 'getPdfExistYnByNow', session: 'check', type: 'post' },
 
 
         { file: './user/etp/etpNavCalcu', path: '/user/etp/getiNavData', method: 'getiNavData', session: 'check', type: 'get' },

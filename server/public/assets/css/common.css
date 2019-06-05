@@ -209,7 +209,7 @@ input[type="text"]:focus, input[type="number"]:focus{border-color:#1976d2;}
  /* Tooltip text */
   
 .tooltip .tooltiptext { visibility: hidden; display: inline-block; background-color:#85c406;color: #fff; 
-    text-align: center;padding: 5px 10px; border-radius: 4px; position: absolute; top:-30px;left:50%; z-index: 1; font-size:12px;letter-spacing: -1;
+    text-align: center;padding: 5px 10px; border-radius: 4px; position: absolute; bottom:-25px;left:50%; z-index: 1; font-size:12px;letter-spacing: -1;
     transform: translate(-50%, 0);
     -ms-transform: translate(-50%, 0);
     -webkit-transform: translate(-50%, 0);
@@ -263,9 +263,9 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type td.txt_left{text-align: left;}
 .tbl_type td.txt_right{text-align: right;}
 .tbl_type td.t_link{ text-decoration: underline; color:#1e99e8; cursor: pointer;}
-.tbl_type td.line2 span{ display: inline-block; font-weight: 400;}
+.tbl_type td.line2 span{ display: inline-block; font-weight: 600;padding-left:5px;}
 .tbl_type td.line2 span.text_s{font-size: 12px !important;font-weight: 400 !important;}
-.tbl_type td.line2 img{vertical-align:top; }
+.tbl_type td.line2 img{vertical-align:top; display:inline-block; }
 .tbl_type tbody tr:hover{background:#fafbfb; cursor:default;}
 .tbl_type tbody tr.selected{background:#edf3f6 !important;}
 .tbl_type .in_select{padding-top:0px !important;}
@@ -277,7 +277,7 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type.ver3 th{padding:8px 12px 4px 12px; width:100%;}
 .tbl_type.ver4{width:1348px !important;}
 .tbl_type.ver5{width:1038px !important;}
-.tbl_type.ver5 td.line2 span{ display: inline-block; font-weight: 600; width:160px; padding-left:5px; vertical-align: middle;}
+.tbl_type.ver5 td.line2 span{ display: inline-block; font-weight: 600; padding-left:5px; vertical-align: middle;}
 .tbl_type.ver5 td.line2 span .line2_ts{font-weight: 400 !important; padding-left:0px !important;font-size: 12px !important;}
 .tbl_type.ver5 td.line2 .line2_ts2{padding-top:5px;}
 .tbl_type span{font-weight: 600;}
@@ -370,6 +370,7 @@ h3.subtit span.text_result_t2{color:#959eb1; margin-right:15px;margin-left:15px;
 .graph_01_w div{display: inline-block;}
 .graph_01_w .index_nums{float:right;}
 .graph_01_w .index_nums .flex ul{vertical-align:text-top;}
+.graph_01_w .index_nums ul li{text-align: right;}
 .graph_01_w .index_nums .flex{width:105px; vertical-align: top; margin-right: 20px;}
 .graph_01_w .index_nums .flex.ver1{width:155px;}
 .graph_01_w .index_nums .flex.ver2{width:165px;}
@@ -458,9 +459,9 @@ h3.subtit span.text_result_t2{color:#959eb1; margin-right:15px;margin-left:15px;
 .indexinfo_today .layout{display:unset !important;}
 
 .index3pop2_con .theme--light.v-list{background: #fff;}
-.index3pop2_con .v-list__tile__title{width:25%; color:#717182; font-weight: 600;}
+.index3pop2_con .v-list__tile__title{width:15%; color:#717182; font-weight: 400;}
 .index3pop2_con.ver2 .v-list__tile__title{width:15%;}
-.index3pop2_con .v-list--two-line .v-list__tile{height:30px;padding-left:24px;}
+.index3pop2_con .v-list--two-line .v-list__tile{height:25px;padding-left:24px;}
 
 .list_boder .v-list-tile{border-bottom:1px solid #cbe2f0}
 
@@ -734,11 +735,13 @@ input[type='file']{
 .Oper_menu .v-list__tile .v-icon{ color:#48485e;}
 .Oper_menu .v-list__tile__title{ color:#48485e; font-size:14px; line-height: 27px; font-weight:600;}
 
-.Oper_menu .v-list__tile:hover{ background:#ebedf4 !important; }
+.Oper_menu .v-list__tile:hover{background:#ffffff !important; }
+.Oper_menu .v-list__tile:hover .v-list__tile__title{ color:#5e870b !important; }
 .Oper_menu .select .v-list__tile .v-list__tile__title{color:#5e870b !important;}
 .Oper_menu .v-list__tile__avatar{min-width:40px !important;}
 
 .Oper_menu .ver2 .v-list__tile{height:55px !important;}
+
 .Oper_menu .v-dialog__container{display:none !important;}
 .oper_list_icon{width:30px; height:30px; background:#ebedf4; border-radius: 3px; margin-right:3px; }
 .oper_list_icon span{width:30px; height:30px; display:inline-block;background: url(../img/oper_list_icon.png) no-repeat;}
