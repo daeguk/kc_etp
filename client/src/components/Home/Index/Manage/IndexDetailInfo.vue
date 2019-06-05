@@ -89,7 +89,7 @@
                         </v-layout>
                     </div>
                 </v-card>
-                <ConfirmDialog ref="confirm"></ConfirmDialog>
+                <ConfirmDialog ref="confirm" v-show="false"></ConfirmDialog>
             </v-flex>
         </v-layout>
     </div>

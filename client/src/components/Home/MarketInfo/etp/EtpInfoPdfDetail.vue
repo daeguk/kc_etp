@@ -3,24 +3,13 @@
         <v-layout row wrap >
             <v-flex grow>
                 <v-card flat>
-                        <h5>
-                            <v-card-title class="pop_pdf">
-                            <v-text-field
-                                v-model="searchParam.search_nm"
-                                class="pdf_search ver2"
-                                single-line
-                                hide-details
-                                :readonly="true"
-                            ></v-text-field>
-                            <v-spacer></v-spacer>
-
-                            <v-btn icon dark  @click="fn_close">
-                                <v-icon>close</v-icon>
-                            </v-btn>
-                            </v-card-title>
-                        </h5>  
-                        <v-card flat class="pop_left_pad">    
-                            <p class="pdf_calendar">
+                     <div class="title01_w case3">
+                        <v-card-title primary-title>
+                            <div class="title_wrap01">
+                                <h3 class="headline mb-0">
+                                  ARIRANG 코스피
+                                    <span class="grey--text">(227830)</span>
+                                    <span class="pdf_calendar">
                                 <v-menu
                                     ref="menu2"
                                     :close-on-content-click="false"
@@ -54,13 +43,28 @@
                                         >OK</v-btn>
                                     </v-date-picker>
                                 </v-menu>                            
-                            </p>
-                        </v-card>
-                    <v-card flat>
-                        <table id="tblPdfList" class="tbl_type ver7"></table>
-                    </v-card>
-
+                            </span>
+                            <!--v-text-field
+                                v-model="searchParam.search_nm"
+                                class="pdf_search ver2"
+                                single-line
+                                hide-details
+                                :readonly="true"
+                            ></v-text-field-->
+                                </h3>
+                                <div class="right_btn">
+                                    <v-btn icon  @click="fn_close">
+                                        <v-icon>close</v-icon>
+                                    </v-btn>
+                                </div>
+                            </div>
+                        </v-card-title>
+                    </div>      
                 </v-card>
+                <v-card flat>
+                        <table id="tblPdfList" class="tbl_type ver7"></table>
+                </v-card>
+
             </v-flex>
 
             <v-flex>
