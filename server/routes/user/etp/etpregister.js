@@ -29,13 +29,11 @@ var getEtpRegisterView = function(req, res) {
         // paramData.inst_cd       =   '04870';
         // paramData.inst_type_cd  =   '0002';
      
-
-        // /* 2. 발행사코드 체크 */
+              
         if ( paramData.inst_type_cd !=='0001' && paramData.inst_type_cd !=='0002') {
             resultMsg.result = false;
-            resultMsg.msg = "[error] NOT SUPPORTED paramData.inst_type_cd ";
+            resultMsg.msg = "발행사만 신청이 가능합니다. ";
             throw resultMsg;
-            return;
         }
         util.log('###ETP VIEW CALL sessioncheck###');
        
@@ -299,9 +297,7 @@ var getEtpRegisterView = function(req, res) {
         resultMsg.code010List      =   [];
         resultMsg.masterData       =   [];
 
-        res.json({
-            resultMsg
-        });
+        res.json( resultMsg );
         res.end()
     }
 };
