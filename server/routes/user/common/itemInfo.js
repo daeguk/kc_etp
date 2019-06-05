@@ -375,6 +375,8 @@ var getPublishEtpList = function (req, res) {
             query_id = "getPublishEtfList";
         } else if (req.session.type_cd == '0002') {
             query_id = "getPublishEtnList";
+        } else if (req.session.type_cd == '9998' || req.session.type_cd == '9999') {
+            query_id = "getPublishAllList";
         } 
         
         if (query_id != "") {

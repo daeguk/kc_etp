@@ -20,7 +20,7 @@ var getIndexSummaryInfo = function (req, res) {
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
-       
+        
         var params = {
             large_type : req.session.large_type == null ? '' : req.session.large_type,
         };
