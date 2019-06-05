@@ -173,6 +173,59 @@
         SELECT      /* etpOper.getEtpOperPdfEtfHist  ETP 운용관리 - PDF관리 정보를 조회한다. ( ETF 인 경우 ) */
         <include    refid="sqlEtpOperPdfEtfHist01" />
     </select>
+
+
+    <!--
+    * ETP 운용관리 - PDF관리 - 긴급반영 정보를 조회한다. ( ETF 인 경우 )
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="getEtpOperPdfEmergencyyHist">
+        SELECT      /* etpOper.getEtpOperPdfEmergencyyHist  ETP 운용관리 - PDF관리 - 긴급반영 정보를 조회한다. ( ETF 인 경우 ) */
+
+                    tm_pdf_modify_hist_dtl.hist_no              AS  hist_no         /* 이력번호 */
+                ,   tm_pdf_modify_hist_dtl.email                AS  email           /* 이메일 */
+                ,   tm_pdf_modify_hist_dtl.f16583               AS  f16583          /* 사무수탁회사번호 */
+                ,   tm_pdf_modify_hist_dtl.f16012               AS  f16012          /* ETF종목코드 */
+                ,   tm_pdf_modify_hist_dtl.f16013               AS  f16013          /* ETF단축코드 */
+                ,   tm_pdf_modify_hist_dtl.f16316               AS  f16316          /* 구성종목코드 */
+                ,   tm_pdf_modify_hist_dtl.group_no             AS  group_no        /* 사용자별 처리한 그룹번호 */
+                    
+                ,   tm_pdf_modify_hist_dtl.type_cd              AS  type_cd         /* 사용자 그룹 코드 */
+                ,   tm_pdf_modify_hist_dtl.inst_cd              AS  inst_cd         /* 기관구분코드 */
+                ,   tm_pdf_modify_hist_dtl.status               AS  status          /* insert( 신규 ), modify( 변경 ) */
+            
+                ,   tm_pdf_modify_hist_dtl.f16499               AS  f16499          /* 1CU단위증권수 */
+                ,   tm_pdf_modify_hist_dtl.f16499_prev          AS  f16499_prev     /* 1CU단위증권수 (변경전) */
+                ,   tm_pdf_modify_hist_dtl.f34840               AS  f34840          /* 액면금액 */
+                ,   tm_pdf_modify_hist_dtl.f34840_prev          AS  f34840_prev     /* 액면금액 ( 변경전 ) */
+                
+                ,   CAST( DATE_FORMAT( tm_pdf_modify_hist_dtl.reg_time, '%Y%m%d' ) AS UNSIGNED )   AS  f12506                
+                
+          FROM  tm_pdf_modify_hist_dtl
+         WHERE  1 = 1
+           AND  (
+                        tm_pdf_modify_hist_dtl.hist_no
+                    ,   tm_pdf_modify_hist_dtl.email
+                    ,   tm_pdf_modify_hist_dtl.f16583
+                    ,   tm_pdf_modify_hist_dtl.f16012
+                    ,   tm_pdf_modify_hist_dtl.f16013
+                    ,   tm_pdf_modify_hist_dtl.group_no
+                )
+                IN
+                (
+                    SELECT      tm_pdf_modify_hist_mast.hist_no
+                            ,   tm_pdf_modify_hist_mast.email
+                            ,   tm_pdf_modify_hist_mast.f16583
+                            ,   tm_pdf_modify_hist_mast.f16012
+                            ,   tm_pdf_modify_hist_mast.f16013
+                            ,   tm_pdf_modify_hist_mast.group_no
+                      FROM  tm_pdf_modify_hist_mast
+                     WHERE  1 = 1
+                       AND  tm_pdf_modify_hist_mast.email       =   'test1111@hanwha.com'
+                       AND  tm_pdf_modify_hist_mast.reg_time    BETWEEN     STR_TO_DATE( CONCAT( '20190605', ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
+                    						                        AND     STR_TO_DATE( CONCAT( '20190605', ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
+                )
+    </select>
     
 
     <!--
