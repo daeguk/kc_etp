@@ -271,13 +271,14 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type .in_select{padding-top:0px !important;}
 
 .tbl_type.ver2{width:300px;}
+.tbl_type.ver2 td.line2 span{ display: inline-block; font-weight: 400;padding-left:0px;}
 /*.tbl_type.ver2 th{background-color: #eeeeee; border:0px !important;}*/
 .tbl_type.ver2 td{font-weight: 600; font-size:12px !important;}
 
 .tbl_type.ver3 th{padding:8px 12px 4px 12px; width:100%;}
 .tbl_type.ver4{width:1348px !important;}
 .tbl_type.ver5{width:1038px !important;}
-.tbl_type.ver5 td.line2 span{ display: inline-block; font-weight: 600; padding-left:5px; vertical-align: middle;}
+.tbl_type.ver5 td.line2 span{ display: inline-block; font-weight:600;width:160px; padding-left:5px; vertical-align: middle;}
 .tbl_type.ver5 td.line2 span .line2_ts{font-weight: 400 !important; padding-left:0px !important;font-size: 12px !important;}
 .tbl_type.ver5 td.line2 .line2_ts2{padding-top:5px;}
 .tbl_type span{font-weight: 600;}
@@ -360,6 +361,7 @@ h3.subtit span.text_result_t2{color:#959eb1; margin-right:15px;margin-left:15px;
 :-ms-fullscreen, :root .title_wrap01 .btn_r{float:right;}
 .title01_w .v-card__title{padding:24px 24px 5px 24px}
 .title01_w.case2 .v-card__title{padding-bottom:16px;}
+.title01_w.case3 .v-card__title{padding-bottom:24px;}
 .title01_w .v-card__text{padding:5px 30px 5px 24px;}
 .title_wrap01{width:100%;height:30px;}
 .title_wrap01 h3{float:left; padding-bottom:0px;}
@@ -391,7 +393,7 @@ h3.subtit span.text_result_t2{color:#959eb1; margin-right:15px;margin-left:15px;
 
 .graph_02_w .graph_box{width:400px;padding:0 8px;  float: left; display: block}
 .lineh{line-height:16px !important;}
-.graph_02_w .perf_chart_w{ padding-left:230px;}
+.graph_02_w .perf_chart_w{ padding-left:170px;}
 .graph_02_w .perf_chart_w2{ padding-left:130px }
 .graph_03_w{width:100%; height: 100%;}
 

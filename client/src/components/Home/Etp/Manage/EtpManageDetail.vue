@@ -58,8 +58,8 @@
 
                         <div class="sub_title_num">
                             {{etpBasic.f15001}}
-                            <span v-if="etpBasic.f15472 <= 0" class="text_blue">{{etpBasic.f15472}}({{etpBasic.f15004}})</span>
-                            <span v-else class="text_red">{{etpBasic.f15472}}({{etpBasic.f15004}})</span>
+                            <span v-if="etpBasic.f15472 <= 0" class="text_blue">{{etpBasic.f15472}}({{etpBasic.f15004}})%</span>
+                            <span v-else class="text_red">{{etpBasic.f15472}}({{etpBasic.f15004}})%</span>
                             <p>Last Updated : {{etpBasic.f12506}}</p>
                         </div>
                         <div class="index_nums">
