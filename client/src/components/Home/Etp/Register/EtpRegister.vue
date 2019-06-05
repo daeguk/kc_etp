@@ -111,6 +111,7 @@
                                             label="단축코드(6자리)" 
                                             v-model="masterData.isu_srt_cd"
                                             outline
+                                            oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
                                             maxlength="6"></v-text-field>
                                              {{errors.isu_srt_cd}}
                                         </v-flex>
@@ -933,7 +934,7 @@
                                             <v-subheader class="subheader_r">기초지수MID</v-subheader>
                                         </v-flex>
                                         <v-flex xs3>
-                                            <v-text-field label="기초지수MID"  value outline  v-model="masterData.idx_mid"  type="number" maxlength="3"></v-text-field>
+                                            <v-text-field label="기초지수MID"  value outline  v-model="masterData.idx_mid"  type="number" maxlength="3"  oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                 </v-container>
@@ -944,7 +945,7 @@
                                         </v-flex>
                                         <v-flex xs3>
                                             <v-text-field label="실시간지수MID"  v-bind:disabled = inputDisabled
-                                             value outline v-model="masterData.ridx_mid"  type="number" maxlength="3"> </v-text-field>
+                                             value outline v-model="masterData.ridx_mid"  type="number" maxlength="3"  oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"> </v-text-field>
                                         </v-flex>
                                         <v-flex xs2>
                                             <v-subheader class="subheader_r">실시간TR</v-subheader>
@@ -973,14 +974,14 @@
                                         </v-flex>
                                         <v-flex xs3>
                                             <v-text-field label="거래소업종코드"  v-bind:disabled = inputDisabled
-                                             value outline v-model="masterData.krx_up_code"  type="number" maxlength="5"></v-text-field>
+                                             value outline v-model="masterData.krx_up_code"  type="number" maxlength="5"  oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"></v-text-field>
                                         </v-flex>
                                         <v-flex xs2>
                                             <v-subheader class="subheader_r">사무수탁사업종코드</v-subheader>
                                         </v-flex>
                                         <v-flex xs3>
                                             <v-text-field label="사무수탁사업종코드"   v-bind:disabled = inputDisabled
-                                             value outline v-model="masterData.agent_up_code"  type="number" maxlength="5"></v-text-field>
+                                             value outline v-model="masterData.agent_up_code"  type="number" maxlength="5"  oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                 </v-container>
@@ -1071,17 +1072,29 @@ export default {
                 vm.masterData.idx_comp_mirae_dist_yn = "N";
             }
         }
-        ,getEtpRegisterView : function(){
+        ,getEtpRegisterView :  function(){
             var vm = this;
              vm.errors = {};
             console.log('##getEtpRegisterView 호출##', vm.seq);
-            axios
+             axios
             .get(Config.base_url + "/user/etp/getEtpRegisterView", {
                     params: {seq: vm.seq}
                 })
             .then(function(response) {
-                    console.log("'##getEtpRegisterView 호출 >>> result##", response.data);
-
+                console.log("'##getEtpRegisterView 호출 >>> result##", response.data);
+                if(!response.data.result){
+                    if( vm.$root.$confirm.open(
+                        '[오류]',
+                        response.data.msg,
+                        {}
+                    ,   1
+                        )
+                    ) {
+                            if( "Y" == vm.$root.$confirm.val ) {
+                                vm.$emit("movePage", 0); 
+                            }
+                    }
+                }else{
                     //초기화
                     vm.masterData ={
                          seq_hist:"", seq:"", isu_kor_nm:"",isu_eng_nm:"",isin_code:"",isu_srt_cd:"",etp_type:"",inst_cd:"",req_date:"",list_req_date:"",list_date:"",krx_dist_yn:"",comp_dist_yn:"",ksd_dist_yn:"",mirae_dist_yn:"",idx_inst_cd:"",idx_sym_code:"",idx_nm:"",idx_dist_inst_cd:"",idx_close_type:"",idx_holy_cd:"",idx_trace_yd_mult_type:"",pre_idx_type:"",idx_file_nm:"",idx_comp_ksd_dist_yn:"",idx_comp_mirae_dist_yn:"",blom_ticker:"",user_req:"",real_yn:"N",ridx_inst_cd:"",ridx_dist_inst_cd:"",ridx_crt_sym_code:"",ridx_dist_sym_code:"",ridx_holy_cd:"",ridx_krx_dist_yn:"",ridx_comp_dist_yn:"",ridx_ksd_dist_yn:"",ridx_mirae_dist_yn:"",ridx_dist_term:"",refidx_sym_code:"",refidx_nm:"",refidx_inst_cd:"",refidx_file_nm:"",refidx_req:"",refidx_blom_ticker:"",ex_rate_cd:"",ex_hedge_yn:"",isin_stat_cd:"",inav_calc_cd:"",idx_rec_yn:"",idx_dis_yn:"",inav_calc_yn:"",idx_mid:"",ridx_mid:"",close_file:"",real_idx_tr:"",proc_stat:"",insert_id:"",insert_time:"",update_id:"",update_time:"",kor_for_type:"F",agent_cd:"",idx_comp_cd:"",krx_up_code:"",agent_up_code:""
@@ -1200,7 +1213,7 @@ export default {
                     vm.masterData.paramInstTypeCd=paramData.inst_type_cd;
                   
                     console.log("masterData RESET", vm.masterData);
-
+                }
             });
         },
          fn_insertEtpRegister: async function(arg) {
