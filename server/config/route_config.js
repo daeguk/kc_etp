@@ -26,6 +26,7 @@ module.exports = {
         { file: './user/etp/etpApplyList', path: '/user/etp/getIdxList', method: 'getIdxList', session: 'check', type: 'get' },
         { file: './user/etp/etpApplyList', path: '/user/etp/getRidxList', method: 'getRidxList', session: 'check', type: 'get' },
         { file: './user/etp/etpApplyList', path: '/user/etp/deleteEtpApply', method: 'deleteEtpApply', session: 'check', type: 'get' },
+        { file: './user/etp/etpApplyList', path: '/user/etp/getINavList', method: 'getINavList', session: 'check', type: 'get' },
 
         { file: './user/etp/etpregister', path: '/user/etp/getEtpRegisterView', method: 'getEtpRegisterView', session: 'check', type: 'get' },
         { file: './user/etp/etpregister', path: '/user/etp/insertEtpRegister', method: 'insertEtpRegister', session: 'check', type: 'post' },

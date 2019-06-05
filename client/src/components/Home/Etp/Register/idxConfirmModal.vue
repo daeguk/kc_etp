@@ -40,7 +40,7 @@
                        </tr> 
                    </tbody>
                </table>
-               <table id="idxConfirmData" class="display table01_w">
+               <table id="dataTable" class="display table01_w">
                    <colgroup>
                        <col width="50%">
                        <col width="50%">
@@ -65,7 +65,7 @@ import $      from 'jquery'
 import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 import Config from '@/js/config.js'
-var table = null;
+var dataTable = null;
 export default {
     props: {
         idxConfirmModal: {
@@ -92,12 +92,12 @@ export default {
     created: function() {
         var vm = this;
         this.$EventBus.$on('idxListModal', function() {
-            if(table != null){
-                 table.clear();
-            }
             vm.selectedItem.value = "1";
             vm.selectedItem.text = "종가";
-             vm.getIdxList();        
+            if(dataTable != null ){
+                dataTable.clear().draw();
+             }
+            vm.getIdxList();        
          });
     },
   
@@ -108,17 +108,20 @@ export default {
     methods: {
         selectItem: function() {
             var vm = this;
-            if(table != null){
-                table.clear();
-            }
             if(vm.selectedItem.value == "2"){
+                if(dataTable != null){
+                    dataTable.clear().draw();
+                }
                 vm.selectedItem.text = "실시간";
-                if( vm.ridx_dist_sym_code == null || vm.ridx_dist_sym_code.length == 0 ){
-                     alert("신청한 실시간 심볼코드가 없습니다.");  
-                    return;   
+                if( this.idxConfirmModal.ridxDistSymCode == null || this.idxConfirmModal.ridxDistSymCode.length == 0 ){
+                    alert("신청한 실시간 심볼코드가 없습니다.");  
+                     return;   
                 }
                 vm.getRidxList();
             }else{
+                if(dataTable != null){
+                   dataTable.clear().draw();
+                }
                 vm.selectedItem.text = "종가";
                 vm.getIdxList();
             }
@@ -131,16 +134,15 @@ export default {
                          }
                 }).then(response => {
                      if (response.data.success == false) {
-                        //alert("데이터에 이상이 있습니다.잠시후 다시 시도해주시기 바랍니다.");
-                        //table.clear() ;
-                    } else {
+                        alert("데이터에 이상이 있습니다.잠시후 다시 시도해주시기 바랍니다.");
+                     } else {
                         var items = response.data.results;
                         this.results = items;
                         if(this.results.length == 0){
                          alert("기초지수 산출전입니다..");   
                         }
                         console.log("getIdxList=" + JSON.stringify(items));
-                        table = $('#idxConfirmData').DataTable( {
+                        dataTable = $('#dataTable').DataTable( {
                             autoWidth: false, 
                             processing: true,
                             serverSide: false,
@@ -176,7 +178,7 @@ export default {
                          alert("기초지수  산출 전입니다..");   
                         }
                         console.log("getRidxList=" + JSON.stringify(items));
-                        table = $('#idxConfirm').DataTable( {
+                        dataTable = $('#dataTable').DataTable( {
                             autoWidth: false, 
                             processing: true,
                             serverSide: false,

@@ -415,8 +415,43 @@ var deleteEtpApply = function (req, res) {
             });
             res.end();
     }    
-}    
+};   
+var getINavList = function (req, res) {
+    try {
+        console.log('EtpApply=>getINavList 호출됨.');
 
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        
+        var options = { 
+                       "isu_srt_cd":  req.query.isu_srt_cd,
+                       };
+
+        util.log("options", JSON.stringify(options));
+        var stmt = mapper.getStatement('EtpRegister', 'getINavList', options, {language:'sql', indent: '  '});
+        console.log(stmt);
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                util.log("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        util.log("err=>", exception);
+    }
+};
 module.exports.getEtpApplyList = getEtpApplyList;
 module.exports.getEtpApplyDistCnt = getEtpApplyDistCnt;
 module.exports.getEtpApplyIndexCnt = getEtpApplyIndexCnt;
@@ -426,3 +461,4 @@ module.exports.getCompContactList = getCompContactList;
 module.exports.getIdxList = getIdxList;
 module.exports.getRidxList = getRidxList;
 module.exports.deleteEtpApply = deleteEtpApply;
+module.exports.getINavList = getINavList;

@@ -63,7 +63,8 @@
                                 <th width="18%"></th>
                                 <th width="8%"></th>
                                 <th style="display: none">idx_nm</th>
-                            </tr>
+                                <th style="display: none">isu_srt_cd</th>
+                             </tr>
                         </thead>
                     </table>
                      <v-card-actions flat class="mr-3">
@@ -127,11 +128,8 @@ export default {
             },
             iNavConfirmModal:{
                 dialog: false,
-                idxSymCode: '',
-                idxNm : '',
-                ridxDistSymCode: '',
-                marketId:'',
-                rMarketId:''
+                isuSrtCd:'',
+                isuKorNm:''
             },
             seqValues :[],
         };
@@ -335,7 +333,8 @@ export default {
                                         '<td><div class="tooltip"><button type="button" name="popIdx" class="btn_icon v-icon material-icons">equalizer</button><span class="tooltiptext" style="width:50px;">기초지수</span></div>'
                                         + '<div class="tooltip"><button type="button" name="popInav" class="btn_icon v-icon material-icons">trending_up</button><span class="tooltiptext" style="width:50px;">iNAV</span></div></td> '
                                         ] , "orderable" : false,},
-                                { "data" : "idx_nm", "orderable": false },        
+                                { "data" : "idx_nm", "orderable": false },
+                                { "data" : "isu_srt_cd", "orderable": false },        
                             ],
                          });
                          
@@ -346,6 +345,7 @@ export default {
                         $('#example1 tbody tr td:nth-child(7)').hide();
                         $('#example1 tbody tr td:nth-child(8)').hide();
                         $('#example1 tbody tr td:nth-child(17)').hide();
+                        $('#example1 tbody tr td:nth-child(18)').hide();
                         
                     
                         $("#example1 tbody").on('click', 'tr td:nth-child(10)', function(){
@@ -372,26 +372,19 @@ export default {
                             vm.idxConfirmModal.ridxDistSymCode = ridxDistSymCode;
                             vm.idxConfirmModal.marketId = marketId;
                             vm.idxConfirmModal.rMarketId = rMarketId;
-                            vm.idxConfirmModal.idxNm = $(tr).find("td:eq(17)").text();;
+                            vm.idxConfirmModal.idxNm = $(tr).find("td:eq(16)").text();;
                             vm.idxConfirmModal.dialog = true;
                             vm.showIdxListPop();
                         });                        
                         //inav 확인팝업 
                         $("button[name=popInav]").on('click', function(){
-                            console.log("#CLICK example1 > tbody > tr > basic index",$(this));
                             var tr = $(this).parent().parent().parent();
-                            var idxMid = $(tr).find("td:eq(4)").text();
-                            var rIdxMid = $(tr).find("td:eq(5)").text();
                             var idxSymCode = $(tr).find("td:eq(6)").text();
-                            var ridxDistSymCode = $(tr).find("td:eq(7)").text();
-                            var marketId= 'M' + ('0' + idxMid).slice(-3)  ;
-                            var rMarketId= 'M' + ('0' + rIdxMid).slice(-3)  ;
-                            console.log("inav : " + idxMid + " marketId: " + marketId + ": " + rMarketId + "rMarketId:" + "idxSymCode:"+  idxSymCode  + ": " + "ridxDistSymCode:" +  ridxDistSymCode) ;
-                            vm.iNavConfirmModal.idxSymCode = idxSymCode;
-                            vm.iNavConfirmModal.ridxDistSymCode = ridxDistSymCode;
-                            vm.iNavConfirmModal.marketId = marketId;
-                            vm.iNavConfirmModal.rMarketId = rMarketId;
-                            vm.iNavConfirmModal.idxNm = $(tr).find("td:eq(17)").text();;
+                            var isuSrtCd = $(tr).find("td:eq(17)").text();
+                            console.log("isuSrtCd : " + $(tr).find("td:eq(17)").text() + "idxSymCode : " + idxSymCode ) ;
+                            vm.iNavConfirmModal.idxSymCode = idxSymCode;                            
+                            vm.iNavConfirmModal.isuKorNm = $(tr).find("td:eq(9)").text();
+                            vm.iNavConfirmModal.isuSrtCd = $(tr).find("td:eq(17)").text();
                             vm.iNavConfirmModal.dialog = true;
                             vm.showInavListPop();
                         });                                               

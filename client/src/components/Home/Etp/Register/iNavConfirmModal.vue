@@ -1,5 +1,5 @@
 <template>
-     <v-dialog :value="dialog" persistent max-width="500">
+     <v-dialog :value="dialog" persistent max-width="600">
      <!-- iNAV 팝업 내용-->
        <v-card>
            <h5>
@@ -26,22 +26,36 @@
                    <tbody>
                        <tr>
                            <td align="center">{{ iNavConfirmModal.idxSymCode }}</td>
-                           <td align="center">{{ iNavConfirmModal.idxNm }}</td>
+                           <td align="center">{{ iNavConfirmModal.isuKorNm }}</td>
                        </tr> 
                    </tbody>
                </table>
-               <table id="iNavConfirmData" class="display table01_w">
-                   <colgroup>
-                       <col width="50%">
-                       <col width="50%">
-                   </colgroup>
+                <table id="iNavConfirmData" class="display table01_w">
+                    <colgroup>
+                        <col width="15%">
+                        <col width="15%">
+                        <col width="10%">
+                        <col width="10%"> 
+                        <col width="10%">
+                        <col width="10%">
+                        <col width="10%">
+                        <col width="10%">                     
+                        <col width="10%">                                                                     
+                    </colgroup>
                     <thead>
                        <tr>
-                           <th></th>
-                           <th></th>
-                       </tr>
+                        <th>시간</th>
+                        <th>장중NAV</th>
+                        <th>현재기초지수</th>
+                        <th>장전매매기준율</th>
+                        <th>매매기준율</th>
+                        <th>전일기초지수</th>
+                        <th>전일NAV</th>
+                        <th>배울</th>
+                        <th>기초지수등락율</th>                            
+                        </tr>
                    </thead>
-               </table>
+                </table>
              </v-card>
            <v-card class="pop_bot_h"></v-card>
        </v-card>
@@ -78,7 +92,7 @@ export default {
     created: function() {
         var vm = this;
         this.$EventBus.$on('iNavListModal', function() {
-             vm.getIdxList();        
+             vm.getINavist();        
          });
     },
   
@@ -88,14 +102,13 @@ export default {
      },
     methods: {
         // INAV
-        getIdxList: function() {
-                axios.get(Config.base_url + "/user/etp/getIdxList", {
-                  params:{idx_sym_code: this.iNavConfirmModal.idxSymCode,
-                          market_id: this.iNavConfirmModal.marketId
-                         }
+        getINavist: function() {
+                 axios.get(Config.base_url + "/user/etp/getINavList", {
+                  params:{isu_srt_cd: this.iNavConfirmModal.isuSrtCd,
+                  }
                 }).then(response => {
                      if (response.data.success == false) {
-                        //alert("데이터에 이상이 있습니다.잠시후 다시 시도해주시기 바랍니다.");
+                        alert("데이터에 이상이 있습니다.잠시후 다시 시도해주시기 바랍니다.");
                     } else {
                         var items = response.data.results;
                         this.results = items;

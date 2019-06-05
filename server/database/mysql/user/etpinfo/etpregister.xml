@@ -405,4 +405,22 @@
         where seq = #{seq}
     ]]>
 </update>
+<select id="getINavList" >
+    <![CDATA[
+        select  f16013 as isu_srt_cd 
+            ,f12506 as fixed_date 
+            ,lpad(to_char(f33267), 8, '0') as time 
+            ,f15301 as nav ,f15318 as idx 
+            ,f30824 as bef_sel_brate 
+            ,f30819 as sel_brate 
+            ,f18053 as yes_idx 
+            ,f34034 as yes_nav 
+            ,f18453 as rate 
+            ,f30823 as ad_ratio 
+        from td_etp_hist 
+        where f16013 = #{isu_srt_cd}  
+        order by f33267 desc limit 20
+    ]]>   
+</select>
+
 </mapper>
