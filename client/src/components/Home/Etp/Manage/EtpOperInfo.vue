@@ -34,15 +34,29 @@
 
                         <div v-show='stateInfo.pageState == "performance"' >
                             <table id="table02" class="tbl_type ver7"    style="width:100%">
+
+                                <colgroup>
+                                    <col width="20%">
+
+                                    <col width="8%">
+                                    <col width="8%">
+                                    <col width="8%">
+                                    <col width="8%">
+
+                                    <col width="8%">
+                                    <col width="8%">
+                                    <col width="8%">
+                                    <col width="8%">
+
+                                    <col width="14%">
+                                </colgroup>
+
                                 <thead>
                                     <tr>
                                         <th class="txt_left"    rowspan="2">종목</th>
-                                        <th class="txt_right"   rowspan="2">iNAV</th>
-                                        <th class="txt_right"   rowspan="2">전일NAV</th>
-                                        <th class="txt_right"   rowspan="2">TE</th>
-                                        <th class="txt_right"   rowspan="2">괴리율</th>
 
-                                        <th class="txt_center"  colspan="5">수익율</th>
+                                        <th class="txt_center"  colspan="4">수익율(종가)</th>
+                                        <th class="txt_center"  colspan="4">수익율(NAV)</th>
                                         <th rowspan="2"></th>
                                     </tr>
 
@@ -50,7 +64,11 @@
                                         <th class="txt_right">1주</th>
                                         <th class="txt_right">1개월</th>
                                         <th class="txt_right">3개월</th>
-                                        <th class="txt_right">6개월</th>
+                                        <th class="txt_right">YTD</th>
+
+                                        <th class="txt_right">1주</th>
+                                        <th class="txt_right">1개월</th>
+                                        <th class="txt_right">3개월</th>
                                         <th class="txt_right">YTD</th>
                                     </tr>
                                 </thead>                                
@@ -138,16 +156,16 @@ export default {
         /* [ETP Performance] 테이블 정보 */
             vm.fn_setArrShowColumn( [
                     'f16002'                        /* 종목 */
-                ,   'f15301'                        /* iNAV */
-                ,   'f03329'                        /* 전일최종NAV */
-                ,   'f15302'                        /* 추적오차율 */
-                ,   'f15304'                        /* 괴리율 */
 
-                ,   'week1'                         /* 1주 */
-                ,   'month1'                        /* 1개월 */
-                ,   'month3'                        /* 3개월 */
-                ,   'month6'                        /* 6개월 */
-                ,   'ytd'                           /* ytd */
+                ,   'w00002'                         /* 종가1주수익률 */
+                ,   'w00003'                        /* 종가1달수익률 */
+                ,   'w00004'                        /* 종가3달수익률 */
+                ,   'w00005'                        /* 종가YTD수익률 */
+
+                ,   'w00012'                         /* NAV1주수익률 */
+                ,   'w00013'                        /* NAV1달수익률 */
+                ,   'w00014'                        /* NAV3달수익률 */
+                ,   'w00015'                        /* NAVYTD수익률 */                
 
                 ,   'graph'                         /* 그래프 영역 */
             ]);
@@ -562,23 +580,27 @@ export default {
             var vm = this;
 
             var arrColumn  =   [
-                { 'name' : 'f16002'             , 'data': 'f16002'           ,  'width' : '120', 'orderable' : true  , 'className': 'txt_left',  'title' : '종목'           },      /* 한글종목명 */
+                { 'name' : 'f16002'             , 'data': 'f16002'           ,  'width' : '150', 'orderable' : true  , 'className': 'txt_left',  'title' : '종목'           },      /* 한글종목명 */
                 { 'name' : 'f33929_nm'          , 'data': 'f33929_nm'        ,  'width' : '70',  'orderable' : true  , 'className': 'txt_left',  'title' : '산출방식'   },      /* 지표산출방식 */
                 { 'name' : 'f15301'             , 'data': 'f15301'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : 'iNAV'          },      /* ETP지표가치(NAV/IV) */
                 { 'name' : 'f03329'             , 'data': 'f03329'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : '전일NAV'},      /* 전일ETP지표가치(예탁원)(NAV/IV) */
                 { 'name' : 'f15302'             , 'data': 'f15302'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : 'TE' },      /* 추적오차율 */
                                                                                                                                                     
                 { 'name' : 'f15304'             , 'data': 'f15304'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : '괴리율'        },      /* ETP괴리율 */
-                { 'name' : 'index_nm'           , 'data': 'index_nm'         ,  'width' : '100', 'orderable' : true  , 'className': 'txt_left' , 'title' : '기초지수'      },      /* 기초지수명 */
+                { 'name' : 'index_nm'           , 'data': 'index_nm'         ,  'width' : '120', 'orderable' : true  , 'className': 'txt_left' , 'title' : '기초지수'      },      /* 기초지수명 */
                 { 'name' : 'index_f15001'       , 'data': 'index_f15001'     ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '지수' },      /* 지수 현재가 */
                 { 'name' : 'f18438'             , 'data': 'f18438'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '환율'          },      /* 적용환율 */
                 { 'name' : 'f18001'             , 'data': 'f18001'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : 'ETF 전일가'    },      /* 전일ETF순자산총액(원)  */
 
-                { 'name' : 'week1'              , 'data': 'week1'            ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '1주'        },      /* 1주  */
-                { 'name' : 'month1'             , 'data': 'month1'           ,  'width' : '90',  'orderable' : true  , 'className': 'txt_right', 'title' : '1개월'      },     /* 1개월  */
-                { 'name' : 'month3'             , 'data': 'month3'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '3개월' },      /* 3개월  */
-                { 'name' : 'month6'             , 'data': 'month6'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '6개월' },      /* 6개월  */
-                { 'name' : 'ytd'                , 'data': 'ytd'              ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : 'YTD'     },      /* ytd  */
+                { 'name' : 'w00002'             , 'data': 'w00002'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '1주'        },      /* 종가1주수익률  */
+                { 'name' : 'w00003'             , 'data': 'w00003'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '1개월'      },     /* 종가1달수익률  */
+                { 'name' : 'w00004'             , 'data': 'w00004'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '3개월'      },      /* 종가3달수익률  */
+                { 'name' : 'w00005'             , 'data': 'w00005'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : 'YTD'        },      /* 종가YTD수익률  */
+
+                { 'name' : 'w00012'             , 'data': 'w00012'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '1주'        },      /* NAV1주수익률  */
+                { 'name' : 'w00013'             , 'data': 'w00013'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '1개월'      },     /* NAV1달수익률  */
+                { 'name' : 'w00014'             , 'data': 'w00014'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '3개월'      },      /* NAV3달수익률  */
+                { 'name' : 'w00015'             , 'data': 'w00015'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : 'YTD'        },      /* NAVYTD수익률  */
                                                                                                                                                     
                 { 'name' : 'f30812'             , 'data': 'f30812'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : 'AUM'           },      /* 유동시가총액  */
                 { 'name' : 'prev_f15001'        , 'data': 'prev_f15001'      ,  'width' : '90',  'orderable' : true  , 'className': 'txt_right', 'title' : '지수전일가'},     /* 기초지수 전일가  */
@@ -664,8 +686,8 @@ export default {
                             },
                     },
 
-                    /* week1 */
-                    {       'name' : 'week1'   
+                    /* 종가1주수익률 */
+                    {       'name' : 'w00002'   
                         ,   "render": function ( data, type, row ) {
                                 let htm = ""
 
@@ -675,8 +697,8 @@ export default {
                             },
                     },
 
-                    /* month1 */
-                    {       'name' : 'month1'   
+                    /* 종가1달수익률 */
+                    {       'name' : 'w00003'   
                         ,   "render": function ( data, type, row ) {
                                 let htm = ""
 
@@ -686,8 +708,8 @@ export default {
                             },
                     },
 
-                    /* month3 */
-                    {       'name' : 'month3'   
+                    /* 종가3달수익률 */
+                    {       'name' : 'w00004'   
                         ,   "render": function ( data, type, row ) {
                                 let htm = ""
 
@@ -697,8 +719,54 @@ export default {
                             },
                     },
 
-                    /* month6 */
-                    {       'name' : 'month6'   
+
+                    /* 종가YTD수익률 */
+                    {       'name' : 'w00005'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+
+                                htm += util.formatNumber(data);
+
+                                return htm;
+                            },
+                    },
+
+                    /* NAV1주수익률 */
+                    {       'name' : 'w00012'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+
+                                htm += util.formatNumber(data);
+
+                                return htm;
+                            },
+                    },
+
+                    /* NAV1달수익률 */
+                    {       'name' : 'w00013'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+
+                                htm += util.formatNumber(data);
+
+                                return htm;
+                            },
+                    },
+
+                    /* NAV3달수익률 */
+                    {       'name' : 'w00014'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+
+                                htm += util.formatNumber(data);
+
+                                return htm;
+                            },
+                    },
+
+
+                    /* NAVYTD수익률 */
+                    {       'name' : 'w00015'   
                         ,   "render": function ( data, type, row ) {
                                 let htm = ""
 
@@ -707,17 +775,6 @@ export default {
                                 return htm;
                             },
                     },                    
-
-                    /* ytd */
-                    {       'name' : 'ytd'   
-                        ,   "render": function ( data, type, row ) {
-                                let htm = ""
-
-                                htm += util.formatNumber(data);
-
-                                return htm;
-                            },
-                    },
 
                     /* 그래프 */
                     {       'name' : 'graph'   
