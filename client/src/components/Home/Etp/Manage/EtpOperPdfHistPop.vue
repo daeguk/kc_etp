@@ -1,41 +1,75 @@
 <template>
     <v-container>
         <v-flex>
-            <v-dialog v-model="showDialog" persistent max-width="900" >
-                <v-card flat>
-                    <v-layout row wrap >
-                        <v-flex grow>
+            <v-dialog v-model="showDialog" persistent max-width="1000" >
+                <v-card class="mx-auto">
+                    <v-card flat class="listset_pop">
+                        <v-card flat>
+                            <v-layout row wrap >
+                                <v-flex grow>
 
-                            <v-card flat>
-                                <div class="title01_w case3">
-                                    <v-card-title primary-title>
-                                        <div class="title_wrap01">
-                                            <h3 class="headline mb-0">
-                                            {{ paramData.f16002 }} |
-                                                <span class="grey--text">({{ paramData.f16013 }})</span>
-                                            </h3>
-                                            <div class="right_btn">
-                                                <v-btn icon  @click="fn_close">
-                                                    <v-icon>close</v-icon>
-                                                </v-btn>
-                                            </div>
-                                        </div>
-                                    </v-card-title>
-                                </div>      
-                            </v-card>
+                                    <v-card flat>
+                                        <div class="title01_w case3">
+                                            <v-card-title primary-title>
+                                                <div class="title_wrap01">
+                                                    <h3 class="headline mb-0">
+                                                    {{ paramData.f16002 }} |
+                                                        <span class="grey--text">({{ paramData.f16013 }})</span>
+                                                    </h3>
+                                                    <div class="right_btn">
+                                                        <v-btn icon  @click="fn_close">
+                                                            <v-icon>close</v-icon>
+                                                        </v-btn>
+                                                    </div>
+                                                </div>
+                                            </v-card-title>
+                                        </div>      
+                                    </v-card>
 
-                            <v-card flat>
-                                    <table id="tblPdfList" class="tbl_type ver7"></table>
-                            </v-card>
+                                    <v-card flat>
+                                        <table id="tblPdfList" class="tbl_type ver7"    style="width:100%">
+                                            <colgroup>
+                                                <col width="15%">       <!-- email -->
+                                                <col width="6%">        <!-- 상태 -->
+                                                <col width>       <!-- 구성종목코드 -->
+                                                <col >       <!-- 종목명 -->
 
-                        </v-flex>
+                                                <col width="5%">        <!-- CU shrs (변경전) -->
+                                                <col width="5%">        <!-- CU shrs (변경후) -->
+                                                <col width="5%">        <!-- 액면금액 (변경전) -->
+                                                <col width="5%">        <!-- 액면금액 (변경후) -->
+                                            </colgroup>
+                                            <thead>
+                                                <tr>
+                                                    <th class="txt_left"   rowspan="2">email</th>
+                                                    <th class="txt_left"   rowspan="2">상태</th>
+                                                    <th class="txt_left"    rowspan="2">종목코드</th>
+                                                    <th class="txt_left"    rowspan="2">종목명</th>
 
-                        <v-flex>
-                            <ProgressBar ref="progress"></ProgressBar>
-                        </v-flex>            
+                                                    <th class="txt_center"   colspan="2">CU shrs</th>
+                                                    <th class="txt_center"   colspan="2">액면금액</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="txt_right">변경전</th>
+                                                    <th class="txt_right">변경후</th>
 
-                    </v-layout>
+                                                    <th class="txt_right">변경전</th>
+                                                    <th class="txt_right">변경후</th>                                            
+                                                </tr>                                        
+                                            </thead> 
+                                        </table>
+                                    </v-card>
 
+                                </v-flex>
+
+                                <v-flex>
+                                    <ProgressBar ref="progress"></ProgressBar>
+                                </v-flex>            
+
+                            </v-layout>
+
+                        </v-card>
+                    </v-card>
                 </v-card>
             </v-dialog>
         </v-flex>
@@ -129,10 +163,8 @@ export default {
          *  테이블 기본정보를 설정한다.
          *  2019-05-03  bkLove(촤병국)
          */
-        fn_setTableInfo(arrCustomizeColumn) {
+        fn_setTableInfo() {
             var vm = this;
-
-            $("#tblPdfList").empty();
 
             tblPdfList = $("#tblPdfList").DataTable({
                 "processing": true,
@@ -140,7 +172,7 @@ export default {
                 "info": false,   // control table information display field
                 "stateSave": true,  //restore table state on page reload,
                 "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                "scrollY": '50vh',
+                "scrollY": '40vh',
                 select: {
                     style:    'single',
                     selector: 'td:first-child'
@@ -149,56 +181,6 @@ export default {
                 searching: false,
                 data : [],    
                 "columnDefs": [         
-                    {  
-                        "render": function ( data, type, row ) {
-
-                            var htm = "";
-                            if( row.status != "normal" ) {
-                                htm = "<span class='text_blue'>" + data + "</span>"
-                            }else{
-                                htm = data;
-                            }
-
-                            return htm;
-                        },
-                        "targets": [0, 1, 2, 3]
-                    },
-                    {  
-                        /* CU shrs */
-                        "render": function ( data, type, row ) {
-                            var htm = "";
-                            if( typeof row.f16316 != "undefined" && row.f16316.length > 0 ) {       /* 구성종목코드 */
-                                if( row.f16316.indexOf( "<input" ) > -1 ) {
-                                    htm = util.formatNumber( data );
-                                }else{
-                                    /* 1CU단위증권수 */
-                                    htm = "<input type='text' name='f16499' id='f16499' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='15'>";
-                                }
-                            }
-
-                            return htm;
-                        },
-                        "orderable" : false,
-                        "targets": 4
-                    },
-                    {  
-                        /* 액면금액 */
-                        "render": function ( data, type, row ) {
-                            var htm = "";
-                            if( typeof row.f16316 != "undefined" && row.f16316.length > 0 ) {       /* 구성종목코드 */
-                                if( row.f16316.indexOf( "<input" ) > -1 ) {
-                                    htm = util.formatNumber( data );
-                                }else{
-                                    /* 액면금액 */
-                                    htm = "<input type='text' name='f34840' id='f34840' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='15'>";
-                                }
-                            }
-
-                            return htm;
-                        },
-                        "orderable" : false,
-                        "targets": 5
-                    },
                     {  
                         /* 평가금액 */
                         "render": function ( data, type, row ) {
@@ -214,16 +196,17 @@ export default {
                     },              
                 ],
                 columns: [  
-                    { "data" : "fmt_f12506"     ,   "orderable" : false  ,   "className" : "txt_center" ,   "width" :   "10%"   , "title" :   "Date"          },   /* Date */
-                    { "data" : "f33861"         ,   "orderable" : false  ,   "className" : "txt_center" ,   "width" :   "8%"    , "title" :   "시장<br>구분"      },  /* 시장구분 */
-                    { "data" : "f16316"         ,   "orderable" : false  ,   "className" : "txt_left"   ,   "width" :   "12%"   , "title" :   "구성종목코드"  },  /* 구성종목코드 */
-                    { "data" : "f16004"         ,   "orderable" : false  ,   "className" : "txt_left"   ,   "width" :   "14%"   , "title" :   "종목명"        },  /* 종목명 */
-                    { "data" : "f16499"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "12%"   , "title" :   "CU shrs"       },  /* CU shrs */
-                    { "data" : "f34840"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "12%"   , "title" :   "액면금액"      },  /* 액면금액 */
-                    { "data" : "f16588"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "12%"   , "title" :   "평가금액"      },  /* 평가금액 */
-                    { "data" : "fmt_f34743"     ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "10%"    , "title" :   "비중(%)"      },  /* 비중 */
+                    { "data" : "email"          ,   "orderable" : false  ,   "className" : "txt_center" },  /* email */
+                    { "data" : "status"         ,   "orderable" : false  ,   "className" : "txt_center" },  /* 상태 */
+                    { "data" : "f16316"         ,   "orderable" : false  ,   "className" : "txt_left"   },  /* 구성종목코드 */
+                    { "data" : "f16004"         ,   "orderable" : false  ,   "className" : "txt_left"   },  /* 종목명 */
+
+                    { "data" : "f16499"         ,   "orderable" : false  ,   "className" : "txt_right"  },  /* CU shrs (변경전) */
+                    { "data" : "f16499_prev"    ,   "orderable" : false  ,   "className" : "txt_right"  },  /* CU shrs (변경후) */
+                    { "data" : "f34840"         ,   "orderable" : false  ,   "className" : "txt_right"  },  /* 액면금액 (변경전) */
+                    { "data" : "f34840_prev"    ,   "orderable" : false  ,   "className" : "txt_right"  },  /* 액면금액 (변경후) */
                 ]
-            });
+            }).draw();
         },        
 
         /*
