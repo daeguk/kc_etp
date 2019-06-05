@@ -75,7 +75,7 @@ export default {
         "email" : vm.email,
         "password" : vm.password,
       }).then(function(response) {
-        console.log(response);
+        // console.log(response);
         if(response.data.success == false){
             alert(response.data.message);
           vm.$EventBus.$emit("userLoginCheck", false);
