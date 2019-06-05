@@ -29,25 +29,25 @@
                                     <v-card flat>
                                         <table id="tblPdfList" class="tbl_type ver7"    style="width:100%">
                                             <colgroup>
-                                                <col width="15%">       <!-- email -->
-                                                <col width="6%">        <!-- 상태 -->
-                                                <col width>       <!-- 구성종목코드 -->
-                                                <col >       <!-- 종목명 -->
+                                                <col width="20%">       <!-- email -->
+                                                <col width="8%">        <!-- 상태 -->
+                                                <col width="12%">       <!-- 구성종목코드 -->
+                                                <col width="20%">       <!-- 종목명 -->
 
-                                                <col width="5%">        <!-- CU shrs (변경전) -->
-                                                <col width="5%">        <!-- CU shrs (변경후) -->
-                                                <col width="5%">        <!-- 액면금액 (변경전) -->
-                                                <col width="5%">        <!-- 액면금액 (변경후) -->
+                                                <col width="10%">       <!-- CU shrs (변경전) -->
+                                                <col width="10%">       <!-- CU shrs (변경후) -->
+                                                <col width="10%">       <!-- 액면금액 (변경전) -->
+                                                <col width="10%">       <!-- 액면금액 (변경후) -->
                                             </colgroup>
                                             <thead>
                                                 <tr>
-                                                    <th class="txt_left"   rowspan="2">email</th>
-                                                    <th class="txt_left"   rowspan="2">상태</th>
+                                                    <th class="txt_left"    rowspan="2">email</th>
+                                                    <th class="txt_left"    rowspan="2">상태</th>
                                                     <th class="txt_left"    rowspan="2">종목코드</th>
                                                     <th class="txt_left"    rowspan="2">종목명</th>
 
-                                                    <th class="txt_center"   colspan="2">CU shrs</th>
-                                                    <th class="txt_center"   colspan="2">액면금액</th>
+                                                    <th class="txt_center"  colspan="2">CU shrs</th>
+                                                    <th class="txt_center"  colspan="2">액면금액</th>
                                                 </tr>
                                                 <tr>
                                                     <th class="txt_right">변경전</th>
@@ -196,8 +196,8 @@ export default {
                     },              
                 ],
                 columns: [  
-                    { "data" : "email"          ,   "orderable" : false  ,   "className" : "txt_center" },  /* email */
-                    { "data" : "status"         ,   "orderable" : false  ,   "className" : "txt_center" },  /* 상태 */
+                    { "data" : "email"          ,   "orderable" : false  ,   "className" : "txt_left" },  /* email */
+                    { "data" : "status"         ,   "orderable" : false  ,   "className" : "txt_left" },  /* 상태 */
                     { "data" : "f16316"         ,   "orderable" : false  ,   "className" : "txt_left"   },  /* 구성종목코드 */
                     { "data" : "f16004"         ,   "orderable" : false  ,   "className" : "txt_left"   },  /* 종목명 */
 
