@@ -1,39 +1,45 @@
 <template>
-    <v-card flat>
-        <v-layout row wrap >
-            <v-flex grow>
-
+    <v-container>
+        <v-flex>
+            <v-dialog v-model="showDialog" persistent max-width="900" >
                 <v-card flat>
-                     <div class="title01_w case3">
-                        <v-card-title primary-title>
-                            <div class="title_wrap01">
-                                <h3 class="headline mb-0">
-                                  {{ searchParam.f16002 }} |
-                                    <span class="grey--text">({{ searchParam.f16013 }})</span>
-                                </h3>
-                                <div class="right_btn">
-                                    <v-btn icon  @click="fn_close">
-                                        <v-icon>close</v-icon>
-                                    </v-btn>
-                                </div>
-                            </div>
-                        </v-card-title>
-                    </div>      
+                    <v-layout row wrap >
+                        <v-flex grow>
+
+                            <v-card flat>
+                                <div class="title01_w case3">
+                                    <v-card-title primary-title>
+                                        <div class="title_wrap01">
+                                            <h3 class="headline mb-0">
+                                            {{ paramData.f16002 }} |
+                                                <span class="grey--text">({{ paramData.f16013 }})</span>
+                                            </h3>
+                                            <div class="right_btn">
+                                                <v-btn icon  @click="fn_close">
+                                                    <v-icon>close</v-icon>
+                                                </v-btn>
+                                            </div>
+                                        </div>
+                                    </v-card-title>
+                                </div>      
+                            </v-card>
+
+                            <v-card flat>
+                                    <table id="tblPdfList" class="tbl_type ver7"></table>
+                            </v-card>
+
+                        </v-flex>
+
+                        <v-flex>
+                            <ProgressBar ref="progress"></ProgressBar>
+                        </v-flex>            
+
+                    </v-layout>
+
                 </v-card>
-
-                <v-card flat>
-                        <table id="tblPdfList" class="tbl_type ver7"></table>
-                </v-card>
-
-            </v-flex>
-
-            <v-flex>
-                <ProgressBar ref="progress"></ProgressBar>
-            </v-flex>            
-
-        </v-layout>
-
-    </v-card>
+            </v-dialog>
+        </v-flex>
+    </v-container>
      
 </template>
 
@@ -52,38 +58,29 @@ import ProgressBar from "@/components/common/ProgressBar.vue";
 var tblPdfList = null;
 
 export default {
-    props: [ "paramData" ],
+    props : [ "showDialog", "paramData" ],
     components : {
         ProgressBar: ProgressBar
     },
     data() {
         return {
-            stateInfo: {
-                pageState:  "pdf" /* pdf - PDF 관리, pdfByRate - 비중변경현황 */,
-                totWidth: 0
-            },
-            arrShowColumn: [],
-            arrShowColumnDef: [],
             searchParam : {
                 show_date : "",
                 search_date : "",
                 search_nm : "",
                 f16493 : "",
-                f16012 : ""
+                f16012 : "",
             },
+            f16002 : "",
             pdfData : {},
         };
     },
     mounted: function() {
         var vm = this;
 
-        console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
-        console.log( vm.paramData );
-
-        vm.pdfData  =   vm.paramData;
+        console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdfHistPop.vue mounted");8
 
         vm.fn_init();
-
     },
     created: function() {
         var vm = this;
@@ -101,15 +98,12 @@ export default {
 
             new Promise(function(resolve, reject) {
 
-                if( vm.pdfData ) {
+                if( vm.paramData ) {
+                    vm.searchParam.f16002       =   vm.paramData.f16002;            /* 한글종목명 */
+                    vm.searchParam.f16013       =   vm.paramData.f16013;            /* 단축코드 */
 
-                    vm.searchParam.f16002       =   vm.pdfData.f16002;          /* 한글종목명 */
-                    vm.searchParam.f16013       =   vm.pdfData.f16013;          /* 단축코드 */
-
-                    vm.searchParam.f16493       =   vm.pdfData.f16493;          /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                    vm.searchParam.f16012       =   vm.pdfData.f16012;          /* 국제표준코드 */
-
-                    vm.searchParam.search_nm    =   vm.searchParam.f16002 + "(" + vm.searchParam.f16013 + ")";  /* 한글종목명 / 단축코드 */
+                    vm.searchParam.f16493       =   vm.paramData.f16493;            /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                    vm.searchParam.f16012       =   vm.paramData.f16012;            /* 국제표준코드 */
                 }
 
                 resolve();
@@ -217,21 +211,7 @@ export default {
                         },
                         "orderable" : false,
                         "targets": 6
-                    },                
-                    { 
-                        "targets": 8,
-                        "render": function ( data, type, row ) {
-                            if (data) {
-                                if ( row.status == "insert" ) {
-                                    return "<div class='tooltip'><button id='btnDelete' name='btnDelete' type='button' class='btn_icon v-icon material-icons'>delete</button><span class='tooltiptext' style='width:40px;'>삭제</span></div>";
-                                }else{
-                                    return "";
-                                }
-                            } else {
-                                return "";
-                            }
-                        },
-                    },                 
+                    },              
                 ],
                 columns: [  
                     { "data" : "fmt_f12506"     ,   "orderable" : false  ,   "className" : "txt_center" ,   "width" :   "10%"   , "title" :   "Date"          },   /* Date */
@@ -242,12 +222,6 @@ export default {
                     { "data" : "f34840"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "12%"   , "title" :   "액면금액"      },  /* 액면금액 */
                     { "data" : "f16588"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "12%"   , "title" :   "평가금액"      },  /* 평가금액 */
                     { "data" : "fmt_f34743"     ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "10%"    , "title" :   "비중(%)"      },  /* 비중 */
-                    { "data": null              ,   "orderable" : false  ,   "align":"center"           ,   "width" :   "9%"    , defaultContent:"" },
-
-                    { "data" : "status"         ,   "visible"   : false   },                                                                /* status */
-                    { "data" : "code_check"     ,   "visible"   : false   },                                                                /* code_check */
-                    { "data" : "f16499_prev"    ,   "visible"   : false   },                                                                /* CU shrs (변경전) */
-                    { "data" : "f34840_prev"    ,   "visible"   : false   },                                                                /* 액면금액 (변경전) */
                 ]
             });
         },        
@@ -267,30 +241,26 @@ export default {
                 tblPdfList.clear().draw();
             }
 
-            if( vm.pdfData && Object.keys( vm.pdfData ).length > 0 ) {
+            vm.searchParam.search_date  =   vm.searchParam.show_date.replace(/-/g,"");
+            vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
+            vm.searchParam.isInstCd     =   "Y";        /* 기관에 속한 정보만 노출하는지 */
 
-                vm.searchParam.search_date  =   vm.searchParam.show_date.replace(/-/g,"");
-                vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
-                vm.searchParam.isInstCd     =   "Y";        /* 기관에 속한 정보만 노출하는지 */
+            util.processing(vm.$refs.progress, true);
+            axios.post( url, {
+                data: vm.searchParam
+            }).then(function(response) {
+                console.log(response);
 
-                util.processing(vm.$refs.progress, true);
-                axios.post( url, {
-                    data: vm.searchParam
-                }).then(function(response) {
-                    console.log(response);
+                if (response.data) {
+                    var dataList = response.data.dataList;
 
-                    if (response.data) {
-                        var dataList = response.data.dataList;
-
-                        if (dataList && dataList.length > 0) {
-                            tblPdfList.rows.add(dataList).draw();
-                        }
+                    if (dataList && dataList.length > 0) {
+                        tblPdfList.rows.add(dataList).draw();
                     }
+                }
 
-                    util.processing(vm.$refs.progress, false);
-                });
-            }
-            
+                util.processing(vm.$refs.progress, false);
+            });
         },
 
         /*

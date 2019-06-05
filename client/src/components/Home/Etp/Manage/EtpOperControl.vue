@@ -104,6 +104,16 @@
                                             @fn_closePop="fn_close" >
             </EtpOperPdfEmergencyModifyPop>
 
+            <!-- PDF 수정내역 팝업 -->
+            <EtpOperPdfHistPop              v-if="showEtpOperPdfHistPop"
+
+                                            :paramData="paramData" 
+                                            :showDialog="showEtpOperPdfHistPop"
+
+                                            @showMessageBox="showMessageBox"
+                                            @fn_closePop="fn_close" >
+            </EtpOperPdfHistPop>            
+
             <!-- (PDF) iNAV 계산기 팝업 -->
             <EtpOperPdfInavCalcPop          v-if="showEtpOperPdfInavCalcPop"
 
@@ -163,6 +173,7 @@ import EtpOperIndex                 from "@/components/Home/Etp/Manage/EtpOperIn
 import EtpOperPdf                   from "@/components/Home/Etp/Manage/EtpOperPdf.vue";                     /* PDF 관리 */
 
 import EtpOperPdfEmergencyModifyPop from "@/components/Home/Etp/Manage/EtpOperPdfEmergencyModifyPop.vue";   /* PDF 긴급반영 팝업 */
+import EtpOperPdfHistPop            from "@/components/Home/Etp/Manage/EtpOperPdfHistPop.vue";              /* PDF 수정내역 팝업 */
 import EtpOperPdfInavCalcPop        from "@/components/Home/Etp/Manage/EtpOperPdfInavCalcPop.vue";          /* (PDF) iNAV 계산기 팝업 */
 import EtpOperInfoInavIndex     from    "@/components/Home/Etp/Manage/EtpOperInfoInavIndex.vue";            /* (지수 수익율) iNAV 계산기 팝업 */
 
@@ -178,6 +189,7 @@ export default {
             showEtpOperIndexErrorDialog : false,
             showEtpOerPdfMain : false,
             showEtpOperPdfEmergencyModifyPop : false,
+            showEtpOperPdfHistPop : false,
             showEtpOperPdfInavCalcPop : false,
             showEtpOperIndexInavCalcPop : false,
             showEtpOerPdfQuick : false,
@@ -201,6 +213,7 @@ export default {
         ComIndexFixPopup                :   ComIndexFixPopup,                   /* 지수조치현황 */
         EtpOperIndexErrorPop            :   EtpOperIndexErrorPop,               /* 지수오류내역 */
         EtpOperPdfEmergencyModifyPop    :   EtpOperPdfEmergencyModifyPop,       /* PDF 긴급반영 팝업 */
+        EtpOperPdfHistPop               :   EtpOperPdfHistPop,                  /* PDF 수정내역 팝업 */
         EtpOperPdfInavCalcPop           :   EtpOperPdfInavCalcPop,              /* (PDF) iNAV 계산기 팝업 */
         EtpOperInfoInavIndex            :   EtpOperInfoInavIndex,               /* (지수수익율) iNAV 계산기 팝업 */
 
@@ -235,6 +248,7 @@ export default {
             this.showEtpOperIndexFixDialog          =   false;
             this.showEtpOperIndexErrorDialog        =   false;
             this.showEtpOperPdfEmergencyModifyPop   =   false;
+            this.showEtpOperPdfHistPop              =   false;
             this.showEtpOperPdfInavCalcPop          =   false;
             this.showEtpOperIndexInavCalcPop        =   false;
 
@@ -401,6 +415,10 @@ export default {
             else if( gubun == '8' ) {
                 this.showEtpOperIndexInavCalcPop = true;
             }
+            /* PDF 관리 -> PDF 수정내역 팝업 */
+            else if( gubun == '9' ) {
+                this.showEtpOperPdfHistPop  =   true;
+            }
         },
 
         /*
@@ -432,6 +450,7 @@ export default {
             vm.showEtpOperIndexFixDialog            =   false;
             vm.showEtpOperIndexErrorDialog          =   false;
             vm.showEtpOperPdfEmergencyModifyPop     =   false;
+            vm.showEtpOperPdfHistPop                =   false;
             vm.showEtpOperPdfInavCalcPop            =   false;
             vm.showEtpOperIndexInavCalcPop          =   false;
         },

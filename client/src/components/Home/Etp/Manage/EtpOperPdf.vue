@@ -54,7 +54,7 @@
                                 <v-icon class="text_red">feedback</v-icon>PDF 수정된 내용이 있습니다.
                             </v-toolbar-title>
 
-                            <v-btn outline small color="primary" dark   @click="fn_addRow()">
+                            <v-btn outline small color="primary" dark   @click.stop="fn_showDetailPdf(9, pdfData)">
                                 <v-icon small color="primary">add</v-icon>수정내역 보기
                             </v-btn>
                         </v-toolbar>
@@ -134,7 +134,9 @@ export default {
 
         console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
 
-        vm.pdfData  =   vm.paramData;
+        if( vm.paramData ) {
+            vm.pdfData  =   vm.paramData;
+        }
 
         vm.fn_getPdfExistYnByNow();
         vm.fn_init();
@@ -155,7 +157,7 @@ export default {
 
             new Promise(function(resolve, reject) {
 
-                if( vm.pdfData ) {
+                if( vm.pdfData && Object.keys( vm.pdfData ).length > 0 ) {
 
                     vm.searchParam.f16002       =   vm.pdfData.f16002;          /* 한글종목명 */
                     vm.searchParam.f16013       =   vm.pdfData.f16013;          /* 단축코드 */

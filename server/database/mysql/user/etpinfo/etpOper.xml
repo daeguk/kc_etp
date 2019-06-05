@@ -237,7 +237,7 @@
                      WHERE  1 = 1
 
         <choose>
-            <when   test='isInstCd != null and isInstCd = "Y"'>
+            <when   test='isInstCd != null and isInstCd == "Y"'>
                        AND  tm_pdf_modify_hist_mast.inst_cd     =   #{inst_cd}
             </when>
 
