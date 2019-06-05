@@ -639,8 +639,14 @@
   		                 td_etp_basic.f16012 = td_etffor_mast.ISIN_CODE
           ) 
          WHERE  1 = 1
+        <choose>
+            <when   test='type_cd != null  and  ( type_cd == "9998" or type_cd == "9999" )'>
+            </when>
 
+            <otherwise>
            AND  td_etp_basic.f33960                 =   #{krx_cd}                   /* ETP운용사코드 가 로그인한 운용사 코드와 동일한 정보만 추출 */
+            </otherwise>
+        </choose>
         
         <if test= 'isEtfYn != null  and  isEtfYn == "Y" ' >
            AND  td_etp_basic.f16493                 IN  ( '1', '2' )                /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
@@ -761,6 +767,12 @@
 
          WHERE  1 = 1
 
+
+        <choose>
+            <when   test='type_cd != null  and  ( type_cd == "9998" or type_cd == "9999" )'>
+            </when>
+
+            <otherwise>
                 /* 해당 지수가 td_etp_basic 에 속하고 로그인 운용사 코드와 동일한 정보만 추출 */
            AND  EXISTS
                 (
@@ -771,6 +783,8 @@
 
                        AND  td_etp_basic.f33960             =   #{krx_cd}                   /* ETP운용사코드 가 로그인한 운용사 코드와 동일한 정보만 추출 */
                 )
+            </otherwise>
+        </choose>
 
     </select>
 
@@ -831,13 +845,18 @@
                 /* 해외지수 mid 에 존재하는 정보만 추출  */
            AND  EXISTS
                 (
-            <foreach    collection="arrOverseaMarketList"   item="item"    index="index"   separator=" UNION ALL" >
+        <foreach    collection="arrOverseaMarketList"   item="item"    index="index"   separator=" UNION ALL" >
                     SELECT  1  
                       FROM  DUAL 
                      WHERE  td_index_basic.market_id  LIKE CONCAT( '_', LPAD( #{item.jisu_mid}, 3, '0' ), '%' )
-            </foreach>
+        </foreach>
                 )
 
+        <choose>
+            <when   test='type_cd != null  and  ( type_cd == "9998" or type_cd == "9999" )'>
+            </when>
+
+            <otherwise>
                 /* 해당 지수가 td_etp_basic 에 속하고 로그인 운용사 코드와 동일한 정보만 추출 */
            AND  EXISTS
                 (
@@ -848,6 +867,9 @@
 
                        AND  td_etp_basic.f33960             =   #{krx_cd}                   /* ETP운용사코드 가 로그인한 운용사 코드와 동일한 정보만 추출 */
                 )
+            </otherwise>
+        </choose>
+
     </select>
 
     <!--
