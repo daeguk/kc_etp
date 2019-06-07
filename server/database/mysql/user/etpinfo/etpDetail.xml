@@ -905,5 +905,16 @@
                 )       tot_sub
          ORDER  BY  sub.PERCNT / tot_sub.TOT_PERCNT     DESC
     </select>
+    <!--
+    * ETP GIGS 섹터 비중 정보를 조회한다.
+    * 2019-06-07  ThreeOn
+    -->
+    <select id="getEtpGigsWeight">
+        SELECT *
+        FROM td_etp_sector
+        WHERE F16012 = #{f16012}
+        AND F12506 = (SELECT MAX(F12506) from td_etp_sector)
+    </select>
+
 
 </mapper>
