@@ -235,6 +235,40 @@ try {
 }
 };
 /*
+* ETP GIGS SECTOR 비중 조회
+*/
+var getEtpGigsWeight = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getEtpGigsWeight 호출됨.');
+
+  var options = {
+    f16012 : req.query.f16012,
+  };
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    getEtpMultiHist
+    var stmt = mapper.getStatement('etpDetail', 'getEtpGigsWeight', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+/*
 * ETF 순자산총액 지수별 합산
 */
 
@@ -841,6 +875,7 @@ module.exports.getEtpBasic = getEtpBasic;
 module.exports.getEtpIntra = getEtpIntra;
 module.exports.getEtpMultiIntra = getEtpMultiIntra;
 module.exports.getEtpMultiHist = getEtpMultiHist;
+module.exports.getEtpGigsWeight = getEtpGigsWeight;
 module.exports.getEtfSumByIndex = getEtfSumByIndex;
 module.exports.getEtnSumByIndex = getEtnSumByIndex;
 module.exports.getEtpCtgBasic = getEtpCtgBasic;

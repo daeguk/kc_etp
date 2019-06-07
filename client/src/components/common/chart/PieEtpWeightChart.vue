@@ -24,16 +24,35 @@ export default {
       sumWeight: 0,
       weights: [],
       angles: [],
-      color1: ['#EF9A9A', '#F48FB1', '#CE93D8', '#9FA8DA', '#90CAF9', 
-        '#80DEEA', '#80CBC4', '#A5D6A7', '#E6EE9C', '#FFCC80'],
-      color2: ['#FFCDD2', '#F8BBD0', '#E1BEE7', '#C5CAE9', '#BBDEFB', 
-        '#B2EBF2', '#B2DFDB', '#C8E6C9', '#F0F4C3', '#FFE0B2'],
+      color1: ['#90CAF9', '#80DEEA', '#80CBC4', '#A5D6A7', '#E6EE9C', 
+        '#FFCC80', '#EF9A9A', '#F48FB1', '#CE93D8', '#9FA8DA'],
+      color2: ['#BBDEFB', '#B2EBF2', '#B2DFDB', '#C8E6C9', '#F0F4C3', 
+        '#FFE0B2', '#FFCDD2', '#F8BBD0', '#E1BEE7', '#C5CAE9'],
     };
   },    
   watch: {
     'etpWeight': function() {
       // console.log("watch.........etpWeight ");
       // console.log(this.etpWeight);
+      this.dataInit();
+    },
+  },
+  created: function() {
+  },
+  mounted: function() {
+    // console.log("LineEtpMultiChart..........");
+    this.canvas = document.getElementById(this.chartId);
+    this.ctx = this.canvas.getContext('2d');
+    this.mrect = this.canvas.getBoundingClientRect();
+    this.cX = this.chart.width / 2;
+    this.cY = this.chart.height / 2;
+    // console.log("PieEtpWeightChart.........");
+    // console.log(this.etpWeight);
+    // this.drawInit();
+    this.dataInit();
+  },
+  methods: {
+    dataInit: function() {
       if(this.etpWeight.length > 0) {
         if(this.etpWeight.length < this.disCnt) this.disCnt = this.etpWeight.length;
         this.sumWeight = 0;
@@ -54,21 +73,6 @@ export default {
         this.drawInit();
       }
     },
-  },
-  created: function() {
-  },
-  mounted: function() {
-    // console.log("LineEtpMultiChart..........");
-    this.canvas = document.getElementById(this.chartId);
-    this.ctx = this.canvas.getContext('2d');
-    this.mrect = this.canvas.getBoundingClientRect();
-    this.cX = this.chart.width / 2;
-    this.cY = this.chart.height / 2;
-    // console.log("PieEtpWeightChart.........");
-    // console.log(this.etpWeight);
-    // this.drawInit();
-  },
-  methods: {
     drawInit: function() {
       this.drawChart1();
       this.drawChart2();

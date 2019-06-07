@@ -184,7 +184,7 @@
                 <!---비중정보 팝업end-->
                 <div class="indexinfo_box01 v1">
                     <h4 class="mb-0">섹터비중</h4>
-                    <div class="graph_03_w">섹터 비중 그래프 들어갑니다.</div>
+                    <BarEtpWeightChart :etpBasic="etpBasic"></BarEtpWeightChart>
                 </div>
             </v-flex>
 
@@ -196,6 +196,7 @@
 <script>
 import jongmokPopup from "@/components/common/popup/jongmokPopup";
 import PieEtpWeightChart from "@/components/common/chart/PieEtpWeightChart";
+import BarEtpWeightChart from "@/components/common/chart/BarEtpWeightChart";
 import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
@@ -252,6 +253,7 @@ export default {
     components: {
         jongmokPopup, 
         PieEtpWeightChart,
+        BarEtpWeightChart,
     },
     created: function() {
         var vm = this;
@@ -325,12 +327,11 @@ export default {
 
                     /* 비중정보 및 차트정보 조회 */
                     vm.fn_getEtpImportanceList( vm.basicData );
+                    /* ETP performance 정보를 조회한다. */
+                    vm.fn_getEtpPerformance();             
 
 
                     chart01 = new google.visualization.ComboChart(document.getElementById('etp_comboChart_div'));
-
-                    /* ETP performance 정보를 조회한다. */
-                    vm.fn_getEtpPerformance();             
 
                     if( table01 ) {
                         table01.destroy();
@@ -773,9 +774,6 @@ export default {
                     this.results = response.data.dataList;
                     this.importance_cnt = this.results.length;
 
-                    // 차트 호출
-                    // this.fn_importance_chart(items);
-                    
                     if (importance_grid) {
                         importance_grid.destroy()
                     }
@@ -807,71 +805,6 @@ export default {
                 
             });
         }, 
-
-
-        fn_importance_chart: function(results) {
-
-            var     vm  =   this;
-
-            // Load the Visualization API and the corechart package.
-            google.charts.load('current', {'packages':['corechart']});
-
-           
-            // Set a callback to run when the Google Visualization API is loaded.
-            google.charts.setOnLoadCallback(drawChart());
-
-            // Callback that creates and populates a data table,
-            // instantiates the pie chart, passes in the data and
-            // draws it.
-      
-            function drawChart() {
-                
-                
-                // Create the data table.
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', '');
-                data.addColumn('number', 'PERCNT');
-
-               
-                // Set chart options
-                var options = {'title':'',
-                            'width':'700',
-                            'height':'330',
-                            'colors': ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde', '#B6B8BA', '#7E8083', '#FBB040', '#F58025', '#EDED8A'],        
-                                       
-                            'legend': {
-                                position: 'right',
-                                color: '#ffffff',
-                               
-                            },
-                            'lineWidth': 5
-                            
-                };
-                
-                
-                var items = [] 
-
-                for (let item of results) {
-                    
-                    if (items.length >= 10) break;
-
-                    items.push([item.JONG_NM, Number( item.PERCNT ) ]);
-
-                }
-                
-            
-
-                
-                data.addRows(
-                    items
-                );
-
-                // Instantiate and draw our chart, passing in some options.
-                var chart = new google.visualization.PieChart( document.getElementById( vm.importance_chart_id ) );
-                chart.draw(data, options);
-            }
-        },        
-        
     }
 };
 </script>
