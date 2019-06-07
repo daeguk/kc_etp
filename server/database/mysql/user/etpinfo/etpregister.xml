@@ -407,19 +407,20 @@
 </update>
 <select id="getINavList" >
     <![CDATA[
-        select  f16013 as isu_srt_cd 
-            ,f12506 as fixed_date 
-            ,lpad(to_char(f33267), 8, '0') as time 
-            ,f15301 as nav ,f15318 as idx 
-            ,f30824 as bef_sel_brate 
-            ,f30819 as sel_brate 
-            ,f18053 as yes_idx 
-            ,f34034 as yes_nav 
-            ,f18453 as rate 
-            ,f30823 as ad_ratio 
-        from td_etp_hist 
-        where f16013 = #{isu_srt_cd}  
-        order by f33267 desc limit 20
+        select  b.f16013 as isu_srt_cd 
+            ,b.f12506 as date 
+            ,b.f15301 as nav 
+            ,b.f15318 as idx 
+            ,b.f30824 as bef_sel_brate 
+            ,b.f18438 as sel_brate 
+            ,(b.f15318 - b.f15319) as yes_idx 
+            ,(b.f15301 - b.f15303) as yes_nav 
+            ,a.f18453 as rate 
+            ,b.f30823 as ad_ratio 
+        from td_etp_basic  a , td_etp_hist b
+        where b.f16013 = #{isu_srt_cd}  
+		and b.f16013  = a.f16013
+        order by b.f12506 desc limit 20
     ]]>   
 </select>
 
