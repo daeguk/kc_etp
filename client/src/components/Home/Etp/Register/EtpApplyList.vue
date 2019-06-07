@@ -363,11 +363,9 @@ export default {
                             var rIdxMid = $(tr).find("td:eq(5)").text();
                             var idxSymCode = $(tr).find("td:eq(6)").text();
                             var ridxDistSymCode = $(tr).find("td:eq(7)").text();
-                            //var idxTable= 'm' + ('0' + idxMid).slice(-3) + 'hbased'  ;
-                            var marketId= 'M' + ('0' + idxMid).slice(-3)  ;
+                             var marketId= 'M' + ('0' + idxMid).slice(-3)  ;
                             var rMarketId= 'M' + ('0' + rIdxMid).slice(-3)  ;
                             console.log("idxMid : " + idxMid + " marketId: " + marketId + ": " + rMarketId + "rMarketId:" + "idxSymCode:"+  idxSymCode  + ": " + "ridxDistSymCode:" +  ridxDistSymCode) ;
-                            //vm.idxConfirmModal.idxTable = idxTable;
                             vm.idxConfirmModal.idxSymCode = idxSymCode;
                             vm.idxConfirmModal.ridxDistSymCode = ridxDistSymCode;
                             vm.idxConfirmModal.marketId = marketId;
