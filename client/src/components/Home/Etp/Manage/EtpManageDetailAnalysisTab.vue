@@ -82,109 +82,24 @@
                         <v-flex xs6>
                     <v-subheader>
                         TOP10 비중정보
-                        <v-dialog v-model="dialog" persistent max-width="500">
-                            <template v-slot:activator="{ on }">
-                                <v-btn outline small color="primary" dark v-on="on">VIEW ALL</v-btn>
-                            </template>
-                            <v-card>
-                                <h5>
-                                    <v-card-title ma-0>
-                                        종목 비중정보 ({{ etpBasic.f16002 }})
-                                        <v-spacer></v-spacer>
-                                        <v-btn icon dark @click="dialog = false">
-                                            <v-icon>close</v-icon>
-                                        </v-btn>
-                                    </v-card-title>
-                                </h5>
-                                <div class="index3pop2_con">
-                                    <v-list subheader two-line>
-                                        <!--v-list-tile>
-                                            <v-list-tile-title>Last Updated</v-list-tile-title>
-                                            <v-list-tile-content>Notifications</v-list-tile-content>
-                                        </v-list-tile-->
-                                        <v-list-tile>
-                                            <v-list-tile-title>Total</v-list-tile-title>
-                                            <v-list-tile-content>{{importance_cnt}}</v-list-tile-content>
-                                        </v-list-tile>
-                                    </v-list>
-                                </div>
-                                <v-card flat>
-                                    <table id="importance_grid" class="tbl_type" style="width:100%">
-                                        <colgroup>
-                                            <col width="10%">
-                                            <col width="40%">
-                                            <col width="40%">
-                                            <col width="10%">
-                                        </colgroup>
-                                        <thead>
-                                            <tr>
-                                                <th class="txt_left">Code</th>
-                                                <th class="txt_left">Name</th>
-                                                <th class="txt_right">Alllocation</th>
-                                                <th class="txt_left">GUBUN</th>
-                                            </tr>
-                                        </thead>   
-                                    </table>
-                                </v-card>
-                                <v-card class="pop_bot_h"></v-card>
-                            </v-card>
-                        </v-dialog>
+                        <v-btn outline small color="primary" dark @click="openWeightModal">VIEW ALL</v-btn>
+                        <EtpPdfWeightModal v-if="WeightModalFlag" :etpBasic="etpBasic" :etpWeight="results" 
+                          @closeWeightModal="closeWeightModal"></EtpPdfWeightModal>
                     </v-subheader>
-                    <v-card flat>
-                    <div class="indexinfo_box01">
-                    <v-card flat class="indexinfo_list_table case2">
-                        <v-layout v-if="results.length >= 1">
-                                <v-flex class="w1"><v-icon :style="{color:importance_colors[0]}" class="lineh">fiber_manual_record</v-icon>{{results[0].JONG_NM}}</v-flex>
-                                <v-flex class="w2 text_r">{{results[0].PERCNT}}%</v-flex>
-                                <v-flex class="w3"></v-flex>
-                                <v-flex class="w1" v-if="results.length >= 2"><v-icon :style="{color:importance_colors[1]}" class="lineh">fiber_manual_record</v-icon>{{results[1].JONG_NM}}</v-flex>
-                                <v-flex class="w2 text_r" v-if="results.length >= 2">{{results[1].PERCNT}}%</v-flex>     
-                        </v-layout>    
-                        <v-layout v-if="results.length >= 3">
-                                <v-flex class="w1"><v-icon :style="{color:importance_colors[2]}" class="lineh">fiber_manual_record</v-icon>{{results[2].JONG_NM}}</v-flex>
-                                <v-flex class="w2 text_r">{{results[2].PERCNT}}%</v-flex>
-                                <v-flex class="w3"></v-flex>
-                                <v-flex class="w1" v-if="results.length >= 4"><v-icon :style="{color:importance_colors[3]}" class="lineh">fiber_manual_record</v-icon>{{results[3].JONG_NM}}</v-flex>
-                                <v-flex class="w2 text_r" v-if="results.length >= 4">{{results[3].PERCNT}}%</v-flex>     
-                        </v-layout>    
-                        <v-layout v-if="results.length >= 5">
-                                <v-flex class="w1"><v-icon :style="{color:importance_colors[4]}" class="lineh">fiber_manual_record</v-icon>{{results[4].JONG_NM}}</v-flex>
-                                <v-flex class="w2 text_r">{{results[4].PERCNT}}%</v-flex>
-                                <v-flex class="w3"></v-flex>
-                                <v-flex class="w1" v-if="results.length >= 6"><v-icon :style="{color:importance_colors[5]}" class="lineh">fiber_manual_record</v-icon>{{results[5].JONG_NM}}</v-flex>
-                                <v-flex class="w2 text_r" v-if="results.length >= 6">{{results[5].PERCNT}}%</v-flex>     
-                        </v-layout>    
-                        <v-layout v-if="results.length >= 7">
-                                <v-flex class="w1"><v-icon :style="{color:importance_colors[6]}" class="lineh">fiber_manual_record</v-icon>{{results[6].JONG_NM}}</v-flex>
-                                <v-flex class="w2 text_r">{{results[6].PERCNT}}%</v-flex>
-                                <v-flex class="w3"></v-flex>
-                                <v-flex class="w1" v-if="results.length >= 8"><v-icon :style="{color:importance_colors[7]}" class="lineh">fiber_manual_record</v-icon>{{results[7].JONG_NM}}</v-flex>
-                                <v-flex class="w2 text_r" v-if="results.length >= 8">{{results[7].PERCNT}}%</v-flex>     
-                        </v-layout>    
-                        <v-layout v-if="results.length >= 9">
-                                <v-flex class="w1"><v-icon :style="{color:importance_colors[8]}" class="lineh">fiber_manual_record</v-icon>{{results[8].JONG_NM}}</v-flex>
-                                <v-flex class="w2 text_r">{{results[8].PERCNT}}%</v-flex>
-                                <v-flex class="w3"></v-flex>
-                                <v-flex class="w1" v-if="results.length >= 10"><v-icon :style="{color:importance_colors[9]}" class="lineh">fiber_manual_record</v-icon>{{results[9].JONG_NM}}</v-flex>
-                                <v-flex class="w2 text_r" v-if="results.length >= 10">{{results[9].PERCNT}}%</v-flex>     
-                        </v-layout>                       
-                    </v-card>
-                </div>
-                    </v-card>
-
-                        </v-flex>
-                        <v-flex xs6>
-                        <!--
-                            <div class="graph_02_w"  id="importance_chart"></div>
-                            -->
-                            <PieEtpWeightChart :etpWeight="results"></PieEtpWeightChart>
-                        </v-flex>
-                    </v-layout>
+                      <TableEtpWeightChart :etpWeight="results"></TableEtpWeightChart>
+                    </v-flex>
+                    <v-flex xs6>
+                      <PieEtpWeightChart :etpWeight="results"></PieEtpWeightChart>
+                    </v-flex>
+                  </v-layout>
                 </div>
                 <!---비중정보 팝업end-->
                 <div class="indexinfo_box01 v1">
-                    <h4 class="mb-0">섹터비중</h4>
-                    <BarEtpWeightChart :etpBasic="etpBasic"></BarEtpWeightChart>
+                <!--
+                <div>
+                -->
+                  <h4 class="mb-0">섹터비중</h4>
+                  <BarEtpWeightChart :etpBasic="etpBasic"></BarEtpWeightChart>
                 </div>
             </v-flex>
 
@@ -195,6 +110,8 @@
 
 <script>
 import jongmokPopup from "@/components/common/popup/jongmokPopup";
+import EtpPdfWeightModal from "@/components/common/modal/EtpPdfWeightModal";
+import TableEtpWeightChart from "@/components/common/chart/TableEtpWeightChart";
 import PieEtpWeightChart from "@/components/common/chart/PieEtpWeightChart";
 import BarEtpWeightChart from "@/components/common/chart/BarEtpWeightChart";
 import $ from "jquery";
@@ -204,7 +121,6 @@ import select from "datatables.net-select";
 import Config from "@/js/config.js";
 
 var table01 = null;
-var chart01 = null;
 
 var importance_grid = null;
 export default {
@@ -227,8 +143,6 @@ export default {
             /* 비중관련 정보 */
             importance_cnt:0,
             importance_grid_id : "importance_grid",
-            importance_chart_id : "importance_chart",
-
             tableName : "tblEtp",
             nowDate:        new Date().getFullYear() 
                         +   "." 
@@ -247,11 +161,14 @@ export default {
             performChartImages  :   ['perform_bar01.png', 'perform_bar02.png', 'perform_bar03.png', 'perform_bar04.png', 'perform_bar05.png'],
             perf_class : 'perf_chart_w',
             tbl_class : 'tbl_type ver4',
-            chart_size : '1180'
+            chart_size : '1180',
+            WeightModalFlag: false,
         };
     },
     components: {
         jongmokPopup, 
+        EtpPdfWeightModal,
+        TableEtpWeightChart,
         PieEtpWeightChart,
         BarEtpWeightChart,
     },
@@ -329,9 +246,6 @@ export default {
                     vm.fn_getEtpImportanceList( vm.basicData );
                     /* ETP performance 정보를 조회한다. */
                     vm.fn_getEtpPerformance();             
-
-
-                    chart01 = new google.visualization.ComboChart(document.getElementById('etp_comboChart_div'));
 
                     if( table01 ) {
                         table01.destroy();
@@ -532,7 +446,14 @@ export default {
             this.fn_getEtpPerformance();
         },
 
-
+        openWeightModal: function() {
+          console.log("openWeightModal One............");
+          this.WeightModalFlag = true;
+        },
+        closeWeightModal: function() {
+          console.log("closeWeightModal One............");
+          this.WeightModalFlag = false;
+        },
         /*
          * ETP 의 기본정보를 조회한다.
          * 2019-04-25  bkLove(촤병국)
@@ -546,14 +467,6 @@ export default {
 
             // Load the Visualization API and the corechart package.
             google.charts.load("current", { packages: ["corechart"] });
-
-
-            /* 차트를 초기화한다. */
-            google.charts.setOnLoadCallback(function() {
-                if( chart01 ) {
-                    chart01.clearChart();
-                }
-            });
 
             if( vm.basicData.arrNavPriceGubun && vm.basicData.arrNavPriceGubun.length != 0  ) {
 

@@ -857,6 +857,7 @@
     * ETP 비중 정보 조회시 공통 SQL 을 정의한다.
     * 2019-04-25  bkLove(촤병국)
     -->
+    <!--
     <sql    id="sqlEtpImportance">
     <![CDATA[
                       FROM  td_etfpdf_hist
@@ -877,33 +878,37 @@
                             )
     ]]>
     </sql>
+    -->
+    <sql    id="sqlEtpImportance">
+    <![CDATA[
+      FROM  td_etfpdf_basic
+      WHERE  F16012 = #{f16012}
+    ]]>
+    </sql>
 
     <!--
     * ETP 비중 정보를 조회한다.
     * 2019-04-25  bkLove(촤병국)
     -->
     <select id="getEtpImportanceList">
-        SELECT      /* etpDetail.getEtpImportanceList    ETP 비중 정보를 조회한다. */
-
-                    sub.ISIN_CODE                                                       AS  ISIN_CODE
-                ,   sub.JONG_NM                                                         AS  JONG_NM
-                ,   ROUND( ( sub.PERCNT / tot_sub.TOT_PERCNT ) * 100, 2 )               AS  PERCNT
-                ,   'ETF'                                                               AS  GUBUN
-
-          FROM  (
-                    SELECT      td_etfpdf_hist.f16316                                   AS  ISIN_CODE
-                            ,   td_etfpdf_hist.f16004                                   AS  JONG_NM
-                            ,   ROUND( td_etfpdf_hist.f34743 / 100, 2 )                 AS  PERCNT
-
-                      <include    refid="sqlEtpImportance" />
-                )       sub
-         INNER  JOIN    
-                (
-                    SELECT  SUM( ROUND( td_etfpdf_hist.f34743 / 100, 2 ) )              AS  TOT_PERCNT
-
-                      <include    refid="sqlEtpImportance" />
-                )       tot_sub
-         ORDER  BY  sub.PERCNT / tot_sub.TOT_PERCNT     DESC
+      SELECT
+        sub.f16316                                                        AS  ISIN_CODE
+        ,TRIM(sub.f16004)                                                         AS  JONG_NM
+        ,ROUND( ( sub.PERCNT / tot_sub.TOT_PERCNT ) * 100, 2 )               AS  PERCNT
+        ,'ETF'                                                               AS  GUBUN
+        FROM  (
+          SELECT f16316
+                ,f16004
+                ,ROUND(f34743 / 100, 2 )                     AS  PERCNT
+            FROM  td_etfpdf_basic
+            WHERE  F16012 = #{f16012}
+        )       sub
+        INNER  JOIN (
+          SELECT  SUM( ROUND(f34743 / 100, 2 ) )              AS  TOT_PERCNT
+            FROM  td_etfpdf_basic
+            WHERE  F16012 = #{f16012}
+        )       tot_sub
+        ORDER  BY  sub.PERCNT / tot_sub.TOT_PERCNT     DESC
     </select>
     <!--
     * ETP GIGS 섹터 비중 정보를 조회한다.

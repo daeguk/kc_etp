@@ -8,13 +8,13 @@ import Config       from "@/js/config.js"
 import util from "@/js/util.js"
 
 export default {
-  props:['etpWeight'],
+  props:['etpBasic','etpWeight'],
   data() {
     return {
       canvas:{},
       ctx:{},
       chartId:"PieEtpWeightChart",
-      chart:{width:500, height:330},
+      chart:{width:500, height:300},
       grad:{},
       mrect:{},
       cX: 0,
@@ -32,7 +32,7 @@ export default {
   },    
   watch: {
     'etpWeight': function() {
-      // console.log("watch.........etpWeight ");
+      console.log("PieEtpWeightChart watch.........etpWeight ");
       // console.log(this.etpWeight);
       this.dataInit();
     },
@@ -45,7 +45,7 @@ export default {
     this.ctx = this.canvas.getContext('2d');
     this.mrect = this.canvas.getBoundingClientRect();
     this.cX = this.chart.width / 2;
-    this.cY = this.chart.height / 2;
+    this.cY = this.chart.height / 2 + 20;
     // console.log("PieEtpWeightChart.........");
     // console.log(this.etpWeight);
     // this.drawInit();

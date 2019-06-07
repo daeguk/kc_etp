@@ -31,6 +31,7 @@ export default {
   },    
   watch: {
     'etpBasic': function() {
+      console.log("BarEtpWeightChart watch.........etpWeight ");
       this.clearRect();
       this.getEtpGigsWeight();
     },
@@ -57,7 +58,7 @@ export default {
       this.drawAxis();
     },
     drawText: function() {
-      console.log("drawText...............");
+      // console.log("drawText...............");
       var c = this.ctx;
       c.save();
       // c.strokeRect(0, 0, this.canvas.width, this.canvas.height);
@@ -79,7 +80,7 @@ export default {
       c.textAlign = "left";
       c.font = '12px san-serif';
       for(var i=0; i < this.weightText.length; i++) {
-        c.fillText(this.weights[i] + "%", this.spos[i] + 20, 30 + i*30);
+        c.fillText(this.weights[i] + "%", this.spos[i] + 10, 30 + i*30);
       }
       c.restore();
     },
@@ -103,7 +104,7 @@ export default {
     drawChart: function() {
       var c = this.ctx;
       for(var i = 0; i < this.weightText.length; i++) {
-        console.log("drawChart...........");
+        // console.log("drawChart...........");
         c.beginPath();
         c.save();
         c.strokeStyle = this.color1[i];
@@ -124,7 +125,7 @@ export default {
       }
     },
     getEtpGigsWeight: function() {
-      console.log("getEtpGigsWeight : " + this.etpBasic.f16012);
+      // console.log("getEtpGigsWeight : " + this.etpBasic.f16012);
       var vm = this;
 
       axios.get(Config.base_url + "/user/marketinfo/getEtpGigsWeight", {
