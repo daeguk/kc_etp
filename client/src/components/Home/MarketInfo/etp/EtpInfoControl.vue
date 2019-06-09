@@ -5,7 +5,7 @@
             <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
 
             <v-dialog v-model="showEtpInfoPdfDetail" persistent max-width="1100">
-                <EtpInfoPdfDetail v-if="showEtpInfoPdfDetail" :paramData="paramData" :showEtpInfoPdfDetail="showEtpInfoPdfDetail" @fn_closePop="fn_close"></EtpInfoPdfDetail>
+                <EtpInfoPdfDetail v-if="showEtpInfoPdfDetail" :paramData="paramData" :showEtpInfoPdfDetail="showEtpInfoPdfDetail" @fn_showDetailPdf="fn_showDetailPdf" @fn_closePop="fn_close"></EtpInfoPdfDetail>
             </v-dialog>
             
             <marketRepresent v-if="showMarketInfo == 1" @showDetail="showDetail" @showMessageBox="showMessageBox" @showProgress="showProgress"></marketRepresent>               
@@ -22,6 +22,17 @@
             <marketLeverageInverse v-if="showMarketInfo == 12" @showDetail="showDetail" @showMessageBox="showMessageBox" @showProgress="showProgress"></marketLeverageInverse>   
             <ConfirmDialog ref="confirm"></ConfirmDialog>
             <ProgressBar ref="progress"></ProgressBar>
+
+            <!-- PDF 수정내역 팝업 -->
+            <EtpOperPdfHistPop              v-if="showEtpOperPdfHistPop"
+
+                                            :paramData="paramData" 
+                                            :showDialog="showEtpOperPdfHistPop"
+
+                                            @showMessageBox="showMessageBox"
+                                            @fn_closePop="fn_closePdf" >
+            </EtpOperPdfHistPop>
+
         </v-flex>
         <v-flex :class="FaverClassName">
                 <ComFavorItemSub v-if="showFaver"   @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
@@ -46,6 +57,7 @@ import ProgressBar from "@/components/common/ProgressBar.vue";
 import IndexDetailInfo from "@/components/Home/Index/Manage/IndexDetailInfo.vue";   /*지수 상세정보*/
 import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";         /*ETP 상세정보*/
 import EtpInfoPdfDetail         from  "@/components/Home/MarketInfo/etp/EtpInfoPdfDetail.vue";                         /* PDF 상세 */
+import EtpOperPdfHistPop            from "@/components/Home/Etp/Manage/EtpOperPdfHistPop.vue";              /* PDF 수정내역 팝업 */
 
 import marketRepresent from "./marketRepresent.vue";                /* 001-시장대표 */
 import marketSector from "./marketSector.vue";                      /* 002-섹터*/
@@ -72,6 +84,7 @@ export default {
             showFaver : false,
             className: '',
             FaverClassName: '',
+            showEtpOperPdfHistPop : false
     	};
     },    
 
@@ -82,6 +95,7 @@ export default {
         IndexDetailInfo : IndexDetailInfo,
         EtpManageDetail :   EtpManageDetail,
         EtpInfoPdfDetail: EtpInfoPdfDetail,                 /* PDF 상세 */
+        EtpOperPdfHistPop : EtpOperPdfHistPop,              /* PDF 수정내역 팝업 */
 
         marketRepresent :  marketRepresent,                 /* 001-시장대표 */
         marketSector :   marketSector,                      /* 002-섹터*/
@@ -110,6 +124,7 @@ export default {
             this.showEtpDetailDialog = false;
             this.showIndexDetailDialog = false;
             this.showEtpInfoPdfDetail = false;
+            this.showEtpOperPdfHistPop =   false;
             this.showFaver = false;
         });
     },
@@ -175,6 +190,18 @@ export default {
         showProgress: function(visible) {
             util.processing(this.$refs.progress, visible);
         },
+
+        fn_showDetailPdf(gubun, paramData) {
+
+
+            this.paramData = paramData;
+
+            /* PDF 관리 -> PDF 긴급반영 팝업 */
+            if( gubun == '9' ) {
+                this.showEtpOperPdfHistPop  =   true;
+            }
+        },
+
         /*
          *  지소관리 상세 팝업에서 종료시 해당 팝업을 종료한다.
          *  2019-05-03  bkLove(촤병국)
@@ -183,6 +210,16 @@ export default {
             var vm = this;
 
             vm.showEtpInfoPdfDetail                =   false;
+        },
+
+        /*
+         *  지소관리 상세 팝업에서 종료시 해당 팝업을 종료한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_closePdf( param ) {
+            var vm = this;
+
+            vm.showEtpOperPdfHistPop                =   false;
         },        
     }   
 

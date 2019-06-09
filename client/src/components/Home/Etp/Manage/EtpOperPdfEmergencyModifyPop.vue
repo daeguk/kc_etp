@@ -693,8 +693,8 @@ export default {
 
                         ,   "status"        :   "insert"
                         ,   "code_check"    :   true
-                        ,   "f16499_prev"   :   ''                          /* CU shrs ( 변경전 ) */
-                        ,   "f34840_prev"   :   ''                          /* 액면금액 ( 변경전 ) */
+                        ,   "f16499_prev"   :   '0'                         /* CU shrs ( 변경전 ) */
+                        ,   "f34840_prev"   :   '0'                         /* 액면금액 ( 변경전 ) */
                     }
 
                     tblEmergeny01.row(rowIndex).data( addData ).order( [0, "asc"] ).draw(  );
@@ -734,8 +734,8 @@ export default {
 
                 ,   "status"        :   "insert"
                 ,   "code_check"    :   false
-                ,   "f16499_prev"   :   ''              /* CU shrs ( 변경전 ) */
-                ,   "f34840_prev"   :   ''              /* 액면금액 ( 변경전 ) */
+                ,   "f16499_prev"   :   '0'             /* CU shrs ( 변경전 ) */
+                ,   "f34840_prev"   :   '0'             /* 액면금액 ( 변경전 ) */
             }
 
             tblEmergeny01.row.add( addData ).order( [0, "asc"] ).draw(  );            

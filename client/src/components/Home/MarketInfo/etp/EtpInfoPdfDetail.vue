@@ -61,6 +61,20 @@
                         </v-card-title>
                     </div>      
                 </v-card>
+
+            <!-- inst_cd (기관코드) 가 같은 사용자가 작성한 PDF 수정건이 있는지 -->
+                <v-card flat class="pdf_mody_w" v-if='emergency_exist_yn == "Y"'>
+                    <v-toolbar card prominent>
+                        <v-toolbar-title class="pdf_t">
+                            <v-icon class="text_red">feedback</v-icon>PDF 수정된 내용이 있습니다.
+                        </v-toolbar-title>
+
+                        <v-btn outline small color="primary" dark   @click.stop="fn_showDetailPdf(9, pdfData)">
+                            <v-icon small color="primary">add</v-icon>수정내역 보기
+                        </v-btn>
+                    </v-toolbar>
+                </v-card>
+
                 <v-card flat>
                         <table id="tblPdfList" class="tbl_type ver7"></table>
                 </v-card>
@@ -69,7 +83,7 @@
 
             <v-flex>
                 <ProgressBar ref="progress"></ProgressBar>
-            </v-flex>            
+            </v-flex>
 
         </v-layout>
 
@@ -112,6 +126,7 @@ export default {
                 f16012 : ""
             },
             pdfData : {},
+            emergency_exist_yn : "N",
         };
     },
     mounted: function() {
@@ -122,6 +137,7 @@ export default {
 
         vm.pdfData  =   vm.paramData;
 
+        vm.fn_getPdfExistYnByNow();
         vm.fn_init();
 
     },
@@ -221,6 +237,33 @@ export default {
         },
 
         /*
+         * 현재일자에 PDF 변경건이 존재하는지 반환한다.
+         * 2019-05-03  bkLove(촤병국)
+         */
+        fn_getPdfExistYnByNow() {
+
+            var vm = this;
+
+            console.log( "fn_getPdfExistYnByNow called" );
+            
+            vm.$emit( "fn_showProgress", true );
+
+            axios.post( Config.base_url + "/user/etp/getPdfExistYnByNow", {
+                data: {  }
+            }).then(function(response) {
+                console.log(response);
+
+                vm.$emit( "fn_showProgress", false );
+
+                if (response.data) {
+                    if( response.data.emergency_exist_yn ) {
+                        vm.emergency_exist_yn   =   response.data.emergency_exist_yn;
+                    }
+                }
+            });
+        },
+
+        /*
          *  테이블 기본정보를 설정한다.
          *  2019-05-03  bkLove(촤병국)
          */
@@ -246,6 +289,7 @@ export default {
 
                 vm.fn_setArrShowColumn([
                         "fmt_f12506"        /* 입회일 - Date */
+                    ,   "status"            /* 상태 */
                     ,   "f33861"            /* ETF시장구분 - 시장구분 -  */
                     ,   "f16316"            /* 구성종목코드 - 종목코드 */
                     ,   "f16004"            /* 해외시장종목명 - 종목명 */
@@ -330,17 +374,35 @@ export default {
             var vm = this;
 
             var arrColumn  =   [
-                { 'name' : 'fmt_f12506'     , 'data': 'fmt_f12506'      ,  'width' : '9%', 'orderable' : true , 'className': 'dt-body-center'  , 'title' : 'Date'      },      /* Date */
-                { 'name' : 'f33861'         , 'data': 'f33861'          ,  'width' : '9%' , 'orderable' : true , 'className': 'dt-body-center'  , 'title' : '시장구분'  },       /* 시장구분 */
+                { 'name' : 'fmt_f12506'     , 'data': 'fmt_f12506'      ,  'width' : '7%' , 'orderable' : true , 'className': 'dt-body-center'  , 'title' : 'Date'     },      /* Date */
+                { 'name' : 'status'         , 'data': 'status'          ,  'width' : '5%' , 'orderable' : true , 'className': 'dt-body-center'  , 'title' : '상태'      },       /* 상태 */
+                { 'name' : 'f33861'         , 'data': 'f33861'          ,  'width' : '6%' , 'orderable' : true , 'className': 'dt-body-center'  , 'title' : '시장구분'  },       /* 시장구분 */
                 { 'name' : 'f16316'         , 'data': 'f16316'          ,  'width' : '9%' , 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목코드'  },       /* 종목코드 */
                 { 'name' : 'f16004'         , 'data': 'f16004'          ,  'width' : '19%', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목명'    },       /* 종목명 ( 해외시장종목명 ) */
                 { 'name' : 'f16499'         , 'data': 'f16499'          ,  'width' : '9%' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : 'CU SHrs'   },      /* CU SHrs */
                 { 'name' : 'f34840'         , 'data': 'f34840'          ,  'width' : '9%' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '액면금액'   },      /* 액면금액 */
                 { 'name' : 'f16588'         , 'data': 'f16588'          ,  'width' : '9%' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '평가금액'   },      /* 평가금액 */
-                { 'name' : 'fmt_f34743'     , 'data': 'fmt_f34743'      ,  'width' : '9%' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중 (%)'  },      /* 비중 */
+                { 'name' : 'fmt_f34743'     , 'data': 'fmt_f34743'      ,  'width' : '6%' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중 (%)'  },      /* 비중 */
             ];        
 
             var arrColumnDef  =   [
+                    /* 상태 */
+                    {  
+                            'name' : 'status'
+                        ,   "render": function ( data, type, row ) {
+
+                                var htm = "";
+                                if( typeof row.status != "undefined" ) {
+                                    if( row.status == "insert" ) {
+                                        htm = "신규";
+                                    }else{
+                                        htm = "변경";
+                                    }
+                                }
+
+                                return htm;
+                            },
+                    },                
                     /* CU SHrs */
                     {      
                             'name' : 'f16499'   
@@ -429,7 +491,13 @@ export default {
             var vm = this;
 
             vm.$emit( "fn_closePop", "close" );
-        }        
+        },
+
+        fn_showDetailPdf(gubun, paramData) {
+            var vm = this;
+
+            vm.$emit( "fn_showDetailPdf", gubun, paramData );
+        },              
     }
 };
 </script>

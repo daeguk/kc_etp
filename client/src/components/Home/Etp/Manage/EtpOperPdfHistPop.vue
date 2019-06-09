@@ -1,8 +1,8 @@
 <template>
     <v-container>
         <v-flex>
-            <v-dialog v-model="showDialog" persistent max-width="1000" >
-                <v-card class="mx-auto">
+            <v-dialog v-model="showDialog" persistent  max-width="1000"  >
+                <v-card class="mx-auto" max-height="400">
                     <v-card flat class="listset_pop">
                         <v-card flat>
                             <v-layout row wrap >
@@ -12,10 +12,6 @@
                                         <div class="title01_w case3">
                                             <v-card-title primary-title>
                                                 <div class="title_wrap01">
-                                                    <h3 class="headline mb-0">
-                                                    {{ paramData.f16002 }} |
-                                                        <span class="grey--text">({{ paramData.f16013 }})</span>
-                                                    </h3>
                                                     <div class="right_btn">
                                                         <v-btn icon  @click="fn_close">
                                                             <v-icon>close</v-icon>
@@ -27,37 +23,47 @@
                                     </v-card>
 
                                     <v-card flat>
-                                        <table id="tblPdfList" class="tbl_type ver7"    style="width:100%">
-                                            <colgroup>
-                                                <col width="20%">       <!-- email -->
-                                                <col width="8%">        <!-- 상태 -->
-                                                <col width="12%">       <!-- 구성종목코드 -->
-                                                <col width="20%">       <!-- 종목명 -->
+                                        
+                                        <v-flex xs12    v-for="subData in allDataList" :key='"step3_"  + subData.etf_f16012'>
 
-                                                <col width="10%">       <!-- CU shrs (변경전) -->
-                                                <col width="10%">       <!-- CU shrs (변경후) -->
-                                                <col width="10%">       <!-- 액면금액 (변경전) -->
-                                                <col width="10%">       <!-- 액면금액 (변경후) -->
-                                            </colgroup>
-                                            <thead>
-                                                <tr>
-                                                    <th class="txt_left"    rowspan="2">email</th>
-                                                    <th class="txt_left"    rowspan="2">상태</th>
-                                                    <th class="txt_left"    rowspan="2">종목코드</th>
-                                                    <th class="txt_left"    rowspan="2">종목명</th>
+                                            <h4>
+                                                {{ subData.etf_f16002           /* ETF 한글종목명 */    }}
+                                                <span>{{ subData.etf_f16013     /* ETF 단축코드 */      }}</span>
+                                            </h4>
 
-                                                    <th class="txt_center"  colspan="2">CU shrs</th>
-                                                    <th class="txt_center"  colspan="2">액면금액</th>
-                                                </tr>
-                                                <tr>
-                                                    <th class="txt_right">변경전</th>
-                                                    <th class="txt_right">변경후</th>
+                                            <table v-bind:id='"step3_" + subData.etf_f16012' class="tbl_type ver7" style="width:100%">
+                                                <colgroup>
+                                                    <col width="15%">       <!-- email -->
+                                                    <col width="7%">        <!-- 상태 -->
+                                                    <col width="15%">       <!-- CODE -->
+                                                    <col width="15%">       <!-- 종목 -->
 
-                                                    <th class="txt_right">변경전</th>
-                                                    <th class="txt_right">변경후</th>                                            
-                                                </tr>                                        
-                                            </thead> 
-                                        </table>
+                                                    <col width="12%">       <!-- CU shrs -->
+                                                    <col width="12%">
+
+                                                    <col width="12%">       <!-- 액면금액 -->
+                                                    <col width="12%">                                        
+                                                </colgroup>
+                                                <thead>
+                                                    <tr>
+                                                        <th class="txt_center"  rowspan="2">email</th>
+                                                        <th class="txt_center"  rowspan="2">상태</th>
+                                                        <th class="txt_center"  rowspan="2">CODE</th>
+                                                        <th class="txt_left"    rowspan="2">종목</th>
+                                                        <th class="txt_center"  colspan="2">CU shrs</th>
+                                                        <th class="txt_center"  colspan="2">액면금액</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="txt_right">변경전</th>
+                                                        <th class="txt_right">변경후</th>
+                                                        <th class="txt_right">변경전</th>
+                                                        <th class="txt_right">변경후</th>                                            
+                                                    </tr>
+                                                </thead>
+                                            </table>
+
+                                        </v-flex>
+
                                     </v-card>
 
                                 </v-flex>
@@ -89,7 +95,7 @@ import dtFc from "datatables.net-fixedcolumns";
 import Config from "@/js/config.js";
 import ProgressBar from "@/components/common/ProgressBar.vue";
 
-var tblPdfList = null;
+var tblPdfHistList = null;
 
 export default {
     props : [ "showDialog", "paramData" ],
@@ -107,6 +113,7 @@ export default {
             },
             f16002 : "",
             pdfData : {},
+            allDataList : []
         };
     },
     mounted: function() {
@@ -137,7 +144,7 @@ export default {
                     vm.searchParam.f16013       =   vm.paramData.f16013;            /* 단축코드 */
 
                     vm.searchParam.f16493       =   vm.paramData.f16493;            /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                    vm.searchParam.f16012       =   vm.paramData.f16012;            /* 국제표준코드 */
+//                    vm.searchParam.f16012       =   vm.paramData.f16012;            /* 국제표준코드 */
                 }
 
                 resolve();
@@ -152,97 +159,173 @@ export default {
                                                 +   "-" 
                                                 +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
                                                 +   "-" 
-                                                +   _.padStart( new Date().getDate(), 2, '0' )
+                                                +   _.padStart( new Date().getDate(), 2, '0' );
+                vm.searchParam.isInstCd     =   "Y";        /* 기관에 속한 정보만 노출하는지 */
 
-                vm.fn_setTableInfo();
-                vm.fn_getEtpOerPdf( 'Y' );
+                vm.fn_getEtpOperPdfEmergencyHistNow();
             });            
         },
-
-        /*
-         *  테이블 기본정보를 설정한다.
-         *  2019-05-03  bkLove(촤병국)
-         */
-        fn_setTableInfo() {
-            var vm = this;
-
-            tblPdfList = $("#tblPdfList").DataTable({
-                "processing": true,
-                "serverSide": false,
-                "info": false,   // control table information display field
-                "stateSave": true,  //restore table state on page reload,
-                "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                "scrollY": '40vh',
-                select: {
-                    style:    'single',
-                    selector: 'td:first-child'
-                },
-                paging: false,
-                searching: false,
-                data : [],    
-                "columnDefs": [         
-                    {  
-                        /* 평가금액 */
-                        "render": function ( data, type, row ) {
-
-                            var htm = "";
-
-                            htm += util.formatNumber(data);
-
-                            return htm;
-                        },
-                        "orderable" : false,
-                        "targets": 6
-                    },              
-                ],
-                columns: [  
-                    { "data" : "email"          ,   "orderable" : false  ,   "className" : "txt_left" },  /* email */
-                    { "data" : "status"         ,   "orderable" : false  ,   "className" : "txt_left" },  /* 상태 */
-                    { "data" : "f16316"         ,   "orderable" : false  ,   "className" : "txt_left"   },  /* 구성종목코드 */
-                    { "data" : "f16004"         ,   "orderable" : false  ,   "className" : "txt_left"   },  /* 종목명 */
-
-                    { "data" : "f16499"         ,   "orderable" : false  ,   "className" : "txt_right"  },  /* CU shrs (변경전) */
-                    { "data" : "f16499_prev"    ,   "orderable" : false  ,   "className" : "txt_right"  },  /* CU shrs (변경후) */
-                    { "data" : "f34840"         ,   "orderable" : false  ,   "className" : "txt_right"  },  /* 액면금액 (변경전) */
-                    { "data" : "f34840_prev"    ,   "orderable" : false  ,   "className" : "txt_right"  },  /* 액면금액 (변경후) */
-                ]
-            }).draw();
-        },        
 
         /*
          * ETP PDF 정보를 조회한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_getEtpOerPdf( initYn ) {
+        fn_getEtpOperPdfEmergencyHistNow() {
             var vm = this;
 
-            console.log("EtpOperPdf.vue -> fn_getEtpOperPdf");
-
-            var  url = Config.base_url + "/user/etp/getEtpOperPdf";
-
-            if (tblPdfList) {
-                tblPdfList.clear().draw();
-            }
-
-            vm.searchParam.search_date  =   vm.searchParam.show_date.replace(/-/g,"");
-            vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
-            vm.searchParam.isInstCd     =   "Y";        /* 기관에 속한 정보만 노출하는지 */
+            console.log("EtpOperPdfEmergencyModifyPop -> fn_getEtpOperPdfEmergencyHistNow");            
 
             util.processing(vm.$refs.progress, true);
-            axios.post( url, {
+            axios.post( Config.base_url + "/user/etp/getEtpOperPdfEmergencyHistNow", {
                 data: vm.searchParam
             }).then(function(response) {
+
                 console.log(response);
 
+                util.processing(vm.$refs.progress, false);
                 if (response.data) {
-                    var dataList = response.data.dataList;
 
-                    if (dataList && dataList.length > 0) {
-                        tblPdfList.rows.add(dataList).draw();
+                    if( !response.data.result ) {
+                        vm.$emit("showMessageBox", '확인', response.data.msg,{},1);
+                        return  false;
+                    }
+
+                    if( response.data.allDataList.length > 0 ) {
+                        vm.allDataList  =   response.data.allDataList;
+
+                        vm.step     =   3;
+                        if( vm.allDataList.length > 0 ) {
+
+                            var items = [];
+
+                            for ( let subData of vm.allDataList ) {
+                                if ( $.fn.DataTable.isDataTable('#step3_' + subData.etf_f16012 ) ) {
+                                    $('#step3_' + subData.etf_f16012).DataTable().destroy();
+                                }
+                            }
+
+                            for ( let subData of vm.allDataList ) {
+
+                                vm.$nextTick().then(() => {
+
+                                    if ( $.fn.DataTable.isDataTable('#step3_' + subData.etf_f16012 ) ) {
+                                        $('#step3_' + subData.etf_f16012).DataTable().destroy();
+                                    }   
+
+                                    items = subData.data;
+
+                                    console.log("subData.etf_f16012=[" + subData.etf_f16012 + "]");
+                                    console.log( "items" );
+                                    console.log( items );
+                                    
+                                    $( '#step3_' + subData.etf_f16012 ).DataTable( {
+                                            "processing": true,
+                                            "serverSide": false,
+                                            "info": false,   // control table information display field
+                                            "stateSave": true,  //restore table state on page reload,
+                                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                                            "scrollY": '15vh',
+                                            select: {
+                                                style:    'single',
+                                                selector: 'td:first-child'
+                                            },
+                                            paging: false,
+                                            searching: false,
+                                            data : items,
+                                            ordering : false,
+                                            "columnDefs": [
+                                                {  
+                                                    /* 상태 */
+                                                    "render": function ( data, type, row ) {
+
+                                                        var htm = "";
+                                                        if( typeof row.status != "undefined" ) {
+                                                            if( row.status == "insert" ) {
+                                                                htm = "신규";
+                                                            }else{
+                                                                htm = "변경";
+                                                            }
+                                                        }
+
+                                                        return htm;
+                                                    },
+                                                    "targets": 1
+                                                },
+                                                {  
+                                                    /* CU shrs (변경전) */
+                                                    "render": function ( data, type, row ) {
+
+                                                        var htm = "";
+                                                        if( typeof row.status != "undefined" ) {
+                                                            if( row.status == "insert" ) {
+                                                                htm = "-";
+                                                            }else{
+                                                                htm = util.formatNumber( data );
+                                                            }
+                                                        }
+
+                                                        return htm;
+                                                    },
+                                                    "targets": 4
+                                                },
+                                                {  
+                                                    /* CU shrs (변경후) */
+                                                    "render": function ( data, type, row ) {
+
+                                                        var htm = "";
+                                                        htm    +=  util.formatNumber( data );
+
+                                                        return htm;
+                                                    },
+                                                    "targets": 5
+                                                },
+                                                {  
+                                                    /* 액면금액 (변경전) */
+                                                    "render": function ( data, type, row ) {
+
+                                                        var htm = "";
+                                                        if( typeof row.status != "undefined" ) {
+                                                            if( row.status == "insert" ) {
+                                                                htm = "-";
+                                                            }else{
+                                                                htm = util.formatNumber( data );
+                                                            }
+                                                        }
+
+                                                        return htm;
+                                                    },
+                                                    "targets": 6
+                                                },
+                                                {  
+                                                    /* 액면금액 (변경후) */
+                                                    "render": function ( data, type, row ) {
+
+                                                        var htm = "";
+                                                        htm    +=  util.formatNumber( data );
+
+                                                        return htm;
+                                                    },
+                                                    "targets": 7
+                                                },
+                                            ],
+                                            columns: [
+                                                { "data" : "email"          ,   "width" :   "15%"   ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 이메일 */
+                                                { "data" : "status"         ,   "width" :   "7%"    ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 상태 */
+                                                { "data" : "f16316"         ,   "width" :   "15%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 코드 */
+                                                { "data" : "f16004"         ,   "width" :   "15%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 종목명 */
+
+                                                { "data" : "f16499_prev"    ,   "width" :   "12%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs (변경전) */
+                                                { "data" : "f16499"         ,   "width" :   "12%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs */
+
+                                                { "data" : "f34840_prev"    ,   "width" :   "12%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 (변경전) */
+                                                { "data" : "f34840"         ,   "width" :   "12%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 */
+                                            ]
+                                    }).draw();
+                                });
+                            }
+                        }
                     }
                 }
-
-                util.processing(vm.$refs.progress, false);
             });
         },
 

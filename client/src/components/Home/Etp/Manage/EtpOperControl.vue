@@ -29,6 +29,7 @@
             <EtpOperPdf     v-if="showEtpOerInfo == 2" 
 
                             :paramData="paramData"
+                            :reloadYn="reloadYn"
                             @showMessageBox="showMessageBox"
 
                             @fn_showProgress="fn_showProgress"
@@ -202,6 +203,7 @@ export default {
             pdfData : {},
             indexBasic : {},
             faverSize : 80,
+            reloadYn : false
     	};
     },    
 
@@ -224,6 +226,14 @@ export default {
         ConfirmDialog                   :   ConfirmDialog,                      /* 공통 메시지창 */
         ProgressBar                     :   ProgressBar,
         ComEtpFavorItemSub              :   ComEtpFavorItemSub,
+    },
+    watch : {
+        showEtpOperPdfEmergencyModifyPop : function( oldValue, newValue ) {
+            var vm = this;
+
+            vm.paramData = vm.paramData;
+            vm.reloadYn = vm.showEtpOperPdfEmergencyModifyPop;
+        }
     },
 
     mounted: function() {
