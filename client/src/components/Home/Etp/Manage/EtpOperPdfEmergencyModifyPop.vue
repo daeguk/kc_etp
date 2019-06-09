@@ -553,6 +553,8 @@ export default {
             vm.result.msg   =   '';
 
             util.processing(vm.$refs.progress, true);
+
+            searchParam.isEtfYn     =   "Y";
             axios.post( Config.base_url + "/user/etp/getEtpOperPdfModify", {
                 data: searchParam
             }).then(function(response) {

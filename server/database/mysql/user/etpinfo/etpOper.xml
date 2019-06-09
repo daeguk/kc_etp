@@ -212,9 +212,27 @@
                                     ELSE    td_etfpdf_basic.f16004
                     END                                         AS  f16004          /* 해외시장종목명 */
                 ,   td_etfpdf_basic.f16588                      AS  f16588          /* 평가금액 */
-                ,   td_etfpdf_basic.f34743                      AS  f34743          /* ETF_PDF비중 */
-                ,   FORMAT( td_etfpdf_basic.f34743 / 100, 2 )   AS  fmt_f34743      /* ETF_PDF비중 */
-                ,   td_etfpdf_basic.f33861                      AS  f33861          /* ETF시장구분 */
+                ,   CASE    WHEN    tm_pdf_modify_hist_dtl.status   =   'insert'
+                                    THEN    0
+                                    ELSE    td_etfpdf_basic.f34743
+                    END                                         AS  f34743          /* ETF_PDF비중 */
+                ,   CASE    WHEN    tm_pdf_modify_hist_dtl.status   =   'insert'
+                                    THEN    0
+                                    ELSE    FORMAT( td_etfpdf_basic.f34743 / 100, 2 )
+                    END                                         AS  fmt_f34743      /* ETF_PDF비중 */
+                ,   CASE    WHEN    tm_pdf_modify_hist_dtl.status   =   'insert'
+                                    THEN    (
+                                                SELECT  CASE    WHEN    td_kspjong_basic.market_id  =   'M001'
+                                                                THEN    '1'         /* 코스피 */
+                                                                WHEN    td_kspjong_basic.market_id  =   'M003'
+                                                                THEN    '2'         /* 코스닥 */
+                                                        END
+                                                  FROM  td_kspjong_basic
+                                                 WHERE  td_kspjong_basic.f16012     =   tm_pdf_modify_hist_dtl.f16316
+                                                 LIMIT  1
+                                            )
+                                    ELSE    td_etfpdf_basic.f33861
+                    END                                         AS  f33861          /* ETF시장구분 */
                 
           FROM  tm_pdf_modify_hist_dtl
           LEFT  OUTER   JOIN    td_etfpdf_basic
