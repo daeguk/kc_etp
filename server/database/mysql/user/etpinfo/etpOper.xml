@@ -1632,7 +1632,7 @@
                        AND  tm_pdf_modify_mast.f16583               =   #{f16583}           /* 사무수탁회사번호 */
                        AND  tm_pdf_modify_mast.f16012               =   #{f16012}           /* ETF종목코드 */
                        AND  tm_pdf_modify_mast.f16013               =   #{f16013}           /* ETF단축코드 */
-                       
+
 					   AND  (
 									tm_pdf_modify_mast.reg_time     BETWEEN     STR_TO_DATE( CONCAT( DATE_FORMAT(now(), '%Y%m%d'), ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
 																	    AND     STR_TO_DATE( CONCAT( DATE_FORMAT(now(), '%Y%m%d'), ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
