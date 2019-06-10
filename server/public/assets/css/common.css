@@ -105,6 +105,7 @@ button:focus { outline: none; }
 
 
 /*탑메뉴*/
+.top_dropmenu .v-menu__content{position: fixed !important;}
 .top_menu{background-color:#ffffff !important; }
 .topmenu_icon.v-btn{height: 56px !important;}
 .topmenu_icon.v-btn--icon{width: 56px !important;}
@@ -263,7 +264,8 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type td.txt_left{text-align: left;}
 .tbl_type td.txt_right{text-align: right;}
 .tbl_type td.t_link{ text-decoration: underline; color:#1e99e8; cursor: pointer;}
-.tbl_type td.line2 span{ display: inline-block; font-weight: 600;padding-left:5px;}
+.tbl_type td.line2 span{ display: inline-block; font-weight: 600;}
+.tbl_type td.line2 span.line2_ts2{padding-left:5px;}
 .tbl_type td.line2 span.text_s{font-size: 12px !important;font-weight: 400 !important;}
 .tbl_type td.line2 img{vertical-align:top; display:inline-block; }
 .tbl_type tbody tr:hover{background:#fafbfb; cursor:default;}
@@ -289,6 +291,44 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type.ver7 td{font-size:12px !important; font-weight: 400 !important;}
 .tbl_type.ver8 td{font-size:14px !important; font-weight: 400 !important;}
 
+/*테이블 header고정*/
+caption {
+    position: absolute;
+    font-size: 0;
+    left: -99999px;
+  }
+.table-box-wrap {
+    position: relative;
+    margin:0px 10px 0px 10px;
+    padding-bottom:10px;
+/*width:509px;*/
+padding-top: 29px;
+}
+.table-box-wrap .table-box {
+overflow: auto;
+overflow-x: hidden;
+}
+.table-box-wrap .table-box table {
+width: 100%;
+table-layout: fixed;
+border-spacing: 0;
+border-collapse: collapse;
+}
+.table-box-wrap .table-box table thead tr {
+position: absolute;
+top: 0;
+left:0;
+}
+
+.table-box-wrap .table-box table tr {
+display: inline-table;
+width: 100%;
+table-layout: fixed;
+}
+
+.table-box-wrap .table-box table tbody tr {
+display: table-row;
+}
 
 
 
@@ -384,6 +424,7 @@ h3.subtit span.text_result_t2{color:#959eb1; margin-right:15px;margin-left:15px;
 .graph_01_w .sub_title_num span{font-size:14px; color:red;}
 .graph_01_w .sub_title_num p{font-size: 14px; color:#959EB1; font-weight: 400; }
 .graph_01_w .graph_01{width:100%;}
+.graph_01_w .graph_toggle{float: right; padding-top:15px;}
 .graph_toggle .v-btn-toggle{border:1px solid #c9c9c9;}
 .graph_toggle .v-btn-toggle--selected{ box-shadow: none !important; }
 .graph_toggle .v-btn-toggle .v-btn.v-btn--active{background-color:#85c406; color:#ffffff; border-right:1px solid #85c406; }
