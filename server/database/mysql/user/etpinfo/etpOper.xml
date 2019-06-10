@@ -1039,6 +1039,7 @@
                             ,   #{f16013}                       AS  f16013      /* ETF단축코드 */
                             ,   #{data.f16316}                  AS  f16316      /* 구성종목코드 */
 
+                            ,   #{data.status}                  AS  status      /* insert( 신규 ), modify( 변경 ) */
                             ,   #{data.f16499}                  AS  f16499      /* 1CU단위증권수 */
                             ,   #{data.f33861}                  AS  f33861      /* ETF시장구분 */
                             ,   #{data.f16004}                  AS  f16004      /* 해외시장종목명 */
@@ -1082,11 +1083,6 @@
             ,   F16588                      /* 평가금액 */
             ,   F34743                      /* ETF_PDF비중 */
             ,   F34744                      /* ETF_PDF포함여부 */
-
-            ,   reg_id                      /* 등록자 ID */
-            ,   reg_time                    /* 등록시간 */
-            ,   upd_id                      /* 수정자 ID */
-            ,   upd_time                    /* 수정시간 */            
         ) 
     ]]>
         VALUES
@@ -1105,11 +1101,6 @@
             ,   0                           /* 평가금액 */
             ,   0                           /* ETF_PDF비중 */
             ,   0                           /* ETF_PDF포함여부 */
-
-            ,   #{user_id}                  /* 등록자 ID */
-            ,   now()                       /* 등록시간 */
-            ,   #{user_id}                  /* 수정자 ID */
-            ,   now()                       /* 수정시간 */
         )
     ]]>
         </foreach>
@@ -1134,6 +1125,7 @@
                                         ,   #{f16013}                       AS  f16013      /* ETF단축코드 */
                                         ,   #{data.f16316}                  AS  f16316      /* 구성종목코드 */
 
+                                        ,   #{data.status}                  AS  status      /* insert( 신규 ), modify( 변경 ) */
                                         ,   #{data.f16499}                  AS  f16499      /* 1CU단위증권수 */
                                         ,   #{data.f33861}                  AS  f33861      /* ETF시장구분 */
                                         ,   #{data.f16004}                  AS  f16004      /* 해외시장종목명 */
@@ -1155,6 +1147,37 @@
                 ,   td_etfpdf_basic.f34840          =   base.f34840             /* 액면금액 */
 
     </update>
+
+    <!--
+    * [tm_pdf_modify_dtl] 테이블의 f33837(구성종목수) 을 수정한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <update     id="modifyTdEtfpdfBasicF33837">
+
+        UPDATE  /* etpOper.modifyTdEtfpdfBasicF33837      [tm_pdf_modify_dtl] 테이블의 f33837(구성종목수) 을 수정한다. */
+
+                td_etfpdf_basic
+
+           SET      /* 구성종목수 */
+                    f33837      =   
+                    (
+                        SELECT  base.cnt
+                          FROM  (
+                                    SELECT  COUNT(*)        AS      cnt
+                                      FROM  td_etfpdf_basic         sub
+                                     WHERE  1 = 1
+                                       AND  sub.f16583      =   #{f16583}           /* 사무수탁회사번호 */
+                                       AND  sub.f16012      =   #{f16012}           /* ETF종목코드 */
+                                       AND  sub.f16013      =   #{f16013}           /* ETF단축코드 */
+                                )       base
+                    )
+
+         WHERE  1 = 1
+           AND  td_etfpdf_basic.f16583  =   #{f16583}                   /* 사무수탁회사번호 */
+           AND  td_etfpdf_basic.f16012  =   #{f16012}                   /* ETF종목코드 */
+           AND  td_etfpdf_basic.f16013  =   #{f16013}                   /* ETF단축코드 */
+
+    </update>    
 
 
 <!-- 
