@@ -12,6 +12,8 @@ var multer = require('multer');
 var xlsx = require('xlsx');
 var fs = require('fs'); 
 
+/* logging 추가함.  2019-06-10 */
+var log = config.logger;
 
 /* 
  * 지수등록 상태정보를 조회한다.
@@ -19,7 +21,7 @@ var fs = require('fs');
  */
 var getStatusList = function(req, res) {
     try {
-        console.log('indexSelectList.getStatusList 호출됨.');
+        log.debug('indexSelectList.getStatusList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -27,8 +29,8 @@ var getStatusList = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            console.log("[error] indexSelectList.getStatusList  req.body.data no data.");
-            console.log(req.body.data);
+            log.debug("[error] indexSelectList.getStatusList  req.body.data no data.");
+            log.debug(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] indexSelectList.getStatusList  req.body.data no data.";
@@ -48,7 +50,7 @@ var getStatusList = function(req, res) {
         /* 2. 지수 등록 상태정보를 조회한다. */
         var format = { language: 'sql', indent: '' };
         var stmt = mapper.getStatement('indexSelectList', 'getCodeDtl', paramData, format);
-        console.log(stmt);
+        log.debug(stmt);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -73,7 +75,7 @@ var getStatusList = function(req, res) {
                 res.end();
 
             }).catch(err => {
-                console.log("[error] indexSelectList.getStatusList Error while performing Query.", err);
+                log.debug("[error] indexSelectList.getStatusList Error while performing Query.", err);
 
                 resultMsg.result = false;
                 resultMsg.msg    = "[error] indexSelectList.getStatusList Error while performing Query";
@@ -83,7 +85,7 @@ var getStatusList = function(req, res) {
         });
 
     } catch(expetion) {
-        console.log(expetion);
+        log.debug(expetion);
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result = false;
@@ -111,7 +113,7 @@ var getStatusList = function(req, res) {
 var getIndexSelectList = function(req, res) {
     
     try{
-        console.log('indexSelectList.getIndexSelectList 호출됨.');
+        log.debug('indexSelectList.getIndexSelectList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -132,7 +134,7 @@ var getIndexSelectList = function(req, res) {
         /* 1. 기관정보를 조회한다. */
         var format = { language: 'sql', indent: '' };
         var stmt = mapper.getStatement('indexSelectList', 'getJisuList', paramData, format);
-        console.log(stmt);
+        log.debug(stmt);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -158,7 +160,7 @@ var getIndexSelectList = function(req, res) {
                 res.end();
 
             }).catch(err => {
-                console.log("[error] indexSelectList.getIndexSelectList Error while performing Query.", err);
+                log.debug("[error] indexSelectList.getIndexSelectList Error while performing Query.", err);
 
                 resultMsg.result = false;
                 resultMsg.msg    = "[error] indexSelectList.getIndexSelectList Error while performing Query";
@@ -168,7 +170,7 @@ var getIndexSelectList = function(req, res) {
         });
 
     } catch(expetion) {
-        console.log(expetion);
+        log.debug(expetion);
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result = false;
