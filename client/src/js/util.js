@@ -14,6 +14,33 @@ var util = {
             return "0.00" 
         }
     },
+    /* 천단위 콤마 처리 */
+    formatInt: function(num) {
+      if (num != null && typeof num !== 'undefined') {
+          if (isNaN(num)) {
+            return "0.00"              
+          } else {
+            num = Number(num);
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+          }
+          
+      } else {
+          return "0.00" 
+      }
+    },
+    /* 천단위 콤마 처리 */
+    formatDigit: function(num, digit) {
+      if (num != null && typeof num !== 'undefined') {
+          if (isNaN(num)) {
+            return "0.00000"              
+          } else {
+            return Number(num).toFixed(digit);
+          }
+          
+      } else {
+          return "0.00" 
+      }
+    },
     formatStringNum: function(num) {
       if (num != null) {
         return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
