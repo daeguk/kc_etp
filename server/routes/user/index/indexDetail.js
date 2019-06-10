@@ -13,6 +13,9 @@ var xlsx = require('xlsx');
 var fs = require('fs'); 
 var async = require('async'); 
 
+/* logging 추가함.  2019-06-10 */
+var log = config.logger;
+
 
 /* 
  * 지수종목상세 정보를 조회한다. ( 지수관리 -> 지수종목상세 탭 클릭시 )
@@ -20,7 +23,7 @@ var async = require('async');
  */
 var getIndexJongmokList = function(req, res) {
     try {
-        console.log('indexDetail.getIndexJongmokList 호출됨.');
+        log.debug('indexDetail.getIndexJongmokList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -28,8 +31,8 @@ var getIndexJongmokList = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            console.log("[error] indexDetail.getIndexJongmokList  req.body.data no data.");
-            console.log(req.body.data);
+            log.debug("[error] indexDetail.getIndexJongmokList  req.body.data no data.");
+            log.debug(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] indexDetail.getIndexJongmokList  req.body.data no data.";
@@ -59,7 +62,7 @@ var getIndexJongmokList = function(req, res) {
 
                     paramData.m168uidxmap_gubun =   "FNGUIDE";
                     stmt = mapper.getStatement('indexDetail', 'getIndexJongmokList', paramData, format);
-                    console.log(stmt);
+                    log.debug(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -82,7 +85,7 @@ var getIndexJongmokList = function(req, res) {
             ], function (err) {
 
                 if( err ) {
-                    console.log( err );
+                    log.debug( err );
                 }else{
 
                     resultMsg.result    =   true;
@@ -97,7 +100,7 @@ var getIndexJongmokList = function(req, res) {
 
     } catch(expetion) {
 
-        console.log(expetion);
+        log.debug(expetion);
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;
@@ -124,7 +127,7 @@ var getIndexJongmokList = function(req, res) {
  */
 var getIndexDetailList = function(req, res) {
     try {
-        console.log('indexDetail.getIndexDetailList 호출됨.');
+        log.debug('indexDetail.getIndexDetailList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -132,8 +135,8 @@ var getIndexDetailList = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            console.log("[error] indexDetail.getIndexDetailList  req.body.data no data.");
-            console.log(req.body.data);
+            log.debug("[error] indexDetail.getIndexDetailList  req.body.data no data.");
+            log.debug(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] indexDetail.getIndexDetailList  req.body.data no data.";
@@ -162,7 +165,7 @@ var getIndexDetailList = function(req, res) {
                 function( callback ) {
 
                     stmt = mapper.getStatement('indexDetail', 'getIndexBasicDetail', paramData, format);
-                    console.log(stmt);
+                    log.debug(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -187,7 +190,7 @@ var getIndexDetailList = function(req, res) {
 
                     paramData.m168uidxmap_gubun =   "FNGUIDE";
                     stmt = mapper.getStatement('indexDetail', 'getIndexDetailList', paramData, format);
-                    console.log(stmt);
+                    log.debug(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -210,7 +213,7 @@ var getIndexDetailList = function(req, res) {
             ], function (err) {
 
                 if( err ) {
-                    console.log( err );
+                    log.debug( err );
                 }else{
 
                     resultMsg.result            =   true;
@@ -225,7 +228,7 @@ var getIndexDetailList = function(req, res) {
 
     } catch(expetion) {
 
-        console.log(expetion);
+        log.debug(expetion);
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;
@@ -254,7 +257,7 @@ var getIndexDetailList = function(req, res) {
  */
 var getIndexFixList = function(req, res) {
     try {
-        console.log('indexDetail.getIndexFixList 호출됨.');
+        log.debug('indexDetail.getIndexFixList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -262,8 +265,8 @@ var getIndexFixList = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            console.log("[error] indexDetail.getIndexFixList  req.body.data no data.");
-            console.log(req.body.data);
+            log.debug("[error] indexDetail.getIndexFixList  req.body.data no data.");
+            log.debug(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] indexDetail.getIndexFixList  req.body.data no data.";
@@ -292,7 +295,7 @@ var getIndexFixList = function(req, res) {
                 function( callback ) {
 
                     stmt = mapper.getStatement('indexDetail', 'getIndexFixData', paramData, format);
-                    console.log(stmt);
+                    log.debug(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -316,7 +319,7 @@ var getIndexFixList = function(req, res) {
                 function( data, callback ) {                    
 
                     stmt = mapper.getStatement('indexDetail', 'getIndexFixJongmokInoutList', paramData, format);
-                    console.log(stmt);
+                    log.debug(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -340,7 +343,7 @@ var getIndexFixList = function(req, res) {
                 function( data, callback ) {                    
 
                     stmt = mapper.getStatement('indexDetail', 'getIndexFixModifyList', paramData, format);
-                    console.log(stmt);
+                    log.debug(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -363,7 +366,7 @@ var getIndexFixList = function(req, res) {
             ], function (err) {
 
                 if( err ) {
-                    console.log( err );
+                    log.debug( err );
                 }else{
 
                     resultMsg.result    =   true;
@@ -378,7 +381,7 @@ var getIndexFixList = function(req, res) {
 
     } catch(expetion) {
 
-        console.log(expetion);
+        log.debug(expetion);
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;
@@ -409,7 +412,7 @@ var getIndexFixList = function(req, res) {
 var getIndexList = function(req, res) {
     
     try {
-        console.log('indexDetail.getIndexList 호출됨.');
+        log.debug('indexDetail.getIndexList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -417,8 +420,8 @@ var getIndexList = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            console.log("[error] indexDetail.getIndexList  req.body.data no data.");
-            console.log(req.body.data);
+            log.debug("[error] indexDetail.getIndexList  req.body.data no data.");
+            log.debug(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] indexDetail.getIndexList  req.body.data no data.";
@@ -450,7 +453,7 @@ var getIndexList = function(req, res) {
 
                     paramData.m168uidxmap_gubun =   "FNGUIDE";
                     stmt = mapper.getStatement('indexDetail', 'getIndexList', paramData, format);
-                    console.log(stmt);
+                    log.debug(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -473,7 +476,7 @@ var getIndexList = function(req, res) {
             ], function (err) {
 
                 if( err ) {
-                    console.log( err );
+                    log.debug( err );
                 }else{
 
                     resultMsg.result    =   true;
@@ -488,7 +491,7 @@ var getIndexList = function(req, res) {
 
     } catch(expetion) {
 
-        console.log(expetion);
+        log.debug(expetion);
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;
