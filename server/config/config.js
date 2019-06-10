@@ -8,7 +8,7 @@
 
 const log4js = require('log4js');
 log4js.configure({
-    appenders:  { output:   { type: 'file', filename: 'D:/koscom_etp/log/etp.log' } },
+    appenders:  { output:   { type: 'dateFile', pattern:"yyyy-MM-dd.log", alwaysIncludePattern: true, filename: 'D:/koscom_etp/log/etp' } },
     categories: { default :  { appenders: ['output'], level: 'debug' } }
 });
 
