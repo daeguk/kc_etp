@@ -102,8 +102,6 @@
                   <BarEtpWeightChart :etpBasic="etpBasic"></BarEtpWeightChart>
                 </div>
             </v-flex>
-
-            <v-flex xs12></v-flex>
         </v-layout>
     </v-container>
 </template>

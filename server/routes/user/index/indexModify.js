@@ -13,6 +13,8 @@ var xlsx = require('xlsx');
 var fs = require('fs'); 
 var async = require('async'); 
 
+/* logging 추가함.  2019-06-10 */
+var log = config.logger;
 
 /* 
  * 등록된 지수정보를 조회한다.
@@ -21,7 +23,7 @@ var async = require('async');
 var getRegistedJisuData = function(req, res) {
 
     try{
-        console.log('indexModify.getRegistedJisuData 호출됨.');
+        log.debug('indexModify.getRegistedJisuData 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -39,7 +41,7 @@ var getRegistedJisuData = function(req, res) {
         paramData.large_type    =   req.session.large_type;
         paramData.krx_cd        =   req.session.krx_cd;
 
-        console.log( req.body.data );
+        log.debug( req.body.data );
 
         /* 1. 지수 마스터 정보를 조회한다. */
         var format = { language: 'sql', indent: '' };
@@ -57,7 +59,7 @@ var getRegistedJisuData = function(req, res) {
                 function( callback ) {
 
                     stmt = mapper.getStatement('indexModify', 'getJisuMast', paramData, format);
-                    console.log(stmt);
+                    log.debug(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -84,7 +86,7 @@ var getRegistedJisuData = function(req, res) {
 
                     paramData.file_id   =  data.jisu_file_id; 
                     stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
-                    console.log(stmt);
+                    log.debug(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -109,7 +111,7 @@ var getRegistedJisuData = function(req, res) {
                 function( data, callback ) {                    
 
                     stmt = mapper.getStatement('indexModify', 'getJisuShareReq', paramData, format);
-                    console.log(stmt);
+                    log.debug(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -172,7 +174,7 @@ var getRegistedJisuData = function(req, res) {
             ], function (err) {
 
                 if( err ) {
-                    console.log( err );
+                    log.debug( err );
                 }else{
                     resultMsg.result    =   true;
                     resultMsg.msg       =   "";
@@ -186,7 +188,7 @@ var getRegistedJisuData = function(req, res) {
 
     } catch(expetion) {
 
-        console.log( expetion );
+        log.debug( expetion );
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result = false;
@@ -215,7 +217,7 @@ var getRegistedJisuData = function(req, res) {
  */
 var modifyJisu = function(req, res) {
 
-    console.log('indexModify.js modifyJisu 호출됨.');
+    log.debug('indexModify.js modifyJisu 호출됨.');
 
     try{
         var pool = req.app.get("pool");
@@ -238,7 +240,7 @@ var modifyJisu = function(req, res) {
             /* 서버에 저장 */
             filename: function (req, file, cb) {
 
-                console.log("file" + JSON.stringify(file));
+                log.debug("file" + JSON.stringify(file));
 
                 var fileLen = file.originalname.length;
                 var lastDot = file.originalname.lastIndexOf(".");
@@ -256,17 +258,17 @@ var modifyJisu = function(req, res) {
 
         upload(req, res, function (err) {
 
-            console.log("upload start");
+            log.debug("upload start");
 
             if (err) {
-                console.log("File Upload Err" + err);
+                log.debug("File Upload Err" + err);
             }
 
 
             /* body.data 값이 있는지 체크 */
             if (!req.body.data) {
-                console.log("indexRegister.save  req.body.data no data.");
-                console.log(req.body.data);
+                log.debug("indexRegister.save  req.body.data no data.");
+                log.debug(req.body.data);
 
                 resultMsg.result = false;
                 resultMsg.msg = "입력값이 유효하지 않습니다.";
@@ -284,7 +286,7 @@ var modifyJisu = function(req, res) {
                 paramData.large_type    =   req.session.large_type;
                 paramData.krx_cd        =   req.session.krx_cd;
 
-                console.log( paramData );
+                log.debug( paramData );
 
                 var format = { language: 'sql', indent: '' };
                 var stmt = "";
@@ -306,7 +308,7 @@ var modifyJisu = function(req, res) {
                                     paramData.file_id   =   paramData.prev_method_file_id;
 
                                     stmt = mapper.getStatement('indexModify', 'getJisuMast', paramData, format);
-                                    console.log(stmt);
+                                    log.debug(stmt);
 
                                     conn.query(stmt, function( err, rows ) {
 
@@ -360,7 +362,7 @@ var modifyJisu = function(req, res) {
                                     reqParam.gubun = "001";      /* 지수방법론 */
 
                                     stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
-                                    console.log(stmt);
+                                    log.debug(stmt);
 
                                     conn.query(stmt, function( err, rows ) {
 
@@ -392,7 +394,7 @@ var modifyJisu = function(req, res) {
                                     paramData.file_id   =   paramData.prev_method_file_id;
 
                                     stmt = mapper.getStatement('indexModify', 'getJisuFile', paramData, format);
-                                    console.log(stmt);
+                                    log.debug(stmt);
 
                                     conn.query(stmt, function( err, rows ) {
 
@@ -435,7 +437,7 @@ var modifyJisu = function(req, res) {
                                                 return callback( resultMsg );
                                             }
 */
-                                            console.log( reqParam.uploadFolder + "\\" + paramData.prev_save_file_name + " 파일삭제 완료");
+                                            log.debug( reqParam.uploadFolder + "\\" + paramData.prev_save_file_name + " 파일삭제 완료");
 
                                             callback( null, paramData );
                                         });
@@ -455,7 +457,7 @@ var modifyJisu = function(req, res) {
                             function( data, callback ) {
 
                                 stmt = mapper.getStatement('indexModify', 'modifyJisuMast', paramData, format);
-                                console.log(stmt);
+                                log.debug(stmt);
 
                                 conn.query(stmt, function( err, rows ) {
 
@@ -479,7 +481,7 @@ var modifyJisu = function(req, res) {
                             function( data, callback ) {
 
                                 stmt = mapper.getStatement( 'indexModify', 'getJisuShareReqForDelete', paramData, format );
-                                console.log(stmt);                                
+                                log.debug(stmt);                                
 
                                 conn.query(stmt, function( err, rows ) {
 
@@ -493,7 +495,7 @@ var modifyJisu = function(req, res) {
 
                                     if ( rows ) {
                                         paramData.jisuShareReqDeleteList    =   rows;
-                                        console.log( rows );
+                                        log.debug( rows );
                                     }
 
                                     callback( null, paramData );
@@ -506,7 +508,7 @@ var modifyJisu = function(req, res) {
                                 if( paramData.jisuShareReqDeleteList != null && paramData.jisuShareReqDeleteList.length > 0  ) {
 
                                     stmt = mapper.getStatement( 'indexModify', 'deleteJisuShareReqList', paramData, format );
-                                    console.log(stmt);                                
+                                    log.debug(stmt);                                
 
                                     conn.query(stmt, function( err, rows ) {
 
@@ -519,7 +521,7 @@ var modifyJisu = function(req, res) {
                                         }
 
                                         if ( rows ) {
-                                            console.log( rows );
+                                            log.debug( rows );
                                         }
 
                                         callback( null, paramData );
@@ -534,7 +536,7 @@ var modifyJisu = function(req, res) {
 
                                 if( paramData.arr_jisu_inst != null && paramData.arr_jisu_inst.length > 0 ) {
                                     stmt = mapper.getStatement( 'indexModify', 'getJisuShareReqForInsert', paramData, format );
-                                    console.log(stmt);                                
+                                    log.debug(stmt);                                
 
                                     conn.query(stmt, function( err, rows ) {
 
@@ -548,7 +550,7 @@ var modifyJisu = function(req, res) {
 
                                         if ( rows ) {
                                             paramData.jisuShareReqInsertList    =   rows;
-                                            console.log( rows );
+                                            log.debug( rows );
                                         }
 
                                         callback( null, paramData );
@@ -565,7 +567,7 @@ var modifyJisu = function(req, res) {
 
                                     paramData.req_flag    =   "0";       /* 공개여부 0:비공개, 1:공개요청, 2:공개 */
                                     stmt = mapper.getStatement( 'indexModify', 'insertJisuShareReqList', paramData, format );
-                                    console.log(stmt);                                
+                                    log.debug(stmt);                                
 
                                     conn.query(stmt, function( err, rows ) {
 
@@ -578,7 +580,7 @@ var modifyJisu = function(req, res) {
                                         }
 
                                         if ( rows ) {
-                                            console.log( rows );
+                                            log.debug( rows );
                                         }
 
                                         callback( null, paramData );
@@ -593,7 +595,7 @@ var modifyJisu = function(req, res) {
 
                                 if( paramData.arr_jisu_inst != null && paramData.arr_jisu_inst.length > 0 ) {
                                     stmt = mapper.getStatement( 'indexModify', 'getJisuShareReqForUpdate', paramData, format );
-                                    console.log(stmt);                                
+                                    log.debug(stmt);                                
 
                                     conn.query(stmt, function( err, rows ) {
 
@@ -607,7 +609,7 @@ var modifyJisu = function(req, res) {
 
                                         if ( rows ) {
                                             paramData.jisuShareReqUpdateList    =   rows;
-                                            console.log( rows );
+                                            log.debug( rows );
                                         }
 
                                         callback( null, paramData );
@@ -623,7 +625,7 @@ var modifyJisu = function(req, res) {
                                 if( paramData.jisuShareReqUpdateList != null && paramData.jisuShareReqUpdateList.length > 0  ) {
 
                                     stmt = mapper.getStatement( 'indexModify', 'updateJisuShareReqList', paramData, format );
-                                    console.log(stmt);                                
+                                    log.debug(stmt);                                
 
                                     conn.query(stmt, function( err, rows ) {
 
@@ -636,7 +638,7 @@ var modifyJisu = function(req, res) {
                                         }
 
                                         if ( rows ) {
-                                            console.log( rows );
+                                            log.debug( rows );
                                         }
 
                                         callback( null, paramData );
@@ -654,7 +656,7 @@ var modifyJisu = function(req, res) {
                                     paramData.file_id  =    paramData.jisu_file_id;
 
                                     stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
-                                    console.log(stmt);
+                                    log.debug(stmt);
 
                                     conn.query(stmt, function( err, rows ) {
 
@@ -668,7 +670,7 @@ var modifyJisu = function(req, res) {
 
                                         if ( rows && rows.length > 0 ) {
                                             paramData.dataLists =   rows;
-                                            console.log( rows );
+                                            log.debug( rows );
                                         }
 
                                         callback( null, paramData );
@@ -686,7 +688,7 @@ var modifyJisu = function(req, res) {
                                 if( paramData.jisu_file_id != paramData.prev_jisu_file_id ) {
 
                                     stmt = mapper.getStatement('indexModify', 'deleteJisuUpload', paramData, format);
-                                    console.log(stmt);
+                                    log.debug(stmt);
 
                                     conn.query(stmt, function( err, rows ) {
 
@@ -699,7 +701,7 @@ var modifyJisu = function(req, res) {
                                         }
 
                                         if ( rows ) {
-                                            console.log( rows );
+                                            log.debug( rows );
                                         }
 
                                         callback( null, paramData );
@@ -717,7 +719,7 @@ var modifyJisu = function(req, res) {
                                 if( paramData.dataLists != null && paramData.dataLists.length > 0  ) {
 
                                     stmt = mapper.getStatement('indexRegister', 'saveTmJisuUpload', paramData, format);
-                                    console.log(stmt);
+                                    log.debug(stmt);
 
                                     conn.query(stmt, function( err, rows ) {
 
@@ -730,7 +732,7 @@ var modifyJisu = function(req, res) {
                                         }
 
                                         if ( rows ) {
-                                            console.log( rows );
+                                            log.debug( rows );
                                         }
 
                                         callback( null, paramData );
@@ -745,7 +747,7 @@ var modifyJisu = function(req, res) {
 
                                 if( paramData.dataLists != null && paramData.dataLists.length > 0  ) {
                                     stmt = mapper.getStatement('indexRegister', 'getHistNoByTmJisuUploadHist', paramData, format);
-                                    console.log(stmt);
+                                    log.debug(stmt);
 
                                     conn.query(stmt, function( err, rows ) {
 
@@ -759,7 +761,7 @@ var modifyJisu = function(req, res) {
 
                                         if( rows && rows[0].hist_no ) {
                                             paramData.hist_no   =   rows[0].hist_no;
-                                            console.log( rows );
+                                            log.debug( rows );
                                         }
 
                                         callback( null, paramData );
@@ -778,7 +780,7 @@ var modifyJisu = function(req, res) {
 
                                         /* 8. [tm_jisu_upload_hist] 테이블에 저장한다. */
                                         stmt = mapper.getStatement('indexRegister', 'saveTmJisuUploadHist', paramData, format);
-                                        console.log(stmt);
+                                        log.debug(stmt);
                                         
                                         conn.query(stmt, function( err, rows ) {
 
@@ -791,8 +793,8 @@ var modifyJisu = function(req, res) {
                                             }
 
                                             if( rows ) {
-                                                console.log( ">>>>>> end >>>>" );
-                                                console.log( rows );
+                                                log.debug( ">>>>>> end >>>>" );
+                                                log.debug( rows );
                                             }
 
                                             callback( null );
@@ -810,7 +812,7 @@ var modifyJisu = function(req, res) {
                         ], function (err) {
 
                             if( err ) {
-                                console.log( err );
+                                log.debug( err );
                                 conn.rollback();
                             }else{
 
@@ -835,8 +837,8 @@ var modifyJisu = function(req, res) {
         });
 
     } catch(expetion) {
-        console.log( "##5" );
-        console.log(expetion);
+        log.debug( "##5" );
+        log.debug(expetion);
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;
@@ -860,7 +862,7 @@ var modifyJisu = function(req, res) {
  */
 var deleteJisu = function(req, res) {
 
-    console.log('indexModify.js deleteJisu 호출됨.');
+    log.debug('indexModify.js deleteJisu 호출됨.');
 
     try{
         var pool = req.app.get("pool");
@@ -876,8 +878,8 @@ var deleteJisu = function(req, res) {
 
         /* body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            console.log("indexModify.deleteJisu  req.body.data no data.");
-            console.log(req.body.data);
+            log.debug("indexModify.deleteJisu  req.body.data no data.");
+            log.debug(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "입력값이 유효하지 않습니다.";
@@ -895,7 +897,7 @@ var deleteJisu = function(req, res) {
             paramData.large_type    =   req.session.large_type;
             paramData.krx_cd        =   req.session.krx_cd;
 
-            console.log( paramData );
+            log.debug( paramData );
 
             var format = { language: 'sql', indent: '' };
             Promise.using(pool.connect(), conn => {
@@ -916,7 +918,7 @@ var deleteJisu = function(req, res) {
                                 paramData.file_id   =   paramData.prev_method_file_id;
 
                                 stmt = mapper.getStatement('indexModify', 'getJisuMast', paramData, format);
-                                console.log(stmt);
+                                log.debug(stmt);
 
                                 conn.query(stmt, function( err, rows ) {
 
@@ -957,7 +959,7 @@ var deleteJisu = function(req, res) {
                                 paramData.file_id   =   paramData.prev_method_file_id;
 
                                 stmt = mapper.getStatement('indexModify', 'getJisuFile', paramData, format);
-                                console.log(stmt);
+                                log.debug(stmt);
 
                                 conn.query(stmt, function( err, rows ) {
 
@@ -1000,7 +1002,7 @@ var deleteJisu = function(req, res) {
                                             return callback( resultMsg );
                                         }
  */
-                                        console.log( reqParam.uploadFolder + "\\" + paramData.prev_save_file_name + " 파일삭제 완료");
+                                        log.debug( reqParam.uploadFolder + "\\" + paramData.prev_save_file_name + " 파일삭제 완료");
 
                                         callback( null, paramData );
                                     });
@@ -1025,7 +1027,7 @@ var deleteJisu = function(req, res) {
                                     paramData.file_id   =   paramData.prev_method_file_id;
 
                                     stmt = mapper.getStatement('indexModify', 'deleteJisuFile', paramData, format);
-                                    console.log(stmt);
+                                    log.debug(stmt);
 
                                     conn.query(stmt, function( err, rows ) {
 
@@ -1058,7 +1060,7 @@ var deleteJisu = function(req, res) {
                                 paramData.file_id   =   paramData.prev_jisu_file_id;
 
                                 stmt = mapper.getStatement('indexModify', 'getJisuFile', paramData, format);
-                                console.log(stmt);
+                                log.debug(stmt);
 
                                 conn.query(stmt, function( err, rows ) {
 
@@ -1101,7 +1103,7 @@ var deleteJisu = function(req, res) {
                                             return callback( resultMsg );
                                         }
  */
-                                        console.log( reqParam.uploadFolder + "\\" + paramData.prev_jisu_save_file_name + " 파일삭제 완료");
+                                        log.debug( reqParam.uploadFolder + "\\" + paramData.prev_jisu_save_file_name + " 파일삭제 완료");
 
                                         callback( null, paramData );
                                     });
@@ -1126,7 +1128,7 @@ var deleteJisu = function(req, res) {
                                     paramData.file_id   =   paramData.prev_jisu_file_id;
 
                                     stmt = mapper.getStatement('indexModify', 'deleteJisuFile', paramData, format);
-                                    console.log(stmt);
+                                    log.debug(stmt);
 
                                     conn.query(stmt, function( err, rows ) {
 
@@ -1158,7 +1160,7 @@ var deleteJisu = function(req, res) {
                                 paramData.file_id   =   paramData.prev_jisu_file_id;
 
                                 stmt = mapper.getStatement('indexModify', 'getJisuTempUploadCnt', paramData, format);
-                                console.log(stmt);
+                                log.debug(stmt);
 
                                 conn.query(stmt, function( err, rows ) {
 
@@ -1193,7 +1195,7 @@ var deleteJisu = function(req, res) {
                                     paramData.file_id   =   paramData.prev_jisu_file_id;
 
                                     stmt = mapper.getStatement('indexModify', 'deleteJisuTempUpload', paramData, format);
-                                    console.log(stmt);
+                                    log.debug(stmt);
 
                                     conn.query(stmt, function( err, rows ) {
 
@@ -1219,7 +1221,7 @@ var deleteJisu = function(req, res) {
                         function( data, callback ) {
 
                             stmt = mapper.getStatement('indexModify', 'getJisuUploadCnt', paramData, format);
-                            console.log(stmt);
+                            log.debug(stmt);
 
                             conn.query(stmt, function( err, rows ) {
 
@@ -1246,7 +1248,7 @@ var deleteJisu = function(req, res) {
                             if( paramData.exists_jisu_upload == "Y" ) {
 
                                 stmt = mapper.getStatement('indexModify', 'deleteJisuUpload', paramData, format);
-                                console.log(stmt);
+                                log.debug(stmt);
 
                                 conn.query(stmt, function( err, rows ) {
 
@@ -1271,7 +1273,7 @@ var deleteJisu = function(req, res) {
                         function( data, callback ) {
 
                             stmt = mapper.getStatement('indexModify', 'getJisuShareReqCnt', paramData, format);
-                            console.log(stmt);
+                            log.debug(stmt);
 
                             conn.query(stmt, function( err, rows ) {
 
@@ -1298,7 +1300,7 @@ var deleteJisu = function(req, res) {
                             if( paramData.exists_jisu_share_req == "Y" ) {
 
                                 stmt = mapper.getStatement('indexModify', 'deleteJisuShareReq', paramData, format);
-                                console.log(stmt);
+                                log.debug(stmt);
 
                                 conn.query(stmt, function( err, rows ) {
 
@@ -1322,7 +1324,7 @@ var deleteJisu = function(req, res) {
                         function( data, callback ) {
 
                             stmt = mapper.getStatement('indexModify', 'getJisuMastCnt', paramData, format);
-                            console.log(stmt);
+                            log.debug(stmt);
 
                             conn.query(stmt, function( err, rows ) {
 
@@ -1349,7 +1351,7 @@ var deleteJisu = function(req, res) {
                             if( paramData.exists_jisu_mast == "Y" ) {
 
                                 stmt = mapper.getStatement('indexModify', 'deleteJisuMast', paramData, format);
-                                console.log(stmt);
+                                log.debug(stmt);
 
                                 conn.query(stmt, function( err, rows ) {
 
@@ -1372,7 +1374,7 @@ var deleteJisu = function(req, res) {
                     ], function (err) {
 
                         if( err ) {
-                            console.log( err );
+                            log.debug( err );
                             conn.rollback();
                         }else{
 
@@ -1391,8 +1393,8 @@ var deleteJisu = function(req, res) {
         }
 
     } catch(expetion) {
-        console.log( "##5" );
-        console.log(expetion);
+        log.debug( "##5" );
+        log.debug(expetion);
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;

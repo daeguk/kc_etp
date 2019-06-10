@@ -28,15 +28,53 @@ export const nav_cal_common =   {
             //## [START] 자산별 value 세팅작업
     
             
+            
+
+
             /*자산이 원화예금(KRD010010001)일 경우 */
             var assetValue = "";
-            if (pdf_info.f16316 == "KRD010010001") {
+            if (pdf_info.f16316 == "CASH00000001") {
                 try {
                     assetValue = 1
 
                     let market_tot_amt = (assetValue * Number(pdf_info.f16499));  /* 시가총액 */
-                    let f15001 = market_tot_amt;       /* 현재가 */
-                    let f15007 = market_tot_amt;                  /* 기준가 */
+                    let f15001 = 1;       /* 현재가 */
+                    let f15007 = 1;                  /* 기준가 */
+                    let f15004 = 0;                     /* 등락률 */
+                    let f15472 = 0;                     /* 대비 */
+                    let f16013 = 'CASH';                     /* 종목코드 */
+
+                    let jongItem = {};
+                    jongItem.market_amt = market_tot_amt;
+                    jongItem.f15001 = f15001;
+                    jongItem.f15007 = f15007;
+                    jongItem.f15004 = f15004;
+                    jongItem.f15472 = f15472;
+                    jongItem.f16013 = f16013;
+
+                    resolve(jongItem);
+                } catch(e) {
+
+                    let jongItem = {};
+                    jongItem.market_amt = 0;
+                    jongItem.f15001 = 0;
+                    jongItem.f15007 = 0;
+                    jongItem.f15004 = 0;
+                    jongItem.f15472 = 0;
+                    jongItem.f16013 = 0;
+
+                    resolve(jongItem);
+                    console.log(e);
+                }
+            }
+
+            else if (pdf_info.f16316 == "KRD010010001") {
+                try {
+                    assetValue = 1
+
+                    let market_tot_amt = (assetValue * Number(pdf_info.f16499));  /* 시가총액 */
+                    let f15001 = 1;       /* 현재가 */
+                    let f15007 = 1;                  /* 기준가 */
                     let f15004 = 0;                     /* 등락률 */
                     let f15472 = 0;                     /* 대비 */
                     let f16013 = 'KRD';                     /* 종목코드 */

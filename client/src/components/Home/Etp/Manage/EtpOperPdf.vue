@@ -148,7 +148,6 @@ export default {
             vm.pdfData  =   vm.paramData;
         }
 
-        vm.fn_getPdfExistYnByNow();
         vm.fn_init();
     },
     created: function() {
@@ -169,6 +168,7 @@ export default {
 
                 if( vm.pdfData && Object.keys( vm.pdfData ).length > 0 ) {
 
+                    vm.searchParam.f16583       =   vm.pdfData.f16583;          /* 사무수탁회사번호 */
                     vm.searchParam.f16002       =   vm.pdfData.f16002;          /* 한글종목명 */
                     vm.searchParam.f16013       =   vm.pdfData.f16013;          /* 단축코드 */
 
@@ -194,6 +194,8 @@ export default {
                                                 +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
                                                 +   "-" 
                                                 +   _.padStart( new Date().getDate(), 2, '0' ) ;
+
+                vm.fn_getPdfExistYnByNow();
 
                 vm.fn_setTableInfo();
                 vm.fn_getEtpOerPdf( 'Y' );
@@ -225,6 +227,7 @@ export default {
                         var dataList = response.data.dataList;
 
                         if (dataList && dataList.length == 1) {
+                            vm.searchParam.f16583       =   dataList[0].f16583;     /* 사무수탁회사번호 */
                             vm.searchParam.f16002       =   dataList[0].f16002;     /* 한글종목명 */
                             vm.searchParam.f16013       =   dataList[0].f16013;     /* 단축코드 */
 
@@ -360,7 +363,7 @@ export default {
             vm.$emit( "fn_showProgress", true );
 
             axios.post( Config.base_url + "/user/etp/getPdfExistYnByNow", {
-                data: {  }
+                data: vm.searchParam
             }).then(function(response) {
                 console.log(response);
 

@@ -22,17 +22,6 @@
             <marketLeverageInverse v-if="showMarketInfo == 12" @showDetail="showDetail" @showMessageBox="showMessageBox" @showProgress="showProgress"></marketLeverageInverse>   
             <ConfirmDialog ref="confirm"></ConfirmDialog>
             <ProgressBar ref="progress"></ProgressBar>
-
-            <!-- PDF 수정내역 팝업 -->
-            <EtpOperPdfHistPop              v-if="showEtpOperPdfHistPop"
-
-                                            :paramData="paramData" 
-                                            :showDialog="showEtpOperPdfHistPop"
-
-                                            @showMessageBox="showMessageBox"
-                                            @fn_closePop="fn_closePdf" >
-            </EtpOperPdfHistPop>
-
         </v-flex>
         <v-flex :class="FaverClassName">
                 <ComFavorItemSub v-if="showFaver"   @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
@@ -84,7 +73,6 @@ export default {
             showFaver : false,
             className: '',
             FaverClassName: '',
-            showEtpOperPdfHistPop : false
     	};
     },    
 
@@ -124,7 +112,6 @@ export default {
             this.showEtpDetailDialog = false;
             this.showIndexDetailDialog = false;
             this.showEtpInfoPdfDetail = false;
-            this.showEtpOperPdfHistPop =   false;
             this.showFaver = false;
         });
     },
@@ -191,17 +178,6 @@ export default {
             util.processing(this.$refs.progress, visible);
         },
 
-        fn_showDetailPdf(gubun, paramData) {
-
-
-            this.paramData = paramData;
-
-            /* PDF 관리 -> PDF 긴급반영 팝업 */
-            if( gubun == '9' ) {
-                this.showEtpOperPdfHistPop  =   true;
-            }
-        },
-
         /*
          *  지소관리 상세 팝업에서 종료시 해당 팝업을 종료한다.
          *  2019-05-03  bkLove(촤병국)
@@ -211,16 +187,6 @@ export default {
 
             vm.showEtpInfoPdfDetail                =   false;
         },
-
-        /*
-         *  지소관리 상세 팝업에서 종료시 해당 팝업을 종료한다.
-         *  2019-05-03  bkLove(촤병국)
-         */
-        fn_closePdf( param ) {
-            var vm = this;
-
-            vm.showEtpOperPdfHistPop                =   false;
-        },        
     }   
 
 

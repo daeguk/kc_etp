@@ -4,7 +4,7 @@
  * @date 2019-02-08
  * @author ThreeOn
  */
-//var config = require('../../../config/config');
+var config = require('../../../config/config');
 var util = require("util");
 var Promise = require("bluebird");
 
@@ -13,10 +13,12 @@ var util = require("util");
 //var xlsx = require('xlsx');
 //var fs = require('fs'); 
 
+/* logging 추가함.  2019-06-10 */
+var log = config.logger;
 
 var getIndexSummaryInfo = function (req, res) {
     try {
-        console.log('indexSummary=>getIndexSummaryInfo 호출됨.');
+        log.debug('indexSummary=>getIndexSummaryInfo 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -79,7 +81,7 @@ var getIndexSummaryInfo = function (req, res) {
 
 var getInfoOpenReqList = function (req, res) {
     try {
-        console.log('indexSummary=>getInfoOpenReqList 호출됨.');
+        log.debug('indexSummary=>getInfoOpenReqList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -94,7 +96,7 @@ var getInfoOpenReqList = function (req, res) {
 
         var stmt = mapper.getStatement('index', 'indexReqList', params, {language:'sql', indent: '  '});
 
-        console.log(stmt);
+        log.debug(stmt);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -122,7 +124,7 @@ var getInfoOpenReqList = function (req, res) {
 
 var getindexSubscribeList = function (req, res) {
     try {
-        console.log('indexSummary=>getindexSubscribeList 호출됨.');
+        log.debug('indexSummary=>getindexSubscribeList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -137,7 +139,7 @@ var getindexSubscribeList = function (req, res) {
 
         var stmt = mapper.getStatement('index', 'getindexSubscribeList', params, {language:'sql', indent: '  '});
 
-        console.log(stmt);
+        log.debug(stmt);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -167,7 +169,7 @@ var getindexSubscribeList = function (req, res) {
 var updateIndexOpenYn = function(req, res) {
  
     try {
-        console.log('indexSummary=>updateIndexOpenYn 호출됨.');
+        log.debug('indexSummary=>updateIndexOpenYn 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -196,7 +198,7 @@ var updateIndexOpenYn = function(req, res) {
         
         var stmt = mapper.getStatement('index', 'updateIndexOpenYn', params, {language:'sql', indent: '  '});
     
-        console.log(stmt);
+        log.debug(stmt);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -226,7 +228,7 @@ var updateIndexOpenYn = function(req, res) {
 * Index 목록
 */
 var getInfoIndexList = function (req, res) {
-    console.log('indexSummary=>getInfoOpenReqList 호출됨.');
+    log.debug('indexSummary=>getInfoOpenReqList 호출됨.');
 
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
@@ -240,7 +242,7 @@ var getInfoIndexList = function (req, res) {
 
     var stmt = mapper.getStatement('index', 'getInfoIndexList', params, {language:'sql', indent: '  '});
 
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
         conn.queryAsync(stmt).then(rows => {
@@ -267,13 +269,13 @@ var getInfoIndexList = function (req, res) {
 */
 var getIndexSummaryHist = function (req, res) {
     try {
-        console.log('indexSummary=>getindexsummaryhist 호출됨.');
+        log.debug('indexSummary=>getindexsummaryhist 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
         // var options = {id:'admin'};
-        console.log("req.query");
-        console.log(req.query);
+        log.debug("req.query");
+        log.debug(req.query);
         var options = {
             large_type : req.session.large_type == null ? '' : req.session.large_type,
             JISU_ID: req.query.jisu_id,
@@ -281,7 +283,7 @@ var getIndexSummaryHist = function (req, res) {
         };
 
         var stmt = mapper.getStatement('index', 'selectIndexSummaryHist', options, {language:'sql', indent: '  '});
-        console.log(stmt);
+        log.debug(stmt);
  
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -311,7 +313,7 @@ var getIndexSummaryHist = function (req, res) {
 */
 var getIndexBaseInfo = function (req, res) {
     try {
-        console.log('indexSummary=>getIndexBaseInfo 호출됨.');
+        log.debug('indexSummary=>getIndexBaseInfo 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -357,7 +359,7 @@ var getIndexBaseInfo = function (req, res) {
 */
 var getIndexEtpHistoryData = function (req, res) {
     try {
-        console.log('indexSummary=>getIndexEtpHistoryData 호출됨.');
+        log.debug('indexSummary=>getIndexEtpHistoryData 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -406,7 +408,7 @@ var getIndexEtpHistoryData = function (req, res) {
 */
 var getIndexInEtpInfo = function (req, res) {
     try {
-        console.log('indexSummary=>getIndexInEtpInfo 호출됨.');
+        log.debug('indexSummary=>getIndexInEtpInfo 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -453,7 +455,7 @@ var getIndexInEtpInfo = function (req, res) {
 */
 var getIndexImportanceList = function (req, res) {
     try {
-        console.log('indexSummary=>getIndexImportanceList 호출됨.');
+        log.debug('indexSummary=>getIndexImportanceList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -472,7 +474,7 @@ var getIndexImportanceList = function (req, res) {
         // 대입 문자 치환
         stmt = stmt.replace(/\: =/g,':='); 
      
-        console.log(stmt);
+        log.debug(stmt);
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -503,7 +505,7 @@ var getIndexImportanceList = function (req, res) {
 
 var getIndexAnalysisInfo = function (req, res) {
     try {
-        console.log('indexSummary=>getIndexAnalysisInfo 호출됨.');
+        log.debug('indexSummary=>getIndexAnalysisInfo 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -522,7 +524,7 @@ var getIndexAnalysisInfo = function (req, res) {
         // 대입 연산자 치환
         stmt = stmt.replace(/\: =/g,':='); 
      
-        console.log(stmt);
+        log.debug(stmt);
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -552,7 +554,7 @@ var getIndexAnalysisInfo = function (req, res) {
 
 var getIndexAnalysisData = function (req, res) {
     try {
-        console.log('indexSummary=>getIndexAnalysisInfo 호출됨.');
+        log.debug('indexSummary=>getIndexAnalysisInfo 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -578,7 +580,7 @@ var getIndexAnalysisData = function (req, res) {
         // 대입 연산자 치환
         stmt = stmt.replace(/\: =/g,':='); 
      
-        console.log(stmt);
+        log.debug(stmt);
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -611,7 +613,7 @@ var getIndexAnalysisData = function (req, res) {
 
 var getShareReqCnt = function (req, res) {
     try {
-        console.log('indexSummary=>getShareReqCnt 호출됨.');
+        log.debug('indexSummary=>getShareReqCnt 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -652,7 +654,7 @@ var getShareReqCnt = function (req, res) {
 
 var getIndexRegStateCnt = function (req, res) {
     try {
-        console.log('indexSummary=>getIndexRegStateCnt 호출됨.');
+        log.debug('indexSummary=>getIndexRegStateCnt 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
