@@ -2,7 +2,9 @@
 <div class="context-menu">
   <v-list  two-line  class="menu_list">
     <v-list-tile v-for="(menu, index) in menuList" :key="index" :menu='menu' v-on:click="movePage(menu)">
-      <v-list-tile-avatar><object type="image/svg+xml" :data="menu.imagePath" width="36px" height="36px" ></object></v-list-tile-avatar>
+      <v-list-tile-avatar>
+        <img :src="menu.imagePath" width="36px" height="36px">
+      </v-list-tile-avatar>
       <v-list-tile-content>
         <v-list-tile-title>{{menu.title}}</v-list-tile-title>
         <v-list-tile-sub-title>{{menu.stitle}}</v-list-tile-sub-title>

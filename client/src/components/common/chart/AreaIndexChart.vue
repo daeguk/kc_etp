@@ -117,28 +117,6 @@ export default {
             if(slen > 6) c.fillText(this.chartItem.f15004 + "%", 125, 60);
             else  c.fillText(this.chartItem.f15004 + "%", 125, 60);
 
-            // 우측 하단 자산총액
-            c.fillStyle = "#757575";
-            c.fillRect(140, 108, 30, 14);
-            c.fillStyle = "white";
-            c.font = '11px san-serif';
-            c.fillText("ETF", 147, 119);
-
-            c.fillStyle = "#424242";
-            c.fillRect(140, 125, 30, 14);
-            c.fillStyle = "white";
-            c.font = '11px san-serif';
-            c.fillText("ETN", 146, 136);
-
-            c.fillStyle = "#5e870b";
-            c.font = '14px san-serif';
-            c.textAlign = "end";
-            c.fillText(this.chartItem.etf_sum + " AUM", 330, 120);
-            c.fillStyle = "#5e870b";
-            c.font = '14px san-serif';
-            c.textAlign = "end";
-            c.fillText(this.chartItem.etn_sum + " 원", 330, 137);
-
             this.bef_tooltip_img = c.getImageData(0, 0, this.chartItem.width, this.chartItem.height);
         },
         drawToolTip: function(event) {
