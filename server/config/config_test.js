@@ -8,7 +8,7 @@
 const log4js = require('log4js');
 log4js.configure({
     appenders:  { output:   { type: 'file', filename: 'D:/koscom_etp/log/etp.log' } },
-    categories: { default :  { appenders: ['output'], level: 'debug' } }
+    categories: { default :  { appenders: ['output'], level: 'error' } }
 });
 
 const logger = log4js.getLogger('output');
