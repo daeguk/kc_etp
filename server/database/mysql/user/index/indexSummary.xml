@@ -128,7 +128,7 @@
         SELECT A.JISU_CD                                            /*지수코드*/
               ,A.JISU_NM                                            /*지수명*/
               ,date_format(A.IP_DT, '%Y-%m-%d') IP_DT               /*입회일자*/
-              ,if(A.ANNO_DATE is null, '미발표', '발표') ANNO_YN     /*발표여부*/
+              ,if(A.ANNO_DATE is null, '연동', '발표') ANNO_YN     /*발표여부*/
               ,A.INDEX_CAL_METHOD                                   /*지수산출방식*/
               ,A.MARKET_ID                                          /*시장ID*/
               ,A.ETP_MARKET_ID                                      /*ETP시장구분*/
