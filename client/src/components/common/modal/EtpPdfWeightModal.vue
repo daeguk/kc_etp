@@ -1,32 +1,47 @@
 <template>
+<v-layout>
+    <v-flex>
     <v-dialog v-model="dialog" persistent max-width="600px">
-    <v-card>
-      <br>
-      <span class="headline">종목 비중정보({{etpBasic.f16002}})</span>
-      <span style="float:right; margin-right:20px">
-      <v-btn icon @click="closeModal"><v-icon>close</v-icon>
-      </v-btn>
-      </span>
-      <div>
-        <span style="margin-left:30px">Total {{jCnt}}</span>
-      </div>
-      <div class="table_container">
-        <div class="table_wrapper">
-          <table>
+    <v-card flat>
+        <h5>
+            <v-card-title ma-0>
+            종목 비중정보({{etpBasic.f16002}})
+            <v-spacer></v-spacer>
+            <v-btn icon @click="closeModal"><v-icon>close</v-icon></v-btn>
+            </v-card-title>
+        </h5>
+        <div class="index3pop2_con">
+            <v-list subheader two-line>
+               <v-list-tile>
+                   <v-list-tile-title>Total</v-list-tile-title>
+                   <v-list-tile-content>{{jCnt}}</v-list-tile-content>
+                </v-list-tile>
+            </v-list>
+       </div>
+      <div class="table-box-wrap">
+          <div class="table-box" style="max-height:500px;">
+          <table class="tbl_type ver8">
+              <caption>헤더 고정 테이블</caption>
+            <colgroup>
+				<col width="30%">
+				<col width="30%">
+				<col width="20%">
+                <col width="20%">
+			</colgroup>
             <thead>
               <tr>
-                <th style="width:10%">Code</th>
-                <th style="width:40%">Name</th>
-                <th style="width:40%">Allocation</th>
-                <th style="width:10%">GUBUN</th>
+                <th style="width:30%" class="txt_left">Code</th>
+                <th style="width:30%"  class="txt_left">Name</th>
+                <th style="width:20%" class="txt_right">Allocation</th>
+                <th style="width:20%" class="txt_right">GUBUN</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(item, index) in etpWeight" :key="index">
-                <td>{{item.ISIN_CODE}}</td>
-                <td>{{item.JONG_NM}}</td>
-                <td>{{item.PERCNT}}</td>
-                <td>{{item.GUBUN}}</td>
+                <td class="txt_left">{{item.ISIN_CODE}}</td>
+                <td class="txt_left">{{item.JONG_NM}}</td>
+                <td class="txt_right">{{item.PERCNT}}</td>
+                <td class="txt_right">{{item.GUBUN}}</td>
               </tr>
             </tbody>
           </table>
@@ -34,6 +49,8 @@
       </div>
     </v-card>
     </v-dialog>
+    </v-flex>
+</v-layout>
 </template>
 
 <script>
@@ -80,42 +97,3 @@ export default {
   }  
 }
 </script>
-<style scoped>
-.table_container {
-  height:500px; 
-  overflow-y:auto;
-  margin: 0px 20px 20px 20px;
-}
-
-.table_wrapper {
-  border: 1px solid #444444;
-  /*
-  padding: 0px 0px 20px 0px;
-  border-radius: 10px;
-  */
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  border-spacing: 0;
-  border-style: hidden;
-}
-table th {
-  border: 1px solid #444444;
-  background: #eee;
-  padding: 4px;
-  text-align: center;
-}
-table td {
-  border: 1px solid #444444;
-  padding: 4px;
-  text-align: center;
-}
-table tr:hover {
-  background: #fbf8e9;
-}    
-.headline {
-  padding: 20px 0px 0px 20px;
-}
-</style>

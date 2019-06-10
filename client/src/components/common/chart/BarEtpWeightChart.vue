@@ -14,19 +14,18 @@ export default {
       canvas:{},
       ctx:{},
       chartId:"BarEtpWeightChart",
-      chart:{width:1100, height:400},
+      chart:{width:1100, height:360},
       grad:{},
-      bwidth: 850,
+      bwidth: 790,
       results: [],
       weights: [],
       weightsNum: [],
       maxWeightNum: 0,
-      bpos: 140,
+      bpos: 180,
       spos: [],
       weightText: ["에너지", "소재", "산업재", "자유소비재", "필수소비재", "건강관리", "금융",
         "정보기술", "커뮤니케이션서비스", "유틸리티", "부동산"],
-      color1: ['#90CAF9', '#80DEEA', '#80CBC4', '#A5D6A7', '#E6EE9C', 
-        '#FFCC80', '#EF9A9A', '#F48FB1', '#CE93D8', '#9FA8DA', '#BCAAA4'],
+      color1: ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde', '#B6B8BA', '#7E8083', '#FBB040', '#F58025', '#EDED8A', '#85c406', '#209267'] ,
     };
   },    
   watch: {
@@ -65,7 +64,7 @@ export default {
       c.fillStyle = "#424242";
       c.textBaseline = "middle";
       c.textAlign = "left";
-      c.font = '12px san-serif';
+      c.font = '14px san-serif';
       for(var i=0; i < this.weightText.length; i++) {
         c.fillText(this.weightText[i], 10, 30 + i*30);
       }
@@ -78,7 +77,7 @@ export default {
       c.fillStyle = "#424242";
       c.textBaseline = "middle";
       c.textAlign = "left";
-      c.font = '12px san-serif';
+      c.font = '14px san-serif';
       for(var i=0; i < this.weightText.length; i++) {
         c.fillText(this.weights[i] + "%", this.spos[i] + 10, 30 + i*30);
       }
@@ -88,10 +87,10 @@ export default {
       var c = this.ctx;
       c.beginPath();
       c.save();
-      c.strokeStyle = "#37474F";
+      c.strokeStyle = "#a8a8a8";
       c.lineWidth = 1;
-      c.moveTo(130, 20);
-      c.lineTo(130, 340);
+      c.moveTo(160, 20);
+      c.lineTo(160, 340);
       c.stroke();
       c.closePath();
       c.restore();

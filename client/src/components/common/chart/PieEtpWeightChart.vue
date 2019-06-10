@@ -14,7 +14,7 @@ export default {
       canvas:{},
       ctx:{},
       chartId:"PieEtpWeightChart",
-      chart:{width:500, height:300},
+      chart:{width:500, height:330},
       grad:{},
       mrect:{},
       cX: 0,
@@ -24,10 +24,8 @@ export default {
       sumWeight: 0,
       weights: [],
       angles: [],
-      color1: ['#90CAF9', '#80DEEA', '#80CBC4', '#A5D6A7', '#E6EE9C', 
-        '#FFCC80', '#EF9A9A', '#F48FB1', '#CE93D8', '#9FA8DA'],
-      color2: ['#BBDEFB', '#B2EBF2', '#B2DFDB', '#C8E6C9', '#F0F4C3', 
-        '#FFE0B2', '#FFCDD2', '#F8BBD0', '#E1BEE7', '#C5CAE9'],
+      color1: ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde', '#B6B8BA', '#7E8083', '#FBB040', '#F58025', '#EDED8A'],
+      color2: ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde', '#B6B8BA', '#7E8083', '#FBB040', '#F58025', '#EDED8A'],
     };
   },    
   watch: {
