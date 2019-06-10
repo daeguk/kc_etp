@@ -62,18 +62,6 @@
                     </div>      
                 </v-card>
 
-            <!-- inst_cd (기관코드) 가 같은 사용자가 작성한 PDF 수정건이 있는지 -->
-                <v-card flat class="pdf_mody_w" v-if='emergency_exist_yn == "Y"'>
-                    <v-toolbar card prominent>
-                        <v-toolbar-title class="pdf_t">
-                            <v-icon class="text_red">feedback</v-icon>PDF 수정된 내용이 있습니다.
-                        </v-toolbar-title>
-
-                        <v-btn outline small color="primary" dark   @click.stop="fn_showDetailPdf(9, pdfData)">
-                            <v-icon small color="primary">add</v-icon>수정내역 보기
-                        </v-btn>
-                    </v-toolbar>
-                </v-card>
 
                 <v-card flat>
                         <table id="tblPdfList" class="tbl_type ver7"></table>
@@ -137,7 +125,6 @@ export default {
 
         vm.pdfData  =   vm.paramData;
 
-        vm.fn_getPdfExistYnByNow();
         vm.fn_init();
 
     },
@@ -234,33 +221,6 @@ export default {
                 });
             }
             
-        },
-
-        /*
-         * 현재일자에 PDF 변경건이 존재하는지 반환한다.
-         * 2019-05-03  bkLove(촤병국)
-         */
-        fn_getPdfExistYnByNow() {
-
-            var vm = this;
-
-            console.log( "fn_getPdfExistYnByNow called" );
-            
-            vm.$emit( "fn_showProgress", true );
-
-            axios.post( Config.base_url + "/user/etp/getPdfExistYnByNow", {
-                data: {  }
-            }).then(function(response) {
-                console.log(response);
-
-                vm.$emit( "fn_showProgress", false );
-
-                if (response.data) {
-                    if( response.data.emergency_exist_yn ) {
-                        vm.emergency_exist_yn   =   response.data.emergency_exist_yn;
-                    }
-                }
-            });
         },
 
         /*
@@ -492,12 +452,6 @@ export default {
 
             vm.$emit( "fn_closePop", "close" );
         },
-
-        fn_showDetailPdf(gubun, paramData) {
-            var vm = this;
-
-            vm.$emit( "fn_showDetailPdf", gubun, paramData );
-        },              
     }
 };
 </script>
