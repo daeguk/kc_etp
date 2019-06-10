@@ -312,11 +312,11 @@ var getEtpList = function(req, res) {
                                 var etf_cnt = 0;
                                 var etn_cnt = 0;
 
-                                //util.log("(carousel_info.carousel_cnt * 5):" , (carousel_info.carousel_cnt * 5));
-                                //util.log("index" , index);
+                                //log.debug("(carousel_info.carousel_cnt * 5):" , (carousel_info.carousel_cnt * 5));
+                                //log.debug("index" , index);
 
                                 if ((carousel_info.carousel_cnt * 5) > index) {
-                                    //util.log("data:=====================", index);
+                                    //log.debug("data:=====================", index);
 
                                     async.forEachOf(rows, function(item, idx) {
                                         total_amt += Number(item.f15028);
@@ -331,7 +331,7 @@ var getEtpList = function(req, res) {
 
                                     carousel_data.push({ "ctg_code": ctgCodeItem.ctg_code, "name": ctgCodeItem.ctg_name, "total_amt": total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt });
                                 } else {
-                                    //util.log("mode:=====================", index);
+                                    //log.debug("mode:=====================", index);
                                     async.forEachOf(rows, function(item, idx) {
                                         total_amt += Number(item.f15028);
 
@@ -453,11 +453,11 @@ var getEtfKorList = function(req, res) {
     /*
         Promise.using(pool.connect(), conn => {
           conn.queryAsync(stmt).then(rows => {
-                  util.log("sql1" == rows.affectedRows)
+                  log.debug("sql1" == rows.affectedRows)
                   res.json({ success: true, results: rows });
                   res.end();
               }).catch(err => {
-                  util.log("Error while performing Query.", err);
+                  log.debug("Error while performing Query.", err);
                   res.json({ success: false, message: err });
                   res.end();
               });
@@ -480,11 +480,11 @@ var getEtfForList = function(req, res) {
 
     Promise.using(pool.connect(), conn => {
         conn.queryAsync(stmt).then(rows => {
-            util.log("sql1" == rows.affectedRows)
+            log.debug("sql1" == rows.affectedRows)
             res.json({ success: true, results: rows });
             res.end();
         }).catch(err => {
-            util.log("Error while performing Query.", err);
+            log.debug("Error while performing Query.", err);
             res.json({ success: false, message: err });
             res.end();
         });
@@ -506,11 +506,11 @@ var getEtnKorList = function(req, res) {
 
     Promise.using(pool.connect(), conn => {
         conn.queryAsync(stmt).then(rows => {
-            util.log("sql1" == rows.affectedRows)
+            log.debug("sql1" == rows.affectedRows)
             res.json({ success: true, results: rows });
             res.end();
         }).catch(err => {
-            util.log("Error while performing Query.", err);
+            log.debug("Error while performing Query.", err);
             res.json({ success: false, message: err });
             res.end();
         });
@@ -532,11 +532,11 @@ var getEtnForList = function(req, res) {
 
     Promise.using(pool.connect(), conn => {
         conn.queryAsync(stmt).then(rows => {
-            util.log("sql1" == rows.affectedRows)
+            log.debug("sql1" == rows.affectedRows)
             res.json({ success: true, results: rows });
             res.end();
         }).catch(err => {
-            util.log("Error while performing Query.", err);
+            log.debug("Error while performing Query.", err);
             res.json({ success: false, message: err });
             res.end();
         });

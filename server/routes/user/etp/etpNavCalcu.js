@@ -38,7 +38,7 @@ var getiNavData = function (req, res) {
                 
                     var stmt = mapper.getStatement('etpDetail', 'getEtpBasic', params, {language:'sql', indent: '  '});
                     
-                    util.log("getEtpBasic:", stmt);
+                    log.debug("getEtpBasic:", stmt);
 
                     conn.query(stmt, function( err, rows ) {
                         callback(null, rows);                                 
@@ -85,7 +85,7 @@ var getiNavData = function (req, res) {
         });
     } catch (exception) {
 
-        util.log("Error while performing Query.", exception);
+        log.debug("Error while performing Query.", exception);
         res.json({
             success: false,
             message: exception
@@ -112,7 +112,7 @@ var getExchBasic = function (req, res) {
             "f16012" : f16012
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('etpOper', 'getExchBasic', options, {language:'sql', indent: '  '});
         
@@ -128,7 +128,7 @@ var getExchBasic = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -138,7 +138,7 @@ var getExchBasic = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -160,7 +160,7 @@ var getKspjongBasic = function (req, res) {
             "f16012" : f16012
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('etpOper', 'getKspjongBasic', options, {language:'sql', indent: '  '});
         
@@ -176,7 +176,7 @@ var getKspjongBasic = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -186,7 +186,7 @@ var getKspjongBasic = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -217,7 +217,7 @@ var getFutureBasic = function (req, res) {
 */
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('etpOper', 'getFutureBasic', options, {language:'sql', indent: '  '});
         
@@ -233,7 +233,7 @@ var getFutureBasic = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -243,7 +243,7 @@ var getFutureBasic = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -265,7 +265,7 @@ var getBondBasic = function (req, res) {
             "f16012" : f16012
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('etpOper', 'getBondBasic', options, {language:'sql', indent: '  '});
         
@@ -281,7 +281,7 @@ var getBondBasic = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -291,7 +291,7 @@ var getBondBasic = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
