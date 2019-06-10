@@ -16,7 +16,6 @@ var log = config.logger;
 /*
 * INDEX BASIC 조회
 */
-
 var getIndexBasic = function(req, res) {
   log.debug('marketInfo 모듈 안에 있는 getIndexBasic 호출됨.');
 
@@ -50,6 +49,81 @@ try {
 }
 };
 
+/*
+* KRX INDEX LIST 조회 (By Type)
+*/
+var getKrxIndexListByType = function(req, res) {
+  log.debug('marketInfo 모듈 안에 있는 getKrxIndexListByType 호출됨.');
+
+  if(req.query.selIndexType == "TOTAL") req.query.selIndexType = "";
+  var options = {
+    selIndexType : req.query.selIndexType,
+  };
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('common.item', 'getKrxIndexListByType', options, {language:'sql', indent: '  '});
+    log.debug(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+/*
+* KRX INDEX LIST 조회 (By Type & 구간별 지수데이터)
+*/
+var getKrxIndexListByType1 = function(req, res) {
+  log.debug('marketInfo 모듈 안에 있는 getKrxIndexListByType1 호출됨.');
+
+  if(req.query.selIndexType == "TOTAL") req.query.selIndexType = "";
+  var options = {
+    selIndexType : req.query.selIndexType,
+    bef1Week: req.query.bef1Week,
+    bef1Month: req.query.bef1Month,
+    befYtd: req.query.befYtd,
+    bef1Year: req.query.bef1Year,
+    bef3Year: req.query.bef3Year,
+  };
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('common.item', 'getKrxIndexListByType1', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    util.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
 /*
 * INDEX INTRA 조회
 */
@@ -874,6 +948,8 @@ var getMarketIndexList = function (req, res) {
 
 module.exports.getIndexBasic = getIndexBasic;
 module.exports.getIndexIntra = getIndexIntra;
+module.exports.getKrxIndexListByType = getKrxIndexListByType;
+module.exports.getKrxIndexListByType1 = getKrxIndexListByType1;
 module.exports.getEtpBasic = getEtpBasic;
 module.exports.getEtpIntra = getEtpIntra;
 module.exports.getEtpMultiIntra = getEtpMultiIntra;

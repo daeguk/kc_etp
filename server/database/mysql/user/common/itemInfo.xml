@@ -160,6 +160,51 @@
         ORDER BY F20044 desc, F20004 desc LIMIT 100
     </select>
 
+    <select id="getKrxIndexListByType">
+        SELECT *
+        FROM td_index_basic
+        WHERE large_type = "KRX"
+        <if test="selIndexType != null and selIndexType !=''">
+          AND middle_type like CONCAT('%',#{selIndexType},'%')
+        </if>
+        ORDER BY F16013 ASC
+    </select>
+
+    <select id="getKrxIndexListByType1">
+        SELECT *,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef1Week}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Week,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef1Month}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Month,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{befYtd}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS befYtd,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef1Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Year,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef3Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef3Year
+        FROM td_index_basic A
+        WHERE A.large_type = "KRX"
+        <if test="selIndexType != null and selIndexType !=''">
+          AND A.middle_type like CONCAT('%',#{selIndexType},'%')
+        </if>
+        ORDER BY A.F15023 DESC
+    </select>
+
     <select id="getEtpBasic">
         SELECT *
         FROM td_etp_basic

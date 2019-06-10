@@ -76,12 +76,94 @@ var util = {
       return toFixNum;
     },
 
+    getDiffRate: function(curr, base) {
+      var diffRate = "";
+      if(base == null || base == "" || base == undefined) {
+        diffRate = " - ";
+      }else {
+        let tmp = 0.0;
+        tmp = (curr - base) * 100 / base;
+        diffRate = tmp.toFixed(2);
+      }
+
+      return diffRate;
+    },
     processing: function(component, visible) {
         if (visible) {
             component.open();
         } else {
             component.close();
         }
+    },
+
+    getToday: function() {
+      var d = new Date();
+      var myear = d.getFullYear();
+      var mmonth = d.getMonth() + 1;
+      var mday = d.getDate();
+
+      if(mmonth < 10) mmonth = "0" + mmonth;
+      if(mday < 10) mday = "0" + mday;
+
+      return myear + "" + mmonth + "" + mday;
+    },
+    getBef1Week: function() {
+      var d = new Date();
+      var tdate = d.getTime() - (7 * 24 * 60 * 60 * 1000);
+      var mdate = new Date();
+      mdate.setTime(tdate);
+      var myear = mdate.getFullYear();
+      var mmonth = mdate.getMonth() + 1;
+      var mday = mdate.getDate();
+
+      if(mmonth < 10) mmonth = "0" + mmonth;
+      if(mday < 10) mday = "0" + mday;
+
+      return myear + "" + mmonth + "" + mday;
+    },
+    getBef1Month: function() {
+      var mdate = new Date();
+      mdate.setMonth(mdate.getMonth()-1);
+      var myear = mdate.getFullYear();
+      var mmonth = mdate.getMonth() + 1;
+      var mday = mdate.getDate();
+
+      if(mmonth < 10) mmonth = "0" + mmonth;
+      if(mday < 10) mday = "0" + mday;
+
+      return myear + "" + mmonth + "" + mday;
+    },
+    getBefYtd: function() {
+      var mdate = new Date();
+      var myear = mdate.getFullYear();
+
+      return myear + "0101";
+    },
+
+    getBef1Year: function() {
+      var mdate = new Date();
+      mdate.setFullYear(mdate.getFullYear()-1);
+      var myear = mdate.getFullYear();
+      var mmonth = mdate.getMonth() + 1;
+      var mday = mdate.getDate();
+
+      if(mmonth < 10) mmonth = "0" + mmonth;
+      if(mday < 10) mday = "0" + mday;
+
+      return myear + "" + mmonth + "" + mday;
+    },
+
+    getBef3Year: function() {
+      var mdate = new Date();
+      mdate.setFullYear(mdate.getFullYear()-3);
+      var myear = mdate.getFullYear();
+      var mmonth = mdate.getMonth() + 1;
+      var mday = mdate.getDate();
+
+      if(mmonth < 10) mmonth = "0" + mmonth;
+      if(mday < 10) mday = "0" + mday;
+
+      return myear + "" + mmonth + "" + mday;
     },
 
 }  

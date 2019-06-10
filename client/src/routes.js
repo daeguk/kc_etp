@@ -21,18 +21,17 @@ import  EtpRegisterMain                     from './components/Home/Etp/Register
 import  EtpContractMain                     from './components/Home/Etp/Contract/EtpContractMain.vue';
 import  EtpManageDetail                     from './components/Home/Etp/Manage/EtpManageDetail.vue';
 
-// MARKET INFO
+// MARKET ETP INFO
 import EtpInfoMain              from  './components/Home/MarketInfo/etp/EtpInfoMain.vue'
 
-
-// TODAY
-import  Today1Main   from './components/Home/MarketInfo/index/IndexInfoMain.vue'
+// MARKET INDEX INFO
+import  IndexInfoMain   from './components/Home/MarketInfo/index/IndexInfoMain.vue'
+import  KrxIndexList   from './components/Home/MarketInfo/index/KrxIndexList.vue'
+import  FngIndexList   from './components/Home/MarketInfo/index/FngIndexList.vue'
 
 
 import  sampleChart   from '@/components/Sample/test.vue'
 import  sampleUpload   from '@/components/Sample/fileUpload.vue'
-
-
 
 // 관리자
 export const routes = [
@@ -48,7 +47,15 @@ export const routes = [
             
         },
         {   path : 'info/indexinfo',
-            component: Today1Main,
+            component: IndexInfoMain,
+            children: [
+              { path: 'krxindexlist',
+                component: KrxIndexList
+              },
+              { path: 'fngindexlist',
+                component: FngIndexList
+              },
+            ]
         },
         {   path : 'sample/test',
             component: sampleChart,

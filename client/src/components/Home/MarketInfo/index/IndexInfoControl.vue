@@ -1,13 +1,14 @@
 <template>
   <v-layout row wrap class="content_margin con_wrap">
     <v-flex grow :class="className">
-        <KrxIndexList v-if="showMarketInfo == 0"></KrxIndexList>         
+      <KrxIndexList v-if="activeTab == 1"></KrxIndexList>       
+      <FngIndexList v-if="activeTab == 2"></FngIndexList>       
 <!--        
-        <IndexDetailInfo v-if="showIndexDetailDialog" :showDialog="true" :showView="true"  :paramData="paramData"></IndexDetailInfo>
-        <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
-        <ConfirmDialog ref="confirm"></ConfirmDialog>
-        <ProgressBar ref="progress"></ProgressBar>
-        -->
+      <IndexDetailInfo v-if="showIndexDetailDialog" :showDialog="true" :showView="true"  :paramData="paramData"></IndexDetailInfo>
+      <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
+      <ConfirmDialog ref="confirm"></ConfirmDialog>
+      <ProgressBar ref="progress"></ProgressBar>
+      -->
     </v-flex>
     <v-flex :class="FaverClassName">
       <ComFavorItemSub v-if="showFaver"   @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
@@ -21,6 +22,7 @@ import util       from "@/js/util.js";
 import Config from "@/js/config.js";
 import today from "./today.vue";
 import KrxIndexList from "./KrxIndexList.vue";
+import FngIndexList from "./FngIndexList.vue";
 import ComFavorItemSub from "@/components/common/control/ComFavorItemSub"; 
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import ProgressBar from "@/components/common/ProgressBar.vue";
@@ -28,20 +30,19 @@ import ProgressBar from "@/components/common/ProgressBar.vue";
 import IndexDetailInfo from "@/components/Home/Index/Manage/IndexDetailInfo.vue";   /*지수 상세정보*/
 import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";         /*ETP 상세정보*/
 
-
 export default {
-    props: ["activeTab"],
-    data() {
-        return {
-            showIndexDetailDialog : false,
-            showEtpDetailDialog : false,
-            showMarketInfo : 0,
-            paramData : [],
-            showFaver : false,
-            className: '',
-            FaverClassName: '',
-    	};
-    },    
+  props: ["activeTab"],
+  data() {
+    return {
+      showIndexDetailDialog : false,
+      showEtpDetailDialog : false,
+      showMarketInfo : 0,
+      paramData : [],
+      showFaver : false,
+      className: '',
+      FaverClassName: '',
+    };
+  },    
 
     components: {
         ComFavorItemSub : ComFavorItemSub,
@@ -50,12 +51,14 @@ export default {
         IndexDetailInfo : IndexDetailInfo,
         EtpManageDetail :   EtpManageDetail,
         KrxIndexList,
+        FngIndexList,
     },
 
     mounted: function() {
         // 메시지 박스 참조
         this.$root.$confirm = this.$refs.confirm;
         this.className = "conWidth_100";
+        console.log("activeTab : " + this.activeTab);
     },
     created: function() {
         this.$EventBus.$on('showList', data => {
