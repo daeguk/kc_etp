@@ -76,7 +76,7 @@ export default {
             carousel_data:[],
             carousel_mod:[],
             intra_data:[],
-            rep_info:[{seq:1, f16013:"1", market_id:"M002", name:"KOSPI", f15001:"2,078.00", 
+            rep_info:[{seq:1, f16013:"1", market_id:"M002", name:"KOSPI", f15001:"", 
                         f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#def5ae", eColor:"#ffffff",
                         width:340, height:150, marginW:1, marginH:40},
               {seq:2, f16013:"51", market_id:"M002", name:"KOSPI 200", f15001:"", 
