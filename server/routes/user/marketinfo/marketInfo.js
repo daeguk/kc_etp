@@ -10,12 +10,15 @@ var Promise = require("bluebird");
 var async = require('async'); 
 var util = require("util");
 
+/* logging 추가함.  2019-06-10 */
+var log = config.logger;
+
 /*
 * INDEX BASIC 조회
 */
 
 var getIndexBasic = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getIndexBasic 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getIndexBasic 호출됨.');
 
   var options = {
     f16013 : req.query.f16013,
@@ -26,7 +29,7 @@ try {
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('common.item', 'getIndexBasic', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -38,7 +41,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -52,7 +55,7 @@ try {
 */
 
 var getIndexIntra = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getIndexIntra 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getIndexIntra 호출됨.');
 
   var options = {
     f16013 : req.query.f16013,
@@ -63,7 +66,7 @@ try {
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('common.item', 'getIndexIntra', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -75,7 +78,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -89,7 +92,7 @@ try {
 */
 
 var getEtpBasic = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getEtpBasic 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getEtpBasic 호출됨.');
 
   var options = {
     f16013 : req.query.f16013,
@@ -99,7 +102,7 @@ try {
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('common.item', 'getEtpBasic', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -111,7 +114,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -124,7 +127,7 @@ try {
 * ETP INTRA 조회
 */
 var getEtpIntra = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getEtpIntra 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getEtpIntra 호출됨.');
 
   var options = {
     f16013 : req.query.f16013,
@@ -134,7 +137,7 @@ try {
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('common.item', 'getEtpIntra', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -146,7 +149,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -159,7 +162,7 @@ try {
 * ETP Multi INTRA 조회
 */
 var getEtpMultiIntra = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getEtpMultiIntra 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getEtpMultiIntra 호출됨.');
 
   var options = {
     f16013 : req.query.f16013,
@@ -173,7 +176,7 @@ try {
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('common.item', 'getEtpMultiIntra', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -185,7 +188,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -197,7 +200,7 @@ try {
 * ETP Multi INTRA 조회
 */
 var getEtpMultiHist = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getEtpMultiHist 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getEtpMultiHist 호출됨.');
 
   var options = {
     f16013 : req.query.f16013,
@@ -214,7 +217,7 @@ try {
     var mapper = req.app.get("mapper");
     getEtpMultiHist
     var stmt = mapper.getStatement('common.item', 'getEtpMultiHist', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -226,7 +229,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -238,7 +241,7 @@ try {
 * ETP GIGS SECTOR 비중 조회
 */
 var getEtpGigsWeight = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getEtpGigsWeight 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getEtpGigsWeight 호출됨.');
 
   var options = {
     f16012 : req.query.f16012,
@@ -248,7 +251,7 @@ try {
     var mapper = req.app.get("mapper");
     getEtpMultiHist
     var stmt = mapper.getStatement('etpDetail', 'getEtpGigsWeight', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -260,7 +263,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -273,7 +276,7 @@ try {
 */
 
 var getEtfSumByIndex = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getEtfSumByIndex 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getEtfSumByIndex 호출됨.');
 
   var options = {
     f34239 : req.query.f34239,
@@ -284,7 +287,7 @@ try {
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('etpinfo', 'getEtfSumByIndex', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -296,7 +299,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -310,7 +313,7 @@ try {
 */
 
 var getEtnSumByIndex = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getEtnSumByIndex 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getEtnSumByIndex 호출됨.');
 
   var options = {
     f34239 : req.query.f34239,
@@ -321,7 +324,7 @@ try {
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('etpinfo', 'getEtnSumByIndex', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -333,7 +336,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -346,16 +349,16 @@ try {
 * ETP SECTOR 기본정보
 */
 var getEtpCtgBasic = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getEtpCtgBasic 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getEtpCtgBasic 호출됨.');
 
   var options = req.query;
-  console.log(options);
+  log.debug(options);
 try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('etpinfo', 'getEtpCtgBasic', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -367,7 +370,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -380,16 +383,16 @@ try {
 * ETP SECTOR 기본정보
 */
 var getEtpSectorMaxRate = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getEtpSectorMaxRate 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getEtpSectorMaxRate 호출됨.');
 
   var options = req.query;
-  console.log(options);
+  log.debug(options);
 try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('etpinfo', 'getEtpSectorMaxRate', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -401,7 +404,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -414,16 +417,16 @@ try {
 * ETF SECTOR 순자산 총액 합산
 */
 var getEtfSectorSum = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getEtfSectorSum 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getEtfSectorSum 호출됨.');
 
   var options = req.query;
-  console.log(options);
+  log.debug(options);
 try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('etpinfo', 'getEtfSectorSum', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -435,7 +438,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -448,16 +451,16 @@ try {
 * ETN SECTOR 순자산 총액 합산
 */
 var getEtnSectorSum = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getEtnSectorSum 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getEtnSectorSum 호출됨.');
 
   var options = req.query;
-  console.log(options);
+  log.debug(options);
 try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('etpinfo', 'getEtnSectorSum', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -469,7 +472,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -482,16 +485,16 @@ try {
 * ETP SECTOR 상승종목수
 */
 var getEtpSectorUp = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getEtpSectorUp 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getEtpSectorUp 호출됨.');
 
   var options = req.query;
-  console.log(options);
+  log.debug(options);
 try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('etpinfo', 'getEtpSectorUp', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -503,7 +506,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -516,16 +519,16 @@ try {
 * ETP SECTOR 하락종목수
 */
 var getEtpSectorDown = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getEtpSectorDown 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getEtpSectorDown 호출됨.');
 
   var options = req.query;
-  console.log(options);
+  log.debug(options);
 try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('etpinfo', 'getEtpSectorDown', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -537,7 +540,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -550,16 +553,16 @@ try {
 * ETP SECTOR 보합종목수
 */
 var getEtpSectorBohap = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getEtpSectorBohap 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getEtpSectorBohap 호출됨.');
 
   var options = req.query;
-  console.log(options);
+  log.debug(options);
 try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('etpinfo', 'getEtpSectorBohap', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -571,7 +574,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -588,7 +591,7 @@ var getSectorEtpList = function (req, res) {
     try {
 
         
-        console.log('marketInfo=>getSectorEtpList 호출됨.');
+        log.debug('marketInfo=>getSectorEtpList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -623,14 +626,14 @@ var getSectorEtpList = function (req, res) {
                 },
 
                 function(ctgCodeList, callback) {
-                    console.log("ctg_code"+ ctgCodeList.length);
+                    log.debug("ctg_code"+ ctgCodeList.length);
                 
                                         
                     carousel_info.carousel_cnt =  Math.floor(ctgCodeList.length / carousel_div);
                     carousel_info.carousel_mod =  ctgCodeList.length % carousel_div;
                 
-                    //util.log("carousel_info.carousel_cnt:", carousel_info.carousel_cnt);
-                    //util.log("carousel_info.carousel_mod:", carousel_info.carousel_mod);
+                    //log.debug("carousel_info.carousel_cnt:", carousel_info.carousel_cnt);
+                    //log.debug("carousel_info.carousel_mod:", carousel_info.carousel_mod);
                 
                     // 항목 갯수 만큼 쿼리 
                     async.forEachOf( ctgCodeList, function ( ctgCodeItem, index){                                
@@ -639,7 +642,7 @@ var getSectorEtpList = function (req, res) {
                             ctg_large_code : ctgCodeItem.ctg_large_code,
                         };
                         
-                        //console.log("ctgCodeItem.ctg_large_code,"+ctgCodeItem.ctg_large_code);
+                        //log.debug("ctgCodeItem.ctg_large_code,"+ctgCodeItem.ctg_large_code);
                         var ctg_name = ctgCodeItem.ctg_name;
                 
                 
@@ -653,16 +656,16 @@ var getSectorEtpList = function (req, res) {
                             var etn_cnt = 0;
                             
 
-                            //util.log("(carousel_info.carousel_cnt * 5):" , (carousel_info.carousel_cnt * 5));
-                            //util.log("index" , index);
+                            //log.debug("(carousel_info.carousel_cnt * 5):" , (carousel_info.carousel_cnt * 5));
+                            //log.debug("index" , index);
 
 
                             if ((carousel_info.carousel_cnt * 5) > index) {
-                                //util.log("data:=====================", index);
+                                //log.debug("data:=====================", index);
 
                                 async.forEachOf( rows, function ( item, idx){ 
                                     total_amt += Number(item.f15028);
-                                    console.log("tot_amt"+ item.f15028);
+                                    log.debug("tot_amt"+ item.f15028);
                                     // ctf 구분자가 1과 2일 경우 
                                     if (item.f16493 == '1' || item.f16493 == '2') {
                                         etf_cnt++; 
@@ -673,10 +676,10 @@ var getSectorEtpList = function (req, res) {
 
                                 carousel_data.push({"ctg_code":ctgCodeItem.ctg_code, "name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
                             } else {
-                                //util.log("mode:=====================", index);
+                                //log.debug("mode:=====================", index);
                                 async.forEachOf( rows, function ( item, idx){                                    
                                     total_amt += Number(item.f15028);
-                                    console.log("tot_amt"+ item.f15028);
+                                    log.debug("tot_amt"+ item.f15028);
                                     // ctf 구분자가 1과 2일 경우 
                                     if (item.f16493 == '1' || item.f16493 == '2') {
                                         etf_cnt++; 
@@ -690,7 +693,7 @@ var getSectorEtpList = function (req, res) {
                             // 조회한 데이터 저장
                             etpLists.push(rows);
                             
-                            //console.log(ctgCodeList.length +"::" + index);
+                            //log.debug(ctgCodeList.length +"::" + index);
                             if (index == ctgCodeList.length-1) {
                                 callback(null, etpLists, carousel_info, carousel_data, carousel_mod, ctgCodeList);   
                             }                                
@@ -703,7 +706,7 @@ var getSectorEtpList = function (req, res) {
             
                     //carousel_data = carousel_data.sort(carouselSort);
             
-                    //util.log("carousel_mod:", carousel_mod.length);
+                    //log.debug("carousel_mod:", carousel_mod.length);
                     res.json({
                         success: true,
                         etpLists: etpLists,
@@ -718,7 +721,7 @@ var getSectorEtpList = function (req, res) {
         });
     } catch (exception) {
 
-        util.log("Error while performing Query.", exception);
+        log.debug("Error while performing Query.", exception);
         res.json({
             success: false,
             message: exception
@@ -741,7 +744,7 @@ var getMarketIndexList = function (req, res) {
     try {
 
         
-        console.log('marketInfo=>getMarketIndexList 호출됨.');
+        log.debug('marketInfo=>getMarketIndexList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");       
@@ -774,7 +777,7 @@ var getMarketIndexList = function (req, res) {
                             market_id : marketItem.market_id,
                         };
                 
-                        util.log("현재가=", marketItem.f15001)
+                        log.debug("현재가=", marketItem.f15001)
                         var stmt = mapper.getStatement('common.item', 'getIndexIntra', params, {language:'sql', indent: '  '});
 
 
@@ -784,7 +787,7 @@ var getMarketIndexList = function (req, res) {
                             // 조회한 데이터 저장
                             graphinfos.push(rows);
                             
-                            //console.log(ctgCodeList.length +"::" + index);
+                            //log.debug(ctgCodeList.length +"::" + index);
                             if (index == marketRepList.length-1) {
                                 callback(null, marketRepList, graphinfos);   
                             }                                
@@ -803,7 +806,7 @@ var getMarketIndexList = function (req, res) {
                     // 대입 문자 치환
                     stmt = stmt.replace(/\: =/g,':='); 
                     
-                    console.log(stmt);
+                    log.debug(stmt);
 
                     conn.query(stmt, function( err, rows ) {
                             
@@ -858,7 +861,7 @@ var getMarketIndexList = function (req, res) {
         });
     } catch (exception) {
 
-        util.log("Error while performing Query.", exception);
+        log.debug("Error while performing Query.", exception);
         res.json({
             success: false,
             message: exception

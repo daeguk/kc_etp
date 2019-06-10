@@ -12,11 +12,14 @@ var async = require('async');
 var util = require("util");
 
 
+/* logging 추가함.  2019-06-10 */
+var log = config.logger;
+
 // 관심 종목 리스트 가져 오기
 var getFavorItemInfo = function (req, res) {
     
     try {
-        console.log('itemInfo=>getFavorItemInfo 호출됨.');
+        log.debug('itemInfo=>getFavorItemInfo 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -42,7 +45,7 @@ var getFavorItemInfo = function (req, res) {
                     });
                     res.end();  
                 }).catch(err => {
-                    util.log("Error while performing Query.", err);
+                    log.debug("Error while performing Query.", err);
                     res.json({
                         success: false,
                         message: err
@@ -58,7 +61,7 @@ var getFavorItemInfo = function (req, res) {
             res.end();  
         }
     } catch (exception) {
-        util.log("error", exception);
+        log.debug("error", exception);
     }   
     
 };
@@ -68,7 +71,7 @@ var getFavorItemInfo = function (req, res) {
 var deleteFavorItem = function (req, res) {
     
     try {
-        console.log('itemInfo=>deleteFavorItem 호출됨.');
+        log.debug('itemInfo=>deleteFavorItem 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -81,12 +84,12 @@ var deleteFavorItem = function (req, res) {
             market_id : req.body.params.market_id
         };
 
-        console.log(JSON.stringify(req.body.params) + ":gubun");
-        console.log(req.body.gubun + ":gubun");
+        log.debug(JSON.stringify(req.body.params) + ":gubun");
+        log.debug(req.body.gubun + ":gubun");
         if (req.session.user_id != null) {
             var stmt = mapper.getStatement('common.item', 'deleteFavorItem', params, {language:'sql', indent: '  '});
 
-            console.log(stmt);
+            log.debug(stmt);
 
             Promise.using(pool.connect(), conn => {
                 conn.beginTransaction(txerr => {
@@ -101,7 +104,7 @@ var deleteFavorItem = function (req, res) {
                         res.end();  
                     }).catch(err => {
                         conn.rollback();
-                        util.log("Error while performing Query.", err);
+                        log.debug("Error while performing Query.", err);
                         res.json({
                             success: false,
                             message: err
@@ -118,7 +121,7 @@ var deleteFavorItem = function (req, res) {
             res.end();  
         }
     } catch (exception) {
-        util.log("error", exception);
+        log.debug("error", exception);
     }   
     
 };
@@ -129,7 +132,7 @@ var deleteFavorItem = function (req, res) {
 var insertFavorItem = function (req, res) {
     
     try {
-        console.log('itemInfo=>insertFavorItem 호출됨.');
+        log.debug('itemInfo=>insertFavorItem 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -160,7 +163,7 @@ var insertFavorItem = function (req, res) {
                             
                                 var stmt = mapper.getStatement('common.item', 'insertFavorItem', params, {language:'sql', indent: '  '});
                                 
-                                 console.log(stmt);
+                                 log.debug(stmt);
 
                                 conn.query(stmt, function( err, rows ) {
                                     if(err) {                                        
@@ -195,7 +198,7 @@ var insertFavorItem = function (req, res) {
             res.end();  
         }
     } catch (exception) {
-        util.log("error", exception);
+        log.debug("error", exception);
     }   
     
 };
@@ -208,7 +211,7 @@ var insertFavorItem = function (req, res) {
 */
 var getETFList = function (req, res) {
     try {
-        console.log('itemInfo=>getETFList 호출됨.');
+        log.debug('itemInfo=>getETFList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -224,7 +227,7 @@ var getETFList = function (req, res) {
             
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('common.item', 'getETFList', options, {language:'sql', indent: '  '});
      
@@ -237,7 +240,7 @@ var getETFList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -247,7 +250,7 @@ var getETFList = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -257,7 +260,7 @@ var getETFList = function (req, res) {
 */
 var getETNList = function (req, res) {
     try {
-        console.log('itemInfo=>getETNList 호출됨.');
+        log.debug('itemInfo=>getETNList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -272,7 +275,7 @@ var getETNList = function (req, res) {
             user_id : req.session.user_id == null? '' : req.session.user_id
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('common.item', 'getETNList', options, {language:'sql', indent: '  '});
      
@@ -285,7 +288,7 @@ var getETNList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -295,7 +298,7 @@ var getETNList = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -305,7 +308,7 @@ var getETNList = function (req, res) {
 * Index 목록(관심종목)
 */
 var getIndexList = function (req, res) {
-    console.log('itemInfo=>getInfoOpenReqList 호출됨.');
+    log.debug('itemInfo=>getInfoOpenReqList 호출됨.');
 
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
@@ -319,7 +322,7 @@ var getIndexList = function (req, res) {
 
     var stmt = mapper.getStatement('common.item', 'getIndexList', params, {language:'sql', indent: '  '});
 
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
         conn.queryAsync(stmt).then(rows => {
@@ -329,7 +332,7 @@ var getIndexList = function (req, res) {
             });
             res.end();
         }).catch(err => {
-            util.log("Error while performing Query.", err);
+            log.debug("Error while performing Query.", err);
             res.json({
                 success: false,
                 message: err
@@ -349,7 +352,7 @@ var getIndexList = function (req, res) {
 */
 var getPublishEtpList = function (req, res) {
     try {
-        console.log('itemInfo=>getPublishEtfList 호출됨.');
+        log.debug('itemInfo=>getPublishEtfList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -366,7 +369,7 @@ var getPublishEtpList = function (req, res) {
             
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var query_id = "";
 
@@ -382,7 +385,7 @@ var getPublishEtpList = function (req, res) {
         if (query_id != "") {
             var stmt = mapper.getStatement('common.item', query_id, options, {language:'sql', indent: '  '});
             
-            util.log("stmt", stmt);
+            log.debug("stmt", stmt);
             
 
             Promise.using(pool.connect(), conn => {
@@ -393,7 +396,7 @@ var getPublishEtpList = function (req, res) {
                     });
                     res.end();
                 }).catch(err => {
-                    util.log("Error while performing Query.", err);
+                    log.debug("Error while performing Query.", err);
                     res.json({
                         success: false,
                         message: err
@@ -410,7 +413,7 @@ var getPublishEtpList = function (req, res) {
             res.end();
         }
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -421,7 +424,7 @@ var getPublishEtpList = function (req, res) {
 */
 var getALLEtpList = function (req, res) {
     try {
-        console.log('itemInfo=>getALLEtpList 호출됨.');
+        log.debug('itemInfo=>getALLEtpList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -437,7 +440,7 @@ var getALLEtpList = function (req, res) {
             
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var query_id = "";
 
@@ -462,7 +465,7 @@ var getALLEtpList = function (req, res) {
                     });
                     res.end();
                 }).catch(err => {
-                    util.log("Error while performing Query.", err);
+                    log.debug("Error while performing Query.", err);
                     res.json({
                         success: false,
                         message: err
@@ -479,7 +482,7 @@ var getALLEtpList = function (req, res) {
             res.end(); 
         }
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 

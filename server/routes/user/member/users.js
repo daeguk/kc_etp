@@ -9,32 +9,35 @@ var config = require('../../../config/config');
 var util = require("util");
 var Promise = require("bluebird");
 
+/* logging 추가함.  2019-06-10 */
+var log = config.logger;
+
 // 사용사 로그인 처리
 var userLoginCheck = function(req, res) {
-  console.log('users 모듈 안에 있는 userLoginCheck 호출됨.');
+  log.debug('users 모듈 안에 있는 userLoginCheck 호출됨.');
 
   var options = {};
-console.log("email : " + req.body.email + " password : " + req.body.password);
+log.debug("email : " + req.body.email + " password : " + req.body.password);
   options.email = req.body.email;
   options.password = req.body.password;
   // options.criteria.hashed_password = crypto.createHash('sha256', config.pwd_salt).update(password).digest('base64');;
 
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress;
-  console.log('client IP***********--> ' + ip);
+  log.debug('client IP***********--> ' + ip);
 
   //접속 시간 
   var dt = new Date();
   var dt_time = dt.getHours();
-  console.log('client DATE***********--> ' + dt);
+  log.debug('client DATE***********--> ' + dt);
 
   try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
-    util.log("options==> ", JSON.stringify(options));
+    log.debug("options==> ", JSON.stringify(options));
 
     var stmt = mapper.getStatement('member', 'userLoginCheck', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -63,7 +66,7 @@ console.log("email : " + req.body.email + " password : " + req.body.password);
             res.end();
         }
       }).catch(err => {
-        util.log("Error while performing Query.", err);
+        log.debug("Error while performing Query.", err);
         res.json({
           success: false,
           message: err,
@@ -73,7 +76,7 @@ console.log("email : " + req.body.email + " password : " + req.body.password);
 
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
   }
   setLoginHistory(req);
 };
@@ -85,24 +88,24 @@ var setLoginHistory = function(req) {
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('member', 'setLoginHistory', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
 
       }).catch(err => {
-        util.log("Error while performing Query.", err);
+        log.debug("Error while performing Query.", err);
       });
 
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
   }
 }
 
 // 사용사 그룹 가져오기
 var getMemberTypeList = function(req, res) {
-  console.log('users 모듈 안에 있는 getMemberTypeList 호출됨.');
+  log.debug('users 모듈 안에 있는 getMemberTypeList 호출됨.');
 
   var options = {};
   try {
@@ -110,7 +113,7 @@ var getMemberTypeList = function(req, res) {
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('member', 'getMemberTypeList', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -120,7 +123,7 @@ var getMemberTypeList = function(req, res) {
         });
         res.end();
       }).catch(err => {
-        util.log("Error while performing Query.", err);
+        log.debug("Error while performing Query.", err);
         res.json({
           success: false,
           message: "사용자 그룹 코드를 가져올 수 없습니다.",
@@ -130,13 +133,13 @@ var getMemberTypeList = function(req, res) {
 
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
   }
 };
 
 // 사용사 그룹 가져오기
 var getMemberDomainList = function(req, res) {
-  console.log('users 모듈 안에 있는 getMemberDomainList 호출됨.');
+  log.debug('users 모듈 안에 있는 getMemberDomainList 호출됨.');
 
   var options = {};
   try {
@@ -144,7 +147,7 @@ var getMemberDomainList = function(req, res) {
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('member', 'getMemberDomainList', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -154,7 +157,7 @@ var getMemberDomainList = function(req, res) {
         });
         res.end();
       }).catch(err => {
-        util.log("Error while performing Query.", err);
+        log.debug("Error while performing Query.", err);
         res.json({
           success: false,
           message: "사용자 그룹 코드를 가져올 수 없습니다.",
@@ -164,13 +167,13 @@ var getMemberDomainList = function(req, res) {
 
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
   }
 };
 
 // 회원등록
 var userNewAccount = function(req, res) {
-  console.log('users 모듈 안에 있는 userNewAccount 호출됨.');
+  log.debug('users 모듈 안에 있는 userNewAccount 호출됨.');
 
   var options = req.body;
   try {
@@ -178,7 +181,7 @@ var userNewAccount = function(req, res) {
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('member', 'userNewAccount', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -188,7 +191,7 @@ var userNewAccount = function(req, res) {
         });
         res.end();
       }).catch(err => {
-        util.log("Error while performing Query.", err);
+        log.debug("Error while performing Query.", err);
         res.json({
           success: false,
           message: "동일한 계정이 등록되어 있습니다.",
@@ -198,13 +201,13 @@ var userNewAccount = function(req, res) {
 
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
   }
 };
 
 // 회원 패스워드 찾기
 var userFindPwd = function(req, res) {
-  console.log('users 모듈 안에 있는 userFindPwd 호출됨.');
+  log.debug('users 모듈 안에 있는 userFindPwd 호출됨.');
 
   var options = req.body;
   try {
@@ -212,11 +215,11 @@ var userFindPwd = function(req, res) {
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('member', 'userFindPwd', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
-        // console.log("rows cnt : " + rows.length);
+        // log.debug("rows cnt : " + rows.length);
         if(rows.length == 0) {
           res.json({
             success: false,
@@ -231,7 +234,7 @@ var userFindPwd = function(req, res) {
           res.end();
         }
       }).catch(err => {
-        util.log("Error while performing Query.", err);
+        log.debug("Error while performing Query.", err);
         res.json({
           success: false,
           message: err,
@@ -241,13 +244,13 @@ var userFindPwd = function(req, res) {
 
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
   }
 };
 
 // 회원 정보 수정
 var userUpdateInfo = function(req, res) {
-  console.log('users 모듈 안에 있는 userUpdateInfo 호출됨.');
+  log.debug('users 모듈 안에 있는 userUpdateInfo 호출됨.');
 
   var options = req.body;
   try {
@@ -255,11 +258,11 @@ var userUpdateInfo = function(req, res) {
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('member', 'setUserInfo', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
-        console.log("rows cnt : " + rows.length);
+        log.debug("rows cnt : " + rows.length);
         if(rows.length == 0) {
           res.json({
             success: false,
@@ -274,7 +277,7 @@ var userUpdateInfo = function(req, res) {
           res.end();
         }
       }).catch(err => {
-        util.log("Error while performing Query.", err);
+        log.debug("Error while performing Query.", err);
         res.json({
           success: false,
           message: err,
@@ -284,7 +287,7 @@ var userUpdateInfo = function(req, res) {
 
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
   }
 };
 
@@ -298,8 +301,8 @@ module.exports.userUpdateInfo = userUpdateInfo;
 // 사용사 정보 조회
 /*
 var getUserInfo = function(req, res) {
-    console.log('/users/getUserInfo 패스 요청됨.');
-    console.log(req.body);
+    log.debug('/users/getUserInfo 패스 요청됨.');
+    log.debug(req.body);
     
     var database = req.app.get('database');
 
@@ -307,11 +310,11 @@ var getUserInfo = function(req, res) {
     if (database.db) {
 
         var userid = req.body.userid || req.query.userid;
-        console.log("getUserInfo : " + req.body.userid);
-        console.log("getUserInfo : " + req.query.userid);
+        log.debug("getUserInfo : " + req.body.userid);
+        log.debug("getUserInfo : " + req.query.userid);
         
         database.UserModel.findByUserId(userid, function(err, user) {
-            console.log("getUserInfo : " + user);
+            log.debug("getUserInfo : " + user);
             if (err) {
                 console.dir(err);
                 res.json({ success: false, message: err });
@@ -332,7 +335,7 @@ var getUserInfo = function(req, res) {
 
 //사용자정보 수정
 var updateUserInfo = function(req, res) {
-    console.log('/users/updateUserInfo 패스 요청됨');
+    log.debug('/users/updateUserInfo 패스 요청됨');
 
     var database = req.app.get('database');
 
@@ -343,7 +346,7 @@ var updateUserInfo = function(req, res) {
 
         database.UserModel.updateInfo(options, function(err) {
             if (err) {
-                console.log("Update.... FAIL " + err);
+                log.debug("Update.... FAIL " + err);
                 res.json({ success: false, message: "FAIL" });
                 res.end();
             } else {

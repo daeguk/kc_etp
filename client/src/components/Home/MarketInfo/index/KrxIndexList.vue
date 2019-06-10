@@ -27,12 +27,12 @@
                       <col width="9%">
                       <col width="9%">
                       <col width="9%">
-                      <col  width="9%">
-                      <col  width="9%">
-                      <col  width="9%">
-                      <col  width="9%">
-                      <col  width="9%">
-                      <col  width="7%">
+                      <col width="9%">
+                      <col width="9%">
+                      <col width="9%">
+                      <col width="9%">
+                      <col width="9%">
+                      <col width="7%">
                   </colgroup>
                   <thead>
                       <tr>

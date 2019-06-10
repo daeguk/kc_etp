@@ -12,23 +12,26 @@ var multer = require('multer');
 var xlsx = require('xlsx');
 var fs = require('fs'); 
 
+/* logging 추가함.  2019-06-10 */
+var log = config.logger;
+
 
 var getIndexVueTableTestList = function (req, res) {
-    console.log('indexmanage 모듈 안에 있는 getIndexVueTableTestList 호출됨.');
+    log.debug('indexmanage 모듈 안에 있는 getIndexVueTableTestList 호출됨.');
     var pool = req.app.get("pool");
     var etpStmts = req.app.get("stmt");
 
     // var options = {id:'admin'};
-    console.log("req.query");
-    console.log(req.query);
+    log.debug("req.query");
+    log.debug(req.query);
     var options = {};
     var stmt = etpStmts.IndexManage.getIndexToastGridTestList(options);
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
         conn.queryAsync(stmt).then(rows => {
 
-            util.log("sql1" == rows.affectedRows)
+            log.debug("sql1" == rows.affectedRows)
             res.json({
                 success: true,
                 results: rows,
@@ -36,7 +39,7 @@ var getIndexVueTableTestList = function (req, res) {
             });
             res.end();
         }).catch(err => {
-            util.log("Error while performing Query.", err);
+            log.debug("Error while performing Query.", err);
             res.json({
                 success: false,
                 message: err
@@ -54,21 +57,21 @@ var getIndexVueTableTestList = function (req, res) {
 */
 
 var getIndexToastGridTestList = function (req, res) {
-    console.log('indexmanage 모듈 안에 있는 getIndexToastGridTestList 호출됨.');
+    log.debug('indexmanage 모듈 안에 있는 getIndexToastGridTestList 호출됨.');
 
     var pool = req.app.get("pool");
     var etpStmts = req.app.get("stmt");
 
     // var options = {id:'admin'};
-    console.log("req.query");
-    console.log(req.query);
+    log.debug("req.query");
+    log.debug(req.query);
     var options = {};
     var stmt = etpStmts.IndexManage.getIndexToastGridTestList(options);
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
         conn.queryAsync(stmt).then(rows => {
-            util.log("sql1" == rows.affectedRows)
+            log.debug("sql1" == rows.affectedRows)
             res.json({
                 success: true,
                 results: rows,
@@ -76,7 +79,7 @@ var getIndexToastGridTestList = function (req, res) {
             });
             res.end();
         }).catch(err => {
-            util.log("Error while performing Query.", err);
+            log.debug("Error while performing Query.", err);
             res.json({
                 success: false,
                 message: err

@@ -4,7 +4,7 @@
  * @date 2019-02-08
  * @author ThreeOn
  */
-//var config = require('../../../config/config');
+var config = require('../../../config/config');
 var util = require("util");
 var Promise = require("bluebird");
 
@@ -13,10 +13,12 @@ var util = require("util");
 //var xlsx = require('xlsx');
 //var fs = require('fs'); 
 
+/* logging 추가함.  2019-06-10 */
+var log = config.logger;
 
 var getIndexSummaryInfo = function (req, res) {
     try {
-        console.log('indexSummary=>getIndexSummaryInfo 호출됨.');
+        log.debug('indexSummary=>getIndexSummaryInfo 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -46,7 +48,7 @@ var getIndexSummaryInfo = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -62,7 +64,7 @@ var getIndexSummaryInfo = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -73,13 +75,13 @@ var getIndexSummaryInfo = function (req, res) {
 
         });
     } catch (exception) {
-        util.log("err==>", exception);
+        log.debug("err==>", exception);
     }    
 };
 
 var getInfoOpenReqList = function (req, res) {
     try {
-        console.log('indexSummary=>getInfoOpenReqList 호출됨.');
+        log.debug('indexSummary=>getInfoOpenReqList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -94,7 +96,7 @@ var getInfoOpenReqList = function (req, res) {
 
         var stmt = mapper.getStatement('index', 'indexReqList', params, {language:'sql', indent: '  '});
 
-        console.log(stmt);
+        log.debug(stmt);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -104,7 +106,7 @@ var getInfoOpenReqList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -115,14 +117,14 @@ var getInfoOpenReqList = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err", exception);
+        log.debug("err", exception);
     }
 };
 
 
 var getindexSubscribeList = function (req, res) {
     try {
-        console.log('indexSummary=>getindexSubscribeList 호출됨.');
+        log.debug('indexSummary=>getindexSubscribeList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -137,7 +139,7 @@ var getindexSubscribeList = function (req, res) {
 
         var stmt = mapper.getStatement('index', 'getindexSubscribeList', params, {language:'sql', indent: '  '});
 
-        console.log(stmt);
+        log.debug(stmt);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -147,7 +149,7 @@ var getindexSubscribeList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -158,7 +160,7 @@ var getindexSubscribeList = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err", exception);
+        log.debug("err", exception);
     }
 };
 
@@ -167,7 +169,7 @@ var getindexSubscribeList = function (req, res) {
 var updateIndexOpenYn = function(req, res) {
  
     try {
-        console.log('indexSummary=>updateIndexOpenYn 호출됨.');
+        log.debug('indexSummary=>updateIndexOpenYn 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -191,12 +193,12 @@ var updateIndexOpenYn = function(req, res) {
             params.FLAG = '0';
         }
 
-        util.log("req.body.params.reqFlag", JSON.stringify(params));
+        log.debug("req.body.params.reqFlag", JSON.stringify(params));
         
         
         var stmt = mapper.getStatement('index', 'updateIndexOpenYn', params, {language:'sql', indent: '  '});
     
-        console.log(stmt);
+        log.debug(stmt);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -206,7 +208,7 @@ var updateIndexOpenYn = function(req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -217,7 +219,7 @@ var updateIndexOpenYn = function(req, res) {
 
         });
     } catch(err) {
-        util.log("err=>", err);
+        log.debug("err=>", err);
     }    
 }
 
@@ -226,7 +228,7 @@ var updateIndexOpenYn = function(req, res) {
 * Index 목록
 */
 var getInfoIndexList = function (req, res) {
-    console.log('indexSummary=>getInfoOpenReqList 호출됨.');
+    log.debug('indexSummary=>getInfoOpenReqList 호출됨.');
 
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
@@ -240,7 +242,7 @@ var getInfoIndexList = function (req, res) {
 
     var stmt = mapper.getStatement('index', 'getInfoIndexList', params, {language:'sql', indent: '  '});
 
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
         conn.queryAsync(stmt).then(rows => {
@@ -250,7 +252,7 @@ var getInfoIndexList = function (req, res) {
             });
             res.end();
         }).catch(err => {
-            util.log("Error while performing Query.", err);
+            log.debug("Error while performing Query.", err);
             res.json({
                 success: false,
                 message: err
@@ -267,13 +269,13 @@ var getInfoIndexList = function (req, res) {
 */
 var getIndexSummaryHist = function (req, res) {
     try {
-        console.log('indexSummary=>getindexsummaryhist 호출됨.');
+        log.debug('indexSummary=>getindexsummaryhist 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
         // var options = {id:'admin'};
-        console.log("req.query");
-        console.log(req.query);
+        log.debug("req.query");
+        log.debug(req.query);
         var options = {
             large_type : req.session.large_type == null ? '' : req.session.large_type,
             JISU_ID: req.query.jisu_id,
@@ -281,7 +283,7 @@ var getIndexSummaryHist = function (req, res) {
         };
 
         var stmt = mapper.getStatement('index', 'selectIndexSummaryHist', options, {language:'sql', indent: '  '});
-        console.log(stmt);
+        log.debug(stmt);
  
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -291,7 +293,7 @@ var getIndexSummaryHist = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -302,7 +304,7 @@ var getIndexSummaryHist = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -311,7 +313,7 @@ var getIndexSummaryHist = function (req, res) {
 */
 var getIndexBaseInfo = function (req, res) {
     try {
-        console.log('indexSummary=>getIndexBaseInfo 호출됨.');
+        log.debug('indexSummary=>getIndexBaseInfo 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -323,11 +325,11 @@ var getIndexBaseInfo = function (req, res) {
             market_id: req.query.market_id
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('index', 'getIndexBaseInfo', options, {language:'sql', indent: '  '});
         
-        util.log("getIndexBaseInfo:" + stmt);
+        log.debug("getIndexBaseInfo:" + stmt);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -337,7 +339,7 @@ var getIndexBaseInfo = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -348,7 +350,7 @@ var getIndexBaseInfo = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -357,7 +359,7 @@ var getIndexBaseInfo = function (req, res) {
 */
 var getIndexEtpHistoryData = function (req, res) {
     try {
-        console.log('indexSummary=>getIndexEtpHistoryData 호출됨.');
+        log.debug('indexSummary=>getIndexEtpHistoryData 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -370,11 +372,11 @@ var getIndexEtpHistoryData = function (req, res) {
             term: req.query.term
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('index', 'getIndexEtpHistoryData', options, {language:'sql', indent: '  '});
      
-        util.log("stmt", stmt);
+        log.debug("stmt", stmt);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -384,7 +386,7 @@ var getIndexEtpHistoryData = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -395,7 +397,7 @@ var getIndexEtpHistoryData = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -406,7 +408,7 @@ var getIndexEtpHistoryData = function (req, res) {
 */
 var getIndexInEtpInfo = function (req, res) {
     try {
-        console.log('indexSummary=>getIndexInEtpInfo 호출됨.');
+        log.debug('indexSummary=>getIndexInEtpInfo 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -418,7 +420,7 @@ var getIndexInEtpInfo = function (req, res) {
             market_id: req.query.market_id
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('index', 'getIndexInEtpInfo', options, {language:'sql', indent: '  '});
      
@@ -431,7 +433,7 @@ var getIndexInEtpInfo = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -441,7 +443,7 @@ var getIndexInEtpInfo = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -453,7 +455,7 @@ var getIndexInEtpInfo = function (req, res) {
 */
 var getIndexImportanceList = function (req, res) {
     try {
-        console.log('indexSummary=>getIndexImportanceList 호출됨.');
+        log.debug('indexSummary=>getIndexImportanceList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -465,14 +467,14 @@ var getIndexImportanceList = function (req, res) {
             market_id: req.query.market_id
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('index', 'getIndexImportanceList', options, {language:'sql', indent: '  '});
         
         // 대입 문자 치환
         stmt = stmt.replace(/\: =/g,':='); 
      
-        console.log(stmt);
+        log.debug(stmt);
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -481,7 +483,7 @@ var getIndexImportanceList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -491,7 +493,7 @@ var getIndexImportanceList = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -503,7 +505,7 @@ var getIndexImportanceList = function (req, res) {
 
 var getIndexAnalysisInfo = function (req, res) {
     try {
-        console.log('indexSummary=>getIndexAnalysisInfo 호출됨.');
+        log.debug('indexSummary=>getIndexAnalysisInfo 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -515,14 +517,14 @@ var getIndexAnalysisInfo = function (req, res) {
             market_id: req.query.market_id
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('index', 'getIndexAnalysisInfo', options, {language:'sql', indent: '  '});
         
         // 대입 연산자 치환
         stmt = stmt.replace(/\: =/g,':='); 
      
-        console.log(stmt);
+        log.debug(stmt);
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -531,7 +533,7 @@ var getIndexAnalysisInfo = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -541,7 +543,7 @@ var getIndexAnalysisInfo = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -552,7 +554,7 @@ var getIndexAnalysisInfo = function (req, res) {
 
 var getIndexAnalysisData = function (req, res) {
     try {
-        console.log('indexSummary=>getIndexAnalysisInfo 호출됨.');
+        log.debug('indexSummary=>getIndexAnalysisInfo 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -565,7 +567,7 @@ var getIndexAnalysisData = function (req, res) {
         };
 
         var gubun = req.query.gubun;
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
         var query_id = '';
 
         if (gubun == '1') {
@@ -578,7 +580,7 @@ var getIndexAnalysisData = function (req, res) {
         // 대입 연산자 치환
         stmt = stmt.replace(/\: =/g,':='); 
      
-        console.log(stmt);
+        log.debug(stmt);
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -587,7 +589,7 @@ var getIndexAnalysisData = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -597,7 +599,7 @@ var getIndexAnalysisData = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -611,7 +613,7 @@ var getIndexAnalysisData = function (req, res) {
 
 var getShareReqCnt = function (req, res) {
     try {
-        console.log('indexSummary=>getShareReqCnt 호출됨.');
+        log.debug('indexSummary=>getShareReqCnt 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -631,7 +633,7 @@ var getShareReqCnt = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -641,7 +643,7 @@ var getShareReqCnt = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -652,7 +654,7 @@ var getShareReqCnt = function (req, res) {
 
 var getIndexRegStateCnt = function (req, res) {
     try {
-        console.log('indexSummary=>getIndexRegStateCnt 호출됨.');
+        log.debug('indexSummary=>getIndexRegStateCnt 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -673,7 +675,7 @@ var getIndexRegStateCnt = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -683,7 +685,7 @@ var getIndexRegStateCnt = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 

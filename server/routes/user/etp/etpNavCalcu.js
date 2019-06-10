@@ -10,12 +10,17 @@ var util = require("util");
 var Promise = require("bluebird");
 var async = require('async'); 
 var util = require("util");
+
+/* logging 추가함.  2019-06-10 */
+var log = config.logger;
+
+
 /*
 * ETP INav 기본 정보
 */
 var getiNavData = function (req, res) {
     try {
-        console.log('etpNavCalcu=>getiNavData 호출됨.');
+        log.debug('etpNavCalcu=>getiNavData 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -33,7 +38,7 @@ var getiNavData = function (req, res) {
                 
                     var stmt = mapper.getStatement('etpDetail', 'getEtpBasic', params, {language:'sql', indent: '  '});
                     
-                    util.log("getEtpBasic:", stmt);
+                    log.debug("getEtpBasic:", stmt);
 
                     conn.query(stmt, function( err, rows ) {
                         callback(null, rows);                                 
@@ -56,10 +61,10 @@ var getiNavData = function (req, res) {
                         query_id = "getEtpPdfEtn";
                     }
 
-                    console.log("query_id:" + query_id);
+                    log.debug("query_id:" + query_id);
                     var stmt = mapper.getStatement('etpNav', query_id, params, {language:'sql', indent: '  '});
                     
-                    console.log("stmt:" + stmt);
+                    log.debug("stmt:" + stmt);
 
                     conn.query(stmt, function( err, rows ) {
                         callback(null, etpItem, rows);                                 
@@ -80,7 +85,7 @@ var getiNavData = function (req, res) {
         });
     } catch (exception) {
 
-        util.log("Error while performing Query.", exception);
+        log.debug("Error while performing Query.", exception);
         res.json({
             success: false,
             message: exception
@@ -96,7 +101,7 @@ var getiNavData = function (req, res) {
 
 var getExchBasic = function (req, res) {
     try {
-        console.log('etpNavCalcu=>getExchange 호출됨.');
+        log.debug('etpNavCalcu=>getExchange 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -107,14 +112,14 @@ var getExchBasic = function (req, res) {
             "f16012" : f16012
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('etpOper', 'getExchBasic', options, {language:'sql', indent: '  '});
         
         // 대입 연산자 치환
         stmt = stmt.replace(/\: =/g,':='); 
      
-        console.log(stmt);
+        log.debug(stmt);
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -123,7 +128,7 @@ var getExchBasic = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -133,7 +138,7 @@ var getExchBasic = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -144,7 +149,7 @@ var getExchBasic = function (req, res) {
 */
 var getKspjongBasic = function (req, res) {
     try {
-        console.log('etpNavCalcu=>getAssetCurrent 호출됨.');
+        log.debug('etpNavCalcu=>getAssetCurrent 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -155,14 +160,14 @@ var getKspjongBasic = function (req, res) {
             "f16012" : f16012
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('etpOper', 'getKspjongBasic', options, {language:'sql', indent: '  '});
         
         // 대입 연산자 치환
         stmt = stmt.replace(/\: =/g,':='); 
      
-        console.log(stmt);
+        log.debug(stmt);
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -171,7 +176,7 @@ var getKspjongBasic = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -181,7 +186,7 @@ var getKspjongBasic = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -193,7 +198,7 @@ var getKspjongBasic = function (req, res) {
 */
 var getFutureBasic = function (req, res) {
     try {
-        console.log('etpNavCalcu=>getFutureCurrent 호출됨.');
+        log.debug('etpNavCalcu=>getFutureCurrent 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -212,14 +217,14 @@ var getFutureBasic = function (req, res) {
 */
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('etpOper', 'getFutureBasic', options, {language:'sql', indent: '  '});
         
         // 대입 연산자 치환
         stmt = stmt.replace(/\: =/g,':='); 
      
-        console.log(stmt);
+        log.debug(stmt);
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -228,7 +233,7 @@ var getFutureBasic = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -238,7 +243,7 @@ var getFutureBasic = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -249,7 +254,7 @@ var getFutureBasic = function (req, res) {
 */
 var getBondBasic = function (req, res) {
     try {
-        console.log('etpNavCalcu=>getBondCurrent 호출됨.');
+        log.debug('etpNavCalcu=>getBondCurrent 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -260,14 +265,14 @@ var getBondBasic = function (req, res) {
             "f16012" : f16012
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('etpOper', 'getBondBasic', options, {language:'sql', indent: '  '});
         
         // 대입 연산자 치환
         stmt = stmt.replace(/\: =/g,':='); 
      
-        console.log(stmt);
+        log.debug(stmt);
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -276,7 +281,7 @@ var getBondBasic = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -286,7 +291,7 @@ var getBondBasic = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 

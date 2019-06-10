@@ -13,6 +13,9 @@ var xlsx = require('xlsx');
 var fs = require('fs'); 
 var async = require('async'); 
 
+/* logging 추가함.  2019-06-10 */
+var log = config.logger;
+
 
 /*
  * ETP 의 기본정보를 조회한다.
@@ -20,7 +23,7 @@ var async = require('async');
  */
 var getEtpBasic = function(req, res) {
     try {
-        console.log('etpDetail.getEtpBasic 호출됨.');
+        log.debug('etpDetail.getEtpBasic 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -28,8 +31,8 @@ var getEtpBasic = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            console.log("[error] etpDetail.getEtpBasic  req.body.data no data.");
-            console.log(req.body.data);
+            log.debug("[error] etpDetail.getEtpBasic  req.body.data no data.");
+            log.debug(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpDetail.getEtpBasic  req.body.data no data.";
@@ -58,7 +61,7 @@ var getEtpBasic = function(req, res) {
                 function( callback ) {
 
                     stmt = mapper.getStatement('etpDetail', 'getEtpBasic', paramData, format);
-                    console.log(stmt);
+                    log.debug(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -82,7 +85,7 @@ var getEtpBasic = function(req, res) {
                 function( data, callback ) { 
 
                     stmt = mapper.getStatement('etpDetail', 'getIndexBasicByEtpJisuCd', paramData, format);
-                    console.log(stmt);
+                    log.debug(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -105,7 +108,7 @@ var getEtpBasic = function(req, res) {
             ], function (err) {
 
                 if( err ) {
-                    console.log( err );
+                    log.debug( err );
                 }else{
 
                     resultMsg.result    =   true;
@@ -120,7 +123,7 @@ var getEtpBasic = function(req, res) {
 
     } catch(expetion) {
 
-        console.log(expetion);
+        log.debug(expetion);
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;
@@ -145,7 +148,7 @@ var getEtpBasic = function(req, res) {
  */
 var getExistEtpBasicCnt = function(req, res) {
     try {
-        console.log('etpDetail.getExistEtpBasicCnt 호출됨.');
+        log.debug('etpDetail.getExistEtpBasicCnt 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -153,8 +156,8 @@ var getExistEtpBasicCnt = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            console.log("[error] etpDetail.getExistEtpBasicCnt  req.body.data no data.");
-            console.log(req.body.data);
+            log.debug("[error] etpDetail.getExistEtpBasicCnt  req.body.data no data.");
+            log.debug(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpDetail.getExistEtpBasicCnt  req.body.data no data.";
@@ -183,7 +186,7 @@ var getExistEtpBasicCnt = function(req, res) {
                 function( callback ) {
 
                     stmt = mapper.getStatement('etpDetail', 'getExistEtpBasicCnt', paramData, format);
-                    console.log(stmt);
+                    log.debug(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -206,7 +209,7 @@ var getExistEtpBasicCnt = function(req, res) {
             ], function (err) {
 
                 if( err ) {
-                    console.log( err );
+                    log.debug( err );
                 }else{
 
                     resultMsg.result    =   true;
@@ -221,7 +224,7 @@ var getExistEtpBasicCnt = function(req, res) {
 
     } catch(expetion) {
 
-        console.log(expetion);
+        log.debug(expetion);
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;
@@ -244,7 +247,7 @@ var getExistEtpBasicCnt = function(req, res) {
  */
 var getEtpPerformance = function(req, res) {
     try {
-        console.log('etpDetail.getEtpPerformance 호출됨.');
+        log.debug('etpDetail.getEtpPerformance 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -252,8 +255,8 @@ var getEtpPerformance = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            console.log("[error] etpDetail.getEtpPerformance  req.body.data no data.");
-            console.log(req.body.data);
+            log.debug("[error] etpDetail.getEtpPerformance  req.body.data no data.");
+            log.debug(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpDetail.getEtpPerformance  req.body.data no data.";
@@ -285,7 +288,7 @@ var getEtpPerformance = function(req, res) {
                     // 대입 문자 치환
                     stmt = stmt.replace(/\: =/g,':='); 
 
-                    console.log(stmt);
+                    log.debug(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -315,7 +318,7 @@ var getEtpPerformance = function(req, res) {
                         // 대입 문자 치환
                         stmt = stmt.replace(/\: =/g,':='); 
 
-                        console.log(stmt);
+                        log.debug(stmt);
 
                         conn.query(stmt, function( err, rows ) {
 
@@ -351,7 +354,7 @@ var getEtpPerformance = function(req, res) {
                         // 대입 문자 치환
                         stmt = stmt.replace(/\: =/g,':='); 
 
-                        console.log(stmt);
+                        log.debug(stmt);
 
                         conn.query(stmt, function( err, rows ) {
 
@@ -381,7 +384,7 @@ var getEtpPerformance = function(req, res) {
             ], function (err) {
 
                 if( err ) {
-                    console.log( err );
+                    log.debug( err );
                 }else{
 
                     resultMsg.result    =   true;
@@ -396,7 +399,7 @@ var getEtpPerformance = function(req, res) {
 
     } catch(expetion) {
 
-        console.log(expetion);
+        log.debug(expetion);
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;
@@ -420,7 +423,7 @@ var getEtpPerformance = function(req, res) {
  */
 var getEtpInfo = function(req, res) {
     try {
-        console.log('etpDetail.getEtpInfo 호출됨.');
+        log.debug('etpDetail.getEtpInfo 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -428,8 +431,8 @@ var getEtpInfo = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            console.log("[error] etpDetail.getEtpInfo  req.body.data no data.");
-            console.log(req.body.data);
+            log.debug("[error] etpDetail.getEtpInfo  req.body.data no data.");
+            log.debug(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpDetail.getEtpInfo  req.body.data no data.";
@@ -461,7 +464,7 @@ var getEtpInfo = function(req, res) {
 
                 paramData.com_mst_cd    =   "COM003";       /* 시장을 대표하는 지수 */
                 stmt = mapper.getStatement('etpDetail', 'getIndexInfoByCodeDtl', paramData, format);
-                console.log( "etpDetail.getIndexInfoByCodeDtl query call");
+                log.debug( "etpDetail.getIndexInfoByCodeDtl query call");
 
                 conn.query(stmt, function( err, rows ) {
 
@@ -504,7 +507,7 @@ var getEtpInfo = function(req, res) {
                     paramData.com_val02     =   ctgCodeItem.com_val02;
                     paramData.com_val03     =   ctgCodeItem.com_val03;
                     stmt = mapper.getStatement('etpDetail', 'getJisuListByEtpRepresent', paramData, format);
-                    console.log( "etpDetail.getJisuListByEtpRepresent query call");
+                    log.debug( "etpDetail.getJisuListByEtpRepresent query call");
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -595,7 +598,7 @@ var getEtpInfo = function(req, res) {
             var etpFunc3_1      =   function( callback ) { 
 
                 stmt = mapper.getStatement('etpDetail', 'getJisuListByCtgCode', paramData, format);
-                console.log( "etpDetail.getJisuListByCtgCode query call");
+                log.debug( "etpDetail.getJisuListByCtgCode query call");
 
                 conn.query(stmt, function( err, rows ) {
 
@@ -619,7 +622,7 @@ var getEtpInfo = function(req, res) {
             var etpFunc3    =   function( data, callback ) { 
 
                 stmt = mapper.getStatement('etpDetail', 'getJisuListByCtgCode', paramData, format);
-                console.log( "etpDetail.getJisuListByCtgCode query call");
+                log.debug( "etpDetail.getJisuListByCtgCode query call");
 
                 conn.query(stmt, function( err, rows ) {
 
@@ -649,7 +652,7 @@ var getEtpInfo = function(req, res) {
 
                     paramData.ctg_code  =   innerData.ctg_code;
                     stmt = mapper.getStatement('etpDetail', 'getEtpListByJisu', paramData, format);
-                    console.log( "etpDetail.getEtpListByJisu query call");
+                    log.debug( "etpDetail.getEtpListByJisu query call");
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -695,7 +698,7 @@ var getEtpInfo = function(req, res) {
 
                     paramData.ctg_code  =   innerData.ctg_code;
                     stmt = mapper.getStatement('etpDetail', 'getEtpListByJisu', paramData, format);
-                    console.log( "etpDetail.getEtpListByJisu query call");
+                    log.debug( "etpDetail.getEtpListByJisu query call");
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -714,12 +717,12 @@ var getEtpInfo = function(req, res) {
                             var etn_cnt = 0;
                             
 
-                            //util.log("(carousel_info.carousel_cnt * 5):" , (carousel_info.carousel_cnt * 5));
-                            //util.log("index" , index);
+                            //log.debug("(carousel_info.carousel_cnt * 5):" , (carousel_info.carousel_cnt * 5));
+                            //log.debug("index" , index);
 
 
                             if ((carousel_info.carousel_cnt * 5) > index) {
-                                //util.log("data:=====================", index);
+                                //log.debug("data:=====================", index);
 
                                 async.forEachOf( rows, function ( item, idx){ 
                                     total_amt += item.f15028;
@@ -733,7 +736,7 @@ var getEtpInfo = function(req, res) {
 
                                 carousel_data.push({"ctg_code":ctgCodeItem.ctg_code, "name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
                             } else {
-                                //util.log("mode:=====================", index);
+                                //log.debug("mode:=====================", index);
                                 async.forEachOf( rows, function ( item, idx){
                                     total_amt += item.f15028;
                                     // ctf 구분자가 1과 2일 경우 
@@ -769,8 +772,8 @@ var getEtpInfo = function(req, res) {
                 });
             };             
 
-console.log("##############################################################");
-console.log("##############################################################" + paramData.ctg_large_code );
+log.debug("##############################################################");
+log.debug("##############################################################" + paramData.ctg_large_code );
 
             var funcList =   [];
 
@@ -797,7 +800,7 @@ console.log("##############################################################" + p
             async.waterfall( funcList, function (err) {
 
                 if( err ) {
-                    console.log( err );
+                    log.debug( err );
                 }else{
 
                     resultMsg.result    =   true;
@@ -812,7 +815,7 @@ console.log("##############################################################" + p
 
     } catch(expetion) {
 
-        console.log(expetion);
+        log.debug(expetion);
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;
@@ -841,7 +844,7 @@ console.log("##############################################################" + p
 var getEtpChartData = function(req, res) {
     
     try {
-        console.log('etpDetail.getEtpChartData 호출됨.');
+        log.debug('etpDetail.getEtpChartData 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -849,8 +852,8 @@ var getEtpChartData = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            console.log("[error] etpDetail.getEtpChartData  req.body.data no data.");
-            console.log(req.body.data);
+            log.debug("[error] etpDetail.getEtpChartData  req.body.data no data.");
+            log.debug(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpDetail.getEtpChartData  req.body.data no data.";
@@ -879,7 +882,7 @@ var getEtpChartData = function(req, res) {
                 function( callback ) {
 
                     stmt = mapper.getStatement('etpDetail', 'getEtpChartData', paramData, format);
-                    console.log(stmt);
+                    log.debug(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -902,7 +905,7 @@ var getEtpChartData = function(req, res) {
             ], function (err) {
 
                 if( err ) {
-                    console.log( err );
+                    log.debug( err );
                 }else{
 
                     resultMsg.result    =   true;
@@ -917,7 +920,7 @@ var getEtpChartData = function(req, res) {
 
     } catch(expetion) {
 
-        console.log(expetion);
+        log.debug(expetion);
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;
@@ -941,7 +944,7 @@ var getEtpChartData = function(req, res) {
 var getEtpImportanceList = function(req, res) {
     
     try {
-        console.log('etpDetail.getEtpImportanceList 호출됨.');
+        log.debug('etpDetail.getEtpImportanceList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -949,8 +952,8 @@ var getEtpImportanceList = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            console.log("[error] etpDetail.getEtpImportanceList  req.body.data no data.");
-            console.log(req.body.data);
+            log.debug("[error] etpDetail.getEtpImportanceList  req.body.data no data.");
+            log.debug(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpDetail.getEtpImportanceList  req.body.data no data.";
@@ -979,7 +982,7 @@ var getEtpImportanceList = function(req, res) {
                 function( callback ) {
 
                     stmt = mapper.getStatement('etpDetail', 'getEtpImportanceList', paramData, format);
-                    console.log(stmt);
+                    log.debug(stmt);
 
                     conn.query(stmt, function( err, rows ) {
 
@@ -1002,7 +1005,7 @@ var getEtpImportanceList = function(req, res) {
             ], function (err) {
 
                 if( err ) {
-                    console.log( err );
+                    log.debug( err );
                 }else{
 
                     resultMsg.result    =   true;
@@ -1017,7 +1020,7 @@ var getEtpImportanceList = function(req, res) {
 
     } catch(expetion) {
 
-        console.log(expetion);
+        log.debug(expetion);
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;

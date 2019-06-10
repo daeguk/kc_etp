@@ -24,8 +24,7 @@ export default {
       sumWeight: 0,
       weights: [],
       angles: [],
-      color1: ['#90CAF9', '#80DEEA', '#80CBC4', '#A5D6A7', '#E6EE9C', 
-        '#FFCC80', '#EF9A9A', '#F48FB1', '#CE93D8', '#9FA8DA'],
+      color1: ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde', '#B6B8BA', '#7E8083', '#FBB040', '#F58025', '#EDED8A'],
     };
   },    
   watch: {
@@ -79,7 +78,7 @@ export default {
       c.fillStyle = "#424242";
       c.textBaseline = "middle";
       c.textAlign = "left";
-      c.font = '16px san-serif';
+      c.font = '14px san-serif';
       for(var i = 0; i < this.disCnt; i++) {
         if(i % 2 == 0) {
           c.fillText(this.etpWeight[i].JONG_NM, 60, 30 + parseInt(i/2) * 50);

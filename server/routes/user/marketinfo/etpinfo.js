@@ -14,13 +14,17 @@ var fs = require('fs');
 var async = require('async');
 
 
+/* logging 추가함.  2019-06-10 */
+var log = config.logger;
+
 /*
  * ETP 정보를 조회한다.
  * 2019-04-19  bkLove(촤병국)
  */
 var getEtpList = function(req, res) {
     try {
-        console.log('etpinfo.getEtpList 호출됨.');
+
+        log.debug('etpinfo.getEtpList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -28,8 +32,8 @@ var getEtpList = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            console.log("[error] etpinfo.getEtpList  req.body.data no data.");
-            console.log(req.body.data);
+            log.debug("[error] etpinfo.getEtpList  req.body.data no data.");
+            log.debug(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpinfo.getEtpList  req.body.data no data.";
@@ -70,7 +74,7 @@ var getEtpList = function(req, res) {
 
                 paramData.com_mst_cd = "COM003"; /* 시장을 대표하는 지수 */
                 stmt = mapper.getStatement('etpinfo', 'getIndexInfoByCodeDtl', paramData, format);
-                console.log("etpinfo.getIndexInfoByCodeDtl query call");
+                log.debug("etpinfo.getIndexInfoByCodeDtl query call");
 
                 conn.query(stmt, function(err, rows) {
 
@@ -123,7 +127,7 @@ var getEtpList = function(req, res) {
                     paramData.com_val02 = ctgCodeItem.com_val02;
                     paramData.com_val03 = ctgCodeItem.com_val03;
                     stmt = mapper.getStatement('etpinfo', 'getJisuListByEtpRepresent', paramData, format);
-                    console.log("etpinfo.getJisuListByEtpRepresent query call");
+                    log.debug("etpinfo.getJisuListByEtpRepresent query call");
 
                     conn.query(stmt, function(err, rows) {
 
@@ -232,7 +236,7 @@ var getEtpList = function(req, res) {
                 }
 
                 stmt = mapper.getStatement('etpinfo', 'getJisuListByCtgCode', paramData, format);
-                console.log("etpinfo.getJisuListByCtgCode query call");
+                log.debug("etpinfo.getJisuListByCtgCode query call");
 
                 conn.query(stmt, function(err, rows) {
 
@@ -284,7 +288,7 @@ var getEtpList = function(req, res) {
 
                     paramData.ctg_code = ctgCodeItem.ctg_code;
                     stmt = mapper.getStatement('etpinfo', 'getEtpListByJisu', paramData, format);
-                    console.log("etpinfo.getEtpListByJisu query call");
+                    log.debug("etpinfo.getEtpListByJisu query call");
 
                     conn.query(stmt, function(err, rows) {
 
@@ -308,11 +312,11 @@ var getEtpList = function(req, res) {
                                 var etf_cnt = 0;
                                 var etn_cnt = 0;
 
-                                //util.log("(carousel_info.carousel_cnt * 5):" , (carousel_info.carousel_cnt * 5));
-                                //util.log("index" , index);
+                                //log.debug("(carousel_info.carousel_cnt * 5):" , (carousel_info.carousel_cnt * 5));
+                                //log.debug("index" , index);
 
                                 if ((carousel_info.carousel_cnt * 5) > index) {
-                                    //util.log("data:=====================", index);
+                                    //log.debug("data:=====================", index);
 
                                     async.forEachOf(rows, function(item, idx) {
                                         total_amt += Number(item.f15028);
@@ -327,7 +331,7 @@ var getEtpList = function(req, res) {
 
                                     carousel_data.push({ "ctg_code": ctgCodeItem.ctg_code, "name": ctgCodeItem.ctg_name, "total_amt": total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt });
                                 } else {
-                                    //util.log("mode:=====================", index);
+                                    //log.debug("mode:=====================", index);
                                     async.forEachOf(rows, function(item, idx) {
                                         total_amt += Number(item.f15028);
 
@@ -371,8 +375,8 @@ var getEtpList = function(req, res) {
                 });
             };
 
-            console.log("##############################################################");
-            console.log("##############################################################" + paramData.ctg_large_code);
+            log.debug("##############################################################");
+            log.debug("##############################################################" + paramData.ctg_large_code);
 
 
             var funcList = [];
@@ -394,7 +398,7 @@ var getEtpList = function(req, res) {
             async.waterfall(funcList, function(err) {
 
                 if (err) {
-                    console.log(err);
+                    log.debug(err);
                 } else {
 
                     resultMsg.result = true;
@@ -409,7 +413,7 @@ var getEtpList = function(req, res) {
 
     } catch (expetion) {
 
-        console.log(expetion);
+        log.debug(expetion);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
@@ -434,7 +438,7 @@ var getEtpList = function(req, res) {
 
 
 var getEtfKorList = function(req, res) {
-    console.log('etpinfo 모듈 안에 있는 getEtpKorList 호출됨.');
+    log.debug('etpinfo 모듈 안에 있는 getEtpKorList 호출됨.');
 
     var pool = req.app.get("pool");
     var etpStmts = req.app.get("stmt");
@@ -442,18 +446,18 @@ var getEtfKorList = function(req, res) {
     // var options = {id:'admin'};
     var options = {};
     var stmt = etpStmts.EtpInfo.selectEtfKorList(options);
-    //console.log(stmt);
+    //log.debug(stmt);
 
     res.json({ success: true, results: rows });
     res.end();
     /*
         Promise.using(pool.connect(), conn => {
           conn.queryAsync(stmt).then(rows => {
-                  util.log("sql1" == rows.affectedRows)
+                  log.debug("sql1" == rows.affectedRows)
                   res.json({ success: true, results: rows });
                   res.end();
               }).catch(err => {
-                  util.log("Error while performing Query.", err);
+                  log.debug("Error while performing Query.", err);
                   res.json({ success: false, message: err });
                   res.end();
               });
@@ -464,7 +468,7 @@ var getEtfKorList = function(req, res) {
 };
 
 var getEtfForList = function(req, res) {
-    console.log('etpinfo 모듈 안에 있는 getEtfForList 호출됨.');
+    log.debug('etpinfo 모듈 안에 있는 getEtfForList 호출됨.');
 
     var pool = req.app.get("pool");
     var etpStmts = req.app.get("stmt");
@@ -472,15 +476,15 @@ var getEtfForList = function(req, res) {
     // var options = {id:'admin'};
     var options = {};
     var stmt = etpStmts.EtpInfo.selectEtfForList(options);
-    //console.log(stmt);
+    //log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
         conn.queryAsync(stmt).then(rows => {
-            util.log("sql1" == rows.affectedRows)
+            log.debug("sql1" == rows.affectedRows)
             res.json({ success: true, results: rows });
             res.end();
         }).catch(err => {
-            util.log("Error while performing Query.", err);
+            log.debug("Error while performing Query.", err);
             res.json({ success: false, message: err });
             res.end();
         });
@@ -490,7 +494,7 @@ var getEtfForList = function(req, res) {
 };
 
 var getEtnKorList = function(req, res) {
-    console.log('etpinfo 모듈 안에 있는 getEtnKorList 호출됨.');
+    log.debug('etpinfo 모듈 안에 있는 getEtnKorList 호출됨.');
 
     var pool = req.app.get("pool");
     var etpStmts = req.app.get("stmt");
@@ -498,15 +502,15 @@ var getEtnKorList = function(req, res) {
     // var options = {id:'admin'};
     var options = {};
     var stmt = etpStmts.EtpInfo.selectEtnKorList(options);
-    //console.log(stmt);
+    //log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
         conn.queryAsync(stmt).then(rows => {
-            util.log("sql1" == rows.affectedRows)
+            log.debug("sql1" == rows.affectedRows)
             res.json({ success: true, results: rows });
             res.end();
         }).catch(err => {
-            util.log("Error while performing Query.", err);
+            log.debug("Error while performing Query.", err);
             res.json({ success: false, message: err });
             res.end();
         });
@@ -516,7 +520,7 @@ var getEtnKorList = function(req, res) {
 };
 
 var getEtnForList = function(req, res) {
-    console.log('etpinfo 모듈 안에 있는 getEtnForList 호출됨.');
+    log.debug('etpinfo 모듈 안에 있는 getEtnForList 호출됨.');
 
     var pool = req.app.get("pool");
     var etpStmts = req.app.get("stmt");
@@ -524,15 +528,15 @@ var getEtnForList = function(req, res) {
     // var options = {id:'admin'};
     var options = {};
     var stmt = etpStmts.EtpInfo.selectEtnForList(options);
-    //console.log(stmt);
+    //log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
         conn.queryAsync(stmt).then(rows => {
-            util.log("sql1" == rows.affectedRows)
+            log.debug("sql1" == rows.affectedRows)
             res.json({ success: true, results: rows });
             res.end();
         }).catch(err => {
-            util.log("Error while performing Query.", err);
+            log.debug("Error while performing Query.", err);
             res.json({ success: false, message: err });
             res.end();
         });

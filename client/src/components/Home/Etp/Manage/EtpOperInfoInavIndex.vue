@@ -65,19 +65,17 @@
                         </ul>
                         <ul>
                             <li class="list_tit">
-                                <b>iNAV</b>
-                                <br>
-                                <span>외부공표</span>
+                                <b>외부공표 iNAV</b>
                             </li>
                             <li class="text_red align_r" v-if="paramData.f30818 >= 0">                                        
                                 <b>{{formatNumber(paramData.f15301)}}</b>
                                 <br>
-                                <span class="float_r">{{formatNumber(paramData.f30818)}}</span>
+                                <span class="float_r">{{formatNumber(paramData.f30818)}}%</span>
                             </li>
                             <li class="text_blue align_r" v-if="paramData.f30818 < 0">                                        
                                 <b>{{formatNumber(paramData.f15301)}}</b>
                                 <br>
-                                <span class="float_r">{{formatNumber(paramData.f30818)}}</span>
+                                <span class="float_r">{{formatNumber(paramData.f30818)}}%</span>
                             </li>
                         </ul>
                         <ul v-if="SimulationSwitch == true">
@@ -265,7 +263,7 @@ export default {
             // 기초 지수 현재가
             vm.f15318 = vm.formatNumber(vm.paramData.f15318);
             //기초지수 등락률 
-            vm.f30823 = vm.formatNumber(vm.paramData.f30823);
+            vm.f30823 = vm.formatDigit(vm.paramData.f30823, 5);
             // 전일ETP기초지수등락율
             vm.f34374 = vm.formatNumber(vm.paramData.f34374);
             // 예상배당수익률 : 배당율
@@ -274,13 +272,13 @@ export default {
             vm.f18453 = vm.paramData.f18453;
             // 변동률 
             vm.f15004 = (1 - vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824)) * 100;
-            vm.f15004 = vm.formatNumber(vm.f15004);
+            vm.f15004 = vm.formatDigit(vm.f15004, 5);
 
             // (ETP계산유형: F, A, K, I)매매기준율 /장전 매매 기준율
-            vm.f15004_1 = vm.formatNumber(vm.paramData.f30819 / vm.paramData.f30824);
+            vm.f15004_1 = vm.formatDigit(vm.paramData.f30819 / vm.paramData.f30824, 5);
 
             // (ETP계산유형: T)(매매기준율 - 장전 매매 기준율)/ 장전매매기준율
-            vm.f15004_2 = vm.formatNumber((vm.paramData.f30819 - vm.paramData.f30824) / vm.paramData.f30824);
+            vm.f15004_2 = vm.formatDigit((vm.paramData.f30819 - vm.paramData.f30824) / vm.paramData.f30824, 5);
 
             // 예상배당 수익률
             vm.f18101 = vm.formatNumber(vm.paramData.f18101);
@@ -354,19 +352,22 @@ export default {
 
             vm.iNav = vm.formatNumber(vm.iNav);
             vm.iNavRate = vm.formatNumber(vm.iNavRate);
-            vm.f30823 = vm.formatNumber(vm.f30823*100);  /* 등락률 */
-            vm.f15004 = vm.formatNumber(vm.f15004);  /* 변동률 */
+            vm.f30823 = vm.formatDigit(vm.f30823*100, 5);  /* 등락률 */
+            vm.f15004 = vm.formatDigit(vm.f15004, 5);  /* 변동률 */
 
             // (ETP계산유형: F, A, K, I)매매기준율 /장전 매매 기준율
-            vm.f15004_1 = vm.formatNumber(vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824));
+            vm.f15004_1 = vm.formatDigit(vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824), 5);
 
             // (ETP계산유형: T)(매매기준율 - 장전 매매 기준율)/ 장전매매기준율
-            vm.f15004_2 = vm.formatNumber((vm.NtoS(vm.f30819) - vm.NtoS(vm.f30824)) / vm.NtoS(vm.f30824));
+            vm.f15004_2 = vm.formatDigit((vm.NtoS(vm.f30819) - vm.NtoS(vm.f30824)) / vm.NtoS(vm.f30824), 5);
             
             util.processing(vm.$refs.progress, false);
         },
         formatNumber:function(num) {
             return util.formatNumber(num);
+        },
+        formatDigit:function(num, digit) {
+            return util.formatDigit(num, digit)
         },
         NtoS: function(num) {
             return util.NumtoStr(num);

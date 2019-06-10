@@ -22,19 +22,19 @@
                             <v-flex xs6>지수산출방식</v-flex>
                             <v-flex xs6 class="text_r">{{index_item.INDEX_CAL_METHOD}}</v-flex>
                         </v-layout>
-                        <v-layout row>
+                        <v-layout row v-if="type_cd=='0003' || type_cd=='0005'">
                             <v-flex xs6>기준시가총액</v-flex>
                             <v-flex xs6 class="text_r">{{index_item.STD_CAPITAL}}</v-flex>
                         </v-layout>
-                        <v-layout row>
+                        <v-layout row v-if="type_cd=='0003' || type_cd=='0005'">
                             <v-flex xs6>비교시가총액</v-flex>
                             <v-flex xs6 class="text_r">{{index_item.STD_CAPITAL}}</v-flex>
                         </v-layout>
-                        <v-layout row>
+                        <v-layout row v-if="type_cd=='0003' || type_cd=='0005'">
                             <v-flex xs6>고정현금</v-flex>
                             <v-flex xs6 class="text_r">{{index_item.FIXED_CASH}}</v-flex>
                         </v-layout>
-                        <v-layout row>
+                        <v-layout row v-if="type_cd=='0003' || type_cd=='0005'">
                             <v-flex xs6>유동비율적용여부</v-flex>
                             <v-flex xs6 class="text_r">{{index_item.FLOWRATE_YN}}</v-flex>
                         </v-layout>
@@ -101,7 +101,8 @@ export default {
             rowsPerPageItems: [50, 50],
             etp_items : [],
             etp_yn : false,
-            param: {}
+            param: {},
+            type_cd : ''
         };
     },
     computed: {
@@ -118,7 +119,7 @@ export default {
         this.$EventBus.$off('changeIndexBasicInfo')
     },
     mounted: function() {
-
+        this.type_cd = this.$store.state.user.type_cd;        
         this.init();
     },
     methods: {

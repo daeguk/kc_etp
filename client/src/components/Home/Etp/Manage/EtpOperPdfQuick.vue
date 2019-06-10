@@ -27,9 +27,9 @@
                             <v-card flat class="w100  ver2">
                                 <v-list>
                                     <!---pdf긴급반영 팝업-->
-                                    <v-list-tile :class="( togglePdfEmergencyPop ? 'border_b select' : 'border_b' )" @click.stop="fn_showDetailPdf(6)">
+                                    <v-list-tile :class="( toggle.togglePdfEmergencyPop ? 'border_b select' : 'border_b' )" @click.stop="fn_showDetailPdf(6)">
                                         <v-list-tile-avatar>
-                                            <div :class="( togglePdfEmergencyPop ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon5"></span></div>
+                                            <div :class="( toggle.togglePdfEmergencyPop ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon5"></span></div>
                                         </v-list-tile-avatar>
                                         <v-list-tile-content class="rm_con_h">
                                             <v-list-tile-title>PDF 긴급반영</v-list-tile-title>
@@ -40,9 +40,9 @@
                                     <!---pdf긴급반영 팝업 팝업 end-->
                                     
                                     <!---iNAV 계산기 팝업---->
-                                    <v-list-tile :class="( toggleIanvPop ? 'border_b select' : 'border_b' )" @click.stop="fn_showDetailPdf(7)">
+                                    <v-list-tile :class="( toggle.toggleIanvPop ? 'border_b select' : 'border_b' )" @click.stop="fn_showDetailPdf(7)">
                                         <v-list-tile-avatar>
-                                            <div :class="( toggleIanvPop ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon6"></span></div>
+                                            <div :class="( toggle.toggleIanvPop ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon6"></span></div>
                                         </v-list-tile-avatar>
                                         <v-list-tile-content class="rm_con_h">
                                             <v-list-tile-title>iNAV 계산기</v-list-tile-title>
@@ -98,12 +98,12 @@ import Config from "@/js/config.js";
 import ComEtpFavorItemSub   from "@/components/common/control/ComEtpFavorItemSub.vue"; 
 
 export default {
-    props : [ "pdfData", "indexBasic" ],
+    props : [ "pdfData", "indexBasic", "toggle" ],
     data() {
         return {
             showFaver : true,
-            togglePdfEmergencyPop : false,
-            toggleIanvPop : false,
+            //togglePdfEmergencyPop : false,
+            //toggleIanvPop : false,
             togglePdfByRate   : false,
 
             /* 지수 조치현황 */
@@ -113,6 +113,11 @@ export default {
             },
             faverSize : 50,            
         };
+    },
+    watch : {
+        'pdfData.toggleIanvPop' : function() {
+            alert( this.pdfData.toggleIanvPop );
+        }
     },
     components: {
         ComEtpFavorItemSub      :   ComEtpFavorItemSub
@@ -176,8 +181,8 @@ export default {
 
             vm.togglePdfByRate  =   !vm.togglePdfByRate;
 
-            vm.togglePdfEmergencyPop    =   false;
-            vm.toggleIanvPop            =   false;
+//            vm.togglePdfEmergencyPop    =   false;
+//            vm.toggleIanvPop            =   false;
 
             var paramData   =   {};
             paramData.togglePdfByRate    =   vm.togglePdfByRate;            
@@ -217,8 +222,8 @@ console.log( vm.pdfData );
             /* PDF 긴급반영인 경우 */
             if( gubun == 6 ) {
 
-                vm.togglePdfEmergencyPop    =   true;
-                vm.toggleIanvPop            =   false;
+//                vm.togglePdfEmergencyPop    =   true;
+//                vm.toggleIanvPop            =   false;
                 vm.togglePdfByRate          =   false;
 
                 vm.$emit( "fn_showDetailPdf", gubun, vm.pdfData );
@@ -226,8 +231,8 @@ console.log( vm.pdfData );
             /* iNAV 계산기인 경우 */
             else if( gubun == 7 ) {
 
-                vm.togglePdfEmergencyPop    =   false;
-                vm.toggleIanvPop            =   true;
+//                vm.togglePdfEmergencyPop    =   false;
+//                vm.toggleIanvPop            =   true;
                 vm.togglePdfByRate          =   false;                
 
                 var gubun   =   "7";

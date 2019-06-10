@@ -212,9 +212,27 @@
                                     ELSE    td_etfpdf_basic.f16004
                     END                                         AS  f16004          /* 해외시장종목명 */
                 ,   td_etfpdf_basic.f16588                      AS  f16588          /* 평가금액 */
-                ,   td_etfpdf_basic.f34743                      AS  f34743          /* ETF_PDF비중 */
-                ,   FORMAT( td_etfpdf_basic.f34743 / 100, 2 )   AS  fmt_f34743      /* ETF_PDF비중 */
-                ,   td_etfpdf_basic.f33861                      AS  f33861          /* ETF시장구분 */
+                ,   CASE    WHEN    tm_pdf_modify_hist_dtl.status   =   'insert'
+                                    THEN    0
+                                    ELSE    td_etfpdf_basic.f34743
+                    END                                         AS  f34743          /* ETF_PDF비중 */
+                ,   CASE    WHEN    tm_pdf_modify_hist_dtl.status   =   'insert'
+                                    THEN    0
+                                    ELSE    FORMAT( td_etfpdf_basic.f34743 / 100, 2 )
+                    END                                         AS  fmt_f34743      /* ETF_PDF비중 */
+                ,   CASE    WHEN    tm_pdf_modify_hist_dtl.status   =   'insert'
+                                    THEN    (
+                                                SELECT  CASE    WHEN    td_kspjong_basic.market_id  =   'M001'
+                                                                THEN    '1'         /* 코스피 */
+                                                                WHEN    td_kspjong_basic.market_id  =   'M003'
+                                                                THEN    '2'         /* 코스닥 */
+                                                        END
+                                                  FROM  td_kspjong_basic
+                                                 WHERE  td_kspjong_basic.f16012     =   tm_pdf_modify_hist_dtl.f16316
+                                                 LIMIT  1
+                                            )
+                                    ELSE    td_etfpdf_basic.f33861
+                    END                                         AS  f33861          /* ETF시장구분 */
                 
           FROM  tm_pdf_modify_hist_dtl
           LEFT  OUTER   JOIN    td_etfpdf_basic
@@ -254,9 +272,9 @@
             </otherwise>
         </choose>
 
-        <if test= 'f16012 != null  and  f16012 != "" ' >
-                       AND  tm_pdf_modify_hist_dtl.f16012       =   #{f16012}
-        </if>
+                       AND  tm_pdf_modify_hist_mast.f16583      =   #{f16583}           /* 사무수탁회사번호 */
+                       AND  tm_pdf_modify_hist_mast.f16012      =   #{f16012}           /* ETF종목코드 */
+                       AND  tm_pdf_modify_hist_mast.f16013      =   #{f16013}           /* ETF단축코드 */
                        AND  tm_pdf_modify_hist_mast.reg_time    BETWEEN     STR_TO_DATE( CONCAT( #{search_date}, ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
                     						                        AND     STR_TO_DATE( CONCAT( #{search_date}, ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
                 )
@@ -992,6 +1010,155 @@
 
 <!-- 
 ***************************************************************
+*   td_etfpdf_basic
+***************************************************************
+-->
+
+    <!--
+    * ETP 운용관리 - PDF 긴급반영 - 저장시 td_etfpdf_basic 에 데이터가 존재하는지 체크한다.
+    *
+    * 1) td_etfpdf_basic 에 없는 경우 'insert'
+    * 2) td_etfpdf_basic 에 존재하는 경우 'update'
+    *
+    * 2019-05-03  bkLove(촤병국)
+    -->
+    <select id="getTdEtfpdfBasicExistsCheck">
+
+        SELECT      /* etpOper.getTdEtfpdfBasicExistsCheck  ETP 운용관리 - PDF 긴급반영 - 저장시 td_etfpdf_basic 에 데이터가 존재하는지 체크한다. */
+                    CASE    WHEN    td_etfpdf_basic.f16316      IS  NULL
+                            THEN    'insert'
+                            ELSE    'modify'
+                    END                                         AS  dtl_status   /* 상세 상태 */
+                ,   base.*
+
+          FROM  (        
+                <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
+                <![CDATA[              
+                    SELECT      #{f16583}                       AS  f16583      /* 사무수탁회사번호 */
+                            ,   #{f16012}                       AS  f16012      /* ETF종목코드 */
+                            ,   #{f16013}                       AS  f16013      /* ETF단축코드 */
+                            ,   #{data.f16316}                  AS  f16316      /* 구성종목코드 */
+
+                            ,   #{data.f16499}                  AS  f16499      /* 1CU단위증권수 */
+                            ,   #{data.f33861}                  AS  f33861      /* ETF시장구분 */
+                            ,   #{data.f16004}                  AS  f16004      /* 해외시장종목명 */
+                            ,   #{data.f34840}                  AS  f34840      /* 액면금액 */
+                    FROM  DUAL
+                ]]>
+                </foreach>
+                )       base
+
+          LEFT  OUTER   JOIN    td_etfpdf_basic
+                          ON    (
+                                            1 = 1
+                                    AND     td_etfpdf_basic.f16583              =   base.f16583     /* 사무수탁회사번호 */
+                                    AND     td_etfpdf_basic.f16012              =   base.f16012     /* ETF종목코드 */
+                                    AND     td_etfpdf_basic.f16013              =   base.f16013     /* ETF단축코드 */
+                                    AND     td_etfpdf_basic.f16316              =   base.f16316     /* 구성종목코드 */
+                                )
+         WHERE  1 = 1
+
+    </select>
+
+    <!--
+    * [td_etfpdf_basic] 테이블에 저장한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <insert     id="saveTdEtfpdfBasic">
+    <![CDATA[
+        INSERT  INTO    
+        /* etpOper.saveTdEtfpdfBasic      [td_etfpdf_basic] 테이블에 저장한다. */
+        td_etfpdf_basic 
+        ( 
+                F16583                      /* 사무수탁회사번호 */
+            ,   F16012                      /* ETF종목코드 */
+            ,   F16013                      /* ETF단축코드 */
+            ,   F16316                      /* 구성종목코드 */
+
+            ,   F16499                      /* 1CU단위증권수 */
+            ,   F33861                      /* ETF시장구분 */
+            ,   F16004                      /* 해외시장종목명 */
+            ,   F34840                      /* 액면금액 */
+            ,   F16588                      /* 평가금액 */
+            ,   F34743                      /* ETF_PDF비중 */
+            ,   F34744                      /* ETF_PDF포함여부 */
+
+            ,   reg_id                      /* 등록자 ID */
+            ,   reg_time                    /* 등록시간 */
+            ,   upd_id                      /* 수정자 ID */
+            ,   upd_time                    /* 수정시간 */            
+        ) 
+    ]]>
+        VALUES
+        <foreach    collection="dataLists"   item="data"     separator="," >
+    <![CDATA[        
+        ( 
+                #{f16583}                   /* 사무수탁회사번호 */
+            ,   #{f16012}                   /* ETF종목코드 */
+            ,   #{f16013}                   /* ETF단축코드 */
+            ,   #{data.f16316}              /* 구성종목코드 */
+
+            ,   #{data.f16499}              /* 1CU단위증권수 */
+            ,   #{data.f33861}              /* ETF시장구분 */
+            ,   #{data.f16004}              /* 해외시장종목명 */
+            ,   #{data.f34840}              /* 액면금액 */
+            ,   0                           /* 평가금액 */
+            ,   0                           /* ETF_PDF비중 */
+            ,   0                           /* ETF_PDF포함여부 */
+
+            ,   #{user_id}                  /* 등록자 ID */
+            ,   now()                       /* 등록시간 */
+            ,   #{user_id}                  /* 수정자 ID */
+            ,   now()                       /* 수정시간 */
+        )
+    ]]>
+        </foreach>
+    </insert>
+
+
+    <!--
+    * [td_etfpdf_basic] 테이블을 수정한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <update     id="modifyTdEtfpdfBasic">
+
+        UPDATE  /* etpOper.modifyTdEtfpdfBasic      [td_etfpdf_basic] 테이블을 수정한다. */
+        
+                td_etfpdf_basic
+        
+         INNER  JOIN    (
+                            <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
+                            <![CDATA[              
+                                SELECT      #{f16583}                       AS  f16583      /* 사무수탁회사번호 */
+                                        ,   #{f16012}                       AS  f16012      /* ETF종목코드 */
+                                        ,   #{f16013}                       AS  f16013      /* ETF단축코드 */
+                                        ,   #{data.f16316}                  AS  f16316      /* 구성종목코드 */
+
+                                        ,   #{data.f16499}                  AS  f16499      /* 1CU단위증권수 */
+                                        ,   #{data.f33861}                  AS  f33861      /* ETF시장구분 */
+                                        ,   #{data.f16004}                  AS  f16004      /* 해외시장종목명 */
+                                        ,   #{data.f34840}                  AS  f34840      /* 액면금액 */
+
+                                FROM  DUAL
+                            ]]>
+                            </foreach>
+                        )       base
+                        
+                  ON            1 = 1
+
+                        AND     td_etfpdf_basic.f16583      =   base.f16583     /* 사무수탁회사번호 */
+                        AND     td_etfpdf_basic.f16012      =   base.f16012     /* ETF종목코드 */
+                        AND     td_etfpdf_basic.f16013      =   base.f16013     /* ETF단축코드 */
+                        AND     td_etfpdf_basic.f16316      =   base.f16316     /* 구성종목코드 */
+
+           SET      td_etfpdf_basic.f16499          =   base.f16499             /* 1CU단위증권수 */
+                ,   td_etfpdf_basic.f34840          =   base.f34840             /* 액면금액 */
+
+    </update>
+
+
+<!-- 
+***************************************************************
 *   tm_pdf_modify_dtl ( PDF 변경 상세 정보 )  
 ***************************************************************
 -->
@@ -1610,7 +1777,11 @@
 					SELECT  *
 					  FROM  tm_pdf_modify_mast
 					 WHERE  1 = 1
-					   AND  tm_pdf_modify_mast.inst_cd              =   #{inst_cd}
+					   AND  tm_pdf_modify_mast.inst_cd              =   #{inst_cd}          /* 기관구분코드 */
+                       AND  tm_pdf_modify_mast.f16583               =   #{f16583}           /* 사무수탁회사번호 */
+                       AND  tm_pdf_modify_mast.f16012               =   #{f16012}           /* ETF종목코드 */
+                       AND  tm_pdf_modify_mast.f16013               =   #{f16013}           /* ETF단축코드 */
+
 					   AND  (
 									tm_pdf_modify_mast.reg_time     BETWEEN     STR_TO_DATE( CONCAT( DATE_FORMAT(now(), '%Y%m%d'), ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
 																	    AND     STR_TO_DATE( CONCAT( DATE_FORMAT(now(), '%Y%m%d'), ' 23:59:59' ), '%Y%m%d %H:%i:%s' )

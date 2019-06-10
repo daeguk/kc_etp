@@ -7,13 +7,17 @@
 var config = require('../../../config/config');
 var util = require("util");
 var Promise = require("bluebird");
+
+/* logging 추가함.  2019-06-10 */
+var log = config.logger;
+
 /* 
  * etp 신청 현황  조회한다.
  * 
  *  *  */
 var getEtpApplyList = function (req, res) {
     try {
-        console.log('EtpApply=>getEtpApplyList 호출됨.');
+        log.debug('EtpApply=>getEtpApplyList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -21,9 +25,9 @@ var getEtpApplyList = function (req, res) {
         var options = { 
             inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd,
             };
-        util.log("options", JSON.stringify(options.inst_cd));
+        log.debug("options", JSON.stringify(options.inst_cd));
         var stmt = mapper.getStatement('EtpRegister', 'selectEtpApplyList', options, {language:'sql', indent: '  '});
-        console.log(stmt);
+        log.debug(stmt);
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -32,7 +36,7 @@ var getEtpApplyList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -42,22 +46,22 @@ var getEtpApplyList = function (req, res) {
 
         });        
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 var getEtpApplyDistCnt = function (req, res) {
     try {
-        console.log('EtpApply=>getEtpApplyDistCnt 호출됨.');
+        log.debug('EtpApply=>getEtpApplyDistCnt 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
         var options = { 
             inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd
          };
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('EtpRegister', 'getEtpApplyDistCnt', options, {language:'sql', indent: '  '});
-        console.log(stmt);
+        log.debug(stmt);
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -66,7 +70,7 @@ var getEtpApplyDistCnt = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -76,21 +80,21 @@ var getEtpApplyDistCnt = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 var getEtpApplyIndexCnt = function (req, res) {
     try {
-        console.log('EtpApply=>getEtpApplyIndexCnt 호출됨.');
+        log.debug('EtpApply=>getEtpApplyIndexCnt 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
         var options = { 
             inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd
          };
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
         var stmt = mapper.getStatement('EtpRegister', 'getEtpApplyIndexCnt', options, {language:'sql', indent: '  '});
-        console.log(stmt);
+        log.debug(stmt);
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -99,7 +103,7 @@ var getEtpApplyIndexCnt = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -109,21 +113,21 @@ var getEtpApplyIndexCnt = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 var getEtpApplyCodeCnt = function (req, res) {
     try {
-        console.log('EtpApply=>getEtpApplyCodeCnt 호출됨.');
+        log.debug('EtpApply=>getEtpApplyCodeCnt 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
          var options = { 
             inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd
          };
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
         var stmt = mapper.getStatement('EtpRegister', 'getEtpApplyCodeCnt', options, {language:'sql', indent: '  '});
-        console.log(stmt);
+        log.debug(stmt);
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -132,7 +136,7 @@ var getEtpApplyCodeCnt = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -142,21 +146,21 @@ var getEtpApplyCodeCnt = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 var getEtpApplyInavCnt = function (req, res) {
     try {
-        console.log('EtpApply=>getEtpApplyInavCnt 호출됨.');
+        log.debug('EtpApply=>getEtpApplyInavCnt 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
          var options = { 
             inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd
          };
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
         var stmt = mapper.getStatement('EtpRegister', 'getEtpApplyInavCnt', options, {language:'sql', indent: '  '});
-        console.log(stmt);
+        log.debug(stmt);
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -165,7 +169,7 @@ var getEtpApplyInavCnt = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
 
@@ -176,21 +180,21 @@ var getEtpApplyInavCnt = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 var getCompContactList = function (req, res) {
     try {
-        console.log('EtpApply=>getCompContactList 호출됨.');
+        log.debug('EtpApply=>getCompContactList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
         var options = { 
             inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd
          };
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
         var stmt = mapper.getStatement('EtpRegister', 'getCompContactList', options, {language:'sql', indent: '  '});
-        console.log(stmt);
+        log.debug(stmt);
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -199,7 +203,7 @@ var getCompContactList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     
@@ -210,12 +214,12 @@ var getCompContactList = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 var getIdxList = function (req, res) {
     try {
-        console.log('EtpApply=>getIdxList 호출됨.');
+        log.debug('EtpApply=>getIdxList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -225,10 +229,10 @@ var getIdxList = function (req, res) {
                        "idx_sym_code":  req.query.idx_sym_code
                        };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('EtpRegister', 'getIdxList', options, {language:'sql', indent: '  '});
-        console.log(stmt);
+        log.debug(stmt);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -238,7 +242,7 @@ var getIdxList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     
@@ -249,12 +253,12 @@ var getIdxList = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 var getRidxList = function (req, res) {
     try {
-        console.log('EtpApply=>getRidxList 호출됨.');
+        log.debug('EtpApply=>getRidxList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -264,9 +268,9 @@ var getRidxList = function (req, res) {
                        "ridx_dist_sym_code":  req.query.ridx_dist_sym_code
                        };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
         var stmt = mapper.getStatement('EtpRegister', 'getRidxList', options, {language:'sql', indent: '  '});
-        console.log(stmt);
+        log.debug(stmt);
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -275,7 +279,7 @@ var getRidxList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     
@@ -286,12 +290,12 @@ var getRidxList = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 var deleteEtpApply = function (req, res) {
     try {
-        console.log('EtpApply=>deleteEtpApply 호출됨.');
+        log.debug('EtpApply=>deleteEtpApply 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -324,18 +328,18 @@ var deleteEtpApply = function (req, res) {
         }
    
         async.forEachOfLimit(req.query.seqValues, 1, function(seq, index, cb) {
-        console.log(index + ': ' + seq);
+        log.debug(index + ': ' + seq);
 
            Promise.using(pool.connect(), conn => {  
                 async.waterfall([
                     function( callback ) { //삭제
                         params.seq = seq;
-                        console.log(params.seq);
+                        log.debug(params.seq);
                         stmt = mapper.getStatement('EtpRegister', 'deleteEtpApply' ,params, format);
-                        console.log(stmt);
+                        log.debug(stmt);
                         conn.query(stmt, function( err, rows ) {
                             if ( rows ) {
-                                console.log( "deleteEtpApply", rows );
+                                log.debug( "deleteEtpApply", rows );
                             } if( err ) {
                                 return callback( err );
                             }
@@ -345,7 +349,7 @@ var deleteEtpApply = function (req, res) {
                     function( data, callback ) { //db 마스터조회
 
                         stmt = mapper.getStatement('EtpRegister', 'getMaster', params, format);
-                        console.log(stmt);
+                        log.debug(stmt);
                         conn.query(stmt, function( err, rows ) {
                             if ( rows ) {
                                 params.dbMasterData = rows[0];
@@ -359,7 +363,7 @@ var deleteEtpApply = function (req, res) {
                     function( data, callback ) { //히스토리 시퀀스확인
 
                         stmt = mapper.getStatement('EtpRegister', 'getMasterHistoryNextSeq', params, format);
-                        console.log(stmt);
+                        log.debug(stmt);
                         conn.query(stmt, function( err, rows ) {
                             if ( rows ) {
                                 params.dbMasterData.seq_hist = rows[0].SEQ_HIST;
@@ -373,10 +377,10 @@ var deleteEtpApply = function (req, res) {
                     function( data, callback ) { //히스토리쌓기
                       
                         stmt = mapper.getStatement('EtpRegister', 'insertMasterHistory',  JSON.parse(JSON.stringify(params.dbMasterData, replacer)), format);
-                        console.log(stmt);
+                        log.debug(stmt);
                         conn.query(stmt, function( err, rows ) {
                             if ( rows ) {
-                                console.log( "insertMasterHistory", rows );
+                                log.debug( "insertMasterHistory", rows );
                             }
                             if( err ) {
                                 return callback( err );
@@ -386,21 +390,21 @@ var deleteEtpApply = function (req, res) {
                     }
                 ],function (err) {
                     if(err){
-                        console.log("[err] EtpRegister.deleteEtpApply Error while performing Query.", err);
+                        log.debug("[err] EtpRegister.deleteEtpApply Error while performing Query.", err);
                         res.json({
                             result: false
                             ,msg: err
                         });
                         res.end();
                     }else{
-                        console.log(index + ": done")
+                        log.debug(index + ": done")
                         cb();
                     }
                    
                 });
             });  
         }, function() {
-            console.log('ALL done');
+            log.debug('ALL done');
             res.json({
                 result: true
             });
@@ -408,7 +412,7 @@ var deleteEtpApply = function (req, res) {
         });
         
     }catch(exception) {
-            util.log("err=>", exception);
+            log.debug("err=>", exception);
             res.json({
                 result: false
                 ,msg: exception
@@ -418,7 +422,7 @@ var deleteEtpApply = function (req, res) {
 };   
 var getINavList = function (req, res) {
     try {
-        console.log('EtpApply=>getINavList 호출됨.');
+        log.debug('EtpApply=>getINavList 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -427,9 +431,9 @@ var getINavList = function (req, res) {
                        "isu_srt_cd":  req.query.isu_srt_cd,
                        };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
         var stmt = mapper.getStatement('EtpRegister', 'getINavList', options, {language:'sql', indent: '  '});
-        console.log(stmt);
+        log.debug(stmt);
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
@@ -438,7 +442,7 @@ var getINavList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     
@@ -449,7 +453,7 @@ var getINavList = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 module.exports.getEtpApplyList = getEtpApplyList;
