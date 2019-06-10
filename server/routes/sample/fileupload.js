@@ -1,5 +1,9 @@
+var config = require('../../config/config');
 var util = require("util");
 var multer = require('multer');
+
+/* logging 추가함.  2019-06-10 */
+var log = config.logger;
 
 
 
@@ -17,13 +21,13 @@ var fileuploadSingle = function (req, res) {
         // 서버에 저장할 파일 명
         filename: function (req, file, cb) {
 
-            console.log("file" + JSON.stringify(file));
+            log.debug("file" + JSON.stringify(file));
 
             file.uploadedFile = {
                 name: file.originalname
             };
 
-            console.log("filename=" + file.uploadedFile.name);
+            log.debug("filename=" + file.uploadedFile.name);
             cb(null, file.uploadedFile.name);
         }
     });
@@ -34,13 +38,13 @@ var fileuploadSingle = function (req, res) {
 
     upload(req, res, function (err) {
         if (err) {
-            console.log("File Upload Err" + err);
+            log.debug("File Upload Err" + err);
         }
         /*if (err) deferred.reject();
         else deferred.resolve(req.file.uploadedFile);
         */
 
-        //console.log(req.file.uploadedFile);
+        //log.debug(req.file.uploadedFile);
 
         res.end();
     });
@@ -64,13 +68,13 @@ var fileuploadMulti = function (req, res) {
         // 서버에 저장할 파일 명
         filename: function (req, file, cb) {
 
-            console.log("file" + JSON.stringify(file));
+            log.debug("file" + JSON.stringify(file));
 
             file.uploadedFile = {
                 name: file.originalname
             };
 
-            console.log("filename=" + file.uploadedFile.name);
+            log.debug("filename=" + file.uploadedFile.name);
             cb(null, file.uploadedFile.name);
         }
     });
@@ -81,13 +85,13 @@ var fileuploadMulti = function (req, res) {
 
     upload(req, res, function (err) {
         if (err) {
-            console.log("File Upload Err" + err);
+            log.debug("File Upload Err" + err);
         }
         /*if (err) deferred.reject();
         else deferred.resolve(req.file.uploadedFile);
         */
 
-        //console.log(req.file.uploadedFile);
+        //log.debug(req.file.uploadedFile);
 
         res.end();
     });

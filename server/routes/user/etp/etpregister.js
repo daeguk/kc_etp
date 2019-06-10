@@ -5,7 +5,10 @@ var config = require('../../../config/config');
 var util = require("util");
 var Promise = require("bluebird");
 var async = require('async');
-       
+
+/* logging 추가함.  2019-06-10 */
+var log = config.logger;
+
 var format = { language: 'sql', indent: '' };
 
 var getEtpRegisterView = function(req, res) {
@@ -264,7 +267,7 @@ var getEtpRegisterView = function(req, res) {
              function (err) {
 
                 if( err ) {
-                    console.log( err );
+                    log.debug( err );
                 }else{
 
                     resultMsg.result    =   true;
@@ -279,7 +282,7 @@ var getEtpRegisterView = function(req, res) {
          });       
        
     } catch(exception) {
-        console.log(exception);
+        log.debug(exception);
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;
@@ -449,7 +452,7 @@ var insertEtpRegister = function(req, res) {
 
         util.log('###ETP CALL JSONPARSE LAST>>>###'+JSON.stringify(paramData));
         var stmt = mapper.getStatement('EtpRegister', 'insertMaster', paramData, format);
-        console.log(stmt);
+        log.debug(stmt);
         
         
         Promise.using(pool.connect(), conn => {
@@ -461,7 +464,7 @@ var insertEtpRegister = function(req, res) {
                 res.end();
     
             }).catch(err => {
-                console.log("[error] EtpRegister.insertMaster Error while performing Query.", err);
+                log.debug("[error] EtpRegister.insertMaster Error while performing Query.", err);
                 res.json({
                     result: false
                     ,msg: err
@@ -604,7 +607,7 @@ var updateEtpRegister = function(req, res) {
     }
  */   
 
-    //console.log('###ETP UPDATE JSONPARSE LAST>>>###', paramData);
+    //log.debug('###ETP UPDATE JSONPARSE LAST>>>###', paramData);
     var dbMasterData ;
     var stmt='';
     Promise.using(pool.connect(), conn => {
@@ -618,7 +621,7 @@ var updateEtpRegister = function(req, res) {
                         if ( rows ) {
                         
                         dbMasterData  = rows[0];
-                        //console.log("UPDATE BEFORE MASTER Data:::", dbMasterData.isin_stat_cd);
+                        //log.debug("UPDATE BEFORE MASTER Data:::", dbMasterData.isin_stat_cd);
                         
                             if(dbMasterData.inst_cd !== paramData.paramInstCd && req.session.type_cd !=='0002' ){
                                 return callback( "해당 발행사나 코스콤만 수정이 가능합니다." );
@@ -648,12 +651,12 @@ var updateEtpRegister = function(req, res) {
 
                 },
                 function( data, callback ) {
-                    console.log(paramData);
+                    log.debug(paramData);
                     stmt = mapper.getStatement('EtpRegister', 'updateMaster', paramData, format);
-                    console.log(stmt);
+                    log.debug(stmt);
                     conn.query(stmt, function( err, rows ) {  
                         if ( rows ) {
-                            console.log( "updateMaster", rows );
+                            log.debug( "updateMaster", rows );
                         }
                         if( err ) {
                             return callback( err );
@@ -667,10 +670,10 @@ var updateEtpRegister = function(req, res) {
                     stmt = mapper.getStatement('EtpRegister', 'getMasterHistoryNextSeq', paramData, format);
                     conn.query(stmt, function( err, rows ) {
                         if ( rows ) {
-                           // console.log( "getMasterHistoryNextSeq", rows[0].SEQ_HIST);
+                           // log.debug( "getMasterHistoryNextSeq", rows[0].SEQ_HIST);
 
                             paramData.seq_hist = rows[0].SEQ_HIST;
-                          //  console.log("EtpRegister paramData", paramData);
+                          //  log.debug("EtpRegister paramData", paramData);
                         }
                         if( err ) {
                             return callback( err );
@@ -681,12 +684,12 @@ var updateEtpRegister = function(req, res) {
                 
                 },
                 function( data, callback ) {
-                    console.log("EtpRegister paramData insertMasterHistory before", paramData);
+                    log.debug("EtpRegister paramData insertMasterHistory before", paramData);
                     stmt = mapper.getStatement('EtpRegister', 'insertMasterHistory', paramData, format);
-                    console.log(stmt);
+                    log.debug(stmt);
                     conn.query(stmt, function( err, rows ) {
                         if ( rows ) {
-                            console.log( "insertMasterHistory", rows );
+                            log.debug( "insertMasterHistory", rows );
                         }
                         if( err ) {
                             return callback( err );
@@ -698,7 +701,7 @@ var updateEtpRegister = function(req, res) {
                 },
                 ],function (err) {
                     if(err){
-                         console.log("[err] EtpRegister.updateEtpRegister Error while performing Query.", err);
+                         log.debug("[err] EtpRegister.updateEtpRegister Error while performing Query.", err);
                         res.json({
                             result: false
                             ,msg: err
@@ -711,7 +714,7 @@ var updateEtpRegister = function(req, res) {
                     res.end();
                 });
         }catch(exception) {
-            console.log("[error] EtpRegister.updateEtpRegister Error while performing Query.", exception);
+            log.debug("[error] EtpRegister.updateEtpRegister Error while performing Query.", exception);
             res.json({
                 result: false
                 ,msg: exception
