@@ -74,6 +74,7 @@
 
                     :pdfData="pdfData"
                     :indexBasic = "indexBasic"
+                    :toggle= "toggle"
 
                     @showDetail="showDetail"
                     @showMessageBox="showMessageBox"
@@ -104,7 +105,7 @@ import EtpOperPdfQuick from "@/components/Home/Etp/Manage/EtpOperPdfQuick.vue";
 var tblPdfList = null;
 
 export default {
-    props: [ "paramData", "reloadYn" ],
+    props: [ "paramData", "reloadYn", "toggle" ],
     components: {
         EtpOperPdfQuick                 :   EtpOperPdfQuick,
     },
@@ -147,7 +148,7 @@ export default {
         if( vm.paramData ) {
             vm.pdfData  =   vm.paramData;
         }
-
+debugger;
         vm.fn_init();
     },
     created: function() {
@@ -385,7 +386,7 @@ export default {
             var vm = this;
 
             var tableObj = {
-                processing: true,
+//              processing: true,
                 serverSide: false,
                 info: false, // control table information display field
                 stateSave: true, //restore table state on page reload,

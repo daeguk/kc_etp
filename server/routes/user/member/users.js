@@ -34,7 +34,7 @@ log.debug("email : " + req.body.email + " password : " + req.body.password);
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
-    util.log("options==> ", JSON.stringify(options));
+    log.debug("options==> ", JSON.stringify(options));
 
     var stmt = mapper.getStatement('member', 'userLoginCheck', options, {language:'sql', indent: '  '});
     log.debug(stmt);
@@ -66,7 +66,7 @@ log.debug("email : " + req.body.email + " password : " + req.body.password);
             res.end();
         }
       }).catch(err => {
-        util.log("Error while performing Query.", err);
+        log.debug("Error while performing Query.", err);
         res.json({
           success: false,
           message: err,
@@ -76,7 +76,7 @@ log.debug("email : " + req.body.email + " password : " + req.body.password);
 
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
   }
   setLoginHistory(req);
 };
@@ -94,12 +94,12 @@ var setLoginHistory = function(req) {
       conn.queryAsync(stmt).then(rows => {
 
       }).catch(err => {
-        util.log("Error while performing Query.", err);
+        log.debug("Error while performing Query.", err);
       });
 
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
   }
 }
 
@@ -123,7 +123,7 @@ var getMemberTypeList = function(req, res) {
         });
         res.end();
       }).catch(err => {
-        util.log("Error while performing Query.", err);
+        log.debug("Error while performing Query.", err);
         res.json({
           success: false,
           message: "사용자 그룹 코드를 가져올 수 없습니다.",
@@ -133,7 +133,7 @@ var getMemberTypeList = function(req, res) {
 
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
   }
 };
 
@@ -157,7 +157,7 @@ var getMemberDomainList = function(req, res) {
         });
         res.end();
       }).catch(err => {
-        util.log("Error while performing Query.", err);
+        log.debug("Error while performing Query.", err);
         res.json({
           success: false,
           message: "사용자 그룹 코드를 가져올 수 없습니다.",
@@ -167,7 +167,7 @@ var getMemberDomainList = function(req, res) {
 
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
   }
 };
 
@@ -191,7 +191,7 @@ var userNewAccount = function(req, res) {
         });
         res.end();
       }).catch(err => {
-        util.log("Error while performing Query.", err);
+        log.debug("Error while performing Query.", err);
         res.json({
           success: false,
           message: "동일한 계정이 등록되어 있습니다.",
@@ -201,7 +201,7 @@ var userNewAccount = function(req, res) {
 
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
   }
 };
 
@@ -234,7 +234,7 @@ var userFindPwd = function(req, res) {
           res.end();
         }
       }).catch(err => {
-        util.log("Error while performing Query.", err);
+        log.debug("Error while performing Query.", err);
         res.json({
           success: false,
           message: err,
@@ -244,7 +244,7 @@ var userFindPwd = function(req, res) {
 
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
   }
 };
 
@@ -277,7 +277,7 @@ var userUpdateInfo = function(req, res) {
           res.end();
         }
       }).catch(err => {
-        util.log("Error while performing Query.", err);
+        log.debug("Error while performing Query.", err);
         res.json({
           success: false,
           message: err,
@@ -287,7 +287,7 @@ var userUpdateInfo = function(req, res) {
 
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.debug("err=>", exception);
   }
 };
 

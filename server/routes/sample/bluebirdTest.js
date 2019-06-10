@@ -23,11 +23,11 @@ var getBlueList = function(req, res) {
 
     Promise.using(pool.connect(), conn => {
         conn.queryAsync(stmt).then(rows => {
-                util.log("sql1", rows.affectedRows)
+                log.debug("sql1", rows.affectedRows)
                 res.json({ success: true, results: rows });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({ success: false, message: err });
                 res.end();
             });
