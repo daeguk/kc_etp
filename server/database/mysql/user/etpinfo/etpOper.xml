@@ -273,7 +273,7 @@
         </choose>
 
         <if test= 'f16012 != null  and  f16012 != "" ' >
-                       AND  tm_pdf_modify_hist_dtl.f16012       =   #{f16012}
+                       AND  tm_pdf_modify_hist_mast.f16012      =   #{f16012}
         </if>
                        AND  tm_pdf_modify_hist_mast.reg_time    BETWEEN     STR_TO_DATE( CONCAT( #{search_date}, ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
                     						                        AND     STR_TO_DATE( CONCAT( #{search_date}, ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
