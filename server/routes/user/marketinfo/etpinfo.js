@@ -32,8 +32,8 @@ var getEtpList = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] etpinfo.getEtpList  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] etpinfo.getEtpList  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpinfo.getEtpList  req.body.data no data.";
@@ -46,8 +46,8 @@ var getEtpList = function(req, res) {
         paramData.user_id = req.session.user_id;
         paramData.inst_cd = req.session.inst_cd;
         paramData.type_cd = req.session.type_cd;
-        paramData.large_type    = req.session.large_type;
-        paramData.krx_cd        =   req.session.krx_cd;
+        paramData.large_type = req.session.large_type;
+        paramData.krx_cd = req.session.krx_cd;
 
 
         var format = { language: 'sql', indent: '' };
@@ -398,7 +398,7 @@ var getEtpList = function(req, res) {
             async.waterfall(funcList, function(err) {
 
                 if (err) {
-                    log.debug(err);
+                    log.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -413,7 +413,7 @@ var getEtpList = function(req, res) {
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;

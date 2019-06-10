@@ -10,13 +10,13 @@ var Promise = require("bluebird");
 
 var multer = require('multer');
 var xlsx = require('xlsx');
-var fs = require('fs'); 
+var fs = require('fs');
 
 /* logging 추가함.  2019-06-10 */
 var log = config.logger;
 
 
-var getIndexVueTableTestList = function (req, res) {
+var getIndexVueTableTestList = function(req, res) {
     log.debug('indexmanage 모듈 안에 있는 getIndexVueTableTestList 호출됨.');
     var pool = req.app.get("pool");
     var etpStmts = req.app.get("stmt");
@@ -39,7 +39,7 @@ var getIndexVueTableTestList = function (req, res) {
             });
             res.end();
         }).catch(err => {
-            log.debug("Error while performing Query.", err);
+            log.error("Error while performing Query.", err);
             res.json({
                 success: false,
                 message: err
@@ -52,11 +52,11 @@ var getIndexVueTableTestList = function (req, res) {
 };
 
 /* 
-********************************************************************************** **
-*************************************************************************************
-*/
+ ********************************************************************************** **
+ *************************************************************************************
+ */
 
-var getIndexToastGridTestList = function (req, res) {
+var getIndexToastGridTestList = function(req, res) {
     log.debug('indexmanage 모듈 안에 있는 getIndexToastGridTestList 호출됨.');
 
     var pool = req.app.get("pool");
@@ -79,7 +79,7 @@ var getIndexToastGridTestList = function (req, res) {
             });
             res.end();
         }).catch(err => {
-            log.debug("Error while performing Query.", err);
+            log.error("Error while performing Query.", err);
             res.json({
                 success: false,
                 message: err
