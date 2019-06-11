@@ -8,5 +8,5 @@ module.exports = {
     // base_url: "https://etp.koscom.co.kr",
     home_url: "/info/etpinfo/",
     etp_url: "/etp/manage",
-    jisu_url: "index/manage/indexSummary",
+    jisu_url: "/index/manage/",
   }
