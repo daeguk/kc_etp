@@ -174,7 +174,6 @@ export default {
                         alert("ETP신청현황  목록이 없습니다");
                     } else {
                         var items = response.data.results;
-                        var inst_cd = response.data.inst_cd;
                         this.inst_cd = response.data.inst_cd ;
                         this.results = items;
                         this.list_cnt = this.results.length;
