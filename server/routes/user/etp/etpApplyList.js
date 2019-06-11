@@ -36,7 +36,7 @@ var getEtpApplyList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                log.debug("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -46,7 +46,7 @@ var getEtpApplyList = function (req, res) {
 
         });        
     } catch(exception) {
-        log.debug("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 var getEtpApplyDistCnt = function (req, res) {
@@ -70,7 +70,7 @@ var getEtpApplyDistCnt = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                log.debug("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -80,7 +80,7 @@ var getEtpApplyDistCnt = function (req, res) {
 
         });
     } catch(exception) {
-        log.debug("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 var getEtpApplyIndexCnt = function (req, res) {
@@ -103,7 +103,7 @@ var getEtpApplyIndexCnt = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                log.debug("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -113,7 +113,7 @@ var getEtpApplyIndexCnt = function (req, res) {
 
         });
     } catch(exception) {
-        log.debug("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 var getEtpApplyCodeCnt = function (req, res) {
@@ -136,7 +136,7 @@ var getEtpApplyCodeCnt = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                log.debug("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -146,7 +146,7 @@ var getEtpApplyCodeCnt = function (req, res) {
 
         });
     } catch(exception) {
-        log.debug("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 var getEtpApplyInavCnt = function (req, res) {
@@ -169,7 +169,7 @@ var getEtpApplyInavCnt = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                log.debug("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
 
@@ -180,7 +180,7 @@ var getEtpApplyInavCnt = function (req, res) {
 
         });
     } catch(exception) {
-        log.debug("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 var getCompContactList = function (req, res) {
@@ -203,7 +203,7 @@ var getCompContactList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                log.debug("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     
@@ -214,7 +214,7 @@ var getCompContactList = function (req, res) {
 
         });
     } catch(exception) {
-        log.debug("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 var getIdxList = function (req, res) {
@@ -242,7 +242,7 @@ var getIdxList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                log.debug("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     
@@ -253,7 +253,7 @@ var getIdxList = function (req, res) {
 
         });
     } catch(exception) {
-        log.debug("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 var getRidxList = function (req, res) {
@@ -279,7 +279,7 @@ var getRidxList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                log.debug("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     
@@ -290,7 +290,7 @@ var getRidxList = function (req, res) {
 
         });
     } catch(exception) {
-        log.debug("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 var deleteEtpApply = function (req, res) {
@@ -390,7 +390,7 @@ var deleteEtpApply = function (req, res) {
                     }
                 ],function (err) {
                     if(err){
-                        log.debug("[err] EtpRegister.deleteEtpApply Error while performing Query.", err);
+                        log.error("[err] EtpRegister.deleteEtpApply Error while performing Query.", err);
                         res.json({
                             result: false
                             ,msg: err
@@ -412,7 +412,7 @@ var deleteEtpApply = function (req, res) {
         });
         
     }catch(exception) {
-            log.debug("err=>", exception);
+            log.error("err=>", exception);
             res.json({
                 result: false
                 ,msg: exception
@@ -442,7 +442,7 @@ var getINavList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                log.debug("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     
@@ -453,7 +453,7 @@ var getINavList = function (req, res) {
 
         });
     } catch(exception) {
-        log.debug("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 module.exports.getEtpApplyList = getEtpApplyList;

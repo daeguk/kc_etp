@@ -1149,6 +1149,38 @@
 -->
 
     <!--
+    * td_etfpdf_hist에 저장하기 위해 변경된 td_etfpdf_basic 의 모든 데이터를 조회한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <select id="getTdEtfpdfBasicAllData">
+
+        SELECT      /* etpOper.getTdEtfpdfBasicAllData  td_etfpdf_hist에 저장하기 위해 변경된 td_etfpdf_basic 의 모든 데이터를 조회한다. */
+
+                ,   td_etfpdf_basic.f16583                                  AS  f16583      /* 사무수탁회사번호 */
+                ,   td_etfpdf_basic.f16012                                  AS  f16012      /* ETF종목코드 */
+                ,   td_etfpdf_basic.f16013                                  AS  f16013      /* ETF단축코드 */
+                ,   td_etfpdf_basic.f16316                                  AS  f16316      /* 구성종목코드 */
+                ,   td_etfpdf_basic.f33837                                  AS  f33837      /* 구성종목수 */
+                ,   td_etfpdf_basic.f16499                                  AS  f16499      /* 1CU단위증권수 */
+                ,   td_etfpdf_basic.f33861                                  AS  f33861      /* ETF시장구분 */
+                ,   td_etfpdf_basic.f16004                                  AS  f16004      /* 해외시장종목명 */
+                ,   td_etfpdf_basic.f34840                                  AS  f34840      /* 액면금액설정현금액 */
+                ,   td_etfpdf_basic.f33760                                  AS  f33760      /* 이익분배기준일 */
+                ,   td_etfpdf_basic.f16588                                  AS  f16588      /* 평가금액 */
+                ,   td_etfpdf_basic.f34743                                  AS  f34743      /* ETF_PDF비중 */
+                ,   td_etfpdf_basic.f34744                                  AS  f34744      /* ETF_PDF포함여부 */
+                ,   td_etfpdf_basic.f16006                                  AS  f16006      /* 영문심볼 */
+
+          FROM  td_etfpdf_basic
+         WHERE  1 = 1
+
+           AND  td_etfpdf_basic.f16583              =   #{f16583}     /* 사무수탁회사번호 */
+           AND  td_etfpdf_basic.f16012              =   #{f16012}     /* ETF종목코드 */
+           AND  td_etfpdf_basic.f16013              =   #{f16013}     /* ETF단축코드 */
+
+    </select>
+
+    <!--
     * ETP 운용관리 - PDF 긴급반영 - 저장시 td_etfpdf_hist 에 데이터가 존재하는지 체크한다.
     *
     * 1) td_etfpdf_hist 에 없는 경우 'insert'
