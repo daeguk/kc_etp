@@ -126,7 +126,7 @@
             </EtpOperPdfInavCalcPop>
 
             <!-- (지수 수익율) iNAV 계산기 팝업 -->
-            <v-dialog  v-model="showEtpOperIndexInavCalcPop"  persistent  max-width="600" >
+            <v-dialog  v-model="showEtpOperIndexInavCalcPop"  persistent  max-width="700" >
                 <EtpOperInfoInavIndex   v-if="showEtpOperIndexInavCalcPop"
 
                                         :paramData = "paramData"
