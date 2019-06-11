@@ -9,12 +9,16 @@
 
 var route_loader = {};
 
+var cof = require('../config/config');
 var config = require('../config/route_config');
 
+/* logging 추가함.  2019-06-10 */
+var log = cof.logger;
+
 route_loader.sessionCheckRegister = function(app) {
-	console.log('route_loader.sessionCheckRegister 호출됨.');
+	log.debug('route_loader.sessionCheckRegister 호출됨.');
 	var infoLen = config.route_info.length;
-	console.log('설정에 정의된 라우팅 모듈의 수 : %d', infoLen);
+	log.debug('설정에 정의된 라우팅 모듈의 수 : %d', infoLen);
          
 	for (var i = 0; i < infoLen; i++) {
 		var curItem = config.route_info[i];
@@ -23,17 +27,17 @@ route_loader.sessionCheckRegister = function(app) {
 // route_loader.js 지금은 loginkey == undefined 로만 체크하기로 함
 // 필요하면, IP / ID 로 DB 세션값 체크, 속도 이슈 생기면 DB를 REDIS로 구성
 		if(curItem.session == 'check') {
-			console.log("seesionCheck path : [" + curItem.path + "]");
+			log.debug("seesionCheck path : [" + curItem.path + "]");
 			app.all(curItem.path, function(req, res, next) {
                 
-                console.log("loginkey : " + req.session.user_id);
+                log.debug("loginkey : " + req.session.user_id);
                 /*===================================*/
 
 				if(req.session.user_id) {
-					console.log("session SUCCESS");
+					log.debug("session SUCCESS");
 					next();
 				}else {
-					console.log("session FAIL.......");
+					log.debug("session FAIL.......");
 					var error = new Error('session error');
 					error.status = 404;
 					next(error);
@@ -45,21 +49,21 @@ route_loader.sessionCheckRegister = function(app) {
 };
 
 route_loader.routerInit = function(app, router) {
-	console.log('route_loader.routerInit 호출됨.');
+	log.debug('route_loader.routerInit 호출됨.');
 	return initRoutes(app, router);
 };
 
 // route_info에 정의된 라우팅 정보 처리
 function initRoutes(app, router) {
 	var infoLen = config.route_info.length;
-	// console.log('설정에 정의된 라우팅 모듈의 수 : %d', infoLen);
+	// log.debug('설정에 정의된 라우팅 모듈의 수 : %d', infoLen);
  
 	for (var i = 0; i < infoLen; i++) {
 		var curItem = config.route_info[i];
 			
 		// 모듈 파일에서 모듈 불러옴
 		var curModule = require(curItem.file);
-		 console.log('%s 파일에서 모듈정보를 읽어옴.', curItem.file);
+		 log.debug('%s 파일에서 모듈정보를 읽어옴.', curItem.file);
 		
 		//  라우팅 처리
 		if (curItem.type == 'get') {
@@ -69,7 +73,7 @@ function initRoutes(app, router) {
 		} else {
 			router.route(curItem.path).post(curModule[curItem.method]);
 		}
-		// console.log('라우팅 모듈 [%s]이(가) 설정됨.', curItem.method);
+		// log.debug('라우팅 모듈 [%s]이(가) 설정됨.', curItem.method);
 	}
 
     // 라우터 객체 등록

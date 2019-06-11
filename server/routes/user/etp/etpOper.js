@@ -538,95 +538,6 @@ var getEtpOperPdf = function(req, res) {
                                     resultMsg.dataList = rows;
                                 }
 
-                                callback(null, paramData);
-                            });
-                        } else {
-                            callback(null, paramData);
-                        }
-
-                    } catch (err) {
-                        resultMsg.result = false;
-                        resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHist Error while performing Query";
-                        resultMsg.err = err;
-
-                        return callback(resultMsg);
-                    }
-                },
-
-                /* 2. ETP 운용관리 - PDF관리 - 긴급반영 이력 정보를 조회한다. ( ETF 인 경우 ) */
-                function(msg, callback) {
-
-                    try {
-                        /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                        if (paramData.f16493 == "1" || paramData.f16493 == "2") {
-
-                            stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEmergencyHist', paramData, format);
-                            log.debug(stmt);
-
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = "[error] etpOper.getEtpOperPdfEmergencyHist Error while performing Query";
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                if (rows && rows.length > 0) {
-
-                                    if (!resultMsg.dataList || resultMsg.dataList.length == 0) {
-                                        resultMsg.dataList = rows;
-                                    } else {
-                                        for (var i in resultMsg.dataList) {
-
-                                            /* 긴급반영 수정건에 존재하지 않는 건 */
-                                            var diff = rows.filter(function(o, p) {
-                                                return (!(
-                                                    o.f12506 == resultMsg.dataList[i].f12506 /* 일자 */ &&
-                                                    o.f16583 == resultMsg.dataList[i].f16583 /* 사무수탁회사번호 */ &&
-                                                    o.f16012 == resultMsg.dataList[i].f16012 /* ETF종목코드 */ &&
-                                                    o.f16316 == resultMsg.dataList[i].f16316 /* 구성종목코드 */
-                                                ));
-                                            });
-
-                                            if (diff.length > 0) {
-                                                resultMsg.dataList[i].fmt_f12506 = diff[0].fmt_f12506; /* 입회일 - Date */
-                                                resultMsg.dataList[i].status = diff[0].status; /* 상태 */
-                                                resultMsg.dataList[i].f33861 = diff[0].f33861; /* ETF시장구분 - 시장구분 -  */
-                                                resultMsg.dataList[i].f16316 = diff[0].f16316; /* 구성종목코드 - 종목코드 */
-                                                resultMsg.dataList[i].f16004 = diff[0].f16004; /* 해외시장종목명 - 종목명 */
-                                                resultMsg.dataList[i].f16499 = diff[0].f16499; /* 1CU단위증권수 - CU SHrs */
-                                                resultMsg.dataList[i].f34840 = diff[0].f34840; /* 액면금액설정현금액 - 액면금액 */
-                                                resultMsg.dataList[i].f16588 = diff[0].f16588; /* 평가금액 - 평가금액 */
-                                                resultMsg.dataList[i].fmt_f34743 = diff[0].fmt_f34743; /* ETF_PDF비중 - 비중 */
-                                            }
-
-
-                                            /* 긴급반영 수정건에 존재하는 건 */
-                                            var same = rows.filter(function(o, p) {
-                                                return (o.f12506 === resultMsg.dataList[i].f12506 /* 일자 */ &&
-                                                    o.f16583 === resultMsg.dataList[i].f16583 /* 사무수탁회사번호 */ &&
-                                                    o.f16012 === resultMsg.dataList[i].f16012 /* ETF종목코드 */ &&
-                                                    o.f16316 === resultMsg.dataList[i].f16316 /* 구성종목코드 */
-                                                );
-                                            });
-
-                                            if (same.length > 0) {
-                                                resultMsg.dataList[i].fmt_f12506 = same[0].fmt_f12506; /* 입회일 - Date */
-                                                resultMsg.dataList[i].status = same[0].status; /* 상태 */
-                                                resultMsg.dataList[i].f33861 = same[0].f33861; /* ETF시장구분 - 시장구분 -  */
-                                                resultMsg.dataList[i].f16316 = same[0].f16316; /* 구성종목코드 - 종목코드 */
-                                                resultMsg.dataList[i].f16004 = same[0].f16004; /* 해외시장종목명 - 종목명 */
-                                                resultMsg.dataList[i].f16499 = same[0].f16499; /* 1CU단위증권수 - CU SHrs */
-                                                resultMsg.dataList[i].f34840 = same[0].f34840; /* 액면금액설정현금액 - 액면금액 */
-                                                resultMsg.dataList[i].f16588 = same[0].f16588; /* 평가금액 - 평가금액 */
-                                                resultMsg.dataList[i].fmt_f34743 = same[0].fmt_f34743; /* ETF_PDF비중 - 비중 */
-                                            }
-                                        }
-                                    }
-                                }
-
                                 callback(null);
                             });
                         } else {
@@ -635,7 +546,7 @@ var getEtpOperPdf = function(req, res) {
 
                     } catch (err) {
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] etpOper.getEtpOperPdfEmergencyHist Error while performing Query";
+                        resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHist Error while performing Query";
                         resultMsg.err = err;
 
                         return callback(resultMsg);
