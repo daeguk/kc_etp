@@ -48,7 +48,7 @@ var getIndexSummaryInfo = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -64,7 +64,7 @@ var getIndexSummaryInfo = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -75,7 +75,7 @@ var getIndexSummaryInfo = function (req, res) {
 
         });
     } catch (exception) {
-        util.log("err==>", exception);
+        log.error("err==>", exception);
     }    
 };
 
@@ -106,7 +106,7 @@ var getInfoOpenReqList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -117,7 +117,7 @@ var getInfoOpenReqList = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err", exception);
+        log.error("err", exception);
     }
 };
 
@@ -149,7 +149,7 @@ var getindexSubscribeList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -160,7 +160,7 @@ var getindexSubscribeList = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err", exception);
+        log.error("err", exception);
     }
 };
 
@@ -193,7 +193,7 @@ var updateIndexOpenYn = function(req, res) {
             params.FLAG = '0';
         }
 
-        util.log("req.body.params.reqFlag", JSON.stringify(params));
+        log.debug("req.body.params.reqFlag", JSON.stringify(params));
         
         
         var stmt = mapper.getStatement('index', 'updateIndexOpenYn', params, {language:'sql', indent: '  '});
@@ -208,7 +208,7 @@ var updateIndexOpenYn = function(req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -219,7 +219,7 @@ var updateIndexOpenYn = function(req, res) {
 
         });
     } catch(err) {
-        util.log("err=>", err);
+        log.error("err=>", err);
     }    
 }
 
@@ -252,7 +252,7 @@ var getInfoIndexList = function (req, res) {
             });
             res.end();
         }).catch(err => {
-            util.log("Error while performing Query.", err);
+            log.error("Error while performing Query.", err);
             res.json({
                 success: false,
                 message: err
@@ -293,7 +293,7 @@ var getIndexSummaryHist = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -304,7 +304,7 @@ var getIndexSummaryHist = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 
@@ -325,11 +325,11 @@ var getIndexBaseInfo = function (req, res) {
             market_id: req.query.market_id
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('index', 'getIndexBaseInfo', options, {language:'sql', indent: '  '});
         
-        util.log("getIndexBaseInfo:" + stmt);
+        log.debug("getIndexBaseInfo:" + stmt);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -339,7 +339,7 @@ var getIndexBaseInfo = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -350,7 +350,7 @@ var getIndexBaseInfo = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 
@@ -372,11 +372,11 @@ var getIndexEtpHistoryData = function (req, res) {
             term: req.query.term
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('index', 'getIndexEtpHistoryData', options, {language:'sql', indent: '  '});
      
-        util.log("stmt", stmt);
+        log.debug("stmt", stmt);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -386,7 +386,7 @@ var getIndexEtpHistoryData = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -397,7 +397,7 @@ var getIndexEtpHistoryData = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 
@@ -420,7 +420,7 @@ var getIndexInEtpInfo = function (req, res) {
             market_id: req.query.market_id
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('index', 'getIndexInEtpInfo', options, {language:'sql', indent: '  '});
      
@@ -433,7 +433,7 @@ var getIndexInEtpInfo = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -443,7 +443,7 @@ var getIndexInEtpInfo = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 
@@ -467,7 +467,7 @@ var getIndexImportanceList = function (req, res) {
             market_id: req.query.market_id
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('index', 'getIndexImportanceList', options, {language:'sql', indent: '  '});
         
@@ -483,7 +483,7 @@ var getIndexImportanceList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -493,7 +493,7 @@ var getIndexImportanceList = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 
@@ -517,7 +517,7 @@ var getIndexAnalysisInfo = function (req, res) {
             market_id: req.query.market_id
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('index', 'getIndexAnalysisInfo', options, {language:'sql', indent: '  '});
         
@@ -533,7 +533,7 @@ var getIndexAnalysisInfo = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -543,7 +543,7 @@ var getIndexAnalysisInfo = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 
@@ -567,7 +567,7 @@ var getIndexAnalysisData = function (req, res) {
         };
 
         var gubun = req.query.gubun;
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
         var query_id = '';
 
         if (gubun == '1') {
@@ -589,7 +589,7 @@ var getIndexAnalysisData = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -599,7 +599,7 @@ var getIndexAnalysisData = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 
@@ -633,7 +633,7 @@ var getShareReqCnt = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -643,7 +643,7 @@ var getShareReqCnt = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 
@@ -675,7 +675,7 @@ var getIndexRegStateCnt = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -685,7 +685,7 @@ var getIndexRegStateCnt = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 

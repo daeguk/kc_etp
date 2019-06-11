@@ -45,7 +45,7 @@ var getFavorItemInfo = function (req, res) {
                     });
                     res.end();  
                 }).catch(err => {
-                    util.log("Error while performing Query.", err);
+                    log.debug("Error while performing Query.", err);
                     res.json({
                         success: false,
                         message: err
@@ -61,7 +61,7 @@ var getFavorItemInfo = function (req, res) {
             res.end();  
         }
     } catch (exception) {
-        util.log("error", exception);
+        log.debug("error", exception);
     }   
     
 };
@@ -104,7 +104,7 @@ var deleteFavorItem = function (req, res) {
                         res.end();  
                     }).catch(err => {
                         conn.rollback();
-                        util.log("Error while performing Query.", err);
+                        log.debug("Error while performing Query.", err);
                         res.json({
                             success: false,
                             message: err
@@ -121,7 +121,7 @@ var deleteFavorItem = function (req, res) {
             res.end();  
         }
     } catch (exception) {
-        util.log("error", exception);
+        log.debug("error", exception);
     }   
     
 };
@@ -198,7 +198,7 @@ var insertFavorItem = function (req, res) {
             res.end();  
         }
     } catch (exception) {
-        util.log("error", exception);
+        log.debug("error", exception);
     }   
     
 };
@@ -227,7 +227,7 @@ var getETFList = function (req, res) {
             
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('common.item', 'getETFList', options, {language:'sql', indent: '  '});
      
@@ -240,7 +240,7 @@ var getETFList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -250,7 +250,7 @@ var getETFList = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -275,7 +275,7 @@ var getETNList = function (req, res) {
             user_id : req.session.user_id == null? '' : req.session.user_id
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('common.item', 'getETNList', options, {language:'sql', indent: '  '});
      
@@ -288,7 +288,7 @@ var getETNList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.debug("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -298,7 +298,7 @@ var getETNList = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -332,7 +332,7 @@ var getIndexList = function (req, res) {
             });
             res.end();
         }).catch(err => {
-            util.log("Error while performing Query.", err);
+            log.debug("Error while performing Query.", err);
             res.json({
                 success: false,
                 message: err
@@ -369,7 +369,7 @@ var getPublishEtpList = function (req, res) {
             
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var query_id = "";
 
@@ -385,7 +385,7 @@ var getPublishEtpList = function (req, res) {
         if (query_id != "") {
             var stmt = mapper.getStatement('common.item', query_id, options, {language:'sql', indent: '  '});
             
-            util.log("stmt", stmt);
+            log.debug("stmt", stmt);
             
 
             Promise.using(pool.connect(), conn => {
@@ -396,7 +396,7 @@ var getPublishEtpList = function (req, res) {
                     });
                     res.end();
                 }).catch(err => {
-                    util.log("Error while performing Query.", err);
+                    log.debug("Error while performing Query.", err);
                     res.json({
                         success: false,
                         message: err
@@ -413,7 +413,7 @@ var getPublishEtpList = function (req, res) {
             res.end();
         }
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 
@@ -440,7 +440,7 @@ var getALLEtpList = function (req, res) {
             
         };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var query_id = "";
 
@@ -465,7 +465,7 @@ var getALLEtpList = function (req, res) {
                     });
                     res.end();
                 }).catch(err => {
-                    util.log("Error while performing Query.", err);
+                    log.debug("Error while performing Query.", err);
                     res.json({
                         success: false,
                         message: err
@@ -482,7 +482,7 @@ var getALLEtpList = function (req, res) {
             res.end(); 
         }
     } catch(exception) {
-        util.log("err=>", exception);
+        log.debug("err=>", exception);
     }
 };
 

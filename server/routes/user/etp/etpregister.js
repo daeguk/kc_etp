@@ -13,7 +13,7 @@ var format = { language: 'sql', indent: '' };
 
 var getEtpRegisterView = function(req, res) {
     try {
-        //util.log('###ETP VIEW CALL###', req.query.seq);
+        //log.debug('###ETP VIEW CALL###', req.query.seq);
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper"); 
@@ -22,8 +22,8 @@ var getEtpRegisterView = function(req, res) {
         var resultMsg = {};
         paramData.seq = req.query.seq*1;
 
-       // util.log('###ETP VIEW CALL paramData.seq###', paramData.seq);
-       // util.log('###ETP VIEW CALL  req.session###',  req.session);
+       // log.debug('###ETP VIEW CALL paramData.seq###', paramData.seq);
+       // log.debug('###ETP VIEW CALL  req.session###',  req.session);
         paramData.user_id       =   req.session.user_id;
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.inst_type_cd  =   req.session.type_cd;
@@ -38,7 +38,7 @@ var getEtpRegisterView = function(req, res) {
             resultMsg.msg = "발행사만 신청이 가능합니다. ";
             throw resultMsg;
         }
-        util.log('###ETP VIEW CALL sessioncheck###');
+        log.debug('###ETP VIEW CALL sessioncheck###');
        
         var param = { 
             userType: '0001', 
@@ -56,7 +56,7 @@ var getEtpRegisterView = function(req, res) {
                 //발행사
                 function( callback ) {
                     stmt = mapper.getStatement('EtpRegister', 'getCompList', param, format);
-                    util.log(stmt);
+                    log.debug(stmt);
                     conn.query(stmt, function( err, rows ) {
                         if( err ) {
                             resultMsg.result    =   false;
@@ -69,7 +69,7 @@ var getEtpRegisterView = function(req, res) {
                         if ( rows ) {
                             resultMsg.compList = rows;
                         }
-                        //util.log(rows);
+                        //log.debug(rows);
                         callback( null, param );
                     });
                  
@@ -77,7 +77,7 @@ var getEtpRegisterView = function(req, res) {
 
                  function( data, callback ) { //지수산출/입수기관
                     stmt = mapper.getStatement('EtpRegister', 'getCodeList', param, format);
-                    //util.log(stmt);
+                    //log.debug(stmt);
                     conn.query(stmt, function( err, rows ) {
                         if( err ) {
                             resultMsg.result    =   false;
@@ -92,14 +92,14 @@ var getEtpRegisterView = function(req, res) {
                         }
 
                         callback( null, param );
-                        //util.log(rows);
+                        //log.debug(rows);
                     });
                    
                  },
                  function( data, callback ) { //휴장일기준
                      param.lCd ='005'
                     stmt = mapper.getStatement('EtpRegister', 'getCodeList', param, format);
-                    //util.log(stmt);
+                    //log.debug(stmt);
                     conn.query(stmt, function( err, rows ) {
                         if( err ) {
                             resultMsg.result    =   false;
@@ -114,14 +114,14 @@ var getEtpRegisterView = function(req, res) {
                         }
 
                         callback( null, param );
-                       // util.log(rows);
+                       // log.debug(rows);
                     });
                    
                  },
                  function( data, callback ) { //적용환율
                     param.lCd ='006'
                     stmt = mapper.getStatement('EtpRegister', 'getCodeList', param, format);
-                   // util.log(stmt);
+                   // log.debug(stmt);
                     conn.query(stmt, function( err, rows ) {
                         if( err ) {
                             resultMsg.result    =   false;
@@ -136,14 +136,14 @@ var getEtpRegisterView = function(req, res) {
                         }
 
                         callback( null, param );
-                       // util.log(rows);
+                       // log.debug(rows);
                     });
                    
                  },
                  function( data, callback ) { //iNav/ilv 계산식
                     param.lCd ='007'
                     stmt = mapper.getStatement('EtpRegister', 'getCodeList', param, format);
-                    //util.log(stmt);
+                    //log.debug(stmt);
                     conn.query(stmt, function( err, rows ) {
                         if( err ) {
                             resultMsg.result    =   false;
@@ -158,14 +158,14 @@ var getEtpRegisterView = function(req, res) {
                         }
 
                         callback( null, param );
-                       // util.log(rows);
+                       // log.debug(rows);
                     });
                    
                  },
                  function( data, callback ) { //국내지수산출기관
                     param.lCd ='008'
                     stmt = mapper.getStatement('EtpRegister', 'getCodeList', param, format);
-                   // util.log(stmt);
+                   // log.debug(stmt);
                     conn.query(stmt, function( err, rows ) {
                         if( err ) {
                             resultMsg.result    =   false;
@@ -180,14 +180,14 @@ var getEtpRegisterView = function(req, res) {
                         }
 
                         callback( null, param );
-                       // util.log(rows);
+                       // log.debug(rows);
                     });
                    
                  },
                  function( data, callback ) { //국내지수타입
                     param.lCd ='009'
                     stmt = mapper.getStatement('EtpRegister', 'getCodeList', param, format);
-                   // util.log(stmt);
+                   // log.debug(stmt);
                     conn.query(stmt, function( err, rows ) {
                         if( err ) {
                             resultMsg.result    =   false;
@@ -202,14 +202,14 @@ var getEtpRegisterView = function(req, res) {
                         }
 
                        callback( null, param );
-                       // util.log(rows);
+                       // log.debug(rows);
                     });
                    
                  },
                  function( data, callback ) { //사무수탁사
                     param.lCd ='010'
                     stmt = mapper.getStatement('EtpRegister', 'getCodeList', param, format);
-                  //  util.log(stmt);
+                  //  log.debug(stmt);
                     conn.query(stmt, function( err, rows ) {
                         if( err ) {
                             resultMsg.result    =   false;
@@ -231,7 +231,7 @@ var getEtpRegisterView = function(req, res) {
                 function( data, callback ) { //update 화면에조회될 기본정보
            
                         stmt = mapper.getStatement('EtpRegister', 'getMaster', param, format);
-                        // util.log(stmt);
+                        // log.debug(stmt);
                         conn.query(stmt, function( err, rows ) {
                             if( err ) {
                                 resultMsg.result    =   false;
@@ -310,7 +310,7 @@ var insertEtpRegister = function(req, res) {
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
 
-        util.log('###ETP INSERT CALL JSONPARSE BEFORE>>>###'+req.body.data);
+        log.debug('###ETP INSERT CALL JSONPARSE BEFORE>>>###'+req.body.data);
         var paramData = JSON.parse(req.body.data);
      
         paramData.user_id       =   req.session.user_id;
@@ -325,7 +325,7 @@ var insertEtpRegister = function(req, res) {
         // paramData.inst_cd       =   '04870';
         // paramData.inst_type_cd  =   '0002';
 
-        util.log("###ETP INSERT CALL HUDLE1##",  req.session);
+        log.debug("###ETP INSERT CALL HUDLE1##",  req.session);
         if( req.session ==''){
             res.json({
                 result: false
@@ -334,7 +334,7 @@ var insertEtpRegister = function(req, res) {
             res.end();
             return;
         }
-        util.log("###ETP INSERT CALL HUDLE2##",  paramData);
+        log.debug("###ETP INSERT CALL HUDLE2##",  paramData);
         if(paramData.paramInstTypeCd !=='0001' && paramData.paramInstTypeCd !=='0002'){
             res.json({
                 result: false
@@ -343,7 +343,7 @@ var insertEtpRegister = function(req, res) {
             res.end();
             return;
         }
-        util.log("###ETP INSERT CALL HUDLE JUMP SUCCESS");
+        log.debug("###ETP INSERT CALL HUDLE JUMP SUCCESS");
         paramData.list_req_date = paramData.listReqDate; //##이값만 바인딩이 안된다..이상하다..
         paramData.list_date = paramData.listDate;
 
@@ -450,7 +450,7 @@ var insertEtpRegister = function(req, res) {
    
 
 
-        util.log('###ETP CALL JSONPARSE LAST>>>###'+JSON.stringify(paramData));
+        log.debug('###ETP CALL JSONPARSE LAST>>>###'+JSON.stringify(paramData));
         var stmt = mapper.getStatement('EtpRegister', 'insertMaster', paramData, format);
         log.debug(stmt);
         
@@ -479,7 +479,7 @@ var updateEtpRegister = function(req, res) {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
    
-    //util.log('###ETP UPDATE JSONPARSE BEFORE>>>###'+req.body.data);
+    //log.debug('###ETP UPDATE JSONPARSE BEFORE>>>###'+req.body.data);
     var paramData = JSON.parse(req.body.data);
     
     paramData.user_id       =   req.session.user_id;
@@ -500,7 +500,7 @@ var updateEtpRegister = function(req, res) {
     //개발용 세팅 
     // paramData.inst_cd       =   '04870';
     // paramData.inst_type_cd  =   '0002';
-    //util.log('###ETP UPDATE JSONPARSE HUDLE1>>>###',req.session);
+    //log.debug('###ETP UPDATE JSONPARSE HUDLE1>>>###',req.session);
    
     paramData.list_req_date = paramData.listReqDate;
     paramData.list_date = paramData.listDate;

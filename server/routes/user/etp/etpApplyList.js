@@ -25,7 +25,7 @@ var getEtpApplyList = function (req, res) {
         var options = { 
             inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd,
             };
-        util.log("options", JSON.stringify(options.inst_cd));
+        log.debug("options", JSON.stringify(options.inst_cd));
         var stmt = mapper.getStatement('EtpRegister', 'selectEtpApplyList', options, {language:'sql', indent: '  '});
         log.debug(stmt);
         Promise.using(pool.connect(), conn => {
@@ -36,7 +36,7 @@ var getEtpApplyList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -46,7 +46,7 @@ var getEtpApplyList = function (req, res) {
 
         });        
     } catch(exception) {
-        util.log("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 var getEtpApplyDistCnt = function (req, res) {
@@ -58,7 +58,7 @@ var getEtpApplyDistCnt = function (req, res) {
         var options = { 
             inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd
          };
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('EtpRegister', 'getEtpApplyDistCnt', options, {language:'sql', indent: '  '});
         log.debug(stmt);
@@ -70,7 +70,7 @@ var getEtpApplyDistCnt = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -80,7 +80,7 @@ var getEtpApplyDistCnt = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 var getEtpApplyIndexCnt = function (req, res) {
@@ -92,7 +92,7 @@ var getEtpApplyIndexCnt = function (req, res) {
         var options = { 
             inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd
          };
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
         var stmt = mapper.getStatement('EtpRegister', 'getEtpApplyIndexCnt', options, {language:'sql', indent: '  '});
         log.debug(stmt);
         Promise.using(pool.connect(), conn => {
@@ -103,7 +103,7 @@ var getEtpApplyIndexCnt = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -113,7 +113,7 @@ var getEtpApplyIndexCnt = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 var getEtpApplyCodeCnt = function (req, res) {
@@ -125,7 +125,7 @@ var getEtpApplyCodeCnt = function (req, res) {
          var options = { 
             inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd
          };
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
         var stmt = mapper.getStatement('EtpRegister', 'getEtpApplyCodeCnt', options, {language:'sql', indent: '  '});
         log.debug(stmt);
         Promise.using(pool.connect(), conn => {
@@ -136,7 +136,7 @@ var getEtpApplyCodeCnt = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     message: err
@@ -146,7 +146,7 @@ var getEtpApplyCodeCnt = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 var getEtpApplyInavCnt = function (req, res) {
@@ -158,7 +158,7 @@ var getEtpApplyInavCnt = function (req, res) {
          var options = { 
             inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd
          };
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
         var stmt = mapper.getStatement('EtpRegister', 'getEtpApplyInavCnt', options, {language:'sql', indent: '  '});
         log.debug(stmt);
         Promise.using(pool.connect(), conn => {
@@ -169,7 +169,7 @@ var getEtpApplyInavCnt = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
 
@@ -180,7 +180,7 @@ var getEtpApplyInavCnt = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 var getCompContactList = function (req, res) {
@@ -192,7 +192,7 @@ var getCompContactList = function (req, res) {
         var options = { 
             inst_cd : req.session.inst_cd == '04870' ? '' : req.session.inst_cd
          };
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
         var stmt = mapper.getStatement('EtpRegister', 'getCompContactList', options, {language:'sql', indent: '  '});
         log.debug(stmt);
         Promise.using(pool.connect(), conn => {
@@ -203,7 +203,7 @@ var getCompContactList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     
@@ -214,7 +214,7 @@ var getCompContactList = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 var getIdxList = function (req, res) {
@@ -229,7 +229,7 @@ var getIdxList = function (req, res) {
                        "idx_sym_code":  req.query.idx_sym_code
                        };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('EtpRegister', 'getIdxList', options, {language:'sql', indent: '  '});
         log.debug(stmt);
@@ -242,7 +242,7 @@ var getIdxList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     
@@ -253,7 +253,7 @@ var getIdxList = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 var getRidxList = function (req, res) {
@@ -268,7 +268,7 @@ var getRidxList = function (req, res) {
                        "ridx_dist_sym_code":  req.query.ridx_dist_sym_code
                        };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
         var stmt = mapper.getStatement('EtpRegister', 'getRidxList', options, {language:'sql', indent: '  '});
         log.debug(stmt);
         Promise.using(pool.connect(), conn => {
@@ -279,7 +279,7 @@ var getRidxList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     
@@ -290,7 +290,7 @@ var getRidxList = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 var deleteEtpApply = function (req, res) {
@@ -390,7 +390,7 @@ var deleteEtpApply = function (req, res) {
                     }
                 ],function (err) {
                     if(err){
-                        log.debug("[err] EtpRegister.deleteEtpApply Error while performing Query.", err);
+                        log.error("[err] EtpRegister.deleteEtpApply Error while performing Query.", err);
                         res.json({
                             result: false
                             ,msg: err
@@ -412,7 +412,7 @@ var deleteEtpApply = function (req, res) {
         });
         
     }catch(exception) {
-            util.log("err=>", exception);
+            log.error("err=>", exception);
             res.json({
                 result: false
                 ,msg: exception
@@ -431,7 +431,7 @@ var getINavList = function (req, res) {
                        "isu_srt_cd":  req.query.isu_srt_cd,
                        };
 
-        util.log("options", JSON.stringify(options));
+        log.debug("options", JSON.stringify(options));
         var stmt = mapper.getStatement('EtpRegister', 'getINavList', options, {language:'sql', indent: '  '});
         log.debug(stmt);
         Promise.using(pool.connect(), conn => {
@@ -442,7 +442,7 @@ var getINavList = function (req, res) {
                 });
                 res.end();
             }).catch(err => {
-                util.log("Error while performing Query.", err);
+                log.error("Error while performing Query.", err);
                 res.json({
                     success: false,
                     
@@ -453,7 +453,7 @@ var getINavList = function (req, res) {
 
         });
     } catch(exception) {
-        util.log("err=>", exception);
+        log.error("err=>", exception);
     }
 };
 module.exports.getEtpApplyList = getEtpApplyList;

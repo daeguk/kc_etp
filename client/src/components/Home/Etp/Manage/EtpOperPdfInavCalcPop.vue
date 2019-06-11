@@ -59,19 +59,17 @@
                                     </ul>
                                     <ul>
                                         <li class="list_tit">
-                                            <b>iNAV</b>
-                                            <br>
-                                            <span>외부공표</span>
+                                            <b>외부공표 iNAV</b>
                                         </li>
                                         <li class="text_red" v-if="etpBasic.f30818 >= 0">                                        
                                             <b>{{formatNumber(etpBasic.f15301)}}</b>
                                             <br>
-                                            <span class="float_r">{{formatNumber(etpBasic.f30818)}}</span>
+                                            <span class="float_r">{{formatNumber(etpBasic.f30818)}}%</span>
                                         </li>
                                         <li class="text_blue" v-if="etpBasic.f30818 < 0">                                        
                                             <b>{{formatNumber(etpBasic.f15301)}}</b>
                                             <br>
-                                            <span class="float_r">{{formatNumber(etpBasic.f30818)}}</span>
+                                            <span class="float_r">{{formatNumber(etpBasic.f30818)}}%</span>
                                         </li>
                                     </ul>
                                 </v-flex>
@@ -82,7 +80,7 @@
                                     </ul>
                                     <ul>
                                         <li class="list_tit">CU당 주식수</li>
-                                        <li>{{formatNumber(etpBasic.f16499)}}</li>
+                                        <li>{{formatInt(etpBasic.f16499)}}</li>
                                     </ul>
                                     <ul>
                                         <li class="list_tit">
@@ -469,6 +467,10 @@ export default {
         },
         formatNumber:function(num) {
             return util.formatNumber(num);
+        },
+
+        formatInt:function(num) {
+            return util.formatInt(num);
         },
 
         /* 반복 계산 시작 및 스톱처리 */

@@ -16,7 +16,7 @@
         <v-card flat>
           <v-card-title primary-title class="tbl_w2">
             <v-list-tile>
-              <v-list-tile-title class="headline">KRX
+              <v-list-tile-title class="headline">FnGuide
               </v-list-tile-title>
             </v-list-tile>
           </v-card-title>
@@ -27,12 +27,12 @@
                       <col width="9%">
                       <col width="9%">
                       <col width="9%">
-                      <col  width="9%">
-                      <col  width="9%">
-                      <col  width="9%">
-                      <col  width="9%">
-                      <col  width="9%">
-                      <col  width="7%">
+                      <col width="9%">
+                      <col width="9%">
+                      <col width="9%">
+                      <col width="9%">
+                      <col width="9%">
+                      <col width="7%">
                   </colgroup>
                   <thead>
                       <tr>

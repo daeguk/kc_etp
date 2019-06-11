@@ -9,7 +9,7 @@ var log = config.logger;
 
 var fileuploadSingle = function (req, res) {
 
-    //util.log("body ===", req);
+    //log.debug("body ===", req);
 
     //var deferred = Q.defer();
     var storage = multer.diskStorage({
@@ -56,7 +56,7 @@ var fileuploadSingle = function (req, res) {
 
 var fileuploadMulti = function (req, res) {
 
-    //util.log("body ===", req);
+    //log.debug("body ===", req);
 
     //var deferred = Q.defer();
     var storage = multer.diskStorage({

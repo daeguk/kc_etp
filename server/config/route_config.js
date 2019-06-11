@@ -111,6 +111,8 @@ module.exports = {
         { file: './user/marketinfo/etpInfo', path: '/user/marketinfo/getEtpList', method: 'getEtpList', session: 'uncheck', type: 'post' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getIndexBasic', method: 'getIndexBasic', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getIndexIntra', method: 'getIndexIntra', session: 'uncheck', type: 'get' },
+        { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getKrxIndexListByType', method: 'getKrxIndexListByType', session: 'uncheck', type: 'get' },
+        { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getKrxIndexListByType1', method: 'getKrxIndexListByType1', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpBasic', method: 'getEtpBasic', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpIntra', method: 'getEtpIntra', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpMultiIntra', method: 'getEtpMultiIntra', session: 'uncheck', type: 'get' },

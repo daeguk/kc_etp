@@ -21,14 +21,6 @@ var log = config.logger;
  */
 var getEtpOperInfo = function(req, res) {
     try {
-
-        log.debug( ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> debug" );
-        log.info( ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> info" );
-        log.warn( ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> warn" );
-        log.error( ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> error" );
-        log.error( ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> error" );
-
-
         log.debug('etpOper.getEtpOperInfo 호출됨.');
 
         var pool = req.app.get("pool");
@@ -37,8 +29,8 @@ var getEtpOperInfo = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] etpOper.getEtpOperInfo  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] etpOper.getEtpOperInfo  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getEtpOperInfo  req.body.data no data.";
@@ -90,7 +82,7 @@ var getEtpOperInfo = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.debug(err);
+                    log.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -136,8 +128,8 @@ var getEtpOperIndex = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] etpOper.getEtpOperIndex  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] etpOper.getEtpOperIndex  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getEtpOperIndex  req.body.data no data.";
@@ -212,7 +204,7 @@ var getEtpOperIndex = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.debug(err);
+                    log.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -259,8 +251,8 @@ var getEtpOperIndexOversea = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] etpOper.getEtpOperIndexOversea  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] etpOper.getEtpOperIndexOversea  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getEtpOperIndexOversea  req.body.data no data.";
@@ -312,7 +304,7 @@ var getEtpOperIndexOversea = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.debug(err);
+                    log.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -358,8 +350,8 @@ var getEtpOperIndexError = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] etpOper.getEtpOperIndexError  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] etpOper.getEtpOperIndexError  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getEtpOperIndexOversea  req.body.data no data.";
@@ -445,7 +437,7 @@ var getEtpOperIndexError = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.debug(err);
+                    log.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -493,8 +485,8 @@ var getEtpOperPdf = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] etpOper.getEtpOperPdf  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] etpOper.getEtpOperPdf  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getEtpOperPdf  req.body.data no data.";
@@ -590,48 +582,47 @@ var getEtpOperPdf = function(req, res) {
 
                                             /* 긴급반영 수정건에 존재하지 않는 건 */
                                             var diff = rows.filter(function(o, p) {
-                                                return (    !( 
-                                                                o.f12506 == resultMsg.dataList[i].f12506 /* 일자 */ 
-                                                            &&  o.f16583 == resultMsg.dataList[i].f16583 /* 사무수탁회사번호 */ 
-                                                            &&  o.f16012 == resultMsg.dataList[i].f16012 /* ETF종목코드 */ 
-                                                            &&  o.f16316 == resultMsg.dataList[i].f16316 /* 구성종목코드 */
-                                                    )
-                                                );
+                                                return (!(
+                                                    o.f12506 == resultMsg.dataList[i].f12506 /* 일자 */ &&
+                                                    o.f16583 == resultMsg.dataList[i].f16583 /* 사무수탁회사번호 */ &&
+                                                    o.f16012 == resultMsg.dataList[i].f16012 /* ETF종목코드 */ &&
+                                                    o.f16316 == resultMsg.dataList[i].f16316 /* 구성종목코드 */
+                                                ));
                                             });
 
                                             if (diff.length > 0) {
-                                                resultMsg.dataList[i].fmt_f12506    =   diff[0].fmt_f12506;     /* 입회일 - Date */
-                                                resultMsg.dataList[i].status        =   diff[0].status;         /* 상태 */
-                                                resultMsg.dataList[i].f33861        =   diff[0].f33861;         /* ETF시장구분 - 시장구분 -  */
-                                                resultMsg.dataList[i].f16316        =   diff[0].f16316;         /* 구성종목코드 - 종목코드 */
-                                                resultMsg.dataList[i].f16004        =   diff[0].f16004;         /* 해외시장종목명 - 종목명 */
-                                                resultMsg.dataList[i].f16499        =   diff[0].f16499;         /* 1CU단위증권수 - CU SHrs */
-                                                resultMsg.dataList[i].f34840        =   diff[0].f34840;         /* 액면금액설정현금액 - 액면금액 */
-                                                resultMsg.dataList[i].f16588        =   diff[0].f16588;         /* 평가금액 - 평가금액 */
-                                                resultMsg.dataList[i].fmt_f34743    =   diff[0].fmt_f34743;     /* ETF_PDF비중 - 비중 */                                                
+                                                resultMsg.dataList[i].fmt_f12506 = diff[0].fmt_f12506; /* 입회일 - Date */
+                                                resultMsg.dataList[i].status = diff[0].status; /* 상태 */
+                                                resultMsg.dataList[i].f33861 = diff[0].f33861; /* ETF시장구분 - 시장구분 -  */
+                                                resultMsg.dataList[i].f16316 = diff[0].f16316; /* 구성종목코드 - 종목코드 */
+                                                resultMsg.dataList[i].f16004 = diff[0].f16004; /* 해외시장종목명 - 종목명 */
+                                                resultMsg.dataList[i].f16499 = diff[0].f16499; /* 1CU단위증권수 - CU SHrs */
+                                                resultMsg.dataList[i].f34840 = diff[0].f34840; /* 액면금액설정현금액 - 액면금액 */
+                                                resultMsg.dataList[i].f16588 = diff[0].f16588; /* 평가금액 - 평가금액 */
+                                                resultMsg.dataList[i].fmt_f34743 = diff[0].fmt_f34743; /* ETF_PDF비중 - 비중 */
                                             }
 
 
                                             /* 긴급반영 수정건에 존재하는 건 */
                                             var same = rows.filter(function(o, p) {
-                                                return (    o.f12506 === resultMsg.dataList[i].f12506 /* 일자 */ 
-                                                        &&  o.f16583 === resultMsg.dataList[i].f16583 /* 사무수탁회사번호 */ 
-                                                        &&  o.f16012 === resultMsg.dataList[i].f16012 /* ETF종목코드 */ 
-                                                        &&  o.f16316 === resultMsg.dataList[i].f16316 /* 구성종목코드 */
+                                                return (o.f12506 === resultMsg.dataList[i].f12506 /* 일자 */ &&
+                                                    o.f16583 === resultMsg.dataList[i].f16583 /* 사무수탁회사번호 */ &&
+                                                    o.f16012 === resultMsg.dataList[i].f16012 /* ETF종목코드 */ &&
+                                                    o.f16316 === resultMsg.dataList[i].f16316 /* 구성종목코드 */
                                                 );
                                             });
 
                                             if (same.length > 0) {
-                                                resultMsg.dataList[i].fmt_f12506    =   same[0].fmt_f12506;     /* 입회일 - Date */
-                                                resultMsg.dataList[i].status        =   same[0].status;         /* 상태 */
-                                                resultMsg.dataList[i].f33861        =   same[0].f33861;         /* ETF시장구분 - 시장구분 -  */
-                                                resultMsg.dataList[i].f16316        =   same[0].f16316;         /* 구성종목코드 - 종목코드 */
-                                                resultMsg.dataList[i].f16004        =   same[0].f16004;         /* 해외시장종목명 - 종목명 */
-                                                resultMsg.dataList[i].f16499        =   same[0].f16499;         /* 1CU단위증권수 - CU SHrs */
-                                                resultMsg.dataList[i].f34840        =   same[0].f34840;         /* 액면금액설정현금액 - 액면금액 */
-                                                resultMsg.dataList[i].f16588        =   same[0].f16588;         /* 평가금액 - 평가금액 */
-                                                resultMsg.dataList[i].fmt_f34743    =   same[0].fmt_f34743;     /* ETF_PDF비중 - 비중 */
-                                            }                                            
+                                                resultMsg.dataList[i].fmt_f12506 = same[0].fmt_f12506; /* 입회일 - Date */
+                                                resultMsg.dataList[i].status = same[0].status; /* 상태 */
+                                                resultMsg.dataList[i].f33861 = same[0].f33861; /* ETF시장구분 - 시장구분 -  */
+                                                resultMsg.dataList[i].f16316 = same[0].f16316; /* 구성종목코드 - 종목코드 */
+                                                resultMsg.dataList[i].f16004 = same[0].f16004; /* 해외시장종목명 - 종목명 */
+                                                resultMsg.dataList[i].f16499 = same[0].f16499; /* 1CU단위증권수 - CU SHrs */
+                                                resultMsg.dataList[i].f34840 = same[0].f34840; /* 액면금액설정현금액 - 액면금액 */
+                                                resultMsg.dataList[i].f16588 = same[0].f16588; /* 평가금액 - 평가금액 */
+                                                resultMsg.dataList[i].fmt_f34743 = same[0].fmt_f34743; /* ETF_PDF비중 - 비중 */
+                                            }
                                         }
                                     }
                                 }
@@ -654,7 +645,7 @@ var getEtpOperPdf = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.debug(err);
+                    log.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -700,8 +691,8 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] etpOper.getEtpOperPdfEmergencyHistNow  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] etpOper.getEtpOperPdfEmergencyHistNow  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getEtpOperPdfEmergencyHistNow  req.body.data no data.";
@@ -830,7 +821,7 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.debug(err);
+                    log.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -876,8 +867,8 @@ var getEtpOperPdfByRateTitle = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] etpOper.getEtpOperPdfByRateTitle  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] etpOper.getEtpOperPdfByRateTitle  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getEtpOperPdfByRateTitle  req.body.data no data.";
@@ -944,7 +935,7 @@ var getEtpOperPdfByRateTitle = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.debug(err);
+                    log.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -991,8 +982,8 @@ var getEtpOperPdfByRate = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] etpOper.getEtpOperPdfByRate  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] etpOper.getEtpOperPdfByRate  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getEtpOperPdfByRate  req.body.data no data.";
@@ -1092,7 +1083,7 @@ var getEtpOperPdfByRate = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.debug(err);
+                    log.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -1139,8 +1130,8 @@ var getEtpOperPdfModify = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] etpOper.getEtpOperPdfModify  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] etpOper.getEtpOperPdfModify  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getEtpOperPdfModify  req.body.data no data.";
@@ -1238,7 +1229,7 @@ var getEtpOperPdfModify = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.debug(err);
+                    log.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -1253,7 +1244,7 @@ var getEtpOperPdfModify = function(req, res) {
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
@@ -1285,8 +1276,8 @@ var getExchBasic = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] etpOper.getExchBasic  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] etpOper.getExchBasic  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getExchBasic  req.body.data no data.";
@@ -1338,7 +1329,7 @@ var getExchBasic = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.debug(err);
+                    log.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -1384,8 +1375,8 @@ var getExchBasic = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] etpOper.getExchBasic  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] etpOper.getExchBasic  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getExchBasic  req.body.data no data.";
@@ -1437,7 +1428,7 @@ var getExchBasic = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.debug(err);
+                    log.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -1452,7 +1443,7 @@ var getExchBasic = function(req, res) {
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
@@ -1483,8 +1474,8 @@ var getKspjongBasic = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] etpOper.getKspjongBasic  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] etpOper.getKspjongBasic  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getKspjongBasic  req.body.data no data.";
@@ -1536,7 +1527,7 @@ var getKspjongBasic = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.debug(err);
+                    log.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -1582,8 +1573,8 @@ var getFutureBasic = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] etpOper.getFutureBasic  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] etpOper.getFutureBasic  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getFutureBasic  req.body.data no data.";
@@ -1635,7 +1626,7 @@ var getFutureBasic = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.debug(err);
+                    log.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -1681,8 +1672,8 @@ var getJongmokData = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] etpOper.getJongmokData  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] etpOper.getJongmokData  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getJongmokData  req.body.data no data.";
@@ -1765,7 +1756,7 @@ var getJongmokData = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.debug(err);
+                    log.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -1780,7 +1771,7 @@ var getJongmokData = function(req, res) {
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
@@ -1812,8 +1803,8 @@ var saveEtpOperPdfModify = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] etpOper.saveEtpOperPdfModify  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] etpOper.saveEtpOperPdfModify  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.saveEtpOperPdfModify  req.body.data no data.";
@@ -1840,7 +1831,7 @@ var saveEtpOperPdfModify = function(req, res) {
             conn.beginTransaction(txerr => {
 
                 if (txerr) {
-                    return console.error(txerr);
+                    return log.error(txerr);
                 }
                 log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>");
                 log.debug(paramData.allDataList);
@@ -1899,56 +1890,388 @@ var saveEtpOperPdfModify = function(req, res) {
                                 var arrModifyDtl = [];
                                 var arrDeleteDtl = [];
 
-                                var mastData = {};
-
                                 async.waterfall([
 
-                                    /* 2. ETP 운용관리 - PDF 긴급반영 - 저장시 상세에 이미 등록된 데이터가 존재하는지 체크한다.  
+                                    /*
+                                     * 2. ETP 운용관리 - PDF 긴급반영 - 저장시 td_etfpdf_basic 에 데이터가 존재하는지 체크한다.
+                                     *
+                                     * 1) td_etfpdf_basic 에 없는 경우 'insert'
+                                     * 2) td_etfpdf_basic 에 존재하는 경우 'update'
+                                     *
+                                     */
+                                    function(callback) {
+
+                                        try {
+
+                                            var stmt = mapper.getStatement('etpOper', 'getTdEtfpdfBasicExistsCheck', paramData, { language: 'sql', indent: '  ' });
+                                            log.debug(stmt);
+
+                                            conn.query(stmt, function(err, rows) {
+
+                                                if (err) {
+                                                    resultMsg.result = false;
+                                                    resultMsg.msg = "[error] etpOper.getTdEtfpdfBasicExistsCheck Error while performing Query";
+                                                    resultMsg.err = err;
+
+                                                    return callback(resultMsg);
+                                                }
+
+                                                if (rows && rows.length > 0) {
+                                                    for (var i in rows) {
+                                                        if (rows[i].dtl_status == "insert") {
+                                                            arrInsertDtl.push(rows[i]);
+                                                        } else if (rows[i].dtl_status == "modify") {
+                                                            arrModifyDtl.push(rows[i]);
+                                                        }
+                                                    }
+                                                }
+
+                                                callback(null, paramData);
+                                            })
+
+                                        } catch (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] etpOper.getTdEtfpdfBasicExistsCheck Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+                                    },
+
+                                    /* 3. td_etfpdf_basic 에 저장한다. */
+                                    function(msg, callback) {
+
+                                        try {
+
+                                            if (arrInsertDtl && arrInsertDtl.length > 0) {
+                                                paramData.dataLists = arrInsertDtl;
+                                                var stmt = mapper.getStatement('etpOper', 'saveTdEtfpdfBasic', paramData, { language: 'sql', indent: '  ' });
+                                                log.debug(stmt);
+
+                                                conn.query(stmt, function(err, rows) {
+
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = "[error] etpOper.saveTdEtfpdfBasic Error while performing Query";
+                                                        resultMsg.err = err;
+
+                                                        return callback(resultMsg);
+                                                    }
+
+                                                    callback(null, paramData);
+                                                })
+
+                                            } else {
+                                                callback(null, paramData);
+                                            }
+
+                                        } catch (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] etpOper.saveTdEtfpdfBasic Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+                                    },
+
+                                    /* 4. [tm_pdf_modify_dtl] 테이블의 f33837(구성종목수) 을 수정한다. */
+                                    function(msg, callback) {
+
+                                        try {
+
+                                            if (arrInsertDtl && arrInsertDtl.length > 0) {
+                                                var stmt = mapper.getStatement('etpOper', 'modifyTdEtfpdfBasicF33837', paramData, { language: 'sql', indent: '  ' });
+                                                log.debug(stmt);
+
+                                                conn.query(stmt, function(err, rows) {
+
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = "[error] etpOper.modifyTdEtfpdfBasicF33837 Error while performing Query";
+                                                        resultMsg.err = err;
+
+                                                        return callback(resultMsg);
+                                                    }
+
+                                                    callback(null, paramData);
+                                                })
+
+                                            } else {
+                                                callback(null, paramData);
+                                            }
+
+                                        } catch (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] etpOper.modifyTdEtfpdfBasicF33837 Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+                                    },
+
+                                    /* 5. td_etfpdf_basic 에 수정한다. */
+                                    function(msg, callback) {
+
+                                        try {
+
+                                            if (arrModifyDtl && arrModifyDtl.length > 0) {
+                                                paramData.dataLists = arrModifyDtl;
+                                                var stmt = mapper.getStatement('etpOper', 'modifyTdEtfpdfBasic', paramData, { language: 'sql', indent: '  ' });
+                                                log.debug(stmt);
+
+                                                conn.query(stmt, function(err, rows) {
+
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = "[error] etpOper.modifyTdEtfpdfBasic Error while performing Query";
+                                                        resultMsg.err = err;
+
+                                                        return callback(resultMsg);
+                                                    }
+
+                                                    callback(null, paramData);
+                                                })
+
+                                            } else {
+                                                callback(null, paramData);
+                                            }
+
+                                        } catch (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] etpOper.modifyTdEtfpdfBasic Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+                                    },
+
+                                    /*  6. td_etfpdf_hist에 저장하기 위해 변경된 td_etfpdf_basic 의 모든 데이터를 조회한다. */
+                                    function(msg, callback) {
+
+                                        try {
+
+                                            arrAllDtl = [];
+
+                                            paramData.dataLists = subList.data;
+                                            var stmt = mapper.getStatement('etpOper', 'getTdEtfpdfBasicAllData', paramData, { language: 'sql', indent: '  ' });
+                                            log.debug(stmt);
+
+                                            conn.query(stmt, function(err, rows) {
+
+                                                if (err) {
+                                                    resultMsg.result = false;
+                                                    resultMsg.msg = "[error] etpOper.getTdEtfpdfBasicAllData Error while performing Query";
+                                                    resultMsg.err = err;
+
+                                                    return callback(resultMsg);
+                                                }
+
+                                                if (rows && rows.length > 0) {
+                                                    arrAllDtl   =   rows;
+                                                }
+
+                                                callback(null, paramData);
+                                            })
+
+                                        } catch (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] etpOper.getTdEtfpdfBasicAllData Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+                                    },                                    
+
+                                    /*
+                                     * 7. ETP 운용관리 - PDF 긴급반영 - 저장시 td_etfpdf_hist 에 데이터가 존재하는지 체크한다.
+                                     *
+                                     * 1) td_etfpdf_hist 에 없는 경우 'insert'
+                                     * 2) td_etfpdf_hist 에 존재하는 경우 'update'
+                                     *
+                                     */
+                                    function(msg, callback) {
+
+                                        try {
+
+                                            arrInsertDtl = [];
+                                            arrModifyDtl = [];
+                                            arrDeleteDtl = [];
+
+                                            paramData.dataLists = arrAllDtl;
+
+                                            if (arrAllDtl && arrAllDtl.length > 0) {
+                                                var stmt = mapper.getStatement('etpOper', 'getTdEtfpdfHistExistsCheck', paramData, { language: 'sql', indent: '  ' });
+                                                log.debug(stmt);
+
+                                                conn.query(stmt, function(err, rows) {
+
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = "[error] etpOper.getTdEtfpdfHistExistsCheck Error while performing Query";
+                                                        resultMsg.err = err;
+
+                                                        return callback(resultMsg);
+                                                    }
+
+                                                    if (rows && rows.length > 0) {
+                                                        for (var i in rows) {
+                                                            if (rows[i].dtl_status == "insert") {
+                                                                arrInsertDtl.push(rows[i]);
+                                                            } else if (rows[i].dtl_status == "modify") {
+                                                                arrModifyDtl.push(rows[i]);
+                                                            }
+                                                        }
+                                                    }
+
+                                                    callback(null, paramData);
+                                                })
+                                            }
+
+                                        } catch (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] etpOper.getTdEtfpdfHistExistsCheck Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+                                    },
+
+                                    /* 8. td_etfpdf_hist 에 저장한다. */
+                                    function(msg, callback) {
+
+                                        try {
+
+                                            if (arrInsertDtl && arrInsertDtl.length > 0) {
+                                                paramData.dataLists = arrInsertDtl;
+                                                var stmt = mapper.getStatement('etpOper', 'saveTdEtfpdfHist', paramData, { language: 'sql', indent: '  ' });
+                                                log.debug(stmt);
+
+                                                conn.query(stmt, function(err, rows) {
+
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = "[error] etpOper.saveTdEtfpdfHist Error while performing Query";
+                                                        resultMsg.err = err;
+
+                                                        return callback(resultMsg);
+                                                    }
+
+                                                    callback(null, paramData);
+                                                })
+
+                                            } else {
+                                                callback(null, paramData);
+                                            }
+
+                                        } catch (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] etpOper.saveTdEtfpdfHist Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+                                    },
+
+                                    /* 9. td_etfpdf_hist 에 수정한다. */
+                                    function(msg, callback) {
+
+                                        try {
+
+                                            if (arrModifyDtl && arrModifyDtl.length > 0) {
+                                                paramData.dataLists = arrModifyDtl;
+                                                var stmt = mapper.getStatement('etpOper', 'modifyTdEtfpdfHist', paramData, { language: 'sql', indent: '  ' });
+                                                log.debug(stmt);
+
+                                                conn.query(stmt, function(err, rows) {
+
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = "[error] etpOper.modifyTdEtfpdfHist Error while performing Query";
+                                                        resultMsg.err = err;
+
+                                                        return callback(resultMsg);
+                                                    }
+
+                                                    callback(null, paramData);
+                                                })
+
+                                            } else {
+                                                callback(null, paramData);
+                                            }
+
+                                        } catch (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] etpOper.modifyTdEtfpdfHist Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+                                    },
+
+                                    /* 
+                                     * 10. ETP 운용관리 - PDF 긴급반영 - 저장시 상세에 이미 등록된 데이터가 존재하는지 체크한다.  
                                      *
                                      * 1) tm_pdf_modify_dtl 에 없는 경우에는 'insert'
                                      * 2) tm_pdf_modify_dtl 에 존재하고 CU수량과 액면금액 모두 td_etfpdf_basic 의 값과 동일한 경우 'delete'
                                      * 3) tm_pdf_modify_dtl 에 존재하고 CU수량과 액면금액이 td_etfpdf_basic 의 값과 다른 경우 'modify'
                                      *                             
                                      */
-                                    function(callback) {
+                                    function(msg, callback) {
 
-                                        var stmt = mapper.getStatement('etpOper', 'getTmPdfModifyDtlExistsCheck', paramData, { language: 'sql', indent: '  ' });
-                                        log.debug(stmt);
+                                        try {
 
-                                        conn.query(stmt, function(err, rows) {
+                                            arrAllDtl = [];
+                                            arrInsertDtl = [];
+                                            arrModifyDtl = [];
+                                            arrDeleteDtl = [];
 
-                                            if (err) {
-                                                resultMsg.result = false;
-                                                resultMsg.msg = "[error] etpOper.getTmPdfModifyDtlExistsCheck Error while performing Query";
-                                                resultMsg.err = err;
+                                            paramData.dataLists = subList.data;
+                                            var stmt = mapper.getStatement('etpOper', 'getTmPdfModifyDtlExistsCheck', paramData, { language: 'sql', indent: '  ' });
+                                            log.debug(stmt);
 
-                                                return callback(resultMsg);
-                                            }
+                                            conn.query(stmt, function(err, rows) {
 
-                                            if (rows && rows.length > 0) {
-                                                for (var i in rows) {
-                                                    if (rows[i].dtl_status == "insert") {
-                                                        arrInsertDtl.push(rows[i]);
-                                                    } else if (rows[i].dtl_status == "modify") {
-                                                        arrModifyDtl.push(rows[i]);
-                                                    } else if (rows[i].dtl_status == "delete") {
-                                                        arrDeleteDtl.push(rows[i]);
-                                                    }
+                                                if (err) {
+                                                    resultMsg.result = false;
+                                                    resultMsg.msg = "[error] etpOper.getTmPdfModifyDtlExistsCheck Error while performing Query";
+                                                    resultMsg.err = err;
+
+                                                    return callback(resultMsg);
                                                 }
 
-                                                arrAllDtl = rows;
-                                            }
+                                                if (rows && rows.length > 0) {
+                                                    for (var i in rows) {
+                                                        if (rows[i].dtl_status == "insert") {
+                                                            arrInsertDtl.push(rows[i]);
+                                                        } else if (rows[i].dtl_status == "modify") {
+                                                            arrModifyDtl.push(rows[i]);
+                                                        } else if (rows[i].dtl_status == "delete") {
+                                                            arrDeleteDtl.push(rows[i]);
+                                                        }
+                                                    }
 
-                                            callback(null, paramData);
-                                        })
+                                                    arrAllDtl = rows;
+                                                }
+
+                                                callback(null, paramData);
+                                            })
+
+                                        } catch (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] etpOper.getTmPdfModifyDtlExistsCheck Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
                                     },
 
-                                    /* 3. PDF 변경 상세 정보 (구성종목) 정보를 저장한다. */
+                                    /* 11. PDF 변경 상세 정보 (구성종목) 정보를 저장한다. */
                                     function(msg, callback) {
 
                                         try {
 
                                             if (arrInsertDtl && arrInsertDtl.length > 0) {
+
                                                 paramData.dataLists = arrInsertDtl;
                                                 var stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyDtl', paramData, { language: 'sql', indent: '  ' });
                                                 log.debug(stmt);
@@ -1979,7 +2302,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 4. PDF 변경 상세 정보 (구성종목) 정보를 수정한다. */
+                                    /* 12. PDF 변경 상세 정보 (구성종목) 정보를 수정한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -2015,7 +2338,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 5. PDF 변경 상세 정보 (구성종목) 정보를 삭제한다. */
+                                    /* 13. PDF 변경 상세 정보 (구성종목) 정보를 삭제한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -2051,7 +2374,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 6. ETP 운용관리 - PDF 긴급반영 - 저장시 마스터 상태정보를 조회한다. */
+                                    /* 14. ETP 운용관리 - PDF 긴급반영 - 저장시 마스터 상태정보를 조회한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -2084,7 +2407,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 7. PDF 변경 마스터 정보를 변경한다. */
+                                    /* 15. PDF 변경 마스터 정보를 변경한다. */
                                     function(msg, callback) {
 
                                         var queryId = "saveTmPdfModifyMast";
@@ -2123,7 +2446,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 8. PDF 변경 이력 마스터 정보를 저장한다. */
+                                    /* 16. PDF 변경 이력 마스터 정보를 저장한다. */
                                     function(msg, callback) {
 
                                         var stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyHistMast', paramData, { language: 'sql', indent: '  ' });
@@ -2148,7 +2471,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                     },
 
-                                    /* 9. PDF 변경 이력 상세 정보를 저장한다. */
+                                    /* 17. PDF 변경 이력 상세 정보를 저장한다. */
                                     function(msg, callback) {
 
                                         paramData.dataLists = arrAllDtl;
@@ -2195,7 +2518,7 @@ var saveEtpOperPdfModify = function(req, res) {
                 ], function(err) {
 
                     if (err) {
-                        log.debug(err);
+                        log.error(err);
                         conn.rollback();
 
                     } else {
@@ -2215,7 +2538,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
@@ -2245,8 +2568,8 @@ var getPdfByGroupNo = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] etpOper.getPdfByGroupNo  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] etpOper.getPdfByGroupNo  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getPdfByGroupNo  req.body.data no data.";
@@ -2414,7 +2737,7 @@ var getPdfByGroupNo = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.debug(err);
+                    log.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -2429,7 +2752,7 @@ var getPdfByGroupNo = function(req, res) {
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
@@ -2462,8 +2785,8 @@ var getPdfExistYnByNow = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] etpOper.getPdfExistYnByNow  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] etpOper.getPdfExistYnByNow  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getPdfExistYnByNow  req.body.data no data.";
@@ -2533,7 +2856,7 @@ var getPdfExistYnByNow = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.debug(err);
+                    log.error(err);
                 } else {
 
                     resultMsg.result = true;

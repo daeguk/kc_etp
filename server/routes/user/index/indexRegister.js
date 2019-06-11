@@ -29,8 +29,8 @@ var getJisuDuplCheck = function (req, res) {
 
     /* 1. body.data 값이 있는지 체크 */
     if (!req.body.data) {
-        log.debug("[error] indexRegister.getJisuDuplCheck  req.body.data no data.");
-        log.debug(req.body.data);
+        log.error("[error] indexRegister.getJisuDuplCheck  req.body.data no data.");
+        log.error(req.body.data);
         res.json({
             success: false,
             result: result
@@ -68,7 +68,7 @@ var getJisuDuplCheck = function (req, res) {
             });
             res.end();
         }).catch(err => {
-            log.debug("[error] indexRegister.getJisuDuplCheck Error while performing Query.", err);
+            log.error("[error] indexRegister.getJisuDuplCheck Error while performing Query.", err);
             res.json({
                 success: false,
                 message: err,
@@ -150,7 +150,7 @@ var getDomainInst = function(req, res) {
             res.end();
 
         }).catch(err => {
-            log.debug("[error] indexRegister.getDomainInst Error while performing Query.", err);
+            log.error("[error] indexRegister.getDomainInst Error while performing Query.", err);
             res.json({
                 dataList: []
             });
@@ -211,7 +211,7 @@ var fileuploadSingle = function (req, res) {
         log.debug("#6 upload start");
 
         if (err) {
-            log.debug("File Upload Err" + err);
+            log.error("File Upload Err" + err);
         }
 
         try{
@@ -324,7 +324,7 @@ var fileuploadSingle = function (req, res) {
                     conn.beginTransaction(txerr => {
 
                         if( txerr ) {
-                            return console.error( txerr );
+                            return log.error( txerr );
                         }
 
                         async.waterfall([
@@ -433,7 +433,7 @@ var fileuploadSingle = function (req, res) {
                         ], function (err) {
 
                             if( err ) {
-                                log.debug( err );
+                                log.error( err );
 
                                 conn.rollback();
                             }else{
@@ -527,13 +527,13 @@ var registerJisu = function (req, res) {
             log.debug("upload start");
 
             if (err) {
-                log.debug("File Upload Err" + err);
+                log.error("File Upload Err" + err);
             }
 
             /* body.data 값이 있는지 체크 */
             if (!req.body.data) {
-                log.debug("indexRegister.save  req.body.data no data.");
-                log.debug(req.body.data);
+                log.error("indexRegister.save  req.body.data no data.");
+                log.error(req.body.data);
 
                 resultMsg.result = false;
                 resultMsg.msg = "입력값이 유효하지 않습니다.";
@@ -559,7 +559,7 @@ var registerJisu = function (req, res) {
                     conn.beginTransaction(txerr => {
 
                         if( txerr ) {
-                            return console.error( txerr );
+                            return log.error( txerr );
                         }
 
                         async.waterfall([
@@ -806,7 +806,7 @@ var registerJisu = function (req, res) {
                         ], function (err) {
 
                             if( err ) {
-                                log.debug( err );
+                                log.error( err );
                                 conn.rollback();
                             }else{
 
@@ -828,7 +828,7 @@ var registerJisu = function (req, res) {
 
     } catch(expetion) {
 
-        log.debug(expetion);
+        log.error(expetion);
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;

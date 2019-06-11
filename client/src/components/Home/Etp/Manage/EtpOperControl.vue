@@ -30,6 +30,8 @@
 
                             :paramData="paramData"
                             :reloadYn="reloadYn"
+                            :toggle="toggle"
+
                             @showMessageBox="showMessageBox"
 
                             @fn_showProgress="fn_showProgress"
@@ -203,7 +205,11 @@ export default {
             pdfData : {},
             indexBasic : {},
             faverSize : 80,
-            reloadYn : false
+            reloadYn : false,
+            toggle : {
+                togglePdfEmergencyPop : false,
+                toggleIanvPop : false
+            }
     	};
     },    
 
@@ -415,10 +421,16 @@ export default {
 
             /* PDF 관리 -> PDF 긴급반영 팝업 */
             if( gubun == '6' ) {
+                this.toggle.togglePdfEmergencyPop  = true;
+                this.toggle.toggleIanvPop = false;
+
                 this.showEtpOperPdfEmergencyModifyPop = true;
             }
             /* (PDF) iNAV 계산기 팝업 */
             else if( gubun == '7' ) {
+                this.toggle.togglePdfEmergencyPop  = false;
+                this.toggle.toggleIanvPop = true;
+                
                 this.showEtpOperPdfInavCalcPop = true;
             }
             /* (지수 수익율) iNAV 계산기 팝업 */
@@ -463,6 +475,9 @@ export default {
             vm.showEtpOperPdfHistPop                =   false;
             vm.showEtpOperPdfInavCalcPop            =   false;
             vm.showEtpOperIndexInavCalcPop          =   false;
+
+            vm.toggle.togglePdfEmergencyPop    = false;
+            vm.toggle.toggleIanvPop = false;
         },
     }
 }

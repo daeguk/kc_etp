@@ -16,7 +16,6 @@ var log = config.logger;
 /*
 * INDEX BASIC 조회
 */
-
 var getIndexBasic = function(req, res) {
   log.debug('marketInfo 모듈 안에 있는 getIndexBasic 호출됨.');
 
@@ -41,7 +40,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -50,6 +49,81 @@ try {
 }
 };
 
+/*
+* KRX INDEX LIST 조회 (By Type)
+*/
+var getKrxIndexListByType = function(req, res) {
+  log.debug('marketInfo 모듈 안에 있는 getKrxIndexListByType 호출됨.');
+
+  if(req.query.selIndexType == "TOTAL") req.query.selIndexType = "";
+  var options = {
+    selIndexType : req.query.selIndexType,
+  };
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('common.item', 'getKrxIndexListByType', options, {language:'sql', indent: '  '});
+    log.debug(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    log.error("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+/*
+* KRX INDEX LIST 조회 (By Type & 구간별 지수데이터)
+*/
+var getKrxIndexListByType1 = function(req, res) {
+  log.debug('marketInfo 모듈 안에 있는 getKrxIndexListByType1 호출됨.');
+
+  if(req.query.selIndexType == "TOTAL") req.query.selIndexType = "";
+  var options = {
+    selIndexType : req.query.selIndexType,
+    bef1Week: req.query.bef1Week,
+    bef1Month: req.query.bef1Month,
+    befYtd: req.query.befYtd,
+    bef1Year: req.query.bef1Year,
+    bef3Year: req.query.bef3Year,
+  };
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('common.item', 'getKrxIndexListByType1', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    log.error("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
 /*
 * INDEX INTRA 조회
 */
@@ -78,7 +152,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -114,7 +188,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -149,7 +223,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -188,7 +262,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -229,7 +303,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -263,7 +337,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -299,7 +373,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -336,7 +410,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -370,7 +444,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -404,7 +478,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -438,7 +512,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -472,7 +546,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -506,7 +580,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -540,7 +614,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -574,7 +648,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -632,8 +706,8 @@ var getSectorEtpList = function (req, res) {
                     carousel_info.carousel_cnt =  Math.floor(ctgCodeList.length / carousel_div);
                     carousel_info.carousel_mod =  ctgCodeList.length % carousel_div;
                 
-                    //util.log("carousel_info.carousel_cnt:", carousel_info.carousel_cnt);
-                    //util.log("carousel_info.carousel_mod:", carousel_info.carousel_mod);
+                    //log.debug("carousel_info.carousel_cnt:", carousel_info.carousel_cnt);
+                    //log.debug("carousel_info.carousel_mod:", carousel_info.carousel_mod);
                 
                     // 항목 갯수 만큼 쿼리 
                     async.forEachOf( ctgCodeList, function ( ctgCodeItem, index){                                
@@ -656,12 +730,12 @@ var getSectorEtpList = function (req, res) {
                             var etn_cnt = 0;
                             
 
-                            //util.log("(carousel_info.carousel_cnt * 5):" , (carousel_info.carousel_cnt * 5));
-                            //util.log("index" , index);
+                            //log.debug("(carousel_info.carousel_cnt * 5):" , (carousel_info.carousel_cnt * 5));
+                            //log.debug("index" , index);
 
 
                             if ((carousel_info.carousel_cnt * 5) > index) {
-                                //util.log("data:=====================", index);
+                                //log.debug("data:=====================", index);
 
                                 async.forEachOf( rows, function ( item, idx){ 
                                     total_amt += Number(item.f15028);
@@ -676,7 +750,7 @@ var getSectorEtpList = function (req, res) {
 
                                 carousel_data.push({"ctg_code":ctgCodeItem.ctg_code, "name":ctg_name, "total_amt":total_amt, "etf_cnt": etf_cnt, "etn_cnt": etn_cnt});
                             } else {
-                                //util.log("mode:=====================", index);
+                                //log.debug("mode:=====================", index);
                                 async.forEachOf( rows, function ( item, idx){                                    
                                     total_amt += Number(item.f15028);
                                     log.debug("tot_amt"+ item.f15028);
@@ -706,7 +780,7 @@ var getSectorEtpList = function (req, res) {
             
                     //carousel_data = carousel_data.sort(carouselSort);
             
-                    //util.log("carousel_mod:", carousel_mod.length);
+                    //log.debug("carousel_mod:", carousel_mod.length);
                     res.json({
                         success: true,
                         etpLists: etpLists,
@@ -721,7 +795,7 @@ var getSectorEtpList = function (req, res) {
         });
     } catch (exception) {
 
-        util.log("Error while performing Query.", exception);
+        log.error("Error while performing Query.", exception);
         res.json({
             success: false,
             message: exception
@@ -777,7 +851,7 @@ var getMarketIndexList = function (req, res) {
                             market_id : marketItem.market_id,
                         };
                 
-                        util.log("현재가=", marketItem.f15001)
+                        log.debug("현재가=", marketItem.f15001)
                         var stmt = mapper.getStatement('common.item', 'getIndexIntra', params, {language:'sql', indent: '  '});
 
 
@@ -861,7 +935,7 @@ var getMarketIndexList = function (req, res) {
         });
     } catch (exception) {
 
-        util.log("Error while performing Query.", exception);
+        log.error("Error while performing Query.", exception);
         res.json({
             success: false,
             message: exception
@@ -874,6 +948,8 @@ var getMarketIndexList = function (req, res) {
 
 module.exports.getIndexBasic = getIndexBasic;
 module.exports.getIndexIntra = getIndexIntra;
+module.exports.getKrxIndexListByType = getKrxIndexListByType;
+module.exports.getKrxIndexListByType1 = getKrxIndexListByType1;
 module.exports.getEtpBasic = getEtpBasic;
 module.exports.getEtpIntra = getEtpIntra;
 module.exports.getEtpMultiIntra = getEtpMultiIntra;

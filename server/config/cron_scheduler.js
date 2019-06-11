@@ -12,7 +12,7 @@ var cron = require('node-cron');
 
 cron_scheduler.init = function(app) {
 	console.log('cron_scheduler.init 호출됨.');
-	return cronRegister(app);
+	// return cronRegister(app);
 };
 
 // route_info에 정의된 라우팅 정보 처리

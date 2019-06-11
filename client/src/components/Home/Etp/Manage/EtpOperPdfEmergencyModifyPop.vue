@@ -946,9 +946,16 @@ export default {
 
             console.log("EtpOperPdfEmergencyModifyPop -> fn_saveEtpOperPdfModify");
 
+            var now_date    =       new Date().getFullYear()
+                                +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
+                                +   _.padStart( new Date().getDate(), 2, '0' );
+
             util.processing(vm.$refs.progress, true);
             axios.post( Config.base_url + "/user/etp/saveEtpOperPdfModify", {
-                data: { allDataList : vm.allDataList }
+                data: {     
+                        now_date    : now_date
+                    ,   allDataList : vm.allDataList
+                }
             }).then(function(response) {
 
                 console.log(response);
