@@ -10,8 +10,9 @@ const store = new Vuex.Store({
                 name: "", 
                 type_cd: "", 
                 type_name: "", 
-                inst_cd: "", 
+                inst_cd: "",                 
                 inst_name: "",
+                krx_cd: "",
                 hp_no: "",
                 tel_no: "",
               },
@@ -25,6 +26,7 @@ const store = new Vuex.Store({
             state.user.type_name = payload.type_name;
             state.user.inst_cd = payload.inst_cd;
             state.user.inst_name = payload.inst_name;
+            state.user.krx_cd = payload.krx_cd;
             state.user.hp_no = payload.hp_no;
             state.user.tel_no = payload.tel_no;
         },
@@ -36,6 +38,7 @@ const store = new Vuex.Store({
           state.user.type_name = "";
           state.user.inst_cd = "";
           state.user.inst_name = "";
+          state.user.krx_cd = "";
           state.user.hp_no = "";
           state.user.tel_no = "";
     },

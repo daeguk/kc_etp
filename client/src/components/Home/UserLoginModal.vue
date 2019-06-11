@@ -87,9 +87,11 @@ export default {
             type_name:response.data.results[0].type_name, 
             inst_cd:response.data.results[0].inst_cd, 
             inst_name:response.data.results[0].inst_name, 
+            krx_cd:response.data.results[0].krx_cd, 
             hp_no:response.data.results[0].hp_no, 
             tel_no:response.data.results[0].tel_no, 
           });
+          debugger;
 
           vm.loginDialog = false;
           // MainLanding.vue
