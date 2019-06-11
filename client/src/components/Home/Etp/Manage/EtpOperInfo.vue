@@ -73,6 +73,25 @@
                                     </tr>
                                 </thead>                                
                             </table>
+                            <!--투자지표 아이콘 변경
+                            <table id="" class="tbl_type ver7" style="width:100%">
+
+                                 <thead>
+                                    <tr>
+                                        <th class="txt_left">투자지표 아이콘</th>
+                                    </tr>
+
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><div class="tooltip"><button type="button" name="" class="calcu_icon"></button><span class="tooltiptext" style="width:70px;">투자지표</span></div></td>
+                                    </tr>
+                                    <tr>
+                                            <td>test</td>
+                                    </tr>
+                                </tbody>                               
+                            </table>
+                            --->
                             
                         </div>                        
                     </v-card>
