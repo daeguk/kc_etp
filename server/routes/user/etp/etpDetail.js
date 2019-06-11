@@ -224,7 +224,7 @@ var getExistEtpBasicCnt = function(req, res) {
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
@@ -399,7 +399,7 @@ var getEtpPerformance = function(req, res) {
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
@@ -817,7 +817,7 @@ var getEtpInfo = function(req, res) {
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
@@ -922,7 +922,7 @@ var getEtpChartData = function(req, res) {
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
@@ -1022,7 +1022,7 @@ var getEtpImportanceList = function(req, res) {
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;

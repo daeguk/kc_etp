@@ -104,7 +104,7 @@
                 {{etpBasic.f33929 == '0' ? 'PDF' : '지수수익율'}} <span>{{etpBasic.f12506}}</span>
             </h4>
 
-            <table id="pdf_table" class="tbl_type ver2" style="width:100%">
+            <table id="pdf_table" class="tbl_type ver9" style="width:100%">
                 <colgroup>
                     <col width="8%">
                     <col width="10%">

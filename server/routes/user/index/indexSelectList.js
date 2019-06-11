@@ -29,8 +29,8 @@ var getStatusList = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.debug("[error] indexSelectList.getStatusList  req.body.data no data.");
-            log.debug(req.body.data);
+            log.error("[error] indexSelectList.getStatusList  req.body.data no data.");
+            log.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] indexSelectList.getStatusList  req.body.data no data.";
@@ -75,7 +75,7 @@ var getStatusList = function(req, res) {
                 res.end();
 
             }).catch(err => {
-                log.debug("[error] indexSelectList.getStatusList Error while performing Query.", err);
+                log.error("[error] indexSelectList.getStatusList Error while performing Query.", err);
 
                 resultMsg.result = false;
                 resultMsg.msg    = "[error] indexSelectList.getStatusList Error while performing Query";
@@ -85,7 +85,7 @@ var getStatusList = function(req, res) {
         });
 
     } catch(expetion) {
-        log.debug(expetion);
+        log.error(expetion);
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result = false;
@@ -160,7 +160,7 @@ var getIndexSelectList = function(req, res) {
                 res.end();
 
             }).catch(err => {
-                log.debug("[error] indexSelectList.getIndexSelectList Error while performing Query.", err);
+                log.error("[error] indexSelectList.getIndexSelectList Error while performing Query.", err);
 
                 resultMsg.result = false;
                 resultMsg.msg    = "[error] indexSelectList.getIndexSelectList Error while performing Query";
@@ -170,7 +170,7 @@ var getIndexSelectList = function(req, res) {
         });
 
     } catch(expetion) {
-        log.debug(expetion);
+        log.error(expetion);
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result = false;

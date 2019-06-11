@@ -40,7 +40,7 @@ try {
       });
     });
   } catch(exception) {
-    log.debug("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -76,7 +76,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -116,7 +116,7 @@ try {
       });
     });
   } catch(exception) {
-    util.log("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -152,7 +152,7 @@ try {
       });
     });
   } catch(exception) {
-    log.debug("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -188,7 +188,7 @@ try {
       });
     });
   } catch(exception) {
-    log.debug("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -223,7 +223,7 @@ try {
       });
     });
   } catch(exception) {
-    log.debug("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -262,7 +262,7 @@ try {
       });
     });
   } catch(exception) {
-    log.debug("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -303,7 +303,7 @@ try {
       });
     });
   } catch(exception) {
-    log.debug("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -337,7 +337,7 @@ try {
       });
     });
   } catch(exception) {
-    log.debug("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -373,7 +373,7 @@ try {
       });
     });
   } catch(exception) {
-    log.debug("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -410,7 +410,7 @@ try {
       });
     });
   } catch(exception) {
-    log.debug("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -444,7 +444,7 @@ try {
       });
     });
   } catch(exception) {
-    log.debug("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -478,7 +478,7 @@ try {
       });
     });
   } catch(exception) {
-    log.debug("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -512,7 +512,7 @@ try {
       });
     });
   } catch(exception) {
-    log.debug("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -546,7 +546,7 @@ try {
       });
     });
   } catch(exception) {
-    log.debug("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -580,7 +580,7 @@ try {
       });
     });
   } catch(exception) {
-    log.debug("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -614,7 +614,7 @@ try {
       });
     });
   } catch(exception) {
-    log.debug("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -648,7 +648,7 @@ try {
       });
     });
   } catch(exception) {
-    log.debug("err=>", exception);
+    log.error("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -795,7 +795,7 @@ var getSectorEtpList = function (req, res) {
         });
     } catch (exception) {
 
-        log.debug("Error while performing Query.", exception);
+        log.error("Error while performing Query.", exception);
         res.json({
             success: false,
             message: exception
@@ -935,7 +935,7 @@ var getMarketIndexList = function (req, res) {
         });
     } catch (exception) {
 
-        log.debug("Error while performing Query.", exception);
+        log.error("Error while performing Query.", exception);
         res.json({
             success: false,
             message: exception
