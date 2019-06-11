@@ -32,7 +32,8 @@ var getEtpApplyList = function (req, res) {
             conn.queryAsync(stmt).then(rows => {
                 res.json({
                     success: true,
-                    results: rows
+                    results: rows,
+                    inst_cd:options.inst_cd
                 });
                 res.end();
             }).catch(err => {

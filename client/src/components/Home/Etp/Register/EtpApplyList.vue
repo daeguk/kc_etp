@@ -68,9 +68,11 @@
                         </thead>
                     </table>
                      <v-card-actions flat class="mr-3">
-                         <v-spacer></v-spacer>
-                        <v-btn depressed color="grey" dark @click="deleteEtpApply">삭제</v-btn>
-                        <v-btn depressed color="primary" dark @click="downloadExcel">엑셀</v-btn>
+                        <v-spacer></v-spacer>
+                        <div flat class="mr-3" v-if="this.loginInstCd==='04870'">
+                            <v-btn depressed color="grey" dark @click="deleteEtpApply">삭제</v-btn>
+                        </div>
+                            <v-btn depressed color="primary" dark @click="downloadExcel">엑셀</v-btn>
                     </v-card-actions>
                 </v-card>
                 <!---실제적용 테이블end--->
@@ -132,6 +134,7 @@ export default {
                 isuKorNm:''
             },
             seqValues :[],
+            loginInstCd:''
         };
     },
     components: {
@@ -152,11 +155,14 @@ export default {
         vm.getEtpApplyCodeCnt();
         vm.getEtpApplyInavCnt();
         this.$root.$confirm = this.$refs.confirm;
+        //this.loginInstCd =  this.$store.state.user.inst_cd;
+        //console.log("inst_cd : " + this.$store.state.user.inst_cd);
+              
     },
     methods: {
 
         getEtpApplyList: function() {
-             var vm = this;
+            var vm = this;
             console.log("getEtpApplyList");
             this.loadingbar = true;
             axios
@@ -164,16 +170,15 @@ export default {
                     params: {}
                 })
                 .then(response => {
-                      console.log("console:" + response);
                     if (response.data.success == false) {
                         alert("ETP신청현황  목록이 없습니다");
                     } else {
                         var items = response.data.results;
+                        this.inst_cd = response.data.inst_cd ;
                         this.results = items;
                         this.list_cnt = this.results.length;
-
-                                
-                          table = $("#example1").DataTable({
+                        console.log("getEtpApplyList=" + JSON.stringify(response.data.inst_cd));       
+                        table = $("#example1").DataTable({
                             autoWidth: false, 
                             processing: true,
                             serverSide: false,
@@ -465,7 +470,6 @@ export default {
                     this.inavCnt = 0 ;   
                 } else {
                     var items = response.data.results ;
-                    console.log("downloadExcel=" + JSON.stringify(items));
                     this.inavCnt = items['0']['inavCnt'] ;
                     console.log("responseinav=" + this.inavCnt );
                 }
@@ -533,11 +537,12 @@ export default {
                             }
                     
                 }else if (response.data.result == true) {
-                        vm.getEtpApplyList();
-                        vm.getEtpApplyDistCnt();
-                        vm.getEtpApplyIndexCnt();
-                        vm.getEtpApplyCodeCnt();
-                        vm.getEtpApplyInavCnt();
+                        vm.refreshYn = true;
+                        //vm.getEtpApplyList();
+                        //vm.getEtpApplyDistCnt();
+                        //vm.getEtpApplyIndexCnt();
+                        //vm.getEtpApplyCodeCnt();
+                        //vm.getEtpApplyInavCnt();
                     if(  vm.$root.$confirm.open(
                             '[삭제]',
                             '삭제가 완료되었습니다.',
