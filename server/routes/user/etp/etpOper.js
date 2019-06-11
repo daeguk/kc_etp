@@ -1953,7 +1953,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /*  6. td_etfpdf_hist에 저장하기 위해 변경된 td_etfpdf_basic 의 모든 데이터를 조회한다. */
+                                    /*  6. td_etfpdf_hist에 저장하기 위해 변경된 td_etfpdf_basic 의 데이터를 조회한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -2005,9 +2005,9 @@ var saveEtpOperPdfModify = function(req, res) {
                                             arrModifyDtl = [];
                                             arrDeleteDtl = [];
 
-                                            paramData.dataLists = arrAllDtl;
-
                                             if (arrAllDtl && arrAllDtl.length > 0) {
+
+                                                paramData.dataLists = arrAllDtl;
                                                 var stmt = mapper.getStatement('etpOper', 'getTdEtfpdfHistExistsCheck', paramData, { language: 'sql', indent: '  ' });
                                                 log.debug(stmt);
 

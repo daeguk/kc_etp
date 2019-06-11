@@ -682,7 +682,7 @@
                 ,   td_etp_basic.F13510                                             AS  f13510      /* 거래량60일이동평균 */
                 ,   td_etp_basic.F13516                                             AS  f13516      /* 거래대금60일이동평균 */
                     
-                ,   td_etp_basic.W00001                                             AS  9w00001      /* 종가1일수익률 */
+                ,   td_etp_basic.W00001                                             AS  w00001      /* 종가1일수익률 */
                 ,   td_etp_basic.W00002                                             AS  w00002      /* 종가1주수익률 */
                 ,   td_etp_basic.W00003                                             AS  w00003      /* 종가1달수익률 */
                 ,   td_etp_basic.W00004                                             AS  w00004      /* 종가3달수익률 */
@@ -1185,12 +1185,12 @@
 -->
 
     <!--
-    * td_etfpdf_hist에 저장하기 위해 변경된 td_etfpdf_basic 의 모든 데이터를 조회한다.
+    * td_etfpdf_hist에 저장하기 위해 변경된 td_etfpdf_basic 의 데이터를 조회한다.
     * 2019-05-20  bkLove(촤병국)
     -->
     <select id="getTdEtfpdfBasicAllData">
 
-        SELECT      /* etpOper.getTdEtfpdfBasicAllData  td_etfpdf_hist에 저장하기 위해 변경된 td_etfpdf_basic 의 모든 데이터를 조회한다. */
+        SELECT      /* etpOper.getTdEtfpdfBasicAllData  td_etfpdf_hist에 저장하기 위해 변경된 td_etfpdf_basic 의 데이터를 조회한다. */
 
                     td_etfpdf_basic.f16583                                  AS  f16583      /* 사무수탁회사번호 */
                 ,   td_etfpdf_basic.f16012                                  AS  f16012      /* ETF종목코드 */
@@ -1207,12 +1207,27 @@
                 ,   td_etfpdf_basic.f34744                                  AS  f34744      /* ETF_PDF포함여부 */
                 ,   td_etfpdf_basic.f16006                                  AS  f16006      /* 영문심볼 */
 
-          FROM  td_etfpdf_basic
-         WHERE  1 = 1
+          FROM  (        
+                <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
+                <![CDATA[              
+                    SELECT      #{f16583}                       AS  f16583      /* 사무수탁회사번호 */
+                            ,   #{f16012}                       AS  f16012      /* ETF종목코드 */
+                            ,   #{f16013}                       AS  f16013      /* ETF단축코드 */
+                            ,   #{data.f16316}                  AS  f16316      /* 구성종목코드 */
+                    FROM  DUAL
+                ]]>
+                </foreach>
+                )       base
 
-           AND  td_etfpdf_basic.f16583              =   #{f16583}     /* 사무수탁회사번호 */
-           AND  td_etfpdf_basic.f16012              =   #{f16012}     /* ETF종목코드 */
-           AND  td_etfpdf_basic.f16013              =   #{f16013}     /* ETF단축코드 */
+          JOIN  td_etfpdf_basic
+            ON  (
+                            1 = 1
+                    AND     td_etfpdf_basic.f16583              =   base.f16583     /* 사무수탁회사번호 */
+                    AND     td_etfpdf_basic.f16012              =   base.f16012     /* ETF종목코드 */
+                    AND     td_etfpdf_basic.f16013              =   base.f16013     /* ETF단축코드 */
+                    AND     td_etfpdf_basic.f16316              =   base.f16316     /* 구성종목코드 */
+                )
+         WHERE  1 = 1
 
     </select>
 
