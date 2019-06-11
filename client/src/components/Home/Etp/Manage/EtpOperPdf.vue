@@ -317,6 +317,7 @@ debugger;
 
             vm.searchParam.search_date  =   vm.searchParam.show_date.replace(/-/g,"");
             vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
+            vm.searchParam.isInstCd     =   "N";        /* 기관에 속한 정보만 노출하는지 */
 
             axios.post(  Config.base_url + "/user/etp/getEtpOperPdfByRateTitle", {
                 data: vm.searchParam

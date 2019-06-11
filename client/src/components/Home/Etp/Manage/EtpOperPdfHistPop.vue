@@ -1,8 +1,8 @@
 <template>
     <v-container>
         <v-flex>
-            <v-dialog v-model="showDialog" persistent  max-width="1000"  >
-                <v-card class="mx-auto" max-height="400">
+            <v-dialog v-model="showDialog" persistent  max-width="1100"  >
+                <v-card class="mx-auto" height="400">
                     <v-card flat class="listset_pop">
                         <v-card flat>
                             <v-layout row wrap >
@@ -33,20 +33,22 @@
 
                                             <table v-bind:id='"step3_" + subData.etf_f16012' class="tbl_type ver7" style="width:100%">
                                                 <colgroup>
-                                                    <col width="15%">       <!-- email -->
-                                                    <col width="7%">        <!-- 상태 -->
-                                                    <col width="15%">       <!-- CODE -->
-                                                    <col width="15%">       <!-- 종목 -->
+                                                    <col width="18%">       <!-- email -->
+                                                    <col width="8%">        <!-- 시간 -->
+                                                    <col width="6%">        <!-- 상태 -->
+                                                    <col width="10%">       <!-- CODE -->
+                                                    <col width="18%">       <!-- 종목 -->
 
-                                                    <col width="12%">       <!-- CU shrs -->
-                                                    <col width="12%">
+                                                    <col width="10%">       <!-- CU shrs -->
+                                                    <col width="10%">
 
-                                                    <col width="12%">       <!-- 액면금액 -->
-                                                    <col width="12%">                                        
+                                                    <col width="10%">       <!-- 액면금액 -->
+                                                    <col width="10%">                                        
                                                 </colgroup>
                                                 <thead>
                                                     <tr>
                                                         <th class="txt_center"  rowspan="2">email</th>
+                                                        <th class="txt_center"  rowspan="2">시간</th>
                                                         <th class="txt_center"  rowspan="2">상태</th>
                                                         <th class="txt_center"  rowspan="2">CODE</th>
                                                         <th class="txt_left"    rowspan="2">종목</th>
@@ -70,7 +72,7 @@
 
                                 <v-flex>
                                     <ProgressBar ref="progress"></ProgressBar>
-                                </v-flex>            
+                                </v-flex>
 
                             </v-layout>
 
@@ -105,7 +107,7 @@ export default {
     data() {
         return {
             searchParam : {
-                show_date : "",
+                now_date : "",
                 search_date : "",
                 search_nm : "",
                 f16493 : "",
@@ -140,11 +142,12 @@ export default {
             new Promise(function(resolve, reject) {
 
                 if( vm.paramData ) {
+                    vm.searchParam.f16583       =   vm.paramData.f16583;            /* 사무수탁회사번호 */
                     vm.searchParam.f16002       =   vm.paramData.f16002;            /* 한글종목명 */
                     vm.searchParam.f16013       =   vm.paramData.f16013;            /* 단축코드 */
 
                     vm.searchParam.f16493       =   vm.paramData.f16493;            /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-//                    vm.searchParam.f16012       =   vm.paramData.f16012;            /* 국제표준코드 */
+                    vm.searchParam.f16012       =   vm.paramData.f16012;            /* 국제표준코드 */
                 }
 
                 resolve();
@@ -155,10 +158,8 @@ export default {
 
             }).then( function() {
 
-                vm.searchParam.show_date    =       new Date().getFullYear() 
-                                                +   "-" 
+                vm.searchParam.now_date     =       new Date().getFullYear() 
                                                 +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
-                                                +   "-" 
                                                 +   _.padStart( new Date().getDate(), 2, '0' );
                 vm.searchParam.isInstCd     =   "Y";        /* 기관에 속한 정보만 노출하는지 */
 
@@ -249,7 +250,7 @@ export default {
 
                                                         return htm;
                                                     },
-                                                    "targets": 1
+                                                    "targets": 2
                                                 },
                                                 {  
                                                     /* CU shrs (변경전) */
@@ -266,7 +267,7 @@ export default {
 
                                                         return htm;
                                                     },
-                                                    "targets": 4
+                                                    "targets": 5
                                                 },
                                                 {  
                                                     /* CU shrs (변경후) */
@@ -277,7 +278,7 @@ export default {
 
                                                         return htm;
                                                     },
-                                                    "targets": 5
+                                                    "targets": 6
                                                 },
                                                 {  
                                                     /* 액면금액 (변경전) */
@@ -294,7 +295,7 @@ export default {
 
                                                         return htm;
                                                     },
-                                                    "targets": 6
+                                                    "targets": 7
                                                 },
                                                 {  
                                                     /* 액면금액 (변경후) */
@@ -305,20 +306,21 @@ export default {
 
                                                         return htm;
                                                     },
-                                                    "targets": 7
+                                                    "targets": 8
                                                 },
                                             ],
                                             columns: [
-                                                { "data" : "email"          ,   "width" :   "15%"   ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 이메일 */
-                                                { "data" : "status"         ,   "width" :   "7%"    ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 상태 */
-                                                { "data" : "f16316"         ,   "width" :   "15%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 코드 */
-                                                { "data" : "f16004"         ,   "width" :   "15%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 종목명 */
+                                                { "data" : "email"          ,   "width" :   "18%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 이메일 */
+                                                { "data" : "fmt_reg_time"   ,   "width" :   "8%"    ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 시간 */
+                                                { "data" : "status"         ,   "width" :   "6%"    ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 상태 */
+                                                { "data" : "f16316"         ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 코드 */
+                                                { "data" : "f16004"         ,   "width" :   "18%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 종목명 */
 
-                                                { "data" : "f16499_prev"    ,   "width" :   "12%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs (변경전) */
-                                                { "data" : "f16499"         ,   "width" :   "12%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs */
+                                                { "data" : "f16499_prev"    ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs (변경전) */
+                                                { "data" : "f16499"         ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs */
 
-                                                { "data" : "f34840_prev"    ,   "width" :   "12%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 (변경전) */
-                                                { "data" : "f34840"         ,   "width" :   "12%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 */
+                                                { "data" : "f34840_prev"    ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 (변경전) */
+                                                { "data" : "f34840"         ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 */
                                             ]
                                     }).draw();
                                 });

@@ -815,10 +815,10 @@
                 ,   td_index_basic.fixed_cash                           AS  fixed_cash          /* 고정현금 */
                 ,   td_index_basic.flowrate_yn                          AS  flowrate_yn         /* 유동비율적용여부 */
 
-                ,   'vendor'                                            AS  vendor
-                ,   '1'                                                 AS  manage_type
-                ,   '2018.09.05'                                        AS  last_date
-                ,   '18:00:01'                                          AS  last_time
+                ,   ''                                                  AS  vendor
+                ,   ''                                                  AS  manage_type
+                ,   ''                                                  AS  last_date
+                ,   ''                                                  AS  last_time
                 ,   IFNULL(
                             (
                                 SELECT  CONCAT(
@@ -827,10 +827,7 @@
                                                         GROUP_CONCAT(
                                                             CONCAT(
                                                                     '{'
-                                                                ,       '\"f16012\": \"', REPLACE( REPLACE(                 f16012, '"', '\\\\"'),'\n','\\\\n'), '\", '                 /* 국제표준코드 */
-                                                                ,       '\"f16002\": \"', REPLACE( REPLACE(                 f16002, '"', '\\\\"'),'\n','\\\\n'), '\", '                 /* 한글종목명 */
-                                                                ,       '\"f16257\": \"', REPLACE( REPLACE(                 f16257, '"', '\\\\"'),'\n','\\\\n'), '\", '                 /* ETP기초지수코드 */
-                                                                ,       '\"f34239\": \"', REPLACE( REPLACE( LPAD( f34239, 3, '0' ), '"', '\\\\"'),'\n','\\\\n'), '\"'    /* ETP기초지수MID */
+                                                                ,       '\"f16002\": \"', REPLACE( REPLACE( f16002, '"', '\\\\"'),'\n','\\\\n'), '\" '  /* 한글종목명 */
                                                                 ,   '}'
                                                             )
                                                             ORDER   BY  f16002  ASC
@@ -2012,6 +2009,7 @@
     * 2019-05-20  bkLove(촤병국)
     -->
     <select id="getTmPdfModifyHistMastByNow">
+
         SELECT      /* etpOper.getTmPdfModifyHistMastByNow    현재시간 에 속한 tm_pdf_modify_hist_mast 정보를 조회한다. */
 
                     tm_pdf_modify_hist_mast.hist_no                     AS  hist_no         /* 이력번호 */
@@ -2024,28 +2022,52 @@
                 ,   tm_pdf_modify_hist_mast.inst_cd                     AS  inst_cd         /* 기관구분코드 */
 
                 ,   (
-                        SELECT  td_etp_basic.f16002
-                          FROM  td_etp_basic
+                        SELECT  td_kspjong_basic.f16002
+                          FROM  td_kspjong_basic
                          WHERE  1 = 1
-                           AND  td_etp_basic.f16012     =   tm_pdf_modify_hist_mast.f16012
+                           AND  td_kspjong_basic.f16012     =   tm_pdf_modify_hist_mast.f16012
+                         LIMIT  1
                     )                                                   AS  f16002          /* 한글종목명 */
 
           FROM  tm_pdf_modify_hist_mast
          WHERE  1 = 1
 
+           AND  (
+                        tm_pdf_modify_hist_mast.hist_no
+                    ,   tm_pdf_modify_hist_mast.f16583
+                    ,   tm_pdf_modify_hist_mast.f16012
+                    ,   tm_pdf_modify_hist_mast.f16013
+                )
+                IN
+                (
+                    SELECT      MAX( hist_no )
+                            ,   tm_pdf_modify_hist_mast.f16583
+                            ,   tm_pdf_modify_hist_mast.f16012
+                            ,   tm_pdf_modify_hist_mast.f16013
+                            
+                      FROM  tm_pdf_modify_hist_mast
+                     WHERE  1 = 1
+                       AND  tm_pdf_modify_hist_mast.f16583      =   #{f16583}       /* 사무수탁회사번호 */
+                       AND  tm_pdf_modify_hist_mast.f16012      =   #{f16012}       /* ETF종목코드 */
+                       AND  tm_pdf_modify_hist_mast.f16013      =   #{f16013}       /* ETF단축코드 */
+
         <choose>
             <when   test='isInstCd != null and isInstCd == "Y"'>
-           AND  tm_pdf_modify_hist_mast.inst_cd     =   #{inst_cd}
+                       AND  tm_pdf_modify_hist_mast.inst_cd     =   #{inst_cd}
             </when>
 
             <otherwise>                     
-           AND  tm_pdf_modify_hist_mast.email       =   #{user_id}
+                       AND  tm_pdf_modify_hist_mast.email       =   #{user_id}
             </otherwise>
         </choose>
 
-           AND  tm_pdf_modify_hist_mast.reg_time    BETWEEN     STR_TO_DATE( CONCAT( DATE_FORMAT(now(), '%Y%m%d'), ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
-           						                        AND     STR_TO_DATE( CONCAT( DATE_FORMAT(now(), '%Y%m%d'), ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
-                
+                       AND  tm_pdf_modify_hist_mast.reg_time    BETWEEN     STR_TO_DATE( CONCAT( #{now_date}, ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
+                                                                    AND     STR_TO_DATE( CONCAT( #{now_date}, ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
+                     GROUP  BY      tm_pdf_modify_hist_mast.f16583
+                                ,   tm_pdf_modify_hist_mast.f16012
+                                ,   tm_pdf_modify_hist_mast.f16013
+                )
+
          ORDER  BY      tm_pdf_modify_hist_mast.hist_no         /* 이력번호 */
                     ,   tm_pdf_modify_hist_mast.email           /* 이메일 */
                     ,   tm_pdf_modify_hist_mast.f16583          /* 사무수탁회사번호 */
@@ -2078,24 +2100,17 @@
                 ,   tm_pdf_modify_hist_dtl.f34840                       AS  f34840          /* 액면금액 */
                 ,   tm_pdf_modify_hist_dtl.f34840_prev                  AS  f34840_prev     /* 액면금액 ( 변경전 ) */
 
-                ,   CASE    WHEN    tm_pdf_modify_hist_dtl.status   =   'insert'
-                            THEN    (
-                                        SELECT  td_kspjong_basic.f16002
-                                            FROM  td_kspjong_basic
-                                            WHERE  td_kspjong_basic.f16012     =   tm_pdf_modify_hist_dtl.f16316
-                                            LIMIT  1
-                                    )
-                            ELSE    (
-										SELECT  td_etfpdf_basic.f16004
-										  FROM  td_etfpdf_basic
-										 WHERE  1 = 1
-										   AND  td_etfpdf_basic.f16583      =   tm_pdf_modify_hist_dtl.f16583   /* 사무수탁회사번호 */
-										   AND  td_etfpdf_basic.f16012      =   tm_pdf_modify_hist_dtl.f16012   /* ETF종목코드 */
-										   AND  td_etfpdf_basic.f16013      =   tm_pdf_modify_hist_dtl.f16013   /* ETF단축코드 */
-										   AND  td_etfpdf_basic.f16316      =   tm_pdf_modify_hist_dtl.f16316   /* 구성종목코드 */
-										 LIMIT  1
-									)
-                    END                                                 AS  f16004          /* 해외시장종목명 */
+                ,   (
+                        SELECT  td_etfpdf_basic.f16004
+                          FROM  td_etfpdf_basic
+                         WHERE  1 = 1
+                           AND  td_etfpdf_basic.f16583      =   tm_pdf_modify_hist_dtl.f16583   /* 사무수탁회사번호 */
+                           AND  td_etfpdf_basic.f16012      =   tm_pdf_modify_hist_dtl.f16012   /* ETF종목코드 */
+                           AND  td_etfpdf_basic.f16013      =   tm_pdf_modify_hist_dtl.f16013   /* ETF단축코드 */
+                           AND  td_etfpdf_basic.f16316      =   tm_pdf_modify_hist_dtl.f16316   /* 구성종목코드 */
+                         LIMIT  1
+					)                                                   AS  f16004          /* 해외시장종목명 */
+                ,   DATE_FORMAT( tm_pdf_modify_hist_dtl.reg_time, '%H:%i' )    AS  fmt_reg_time
 
           FROM  tm_pdf_modify_hist_dtl
          WHERE  1 = 1
@@ -2105,48 +2120,92 @@
                     ,   tm_pdf_modify_hist_dtl.f16583
                     ,   tm_pdf_modify_hist_dtl.f16012
                     ,   tm_pdf_modify_hist_dtl.f16013
-                    ,   tm_pdf_modify_hist_dtl.group_no
+                    ,   tm_pdf_modify_hist_dtl.f16316
                 )
                 IN
                 (
-                    SELECT      tm_pdf_modify_hist_mast.hist_no
-                            ,   tm_pdf_modify_hist_mast.email
-                            ,   tm_pdf_modify_hist_mast.f16583
-                            ,   tm_pdf_modify_hist_mast.f16012
-                            ,   tm_pdf_modify_hist_mast.f16013
-                            ,   tm_pdf_modify_hist_mast.group_no
-                      FROM  tm_pdf_modify_hist_mast
+                    SELECT      MAX( hist_no )
+                            ,   tm_pdf_modify_hist_dtl.email
+                            ,   tm_pdf_modify_hist_dtl.f16583
+                            ,   tm_pdf_modify_hist_dtl.f16012
+                            ,   tm_pdf_modify_hist_dtl.f16013
+                            ,   tm_pdf_modify_hist_dtl.f16316
+                      FROM  tm_pdf_modify_hist_dtl
                      WHERE  1 = 1
+                       AND  tm_pdf_modify_hist_dtl.f16583       =   #{f16583}       /* 사무수탁회사번호 */
+                       AND  tm_pdf_modify_hist_dtl.f16012       =   #{f16012}       /* ETF종목코드 */
+                       AND  tm_pdf_modify_hist_dtl.f16013       =   #{f16013}       /* ETF단축코드 */
+        <choose>
+            <when   test='isInstCd != null and isInstCd == "Y"'>
+                       AND  tm_pdf_modify_hist_dtl.inst_cd      =   #{inst_cd}
+            </when>
 
-                        <choose>
-                            <when   test='isInstCd != null and isInstCd == "Y"'>
-                       AND  tm_pdf_modify_hist_mast.inst_cd     =   #{inst_cd}
-                            </when>
+            <otherwise>                     
+                       AND  tm_pdf_modify_hist_dtl.email        =   #{user_id}
+            </otherwise>
+        </choose>
+                       AND  tm_pdf_modify_hist_dtl.reg_time     BETWEEN     STR_TO_DATE( CONCAT( #{now_date}, ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
+                                                                    AND     STR_TO_DATE( CONCAT( #{now_date}, ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
 
-                            <otherwise>                     
-                       AND  tm_pdf_modify_hist_mast.email       =   #{user_id}
-                            </otherwise>
-                        </choose>
+                       AND  (
+                                    tm_pdf_modify_hist_dtl.f16583
+                                ,   tm_pdf_modify_hist_dtl.f16012
+                                ,   tm_pdf_modify_hist_dtl.f16013
+                            )
+                            IN
+                            (
+                                SELECT      tm_pdf_modify_hist_mast.f16583
+                                        ,   tm_pdf_modify_hist_mast.f16012
+                                        ,   tm_pdf_modify_hist_mast.f16013
+                                        
+                                  FROM  tm_pdf_modify_hist_mast
+                                 WHERE  1 = 1
 
-                       AND  tm_pdf_modify_hist_mast.reg_time    BETWEEN     STR_TO_DATE( CONCAT( DATE_FORMAT(now(), '%Y%m%d'), ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
-                                                                        AND     STR_TO_DATE( CONCAT( DATE_FORMAT(now(), '%Y%m%d'), ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
+                                   AND  tm_pdf_modify_hist_mast.f16583      =   #{f16583}       /* 사무수탁회사번호 */
+                                   AND  tm_pdf_modify_hist_mast.f16012      =   #{f16012}       /* ETF종목코드 */
+                                   AND  tm_pdf_modify_hist_mast.f16013      =   #{f16013}       /* ETF단축코드 */
+        <choose>
+            <when   test='isInstCd != null and isInstCd == "Y"'>
+                                   AND  tm_pdf_modify_hist_mast.inst_cd     =   #{inst_cd}
+            </when>
+
+            <otherwise>                     
+                                   AND  tm_pdf_modify_hist_mast.email       =   #{user_id}
+            </otherwise>
+        </choose>
+                                   AND  tm_pdf_modify_hist_mast.reg_time    BETWEEN     STR_TO_DATE( CONCAT( #{now_date}, ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
+                                                                                AND     STR_TO_DATE( CONCAT( #{now_date}, ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
+
+                                 GROUP  BY      tm_pdf_modify_hist_mast.f16583
+                                            ,   tm_pdf_modify_hist_mast.f16012
+                                            ,   tm_pdf_modify_hist_mast.f16013
+                                            
+                                 ORDER  BY      tm_pdf_modify_hist_mast.f16583          /* 사무수탁회사번호 */
+                                            ,   tm_pdf_modify_hist_mast.f16012          /* ETF종목코드 */
+                                            ,   tm_pdf_modify_hist_mast.f16013          /* ETF단축코드 */
+                            )
+
+                     GROUP  BY      tm_pdf_modify_hist_dtl.email
+                                ,   tm_pdf_modify_hist_dtl.f16583
+                                ,   tm_pdf_modify_hist_dtl.f16012
+                                ,   tm_pdf_modify_hist_dtl.f16013
+                                ,   tm_pdf_modify_hist_dtl.f16316
                                 
-                     ORDER  BY      tm_pdf_modify_hist_mast.hist_no         /* 이력번호 */
-                                ,   tm_pdf_modify_hist_mast.email           /* 이메일 */
-                                ,   tm_pdf_modify_hist_mast.f16583          /* 사무수탁회사번호 */
-                                ,   tm_pdf_modify_hist_mast.f16012          /* ETF종목코드 */
-                                ,   tm_pdf_modify_hist_mast.f16013          /* ETF단축코드 */
-                                ,   tm_pdf_modify_hist_mast.group_no        /* 사용자별 처리한 그룹번호 */
-
+                     ORDER  BY      tm_pdf_modify_hist_dtl.f16583               /* 사무수탁회사번호 */
+                                ,   tm_pdf_modify_hist_dtl.f16012               /* ETF종목코드 */
+                                ,   tm_pdf_modify_hist_dtl.f16013               /* ETF단축코드 */
+                                ,   tm_pdf_modify_hist_dtl.f16316               /* 구성종목코드 */
+                                ,   MAX( hist_no )                  DESC        /* 이력번호 */
+                                ,   tm_pdf_modify_hist_dtl.email                /* 이메일 */
                 )
 
-         ORDER  BY      tm_pdf_modify_hist_dtl.hist_no          /* 이력번호 */
-                    ,   tm_pdf_modify_hist_dtl.email            /* 이메일 */
-                    ,   tm_pdf_modify_hist_dtl.f16583           /* 사무수탁회사번호 */
-                    ,   tm_pdf_modify_hist_dtl.f16012           /* ETF종목코드 */
-                    ,   tm_pdf_modify_hist_dtl.f16013           /* ETF단축코드 */
-                    ,   tm_pdf_modify_hist_dtl.f16316           /* 구성종목코드 */
-                    ,   tm_pdf_modify_hist_dtl.group_no         /* 사용자별 처리한 그룹번호 */
+         ORDER  BY      tm_pdf_modify_hist_dtl.f16583               /* 사무수탁회사번호 */
+                    ,   tm_pdf_modify_hist_dtl.f16012               /* ETF종목코드 */
+                    ,   tm_pdf_modify_hist_dtl.f16013               /* ETF단축코드 */
+                    ,   tm_pdf_modify_hist_dtl.f16316               /* 구성종목코드 */
+                    ,   tm_pdf_modify_hist_dtl.reg_time     DESC    /* 이력번호 */
+                    ,   tm_pdf_modify_hist_dtl.email                /* 이메일 */                    
+                    ,   tm_pdf_modify_hist_dtl.group_no             /* 사용자별 처리한 그룹번호 */
     </select>    
 
 </mapper>

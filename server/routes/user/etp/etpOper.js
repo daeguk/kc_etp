@@ -698,12 +698,9 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
                                         resultMsg.allDataList[i].etf_f16583 = resultMsg.allDataList[i].f16583; /* ETF 사무수탁회사번호 */
 
                                         var same = rows.filter(function(o, p) {
-                                            return (o.hist_no === resultMsg.allDataList[i].hist_no /* 이력번호 */ &&
-                                                o.email === resultMsg.allDataList[i].email /* 이메일 */ &&
-                                                o.f16583 === resultMsg.allDataList[i].f16583 /* 사무수탁회사번호 */ &&
-                                                o.f16012 === resultMsg.allDataList[i].f16012 /* ETF종목코드 */ &&
-                                                o.f16013 === resultMsg.allDataList[i].f16013 /* ETF단축코드 */ &&
-                                                o.group_no === resultMsg.allDataList[i].group_no /* 사용자별 처리한 그룹번호 */
+                                            return (    o.f16583 === resultMsg.allDataList[i].f16583 /* 사무수탁회사번호 */ 
+                                                    &&  o.f16012 === resultMsg.allDataList[i].f16012 /* ETF종목코드 */ 
+                                                    &&  o.f16013 === resultMsg.allDataList[i].f16013 /* ETF단축코드 */
                                             );
                                         });
 
