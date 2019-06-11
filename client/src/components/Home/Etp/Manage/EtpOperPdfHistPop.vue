@@ -34,7 +34,7 @@
                                             <table v-bind:id='"step3_" + subData.etf_f16012' class="tbl_type ver7" style="width:100%">
                                                 <colgroup>
                                                     <col width="18%">       <!-- email -->
-                                                    <col width="8%">       <!-- 날짜 -->
+                                                    <col width="8%">        <!-- 시간 -->
                                                     <col width="6%">        <!-- 상태 -->
                                                     <col width="10%">       <!-- CODE -->
                                                     <col width="18%">       <!-- 종목 -->
@@ -48,7 +48,7 @@
                                                 <thead>
                                                     <tr>
                                                         <th class="txt_center"  rowspan="2">email</th>
-                                                        <th class="txt_center"  rowspan="2">날짜</th>
+                                                        <th class="txt_center"  rowspan="2">시간</th>
                                                         <th class="txt_center"  rowspan="2">상태</th>
                                                         <th class="txt_center"  rowspan="2">CODE</th>
                                                         <th class="txt_left"    rowspan="2">종목</th>
@@ -142,11 +142,12 @@ export default {
             new Promise(function(resolve, reject) {
 
                 if( vm.paramData ) {
+                    vm.searchParam.f16583       =   vm.paramData.f16583;            /* 사무수탁회사번호 */
                     vm.searchParam.f16002       =   vm.paramData.f16002;            /* 한글종목명 */
                     vm.searchParam.f16013       =   vm.paramData.f16013;            /* 단축코드 */
 
                     vm.searchParam.f16493       =   vm.paramData.f16493;            /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-//                    vm.searchParam.f16012       =   vm.paramData.f16012;            /* 국제표준코드 */
+                    vm.searchParam.f16012       =   vm.paramData.f16012;            /* 국제표준코드 */
                 }
 
                 resolve();
@@ -310,7 +311,7 @@ export default {
                                             ],
                                             columns: [
                                                 { "data" : "email"          ,   "width" :   "18%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 이메일 */
-                                                { "data" : "fmt_reg_time"   ,   "width" :   "8%"    ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 날짜 */
+                                                { "data" : "fmt_reg_time"   ,   "width" :   "8%"    ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 시간 */
                                                 { "data" : "status"         ,   "width" :   "6%"    ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 상태 */
                                                 { "data" : "f16316"         ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 코드 */
                                                 { "data" : "f16004"         ,   "width" :   "18%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 종목명 */
