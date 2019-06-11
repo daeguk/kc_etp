@@ -9,16 +9,12 @@
 
 var route_loader = {};
 
-var cof = require('../config/config');
 var config = require('../config/route_config');
 
-/* logging 추가함.  2019-06-10 */
-var log = cof.logger;
-
 route_loader.sessionCheckRegister = function(app) {
-	log.debug('route_loader.sessionCheckRegister 호출됨.');
+	console.log('route_loader.sessionCheckRegister 호출됨.');
 	var infoLen = config.route_info.length;
-	log.debug('설정에 정의된 라우팅 모듈의 수 : %d', infoLen);
+	console.log('설정에 정의된 라우팅 모듈의 수 : %d', infoLen);
          
 	for (var i = 0; i < infoLen; i++) {
 		var curItem = config.route_info[i];
@@ -29,7 +25,7 @@ route_loader.sessionCheckRegister = function(app) {
 
 		if(curItem.session == 'check') {
 			
-			log.debug("seesionCheck path : [" + curItem.path + "]");
+			console.log("seesionCheck path : [" + curItem.path + "]");
 			app.all(curItem.path, function(req, res, next) {
 				
 				                /*
@@ -44,14 +40,14 @@ route_loader.sessionCheckRegister = function(app) {
 //               req.session.krx_cd = '56'; // ETN 상품이 존재하는 운용사 ( 하나금융투자증권 )
 //               req.session.krx_cd = '2'; // ETN 상품이 존재하는 운용사 ( 신한금융투자증권 ) 
                req.session.save();
-                log.debug("loginkey : " + req.session.user_id);
+                console.log("loginkey : " + req.session.user_id);
                 /*===================================*/
 
 				if(req.session.user_id) {
-					log.debug("session SUCCESS");
+					console.log("session SUCCESS");
 					next();
 				}else {
-					log.debug("session FAIL.......");
+					console.log("session FAIL.......");
 					var error = new Error('session error');
 					error.status = 404;
 					next(error);
@@ -63,21 +59,21 @@ route_loader.sessionCheckRegister = function(app) {
 };
 
 route_loader.routerInit = function(app, router) {
-	log.debug('route_loader.routerInit 호출됨.');
+	console.log('route_loader.routerInit 호출됨.');
 	return initRoutes(app, router);
 };
 
 // route_info에 정의된 라우팅 정보 처리
 function initRoutes(app, router) {
 	var infoLen = config.route_info.length;
-	// log.debug('설정에 정의된 라우팅 모듈의 수 : %d', infoLen);
+	// console.log('설정에 정의된 라우팅 모듈의 수 : %d', infoLen);
  
 	for (var i = 0; i < infoLen; i++) {
 		var curItem = config.route_info[i];
 			
 		// 모듈 파일에서 모듈 불러옴
 		var curModule = require(curItem.file);
-		 log.debug('%s 파일에서 모듈정보를 읽어옴.', curItem.file);
+		 console.log('%s 파일에서 모듈정보를 읽어옴.', curItem.file);
 		
 		//  라우팅 처리
 		if (curItem.type == 'get') {
@@ -87,7 +83,7 @@ function initRoutes(app, router) {
 		} else {
 			router.route(curItem.path).post(curModule[curItem.method]);
 		}
-		// log.debug('라우팅 모듈 [%s]이(가) 설정됨.', curItem.method);
+		// console.log('라우팅 모듈 [%s]이(가) 설정됨.', curItem.method);
 	}
 
     // 라우터 객체 등록
