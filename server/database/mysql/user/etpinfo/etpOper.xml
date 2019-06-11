@@ -134,6 +134,45 @@
     -->
     <select id="getEtpOperPdfEtfHist">
         SELECT      /* etpOper.getEtpOperPdfEtfHist  ETP 운용관리 - PDF관리 정보를 조회한다. ( ETF 인 경우 ) */
+                    (
+                        SELECT  tm_pdf_modify_hist_dtl.status           AS  status
+                          FROM  tm_pdf_modify_hist_dtl
+                         WHERE  1 = 1
+                           AND  (   
+                                        tm_pdf_modify_hist_dtl.hist_no
+                                    ,   tm_pdf_modify_hist_dtl.f16583
+                                    ,   tm_pdf_modify_hist_dtl.f16012
+                                    ,   tm_pdf_modify_hist_dtl.f16013
+                                    ,   tm_pdf_modify_hist_dtl.f16316
+                                )
+                                IN
+                                (
+                                    SELECT      MAX( hist_no )
+                                            ,   tm_pdf_modify_hist_dtl.f16583
+                                            ,   tm_pdf_modify_hist_dtl.f16012
+                                            ,   tm_pdf_modify_hist_dtl.f16013
+                                            ,   tm_pdf_modify_hist_dtl.f16316
+                                      FROM  tm_pdf_modify_hist_dtl
+                                     WHERE  1 = 1
+                                    
+                                       AND  tm_pdf_modify_hist_dtl.f16583      =   td_etfpdf_hist.f16583           /* 사무수탁회사번호 */
+                                       AND  tm_pdf_modify_hist_dtl.f16012      =   td_etfpdf_hist.f16012           /* ETF종목코드 */
+                                       AND  tm_pdf_modify_hist_dtl.f16013      =   td_etfpdf_hist.f16013           /* ETF단축코드 */
+                                       AND  tm_pdf_modify_hist_dtl.reg_time    BETWEEN     STR_TO_DATE( CONCAT( #{search_date}, ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
+                                                                                   AND     STR_TO_DATE( CONCAT( #{search_date}, ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
+                                     GROUP  BY      tm_pdf_modify_hist_dtl.f16583
+                                                ,   tm_pdf_modify_hist_dtl.f16012
+                                                ,   tm_pdf_modify_hist_dtl.f16013
+                                                ,   tm_pdf_modify_hist_dtl.f16316        
+                                )
+
+                           AND  tm_pdf_modify_hist_dtl.f16583       =   td_etfpdf_hist.f16583
+                           AND  tm_pdf_modify_hist_dtl.f16012       =   td_etfpdf_hist.f16012
+                           AND  tm_pdf_modify_hist_dtl.f16013       =   td_etfpdf_hist.f16013
+                           AND  tm_pdf_modify_hist_dtl.f16316       =   td_etfpdf_hist.f16316
+                           AND  CAST( DATE_FORMAT( tm_pdf_modify_hist_dtl.reg_time, '%Y%m%d' ) AS UNSIGNED )      =   td_etfpdf_hist.f12506
+                    )                                               AS  status
+                ,
         <include    refid="sqlEtpOperPdfEtfHist01" />
     </select>
 
@@ -1156,7 +1195,7 @@
 
         SELECT      /* etpOper.getTdEtfpdfBasicAllData  td_etfpdf_hist에 저장하기 위해 변경된 td_etfpdf_basic 의 모든 데이터를 조회한다. */
 
-                ,   td_etfpdf_basic.f16583                                  AS  f16583      /* 사무수탁회사번호 */
+                    td_etfpdf_basic.f16583                                  AS  f16583      /* 사무수탁회사번호 */
                 ,   td_etfpdf_basic.f16012                                  AS  f16012      /* ETF종목코드 */
                 ,   td_etfpdf_basic.f16013                                  AS  f16013      /* ETF단축코드 */
                 ,   td_etfpdf_basic.f16316                                  AS  f16316      /* 구성종목코드 */
@@ -1206,11 +1245,16 @@
                             ,   #{f16013}                       AS  f16013      /* ETF단축코드 */
                             ,   #{data.f16316}                  AS  f16316      /* 구성종목코드 */
 
-                            ,   #{data.status}                  AS  status      /* insert( 신규 ), modify( 변경 ) */
+                            ,   #{data.f33837}                  AS  f33837      /* 구성종목수 */
                             ,   #{data.f16499}                  AS  f16499      /* 1CU단위증권수 */
                             ,   #{data.f33861}                  AS  f33861      /* ETF시장구분 */
                             ,   #{data.f16004}                  AS  f16004      /* 해외시장종목명 */
                             ,   #{data.f34840}                  AS  f34840      /* 액면금액 */
+                            ,   #{data.f33760}                  AS  f33760      /* 이익분배기준일 */
+                            ,   #{data.f16588}                  AS  f16588      /* 평가금액 */
+                            ,   #{data.f34743}                  AS  f34743      /* ETF_PDF비중 */
+                            ,   #{data.f34744}                  AS  f34744      /* ETF_PDF포함여부 */
+                            ,   #{data.f16006}                  AS  f16006      /* 영문심볼 */
                     FROM  DUAL
                 ]]>
                 </foreach>
@@ -1245,10 +1289,13 @@
             ,   F16013                      /* ETF단축코드 */
             ,   F16316                      /* 구성종목코드 */
 
+            ,   F33837                      /* 구성종목수 */
             ,   F16499                      /* 1CU단위증권수 */
             ,   F33861                      /* ETF시장구분 */
             ,   F16004                      /* 해외시장종목명 */
             ,   F34840                      /* 액면금액 */
+
+            ,   F33760                      /* 이익분배기준일 */
             ,   F16588                      /* 평가금액 */
             ,   F34743                      /* ETF_PDF비중 */
             ,   F34744                      /* ETF_PDF포함여부 */
@@ -1264,13 +1311,16 @@
             ,   #{f16013}                   /* ETF단축코드 */
             ,   #{data.f16316}              /* 구성종목코드 */
 
+            ,   #{data.f33837}              /* 구성종목수 */
             ,   #{data.f16499}              /* 1CU단위증권수 */
             ,   #{data.f33861}              /* ETF시장구분 */
             ,   #{data.f16004}              /* 해외시장종목명 */
             ,   #{data.f34840}              /* 액면금액 */
-            ,   0                           /* 평가금액 */
-            ,   0                           /* ETF_PDF비중 */
-            ,   0                           /* ETF_PDF포함여부 */
+
+            ,   #{data.f33760}              /* 이익분배기준일 */
+            ,   #{data.f16588}              /* 평가금액 */
+            ,   #{data.f34743}              /* ETF_PDF비중 */
+            ,   #{data.f34744}              /* ETF_PDF포함여부 */
         )
     ]]>
         </foreach>
@@ -1296,7 +1346,6 @@
                                         ,   #{f16013}                       AS  f16013      /* ETF단축코드 */
                                         ,   #{data.f16316}                  AS  f16316      /* 구성종목코드 */
 
-                                        ,   #{data.status}                  AS  status      /* insert( 신규 ), modify( 변경 ) */
                                         ,   #{data.f16499}                  AS  f16499      /* 1CU단위증권수 */
                                         ,   #{data.f33861}                  AS  f33861      /* ETF시장구분 */
                                         ,   #{data.f16004}                  AS  f16004      /* 해외시장종목명 */

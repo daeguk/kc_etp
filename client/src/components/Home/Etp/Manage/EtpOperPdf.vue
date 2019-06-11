@@ -569,7 +569,7 @@ debugger;
                                 if( typeof row.status != "undefined" ) {
                                     if( row.status == "insert" ) {
                                         htm = "신규";
-                                    }else{
+                                    }else if( row.status == "modify" ) {
                                         htm = "변경";
                                     }
                                 }
