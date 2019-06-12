@@ -42,7 +42,7 @@
                                 </v-flex>
 
                                 <v-flex xs4 mt-1 mb-3>
-                                    <span class="text_color_blue">dbfn</span>
+                                    <span class="text_color_blue">{{ inst_name }}</span>
                                 </v-flex>
                             </v-layout>
 
@@ -620,7 +620,9 @@ export default {
                 titleErrorYn: false,
 
                 message: ""
-            },            
+            },
+
+            inst_name : "",
 
             /* 기관 관련 정보 */
             arr_org_inst : [],          /* (원본) 기관정보 원본 목록정보 */
@@ -893,7 +895,9 @@ export default {
                 { "data": "col02"       , "orderable" : false , className: 'txt_right'  },              /* col02 */
                 { "data": "col03"       , "orderable" : false , className: 'txt_right'  },              /* col03 */
             ]
-        });        
+        });
+
+        this.inst_name   =  this.$store.state.user.inst_name;
 
         this.$nextTick().then(() => {
 
