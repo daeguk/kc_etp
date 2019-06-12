@@ -577,6 +577,7 @@ import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
+import Constant from "@/store/store_constant.js";
 
 var table01 = null;
 
