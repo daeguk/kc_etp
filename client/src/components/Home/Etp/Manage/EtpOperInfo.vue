@@ -124,7 +124,6 @@ import dtFc from "datatables.net-fixedcolumns";
 
 import Config from '@/js/config.js';
 import EtpOperInfoQuick         from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
-import EtpOperInfoInavPdf       from    "@/components/Home/Etp/Manage/EtpOperInfoInavPdf.vue";
 import EtpOperInfoInavIndex     from    "@/components/Home/Etp/Manage/EtpOperInfoInavIndex.vue";
 
 var table01 = null;
@@ -134,7 +133,6 @@ export default {
     components: {
         //indexDetailrtmenupop: indexDetailrtmenupop
             EtpOperInfoQuick        :   EtpOperInfoQuick
-        ,   EtpOperInfoInavPdf      :   EtpOperInfoInavPdf
         ,   EtpOperInfoInavIndex    :   EtpOperInfoInavIndex
     },
     data() {
@@ -359,15 +357,14 @@ export default {
 
                 vm.fn_setArrShowColumn( [ 
                         'f16002'                        /* 종목 */
-                    ,   'f33929_nm'                     /* 산출방식  <---- ADDED */
+                    ,   'f33929_nm'                     /* 산출방식 */
                     ,   'f15301'                        /* iNAV */
                     ,   'f03329'                        /* 전일최종NAV */
-                    ,   'f15302'                        /* 추적오차율 */
-                    ,   'f15304'                        /* 괴리율 */
 
                     ,   'index_nm'                      /* 기초지수 */
                     ,   'index_f15001'                  /* 지수현재가 */
-                    ,   'f18438'                        /* 환율  <---- ADDED */
+                    ,   'f18450'                        /* 환코드 */
+                    ,   'f18438'                        /* 환율 */
                     ,   'graph'                         /* 그래프 영역 */
                 ] );
             }
@@ -608,7 +605,8 @@ export default {
                 { 'name' : 'f15304'             , 'data': 'f15304'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : '괴리율'        },      /* ETP괴리율 */
                 { 'name' : 'index_nm'           , 'data': 'index_nm'         ,  'width' : '120', 'orderable' : true  , 'className': 'txt_left' , 'title' : '기초지수'      },      /* 기초지수명 */
                 { 'name' : 'index_f15001'       , 'data': 'index_f15001'     ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '지수' },      /* 지수 현재가 */
-                { 'name' : 'f18438'             , 'data': 'f18438'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '환율'          },      /* 적용환율 */
+                { 'name' : 'f18450'             , 'data': 'f18450'           ,  'width' : '40',  'orderable' : true  , 'className': 'txt_right', 'title' : '환코드'         },      /* 해외ETF원주자산기준통화코드 */
+                { 'name' : 'f18438'             , 'data': 'f18438'           ,  'width' : '70',  'orderable' : true  , 'className': 'txt_right', 'title' : '환율'          },      /* 적용환율 */
                 { 'name' : 'f18001'             , 'data': 'f18001'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : 'ETF 전일가'    },      /* 전일ETF순자산총액(원)  */
 
                 { 'name' : 'w00002'             , 'data': 'w00002'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '1주'        },      /* 종가1주수익률  */
@@ -693,17 +691,26 @@ export default {
                     /* 환율 */
                     {       'name' : 'f18438'   
                         ,   "render": function ( data, type, row ) {
+
+                                row.f30819      =   util.formatNumber( row.f30819 );        /* 매매기준율 */
+                                row.f30824      =   util.formatNumber( row.f30824 );        /* 장전기준율 */
+
+                                var rateData    =   util.formatNumber( ( util.NumtoStr(row.f30819) / util.NumtoStr(row.f30824) - 1 ) * 100 );    /* ( 장전기준율 / 매매기준율 - 1 ) * 100 */
+
                                 let htm = ""
 
-                                htm += util.formatNumber(data);
-            
-//                                htm += data;
+                                htm += util.formatNumber( row.f30819 );                     /* 매매기준율 */
                                 htm += "<br>";
-                                htm += "<span class='text_s'>" + row.f18450 + "</span>";                    /* 해외ETF원주자산기준통화코드 */
+
+                                if ( rateData >= 0) {
+                                    htm += "<span class='text_S text_red'>"+rateData+"%</span>";
+                                } else {
+                                    htm += "<span class='text_S text_blue'>"+rateData+"%</span>";
+                                }                                
 
                                 return htm;
                             },
-                    },
+                    },                    
 
                     /* 종가1주수익률 */
                     {       'name' : 'w00002'   

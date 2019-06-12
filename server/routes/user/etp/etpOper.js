@@ -1058,6 +1058,7 @@ var getEtpOperPdfModify = function(req, res) {
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";
+        
 
         resultMsg.dataList = [];
         Promise.using(pool.connect(), conn => {
@@ -1068,6 +1069,10 @@ var getEtpOperPdfModify = function(req, res) {
                 /* 1. ETP 기본 정보를 조회한다. */
                 function(callback) {
 
+                    var f16012  =   paramData.f16012;
+                    if( paramData.searchCode ) {
+                        paramData.f16012    =   "";
+                    }
                     stmt = mapper.getStatement('etpDetail', 'getEtpBasic', paramData, format);
                     log.debug(stmt);
 
@@ -1084,6 +1089,8 @@ var getEtpOperPdfModify = function(req, res) {
                         if (rows && rows.length == 1) {
                             resultMsg.etpBasic = rows[0];
                         }
+
+                        paramData.f16012    =   f16012;
 
                         callback(null, paramData);
                     });
@@ -1882,7 +1889,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 4. [tm_pdf_modify_dtl] 테이블의 f33837(구성종목수) 을 수정한다. */
+                                    /* 4. [td_etfpdf_basic] 테이블의 f33837(구성종목수) 을 수정한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -2080,7 +2087,42 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 9. td_etfpdf_hist 에 수정한다. */
+                                    /* 9. [td_etfpdf_hist] 테이블의 f33837(구성종목수) 을 수정한다. */
+                                    function(msg, callback) {
+
+                                        try {
+
+                                            if (arrInsertDtl && arrInsertDtl.length > 0) {
+                                                var stmt = mapper.getStatement('etpOper', 'modifyTdEtfpdfHistF33837', paramData, { language: 'sql', indent: '  ' });
+                                                log.debug(stmt);
+
+                                                conn.query(stmt, function(err, rows) {
+
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = "[error] etpOper.modifyTdEtfpdfHistF33837 Error while performing Query";
+                                                        resultMsg.err = err;
+
+                                                        return callback(resultMsg);
+                                                    }
+
+                                                    callback(null, paramData);
+                                                })
+
+                                            } else {
+                                                callback(null, paramData);
+                                            }
+
+                                        } catch (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] etpOper.modifyTdEtfpdfHistF33837 Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+                                    },                                    
+
+                                    /* 10. td_etfpdf_hist 에 수정한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -2117,7 +2159,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                     },
 
                                     /* 
-                                     * 10. ETP 운용관리 - PDF 긴급반영 - 저장시 상세에 이미 등록된 데이터가 존재하는지 체크한다.  
+                                     * 11. ETP 운용관리 - PDF 긴급반영 - 저장시 상세에 이미 등록된 데이터가 존재하는지 체크한다.  
                                      *
                                      * 1) tm_pdf_modify_dtl 에 없는 경우에는 'insert'
                                      * 2) tm_pdf_modify_dtl 에 존재하고 CU수량과 액면금액 모두 td_etfpdf_basic 의 값과 동일한 경우 'delete'
@@ -2173,7 +2215,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 11. PDF 변경 상세 정보 (구성종목) 정보를 저장한다. */
+                                    /* 12. PDF 변경 상세 정보 (구성종목) 정보를 저장한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -2210,7 +2252,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 12. PDF 변경 상세 정보 (구성종목) 정보를 수정한다. */
+                                    /* 13. PDF 변경 상세 정보 (구성종목) 정보를 수정한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -2246,7 +2288,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 13. PDF 변경 상세 정보 (구성종목) 정보를 삭제한다. */
+                                    /* 14. PDF 변경 상세 정보 (구성종목) 정보를 삭제한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -2282,7 +2324,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 14. ETP 운용관리 - PDF 긴급반영 - 저장시 마스터 상태정보를 조회한다. */
+                                    /* 15. ETP 운용관리 - PDF 긴급반영 - 저장시 마스터 상태정보를 조회한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -2315,7 +2357,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 15. PDF 변경 마스터 정보를 변경한다. */
+                                    /* 16. PDF 변경 마스터 정보를 변경한다. */
                                     function(msg, callback) {
 
                                         var queryId = "saveTmPdfModifyMast";
@@ -2354,7 +2396,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 16. PDF 변경 이력 마스터 정보를 저장한다. */
+                                    /* 17. PDF 변경 이력 마스터 정보를 저장한다. */
                                     function(msg, callback) {
 
                                         var stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyHistMast', paramData, { language: 'sql', indent: '  ' });
@@ -2379,7 +2421,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                     },
 
-                                    /* 17. PDF 변경 이력 상세 정보를 저장한다. */
+                                    /* 18. PDF 변경 이력 상세 정보를 저장한다. */
                                     function(msg, callback) {
 
                                         paramData.dataLists = arrAllDtl;

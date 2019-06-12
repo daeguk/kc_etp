@@ -171,7 +171,7 @@
                                         <v-flex xs4>
                                             <!--달력-->
                                             <v-layout row wrap >
-                                                <v-flex xs12 sm6 md4 >
+                                                <v-flex xs4 sm6 md4 >
                                                     <v-menu   
                                                     ref="menu"
                                                         v-model="menu"
@@ -231,7 +231,7 @@
                                         <v-flex xs4>
                                             <!--달력-->
                                             <v-layout row wrap>
-                                                <v-flex xs12 sm6 md4>
+                                                <v-flex xs4 sm6 md4>
                                                     <v-menu
                                                          ref="menu2"
                                                         v-model="menu2"

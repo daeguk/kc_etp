@@ -466,7 +466,7 @@ export default {
             var data = table.row($(this).parents("tr")).data();
             var rowIndex = table.row($(this).parents("tr")).index();
 
-            vm.fn_getJongmokData( $(this).parents("tr").find( "input[name='jongmok']" ).eq(0).val() , rowIndex  );
+            vm.fn_getJongmokData( { status : "insert", codeVal : $(this).parents("tr").find( "input[name='jongmok']" ).eq(0).val() , rowIndex : rowIndex, f16499 : 0 }  );
         });
 
 
@@ -630,28 +630,33 @@ export default {
          * [자산 추가] 후 구성종목 찾기를 누를시 실행한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_getJongmokData( codeVal, rowIndex ) {
+        fn_getJongmokData( dataJson ) {
             var vm = this;
 
             console.log("EtpOperPdfEmergencyModifyPop -> fn_getJongmokData");
 
-            if(     !codeVal
-                ||  codeVal.length == 0
-            ) {
-                vm.$emit("showMessageBox", '확인','구성종목코드를 입력해 주세요.',{},1);
+            if( dataJson.status == "insert" ) {
+                if(     !dataJson.codeVal
+                    ||  dataJson.codeVal.length == 0
+                ) {
+                    vm.$emit("showMessageBox", '확인','구성종목코드를 입력해 주세요.',{},1);
 
-                return  false;
+                    return  false;
+                }
+
+                if(  dataJson.codeVal.length < 6 ) {
+                    vm.$emit("showMessageBox", '확인','구성종목코드를 6자리 이상 입력해 주세요.',{},1);
+
+                    return  false;
+                }
             }
 
-            if(  codeVal.length < 6 ) {
-                vm.$emit("showMessageBox", '확인','구성종목코드를 6자리 이상 입력해 주세요.',{},1);
-
-                return  false;
-            }            
+            var table = $("#" + vm.tblEmergeny01 ).DataTable();
+            var tr = table.row( dataJson.rowIndex );            
 
             util.processing(vm.$refs.progress, true);
             axios.post( Config.base_url + "/user/etp/getJongmokData", {
-                data: { "searchCode" : codeVal }
+                data: { "searchCode" : dataJson.codeVal }
             }).then(function(response) {
                 console.log(response);
 
@@ -661,47 +666,54 @@ export default {
                     var dataList = response.data.dataList;
 
                     if ( !dataList || dataList.length == 0 ) {
-                        vm.$emit("showMessageBox", '확인','구성종목코드(' + codeVal + ')가 존재하지 않습니다.',{},1);
+                        vm.$emit("showMessageBox", '확인','구성종목코드(' + dataJson.codeVal + ')가 존재하지 않습니다.',{},1);
                         return  false;
                     }
 
                     if ( dataList && dataList.length > 1 ) {
-                        vm.$emit("showMessageBox", '확인','구성종목코드(' + codeVal + ')가 여러건 존재합니다.',{},1);
+                        vm.$emit("showMessageBox", '확인','구성종목코드(' + dataJson.codeVal + ')가 여러건 존재합니다.',{},1);
                         return  false;
                     }
 
-                    var filterData = _.filter( tblEmergeny01.rows().data() , function(o) {
-                        if ( o.f16316 == dataList[0].f16012 ) {
-                            return true; 
+                    if( dataJson.status == "insert" ) {
+                        
+                        var filterData = _.filter( tblEmergeny01.rows().data() , function(o) {
+                            if ( o.f16316 == dataList[0].f16012 ) {
+                                return true; 
+                            }
+                        });
+                    
+                        if( filterData.length > 0 ) {
+                            vm.$emit("showMessageBox", '확인','구성종목코드(' + dataJson.codeVal + ')가 이미 존재합니다.',{},1);
+                            return  false;
                         }
-                    });
 
-                    if( filterData.length > 0 ) {
-                        vm.$emit("showMessageBox", '확인','구성종목코드(' + codeVal + ')가 이미 존재합니다.',{},1);
-                        return  false;
+                        var addData     =   {
+
+                                "fmt_f12506"    :   dataList[0].fmt_f12506      /* Date */
+                            ,   "f33861"        :   dataList[0].f33861          /* 시장구분 */
+                            ,   "f16316"        :   dataList[0].f16012          /* 구성종목코드 */
+                            ,   "f16004"        :   dataList[0].f16002          /* 종목명 */
+
+                            ,   "f16499"        :   0                           /* CU shrs */
+                            ,   "f34840"        :   0                           /* 액면금액 */
+                            ,   "f16588"        :   0                           /* 평가금액 */
+                            ,   "fmt_f34743"    :   0                           /* 비중 */
+
+                            ,   "status"        :   "insert"
+                            ,   "code_check"    :   true
+                            ,   "f16499_prev"   :   '0'                         /* CU shrs ( 변경전 ) */
+                            ,   "f34840_prev"   :   '0'                         /* 액면금액 ( 변경전 ) */
+                        }
+
+                        tblEmergeny01.row(  dataJson.rowIndex ).data( addData ).order( [0, "asc"] ).draw(  );
+                        vm.dataList[ dataJson.rowIndex ]            =   addData;
+                    }else{
+                        var  v_f16588   =   dataList[0].f15007  /* 기준가 */ * dataJson.f16499  /* CU shrs */;
+
+                        table.cell( tr, 6 ).data( v_f16588 );
+                        vm.dataList[ dataJson.rowIndex ].f16588    =   v_f16588;
                     }
-
-                    var addData     =   {
-
-                            "fmt_f12506"    :   dataList[0].fmt_f12506      /* Date */
-                        ,   "f33861"        :   dataList[0].f33861          /* 시장구분 */
-                        ,   "f16316"        :   dataList[0].f16012          /* 구성종목코드 */
-                        ,   "f16004"        :   dataList[0].f16002          /* 종목명 */
-
-                        ,   "f16499"        :   0                           /* CU shrs */
-                        ,   "f34840"        :   0                           /* 액면금액 */
-                        ,   "f16588"        :   0                           /* 평가금액 */
-                        ,   "fmt_f34743"    :   0                           /* 비중 */
-
-                        ,   "status"        :   "insert"
-                        ,   "code_check"    :   true
-                        ,   "f16499_prev"   :   '0'                         /* CU shrs ( 변경전 ) */
-                        ,   "f34840_prev"   :   '0'                         /* 액면금액 ( 변경전 ) */
-                    }
-
-                    tblEmergeny01.row(rowIndex).data( addData ).order( [0, "asc"] ).draw(  );
-
-                    vm.dataList[ rowIndex ] =   addData;
                 }
             });
         },
@@ -1184,6 +1196,7 @@ export default {
 
             var searchParam                 =   {}
             searchParam.f16012              =   vm.txtAddEtpCode;
+            searchParam.searchCode          =   vm.txtAddEtpCode;
             searchParam.initYn              =   "N";
 
             vm.fn_getEtpOperPdfModify( searchParam );
@@ -1240,6 +1253,10 @@ export default {
                     }
 
                     vm.dataList[ rowIndex ].f16499      =   nowData.f16499;
+
+                    if( tr.data() && tr.data().f16316 ) {
+                        vm.fn_getJongmokData( { status : "modify", codeVal : tr.data().f16316, rowIndex : rowIndex, f16499 : nowData.f16499 }  );
+                    }                    
                 }
                 /* 액면금액 */
                 else if( nowData.name == "f34840" ) {

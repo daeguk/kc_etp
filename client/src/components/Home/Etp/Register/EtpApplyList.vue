@@ -333,6 +333,7 @@ export default {
                                 { data: null, className: "", defaultContent:"" , "orderable" : false,},
                                 { data: null, className: "", defaultContent:[
                                         '<td><div class="tooltip"><button type="button" name="popIdx" class="btn_icon v-icon material-icons">equalizer</button><span class="tooltiptext" style="width:50px;">기초지수</span></div>'
+                                        //<div class="v-icon material-icons icon_dis">equalizer</div>
                                         + '<div class="tooltip"><button type="button" name="popInav" class="btn_icon v-icon material-icons">trending_up</button><span class="tooltiptext" style="width:50px;">iNAV</span></div></td> '
                                         ] , "orderable" : false,},
                                 { "data" : "idx_nm", "orderable": false },

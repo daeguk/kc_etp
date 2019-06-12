@@ -148,7 +148,7 @@ export default {
         if( vm.paramData ) {
             vm.pdfData  =   vm.paramData;
         }
-debugger;
+
         vm.fn_init();
     },
     created: function() {

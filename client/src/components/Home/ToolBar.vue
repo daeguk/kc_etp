@@ -5,12 +5,14 @@
   <v-toolbar-title v-on:mouseover="showContextMenu($event)">
   -->
   <v-toolbar-title>
-    <a class="routerlink logo" @click="outService">ETP PLATFORM</a>
+    <div class="logo_w">
+        <a class="routerlink logo" @click="outService">EMP<span>Etp Management<br> Platform</span></a>
+    </div>
+  </v-toolbar-title>
     <v-btn icon dark class="topmenu_icon" @click="contextMenuClick" 
-      @mouseover="contextMenuOver"><v-icon>apps</v-icon>
+            @mouseover="contextMenuOver"><v-icon>apps</v-icon>
     </v-btn>
     <span class="top_cont_title">{{menuTitle}}</span>
-  </v-toolbar-title>
   <ContextMenu v-show="isContext" @menuClick="menuClick"></ContextMenu>
   <v-spacer></v-spacer>
   <UserInfo></UserInfo>
