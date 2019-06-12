@@ -12,25 +12,21 @@
                                 </h3>
                                 <div class="right_btn">
                                     <v-layout align-right>
-                                        <v-flex xs12 sm4 text-xs-center v-if="!showDialog">
-                                            <div class="btn_r">
+                                            <div class="btn_r" v-if="!showDialog">
                                                 <v-btn outline color="primary" small :to="{path:'/index/manage', query:{'activeTab':'2'}}">목록으로 돌아가기</v-btn>
                                             </div>
-                                        </v-flex>
-
-                                        <v-flex xs12 text-xs-center v-if="showDialog">
-                                            <v-btn icon @click="fn_close">
-                                                <v-icon>close</v-icon>
-                                            </v-btn>
-                                        </v-flex>
-
+                                            <div class="btn_r" v-if="showDialog == true && showView == false">
+                                                <v-btn icon @click="fn_close" >
+                                                    <v-icon>close</v-icon>
+                                                </v-btn>
+                                            </div>
                                     </v-layout>
                                 </div>
                             </div>
                         </v-card-title>
                         <v-card-text>
                             <p class="title_ex">
-                                {{this.results.F16002}} 관한 설명이 들어갑니다
+                                {{this.results.INDEX_COMMENT}}
                             </p>
                         </v-card-text>
                     </div>
