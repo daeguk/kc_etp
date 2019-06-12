@@ -124,7 +124,6 @@ import dtFc from "datatables.net-fixedcolumns";
 
 import Config from '@/js/config.js';
 import EtpOperInfoQuick         from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
-import EtpOperInfoInavPdf       from    "@/components/Home/Etp/Manage/EtpOperInfoInavPdf.vue";
 import EtpOperInfoInavIndex     from    "@/components/Home/Etp/Manage/EtpOperInfoInavIndex.vue";
 
 var table01 = null;
@@ -134,7 +133,6 @@ export default {
     components: {
         //indexDetailrtmenupop: indexDetailrtmenupop
             EtpOperInfoQuick        :   EtpOperInfoQuick
-        ,   EtpOperInfoInavPdf      :   EtpOperInfoInavPdf
         ,   EtpOperInfoInavIndex    :   EtpOperInfoInavIndex
     },
     data() {
