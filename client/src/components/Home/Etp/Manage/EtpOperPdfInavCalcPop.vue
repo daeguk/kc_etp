@@ -461,6 +461,8 @@ export default {
                         });                        
                     }
                 }
+            }).catch(error => {
+                util.processing(vm.$refs.progress, false);                
             });
         },        
 

@@ -412,6 +412,8 @@ export default {
                     }
                 }
                 vm.$emit('showProgress', false);
+            }).catch(error => {
+                vm.$emit("showProgress", false);
             });
         },
         getSliceData: function(items, gubun) {

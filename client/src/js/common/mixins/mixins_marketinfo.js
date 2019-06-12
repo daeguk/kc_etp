@@ -174,6 +174,8 @@ export  const  market_common =   {
                     }
                 }
                 vm.$emit('showProgress', false);
+            }).catch(error => {
+                vm.$emit("showProgress", false);
             });
         },
         

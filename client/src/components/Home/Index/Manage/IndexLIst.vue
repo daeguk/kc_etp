@@ -172,6 +172,9 @@ export default {
                         
                     }                    
                     util.processing(this.$refs.progress, false);
+                }).catch(error => {
+                    util.processing(this.$refs.progress, false);
+                    this.$refs.confirm.open('', '서버로 부터 응답을 받지 못하였습니다.', {}, 1);
                 });
         }, 
         getReplace: function(text) {
