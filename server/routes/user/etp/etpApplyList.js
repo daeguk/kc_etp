@@ -44,7 +44,6 @@ var getEtpApplyList = function (req, res) {
                 });
                 res.end();
             });
-
         });        
     } catch(exception) {
         log.error("err=>", exception);
