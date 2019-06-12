@@ -6,6 +6,7 @@
 
 <script>
 import Config       from "@/js/config.js"
+import util       from "@/js/util.js";
 
 export default {
     props:['chartItem', 'dataSet'],
@@ -100,22 +101,24 @@ export default {
 
             // 좌즉 상단 현재가
             c.fillStyle = "#37474F";
-            c.font = '14px san-serif';
-            c.fillText(this.chartItem.name, 15, 30);
+            c.font = '24px san-serif';
+            c.fillText(this.chartItem.name, 20, 40);
             c.fillStyle = "#263238";
+            c.textAlign = "end";
             c.font = 'bold 28px san-serif';
-            c.fillText(this.chartItem.f15001, 15, 60);
-            var slen = this.chartItem.f15001.length;
+            this.chartItem.f15001 = util.formatNumber(this.chartItem.f15001);
+            c.fillText(this.chartItem.f15001, 320, 40);
+            
             if(Number(this.chartItem.f15472) < 0) {
-              c.fillStyle = "#039BE5";
+              c.fillStyle = "#1e99e8";
             }else {
-              c.fillStyle = "#FF0000";
+              c.fillStyle = "#ff4366";
             }
-            c.font = '12px san-serif';
-            if(slen > 6) c.fillText(this.chartItem.f15472, 125, 47);
-            else  c.fillText(this.chartItem.f15472, 125, 47);
-            if(slen > 6) c.fillText(this.chartItem.f15004 + "%", 125, 60);
-            else  c.fillText(this.chartItem.f15004 + "%", 125, 60);
+            c.font = '16px san-serif';
+            this.chartItem.f15472 = util.getPlus(this.chartItem.f15472, 2);
+            this.chartItem.f15004 = util.getPlus(this.chartItem.f15004, 2);
+            c.fillText(this.chartItem.f15472, 320, 60);
+            c.fillText(this.chartItem.f15004 + "%", 320, 80);
 
             this.bef_tooltip_img = c.getImageData(0, 0, this.chartItem.width, this.chartItem.height);
         },

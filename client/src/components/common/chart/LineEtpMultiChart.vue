@@ -125,7 +125,8 @@ export default {
         axios.get(Config.base_url + "/user/marketinfo/getEtpMultiIntra", {
           params: etpInfo
         }).then(function(response) {
-          // console.log(response);
+          console.log("getEtpMultiIntra.....................");
+          console.log(response);
           if (response.data.success == false) {
 //              alert("해당 ETP의 데이터가 없습니다");
           } else {
@@ -266,7 +267,7 @@ export default {
         c.font = '12px san-serif';
         for(var i=0; i < 7; i++) {
           // console.log("yAxis : " + vm.yAxisVal[i]);
-          c.fillText(vm.yAxisVal[6-i], 75, vm.crect.y1 + 50 * i);
+          c.fillText(vm.yAxisVal[6-i], 65, vm.crect.y1 + 50 * i);
         }
         //X-Axis 그리기
         c.fillStyle = "#424242";
@@ -376,7 +377,7 @@ export default {
         c.font = '12px san-serif';
         for(var i=0; i < 7; i++) {
           // console.log("yAxis : " + vm.yAxisVal[i]);
-          c.fillText(vm.yAxisVal[6-i], 75, vm.crect.y1 + 50 * i);
+          c.fillText(vm.yAxisVal[6-i], 65, vm.crect.y1 + 50 * i);
         }
         //X-Axis 그리기
         c.fillStyle = "#424242";
@@ -529,7 +530,7 @@ export default {
         c.font = '12px san-serif';
         for(var i=0; i < 7; i++) {
           // console.log("yAxis : " + vm.yAxisVal[i]);
-          c.fillText(vm.yAxisVal[6-i]+"%", 75, vm.crect.y1 + 50 * i);
+          c.fillText(vm.yAxisVal[6-i]+"%", 65, vm.crect.y1 + 50 * i);
         }
         //X-Axis 그리기
         c.fillStyle = "#424242";
@@ -683,7 +684,7 @@ export default {
         c.font = '12px san-serif';
         for(var i=0; i < 7; i++) {
           // console.log("yAxis : " + vm.yAxisVal[i]);
-          c.fillText(vm.yAxisVal[6-i]+"%", 75, vm.crect.y1 + 50 * i);
+          c.fillText(vm.yAxisVal[6-i]+"%", 65, vm.crect.y1 + 50 * i);
         }
         //X-Axis 그리기
         c.fillStyle = "#424242";

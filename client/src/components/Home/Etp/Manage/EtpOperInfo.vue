@@ -123,6 +123,8 @@ import util       from "@/js/util.js";
 import dtFc from "datatables.net-fixedcolumns";
 
 import Config from '@/js/config.js';
+import Constant from "@/store/store_constant.js"
+
 import EtpOperInfoQuick         from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
 import EtpOperInfoInavIndex     from    "@/components/Home/Etp/Manage/EtpOperInfoInavIndex.vue";
 
@@ -598,6 +600,9 @@ export default {
         fn_setArrShowColumn( arrTemp ) {
             var vm = this;
 
+            var typeCd  =   vm.$store.state.user.type_cd;
+            var krxCd   =   vm.$store.state.user.krx_cd;
+
             var arrColumn  =   [
                 { 'name' : 'f16002'             , 'data': 'f16002'           ,  'width' : '150', 'orderable' : true  , 'className': 'txt_left',  'title' : '종목'           },      /* 한글종목명 */
                 { 'name' : 'f33929_nm'          , 'data': 'f33929_nm'        ,  'width' : '70',  'orderable' : true  , 'className': 'txt_left',  'title' : '산출방식'   },      /* 지표산출방식 */
@@ -814,7 +819,12 @@ export default {
                                 /* etpInfo - ETP운용정보, iNav - iNav 산출현황, performance - ETP Performance, customize - 컬럼 선택 */
                                 /* iNAV 산출현황 */
                                 if( vm.stateInfo.pageState === 'iNav' ) {
-                                    graphContent    +=  '<div class="tooltip"><button type="button" id="btnInav" name="btnInav" class="calcu_icon"></button><span class="tooltiptext" style="width:70px;">투자지표</span></div>';
+
+                                    if(     ( typeCd == "9998" || typeCd == "9999" ) 
+                                        ||  krxCd == row.f33960                         /* 로그인 운용사 코드와 해당 row의 ETP운용사코드 가 같은 경우 */
+                                    ) {
+                                        graphContent    +=  '<div class="tooltip"><button type="button" id="btnInav" name="btnInav" class="calcu_icon"></button><span class="tooltiptext" style="width:70px;">투자지표</span></div>';
+                                    }
 //                                    graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnInav", "btnContent" : "visibility", "btnSpanContent" : "투자지표" } );
                                 }
                                 

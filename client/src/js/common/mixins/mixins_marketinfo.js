@@ -31,9 +31,9 @@ export  const  market_common =   {
             var idx = 0;
 
             vm.$emit('showProgress', true);
-            console.log("########## mixins_marketinfo.js -> fn_getEtpList ############");
-            console.log("ctg_large_code=[" + ctg_large_code + "]");
-            console.log("vm.table_name=[" + vm.table_name + "]");
+            // console.log("########## mixins_marketinfo.js -> fn_getEtpList ############");
+            // console.log("ctg_large_code=[" + ctg_large_code + "]");
+            // console.log("vm.table_name=[" + vm.table_name + "]");
 
             axios.post(Config.base_url + "/user/marketinfo/getEtpList", {
                 data: {
@@ -42,7 +42,7 @@ export  const  market_common =   {
             }).then(function(response) {
                 console.log(response);
 
-                console.log("carousel_data..............");
+                // console.log("carousel_data..............");
 
                 if( response.data ) {
                     var etpLists = response.data.etpLists;
@@ -58,7 +58,7 @@ export  const  market_common =   {
                         vm.$nextTick().then(() => {
                             items = etpLists[idx++];
 
-                            console.log("vm.table_name + ctgCodeItem.ctg_code=[" + vm.table_name + ctgCodeItem.ctg_code + "]");
+                            // console.log("vm.table_name + ctgCodeItem.ctg_code=[" + vm.table_name + ctgCodeItem.ctg_code + "]");
                             $('#' + vm.table_name + ctgCodeItem.ctg_code).DataTable( {
                                     "processing": true,
                                     "serverSide": false,
