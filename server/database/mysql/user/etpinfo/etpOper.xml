@@ -551,7 +551,8 @@
 
         SELECT      /* etpOper.getEtpOperInfo  ETP 운용관리 - ETP 운영정보를 조회한다. */
 
-                    DATE_FORMAT( td_etp_basic.F12506, '%Y.%m.%d' )      AS  f12506              /* 입회일 */
+                    td_etp_basic.F12506                                 AS  f12506              /* 입회일 */
+                ,   DATE_FORMAT( td_etp_basic.F12506, '%Y.%m.%d' )      AS  fmt_f12506          /* 입회일 */
                 ,   td_etp_basic.F16012                                 AS  f16012              /* 국제표준코드 */
                 ,   td_etp_basic.F16013                                 AS  f16013              /* 단축코드 */
                 ,   td_etp_basic.F16002                                 AS  f16002              /* 한글종목명 */
@@ -728,6 +729,11 @@
   		                 td_etp_basic.f16012 = td_etffor_mast.ISIN_CODE
           ) 
          WHERE  1 = 1
+           AND  td_etp_basic.f12506     IN
+                (
+                    SELECT  MAX( td_etp_basic.f12506 )
+                      FROM  td_etp_basic
+                )
 
         <if   test='!(f34241 != null  and f34241  == "I")'>
              /* ETP지표가치산출구분(K:국내,F:해외) 이 '관심종목' 이 아닌 경우에만 발행사 코드 체크 */
@@ -857,6 +863,11 @@
 
          WHERE  1 = 1
 
+           AND  td_index_basic.f12506     IN
+                (
+                    SELECT  MAX( td_index_basic.f12506 )
+                      FROM  td_index_basic
+                )
 
         <choose>
             <when   test='type_cd != null  and  ( type_cd == "9998" or type_cd == "9999" )'>
