@@ -274,7 +274,7 @@ export default {
             // ETP 배율 
             vm.f18453 = vm.paramData.f18453;
             // 변동률 
-            vm.f15004 = (1 - vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824)) * 100;
+            vm.f15004 = (vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824)-1) * 100;
             vm.f15004 = vm.formatDigit(vm.f15004, 5);
             // (ETP계산유형: F, A, K, I)매매기준율 /장전 매매 기준율
             vm.f15004_1 = vm.formatDigit(vm.paramData.f30819 / vm.paramData.f30824, 5);
@@ -295,7 +295,7 @@ export default {
             // 지수 등락률
             vm.f30823 = (vm.NtoS(vm.f15318) / vm.NtoS(vm.f15007)) - 1 ;
             // 변동률 
-            vm.f15004 = (vm.NtoS(vm.f30824) / vm.NtoS(vm.f30819) - 1) * 100;
+            vm.f15004 = (vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824) - 1) * 100;
             // ETP 계산 유형(H: 환햇지, F: 환노출, A: 지수환노출, T: 복합배율, K: 복합배율2, I: 인도레버리지, J: KINDEX합성일본인버스)
             /* 
                H. 환헷지
