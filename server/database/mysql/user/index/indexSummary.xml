@@ -269,6 +269,7 @@
               ,BAS.STD_CAPITAL                                      /*기준시가총액*/
               ,BAS.FIXED_CASH                                       /*고정현금*/
               ,BAS.FLOWRATE_YN                                      /*유동비율적용여부*/
+              ,BAS.INDEX_COMMENT                                    /*설명*/
         FROM  td_index_basic BAS
         WHERE BAS.F16013 = #{jisu_cd}
           and BAS.MARKET_ID = #{market_id}        
