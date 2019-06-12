@@ -322,7 +322,8 @@ var getIndexBaseInfo = function (req, res) {
         var options = {
             large_type : req.query.large_type,
             jisu_cd: req.query.jisu_cd,
-            market_id: req.query.market_id
+            market_id: req.query.market_id,            
+            inst_cd: req.session.inst_cd == null ? '' : req.session.inst_cd
         };
 
         log.debug("options", JSON.stringify(options));

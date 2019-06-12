@@ -244,7 +244,6 @@
 
     <!-- 인덱스 기본정보-->
     <select id="getIndexBaseInfo">
-    <![CDATA[
         SELECT date_format(BAS.F12506, "%Y.%m.%d") F12506           /*입회일자*/
               ,BAS.F16013                                           /*단축코드*/
               ,BAS.F16002                                           /*한글종목명*/
@@ -270,10 +269,15 @@
               ,BAS.FIXED_CASH                                       /*고정현금*/
               ,BAS.FLOWRATE_YN                                      /*유동비율적용여부*/
               ,BAS.INDEX_COMMENT                                    /*설명*/
+              ,(SELECT COUNT(*) 
+                  FROM tm_jisu_share_req
+                 WHERE inst_cd = #{inst_cd}
+                   AND jisu_id = #{jisu_cd}
+                   AND req_flag = '2') REQCNT 								      /* 지수 공개여부(카운트가 1이상이면 공개) */
         FROM  td_index_basic BAS
         WHERE BAS.F16013 = #{jisu_cd}
           and BAS.MARKET_ID = #{market_id}        
-    ]]>
+    
           <if test="large_type != null and large_type !=''">
             AND BAS.large_type = #{large_type}
           </if>
