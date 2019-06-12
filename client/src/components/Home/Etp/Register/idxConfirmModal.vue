@@ -12,7 +12,7 @@
                </v-card-title>
            </h5>
            <v-card flat>
-               <table id="idxConfirm" class="display table01_w">
+               <table id="idxConfirm" class="tbl_type ver6_1">
                    <colgroup>
                        <col width="25%">
                        <col width="25%">
@@ -23,6 +23,7 @@
                            <th>심볼코드</th>
                            <th>
                                <v-select 
+                                    class="select_table_in"
                                     :items="items"
                                     @change="selectItem"
                                     v-model="selectedItem.value"
@@ -34,13 +35,13 @@
                    </thead>
                    <tbody>
                        <tr>
-                           <td align="center">{{ idxConfirmModal.idxSymCode }}</td>
-                           <td align="center">{{ selectedItem.text }}</td>
-                           <td align="center">{{ idxConfirmModal.idxNm }}</td>
+                           <td>{{ idxConfirmModal.idxSymCode }}</td>
+                           <td>{{ selectedItem.text }}</td>
+                           <td class="txt_left">{{ idxConfirmModal.idxNm }}</td>
                        </tr> 
                    </tbody>
                </table>
-               <table id="dataTable" class="display table01_w">
+               <table id="dataTable" class="tbl_type ver6 mt-3">
                    <colgroup>
                        <col width="50%">
                        <col width="50%">
