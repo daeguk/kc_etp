@@ -69,7 +69,7 @@
                     </table>
                      <v-card-actions flat class="mr-3">
                         <v-spacer></v-spacer>
-                        <div flat class="mr-3" v-if="this.loginInstCd==='04870'">
+                        <div flat class="mr-3" v-if="this.inst_cd==='04870'">
                             <v-btn depressed color="grey" dark @click="deleteEtpApply">삭제</v-btn>
                         </div>
                             <v-btn depressed color="primary" dark @click="downloadExcel">엑셀</v-btn>
@@ -134,7 +134,7 @@ export default {
                 isuKorNm:''
             },
             seqValues :[],
-            loginInstCd:''
+            inst_cd:''
         };
     },
     components: {
@@ -177,7 +177,7 @@ export default {
                         this.inst_cd = response.data.inst_cd ;
                         this.results = items;
                         this.list_cnt = this.results.length;
-                        console.log("getEtpApplyList=" + JSON.stringify(response.data.inst_cd));       
+                        console.log("inst_cd=" + JSON.stringify(response.data.inst_cd));       
                         table = $("#example1").DataTable({
                             autoWidth: false, 
                             processing: true,

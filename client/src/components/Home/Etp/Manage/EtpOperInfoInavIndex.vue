@@ -37,7 +37,7 @@
             </v-list>
         </div>
         <div class="sumul_w">
-            <v-card flat class="sumul_card_w">
+            <v-card flat class="sumul_card_w ver3">
                 <v-layout>
                     <v-flex xs12>
                         <ul>
@@ -55,48 +55,51 @@
                             <li v-if="paramData.f34240 == 'J'">KINDEX합성일본인버스(J)</li>
                         </ul>
                         <ul>
-                            <li class="text_coment" v-if="paramData.f34240 == 'H'">iNAV=전일NAV*(1+기초지수등락율*배율)</li>
-                            <li class="text_coment" v-if="paramData.f34240 == 'F'">iNAV=전일NAV*(1+기초지수등락율*배율)*(매매기준율/장전매매기준율)</li>
-                            <li class="text_coment" v-if="paramData.f34240 == 'A'">iNAV=전일NAV*(1+기초지수등락율*배율*매매기준율/장전매매기준율)</li>
-                            <li class="text_coment" v-if="paramData.f34240 == 'T'">iNAV=전일NAV*(1+기초지수등락율*배율)*(1+(매매기준율-장전매매기준율)/장전매매기준율*배율)</li>
-                            <li class="text_coment" v-if="paramData.f34240 == 'K'">iNAV=전일NAV*(1+((1+기초지수등락율)*매매기준율/장전매매기준율-1)*배율)</li>
-                            <li class="text_coment" v-if="paramData.f34240 == 'I'">iNAV=전일NAV*(1+((1+기초지수등락율)*매매기준율/장전매매기준율-1)*배율) *(1+전일등락율*배율)</li>
-                            <li class="text_coment" v-if="paramData.f34240 == 'J'">iNAV=전일NAV*(1+기초지수등락율*배율-예상배당수익률)</li>
+                            <li class="list_tit">산출식</li>
+                            <li v-if="paramData.f34240 == 'H'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)</li>
+                            <li v-if="paramData.f34240 == 'F'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)×(<span class="txt_point4">④매매기준율/장전매매기준율</span>)</li>
+                            <li v-if="paramData.f34240 == 'A'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>×<span class="txt_point4">④매매기준율/장전매매기준율</span>)</li>
+                            <li v-if="paramData.f34240 == 'T'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)<br>×(1+(매매기준율-장전매매기준율)/장전매매기준율×<span class="txt_point2">②배율</span>)</li>
+                            <li v-if="paramData.f34240 == 'K'">iNAV=<span class="txt_point">①전일NAV</span>×(1+((1+<span class="txt_point3">③기초지수등락율</span>)<br>×<span class="txt_point4">④매매기준율/장전매매기준율</span>-1)×<span class="txt_point2">②배율</span>)</li>
+                            <li v-if="paramData.f34240 == 'I'">iNAV=<span class="txt_point">①전일NAV</span>×(1+((1+<span class="txt_point3">③기초지수등락율</span>)×<span class="txt_point4">④매매기준율/장전매매기준율</span>-1)×<span class="txt_point2">②배율</span>) ×(1+전일등락율×<span class="txt_point2">②배율</span>)</li>
+                            <li v-if="paramData.f34240 == 'J'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>-예상배당수익률)</li>
                         </ul>
                         <ul>
                             <li class="list_tit">
-                                <b>외부공표 iNAV</b>
+                                <b>iNAV</b>
+                                <br>
+                                <span>외부공표</span>
                             </li>
                             <li class="text_red align_r" v-if="paramData.f30818 >= 0">                                        
                                 <b>{{formatNumber(paramData.f15301)}}</b>
                                 <br>
-                                <span class="float_r">{{formatNumber(paramData.f30818)}}%</span>
+                                <span class="float_r">{{formatNumber(paramData.f30818)}}</span>
                             </li>
                             <li class="text_blue align_r" v-if="paramData.f30818 < 0">                                        
                                 <b>{{formatNumber(paramData.f15301)}}</b>
                                 <br>
-                                <span class="float_r">{{formatNumber(paramData.f30818)}}%</span>
+                                <span class="float_r">{{formatNumber(paramData.f30818)}}</span>
                             </li>
                         </ul>
                         <ul v-if="SimulationSwitch == true">
-                            <li class="list_tit case2 txt_point">전일NAV</li>
+                            <li class="list_tit case2 txt_point">①전일NAV</li>
                             <li class="input_mid">
                                 <v-text-field  v-model="f03329"  outline class="txt_right"></v-text-field>
                             </li>
                         </ul>
                         <ul v-else>
-                            <li class="list_tit case2 txt_point">전일NAV</li>
+                            <li class="list_tit case2 txt_point">①전일NAV</li>
                             <li class="align_r">{{f03329}}</li>
                         </ul>
 
                         <ul v-if="SimulationSwitch == true">
-                            <li class="list_tit case2 txt_point">배율</li>
+                            <li class="list_tit case2 txt_point2">②배율</li>
                             <li class="input_mid">
                                 <v-text-field v-model="f18453" outline class="txt_right"></v-text-field>
                             </li>                            
                         </ul>
                         <ul v-else>
-                            <li class="list_tit case2 txt_point">배율</li>
+                            <li class="list_tit case2 txt_point2">②배율</li>
                             <li class="align_r">{{f18453}}</li>
                         </ul>
                     </v-flex>
@@ -135,7 +138,7 @@
                             </li>
                         </ul>
                         <ul>
-                            <li class="list_tit txt_point">등락률(%)</li>
+                            <li class="list_tit txt_point3"><b>③등락률(%)</b></li>
                             <li class="align_r">
                                 <b>{{f30823}}%</b>
                             </li>
@@ -162,13 +165,13 @@
                             </li>
                         </ul>
                         <ul v-if="paramData.f34240 == 'F' || paramData.f34240 == 'A' || paramData.f34240 == 'K' || paramData.f34240 == 'I' ">
-                            <li class="list_tit txt_point">매매기준율/장전기준율</li>
+                            <li class="list_tit txt_point4">④매매기준율/장전기준율</li>
                             <li class="align_r">
                                 <b>{{f15004_1}}</b>
                             </li>
                         </ul>
                         <ul v-else-if="paramData.f34240 == 'T'">
-                            <li class="list_tit txt_point">등락률</li>
+                            <li class="list_tit txt_point3"><b>③등락률(%)</b></li>
                             <li class="align_r">
                                 <b>{{f15004_2}}</b>
                             </li>
@@ -263,7 +266,7 @@ export default {
             // 기초 지수 현재가
             vm.f15318 = vm.formatNumber(vm.paramData.f15318);
             //기초지수 등락률 
-            vm.f30823 = vm.formatDigit(vm.paramData.f30823, 5);
+            vm.f30823 = vm.formatNumber(vm.paramData.f30823);
             // 전일ETP기초지수등락율
             vm.f34374 = vm.formatNumber(vm.paramData.f34374);
             // 예상배당수익률 : 배당율
@@ -272,13 +275,13 @@ export default {
             vm.f18453 = vm.paramData.f18453;
             // 변동률 
             vm.f15004 = (1 - vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824)) * 100;
-            vm.f15004 = vm.formatDigit(vm.f15004, 5);
+            vm.f15004 = vm.formatNumber(vm.f15004);
 
             // (ETP계산유형: F, A, K, I)매매기준율 /장전 매매 기준율
-            vm.f15004_1 = vm.formatDigit(vm.paramData.f30819 / vm.paramData.f30824, 5);
+            vm.f15004_1 = vm.formatNumber(vm.paramData.f30819 / vm.paramData.f30824);
 
             // (ETP계산유형: T)(매매기준율 - 장전 매매 기준율)/ 장전매매기준율
-            vm.f15004_2 = vm.formatDigit((vm.paramData.f30819 - vm.paramData.f30824) / vm.paramData.f30824, 5);
+            vm.f15004_2 = vm.formatNumber((vm.paramData.f30819 - vm.paramData.f30824) / vm.paramData.f30824);
 
             // 예상배당 수익률
             vm.f18101 = vm.formatNumber(vm.paramData.f18101);
@@ -352,22 +355,19 @@ export default {
 
             vm.iNav = vm.formatNumber(vm.iNav);
             vm.iNavRate = vm.formatNumber(vm.iNavRate);
-            vm.f30823 = vm.formatDigit(vm.f30823*100, 5);  /* 등락률 */
-            vm.f15004 = vm.formatDigit(vm.f15004, 5);  /* 변동률 */
+            vm.f30823 = vm.formatNumber(vm.f30823*100);  /* 등락률 */
+            vm.f15004 = vm.formatNumber(vm.f15004);  /* 변동률 */
 
             // (ETP계산유형: F, A, K, I)매매기준율 /장전 매매 기준율
-            vm.f15004_1 = vm.formatDigit(vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824), 5);
+            vm.f15004_1 = vm.formatNumber(vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824));
 
             // (ETP계산유형: T)(매매기준율 - 장전 매매 기준율)/ 장전매매기준율
-            vm.f15004_2 = vm.formatDigit((vm.NtoS(vm.f30819) - vm.NtoS(vm.f30824)) / vm.NtoS(vm.f30824), 5);
+            vm.f15004_2 = vm.formatNumber((vm.NtoS(vm.f30819) - vm.NtoS(vm.f30824)) / vm.NtoS(vm.f30824));
             
             util.processing(vm.$refs.progress, false);
         },
         formatNumber:function(num) {
             return util.formatNumber(num);
-        },
-        formatDigit:function(num, digit) {
-            return util.formatDigit(num, digit)
         },
         NtoS: function(num) {
             return util.NumtoStr(num);
