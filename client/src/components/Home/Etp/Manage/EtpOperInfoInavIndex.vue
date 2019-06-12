@@ -214,9 +214,7 @@ import buttons from 'datatables.net-buttons'
 import util       from "@/js/util.js";
 import Config from '@/js/config.js';
 import ProgressBar from "@/components/common/ProgressBar.vue";
-
 var table01 = null;
-
 export default {
     props : [ "paramData" ],
     data() {
@@ -251,7 +249,6 @@ export default {
     beforeDestory: function() {
         var vm = this;
     },
-
     methods: {
         init: function() {
             var vm = this;
@@ -269,7 +266,7 @@ export default {
             // 기초 지수 현재가
             vm.f15318 = vm.formatNumber(vm.paramData.f15318);
             //기초지수 등락률 
-            vm.f30823 = vm.formatNumber(vm.paramData.f30823);
+            vm.f30823 = vm.formatDigit(vm.paramData.f30823, 5);
             // 전일ETP기초지수등락율
             vm.f34374 = vm.formatNumber(vm.paramData.f34374);
             // 예상배당수익률 : 배당율
@@ -277,15 +274,12 @@ export default {
             // ETP 배율 
             vm.f18453 = vm.paramData.f18453;
             // 변동률 
-            vm.f15004 = (1 - vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824)) * 100;
-            vm.f15004 = vm.formatNumber(vm.f15004);
-
+            vm.f15004 = (vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824)-1) * 100;
+            vm.f15004 = vm.formatDigit(vm.f15004, 5);
             // (ETP계산유형: F, A, K, I)매매기준율 /장전 매매 기준율
-            vm.f15004_1 = vm.formatNumber(vm.paramData.f30819 / vm.paramData.f30824);
-
+            vm.f15004_1 = vm.formatDigit(vm.paramData.f30819 / vm.paramData.f30824, 5);
             // (ETP계산유형: T)(매매기준율 - 장전 매매 기준율)/ 장전매매기준율
-            vm.f15004_2 = vm.formatNumber((vm.paramData.f30819 - vm.paramData.f30824) / vm.paramData.f30824);
-
+            vm.f15004_2 = vm.formatDigit((vm.paramData.f30819 - vm.paramData.f30824) / vm.paramData.f30824, 5);
             // 예상배당 수익률
             vm.f18101 = vm.formatNumber(vm.paramData.f18101);
             // INav 계산결과
@@ -293,19 +287,15 @@ export default {
             // INav 계산결과 율
             vm.iNavRate = vm.formatNumber(0);    
             
-
             vm.indexInavCal();
         },
         indexInavCal : function() {
             var vm = this;
             util.processing(vm.$refs.progress, true);
-
             // 지수 등락률
             vm.f30823 = (vm.NtoS(vm.f15318) / vm.NtoS(vm.f15007)) - 1 ;
-
             // 변동률 
-            vm.f15004 = (vm.NtoS(vm.f30824) / vm.NtoS(vm.f30819) - 1) * 100;
-
+            vm.f15004 = (vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824) - 1) * 100;
             // ETP 계산 유형(H: 환햇지, F: 환노출, A: 지수환노출, T: 복합배율, K: 복합배율2, I: 인도레버리지, J: KINDEX합성일본인버스)
             /* 
                H. 환헷지
@@ -318,7 +308,6 @@ export default {
                iNAV=전일NAV*(1+기초지수등락율*배율)*(매매기준율/장전매매기준율)
             */           
             } else if (vm.paramData.f34240 == 'F') {
-
                 vm.iNav = vm.NtoS(vm.f03329) * ( 1 + vm.f30823 * vm.NtoS(vm.f18453) ) * ( vm.NtoS(vm.f30819)	/ vm.NtoS(vm.f30824) );
                 
             /* 
@@ -352,32 +341,30 @@ export default {
             } else if (vm.paramData.f34240 == 'J') {
                 vm.iNav = vm.NtoS(vm.f03329) * (1 + vm.f30823 * vm.NtoS(vm.f18453) - vm.NtoS(vm.f18101)); 
             } 
-
             /* iNav 등락률 */
             vm.iNavRate =  ((vm.iNav / vm.NtoS(vm.f03329)) - 1) * 100;
-
             vm.iNav = vm.formatNumber(vm.iNav);
             vm.iNavRate = vm.formatNumber(vm.iNavRate);
-            vm.f30823 = vm.formatNumber(vm.f30823*100);  /* 등락률 */
-            vm.f15004 = vm.formatNumber(vm.f15004);  /* 변동률 */
-
+            vm.f30823 = vm.formatDigit(vm.f30823*100, 5);  /* 등락률 */
+            vm.f15004 = vm.formatDigit(vm.f15004, 5);  /* 변동률 */
             // (ETP계산유형: F, A, K, I)매매기준율 /장전 매매 기준율
-            vm.f15004_1 = vm.formatNumber(vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824));
-
+            vm.f15004_1 = vm.formatDigit(vm.NtoS(vm.f30819) / vm.NtoS(vm.f30824), 5);
             // (ETP계산유형: T)(매매기준율 - 장전 매매 기준율)/ 장전매매기준율
-            vm.f15004_2 = vm.formatNumber((vm.NtoS(vm.f30819) - vm.NtoS(vm.f30824)) / vm.NtoS(vm.f30824));
+            vm.f15004_2 = vm.formatDigit((vm.NtoS(vm.f30819) - vm.NtoS(vm.f30824)) / vm.NtoS(vm.f30824), 5);
             
             util.processing(vm.$refs.progress, false);
         },
         formatNumber:function(num) {
             return util.formatNumber(num);
         },
+        formatDigit:function(num, digit) {
+            return util.formatDigit(num, digit)
+        },
         NtoS: function(num) {
             return util.NumtoStr(num);
         },
         fn_close() {
             var vm = this;
-
             vm.$emit( "fn_close", "index" );
         },       
     }
