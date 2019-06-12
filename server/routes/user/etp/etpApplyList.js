@@ -33,7 +33,7 @@ var getEtpApplyList = function (req, res) {
                 res.json({
                     success: true,
                     results: rows,
-                    inst_cd:options.inst_cd
+                    inst_cd: req.session.inst_cd
                 });
                 res.end();
             }).catch(err => {
