@@ -33,11 +33,11 @@ var getEtpRegisterView = function(req, res) {
         // paramData.inst_type_cd  =   '0002';
      
               
-        if ( paramData.inst_type_cd !=='0001' && paramData.inst_type_cd !=='0002') {
-            resultMsg.result = false;
-            resultMsg.msg = "발행사만 신청이 가능합니다. ";
-            throw resultMsg;
-        }
+        // if ( paramData.inst_type_cd !=='0001' && paramData.inst_type_cd !=='0002') {
+        //     resultMsg.result = false;
+        //     resultMsg.msg = "발행사만 신청이 가능합니다. ";
+        //     throw resultMsg;
+        // }
         log.debug('###ETP VIEW CALL sessioncheck###');
        
         var param = { 
@@ -335,14 +335,14 @@ var insertEtpRegister = function(req, res) {
             return;
         }
         log.debug("###ETP INSERT CALL HUDLE2##",  paramData);
-        if(paramData.paramInstTypeCd !=='0001' && paramData.paramInstTypeCd !=='0002'){
-            res.json({
-                result: false
-                ,msg: "발행사만 신청이 가능합니다."
-            });
-            res.end();
-            return;
-        }
+        // if(paramData.paramInstTypeCd !=='0001' && paramData.paramInstTypeCd !=='0002'){
+        //     res.json({
+        //         result: false
+        //         ,msg: "발행사만 신청이 가능합니다."발행사만 신청이 가능합니다."
+        //     });
+        //     res.end();
+        //     return;
+        // }
         log.debug("###ETP INSERT CALL HUDLE JUMP SUCCESS");
         paramData.list_req_date = paramData.listReqDate; //##이값만 바인딩이 안된다..이상하다..
         paramData.list_date = paramData.listDate;
