@@ -152,7 +152,7 @@
     <![CDATA[
         SELECT      /* indexDetail.getIndexBasicDetail 지수 기본정보를 조회한다. */
                     td_index_basic.f12506                                   AS  f12506                  /* 입회일 */
-                ,   DATE_FORMAT( td_index_basic.f12506, '%Y-%m-%d' )        AS  fmt_f12506              /* 포맷된 입회일 */
+                ,   DATE_FORMAT( td_index_basic.f12506, '%Y.%m.%d' )        AS  fmt_f12506              /* 포맷된 입회일 */
                 ,   td_index_basic.f16013                                   AS  f16013                  /* 단축코드 */
                 ,   td_index_basic.f16002                                   AS  f16002                  /* 한글종목명 */
                 ,   td_index_basic.f15009                                   AS  f15009                  /* 시가 */
@@ -171,6 +171,7 @@
                 ,   td_index_basic.market_id                                AS  market_id               /* 시장 ID */
                 ,   td_index_basic.std_index                                AS  std_index               /* 기준지수 */
                 ,   td_index_basic.std_date                                 AS  std_date                /* 기준일 */
+                ,   DATE_FORMAT( td_index_basic.std_date, '%Y.%m.%d' )      AS  fmt_std_date            /* 기준일 */
                 ,   td_index_basic.anno_date                                AS  anno_date               /* 발표일 */
                 ,   td_index_basic.index_cal_method                         AS  index_cal_method        /* 지수산출방식 */
                 ,   td_index_basic.std_capital                              AS  std_capital             /* 기준시가총액 */
