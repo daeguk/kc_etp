@@ -977,6 +977,16 @@ export default {
 
             var msgTitle = "";
 
+            var typeCd  =   vm.$store.state.user.type_cd;
+
+            if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                if( typeCd != "0003" ) {
+
+                    vm.$emit( 'showMessageBox', '확인','지수사업자만 수정 하실수 있습니다.',{},1 );
+                    return  false;
+                }
+            }
+
             // 선택된 공유 기관 바인딩 
             vm.modForm.arr_jisu_inst = vm.selectedInst;
 
@@ -1096,6 +1106,16 @@ export default {
 
         async   fn_deleteJisu() {
             var vm = this;
+
+            var typeCd  =   vm.$store.state.user.type_cd;
+
+            if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                if( typeCd != "0003" ) {
+
+                    vm.$emit( 'showMessageBox', '확인','지수사업자만 삭제 하실수 있습니다.',{},1 );
+                    return  false;
+                }
+            }
 
             if( await this.$root.$confirm2.open(
                         '[지수 삭제]',

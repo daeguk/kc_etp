@@ -703,7 +703,7 @@ export default {
                                 row.f30819      =   util.formatNumber( row.f30819 );        /* 매매기준율 */
                                 row.f30824      =   util.formatNumber( row.f30824 );        /* 장전기준율 */
 
-                                var rateData    =   util.formatDigit( ( ( util.NumtoStr(row.f30819) / util.NumtoStr(row.f30824) ) - 1 ) * 100, 5 );    /* ( 장전기준율 / 매매기준율 - 1 ) * 100 */
+                                var rateData    =   util.formatNumber( ( ( util.NumtoStr(row.f30819) / util.NumtoStr(row.f30824) ) - 1 ) * 100 );    /* ( 장전기준율 / 매매기준율 - 1 ) * 100 */
 
                                 let htm = ""
 
