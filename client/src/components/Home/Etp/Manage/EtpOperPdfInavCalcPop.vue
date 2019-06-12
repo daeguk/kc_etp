@@ -86,11 +86,16 @@
                                         <li class="list_tit">
                                             <b>iNAV 계산결과</b>
                                         </li>
-                                        <li class="text_red">
+                                        <li class="text_red"    v-if="iNav_percent >= 0">
                                             <b>{{formatNumber(iNav_amt)}}</b>
                                             <br>
                                             <span class="float_r">{{formatNumber(iNav_percent)}}%</span>
                                         </li>
+                                        <li class="text_blue"   v-if="iNav_percent < 0">
+                                            <b>{{formatNumber(iNav_amt)}}</b>
+                                            <br>
+                                            <span class="float_r">{{formatNumber(iNav_percent)}}%</span>
+                                        </li>                                        
                                     </ul>
                                 </v-flex>
                             </v-layout>

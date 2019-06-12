@@ -66,9 +66,7 @@
                         </ul>
                         <ul>
                             <li class="list_tit">
-                                <b>iNAV</b>
-                                <br>
-                                <span>외부공표</span>
+                                <b>외부공표 iNAV</b>
                             </li>
                             <li class="text_red align_r" v-if="paramData.f30818 >= 0">                                        
                                 <b>{{formatNumber(paramData.f15301)}}</b>
@@ -190,11 +188,16 @@
                         </ul>
                         <ul class="result">
                             <li class="list_tit txt_point1">iNAV 계산결과</li>
-                            <li class="align_r text_red">
+                            <li class="align_r text_red" v-if="iNavRate >=0 ">
                                 <b>{{iNav}}</b>
                                 <br>
                                 <span class="float_r">{{iNavRate}}%</span>
                             </li>
+                            <li class="align_r text_blue" v-if="iNavRate < 0">
+                                <b>{{iNav}}</b>
+                                <br>
+                                <span class="float_r">{{iNavRate}}%</span>
+                            </li>                            
                         </ul>
                     </v-flex>
                 </v-layout>
