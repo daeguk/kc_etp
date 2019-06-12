@@ -94,7 +94,7 @@ import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
-import Constant from "@/store/store_constant.js"
+import Constant from "@/store/store_constant.js";
 
 import ComEtpFavorItemSub   from "@/components/common/control/ComEtpFavorItemSub.vue"; 
 
