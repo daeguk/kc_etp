@@ -43,7 +43,7 @@
               </colgroup>
               <thead>
                 <tr>
-                  <th style="width:21%" class="txt_left">지수명</th>
+                  <th style="width:21%" class="txt_center">지수명</th>
                   <th style="width:9%" class="txt_center">현재가</th>
                   <th style="width:9%" class="txt_center">대비</th>
                   <th style="width:9%" class="txt_center">Daily</th>
@@ -52,21 +52,27 @@
                   <th style="width:9%" class="txt_center">YTD</th>
                   <th style="width:9%" class="txt_center">1Year</th>
                   <th style="width:9%" class="txt_center">3Year</th>
-                  <th style="width:7%" class="txt_center">비고</th>
+                  <th style="width:7%" class="txt_center">지수정보</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(item, index) in indexLists" :key="index">
-                  <td class="txt_left">{{item.F16002}}</td>
+                  <td class="txt_left"><span style="font-weight:bold;">{{item.F16002}}</span></td>
                   <td class="txt_right">{{item.F15001}}</td>
-                  <td class="txt_right">{{item.F15472}}</td>
-                  <td class="txt_right">{{item.F15004}}%</td>
-                  <td class="txt_right">{{item.weekRate}}%</td>
-                  <td class="txt_right">{{item.monthRate}}%</td>
-                  <td class="txt_right">{{item.ytdRate}}%</td>
-                  <td class="txt_right">{{item.yearRate}}%</td>
-                  <td class="txt_right">{{item.tyearRate}}%</td>
-                  <td class="txt_right">TEST</td>
+                  <td class="txt_right" :style="item.dStyle">{{item.F15472}}</td>
+                  <td class="txt_right" :style="item.dStyle">{{item.F15004}}%</td>
+                  <td class="txt_right" :style="item.wStyle">{{item.weekRate}}%</td>
+                  <td class="txt_right" :style="item.mStyle">{{item.monthRate}}%</td>
+                  <td class="txt_right" :style="item.ytdStyle">{{item.ytdRate}}%</td>
+                  <td class="txt_right" :style="item.yStyle">{{item.yearRate}}%</td>
+                  <td class="txt_right" :style="item.tyStyle">{{item.tyearRate}}%</td>
+                  <td class="txt_center">
+                    <div class='tooltip'>
+                      <button class='btn_icon v-icon material-icons' @click="openIndexModal(item)">equalizer
+                      </button>
+                      <span class='tooltiptext' style='width:80px;'>지수정보</span>
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -76,6 +82,8 @@
       </v-flex>
       <!---테이블1 end -->
     </v-layout>
+    <IndexInfoModal v-if="IndexModalFlag" :indexBasic="indexBasic"
+      @closeIndexModal="closeIndexModal"></IndexInfoModal>
   </v-container>
 </template>
 
@@ -85,6 +93,7 @@ import _ from "lodash";
 import Config       from "@/js/config.js";
 import util       from "@/js/util.js";
 import AreaIndexChart   from  '@/components/common/chart/AreaIndexChart.vue';
+import IndexInfoModal   from  '@/components/common/modal/IndexInfoModal.vue';
 
 export default {
   props: [],
@@ -92,7 +101,9 @@ export default {
     return {
       indexLists:[],
       resultLists:[],
+      indexBasic:{},
       chartLoadFlag: false,
+      IndexModalFlag: false,
       paramData : {},
       intra_data:[],
       bef1Week:"",
@@ -120,11 +131,16 @@ export default {
                 width:340, height:150, marginW:1, marginH:40},
         {seq:4, f16013:"203", market_id:"M004", name:"KOSDAQ 150", f15001:"", 
                 f15472:"", f15004:"", sColor:"#def5ae", eColor:"#ffffff",
-                width:350, height:150, marginW:1, marginH:40}],
+                width:350, height:150, marginW:1, marginH:40}
+      ],
+      upStyle: {color:'#ff4366'},
+      sqStyle: {color: '#959EB1'},
+      downStyle: {color: '#1e99e8'},
     };
   },
   components: {
     AreaIndexChart,
+    IndexInfoModal,
   },
   computed: {
       
@@ -142,30 +158,19 @@ export default {
     }
 
     this.getKrxIndexList(this.selIndexType);
-      // 테이블별 이벤트
-      /*
-      $('#krxIndexTable tbody').on('click', 'button', function (e) {
-          e.stopImmediatePropagation();
-
-          var table = $('#krxIndexTable').DataTable();
-          var data = table.row($(this).parents('tr')).data();
-
-          if ($(this).attr('id') == 'btnIndexDetail') {
-              vm.fn_movePage( data );
-          }
-
-          return  false; 
-      });
-      */
-
   },
   created: function() {},
   beforeDestroy() {},
   methods: {
-    formatNumber:function(num) {
-      return util.formatNumber(num);
+    openIndexModal: function(item) {
+      console.log("openIndexModal : " + item.market_id + " " + item.F16013);
+      this.indexBasic = item;
+      this.IndexModalFlag = true;
     },
-
+    closeIndexModal: function() {
+      console.log("closeIndexModal One............");
+      this.IndexModalFlag = false;
+    },
     getIndexBasic: function(rinfo) {
       // console.log("getIndexBasic : " + rinfo.seq);
       var vm = this;
@@ -215,7 +220,7 @@ export default {
         return items;
     },
     getKrxIndexList: function(indexType) {
-      console.log("getKrxIndexList");
+      // console.log("getKrxIndexList");
       var vm = this;
       vm.indexLists = [];          
       axios.get(Config.base_url + "/user/marketinfo/getKrxIndexListByType1", {
@@ -236,22 +241,55 @@ export default {
           // console.log(vm.resultLists);
           for(let i=0; i < vm.resultLists.length; i++) {
             let tmp = {};
+            /*
+            tmp.market_id = vm.resultLists[i].market_id;
+            tmp.F12506 = vm.resultLists[i].F12506;
+            tmp.F16013 = vm.resultLists[i].F16013;
             tmp.F16002 = vm.resultLists[i].F16002;
             tmp.F15001 = vm.resultLists[i].F15001;
             tmp.F15472 = vm.resultLists[i].F15472;
+            tmp.F15009 = vm.resultLists[i].F15009;
+            tmp.F15010 = vm.resultLists[i].F15010;
+            tmp.F15011 = vm.resultLists[i].F15011;
+            tmp.F15028 = vm.resultLists[i].F15028;
+            tmp.F15015 = vm.resultLists[i].F15015;
+            tmp.F15023 = vm.resultLists[i].F15023;
+            */
+            tmp = JSON.parse(JSON.stringify(vm.resultLists[i]));
+            tmp.F15472 = util.getPlus(tmp.F15472, 2);
             tmp.F15004 = vm.resultLists[i].F15004;
-            tmp.weekRate = util.getDiffRate(tmp.F15001, vm.resultLists[i].bef1Week);
-            tmp.monthRate = util.getDiffRate(tmp.F15001, vm.resultLists[i].bef1Month);
-            tmp.ytdRate = util.getDiffRate(tmp.F15001, vm.resultLists[i].befYtd);
-            tmp.yearRate = util.getDiffRate(tmp.F15001, vm.resultLists[i].bef1Year);
-            tmp.tyearRate = util.getDiffRate(tmp.F15001, vm.resultLists[i].bef3Year);
+            tmp.F15004 = util.getPlus(tmp.F15004, 2);
+            tmp.dStyle = vm.getUpAndDownStyle(tmp.F15004);
+            tmp.weekRate = util.getDiffRate1(tmp.F15001, vm.resultLists[i].bef1Week);
+            tmp.wStyle = vm.getUpAndDownStyle(tmp.weekRate);
+            tmp.monthRate = util.getDiffRate1(tmp.F15001, vm.resultLists[i].bef1Month);
+            tmp.mStyle = vm.getUpAndDownStyle(tmp.monthRate);
+            tmp.ytdRate = util.getDiffRate1(tmp.F15001, vm.resultLists[i].befYtd);
+            tmp.ytdStyle = vm.getUpAndDownStyle(tmp.ytdRate);
+            tmp.yearRate = util.getDiffRate1(tmp.F15001, vm.resultLists[i].bef1Year);
+            tmp.yStyle = vm.getUpAndDownStyle(tmp.yearRate);
+            tmp.tyearRate = util.getDiffRate1(tmp.F15001, vm.resultLists[i].bef3Year);
+            tmp.tyStyle = vm.getUpAndDownStyle(tmp.tyearRate);
+            tmp.F15001 = util.formatNumber(tmp.F15001);
             vm.indexLists.push(tmp);
+            vm.indexLists.sort(function(a, b) {
+              if(a.ytdRate > b.ytdRate) return 1;
+              else -1;
+            });
           }
-          console.log("vm.indexLists......." + vm.indexLists.length);
-          console.log(vm.indexLists);
         }
       });
     },
+    getUpAndDownStyle: function(value) {
+        var tmp = Number(value);
+        var rtn = {};
+
+        if(tmp > 0) rtn = this.upStyle;
+        else if(tmp < 0) rtn = this.downStyle;
+        else rtn = this.sqStyle;
+
+        return rtn;
+    }
   }
 };
 </script>

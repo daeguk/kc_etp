@@ -61,7 +61,7 @@ export default {
       }
     },
     menuClick: function(menu) {
-      console.log("menuClick........: " + menu.title);
+      // console.log("menuClick........: " + menu.title);
       this.isContext = false;
       this.menuTitle = menu.title;
     },
