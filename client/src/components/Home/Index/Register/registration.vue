@@ -660,6 +660,16 @@ export default {
                     var selfThis    =   this;
                     let file        =   e.dataTransfer.files[0];
 
+                    var typeCd      =   this.$store.state.user.type_cd;
+
+                    if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                        if( typeCd != "0003" ) {
+
+                            this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                            return  false;
+                        }
+                    }
+
                     this.fn_checkFile( file ).then(function (res) {
                             if( !res ) {
                                 return  false;
@@ -681,6 +691,16 @@ export default {
                     var selfThis    =   this;
                     let file        =   e.dataTransfer.files[0];
 
+                    var typeCd      =   this.$store.state.user.type_cd;
+
+                    if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                        if( typeCd != "0003" ) {
+
+                            this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                            return  false;
+                        }
+                    }
+
                     this.form.show_method_file  =   file.name;
 
                 }.bind(this)
@@ -693,6 +713,16 @@ export default {
             function(evt) {
                 var selfThis    =   this;
                 let file        =   this.$refs.file.files[0];
+
+                var typeCd      =   this.$store.state.user.type_cd;
+
+                if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                    if( typeCd != "0003" ) {
+
+                        this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                        return  false;
+                    }
+                }
 
                 this.fn_checkFile( file ).then(function (res) {
                         if( !res ) {
@@ -722,6 +752,16 @@ export default {
             function(evt) {
                 var selfThis    =   this;
                 let file        =   this.$refs.methodFile.files[0];
+
+                var typeCd      =   this.$store.state.user.type_cd;
+
+                if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                    if( typeCd != "0003" ) {
+
+                        this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                        return  false;
+                    }
+                }                
 
                 this.form.show_method_file  =   file.name;
 
@@ -884,6 +924,16 @@ export default {
          */
         async   fn_registerJisu() {
             var vm = this;
+
+            var typeCd      =   this.$store.state.user.type_cd;
+
+            if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                if( typeCd != "0003" ) {
+
+                    this.$emit( 'showMessageBox', '확인','지수사업자만 등록 하실수 있습니다.',{},1 );
+                    return  false;
+                }
+            }
 
             if (!this.form.duplCheckResult) {
 
