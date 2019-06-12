@@ -164,17 +164,17 @@
         ORDER BY F12506 desc LIMIT ${limit}
     </select>
 
-    <select id="getKrxIndexListByType">
+    <select id="getIndexListByType">
         SELECT *
         FROM td_index_basic
-        WHERE large_type = "KRX"
-        <if test="selIndexType != null and selIndexType !=''">
-          AND middle_type like CONCAT('%',#{selIndexType},'%')
+        WHERE large_type = #{large_type}
+        <if test="middle_type != null and middle_type !=''">
+          AND middle_type like CONCAT('%',#{middle_type},'%')
         </if>
         ORDER BY F16013 ASC
     </select>
 
-    <select id="getKrxIndexListByType1">
+    <select id="getIndexListAnalByType">
         SELECT *,
           (SELECT B.F15001 FROM td_index_hist B
             WHERE B.market_id = A.market_id
@@ -200,11 +200,21 @@
             WHERE B.market_id = A.market_id
             AND B.F16013 = A.F16013
 <![CDATA[            AND B.F12506 <= #{bef3Year}]]>
-            ORDER BY B.F12506 DESC LIMIT 1) AS bef3Year
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef3Year,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef5Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef5Year,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef10Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef10Year
         FROM td_index_basic A
-        WHERE A.large_type = "KRX"
-        <if test="selIndexType != null and selIndexType !=''">
-          AND A.middle_type like CONCAT('%',#{selIndexType},'%')
+        WHERE A.large_type = #{large_type}
+        <if test="middle_type != null and middle_type !=''">
+          AND A.middle_type like CONCAT('%',#{middle_type},'%')
         </if>
         ORDER BY A.F15023 DESC
     </select>

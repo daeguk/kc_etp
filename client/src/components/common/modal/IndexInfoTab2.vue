@@ -17,7 +17,9 @@
           <!--자산추가 팝업 end -->
       </div>
     </v-flex>
+    <!--
     <jongmokPopup @selectedItem="getSelectedItem" @hideJongMokPop="hideJongMokPop" :showDialog="jongMokDialog"></jongmokPopup>
+    -->
   </v-layout>
 </template>
 
