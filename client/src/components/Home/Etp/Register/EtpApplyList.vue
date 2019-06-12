@@ -307,6 +307,23 @@ export default {
                                         }, 
                                     "targets": 14
                                 },
+                                {  
+                                    "render": function ( data, type, row ) {
+                                        let shtml = '' ;
+                                        if (row.isin_stat_cd == "0001" || row.isin_stat_cd == "0008"){ 
+                                           shtml += '<div class="v-icon material-icons icon_dis">equalizer</div>  ' ;
+                                           shtml += '<div class="v-icon material-icons icon_dis">trending_up</div>  ' ;
+                                        }else if(row.isin_stat_cd == "0002" || row.isin_stat_cd == "0003" ){
+                                           shtml += '<div class="tooltip"><button type="button" name="popIdx" class="btn_icon v-icon material-icons">equalizer</button><span class="tooltiptext" style="width:50px;">기초지수</span></div>' ; 
+                                           shtml += '<div class="v-icon material-icons icon_dis">trending_up</div>  ' ;                                           
+                                        }else if(row.isin_stat_cd == "0004"){
+                                           shtml += '<div class="tooltip"><button type="button" name="popIdx" class="btn_icon v-icon material-icons">equalizer</button><span class="tooltiptext" style="width:50px;">기초지수</span></div>' ; 
+                                           shtml += '<div class="tooltip"><button type="button" name="popInav" class="btn_icon v-icon material-icons">trending_up</button><span class="tooltiptext" style="width:50px;">iNAV</span></div></td>' ;                                            
+                                        }
+                                        return shtml;
+                                        }, 
+                                    "targets": 15
+                                },
                              ],
                             columns: [
                                 {
@@ -331,11 +348,7 @@ export default {
                                    defaultContent: ""
                                   },
                                 { data: null, className: "", defaultContent:"" , "orderable" : false,},
-                                { data: null, className: "", defaultContent:[
-                                        '<td><div class="tooltip"><button type="button" name="popIdx" class="btn_icon v-icon material-icons">equalizer</button><span class="tooltiptext" style="width:50px;">기초지수</span></div>'
-                                        //<div class="v-icon material-icons icon_dis">equalizer</div>
-                                        + '<div class="tooltip"><button type="button" name="popInav" class="btn_icon v-icon material-icons">trending_up</button><span class="tooltiptext" style="width:50px;">iNAV</span></div></td> '
-                                        ] , "orderable" : false,},
+                                { data: null, className: "", defaultContent:"" , "orderable" : false,},
                                 { "data" : "idx_nm", "orderable": false },
                                 { "data" : "isu_srt_cd", "orderable": false },        
                             ],

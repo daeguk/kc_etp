@@ -95,8 +95,8 @@ export default {
                                 columns: [
                                    { "data": "user_nm", "orderable": true,className: "td_in_center","width":"20%" },
                                    { "data": "tel_no", "orderable" : true,className: "td_in_center","width":"20%" },
-                                   { "data": "cel_no", "orderable": true ,className: "td_in_center","width":"25%"},
-                                   { "data": "email", "orderable" : true ,className: "td_in_center","width":"35%" },
+                                   { "data": "cel_no", "orderable": true ,className: "td_in_center","width":"30%"},
+                                   { "data": "email", "orderable" : true ,className: "td_in_center","width":"30%" },
                                 ]
                             }); 
                     }
