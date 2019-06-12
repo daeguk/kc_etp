@@ -155,9 +155,6 @@ export default {
         vm.getEtpApplyCodeCnt();
         vm.getEtpApplyInavCnt();
         this.$root.$confirm = this.$refs.confirm;
-        //this.loginInstCd =  this.$store.state.user.inst_cd;
-        //console.log("inst_cd : " + this.$store.state.user.inst_cd);
-              
     },
     methods: {
 
@@ -537,12 +534,12 @@ export default {
                             }
                     
                 }else if (response.data.result == true) {
-                        vm.refreshYn = true;
-                        //vm.getEtpApplyList();
-                        //vm.getEtpApplyDistCnt();
-                        //vm.getEtpApplyIndexCnt();
-                        //vm.getEtpApplyCodeCnt();
-                        //vm.getEtpApplyInavCnt();
+                        //vm.refreshYn = true;
+                        vm.getEtpApplyList();
+                        vm.getEtpApplyDistCnt();
+                        vm.getEtpApplyIndexCnt();
+                        vm.getEtpApplyCodeCnt();
+                        vm.getEtpApplyInavCnt();
                     if(  vm.$root.$confirm.open(
                             '[삭제]',
                             '삭제가 완료되었습니다.',
@@ -556,14 +553,12 @@ export default {
         },
         downloadExcel: function() {
             var vm = this;
-            //var tempResults= vm.results ;
-             var dataWS = excel.utils.aoa_to_sheet([["종목한글명","종목영문명","종목코드","단축코드","상품구분","발행기관","신청일자","상장신청일자","상장일자","기초지수KRX분배여부","기초지수발행사분배여부","기초지수예탁원분배여부","기초지수미래에셋분배여부","기초지수산출기관코드","기초지수심볼코드","기초지수명","기초지수입수기관코드","기초지수종가타입","기초지수휴장일","기초지수추적배수구분","전일기초지수구분(한국시간기준)","기초지수파일명(경로포함)","지수구성종목예탁원분배여부","지수구성종목미래에셋분배여부","블룸버그티커","종가지수요청사항","실시간여부","실시간지수산출기관코드","실시간지수입수기관코드","실시간지수산출기관심볼코드","실시간지수입수기관심볼코드","실시간지수휴장일","실시간지수KRX분배여부","실시간지수발행사분배여부","실시간지수예탁원분배여부","실시간지수미래에셋분배여부","실시간지수제공주기","참고지수심볼코드","참고지수명","참고지수입수기관코드","참고지수파일명","참고지수요청사항","참고지수블룸버그티커","적용환율","환헷지여부","종목상태명","iNAV/iIV산출구분코드","기초지수입수여부_KOSCOM","기초지수분배여부_KOSCOM","iNAV산출여부_KOSCOM","기초지수MID_KOSCOM","실시간지수MID_KOSCOM","종가파일_KOSCOM","실시간TR_KOSCOM"]]);
+            var dataWS = excel.utils.aoa_to_sheet([["종목한글명","종목영문명","종목코드","단축코드","상품구분","발행기관","신청일자","상장신청일자","상장일자","기초지수KRX분배여부","기초지수발행사분배여부","기초지수예탁원분배여부","기초지수미래에셋분배여부","기초지수산출기관코드","기초지수심볼코드","기초지수명","기초지수입수기관코드","기초지수종가타입","기초지수휴장일","기초지수추적배수구분","전일기초지수구분(한국시간기준)","기초지수파일명(경로포함)","지수구성종목예탁원분배여부","지수구성종목미래에셋분배여부","블룸버그티커","종가지수요청사항","실시간여부","실시간지수산출기관코드","실시간지수입수기관코드","실시간지수산출기관심볼코드","실시간지수입수기관심볼코드","실시간지수휴장일","실시간지수KRX분배여부","실시간지수발행사분배여부","실시간지수예탁원분배여부","실시간지수미래에셋분배여부","실시간지수제공주기","참고지수심볼코드","참고지수명","참고지수입수기관코드","참고지수파일명","참고지수요청사항","참고지수블룸버그티커","적용환율","환헷지여부","종목상태명","iNAV/iIV산출구분코드","기초지수입수여부_KOSCOM","기초지수분배여부_KOSCOM","iNAV산출여부_KOSCOM","기초지수MID_KOSCOM","실시간지수MID_KOSCOM","종가파일_KOSCOM","실시간TR_KOSCOM"]]);
             /* hide  column */
             dataWS['!cols'] = [];
             for (var i = 54 ; i < 100 ; i++) {
                 dataWS['!cols'][i] = { hidden: true };
             }
-             //console.log("downloadExcel=" + JSON.stringify(tempResults));
             excel.utils.sheet_add_json(dataWS, vm.results, {header: ["isu_kor_nm","isu_eng_nm","isin_code","isu_srt_cd","etp_type","inst_nm","req_date" ,"list_req_date" ,"list_date","krx_dist_yn","comp_dist_yn","ksd_dist_yn","mirae_dist_yn","idx_inst_cd_nm","idx_sym_code","idx_nm","idx_dist_inst_cd_nm","idx_close_type","idx_holy_cd_nm" ,"idx_trace_yd_mult_type","pre_idx_type","idx_file_nm","idx_comp_ksd_dist_yn","idx_comp_mirae_dist_yn","blom_ticker","user_req","real_yn","ridx_inst_cd_nm","ridx_dist_inst_cd_nm","ridx_crt_sym_code","ridx_dist_sym_code","ridx_holy_cd_nm","ridx_krx_dist_yn","ridx_comp_dist_yn","ridx_ksd_dist_yn","ridx_mirae_dist_yn","ridx_dist_term","refidx_sym_code","refidx_nm","refidx_inst_cd_nm","refidx_file_nm","refidx_req","refidx_blom_ticker","ex_rate_cd_nm","ex_hedge_yn","isin_stat_cd_nm","inav_calc_cd_nm","idx_rec_yn","idx_dis_yn","inav_calc_yn","idx_mid","ridx_mid","close_file","real_idx_tr"] ,skipHeader:true, origin:"A2"});
             var wb = excel.utils.book_new();
             excel.utils.book_append_sheet(wb, dataWS, "신청목록");
