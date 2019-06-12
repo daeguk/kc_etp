@@ -69,6 +69,8 @@
            AND  td_etp_basic.f16493                 IN  ( '1', '2' )                /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
         </if>
 
+         LIMIT 0, 2
+
     </select>
 
 
