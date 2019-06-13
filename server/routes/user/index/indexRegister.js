@@ -991,6 +991,8 @@ var registerJisu = function (req, res) {
 
                                 deleteFile( reqParam );
                             }else{
+                                resultMsg.jisu_id   =   paramData.jisu_id;
+                                resultMsg.jisu_seq  =   paramData.jisu_seq;
 
                                 resultMsg.result    =   true;
                                 resultMsg.msg       =   "성공적으로 저장 하였습니다.";

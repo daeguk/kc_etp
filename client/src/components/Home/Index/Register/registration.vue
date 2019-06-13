@@ -996,8 +996,7 @@ export default {
                         }
 
                         if( resultData.result ) {
-                            vm.$emit( "fn_refresh" );
-                            vm.$router.push( "/index/register" );
+                            vm.$emit( "fn_refresh", { 'jisu_id' : resultData.jisu_id, 'jisu_seq' : resultData.jisu_seq  } );
                         }
                     }
 
