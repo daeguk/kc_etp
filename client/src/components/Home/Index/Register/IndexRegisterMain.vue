@@ -9,8 +9,8 @@
                             <span class="grey--text">지수의 기본정보 및 소급지수를 등록합니다.</span>
                         </h3>
                     </v-card-title>
-                    <registrationModify v-if="editYn" :editData="editData" :key="editData.jisu_id" @fn_refresh="fn_refresh" @showMessageBox="showMessageBox"></registrationModify>
-                    <registration v-show="!editYn" @fn_refresh="fn_refresh" @showMessageBox="showMessageBox"></registration>
+                    <registrationModify v-if="editYn" :editData="editData" :key="editData.jisu_id" @fn_refresh="fn_refresh" @showMessageBox="showMessageBox" @fn_showProgress="fn_showProgress"></registrationModify>
+                    <registration v-show="!editYn" @fn_refresh="fn_refresh" @showMessageBox="showMessageBox" @fn_showProgress="fn_showProgress"></registration>
                 </v-card>
             </v-flex>
             <v-flex shrink   class="conWidth_right">
@@ -29,17 +29,21 @@
         </v-layout>
 
         <ConfirmDialog ref="confirm" v-show="false"></ConfirmDialog>
+        <ProgressBar ref="progress"></ProgressBar>
     </v-container>
 </template>
 
 
 <script>
 import Config from "@/js/config.js";
+import util   from "@/js/util.js";
 
 import registration from "./registration.vue";
 import quickmenucon from "./quickmenucon.vue";
 import registrationModify from "./registrationModify.vue";
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
+import ConfirmDialog    from "@/components/common/ConfirmDialog.vue";
+import ProgressBar      from "@/components/common/ProgressBar.vue";
+
 import Constant from "@/store/store_constant.js";
 
 export default {
@@ -59,7 +63,8 @@ export default {
         registration: registration,
         quickmenucon: quickmenucon,
         registrationModify: registrationModify,
-        ConfirmDialog: ConfirmDialog
+        ConfirmDialog: ConfirmDialog,
+        ProgressBar : ProgressBar,
     },
 
     created() {
@@ -129,6 +134,10 @@ export default {
 
         showMessageBox: function(title, msg, option, gubun) {
             this.$root.$confirm.open(title,msg, option, gubun);
+        },
+
+        fn_showProgress: function(visible) {
+            util.processing(this.$refs.progress, visible);
         }
     }
 };

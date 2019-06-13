@@ -676,12 +676,10 @@ export default {
                             if( !res ) {
                                 return  false;
                             }
-                            
+
                             selfThis.fn_jisuFileUpload( file, selfThis );
                         }
                     );
-
-                    this.fn_jisuFileUpload( file, selfThis );
 
                 }.bind(this)
             );
@@ -691,7 +689,8 @@ export default {
                 "drop",
                 function(e) {
                     var selfThis    =   this;
-                    let file        =   e.dataTransfer.files[0];
+                    let files       =   e.dataTransfer.files;
+                    let file        =   files[0];
 
                     var typeCd      =   this.$store.state.user.type_cd;
 
@@ -704,7 +703,7 @@ export default {
                     }
 
                     this.form.show_method_file  =   file.name;
-
+                    this.$refs.methodFile.files =   files;
                 }.bind(this)
             );            
         }
@@ -734,8 +733,6 @@ export default {
                         selfThis.fn_jisuFileUpload( file, selfThis );
                     }
                 );
-
-                this.fn_jisuFileUpload( file, selfThis );
 
                 this.$refs.fileform.addEventListener(
                     evt,
@@ -929,7 +926,6 @@ export default {
             var vm = this;
 
             var typeCd      =   this.$store.state.user.type_cd;
-
             if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                 if( typeCd != "0003" ) {
 
@@ -974,6 +970,7 @@ export default {
             this.formData.append( "files", this.$refs.methodFile.files[0] );
             this.formData.append( "data", JSON.stringify(this.form) );
 
+            vm.$emit( "fn_showProgress", true );
             axios.post(
                 Config.base_url + "/user/index/registerJisu",
                 this.formData,
@@ -982,6 +979,9 @@ export default {
                         "Content-Type": "multipart/form-data"
                     }
                 }).then( async function(response) {
+
+                    vm.$emit( "fn_showProgress", false );
+
                     if( response.data ) {
 
                         var resultData = response.data;
@@ -1000,6 +1000,10 @@ export default {
                             vm.$router.push( "/index/register" );
                         }
                     }
+
+                }).catch(error => {
+                    vm.$emit( "fn_showProgress", false );
+                    vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
                 });
         },
 
@@ -1093,13 +1097,16 @@ export default {
          */
         fn_jisuFileUpload : function( file, selfThis ){
 
+            var vm = this;
+
             let formData = new FormData();
             formData.append("files", file);
 
             if( table01 ) {
                 table01.clear().draw();
             }
-            
+
+            vm.$emit( "fn_showProgress", true );
             axios.post(
                 Config.base_url + "/user/index/fileuploadSingle",
                 formData,
@@ -1110,6 +1117,8 @@ export default {
                 }
             ).then( async function(response) {
                 console.log( response );
+
+                vm.$emit( "fn_showProgress", false );
 
                 if( response.data ) {
                     selfThis.jisuUploadResult = response.data.result;
@@ -1137,9 +1146,10 @@ export default {
                     }
                 }
 
-            }).catch(function(response) {
-                console.log( response );
-            });    
+            }).catch(error => {
+                vm.$emit( "fn_showProgress", false );
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+            });
         },
 
         /*

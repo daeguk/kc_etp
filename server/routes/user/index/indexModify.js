@@ -58,119 +58,159 @@ var getRegistedJisuData = function(req, res) {
                 /* 1. 지수 마스터 정보를 조회한다. */
                 function(callback) {
 
-                    stmt = mapper.getStatement('indexModify', 'getJisuMast', paramData, format);
-                    log.debug(stmt);
+                    try{
+                        stmt = mapper.getStatement('indexModify', 'getJisuMast', paramData, format);
+                        log.debug(stmt);
 
-                    conn.query(stmt, function(err, rows) {
+                        conn.query(stmt, function(err, rows) {
 
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] indexModify.getJisuMast Error while performing Query";
-                            resultMsg.err = err;
+                            if (err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "[error] indexModify.getJisuMast Error while performing Query";
+                                resultMsg.err = err;
 
-                            return callback(resultMsg);
-                        }
+                                return callback(resultMsg);
+                            }
 
-                        if (rows && rows[0]) {
-                            jisuInfo = rows[0];
-                        }
+                            if (rows && rows[0]) {
+                                jisuInfo = rows[0];
+                            }
 
-                        resultMsg.jisuInfo = jisuInfo;
+                            resultMsg.jisuInfo = jisuInfo;
 
-                        callback(null, jisuInfo);
-                    });
+                            callback(null, jisuInfo);
+                        });
+                    }catch( err ) {
+
+                        resultMsg.result    =   false;
+                        resultMsg.msg       =   "[error] indexModify.getJisuMast Error while performing Query";
+                        resultMsg.err       =   err;
+
+                        return callback( resultMsg );
+                    }
                 },
 
                 /* 2. 소급지수 목록 정보를 조회한다. */
                 function(data, callback) {
 
-                    paramData.file_id = data.jisu_file_id;
-                    stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
-                    log.debug(stmt);
+                    try{
+                        paramData.file_id = data.jisu_file_id;
+                        stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
+                        log.debug(stmt);
 
-                    conn.query(stmt, function(err, rows) {
+                        conn.query(stmt, function(err, rows) {
 
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] indexModify.getTmJisuTempUpload Error while performing Query";
-                            resultMsg.err = err;
+                            if (err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
+                                resultMsg.err = err;
 
-                            return callback(resultMsg);
-                        }
+                                return callback(resultMsg);
+                            }
 
-                        if (rows) {
-                            jisuDataList = rows;
-                        }
+                            if (rows) {
+                                jisuDataList = rows;
+                            }
 
-                        resultMsg.jisuDataList = jisuDataList;
+                            resultMsg.jisuDataList = jisuDataList;
 
-                        callback(null, jisuDataList);
-                    });
+                            callback(null, jisuDataList);
+                        });
+                    }catch( err ) {
+
+                        resultMsg.result    =   false;
+                        resultMsg.msg       =   "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
+                        resultMsg.err       =   err;
+
+                        return callback( resultMsg );
+                    }
                 },
                 /* 3. 등록된 기관 목록 정보를 조회한다. */
                 function(data, callback) {
 
-                    stmt = mapper.getStatement('indexModify', 'getJisuShareReq', paramData, format);
-                    log.debug(stmt);
+                    try{
+                        stmt = mapper.getStatement('indexModify', 'getJisuShareReq', paramData, format);
+                        log.debug(stmt);
 
-                    conn.query(stmt, function(err, rows) {
+                        conn.query(stmt, function(err, rows) {
 
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] indexModify.getJisuShareReq Error while performing Query";
-                            resultMsg.err = err;
+                            try{
 
-                            return callback(resultMsg);
-                        }
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] indexModify.getJisuShareReq Error while performing Query";
+                                    resultMsg.err = err;
 
-                        if (rows) {
-
-                            var dataList = [];
-                            for (var i = 0, inx = 0; i < rows.length; i = i + 4) {
-                                var data = rows[i];
-                                var groupData = {};
-
-                                arr_jisu_inst.push(data.inst_cd);
-                                groupData.one = {};
-                                groupData.one.inst_cd = data.inst_cd;
-                                groupData.one.inst_name = data.inst_name;
-
-                                groupData.two = {};
-                                if (i + 1 < rows.length) {
-                                    data = rows[i + 1];
-                                    arr_jisu_inst.push(data.inst_cd);
-                                    groupData.two.inst_cd = data.inst_cd;
-                                    groupData.two.inst_name = data.inst_name;
+                                    return callback(resultMsg);
                                 }
 
-                                groupData.three = {};
-                                if (i + 2 < rows.length) {
-                                    data = rows[i + 2];
-                                    arr_jisu_inst.push(data.inst_cd);
-                                    groupData.three.inst_cd = data.inst_cd;
-                                    groupData.three.inst_name = data.inst_name;
+                                if (rows) {
+
+                                    var dataList = [];
+                                    for (var i = 0, inx = 0; i < rows.length; i = i + 4) {
+                                        var data = rows[i];
+                                        var groupData = {};
+
+                                        arr_jisu_inst.push(data.inst_cd);
+                                        groupData.one = {};
+                                        groupData.one.inst_cd = data.inst_cd;
+                                        groupData.one.inst_name = data.inst_name;
+
+                                        groupData.two = {};
+                                        if (i + 1 < rows.length) {
+                                            data = rows[i + 1];
+                                            arr_jisu_inst.push(data.inst_cd);
+                                            groupData.two.inst_cd = data.inst_cd;
+                                            groupData.two.inst_name = data.inst_name;
+                                        }
+
+                                        groupData.three = {};
+                                        if (i + 2 < rows.length) {
+                                            data = rows[i + 2];
+                                            arr_jisu_inst.push(data.inst_cd);
+                                            groupData.three.inst_cd = data.inst_cd;
+                                            groupData.three.inst_name = data.inst_name;
+                                        }
+
+                                        groupData.four = {};
+                                        if (i + 3 < rows.length) {
+                                            data = rows[i + 3];
+                                            arr_jisu_inst.push(data.inst_cd);
+                                            groupData.four.inst_cd = data.inst_cd;
+                                            groupData.four.inst_name = data.inst_name;
+                                        }
+
+                                        dataList[inx++] = groupData;
+                                    }
+
+                                    arr_show_inst = dataList;
                                 }
 
-                                groupData.four = {};
-                                if (i + 3 < rows.length) {
-                                    data = rows[i + 3];
-                                    arr_jisu_inst.push(data.inst_cd);
-                                    groupData.four.inst_cd = data.inst_cd;
-                                    groupData.four.inst_name = data.inst_name;
-                                }
+                                resultMsg.arr_show_inst = arr_show_inst;
+                                resultMsg.arr_jisu_inst = arr_jisu_inst;
 
-                                dataList[inx++] = groupData;
+                                callback(null);
+
+                            }catch( err ) {
+
+                                resultMsg.result    =   false;
+                                resultMsg.msg       =   "[error] indexModify.getJisuShareReq Error while performing Query";
+                                resultMsg.err       =   err;
+
+                                return callback( resultMsg );
                             }
+                        });
 
-                            arr_show_inst = dataList;
-                        }
+                    }catch( err ) {
 
-                        resultMsg.arr_show_inst = arr_show_inst;
-                        resultMsg.arr_jisu_inst = arr_jisu_inst;
+                        resultMsg.result    =   false;
+                        resultMsg.msg       =   "[error] indexModify.getJisuShareReq Error while performing Query";
+                        resultMsg.err       =   err;
 
-                        callback(null);
-                    });
+                        return callback( resultMsg );
+                    }
                 }
+
             ], function(err) {
 
                 if (err) {
@@ -188,7 +228,7 @@ var getRegistedJisuData = function(req, res) {
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
@@ -200,14 +240,70 @@ var getRegistedJisuData = function(req, res) {
             resultMsg.arr_jisu_inst = [];
         }
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
 
 
+/**
+  * NOTE: 디렉토리가 존재하는지 체크
+  * @param {Array|String} DB에 저장된 업로드 경로
+ */
+function dirExists( absoluteDir ){
+    try {
+        // Array
+        if ( Array.isArray(absoluteDir) ) {
+            var flag = [];
+
+            absoluteDir.forEach(function (Dir) {
+                flag.push(fs.statSync(Dir).isDirectory()); // 존재하면 true 없으면 false
+            });
+      
+            if (flag.indexOf(false) === -1) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } else {
+
+            return fs.statSync(absoluteDir).isDirectory(); // 이하 동일
+        }
+
+    } catch (e) {
+        log.error( e );
+
+        // 디렉토리가 존재하지 않으면 'ENOENT' 에러를 반환해줌. return false
+        if (e.code === 'ENOENT') {
+            return false;
+        } else {
+            // 그외 에러는 확인
+            throw e;
+        }
+    }
+}
+
+
+function deleteFile( fileInfo ){
+    try {
+
+        if( !fileInfo || !fileInfo.uploadFolder || !fileInfo.save_file_name ) {
+            return  false;
+        }
+
+        fs.unlink( fileInfo.uploadFolder + "/" + fileInfo.save_file_name, function(err) {
+            log.debug( fileInfo.uploadFolder + "/" + fileInfo.save_file_name + " 파일삭제 완료");
+        });
+
+        return  true;
+
+    } catch (e) {
+        log.error( e );
+
+        return  false;
+    }
+}
 
 
 
@@ -225,7 +321,7 @@ var modifyJisu = function(req, res) {
         var resultMsg = {};
 
         var reqParam = {
-            uploadFolder: "d:\\test",
+            uploadFolder: config.uploadFolder,
             save_file_name: '',
             user_id: req.session.user_id
         };
@@ -234,6 +330,11 @@ var modifyJisu = function(req, res) {
 
             // 서버에 저장할 폴더
             destination: function(req, file, cb) {
+
+                if( !dirExists( reqParam.uploadFolder ) ){ 
+                    fs.mkdirSync( reqParam.uploadFolder ); 
+                }
+
                 cb(null, reqParam.uploadFolder);
             },
 
@@ -267,7 +368,7 @@ var modifyJisu = function(req, res) {
 
             /* body.data 값이 있는지 체크 */
             if (!req.body.data) {
-                log.debug("indexRegister.save  req.body.data no data.");
+                log.debug("indexModify.save  req.body.data no data.");
                 log.debug(req.body.data);
 
                 resultMsg.result = false;
@@ -303,141 +404,98 @@ var modifyJisu = function(req, res) {
                             /* 1. status 를 조회한다. */
                             function(callback) {
 
-                                if (paramData.prev_method_file_id != -1) {
+                                try{
+                                    if (paramData.prev_method_file_id != -1) {
 
-                                    paramData.file_id = paramData.prev_method_file_id;
+                                        paramData.file_id = paramData.prev_method_file_id;
 
-                                    stmt = mapper.getStatement('indexModify', 'getJisuMast', paramData, format);
-                                    log.debug(stmt);
+                                        stmt = mapper.getStatement('indexModify', 'getJisuMast', paramData, format);
+                                        log.debug(stmt);
 
-                                    conn.query(stmt, function(err, rows) {
+                                        conn.query(stmt, function(err, rows) {
 
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexModify.getJisuMast Error while performing Query";
-                                            resultMsg.err = err;
+                                            try{
 
-                                            return callback(resultMsg);
-                                        }
+                                                if (err) {
+                                                    resultMsg.result = false;
+                                                    resultMsg.msg = "[error] indexModify.getJisuMast Error while performing Query";
+                                                    resultMsg.err = err;
 
-                                        if (rows && rows[0]) {
-                                            paramData.nowStatus = rows[0].status;
-                                        }
+                                                    return callback(resultMsg);
+                                                }
 
-                                        /* 연동신청을 누르는 경우 상태값이 연동 완료된 경우 */
-                                        if (paramData.modStatus == "03" && paramData.nowStatus == "03") {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] 이미 연동완료된 상태입니다.";
-                                            resultMsg.err = err;
+                                                if (rows && rows[0]) {
+                                                    paramData.nowStatus = rows[0].status;
+                                                }
 
-                                            return callback(resultMsg);
-                                        }
+                                                /* 연동신청을 누르는 경우 상태값이 연동 완료된 경우 */
+                                                if (paramData.modStatus == "03" && paramData.nowStatus == "03") {
+                                                    resultMsg.result = false;
+                                                    resultMsg.msg = "[error] 이미 연동완료된 상태입니다.";
+                                                    resultMsg.err = err;
 
-                                        /* 상태가 변경된 경우 */
-                                        if (paramData.nowStatus != paramData.status) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] 상태가 변경되었습니다. 화면 갱신후 다시 저장해 주세요.";
-                                            resultMsg.err = err;
+                                                    return callback(resultMsg);
+                                                }
 
-                                            return callback(resultMsg);
-                                        }
+                                                /* 상태가 변경된 경우 */
+                                                if (paramData.nowStatus != paramData.status) {
+                                                    resultMsg.result = false;
+                                                    resultMsg.msg = "[error] 상태가 변경되었습니다. 화면 갱신후 다시 저장해 주세요.";
+                                                    resultMsg.err = err;
 
+                                                    return callback(resultMsg);
+                                                }
+
+                                                callback(null, paramData);
+
+                                            }catch( err ) {
+
+                                                resultMsg.result    =   false;
+                                                resultMsg.msg       =   "[error] indexModify.getJisuMast Error while performing Query";
+                                                resultMsg.err       =   err;
+
+                                                return callback( resultMsg );
+                                            }
+                                        });
+
+                                    } else {
                                         callback(null, paramData);
-                                    });
+                                    }
 
-                                } else {
-                                    callback(null, paramData);
+                                }catch( err ) {
+
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] indexModify.getJisuMast Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
                                 }
-
                             },
 
                             /* 2. 지수방법론을 저장한다. */
                             function(data, callback) {
+                                try{
+                                    /* 지수방법론 파일이 존재하는 경우 */
+                                    if (req.file) {
+                                        reqParam.org_file_name = req.file.originalname;
+                                        reqParam.mime_type = req.file.mimetype;
+                                        reqParam.file_size = req.file.size;
+                                        reqParam.gubun = "001"; /* 지수방법론 */
 
-                                /* 지수방법론 파일이 존재하는 경우 */
-                                if (req.file) {
-                                    reqParam.org_file_name = req.file.originalname;
-                                    reqParam.mime_type = req.file.mimetype;
-                                    reqParam.file_size = req.file.size;
-                                    reqParam.gubun = "001"; /* 지수방법론 */
+                                        stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
+                                        log.debug(stmt);
 
-                                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
-                                    log.debug(stmt);
+                                        conn.query(stmt, function(err, rows) {
 
-                                    conn.query(stmt, function(err, rows) {
+                                            if (err) {
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] indexRegister.saveTmJisuFile Error while performing Query";
+                                                resultMsg.err = err;
 
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexModify.saveTmJisuFile Error while performing Query";
-                                            resultMsg.err = err;
+                                                return callback(resultMsg);
+                                            }
 
-                                            return callback(resultMsg);
-                                        }
-
-                                        paramData.method_file_id = rows.insertId;
-
-                                        callback(null, paramData);
-                                    });
-
-                                } else {
-                                    callback(null, paramData);
-                                }
-
-                            },
-
-                            /* 3. 기존 지수파일이 바뀐 경우 기준 지수 파일 정보를 조회한다. */
-                            function(data, callback) {
-
-                                if (paramData.prev_method_file_id != -1 &&
-                                    paramData.prev_method_file_id != paramData.method_file_id) {
-
-                                    paramData.file_id = paramData.prev_method_file_id;
-
-                                    stmt = mapper.getStatement('indexModify', 'getJisuFile', paramData, format);
-                                    log.debug(stmt);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexModify.getJisuFile Error while performing Query";
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        if (rows && rows[0]) {
-                                            paramData.prev_mothod_save_file_name = rows[0].save_file_name;
-                                        }
-
-                                        callback(null, paramData);
-                                    });
-
-                                } else {
-                                    callback(null, paramData);
-                                }
-                            },
-
-                            /* 4. 기존 지수파일이 바뀐 경우 기준 지수 파일을 삭제한다. */
-                            function(data, callback) {
-
-                                if (paramData.prev_method_file_id != -1 &&
-                                    paramData.prev_method_file_id != paramData.method_file_id) {
-
-                                    /* 기준 지수파일 경로가 존재하는 경우 */
-                                    if (paramData.prev_mothod_save_file_name) {
-
-                                        fs.unlink(reqParam.uploadFolder + "\\" + paramData.prev_mothod_save_file_name, function(err) {
-                                            /*
-                                                                                        if( err ) {
-                                                                                            resultMsg.result    =   false;
-                                                                                            resultMsg.msg       =   "[error] 지수파일 삭제 중 오류가 발생하였습니다.";
-                                                                                            resultMsg.err       =   err;
-
-                                                                                            return callback( resultMsg );
-                                                                                        }
-                                            */
-                                            log.debug(reqParam.uploadFolder + "\\" + paramData.prev_save_file_name + " 파일삭제 완료");
+                                            paramData.method_file_id = rows.insertId;
 
                                             callback(null, paramData);
                                         });
@@ -446,367 +504,557 @@ var modifyJisu = function(req, res) {
                                         callback(null, paramData);
                                     }
 
-                                } else {
-                                    callback(null, paramData);
-                                }
+                                }catch( err ) {
 
-                            },
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] indexRegister.saveTmJisuFile Error while performing Query";
+                                    resultMsg.err       =   err;
 
-
-                            /* 5. 지수 마스터를 수정한다. */
-                            function(data, callback) {
-
-                                stmt = mapper.getStatement('indexModify', 'modifyJisuMast', paramData, format);
-                                log.debug(stmt);
-
-                                conn.query(stmt, function(err, rows) {
-
-                                    if (err) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexModify.modifyJisuMast Error while performing Query";
-                                        resultMsg.err = err;
-
-                                        return callback(resultMsg);
-                                    }
-
-                                    if (rows) {
-
-                                    }
-
-                                    callback(null, paramData);
-                                });
-                            },
-
-                            /* 6. 삭제할 지수정보공개요청 조회 */
-                            function(data, callback) {
-
-                                stmt = mapper.getStatement('indexModify', 'getJisuShareReqForDelete', paramData, format);
-                                log.debug(stmt);
-
-                                conn.query(stmt, function(err, rows) {
-
-                                    if (err) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexModify.getJisuShareReqForDelete Error while performing Query";
-                                        resultMsg.err = err;
-
-                                        return callback(resultMsg);
-                                    }
-
-                                    if (rows) {
-                                        paramData.jisuShareReqDeleteList = rows;
-                                        log.debug(rows);
-                                    }
-
-                                    callback(null, paramData);
-                                });
-                            },
-
-                            /* 7. 삭제할 지수정보공개요청 삭제 */
-                            function(data, callback) {
-
-                                if (paramData.jisuShareReqDeleteList != null && paramData.jisuShareReqDeleteList.length > 0) {
-
-                                    stmt = mapper.getStatement('indexModify', 'deleteJisuShareReqList', paramData, format);
-                                    log.debug(stmt);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexModify.deleteJisuShareReqList Error while performing Query";
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        if (rows) {
-                                            log.debug(rows);
-                                        }
-
-                                        callback(null, paramData);
-                                    });
-                                } else {
-                                    callback(null, paramData);
+                                    return callback( resultMsg );
                                 }
                             },
 
-                            /* 8. 추가할 지수정보공개요청 목록을 조회한다. */
+                            /* 3. 기존 지수파일이 바뀐 경우 기준 지수 파일 정보를 조회한다. */
                             function(data, callback) {
 
-                                if (paramData.arr_jisu_inst != null && paramData.arr_jisu_inst.length > 0) {
-                                    stmt = mapper.getStatement('indexModify', 'getJisuShareReqForInsert', paramData, format);
-                                    log.debug(stmt);
+                                try{
+                                    if (paramData.prev_method_file_id != -1 &&
+                                        paramData.prev_method_file_id != paramData.method_file_id) {
 
-                                    conn.query(stmt, function(err, rows) {
+                                        paramData.file_id = paramData.prev_method_file_id;
 
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexModify.getJisuShareReqForInsert Error while performing Query";
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        if (rows) {
-                                            paramData.jisuShareReqInsertList = rows;
-                                            log.debug(rows);
-                                        }
-
-                                        callback(null, paramData);
-                                    });
-                                } else {
-                                    callback(null, paramData);
-                                }
-                            },
-
-                            /* 9. 추가할 지수정보공개요청을 저장한다. */
-                            function(data, callback) {
-
-                                if (paramData.jisuShareReqInsertList != null && paramData.jisuShareReqInsertList.length > 0) {
-
-                                    paramData.req_flag = "0"; /* 공개여부 0:비공개, 1:공개요청, 2:공개 */
-                                    stmt = mapper.getStatement('indexModify', 'insertJisuShareReqList', paramData, format);
-                                    log.debug(stmt);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexModify.insertJisuShareReqList Error while performing Query";
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        if (rows) {
-                                            log.debug(rows);
-                                        }
-
-                                        callback(null, paramData);
-                                    });
-                                } else {
-                                    callback(null, paramData);
-                                }
-                            },
-
-                            /* 10. 수정할 지수정보공개요청 목록을 조회한다. */
-                            function(data, callback) {
-
-                                if (paramData.arr_jisu_inst != null && paramData.arr_jisu_inst.length > 0) {
-                                    stmt = mapper.getStatement('indexModify', 'getJisuShareReqForUpdate', paramData, format);
-                                    log.debug(stmt);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexModify.getJisuShareReqForUpdate Error while performing Query";
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        if (rows) {
-                                            paramData.jisuShareReqUpdateList = rows;
-                                            log.debug(rows);
-                                        }
-
-                                        callback(null, paramData);
-                                    });
-                                } else {
-                                    callback(null, paramData);
-                                }
-                            },
-
-                            /* 11. 수정할 지수정보공개요청을 저장한다. */
-                            function(data, callback) {
-
-                                if (paramData.jisuShareReqUpdateList != null && paramData.jisuShareReqUpdateList.length > 0) {
-
-                                    stmt = mapper.getStatement('indexModify', 'updateJisuShareReqList', paramData, format);
-                                    log.debug(stmt);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexModify.updateJisuShareReqList Error while performing Query";
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        if (rows) {
-                                            log.debug(rows);
-                                        }
-
-                                        callback(null, paramData);
-                                    });
-                                } else {
-                                    callback(null, paramData);
-                                }
-                            },
-
-                            /* 12. [지수 저장전 업로드] 목록을 조회한다. */
-                            function(data, callback) {
-
-                                if (paramData.jisu_file_id != paramData.prev_jisu_file_id) {
-
-                                    paramData.file_id = paramData.jisu_file_id;
-
-                                    stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
-                                    log.debug(stmt);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        if (rows && rows.length > 0) {
-                                            paramData.dataLists = rows;
-                                            log.debug(rows);
-                                        }
-
-                                        callback(null, paramData);
-                                    });
-
-                                } else {
-
-                                    callback(null, paramData);
-                                }
-                            },
-
-                            /* 13. [지수 엑셀 업로드] 데이터를 삭제한다. */
-                            function(data, callback) {
-
-                                if (paramData.jisu_file_id != paramData.prev_jisu_file_id) {
-
-                                    stmt = mapper.getStatement('indexModify', 'deleteJisuUpload', paramData, format);
-                                    log.debug(stmt);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexModify.deleteJisuUpload Error while performing Query";
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        if (rows) {
-                                            log.debug(rows);
-                                        }
-
-                                        callback(null, paramData);
-                                    });
-
-                                } else {
-
-                                    callback(null, paramData);
-                                }
-                            },
-
-                            /* 14. [지수 엑셀 업로드] 에 저장한다.  */
-                            function(data, callback) {
-
-                                if (paramData.dataLists != null && paramData.dataLists.length > 0) {
-
-                                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuUpload', paramData, format);
-                                    log.debug(stmt);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexRegister.saveTmJisuUpload Error while performing Query";
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        if (rows) {
-                                            log.debug(rows);
-                                        }
-
-                                        callback(null, paramData);
-                                    });
-                                } else {
-                                    callback(null, paramData);
-                                }
-                            },
-
-                            /* 15. [지수별 최신 이력번호] 를 조회한다. */
-                            function(data, callback) {
-
-                                if (paramData.dataLists != null && paramData.dataLists.length > 0) {
-                                    stmt = mapper.getStatement('indexRegister', 'getHistNoByTmJisuUploadHist', paramData, format);
-                                    log.debug(stmt);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexRegister.getHistNoByTmJisuUploadHist Error while performing Query";
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        if (rows && rows[0].hist_no) {
-                                            paramData.hist_no = rows[0].hist_no;
-                                            log.debug(rows);
-                                        }
-
-                                        callback(null, paramData);
-                                    });
-                                } else {
-                                    callback(null, paramData);
-                                }
-                            },
-
-                            /* 16. [지수 엑셀업로드 이력] 테이블에 저장한다. */
-                            function(data, callback) {
-
-                                if (paramData.dataLists != null && paramData.dataLists.length > 0) {
-
-                                    if (paramData.hist_no) {
-
-                                        /* 8. [tm_jisu_upload_hist] 테이블에 저장한다. */
-                                        stmt = mapper.getStatement('indexRegister', 'saveTmJisuUploadHist', paramData, format);
+                                        stmt = mapper.getStatement('indexModify', 'getJisuFile', paramData, format);
                                         log.debug(stmt);
 
                                         conn.query(stmt, function(err, rows) {
 
                                             if (err) {
                                                 resultMsg.result = false;
-                                                resultMsg.msg = "[error] indexRegister.saveTmJisuUploadHist Error while performing Query";
+                                                resultMsg.msg = "[error] indexModify.getJisuFile Error while performing Query";
+                                                resultMsg.err = err;
+
+                                                return callback(resultMsg);
+                                            }
+
+                                            if (rows && rows[0]) {
+                                                paramData.prev_mothod_save_file_name = rows[0].save_file_name;
+                                            }
+
+                                            callback(null, paramData);
+                                        });
+
+                                    } else {
+                                        callback(null, paramData);
+                                    }
+                                }catch( err ) {
+
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] indexModify.getJisuFile Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
+                            },
+
+                            /* 4. 기존 지수파일이 바뀐 경우 기준 지수 파일을 삭제한다. */
+                            function(data, callback) {
+
+                                try{
+                                    if (paramData.prev_method_file_id != -1 &&
+                                        paramData.prev_method_file_id != paramData.method_file_id) {
+
+                                        /* 기준 지수파일 경로가 존재하는 경우 */
+                                        if (paramData.prev_mothod_save_file_name) {
+
+                                            deleteFile( { "uploadFolder" : reqParam.uploadFolder, "save_file_name" : paramData.prev_mothod_save_file_name } );
+                                            callback(null, paramData);
+                                        } else {
+                                            callback(null, paramData);
+                                        }
+                                    } else {
+                                        callback(null, paramData);
+                                    }
+
+                                }catch( err ) {
+
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] 기존지수 파일을 변경된 지수파일로 변경중 오류가 발생하였습니다.";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
+                            },
+
+
+                            /* 5. 지수 마스터를 수정한다. */
+                            function(data, callback) {
+
+                                try{
+                                    stmt = mapper.getStatement('indexModify', 'modifyJisuMast', paramData, format);
+                                    log.debug(stmt);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] indexModify.modifyJisuMast Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        callback(null, paramData);
+                                    });
+
+                                }catch( err ) {
+
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] indexModify.modifyJisuMast Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
+                            },
+
+                            /* 6. 삭제할 지수정보공개요청 조회 */
+                            function(data, callback) {
+
+                                try{
+                                    stmt = mapper.getStatement('indexModify', 'getJisuShareReqForDelete', paramData, format);
+                                    log.debug(stmt);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] indexModify.getJisuShareReqForDelete Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        if (rows) {
+                                            paramData.jisuShareReqDeleteList = rows;
+                                            log.debug(rows);
+                                        }
+
+                                        callback(null, paramData);
+                                    });
+
+                                }catch( err ) {
+
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] indexModify.getJisuShareReqForDelete Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
+                            },
+
+                            /* 7. 삭제할 지수정보공개요청 삭제 */
+                            function(data, callback) {
+
+                                try{
+                                    if (paramData.jisuShareReqDeleteList != null && paramData.jisuShareReqDeleteList.length > 0) {
+
+                                        stmt = mapper.getStatement('indexModify', 'deleteJisuShareReqList', paramData, format);
+                                        log.debug(stmt);
+
+                                        conn.query(stmt, function(err, rows) {
+
+                                            if (err) {
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] indexModify.deleteJisuShareReqList Error while performing Query";
                                                 resultMsg.err = err;
 
                                                 return callback(resultMsg);
                                             }
 
                                             if (rows) {
-                                                log.debug(">>>>>> end >>>>");
                                                 log.debug(rows);
                                             }
 
-                                            callback(null);
+                                            callback(null, paramData);
                                         });
+                                    } else {
+                                        callback(null, paramData);
+                                    }
+
+                                }catch( err ) {
+
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] indexModify.deleteJisuShareReqList Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
+                            },
+
+                            /* 8. 추가할 지수정보공개요청 목록을 조회한다. */
+                            function(data, callback) {
+
+                                try{
+                                    if (paramData.arr_jisu_inst != null && paramData.arr_jisu_inst.length > 0) {
+                                        stmt = mapper.getStatement('indexModify', 'getJisuShareReqForInsert', paramData, format);
+                                        log.debug(stmt);
+
+                                        conn.query(stmt, function(err, rows) {
+
+                                            if (err) {
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] indexModify.getJisuShareReqForInsert Error while performing Query";
+                                                resultMsg.err = err;
+
+                                                return callback(resultMsg);
+                                            }
+
+                                            if (rows) {
+                                                paramData.jisuShareReqInsertList = rows;
+                                                log.debug(rows);
+                                            }
+
+                                            callback(null, paramData);
+                                        });
+                                    } else {
+                                        callback(null, paramData);
+                                    }
+
+                                }catch( err ) {
+
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] indexModify.getJisuShareReqForInsert Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
+                            },
+
+                            /* 9. 추가할 지수정보공개요청을 저장한다. */
+                            function(data, callback) {
+
+                                try{
+                                    if (paramData.jisuShareReqInsertList != null && paramData.jisuShareReqInsertList.length > 0) {
+
+                                        paramData.req_flag = "0"; /* 공개여부 0:비공개, 1:공개요청, 2:공개 */
+                                        stmt = mapper.getStatement('indexModify', 'insertJisuShareReqList', paramData, format);
+                                        log.debug(stmt);
+
+                                        conn.query(stmt, function(err, rows) {
+
+                                            if (err) {
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] indexModify.insertJisuShareReqList Error while performing Query";
+                                                resultMsg.err = err;
+
+                                                return callback(resultMsg);
+                                            }
+
+                                            if (rows) {
+                                                log.debug(rows);
+                                            }
+
+                                            callback(null, paramData);
+                                        });
+                                    } else {
+                                        callback(null, paramData);
+                                    }
+                                }catch( err ) {
+
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] indexModify.insertJisuShareReqList Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
+                            },
+
+                            /* 10. 수정할 지수정보공개요청 목록을 조회한다. */
+                            function(data, callback) {
+
+                                try{
+                                    if (paramData.arr_jisu_inst != null && paramData.arr_jisu_inst.length > 0) {
+                                        stmt = mapper.getStatement('indexModify', 'getJisuShareReqForUpdate', paramData, format);
+                                        log.debug(stmt);
+
+                                        conn.query(stmt, function(err, rows) {
+
+                                            if (err) {
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] indexModify.getJisuShareReqForUpdate Error while performing Query";
+                                                resultMsg.err = err;
+
+                                                return callback(resultMsg);
+                                            }
+
+                                            if (rows) {
+                                                paramData.jisuShareReqUpdateList = rows;
+                                                log.debug(rows);
+                                            }
+
+                                            callback(null, paramData);
+                                        });
+                                    } else {
+                                        callback(null, paramData);
+                                    }
+
+                                }catch( err ) {
+
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] indexModify.getJisuShareReqForUpdate Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
+                            },
+
+                            /* 11. 수정할 지수정보공개요청을 저장한다. */
+                            function(data, callback) {
+
+                                try{
+                                    if (paramData.jisuShareReqUpdateList != null && paramData.jisuShareReqUpdateList.length > 0) {
+
+                                        stmt = mapper.getStatement('indexModify', 'updateJisuShareReqList', paramData, format);
+                                        log.debug(stmt);
+
+                                        conn.query(stmt, function(err, rows) {
+
+                                            if (err) {
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] indexModify.updateJisuShareReqList Error while performing Query";
+                                                resultMsg.err = err;
+
+                                                return callback(resultMsg);
+                                            }
+
+                                            if (rows) {
+                                                log.debug(rows);
+                                            }
+
+                                            callback(null, paramData);
+                                        });
+                                    } else {
+                                        callback(null, paramData);
+                                    }
+
+                                }catch( err ) {
+
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] indexModify.updateJisuShareReqList Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
+                            },
+
+                            /* 12. [지수 저장전 업로드] 목록을 조회한다. */
+                            function(data, callback) {
+
+                                try{
+                                    if (paramData.jisu_file_id != paramData.prev_jisu_file_id) {
+
+                                        paramData.file_id = paramData.jisu_file_id;
+
+                                        stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
+                                        log.debug(stmt);
+
+                                        conn.query(stmt, function(err, rows) {
+
+                                            if (err) {
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
+                                                resultMsg.err = err;
+
+                                                return callback(resultMsg);
+                                            }
+
+                                            if (rows && rows.length > 0) {
+                                                paramData.dataLists = rows;
+                                                log.debug(rows);
+                                            }
+
+                                            callback(null, paramData);
+                                        });
+
+                                    } else {
+
+                                        callback(null, paramData);
+                                    }
+
+                                }catch( err ) {
+
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
+                            },
+
+                            /* 13. [지수 엑셀 업로드] 데이터를 삭제한다. */
+                            function(data, callback) {
+
+                                try{
+                                    if (paramData.jisu_file_id != paramData.prev_jisu_file_id) {
+
+                                        stmt = mapper.getStatement('indexModify', 'deleteJisuUpload', paramData, format);
+                                        log.debug(stmt);
+
+                                        conn.query(stmt, function(err, rows) {
+
+                                            if (err) {
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] indexModify.deleteJisuUpload Error while performing Query";
+                                                resultMsg.err = err;
+
+                                                return callback(resultMsg);
+                                            }
+
+                                            if (rows) {
+                                                log.debug(rows);
+                                            }
+
+                                            callback(null, paramData);
+                                        });
+
+                                    } else {
+
+                                        callback(null, paramData);
+                                    }
+
+                                }catch( err ) {
+
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] indexModify.deleteJisuUpload Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
+                            },
+
+                            /* 14. [지수 엑셀 업로드] 에 저장한다.  */
+                            function(data, callback) {
+
+                                try{
+                                    if (paramData.dataLists != null && paramData.dataLists.length > 0) {
+
+                                        stmt = mapper.getStatement('indexRegister', 'saveTmJisuUpload', paramData, format);
+                                        log.debug(stmt);
+
+                                        conn.query(stmt, function(err, rows) {
+
+                                            if (err) {
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] indexRegister.saveTmJisuUpload Error while performing Query";
+                                                resultMsg.err = err;
+
+                                                return callback(resultMsg);
+                                            }
+
+                                            if (rows) {
+                                                log.debug(rows);
+                                            }
+
+                                            callback(null, paramData);
+                                        });
+                                    } else {
+                                        callback(null, paramData);
+                                    }
+
+                                }catch( err ) {
+
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] indexRegister.saveTmJisuUpload Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
+                            },
+
+                            /* 15. [지수별 최신 이력번호] 를 조회한다. */
+                            function(data, callback) {
+
+                                try{
+                                    if (paramData.dataLists != null && paramData.dataLists.length > 0) {
+                                        stmt = mapper.getStatement('indexRegister', 'getHistNoByTmJisuUploadHist', paramData, format);
+                                        log.debug(stmt);
+
+                                        conn.query(stmt, function(err, rows) {
+
+                                            if (err) {
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] indexRegister.getHistNoByTmJisuUploadHist Error while performing Query";
+                                                resultMsg.err = err;
+
+                                                return callback(resultMsg);
+                                            }
+
+                                            if (rows && rows[0].hist_no) {
+                                                paramData.hist_no = rows[0].hist_no;
+                                                log.debug(rows);
+                                            }
+
+                                            callback(null, paramData);
+                                        });
+                                    } else {
+                                        callback(null, paramData);
+                                    }
+
+                                }catch( err ) {
+
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] indexRegister.getHistNoByTmJisuUploadHist Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
+                            },
+
+                            /* 16. [지수 엑셀업로드 이력] 테이블에 저장한다. */
+                            function(data, callback) {
+
+                                try{
+                                    if (paramData.dataLists != null && paramData.dataLists.length > 0) {
+
+                                        if (paramData.hist_no) {
+
+                                            /* 8. [tm_jisu_upload_hist] 테이블에 저장한다. */
+                                            stmt = mapper.getStatement('indexRegister', 'saveTmJisuUploadHist', paramData, format);
+                                            log.debug(stmt);
+
+                                            conn.query(stmt, function(err, rows) {
+
+                                                if (err) {
+                                                    resultMsg.result = false;
+                                                    resultMsg.msg = "[error] indexRegister.saveTmJisuUploadHist Error while performing Query";
+                                                    resultMsg.err = err;
+
+                                                    return callback(resultMsg);
+                                                }
+
+                                                if (rows) {
+                                                    log.debug(">>>>>> end >>>>");
+                                                    log.debug(rows);
+                                                }
+
+                                                callback(null);
+                                            });
+
+                                        } else {
+                                            callback(null);
+                                        }
 
                                     } else {
                                         callback(null);
                                     }
 
-                                } else {
-                                    callback(null);
-                                }
+                                }catch( err ) {
+
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] indexRegister.saveTmJisuUploadHist Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }                                    
                             },
 
                         ], function(err) {
@@ -814,6 +1062,8 @@ var modifyJisu = function(req, res) {
                             if (err) {
                                 log.error(err);
                                 conn.rollback();
+
+                                deleteFile( reqParam );
                             } else {
 
                                 resultMsg.result = true;
@@ -839,15 +1089,15 @@ var modifyJisu = function(req, res) {
     } catch (expetion) {
         log.error(expetion);
 
+        deleteFile( reqParam );
+
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
             resultMsg.msg = "[error] indexModify.modifyJisu 오류가 발생하였습니다.";
             resultMsg.err = expetion;
         }
 
-        res.json({
-            resultMsg
-        });
+        res.json( resultMsg );
         res.end();
     }
 }
@@ -869,7 +1119,7 @@ var deleteJisu = function(req, res) {
         var resultMsg = {};
 
         var reqParam = {
-            uploadFolder: "d:\\test",
+            uploadFolder: config.uploadFolder,
             save_file_name: '',
             user_id: req.session.user_id
         };
@@ -1401,9 +1651,7 @@ var deleteJisu = function(req, res) {
             resultMsg.err = expetion;
         }
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
