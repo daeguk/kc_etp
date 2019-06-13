@@ -1360,8 +1360,26 @@ export default {
             /* 1. 기관정보를 조회한다. */
             axios.post(Config.base_url + "/user/index/getDomainInst", {
                 data: {}
-            }).then(function(response) {
+            }).then( async function(response) {
                 if (response && response.data) {
+
+                    var msg = ( response.data.message ? response.data.message : "" );
+
+                    if (!response.data.success) {
+
+                        if( msg ) {
+                            if( await selfThis.$root.$confirm1.open(
+                                        '확인',
+                                        msg,
+                                        {}
+                                    ,   1
+                                )
+                            ) {
+                                return false;
+                            }
+                        }
+                    }
+
                     selfThis.arr_group_inst = response.data.dataGroupList;
                     selfThis.arr_org_inst = response.data.dataList;
                 }

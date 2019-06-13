@@ -1181,14 +1181,17 @@ export default {
                     var msg = ( response.data.message ? response.data.message : "" );
 
                     if (!response.data.success) {
-                        if( await selfThis.$root.$confirm1.open(
-                                    '확인',
-                                    msg,
-                                    {}
-                                ,   1
-                            )
-                        ) {
-                            return false;
+
+                        if( msg ) {
+                            if( await selfThis.$root.$confirm1.open(
+                                        '확인',
+                                        msg,
+                                        {}
+                                    ,   1
+                                )
+                            ) {
+                                return false;
+                            }
                         }
                     }
 

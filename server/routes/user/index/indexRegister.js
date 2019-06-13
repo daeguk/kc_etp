@@ -160,13 +160,17 @@ var getDomainInst = function(req, res) {
 
                 res.json({
                     dataGroupList: dataList,
-                    dataList: rows
+                    dataList: rows,
+                    success: true,
+                    message: "",
                 });
                 res.end();
 
             }).catch(err => {
                 log.error("[error] indexRegister.getDomainInst Error while performing Query.", err, paramData);
                 res.json({
+                    success: false,
+                    message: "[error] indexRegister.getDomainInst Error while performing Query.",                    
                     dataList: []
                 });
                 res.end();
