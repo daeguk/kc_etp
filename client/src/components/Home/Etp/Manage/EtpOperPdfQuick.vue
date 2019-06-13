@@ -94,7 +94,7 @@ import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
-import Constant from "@/store/store_constant.js"
+import Constant from "@/store/store_constant.js";
 
 import ComEtpFavorItemSub   from "@/components/common/control/ComEtpFavorItemSub.vue"; 
 
@@ -217,11 +217,14 @@ console.log( vm.pdfData );
 
             /* PDF 긴급반영인 경우 */
             if( gubun == 6 ) {
+                var typeCd  =   vm.$store.state.user.type_cd;
 
-                if( vm.$store.state.user.krx_cd != vm.pdfData.f33960 ) {
-                    vm.$emit("showMessageBox", '확인','타 발행사의 종목은 PDF 긴급반영 하실 수 없습니다.',{},1);
-                    return  false;
-                }                
+                if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                    if( vm.$store.state.user.krx_cd != vm.pdfData.f33960 ) {
+                        vm.$emit("showMessageBox", '확인','타 발행사의 종목은 PDF 긴급반영 하실 수 없습니다.',{},1);
+                        return  false;
+                    }
+                }
 
 //                vm.togglePdfEmergencyPop    =   true;
 //                vm.toggleIanvPop            =   false;

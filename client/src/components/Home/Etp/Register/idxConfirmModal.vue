@@ -12,7 +12,7 @@
                </v-card-title>
            </h5>
            <v-card flat>
-               <table id="idxConfirm" class="display table01_w">
+               <table id="idxConfirm" class="tbl_type ver6_1">
                    <colgroup>
                        <col width="25%">
                        <col width="25%">
@@ -23,6 +23,7 @@
                            <th>심볼코드</th>
                            <th>
                                <v-select 
+                                    class="select_table_in"
                                     :items="items"
                                     @change="selectItem"
                                     v-model="selectedItem.value"
@@ -34,13 +35,13 @@
                    </thead>
                    <tbody>
                        <tr>
-                           <td align="center">{{ idxConfirmModal.idxSymCode }}</td>
-                           <td align="center">{{ selectedItem.text }}</td>
-                           <td align="center">{{ idxConfirmModal.idxNm }}</td>
+                           <td>{{ idxConfirmModal.idxSymCode }}</td>
+                           <td>{{ selectedItem.text }}</td>
+                           <td class="txt_left">{{ idxConfirmModal.idxNm }}</td>
                        </tr> 
                    </tbody>
                </table>
-               <table id="dataTable" class="display table01_w">
+               <table id="dataTable" class="tbl_type ver6 mt-3">
                    <colgroup>
                        <col width="50%">
                        <col width="50%">
@@ -82,7 +83,6 @@ export default {
         }
     },
     components: {
-
     },
     computed: {
         dialog() {
@@ -108,10 +108,10 @@ export default {
     methods: {
         selectItem: function() {
             var vm = this;
+            if(dataTable != null){
+                dataTable.clear().draw();
+            }
             if(vm.selectedItem.value == "2"){
-                if(dataTable != null){
-                    dataTable.clear().draw();
-                }
                 vm.selectedItem.text = "실시간";
                 if( this.idxConfirmModal.ridxDistSymCode == null || this.idxConfirmModal.ridxDistSymCode.length == 0 ){
                     alert("신청한 실시간 심볼코드가 없습니다.");  
@@ -119,9 +119,6 @@ export default {
                 }
                 vm.getRidxList();
             }else{
-                if(dataTable != null){
-                   dataTable.clear().draw();
-                }
                 vm.selectedItem.text = "종가";
                 vm.getIdxList();
             }
@@ -139,9 +136,9 @@ export default {
                         var items = response.data.results;
                         this.results = items;
                         if(this.results.length == 0){
-                         alert("기초지수 산출전입니다..");   
+                         alert("기초지수 산출전입니다.");   
                         }
-                        console.log("getIdxList=" + JSON.stringify(items));
+                        //console.log("getIdxList=" + JSON.stringify(items));
                         dataTable = $('#dataTable').DataTable( {
                             autoWidth: false, 
                             processing: true,
@@ -163,7 +160,6 @@ export default {
         }, 
         //실시간
         getRidxList: function() {
-                console.log("ridx_dist_sym_code : " + this.idxConfirmModal.ridxDistSymCode);
                 axios.get(Config.base_url + "/user/etp/getRidxList", {
                   params:{rMarket_id: this.idxConfirmModal.rMarketId,
                           ridx_dist_sym_code: this.idxConfirmModal.ridxDistSymCode,
@@ -177,7 +173,6 @@ export default {
                         if(this.results.length == 0){
                          alert("기초지수  산출 전입니다..");   
                         }
-                        console.log("getRidxList=" + JSON.stringify(items));
                         dataTable = $('#dataTable').DataTable( {
                             autoWidth: false, 
                             processing: true,

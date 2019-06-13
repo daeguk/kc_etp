@@ -11,7 +11,7 @@
                             ETP 운용 정보
                                 <span class="text_result">{{ result_cnt }}</span>
                                 <span class="text_result_t">results</span>
-                                <span class="sub_txt">기준일 : {{ nowDate }}</span>
+                                <span class="sub_txt">기준일 : {{ fmt_f12506 }}</span>
                             </h3>
                             <div class="right_btn">
                                 <span class="toggle2">
@@ -99,7 +99,7 @@
             </v-flex>  
             <v-flex class="conWidth_right">
                  <!-- [ETP 운영정보] Quick 메뉴 정보 -->
-                    <EtpOperInfoQuick   :indexBasic = "indexBasic"
+                    <EtpOperInfoQuick   :etpBasic = "etpBasic"
 
                                         @fn_setInavData = "fn_setInavData"
                                         @fn_setEtpPerformanceData = "fn_setEtpPerformanceData"
@@ -123,8 +123,9 @@ import util       from "@/js/util.js";
 import dtFc from "datatables.net-fixedcolumns";
 
 import Config from '@/js/config.js';
+import Constant from "@/store/store_constant.js"
+
 import EtpOperInfoQuick         from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
-import EtpOperInfoInavPdf       from    "@/components/Home/Etp/Manage/EtpOperInfoInavPdf.vue";
 import EtpOperInfoInavIndex     from    "@/components/Home/Etp/Manage/EtpOperInfoInavIndex.vue";
 
 var table01 = null;
@@ -134,17 +135,12 @@ export default {
     components: {
         //indexDetailrtmenupop: indexDetailrtmenupop
             EtpOperInfoQuick        :   EtpOperInfoQuick
-        ,   EtpOperInfoInavPdf      :   EtpOperInfoInavPdf
         ,   EtpOperInfoInavIndex    :   EtpOperInfoInavIndex
     },
     data() {
         return {
             text: "전종목",
-            nowDate:        new Date().getFullYear() 
-                        +   "." 
-                        +   (parseInt(new Date().getMonth()) + 1) 
-                        +   "." 
-                        +   new Date().getDate(),
+            fmt_f12506 :   "",
 
             stateInfo :     {       
                                     pageState : 'etpInfo'   /* etpInfo - ETP운용정보, iNav - iNav 산출현황, performance - ETP Performance, customize - 컬럼 선택 */
@@ -156,7 +152,7 @@ export default {
             etpOperInfoQuickYn : true,
 
             result_cnt  :   0,
-            indexBasic  :   {},
+            etpBasic  :   {},
             paramData   :   {},
             etpRow      :   {},
             inavGubun   :   "",
@@ -312,6 +308,7 @@ export default {
                 if (response.data) {
                     var dataList = response.data.dataList;
                     
+                    vm.result_cnt   =   0;
                     if( dataList && dataList.length > 0 ) {
 
                         if( vm.stateInfo.pageState == "performance" ) {
@@ -320,12 +317,17 @@ export default {
                             table01.rows.add( dataList ).draw();
                         }
 
-                        vm.indexBasic   =   dataList[0];
-                        vm.result_cnt   =   dataList.length;
+                        vm.etpBasic     =   dataList[0];
+
+                        vm.fmt_f12506   =   dataList[0].fmt_f12506;
+                        vm.result_cnt   =   util.formatInt( dataList.length );
                     }
                 }
 
                 vm.$emit( "fn_showProgress", false );
+            }).catch(error => {
+                vm.$emit( "fn_showProgress", false );
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         },
 
@@ -365,7 +367,7 @@ export default {
 
                     ,   'index_nm'                      /* 기초지수 */
                     ,   'index_f15001'                  /* 지수현재가 */
-                    ,   'ex_rate_code'                  /* 환코드 */
+                    ,   'f18450'                        /* 환코드 */
                     ,   'f18438'                        /* 환율 */
                     ,   'graph'                         /* 그래프 영역 */
                 ] );
@@ -597,6 +599,9 @@ export default {
         fn_setArrShowColumn( arrTemp ) {
             var vm = this;
 
+            var typeCd  =   vm.$store.state.user.type_cd;
+            var krxCd   =   vm.$store.state.user.krx_cd;
+
             var arrColumn  =   [
                 { 'name' : 'f16002'             , 'data': 'f16002'           ,  'width' : '150', 'orderable' : true  , 'className': 'txt_left',  'title' : '종목'           },      /* 한글종목명 */
                 { 'name' : 'f33929_nm'          , 'data': 'f33929_nm'        ,  'width' : '70',  'orderable' : true  , 'className': 'txt_left',  'title' : '산출방식'   },      /* 지표산출방식 */
@@ -607,7 +612,7 @@ export default {
                 { 'name' : 'f15304'             , 'data': 'f15304'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : '괴리율'        },      /* ETP괴리율 */
                 { 'name' : 'index_nm'           , 'data': 'index_nm'         ,  'width' : '120', 'orderable' : true  , 'className': 'txt_left' , 'title' : '기초지수'      },      /* 기초지수명 */
                 { 'name' : 'index_f15001'       , 'data': 'index_f15001'     ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '지수' },      /* 지수 현재가 */
-                { 'name' : 'ex_rate_code'       , 'data': 'ex_rate_code'     ,  'width' : '40',  'orderable' : true  , 'className': 'txt_right', 'title' : '환코드'         },      /* 환코드 */
+                { 'name' : 'f18450'             , 'data': 'f18450'           ,  'width' : '40',  'orderable' : true  , 'className': 'txt_right', 'title' : '환코드'         },      /* 해외ETF원주자산기준통화코드 */
                 { 'name' : 'f18438'             , 'data': 'f18438'           ,  'width' : '70',  'orderable' : true  , 'className': 'txt_right', 'title' : '환율'          },      /* 적용환율 */
                 { 'name' : 'f18001'             , 'data': 'f18001'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : 'ETF 전일가'    },      /* 전일ETF순자산총액(원)  */
 
@@ -697,7 +702,7 @@ export default {
                                 row.f30819      =   util.formatNumber( row.f30819 );        /* 매매기준율 */
                                 row.f30824      =   util.formatNumber( row.f30824 );        /* 장전기준율 */
 
-                                var rateData    =   util.formatNumber( ( util.NumtoStr(row.f30824) / ( util.NumtoStr(row.f30819) - 1 ) ) * 100 );    /* ( 매매기준율 / 장전기준율 - 1 ) * 100 */
+                                var rateData    =   util.formatNumber( ( ( util.NumtoStr(row.f30819) / util.NumtoStr(row.f30824) ) - 1 ) * 100 );    /* ( 장전기준율 / 매매기준율 - 1 ) * 100 */
 
                                 let htm = ""
 
@@ -813,7 +818,12 @@ export default {
                                 /* etpInfo - ETP운용정보, iNav - iNav 산출현황, performance - ETP Performance, customize - 컬럼 선택 */
                                 /* iNAV 산출현황 */
                                 if( vm.stateInfo.pageState === 'iNav' ) {
-                                    graphContent    +=  '<div class="tooltip"><button type="button" id="btnInav" name="btnInav" class="calcu_icon"></button><span class="tooltiptext" style="width:70px;">투자지표</span></div>';
+
+                                    if(     ( typeCd == "9998" || typeCd == "9999" ) 
+                                        ||  krxCd == row.f33960                         /* 로그인 운용사 코드와 해당 row의 ETP운용사코드 가 같은 경우 */
+                                    ) {
+                                        graphContent    +=  '<div class="tooltip"><button type="button" id="btnInav" name="btnInav" class="calcu_icon"></button><span class="tooltiptext" style="width:70px;">투자지표</span></div>';
+                                    }
 //                                    graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnInav", "btnContent" : "visibility", "btnSpanContent" : "투자지표" } );
                                 }
                                 

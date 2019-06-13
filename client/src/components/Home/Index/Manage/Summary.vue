@@ -1,7 +1,6 @@
 <template>
-<v-app>
-    <v-container>
-        <v-layout row wrap class="content_margin">
+    <v-container class="content_margin">
+        <v-layout row wrap>
             <v-flex xs12>
                 <v-container>
                     <v-layout>
@@ -18,7 +17,7 @@
                 </v-container>
             </v-flex>
         </v-layout>
-        <v-layout row wrap mt-2  class="content_margin">
+        <v-layout row wrap mt-2  class="mt-2">
             <v-flex xs3 pr-2>
                 <IndexSummaryBox :item="boxItem1"></IndexSummaryBox>
             </v-flex>
@@ -32,16 +31,18 @@
                 <IndexSummaryBox :item="boxItem4"></IndexSummaryBox>
             </v-flex>
         </v-layout>
-        <v-layout row wrap class="content_margin">
+        <v-layout row wrap class="mt-2">
             <v-flex xs12 >
                 <InfoOpenReq></InfoOpenReq>
             </v-flex>
         </v-layout>
-    </v-container>
-    <v-flex>
+        <v-layout>
+            <v-flex>
              <ConfirmDialog ref="confirm"></ConfirmDialog>
-    </v-flex>
-</v-app>
+            </v-flex>
+        </v-layout>
+    </v-container>
+
     
 </template>
 

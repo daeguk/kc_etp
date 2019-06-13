@@ -42,7 +42,7 @@
                                 </v-flex>
 
                                 <v-flex xs4 mt-1 mb-3>
-                                    <span class="text_color_blue">dbfn</span>
+                                    <span class="text_color_blue">{{ inst_name }}</span>
                                 </v-flex>
                             </v-layout>
 
@@ -254,12 +254,12 @@
                                         disabled
                                     >
 
-                                    <v-layout id="file-drag-drop" ref="methodForm" class="drag_box">
+                                    <v-layout id="file-drag-drop" ref="methodForm1" class="drag_box">
                                         <v-layout class="jumsun" align-center justify-center column>
                                             <input
                                                 type="file"
-                                                name="methodFile"
-                                                ref="methodFile"
+                                                name="methodFile1"
+                                                ref="methodFile1"
                                                 style="display:none;"
                                             >
 
@@ -292,11 +292,11 @@
                                 </v-flex>
 
                                 <v-flex xs4 id="file-drag-drop" v-show="!jisuUploadResult" v-if="modForm.status != '03'">
-                                    <v-layout flat class="drag_box" ref="fileform">
+                                    <v-layout flat class="drag_box" ref="fileform1">
                                         <input
                                             type="file"
-                                            name="file"
-                                            ref="file"
+                                            name="file1"
+                                            ref="file1"
                                             style="display:none;"
                                         >
 
@@ -577,6 +577,7 @@ import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
+import Constant from "@/store/store_constant.js";
 
 var table01 = null;
 
@@ -619,7 +620,9 @@ export default {
                 titleErrorYn: false,
 
                 message: ""
-            },            
+            },
+
+            inst_name : "",
 
             /* 기관 관련 정보 */
             arr_org_inst : [],          /* (원본) 기관정보 원본 목록정보 */
@@ -708,7 +711,7 @@ export default {
                 "drop"
             ].forEach(
                 function(evt) {
-                    this.$refs.fileform.addEventListener(
+                    this.$refs.fileform1.addEventListener(
                         evt,
                         function(e) {
                             e.preventDefault();
@@ -729,7 +732,7 @@ export default {
                 "drop"
             ].forEach(
                 function(evt) {
-                    this.$refs.methodForm.addEventListener(
+                    this.$refs.methodForm1.addEventListener(
                         evt,
                         function(e) {
                             e.preventDefault();
@@ -741,12 +744,22 @@ export default {
             );            
 
             /* 소급지수 파일 영역 */
-            this.$refs.fileform.addEventListener(
+            this.$refs.fileform1.addEventListener(
                 "drop",
                 function(e) {
 
                     var selfThis    =   this;
                     let file        =   e.dataTransfer.files[0];
+
+                    var typeCd      =   this.$store.state.user.type_cd;
+
+                    if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                        if( typeCd != "0003" ) {
+
+                            this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                            return  false;
+                        }
+                    }                    
 
                     this.fn_checkFile( file ).then(function (res) {
                             if( !res ) {
@@ -761,24 +774,45 @@ export default {
             );
 
             /* 지수방법론 파일 영역 */
-            this.$refs.methodForm.addEventListener(
+            this.$refs.methodForm1.addEventListener(
                 "drop",
                 function(e) {
                     var selfThis    =   this;
-                    let file        =   e.dataTransfer.files[0];
+                    let files       =   e.dataTransfer.files;
+                    let file        =   files[0];
+
+                    var typeCd      =   this.$store.state.user.type_cd;
+
+                    if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                        if( typeCd != "0003" ) {
+
+                            this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                            return  false;
+                        }
+                    }                    
 
                     this.modForm.show_method_file   =   file.name;
-
+                    this.$refs.methodFile1.files    =   files;
                 }.bind(this)
             );            
         }
 
         /* 소급지수 파일 영역 */
-        this.$refs.file.addEventListener(
+        this.$refs.file1.addEventListener(
             "change",
             function(evt) {
                 var selfThis    =   this;
-                let file        =   this.$refs.file.files[0];
+                let file        =   this.$refs.file1.files[0];
+
+                var typeCd      =   this.$store.state.user.type_cd;
+
+                if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                    if( typeCd != "0003" ) {
+
+                        this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                        return  false;
+                    }
+                }                
 
                 this.fn_checkFile( file ).then(function (res) {
                         if( !res ) {
@@ -789,7 +823,7 @@ export default {
                     }
                 );
 
-                this.$refs.fileform.addEventListener(
+                this.$refs.fileform1.addEventListener(
                     evt,
                     function(e) {
                         e.preventDefault();
@@ -801,15 +835,25 @@ export default {
         );
 
         /* 지수방법론 파일 영역 */
-        this.$refs.methodFile.addEventListener(
+        this.$refs.methodFile1.addEventListener(
             "change",
             function(evt) {
                 var selfThis    =   this;
-                let file        =   this.$refs.methodFile.files[0];
+                let file        =   this.$refs.methodFile1.files[0];
+
+                var typeCd      =   this.$store.state.user.type_cd;
+
+                if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                    if( typeCd != "0003" ) {
+
+                        this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                        return  false;
+                    }
+                }                
 
                 this.modForm.show_method_file   =   file.name;
 
-                this.$refs.methodForm.addEventListener(
+                this.$refs.methodForm1.addEventListener(
                     evt,
                     function(e) {
                         e.preventDefault();
@@ -852,7 +896,9 @@ export default {
                 { "data": "col02"       , "orderable" : false , className: 'txt_right'  },              /* col02 */
                 { "data": "col03"       , "orderable" : false , className: 'txt_right'  },              /* col03 */
             ]
-        });        
+        });
+
+        this.inst_name   =  this.$store.state.user.inst_name;
 
         this.$nextTick().then(() => {
 
@@ -976,6 +1022,16 @@ export default {
 
             var msgTitle = "";
 
+            var typeCd  =   vm.$store.state.user.type_cd;
+
+            if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                if( typeCd != "0003" ) {
+
+                    vm.$emit( 'showMessageBox', '확인','지수사업자만 수정 하실수 있습니다.',{},1 );
+                    return  false;
+                }
+            }
+
             // 선택된 공유 기관 바인딩 
             vm.modForm.arr_jisu_inst = vm.selectedInst;
 
@@ -1061,9 +1117,10 @@ export default {
             }             
 
             this.formData = new FormData();
-            this.formData.append( "files", this.$refs.methodFile.files[0] );
+            this.formData.append( "files", this.$refs.methodFile1.files[0] );
             this.formData.append( "data", JSON.stringify(this.modForm) );
 
+            vm.$emit( "fn_showProgress", true );
             axios.post(
                 Config.base_url + "/user/index/modifyJisu",
                 this.formData,
@@ -1072,6 +1129,8 @@ export default {
                         "Content-Type": "multipart/form-data"
                     }
                 }).then( async function(response) {
+
+                    vm.$emit( "fn_showProgress", false );
                     if( response.data ) {
 
                         var resultData = response.data;
@@ -1090,11 +1149,24 @@ export default {
                             vm.$router.push( "/index/register" );
                         }
                     }
+                }).catch(error => {
+                    vm.$emit( "fn_showProgress", false );
+                    vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
                 });
         },
 
         async   fn_deleteJisu() {
             var vm = this;
+
+            var typeCd  =   vm.$store.state.user.type_cd;
+
+            if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                if( typeCd != "0003" ) {
+
+                    vm.$emit( 'showMessageBox', '확인','지수사업자만 삭제 하실수 있습니다.',{},1 );
+                    return  false;
+                }
+            }
 
             if( await this.$root.$confirm2.open(
                         '[지수 삭제]',
@@ -1154,11 +1226,11 @@ export default {
 
             /* 소급지수 파일 클릭시 */
             if( gubun == "file" ) {
-                this.$refs.file.click();
+                this.$refs.file1.click();
             }
             /* 지수 방법론 파일 클릭시 */
             else{
-                this.$refs.methodFile.click();
+                this.$refs.methodFile1.click();
             }
         },
 
@@ -1172,7 +1244,7 @@ export default {
             vm.jisuUploadResult         =   false;
             
             vm.modForm.jisu_file_id     =   -1;
-            vm.$refs.file.value         =   null;
+            vm.$refs.file1.value         =   null;
         },
 
         /*
@@ -1224,6 +1296,7 @@ export default {
          * 2019-04-02  bkLove(촤병국)
          */
         fn_jisuFileUpload : function( file, selfThis ){
+            var vm = this;
 
             let formData = new FormData();
             formData.append("files", file);
@@ -1231,7 +1304,8 @@ export default {
             if( table01 ) {
                 table01.clear().draw();
             }                  
-            
+
+            vm.$emit( "fn_showProgress", true );
             axios.post(
                 Config.base_url + "/user/index/fileuploadSingle",
                 formData,
@@ -1243,6 +1317,7 @@ export default {
             ).then( async function(response) {
                 console.log( response );
 
+                vm.$emit( "fn_showProgress", false );
                 if( response.data ) {
                     selfThis.jisuUploadResult = response.data.result;
                     
@@ -1269,9 +1344,10 @@ export default {
                     }
                 }
 
-            }).catch(function(response) {
-                console.log( response );
-            });    
+            }).catch(error => {
+                vm.$emit( "fn_showProgress", false );
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+            });
         },
 
         /*
@@ -1396,18 +1472,18 @@ export default {
                 table01.clear().draw();
             }            
 
-            /* 1. 기관정보를 조회한다. */
+            selfThis.$emit( "fn_showProgress", true );
             axios.post(Config.base_url + "/user/index/getRegistedJisuData", {
                 data: selfThis.editData
             }).then(function(response) {
 
+                selfThis.$emit( "fn_showProgress", false );
                 if (response && response.data) {
                     if( response.data.jisuInfo ) {
                         selfThis.modForm = response.data.jisuInfo;
                         selfThis.modForm.duplCheckResult    =   true;
                     }
 
-                    //debugger;
                     selfThis.modForm.arr_jisu_inst          =   [];
                     selfThis.selectedInst          =   [];
                     if( response.data.arr_jisu_inst && response.data.arr_jisu_inst.length > 0 ) {
@@ -1430,7 +1506,10 @@ export default {
                         }
                     }
                 }
-            });            
+            }).catch(error => {
+                selfThis.$emit( "fn_showProgress", false );
+                selfThis.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+            });
         }
     }
 };

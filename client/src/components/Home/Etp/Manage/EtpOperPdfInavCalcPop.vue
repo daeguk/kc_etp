@@ -86,11 +86,16 @@
                                         <li class="list_tit">
                                             <b>iNAV 계산결과</b>
                                         </li>
-                                        <li class="text_red">
+                                        <li class="text_red"    v-if="iNav_percent >= 0">
                                             <b>{{formatNumber(iNav_amt)}}</b>
                                             <br>
                                             <span class="float_r">{{formatNumber(iNav_percent)}}%</span>
                                         </li>
+                                        <li class="text_blue"   v-if="iNav_percent < 0">
+                                            <b>{{formatNumber(iNav_amt)}}</b>
+                                            <br>
+                                            <span class="float_r">{{formatNumber(iNav_percent)}}%</span>
+                                        </li>                                        
                                     </ul>
                                 </v-flex>
                             </v-layout>
@@ -456,6 +461,9 @@ export default {
                         });                        
                     }
                 }
+            }).catch(error => {
+                util.processing(vm.$refs.progress, false);   
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);             
             });
         },        
 

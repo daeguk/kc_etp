@@ -5,7 +5,7 @@
   <v-card flat>
     <h5>
       <v-card-title ma-0>
-        종목 비중정보({{etpBasic.f16002}})
+        <h5>종목 비중정보 <span class="pl-0">({{etpBasic.f16002}})</span></h5>
       <v-spacer></v-spacer>
       <v-btn icon @click="closeModal"><v-icon>close</v-icon></v-btn>
       </v-card-title>

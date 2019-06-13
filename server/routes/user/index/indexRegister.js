@@ -164,6 +164,66 @@ var getDomainInst = function(req, res) {
 *************************************************************************************
 */
 
+/**
+  * NOTE: 디렉토리가 존재하는지 체크
+  * @param {Array|String} DB에 저장된 업로드 경로
+ */
+function dirExists( absoluteDir ){
+    try {
+        // Array
+        if ( Array.isArray(absoluteDir) ) {
+            var flag = [];
+
+            absoluteDir.forEach(function (Dir) {
+                flag.push(fs.statSync(Dir).isDirectory()); // 존재하면 true 없으면 false
+            });
+      
+            if (flag.indexOf(false) === -1) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } else {
+
+            return fs.statSync(absoluteDir).isDirectory(); // 이하 동일
+        }
+
+    } catch (e) {
+        log.error( e );
+
+        // 디렉토리가 존재하지 않으면 'ENOENT' 에러를 반환해줌. return false
+        if (e.code === 'ENOENT') {
+            return false;
+        } else {
+            // 그외 에러는 확인
+            throw e;
+        }
+    }
+}
+
+
+function deleteFile( fileInfo ){
+    try {
+
+        if( !fileInfo || !fileInfo.uploadFolder || !fileInfo.save_file_name ) {
+            return  false;
+        }
+
+        fs.unlink( fileInfo.uploadFolder + "/" + fileInfo.save_file_name, function(err) {
+            log.debug( fileInfo.uploadFolder + "/" + fileInfo.save_file_name + " 파일삭제 완료");
+        });
+
+        return  true;
+
+    } catch (e) {
+        log.error( e );
+
+        return  false;
+    }
+}
+
+
 /*
  * 소급지수 파일을 업로드 한다.
  * 2019-04-02  bkLove(촤병국)
@@ -175,7 +235,7 @@ var fileuploadSingle = function (req, res) {
     var mapper = req.app.get("mapper");
     var resultMsg = {};
     var reqParam = {
-            uploadFolder: "d:\\test"
+            uploadFolder: config.uploadFolder
         ,   save_file_name: ''
         ,   user_id : req.session.user_id,
     };
@@ -184,6 +244,11 @@ var fileuploadSingle = function (req, res) {
 
         // 서버에 저장할 폴더
         destination: function (req, file, cb) {
+
+            if( !dirExists( reqParam.uploadFolder ) ){ 
+                fs.mkdirSync( reqParam.uploadFolder ); 
+            }
+
             cb(null, reqParam.uploadFolder);
         },
 
@@ -379,6 +444,7 @@ var fileuploadSingle = function (req, res) {
 
                                             callback( null, reqParam );
                                         });
+
                                     }catch( err ) {
 
                                         if( err ) {
@@ -402,10 +468,43 @@ var fileuploadSingle = function (req, res) {
 
                                 if( reqParam.file_id ) {
 
-                                    stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', reqParam, format);
-                                    log.debug(stmt);
+                                    try{
 
-                                    conn.query(stmt, function( err, rows ) {
+                                        stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', reqParam, format);
+                                        log.debug(stmt);
+
+                                        conn.query(stmt, function( err, rows ) {
+
+                                            try{
+
+                                                if( err ) {
+                                                    resultMsg.result    =   false;
+                                                    resultMsg.msg       =   "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
+                                                    resultMsg.err       =   err;
+
+                                                    return callback( resultMsg );
+                                                }
+
+                                                if( rows ) {
+                                                    resultMsg.result = true;
+                                                    resultMsg.jisu_file_id = reqParam.file_id;
+                                                    resultMsg.dataList = rows;
+                                                }
+
+                                                callback( null, reqParam );
+
+                                            }catch( err ) {
+
+                                                resultMsg.result    =   false;
+                                                resultMsg.msg       =   "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
+                                                resultMsg.err       =   err;
+
+                                                return callback( resultMsg );
+                                            }
+
+                                        });
+
+                                    }catch( err ) {
 
                                         if( err ) {
                                             resultMsg.result    =   false;
@@ -414,15 +513,7 @@ var fileuploadSingle = function (req, res) {
 
                                             return callback( resultMsg );
                                         }
-
-                                        if( rows ) {
-                                            resultMsg.result = true;
-                                            resultMsg.jisu_file_id = reqParam.file_id;
-                                            resultMsg.dataList = rows;
-                                        }
-
-                                        callback( null, reqParam );
-                                    });
+                                    }
 
                                 }else{
 
@@ -431,6 +522,8 @@ var fileuploadSingle = function (req, res) {
                             }                            
 
                         ], function (err) {
+
+                            deleteFile( reqParam );
 
                             if( err ) {
                                 log.error( err );
@@ -455,7 +548,9 @@ var fileuploadSingle = function (req, res) {
 
         } catch(expetion) {
 
-            log.debug(expetion);
+            log.error(expetion);
+
+            deleteFile( reqParam );
 
             resultMsg.result    =   false;
             resultMsg.msg       =   "[error] 소급지수 파일 업로드 중 오류가 발생하였습니다.";
@@ -491,7 +586,7 @@ var registerJisu = function (req, res) {
 
         var resultMsg = {};
         var reqParam = {
-                uploadFolder: "d:\\test"
+                uploadFolder: config.uploadFolder
             ,   save_file_name: ''
             ,   user_id : req.session.user_id
         };
@@ -500,6 +595,11 @@ var registerJisu = function (req, res) {
 
             // 서버에 저장할 폴더
             destination: function (req, file, cb) {
+
+                if( !dirExists( reqParam.uploadFolder ) ){ 
+                    fs.mkdirSync( reqParam.uploadFolder ); 
+                }
+
                 cb(null, reqParam.uploadFolder);
             },
 
@@ -567,32 +667,43 @@ var registerJisu = function (req, res) {
                             /* 1. [지수ID] 중복을 체크한다. */
                             function( callback ) {
 
-                                stmt = mapper.getStatement('indexRegister', 'getJisuDuplCheck', paramData, format);
-                                log.debug(stmt);
+                                try{
 
-                                conn.query(stmt, function( err, rows ) {
+                                    stmt = mapper.getStatement('indexRegister', 'getJisuDuplCheck', paramData, format);
+                                    log.debug(stmt);
 
-                                    if( err ) {
-                                        resultMsg.result    =   false;
-                                        resultMsg.msg       =   "[error] indexRegister.getJisuDuplCheck Error while performing Query";
-                                        resultMsg.err       =   err;
+                                    conn.query(stmt, function( err, rows ) {
 
-                                        return callback( resultMsg );
-                                    }
+                                        if( err ) {
+                                            resultMsg.result    =   false;
+                                            resultMsg.msg       =   "[error] indexRegister.getJisuDuplCheck Error while performing Query";
+                                            resultMsg.err       =   err;
 
-                                    if (rows &&
-                                        rows[0].cnt > 0) {
+                                            return callback( resultMsg );
+                                        }
 
-                                        resultMsg.result    =   false;
-                                        resultMsg.msg       =   "[지수ID]가 이미 존재합니다.";
-                                        resultMsg.err       =   err;
+                                        if (rows &&
+                                            rows[0].cnt > 0) {
 
-                                        return callback( resultMsg );                                        
-                                    }
-                                    
+                                            resultMsg.result    =   false;
+                                            resultMsg.msg       =   "[지수ID]가 이미 존재합니다.";
+                                            resultMsg.err       =   err;
 
-                                    callback( null, paramData );
-                                });
+                                            return callback( resultMsg );                                        
+                                        }
+                                        
+
+                                        callback( null, paramData );
+                                    });
+
+                                }catch( err ) {
+
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] indexRegister.getJisuDuplCheck Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
                             },
 
 
@@ -601,28 +712,39 @@ var registerJisu = function (req, res) {
 
                                 /* 지수방법론 파일이 존재하는 경우 */
                                 if( req.file ) {
-                                    reqParam.org_file_name = req.file.originalname;
-                                    reqParam.mime_type = req.file.mimetype;
-                                    reqParam.file_size = req.file.size;
-                                    reqParam.gubun = "001";      /* 지수방법론 */
 
-                                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
-                                    log.debug(stmt);
+                                    try{
+                                        reqParam.org_file_name = req.file.originalname;
+                                        reqParam.mime_type = req.file.mimetype;
+                                        reqParam.file_size = req.file.size;
+                                        reqParam.gubun = "001";      /* 지수방법론 */
 
-                                    conn.query(stmt, function( err, rows ) {
+                                        stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
+                                        log.debug(stmt);
 
-                                        if( err ) {
-                                            resultMsg.result    =   false;
-                                            resultMsg.msg       =   "[error] indexRegister.saveTmJisuFile Error while performing Query";
-                                            resultMsg.err       =   err;
+                                        conn.query(stmt, function( err, rows ) {
 
-                                            return callback( resultMsg );
-                                        }
-                                        
-                                        paramData.method_file_id        =   rows.insertId;
+                                            if( err ) {
+                                                resultMsg.result    =   false;
+                                                resultMsg.msg       =   "[error] indexRegister.saveTmJisuFile Error while performing Query";
+                                                resultMsg.err       =   err;
 
-                                        callback( null, paramData );
-                                    });
+                                                return callback( resultMsg );
+                                            }
+                                            
+                                            paramData.method_file_id        =   rows.insertId;
+
+                                            callback( null, paramData );
+                                        });
+
+                                    }catch( err ) {
+
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "[error] indexRegister.saveTmJisuFile Error while performing Query";
+                                        resultMsg.err       =   err;
+
+                                        return callback( resultMsg );
+                                    }
 
                                 }else{
                                     callback( null, paramData );
@@ -633,26 +755,36 @@ var registerJisu = function (req, res) {
                             /* 3. 지수 마스터를 저장한다. */
                             function( data, callback ) {
 
-                                paramData.status                =   "01";       // 상태 (01: 등록완료, 02:연동신청, 03: 연동완료 )
-                                stmt = mapper.getStatement('indexRegister', 'saveTmJisuMast', paramData, format);
-                                log.debug(stmt);
+                                try{
+                                    paramData.status                =   "01";       // 상태 (01: 등록완료, 02:연동신청, 03: 연동완료 )
+                                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuMast', paramData, format);
+                                    log.debug(stmt);
 
-                                conn.query(stmt, function( err, rows ) {
+                                    conn.query(stmt, function( err, rows ) {
 
-                                    if( err ) {
-                                        resultMsg.result    =   false;
-                                        resultMsg.msg       =   "[error] indexRegister.saveTmJisuMast Error while performing Query";
-                                        resultMsg.err       =   err;
+                                        if( err ) {
+                                            resultMsg.result    =   false;
+                                            resultMsg.msg       =   "[error] indexRegister.saveTmJisuMast Error while performing Query";
+                                            resultMsg.err       =   err;
 
-                                        return callback( resultMsg );
-                                    }
+                                            return callback( resultMsg );
+                                        }
 
-                                    if( rows.affectedRows > 0 ) {
-                                        paramData.jisu_seq      =   rows.insertId;      /* 지수 시퀀스 */
-                                    }
+                                        if( rows.affectedRows > 0 ) {
+                                            paramData.jisu_seq      =   rows.insertId;      /* 지수 시퀀스 */
+                                        }
 
-                                    callback( null, paramData );
-                                });
+                                        callback( null, paramData );
+                                    });
+
+                                }catch( err ) {
+
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] indexRegister.saveTmJisuMast Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
                             },
 
 
@@ -661,23 +793,32 @@ var registerJisu = function (req, res) {
 
                                 if( paramData.arr_jisu_inst && paramData.arr_jisu_inst.length > 0  ) {
 
-                                    paramData.req_flag    =   "0";       /* 공개여부 0:비공개, 1:공개요청, 2:공개 */
+                                    try{
+                                        paramData.req_flag    =   "0";       /* 공개여부 0:비공개, 1:공개요청, 2:공개 */
 
-                                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuShareReq', paramData, format);
-                                    log.debug(stmt);
+                                        stmt = mapper.getStatement('indexRegister', 'saveTmJisuShareReq', paramData, format);
+                                        log.debug(stmt);
 
-                                    conn.query(stmt, function( err, rows ) {
+                                        conn.query(stmt, function( err, rows ) {
 
-                                        if( err ) {
-                                            resultMsg.result    =   false;
-                                            resultMsg.msg       =   "[error] indexRegister.saveTmJisuShareReq Error while performing Query";
-                                            resultMsg.err       =   err;
+                                            if( err ) {
+                                                resultMsg.result    =   false;
+                                                resultMsg.msg       =   "[error] indexRegister.saveTmJisuShareReq Error while performing Query";
+                                                resultMsg.err       =   err;
 
-                                            return callback( resultMsg );
-                                        }
+                                                return callback( resultMsg );
+                                            }
 
-                                        callback( null, paramData );
-                                    });
+                                            callback( null, paramData );
+                                        });
+                                    }catch( err ) {
+
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "[error] indexRegister.saveTmJisuShareReq Error while performing Query";
+                                        resultMsg.err       =   err;
+
+                                        return callback( resultMsg );
+                                    }
 
                                 }else{
                                     callback( null, paramData );
@@ -688,28 +829,38 @@ var registerJisu = function (req, res) {
                             /* 5. [지수 저장전 업로드] 를 조회한다. */
                             function( data, callback ) {
 
-                                paramData.file_id  =    paramData.jisu_file_id;
+                                try{
+                                    paramData.file_id  =    paramData.jisu_file_id;
 
-                                stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
-                                log.debug(stmt);
+                                    stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
+                                    log.debug(stmt);
 
-                                conn.query(stmt, function( err, rows ) {
+                                    conn.query(stmt, function( err, rows ) {
 
-                                    if( err ) {
-                                        resultMsg.result    =   false;
-                                        resultMsg.msg       =   "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
-                                        resultMsg.err       =   err;
+                                        if( err ) {
+                                            resultMsg.result    =   false;
+                                            resultMsg.msg       =   "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
+                                            resultMsg.err       =   err;
 
-                                        return callback( resultMsg );
-                                    }
+                                            return callback( resultMsg );
+                                        }
 
-                                    if( rows && rows.length > 0 ) {
-                                        paramData.dataLists =   rows;
-                                    }
+                                        if( rows && rows.length > 0 ) {
+                                            paramData.dataLists =   rows;
+                                        }
 
-                                    callback( null, paramData );
+                                        callback( null, paramData );
 
-                                });
+                                    });
+
+                                }catch( err ) {
+
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
+                                    resultMsg.err       =   err;
+
+                                    return callback( resultMsg );
+                                }
                             },
 
 
@@ -718,21 +869,30 @@ var registerJisu = function (req, res) {
 
                                 if( paramData.dataLists != null && paramData.dataLists.length > 0  ) {
 
-                                    stmt = mapper.getStatement('indexRegister', 'saveTmJisuUpload', paramData, format);
-                                    log.debug(stmt);
+                                    try{
+                                        stmt = mapper.getStatement('indexRegister', 'saveTmJisuUpload', paramData, format);
+                                        log.debug(stmt);
 
-                                    conn.query(stmt, function( err, rows ) {
+                                        conn.query(stmt, function( err, rows ) {
 
-                                        if( err ) {
-                                            resultMsg.result    =   false;
-                                            resultMsg.msg       =   "[error] indexRegister.saveTmJisuUpload Error while performing Query";
-                                            resultMsg.err       =   err;
+                                            if( err ) {
+                                                resultMsg.result    =   false;
+                                                resultMsg.msg       =   "[error] indexRegister.saveTmJisuUpload Error while performing Query";
+                                                resultMsg.err       =   err;
 
-                                            return callback( resultMsg );
-                                        }
+                                                return callback( resultMsg );
+                                            }
 
-                                        callback( null, paramData );
-                                    });
+                                            callback( null, paramData );
+                                        });
+                                    }catch( err ) {
+
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "[error] indexRegister.saveTmJisuUpload Error while performing Query";
+                                        resultMsg.err       =   err;
+
+                                        return callback( resultMsg );
+                                    }
 
                                 }else{
                                     callback( null, paramData );
@@ -745,25 +905,35 @@ var registerJisu = function (req, res) {
 
                                 if( paramData.dataLists != null && paramData.dataLists.length > 0  ) {
 
-                                    stmt = mapper.getStatement('indexRegister', 'getHistNoByTmJisuUploadHist', paramData, format);
-                                    log.debug(stmt);
+                                    try{
+                                        stmt = mapper.getStatement('indexRegister', 'getHistNoByTmJisuUploadHist', paramData, format);
+                                        log.debug(stmt);
 
-                                    conn.query(stmt, function( err, rows ) {
+                                        conn.query(stmt, function( err, rows ) {
 
-                                        if( err ) {
-                                            resultMsg.result    =   false;
-                                            resultMsg.msg       =   "[error] indexRegister.getHistNoByTmJisuUploadHist Error while performing Query";
-                                            resultMsg.err       =   err;
+                                            if( err ) {
+                                                resultMsg.result    =   false;
+                                                resultMsg.msg       =   "[error] indexRegister.getHistNoByTmJisuUploadHist Error while performing Query";
+                                                resultMsg.err       =   err;
 
-                                            return callback( resultMsg );
-                                        }
-    
-                                        if( rows && rows[0].hist_no ) {
-                                            paramData.hist_no   =   rows[0].hist_no;
-                                        }
+                                                return callback( resultMsg );
+                                            }
+        
+                                            if( rows && rows[0].hist_no ) {
+                                                paramData.hist_no   =   rows[0].hist_no;
+                                            }
 
-                                        callback( null, paramData );
-                                    });
+                                            callback( null, paramData );
+                                        });
+
+                                    }catch( err ) {
+
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "[error] indexRegister.getHistNoByTmJisuUploadHist Error while performing Query";
+                                        resultMsg.err       =   err;
+
+                                        return callback( resultMsg );
+                                    }
 
                                 }else{
                                     callback( null, paramData );
@@ -776,26 +946,36 @@ var registerJisu = function (req, res) {
 
                                 if( paramData.dataLists != null && paramData.dataLists.length > 0  ) {
 
-                                    if( paramData.hist_no ) {
+                                    try{
+                                        if( paramData.hist_no ) {
 
-                                        stmt = mapper.getStatement('indexRegister', 'saveTmJisuUploadHist', paramData, format);
-                                        log.debug(stmt);
+                                            stmt = mapper.getStatement('indexRegister', 'saveTmJisuUploadHist', paramData, format);
+                                            log.debug(stmt);
 
-                                        conn.query(stmt, function( err, rows ) {
+                                            conn.query(stmt, function( err, rows ) {
 
-                                            if( err ) {
-                                                resultMsg.result    =   false;
-                                                resultMsg.msg       =   "[error] indexRegister.saveTmJisuUploadHist Error while performing Query";
-                                                resultMsg.err       =   err;
+                                                if( err ) {
+                                                    resultMsg.result    =   false;
+                                                    resultMsg.msg       =   "[error] indexRegister.saveTmJisuUploadHist Error while performing Query";
+                                                    resultMsg.err       =   err;
 
-                                                return callback( resultMsg );
-                                            }                                    
+                                                    return callback( resultMsg );
+                                                }                                    
 
-                                            callback( null, paramData );
-                                        });
+                                                callback( null, paramData );
+                                            });
 
-                                    }else{
-                                        callback( null );
+                                        }else{
+                                            callback( null );
+                                        }
+
+                                    }catch( err ) {
+
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "[error] indexRegister.saveTmJisuUploadHist Error while performing Query";
+                                        resultMsg.err       =   err;
+
+                                        return callback( resultMsg );
                                     }
 
                                 }else{
@@ -808,6 +988,8 @@ var registerJisu = function (req, res) {
                             if( err ) {
                                 log.error( err );
                                 conn.rollback();
+
+                                deleteFile( reqParam );
                             }else{
 
                                 resultMsg.result    =   true;
@@ -829,6 +1011,8 @@ var registerJisu = function (req, res) {
     } catch(expetion) {
 
         log.error(expetion);
+
+        deleteFile( reqParam );
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;

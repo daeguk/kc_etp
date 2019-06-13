@@ -565,6 +565,9 @@ export default {
                                         
                 }
                 util.processing(this.$refs.progress, false);
+            }).catch(error => {
+                util.processing(this.$refs.progress, false);
+                this.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         }, 
 
@@ -588,6 +591,9 @@ export default {
             
                 }
                 util.processing(this.$refs.progress, false);
+            }).catch(error => {
+                util.processing(this.$refs.progress, false);
+                this.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         }, 
 
@@ -611,6 +617,9 @@ export default {
                     
                 }
                 util.processing(this.$refs.progress, false);
+            }).catch(error => {
+                util.processing(this.$refs.progress, false);
+                this.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         },
 

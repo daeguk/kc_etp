@@ -10,8 +10,9 @@
                         <h3 class="headline subtit" pb-0>
                             {{ indexBasic.f16002 }} |
                             <span class="grey--text">{{ indexBasic.f16013 }}</span>
-                            <span class="text_result_t">기준일 : {{ indexBasic.fmt_f12506 }}</span>
-                            <span class="sub_txt">Last Updated : </span>
+
+                            <span class="text_result_t">기준일 : {{ indexBasic.fmt_std_date  /* 기준일 */ }}</span>
+                            <span class="sub_txt">Last Updated : {{ indexBasic.fmt_f12506   /* 입회일 */ }}</span>
                         </h3>
                     </v-card-title>
 
@@ -21,8 +22,8 @@
                         <h3 class="headline subtit" pb-0>
                             {{ indexBasic.f16002 }} 편입지수 목록
 
-                            <p class="grey--text">{{ form.resultsCnt }} results</p>
-                            <p class="sub_txt">Last Updated : </p>
+                            <span class="grey--text">{{ form.resultsCnt }} results</span>
+                            <span class="sub_txt">Last Updated : {{ indexBasic.fmt_f12506   /* 입회일 */ }}</span>
                         </h3>
                     </v-card-title>                    
 
@@ -119,7 +120,7 @@ export default {
                     "info": false,   // control table information display field
                     "stateSave": true,  //restore table state on page reload,
                     "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                    "scrollY": '75vh',
+                    "scrollY": '72vh',
                     paging: false,
                     searching: false,                
                     data : [],
@@ -179,7 +180,7 @@ export default {
                 "info": false,   // control table information display field
                 "stateSave": true,  //restore table state on page reload,
                 "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                "scrollY": '68vh',
+                "scrollY": '72vh',
                 paging: false,
                 searching: false,
                 data : [],
