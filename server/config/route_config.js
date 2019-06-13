@@ -142,6 +142,10 @@ module.exports = {
         { file: './user/common/itemInfo', path: '/user/common/getPublishEtpList', method: 'getPublishEtpList', session: 'check', type: 'get' },
         { file: './user/common/itemInfo', path: '/user/common/getALLEtpList', method: 'getALLEtpList', session: 'check', type: 'get' },
 
+
+        /* 고객지원 */
+        { file: './user/etc/custSupport', path: '/user/etc/saveCustSupport', method: 'saveCustSupport', session: 'check', type: 'post' },
+
         //풀 테스트 
 
         { file: './sample/bluebirdTest', path: '/sample/getBluelist', method: 'getBlueList', session: 'uncheck', type: 'post' },

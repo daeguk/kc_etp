@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="custSupport">
+
+    <!--
+    *   고객지원 정보를 저장한다.
+    *   2019-06-13  bkLove(촤병국)
+    -->
+    <select id="saveCustSupport">
+    <![CDATA[
+        INSERT  INTO
+        /* 고객지원 */
+        tm_cust_support
+        (
+                email                       /* 이메일 */
+            ,   type_cd                     /* 사용자 그룹 코드 */
+            ,   inst_cd                     /* 기관구분코드 */
+
+            ,   subject                     /* 제목 */
+            ,   contents                    /* 내용 */
+            
+            ,   reg_id                      /* 등록자 ID */
+            ,   reg_time                    /* 등록시간 */
+        )
+        VALUES
+        (
+                #{user_id}                  /* 이메일 */
+            ,   #{type_cd}                  /* 사용자 그룹 코드 */
+            ,   #{inst_cd}                  /* 기관구분코드 */
+
+            ,   #{subject}                  /* 제목 */
+            ,   #{contents}                 /* 내용 */
+            
+            ,   #{user_id}                  /* 등록자 ID */
+            ,   NOW()                       /* 등록시간 */
+        )
+    ]]>
+    </select>
+
+</mapper>

@@ -90,6 +90,8 @@ module.exports = class {
         // 공통으로 사용되는 종목 정보
         ibatisMapper.createMapper(['./database/mysql/user/common/itemInfo.xml']);
 
+        ibatisMapper.createMapper(['./database/mysql/user/etc/custSupport.xml']);
+
         return ibatisMapper;
     }
 };
