@@ -101,34 +101,44 @@ export default {
 
             // 좌즉 상단 현재가
             c.fillStyle = "#37474F";
-            c.font = '24px san-serif';
-            c.fillText(this.chartItem.name, 20, 40);
+            c.font = '14px san-serif';
+            c.fillText(this.chartItem.name, 15, 30);
             c.fillStyle = "#263238";
-            c.textAlign = "end";
             c.font = 'bold 28px san-serif';
-            this.chartItem.f15001 = util.formatNumber(this.chartItem.f15001);
-            c.fillText(this.chartItem.f15001, 320, 40);
-            
+            c.fillText(this.chartItem.f15001, 15, 60);
+            var slen = this.chartItem.f15001.length;
             if(Number(this.chartItem.f15472) < 0) {
-              c.fillStyle = "#1e99e8";
+              c.fillStyle = "#039BE5";
             }else {
-              c.fillStyle = "#ff4366";
+              c.fillStyle = "#FF0000";
             }
-            c.font = '16px san-serif';
+            c.font = '12px san-serif';
             this.chartItem.f15472 = util.getPlus(this.chartItem.f15472, 2);
             this.chartItem.f15004 = util.getPlus(this.chartItem.f15004, 2);
-            c.fillText(this.chartItem.f15472, 320, 60);
-            c.fillText(this.chartItem.f15004 + "%", 320, 80);
+            if(slen > 6) c.fillText(this.chartItem.f15472, 125, 47);
+            else  c.fillText(this.chartItem.f15472, 115, 47);
+            if(slen > 6) c.fillText(this.chartItem.f15004 + "%", 125, 60);
+            else  c.fillText(this.chartItem.f15004 + "%", 115, 60);
+
 
             this.bef_tooltip_img = c.getImageData(0, 0, this.chartItem.width, this.chartItem.height);
         },
         drawToolTip: function(event) {
           var c = this.ctx;
+          /*
           var _mwpos = event.clientX-this.rect.left;
           var _wpos = _mwpos;
           var _hpos = event.clientY-this.rect.top - 20;
+          */
+          var _mwpos = event.layerX;
+          var _wpos = _mwpos;
+          var _hpos = event.layerY;
           var item = [];
           var tooltip = "";
+          console.log("client : " + event.clientX + " "  + event.clientY);
+          console.log("client : " + event.layerX + " "  + event.layerY);
+          console.log("rec : " + this.rect.left + " " + this.rect.top);
+          console.log("_wpos : " + _wpos + " _hpos : " + _hpos);
 
           if(_wpos > 200) _wpos -= this.tt_wlen;
 

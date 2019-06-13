@@ -6,9 +6,9 @@
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
                             지수관리
-                                <span class="text_result">{{ result_cnt }}</span>
-                                <span class="text_result_t"> results</span>
-                                <span class="sub_txt">기준일 : {{ nowDate }}</span>
+                            <span class="text_result">{{ result_cnt }}</span>
+                            <span class="text_result_t"> results</span>
+                            <span class="sub_txt">기준일 : {{ fmt_f12506 }}</span>
                         </h3>
                     </v-card-title>
                     
@@ -51,6 +51,7 @@ export default {
 
     data() {
         return {
+            fmt_f12506 :   "",
             indexBasic  :   {},
             paramData   :   {},
             stateInfo   :   {
@@ -131,7 +132,9 @@ export default {
                         tableOperIndex.rows.add( dataList ).draw();
 
                         vm.indexBasic   =   dataList[0];
-                        vm.result_cnt   =   dataList.length;
+
+                        vm.fmt_f12506   =   dataList[0].fmt_f12506;
+                        vm.result_cnt   =   util.formatInt( dataList.length );
                     }
                 }
 

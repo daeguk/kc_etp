@@ -11,8 +11,8 @@
                             {{ indexBasic.f16002 }} |
                             <span class="grey--text">{{ indexBasic.f16013 }}</span>
 
-                            <p class="text_result_t">기준일 : {{ indexBasic.fmt_std_date  /* 기준일 */ }}</p>
-                            <p class="sub_txt">Last Updated : {{ indexBasic.fmt_f12506   /* 입회일 */ }}</p>
+                            <span class="text_result_t">기준일 : {{ indexBasic.fmt_std_date  /* 기준일 */ }}</span>
+                            <span class="sub_txt">Last Updated : {{ indexBasic.fmt_f12506   /* 입회일 */ }}</span>
                         </h3>
                     </v-card-title>
 
@@ -22,8 +22,8 @@
                         <h3 class="headline subtit" pb-0>
                             {{ indexBasic.f16002 }} 편입지수 목록
 
-                            <p class="grey--text">{{ form.resultsCnt }} results</p>
-                            <p class="sub_txt">Last Updated : {{ indexBasic.fmt_f12506   /* 입회일 */ }}</p>
+                            <span class="grey--text">{{ form.resultsCnt }} results</span>
+                            <span class="sub_txt">Last Updated : {{ indexBasic.fmt_f12506   /* 입회일 */ }}</span>
                         </h3>
                     </v-card-title>                    
 

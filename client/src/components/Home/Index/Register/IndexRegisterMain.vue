@@ -9,8 +9,8 @@
                             <span class="grey--text">지수의 기본정보 및 소급지수를 등록합니다.</span>
                         </h3>
                     </v-card-title>
-                    <registrationModify v-if="editYn" :editData="editData" :key="editData.jisu_id" @fn_refresh="fn_refresh"></registrationModify>
-                    <registration v-show="!editYn" @fn_refresh="fn_refresh" ></registration>
+                    <registrationModify v-if="editYn" :editData="editData" :key="editData.jisu_id" @fn_refresh="fn_refresh" @showMessageBox="showMessageBox"></registrationModify>
+                    <registration v-show="!editYn" @fn_refresh="fn_refresh" @showMessageBox="showMessageBox"></registration>
                 </v-card>
             </v-flex>
             <v-flex shrink   class="conWidth_right">

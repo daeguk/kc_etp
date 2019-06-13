@@ -199,5 +199,31 @@ var util = {
       return myear + "" + mmonth + "" + mday;
     },
 
+    getBef5Year: function() {
+      var mdate = new Date();
+      mdate.setFullYear(mdate.getFullYear()-5);
+      var myear = mdate.getFullYear();
+      var mmonth = mdate.getMonth() + 1;
+      var mday = mdate.getDate();
+
+      if(mmonth < 10) mmonth = "0" + mmonth;
+      if(mday < 10) mday = "0" + mday;
+
+      return myear + "" + mmonth + "" + mday;
+    },
+
+    getBef10Year: function() {
+      var mdate = new Date();
+      mdate.setFullYear(mdate.getFullYear()-10);
+      var myear = mdate.getFullYear();
+      var mmonth = mdate.getMonth() + 1;
+      var mday = mdate.getDate();
+
+      if(mmonth < 10) mmonth = "0" + mmonth;
+      if(mday < 10) mday = "0" + mday;
+
+      return myear + "" + mmonth + "" + mday;
+    },
+
 }  
   export default util

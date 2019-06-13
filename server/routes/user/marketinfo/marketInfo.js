@@ -50,20 +50,21 @@ try {
 };
 
 /*
-* KRX INDEX LIST 조회 (By Type)
+* INDEX LIST 조회 (By Type)
 */
-var getKrxIndexListByType = function(req, res) {
+var getIndexListByType = function(req, res) {
   log.debug('marketInfo 모듈 안에 있는 getKrxIndexListByType 호출됨.');
 
   if(req.query.selIndexType == "TOTAL") req.query.selIndexType = "";
   var options = {
-    selIndexType : req.query.selIndexType,
+    large_type : req.query.large_type,
+    middle_type : req.query.middle_type,
   };
 try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
-    var stmt = mapper.getStatement('common.item', 'getKrxIndexListByType', options, {language:'sql', indent: '  '});
+    var stmt = mapper.getStatement('common.item', 'getIndexListByType', options, {language:'sql', indent: '  '});
     log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
@@ -85,25 +86,28 @@ try {
 }
 };
 /*
-* KRX INDEX LIST 조회 (By Type & 구간별 지수데이터)
+* INDEX LIST 조회 (By Type & 분석정보)
 */
-var getKrxIndexListByType1 = function(req, res) {
-  log.debug('marketInfo 모듈 안에 있는 getKrxIndexListByType1 호출됨.');
+var getIndexListAnalByType = function(req, res) {
+  log.debug('marketInfo 모듈 안에 있는 getIndexListAnalByType 호출됨.');
 
-  if(req.query.selIndexType == "TOTAL") req.query.selIndexType = "";
+  if(req.query.middle_type == "TOTAL") req.query.middle_type = "";
   var options = {
-    selIndexType : req.query.selIndexType,
+    large_type : req.query.large_type,
+    middle_type : req.query.middle_type,
     bef1Week: req.query.bef1Week,
     bef1Month: req.query.bef1Month,
     befYtd: req.query.befYtd,
     bef1Year: req.query.bef1Year,
     bef3Year: req.query.bef3Year,
+    bef5Year: req.query.bef5Year,
+    bef10Year: req.query.bef10Year,
   };
 try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
-    var stmt = mapper.getStatement('common.item', 'getKrxIndexListByType1', options, {language:'sql', indent: '  '});
+    var stmt = mapper.getStatement('common.item', 'getIndexListAnalByType', options, {language:'sql', indent: '  '});
     console.log(stmt);
 
     Promise.using(pool.connect(), conn => {
@@ -1024,8 +1028,8 @@ module.exports.getIndexBasic = getIndexBasic;
 module.exports.getIndexIntra = getIndexIntra;
 module.exports.getIndexIntra1 = getIndexIntra1;
 module.exports.getIndexHist1 = getIndexHist1;
-module.exports.getKrxIndexListByType = getKrxIndexListByType;
-module.exports.getKrxIndexListByType1 = getKrxIndexListByType1;
+module.exports.getIndexListByType = getIndexListByType;
+module.exports.getIndexListAnalByType = getIndexListAnalByType;
 module.exports.getEtpBasic = getEtpBasic;
 module.exports.getEtpIntra = getEtpIntra;
 module.exports.getEtpMultiIntra = getEtpMultiIntra;
