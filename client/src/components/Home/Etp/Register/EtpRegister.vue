@@ -688,7 +688,7 @@
                                         </v-flex>
                                         <v-flex xs3>
                                             <v-select v-bind:disabled="masterData.real_yn === 'N' || inputDisabled"
-                                               :items="code0041List"
+                                               :items="code004List"
                                                 item-value="value"
                                                 item-text="text"
                                                 :selected="masterData.ridx_dist_inst_cd"
@@ -1403,14 +1403,14 @@ export default {
                 }
             }
         
-            if(vm.masterData.ridx_dist_sym_code !==''){
-                if(vm.masterData.ridx_dist_inst_cd ===''){
+            if(vm.masterData.ridx_dist_sym_code !=='' && vm.masterData.ridx_dist_sym_code !==null){
+                if(vm.masterData.ridx_dist_inst_cd ==='' || vm.masterData.ridx_dist_inst_cd == null){
                      vm.$refs.ridx_dist_inst_cd.focus();
                      vm.errors.ridx_dist_inst_cd = '실시간 지수입수기관심볼 입력 시 실시간 지수입수기관이 입력되어야 합니다.';
                    hudleYn ='N';
                 }
 
-                if(vm.masterData.ridx_holy_cd ===''){
+                if(vm.masterData.ridx_holy_cd ==='' || vm.masterData.ridx_holy_cd ==null){
                      vm.$refs.ridx_holy_cd.focus();
                      vm.errors.ridx_holy_cd = '실시간 지수입수기관심볼 입력 시 실시간 휴장일 기준이 입력되어야 합니다.';
                    hudleYn ='N';
