@@ -1,10 +1,33 @@
 <template>
+  <div class="text-xs-center">
+    <v-menu offset-y open-on-hover dark>
+      <template v-slot:activator="{ on }">
+        <v-btn class="topmenu_icon"
+          icon
+          dark
+          v-on="on"
+        >
+        <v-icon>apps</v-icon>
+        </v-btn>
+      </template>
+      <v-list  two-line  class="menu_list">
+    <v-list-tile v-for="(menu, index) in menuList" :key="index" :menu='menu' v-on:click="movePage(menu)">
+      <v-list-tile-avatar><object type="image/svg+xml" :data="menu.imagePath" width="36px" height="36px" ></object></v-list-tile-avatar>
+      <v-list-tile-content>
+        <v-list-tile-title>{{menu.title}}</v-list-tile-title>
+        <v-list-tile-sub-title>{{menu.stitle}}</v-list-tile-sub-title>
+      </v-list-tile-content>
+    </v-list-tile>
+  </v-list>
+    </v-menu>
+  </div>
+</template>
+
+<!--template>
 <div class="context-menu">
   <v-list  two-line  class="menu_list">
     <v-list-tile v-for="(menu, index) in menuList" :key="index" :menu='menu' v-on:click="movePage(menu)">
-      <v-list-tile-avatar>
-        <img :src="menu.imagePath" width="36px" height="36px">
-      </v-list-tile-avatar>
+      <v-list-tile-avatar><object type="image/svg+xml" :data="menu.imagePath" width="36px" height="36px" ></object></v-list-tile-avatar>
       <v-list-tile-content>
         <v-list-tile-title>{{menu.title}}</v-list-tile-title>
         <v-list-tile-sub-title>{{menu.stitle}}</v-list-tile-sub-title>
@@ -12,7 +35,11 @@
     </v-list-tile>
   </v-list>
 </div>
-</template>
+</template-->
+
+
+
+
 <script>
 
 export default {
@@ -75,15 +102,6 @@ export default {
 </script>
 
 <style scoped>
-.context-menu {
-  position: fixed;
-  z-index: 9998;
-  top: 60px;
-  left: 16%;
-  width: 15%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, .5);
-  display: table;
-  transition: opacity .3s ease;
-}
+.v-menu__content{position:fixed !important; top:56px !important;}
+
 </style>
