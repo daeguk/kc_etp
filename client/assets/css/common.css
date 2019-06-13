@@ -5,22 +5,22 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:100,200,300,400,500,700);
 
 
-@font-face {
-    font-family: 'Noto Sans';
-    src: url('../webfonts/NotoSansKR-Medium.woff') format('woff'), /* 대부분 브라우저. 압축률이 좋음*/
-         url('Nanum Gothic.ttf')  format('truetype'), /* Android, iOS, 압축 x */
-         url('Nanum Gothic.eot'), /* IE9 호완성 모드, 압축 x */
-         url('../webfonts/NotoSansKR-Medium.otf') format('otf');
-         font-weight:400;
-  }
-@font-face {
-    font-family: 'Noto Sans';
-    src: url('../webfonts/NotoSansKR-Bold.woff') format('woff'), /* 대부분 브라우저. 압축률이 좋음*/
-         url('Nanum Gothic.ttf')  format('truetype'), /* Android, iOS, 압축 x */
-         url('Nanum Gothic.eot'), /* IE9 호완성 모드, 압축 x */
-         url('../webfonts/NotoSansKR-Bold.otf') format('otf');
-         font-weight:600;
-  }
+/*@font-face {*/
+    /*font-family: 'Noto Sans';*/
+    /*src: url('../webfonts/NotoSansKR-Medium.woff') format('woff'),*/ /* 대부분 브라우저. 압축률이 좋음*/
+      /*   url('Nanum Gothic.ttf')  format('truetype'),*/ /* Android, iOS, 압축 x */
+      /*   url('Nanum Gothic.eot'),*/ /* IE9 호완성 모드, 압축 x */
+      /*   url('../webfonts/NotoSansKR-Medium.otf') format('otf');*/
+      /*   font-weight:400;*/
+ /* }*/
+/*@font-face {*/
+    /*font-family: 'Noto Sans';*/
+    /*src: url('../webfonts/NotoSansKR-Bold.woff') format('woff'), *//* 대부분 브라우저. 압축률이 좋음*/
+    /*     url('Nanum Gothic.ttf')  format('truetype'), *//* Android, iOS, 압축 x */
+    /*     url('Nanum Gothic.eot'),*/ /* IE9 호완성 모드, 압축 x */
+    /*    url('../webfonts/NotoSansKR-Bold.otf') format('otf');*/
+    /*     font-weight:600;*/
+  /*}*/
   
   
 
