@@ -1277,19 +1277,23 @@ export default {
                hudleYn ='N';
             }
             
-            if(vm.masterData.isu_srt_cd !=='' && vm.masterData.isin_code ==''){
-                vm.$refs.isin_code.focus();
-                 vm.errors.isin_code='단축코드 입력 시 종목코드가 입력되어야 합니다.';
-               hudleYn ='N';
+            if(vm.masterData.isu_srt_cd !=='' && vm.masterData.isu_srt_cd !==null){
+                if(vm.masterData.isin_code =='' || vm.masterData.isin_code ==null){
+                    vm.$refs.isin_code.focus();
+                    vm.errors.isin_code='단축코드 입력 시 종목코드가 입력되어야 합니다.';
+                    hudleYn ='N';
+                }
             }
 
-            if(vm.masterData.isu_srt_cd =='' && vm.masterData.isin_code !==''){
-                 vm.$refs.isu_srt_cd.focus();
-                 vm.errors.isu_srt_cd='종목코드 입력 시 단축코드가 입력되어야 합니다.';
-               hudleYn ='N';
+            if(vm.masterData.isin_code !==''&& vm.masterData.isin_code !==null){
+                if(vm.masterData.isu_srt_cd =='' || vm.masterData.isu_srt_cd ==null){
+                    vm.$refs.isu_srt_cd.focus();
+                    vm.errors.isu_srt_cd='종목코드 입력 시 단축코드가 입력되어야 합니다.';
+                    hudleYn ='N';
+                }
             }
 
-             if(vm.masterData.isin_code !==''){
+             if(vm.masterData.isin_code !=='' && vm.masterData.isin_code !==null){
                 if(vm.masterData.list_req_date =='' || vm.masterData.list_req_date ==null){
                     vm.$refs.list_req_date.focus();
                      vm.errors.list_req_date='종목코드 입력 시 상장신청일이 입력되어야 합니다.';
@@ -1302,7 +1306,7 @@ export default {
                    hudleYn ='N';
                 }
 
-                if(vm.masterData.inav_calc_cd ==''){
+                if(vm.masterData.inav_calc_cd =='' || vm.masterData.inav_calc_cd ==null){
                     vm.$refs.inav_calc_cd.focus();
                     vm.errors.inav_calc_cd='종목코드 입력 시 iNAV/iV 관련정보가 입력되어야 합니다.';
                    hudleYn ='N';
@@ -1437,19 +1441,19 @@ export default {
             if(vm.masterData.inav_calc_yn =='Y'){
                 if(vm.masterData.isin_code ==='' || vm.masterData.isin_code ==null){
                      vm.$refs.isin_code.focus();
-                     vm.errors.isin_code='iNAV산출여부가 Y일 때 첫번째 페이지의 종목코드, 상장신청일, 상장일이 입력되어야 합니다.';
+                     vm.errors.isin_code='iNAV산출여부가 Y일 때 종목코드, 상장신청일, 상장일이 입력되어야 합니다.';
                    hudleYn ='N';
                 }
                 
                 if(vm.masterData.list_req_date =='' || vm.masterData.list_req_date ==null){
                     vm.$refs.list_req_date.focus();
-                    vm.errors.list_req_date='iNAV산출여부가 Y일 때 첫번째 페이지의 종목코드, 상장신청일, 상장일이 입력되어야 합니다.';
+                    vm.errors.list_req_date='iNAV산출여부가 Y일 때 종목코드, 상장신청일, 상장일이 입력되어야 합니다.';
                    hudleYn ='N';
                 }
 
                 if(vm.masterData.list_date =='' || vm.masterData.list_date ==null){ 
                      vm.$refs.list_date.focus();
-                     vm.errors.list_date='iNAV산출여부가 Y일 때 첫번째 페이지의 종목코드, 상장신청일, 상장일이 입력되어야 합니다.';
+                     vm.errors.list_date='iNAV산출여부가 Y일 때 종목코드, 상장신청일, 상장일이 입력되어야 합니다.';
                    hudleYn ='N';
                 }
 
