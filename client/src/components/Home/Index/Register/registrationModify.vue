@@ -1145,8 +1145,7 @@ export default {
                         }
 
                         if( resultData.result ) {
-                            vm.$emit( "fn_refresh" );
-                            vm.$router.push( "/index/register" );
+                            vm.$emit( "fn_refresh", { 'jisu_id' : resultData.jisu_id, 'jisu_seq' : resultData.jisu_seq  } );
                         }
                     }
                 }).catch(error => {
@@ -1154,6 +1153,7 @@ export default {
                     vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
                 });
         },
+
 
         async   fn_deleteJisu() {
             var vm = this;
@@ -1199,7 +1199,7 @@ export default {
                     }
 
                     if( resultData.result ) {
-                        vm.$router.push( "/index/manage" );
+                        vm.$emit( "fn_refresh" );
                     }
                 }
             });

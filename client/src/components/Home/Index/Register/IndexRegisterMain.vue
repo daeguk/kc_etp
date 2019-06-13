@@ -122,13 +122,20 @@ export default {
             vm.$EventBus.$emit( "indexRegisterMain_registration_call", "clear" );            
         },
 
-        fn_refresh() {
+        fn_refresh( paramData ) {
             var vm = this;
 
+            vm.editYn   = false;
             vm.refreshYn = false;
 
-            vm.$nextTick().then(() => {
+            vm.$nextTick().then( () => {
                 vm.refreshYn = true;
+
+                if( paramData ) {
+                    vm.editData.jisu_id = paramData.jisu_id;
+                    vm.editData.jisu_seq = paramData.jisu_seq;
+                    vm.editYn   = true;
+                }
             });
         },
 

@@ -5,31 +5,22 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:100,200,300,400,500,700);
 
 
-@font-face {
+/*@font-face {
     font-family: 'Noto Sans';
-    src: url('../webfonts/NotoSansKR-Medium.woff') format('woff'), /* 대부분 브라우저. 압축률이 좋음*/
-         url('Nanum Gothic.ttf')  format('truetype'), /* Android, iOS, 압축 x */
-         url('Nanum Gothic.eot'), /* IE9 호완성 모드, 압축 x */
-         url('../webfonts/NotoSansKR-Medium.otf') format('otf');
+    src: url('../webfonts/NotoSansKR-Medium.woff') format('woff'), 
+         url('../webfonts/NotoSansKR-Medium.ttf')  format('truetype'), 
+         url('../webfonts/NotoSansKR-Medium.eot'), 
          font-weight:400;
   }
 @font-face {
     font-family: 'Noto Sans';
-    src: url('../webfonts/NotoSansKR-Bold.woff') format('woff'), /* 대부분 브라우저. 압축률이 좋음*/
-         url('Nanum Gothic.ttf')  format('truetype'), /* Android, iOS, 압축 x */
-         url('Nanum Gothic.eot'), /* IE9 호완성 모드, 압축 x */
-         url('../webfonts/NotoSansKR-Bold.otf') format('otf');
+    src: url('../webfonts/NotoSansKR-Bold.woff') format('woff'), 
+         url('../webfonts/NotoSansKR-Medium.ttf')  format('truetype'), 
+         url('../webfonts/NotoSansKR-Medium.eot'), 
          font-weight:600;
-  }
-  
-  
+  }*/
+   
 
-/*@import url('https://fonts.googleapis.com/css?family=Nanum+Gothic:400,700,800&subset=korean');*/
-
-/*@media only screen and  (min-width:1200px){
-    body{ overflow-x: hidden !important;}
-}*/
-/*.html{ width:1400px; margin:0 auto !important;overflow-x: hidden !important;}*/
 html{ min-width: 1400px; overflow-x:scroll !important;}
 body{background: #f5f5f5; }
 .v-content__wrap .v-tabs__wrapper{width:1400px; margin:0 auto;}
@@ -166,6 +157,10 @@ button:focus { outline: none; }
 .context-menu-item {display: flex; cursor: pointer; padding: 6px 15px; align-items: center; border-bottom: 1px solid #ebebeb;}
 .context-menu-item:hover { background-color: #1c1c1c;}
 
+.support{width:500px; height:400px;}
+.support .v-card__title{padding-bottom:0;}
+.support .v-text-field__details .v-messages{display: none;}
+.support_btn .v-btn__content{font-size:14px;}
 
 
 .theme--light.v-footer{background:#e8e8e8 !important; color:#717182 !important; font-size:12px !important}
@@ -190,7 +185,7 @@ button:focus { outline: none; }
 .btn_pad2{margin-left:170px; margin-top:15px;}
 
 .v-icon{font-size:22px !important;}
-.icon_dis{color:#bcbcbc}
+.icon_dis{color:#cfcfcf}
 .btn_icon{width:35px; height:35px;border-radius: 20px; color:#9797ac}
 .btn_icon:hover{align-items: center;
     border-radius: 20px;

@@ -13,7 +13,7 @@
     <span class="top_cont_title">{{menuTitle}}</span>
   <v-spacer></v-spacer>
   <!--고객지원---->
-  <v-menu v-model="menu" bottom offset-y :close-on-content-click="false" >
+  <v-menu bottom offset-y :close-on-content-click="false" >
         <template v-slot:activator="{ on }">
             <v-btn flat v-on="on" class="support_btn"><v-icon>send</v-icon> 고객지원</v-btn>
         </template>
@@ -60,6 +60,19 @@ export default {
   beforeDestroy() {
   },    
   mounted: function() {
+        /* 지수 사업자 */
+        if (this.$store.state.user.type_cd == '0003') {
+            this.menuTitle = "지수관리";
+        /* ETP 발행사 */
+        } else if (this.$store.state.user.type_cd == '0001' 
+            || this.$store.state.user.type_cd == '0002' 
+            || this.$store.state.user.type_cd == '0004'  
+            || this.$store.state.user.type_cd == '9998'  
+            || this.$store.state.user.type_cd == '9999') {
+            this.menuTitle = "ETP운영관리";
+        } else {
+            this.menuTitle = "MARKET ETP INFO";
+        }
   },
   methods: {
 //    contextMenuClick: function() {
