@@ -6,7 +6,7 @@
                     <v-card-title primary-title>
                         <div>
                             <h3 class="headline mb-0">
-                                EPT 신청 |
+                                ETP 신청 |
                                 <span
                                     class="grey--text"
                                 >ETP 신규 신청서 작성 및 상세 내용을 확인, 수정 할 수 있습니다.</span>
@@ -27,7 +27,9 @@
                                         <!--코스콤> 수정> 저장된발행사 코드로 selected -->
                                         <!--코스콤> 등록> 발행사 선택 가능-->
                                         <!--일반>   등록> 발행사 파라미터로 받은걸로 selected-->
-                                        <v-select  v-if="masterData.paramInstTypeCd ==='0002'"  v-bind:disabled = compInputDisabled
+                                        <v-select  
+                                        v-if="masterData.paramInstTypeCd ===koscomSuperUser || masterData.paramInstTypeCd ===koscomUser"  
+                                        v-bind:disabled = compInputDisabled
                                             :items="compList"
                                             :selected ="masterData.inst_cd" 
                                             v-model ="masterData.inst_cd"
@@ -36,9 +38,11 @@
                                             placeholder="선택하세요"
                                             outline
                                             ref="inst_cd"
+                                            :rules ="[errors.inst_cd]"
                                         ></v-select>
-                                        {{errors.inst_cd}}
-                                        <v-select  v-if="masterData.paramInstTypeCd !=='0002'"  v-bind:disabled = compInputDisabled
+                                        <v-select
+                                        v-else
+                                        v-bind:disabled = compInputDisabled
                                             :items="compList"
                                             :selected ="masterData.paramInstCd"
                                             v-model ="masterData.paramInstCd"
@@ -70,8 +74,9 @@
                                             v-model="masterData.isu_kor_nm"
                                             outline
                                             maxlength="50"
-                                            ref="isu_kor_nm"></v-text-field>
-                                        {{errors.isu_kor_nm}}
+                                            ref="isu_kor_nm"
+                                            :rules ="[errors.isu_kor_nm]"
+                                            ></v-text-field>
                                         </v-flex>
                                         <v-flex xs2>
                                             <v-subheader class="subheader_r essen">종목영문명</v-subheader>
@@ -82,8 +87,9 @@
                                             v-model="masterData.isu_eng_nm"
                                             outline
                                             maxlength="50"
-                                            ref="isu_eng_nm"></v-text-field>
-                                            {{errors.isu_eng_nm}}
+                                            ref="isu_eng_nm"
+                                            :rules ="[errors.isu_eng_nm]"
+                                            ></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                 </v-container>
@@ -98,8 +104,9 @@
                                             label="종목코드(12자리)" 
                                             v-model="masterData.isin_code"
                                             outline
-                                            maxlength="12"></v-text-field>
-                                             {{errors.isin_code}}
+                                            maxlength="12"
+                                            :rules ="[errors.isin_code]"
+                                            ></v-text-field>
                                         </v-flex>
                                         <v-flex xs2>
                                             <v-subheader class="subheader_r">단축코드(6자리)</v-subheader>
@@ -112,8 +119,9 @@
                                             v-model="masterData.isu_srt_cd"
                                             outline
                                             oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
-                                            maxlength="6"></v-text-field>
-                                             {{errors.isu_srt_cd}}
+                                            maxlength="6"
+                                            :rules ="[errors.isu_srt_cd]"
+                                            ></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                 </v-container>
@@ -127,8 +135,7 @@
                                                :items="items2"
                                                :selected="masterData.kor_for_type"
                                                v-model="masterData.kor_for_type"
-                                                 item-value="value"
-                                                item-text="text"
+                                               
                                                 placeholder="선택하세요"                               
                                                 outline>
                                         </v-select>
@@ -195,9 +202,8 @@
                                                                 width="100%"
                                                                 ref="list_req_date"
                                                                 maxlength="10"
-                                                              
+                                                               :rules ="[errors.list_req_date]"
                                                             ></v-text-field>
-                                                             {{errors.list_req_date}}
                                                         </template>
                                                         <v-date-picker
                                                             no-title
@@ -255,8 +261,8 @@
                                                                 width="100%"
                                                                 ref="list_date"
                                                                 maxlength="10"
+                                                                :rules ="[errors.list_date]"
                                                             ></v-text-field>
-                                                             {{errors.list_date}}
                                                         </template>
                                                         <v-date-picker
                                                             no-title
@@ -291,7 +297,7 @@
                         <!---step3--->
                             
                             <v-card class="register_wrap" color="lighten-1"  flat xs12 >
-                                <div v-if="masterData.kor_for_type==='F'">
+                                <div v-show="masterData.kor_for_type==='F'">
                                 <h4>
                                     3.기초지수분배처
                                     <span>(*중요 : 기초지수는 ETP상장준비과정 전에 지수제공처와 모든 협의가 완료되어야 합니다.)</span>
@@ -302,11 +308,14 @@
                                             <v-subheader class="subheader_r essen">지수심볼</v-subheader>
                                         </v-flex>
                                         <v-flex xs3>
-                                            <v-text-field v-bind:disabled = inputDisabled 
-                                            label="지수심볼" value outline v-model="masterData.idx_sym_code" ref="idx_sym_code"
+                                             <v-text-field   v-bind:disabled = inputDisabled
+                                            label="지수심볼" 
+                                            v-model="masterData.idx_sym_code" 
+                                            outline 
                                             maxlength="16"
+                                            ref="idx_sym_code"
+                                            :rules ="[errors.idx_sym_code]"
                                             ></v-text-field>
-                                            {{errors.idx_sym_code}}
                                         </v-flex>
                                         <v-flex xs2>
                                             <v-subheader class="subheader_r">지수명칭</v-subheader>
@@ -333,8 +342,8 @@
                                                 placeholder="선택하세요"
                                                 outline
                                                 ref="idx_dist_inst_cd"
+                                                :rules ="[errors.idx_dist_inst_cd]"
                                             ></v-select>
-                                            {{errors.idx_dist_inst_cd}}
                                         </v-flex>
                                         <v-flex xs2>
                                             <v-subheader class="subheader_r">기초지수분배처</v-subheader>
@@ -396,8 +405,9 @@
                                                 placeholder="선택하세요"
                                                 outline
                                                 ref ="idx_holy_cd"
+                                                :rules ="[errors.idx_holy_cd]"
                                             ></v-select>
-                                            {{errors.idx_holy_cd}}
+                                            
                                         </v-flex>
                                         <v-flex xs2>
                                             <v-subheader class="subheader_r essen">지수추적배수</v-subheader>
@@ -412,8 +422,8 @@
                                                 placeholder="선택하세요"
                                                 outline
                                                 ref="idx_trace_yd_mult_type"
+                                                :rules ="[errors.idx_trace_yd_mult_type]"
                                             ></v-select>
-                                            {{errors.idx_trace_yd_mult_type}}
                                         </v-flex>
                                     </v-layout>
                                 </v-container>
@@ -432,8 +442,8 @@
                                                 placeholder="선택하세요"
                                                 outline
                                                 ref ="idx_close_type"
+                                                :rules ="[errors.idx_close_type]"
                                             ></v-select>
-                                             {{errors.idx_close_type}}
                                         </v-flex>
                                         <v-flex xs2>
                                             <v-subheader class="subheader_r essen">전일기초지수구분</v-subheader>
@@ -448,8 +458,8 @@
                                                 placeholder="선택하세요"
                                                 outline
                                                 ref="pre_idx_type"
+                                                 :rules ="[errors.pre_idx_type]"
                                             ></v-select>
-                                             {{errors.pre_idx_type}}
                                         </v-flex>
                                     </v-layout>
                                 </v-container>
@@ -461,8 +471,9 @@
                                         <v-flex xs8>
                                             <v-text-field v-bind:disabled = inputDisabled 
                                             label="지수파일명" value outline v-model="masterData.idx_file_nm"
-                                            maxlength="30" ref="idx_file_nm"></v-text-field>
-                                             {{errors.idx_file_nm}}
+                                            maxlength="30" ref="idx_file_nm"
+                                            :rules ="[errors.idx_file_nm]"
+                                            ></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                 </v-container>
@@ -474,8 +485,9 @@
                                         <v-flex xs8>
                                             <v-text-field v-bind:disabled = inputDisabled
                                              label="기초지수경로" value outline v-model="masterData.idx_file_path"
-                                             maxlength="500" ref="idx_file_path"></v-text-field>
-                                             {{errors.idx_file_path}}
+                                             maxlength="500" ref="idx_file_path"
+                                             :rules ="[errors.idx_file_path]"
+                                             ></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                 </v-container>
@@ -495,8 +507,8 @@
                                                 outline
                                                 @change='updateIdxDistCheckBox()'
                                                 ref="idxCompDistYn"
+                                                :rules ="[errors.idxCompDistYn]"
                                             ></v-select>
-                                           {{errors.idxCompDistYn}}
                                         </v-flex>
                                         <v-flex xs2>
                                             <v-subheader class="subheader_r">지수구성종목분배처</v-subheader>
@@ -563,7 +575,7 @@
                                     </v-layout>
                                 </v-container>
                             </div>
-                            <div v-if="masterData.kor_for_type==='K'">
+                            <div v-show="masterData.kor_for_type==='K'">
                                 <h4>
                                     3.국내지수정보
                                 </h4>
@@ -574,16 +586,18 @@
                                         </v-flex>
                                         <v-flex xs3>
                                             <v-text-field v-bind:disabled = inputDisabled
-                                            label="지수심볼" value outline  v-model="masterData.kor_idx_sym_code" ref="kor_idx_sym_code"></v-text-field>
-                                               {{errors.kor_idx_sym_code}}
+                                            label="지수심볼"  outline  v-model="masterData.kor_idx_sym_code" ref="kor_idx_sym_code"
+                                            :rules ="[errors.kor_idx_sym_code]"
+                                            ></v-text-field>
                                         </v-flex>
                                         <v-flex xs2>
                                             <v-subheader class="subheader_r">지수명칭</v-subheader>
                                         </v-flex>
                                         <v-flex xs3>
                                             <v-text-field v-bind:disabled = inputDisabled
-                                            label="지수명칭" value outline v-model="masterData.kor_idx_nm"></v-text-field>
-                                             {{errors.kor_idx_nm}}
+                                            label="지수명칭"  outline v-model="masterData.kor_idx_nm"
+                                            :rules ="[errors.kor_idx_nm]"
+                                            ></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                 </v-container>
@@ -602,8 +616,8 @@
                                                 placeholder="선택하세요"
                                                 outline
                                                 ref="idx_inst_cd"
+                                                :rules ="[errors.idx_inst_cd]"
                                             ></v-select>
-                                            {{errors.idx_inst_cd}}
                                         </v-flex>
                                        <v-flex xs2>
                                             <v-subheader class="subheader_r essen">지수타입</v-subheader>
@@ -618,8 +632,8 @@
                                                 placeholder="선택하세요"
                                                 outline
                                                 ref="idx_comp_cd"
+                                                :rules ="[errors.idx_comp_cd]"
                                             ></v-select>
-                                             {{errors.idx_comp_cd}}
                                         </v-flex>
                                     </v-layout>
                                 </v-container>
@@ -631,8 +645,9 @@
                                         <v-flex xs8>
                                             <v-textarea v-bind:disabled = inputDisabled
                                             label="요청사항" outline color="blue"  
-                                            v-model="masterData.kor_user_req" maxlength="500" ref="kor_user_req"></v-textarea>
-                                             {{errors.kor_user_req}}
+                                            v-model="masterData.kor_user_req" maxlength="500" ref="kor_user_req"
+                                            :rules ="[errors.kor_user_req]"
+                                            ></v-textarea>
                                         </v-flex>
                                     </v-layout>
                                 </v-container>
@@ -646,7 +661,7 @@
                             </div-->
 
                         <!---step4--->
-                            <v-card class="register_wrap" color="lighten-1"  flat xs12  v-if="masterData.kor_for_type==='F'">
+                            <v-card class="register_wrap" color="lighten-1"  flat xs12  v-show="masterData.kor_for_type==='F'">
                                 <h4>4.실시간 지수 분배처</h4>
                                 <v-container fluid>
                                     <v-layout row>
@@ -681,8 +696,8 @@
                                                 placeholder="선택하세요"
                                                 outline
                                                 ref="ridx_dist_inst_cd"
+                                                :rules ="[errors.ridx_dist_inst_cd]"
                                             ></v-select>
-                                            {{errors.ridx_dist_inst_cd}}
                                         </v-flex>
                                         <v-flex xs2>
                                             <v-subheader class="subheader_r">지수입수기관심볼</v-subheader>
@@ -708,8 +723,8 @@
                                                 placeholder="선택하세요"
                                                 outline
                                                 ref ="ridx_holy_cd"
+                                                :rules ="[errors.ridx_holy_cd]"
                                             ></v-select>
-                                            {{errors.ridx_holy_cd}}
                                         </v-flex>
                                         <v-flex xs2>
                                             <v-subheader class="subheader_r">실시간지수분배처</v-subheader>
@@ -764,7 +779,7 @@
                             </div-->
 
                         <!---step5--->
-                            <v-card class="register_wrap" color="lighten-1" flat xs12  v-if="masterData.kor_for_type==='F'">
+                            <v-card class="register_wrap" color="lighten-1" flat xs12  v-show="masterData.kor_for_type==='F'">
                                 <h4>5.참고지수정보 (상품구분이 ETF일때만 입력가능 합니다.)</h4>
                                 <v-container fluid>
                                     <v-layout row>
@@ -855,14 +870,14 @@
                                                 v-model="masterData.inav_calc_cd"
                                                 placeholder="선택하세요"
                                                 outline
+                                                :rules ="[errors.inav_calc_cd]"
                                             ></v-select>
-                                            {{errors.inav_calc_cd}}
                                         </v-flex>
                                     </v-layout>
                                 </v-container>
-                                 <div class="text-xs-center pt-3 mt-3" v-if="masterData.paramInstTypeCd !== '0002'">
-                                <v-btn color="primary" depressed dark   v-if="masterData.seq  === ''&& !inputDisabled" @click="fn_insertEtpRegister('S')">저장</v-btn>
-                                <v-btn color="primary" depressed dark   v-if="masterData.seq  !== ''&& !inputDisabled" @click="fn_insertEtpRegister('U')">수정</v-btn>
+                                 <div class="text-xs-center pt-3 mt-3" v-if="masterData.paramInstTypeCd !==koscomSuperUser && masterData.paramInstTypeCd !==koscomUser ">
+                                <v-btn color="primary" depressed dark   v-if="masterData.seq  === ''&& !inputDisabled" @click.prevent="fn_insertEtpRegister('S')">저장</v-btn>
+                                <v-btn color="primary" depressed dark   v-if="masterData.seq  !== ''&& !inputDisabled" @click.prevent="fn_insertEtpRegister('U')">수정</v-btn>
                                 </div>
                                   <ConfirmDialog ref="confirm" ></ConfirmDialog>
                             </v-card>
@@ -879,7 +894,7 @@
                             </div-->
 
                         <!---step7--->
-                            <v-card class="register_wrap" color="lighten-1"  flat xs12  v-if="masterData.paramInstTypeCd === '0002'" >
+                            <v-card class="register_wrap" color="lighten-1"  flat xs12  v-show="masterData.paramInstTypeCd === koscomSuperUser || masterData.paramInstTypeCd === koscomUser " >
                                 <h4>7.코스콤</h4>
                                 <v-container fluid>
                                     <v-layout row>
@@ -927,8 +942,8 @@
                                                 v-model="masterData.inav_calc_yn"
                                                 placeholder="선택하세요"
                                                 outline
+                                                :rules ="[errors.inav_calc_yn]"
                                             ></v-select>
-                                            {{errors.inav_calc_yn}}
                                         </v-flex>
                                         <v-flex xs2>
                                             <v-subheader class="subheader_r">기초지수MID</v-subheader>
@@ -1010,7 +1025,6 @@
 <script>
 import Config from "@/js/config.js";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
-//import moment from "moment";
 export default {
     data() {
         return {
@@ -1023,6 +1037,10 @@ export default {
             menu2: false,
             modal: false,
             e1: 0,
+            etpUser           : "0001",
+            etnUser           : "0002",
+            koscomUser        : "9998",
+            koscomSuperUser   : "9999",
             compList :[],       //발행사
             code004List :[],    //지수입수기관
             code0041List :[],   //실시간 지수입수기관(숫자)
@@ -1045,7 +1063,10 @@ export default {
             inputDisabled: false,
             compInputDisabled: false,
             idxCompDistYn : "N",
-            errors: {},
+            errors : {seq_hist:true, seq:true, isu_kor_nm:true,isu_eng_nm:true,isin_code:true,isu_srt_cd:true,etp_type:true,inst_cd:true,req_date:true,list_req_date:true,list_date:true,krx_dist_yn:true,comp_dist_yn:true,ksd_dist_yn:true,mirae_dist_yn:true,idx_inst_cd:true,idx_sym_code:true,idx_nm:true,idx_dist_inst_cd:true,idx_close_type:true,idx_holy_cd:true,idx_trace_yd_mult_type:true,pre_idx_type:true,idx_file_nm:true,idx_comp_ksd_dist_yn:true,idx_comp_mirae_dist_yn:true,blom_ticker:true,user_req:true,real_yn:"N",ridx_inst_cd:true,ridx_dist_inst_cd:true,ridx_crt_sym_code:true,ridx_dist_sym_code:true,ridx_holy_cd:true,ridx_krx_dist_yn:true,ridx_comp_dist_yn:true,ridx_ksd_dist_yn:true,ridx_mirae_dist_yn:true,ridx_dist_term:true,refidx_sym_code:true,refidx_nm:true,refidx_inst_cd:true,refidx_file_nm:true,refidx_req:true,refidx_blom_ticker:true,ex_rate_cd:true,ex_hedge_yn:true,isin_stat_cd:true,inav_calc_cd:true,idx_rec_yn:true,idx_dis_yn:true,inav_calc_yn:true,idx_mid:true,ridx_mid:true,close_file:true,real_idx_tr:true,proc_stat:true,insert_id:true,insert_time:true,update_id:true,update_time:true,kor_for_type:"F",agent_cd:true,idx_comp_cd:true,krx_up_code:true,agent_up_code:true
+                                   ,idx_file_path:true
+                                   ,listDate:true, listReqDate:true
+                                   ,kor_idx_sym_code:true, kor_idx_nm:true, kor_user_req:true},
             seq : 0,
         };
     },
@@ -1053,10 +1074,13 @@ export default {
         ConfirmDialog : ConfirmDialog,
     },
     mounted: function() {
+      
+             
         this.getEtpRegisterView();
         this.$root.$confirm = this.$refs.confirm;        // 메시지 박스 참조
     },
     created: function() {
+          
     },
     computed: {
     }, 
@@ -1074,8 +1098,12 @@ export default {
         }
         ,getEtpRegisterView :  function(){
             var vm = this;
-             vm.errors = {};
-            console.log('##getEtpRegisterView 호출##', vm.seq);
+            vm.errors = {seq_hist:true, seq:true, isu_kor_nm:true,isu_eng_nm:true,isin_code:true,isu_srt_cd:true,etp_type:true,inst_cd:true,req_date:true,list_req_date:true,list_date:true,krx_dist_yn:true,comp_dist_yn:true,ksd_dist_yn:true,mirae_dist_yn:true,idx_inst_cd:true,idx_sym_code:true,idx_nm:true,idx_dist_inst_cd:true,idx_close_type:true,idx_holy_cd:true,idx_trace_yd_mult_type:true,pre_idx_type:true,idx_file_nm:true,idx_comp_ksd_dist_yn:true,idx_comp_mirae_dist_yn:true,blom_ticker:true,user_req:true,real_yn:"N",ridx_inst_cd:true,ridx_dist_inst_cd:true,ridx_crt_sym_code:true,ridx_dist_sym_code:true,ridx_holy_cd:true,ridx_krx_dist_yn:true,ridx_comp_dist_yn:true,ridx_ksd_dist_yn:true,ridx_mirae_dist_yn:true,ridx_dist_term:true,refidx_sym_code:true,refidx_nm:true,refidx_inst_cd:true,refidx_file_nm:true,refidx_req:true,refidx_blom_ticker:true,ex_rate_cd:true,ex_hedge_yn:true,isin_stat_cd:true,inav_calc_cd:true,idx_rec_yn:true,idx_dis_yn:true,inav_calc_yn:true,idx_mid:true,ridx_mid:true,close_file:true,real_idx_tr:true,proc_stat:true,insert_id:true,insert_time:true,update_id:true,update_time:true,kor_for_type:"F",agent_cd:true,idx_comp_cd:true,krx_up_code:true,agent_up_code:true
+                                   ,idx_file_path:true
+                                   ,listDate:true, listReqDate:true
+                                   ,kor_idx_sym_code:true, kor_idx_nm:true, kor_user_req:true}; 
+            console.log('##getEtpRegisterView 호출 error##', vm.errors);
+            console.log('##getEtpRegisterView 호출 seq##', vm.seq);
              axios
             .get(Config.base_url + "/user/etp/getEtpRegisterView", {
                     params: {seq: vm.seq}
@@ -1095,13 +1123,14 @@ export default {
                             }
                     }
                 }else{
-                    //초기화
+                  //초기화
                     vm.masterData ={
                          seq_hist:"", seq:"", isu_kor_nm:"",isu_eng_nm:"",isin_code:"",isu_srt_cd:"",etp_type:"",inst_cd:"",req_date:"",list_req_date:"",list_date:"",krx_dist_yn:"",comp_dist_yn:"",ksd_dist_yn:"",mirae_dist_yn:"",idx_inst_cd:"",idx_sym_code:"",idx_nm:"",idx_dist_inst_cd:"",idx_close_type:"",idx_holy_cd:"",idx_trace_yd_mult_type:"",pre_idx_type:"",idx_file_nm:"",idx_comp_ksd_dist_yn:"",idx_comp_mirae_dist_yn:"",blom_ticker:"",user_req:"",real_yn:"N",ridx_inst_cd:"",ridx_dist_inst_cd:"",ridx_crt_sym_code:"",ridx_dist_sym_code:"",ridx_holy_cd:"",ridx_krx_dist_yn:"",ridx_comp_dist_yn:"",ridx_ksd_dist_yn:"",ridx_mirae_dist_yn:"",ridx_dist_term:"",refidx_sym_code:"",refidx_nm:"",refidx_inst_cd:"",refidx_file_nm:"",refidx_req:"",refidx_blom_ticker:"",ex_rate_cd:"",ex_hedge_yn:"",isin_stat_cd:"",inav_calc_cd:"",idx_rec_yn:"",idx_dis_yn:"",inav_calc_yn:"",idx_mid:"",ridx_mid:"",close_file:"",real_idx_tr:"",proc_stat:"",insert_id:"",insert_time:"",update_id:"",update_time:"",kor_for_type:"F",agent_cd:"",idx_comp_cd:"",krx_up_code:"",agent_up_code:""
                         ,idx_file_path:""
                         ,listDate:"", listReqDate:""
                         ,kor_idx_sym_code:"", kor_idx_nm:"", kor_user_req:""
                         };
+                        
                    //상장신청일, 상장일 디폴트 공백.     
                    // vm.masterData.list_req_date = new Date().toISOString().substr(0, 10);
                    // vm.masterData.list_date = new Date().toISOString().substr(0, 10); 
@@ -1174,7 +1203,9 @@ export default {
                         if(vm.masterData.idx_comp_mirae_dist_yn=='Y' || vm.masterData.idx_comp_ksd_dist_yn=='Y'){
                             vm.idxCompDistYn = 'Y';
                         }
-                        if( (paramData.inst_cd !== vm.masterData.inst_cd) && paramData.inst_type_cd !== '0002'){
+
+                        if( (paramData.inst_cd !== vm.masterData.inst_cd) 
+                            && (paramData.inst_type_cd !==vm.koscomUser && paramData.inst_type_cd !==vm.koscomSuperUser) ){
                             vm.inputDisabled = true;
                         }
 
@@ -1196,7 +1227,7 @@ export default {
                     //코스콤> 등록페이지에서는 발행사 선택 가능
                     //일반> 발행사 선택 불가
                 
-                    if(paramData.inst_type_cd =='0002'){
+                    if(paramData.inst_type_cd == vm.koscomUser || paramData.inst_type_cd == vm.koscomSuperUser){
                         console.log("masterData.seq",vm.masterData.seq);
                         if(vm.masterData.seq !== undefined && vm.masterData.seq !==''){ //수정 
                             vm.compInputDisabled = true;
@@ -1212,64 +1243,70 @@ export default {
                     vm.masterData.paramInstCd=paramData.inst_cd;
                     vm.masterData.paramInstTypeCd=paramData.inst_type_cd;
                   
-                    console.log("masterData RESET", vm.masterData);
+                    console.log("masterData PARAM PLUS FINAL RESET", vm.masterData);
                 }
             });
         },
+
          fn_insertEtpRegister: async function(arg) {
-            console.log("###fn_insertEtpRegister:::",arg);
+          console.log(this.$root.$confirm);
             var vm = this;
-            vm.errors = {};
             
+               vm.errors = {seq_hist:true, seq:true, isu_kor_nm:true,isu_eng_nm:true,isin_code:true,isu_srt_cd:true,etp_type:true,inst_cd:true,req_date:true,list_req_date:true,list_date:true,krx_dist_yn:true,comp_dist_yn:true,ksd_dist_yn:true,mirae_dist_yn:true,idx_inst_cd:true,idx_sym_code:true,idx_nm:true,idx_dist_inst_cd:true,idx_close_type:true,idx_holy_cd:true,idx_trace_yd_mult_type:true,pre_idx_type:true,idx_file_nm:true,idx_comp_ksd_dist_yn:true,idx_comp_mirae_dist_yn:true,blom_ticker:true,user_req:true,real_yn:"N",ridx_inst_cd:true,ridx_dist_inst_cd:true,ridx_crt_sym_code:true,ridx_dist_sym_code:true,ridx_holy_cd:true,ridx_krx_dist_yn:true,ridx_comp_dist_yn:true,ridx_ksd_dist_yn:true,ridx_mirae_dist_yn:true,ridx_dist_term:true,refidx_sym_code:true,refidx_nm:true,refidx_inst_cd:true,refidx_file_nm:true,refidx_req:true,refidx_blom_ticker:true,ex_rate_cd:true,ex_hedge_yn:true,isin_stat_cd:true,inav_calc_cd:true,idx_rec_yn:true,idx_dis_yn:true,inav_calc_yn:true,idx_mid:true,ridx_mid:true,close_file:true,real_idx_tr:true,proc_stat:true,insert_id:true,insert_time:true,update_id:true,update_time:true,kor_for_type:"F",agent_cd:true,idx_comp_cd:true,krx_up_code:true,agent_up_code:true
+                                   ,idx_file_path:true
+                                   ,listDate:true, listReqDate:true
+                                   ,kor_idx_sym_code:true, kor_idx_nm:true, kor_user_req:true};
+            var hudleYn = "Y";
+              console.log("###fn_insertEtpRegister:::", vm.masterData);
             //코스콤은 발행사 수정 가능
-            if(vm.masterData.paramInstTypeCd ==='0002'){
+            if(vm.masterData.paramInstTypeCd === vm.koscomUser || vm.masterData.paramInstTypeCd == vm.koscomSuperUser){
                 if(vm.masterData.inst_cd ==null || vm.masterData.inst_cd ==''){
                     vm.errors.inst_cd = "발행사를 선택해주세요."
                     vm.$refs.inst_cd.focus();
-                    return;
+                    hudleYn ='N';
                 }
             }
 
             if(vm.masterData.isu_kor_nm == null || vm.masterData.isu_kor_nm ==''){
                 vm.errors.isu_kor_nm = "종목한글명을 입력해주세요."
                 vm.$refs.isu_kor_nm.focus();
-                return;
+                hudleYn ='N';
             }
             if(vm.masterData.isu_eng_nm == null || vm.masterData.isu_eng_nm ==''){
                 vm.errors.isu_eng_nm = "종목영문명을 입력해주세요."
-                 vm.$refs.isu_eng_nm.focus();
-                return;
+                vm.$refs.isu_eng_nm.focus();
+               hudleYn ='N';
             }
             
             if(vm.masterData.isu_srt_cd !=='' && vm.masterData.isin_code ==''){
-                 vm.$refs.isin_code.focus();
+                vm.$refs.isin_code.focus();
                  vm.errors.isin_code='단축코드 입력 시 종목코드가 입력되어야 합니다.';
-                return;
+               hudleYn ='N';
             }
 
             if(vm.masterData.isu_srt_cd =='' && vm.masterData.isin_code !==''){
-                vm.$refs.isu_srt_cd.focus();
+                 vm.$refs.isu_srt_cd.focus();
                  vm.errors.isu_srt_cd='종목코드 입력 시 단축코드가 입력되어야 합니다.';
-                return;
+               hudleYn ='N';
             }
 
              if(vm.masterData.isin_code !==''){
-                if(vm.masterData.list_req_date ==''){
-                     vm.$refs.list_req_date.focus();
+                if(vm.masterData.list_req_date =='' || vm.masterData.list_req_date ==null){
+                    vm.$refs.list_req_date.focus();
                      vm.errors.list_req_date='종목코드 입력 시 상장신청일이 입력되어야 합니다.';
-                    return;
+                   hudleYn ='N';
                 }
 
-                if(vm.masterData.list_date ==''){
-                    vm.$refs.list_date.focus();
+                if(vm.masterData.list_date =='' || vm.masterData.list_date ==null){
+                   vm.$refs.list_date.focus();
                     vm.errors.list_date='종목코드 입력 시 상장일이 입력되어야 합니다.';
-                    return;
+                   hudleYn ='N';
                 }
 
                 if(vm.masterData.inav_calc_cd ==''){
                     vm.$refs.inav_calc_cd.focus();
                     vm.errors.inav_calc_cd='종목코드 입력 시 iNAV/iV 관련정보가 입력되어야 합니다.';
-                    return;
+                   hudleYn ='N';
                 }
             }
 
@@ -1279,87 +1316,87 @@ export default {
                 if(check.test(vm.masterData.idx_sym_code)){
                     vm.errors.idx_sym_code = "지수심볼에 한글은 들어갈수 없습니다.";
                     vm.$refs.idx_sym_code.focus();
-                    return;
+                   hudleYn ='N';
                 }
                 if(vm.masterData.idx_sym_code =='' || vm.masterData.idx_sym_code ==null){
-                    vm.errors.idx_sym_code = "지수심볼을 입력해주세요.";
-                    vm.$refs.idx_sym_code.focus();
-                    return;
+                   vm.errors.idx_sym_code = "지수심볼을 입력해주세요.";
+                     vm.$refs.idx_sym_code.focus();
+                   hudleYn ='N';
                 }
                 if(vm.masterData.idx_dist_inst_cd =='' || vm.masterData.idx_dist_inst_cd ==null){
                     vm.errors.idx_dist_inst_cd = "지수입수기관을 입력해주세요.";
-                    vm.$refs.idx_dist_inst_cd.focus();
-                    return;
+                   vm.$refs.idx_dist_inst_cd.focus();
+                   hudleYn ='N';
                 }
                 if(vm.masterData.idx_holy_cd =='' || vm.masterData.idx_holy_cd ==null){
                     vm.errors.idx_holy_cd = "실시간휴장일기준을 입력해주세요.";
-                    vm.$refs.idx_holy_cd.focus();
-                    return;
+                   vm.$refs.idx_holy_cd.focus();
+                   hudleYn ='N';
                 }
                 
                 if(vm.masterData.idx_trace_yd_mult_type =='' || vm.masterData.idx_trace_yd_mult_type ==null){
                     vm.errors.idx_trace_yd_mult_type = "지수추적배수을 입력해주세요.";
                     vm.$refs.idx_trace_yd_mult_type.focus();
-                    return;
+                   hudleYn ='N';
                 }
                 
                 if(vm.masterData.idx_close_type=='' || vm.masterData.idx_close_type ==null){
                     vm.errors.idx_close_type = "지수종가타입을 입력해주세요.";
                     vm.$refs.idx_close_type.focus();
-                    return;
+                   hudleYn ='N';
                 }
 
                 if(vm.masterData.pre_idx_type=='' || vm.masterData.pre_idx_type ==null){
                     vm.errors.pre_idx_type = "전일기초지수구분을 입력해주세요.";
-                    vm.$refs.pre_idx_type.focus();
-                    return;
+                   vm.$refs.pre_idx_type.focus();
+                   hudleYn ='N';
                 }
 
                 if(vm.masterData.idx_file_nm=='' || vm.masterData.idx_file_nm ==null){
                     vm.errors.idx_file_nm = "지수파일명을 입력해주세요.";
-                    vm.$refs.idx_file_nm.focus();
-                    return;
+                  vm.$refs.idx_file_nm.focus();
+                   hudleYn ='N';
                 }
 
                 if(vm.masterData.idx_file_path=='' || vm.masterData.idx_file_path ==null){
                     vm.errors.idx_file_path =  "기초지수경로을 입력해주세요.";
-                    vm.$refs.idx_file_path.focus();
-                    return;
+                  vm.$refs.idx_file_path.focus();
+                   hudleYn ='N';
                 }
 
                 // if(vm.idxCompDistYn.length=='' || vm.masterData.idxCompDistYn ==null){
                 //     vm.errors.idxCompDistYn = "this field is required";
                 //     vm.$refs.idxCompDistYn.focus();
-                //     return;
+                //    hudleYn ='N';
                 // }
             //국내종목   
             }else if(vm.masterData.kor_for_type==='K'){   
                 var check= /[ㄱ-ㅎ|ㅓ-ㅣ|가-힣]/;
                 if(check.test(vm.masterData.kor_idx_sym_code)){
                     vm.errors.kor_idx_sym_code = "지수심볼에 한글은 들어갈수 없습니다.";
-                    vm.$refs.kor_idx_sym_code.focus();
-                    return;
+                   vm.$refs.kor_idx_sym_code.focus();
+                   hudleYn ='N';
                 }
                 if(vm.masterData.kor_idx_sym_code=='' || vm.masterData.kor_idx_sym_code ==null){
                     vm.errors.kor_idx_sym_code = "지수심볼을 입력해주세요.";
                     vm.$refs.kor_idx_sym_code.focus();
-                    return;
+                   hudleYn ='N';
                 }
                 if(vm.masterData.idx_inst_cd=='' || vm.masterData.idx_inst_cd ==null){
                     vm.errors.idx_inst_cd = "지수산출기관을 입력해주세요.";
                     vm.$refs.idx_inst_cd.focus();
-                    return;
+                   hudleYn ='N';
                 }
                 if(vm.masterData.idx_comp_cd =='' || vm.masterData.idx_comp_cd ==null){
                     vm.errors.idx_comp_cd = "지수타입을 입력해주세요.";
                     vm.$refs.idx_comp_cd.focus();
-                    return;
+                   hudleYn ='N';
                 }
                 
                 if(vm.masterData.kor_user_req =='' || vm.masterData.kor_user_req ==null){
                     vm.errors.kor_user_req = "요청사항을 입력해주세요.";
-                    vm.$refs.kor_user_req.focus();
-                    return;
+                   vm.$refs.kor_user_req.focus();
+                   hudleYn ='N';
                 }
             }
         
@@ -1367,13 +1404,13 @@ export default {
                 if(vm.masterData.ridx_dist_inst_cd ===''){
                      vm.$refs.ridx_dist_inst_cd.focus();
                      vm.errors.ridx_dist_inst_cd = '실시간 지수입수기관심볼 입력 시 실시간 지수입수기관이 입력되어야 합니다.';
-                    return;
+                   hudleYn ='N';
                 }
 
                 if(vm.masterData.ridx_holy_cd ===''){
                      vm.$refs.ridx_holy_cd.focus();
                      vm.errors.ridx_holy_cd = '실시간 지수입수기관심볼 입력 시 실시간 휴장일 기준이 입력되어야 합니다.';
-                    return;
+                   hudleYn ='N';
                 }
             }
 
@@ -1394,7 +1431,7 @@ export default {
                 if(vm.masterData.inav_calc_cd  ==''){
                      vm.$refs.inav_calc_cd.focus();
                      vm.errors.inav_calc_cd='종목코드 입력 시 iNAV/iV 관련정보가 입력되어야 합니다.';
-                    return;
+                   hudleYn ='N';
                 }
             }
 
@@ -1402,19 +1439,19 @@ export default {
                 if(vm.masterData.isin_code ==='' || vm.masterData.isin_code ==null){
                      vm.$refs.isin_code.focus();
                      vm.errors.isin_code='iNAV산출여부가 Y일 때 첫번째 페이지의 종목코드, 상장신청일, 상장일이 입력되어야 합니다.';
-                    return;
+                   hudleYn ='N';
                 }
                 
                 if(vm.masterData.list_req_date =='' || vm.masterData.list_req_date ==null){
                     vm.$refs.list_req_date.focus();
                     vm.errors.list_req_date='iNAV산출여부가 Y일 때 첫번째 페이지의 종목코드, 상장신청일, 상장일이 입력되어야 합니다.';
-                    return;
+                   hudleYn ='N';
                 }
 
                 if(vm.masterData.list_date =='' || vm.masterData.list_date ==null){ 
                      vm.$refs.list_date.focus();
                      vm.errors.list_date='iNAV산출여부가 Y일 때 첫번째 페이지의 종목코드, 상장신청일, 상장일이 입력되어야 합니다.';
-                    return;
+                   hudleYn ='N';
                 }
 
             }
@@ -1423,147 +1460,149 @@ export default {
                 vm.masterData.ex_hedge_yn ='Y';
             } 
 
-
-            if(arg ==='S'){
-                console.log("fn_insertEtpRegister 호출>> this.masterData ", vm.masterData);
-                if( await this.$root.$confirm.open(
-                        "[저장]",
-                        "저장하시겠습니까?",
-                        {}
-                    ,   2
-                    )
-                ){
-                    if( "Y" != this.$root.$confirm.val ) {
-                        return false;
-                    }
-                } 
-                var origin_file_nm =  vm.masterData.idx_file_nm;
-                if(vm.masterData.idx_file_path !=='' && vm.masterData.idx_file_path !=null){ 
-                    vm.masterData.idx_file_nm= vm.masterData.idx_file_path + "/" + vm.masterData.idx_file_nm;
-                }
-                
-                //int type파라미터 값 없을 시 null저장
-                // idx_trace_yd_mult_type
-                // pre_idx_type
-                // ridx_dist_term(지수제공주기)
-                // idx_mid
-                // ridx_mid
-                // krx_up_code
-                // agent_up_code
-
-                await axios({
-                    method: 'post',
-                    url: Config.base_url + "/user/etp/insertEtpRegister",
-                    data: { "data" : JSON.stringify(vm.masterData)},
-                    headers: {
-                            "Content-Type": "application/json"
+   
+                if(arg ==='S' && hudleYn =='Y'){
+                    console.log("fn_insertEtpRegister 호출>> this.masterData ", vm.masterData);
+                    if( await this.$root.$confirm.open(
+                            "[저장]",
+                            "저장하시겠습니까?",
+                            {}
+                        ,   2
+                        )
+                    ){
+                        if( "Y" != this.$root.$confirm.val ) {
+                            return false;
                         }
-                    }).then(function(response) {
-                        
-                        console.log("insertEtpRegister result>>>", response);
-                        if( response.data.result ) {
-                            if(  vm.$root.$confirm.open(
-                                '[저장]',
-                                '저장이 완료되었습니다.',
-                                {}
-                            ,   1
-                                )
-                            ) {
-                                if( "Y" == vm.$root.$confirm.val ) {
-                                     vm.$emit("movePage", 0); 
+                    } 
+                    var origin_file_nm =  vm.masterData.idx_file_nm;
+                    if(vm.masterData.idx_file_path !=='' && vm.masterData.idx_file_path !=null){ 
+                        vm.masterData.idx_file_nm= vm.masterData.idx_file_path + "/" + vm.masterData.idx_file_nm;
+                    }
+                    
+                    //int type파라미터 값 없을 시 null저장
+                    // idx_trace_yd_mult_type
+                    // pre_idx_type
+                    // ridx_dist_term(지수제공주기)
+                    // idx_mid
+                    // ridx_mid
+                    // krx_up_code
+                    // agent_up_code
+
+                    await axios({
+                        method: 'post',
+                        url: Config.base_url + "/user/etp/insertEtpRegister",
+                        data: { "data" : JSON.stringify(vm.masterData)},
+                        headers: {
+                                "Content-Type": "application/json"
+                            }
+                        }).then(function(response) {
+                            
+                            console.log("insertEtpRegister result>>>", response);
+                            if( response.data.result ) {
+                                if(  vm.$root.$confirm.open(
+                                    '[저장]',
+                                    '저장이 완료되었습니다.',
+                                    {}
+                                ,   1
+                                    )
+                                ) {
+                                    if( "Y" == vm.$root.$confirm.val ) {
+                                        vm.$emit("movePage", 0); 
+                                    }
+                                }
+                            }else{
+                                if( vm.$root.$confirm.open(
+                                    '[오류]',
+                                    response.data.msg,
+                                    {}
+                                ,   1
+                                    )
+                                ) {
+                                    vm.masterData.idx_file_nm = origin_file_nm;
+                                    return false;
                                 }
                             }
-                        }else{
-                            if( vm.$root.$confirm.open(
-                                '[오류]',
-                                response.data.msg,
+
+                        });
+                }else if(arg ==='U' && hudleYn =='Y'){
+                    console.log("fn_updateEtpRegister 호출>> this.masterData ", vm.masterData);
+                    if(vm.masterData.isin_stat_cd =='0002' && vm.masterData.idx_rec_yn =='N'){
+                        if( await this.$root.$confirm.open(
+                                '[저장]',
+                                '기초지수입수여부가 "N"으로 변경되어 종목신청상태로 돌아갑니다.',
                                 {}
-                            ,   1
+                            ,   2
                                 )
                             ) {
-                                vm.masterData.idx_file_nm = origin_file_nm;
-                                return false;
+                                if( "Y" != this.$root.$confirm.val ) {
+                                    return false;
+                                }
                             }
-                        }
-
-                    });
-            }else if(arg ==='U'){
-                console.log("fn_updateEtpRegister 호출>> this.masterData ", vm.masterData);
-                if(vm.masterData.isin_stat_cd =='0002' && vm.masterData.idx_rec_yn =='N'){
-                    if( await this.$root.$confirm.open(
-                            '[저장]',
-                            '기초지수입수여부가 "N"으로 변경되어 종목신청상태로 돌아갑니다.',
-                            {}
-                        ,   2
-                            )
-                        ) {
-                            if( "Y" != this.$root.$confirm.val ) {
-                                return false;
-                            }
-                        }
-                }
-                  if( await this.$root.$confirm.open(
-                            '[수정]',
-                            '수정하시겠습니까',
-                            {}
-                        ,   2
-                            )
-                        ) {
-                            if( "Y" != this.$root.$confirm.val ) {
-                                return false;
-                            }
-                        }
-                if(vm.masterData.idx_file_path !=='' && vm.masterData.idx_file_path !=null){ 
-                    vm.masterData.idx_file_nm= vm.masterData.idx_file_path + "/" + vm.masterData.idx_file_nm;
-                }
-                function replacer(name, val) {
-                    if ( val == null || val==undefined ) {
-                        return ""; 
-                    }  else {
-                        return val; // return unchanged
                     }
+
+                    if( await this.$root.$confirm.open(
+                                '[수정]',
+                                '수정하시겠습니까',
+                                {}
+                            ,   2
+                                )
+                            ) {
+                                if( "Y" != this.$root.$confirm.val ) {
+                                    return false;
+                                }
+                            }
+                    if(vm.masterData.idx_file_path !=='' && vm.masterData.idx_file_path !=null){ 
+                        vm.masterData.idx_file_nm= vm.masterData.idx_file_path + "/" + vm.masterData.idx_file_nm;
+                    }
+                    function replacer(name, val) {
+                        if ( val == null || val==undefined ) {
+                            return ""; 
+                        }  else {
+                            return val; // return unchanged
+                        }
+                    }
+                 
+                    await axios({
+                        method: 'post',
+                        url: Config.base_url + "/user/etp/updateEtpRegister",
+                        data: { "data" : JSON.stringify(vm.masterData, replacer)},
+                        headers: {
+                                "Content-Type": "application/json"
+                            }
+                        }).then(function(response) {
+                                
+                                console.log("updateEtpRegister result>>>", response);
+                            if( response.data.result ) {
+                                if( vm.$root.$confirm.open(
+                                    '[수정]',
+                                    '수정이 완료되었습니다.',
+                                    {}
+                                ,   1
+                                    )
+                                ) {
+                                    if( "Y" == vm.$root.$confirm.val ) {
+                                            vm.$emit("movePage", 0); 
+                                    }
+                                    
+                                }
+                                //alert('수정이 완료되었습니다.');
+                            
+                            }else{
+                                if( vm.$root.$confirm.open(
+                                    '[오류]',
+                                    response.data.msg,
+                                    {}
+                                ,   1
+                                    )
+                                ) {
+                                    vm.masterData.idx_file_nm = origin_file_nm;
+                                    return false;
+                                }
+                            }
+                    });
                 }
 
-                await axios({
-                    method: 'post',
-                    url: Config.base_url + "/user/etp/updateEtpRegister",
-                    data: { "data" : JSON.stringify(vm.masterData, replacer)},
-                    headers: {
-                            "Content-Type": "application/json"
-                        }
-                    }).then(function(response) {
-                            
-                            console.log("updateEtpRegister result>>>", response);
-                        if( response.data.result ) {
-                            if( vm.$root.$confirm.open(
-                                '[수정]',
-                                '수정이 완료되었습니다.',
-                                {}
-                            ,   1
-                                )
-                            ) {
-                                 if( "Y" == vm.$root.$confirm.val ) {
-                                        vm.$emit("movePage", 0); 
-                                 }
-                                  
-                            }
-                            //alert('수정이 완료되었습니다.');
-                        
-                        }else{
-                            if( vm.$root.$confirm.open(
-                                '[오류]',
-                                response.data.msg,
-                                {}
-                            ,   1
-                                )
-                            ) {
-                                vm.masterData.idx_file_nm = origin_file_nm;
-                                 return false;
-                            }
-                        }
-                });
-            }
-
+         
         }
     }
 };
