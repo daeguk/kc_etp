@@ -140,13 +140,15 @@ export default {
 
                 var resultData = response.data;
 
-                if( vm.$root.$confirm.open(
-                            ''
-                        ,   resultData.msg
-                        ,   {}
-                        ,   1
-                    )
-                ) {
+                if( resultData.msg ) {
+                    if( vm.$root.$confirm.open(
+                                ''
+                            ,   resultData.msg
+                            ,   {}
+                            ,   1
+                        )
+                    ) {
+                    }
                 }
 
                 if( resultData.result ) {
