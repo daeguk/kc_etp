@@ -141,6 +141,18 @@
                                 <b>{{f30823}}%</b>
                             </li>
                         </ul>
+                        <ul v-if="paramData.f34240 == 'I'"> <!-- 인도레버리지 -->
+                            <li class="list_tit"><b>전일등락율(%)</b></li>
+                            <li class="align_r">
+                                <b>{{f34374}}%</b>
+                            </li>
+                        </ul>
+                        <ul v-if="paramData.f34240 == 'J'"> <!-- KINDEX합성일본인버스 -->
+                            <li class="list_tit"><b>예상배당수익률(%)</b></li>
+                            <li class="align_r">
+                                <b>{{f18101}}%</b>
+                            </li>
+                        </ul>
                     </v-flex>
                 </v-layout>
                 <v-layout>
@@ -333,7 +345,7 @@ export default {
                 iNAV=전일NAV*(1+((1+기초지수등락율)*매매기준율/장전매매기준율-1)*배율) *(1+전일등락율*배율)
             */
             } else if (vm.paramData.f34240 == 'I') {
-                vm.iNav = vm.NtoS(vm.f03329) * ( 1 + (( 1 + vm.f30823 ) * vm.NtoS(vm.f30819) /  vm.NtoS(vm.f30824) - 1 ) * vm.NtoS(vm.f18453) ) * (1 + vm.NtoS(f34374) * vm.NtoS(vm.f18453));
+                vm.iNav = vm.NtoS(vm.f03329) * ( 1 + (( 1 + vm.f30823 ) * vm.NtoS(vm.f30819) /  vm.NtoS(vm.f30824) - 1 ) * vm.NtoS(vm.f18453) ) * (1 + vm.NtoS(vm.f34374) * vm.NtoS(vm.f18453));
             /* 
                J. KINDEX합성일본인버스, 1년에 2번 inav를 예상배당수익률(FID 18101 (주의)DEC -6)로 조정한다.
                iNAV=전일NAV*(1+기초지수등락율*배율-예상배당수익률)
