@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import Config       from "@/js/config.js"
+import Config from "@/js/config.js"
 import util from "@/js/util.js"
 
 export default {
@@ -45,7 +45,8 @@ export default {
   methods: {
     dataInit: function() {
       if(this.etpWeight.length > 0) {
-        if(this.etpWeight.length < this.disCnt) this.disCnt = this.etpWeight.length;
+        if(this.etpWeight.length < 10) this.disCnt = this.etpWeight.length;
+        else this.disCnt = 10;
         this.drawInit();
       }
     },
@@ -81,14 +82,14 @@ export default {
       c.font = '14px san-serif';
       for(var i = 0; i < this.disCnt; i++) {
         if(i % 2 == 0) {
-          c.fillText(this.etpWeight[i].JONG_NM, 60, 30 + parseInt(i/2) * 50);
+          c.fillText(util.strSubString(this.etpWeight[i].JONG_NM, 13), 60, 30 + parseInt(i/2) * 50);
           c.fillText(this.etpWeight[i].PERCNT + "%", 200, 30 + parseInt(i/2) * 50);
         }else {
-          c.fillText(this.etpWeight[i].JONG_NM, 320, 30 + parseInt(i/2) * 50);
+          c.fillText(util.strSubString(this.etpWeight[i].JONG_NM, 13), 320, 30 + parseInt(i/2) * 50);
           c.fillText(this.etpWeight[i].PERCNT + "%", 460, 30 + parseInt(i/2) * 50);
         }
       }
-    }
+    },
   }
 }    
 </script>

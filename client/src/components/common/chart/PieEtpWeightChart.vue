@@ -30,7 +30,7 @@ export default {
   },    
   watch: {
     'etpWeight': function() {
-      console.log("PieEtpWeightChart watch.........etpWeight ");
+      // console.log("PieEtpWeightChart watch.........etpWeight ");
       // console.log(this.etpWeight);
       this.dataInit();
     },
@@ -52,7 +52,8 @@ export default {
   methods: {
     dataInit: function() {
       if(this.etpWeight.length > 0) {
-        if(this.etpWeight.length < this.disCnt) this.disCnt = this.etpWeight.length;
+        if(this.etpWeight.length < 10) this.disCnt = this.etpWeight.length;
+        else this.disCnt = 10;
         this.sumWeight = 0;
         for(var i = 0; i < this.disCnt; i++) {
           this.weights[i] = Number(this.etpWeight[i].PERCNT);

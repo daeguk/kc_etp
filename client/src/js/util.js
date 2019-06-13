@@ -20,7 +20,7 @@ var util = {
           if (isNaN(num)) {
             return "0.00"              
           } else {
-            num = Number(num);
+            num = Number(num).toFixed(0);
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
           }
           
@@ -47,6 +47,9 @@ var util = {
       }else {
         return '';
       }
+    },
+    formatDate: function(inDate) {
+      return inDate.substring(0, 4) + "." + inDate.substring(4,6) + "." + inDate.substring(6,8);
     },
     pad: function(n, width) {
         n = n + '';
@@ -75,7 +78,16 @@ var util = {
       }
       return toFixNum;
     },
+    getPlus: function(val, fixNum) {
+      var tmp = Number(val).toFixed(fixNum);
+      var rtn = "";
 
+      if(tmp > 0) rtn = "+" + tmp;
+      else rtn = "" + tmp;
+
+      return rtn;
+
+    },
     getDiffRate: function(curr, base) {
       var diffRate = "";
       if(base == null || base == "" || base == undefined) {
@@ -88,12 +100,33 @@ var util = {
 
       return diffRate;
     },
+    getDiffRate1: function(curr, base) {
+      var diffRate = "";
+      if(base == null || base == "" || base == undefined) {
+        diffRate = " - ";
+      }else {
+        let tmp = 0.0;
+        tmp = (curr - base) * 100 / base;
+        tmp = tmp.toFixed(2);
+        if(tmp > 0) diffRate = "+" + tmp;
+        else diffRate = "" + tmp;
+      }
+
+      return diffRate;
+    },
     processing: function(component, visible) {
         if (visible) {
             component.open();
         } else {
             component.close();
         }
+    },
+    strSubString: function(str, len) {
+      var rtn = str ;
+      if(str.length > len) {
+        rtn = str.substring(0, len) + "...";
+      }
+      return rtn ;
     },
 
     getToday: function() {
@@ -156,6 +189,32 @@ var util = {
     getBef3Year: function() {
       var mdate = new Date();
       mdate.setFullYear(mdate.getFullYear()-3);
+      var myear = mdate.getFullYear();
+      var mmonth = mdate.getMonth() + 1;
+      var mday = mdate.getDate();
+
+      if(mmonth < 10) mmonth = "0" + mmonth;
+      if(mday < 10) mday = "0" + mday;
+
+      return myear + "" + mmonth + "" + mday;
+    },
+
+    getBef5Year: function() {
+      var mdate = new Date();
+      mdate.setFullYear(mdate.getFullYear()-5);
+      var myear = mdate.getFullYear();
+      var mmonth = mdate.getMonth() + 1;
+      var mday = mdate.getDate();
+
+      if(mmonth < 10) mmonth = "0" + mmonth;
+      if(mday < 10) mday = "0" + mday;
+
+      return myear + "" + mmonth + "" + mday;
+    },
+
+    getBef10Year: function() {
+      var mdate = new Date();
+      mdate.setFullYear(mdate.getFullYear()-10);
       var myear = mdate.getFullYear();
       var mmonth = mdate.getMonth() + 1;
       var mday = mdate.getDate();

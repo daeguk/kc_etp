@@ -83,7 +83,6 @@ export default {
         }
     },
     components: {
-
     },
     computed: {
         dialog() {
@@ -109,10 +108,10 @@ export default {
     methods: {
         selectItem: function() {
             var vm = this;
+            if(dataTable != null){
+                dataTable.clear().draw();
+            }
             if(vm.selectedItem.value == "2"){
-                if(dataTable != null){
-                    dataTable.clear().draw();
-                }
                 vm.selectedItem.text = "실시간";
                 if( this.idxConfirmModal.ridxDistSymCode == null || this.idxConfirmModal.ridxDistSymCode.length == 0 ){
                     alert("신청한 실시간 심볼코드가 없습니다.");  
@@ -120,9 +119,6 @@ export default {
                 }
                 vm.getRidxList();
             }else{
-                if(dataTable != null){
-                   dataTable.clear().draw();
-                }
                 vm.selectedItem.text = "종가";
                 vm.getIdxList();
             }
@@ -140,9 +136,9 @@ export default {
                         var items = response.data.results;
                         this.results = items;
                         if(this.results.length == 0){
-                         alert("기초지수 산출전입니다..");   
+                         alert("기초지수 산출전입니다.");   
                         }
-                        console.log("getIdxList=" + JSON.stringify(items));
+                        //console.log("getIdxList=" + JSON.stringify(items));
                         dataTable = $('#dataTable').DataTable( {
                             autoWidth: false, 
                             processing: true,
@@ -164,7 +160,6 @@ export default {
         }, 
         //실시간
         getRidxList: function() {
-                console.log("ridx_dist_sym_code : " + this.idxConfirmModal.ridxDistSymCode);
                 axios.get(Config.base_url + "/user/etp/getRidxList", {
                   params:{rMarket_id: this.idxConfirmModal.rMarketId,
                           ridx_dist_sym_code: this.idxConfirmModal.ridxDistSymCode,
@@ -178,7 +173,6 @@ export default {
                         if(this.results.length == 0){
                          alert("기초지수  산출 전입니다..");   
                         }
-                        console.log("getRidxList=" + JSON.stringify(items));
                         dataTable = $('#dataTable').DataTable( {
                             autoWidth: false, 
                             processing: true,

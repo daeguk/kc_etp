@@ -154,6 +154,8 @@ export default {
                 }
 
                 util.processing(vm.$refs.progress, false);
+            }).catch(error => {
+                util.processing(vm.$refs.progress, false);
             });            
         },
 

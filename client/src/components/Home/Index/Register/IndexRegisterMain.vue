@@ -9,8 +9,8 @@
                             <span class="grey--text">지수의 기본정보 및 소급지수를 등록합니다.</span>
                         </h3>
                     </v-card-title>
-                    <registrationModify v-if="editYn" :editData="editData" :key="editData.jisu_id" @fn_refresh="fn_refresh"></registrationModify>
-                    <registration v-show="!editYn" @fn_refresh="fn_refresh" ></registration>
+                    <registrationModify v-if="editYn" :editData="editData" :key="editData.jisu_id" @fn_refresh="fn_refresh" @showMessageBox="showMessageBox"></registrationModify>
+                    <registration v-show="!editYn" @fn_refresh="fn_refresh" @showMessageBox="showMessageBox"></registration>
                 </v-card>
             </v-flex>
             <v-flex shrink   class="conWidth_right">
@@ -21,7 +21,7 @@
                                     <v-btn nomal depressed class="btn_orange01" dark  @click="fn_jisuRegister()">신규지수등록</v-btn>
                                 </v-list-tile-content>
                             </v-list-tile>
-                            <quickmenucon v-if="refreshYn"></quickmenucon>
+                            <quickmenucon v-if="refreshYn" @showMessageBox="showMessageBox"></quickmenucon>
                         </v-list>
                 </v-card>
             </v-flex>
@@ -40,6 +40,7 @@ import registration from "./registration.vue";
 import quickmenucon from "./quickmenucon.vue";
 import registrationModify from "./registrationModify.vue";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
+import Constant from "@/store/store_constant.js";
 
 export default {
     data() {
@@ -90,6 +91,16 @@ export default {
         async   fn_jisuRegister() {
             var vm = this;
 
+            var typeCd  =   vm.$store.state.user.type_cd;
+
+            if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                if( typeCd != "0003" ) {
+
+                    vm.showMessageBox( '확인','지수사업자만 등록하실수 있습니다.',{},1 );
+                    return  false;
+                }
+            }
+
             if( await vm.$root.$confirm.open(
                         '[신규지수등록]',
                         '현재 작성중인 내용은 사라집니다. \n[신규지수등록] 화면으로 이동하시겠습니까?',
@@ -114,6 +125,10 @@ export default {
             vm.$nextTick().then(() => {
                 vm.refreshYn = true;
             });
+        },
+
+        showMessageBox: function(title, msg, option, gubun) {
+            this.$root.$confirm.open(title,msg, option, gubun);
         }
     }
 };
