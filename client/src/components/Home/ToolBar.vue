@@ -61,7 +61,7 @@ export default {
   },    
   mounted: function() {
   },
-// methods: {
+  methods: {
 //    contextMenuClick: function() {
       // console.log('ToolBar contextMenuClick!!!');
 //      var vm = this;
@@ -77,20 +77,16 @@ export default {
 //        this.isContext = true;
 //      }
 //    },
-//   menuClick: function(menu) {
-      //console.log("menuClick........: " + menu.title);
-      // this.isContext = false;
-//      this.menuTitle = menu.title;
-//     },
- //   outService: function() {
- //     console.log("UserInfo.vue....... outService...");
+    menuClick: function(menu) {
+      //console.log("menuClick........: " + menu.title);        
+        this.menuTitle = menu.title;
+     },
+    outService: function() {
+      console.log("UserInfo.vue....... outService...");
       // Home.vue
- //     this.$EventBus.$emit("outService");
-//    },
- //   movePage: function(link) {
- //       this.$router.push({path:link});
- //   }
- //  }
+      this.$EventBus.$emit("outService");
+    },
+  }
 }  
 </script>
 
