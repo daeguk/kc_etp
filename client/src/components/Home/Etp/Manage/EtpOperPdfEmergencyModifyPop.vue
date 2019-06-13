@@ -623,6 +623,9 @@ export default {
                     }
                 }
                 
+            }).catch(error => {
+                util.processing(vm.$refs.progress, false);
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         },
 
@@ -715,6 +718,9 @@ export default {
                         vm.dataList[ dataJson.rowIndex ].f16588    =   v_f16588;
                     }
                 }
+            }).catch(error => {
+                util.processing(vm.$refs.progress, false);
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         },
 
@@ -982,6 +988,9 @@ export default {
 
                     vm.fn_getPdfByGroupNo();
                 }
+            }).catch(error => {
+                util.processing(vm.$refs.progress, false);
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         },
 
@@ -1140,6 +1149,9 @@ export default {
                         }
                     }
                 }
+            }).catch(error => {
+                util.processing(vm.$refs.progress, false);
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         },
 

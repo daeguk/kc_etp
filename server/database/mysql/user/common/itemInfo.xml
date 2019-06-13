@@ -128,49 +128,53 @@
 
     </insert>
 
-<!-- 
-    <select id="getTodayIntraInfo">
-        SELECT concat(substr(lpad(B.F20004,8, '0'), 1, 2), ':',substr(lpad(B.F20004,8, '0'), 3, 2), ':',substr(lpad(B.F20004,8, '0'), 5, 2)) AS trd_his
-               ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as trd_dd
-		       ,B.F20008 as close_idx
-        FROM td_index_basic A, 
-            td_index_intra B
-        WHERE A.F16013 = B.F16013
-        AND A.MARKET_ID = B.MARKET_ID
-        AND A.F16013 = #{f16013}
-        AND A.MARKET_ID = #{market_id}
-        AND DATE_FORMAT(B.F20044, "%Y.%m.%d") = DATE_FORMAT('20190410', "%Y.%m.%d")
-        ORDER BY B.F20044 desc
-    </select>
--->    
     <select id="getIndexBasic">
-        SELECT *
-        FROM td_index_basic
-        WHERE F16013 = #{f16013}
-        AND MARKET_ID = #{market_id}
+      SELECT *
+      FROM td_index_basic
+      WHERE F16013 = #{f16013}
+      AND MARKET_ID = #{market_id}
     </select>
 
     <select id="getIndexIntra">
+      SELECT concat(substr(lpad(F20004,8, '0'), 1, 2), ':',substr(lpad(F20004,8, '0'), 3, 2), ':',substr(lpad(F20004,8, '0'), 5, 2)) AS F20004
+              ,DATE_FORMAT(F20044, "%Y.%m.%d") as F20044
+          ,F20008
+      FROM td_index_intra
+      WHERE F16013 = #{f16013}
+      AND MARKET_ID = #{market_id}
+      ORDER BY F20044 desc, F20004 desc LIMIT 100
+    </select>
+
+    <select id="getIndexIntra1">
         SELECT concat(substr(lpad(F20004,8, '0'), 1, 2), ':',substr(lpad(F20004,8, '0'), 3, 2), ':',substr(lpad(F20004,8, '0'), 5, 2)) AS F20004
                ,DATE_FORMAT(F20044, "%Y.%m.%d") as F20044
 		       ,F20008
         FROM td_index_intra
         WHERE F16013 = #{f16013}
-        AND MARKET_ID = #{market_id}
-        ORDER BY F20044 desc, F20004 desc LIMIT 100
+        AND market_id = #{market_id}
+        ORDER BY F20044 desc, F20004 desc LIMIT ${limit}
     </select>
 
-    <select id="getKrxIndexListByType">
+    <select id="getIndexHist1">
+        SELECT DATE_FORMAT(F12506, "%Y.%m.%d") as F12506
+		       ,F15001
+        FROM td_index_hist
+        WHERE F16013 = #{f16013}
+        AND market_id = #{market_id}
+        ORDER BY F12506 desc LIMIT ${limit}
+    </select>
+
+    <select id="getIndexListByType">
         SELECT *
         FROM td_index_basic
-        WHERE large_type = "KRX"
-        <if test="selIndexType != null and selIndexType !=''">
-          AND middle_type like CONCAT('%',#{selIndexType},'%')
+        WHERE large_type = #{large_type}
+        <if test="middle_type != null and middle_type !=''">
+          AND middle_type like CONCAT('%',#{middle_type},'%')
         </if>
         ORDER BY F16013 ASC
     </select>
 
-    <select id="getKrxIndexListByType1">
+    <select id="getIndexListAnalByType">
         SELECT *,
           (SELECT B.F15001 FROM td_index_hist B
             WHERE B.market_id = A.market_id
@@ -196,11 +200,21 @@
             WHERE B.market_id = A.market_id
             AND B.F16013 = A.F16013
 <![CDATA[            AND B.F12506 <= #{bef3Year}]]>
-            ORDER BY B.F12506 DESC LIMIT 1) AS bef3Year
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef3Year,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef5Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef5Year,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef10Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef10Year
         FROM td_index_basic A
-        WHERE A.large_type = "KRX"
-        <if test="selIndexType != null and selIndexType !=''">
-          AND A.middle_type like CONCAT('%',#{selIndexType},'%')
+        WHERE A.large_type = #{large_type}
+        <if test="middle_type != null and middle_type !=''">
+          AND A.middle_type like CONCAT('%',#{middle_type},'%')
         </if>
         ORDER BY A.F15023 DESC
     </select>

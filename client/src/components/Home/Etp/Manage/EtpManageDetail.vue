@@ -89,8 +89,8 @@
                                 <v-flex class="ver2">
                                         <ul>
                                             <li>거래량</li>
-                                            <li class="number">{{formatNumber(etpBasic.f15015)}}주</li>
-                                            <li class="number2 text_green">AVG(3M):{{formatNumber(etpBasic.f13510)}}</li>
+                                            <li class="number">{{formatInt(etpBasic.f15015)}}주</li>
+                                            <li class="number2 text_green">AVG(3M):{{formatInt(etpBasic.f13510)}}</li>
                                         </ul>
                                 </v-flex>
                                 <v-flex class="ver3">
@@ -261,7 +261,7 @@ export default {
             axios.post(Config.base_url + "/user/etp/getEtpBasic", {
                 data:   vm.basicData
             }).then(function(response) {
-                console.log(response);
+                // console.log(response);
                 if (response.data) {
                     vm.etpBasic = response.data.etpBasic;
                     vm.etpBasic.f15001 = util.formatStringNum(vm.etpBasic.f15001);
@@ -296,6 +296,9 @@ export default {
         },
         formatNumber:function(num) {
             return util.formatNumber(num);
+        },
+        formatInt:function(num) {
+            return util.formatInt(num);
         },
         showDetail:function() {
             var vm = this;

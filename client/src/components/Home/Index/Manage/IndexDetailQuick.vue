@@ -284,6 +284,8 @@ export default {
                     vm.$emit( "fn_getIndexDetailList", vm.indexBasic, indexDetailList, vm.form );
                 }
                 this.$emit("showProgress", false);
+            }).catch(error => {
+                this.$emit( "showProgress", false );
             });
         },        
 
