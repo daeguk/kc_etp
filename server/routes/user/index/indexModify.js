@@ -1066,6 +1066,9 @@ var modifyJisu = function(req, res) {
                                 deleteFile( reqParam );
                             } else {
 
+                                resultMsg.jisu_id   =   paramData.jisu_id;
+                                resultMsg.jisu_seq  =   paramData.jisu_seq;
+
                                 resultMsg.result = true;
 
                                 if (paramData.modStatus) {
