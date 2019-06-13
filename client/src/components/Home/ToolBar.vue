@@ -13,7 +13,7 @@
     <span class="top_cont_title">{{menuTitle}}</span>
   <v-spacer></v-spacer>
   <!--고객지원---->
-  <v-menu v-model="menu" bottom offset-y :close-on-content-click="false" >
+  <v-menu bottom offset-y :close-on-content-click="false" >
         <template v-slot:activator="{ on }">
             <v-btn flat v-on="on" class="support_btn"><v-icon>send</v-icon> 고객지원</v-btn>
         </template>
