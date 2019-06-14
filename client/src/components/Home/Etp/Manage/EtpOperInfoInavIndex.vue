@@ -53,6 +53,7 @@
                             <li v-if="paramData.f34240 == 'K'">복합배율2(K)</li>
                             <li v-if="paramData.f34240 == 'I'">인도레버리지(I)</li>
                             <li v-if="paramData.f34240 == 'J'">KINDEX합성일본인버스(J)</li>
+                            <li v-if="paramData.f34240 == 'G'">KODEX 미국채10년 선물 ETF(G)</li>
                         </ul>
                         <ul>
                             <li class="list_tit">산출식</li>
@@ -63,6 +64,7 @@
                             <li v-if="paramData.f34240 == 'K'">iNAV=<span class="txt_point">①전일NAV</span>×(1+((1+<span class="txt_point3">③기초지수등락율</span>)<br>×<span class="txt_point4">④매매기준율/장전매매기준율</span>-1)×<span class="txt_point2">②배율</span>)</li>
                             <li v-if="paramData.f34240 == 'I'">iNAV=<span class="txt_point">①전일NAV</span>×(1+((1+<span class="txt_point3">③기초지수등락율</span>)×<span class="txt_point4">④매매기준율/장전매매기준율</span>-1)×<span class="txt_point2">②배율</span>) ×(1+전일등락율×<span class="txt_point2">②배율</span>)</li>
                             <li v-if="paramData.f34240 == 'J'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>-예상배당수익률)</li>
+                            <li v-if="paramData.f34240 == 'G'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point2">②배율</span>×<span class="txt_point3">③지수등락율</span>)×(환율보정계수/장전매매기준율)</li>
                         </ul>
                         <ul>
                             <li class="list_tit">
@@ -246,6 +248,7 @@ export default {
             f18101: 0,  /* 예상배당수익률 : 배당율 */
             f18453: 0,  /* ETP 배율 */
             f18101: 0,  /* 예상 배당 수익률 */
+            f33128: 0,  /* 환율보정계수 */
             iNav: 0,    /* INav 계산결과 */
             iNavRate: 0, /* INav 계산결과 율 */
             readonly: true
@@ -294,6 +297,8 @@ export default {
             vm.f15004_2 = vm.formatDigit((vm.paramData.f30819 - vm.paramData.f30824) / vm.paramData.f30824, 5);
             // 예상배당 수익률
             vm.f18101 = vm.formatNumber(vm.paramData.f18101);
+            // 환율 보정 계수 
+            vm.f33128 =  0;
             // INav 계산결과
             vm.iNav = vm.formatNumber(0);    
             // INav 계산결과 율
@@ -353,7 +358,14 @@ export default {
                 */
                 } else if (vm.paramData.f34240 == 'J') {
                     vm.iNav = vm.NtoS(vm.f03329) * (1 + vm.f30823 * vm.NtoS(vm.f18453) - vm.NtoS(vm.f18101)); 
+                /* 
+                G.  KODEX 미국채10년 선물 ETF
+                iNAV = 전일NAV * (1+지수등락율*배율)*(환율보정계수 / 장전매매기준율)
+                */
+                } else if (vm.paramData.f34240 == 'G') {
+                    vm.iNav = vm.NtoS(vm.f03329) * ( 1 + vm.f30823 * vm.NtoS(vm.f18453) ) * ( vm.NtoS(vm.f33128) / vm.NtoS(vm.f30824) );
                 } 
+                
                 /* iNav 등락률 */
                 vm.iNavRate =  ((vm.iNav / vm.NtoS(vm.f03329)) - 1) * 100;
                 vm.iNav = vm.formatNumber(vm.iNav);
