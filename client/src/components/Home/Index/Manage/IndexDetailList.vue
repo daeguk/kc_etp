@@ -35,7 +35,8 @@
             <v-flex  class="conWidth_right">
                 <IndexDetailQuick   @fn_getIndexDetailList="fn_getIndexDetailList"
                                     @fn_getIndexJongmokList="fn_getIndexJongmokList"
-                                    @showProgress="showProgress">
+                                    @showProgress="showProgress"
+                                    @showMessageBox="showMessageBox">
                 </IndexDetailQuick>                
             </v-flex>
             
@@ -46,6 +47,7 @@
                             <v-progress-circular :size="50" indeterminate></v-progress-circular>
                             </template>
         </v-dialog>
+        <ConfirmDialog ref="confirm"></ConfirmDialog>
     </v-container>
 </template>
 
@@ -58,12 +60,14 @@ import buttons from 'datatables.net-buttons'
 import util       from "@/js/util.js";
 import Config from '@/js/config.js';
 import IndexDetailQuick from "@/components/Home/Index/Manage/IndexDetailQuick.vue";
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 var tableIndexList = null;
 
 export default {
     components: {
         IndexDetailQuick     :   IndexDetailQuick,
+        ConfirmDialog: ConfirmDialog,
     },
     data() {
         return {
@@ -215,6 +219,9 @@ export default {
              
         showProgress: function(visible) {
             this.progress = visible;
+        },
+        showMessageBox: function(title, msg, option, gubun) {
+            this.$refs.confirm.open(title,msg, option, gubun);
         },
         fn_closePop() {
             var vm = this;

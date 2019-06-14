@@ -381,6 +381,9 @@ export default {
                     jisuTable.rows.add( indexDataList ).draw();                    
                 }
                 
+            }).catch(error => {
+                vm.$emit( "showProgress", false ); 
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);             
             });
            
         },
