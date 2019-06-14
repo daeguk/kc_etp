@@ -16,7 +16,7 @@
     <v-btn flat class="support_btn" @click="csDialog=true"><v-icon>send</v-icon> 고객지원</v-btn>
 
    <v-dialog v-model="csDialog" persistent max-width="500px">
-        <v-card flat class="support">
+        <v-card flat class="support" height="440px">
             <v-card-title>
                 <h5>고객지원</h5>
                 <v-spacer></v-spacer>
