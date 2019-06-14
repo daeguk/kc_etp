@@ -277,43 +277,43 @@
         <if test="ridx_dist_term!= null and ridx_dist_term != ''">
          ,ridx_dist_term = #{ridx_dist_term}
         </if>
-        <if test="ridx_dist_term == null and ridx_dist_term == ''">
+        <if test="ridx_dist_term == null or ridx_dist_term == ''">
          ,ridx_dist_term = null
         </if>
         <if test="krx_up_code!= null and krx_up_code != ''">
         ,krx_up_code= #{krx_up_code}
         </if>
-        <if test="krx_up_code == null and krx_up_code == ''">
+        <if test="krx_up_code == null or krx_up_code == ''">
         ,krx_up_code= null
         </if>
         <if test="agent_up_code!= null and agent_up_code != ''">
         ,agent_up_code = #{agent_up_code}
         </if>
-        <if test="agent_up_code == null and agent_up_code == ''">
+        <if test="agent_up_code == null or agent_up_code == ''">
         ,agent_up_code = null
         </if>
         <if test="idx_mid!= null and idx_mid != ''">  
         ,idx_mid = #{idx_mid}
         </if>
-         <if test="idx_mid== null and idx_mid == ''">  
+         <if test="idx_mid== null or idx_mid == ''">  
         ,idx_mid = null
         </if>
         <if test="ridx_mid!= null and ridx_mid != ''">  
         ,ridx_mid = #{ridx_mid}
         </if>
-        <if test="ridx_mid== null and ridx_mid == ''">  
+        <if test="ridx_mid== null or ridx_mid == ''">  
         ,ridx_mid = null
         </if>
         <if test="idx_trace_yd_mult_type!= null and idx_trace_yd_mult_type != ''">
         ,idx_trace_yd_mult_type = #{idx_trace_yd_mult_type}
         </if>
-         <if test="idx_trace_yd_mult_type == null and idx_trace_yd_mult_type == ''">
+         <if test="idx_trace_yd_mult_type == null or idx_trace_yd_mult_type == ''">
         ,idx_trace_yd_mult_type = null
         </if>
         <if test="pre_idx_type!= null and pre_idx_type != ''">
         ,pre_idx_type = #{pre_idx_type}
         </if>
-        <if test="pre_idx_type == null and pre_idx_type == ''">
+        <if test="pre_idx_type == null or pre_idx_type == ''">
         ,pre_idx_type = null
         </if>
         <if test="listReqDate != null and listReqDate != ''">
