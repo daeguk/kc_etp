@@ -404,7 +404,7 @@ var modifyJisu = function(req, res) {
                             function(callback) {
 
                                 try {
-                                    if (paramData.prev_method_file_id != -1) {
+//                                    if (paramData.prev_method_file_id != -1) {
 
                                         paramData.file_id = paramData.prev_method_file_id;
 
@@ -422,6 +422,15 @@ var modifyJisu = function(req, res) {
 
                                                     return callback(resultMsg);
                                                 }
+
+                                                /* 이미 삭제된 경우 */
+                                                if ( !rows || rows.length == 0 ) {
+                                                    resultMsg.result = false;
+                                                    resultMsg.msg = "[error] 이미 삭제된 상태입니다.";
+                                                    resultMsg.err = err;
+
+                                                    return callback(resultMsg);
+                                                }   
 
                                                 if (rows && rows[0]) {
                                                     paramData.nowStatus = rows[0].status;
@@ -457,9 +466,9 @@ var modifyJisu = function(req, res) {
                                             }
                                         });
 
-                                    } else {
-                                        callback(null, paramData);
-                                    }
+//                                    } else {
+//                                        callback(null, paramData);
+//                                    }
 
                                 } catch (err) {
 
@@ -1177,6 +1186,15 @@ var deleteJisu = function(req, res) {
                                             if (err) {
                                                 resultMsg.result = false;
                                                 resultMsg.msg = "[error] indexModify.getJisuMast Error while performing Query";
+                                                resultMsg.err = err;
+
+                                                return callback(resultMsg);
+                                            }
+
+                                            /* 이미 삭제된 경우 */
+                                            if ( !rows || rows.length == 0 ) {
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] 이미 삭제된 상태입니다.";
                                                 resultMsg.err = err;
 
                                                 return callback(resultMsg);

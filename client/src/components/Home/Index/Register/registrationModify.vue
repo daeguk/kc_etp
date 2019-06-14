@@ -291,7 +291,7 @@
                                     <v-subheader>소급지수</v-subheader>
                                 </v-flex>
 
-                                <v-flex xs4 id="file-drag-drop" v-show="!jisuUploadResult" v-if="modForm.status != '03'">
+                                <v-flex xs4 id="file-drag-drop" v-show="!jisuUploadResult">
                                     <v-layout flat class="drag_box" ref="fileform1">
                                         <input
                                             type="file"
@@ -1022,8 +1022,9 @@ export default {
             var vm = this;
 
             var msgTitle = "";
-
             var typeCd  =   vm.$store.state.user.type_cd;
+
+            vm.modForm.modStatus    =   "";
 
             if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                 if( typeCd != "0003" ) {
@@ -1059,15 +1060,17 @@ export default {
                 }
             }
 
-            /* [연동신청] 또는 [연동신청] 완료된 상태인 경우 */
-            if( modStatus || this.modForm.status == "02"  ) {
+            /* [연동신청] 또는 [연동신청 완료] 또는 [연동완료] 된 상태인 경우 */
+            if( modStatus || this.modForm.status == "02" || this.modForm.status == "03"  ) {
 
                 if( modStatus ) {
                     this.modForm.modStatus = modStatus;
 
-                    msgTitle = "[연동신청] 요청시 ";
+                    msgTitle = "연동신청 요청시 ";
                 }else if( this.modForm.status == "02" ) {
                     msgTitle = "연동신청된 상태입니다.";
+                }else if( this.modForm.status == "02" ) {
+                    msgTitle = "연동완료 상태입니다.";
                 }
 
 
@@ -1200,7 +1203,7 @@ export default {
                     }
 
                     if( resultData.result ) {
-                        vm.$emit( "fn_refresh" );
+                        vm.$emit( "fn_moveRegisterPage" );
                     }
                 }
             });
@@ -1494,10 +1497,29 @@ export default {
             selfThis.$emit( "fn_showProgress", true );
             axios.post(Config.base_url + "/user/index/getRegistedJisuData", {
                 data: selfThis.editData
-            }).then(function(response) {
+            }).then( async function(response) {
 
                 selfThis.$emit( "fn_showProgress", false );
+
                 if (response && response.data) {
+
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+
+                    if (!response.data.result) {
+
+                        if( msg ) {
+                            if( await selfThis.$root.$confirm1.open(
+                                        '확인',
+                                        msg,
+                                        {}
+                                    ,   1
+                                )
+                            ) {
+                                return false;
+                            }
+                        }
+                    }
+
                     if( response.data.jisuInfo ) {
                         selfThis.modForm = response.data.jisuInfo;
                         selfThis.modForm.duplCheckResult    =   true;

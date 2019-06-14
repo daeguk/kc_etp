@@ -1043,7 +1043,7 @@ export default {
             koscomSuperUser   : "9999",
             compList :[],       //발행사
             code004List :[],    //지수입수기관
-            code0041List :[],   //실시간 지수입수기관(숫자)
+            //code0041List :[],   //실시간 지수입수기관(숫자)
             code005List :[],    //실시간휴장일기준
             code006List :[],    //Hedge여부/적용환율
             code007List :[],    //산출식
@@ -1067,7 +1067,7 @@ export default {
                                    ,idx_file_path:true
                                    ,listDate:true, listReqDate:true
                                    ,kor_idx_sym_code:true, kor_idx_nm:true, kor_user_req:true, idxCompDistYn:true},
-            seq : 0,
+            seq : 0
         };
     },
     components: {
@@ -1125,7 +1125,7 @@ export default {
                 }else{
                   //초기화
                     vm.masterData ={
-                         seq_hist:"", seq:"", isu_kor_nm:"",isu_eng_nm:"",isin_code:"",isu_srt_cd:"",etp_type:"",inst_cd:"",req_date:"",list_req_date:"",list_date:"",krx_dist_yn:"",comp_dist_yn:"",ksd_dist_yn:"",mirae_dist_yn:"",idx_inst_cd:"",idx_sym_code:"",idx_nm:"",idx_dist_inst_cd:"",idx_close_type:"",idx_holy_cd:"",idx_trace_yd_mult_type:"",pre_idx_type:"",idx_file_nm:"",idx_comp_ksd_dist_yn:"",idx_comp_mirae_dist_yn:"",blom_ticker:"",user_req:"",real_yn:"N",ridx_inst_cd:"",ridx_dist_inst_cd:"",ridx_crt_sym_code:"",ridx_dist_sym_code:"",ridx_holy_cd:"",ridx_krx_dist_yn:"",ridx_comp_dist_yn:"",ridx_ksd_dist_yn:"",ridx_mirae_dist_yn:"",ridx_dist_term:"",refidx_sym_code:"",refidx_nm:"",refidx_inst_cd:"",refidx_file_nm:"",refidx_req:"",refidx_blom_ticker:"",ex_rate_cd:"",ex_hedge_yn:"",isin_stat_cd:"",inav_calc_cd:"",idx_rec_yn:"",idx_dis_yn:"",inav_calc_yn:"",idx_mid:"",ridx_mid:"",close_file:"",real_idx_tr:"",proc_stat:"",insert_id:"",insert_time:"",update_id:"",update_time:"",kor_for_type:"F",agent_cd:"",idx_comp_cd:"",krx_up_code:"",agent_up_code:""
+                         seq_hist:"", seq:"", isu_kor_nm:"",isu_eng_nm:"",isin_code:"",isu_srt_cd:"",etp_type:"",inst_cd:"",req_date:"",list_req_date:"",list_date:"",krx_dist_yn:"",comp_dist_yn:"",ksd_dist_yn:"",mirae_dist_yn:"",idx_inst_cd:"",idx_sym_code:"",idx_nm:"",idx_dist_inst_cd:"",idx_close_type:"",idx_holy_cd:"",idx_trace_yd_mult_type:"",pre_idx_type:"",idx_file_nm:"",idx_comp_ksd_dist_yn:"",idx_comp_mirae_dist_yn:"",blom_ticker:"",user_req:"",real_yn:"N",ridx_inst_cd:"",ridx_dist_inst_cd:"",ridx_crt_sym_code:"",ridx_dist_sym_code:"",ridx_holy_cd:"",ridx_krx_dist_yn:"",ridx_comp_dist_yn:"",ridx_ksd_dist_yn:"",ridx_mirae_dist_yn:"",ridx_dist_term:"",refidx_sym_code:"",refidx_nm:"",refidx_inst_cd:"",refidx_file_nm:"",refidx_req:"",refidx_blom_ticker:"",ex_rate_cd:"",ex_hedge_yn:"",isin_stat_cd:"",inav_calc_cd:"",idx_rec_yn:"N",idx_dis_yn:"N",inav_calc_yn:"N",idx_mid:"",ridx_mid:"",close_file:"",real_idx_tr:"",proc_stat:"",insert_id:"",insert_time:"",update_id:"",update_time:"",kor_for_type:"F",agent_cd:"",idx_comp_cd:"",krx_up_code:"",agent_up_code:""
                         ,idx_file_path:""
                         ,listDate:"", listReqDate:""
                         ,kor_idx_sym_code:"", kor_idx_nm:"", kor_user_req:""
@@ -1148,11 +1148,11 @@ export default {
                         vm.code004List.push({ value: code004List[i].M_CD, text: code004List[i].M_CD_NM });
                     }
 
-                    var code0041List = response.data.code004List; //지수입수기관(숫자)
-                        vm.code0041List.push({ value: "", text: "선택하세요." });
-                    for (let i = 0; i < code004List.length; i++) {
-                        vm.code0041List.push({ value: code004List[i].M_CD.substr(2,4), text: code004List[i].M_CD_NM });
-                    }
+                    // var code0041List = response.data.code004List; //지수입수기관(숫자)
+                    //     vm.code0041List.push({ value: "", text: "선택하세요." });
+                    // for (let i = 0; i < code004List.length; i++) {
+                    //     vm.code0041List.push({ value: code004List[i].M_CD.substr(2,4), text: code004List[i].M_CD_NM });
+                    // }
 
                     var code005List = response.data.code005List; //실시간휴장일기준
                         vm.code005List.push({ value: "", text: "선택하세요." });
@@ -1483,13 +1483,13 @@ export default {
                     }
                     
                     //int type파라미터 값 없을 시 null저장
-                    // idx_trace_yd_mult_type
-                    // pre_idx_type
+                    // idx_trace_yd_mult_type(지수추적배수)
+                    // pre_idx_type(전일기초지수구분)
                     // ridx_dist_term(지수제공주기)
-                    // idx_mid
-                    // ridx_mid
-                    // krx_up_code
-                    // agent_up_code
+                    // idx_mid(기초지수MID)
+                    // ridx_mid(실시간지수MID)
+                    // krx_up_code(거래소업종코드)
+                    // agent_up_code(사무사수탁업종코드)
 
                     await axios({
                         method: 'post',
