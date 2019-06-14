@@ -68,6 +68,9 @@ var getEtpOperInfo = function(req, res) {
                     }
 
                     if (rows && rows.length > 0) {
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
+                        
                         resultMsg.dataList = rows;
                     }
 
@@ -275,6 +278,9 @@ var getEtpOperIndexOversea = function(req, res) {
                     }
 
                     if (rows && rows.length > 0) {
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
+                        
                         resultMsg.dataList = rows;
                     }
 
@@ -500,6 +506,9 @@ var getEtpOperPdf = function(req, res) {
                         }
 
                         if (rows && rows.length > 0) {
+                            resultMsg.result = true;
+                            resultMsg.msg = "";
+
                             resultMsg.dataList = rows;
                         }
 
@@ -775,6 +784,9 @@ var getEtpOperPdfByRateTitle = function(req, res) {
 
                             rateTitleList.push(temp);
                         }
+
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
 
                         resultMsg.rateTitleList = rateTitleList;
                     }
@@ -1145,75 +1157,40 @@ var getJongmokData = function(req, res) {
 
         Promise.using(pool.connect(), conn => {
 
-            async.waterfall([
+            try{
+                stmt = mapper.getStatement('etpOper', 'getKspjongBasic', paramData, format);
+                log.debug(stmt);
 
-                /* 1. KspjongBasic 의 기본정보를 조회한다. */
-                function(callback) {
+                conn.query(stmt, function(err, rows) {
 
-                    stmt = mapper.getStatement('etpOper', 'getKspjongBasic', paramData, format);
-                    log.debug(stmt);
+                    if (err) {
+                        log.error(err, paramData);
 
-                    conn.query(stmt, function(err, rows) {
-
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpOper.getKspjongBasic Error while performing Query";
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-
-                        if (rows && rows.length > 0) {
-                            resultMsg.dataList = rows;
-                        }
-
-                        callback(null, paramData);
-                    });
-                },
-
-                /* 2. FutureBasic 의 기본정보를 조회한다. */
-                function(msg, callback) {
-
-                    if (!(resultMsg.dataList && resultMsg.dataList.length > 0)) {
-                        stmt = mapper.getStatement('etpOper', 'getFutureBasic', paramData, format);
-                        log.debug(stmt);
-
-                        conn.query(stmt, function(err, rows) {
-
-                            if (err) {
-                                resultMsg.result = false;
-                                resultMsg.msg = "[error] etpOper.getFutureBasic Error while performing Query";
-                                resultMsg.err = err;
-
-                                return callback(resultMsg);
-                            }
-
-                            if (rows && rows.length > 0) {
-                                resultMsg.dataList = rows;
-                            }
-
-                            callback(null);
-                        });
-
-                    } else {
-                        callback(null);
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getKspjongBasic Error while performing Query";
+                        resultMsg.err = err;
                     }
-                }
 
-            ], function(err) {
+                    if (rows && rows.length > 0) {
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
+                        resultMsg.dataList = rows;
+                    }
 
-                if (err) {
-                    log.error(err, paramData);
-                } else {
+                    res.json(resultMsg);
+                    res.end();
+                });
 
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
-                    resultMsg.err = null;
-                }
+            } catch (err) {
+                log.error(err, paramData);
+
+                resultMsg.result = false;
+                resultMsg.msg = "[error] etpOper.getKspjongBasic Error while performing Query";
+                resultMsg.err = err;
 
                 res.json(resultMsg);
                 res.end();
-            });
+            }
         });
 
     } catch (expetion) {
@@ -2282,64 +2259,43 @@ var getPdfExistYnByNow = function(req, res) {
         resultMsg.emergency_exist_yn = "N";
         Promise.using(pool.connect(), conn => {
 
+            try {
+                stmt = mapper.getStatement('etpOper', 'getPdfExistYnByNow', paramData, format);
+                log.debug(stmt);
 
-            async.waterfall([
+                conn.query(stmt, function(err, rows) {
 
-                /* 1. 현재일자에 PDF 변경건이 존재하는지 반환한다. */
-                function(callback) {
-
-                    try {
-                        stmt = mapper.getStatement('etpOper', 'getPdfExistYnByNow', paramData, format);
-                        log.debug(stmt);
-
-                        conn.query(stmt, function(err, rows) {
-
-                            if (err) {
-                                resultMsg.result = false;
-                                resultMsg.msg = "[error] etpOper.getPdfExistYnByNow Error while performing Query";
-                                resultMsg.err = err;
-
-                                return callback(resultMsg);
-                            }
-
-                            if (!rows || rows.length != 1) {
-                                resultMsg.result = false;
-                                resultMsg.msg = "[error] etpOper.getMaxGroupNo emergency_exist_yn 가 존재하지 않습니다.";
-                                resultMsg.err = err;
-
-                                return callback(resultMsg);
-                            }
-
-                            if (rows && rows.length == 1) {
-                                resultMsg.emergency_exist_yn = rows[0].emergency_exist_yn;
-                            }
-
-                            callback(null, paramData);
-                        });
-
-                    } catch (err) {
+                    if (err) {
                         resultMsg.result = false;
                         resultMsg.msg = "[error] etpOper.getPdfExistYnByNow Error while performing Query";
                         resultMsg.err = err;
-
-                        return callback(resultMsg);
                     }
-                },
 
-            ], function(err) {
+                    if (!rows || rows.length != 1) {
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getMaxGroupNo emergency_exist_yn 가 존재하지 않습니다.";
+                        resultMsg.err = err;
+                    }
 
-                if (err) {
-                    log.error(err, paramData);
-                } else {
+                    if (rows && rows.length == 1) {
 
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
-                    resultMsg.err = null;
-                }
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
 
-                res.json(resultMsg);
-                res.end();
-            });
+                        resultMsg.emergency_exist_yn = rows[0].emergency_exist_yn;
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+                });
+
+            } catch (err) {
+                resultMsg.result = false;
+                resultMsg.msg = "[error] etpOper.getPdfExistYnByNow Error while performing Query";
+                resultMsg.err = err;
+
+                return callback(resultMsg);
+            }
         });
 
     } catch (expetion) {
