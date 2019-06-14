@@ -50,7 +50,6 @@ module.exports = {
         { file: './user/etp/etpOper', path: '/user/etp/getJongmokData', method: 'getJongmokData', session: 'check', type: 'post' },
 
 
-        { file: './user/etp/etpOper', path: '/user/etp/getExchBasic', method: 'getExchBasic', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getKspjongBasic', method: 'getKspjongBasic', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getFutureBasic', method: 'getFutureBasic', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/saveEtpOperPdfModify', method: 'saveEtpOperPdfModify', session: 'check', type: 'post' },
