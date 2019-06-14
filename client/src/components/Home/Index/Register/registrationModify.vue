@@ -57,6 +57,7 @@
                                         ref="jisu_id"
                                         label="지수ID"
                                         value="e.g.FDL001"
+                                        maxlength="20"
                                         outline
                                         v-model="modForm.jisu_id"
                                         :rules="rules.jisu_id"
@@ -128,6 +129,7 @@
                                         v-model="modForm.jisu_kor_nm"
                                         :rules="rules.jisu_kor_nm"
 
+                                        maxlength="100"
                                         :disabled="modForm.status == '03'"
                                     ></v-text-field>
                                 </v-flex>
@@ -146,6 +148,7 @@
                                         v-model="modForm.jisu_summary"
                                         :rules="rules.jisu_summary"
 
+                                        maxlength="4000"
                                         :disabled="modForm.status == '03'"
                                     ></v-textarea>
                                 </v-flex>
@@ -164,6 +167,7 @@
                                         v-model="modForm.base_jisu"
                                         :rules="rules.base_jisu"
 
+                                        maxlength="20"
                                         :disabled="modForm.status == '03'"
                                     ></v-text-field>
                                 </v-flex>
@@ -202,6 +206,7 @@
                                                         v-model="modForm.base_date"
                                                         :rules="rules.base_date"
 
+                                                        maxlength="10"
                                                         :disabled="modForm.status == '03'"
                                                     ></v-text-field>
                                                 </template>
@@ -388,6 +393,7 @@
                                         v-model="modForm.req_content"
                                         :rules="[rules.req_content]"
 
+                                        maxlength="4000"
                                         :disabled="modForm.status == '03'"
                                     >
                                     </v-textarea>

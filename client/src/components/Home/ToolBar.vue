@@ -13,20 +13,28 @@
     <span class="top_cont_title">{{menuTitle}}</span>
   <v-spacer></v-spacer>
   <!--고객지원---->
-  <v-menu bottom offset-y  ref="csMenu"  :close-on-content-click="false">
-        <template v-slot:activator="{ on }">
-            <v-btn flat v-on="on" class="support_btn"><v-icon>send</v-icon> 고객지원</v-btn>
-        </template>
+    <v-btn flat class="support_btn" @click="csDialog=true"><v-icon>send</v-icon> 고객지원</v-btn>
+
+   <v-dialog v-model="csDialog" persistent max-width="500px">
         <v-card flat class="support">
-            <v-card-title><h5>고객지원</h5>
-            <p>서비스 관련 문의 및 개선해야 할 사항을 남겨주시면 빠른시간 내에 답변 드리겠습니다.</p>
-            <v-textarea label="" outline color="blue" height="220px"    ref="contents"    v-model="contents"></v-textarea>
+            <v-card-title>
+                <h5>고객지원</h5>
+                <v-spacer></v-spacer>
+                <v-btn icon @click="csDialog=false"><v-icon>close</v-icon></v-btn>
             </v-card-title>
+
+            <v-card-title>
+                <p>서비스 관련 문의 및 개선해야 할 사항을 남겨주시면 빠른시간 내에 답변 드리겠습니다.</p>
+                <v-textarea label="" outline color="blue" height="220px"    ref="contents"    v-model="contents" :placeholder="defaultContents"></v-textarea>
+            </v-card-title>
+
+            <v-card-title>
                 <div class="text-xs-center">  
                     <v-btn dark depressed color="primary" @click="fn_saveCustSupport">전송하기</v-btn>
                 </div>
+            </v-card-title>
         </v-card>
-    </v-menu>
+  </v-dialog>
     <!--고객지원end---->  
   <UserInfo></UserInfo>
 
@@ -58,6 +66,7 @@ export default {
                             +   "기관명:\n\n\n"    
                             +   "내용:\n\n\n",
         contents :  "",
+        csDialog : false
     };
   },
   components: {
@@ -73,7 +82,7 @@ export default {
         // 메시지 박스 참조
         this.$root.$confirm = this.$refs.confirm;
 
-        this.contents = this.defaultContents;
+//        this.contents = this.defaultContents;
 
         /* 지수 사업자 */
         if (this.$store.state.user.type_cd == '0003') {
@@ -152,8 +161,8 @@ export default {
                 }
 
                 if( resultData.result ) {
-                    vm.$refs.csMenu.isActive = false;
-                    vm.contents = vm.defaultContents;
+                    vm.contents     =   "";
+                    vm.csDialog     =   false;
                 }
             });
         }

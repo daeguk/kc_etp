@@ -29,8 +29,7 @@ var saveCustSupport = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] custSupport.saveCustSupport  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] custSupport.saveCustSupport  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] custSupport.saveCustSupport  req.body.data no data.";
@@ -57,14 +56,14 @@ var saveCustSupport = function(req, res) {
                 if( paramData.contents ) {
                     paramData.subject   =   paramData.contents.substr( 0, 30 );
                 }
-console.log( paramData );
+
                 stmt = mapper.getStatement('custSupport', 'saveCustSupport', paramData, format);
                 log.debug(stmt);
 
                 conn.query(stmt, function(err, rows) {
 
                     if (err) {
-                        log.error(err);
+                        log.error(err, paramData);
 
                         resultMsg.result = false;
                         resultMsg.msg = "[error] custSupport.saveCustSupport Error while performing Query";
@@ -81,7 +80,7 @@ console.log( paramData );
                 });
 
             } catch (err) {
-                log.error(err);
+                log.error(err, paramData);
 
                 resultMsg.result = false;
                 resultMsg.msg = "[error] custSupport.saveCustSupport Error while performing Query";
@@ -94,7 +93,7 @@ console.log( paramData );
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
