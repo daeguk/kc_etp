@@ -6,35 +6,46 @@
   -->
   <v-toolbar-title>
     <div class="logo_w">
-        <a class="routerlink logo" @click="outService">EMP<span>Etp Management<br> Platform</span></a>
+        <a class="routerlink logo" @click="outService">EMP<span>ETP Management<br> Platform</span></a>
     </div>
   </v-toolbar-title>
     <ContextMenu v-show="isContext" @menuClick="menuClick"></ContextMenu>
     <span class="top_cont_title">{{menuTitle}}</span>
   <v-spacer></v-spacer>
   <!--고객지원---->
-  <v-menu bottom offset-y :close-on-content-click="false" >
-        <template v-slot:activator="{ on }">
-            <v-btn flat v-on="on" class="support_btn"><v-icon>send</v-icon> 고객지원</v-btn>
-        </template>
-        <v-card flat class="support">
-            <v-card-title><h5>고객지원</h5>
-            <p>서비스 관련 문의 및 개선해야 할 사항을 남겨주시면 빠른시간 내에 답변 드리겠습니다.</p>
-            <v-textarea label="" outline color="blue" height="220px"></v-textarea>
+    <v-btn flat class="support_btn" @click="csDialog=true"><v-icon>send</v-icon> 고객지원</v-btn>
+
+   <v-dialog v-model="csDialog" persistent max-width="500px">
+        <v-card flat class="support" height="440px">
+            <v-card-title>
+                <h5>고객지원</h5>
+                <v-spacer></v-spacer>
+                <v-btn icon @click="csDialog=false"><v-icon>close</v-icon></v-btn>
             </v-card-title>
+
+            <v-card-title>
+                <p>서비스 관련 문의 및 개선해야 할 사항을 남겨주시면 빠른시간 내에 답변 드리겠습니다.</p>
+                <v-textarea label="" outline color="blue" height="220px"    ref="contents"    v-model="contents" :placeholder="defaultContents"></v-textarea>
+            </v-card-title>
+
+            <v-card-title>
                 <div class="text-xs-center">  
-                    <v-btn dark depressed color="primary" @click="menu = false">전송하기</v-btn>
+                    <v-btn dark depressed color="primary" @click="fn_saveCustSupport">전송하기</v-btn>
                 </div>
+            </v-card-title>
         </v-card>
-      </v-menu>
+  </v-dialog>
     <!--고객지원end---->  
   <UserInfo></UserInfo>
+
+  <ConfirmDialog ref="confirm"></ConfirmDialog>
 </v-toolbar>
 
 </template>
 
 
 <script>
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import ContextMenu          from './ContextMenu.vue';
 import UserInfo          from './UserInfo.vue';
 import Config       from "@/js/config.js";
@@ -50,16 +61,29 @@ export default {
         menuTitle: "MARKET ETP INFO",
         clickTimer: 0,
         homeUrl: Config.home_url,
+
+        defaultContents :       "사용자명:\n\n\n"
+                            +   "기관명:\n\n\n"    
+                            +   "내용:\n\n\n",
+        contents :  "",
+        csDialog : false
     };
   },
   components: {
-    ContextMenu, UserInfo
+    ContextMenu, UserInfo,
+    ConfirmDialog: ConfirmDialog
   },
   created: function() {
   },
   beforeDestroy() {
   },    
   mounted: function() {
+
+        // 메시지 박스 참조
+        this.$root.$confirm = this.$refs.confirm;
+
+//        this.contents = this.defaultContents;
+
         /* 지수 사업자 */
         if (this.$store.state.user.type_cd == '0003') {
             this.menuTitle = "지수관리";
@@ -90,16 +114,59 @@ export default {
 //        this.isContext = true;
 //      }
 //    },
-    menuClick: function(menu) {
-      //console.log("menuClick........: " + menu.title);        
-        this.menuTitle = menu.title;
-     },
-    outService: function() {
-      console.log("UserInfo.vue....... outService...");
-      // Home.vue
-      this.$EventBus.$emit("outService");
-    },
-  }
+        menuClick: function(menu) {
+        //console.log("menuClick........: " + menu.title);        
+            this.menuTitle = menu.title;
+        },
+        outService: function() {
+        console.log("UserInfo.vue....... outService...");
+        // Home.vue
+        this.$EventBus.$emit("outService");
+        },
+
+        /*
+        *   고객지원 정보를 저장한다.
+        *   2019-06-13  bkLove(촤병국)
+        */
+        async fn_saveCustSupport() {
+            var vm = this;
+
+            if( await !vm.contents || vm.contents.length == 0 || vm.contents.replace(/^\s+|\s+$/g,"").length == 0 ) {
+                if( vm.$root.$confirm.open(
+                            ''
+                        ,   "내용을 입력해 주세요"
+                        ,   {}
+                        ,   1
+                    )
+                ) {
+                    return false;                    
+                }                
+            }
+
+            axios.post(Config.base_url+'/user/etc/saveCustSupport', {
+                "data" : { contents : vm.contents },
+            }).then( async function(response) {
+
+                var resultData = response.data;
+
+                if( resultData.msg ) {
+                    if( vm.$root.$confirm.open(
+                                ''
+                            ,   resultData.msg
+                            ,   {}
+                            ,   1
+                        )
+                    ) {
+                    }
+                }
+
+                if( resultData.result ) {
+                    vm.contents     =   "";
+                    vm.csDialog     =   false;
+                }
+            });
+        }
+    }
 }  
 </script>
 
