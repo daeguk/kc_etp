@@ -688,7 +688,7 @@
                                         </v-flex>
                                         <v-flex xs3>
                                             <v-select v-bind:disabled="masterData.real_yn === 'N' || inputDisabled"
-                                               :items="code0041List"
+                                               :items="code004List"
                                                 item-value="value"
                                                 item-text="text"
                                                 :selected="masterData.ridx_dist_inst_cd"
@@ -1066,7 +1066,7 @@ export default {
             errors : {seq_hist:true, seq:true, isu_kor_nm:true,isu_eng_nm:true,isin_code:true,isu_srt_cd:true,etp_type:true,inst_cd:true,req_date:true,list_req_date:true,list_date:true,krx_dist_yn:true,comp_dist_yn:true,ksd_dist_yn:true,mirae_dist_yn:true,idx_inst_cd:true,idx_sym_code:true,idx_nm:true,idx_dist_inst_cd:true,idx_close_type:true,idx_holy_cd:true,idx_trace_yd_mult_type:true,pre_idx_type:true,idx_file_nm:true,idx_comp_ksd_dist_yn:true,idx_comp_mirae_dist_yn:true,blom_ticker:true,user_req:true,real_yn:"N",ridx_inst_cd:true,ridx_dist_inst_cd:true,ridx_crt_sym_code:true,ridx_dist_sym_code:true,ridx_holy_cd:true,ridx_krx_dist_yn:true,ridx_comp_dist_yn:true,ridx_ksd_dist_yn:true,ridx_mirae_dist_yn:true,ridx_dist_term:true,refidx_sym_code:true,refidx_nm:true,refidx_inst_cd:true,refidx_file_nm:true,refidx_req:true,refidx_blom_ticker:true,ex_rate_cd:true,ex_hedge_yn:true,isin_stat_cd:true,inav_calc_cd:true,idx_rec_yn:true,idx_dis_yn:true,inav_calc_yn:true,idx_mid:true,ridx_mid:true,close_file:true,real_idx_tr:true,proc_stat:true,insert_id:true,insert_time:true,update_id:true,update_time:true,kor_for_type:"F",agent_cd:true,idx_comp_cd:true,krx_up_code:true,agent_up_code:true
                                    ,idx_file_path:true
                                    ,listDate:true, listReqDate:true
-                                   ,kor_idx_sym_code:true, kor_idx_nm:true, kor_user_req:true},
+                                   ,kor_idx_sym_code:true, kor_idx_nm:true, kor_user_req:true, idxCompDistYn:true},
             seq : 0,
         };
     },
@@ -1098,10 +1098,10 @@ export default {
         }
         ,getEtpRegisterView :  function(){
             var vm = this;
-            vm.errors = {seq_hist:true, seq:true, isu_kor_nm:true,isu_eng_nm:true,isin_code:true,isu_srt_cd:true,etp_type:true,inst_cd:true,req_date:true,list_req_date:true,list_date:true,krx_dist_yn:true,comp_dist_yn:true,ksd_dist_yn:true,mirae_dist_yn:true,idx_inst_cd:true,idx_sym_code:true,idx_nm:true,idx_dist_inst_cd:true,idx_close_type:true,idx_holy_cd:true,idx_trace_yd_mult_type:true,pre_idx_type:true,idx_file_nm:true,idx_comp_ksd_dist_yn:true,idx_comp_mirae_dist_yn:true,blom_ticker:true,user_req:true,real_yn:"N",ridx_inst_cd:true,ridx_dist_inst_cd:true,ridx_crt_sym_code:true,ridx_dist_sym_code:true,ridx_holy_cd:true,ridx_krx_dist_yn:true,ridx_comp_dist_yn:true,ridx_ksd_dist_yn:true,ridx_mirae_dist_yn:true,ridx_dist_term:true,refidx_sym_code:true,refidx_nm:true,refidx_inst_cd:true,refidx_file_nm:true,refidx_req:true,refidx_blom_ticker:true,ex_rate_cd:true,ex_hedge_yn:true,isin_stat_cd:true,inav_calc_cd:true,idx_rec_yn:true,idx_dis_yn:true,inav_calc_yn:true,idx_mid:true,ridx_mid:true,close_file:true,real_idx_tr:true,proc_stat:true,insert_id:true,insert_time:true,update_id:true,update_time:true,kor_for_type:"F",agent_cd:true,idx_comp_cd:true,krx_up_code:true,agent_up_code:true
+             vm.errors = {seq_hist:true, seq:true, isu_kor_nm:true,isu_eng_nm:true,isin_code:true,isu_srt_cd:true,etp_type:true,inst_cd:true,req_date:true,list_req_date:true,list_date:true,krx_dist_yn:true,comp_dist_yn:true,ksd_dist_yn:true,mirae_dist_yn:true,idx_inst_cd:true,idx_sym_code:true,idx_nm:true,idx_dist_inst_cd:true,idx_close_type:true,idx_holy_cd:true,idx_trace_yd_mult_type:true,pre_idx_type:true,idx_file_nm:true,idx_comp_ksd_dist_yn:true,idx_comp_mirae_dist_yn:true,blom_ticker:true,user_req:true,real_yn:"N",ridx_inst_cd:true,ridx_dist_inst_cd:true,ridx_crt_sym_code:true,ridx_dist_sym_code:true,ridx_holy_cd:true,ridx_krx_dist_yn:true,ridx_comp_dist_yn:true,ridx_ksd_dist_yn:true,ridx_mirae_dist_yn:true,ridx_dist_term:true,refidx_sym_code:true,refidx_nm:true,refidx_inst_cd:true,refidx_file_nm:true,refidx_req:true,refidx_blom_ticker:true,ex_rate_cd:true,ex_hedge_yn:true,isin_stat_cd:true,inav_calc_cd:true,idx_rec_yn:true,idx_dis_yn:true,inav_calc_yn:true,idx_mid:true,ridx_mid:true,close_file:true,real_idx_tr:true,proc_stat:true,insert_id:true,insert_time:true,update_id:true,update_time:true,kor_for_type:"F",agent_cd:true,idx_comp_cd:true,krx_up_code:true,agent_up_code:true
                                    ,idx_file_path:true
                                    ,listDate:true, listReqDate:true
-                                   ,kor_idx_sym_code:true, kor_idx_nm:true, kor_user_req:true}; 
+                                   ,kor_idx_sym_code:true, kor_idx_nm:true, kor_user_req:true, idxCompDistYn:true};
             console.log('##getEtpRegisterView 호출 error##', vm.errors);
             console.log('##getEtpRegisterView 호출 seq##', vm.seq);
              axios
@@ -1251,11 +1251,10 @@ export default {
          fn_insertEtpRegister: async function(arg) {
           console.log(this.$root.$confirm);
             var vm = this;
-            
-               vm.errors = {seq_hist:true, seq:true, isu_kor_nm:true,isu_eng_nm:true,isin_code:true,isu_srt_cd:true,etp_type:true,inst_cd:true,req_date:true,list_req_date:true,list_date:true,krx_dist_yn:true,comp_dist_yn:true,ksd_dist_yn:true,mirae_dist_yn:true,idx_inst_cd:true,idx_sym_code:true,idx_nm:true,idx_dist_inst_cd:true,idx_close_type:true,idx_holy_cd:true,idx_trace_yd_mult_type:true,pre_idx_type:true,idx_file_nm:true,idx_comp_ksd_dist_yn:true,idx_comp_mirae_dist_yn:true,blom_ticker:true,user_req:true,real_yn:"N",ridx_inst_cd:true,ridx_dist_inst_cd:true,ridx_crt_sym_code:true,ridx_dist_sym_code:true,ridx_holy_cd:true,ridx_krx_dist_yn:true,ridx_comp_dist_yn:true,ridx_ksd_dist_yn:true,ridx_mirae_dist_yn:true,ridx_dist_term:true,refidx_sym_code:true,refidx_nm:true,refidx_inst_cd:true,refidx_file_nm:true,refidx_req:true,refidx_blom_ticker:true,ex_rate_cd:true,ex_hedge_yn:true,isin_stat_cd:true,inav_calc_cd:true,idx_rec_yn:true,idx_dis_yn:true,inav_calc_yn:true,idx_mid:true,ridx_mid:true,close_file:true,real_idx_tr:true,proc_stat:true,insert_id:true,insert_time:true,update_id:true,update_time:true,kor_for_type:"F",agent_cd:true,idx_comp_cd:true,krx_up_code:true,agent_up_code:true
-                                   ,idx_file_path:true
-                                   ,listDate:true, listReqDate:true
-                                   ,kor_idx_sym_code:true, kor_idx_nm:true, kor_user_req:true};
+            vm.errors = {seq_hist:true, seq:true, isu_kor_nm:true,isu_eng_nm:true,isin_code:true,isu_srt_cd:true,etp_type:true,inst_cd:true,req_date:true,list_req_date:true,list_date:true,krx_dist_yn:true,comp_dist_yn:true,ksd_dist_yn:true,mirae_dist_yn:true,idx_inst_cd:true,idx_sym_code:true,idx_nm:true,idx_dist_inst_cd:true,idx_close_type:true,idx_holy_cd:true,idx_trace_yd_mult_type:true,pre_idx_type:true,idx_file_nm:true,idx_comp_ksd_dist_yn:true,idx_comp_mirae_dist_yn:true,blom_ticker:true,user_req:true,real_yn:"N",ridx_inst_cd:true,ridx_dist_inst_cd:true,ridx_crt_sym_code:true,ridx_dist_sym_code:true,ridx_holy_cd:true,ridx_krx_dist_yn:true,ridx_comp_dist_yn:true,ridx_ksd_dist_yn:true,ridx_mirae_dist_yn:true,ridx_dist_term:true,refidx_sym_code:true,refidx_nm:true,refidx_inst_cd:true,refidx_file_nm:true,refidx_req:true,refidx_blom_ticker:true,ex_rate_cd:true,ex_hedge_yn:true,isin_stat_cd:true,inav_calc_cd:true,idx_rec_yn:true,idx_dis_yn:true,inav_calc_yn:true,idx_mid:true,ridx_mid:true,close_file:true,real_idx_tr:true,proc_stat:true,insert_id:true,insert_time:true,update_id:true,update_time:true,kor_for_type:"F",agent_cd:true,idx_comp_cd:true,krx_up_code:true,agent_up_code:true
+                        ,idx_file_path:true
+                        ,listDate:true, listReqDate:true
+                        ,kor_idx_sym_code:true, kor_idx_nm:true, kor_user_req:true, idxCompDistYn:true};
             var hudleYn = "Y";
               console.log("###fn_insertEtpRegister:::", vm.masterData);
             //코스콤은 발행사 수정 가능
@@ -1278,19 +1277,23 @@ export default {
                hudleYn ='N';
             }
             
-            if(vm.masterData.isu_srt_cd !=='' && vm.masterData.isin_code ==''){
-                vm.$refs.isin_code.focus();
-                 vm.errors.isin_code='단축코드 입력 시 종목코드가 입력되어야 합니다.';
-               hudleYn ='N';
+            if(vm.masterData.isu_srt_cd !=='' && vm.masterData.isu_srt_cd !==null){
+                if(vm.masterData.isin_code =='' || vm.masterData.isin_code ==null){
+                    vm.$refs.isin_code.focus();
+                    vm.errors.isin_code='단축코드 입력 시 종목코드가 입력되어야 합니다.';
+                    hudleYn ='N';
+                }
             }
 
-            if(vm.masterData.isu_srt_cd =='' && vm.masterData.isin_code !==''){
-                 vm.$refs.isu_srt_cd.focus();
-                 vm.errors.isu_srt_cd='종목코드 입력 시 단축코드가 입력되어야 합니다.';
-               hudleYn ='N';
+            if(vm.masterData.isin_code !==''&& vm.masterData.isin_code !==null){
+                if(vm.masterData.isu_srt_cd =='' || vm.masterData.isu_srt_cd ==null){
+                    vm.$refs.isu_srt_cd.focus();
+                    vm.errors.isu_srt_cd='종목코드 입력 시 단축코드가 입력되어야 합니다.';
+                    hudleYn ='N';
+                }
             }
 
-             if(vm.masterData.isin_code !==''){
+             if(vm.masterData.isin_code !=='' && vm.masterData.isin_code !==null){
                 if(vm.masterData.list_req_date =='' || vm.masterData.list_req_date ==null){
                     vm.$refs.list_req_date.focus();
                      vm.errors.list_req_date='종목코드 입력 시 상장신청일이 입력되어야 합니다.';
@@ -1303,7 +1306,7 @@ export default {
                    hudleYn ='N';
                 }
 
-                if(vm.masterData.inav_calc_cd ==''){
+                if(vm.masterData.inav_calc_cd =='' || vm.masterData.inav_calc_cd ==null){
                     vm.$refs.inav_calc_cd.focus();
                     vm.errors.inav_calc_cd='종목코드 입력 시 iNAV/iV 관련정보가 입력되어야 합니다.';
                    hudleYn ='N';
@@ -1400,14 +1403,14 @@ export default {
                 }
             }
         
-            if(vm.masterData.ridx_dist_sym_code !==''){
-                if(vm.masterData.ridx_dist_inst_cd ===''){
+            if(vm.masterData.ridx_dist_sym_code !=='' && vm.masterData.ridx_dist_sym_code !==null){
+                if(vm.masterData.ridx_dist_inst_cd ==='' || vm.masterData.ridx_dist_inst_cd == null){
                      vm.$refs.ridx_dist_inst_cd.focus();
                      vm.errors.ridx_dist_inst_cd = '실시간 지수입수기관심볼 입력 시 실시간 지수입수기관이 입력되어야 합니다.';
                    hudleYn ='N';
                 }
 
-                if(vm.masterData.ridx_holy_cd ===''){
+                if(vm.masterData.ridx_holy_cd ==='' || vm.masterData.ridx_holy_cd ==null){
                      vm.$refs.ridx_holy_cd.focus();
                      vm.errors.ridx_holy_cd = '실시간 지수입수기관심볼 입력 시 실시간 휴장일 기준이 입력되어야 합니다.';
                    hudleYn ='N';
@@ -1438,19 +1441,19 @@ export default {
             if(vm.masterData.inav_calc_yn =='Y'){
                 if(vm.masterData.isin_code ==='' || vm.masterData.isin_code ==null){
                      vm.$refs.isin_code.focus();
-                     vm.errors.isin_code='iNAV산출여부가 Y일 때 첫번째 페이지의 종목코드, 상장신청일, 상장일이 입력되어야 합니다.';
+                     vm.errors.isin_code='iNAV산출여부가 Y일 때 종목코드, 상장신청일, 상장일이 입력되어야 합니다.';
                    hudleYn ='N';
                 }
                 
                 if(vm.masterData.list_req_date =='' || vm.masterData.list_req_date ==null){
                     vm.$refs.list_req_date.focus();
-                    vm.errors.list_req_date='iNAV산출여부가 Y일 때 첫번째 페이지의 종목코드, 상장신청일, 상장일이 입력되어야 합니다.';
+                    vm.errors.list_req_date='iNAV산출여부가 Y일 때 종목코드, 상장신청일, 상장일이 입력되어야 합니다.';
                    hudleYn ='N';
                 }
 
                 if(vm.masterData.list_date =='' || vm.masterData.list_date ==null){ 
                      vm.$refs.list_date.focus();
-                     vm.errors.list_date='iNAV산출여부가 Y일 때 첫번째 페이지의 종목코드, 상장신청일, 상장일이 입력되어야 합니다.';
+                     vm.errors.list_date='iNAV산출여부가 Y일 때 종목코드, 상장신청일, 상장일이 입력되어야 합니다.';
                    hudleYn ='N';
                 }
 
