@@ -211,18 +211,13 @@
                                                     ></v-text-field>
                                                 </template>
 
-                                                <v-date-picker v-model="modForm.base_date" no-title scrollable>
-                                                    <v-spacer></v-spacer>
-                                                    <v-btn
-                                                        flat
-                                                        color="primary"
-                                                        @click="menu = false"
-                                                    >Cancel</v-btn>
-                                                    <v-btn
-                                                        flat
-                                                        color="primary"
-                                                        @click="$refs.menu.save(modForm.base_date)"
-                                                    >OK</v-btn>
+                                                <v-date-picker 
+                                                    v-model="modForm.base_date" 
+                                                    no-title 
+                                                    scrollable
+
+                                                    @input="$refs.menu.save(modForm.base_date)"
+                                                >
                                                 </v-date-picker>
                                             </v-menu>
                                         </v-flex>

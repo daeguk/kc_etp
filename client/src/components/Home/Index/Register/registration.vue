@@ -158,18 +158,9 @@
                                                     v-model="form.base_date"
                                                     no-title
                                                     scrollable
+
+                                                    @input="$refs.menu.save(form.base_date)"
                                                 >
-                                                    <v-spacer></v-spacer>
-                                                    <v-btn
-                                                        flat
-                                                        color="primary"
-                                                        @click="menu = false"
-                                                    >Cancel</v-btn>
-                                                    <v-btn
-                                                        flat
-                                                        color="primary"
-                                                        @click="$refs.menu.save(form.base_date)"
-                                                    >OK</v-btn>
                                                 </v-date-picker>
                                             </v-menu>
                                         </v-flex>
