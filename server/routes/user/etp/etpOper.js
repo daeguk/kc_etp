@@ -1207,102 +1207,6 @@ var getKspjongBasic = function(req, res) {
 }
 
 /*
- * futureBasic 데이터를 조회한다.
- * 2019-05-03  bkLove(촤병국)
- */
-var getFutureBasic = function(req, res) {
-    try {
-        log.debug('etpOper.getFutureBasic 호출됨.');
-
-        var pool = req.app.get("pool");
-        var mapper = req.app.get("mapper");
-        var resultMsg = {};
-
-        /* 1. body.data 값이 있는지 체크 */
-        if (!req.body.data) {
-            log.error("[error] etpOper.getFutureBasic  req.body.data no data.");
-            log.error(req.body.data);
-
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getFutureBasic  req.body.data no data.";
-
-            throw resultMsg;
-        }
-
-        var paramData = JSON.parse(JSON.stringify(req.body.data));
-
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
-
-
-        var format = { language: 'sql', indent: '' };
-        var stmt = "";
-
-        Promise.using(pool.connect(), conn => {
-
-            async.waterfall([
-
-                /* 1. EtpBasic 의 기본정보를 조회한다. */
-                function(callback) {
-
-                    stmt = mapper.getStatement('etpOper', 'getFutureBasic', paramData, format);
-                    log.debug(stmt);
-
-                    conn.query(stmt, function(err, rows) {
-
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpOper.getFutureBasic Error while performing Query";
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-
-                        if (rows && rows.length > 0) {
-                            resultMsg.dataList = rows;
-                        }
-
-                        callback(null);
-                    });
-                }
-
-            ], function(err) {
-
-                if (err) {
-                    log.error(err);
-                } else {
-
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
-                    resultMsg.err = null;
-                }
-
-                res.json(resultMsg);
-                res.end();
-            });
-        });
-
-    } catch (expetion) {
-
-        log.error(expetion);
-
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getFutureBasic 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
-
-        resultMsg.dataList = [];
-
-        res.json(resultMsg);
-        res.end();
-    }
-}
-
-/*
  * 국제표준코드에 속한 종목정보( td_kspjong_basic, td_future_basic )를 조회한다.
  * 2019-05-03  bkLove(촤병국)
  */
@@ -2564,10 +2468,6 @@ module.exports.getEtpOperPdfByRateTitle = getEtpOperPdfByRateTitle;
 module.exports.getEtpOperPdfByRate = getEtpOperPdfByRate;
 module.exports.getEtpOperPdfModify = getEtpOperPdfModify;
 module.exports.getJongmokData = getJongmokData;
-
-
-module.exports.getKspjongBasic = getKspjongBasic;
-module.exports.getFutureBasic = getFutureBasic;
 
 module.exports.saveEtpOperPdfModify = saveEtpOperPdfModify;
 module.exports.getPdfByGroupNo = getPdfByGroupNo;
