@@ -1109,103 +1109,6 @@ var getEtpOperPdfModify = function(req, res) {
     }
 }
 
-
-/*
- * kspjongBasic 데이터를 조회한다.
- * 2019-05-03  bkLove(촤병국)
- */
-var getKspjongBasic = function(req, res) {
-    try {
-        log.debug('etpOper.getKspjongBasic 호출됨.');
-
-        var pool = req.app.get("pool");
-        var mapper = req.app.get("mapper");
-        var resultMsg = {};
-
-        /* 1. body.data 값이 있는지 체크 */
-        if (!req.body.data) {
-            log.error("[error] etpOper.getKspjongBasic  req.body.data no data.");
-            log.error(req.body.data);
-
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getKspjongBasic  req.body.data no data.";
-
-            throw resultMsg;
-        }
-
-        var paramData = JSON.parse(JSON.stringify(req.body.data));
-
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
-
-
-        var format = { language: 'sql', indent: '' };
-        var stmt = "";
-
-        Promise.using(pool.connect(), conn => {
-
-            async.waterfall([
-
-                /* 1. EtpBasic 의 기본정보를 조회한다. */
-                function(callback) {
-
-                    stmt = mapper.getStatement('etpOper', 'getKspjongBasic', paramData, format);
-                    log.debug(stmt);
-
-                    conn.query(stmt, function(err, rows) {
-
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpOper.getKspjongBasic Error while performing Query";
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-
-                        if (rows && rows.length > 0) {
-                            resultMsg.dataList = rows;
-                        }
-
-                        callback(null);
-                    });
-                }
-
-            ], function(err) {
-
-                if (err) {
-                    log.error(err);
-                } else {
-
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
-                    resultMsg.err = null;
-                }
-
-                res.json(resultMsg);
-                res.end();
-            });
-        });
-
-    } catch (expetion) {
-
-        log.error(expetion);
-
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getKspjongBasic 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
-
-        resultMsg.dataList = [];
-
-        res.json(resultMsg);
-        res.end();
-    }
-}
-
 /*
  * 국제표준코드에 속한 종목정보( td_kspjong_basic, td_future_basic )를 조회한다.
  * 2019-05-03  bkLove(촤병국)
@@ -1220,8 +1123,7 @@ var getJongmokData = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getJongmokData  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpOper.getJongmokData  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getJongmokData  req.body.data no data.";
@@ -1301,7 +1203,7 @@ var getJongmokData = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err);
+                    log.error(err, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -1316,7 +1218,7 @@ var getJongmokData = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
@@ -1346,8 +1248,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.saveEtpOperPdfModify  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpOper.saveEtpOperPdfModify  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.saveEtpOperPdfModify  req.body.data no data.";
@@ -2096,7 +1997,7 @@ var saveEtpOperPdfModify = function(req, res) {
                 ], function(err) {
 
                     if (err) {
-                        log.error(err);
+                        log.error(err, paramData);
                         conn.rollback();
 
                     } else {
@@ -2116,7 +2017,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
@@ -2144,8 +2045,7 @@ var getPdfByGroupNo = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getPdfByGroupNo  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpOper.getPdfByGroupNo  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getPdfByGroupNo  req.body.data no data.";
@@ -2313,7 +2213,7 @@ var getPdfByGroupNo = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err);
+                    log.error(err, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -2328,7 +2228,7 @@ var getPdfByGroupNo = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
@@ -2359,8 +2259,7 @@ var getPdfExistYnByNow = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getPdfExistYnByNow  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpOper.getPdfExistYnByNow  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getPdfExistYnByNow  req.body.data no data.";
@@ -2430,7 +2329,7 @@ var getPdfExistYnByNow = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err);
+                    log.error(err, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -2445,7 +2344,7 @@ var getPdfExistYnByNow = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
