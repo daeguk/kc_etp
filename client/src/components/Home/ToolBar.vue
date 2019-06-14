@@ -38,7 +38,7 @@
     <!--고객지원end---->  
   <UserInfo></UserInfo>
 
-  <ConfirmDialog ref="confirm"></ConfirmDialog>
+  <ConfirmDialog ref="confirm" v-show="false"></ConfirmDialog>
 </v-toolbar>
 
 </template>
