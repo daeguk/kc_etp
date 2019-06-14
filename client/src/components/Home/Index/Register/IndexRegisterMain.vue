@@ -9,7 +9,7 @@
                             <span class="grey--text">지수의 기본정보 및 소급지수를 등록합니다.</span>
                         </h3>
                     </v-card-title>
-                    <registrationModify v-if="editYn" :editData="editData" :key="editData.jisu_id" @fn_refresh="fn_refresh" @showMessageBox="showMessageBox" @fn_showProgress="fn_showProgress"></registrationModify>
+                    <registrationModify v-if="editYn" :editData="editData" :key="editData.jisu_id" @fn_refresh="fn_refresh" @showMessageBox="showMessageBox" @fn_showProgress="fn_showProgress" @fn_moveRegisterPage="fn_moveRegisterPage"></registrationModify>
                     <registration v-show="!editYn" @fn_refresh="fn_refresh" @showMessageBox="showMessageBox" @fn_showProgress="fn_showProgress"></registration>
                 </v-card>
             </v-flex>
@@ -136,6 +136,16 @@ export default {
                     vm.editData.jisu_seq = paramData.jisu_seq;
                     vm.editYn   = true;
                 }
+            });
+        },
+
+        fn_moveRegisterPage() {
+            var vm = this;
+
+            vm.editYn = false;
+            vm.$nextTick().then( () => {
+                vm.refreshYn = true;
+                vm.$EventBus.$emit( "indexRegisterMain_registration_call", "clear" );
             });
         },
 

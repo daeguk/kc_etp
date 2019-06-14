@@ -211,18 +211,13 @@
                                                     ></v-text-field>
                                                 </template>
 
-                                                <v-date-picker v-model="modForm.base_date" no-title scrollable>
-                                                    <v-spacer></v-spacer>
-                                                    <v-btn
-                                                        flat
-                                                        color="primary"
-                                                        @click="menu = false"
-                                                    >Cancel</v-btn>
-                                                    <v-btn
-                                                        flat
-                                                        color="primary"
-                                                        @click="$refs.menu.save(modForm.base_date)"
-                                                    >OK</v-btn>
+                                                <v-date-picker 
+                                                    v-model="modForm.base_date" 
+                                                    no-title 
+                                                    scrollable
+
+                                                    @input="$refs.menu.save(modForm.base_date)"
+                                                >
                                                 </v-date-picker>
                                             </v-menu>
                                         </v-flex>
@@ -1027,8 +1022,9 @@ export default {
             var vm = this;
 
             var msgTitle = "";
-
             var typeCd  =   vm.$store.state.user.type_cd;
+
+            vm.modForm.modStatus    =   "";
 
             if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                 if( typeCd != "0003" ) {
@@ -1205,7 +1201,7 @@ export default {
                     }
 
                     if( resultData.result ) {
-                        vm.$emit( "fn_refresh" );
+                        vm.$emit( "fn_moveRegisterPage" );
                     }
                 }
             });
@@ -1499,10 +1495,29 @@ export default {
             selfThis.$emit( "fn_showProgress", true );
             axios.post(Config.base_url + "/user/index/getRegistedJisuData", {
                 data: selfThis.editData
-            }).then(function(response) {
+            }).then( async function(response) {
 
                 selfThis.$emit( "fn_showProgress", false );
+
                 if (response && response.data) {
+
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+
+                    if (!response.data.result) {
+
+                        if( msg ) {
+                            if( await selfThis.$root.$confirm1.open(
+                                        '확인',
+                                        msg,
+                                        {}
+                                    ,   1
+                                )
+                            ) {
+                                return false;
+                            }
+                        }
+                    }
+
                     if( response.data.jisuInfo ) {
                         selfThis.modForm = response.data.jisuInfo;
                         selfThis.modForm.duplCheckResult    =   true;
