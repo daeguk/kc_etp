@@ -641,10 +641,10 @@ export default {
                         ,   "render": function ( data, type, row ) {
 
                                 let htm = "<span>";
-                                htm += "           <b>"+data+"</b>";
-                                htm += "            <br><span class='text_s'>"+row.f16013+"</span>";        /* ETF단축코드 */
-                                if (row.NEW_YN == "Y") {
-                                    htm += "<span><div class='text_new'>new</div></span>";
+                                htm +=          "<b>"+data+"</b>";
+                                htm +=          "<br><span class='text_s'>"+row.f16013+"</span>";        /* ETF단축코드 */
+                                if (row.new_yn == "Y") {
+                                    htm += " <span><div class='text_new'>new</div></span>";
                                 }
                                 return htm;
                             }
