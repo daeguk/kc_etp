@@ -27,12 +27,9 @@
                 <p>서비스 관련 문의 및 개선해야 할 사항을 남겨주시면 빠른시간 내에 답변 드리겠습니다.</p>
                 <v-textarea label="" outline color="blue" height="220px"    ref="contents"    v-model="contents" :placeholder="defaultContents"></v-textarea>
             </v-card-title>
-
-            <v-card-title>
                 <div class="text-xs-center">  
                     <v-btn dark depressed color="primary" @click="fn_saveCustSupport">전송하기</v-btn>
                 </div>
-            </v-card-title>
         </v-card>
   </v-dialog>
     <!--고객지원end---->  
