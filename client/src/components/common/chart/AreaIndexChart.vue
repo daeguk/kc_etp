@@ -1,6 +1,6 @@
 <template>
-    <canvas :id=chartItem.seq :width=chartItem.width :height=chartItem.height 
-      v-on:mousemove.stop="drawToolTip" v-on:mouseleave.stop="clearToolTip">
+  <canvas :id=chartItem.seq :width=chartItem.width :height=chartItem.height 
+    v-on:mousemove.stop="drawToolTip" v-on:mouseleave.stop="clearToolTip">
     </canvas>
 </template>
 
@@ -135,10 +135,10 @@ export default {
           var _hpos = event.layerY;
           var item = [];
           var tooltip = "";
-          console.log("client : " + event.clientX + " "  + event.clientY);
-          console.log("client : " + event.layerX + " "  + event.layerY);
-          console.log("rec : " + this.rect.left + " " + this.rect.top);
-          console.log("_wpos : " + _wpos + " _hpos : " + _hpos);
+          // console.log("client : " + event.clientX + " "  + event.clientY);
+          // console.log("client : " + event.layerX + " "  + event.layerY);
+          // console.log("rec : " + this.rect.left + " " + this.rect.top);
+          // console.log("_wpos : " + _wpos + " _hpos : " + _hpos);
 
           if(_wpos > 200) _wpos -= this.tt_wlen;
 

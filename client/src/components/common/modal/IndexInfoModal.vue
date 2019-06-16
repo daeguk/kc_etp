@@ -67,7 +67,7 @@
             </v-tabs>
             <v-tabs-items v-model="tab">
               <v-tab-item>
-                <IndexInfoTab2 :indexBasic="indexBasic"></IndexInfoTab2>
+                <IndexInfoTab2 :indexBasic="indexBasic" :etpList="etpList"></IndexInfoTab2>
               </v-tab-item>
               <v-tab-item>
                 <IndexInfoTab1 :indexBasic="indexBasic" :etpList="etpList"></IndexInfoTab1>

@@ -49,7 +49,7 @@
               </colgroup>
               <thead>
                 <tr>
-                  <th style="width:21%" class="txt_center">지수명</th>
+                  <th @dblclick="sortTable(0)" style="width:21%" class="txt_center">지수명</th>
                   <th style="width:9%" class="txt_center">현재가</th>
                   <th style="width:7%" class="txt_center">대비</th>
                   <th @dblclick="sortTable(1)" style="width:7%" class="txt_center">Daily</th>
@@ -116,13 +116,6 @@ export default {
       IndexModalFlag: false,
       paramData : {},
       intra_data:[],
-      bef1Week:"",
-      bef1Month:"",
-      befYtd:"",
-      bef1Year:"",
-      bef3Year:"",
-      bef5Year:"",
-      bef10Year:"",
       indexTypes: [{text:"KOSPI", value:"KSP"}, 
         {text:"KOSDAQ", value:"KSQ"}, 
         {text:"SECTOR", value:"SECTOR"}, 
@@ -143,9 +136,6 @@ export default {
                 f15472:"", f15004:"", sColor:"#def5ae", eColor:"#ffffff",
                 width:350, height:150, marginW:1, marginH:40}
       ],
-      upStyle: {color:'#ff4366'},
-      sqStyle: {color: '#959EB1'},
-      downStyle: {color: '#1e99e8'},
       sortFlag: 1,
     };
   },
@@ -157,13 +147,7 @@ export default {
       
   },
   mounted: function() {
-    this.bef1Week = util.getBef1Week();
-    this.bef1Month = util.getBef1Month();
-    this.befYtd = util.getBefYtd();
-    this.bef1Year = util.getBef1Year();
-    this.bef3Year = util.getBef3Year();
-    this.bef5Year = util.getBef5Year();
-    this.bef10Year = util.getBef10Year();
+    this.befDates = this.$store.state.befDates;
 
     for(var i=0; i<this.rep_info.length; i++) {
       this.getIndexBasic(this.rep_info[i]);
@@ -240,13 +224,13 @@ export default {
         params: {
           large_type: "KRX",
           middle_type: indexType.value,
-          bef1Week: vm.bef1Week,
-          bef1Month: vm.bef1Month,
-          befYtd: vm.befYtd,
-          bef1Year: vm.bef1Year,
-          bef3Year: vm.bef3Year,
-          bef5Year: vm.bef5Year,
-          bef10Year: vm.bef10Year,
+          bef1Week: vm.befDates.bef1Week,
+          bef1Month: vm.befDates.bef1Month,
+          befYtd: vm.befDates.befYtd,
+          bef1Year: vm.befDates.bef1Year,
+          bef3Year: vm.befDates.bef3Year,
+          bef5Year: vm.befDates.bef5Year,
+          bef10Year: vm.befDates.bef10Year,
         }
       }).then(function(response) {
         // console.log(response);
@@ -261,21 +245,21 @@ export default {
             tmp.F15472 = util.getPlus(tmp.F15472, 2);
             tmp.F15004 = vm.resultLists[i].F15004;
             tmp.F15004 = util.getPlus(tmp.F15004, 2);
-            tmp.dStyle = vm.getUpAndDownStyle(tmp.F15004);
-            tmp.weekRate = util.getDiffRate1(tmp.F15001, vm.resultLists[i].bef1Week);
-            tmp.wStyle = vm.getUpAndDownStyle(tmp.weekRate);
-            tmp.monthRate = util.getDiffRate1(tmp.F15001, vm.resultLists[i].bef1Month);
-            tmp.mStyle = vm.getUpAndDownStyle(tmp.monthRate);
-            tmp.ytdRate = util.getDiffRate1(tmp.F15001, vm.resultLists[i].befYtd);
-            tmp.ytdStyle = vm.getUpAndDownStyle(tmp.ytdRate);
-            tmp.yearRate = util.getDiffRate1(tmp.F15001, vm.resultLists[i].bef1Year);
-            tmp.yStyle = vm.getUpAndDownStyle(tmp.yearRate);
-            tmp.year3Rate = util.getDiffRate1(tmp.F15001, vm.resultLists[i].bef3Year);
-            tmp.y3Style = vm.getUpAndDownStyle(tmp.year3Rate);
-            tmp.year5Rate = util.getDiffRate1(tmp.F15001, vm.resultLists[i].bef5Year);
-            tmp.y5Style = vm.getUpAndDownStyle(tmp.year5Rate);
-            tmp.year10Rate = util.getDiffRate1(tmp.F15001, vm.resultLists[i].bef10Year);
-            tmp.y10Style = vm.getUpAndDownStyle(tmp.year10Rate);
+            tmp.dStyle = util.getUpAndDownStyle(tmp.F15004);
+            tmp.weekRate = util.getDiffRate1(tmp.F15001, tmp.bef1Week);
+            tmp.wStyle = util.getUpAndDownStyle(tmp.weekRate);
+            tmp.monthRate = util.getDiffRate1(tmp.F15001, tmp.bef1Month);
+            tmp.mStyle = util.getUpAndDownStyle(tmp.monthRate);
+            tmp.ytdRate = util.getDiffRate1(tmp.F15001, tmp.befYtd);
+            tmp.ytdStyle = util.getUpAndDownStyle(tmp.ytdRate);
+            tmp.yearRate = util.getDiffRate1(tmp.F15001, tmp.bef1Year);
+            tmp.yStyle = util.getUpAndDownStyle(tmp.yearRate);
+            tmp.year3Rate = util.getDiffRate1(tmp.F15001, tmp.bef3Year);
+            tmp.y3Style = util.getUpAndDownStyle(tmp.year3Rate);
+            tmp.year5Rate = util.getDiffRate1(tmp.F15001, tmp.bef5Year);
+            tmp.y5Style = util.getUpAndDownStyle(tmp.year5Rate);
+            tmp.year10Rate = util.getDiffRate1(tmp.F15001, tmp.bef10Year);
+            tmp.y10Style = util.getUpAndDownStyle(tmp.year10Rate);
             tmp.F15001 = util.formatNumber(tmp.F15001);
             vm.indexLists.push(tmp);
           }
@@ -287,20 +271,25 @@ export default {
       });
     },
     getUpAndDownStyle: function(value) {
-        var tmp = Number(value);
-        var rtn = {};
+      var tmp = Number(value);
+      var rtn = {};
 
-        if(tmp > 0) rtn = this.upStyle;
-        else if(tmp < 0) rtn = this.downStyle;
-        else rtn = this.sqStyle;
+      if(tmp > 0) rtn = this.upStyle;
+      else if(tmp < 0) rtn = this.downStyle;
+      else rtn = this.sqStyle;
 
-        return rtn;
+      return rtn;
     },
     sortTable: function(num) {
       var vm = this;
       vm.sortFlag = vm.sortFlag * (-1);
       
-      if(num == 1) {
+      if(num == 0) {
+        vm.indexLists.sort(function(a, b) {
+          if(a.F16002 > b.F16002) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }else if(num == 1) {
         vm.indexLists.sort(function(a, b) {
           if(Number(a.F15004) > Number(b.F15004)) return vm.sortFlag;
           else return (vm.sortFlag * (-1));

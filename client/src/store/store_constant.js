@@ -2,6 +2,11 @@ export default {
     // 사용자 정보 등록
     ADD_USER : "addUser",
     DELETE_USER : "delUser",
+    // 날짜 정보관리
+    SET_BEF_DATES : "setBefDates",
+    // MAST 정보관리
+    SET_INDEX : "setIndexMast",
+    SET_ETP : "setEtpMast",
     // 메일관리
     // INSERT_MAIL : "insertMail",
     // UPDATE_MAIL : "updateMail",
