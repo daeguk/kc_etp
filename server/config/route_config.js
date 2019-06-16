@@ -36,7 +36,6 @@ module.exports = {
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpInfo', method: 'getEtpInfo', session: 'check', type: 'post' },
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpChartData', method: 'getEtpChartData', session: 'check', type: 'post' },
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpPerformance', method: 'getEtpPerformance', session: 'check', type: 'post' },
-        { file: './user/etp/etpDetail', path: '/user/etp/getExistEtpBasicCnt', method: 'getExistEtpBasicCnt', session: 'check', type: 'post' },
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpImportanceList', method: 'getEtpImportanceList', session: 'check', type: 'post' },
 
         { file: './user/etp/etpOper', path: '/user/etp/getEtpOperInfo', method: 'getEtpOperInfo', session: 'check', type: 'post' },

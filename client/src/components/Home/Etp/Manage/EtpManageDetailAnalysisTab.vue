@@ -678,10 +678,19 @@ export default {
                 data: paramData
             }).then(response => {
 
-                // console.log(response);
-                if (response.data.success == false) {
-                    alert("비중 목록이 없습니다");
-                } else {
+
+                if( response.data ) {
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+
+                    if (!response.data.result) {
+
+                        if( msg ) {
+                            vm.$emit("showMessageBox", '확인', msg,{},1);
+                            return  false;
+                        }
+                    }                
+
+
                     this.results = response.data.dataList;
                     this.importance_cnt = this.results.length;
 
@@ -710,8 +719,6 @@ export default {
                             { "data": "GUBUN", "orderable" : true},
                         ]
                     }); 
-
-                    
                 }
                 
             });

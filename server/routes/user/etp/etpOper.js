@@ -60,7 +60,7 @@ var getEtpOperInfo = function(req, res) {
                 conn.query(stmt, function(err, rows) {
 
                     if (err) {
-                        log.error(err, paramData);
+                        log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
                         resultMsg.msg = "[error] etpOper.getEtpOperInfo Error while performing Query";
@@ -70,7 +70,7 @@ var getEtpOperInfo = function(req, res) {
                     if (rows && rows.length > 0) {
                         resultMsg.result = true;
                         resultMsg.msg = "";
-                        
+
                         resultMsg.dataList = rows;
                     }
 
@@ -79,7 +79,7 @@ var getEtpOperInfo = function(req, res) {
                 });
 
             } catch (err) {
-                log.error(err, paramData);
+                log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
                 resultMsg.msg = "[error] etpOper.getEtpOperInfo Error while performing Query";
@@ -94,11 +94,9 @@ var getEtpOperInfo = function(req, res) {
 
         log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getEtpOperInfo 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getEtpOperInfo 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.dataList = [];
 
@@ -196,7 +194,7 @@ var getEtpOperIndex = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err, paramData);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -213,11 +211,9 @@ var getEtpOperIndex = function(req, res) {
 
         log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getEtpOperIndex 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getEtpOperIndex 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.dataList = [];
 
@@ -270,7 +266,7 @@ var getEtpOperIndexOversea = function(req, res) {
                 conn.query(stmt, function(err, rows) {
 
                     if (err) {
-                        log.error(err, paramData);
+                        log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
                         resultMsg.msg = "[error] etpOper.getEtpOperIndexOversea Error while performing Query";
@@ -280,7 +276,7 @@ var getEtpOperIndexOversea = function(req, res) {
                     if (rows && rows.length > 0) {
                         resultMsg.result = true;
                         resultMsg.msg = "";
-                        
+
                         resultMsg.dataList = rows;
                     }
 
@@ -289,7 +285,7 @@ var getEtpOperIndexOversea = function(req, res) {
                 });
 
             } catch (err) {
-                log.error(err, paramData);
+                log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
                 resultMsg.msg = "[error] etpOper.getEtpOperIndexOversea Error while performing Query";
@@ -304,11 +300,9 @@ var getEtpOperIndexOversea = function(req, res) {
 
         log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getEtpOperIndexOversea 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getEtpOperIndexOversea 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.dataList = [];
 
@@ -417,7 +411,7 @@ var getEtpOperIndexError = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err, paramData);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -434,11 +428,9 @@ var getEtpOperIndexError = function(req, res) {
 
         log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getEtpOperIndexError 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getEtpOperIndexError 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.dataList = [];
         resultMsg.indexBasic = {};
@@ -498,7 +490,7 @@ var getEtpOperPdf = function(req, res) {
                     conn.query(stmt, function(err, rows) {
 
                         if (err) {
-                            log.error(err, paramData);
+                            log.error(err, stmt, paramData);
 
                             resultMsg.result = false;
                             resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHist Error while performing Query";
@@ -514,16 +506,18 @@ var getEtpOperPdf = function(req, res) {
 
                         res.json(resultMsg);
                         res.end();
-
                     });
 
                 } else {
+                    resultMsg.result = true;
+                    resultMsg.msg = "";
+
                     res.json(resultMsg);
                     res.end();
                 }
 
             } catch (err) {
-                log.error(err, paramData);
+                log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
                 resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHist Error while performing Query";
@@ -588,7 +582,6 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
 
         resultMsg.allDataList = [];
         Promise.using(pool.connect(), conn => {
-
 
             async.waterfall([
 
@@ -691,7 +684,7 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err, paramData);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -708,11 +701,9 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
 
         log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getEtpOperPdfEmergencyHistNow 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getEtpOperPdfEmergencyHistNow 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.allDataList = [];
 
@@ -766,7 +757,7 @@ var getEtpOperPdfByRateTitle = function(req, res) {
                 conn.query(stmt, function(err, rows) {
 
                     if (err) {
-                        log.error(err, paramData);
+                        log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
                         resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHistByRateTitle Error while performing Query";
@@ -811,11 +802,9 @@ var getEtpOperPdfByRateTitle = function(req, res) {
 
         log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getEtpOperPdfByRateTitle 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getEtpOperPdfByRateTitle 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.rateTitleList = [];
 
@@ -864,7 +853,6 @@ var getEtpOperPdfByRate = function(req, res) {
 
         var rateTitleList = [];
         Promise.using(pool.connect(), conn => {
-
 
             async.waterfall([
 
@@ -940,7 +928,7 @@ var getEtpOperPdfByRate = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err, paramData);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -957,11 +945,9 @@ var getEtpOperPdfByRate = function(req, res) {
 
         log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getEtpOperPdfByRate 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getEtpOperPdfByRate 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.rateTitleList = [];
         resultMsg.dataList = [];
@@ -1090,7 +1076,7 @@ var getEtpOperPdfModify = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err, paramData);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -1107,11 +1093,9 @@ var getEtpOperPdfModify = function(req, res) {
 
         log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getEtpOperPdfByRate 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getEtpOperPdfByRate 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.etpBasic = {};
         resultMsg.dataList = [];
@@ -1157,14 +1141,14 @@ var getJongmokData = function(req, res) {
 
         Promise.using(pool.connect(), conn => {
 
-            try{
+            try {
                 stmt = mapper.getStatement('etpOper', 'getKspjongBasic', paramData, format);
                 log.debug(stmt);
 
                 conn.query(stmt, function(err, rows) {
 
                     if (err) {
-                        log.error(err, paramData);
+                        log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
                         resultMsg.msg = "[error] etpOper.getKspjongBasic Error while performing Query";
@@ -1182,7 +1166,7 @@ var getJongmokData = function(req, res) {
                 });
 
             } catch (err) {
-                log.error(err, paramData);
+                log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
                 resultMsg.msg = "[error] etpOper.getKspjongBasic Error while performing Query";
@@ -1197,11 +1181,9 @@ var getJongmokData = function(req, res) {
 
         log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getKspjongBasic 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getKspjongBasic 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.dataList = [];
 
@@ -1974,7 +1956,7 @@ var saveEtpOperPdfModify = function(req, res) {
                 ], function(err) {
 
                     if (err) {
-                        log.error(err, paramData);
+                        log.error(err, stmt, paramData);
                         conn.rollback();
 
                     } else {
@@ -1996,11 +1978,9 @@ var saveEtpOperPdfModify = function(req, res) {
 
         log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.saveEtpOperPdfModify 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.saveEtpOperPdfModify 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         res.json(resultMsg);
         res.end();
@@ -2190,7 +2170,7 @@ var getPdfByGroupNo = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err, paramData);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -2207,11 +2187,9 @@ var getPdfByGroupNo = function(req, res) {
 
         log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getPdfByGroupNo 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getPdfByGroupNo 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.dataList = [];
 
@@ -2266,6 +2244,8 @@ var getPdfExistYnByNow = function(req, res) {
                 conn.query(stmt, function(err, rows) {
 
                     if (err) {
+                        log.error(err, stmt, paramData);
+
                         resultMsg.result = false;
                         resultMsg.msg = "[error] etpOper.getPdfExistYnByNow Error while performing Query";
                         resultMsg.err = err;
@@ -2290,23 +2270,24 @@ var getPdfExistYnByNow = function(req, res) {
                 });
 
             } catch (err) {
+                log.error(err, stmt, paramData);
+
                 resultMsg.result = false;
                 resultMsg.msg = "[error] etpOper.getPdfExistYnByNow Error while performing Query";
                 resultMsg.err = err;
 
-                return callback(resultMsg);
+                res.json(resultMsg);
+                res.end();
             }
         });
 
     } catch (expetion) {
 
-        log.error(expetion, paramData);
+        log.error(expetion, stmt, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getPdfExistYnByNow 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getPdfExistYnByNow 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         res.json(resultMsg);
         res.end();
