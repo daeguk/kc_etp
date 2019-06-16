@@ -5,6 +5,10 @@ var config = require('../../../config/config');
 var util = require("util");
 var Promise = require("bluebird");
 var async = require('async');
+const etpUser           = "0001";
+const etnUser           = "0002";
+const koscomUser        = "9998";
+const koscomSuperUser   = "9999";
 
 /* logging 추가함.  2019-06-10 */
 var log = config.logger;
@@ -13,7 +17,7 @@ var format = { language: 'sql', indent: '' };
 
 var getEtpRegisterView = function(req, res) {
     try {
-        //log.debug('###ETP VIEW CALL###', req.query.seq);
+        log.debug('###ETP VIEW CALL###', req.query.seq);
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper"); 
@@ -22,22 +26,18 @@ var getEtpRegisterView = function(req, res) {
         var resultMsg = {};
         paramData.seq = req.query.seq*1;
 
-       // log.debug('###ETP VIEW CALL paramData.seq###', paramData.seq);
-       // log.debug('###ETP VIEW CALL  req.session###',  req.session);
         paramData.user_id       =   req.session.user_id;
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.inst_type_cd  =   req.session.type_cd;
         
-        //개발용 세팅
-        // paramData.inst_cd       =   '04870';
-        // paramData.inst_type_cd  =   '0002';
-     
-              
-        // if ( paramData.inst_type_cd !=='0001' && paramData.inst_type_cd !=='0002') {
-        //     resultMsg.result = false;
-        //     resultMsg.msg = "발행사만 신청이 가능합니다. ";
-        //     throw resultMsg;
-        // }
+
+        if ( paramData.inst_type_cd !== etpUser && paramData.inst_type_cd !==etnUser &&
+             paramData.inst_type_cd !== koscomUser && paramData.inst_type_cd !==koscomSuperUser
+            ) {
+            resultMsg.result = false;
+            resultMsg.msg = "발행사만 신청이 가능합니다. ";
+            throw resultMsg;
+        }
         log.debug('###ETP VIEW CALL sessioncheck###');
        
         var param = { 
@@ -257,6 +257,16 @@ var getEtpRegisterView = function(req, res) {
 
                                 
                             }
+                            // else{
+                            //     var masterData  ={
+                            //         seq_hist:"", seq:"", isu_kor_nm:"",isu_eng_nm:"",isin_code:"",isu_srt_cd:"",etp_type:"",inst_cd:"",req_date:"",list_req_date:"",list_date:"",krx_dist_yn:"",comp_dist_yn:"",ksd_dist_yn:"",mirae_dist_yn:"",idx_inst_cd:"",idx_sym_code:"",idx_nm:"",idx_dist_inst_cd:"",idx_close_type:"",idx_holy_cd:"",idx_trace_yd_mult_type:"",pre_idx_type:"",idx_file_nm:"",idx_comp_ksd_dist_yn:"",idx_comp_mirae_dist_yn:"",blom_ticker:"",user_req:"",real_yn:"N",ridx_inst_cd:"",ridx_dist_inst_cd:"",ridx_crt_sym_code:"",ridx_dist_sym_code:"",ridx_holy_cd:"",ridx_krx_dist_yn:"",ridx_comp_dist_yn:"",ridx_ksd_dist_yn:"",ridx_mirae_dist_yn:"",ridx_dist_term:"",refidx_sym_code:"",refidx_nm:"",refidx_inst_cd:"",refidx_file_nm:"",refidx_req:"",refidx_blom_ticker:"",ex_rate_cd:"",ex_hedge_yn:"",isin_stat_cd:"",inav_calc_cd:"",idx_rec_yn:"",idx_dis_yn:"",inav_calc_yn:"",idx_mid:"",ridx_mid:"",close_file:"",real_idx_tr:"",proc_stat:"",insert_id:"",insert_time:"",update_id:"",update_time:"",kor_for_type:"F",agent_cd:"",idx_comp_cd:"",krx_up_code:"",agent_up_code:""
+                            //        ,idx_file_path:""
+                            //        ,listDate:"", listReqDate:""
+                            //        ,kor_idx_sym_code:"", kor_idx_nm:"", kor_user_req:""
+                            //        };
+
+                            //        resultMsg.masterData.push(masterData);
+                            // }
                         
                             callback( null, param );
                             
@@ -317,7 +327,7 @@ var insertEtpRegister = function(req, res) {
 
         //일반->  세션
         //코스콤->선택값
-        if(req.session.type_cd !=='0002'){
+        if(req.session.type_cd !==koscomSuperUser && req.session.type_cd !==koscomUser){
             paramData.inst_cd       =   paramData.paramInstCd;
         }
         
@@ -334,15 +344,18 @@ var insertEtpRegister = function(req, res) {
             res.end();
             return;
         }
+
         log.debug("###ETP INSERT CALL HUDLE2##",  paramData);
-        // if(paramData.paramInstTypeCd !=='0001' && paramData.paramInstTypeCd !=='0002'){
-        //     res.json({
-        //         result: false
-        //         ,msg: "발행사만 신청이 가능합니다."발행사만 신청이 가능합니다."
-        //     });
-        //     res.end();
-        //     return;
-        // }
+        if ( paramData.paramInstTypeCd !== etpUser && paramData.paramInstTypeCd !== etnUser &&
+             paramData.paramInstTypeCd !== koscomUser && paramData.paramInstTypeCd !== koscomSuperUser
+            ) {
+            res.json({
+                result: false
+                ,msg: "발행사만 신청이 가능합니다."
+            });
+            res.end();
+            return;
+        }
         log.debug("###ETP INSERT CALL HUDLE JUMP SUCCESS");
         paramData.list_req_date = paramData.listReqDate; //##이값만 바인딩이 안된다..이상하다..
         paramData.list_date = paramData.listDate;
@@ -484,7 +497,7 @@ var updateEtpRegister = function(req, res) {
     
     paramData.user_id       =   req.session.user_id;
 
-    if(req.session.type_cd !=='0002'){
+    if(req.session.type_cd !==koscomSuperUser && req.session.type_cd !==koscomUser){
         paramData.inst_cd       =   paramData.paramInstCd;
     }
     
@@ -497,11 +510,6 @@ var updateEtpRegister = function(req, res) {
         return;
     }
     
-    //개발용 세팅 
-    // paramData.inst_cd       =   '04870';
-    // paramData.inst_type_cd  =   '0002';
-    //log.debug('###ETP UPDATE JSONPARSE HUDLE1>>>###',req.session);
-   
     paramData.list_req_date = paramData.listReqDate;
     paramData.list_date = paramData.listDate;
 
@@ -623,7 +631,10 @@ var updateEtpRegister = function(req, res) {
                         dbMasterData  = rows[0];
                         //log.debug("UPDATE BEFORE MASTER Data:::", dbMasterData.isin_stat_cd);
                         
-                            if(dbMasterData.inst_cd !== paramData.paramInstCd && req.session.type_cd !=='0002' ){
+                            if(
+                              (dbMasterData.inst_cd !== paramData.paramInstCd)  &&
+                              (req.session.type_cd !==koscomSuperUser && req.session.type_cd !==koscomUser)
+                            ){
                                 return callback( "해당 발행사나 코스콤만 수정이 가능합니다." );
                             }    
 

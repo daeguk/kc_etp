@@ -11,7 +11,7 @@
                             ETP 운용 정보
                                 <span class="text_result">{{ result_cnt }}</span>
                                 <span class="text_result_t">results</span>
-                                <span class="sub_txt">기준일 : {{ nowDate }}</span>
+                                <span class="sub_txt">기준일 : {{ fmt_f12506 }}</span>
                             </h3>
                             <div class="right_btn">
                                 <span class="toggle2">
@@ -99,7 +99,7 @@
             </v-flex>  
             <v-flex class="conWidth_right">
                  <!-- [ETP 운영정보] Quick 메뉴 정보 -->
-                    <EtpOperInfoQuick   :indexBasic = "indexBasic"
+                    <EtpOperInfoQuick   :etpBasic = "etpBasic"
 
                                         @fn_setInavData = "fn_setInavData"
                                         @fn_setEtpPerformanceData = "fn_setEtpPerformanceData"
@@ -140,11 +140,7 @@ export default {
     data() {
         return {
             text: "전종목",
-            nowDate:        new Date().getFullYear() 
-                        +   "." 
-                        +   (parseInt(new Date().getMonth()) + 1) 
-                        +   "." 
-                        +   new Date().getDate(),
+            fmt_f12506 :   "",
 
             stateInfo :     {       
                                     pageState : 'etpInfo'   /* etpInfo - ETP운용정보, iNav - iNav 산출현황, performance - ETP Performance, customize - 컬럼 선택 */
@@ -156,7 +152,7 @@ export default {
             etpOperInfoQuickYn : true,
 
             result_cnt  :   0,
-            indexBasic  :   {},
+            etpBasic  :   {},
             paramData   :   {},
             etpRow      :   {},
             inavGubun   :   "",
@@ -312,6 +308,7 @@ export default {
                 if (response.data) {
                     var dataList = response.data.dataList;
                     
+                    vm.result_cnt   =   0;
                     if( dataList && dataList.length > 0 ) {
 
                         if( vm.stateInfo.pageState == "performance" ) {
@@ -320,8 +317,10 @@ export default {
                             table01.rows.add( dataList ).draw();
                         }
 
-                        vm.indexBasic   =   dataList[0];
-                        vm.result_cnt   =   dataList.length;
+                        vm.etpBasic     =   dataList[0];
+
+                        vm.fmt_f12506   =   dataList[0].fmt_f12506;
+                        vm.result_cnt   =   util.formatInt( dataList.length );
                     }
                 }
 
@@ -642,10 +641,10 @@ export default {
                         ,   "render": function ( data, type, row ) {
 
                                 let htm = "<span>";
-                                htm += "           <b>"+data+"</b>";
-                                htm += "            <br><span class='text_s'>"+row.f16013+"</span>";        /* ETF단축코드 */
-                                if (row.NEW_YN == "Y") {
-                                    htm += "<span><div class='text_new'>new</div></span>";
+                                htm +=          "<b>"+data+"</b>";
+                                htm +=          "<br><span class='text_s'>"+row.f16013+"</span>";        /* ETF단축코드 */
+                                if (row.new_yn == "Y") {
+                                    htm += " <span><div class='text_new'>new</div></span>";
                                 }
                                 return htm;
                             }

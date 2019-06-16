@@ -37,19 +37,19 @@ export default {
             var bohaplen = (this.chartItem.bohap / totcnt) * _width;
              // 좌즉 상단 현재가
             c.fillStyle = "#37474F";
-            c.font = 'bold 16px  Noto Sans,san-serif';
+            c.font = 'bold 16px  Roboto, sans-serif, Noto-Sans';
             c.fillText(this.chartItem.ctg_name, 15, 30);
             
             if(Number(this.chartItem.f15004) > 0) c.fillStyle = "#ff4366";
             else  c.fillStyle = "#1e99e8"
-            c.font = 'bold 26px san-serif';
+            c.font = 'bold 26px  Roboto, sans-serif, Noto-Sans';
             c.fillText(this.chartItem.f15004+"%", 15, 58);
             c.fillStyle = "#37474F";
-            c.font = '10px  Noto Sans,san-serif';
+            c.font = '10px   Roboto, sans-serif, Noto-Sans';
             c.fillText(this.chartItem.f16002, 110, 56);
             
             // 자산총액
-            c.font = '11px  Noto Sans,san-serif';
+            c.font = '11px   Roboto, sans-serif, Noto-Sans';
             c.fillStyle = "#757575";
             c.fillRect(18, 70, 30, 14);
             c.fillStyle = "white";
@@ -60,7 +60,7 @@ export default {
             c.fillStyle = "white";
             c.fillText("ETN", 24, 101);
 
-            c.font = '16px  Noto Sans,san-serif';
+            c.font = '16px  Roboto, sans-serif, Noto-Sans';
             c.textAlign = "end";
             c.fillStyle = "#5e870b";
             c.fillText(this.chartItem.etf_sum + " AUM", 213, 82);
@@ -69,7 +69,7 @@ export default {
 
             // Bar Chart
             c.textAlign = "left";
-            c.font = '12px  Noto Sans,san-serif';
+            c.font = '12px  Roboto, sans-serif, Noto-Sans';
             c.fillStyle = "#ff4366";
             c.fillText("상승 " + this.chartItem.up, 18, 136);
             c.fillRect(18, 117, uplen, 4);

@@ -576,7 +576,13 @@ export default {
             excel.utils.sheet_add_json(dataWS, vm.results, {header: ["isu_kor_nm","isu_eng_nm","isin_code","isu_srt_cd","etp_type","inst_nm","req_date" ,"list_req_date" ,"list_date","krx_dist_yn","comp_dist_yn","ksd_dist_yn","mirae_dist_yn","idx_inst_cd_nm","idx_sym_code","idx_nm","idx_dist_inst_cd_nm","idx_close_type","idx_holy_cd_nm" ,"idx_trace_yd_mult_type","pre_idx_type","idx_file_nm","idx_comp_ksd_dist_yn","idx_comp_mirae_dist_yn","blom_ticker","user_req","real_yn","ridx_inst_cd_nm","ridx_dist_inst_cd_nm","ridx_crt_sym_code","ridx_dist_sym_code","ridx_holy_cd_nm","ridx_krx_dist_yn","ridx_comp_dist_yn","ridx_ksd_dist_yn","ridx_mirae_dist_yn","ridx_dist_term","refidx_sym_code","refidx_nm","refidx_inst_cd_nm","refidx_file_nm","refidx_req","refidx_blom_ticker","ex_rate_cd_nm","ex_hedge_yn","isin_stat_cd_nm","inav_calc_cd_nm","idx_rec_yn","idx_dis_yn","inav_calc_yn","idx_mid","ridx_mid","close_file","real_idx_tr"] ,skipHeader:true, origin:"A2"});
             var wb = excel.utils.book_new();
             excel.utils.book_append_sheet(wb, dataWS, "신청목록");
-            excel.writeFile(wb, "해외ETP신청목록.xlsx");
+            var today = new Date();
+            var month = today.getUTCMonth() + 1; //months from 1-12
+            var day = today.getUTCDate();
+            var year = today.getUTCFullYear();
+            month= ('0' + month).slice(-2);
+            today = year+ "" +  month +  "" +  day;
+            excel.writeFile(wb, "해외ETP현황_"+ today +  ".xlsx");
         }
     }
     

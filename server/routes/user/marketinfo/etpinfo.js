@@ -32,8 +32,7 @@ var getEtpList = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpinfo.getEtpList  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpinfo.getEtpList  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpinfo.getEtpList  req.body.data no data.";
@@ -398,7 +397,7 @@ var getEtpList = function(req, res) {
             async.waterfall(funcList, function(err) {
 
                 if (err) {
-                    log.error(err);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -413,13 +412,11 @@ var getEtpList = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpinfo.getEtpList 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpinfo.getEtpList 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.etpLists = [];
         resultMsg.carousel_info = {};
@@ -427,9 +424,7 @@ var getEtpList = function(req, res) {
             resultMsg.carousel_mod = [];
         resultMsg.ctgCodeList = [];
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }

@@ -17,7 +17,7 @@
                                     <v-subheader>지수산출기관</v-subheader>
                                 </v-flex>
                                 <v-flex xs4 mt-1 mb-3>
-                                    <span class="text_color_blue">dbfn</span>
+                                    <span class="text_color_blue">{{ inst_name }}</span>
                                 </v-flex>
                             </v-layout>
 
@@ -32,6 +32,7 @@
                                         ref="jisu_id"
                                         label="지수ID"
                                         value="e.g.FDL001"
+                                        maxlength="20"
                                         outline
                                         v-model="form.jisu_id"
                                         :rules="rules.jisu_id"
@@ -71,6 +72,8 @@
                                         outline
                                         v-model="form.jisu_kor_nm"
                                         :rules="rules.jisu_kor_nm"
+
+                                        maxlength="100"
                                     ></v-text-field>
                                 </v-flex>
                             </v-layout>
@@ -88,6 +91,8 @@
                                         color="blue"
                                         v-model="form.jisu_summary"
                                         :rules="rules.jisu_summary"
+
+                                        maxlength="4000"
                                     ></v-textarea>
                                 </v-flex>
                             </v-layout>
@@ -105,6 +110,8 @@
                                         outline
                                         v-model="form.base_jisu"
                                         :rules="rules.base_jisu"
+
+                                        maxlength="20"
                                     ></v-text-field>
                                 </v-flex>
                             </v-layout>
@@ -142,6 +149,8 @@
                                                         widh="100%"
                                                         v-model="form.base_date"
                                                         :rules="rules.base_date"
+
+                                                        maxlength="10"
                                                     ></v-text-field>
                                                 </template>
 
@@ -149,18 +158,9 @@
                                                     v-model="form.base_date"
                                                     no-title
                                                     scrollable
+
+                                                    @input="$refs.menu.save(form.base_date)"
                                                 >
-                                                    <v-spacer></v-spacer>
-                                                    <v-btn
-                                                        flat
-                                                        color="primary"
-                                                        @click="menu = false"
-                                                    >Cancel</v-btn>
-                                                    <v-btn
-                                                        flat
-                                                        color="primary"
-                                                        @click="$refs.menu.save(form.base_date)"
-                                                    >OK</v-btn>
                                                 </v-date-picker>
                                             </v-menu>
                                         </v-flex>
@@ -296,7 +296,7 @@
                                 </v-flex>
 
                                 <v-flex xs8>
-                                    <v-textarea outline color="blue" height="80px"  v-model="form.req_content" :rules="[rules.req_content]">
+                                    <v-textarea outline color="blue" height="80px"  v-model="form.req_content" :rules="[rules.req_content]" maxlength="4000">
                                         <template v-slot:label>
                                             <div>
                                                 Bio
@@ -483,7 +483,9 @@ export default {
                 titleErrorYn: false,
 
                 message: ""
-            },            
+            },
+
+            inst_name : "",    
 
             /* 기관 관련 정보 */
             arr_org_inst : [],          /* (원본) 기관정보 원본 목록정보 */
@@ -674,12 +676,10 @@ export default {
                             if( !res ) {
                                 return  false;
                             }
-                            
+
                             selfThis.fn_jisuFileUpload( file, selfThis );
                         }
                     );
-
-                    this.fn_jisuFileUpload( file, selfThis );
 
                 }.bind(this)
             );
@@ -689,7 +689,8 @@ export default {
                 "drop",
                 function(e) {
                     var selfThis    =   this;
-                    let file        =   e.dataTransfer.files[0];
+                    let files       =   e.dataTransfer.files;
+                    let file        =   files[0];
 
                     var typeCd      =   this.$store.state.user.type_cd;
 
@@ -702,7 +703,7 @@ export default {
                     }
 
                     this.form.show_method_file  =   file.name;
-
+                    this.$refs.methodFile.files =   files;
                 }.bind(this)
             );            
         }
@@ -732,8 +733,6 @@ export default {
                         selfThis.fn_jisuFileUpload( file, selfThis );
                     }
                 );
-
-                this.fn_jisuFileUpload( file, selfThis );
 
                 this.$refs.fileform.addEventListener(
                     evt,
@@ -811,6 +810,7 @@ export default {
             ]
         });
 
+        this.inst_name   =  this.$store.state.user.inst_name;
     },
 
     methods: {
@@ -886,9 +886,23 @@ export default {
             axios.post(Config.base_url + "/user/index/getJisuDuplCheck", {
                 data: { jisu_id: this.form.jisu_id }
             }).then( async function(response) {
-                if (response && response.data) {
-                    if (response.data.result == true) {
 
+                if (response && response.data) {
+                    var msg = ( response.data.message ? response.data.message : "" );
+
+                    if (!response.data.success) {
+                        if( await vm.$root.$confirm1.open(
+                                    '[지수 ID]',
+                                    msg,
+                                    {}
+                                ,   1
+                            )
+                        ) {
+                            return false;
+                        }
+                    }
+
+                    if (response.data.result == true) {
                         if( await vm.$root.$confirm1.open(
                                     '[지수 ID]',
                                     '[지수 ID] 이미 존재합니다.',
@@ -926,7 +940,6 @@ export default {
             var vm = this;
 
             var typeCd      =   this.$store.state.user.type_cd;
-
             if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                 if( typeCd != "0003" ) {
 
@@ -971,6 +984,7 @@ export default {
             this.formData.append( "files", this.$refs.methodFile.files[0] );
             this.formData.append( "data", JSON.stringify(this.form) );
 
+            vm.$emit( "fn_showProgress", true );
             axios.post(
                 Config.base_url + "/user/index/registerJisu",
                 this.formData,
@@ -979,6 +993,9 @@ export default {
                         "Content-Type": "multipart/form-data"
                     }
                 }).then( async function(response) {
+
+                    vm.$emit( "fn_showProgress", false );
+
                     if( response.data ) {
 
                         var resultData = response.data;
@@ -993,10 +1010,13 @@ export default {
                         }
 
                         if( resultData.result ) {
-                            vm.$emit( "fn_refresh" );
-                            vm.$router.push( "/index/register" );
+                            vm.$emit( "fn_refresh", { 'jisu_id' : resultData.jisu_id, 'jisu_seq' : resultData.jisu_seq  } );
                         }
                     }
+
+                }).catch(error => {
+                    vm.$emit( "fn_showProgress", false );
+                    vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
                 });
         },
 
@@ -1090,13 +1110,16 @@ export default {
          */
         fn_jisuFileUpload : function( file, selfThis ){
 
+            var vm = this;
+
             let formData = new FormData();
             formData.append("files", file);
 
             if( table01 ) {
                 table01.clear().draw();
             }
-            
+
+            vm.$emit( "fn_showProgress", true );
             axios.post(
                 Config.base_url + "/user/index/fileuploadSingle",
                 formData,
@@ -1107,6 +1130,8 @@ export default {
                 }
             ).then( async function(response) {
                 console.log( response );
+
+                vm.$emit( "fn_showProgress", false );
 
                 if( response.data ) {
                     selfThis.jisuUploadResult = response.data.result;
@@ -1134,9 +1159,10 @@ export default {
                     }
                 }
 
-            }).catch(function(response) {
-                console.log( response );
-            });    
+            }).catch(error => {
+                vm.$emit( "fn_showProgress", false );
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+            });
         },
 
         /*
@@ -1149,8 +1175,26 @@ export default {
             /* 1. 기관정보를 조회한다. */
             axios.post(Config.base_url + "/user/index/getDomainInst", {
                 data: {}
-            }).then(function(response) {
+            }).then( async function(response) {
                 if (response && response.data) {
+
+                    var msg = ( response.data.message ? response.data.message : "" );
+
+                    if (!response.data.success) {
+
+                        if( msg ) {
+                            if( await selfThis.$root.$confirm1.open(
+                                        '확인',
+                                        msg,
+                                        {}
+                                    ,   1
+                                )
+                            ) {
+                                return false;
+                            }
+                        }
+                    }
+
                     selfThis.arr_group_inst = response.data.dataGroupList;
                     selfThis.arr_org_inst = response.data.dataList;
                 }

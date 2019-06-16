@@ -31,8 +31,7 @@ var getEtpBasic = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpDetail.getEtpBasic  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpDetail.getEtpBasic  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpDetail.getEtpBasic  req.body.data no data.";
@@ -108,7 +107,7 @@ var getEtpBasic = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -123,7 +122,7 @@ var getEtpBasic = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
@@ -134,109 +133,7 @@ var getEtpBasic = function(req, res) {
         resultMsg.etpBasic = {};
         resultMsg.indexBasic = {};
 
-        res.json({
-            resultMsg
-        });
-        res.end();
-    }
-}
-
-
-/*
- * ETP 또는 INDEX 정보가 존재하는지 체크한다.
- * 2019-04-25  bkLove(촤병국)
- */
-var getExistEtpBasicCnt = function(req, res) {
-    try {
-        log.debug('etpDetail.getExistEtpBasicCnt 호출됨.');
-
-        var pool = req.app.get("pool");
-        var mapper = req.app.get("mapper");
-        var resultMsg = {};
-
-        /* 1. body.data 값이 있는지 체크 */
-        if (!req.body.data) {
-            log.error("[error] etpDetail.getExistEtpBasicCnt  req.body.data no data.");
-            log.error(req.body.data);
-
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpDetail.getExistEtpBasicCnt  req.body.data no data.";
-
-            throw resultMsg;
-        }
-
-        var paramData = JSON.parse(JSON.stringify(req.body.data));
-
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
-
-
-        var format = { language: 'sql', indent: '' };
-        var stmt = "";
-
-        Promise.using(pool.connect(), conn => {
-
-
-            async.waterfall([
-
-                /* 1. EtpBasic 의 기본정보를 조회한다. */
-                function(callback) {
-
-                    stmt = mapper.getStatement('etpDetail', 'getExistEtpBasicCnt', paramData, format);
-                    log.debug(stmt);
-
-                    conn.query(stmt, function(err, rows) {
-
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpDetail.getExistEtpBasicCnt Error while performing Query";
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-
-                        if (rows && rows.length == 1) {
-                            resultMsg.etpIndex = rows[0];
-                        }
-
-                        callback(null);
-                    });
-                }
-
-            ], function(err) {
-
-                if (err) {
-                    log.error(err);
-                } else {
-
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
-                    resultMsg.err = null;
-                }
-
-                res.json(resultMsg);
-                res.end();
-            });
-        });
-
-    } catch (expetion) {
-
-        log.error(expetion);
-
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpDetail.getExistEtpBasicCnt 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
-
-        resultMsg.etpIndex = {};
-
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -255,8 +152,7 @@ var getEtpPerformance = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpDetail.getEtpPerformance  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpDetail.getEtpPerformance  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpDetail.getEtpPerformance  req.body.data no data.";
@@ -384,7 +280,7 @@ var getEtpPerformance = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -399,7 +295,7 @@ var getEtpPerformance = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
@@ -409,9 +305,7 @@ var getEtpPerformance = function(req, res) {
 
         resultMsg.etpPerformanceList = [];
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -431,8 +325,7 @@ var getEtpInfo = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpDetail.getEtpInfo  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpDetail.getEtpInfo  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpDetail.getEtpInfo  req.body.data no data.";
@@ -802,7 +695,7 @@ var getEtpInfo = function(req, res) {
             async.waterfall(funcList, function(err) {
 
                 if (err) {
-                    log.error(err);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -817,7 +710,7 @@ var getEtpInfo = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
@@ -827,13 +720,11 @@ var getEtpInfo = function(req, res) {
 
         resultMsg.etpLists = [];
         resultMsg.carousel_info = {};
-        resultMsg.carousel_data = [],
-            resultMsg.carousel_mod = [];
+        resultMsg.carousel_data = [];
+        resultMsg.carousel_mod = [];
         resultMsg.ctgCodeList = [];
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -854,8 +745,7 @@ var getEtpChartData = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpDetail.getEtpChartData  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpDetail.getEtpChartData  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpDetail.getEtpChartData  req.body.data no data.";
@@ -877,63 +767,54 @@ var getEtpChartData = function(req, res) {
 
         Promise.using(pool.connect(), conn => {
 
+            try {
 
-            async.waterfall([
+                stmt = mapper.getStatement('etpDetail', 'getEtpChartData', paramData, format);
+                log.debug(stmt);
 
-                /* 1. 지수정보를 조회한다. */
-                function(callback) {
+                conn.query(stmt, function(err, rows) {
 
-                    stmt = mapper.getStatement('etpDetail', 'getEtpChartData', paramData, format);
-                    log.debug(stmt);
+                    if (err) {
+                        log.error(err, stmt, paramData);
 
-                    conn.query(stmt, function(err, rows) {
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpDetail.getEtpChartData Error while performing Query";
+                        resultMsg.err = err;
+                    }
 
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpDetail.getEtpChartData Error while performing Query";
-                            resultMsg.err = err;
+                    if (rows) {
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
 
-                            return callback(resultMsg);
-                        }
+                        resultMsg.chartList = rows;
+                    }
 
-                        if (rows) {
-                            resultMsg.chartList = rows;
-                        }
+                    res.json(resultMsg);
+                    res.end();
+                });
 
-                        callback(null);
-                    });
-                }
+            } catch (err) {
+                log.error(err, stmt, paramData);
 
-            ], function(err) {
-
-                if (err) {
-                    log.error(err);
-                } else {
-
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
-                    resultMsg.err = null;
-                }
+                resultMsg.result = false;
+                resultMsg.msg = "[error] etpDetail.getEtpChartData Error while performing Query";
+                resultMsg.err = err;
 
                 res.json(resultMsg);
                 res.end();
-            });
+            }
         });
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpDetail.getEtpChartData 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpDetail.getEtpChartData 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.chartList = [];
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -954,8 +835,7 @@ var getEtpImportanceList = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpDetail.getEtpImportanceList  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpDetail.getEtpImportanceList  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpDetail.getEtpImportanceList  req.body.data no data.";
@@ -971,75 +851,61 @@ var getEtpImportanceList = function(req, res) {
         paramData.large_type = req.session.large_type;
         paramData.krx_cd = req.session.krx_cd;
 
-
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
         Promise.using(pool.connect(), conn => {
 
+            try {
+                stmt = mapper.getStatement('etpDetail', 'getEtpImportanceList', paramData, format);
+                log.debug(stmt);
 
-            async.waterfall([
+                conn.query(stmt, function(err, rows) {
 
-                /* 1. 비중정보를 조회한다. */
-                function(callback) {
+                    if (err) {
+                        log.error(err, stmt, paramData);
 
-                    stmt = mapper.getStatement('etpDetail', 'getEtpImportanceList', paramData, format);
-                    log.debug(stmt);
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpDetail.getEtpImportanceList Error while performing Query";
+                        resultMsg.err = err;
+                    }
 
-                    conn.query(stmt, function(err, rows) {
+                    if (rows) {
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
+                        resultMsg.dataList = rows;
+                    }
 
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpDetail.getEtpImportanceList Error while performing Query";
-                            resultMsg.err = err;
+                    res.json(resultMsg);
+                    res.end();
+                });
 
-                            return callback(resultMsg);
-                        }
+            } catch (err) {
+                log.error(err, stmt, paramData);
 
-                        if (rows) {
-                            resultMsg.dataList = rows;
-                        }
-
-                        callback(null);
-                    });
-                }
-
-            ], function(err) {
-
-                if (err) {
-                    log.error(err);
-                } else {
-
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
-                    resultMsg.err = null;
-                }
+                resultMsg.result = false;
+                resultMsg.msg = "[error] etpDetail.getEtpImportanceList Error while performing Query";
+                resultMsg.err = err;
 
                 res.json(resultMsg);
                 res.end();
-            });
+            }
         });
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpDetail.getEtpImportanceList 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpDetail.getEtpImportanceList 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
-        resultMsg.dataList = [];
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
 
 module.exports.getEtpBasic = getEtpBasic;
-module.exports.getExistEtpBasicCnt = getExistEtpBasicCnt;
 module.exports.getEtpInfo = getEtpInfo;
 module.exports.getEtpPerformance = getEtpPerformance;
 module.exports.getEtpChartData = getEtpChartData;

@@ -38,7 +38,6 @@
                                     SELECT  MAX( F12506 )
                                       FROM  m168uidxmap
                                 )
-                        AND     m168uidxmap.GUBUN       =   #{m168uidxmap_gubun}
                         AND     m168uidxmap.up_code     =   CASE    WHEN    td_index_basic.f16013   LIKE    '60___'                     /* 단축코드 */
                                                                     THEN    CONCAT( 'MFI' , SUBSTR( td_index_basic.f16013, -3 ) )
                                                                 
@@ -49,14 +48,7 @@
          WHERE  1 = 1
     ]]>
 
-        <if test= 'large_type != null  and  large_type == "FNGUIDE" ' >
-                /* 로그인 사용자의 large_type 이 'FNGUIDE' 인 경우 */
-           AND  td_index_basic.large_type       =   #{large_type}
-           AND  td_index_basic.market_id        IN  ( 'M168' )
-        </if>
-
-        <if test= 'large_type != null  and  large_type == "KRX" ' >
-                /* 로그인 사용자의 large_type 이 'KRX' 인 경우 */
+        <if test="large_type != null and large_type !=''">
            AND  td_index_basic.large_type       =   #{large_type}
         </if>
 
@@ -75,7 +67,8 @@
     ]]>
         </if>                       
                 )
-         ORDER  BY  m168uidxmap.isin_code       DESC            /* 입회일 */
+         ORDER  BY      m168uidxmap.isin_code       DESC        /* 입회일 */
+                    ,   td_index_basic.f16013         
     </select>
 
 
@@ -115,15 +108,9 @@
           FROM  td_index_basic
          WHERE  1 = 1
     ]]>
+    
 
-        <if test= 'large_type != null  and  large_type == "FNGUIDE" ' >
-                /* 로그인 사용자의 large_type 이 'FNGUIDE' 인 경우 */
-           AND  td_index_basic.large_type       =   #{large_type}
-           AND  td_index_basic.market_id        IN  ( 'M168' )
-        </if>
-
-        <if test= 'large_type != null  and  large_type == "KRX" ' >
-                /* 로그인 사용자의 large_type 이 'KRX' 인 경우 */
+        <if test="large_type != null and large_type !=''">
            AND  td_index_basic.large_type       =   #{large_type}
         </if>
 
@@ -228,7 +215,6 @@
                                                             SELECT  MAX( m168uidxmap.F12506 )
                                                             FROM  m168uidxmap
                                                         )
-                                                AND     A.GUBUN             =   #{m168uidxmap_gubun}
                                                 AND     A.ISIN_CODE         =   B.F16012 
 
                                  WHERE  A.UP_CODE     =   CONCAT( IF( SUBSTR(#{f16013}, 1, 2 ) = '60', 'MFI', 'WFN' ), substr(#{f16013}, 3) )
@@ -245,7 +231,6 @@
                                                             SELECT  MAX( m168uidxmap.F12506 )
                                                               FROM  m168uidxmap
                                                         )
-                                                AND     AA.GUBUN            =   #{m168uidxmap_gubun}
                                                 AND     AA.ISIN_CODE        =   BB.F16012
 
                                  WHERE  AA.UP_CODE  =   CONCAT( IF(substr(#{f16013}, 1, 2) = '60', 'MFI', 'WFN'), substr(#{f16013}, 3)) 

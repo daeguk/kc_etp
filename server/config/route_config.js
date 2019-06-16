@@ -36,7 +36,6 @@ module.exports = {
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpInfo', method: 'getEtpInfo', session: 'check', type: 'post' },
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpChartData', method: 'getEtpChartData', session: 'check', type: 'post' },
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpPerformance', method: 'getEtpPerformance', session: 'check', type: 'post' },
-        { file: './user/etp/etpDetail', path: '/user/etp/getExistEtpBasicCnt', method: 'getExistEtpBasicCnt', session: 'check', type: 'post' },
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpImportanceList', method: 'getEtpImportanceList', session: 'check', type: 'post' },
 
         { file: './user/etp/etpOper', path: '/user/etp/getEtpOperInfo', method: 'getEtpOperInfo', session: 'check', type: 'post' },
@@ -50,9 +49,6 @@ module.exports = {
         { file: './user/etp/etpOper', path: '/user/etp/getJongmokData', method: 'getJongmokData', session: 'check', type: 'post' },
 
 
-        { file: './user/etp/etpOper', path: '/user/etp/getExchBasic', method: 'getExchBasic', session: 'check', type: 'post' },
-        { file: './user/etp/etpOper', path: '/user/etp/getKspjongBasic', method: 'getKspjongBasic', session: 'check', type: 'post' },
-        { file: './user/etp/etpOper', path: '/user/etp/getFutureBasic', method: 'getFutureBasic', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/saveEtpOperPdfModify', method: 'saveEtpOperPdfModify', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getPdfByGroupNo', method: 'getPdfByGroupNo', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getPdfExistYnByNow', method: 'getPdfExistYnByNow', session: 'check', type: 'post' },
@@ -145,6 +141,10 @@ module.exports = {
         { file: './user/common/itemInfo', path: '/user/common/getIndexList', method: 'getIndexList', session: 'check', type: 'get' },
         { file: './user/common/itemInfo', path: '/user/common/getPublishEtpList', method: 'getPublishEtpList', session: 'check', type: 'get' },
         { file: './user/common/itemInfo', path: '/user/common/getALLEtpList', method: 'getALLEtpList', session: 'check', type: 'get' },
+
+
+        /* 고객지원 */
+        { file: './user/etc/custSupport', path: '/user/etc/saveCustSupport', method: 'saveCustSupport', session: 'check', type: 'post' },
 
         //풀 테스트 
 

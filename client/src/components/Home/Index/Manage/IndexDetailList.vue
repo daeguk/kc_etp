@@ -11,8 +11,8 @@
                             {{ indexBasic.f16002 }} |
                             <span class="grey--text">{{ indexBasic.f16013 }}</span>
 
-                            <p class="text_result_t">기준일 : {{ indexBasic.fmt_std_date  /* 기준일 */ }}</p>
-                            <p class="sub_txt">Last Updated : {{ indexBasic.fmt_f12506   /* 입회일 */ }}</p>
+                            <span class="text_result_t">기준일 : {{ indexBasic.fmt_std_date  /* 기준일 */ }}</span>
+                            <span class="sub_txt">Last Updated : {{ indexBasic.fmt_f12506   /* 입회일 */ }}</span>
                         </h3>
                     </v-card-title>
 
@@ -22,8 +22,8 @@
                         <h3 class="headline subtit" pb-0>
                             {{ indexBasic.f16002 }} 편입지수 목록
 
-                            <p class="grey--text">{{ form.resultsCnt }} results</p>
-                            <p class="sub_txt">Last Updated : {{ indexBasic.fmt_f12506   /* 입회일 */ }}</p>
+                            <span class="grey--text">{{ form.resultsCnt }} results</span>
+                            <span class="sub_txt">Last Updated : {{ indexBasic.fmt_f12506   /* 입회일 */ }}</span>
                         </h3>
                     </v-card-title>                    
 
@@ -35,7 +35,8 @@
             <v-flex  class="conWidth_right">
                 <IndexDetailQuick   @fn_getIndexDetailList="fn_getIndexDetailList"
                                     @fn_getIndexJongmokList="fn_getIndexJongmokList"
-                                    @showProgress="showProgress">
+                                    @showProgress="showProgress"
+                                    @showMessageBox="showMessageBox">
                 </IndexDetailQuick>                
             </v-flex>
             
@@ -46,6 +47,7 @@
                             <v-progress-circular :size="50" indeterminate></v-progress-circular>
                             </template>
         </v-dialog>
+        <ConfirmDialog ref="confirm"></ConfirmDialog>
     </v-container>
 </template>
 
@@ -58,12 +60,14 @@ import buttons from 'datatables.net-buttons'
 import util       from "@/js/util.js";
 import Config from '@/js/config.js';
 import IndexDetailQuick from "@/components/Home/Index/Manage/IndexDetailQuick.vue";
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 var tableIndexList = null;
 
 export default {
     components: {
         IndexDetailQuick     :   IndexDetailQuick,
+        ConfirmDialog: ConfirmDialog,
     },
     data() {
         return {
@@ -215,6 +219,9 @@ export default {
              
         showProgress: function(visible) {
             this.progress = visible;
+        },
+        showMessageBox: function(title, msg, option, gubun) {
+            this.$refs.confirm.open(title,msg, option, gubun);
         },
         fn_closePop() {
             var vm = this;
