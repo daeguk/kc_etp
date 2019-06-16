@@ -197,7 +197,7 @@ export default {
                     } 
                 ],
                 columns: [
-                    { "title"   :   "ID"            ,   "data": "f16013"                ,   "orderable" : true, "width" : "12%", className:"txt_left"  },      /* ID */
+                    { "title"   :   "ID"            ,   "data": "isin_code"             ,   "orderable" : true, "width" : "12%", className:"txt_left"  },      /* ID */
                     { "title"   :   "지수명"         ,   "data": "f16002"                ,   "orderable" : true, "width" : "18%",className:"txt_left"  },      /* 지수명 */
                     { "title"   :   "편입비중(%)"    ,   "data": "in_out_rate"           ,   "orderable" : true, "width" : "14%",className:"txt_right"  },      /* 편입비중(%) */
                     { "title"   :   "Shrs"          ,   "data": "f30812"                ,   "orderable" : true, "width" : "14%",className:"txt_right"  },      /* shrs */
