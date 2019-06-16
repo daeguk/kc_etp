@@ -39,11 +39,11 @@ var getEtpOperInfo = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -129,11 +129,11 @@ var getEtpOperIndex = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -247,11 +247,11 @@ var getEtpOperIndexOversea = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -335,11 +335,11 @@ var getEtpOperIndexError = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -465,11 +465,11 @@ var getEtpOperPdf = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -569,11 +569,11 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -736,11 +736,11 @@ var getEtpOperPdfByRateTitle = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -839,11 +839,11 @@ var getEtpOperPdfByRate = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -981,11 +981,11 @@ var getEtpOperPdfModify = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -1129,11 +1129,11 @@ var getJongmokData = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -1217,11 +1217,11 @@ var saveEtpOperPdfModify = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -2012,11 +2012,11 @@ var getPdfByGroupNo = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -2224,11 +2224,11 @@ var getPdfExistYnByNow = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };

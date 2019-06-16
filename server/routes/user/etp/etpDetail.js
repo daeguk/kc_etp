@@ -41,11 +41,11 @@ var getEtpBasic = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -162,11 +162,11 @@ var getEtpPerformance = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -335,11 +335,11 @@ var getEtpInfo = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";
@@ -755,11 +755,11 @@ var getEtpChartData = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -845,11 +845,11 @@ var getEtpImportanceList = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";
