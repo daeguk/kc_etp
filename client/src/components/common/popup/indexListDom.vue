@@ -7,8 +7,8 @@
     <table id="jisu_grid" class="tbl_type" style="width:100%">
       <colgroup>
         <col width="15%">
-        <col width="30%">
         <col width="55%">
+        <col width="30%">
       </colgroup>
       <thead>
         <tr>
@@ -59,9 +59,13 @@ export default {
   },
   methods: {
     getInfoIndexList: function() {
-
+      let tmp = [];
 // console.log("getInfoIndexList...................");
-      this.results = this.$store.state.indexmast;
+      tmp = this.$store.state.indexmast;
+      this.results = tmp.filter(function(o) {
+        if(o.large_type == 'KRX' || o.large_type == 'FNGUIDE') return true;
+        else return false;
+      });
       if (!$.fn.dataTable.isDataTable( '#jisu_grid' ) ) {
         jisu_grid = $('#jisu_grid').DataTable( {
           "processing": true,

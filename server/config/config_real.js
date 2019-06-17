@@ -22,7 +22,7 @@ module.exports = {
     base_url: "https://newetp.koscom.co.kr",
     pwd_salt: "11aabb..",
     pwd_default: "11aabb..",
-    uploadFolder : "/upload",
+    uploadFolder : "/data/koscom/kc_newetp/upload",
 
     logger : logger,
 }

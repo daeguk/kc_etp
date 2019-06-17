@@ -31,7 +31,10 @@
                       <etnList @selectedItem="getSelectedItem"></etnList>
                     </v-tab-item>
                     <v-tab-item>
-                      <indexList @selectedItem="getSelectedItem"></indexList>
+                      <indexListDom @selectedItem="getSelectedItem"></indexListDom>
+                    </v-tab-item>
+                    <v-tab-item>
+                      <indexListAll @selectedItem="getSelectedItem"></indexListAll>
                     </v-tab-item>
                     </v-tabs-items>
                 </v-flex>
@@ -47,21 +50,23 @@
 <script>
 import etfList from "./etfList.vue";
 import etnList from "./etnList.vue";
-import indexList from "./indexList.vue";
+import indexListDom from "./indexListDom.vue";
+import indexListAll from "./indexListAll.vue";
 import Config from '@/js/config.js'
 export default {
   props: [],
   data() {
     return {
         tab: null,
-        items: ["ETF", "ETN", "INDEX"],
+        items: ["ETF", "ETN", "INDEX(국내)", "INDEX(전체)"],
         dialog: false
     };
   },
   components: {
-    etfList: etfList,
-    etnList: etnList,
-    indexList: indexList
+    etfList,
+    etnList,
+    indexListDom,
+    indexListAll
   },
   computed: {},
   created: function() {
@@ -74,8 +79,8 @@ export default {
   methods: {
     getSelectedItem: function(sel_items, gubun) {
       var vm = this;
-console.log("selectedItem ..............");
-console.log(sel_items);
+// console.log("selectedItem ..............");
+// console.log(sel_items);
       this.$emit("selectedItem", sel_items, gubun);
     },
     closeModal: function() {

@@ -4,11 +4,11 @@
     <v-text-field class="pt-0" v-model="search" v-on:keyup="filterData" append-icon="search" label="Search" single-line hide-details></v-text-field>
   </v-card-title>   
   <v-card flat>
-    <table id="jisu_grid" class="tbl_type" style="width:100%">
+    <table id="jisu_grid1" class="tbl_type" style="width:100%">
       <colgroup>
         <col width="15%">
-        <col width="30%">
         <col width="55%">
+        <col width="30%">
       </colgroup>
       <thead>
         <tr>
@@ -32,7 +32,7 @@ import buttons from 'datatables.net-buttons'
 import select from 'datatables.net-select'
 import _ from "lodash";
 import Config from '@/js/config.js'
-var jisu_grid = null;
+var jisu_grid1 = null;
 export default {
   data () {
     return {
@@ -51,19 +51,18 @@ export default {
 
     $('.selectAll').on('click', function () {
         if ($(this).is( ":checked" )) {
-            jisu_grid.rows().select();        
+            jisu_grid1.rows().select();        
         } else {
-            jisu_grid.rows().deselect(); 
+            jisu_grid1.rows().deselect(); 
         }
     });
   },
   methods: {
     getInfoIndexList: function() {
-
-// console.log("getInfoIndexList...................");
       this.results = this.$store.state.indexmast;
-      if (!$.fn.dataTable.isDataTable( '#jisu_grid' ) ) {
-        jisu_grid = $('#jisu_grid').DataTable( {
+
+      if (!$.fn.dataTable.isDataTable( '#jisu_grid1' ) ) {
+        jisu_grid1 = $('#jisu_grid1').DataTable( {
           "processing": true,
           "serverSide": false,
           "search": true,
@@ -94,9 +93,9 @@ export default {
       }
     },
     selectData: function() {
-      var data = jisu_grid.rows( { selected: true } ).data();
+      var data = jisu_grid1.rows( { selected: true } ).data();
       this.$emit("selectedItem", data, 3);
-      jisu_grid.rows().deselect(); 
+      jisu_grid1.rows().deselect(); 
     },
     filterData: function() {
       var vm = this;
@@ -110,8 +109,8 @@ export default {
           }
       });
 
-      jisu_grid.clear().draw();
-      jisu_grid.rows.add(filterData).draw();           
+      jisu_grid1.clear().draw();
+      jisu_grid1.rows.add(filterData).draw();           
     },
   }
 }

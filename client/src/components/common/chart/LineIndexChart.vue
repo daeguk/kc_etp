@@ -16,10 +16,10 @@ export default {
       canvas:{},
       ctx:{},
       chartId:"LineIndexChart",
-      chart:{width:1050, height:400},
+      chart:{width:1050, height:340},
       grad:{},
       mrect:{},
-      crect:{x1:80, y1:60, x2:1000, y2:360},
+      crect:{x1:80, y1:60, x2:1000, y2:300},
       dataArr: [],
       chartDataPosArr: [],
       chartDataHPosArr: [],
@@ -35,6 +35,7 @@ export default {
       dterm:2,
       wlen: 0,
       hlen: 0,
+      ydifflen: 0,
       intra_data:[],
       hist_data:[],
       sArr:[],
@@ -65,6 +66,8 @@ export default {
     this.wlen = this.crect.x2 - this.crect.x1;
     // -10 : 하단 라인 침범 수정
     this.hlen = this.crect.y2 - this.crect.y1 - 10;
+    this.ydifflen = (this.crect.y2 - this.crect.y1) / 6;
+    console.log("ydifflen : " + this.ydifflen);
     this.dataInit();
     this.drawInit();
   },
@@ -89,8 +92,8 @@ export default {
         c.strokeStyle = "#BDBDBD";
         c.setLineDash([2]);
         for(var i=0; i < 6; i++) {
-          c.moveTo(this.crect.x1, this.crect.y1 + 50*i);
-          c.lineTo(this.crect.x2, this.crect.y1 + 50*i);
+          c.moveTo(this.crect.x1, this.crect.y1 + this.ydifflen*i);
+          c.lineTo(this.crect.x2, this.crect.y1 + this.ydifflen*i);
         }
         c.stroke();
 
@@ -248,7 +251,7 @@ export default {
         c.font = '12px san-serif';
         for(var i=0; i < 7; i++) {
           // console.log("yAxis : " + vm.yAxisVal[i]);
-          c.fillText(vm.yAxisVal[6-i], 75, vm.crect.y1 + 50 * i);
+          c.fillText(vm.yAxisVal[6-i], 75, vm.crect.y1 + this.ydifflen * i);
         }
         //X-Axis 그리기
         c.fillStyle = "#424242";
@@ -354,7 +357,7 @@ export default {
         c.font = '12px san-serif';
         for(var i=0; i < 7; i++) {
           // console.log("yAxis : " + vm.yAxisVal[i]);
-          c.fillText(vm.yAxisVal[6-i], 65, vm.crect.y1 + 50 * i);
+          c.fillText(vm.yAxisVal[6-i], 65, vm.crect.y1 + this.ydifflen * i);
         }
         //X-Axis 그리기
         c.fillStyle = "#424242";
@@ -376,7 +379,7 @@ export default {
         }else {
           var c = this.ctx;
           var _mwpos = event.layerX;
-          var _mhpos = event.layerY-125;
+          var _mhpos = event.layerY;
           c.putImageData(this.draw_chart_image, this.crect.x1, this.crect.y1-10);
           if(this.selectGuideCheck(_mwpos, _mhpos) !== -1) {
             // console.log("Got.......... guide");

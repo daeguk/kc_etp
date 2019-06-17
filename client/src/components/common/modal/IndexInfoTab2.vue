@@ -8,7 +8,7 @@
         </div>
         <v-card flat>
           <div class="table-box-wrap">
-            <div class="table-box" style="max-height:1000px;">
+            <div class="table-box" style="max-height:200px;">
             <table class="tbl_type ver8">
               <caption> 헤더 고정 테이블</caption>
               <colgroup>
@@ -39,7 +39,7 @@
               </thead>
               <tbody>
                 <tr v-for="(item, index) in indexLists" :key="index">
-                  <td class="txt_left"><span style="font-weight:bold;">{{item.F16002}}</span></td>
+                  <td class="txt_left"><span :style="item.nStyle">{{item.F16002}}</span></td>
                   <td class="txt_right" :style="item.dStyle">{{item.F15004}}%</td>
                   <td class="txt_right" :style="item.wStyle">{{item.weekRate}}%</td>
                   <td class="txt_right" :style="item.mStyle">{{item.monthRate}}%</td>
@@ -102,8 +102,9 @@ export default {
       console.log("IndexInfoTab2 watch.........etpList ");
       console.log("this.etpList.length : " + this.etpList.length);
       for(let i=0; i < this.etpList.length; i++) {
-        let tmp1 = JSON.parse(JSON.stringify(this.etpList[i]));
-        this.indexLists.push(tmp1);
+        // let tmp1 = JSON.parse(JSON.stringify(this.etpList[i]));
+        // this.indexLists.push(tmp1);
+        this.getEtpAnal(this.etpList[i]);
       }
     },
   },
@@ -121,13 +122,8 @@ export default {
     this.befDates = this.$store.state.befDates;
 
     let tmp = JSON.parse(JSON.stringify(this.indexBasic));
+    tmp.gubun = 3; // INDEX
     this.indexLists.push(tmp);
-
-    console.log("this.etpList.length : " + this.etpList.length);
-    for(let i=0; i < this.etpList.length; i++) {
-      let tmp1 = JSON.parse(JSON.stringify(this.etpList[i]));
-      this.indexLists.push(tmp1);
-    }
   },
   methods: {
     openMastModal: function() {  
@@ -140,10 +136,10 @@ export default {
     getSelectedItem: function(items, gubun) {
       for(let i=0; i < items.length; i++) {
         // this.indexLists.push(items[i]);
-        if(gubun == 1) {
-          this.getEtpAnal(items[i]);
-        }else {
+        if(gubun == 3) {
           this.getIndexAnal(items[i]);
+        }else {
+          this.getEtpAnal(items[i]);
         }
       }
     },
@@ -173,6 +169,7 @@ export default {
           // console.log(response.data.results[0]);
 
           let tmp = JSON.parse(JSON.stringify(response.data.results[0]));
+          tmp.nStyle = {color:'#969696'};
           tmp.F15472 = util.getPlus(tmp.F15472, 2);
           tmp.F15004 = util.getPlus(tmp.F15004, 2);
           tmp.dStyle = util.getUpAndDownStyle(tmp.F15004);
@@ -191,9 +188,13 @@ export default {
           tmp.year10Rate = util.getDiffRate1(tmp.F15001, tmp.bef10Year);
           tmp.y10Style = util.getUpAndDownStyle(tmp.year10Rate);
           tmp.F15001 = util.formatNumber(tmp.F15001);
+          tmp.gubun = 1; // ETF
 
           vm.indexLists.push(tmp);
         }
+
+        // console.log("getEtpAnal........");
+        // console.log(vm.indexLists);
       });
     },
     getIndexAnal: function(item) {
@@ -212,7 +213,7 @@ export default {
           bef10Year: vm.befDates.bef10Year,
         }
       }).then(function(response) {
-        // console.log(response);
+        console.log(response);
         if (response.data.success == false) {
           alert("해당 종목이 없습니다");
         } else {
@@ -220,6 +221,7 @@ export default {
           // console.log(response.data.results[0]);
 
           let tmp = JSON.parse(JSON.stringify(response.data.results[0]));
+          tmp.nStyle = {color:'#969696'};
           tmp.F15472 = util.getPlus(tmp.F15472, 2);
           tmp.F15004 = util.getPlus(tmp.F15004, 2);
           tmp.dStyle = util.getUpAndDownStyle(tmp.F15004);
@@ -238,6 +240,7 @@ export default {
           tmp.year10Rate = util.getDiffRate1(tmp.F15001, tmp.bef10Year);
           tmp.y10Style = util.getUpAndDownStyle(tmp.year10Rate);
           tmp.F15001 = util.formatNumber(tmp.F15001);
+          tmp.gubun = 3; // INDEX
 
           vm.indexLists.push(tmp);
         }
