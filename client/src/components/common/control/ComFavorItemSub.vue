@@ -715,6 +715,7 @@ export default {
         filterData: function(mode) {
             var vm = this;
             var faverData = '-1';
+            vm.search = vm.search.toUpperCase();
             
             /* 이벤트 delay이로 부하 줄임 */
             var delay = (function(){

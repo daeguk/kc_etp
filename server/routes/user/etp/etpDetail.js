@@ -41,11 +41,11 @@ var getEtpBasic = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -162,11 +162,11 @@ var getEtpPerformance = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -179,37 +179,8 @@ var getEtpPerformance = function(req, res) {
                 /* 1. ETP performance 정보를 조회한다. */
                 function(callback) {
 
-                    stmt = mapper.getStatement('etpDetail', 'getEtpPerformance', paramData, format);
-
-                    // 대입 문자 치환
-                    stmt = stmt.replace(/\: =/g, ':=');
-
-                    log.debug(stmt);
-
-                    conn.query(stmt, function(err, rows) {
-
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpDetail.getEtpPerformance Error while performing Query";
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-
-                        if (rows && rows.length > 0) {
-                            resultMsg.etpPerformanceList = rows;
-                        }
-
-                        callback(null, paramData);
-                    });
-                },
-
-                /* 2. 자산추가된 ETP 의 ETP performance 정보를 조회한다. */
-                function(msg, callback) {
-
-                    if (paramData.arrEtpPerformance && paramData.arrEtpPerformance.length > 0) {
-
-                        stmt = mapper.getStatement('etpDetail', 'getEtpPerformanceByEtp', paramData, format);
+                    try{
+                        stmt = mapper.getStatement('etpDetail', 'getEtpPerformance', paramData, format);
 
                         // 대입 문자 치환
                         stmt = stmt.replace(/\: =/g, ':=');
@@ -220,60 +191,122 @@ var getEtpPerformance = function(req, res) {
 
                             if (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] etpDetail.getEtpPerformanceByEtp Error while performing Query";
+                                resultMsg.msg = "[error] etpDetail.getEtpPerformance Error while performing Query";
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
                             }
 
                             if (rows && rows.length > 0) {
-                                for (var inx in rows) {
-                                    resultMsg.etpPerformanceList.push(rows[inx]);
-                                }
+                                resultMsg.etpPerformanceList = rows;
                             }
 
                             callback(null, paramData);
                         });
 
-                    } else {
-                        callback(null, paramData);
+                    } catch (err) {
+                        log.error(err, stmt, paramData);
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpDetail.getEtpPerformance Error while performing Query";
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }
+                },
+
+                /* 2. 자산추가된 ETP 의 ETP performance 정보를 조회한다. */
+                function(msg, callback) {
+
+                    try{
+                        if (paramData.arrEtpPerformance && paramData.arrEtpPerformance.length > 0) {
+
+                            stmt = mapper.getStatement('etpDetail', 'getEtpPerformanceByEtp', paramData, format);
+
+                            // 대입 문자 치환
+                            stmt = stmt.replace(/\: =/g, ':=');
+
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] etpDetail.getEtpPerformanceByEtp Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if (rows && rows.length > 0) {
+                                    for (var inx in rows) {
+                                        resultMsg.etpPerformanceList.push(rows[inx]);
+                                    }
+                                }
+
+                                callback(null, paramData);
+                            });
+
+                        } else {
+                            callback(null, paramData);
+                        }
+
+                    } catch (err) {
+                        log.error(err, stmt, paramData);
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpDetail.getEtpPerformanceByEtp Error while performing Query";
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
                     }
                 },
 
                 /* 3. 자산추가된 INDEX 의 ETP performance 정보를 조회한다. */
                 function(msg, callback) {
 
-                    if (paramData.arrIndexPerformance && paramData.arrIndexPerformance.length > 0) {
+                    try{
+                        if (paramData.arrIndexPerformance && paramData.arrIndexPerformance.length > 0) {
 
-                        stmt = mapper.getStatement('etpDetail', 'getEtpPerformanceByIndex', paramData, format);
+                            stmt = mapper.getStatement('etpDetail', 'getEtpPerformanceByIndex', paramData, format);
 
-                        // 대입 문자 치환
-                        stmt = stmt.replace(/\: =/g, ':=');
+                            // 대입 문자 치환
+                            stmt = stmt.replace(/\: =/g, ':=');
 
-                        log.debug(stmt);
+                            log.debug(stmt);
 
-                        conn.query(stmt, function(err, rows) {
+                            conn.query(stmt, function(err, rows) {
 
-                            if (err) {
-                                resultMsg.result = false;
-                                resultMsg.msg = "[error] etpDetail.getEtpPerformanceByIndex Error while performing Query";
-                                resultMsg.err = err;
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] etpDetail.getEtpPerformanceByIndex Error while performing Query";
+                                    resultMsg.err = err;
 
-                                return callback(resultMsg);
-                            }
-
-                            if (rows && rows.length > 0) {
-                                for (var inx in rows) {
-                                    resultMsg.etpPerformanceList.push(rows[inx]);
+                                    return callback(resultMsg);
                                 }
-                            }
 
+                                if (rows && rows.length > 0) {
+                                    for (var inx in rows) {
+                                        resultMsg.etpPerformanceList.push(rows[inx]);
+                                    }
+                                }
+
+                                callback(null);
+                            });
+
+                        } else {
                             callback(null);
-                        });
+                        }
 
-                    } else {
-                        callback(null);
-                    }
+                    } catch (err) {
+                        log.error(err, stmt, paramData);
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpDetail.getEtpPerformanceByIndex Error while performing Query";
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }                        
                 },
 
 
@@ -335,11 +368,11 @@ var getEtpInfo = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";
@@ -755,11 +788,11 @@ var getEtpChartData = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -845,11 +878,11 @@ var getEtpImportanceList = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";

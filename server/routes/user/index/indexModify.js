@@ -35,11 +35,11 @@ var getRegistedJisuData = function(req, res) {
             paramData = req.body.data;
         }
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
         log.debug(req.body.data);
 
@@ -380,11 +380,11 @@ var modifyJisu = function(req, res) {
 
                 var paramData = JSON.parse(req.body.data);
 
-                paramData.user_id = req.session.user_id;
-                paramData.inst_cd = req.session.inst_cd;
-                paramData.type_cd = req.session.type_cd;
-                paramData.large_type = req.session.large_type;
-                paramData.krx_cd = req.session.krx_cd;
+                paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+                paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+                paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+                paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+                paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
                 log.debug(paramData);
 
@@ -1150,11 +1150,11 @@ var deleteJisu = function(req, res) {
 
             var paramData = req.body.data;
 
-            paramData.user_id = req.session.user_id;
-            paramData.inst_cd = req.session.inst_cd;
-            paramData.type_cd = req.session.type_cd;
-            paramData.large_type = req.session.large_type;
-            paramData.krx_cd = req.session.krx_cd;
+            paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+            paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+            paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+            paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+            paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
             log.debug(paramData);
 

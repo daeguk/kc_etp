@@ -41,11 +41,11 @@ var getJisuDuplCheck = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         /* 2. 이미 등록된 지수ID 가 존재하는지 확인 */
@@ -116,11 +116,11 @@ var getDomainInst = function(req, res) {
     }
 
     try {
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
         /* 1. 기관정보를 조회한다. */
         var format = { language: 'sql', indent: '' };
@@ -670,11 +670,11 @@ var registerJisu = function(req, res) {
 
                 var paramData = JSON.parse(req.body.data);
 
-                paramData.user_id = req.session.user_id;
-                paramData.inst_cd = req.session.inst_cd;
-                paramData.type_cd = req.session.type_cd;
-                paramData.large_type = req.session.large_type;
-                paramData.krx_cd = req.session.krx_cd;
+                paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+                paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+                paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+                paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+                paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
                 log.debug(paramData);
 
