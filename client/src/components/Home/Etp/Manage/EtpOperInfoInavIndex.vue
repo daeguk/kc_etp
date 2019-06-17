@@ -66,21 +66,7 @@
                             <li v-if="paramData.f34240 == 'J'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>-예상배당수익률)</li>
                             <li v-if="paramData.f34240 == 'G'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point2">②배율</span>×<span class="txt_point3">③지수등락율</span>)×(환율보정계수/장전매매기준율)</li>
                         </ul>
-                        <ul>
-                            <li class="list_tit">
-                                <b>외부공표 iNAV</b>
-                            </li>
-                            <li class="text_red align_r" v-if="paramData.f30818 >= 0">                                        
-                                <b>{{formatNumber(paramData.f15301)}}</b>
-                                <br>
-                                <span class="float_r">{{formatNumber(paramData.f30818)}}</span>
-                            </li>
-                            <li class="text_blue align_r" v-if="paramData.f30818 < 0">                                        
-                                <b>{{formatNumber(paramData.f15301)}}</b>
-                                <br>
-                                <span class="float_r">{{formatNumber(paramData.f30818)}}</span>
-                            </li>
-                        </ul>
+                        
                         <ul v-if="SimulationSwitch == true">
                             <li class="list_tit case2 txt_point">①전일NAV</li>
                             <li class="input_mid">
@@ -112,7 +98,10 @@
                         </ul>
                         <ul class="bot_line1">
                             <li class="list_tit">지수현재가</li>
-                            <li class="align_r text_red">{{f15318}}</li>
+                            <li class="input_mid" v-if="SimulationSwitch == true">
+                                <v-text-field v-model="f15318" outline class="txt_right"></v-text-field>
+                            </li>
+                            <li v-else class="align_r text_red">{{f15318}}</li>
                         </ul>
                         <!--ul class="bot_line2">
                                                     <li class="list_tit"><b>지수기준가</b><br><span>기준일</span></li>
@@ -165,7 +154,10 @@
                         </ul>
                         <ul class="bot_line1">
                             <li class="list_tit">매매기준율</li>
-                            <li class="align_r text_red">{{f30819}}</li>
+                            <li class="input_mid" v-if="SimulationSwitch == true">
+                                <v-text-field v-model="f30819" outline class="txt_right"></v-text-field>
+                            </li>
+                            <li v-else class="align_r text_red">{{f30819}}</li>
                         </ul>
                         <ul class="bot_line2">
                             <li class="list_tit case2">장전기준율</li>
@@ -198,6 +190,21 @@
                             <li class="list_tit txt_point">Other Factor</li>
                             <li class="align_r">
                                 <b>{{f18101}}</b>
+                            </li>
+                        </ul>
+                        <ul class="result">
+                            <li class="list_tit">
+                                <b>외부공표 iNAV</b>
+                            </li>
+                            <li class="text_red align_r" v-if="paramData.f30818 >= 0">                                        
+                                <b>{{formatNumber(paramData.f15301)}}</b>
+                                <br>
+                                <span class="float_r">{{formatNumber(paramData.f30818)}}</span>
+                            </li>
+                            <li class="text_blue align_r" v-if="paramData.f30818 < 0">                                        
+                                <b>{{formatNumber(paramData.f15301)}}</b>
+                                <br>
+                                <span class="float_r">{{formatNumber(paramData.f30818)}}</span>
                             </li>
                         </ul>
                         <ul class="result">

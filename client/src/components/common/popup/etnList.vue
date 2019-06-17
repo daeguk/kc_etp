@@ -104,6 +104,7 @@ export default {
 
     filterData: function() {
       var vm = this;
+      vm.search = vm.search.toUpperCase();
       var filterData = _.filter(vm.results, function(o) { 
         var nmIdx = o.F16002.indexOf(vm.search);
         var cdIdx = o.F16013.indexOf(vm.search);
