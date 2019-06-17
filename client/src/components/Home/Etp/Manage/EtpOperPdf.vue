@@ -181,7 +181,7 @@ export default {
                     resolve();
 
                 }else{
-                    vm.fn_getEtpOperInfoFirstData( "A", resolve, reject );
+//                    vm.fn_getEtpOperInfoFirstData( "A", resolve, reject );
                 }
 
             }).catch( function(e) {

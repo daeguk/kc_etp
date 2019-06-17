@@ -18,7 +18,8 @@
             <!--router-view></router-view-->
 
             <EtpOperControl :activeTab="activeTab"
-                            @fn_setActiveTab="fn_setActiveTab">
+                            @fn_setActiveTab="fn_setActiveTab"
+                            @fn_setParamData="fn_setParamData">
             </EtpOperControl>
 
         </v-flex>
@@ -38,6 +39,7 @@ export default {
                 { id: 1, name: "지수관리"           , route: '/etp/manage/etpOperIndex' },              /* 지수관리 */
                 { id: 2, name: "PDF 관리"           , route: '/etp/manage/etpOperPdf' },                /* PDF 관리 */
             ],
+            paramData : {}
         };
     },
     components: {
@@ -49,7 +51,7 @@ export default {
     },
     methods: {
         
-        pageMove : function(tab_id, paramData) {
+        pageMove : function(tab_id) {
             var vm = this;
 
             this.$EventBus.$off('changeIndexInfo');
@@ -58,9 +60,15 @@ export default {
             this.$EventBus.$off('changeEtpInfo');
 
 
-            this.$EventBus.$emit("showList", {tab_id:tab_id, paramData : paramData });
+            this.$EventBus.$emit("showList", {tab_id:tab_id, paramData : vm.paramData });
             //this.activeTab = id + 1;
             //this.$router.push({path:'/info/etpinfo/EtpMarketInfo', props:{activeTab:this.activeTab}});
+        },
+
+        fn_setParamData : function( paramData ) {
+            var vm = this;
+
+            vm.paramData = paramData;
         },
 
         /*
@@ -69,7 +77,9 @@ export default {
          */
         fn_setActiveTab : function( activeTab, paramData ) {
             this.activeTab = activeTab;
-            this.pageMove( activeTab, paramData );
+
+            this.fn_setParamData( paramData );
+            this.pageMove( activeTab );
         }
     }
 };
