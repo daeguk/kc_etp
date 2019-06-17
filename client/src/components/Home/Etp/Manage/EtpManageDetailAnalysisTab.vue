@@ -490,6 +490,15 @@ export default {
                         console.log(response.data);
 
                         if (response.data) {
+
+                            var msg = ( response.data.msg ? response.data.msg : "" );
+                            if (!response.data.result) {
+                                if( msg ) {
+                                    vm.$emit("showMessageBox", '확인', msg,{},1);
+                                    return  false;
+                                }
+                            }
+
                             var etpPerformanceList = response.data.etpPerformanceList;
 
                         /* 테이블 정보 출력 */
@@ -499,39 +508,39 @@ export default {
                             }
 
                         /* 차트 출력 */
-                        var items = [] 
+                            var items = [] 
 
-                        items.push(['string']);
-                        items.push(['1-Week']);
-                        items.push(['1-Month']);
-                        items.push(['3-Month']);
-                        items.push(['YTD']);
-                        items.push(['1-Year']);
-                        items.push(['3-Year']);
-                        items.push(['5-Year']);
-                        items.push(['10-Year']);
+                            items.push(['string']);
+                            items.push(['1-Week']);
+                            items.push(['1-Month']);
+                            items.push(['3-Month']);
+                            items.push(['YTD']);
+                            items.push(['1-Year']);
+                            items.push(['3-Year']);
+                            items.push(['5-Year']);
+                            items.push(['10-Year']);
 
-                    
-                        for (let i = 0; i < table01.rows().data().length; i++) {
-                            var data = table01.rows().data()[i];
+                        
+                            for (let i = 0; i < table01.rows().data().length; i++) {
+                                var data = table01.rows().data()[i];
 
-                            // 첫번째 ROW 범위
-                            items[0][i+1] = data.f16002;           
+                                // 첫번째 ROW 범위
+                                items[0][i+1] = data.f16002;           
 
-                            for (let x = 0; x < table01.rows().data().length; x++) {   
-                                var item = table01.rows().data()[x];
+                                for (let x = 0; x < table01.rows().data().length; x++) {   
+                                    var item = table01.rows().data()[x];
 
-                                // 데이터                    
-                                items[1][x+1] = Number(item.Week1);
-                                items[2][x+1] = Number(item.Month1);
-                                items[3][x+1] = Number(item.Month3);
-                                items[4][x+1] = Number(item.YTD);
-                                items[5][x+1] = Number(item.Year1);
-                                items[6][x+1] = Number(item.Year3);
-                                items[7][x+1] = Number(item.Year5);
-                                items[8][x+1] = Number(item.Year10);
+                                    // 데이터                    
+                                    items[1][x+1] = Number(item.Week1);
+                                    items[2][x+1] = Number(item.Month1);
+                                    items[3][x+1] = Number(item.Month3);
+                                    items[4][x+1] = Number(item.YTD);
+                                    items[5][x+1] = Number(item.Year1);
+                                    items[6][x+1] = Number(item.Year3);
+                                    items[7][x+1] = Number(item.Year5);
+                                    items[8][x+1] = Number(item.Year10);
+                                }
                             }
-                        }
                 
                     
                             var chart_data = new google.visualization.arrayToDataTable( items);
@@ -595,9 +604,10 @@ export default {
                 vm.$emit("showMessageBox", '확인','자산 비교는 5개 까지 가능 합니다.',{},1);
                 return;
             } 
+
             for (let i = 0; i < sel_items.length; i++) {
 
-                    let checkList = table01.columns( [0,1,2] ).data();
+                    let checkList = table01.columns( [11,12,13] ).data();
                     var compare_cnt =   -1;
 
                     /* INDEX 인 경우 */
@@ -605,49 +615,46 @@ export default {
 
                         /* 팝업에서 받은 지수코드와 Table의 ETP기초지수코드(f16257) 가 존재하는지 체크 */
                         var jisuCompCnt =   checkList[1].filter( function( jisuCd, jisuInx ){
-                            return sel_items[i].JISU_CD == jisuCd ? true : false;
+                            return sel_items[i].F16013 == jisuCd ? true : false;
                         }).length;
 
-                        if( jisuCompCnt > 0 ) {
-                            compare_cnt =   jisuCompCnt;
-                            break;
-                        }
+                        compare_cnt =   jisuCompCnt;
 
                         /* 팝업에서 받은 지수코드와 Table의 ETP기초지수MID(f34239) 가 존재하는지 체크 */
+/*                        
                         var marketCnt   =   checkList[2].filter( function( marketCd, marketInx ){
-                            return sel_items[i].MARKET_ID == marketCd ? true : false;
+                            return sel_items[i].market_id == marketCd ? true : false;
                         }).length;
 
                         compare_cnt =   marketCnt;
-
+*/
                     }else{
 
                         /* 팝업에서 받은 지수코드와 Table의 국제표준코드(f16012) 가 존재하는지 체크 */
                         var etpCompCnt  =   checkList[0].filter( function( etpCd, etpInx ){
-                            return sel_items[i].JISU_CD == etpCd ? true : false;
+                            return sel_items[i].F16012 == etpCd ? true : false;
                         }).length;
 
                         compare_cnt =   etpCompCnt;
                     }
 
                     if (compare_cnt > 0) {
-                       
-                        vm.$emit("showMessageBox", '확인',sel_items[i].JISU_NM +"은 이미 추가된 자산입니다.",{},1);
+                    
+                        vm.$emit("showMessageBox", '확인',sel_items[i].F16002 +"은 이미 추가된 자산입니다.",{},1);
 
                         return false;
-                    }
-
+                    }                    
 
                     /* INDEX 인 경우 */
                     if( gubun == "2" ) {
                         vm.arrIndexPerformance.push({
                                 f16012      :   ""                                      /* 국제표준코드 */
-                            ,   f16257      :   sel_items[i].JISU_CD                    /* ETP기초지수코드 */
-                            ,   f34239      :   sel_items[i].MARKET_ID.substring( 1 )   /* ETP기초지수MID */
+                            ,   f16257      :   sel_items[i].F16013                     /* ETP기초지수코드 */
+                            ,   f34239      :   sel_items[i].market_id.substring( 1 )   /* ETP기초지수MID */
                         });
                     }else{
                         vm.arrEtpPerformance.push({
-                                f16012      :   sel_items[i].JISU_CD                    /* 국제표준코드 */
+                                f16012      :   sel_items[i].F16012                     /* 국제표준코드 */
                             ,   f16257      :   ""                                      /* ETP기초지수코드 */
                             ,   f34239      :   ""                                      /* ETP기초지수MID */
                         });
