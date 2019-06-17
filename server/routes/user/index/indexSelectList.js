@@ -144,6 +144,7 @@ var getIndexSelectList = function(req, res) {
 
                     resultMsg.result = true;
                     resultMsg.msg = "";
+                    resultMsg.dataList = rows;
                 }
 
                 res.json(resultMsg);
