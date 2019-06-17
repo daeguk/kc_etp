@@ -192,7 +192,7 @@
                                 <b>{{f18101}}</b>
                             </li>
                         </ul>
-                        <ul class="result">
+                        <ul class="result ver2 bot_line1">
                             <li class="list_tit">
                                 <b>외부공표 iNAV</b>
                             </li>
