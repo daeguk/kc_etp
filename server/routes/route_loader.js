@@ -30,7 +30,20 @@ route_loader.sessionCheckRegister = function(app) {
 			log.debug("seesionCheck path : [" + curItem.path + "]");
 			app.all(curItem.path, function(req, res, next) {
                 
-                log.debug("loginkey : " + req.session.user_id);
+                
+                /*
+                    세션 정보 처리[개발시 사용];
+                    ============================
+                */
+               req.session.user_id = "test1111@hanwha.com";
+               req.session.inst_cd = "03068";
+               req.session.type_cd = "0001";
+               req.session.large_type = "FNGUIDE";
+               req.session.krx_cd = '410220'; //거래소 ETP 발행사 코드
+//               req.session.krx_cd = '56'; // ETN 상품이 존재하는 운용사 ( 하나금융투자증권 )
+//               req.session.krx_cd = '2'; // ETN 상품이 존재하는 운용사 ( 신한금융투자증권 ) 
+               req.session.save();
+               log.debug("loginkey : " + req.session.user_id);
                 /*===================================*/
 
 				if(req.session.user_id) {
