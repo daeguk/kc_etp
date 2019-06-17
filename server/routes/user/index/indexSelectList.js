@@ -141,12 +141,10 @@ var getIndexSelectList = function(req, res) {
                         data.arr_status_position.push(0);
                         data.arr_status_position.push(status_pos);
                     }
+
+                    resultMsg.result = true;
+                    resultMsg.msg = "";
                 }
-
-                resultMsg.result = true;
-                resultMsg.msg = "";
-
-                resultMsg.dataList = dataList;
 
                 res.json(resultMsg);
                 res.end();
