@@ -264,7 +264,7 @@ export default {
     components: {
         ProgressBar: ProgressBar
     },    
-    mounted: function() {
+    mounted: function() {        
         this.init();
     },
     created: function() {},
