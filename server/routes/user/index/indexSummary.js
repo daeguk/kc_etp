@@ -424,7 +424,7 @@ var getIndexInEtpInfo = function (req, res) {
         log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('index', 'getIndexInEtpInfo', options, {language:'sql', indent: '  '});
-     
+        log.debug(stmt);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {

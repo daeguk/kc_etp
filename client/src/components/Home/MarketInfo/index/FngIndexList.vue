@@ -92,7 +92,7 @@
       </v-flex>
       <!---테이블1 end -->
     </v-layout>
-    <IndexInfoModal v-if="IndexModalFlag" :indexBasic="indexBasic"
+    <IndexInfoModal v-if="IndexModalFlag" :indexInfo="indexBasic"
       @closeIndexModal="closeIndexModal"></IndexInfoModal>
   </v-container>
 </template>

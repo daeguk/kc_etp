@@ -123,8 +123,18 @@ export default {
             }).then(function(response) {
                 console.log(response);
 
+                vm.$emit( "fn_showProgress", false );
                 vm.result_cnt = 0;
                 if (response.data) {
+
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.$emit("showMessageBox", '확인', msg,{},1);
+                            return  false;
+                        }
+                    }
+
                     var dataList = response.data.dataList;
 
                     if( dataList && dataList.length > 0 ) {
@@ -137,7 +147,6 @@ export default {
                     }
                 }
 
-                vm.$emit( "fn_showProgress", false );
             }).catch(error => {
                 vm.$emit( "fn_showProgress", false );
                 vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);

@@ -103,15 +103,17 @@ export default {
     };
   },
   watch: {
+    /*
     'etpList': function() {
-      // console.log("IndexInfoTab2 watch.........etpList ");
-      // console.log("this.etpList.length : " + this.etpList.length);
+      console.log("IndexInfoTab2 watch.........etpList ");
+      console.log("this.etpList.length : " + this.etpList.length);
       for(let i=0; i < this.etpList.length; i++) {
         // let tmp1 = JSON.parse(JSON.stringify(this.etpList[i]));
         // this.indexLists.push(tmp1);
         this.getEtpAnal(this.etpList[i]);
       }
     },
+    */
   },
   components: {
       PerformColumnChart,
@@ -129,10 +131,13 @@ export default {
       // console.log("barImg : " + this.barImgPath[i]);
     }
     this.befDates = this.$store.state.befDates;
-
-    let tmp = JSON.parse(JSON.stringify(this.indexBasic));
-    tmp.gubun = 3; // INDEX
-    this.indexLists.push(tmp);
+    this.getIndexAnal(this.indexBasic);
+    console.log("this.etpList.length : " + this.etpList.length);
+    for(let i=0; i < this.etpList.length; i++) {
+      // let tmp1 = JSON.parse(JSON.stringify(this.etpList[i]));
+      // this.indexLists.push(tmp1);
+      this.getEtpAnal(this.etpList[i]);
+    }
   },
   methods: {
     openMastModal: function() {  
