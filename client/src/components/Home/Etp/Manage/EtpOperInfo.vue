@@ -305,6 +305,7 @@ export default {
             }).then(function(response) {
                 console.log(response);
 
+                vm.$emit( "fn_showProgress", false );
                 if (response.data) {
                     var dataList = response.data.dataList;
                     
@@ -329,7 +330,6 @@ export default {
                     }
                 }
 
-                vm.$emit( "fn_showProgress", false );
             }).catch(error => {
                 vm.$emit( "fn_showProgress", false );
                 vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);

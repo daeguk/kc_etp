@@ -56,7 +56,7 @@ var getIndexJongmokList = function(req, res) {
             try {
                 paramData.m168uidxmap_gubun = "FNGUIDE";
                 stmt = mapper.getStatement('indexDetail', 'getIndexJongmokList', paramData, format);
-                log.debug(stmt);
+                log.debug(stmt, paramData);
 
                 conn.query(stmt, function(err, rows) {
 
@@ -151,7 +151,7 @@ var getIndexDetailList = function(req, res) {
                 function(callback) {
 
                     stmt = mapper.getStatement('indexDetail', 'getIndexBasicDetail', paramData, format);
-                    log.debug(stmt);
+                    log.debug(stmt, paramData);
 
                     conn.query(stmt, function(err, rows) {
 
@@ -176,7 +176,7 @@ var getIndexDetailList = function(req, res) {
 
                     paramData.m168uidxmap_gubun = "FNGUIDE";
                     stmt = mapper.getStatement('indexDetail', 'getIndexDetailList', paramData, format);
-                    log.debug(stmt);
+                    log.debug(stmt, paramData);
 
                     conn.query(stmt, function(err, rows) {
 
@@ -276,7 +276,7 @@ var getIndexFixList = function(req, res) {
                 function(callback) {
 
                     stmt = mapper.getStatement('indexDetail', 'getIndexFixData', paramData, format);
-                    log.debug(stmt);
+                    log.debug(stmt, paramData);
 
                     conn.query(stmt, function(err, rows) {
 
@@ -300,7 +300,7 @@ var getIndexFixList = function(req, res) {
                 function(data, callback) {
 
                     stmt = mapper.getStatement('indexDetail', 'getIndexFixJongmokInoutList', paramData, format);
-                    log.debug(stmt);
+                    log.debug(stmt, paramData);
 
                     conn.query(stmt, function(err, rows) {
 
@@ -324,7 +324,7 @@ var getIndexFixList = function(req, res) {
                 function(data, callback) {
 
                     stmt = mapper.getStatement('indexDetail', 'getIndexFixModifyList', paramData, format);
-                    log.debug(stmt);
+                    log.debug(stmt, paramData);
 
                     conn.query(stmt, function(err, rows) {
 
@@ -424,7 +424,7 @@ var getIndexList = function(req, res) {
             try {
                 paramData.m168uidxmap_gubun = "FNGUIDE";
                 stmt = mapper.getStatement('indexDetail', 'getIndexList', paramData, format);
-                log.debug(stmt);
+                log.debug(stmt, paramData);
 
                 conn.query(stmt, function(err, rows) {
 
