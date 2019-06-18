@@ -325,7 +325,7 @@ export default {
                         vm.fmt_f12506   =   vm.etpBasic.fmt_f12506;
                         vm.result_cnt   =   util.formatInt( dataList.length );
 
-                        vm.$emit( "fn_setParamData", vm.etpBasic );
+                        vm.$emit( "fn_setFirstData", vm.etpBasic );
                     }
                 }
 
