@@ -118,9 +118,7 @@ export default {
                 if (response && response.data) {
 
                     var msg = ( response.data.msg ? response.data.msg : "" );
-
                     if (!response.data.result) {
-
                         if( msg ) {
                             vm.$emit("showMessageBox", '확인', msg,{},1);
                             return  false;

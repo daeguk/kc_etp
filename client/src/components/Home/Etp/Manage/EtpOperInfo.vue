@@ -313,14 +313,19 @@ export default {
 
                         if( vm.stateInfo.pageState == "performance" ) {
                             table02.rows.add( dataList ).draw();
+
+                            vm.etpBasic     =   table02.rows().data()[0];
                         }else{
                             table01.rows.add( dataList ).draw();
+
+                            vm.etpBasic     =   table01.rows().data()[0];
                         }
 
-                        vm.etpBasic     =   dataList[0];
-
-                        vm.fmt_f12506   =   dataList[0].fmt_f12506;
+//                        vm.etpBasic     =   dataList[0];
+                        vm.fmt_f12506   =   vm.etpBasic.fmt_f12506;
                         vm.result_cnt   =   util.formatInt( dataList.length );
+
+                        vm.$emit( "fn_setFirstData", vm.etpBasic );
                     }
                 }
 

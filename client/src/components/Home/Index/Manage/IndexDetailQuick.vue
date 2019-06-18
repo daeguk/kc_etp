@@ -61,7 +61,7 @@
                                 value="e.g.005930, 삼성전자"
                                 single-line
                                 class="w100"
-                                @keyup.enter="fn_getIndexList()"
+                                v-on:keyup="fn_filterAllData()"
                             ></v-text-field>
                         </v-list-tile-content>
                          <!--오른쪽 메뉴 하단 리스트 영역 -->
@@ -137,6 +137,7 @@ export default {
             on : false,
 
             indexBasic : {},                    /* 선택된 지수의 마스터 정보 */
+            indexDataList : [],
 
             /* 지수 조치현황 정보 */
             indexFixDialog : false,
@@ -415,10 +416,10 @@ export default {
                         }
                     }
 
-                    var indexDataList = response.data.dataList;
+                    vm.indexDataList = response.data.dataList;
 
                     jisuTable.clear().draw();
-                    jisuTable.rows.add( indexDataList ).draw();                    
+                    jisuTable.rows.add( vm.indexDataList ).draw();                    
                 }
                 
             }).catch(error => {
@@ -439,6 +440,41 @@ export default {
 
             vm.indexFixDialog = true;
         },
+
+        
+        fn_filterAllData: function() {
+            var vm = this;
+
+            vm.form.jisuSearch = vm.form.jisuSearch.toUpperCase();
+
+            /* 이벤트 delay이로 부하 줄임 */
+            var delay = (function(){
+                var timer = 0;
+                return function(callback, ms){
+                    clearTimeout (timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
+
+            delay(function(){
+
+                var filterData = _.filter( vm.indexDataList, function(o) { 
+
+                    var nmIdx = o.f16002.toUpperCase().indexOf(vm.form.jisuSearch);       /* 한글종목명 */
+                    var cdIdx = o.f16013.toUpperCase().indexOf(vm.form.jisuSearch);       /* 단축코드 */
+
+                    if (nmIdx > -1 || cdIdx > -1) {
+                        return true; 
+                    } else {
+                        return false;
+                    }
+                });
+
+                jisuTable.clear().draw();
+                jisuTable.rows.add(filterData).draw();       
+
+            }, 1000 );
+        },        
 
     }
 };

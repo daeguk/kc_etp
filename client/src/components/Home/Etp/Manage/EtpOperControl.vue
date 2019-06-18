@@ -12,7 +12,8 @@
 
                             @fn_showDetailIndex="fn_showDetailIndex"
                             @fn_showDetailPdf="fn_showDetailPdf"
-                            @fn_pageMove="fn_pageMove">
+                            @fn_pageMove="fn_pageMove"
+                            @fn_setFirstData="fn_setFirstData">
             </EtpOperInfo>
 
             <!-- 지수관리 -->
@@ -457,6 +458,13 @@ export default {
                             this.$emit( "fn_setActiveTab", 2, this.paramData );
                             break;
             }            
+        },
+
+        fn_setFirstData( firstData ) {
+            var vm = this;
+
+            vm.paramData = firstData;
+            vm.$emit( "fn_setFirstData", firstData );
         },
 
         /*

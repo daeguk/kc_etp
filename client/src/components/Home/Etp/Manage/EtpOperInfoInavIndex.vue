@@ -264,7 +264,7 @@ export default {
     components: {
         ProgressBar: ProgressBar
     },    
-    mounted: function() {
+    mounted: function() {        
         this.init();
     },
     created: function() {},
@@ -305,7 +305,7 @@ export default {
             // 예상배당 수익률
             vm.f18101 = vm.formatNumber(vm.paramData.f18101);
             // 환율 보정 계수 
-            vm.f33128 =  0;
+            vm.f33128 =  vm.formatNumber(vm.paramData.f33128);
             // INav 계산결과
             vm.iNav = vm.formatNumber(0);    
             // INav 계산결과 율
