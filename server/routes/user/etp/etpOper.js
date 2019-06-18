@@ -572,7 +572,7 @@ var getEtpOperPdf = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] etpOper.getEtpOperPdf 오류가 발생하였습니다.";
+        resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHist 오류가 발생하였습니다.";
         resultMsg.err = expetion;
 
         resultMsg.dataList = [];
@@ -625,7 +625,7 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
                 /* 1. 현재시간 에 속한 tm_pdf_modify_hist_mast 정보를 조회한다. */
                 function(callback) {
 
-                    try {
+                    try {x=x+1;
                         /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
                         if (paramData.f16493 == "1" || paramData.f16493 == "2") {
 
@@ -787,6 +787,7 @@ var getEtpOperPdfByRateTitle = function(req, res) {
         Promise.using(pool.connect(), conn => {
 
             try {
+
                 /* 1. ETP 운용관리 - 비중변경현황 - 최근 5개 날짜 정보를 조회한다. ( ETF 인 경우 ) */
                 stmt = mapper.getStatement('etpOper', "getEtpOperPdfEtfHistByRateTitle", paramData, format);
                 log.debug(stmt, paramData);

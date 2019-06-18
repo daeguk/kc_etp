@@ -308,8 +308,17 @@ export default {
                 vm.$emit( "fn_showProgress", false );
                 if (response.data) {
                     var dataList = response.data.dataList;
-                    
+
                     vm.result_cnt   =   0;
+
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.showMessageBox('확인', msg,{},1);
+                            return  false;
+                        }
+                    }
+
                     if( dataList && dataList.length > 0 ) {
 
                         if( vm.stateInfo.pageState == "performance" ) {
