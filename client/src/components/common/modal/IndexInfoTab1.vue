@@ -109,8 +109,8 @@ export default {
   beforeDestroy() {
   },
   mounted: function() {
-    console.log("tab1...............");
-    console.log("this.etpList.length : " + this.etpList.length);
+    // console.log("tab1...............");
+    // console.log("this.etpList.length : " + this.etpList.length);
     this.type_cd = this.$store.state.user.type_cd;
     if(this.etpList.length !== 0) this.etp_yn = true;
     else this.etp_yn = false;
