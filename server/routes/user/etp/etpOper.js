@@ -625,7 +625,7 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
                 /* 1. 현재시간 에 속한 tm_pdf_modify_hist_mast 정보를 조회한다. */
                 function(callback) {
 
-                    try {x=x+1;
+                    try {
                         /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
                         if (paramData.f16493 == "1" || paramData.f16493 == "2") {
 
