@@ -5,7 +5,7 @@
             <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
 
             <v-dialog v-model="showEtpInfoPdfDetail" persistent max-width="1100">
-                <EtpInfoPdfDetail v-if="showEtpInfoPdfDetail" :paramData="paramData" :showEtpInfoPdfDetail="showEtpInfoPdfDetail" @fn_closePop="fn_close"></EtpInfoPdfDetail>
+                <EtpInfoPdfDetail v-if="showEtpInfoPdfDetail" :paramData="paramData" :showEtpInfoPdfDetail="showEtpInfoPdfDetail" @showMessageBox="showMessageBox" @fn_closePop="fn_close"></EtpInfoPdfDetail>
             </v-dialog>
             
             <marketRepresent v-if="showMarketInfo == 1" @showDetail="showDetail" @showMessageBox="showMessageBox" @showProgress="showProgress"></marketRepresent>               

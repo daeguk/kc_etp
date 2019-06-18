@@ -520,6 +520,7 @@ var getEtpOperPdf = function(req, res) {
         Promise.using(pool.connect(), conn => {
 
             try {
+
                 /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
                 if (paramData.f16493 == "1" || paramData.f16493 == "2") {
 
