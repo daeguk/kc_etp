@@ -122,6 +122,7 @@ export default {
   mounted: function() {
     this.dialog = true;
     console.log("Open IndexInfoModal...........");
+    console.log(this.indexBasic);
     this.getIndexInEtpInfo();
   },
   methods: {
