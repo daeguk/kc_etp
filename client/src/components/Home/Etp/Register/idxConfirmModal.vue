@@ -21,14 +21,14 @@
                    <thead>
                        <tr>
                            <th>심볼코드</th>
-                           <th>
-                               <v-select 
+                           <th>종가
+                               <!-- <v-select 
                                     class="select_table_in"
                                     :items="items"
                                     @change="selectItem"
                                     v-model="selectedItem.value"
                                  >
-                              </v-select>
+                              </v-select> -->
                            </th>
                            <th>지수명</th>
                        </tr>
@@ -106,23 +106,23 @@ export default {
     mounted: function() {
      },
     methods: {
-        selectItem: function() {
-            var vm = this;
-            if(dataTable != null){
-                dataTable.clear().draw();
-            }
-            if(vm.selectedItem.value == "2"){
-                vm.selectedItem.text = "실시간";
-                if( this.idxConfirmModal.ridxDistSymCode == null || this.idxConfirmModal.ridxDistSymCode.length == 0 ){
-                    alert("신청한 실시간 심볼코드가 없습니다.");  
-                     return;   
-                }
-                vm.getRidxList();
-            }else{
-                vm.selectedItem.text = "종가";
-                vm.getIdxList();
-            }
-        },
+        // selectItem: function() {
+        //     var vm = this;
+        //     if(dataTable != null){
+        //         dataTable.clear().draw();
+        //     }
+        //     if(vm.selectedItem.value == "2"){
+        //         vm.selectedItem.text = "실시간";
+        //         if( this.idxConfirmModal.ridxDistSymCode == null || this.idxConfirmModal.ridxDistSymCode.length == 0 ){
+        //             alert("신청한 실시간 심볼코드가 없습니다.");  
+        //              return;   
+        //         }
+        //         vm.getRidxList();
+        //     }else{
+        //         vm.selectedItem.text = "종가";
+        //         vm.getIdxList();
+        //     }
+        // },
         //종가
         getIdxList: function() {
                 axios.get(Config.base_url + "/user/etp/getIdxList", {
@@ -159,39 +159,39 @@ export default {
                 });
         }, 
         //실시간
-        getRidxList: function() {
-                axios.get(Config.base_url + "/user/etp/getRidxList", {
-                  params:{rMarket_id: this.idxConfirmModal.rMarketId,
-                          ridx_dist_sym_code: this.idxConfirmModal.ridxDistSymCode,
-                         }
-                 }).then(response => {
-                     if (response.data.success == false) {
-                       // alert("실시간 데이터가 없습니다.");
-                    } else {
-                        var items = response.data.results;
-                        this.results = items;
-                        if(this.results.length == 0){
-                         alert("기초지수  산출 전입니다..");   
-                        }
-                        dataTable = $('#dataTable').DataTable( {
-                            autoWidth: false, 
-                            processing: true,
-                            serverSide: false,
-                            info: true, // control table information display field
-                            stateSave: true, //restore table state on page reload,
-                            paging: false,
-                            searching: false,
-                            data: this.results,
-                            destroy: true,
-                                columns: [
-                                   { "data": "time", "orderable" : true , "title"  : "일자"   ,className: "td_in_center", },
-                                   { "data": "value","orderable" : true , "title"  : "현재가" ,className: "td_in_center",},
-                                 ]
-                            }); 
-                    }
+        // getRidxList: function() {
+        //         axios.get(Config.base_url + "/user/etp/getRidxList", {
+        //           params:{rMarket_id: this.idxConfirmModal.rMarketId,
+        //                   ridx_dist_sym_code: this.idxConfirmModal.ridxDistSymCode,
+        //                  }
+        //          }).then(response => {
+        //              if (response.data.success == false) {
+        //                // alert("실시간 데이터가 없습니다.");
+        //             } else {
+        //                 var items = response.data.results;
+        //                 this.results = items;
+        //                 if(this.results.length == 0){
+        //                  alert("기초지수  산출 전입니다..");   
+        //                 }
+        //                 dataTable = $('#dataTable').DataTable( {
+        //                     autoWidth: false, 
+        //                     processing: true,
+        //                     serverSide: false,
+        //                     info: true, // control table information display field
+        //                     stateSave: true, //restore table state on page reload,
+        //                     paging: false,
+        //                     searching: false,
+        //                     data: this.results,
+        //                     destroy: true,
+        //                         columns: [
+        //                            { "data": "time", "orderable" : true , "title"  : "일자"   ,className: "td_in_center", },
+        //                            { "data": "value","orderable" : true , "title"  : "현재가" ,className: "td_in_center",},
+        //                          ]
+        //                     }); 
+        //             }
                    
-                });
-        },
+        //         });
+        // },
 
     }
 }
