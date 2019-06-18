@@ -5,8 +5,8 @@
         <v-layout>
         <v-flex xs3 v-for="(rinfo, index) in rep_info" :key="rinfo.seq">
           <AreaIndexChart v-if=chartLoadFlag 
-              :chartItem="rinfo"
-              :dataSet="getDataSet(index)"></AreaIndexChart>
+            :chartItem="rinfo"
+            :dataSet="getDataSet(index)"></AreaIndexChart>
         </v-flex>                    
         </v-layout>
       </v-flex>
@@ -14,523 +14,327 @@
       <!---테이블1 -->
       <v-flex grow xs12 mt-2>
         <v-card flat>
-          <v-card-title primary-title class="tbl_w2">
-            <v-list-tile>
-              <v-list-tile-title class="headline">FnGuide
-              </v-list-tile-title>
-            </v-list-tile>
+          <v-card-title primary-title>
+            <v-layout>
+            <v-flex xs1>
+              <h3 class="headline subtit" pb-0>FNGUIDE</h3>
+              <span class="text_result">{{indexLists.length}} </span>
+              <span class="text_result_t">results</span>
+            </v-flex>
+            <v-flex xs2>
+              <v-combobox dense v-model="selIndexType" :items="indexTypes"
+                label="INDEX TYPE" @change="getIndexList(selIndexType)">
+              </v-combobox>
+            </v-flex>
+            </v-layout>
           </v-card-title>
-          <v-card flat>
-              <table id="krxIndexTable" class="tbl_type" style="width:100%">
-                  <colgroup>
-                      <col width="21%">
-                      <col width="9%">
-                      <col width="9%">
-                      <col width="9%">
-                      <col width="9%">
-                      <col width="9%">
-                      <col width="9%">
-                      <col width="9%">
-                      <col width="9%">
-                      <col width="7%">
-                  </colgroup>
-                  <thead>
-                      <tr>
-                          <th>지수명</th>
-                          <th>현재가</th>
-                          <th>전일가</th>
-                          <th>Daily</th>
-                          <th>1Week</th>
-                          <th>1Month</th>
-                          <th>YTD</th>
-                          <th>1Year</th>
-                          <th>3Year</th>
-                          <th></th>
-                      </tr>
-                  </thead>
-              </table>
-              <v-btn block color="#ffffff" @click="moreData('krx')">
-                  <v-icon color="#9e9e9e">add</v-icon>더보기 ({{krxCurrentPage}}/{{krxTotalPage}})
-              </v-btn>
-          </v-card>
+
+          <div class="table-box-wrap">
+            <div class="table-box" style="max-height:1000px;">
+            <table class="tbl_type ver8">
+              <caption> 헤더 고정 테이블</caption>
+              <colgroup>
+                <col width="21%">
+                <col width="9%">
+                <col width="7%">
+                <col width="7%">
+                <col width="7%">
+                <col width="7%">
+                <col width="7%">
+                <col width="7%">
+                <col width="7%">
+                <col width="7%">
+                <col width="7%">
+                <col width="7%">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th @dblclick="sortTable(0)" style="width:21%" class="txt_center">지수명</th>
+                  <th style="width:9%" class="txt_center">현재가</th>
+                  <th style="width:7%" class="txt_center">대비</th>
+                  <th @dblclick="sortTable(1)" style="width:7%" class="txt_center">Daily</th>
+                  <th @dblclick="sortTable(2)" style="width:7%" class="txt_center">1Week</th>
+                  <th @dblclick="sortTable(3)" style="width:7%" class="txt_center">1Month</th>
+                  <th @dblclick="sortTable(4)" style="width:7%" class="txt_center">YTD</th>
+                  <th @dblclick="sortTable(5)" style="width:7%" class="txt_center">1Year</th>
+                  <th @dblclick="sortTable(6)" style="width:7%" class="txt_center">3Year</th>
+                  <th @dblclick="sortTable(7)" style="width:7%" class="txt_center">5Year</th>
+                  <th @dblclick="sortTable(8)" style="width:7%" class="txt_center">10Year</th>
+                  <th style="width:7%" class="txt_center">지수정보</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in indexLists" :key="index">
+                  <td class="txt_left"><span style="font-weight:bold;">{{item.F16002}}</span></td>
+                  <td class="txt_right">{{item.F15001}}</td>
+                  <td class="txt_right" :style="item.dStyle">{{item.F15472}}</td>
+                  <td class="txt_right" :style="item.dStyle">{{item.F15004}}%</td>
+                  <td class="txt_right" :style="item.wStyle">{{item.weekRate}}%</td>
+                  <td class="txt_right" :style="item.mStyle">{{item.monthRate}}%</td>
+                  <td class="txt_right" :style="item.ytdStyle">{{item.ytdRate}}%</td>
+                  <td class="txt_right" :style="item.yStyle">{{item.yearRate}}%</td>
+                  <td class="txt_right" :style="item.y3Style">{{item.year3Rate}}%</td>
+                  <td class="txt_right" :style="item.y5Style">{{item.year5Rate}}%</td>
+                  <td class="txt_right" :style="item.y10Style">{{item.year10Rate}}%</td>
+                  <td class="txt_center">
+                    <div class='tooltip'>
+                      <button class='btn_icon v-icon material-icons' @click="openIndexModal(item)">equalizer
+                      </button>
+                      <span class='tooltiptext' style='width:80px;'>지수정보</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </div>
+          </div>
         </v-card>
       </v-flex>
       <!---테이블1 end -->
-
-            <!-- 테이블2 -->
-            <v-flex grow xs12 mt-2>
-                <v-card flat>
-                    <v-card-title primary-title class="tbl_w2">
-                        <v-list-tile>
-                            <v-list-tile-avatar>
-                                <img src="/assets/img/avatar.png">
-                            </v-list-tile-avatar>
-                            <v-list-tile-content>
-                                <v-list-tile-title class="headline">FnGuide
-                                </v-list-tile-title>
-                                <v-list-tile-sub-title>설명이 들어갑니다.</v-list-tile-sub-title>
-                            </v-list-tile-content>
-                        </v-list-tile>
-                    </v-card-title>
-                    <v-card flat>
-                        <table id="fnGuideIndexTable" class="tbl_type" style="width:100%">
-                            <colgroup>
-                                <col width="21%">
-                                <col width="9%">
-                                <col width="9%">
-                                <col width="9%">
-                                <col  width="9%">
-                                <col  width="9%">
-                                <col  width="9%">
-                                <col  width="9%">
-                                <col  width="9%">
-                                <col  width="7%">
-                            </colgroup>
-                            <thead>
-                                <tr>
-                                    <th>지수명</th>
-                                    <th>현재가</th>
-                                    <th>전일가</th>
-                                    <th>Daily</th>
-                                    <th>1Week</th>
-                                    <th>1Month</th>
-                                    <th>YTD</th>
-                                    <th>1Year</th>
-                                    <th>3Year</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                        </table>
-                        <v-btn block color="#ffffff" @click="moreData('fn')">
-                            <v-icon color="#9e9e9e">add</v-icon>더보기 ({{fnCurrentPage}}/{{fnTotalPage}})
-                        </v-btn>
-                    </v-card>
-                </v-card>
-            </v-flex>
-            
-        </v-layout>
-    </v-container>
+    </v-layout>
+    <IndexInfoModal v-if="IndexModalFlag" :indexBasic="indexBasic"
+      @closeIndexModal="closeIndexModal"></IndexInfoModal>
+  </v-container>
 </template>
-
-
 
 <script>
 
-import $ from "jquery";
-import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
-import select from "datatables.net-select";
 import _ from "lodash";
 import Config       from "@/js/config.js";
 import util       from "@/js/util.js";
 import AreaIndexChart   from  '@/components/common/chart/AreaIndexChart.vue';
+import IndexInfoModal   from  '@/components/common/modal/IndexInfoModal.vue';
 
-var krxIndexTable = null;
-var fnGuideIndexTable = null;
 export default {
   props: [],
   data() {
     return {
-      marketRepList: [],
-      graphinfos:[],     
-      krsLists:[],   
-      fnGuideLists:[], 
-      pageLength: 5, 
-      krxCurrentPage: 0,
-      krxTotalPage:0,
-      fnCurrentPage: 0,
-      fnTotalPage:0,
+      indexLists:[],
+      resultLists:[],
+      indexBasic:{},
       chartLoadFlag: false,
-
+      IndexModalFlag: false,
       paramData : {},
       intra_data:[],
-      rep_info:[{seq:1, f16013:"1", market_id:"M002", name:"KOSPI", f15001:"", 
-                  f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#def5ae", eColor:"#ffffff",
+      indexTypes: [{text:"FNGUIDE", value:"FNGUIDE"}, 
+        {text:"WISEFN", value:"WISEFN"}, 
+        // {text:"전체", value:"TOTAL"},
+      ],
+      selIndexType: {text:"FNGUIDE", value:"FNGUIDE"},
+      rep_info:[{seq:1, f16013:"60001", market_id:"M168", name:"MKF500", f15001:"", 
+                  f15472:"", f15004:"", sColor:"#def5ae", eColor:"#ffffff",
                   width:340, height:150, marginW:1, marginH:40},
-        {seq:2, f16013:"51", market_id:"M002", name:"KOSPI 200", f15001:"", 
-                f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#def5ae", eColor:"#ffffff",
+        {seq:2, f16013:"60003", market_id:"M168", name:"MKF 성장", f15001:"", 
+                f15472:"", f15004:"", sColor:"#def5ae", eColor:"#ffffff",
                 width:340, height:150, marginW:1, marginH:40},
-        {seq:3, f16013:"1", market_id:"M004", name:"KOSDAQ", f15001:"", 
-                f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#def5ae", eColor:"#ffffff",
+        {seq:3, f16013:"60166", market_id:"M168", name:"FNGUIDE 성장", f15001:"", 
+                f15472:"", f15004:"", sColor:"#def5ae", eColor:"#ffffff",
                 width:340, height:150, marginW:1, marginH:40},
-        {seq:4, f16013:"203", market_id:"M004", name:"KOSDAQ 150", f15001:"", 
-                f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#def5ae", eColor:"#ffffff",
-                width:350, height:150, marginW:1, marginH:40}],
+        {seq:4, f16013:"60019", market_id:"M168", name:"MKF 중대형", f15001:"", 
+                f15472:"", f15004:"", sColor:"#def5ae", eColor:"#ffffff",
+                width:350, height:150, marginW:1, marginH:40}
+      ],
+      sortFlag: 1,
     };
   },
-    components: {
-      AreaIndexChart,
-    },
-    computed: {
-        
-    },
-    mounted: function() {
-      var vm = this;
-      for(var i=0; i<this.rep_info.length; i++) {
-        this.getIndexBasic(this.rep_info[i]);
-        this.getIndexIntra(this.rep_info[i]);
-      }
+  components: {
+    AreaIndexChart,
+    IndexInfoModal,
+  },
+  computed: {
+      
+  },
+  mounted: function() {
+    this.befDates = this.$store.state.befDates;
 
-      vm.getMarketIndexList();
-        
-
-        krxIndexTable = $('#krxIndexTable').DataTable( {
-            "processing": true,
-            "serverSide": false,
-            "info": false,   // control table information display field
-            "stateSave": true,  //restore table state on page reload,
-            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                                    
-            select: {
-                style:    'single',
-                selector: 'td:first-child'
-            },
-            paging: false,
-            searching: false,
-            "columnDefs": [
-                {  
-                    "render": function ( data, type, row ) {
-                        let htm = "<span>";
-                        htm += "           <b>"+data+"</b>";
-                        htm += "            <br><span class='text_s'>"+row.F16013+"</span>";
-                        if (row.NEW_YN == "Y") {
-                            htm += "<span><div class='text_new'>new</div></span>";
-                        }
-                        htm += "        </span>";
-                        return htm;
-                    },
-                    "targets": 0
-                },
-                {  
-                    "render": function ( data, type, row ) {
-
-                        let htm = ""
-                            
-                        htm += util.formatNumber(data);
-
-                        if (row.F15004 >= 0) {
-                            htm += "<br><span class='text_S text_red'>"+row.F15004+"%</span>";
-                        } else {
-                            htm += "<br><span class='text_S text_blue'>"+row.F15004+"%</span>"; /* ETF관련지수등락율 */
-                        }
-
-                        return htm;
-                    },
-                    "targets": 1
-                },
-                {
-                    "render": function ( data, type, row ) {
-                        return util.formatNumber(data);                            
-                    },
-                    "targets": 2
-                },
-                {
-                    "render": function ( data, type, row ) {
-                        let htm = ""
-                        if (data >= 0) {
-                                htm = "<span class='align_r text_red'>"+data + "</span>";
-                        } else {
-                                htm = "<span class='align_r text_blue'>"+data + "</span>";
-                        }      
-                        return htm;                   
-                    },
-                    "targets": [3]
-                },
-                {
-                    "render": function ( data, type, row ) {
-                        let htm = "<div class='tooltip'><button type='button' id='btnIndexDetail' class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:50px;'>지수정보</span></div>";                            
-                        return htm;
-                    },
-                    "targets": 9
-                }
-            ],              
-            columns: [
-                { "data": "F16002", "orderable": true, className:"txt_left line2"}, /*종목*/
-                { "data": 'F15001', "orderable": true , className:"txt_right"}, /*현재가*/
-                { "data": 'F15009', "orderable" : true, className:"txt_right"}, /*전일가*/
-                { "data": 'daily', "orderable" : true, className:"txt_right" }, /*Daily*/
-                { "data": '1week', "orderable" : true, className:"txt_right"}, /*1Week*/
-                { "data": '1month', "orderable" : true, className:"txt_right"}, /*1Month*/
-                { "data": 'ytd', "orderable" : true, className:"txt_right"}, /*YTD*/
-                { "data": '1year', "orderable" : true, className:"txt_right"}, /*1Year*/
-                { "data": '3year', "orderable" : true, className:"txt_right"}, /*3Year*/
-                { "data": null, "orderable" : true, defaultContent:""},
-            ]
-        }); 
-
-        // 테이블별 이벤트
-        $('#krxIndexTable tbody').on('click', 'button', function (e) {
-            e.stopImmediatePropagation();
-
-            var table = $('#krxIndexTable').DataTable();
-            var data = table.row($(this).parents('tr')).data();
-
-            if ($(this).attr('id') == 'btnIndexDetail') {
-                vm.fn_movePage( data );
-            }
-
-            return  false; 
-        });
-
-
-        fnGuideIndexTable = $('#fnGuideIndexTable').DataTable( {
-            "processing": true,
-            "serverSide": false,
-            "info": false,   // control table information display field
-            "stateSave": true,  //restore table state on page reload,
-            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                                    
-            select: {
-                style:    'single',
-                selector: 'td:first-child'
-            },
-            paging: false,
-            searching: false,
-            "columnDefs": [
-                {  
-                    "render": function ( data, type, row ) {
-                        let htm = "<span>";
-                        htm += "           <b>"+data+"</b>";
-                        htm += "            <br><span class='text_s'>"+row.F16013+"</span>";
-                        if (row.NEW_YN == "Y") {
-                            htm += "<span><div class='text_new'>new</div></span>";
-                        }
-                        htm += "        </span>";
-                        return htm;
-                    },
-                    "targets": 0
-                },
-                {  
-                    "render": function ( data, type, row ) {
-
-                        let htm = ""
-                            
-                        htm += util.formatNumber(data);
-
-                        if (row.F15004 >= 0) {
-                            htm += "<br><span class='text_S text_red'>"+row.F15004+"%</span>";
-                        } else {
-                            htm += "<br><span class='text_S text_blue'>"+row.F15004+"%</span>"; /* ETF관련지수등락율 */
-                        }
-
-                        return htm;
-
-
-                    },
-                    "targets": 1
-                },
-                {
-                    "render": function ( data, type, row ) {
-                        return util.formatNumber(data);                            
-                    },
-                    "targets": 2
-                },
-                {
-                    "render": function ( data, type, row ) {
-                        let htm = ""
-                        if (data >= 0) {
-                                htm = "<span class='align_r text_red'>"+data + "</span>";
-                        } else {
-                                htm = "<span class='align_r text_blue'>"+data + "</span>";
-                        }      
-                        return htm;                   
-                    },
-                    "targets": [3]
-                },
-                {
-                    "render": function ( data, type, row ) {
-                        let htm = "<div class='tooltip'><button type='button' id='btnIndexDetail'  class='btn_icon v-icon material-icons'>equalizer</button><span class='tooltiptext' style='width:50px;'>지수정보</span></div>";                            
-                        return htm;
-                    },
-                    "targets": 9
-                }
-            ],                                    
-            columns: [
-                { "data": "F16002", "orderable": true, className:"txt_left line2"}, /*종목*/
-                { "data": 'F15001', "orderable": true, className:"txt_right" }, /*현재가*/
-                { "data": 'F15009', "orderable" : true, className:"txt_right"}, /*전일가*/
-                { "data": 'daily', "orderable" : true, className:"txt_right" }, /*Daily*/
-                { "data": '1week', "orderable" : true, className:"txt_right"}, /*1Week*/
-                { "data": '1month', "orderable" : true, className:"txt_right"}, /*1Month*/
-                { "data": 'ytd', "orderable" : true, className:"txt_right"}, /*YTD*/
-                { "data": '1year', "orderable" : true, className:"txt_right"}, /*1Year*/
-                { "data": '3year', "orderable" : true, className:"txt_right"}, /*3Year*/
-                { "data": null, "orderable" : true},
-            ]
-        });
-
-        // 테이블별 이벤트
-        $('#fnGuideIndexTable tbody').on('click', 'button', function (e) {
-            e.stopImmediatePropagation();
-
-            var table = $('#fnGuideIndexTable').DataTable();
-            var data = table.row($(this).parents('tr')).data();
-
-            if ($(this).attr('id') == 'btnIndexDetail') {
-                vm.fn_movePage( data );
-            }
-
-            return  false;
-        });
-    },
-    created: function() {},
-    beforeDestroy() {},
-    methods: {
-
-        getMarketIndexList: function() {
-            console.log("getMarketIndexList");
-            var vm = this;
-            var idx = 0;
-
-            vm.$emit('showProgress', true);
-            axios.get(Config.base_url + "/user/marketinfo/getMarketIndexList", {
-                    params: {
-                       
-                    }
-            }).then(function(response) {
-                console.log(response);
-                if (response.data.success == false) {
-                    alert("해당 종목이 없습니다");
-                } else {
-                    vm.marketRepList = response.data.marketRepList;
-                    vm.graphinfos = response.data.graphinfos;
-                    vm.krsLists = response.data.krsLists[0];
-                    vm.fnGuideLists = response.data.fnGuideLists[0];
-                   
-                    vm.krxTotalPage = vm.krsLists.length;
-                    vm.fnTotalPage = vm.fnGuideLists.length;
-
-                    // KRX INDEX DRAW (페이지 크기만큼만 잘라내어 보여 준다.)
-                    if (vm.krxTotalPage > 0) {
-                        krxIndexTable.clear().draw();
-                        krxIndexTable.rows.add(vm.getSliceData(vm.krsLists, 'krx')).draw();
-                    }
-                    // FNGUIDE INDEX DRAW
-                    if (vm.fnTotalPage > 0) {
-                        fnGuideIndexTable.clear().draw();
-                        fnGuideIndexTable.rows.add(vm.getSliceData(vm.fnGuideLists, 'fn')).draw();
-                    }
-                }
-                vm.$emit('showProgress', false);
-            }).catch(error => {
-                vm.$emit("showProgress", false);
-            });
-        },
-        getSliceData: function(items, gubun) {
-            var vm = this;
-            var curPage = 0;
-            if (gubun == "krx") {
-                curPage = vm.pageLength + vm.krxCurrentPage;
-                if (items != null) {
-                    if (curPage <= items.length) {
-                        vm.krxCurrentPage = curPage;
-                        return _.slice(items, 0, curPage);
-                    } else {
-                        if (vm.krxCurrentPage < items.length) {
-                            vm.krxCurrentPage = items.length;
-                            return _.slice(items, 0, curPage);
-                        } else {
-                            return null;
-                        }
-                    }
-                }
-            } else if (gubun == "fn") {
-                curPage = vm.pageLength + vm.fnCurrentPage;
-                if (items != null) {
-                    if (curPage <= items.length) {
-                        vm.fnCurrentPage = curPage;
-                        return _.slice(items, 0, curPage);
-                    } else {            
-                        if (vm.fnCurrentPage < items.length) {
-                            vm.fnCurrentPage = items.length;
-                            return _.slice(items, 0, curPage);
-                        } else {
-                            return null;
-                        }
-                        return null;
-                    }
-                }
-            } 
-        }, 
-
-        moreData: function(gubun) {
-            var vm = this;
-
-            if (gubun == "krx") {
-                // KRX INDEX DRAW (페이지 크기만큼만 잘라내어 보여 준다.)
-                var items = vm.getSliceData(vm.krsLists, gubun);
-                if (items != null) {
-                    krxIndexTable.clear().draw();
-                    krxIndexTable.rows.add(items).draw();
-                }
-            } else if (gubun == "fn") {
-                // FNGUIDE INDEX DRAW
-                var items = vm.getSliceData(vm.fnGuideLists, gubun);
-                if (items != null) {
-                    fnGuideIndexTable.clear().draw();
-                    fnGuideIndexTable.rows.add(items).draw();
-                }
-            }
-        },
-        formatNumber:function(num) {
-            return util.formatNumber(num);
-        },
-
-        /*
-         *  그리드에서 차트이미지 선택시 인덱스 상세 팝업창을 띄운다. ( IndexInfoMain.vue -> emit )
-         *  2019-04-16  bkLove(촤병국)
-         */
-        fn_movePage: function( data ) {
-            this.$emit('showDetail', 2, data);
-        },
-      getIndexBasic: function(rinfo) {
-        // console.log("getIndexBasic : " + rinfo.seq);
-        var vm = this;
-
-        axios.get(Config.base_url + "/user/marketinfo/getIndexBasic", {
-          params: rinfo
-        }).then(function(response) {
-          // console.log(response);
-          if (response.data.success == false) {
-              alert("해당 지수의 데이터가 없습니다");
-          } else {
-            rinfo.f15001 = response.data.results[0].F15001;
-            rinfo.f15472 = response.data.results[0].F15472;
-            rinfo.f15004 =  response.data.results[0].F15004;      
-          }
-        });
-      },
-      getIndexIntra: function(rinfo) {
-        // console.log("getIndexIntra : " + rinfo.seq);
-        var vm = this;
-
-        axios.get(Config.base_url + "/user/marketinfo/getIndexIntra", {
-          params: rinfo
-        }).then(function(response) {
-          // console.log(response);
-          if (response.data.success == false) {
-              alert("해당 지수의 데이터가 없습니다");
-          } else {
-              // vm.intra_data.push = response.data.results;
-              vm.intra_data.push(response.data.results);
-              // console.log(vm.intra_data[rinfo.seq]);
-              // 데이터 없는 상태에서 getDataSet 하면 에러남.
-              // Error in render: "TypeError: undefined is not iterable (cannot read property Symbol(Symbol.iterator))
-              if(vm.intra_data.length == vm.rep_info.length) vm.chartLoadFlag = true;
-          }
-        });
-      },
-      getDataSet: function(idx) {
-          var vm = this;
-          var intra_info = vm.intra_data[idx];
-          var items = [];
-          for (let item of intra_info) {
-            // console.log("close_idx : " + item.close_idx);
-              items.push([item.F20044, item.F20004, item.F20008]);
-          }
-
-          return items;
-      },
+    for(var i=0; i<this.rep_info.length; i++) {
+      this.getIndexBasic(this.rep_info[i]);
+      this.getIndexIntra(this.rep_info[i]);
     }
+
+    this.getIndexList(this.selIndexType);
+  },
+  created: function() {},
+  beforeDestroy() {},
+  methods: {
+    openIndexModal: function(item) {
+      console.log("openIndexModal : " + item.market_id + " " + item.F16013);
+      this.indexBasic = item;
+      this.IndexModalFlag = true;
+    },
+    closeIndexModal: function() {
+      console.log("closeIndexModal One............");
+      this.IndexModalFlag = false;
+    },
+    getIndexBasic: function(rinfo) {
+      // console.log("getIndexBasic : " + rinfo.seq);
+      var vm = this;
+
+      axios.get(Config.base_url + "/user/marketinfo/getIndexBasic", {
+        params: rinfo
+      }).then(function(response) {
+        // console.log(response);
+        if (response.data.success == false) {
+            alert("해당 지수의 데이터가 없습니다");
+        } else {
+          rinfo.f15001 = response.data.results[0].F15001;
+          rinfo.f15472 = response.data.results[0].F15472;
+          rinfo.f15004 =  response.data.results[0].F15004;      
+        }
+      });
+    },
+    getIndexIntra: function(rinfo) {
+      // console.log("getIndexIntra : " + rinfo.seq);
+      var vm = this;
+
+      axios.get(Config.base_url + "/user/marketinfo/getIndexIntra", {
+        params: rinfo
+      }).then(function(response) {
+        // console.log(response);
+        if (response.data.success == false) {
+            alert("해당 지수의 데이터가 없습니다");
+        } else {
+            // vm.intra_data.push = response.data.results;
+            vm.intra_data.push(response.data.results);
+            // console.log(vm.intra_data[rinfo.seq]);
+            // 데이터 없는 상태에서 getDataSet 하면 에러남.
+            // Error in render: "TypeError: undefined is not iterable (cannot read property Symbol(Symbol.iterator))
+            if(vm.intra_data.length == vm.rep_info.length) vm.chartLoadFlag = true;
+        }
+      });
+    },
+    getDataSet: function(idx) {
+        var vm = this;
+        var intra_info = vm.intra_data[idx];
+        var items = [];
+        for (let item of intra_info) {
+          // console.log("close_idx : " + item.close_idx);
+            items.push([item.F20044, item.F20004, item.F20008]);
+        }
+
+        return items;
+    },
+    getIndexList: function(indexType) {
+      // console.log("getKrxIndexList");
+      var vm = this;
+      vm.indexLists = [];          
+      axios.get(Config.base_url + "/user/marketinfo/getIndexListAnalByType", {
+        params: {
+          large_type: "FNGUIDE",
+          middle_type: indexType.value,
+          bef1Week: vm.befDates.bef1Week,
+          bef1Month: vm.befDates.bef1Month,
+          befYtd: vm.befDates.befYtd,
+          bef1Year: vm.befDates.bef1Year,
+          bef3Year: vm.befDates.bef3Year,
+          bef5Year: vm.befDates.bef5Year,
+          bef10Year: vm.befDates.bef10Year,
+        }
+      }).then(function(response) {
+        // console.log(response);
+        if (response.data.success == false) {
+          alert("해당 종목이 없습니다");
+        } else {
+          vm.resultLists = response.data.results;
+          // console.log(vm.resultLists);
+          for(let i=0; i < vm.resultLists.length; i++) {
+            let tmp = {};
+            tmp = JSON.parse(JSON.stringify(vm.resultLists[i]));
+            tmp.F15472 = util.getPlus(tmp.F15472, 2);
+            tmp.F15004 = vm.resultLists[i].F15004;
+            tmp.F15004 = util.getPlus(tmp.F15004, 2);
+            tmp.dStyle = util.getUpAndDownStyle(tmp.F15004);
+            tmp.weekRate = util.getDiffRate1(tmp.F15001, tmp.bef1Week);
+            tmp.wStyle = util.getUpAndDownStyle(tmp.weekRate);
+            tmp.monthRate = util.getDiffRate1(tmp.F15001, tmp.bef1Month);
+            tmp.mStyle = util.getUpAndDownStyle(tmp.monthRate);
+            tmp.ytdRate = util.getDiffRate1(tmp.F15001, tmp.befYtd);
+            tmp.ytdStyle = util.getUpAndDownStyle(tmp.ytdRate);
+            tmp.yearRate = util.getDiffRate1(tmp.F15001, tmp.bef1Year);
+            tmp.yStyle = util.getUpAndDownStyle(tmp.yearRate);
+            tmp.year3Rate = util.getDiffRate1(tmp.F15001, tmp.bef3Year);
+            tmp.y3Style = util.getUpAndDownStyle(tmp.year3Rate);
+            tmp.year5Rate = util.getDiffRate1(tmp.F15001, tmp.bef5Year);
+            tmp.y5Style = util.getUpAndDownStyle(tmp.year5Rate);
+            tmp.year10Rate = util.getDiffRate1(tmp.F15001, tmp.bef10Year);
+            tmp.y10Style = util.getUpAndDownStyle(tmp.year10Rate);
+            tmp.F15001 = util.formatNumber(tmp.F15001);
+            vm.indexLists.push(tmp);
+          }
+          vm.indexLists.sort(function(a, b) {
+            if(Number(a.ytdRate) > Number(b.ytdRate)) return -1;
+            else return 1;
+          });
+        }
+      });
+    },
+    getUpAndDownStyle: function(value) {
+      var tmp = Number(value);
+      var rtn = {};
+
+      if(tmp > 0) rtn = this.upStyle;
+      else if(tmp < 0) rtn = this.downStyle;
+      else rtn = this.sqStyle;
+
+      return rtn;
+    },
+    sortTable: function(num) {
+      var vm = this;
+      vm.sortFlag = vm.sortFlag * (-1);
+      
+      if(num == 0) {
+        vm.indexLists.sort(function(a, b) {
+          if(a.F16002 > b.F16002) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }else if(num == 1) {
+        vm.indexLists.sort(function(a, b) {
+          if(Number(a.F15004) > Number(b.F15004)) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }else if(num == 2) {
+        vm.indexLists.sort(function(a, b) {
+          if(Number(a.weekRate) > Number(b.weekRate)) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }else if(num == 3) {
+        vm.indexLists.sort(function(a, b) {
+          if(Number(a.monthRate) > Number(b.monthRate)) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }else if(num == 4) {
+        vm.indexLists.sort(function(a, b) {
+          if(Number(a.ytdRate) > Number(b.ytdRate)) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }else if(num == 5) {
+        vm.indexLists.sort(function(a, b) {
+          if(Number(a.yearRate) > Number(b.yearRate)) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }else if(num == 6) {
+        vm.indexLists.sort(function(a, b) {
+          if(Number(a.year3Rate) > Number(b.year3Rate)) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }else if(num == 7) {
+        vm.indexLists.sort(function(a, b) {
+          if(Number(a.year5Rate) > Number(b.year5Rate)) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }else if(num == 8) {
+        vm.indexLists.sort(function(a, b) {
+          if(Number(a.year10Rate) > Number(b.year10Rate)) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }
+    },
+  }
 };
 </script>
+<style scoped>
+.textcount {
+  margin-left: 50px;
+  color: #FF0000;
+}
+</style>
