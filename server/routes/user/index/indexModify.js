@@ -60,7 +60,7 @@ var getRegistedJisuData = function(req, res) {
 
                     try {
                         stmt = mapper.getStatement('indexModify', 'getJisuMast', paramData, format);
-                        log.debug(stmt);
+                        log.debug(stmt, paramData);
 
                         conn.query(stmt, function(err, rows) {
 
@@ -96,7 +96,7 @@ var getRegistedJisuData = function(req, res) {
                     try {
                         paramData.file_id = data.jisu_file_id;
                         stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
-                        log.debug(stmt);
+                        log.debug(stmt, paramData);
 
                         conn.query(stmt, function(err, rows) {
 
@@ -130,7 +130,7 @@ var getRegistedJisuData = function(req, res) {
 
                     try {
                         stmt = mapper.getStatement('indexModify', 'getJisuShareReq', paramData, format);
-                        log.debug(stmt);
+                        log.debug(stmt, paramData);
 
                         conn.query(stmt, function(err, rows) {
 
@@ -409,7 +409,7 @@ var modifyJisu = function(req, res) {
                                         paramData.file_id = paramData.prev_method_file_id;
 
                                         stmt = mapper.getStatement('indexModify', 'getJisuMast', paramData, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, paramData);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -491,7 +491,7 @@ var modifyJisu = function(req, res) {
                                         reqParam.gubun = "001"; /* 지수방법론 */
 
                                         stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, reqParam);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -532,7 +532,7 @@ var modifyJisu = function(req, res) {
                                         paramData.file_id = paramData.prev_method_file_id;
 
                                         stmt = mapper.getStatement('indexModify', 'getJisuFile', paramData, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, paramData);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -599,7 +599,7 @@ var modifyJisu = function(req, res) {
 
                                 try {
                                     stmt = mapper.getStatement('indexModify', 'modifyJisuMast', paramData, format);
-                                    log.debug(stmt);
+                                    log.debug(stmt, paramData);
 
                                     conn.query(stmt, function(err, rows) {
 
@@ -629,7 +629,7 @@ var modifyJisu = function(req, res) {
 
                                 try {
                                     stmt = mapper.getStatement('indexModify', 'getJisuShareReqForDelete', paramData, format);
-                                    log.debug(stmt);
+                                    log.debug(stmt, paramData);
 
                                     conn.query(stmt, function(err, rows) {
 
@@ -666,7 +666,7 @@ var modifyJisu = function(req, res) {
                                     if (paramData.jisuShareReqDeleteList != null && paramData.jisuShareReqDeleteList.length > 0) {
 
                                         stmt = mapper.getStatement('indexModify', 'deleteJisuShareReqList', paramData, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, paramData);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -704,7 +704,7 @@ var modifyJisu = function(req, res) {
                                 try {
                                     if (paramData.arr_jisu_inst != null && paramData.arr_jisu_inst.length > 0) {
                                         stmt = mapper.getStatement('indexModify', 'getJisuShareReqForInsert', paramData, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, paramData);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -745,7 +745,7 @@ var modifyJisu = function(req, res) {
 
                                         paramData.req_flag = "0"; /* 공개여부 0:비공개, 1:공개요청, 2:공개 */
                                         stmt = mapper.getStatement('indexModify', 'insertJisuShareReqList', paramData, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, paramData);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -782,7 +782,7 @@ var modifyJisu = function(req, res) {
                                 try {
                                     if (paramData.arr_jisu_inst != null && paramData.arr_jisu_inst.length > 0) {
                                         stmt = mapper.getStatement('indexModify', 'getJisuShareReqForUpdate', paramData, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, paramData);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -822,7 +822,7 @@ var modifyJisu = function(req, res) {
                                     if (paramData.jisuShareReqUpdateList != null && paramData.jisuShareReqUpdateList.length > 0) {
 
                                         stmt = mapper.getStatement('indexModify', 'updateJisuShareReqList', paramData, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, paramData);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -863,7 +863,7 @@ var modifyJisu = function(req, res) {
                                         paramData.file_id = paramData.jisu_file_id;
 
                                         stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, paramData);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -905,7 +905,7 @@ var modifyJisu = function(req, res) {
                                     if (paramData.jisu_file_id != paramData.prev_jisu_file_id) {
 
                                         stmt = mapper.getStatement('indexModify', 'deleteJisuUpload', paramData, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, paramData);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -946,7 +946,7 @@ var modifyJisu = function(req, res) {
                                     if (paramData.dataLists != null && paramData.dataLists.length > 0) {
 
                                         stmt = mapper.getStatement('indexRegister', 'saveTmJisuUpload', paramData, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, paramData);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -984,7 +984,7 @@ var modifyJisu = function(req, res) {
                                 try {
                                     if (paramData.dataLists != null && paramData.dataLists.length > 0) {
                                         stmt = mapper.getStatement('indexRegister', 'getHistNoByTmJisuUploadHist', paramData, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, paramData);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -1027,7 +1027,7 @@ var modifyJisu = function(req, res) {
 
                                             /* 8. [tm_jisu_upload_hist] 테이블에 저장한다. */
                                             stmt = mapper.getStatement('indexRegister', 'saveTmJisuUploadHist', paramData, format);
-                                            log.debug(stmt);
+                                            log.debug(stmt, paramData);
 
                                             conn.query(stmt, function(err, rows) {
 
@@ -1178,7 +1178,7 @@ var deleteJisu = function(req, res) {
                                     paramData.file_id = paramData.prev_method_file_id;
 
                                     stmt = mapper.getStatement('indexModify', 'getJisuMast', paramData, format);
-                                    log.debug(stmt);
+                                    log.debug(stmt, paramData);
 
                                     conn.query(stmt, function(err, rows) {
 
@@ -1248,7 +1248,7 @@ var deleteJisu = function(req, res) {
                                     paramData.file_id = paramData.prev_method_file_id;
 
                                     stmt = mapper.getStatement('indexModify', 'getJisuFile', paramData, format);
-                                    log.debug(stmt);
+                                    log.debug(stmt, paramData);
 
                                     conn.query(stmt, function(err, rows) {
 
@@ -1336,7 +1336,7 @@ var deleteJisu = function(req, res) {
                                         paramData.file_id = paramData.prev_method_file_id;
 
                                         stmt = mapper.getStatement('indexModify', 'deleteJisuFile', paramData, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, paramData);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -1379,7 +1379,7 @@ var deleteJisu = function(req, res) {
                                     paramData.file_id = paramData.prev_jisu_file_id;
 
                                     stmt = mapper.getStatement('indexModify', 'getJisuFile', paramData, format);
-                                    log.debug(stmt);
+                                    log.debug(stmt, paramData);
 
                                     conn.query(stmt, function(err, rows) {
 
@@ -1466,7 +1466,7 @@ var deleteJisu = function(req, res) {
                                         paramData.file_id = paramData.prev_jisu_file_id;
 
                                         stmt = mapper.getStatement('indexModify', 'deleteJisuFile', paramData, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, paramData);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -1508,7 +1508,7 @@ var deleteJisu = function(req, res) {
                                     paramData.file_id = paramData.prev_jisu_file_id;
 
                                     stmt = mapper.getStatement('indexModify', 'getJisuTempUploadCnt', paramData, format);
-                                    log.debug(stmt);
+                                    log.debug(stmt, paramData);
 
                                     conn.query(stmt, function(err, rows) {
 
@@ -1552,7 +1552,7 @@ var deleteJisu = function(req, res) {
                                         paramData.file_id = paramData.prev_jisu_file_id;
 
                                         stmt = mapper.getStatement('indexModify', 'deleteJisuTempUpload', paramData, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, paramData);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -1587,7 +1587,7 @@ var deleteJisu = function(req, res) {
 
                             try {
                                 stmt = mapper.getStatement('indexModify', 'getJisuUploadCnt', paramData, format);
-                                log.debug(stmt);
+                                log.debug(stmt, paramData);
 
                                 conn.query(stmt, function(err, rows) {
 
@@ -1623,7 +1623,7 @@ var deleteJisu = function(req, res) {
                                 if (paramData.exists_jisu_upload == "Y") {
 
                                     stmt = mapper.getStatement('indexModify', 'deleteJisuUpload', paramData, format);
-                                    log.debug(stmt);
+                                    log.debug(stmt, paramData);
 
                                     conn.query(stmt, function(err, rows) {
 
@@ -1656,7 +1656,7 @@ var deleteJisu = function(req, res) {
 
                             try {
                                 stmt = mapper.getStatement('indexModify', 'getJisuShareReqCnt', paramData, format);
-                                log.debug(stmt);
+                                log.debug(stmt, paramData);
 
                                 conn.query(stmt, function(err, rows) {
 
@@ -1692,7 +1692,7 @@ var deleteJisu = function(req, res) {
                                 if (paramData.exists_jisu_share_req == "Y") {
 
                                     stmt = mapper.getStatement('indexModify', 'deleteJisuShareReq', paramData, format);
-                                    log.debug(stmt);
+                                    log.debug(stmt, paramData);
 
                                     conn.query(stmt, function(err, rows) {
 
@@ -1726,7 +1726,7 @@ var deleteJisu = function(req, res) {
 
                             try {
                                 stmt = mapper.getStatement('indexModify', 'getJisuMastCnt', paramData, format);
-                                log.debug(stmt);
+                                log.debug(stmt, paramData);
 
                                 conn.query(stmt, function(err, rows) {
 
@@ -1762,7 +1762,7 @@ var deleteJisu = function(req, res) {
                                 if (paramData.exists_jisu_mast == "Y") {
 
                                     stmt = mapper.getStatement('indexModify', 'deleteJisuMast', paramData, format);
-                                    log.debug(stmt);
+                                    log.debug(stmt, paramData);
 
                                     conn.query(stmt, function(err, rows) {
 

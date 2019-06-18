@@ -51,7 +51,7 @@ var getJisuDuplCheck = function(req, res) {
         /* 2. 이미 등록된 지수ID 가 존재하는지 확인 */
         var format = { language: 'sql', indent: '' };
         var stmt = mapper.getStatement('indexRegister', 'getJisuDuplCheck', paramData, format);
-        log.debug(stmt);
+        log.debug(stmt, paramData);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -125,7 +125,7 @@ var getDomainInst = function(req, res) {
         /* 1. 기관정보를 조회한다. */
         var format = { language: 'sql', indent: '' };
         var stmt = mapper.getStatement('indexRegister', 'getDomainInst', paramData, format);
-        log.debug(stmt);
+        log.debug(stmt, paramData);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -427,7 +427,7 @@ var fileuploadSingle = function(req, res) {
                                 reqParam.gubun = "002"; /* 소급 지수 */
 
                                 stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
-                                log.debug(stmt);
+                                log.debug(stmt, reqParam);
 
                                 conn.query(stmt, function(err, rows) {
 
@@ -457,7 +457,7 @@ var fileuploadSingle = function(req, res) {
 
                                         reqParam.dataLists = dataLists;
                                         stmt = mapper.getStatement('indexRegister', 'saveTmJisuTempUpload', reqParam, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, reqParam);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -498,7 +498,7 @@ var fileuploadSingle = function(req, res) {
                                     try {
 
                                         stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', reqParam, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, reqParam);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -696,7 +696,7 @@ var registerJisu = function(req, res) {
                                 try {
 
                                     stmt = mapper.getStatement('indexRegister', 'getJisuDuplCheck', paramData, format);
-                                    log.debug(stmt);
+                                    log.debug(stmt, paramData);
 
                                     conn.query(stmt, function(err, rows) {
 
@@ -746,7 +746,7 @@ var registerJisu = function(req, res) {
                                         reqParam.gubun = "001"; /* 지수방법론 */
 
                                         stmt = mapper.getStatement('indexRegister', 'saveTmJisuFile', reqParam, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, reqParam);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -784,7 +784,7 @@ var registerJisu = function(req, res) {
                                 try {
                                     paramData.status = "01"; // 상태 (01: 등록완료, 02:연동신청, 03: 연동완료 )
                                     stmt = mapper.getStatement('indexRegister', 'saveTmJisuMast', paramData, format);
-                                    log.debug(stmt);
+                                    log.debug(stmt, paramData);
 
                                     conn.query(stmt, function(err, rows) {
 
@@ -823,7 +823,7 @@ var registerJisu = function(req, res) {
                                         paramData.req_flag = "0"; /* 공개여부 0:비공개, 1:공개요청, 2:공개 */
 
                                         stmt = mapper.getStatement('indexRegister', 'saveTmJisuShareReq', paramData, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, paramData);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -859,7 +859,7 @@ var registerJisu = function(req, res) {
                                     paramData.file_id = paramData.jisu_file_id;
 
                                     stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
-                                    log.debug(stmt);
+                                    log.debug(stmt, paramData);
 
                                     conn.query(stmt, function(err, rows) {
 
@@ -897,7 +897,7 @@ var registerJisu = function(req, res) {
 
                                     try {
                                         stmt = mapper.getStatement('indexRegister', 'saveTmJisuUpload', paramData, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, paramData);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -933,7 +933,7 @@ var registerJisu = function(req, res) {
 
                                     try {
                                         stmt = mapper.getStatement('indexRegister', 'getHistNoByTmJisuUploadHist', paramData, format);
-                                        log.debug(stmt);
+                                        log.debug(stmt, paramData);
 
                                         conn.query(stmt, function(err, rows) {
 
@@ -976,7 +976,7 @@ var registerJisu = function(req, res) {
                                         if (paramData.hist_no) {
 
                                             stmt = mapper.getStatement('indexRegister', 'saveTmJisuUploadHist', paramData, format);
-                                            log.debug(stmt);
+                                            log.debug(stmt, paramData);
 
                                             conn.query(stmt, function(err, rows) {
 

@@ -388,7 +388,7 @@ var getEtpImportanceList = function(req, res) {
 
             try {
                 stmt = mapper.getStatement('etpDetail', 'getEtpImportanceList', paramData, format);
-                log.debug(stmt);
+                log.debug(stmt, paramData);
 
                 conn.query(stmt, function(err, rows) {
 

@@ -290,6 +290,15 @@ export default {
 
                     vm.$emit( "fn_showProgress", false );
                     if (response.data) {
+
+                        var msg = ( response.data.msg ? response.data.msg : "" );
+                        if (!response.data.result) {
+                            if( msg ) {
+                                vm.showMessageBox('확인', msg,{},1);
+                                return  false;
+                            }
+                        }
+
                         var dataList = response.data.dataList;
 
                         if (dataList && dataList.length > 0) {
@@ -328,6 +337,15 @@ export default {
                 console.log(response);
 
                 if (response.data) {
+
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.showMessageBox('확인', msg,{},1);
+                            return  false;
+                        }
+                    }
+
                     var rateTitleList = response.data.rateTitleList;
 
                     vm.rateTitleList =   rateTitleList;
@@ -375,6 +393,15 @@ export default {
                 vm.$emit( "fn_showProgress", false );
 
                 if (response.data) {
+
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.showMessageBox('확인', msg,{},1);
+                            return  false;
+                        }
+                    }
+
                     if( response.data.emergency_exist_yn ) {
                         vm.emergency_exist_yn   =   response.data.emergency_exist_yn;
                     }
