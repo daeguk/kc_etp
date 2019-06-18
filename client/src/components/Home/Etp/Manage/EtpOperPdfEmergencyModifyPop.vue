@@ -555,6 +555,10 @@ export default {
             util.processing(vm.$refs.progress, true);
 
             searchParam.isEtfYn     =   "Y";
+            searchParam.search_date =       new Date().getFullYear() 
+                                        +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
+                                        +   _.padStart( new Date().getDate(), 2, '0' );
+
             axios.post( Config.base_url + "/user/etp/getEtpOperPdfModify", {
                 data: searchParam
             }).then(function(response) {
