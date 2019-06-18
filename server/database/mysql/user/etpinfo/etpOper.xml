@@ -639,6 +639,7 @@
                             ,   td_etp_basic.F30819                                 AS  f30819              /* 해외ETP매매기준율 */
                             ,   td_etp_basic.F18453                                 AS  f18453              /* ETP 배율 */ 
                             ,   td_etp_basic.F18101                                 AS  f18101              /* 예상배당수익률 : 배당율 */ 
+                            ,   td_etp_basic.F33128                                 AS  f33128              /* iNAV산출환율보정 */ 
                             ,   (
                                     SELECT  tm_code_dtl.com_dtl_name
                                       FROM  tm_code_dtl
