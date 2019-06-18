@@ -42,7 +42,6 @@ import dtFc from "datatables.net-fixedcolumns";
 
 import Config from "@/js/config.js";
 //import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
-import IndexInfoDetailPop from "./IndexInfoDetailPop.vue";
 import EtpOperIndexQuick     from    "@/components/Home/Etp/Manage/EtpOperIndexQuick.vue";
 
 var tableOperIndex = null;

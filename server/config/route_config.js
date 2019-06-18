@@ -33,8 +33,6 @@ module.exports = {
         { file: './user/etp/etpregister', path: '/user/etp/updateEtpRegister', method: 'updateEtpRegister', session: 'check', type: 'post' },
 
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpBasic', method: 'getEtpBasic', session: 'check', type: 'post' },
-        { file: './user/etp/etpDetail', path: '/user/etp/getEtpInfo', method: 'getEtpInfo', session: 'check', type: 'post' },
-        { file: './user/etp/etpDetail', path: '/user/etp/getEtpChartData', method: 'getEtpChartData', session: 'check', type: 'post' },
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpPerformance', method: 'getEtpPerformance', session: 'check', type: 'post' },
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpImportanceList', method: 'getEtpImportanceList', session: 'check', type: 'post' },
 
