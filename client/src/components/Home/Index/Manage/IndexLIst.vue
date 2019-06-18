@@ -1,8 +1,6 @@
 <template>
-<v-app>
     <v-container>
-       
-        <v-layout row wrap class="content_margin">
+       <v-layout row wrap class="content_margin">
             <v-flex grow>
                 <v-card flat>
                     <v-card-title primary-title>
@@ -36,13 +34,11 @@
 
                        
         </v-layout>
-         <v-flex>
+
              <ConfirmDialog ref="confirm"></ConfirmDialog>
              <ProgressBar ref="progress"></ProgressBar>
-        </v-flex>
-    </v-container>
-   
-</v-app>    
+
+    </v-container>      
 </template>
 
 <script>
