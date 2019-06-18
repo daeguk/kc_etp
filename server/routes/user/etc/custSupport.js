@@ -58,7 +58,7 @@ var saveCustSupport = function(req, res) {
                 }
 
                 stmt = mapper.getStatement('custSupport', 'saveCustSupport', paramData, format);
-                log.debug(stmt);
+                log.debug(stmt, paramData);
 
                 conn.query(stmt, function(err, rows) {
 
@@ -80,7 +80,7 @@ var saveCustSupport = function(req, res) {
                 });
 
             } catch (err) {
-                log.error(err, paramData);
+                log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
                 resultMsg.msg = "[error] custSupport.saveCustSupport Error while performing Query";

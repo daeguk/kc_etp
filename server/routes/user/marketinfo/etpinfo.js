@@ -73,7 +73,7 @@ var getEtpList = function(req, res) {
 
                 paramData.com_mst_cd = "COM003"; /* 시장을 대표하는 지수 */
                 stmt = mapper.getStatement('etpinfo', 'getIndexInfoByCodeDtl', paramData, format);
-                log.debug("etpinfo.getIndexInfoByCodeDtl query call");
+                log.debug(stmt, paramData);
 
                 conn.query(stmt, function(err, rows) {
 
@@ -126,7 +126,7 @@ var getEtpList = function(req, res) {
                     paramData.com_val02 = ctgCodeItem.com_val02;
                     paramData.com_val03 = ctgCodeItem.com_val03;
                     stmt = mapper.getStatement('etpinfo', 'getJisuListByEtpRepresent', paramData, format);
-                    log.debug("etpinfo.getJisuListByEtpRepresent query call");
+                    log.debug(stmt, paramData);
 
                     conn.query(stmt, function(err, rows) {
 
@@ -235,7 +235,7 @@ var getEtpList = function(req, res) {
                 }
 
                 stmt = mapper.getStatement('etpinfo', 'getJisuListByCtgCode', paramData, format);
-                log.debug("etpinfo.getJisuListByCtgCode query call");
+                log.debug(stmt, paramData);
 
                 conn.query(stmt, function(err, rows) {
 
@@ -287,7 +287,7 @@ var getEtpList = function(req, res) {
 
                     paramData.ctg_code = ctgCodeItem.ctg_code;
                     stmt = mapper.getStatement('etpinfo', 'getEtpListByJisu', paramData, format);
-                    log.debug("etpinfo.getEtpListByJisu query call");
+                    log.debug(stmt, paramData);
 
                     conn.query(stmt, function(err, rows) {
 
@@ -421,7 +421,7 @@ var getEtpList = function(req, res) {
         resultMsg.etpLists = [];
         resultMsg.carousel_info = {};
         resultMsg.carousel_data = [],
-            resultMsg.carousel_mod = [];
+        resultMsg.carousel_mod = [];
         resultMsg.ctgCodeList = [];
 
         res.json(resultMsg);

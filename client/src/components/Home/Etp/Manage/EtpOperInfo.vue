@@ -305,10 +305,20 @@ export default {
             }).then(function(response) {
                 console.log(response);
 
+                vm.$emit( "fn_showProgress", false );
                 if (response.data) {
                     var dataList = response.data.dataList;
-                    
+
                     vm.result_cnt   =   0;
+
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.showMessageBox('확인', msg,{},1);
+                            return  false;
+                        }
+                    }
+
                     if( dataList && dataList.length > 0 ) {
 
                         if( vm.stateInfo.pageState == "performance" ) {
@@ -325,11 +335,10 @@ export default {
                         vm.fmt_f12506   =   vm.etpBasic.fmt_f12506;
                         vm.result_cnt   =   util.formatInt( dataList.length );
 
-                        vm.$emit( "fn_setParamData", vm.etpBasic );
+                        vm.$emit( "fn_setFirstData", vm.etpBasic );
                     }
                 }
 
-                vm.$emit( "fn_showProgress", false );
             }).catch(error => {
                 vm.$emit( "fn_showProgress", false );
                 vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);

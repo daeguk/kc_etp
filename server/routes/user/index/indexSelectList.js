@@ -48,7 +48,7 @@ var getStatusList = function(req, res) {
         /* 2. 지수 등록 상태정보를 조회한다. */
         var format = { language: 'sql', indent: '' };
         var stmt = mapper.getStatement('indexSelectList', 'getCodeDtl', paramData, format);
-        log.debug(stmt);
+        log.debug(stmt, paramData);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
@@ -126,7 +126,7 @@ var getIndexSelectList = function(req, res) {
         /* 1. 기관정보를 조회한다. */
         var format = { language: 'sql', indent: '' };
         var stmt = mapper.getStatement('indexSelectList', 'getJisuList', paramData, format);
-        log.debug(stmt);
+        log.debug(stmt, paramData);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {
