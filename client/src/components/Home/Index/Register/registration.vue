@@ -473,6 +473,10 @@ export default {
             tableName : "table01",
             jisuDataList : [],          /* 소급지수 업로드 후 목록정보 */
             jisuUploadResult : false,   /* 소급지수 업로드 결과 여부 */
+            limit : {
+                    method_max_size : 5      /* 지수방법론 (Mb) */
+                ,   jisu_max_size : 1        /* 소급지수 (Mb) */
+            },
 
 
             /* 모달관련 정보 */
@@ -672,14 +676,25 @@ export default {
                         }
                     }
 
-                    this.fn_checkFile( file ).then(function (res) {
-                            if( !res ) {
+                    new Promise(function(resolve, reject) {
+                        if( !selfThis.fn_checkFile( file ) ) {
+                            return  false;
+                        }
+                        resolve();
+                    }).catch( function(e) {
+                        console.log( e );
+                    }).then( function() {
+                        new Promise(function(resolve, reject) {
+                            if( !selfThis.fn_sizeCheck( file, "file" ) ) {
                                 return  false;
                             }
-
+                            resolve();                      
+                        }).catch( function(e) {
+                            console.log( e );
+                        }).then( function() {    
                             selfThis.fn_jisuFileUpload( file, selfThis );
-                        }
-                    );
+                        });
+                    });
 
                 }.bind(this)
             );
@@ -702,8 +717,19 @@ export default {
                         }
                     }
 
-                    this.form.show_method_file  =   file.name;
-                    this.$refs.methodFile.files =   files;
+                    new Promise(function(resolve, reject) {
+                        if( !selfThis.fn_sizeCheck( file, "methodFile" ) ) {
+                            return  false;
+                        }
+                        resolve();                      
+                    }).catch( function(e) {
+                        console.log( e );
+                    }).then( function() {    
+                        this.form.show_method_file  =   file.name;
+                        this.$refs.methodFile.files =   files;
+                    });
+
+
                 }.bind(this)
             );            
         }
@@ -725,14 +751,25 @@ export default {
                     }
                 }
 
-                this.fn_checkFile( file ).then(function (res) {
-                        if( !res ) {
+                new Promise(function(resolve, reject) {
+                    if( !selfThis.fn_checkFile( file ) ) {
+                        return  false;
+                    }
+                    resolve();
+                }).catch( function(e) {
+                    console.log( e );
+                }).then( function() {
+                    new Promise(function(resolve, reject) {
+                        if( !selfThis.fn_sizeCheck( file, "file" ) ) {
                             return  false;
                         }
-                        
+                        resolve();                      
+                    }).catch( function(e) {
+                        console.log( e );
+                    }).then( function() {    
                         selfThis.fn_jisuFileUpload( file, selfThis );
-                    }
-                );
+                    });
+                });                
 
                 this.$refs.fileform.addEventListener(
                     evt,
@@ -999,7 +1036,6 @@ export default {
                     if( response.data ) {
 
                         var resultData = response.data;
-
                         if( await vm.$root.$confirm1.open(
                                     ''
                                 ,   resultData.msg
@@ -1065,43 +1101,47 @@ export default {
          * 엑셀 유형인지 파일을 체크한다.
          * 2019-04-02  bkLove(촤병국)
          */
-        async   fn_checkFile( file ) {
+         fn_checkFile( file ) {
 
             var fileLen = file.name.length;
             var lastDot = file.name.lastIndexOf(".");
 
-            /* 1. 확장자가 존재하지 않는지 확인 */
-            if (lastDot == -1) {
+            try{
+                /* 1. 확장자가 존재하지 않는지 확인 */
+                if (lastDot == -1) {
 
-                if( await this.$root.$confirm1.open(
-                            '[엑셀파일 유형확인]',
-                            "엑셀유형의 파일인지 확인 해 주세요.",
-                            {}
-                        ,   1
-                    )
-                ) {
-                    return false;
+                    if( this.$root.$confirm1.open(
+                                '[엑셀파일 유형확인]',
+                                "엑셀유형의 파일인지 확인 해 주세요.",
+                                {}
+                            ,   1
+                        )
+                    ) {
+                        return false;
+                    }
                 }
-            }
 
-            var fileExt     =   file.name.substring(lastDot + 1, fileLen).toLowerCase();
-            var allowExt    =   ["xls", "xlsx", "csv"];
+                var fileExt     =   file.name.substring(lastDot + 1, fileLen).toLowerCase();
+                var allowExt    =   ["xls", "xlsx", "csv"];
 
-            /* 2. 허용되는 확장자에 포함되는지 확인 */
-            if (!allowExt.includes(fileExt)) {
+                /* 2. 허용되는 확장자에 포함되는지 확인 */
+                if (!allowExt.includes(fileExt)) {
 
-                if( await this.$root.$confirm1.open(
-                            '[엑셀파일 유형확인]',
-                            "엑셀유형의 파일인지 확인 해 주세요.",
-                            {}
-                        ,   1
-                    )
-                ) {
-                    return false;
+                    if( this.$root.$confirm1.open(
+                                '[엑셀파일 유형확인]',
+                                "엑셀유형의 파일인지 확인 해 주세요.",
+                                {}
+                            ,   1
+                        )
+                    ) {        
+                        return false;
+                    }
                 }
-            }
+                return  true; 
 
-            return  true;    
+            }catch(e) {
+                return false;
+            }   
         },
 
         /*
@@ -1281,8 +1321,55 @@ export default {
             this.fn_instShare();
         },
 
-        fn_clearCall() {
-            
+        fn_sizeCheck( file, gubun ) {
+
+            var vm = this;
+
+            if( file ) {
+                var title = "";
+                var maxSize = 0;
+
+                if( gubun == "file") {
+                    title = "소급지수";
+
+                    if( vm.limit ) {
+                        maxSize = vm.limit.jisu_max_size;
+                    }
+                }else if( gubun == "methodFile" ) {
+                    title = "지수방법론";
+
+                    if( vm.limit ) {
+                        maxSize = vm.limit.method_max_size;
+                    }                    
+                }
+
+                if( maxSize > 0 ) {
+                    if( file.size == 0 ) {
+                        if( this.$root.$confirm1.open(
+                                    '확인',
+                                    title + ' 파일용량이 0 byte 입니다.',
+                                    {}
+                                ,   1
+                            )
+                        ) {
+                            return false;
+                        }
+                    }
+
+                    if( ( maxSize * 1024 * 1024 ) < file.size ) {
+                        if( this.$root.$confirm1.open(
+                                    '확인',
+                                    title + ' 파일용량은 ' + maxSize + ' Mb 보다 작아야 합니다.',
+                                    {}
+                                ,   1
+                            )
+                        ) {                       
+                            return false;
+                        }
+                    }
+                }
+            }
+            return  true;
         }
     }
 };
