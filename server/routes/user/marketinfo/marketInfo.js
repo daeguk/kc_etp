@@ -97,7 +97,7 @@ var getIndexAnal = function(req, res) {
   };
   */
  var options = req.query;
-try {
+  try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
@@ -121,7 +121,7 @@ try {
       message: "Error while performing Query.",
     });
     res.end();
-}
+  }
 };
 
 /*
@@ -425,6 +425,46 @@ try {
 }
 };
 
+/*
+* ETP 분석정보 조회(NAV)
+*/
+var getEtpNavAnal = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getEtpNavAnal 호출됨.');
+
+  console.log(req.query);
+  /*
+  var options = {
+    F16013 : req.query.F16013,
+    market_id: req.query.market_id,
+  };
+  */
+ var options = req.query;
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    console.log(options);
+    var stmt = mapper.getStatement('common.item', 'getEtpNavAnal', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    console.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
 /*
 * ETP INTRA 조회
 */
@@ -1184,6 +1224,7 @@ module.exports.getIndexListAnalByType = getIndexListAnalByType;
 module.exports.getEtpMast = getEtpMast;
 module.exports.getEtpBasic = getEtpBasic;
 module.exports.getEtpAnal = getEtpAnal;
+module.exports.getEtpNavAnal = getEtpNavAnal;
 module.exports.getEtpIntra = getEtpIntra;
 module.exports.getEtpMultiIntra = getEtpMultiIntra;
 module.exports.getEtpMultiHist = getEtpMultiHist;

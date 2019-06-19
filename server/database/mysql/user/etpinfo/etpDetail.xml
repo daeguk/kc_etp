@@ -901,7 +901,7 @@
     * ETP 비중 정보를 조회한다.
     * 2019-04-25  bkLove(촤병국)
     -->
-    <select id="getEtpImportanceList">
+    <select id="getEtpWeightList">
       SELECT
         sub.f16316                                                        AS  ISIN_CODE
         ,TRIM(sub.f16004)                                                         AS  JONG_NM

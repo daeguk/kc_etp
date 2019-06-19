@@ -196,6 +196,43 @@
         WHERE A.F16013 = #{F16013}
     </select>
 
+    <!--
+    * ETP 분석정보(NAV)
+    -->
+    <select id="getEtpNavAnal">
+        SELECT *,
+          (SELECT B.F15301 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef1Week}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Week,
+          (SELECT B.F15301 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef1Month}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Month,
+          (SELECT B.F15301 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{befYtd}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS befYtd,
+          (SELECT B.F15301 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef1Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Year,
+          (SELECT B.F15301 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef3Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef3Year,
+          (SELECT B.F15301 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef5Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef5Year,
+          (SELECT B.F15301 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef10Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef10Year
+        FROM td_etp_basic A
+        WHERE A.F16013 = #{F16013}
+    </select>
+
     <select id="getEtpIntra">
         SELECT concat(substr(lpad(F20004,8, '0'), 1, 2), ':',substr(lpad(F20004,8, '0'), 3, 2), ':',substr(lpad(F20004,8, '0'), 5, 2)) AS F20004
                ,DATE_FORMAT(F20044, "%Y.%m.%d") as F20044

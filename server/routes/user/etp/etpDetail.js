@@ -349,92 +349,40 @@ var getEtpPerformance = function(req, res) {
     }
 }
 
-
 /* 
  * ETP 비중 정보를 조회한다.
  * 2019-04-25  bkLove(촤병국)
+ * 2019-06-19  ThreeOn : 쿼리단순화
  */
-var getEtpImportanceList = function(req, res) {
+var getEtpWeightList = function(req, res) {
+  try {
+    log.debug('etpDetail.getEtpWeightList 호출됨.');
 
-    try {
-        log.debug('etpDetail.getEtpImportanceList 호출됨.');
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    var paramData = req.query;
+    var stmt = mapper.getStatement('etpDetail', 'getEtpWeightList', paramData, { language: 'sql', indent: ' '});
+    log.debug(stmt, paramData);
 
-        var pool = req.app.get("pool");
-        var mapper = req.app.get("mapper");
-        var resultMsg = {};
-
-        /* 1. body.data 값이 있는지 체크 */
-        if (!req.body.data) {
-            log.error("[error] etpDetail.getEtpImportanceList  req.body.data no data.", req.body.data);
-
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpDetail.getEtpImportanceList  req.body.data no data.";
-
-            throw resultMsg;
-        }
-
-        var paramData = JSON.parse(JSON.stringify(req.body.data));
-
-        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
-        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
-        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
-        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
-        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
-
-        var format = { language: 'sql', indent: '' };
-        var stmt = "";
-
-        Promise.using(pool.connect(), conn => {
-
-            try {
-                stmt = mapper.getStatement('etpDetail', 'getEtpImportanceList', paramData, format);
-                log.debug(stmt, paramData);
-
-                conn.query(stmt, function(err, rows) {
-
-                    if (err) {
-                        log.error(err, stmt, paramData);
-
-                        resultMsg.result = false;
-                        resultMsg.msg = "[error] etpDetail.getEtpImportanceList Error while performing Query";
-                        resultMsg.err = err;
-                    }
-
-                    if (rows) {
-                        resultMsg.result = true;
-                        resultMsg.msg = "";
-                        resultMsg.dataList = rows;
-                    }
-
-                    res.json(resultMsg);
-                    res.end();
-                });
-
-            } catch (err) {
-                log.error(err, stmt, paramData);
-
-                resultMsg.result = false;
-                resultMsg.msg = "[error] etpDetail.getEtpImportanceList Error while performing Query";
-                resultMsg.err = err;
-
-                res.json(resultMsg);
-                res.end();
-            }
-        });
-
-    } catch (expetion) {
-
-        log.error(expetion, paramData);
-
-        resultMsg.result = false;
-        resultMsg.msg = "[error] etpDetail.getEtpImportanceList 오류가 발생하였습니다.";
-        resultMsg.err = expetion;
-
-        res.json(resultMsg);
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt, function(err, rows) {
+        res.json({
+          success: true,
+          results: rows
+      });
         res.end();
-    }
+      });
+    });
+  } catch (expetion) {
+    log.error(expetion, paramData);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+  }
 }
 
 module.exports.getEtpBasic = getEtpBasic;
 module.exports.getEtpPerformance = getEtpPerformance;
-module.exports.getEtpImportanceList = getEtpImportanceList;
+module.exports.getEtpWeightList = getEtpWeightList;

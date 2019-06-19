@@ -4,7 +4,7 @@
       <div class="indexinfo_box01">
         <h4 class="mb-0">Performance</h4>
         <div class="graph_02_w">
-          <PerformColumnChart :itemLists="indexLists"></PerformColumnChart>
+          <IndexPerformColumnChart :itemLists="indexLists"></IndexPerformColumnChart>
         </div>
         <v-card flat>
           <div class="table-box-wrap">
@@ -61,13 +61,11 @@
             </div>
           </div>
         </v-card>
-          <!---자산추가 팝업 -->
-          <v-layout row>
-              <v-btn outline small color="primary" dark v-on:click="openMastModal">
-                <v-icon small color="primary">add</v-icon>자산추가
-              </v-btn>
-          </v-layout>
-          <!--자산추가 팝업 end -->
+        <v-layout row>
+            <v-btn outline small color="primary" dark v-on:click="openMastModal">
+              <v-icon small color="primary">add</v-icon>자산추가
+            </v-btn>
+        </v-layout>
       </div>
     </v-flex>
     <MastPopup v-if="MastModalFlag" @selectedItem="getSelectedItem" @closeMastModal="closeMastModal" ></MastPopup>
@@ -76,7 +74,7 @@
 
 
 <script>
-import PerformColumnChart from "@/components/common/chart/PerformColumnChart";
+import IndexPerformColumnChart from "@/components/common/chart/IndexPerformColumnChart";
 import MastPopup from "@/components/common/popup/MastPopup";
 import Config from '@/js/config.js'
 import util from "@/js/util.js";
@@ -85,11 +83,8 @@ export default {
   props: ["indexBasic", "etpList"],
   data() {
     return {
-      tab: null,
-      dialog: false,
       MastModalFlag: false,
       results: [],
-      importance_cnt:0,
       modalFlag: false,
       indexLists: [],
       sortFlag: 1,
@@ -116,7 +111,7 @@ export default {
     */
   },
   components: {
-      PerformColumnChart,
+      IndexPerformColumnChart,
       MastPopup,
   },
   computed: {},

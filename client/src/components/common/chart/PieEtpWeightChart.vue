@@ -60,7 +60,6 @@ export default {
           this.sumWeight += this.weights[i];
           // console.log("this.weights : " + this.weights[i] + " sum : " + this.sumWeight);
         }
-        console.log("sum : " + this.sumWeight);
         var spos = 0.0;
         for(var i = 0; i < this.disCnt; i++) {
           this.weights[i] = this.weights[i] / this.sumWeight;

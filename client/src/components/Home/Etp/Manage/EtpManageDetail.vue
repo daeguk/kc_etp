@@ -116,9 +116,7 @@
                                 <v-tabs-items v-model="tab5">
                                     <v-tab-item>
                                         <EtpManageDetailAnalysisTab     v-if="showEtpManageDetailDialogBySub"
-
-                                                                        :paramData="paramData" 
-                                                                        :etpBasic="etpBasic"
+                                                                        :etpBasic="paramData"
                                                                         @showMessageBox="showMessageBox">
                                         </EtpManageDetailAnalysisTab>
                                     </v-tab-item>
