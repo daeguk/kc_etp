@@ -70,7 +70,6 @@ export default {
             result_cnt  :   0,
             arrOverseaMarketList    :   [],
             IndexModalFlag: false,
-
         };
     },
     components: {

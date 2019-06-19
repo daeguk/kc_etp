@@ -149,13 +149,15 @@
                 </div>
                 <!-- table3 end -->
             </v-flex>
-
         </v-layout>
+        <IndexInfoModal v-if="IndexModalFlag" :indexInfo="indexBasic"
+          @closeIndexModal="closeIndexModal"></IndexInfoModal>
     </v-container>
 </template>
 
 <script>
 import Config from "@/js/config.js";
+import IndexInfoModal   from  '@/components/common/modal/IndexInfoModal.vue';
 
 export default {
     props   :   [ "paramData", "etpBasic", "indexBasic" ],
@@ -164,7 +166,11 @@ export default {
             index_item: {},
             rowsPerPageItems: [50, 50],
             etp_items: [],
+            IndexModalFlag: false,
         };
+    },
+    components: {
+        IndexInfoModal,
     },
     computed: {
 
@@ -194,9 +200,11 @@ export default {
     
     methods: {
         showDetail: function() {
-            var vm = this;
-            vm.$emit("showDetail");
-        }
+          this.IndexModalFlag = true;
+        },
+        closeIndexModal: function() {
+          this.IndexModalFlag = false;
+        },
     }
 };
 </script>

@@ -125,8 +125,11 @@ export default {
     this.dialog = true;
     console.log("Open IndexInfoModal...........");
     console.log(this.indexInfo);
+    if(this.indexInfo.F16013 == undefined) this.indexInfo.F16013 = this.indexInfo.f16013;
+    console.log("Open IndexInfoModal...........1");
+    console.log(this.indexInfo);
     this.getIndexBasic(this.indexInfo);
-    this.getIndexInEtpInfo(this.indexInfo);
+    // this.getIndexInEtpInfo(this.indexInfo);
   },
   methods: {
     closeModal: function() {
@@ -154,7 +157,7 @@ export default {
         } else {
           vm.indexBasic = response.data.results[0];
           vm.chartFlag = true;
-          // vm.getIndexInEtpInfo(vm.indexInfo);
+          vm.getIndexInEtpInfo(vm.indexInfo);
         }
       });
     },
