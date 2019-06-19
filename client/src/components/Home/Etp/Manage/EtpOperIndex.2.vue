@@ -29,7 +29,7 @@
                     </EtpOperIndexQuick>
            </v-flex>
         </v-layout>
-    <IndexInfoModal v-if="IndexModalFlag" :indexInfo="paramData"
+    <IndexInfoModal v-if="IndexModalFlag" :indexBasic="paramData"
       @closeIndexModal="closeIndexModal"></IndexInfoModal>
     </v-container>
 </template>
@@ -128,18 +128,8 @@ export default {
             }).then(function(response) {
                 console.log(response);
 
-                vm.$emit( "fn_showProgress", false );
                 vm.result_cnt = 0;
                 if (response.data) {
-
-                    var msg = ( response.data.msg ? response.data.msg : "" );
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.$emit("showMessageBox", '확인', msg,{},1);
-                            return  false;
-                        }
-                    }
-
                     var dataList = response.data.dataList;
 
                     if( dataList && dataList.length > 0 ) {
@@ -152,6 +142,7 @@ export default {
                     }
                 }
 
+                vm.$emit( "fn_showProgress", false );
             }).catch(error => {
                 vm.$emit( "fn_showProgress", false );
                 vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
@@ -264,10 +255,10 @@ export default {
 
 
                 vm.paramData.F16257         =   data.f16013;        /* 단축코드  */
+                vm.paramData.F16013         =   data.f16013;        /* 단축코드  */
                 vm.paramData.LARGE_TYPE     =   data.large_type;    /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */
                 vm.paramData.MARKET_ID      =   data.market_id;     /* 시장 ID  */
 
-                vm.paramData.F16013         =   data.f16013;        /* 단축코드  */
                 vm.paramData.f16013         =   data.f16013;        /* 단축코드  */
                 vm.paramData.market_id      =   data.market_id;     /* 시장 ID  */
 
@@ -551,12 +542,13 @@ export default {
 
             vm.$emit( "fn_showDetailIndex", gubun, paramData );
         },
-        openIndexModal: function() {
-          this.IndexModalFlag = true;
-        },
-        closeIndexModal: function() {
-          this.IndexModalFlag = false;
-        },
+      openIndexModal: function() {
+        this.IndexModalFlag = true;
+      },
+      closeIndexModal: function() {
+        // console.log("closeIndexModal One............");
+        this.IndexModalFlag = false;
+      },
     }
 };
 </script>

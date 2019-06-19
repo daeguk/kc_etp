@@ -29,8 +29,6 @@
                     </EtpOperIndexQuick>
            </v-flex>
         </v-layout>
-    <IndexInfoModal v-if="IndexModalFlag" :indexInfo="paramData"
-      @closeIndexModal="closeIndexModal"></IndexInfoModal>
     </v-container>
 </template>
 
@@ -45,7 +43,6 @@ import dtFc from "datatables.net-fixedcolumns";
 import Config from "@/js/config.js";
 //import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
 import EtpOperIndexQuick     from    "@/components/Home/Etp/Manage/EtpOperIndexQuick.vue";
-import IndexInfoModal   from  '@/components/common/modal/IndexInfoModal.vue';
 
 var tableOperIndex = null;
 
@@ -68,13 +65,11 @@ export default {
                         +   "." 
                         +   new Date().getDate(),
             result_cnt  :   0,
-            arrOverseaMarketList    :   [],
-            IndexModalFlag: false,
+            arrOverseaMarketList    :   []
         };
     },
     components: {
-        EtpOperIndexQuick,
-        IndexInfoModal,
+        EtpOperIndexQuick: EtpOperIndexQuick
     },
     mounted: function() {
 
@@ -267,7 +262,6 @@ export default {
                 vm.paramData.LARGE_TYPE     =   data.large_type;    /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */
                 vm.paramData.MARKET_ID      =   data.market_id;     /* 시장 ID  */
 
-                vm.paramData.F16013         =   data.f16013;        /* 단축코드  */
                 vm.paramData.f16013         =   data.f16013;        /* 단축코드  */
                 vm.paramData.market_id      =   data.market_id;     /* 시장 ID  */
 
@@ -278,8 +272,7 @@ export default {
 
                             /* 지수정보 */
                     case    'btnIndex'       :
-                                // vm.$emit('showDetail', 2, vm.paramData);
-                                vm.openIndexModal();
+                                vm.$emit('showDetail', 2, vm.paramData);
                                 break;
 
                             /* 지수구성정보 */
@@ -550,12 +543,6 @@ export default {
             var vm = this;
 
             vm.$emit( "fn_showDetailIndex", gubun, paramData );
-        },
-        openIndexModal: function() {
-          this.IndexModalFlag = true;
-        },
-        closeIndexModal: function() {
-          this.IndexModalFlag = false;
         },
     }
 };

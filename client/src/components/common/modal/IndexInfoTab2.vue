@@ -4,7 +4,7 @@
       <div class="indexinfo_box01">
         <h4 class="mb-0">Performance</h4>
         <div class="graph_02_w">
-          <PerformColumnChart></PerformColumnChart>
+          <PerformColumnChart :itemLists="indexLists"></PerformColumnChart>
         </div>
         <v-card flat>
           <div class="table-box-wrap">
@@ -39,7 +39,7 @@
               </thead>
               <tbody>
                 <tr v-for="(item, index) in indexLists" :key="index">
-                  <td class="txt_left"><span :style="item.nStyle">{{item.F16002}}</span></td>
+                  <td class="txt_left"><img :src="barImgPath[index]"><span :style="item.nStyle"> {{item.F16002}}</span></td>
                   <td class="txt_right" :style="item.dStyle">{{item.F15004}}%</td>
                   <td class="txt_right" :style="item.wStyle">{{item.weekRate}}%</td>
                   <td class="txt_right" :style="item.mStyle">{{item.monthRate}}%</td>
@@ -86,7 +86,6 @@ export default {
   data() {
     return {
       tab: null,
-      importance_colors: ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde', '#B6B8BA', '#7E8083', '#FBB040', '#F58025', '#EDED8A'],
       dialog: false,
       MastModalFlag: false,
       results: [],
@@ -95,9 +94,16 @@ export default {
       indexLists: [],
       sortFlag: 1,
       befDates: {},
+      barImg: ['perform_bar01.png', 
+        'perform_bar02.png', 
+        'perform_bar03.png', 
+        'perform_bar04.png', 
+        'perform_bar05.png'],
+      barImgPath: [],
     };
   },
   watch: {
+    /*
     'etpList': function() {
       console.log("IndexInfoTab2 watch.........etpList ");
       console.log("this.etpList.length : " + this.etpList.length);
@@ -107,6 +113,7 @@ export default {
         this.getEtpAnal(this.etpList[i]);
       }
     },
+    */
   },
   components: {
       PerformColumnChart,
@@ -118,12 +125,19 @@ export default {
   beforeDestroy() {
   },
   mounted: function() {        
-    console.log("IndexInfoTab2 mount...............");
+    // console.log("IndexInfoTab2 mount...............");
+    for(let i=0; i < 5; i++) {
+      this.barImgPath[i] = "/assets/img/" + this.barImg[i];
+      // console.log("barImg : " + this.barImgPath[i]);
+    }
     this.befDates = this.$store.state.befDates;
-
-    let tmp = JSON.parse(JSON.stringify(this.indexBasic));
-    tmp.gubun = 3; // INDEX
-    this.indexLists.push(tmp);
+    this.getIndexAnal(this.indexBasic);
+    console.log("this.etpList.length : " + this.etpList.length);
+    for(let i=0; i < this.etpList.length; i++) {
+      // let tmp1 = JSON.parse(JSON.stringify(this.etpList[i]));
+      // this.indexLists.push(tmp1);
+      this.getEtpAnal(this.etpList[i]);
+    }
   },
   methods: {
     openMastModal: function() {  
@@ -213,7 +227,7 @@ export default {
           bef10Year: vm.befDates.bef10Year,
         }
       }).then(function(response) {
-        console.log(response);
+        // console.log(response);
         if (response.data.success == false) {
           alert("해당 종목이 없습니다");
         } else {

@@ -59,7 +59,7 @@ export default {
   created: function() {
   },
   mounted: function() {
-    console.log("LineIndexChart..........");
+    // console.log("LineIndexChart..........");
     this.canvas = document.getElementById(this.chartId);
     this.ctx = this.canvas.getContext('2d');
     this.mrect = this.canvas.getBoundingClientRect();
@@ -67,7 +67,7 @@ export default {
     // -10 : 하단 라인 침범 수정
     this.hlen = this.crect.y2 - this.crect.y1 - 10;
     this.ydifflen = (this.crect.y2 - this.crect.y1) / 6;
-    console.log("ydifflen : " + this.ydifflen);
+    // console.log("ydifflen : " + this.ydifflen);
     this.dataInit();
     this.drawInit();
   },
@@ -108,7 +108,7 @@ export default {
           else this.getIndexHist(this.indexBasic, this.term[this.dterm]);
       },
       getIndexIntra: function(indexInfo, term) {
-        console.log("getIndexIntra : " + indexInfo.F16013);
+        // console.log("getIndexIntra : " + indexInfo.F16013);
         var vm = this;
 
         indexInfo.term = term;
@@ -116,8 +116,8 @@ export default {
         axios.get(Config.base_url + "/user/marketinfo/getIndexIntra1", {
           params: indexInfo
         }).then(function(response) {
-          console.log("getIndexIntra.....................");
-          console.log(response);
+          // console.log("getIndexIntra.....................");
+          // console.log(response);
           if (response.data.success == false) {
 //              alert("해당 ETP의 데이터가 없습니다");
           } else {
@@ -131,7 +131,7 @@ export default {
         });
       },
       getIndexHist: function(indexInfo, term) {
-        console.log("getIndexHist : " + indexInfo.F16013);
+        // console.log("getIndexHist : " + indexInfo.F16013);
         var vm = this;
 
         indexInfo.term = term;
@@ -493,7 +493,7 @@ export default {
         return this.chartDataHPosArr1[i];
       },
       mouseClick: function(event) {
-        console.log("mouseClick...................................................");
+        // console.log("mouseClick...................................................");
         // var _mwpos = event.pageX-this.mrect.left-200;
         // var _mhpos = event.pageY-this.mrect.top-210;
         var _mwpos = event.layerX;

@@ -52,7 +52,7 @@
           </v-layout>
         </div>
       </div>
-      <LineIndexChart :indexBasic="indexBasic"></LineIndexChart>
+      <LineIndexChart v-if="chartFlag" :indexBasic="indexBasic"></LineIndexChart>
       <div class="tab2_w">
         <v-layout row wrap>
           <v-flex xs12>
@@ -67,10 +67,10 @@
             </v-tabs>
             <v-tabs-items v-model="tab">
               <v-tab-item>
-                <IndexInfoTab2 :indexBasic="indexBasic" :etpList="etpList"></IndexInfoTab2>
+                <IndexInfoTab2 v-if="tabFlag" :indexBasic="indexBasic" :etpList="etpList"></IndexInfoTab2>
               </v-tab-item>
               <v-tab-item>
-                <IndexInfoTab1 :indexBasic="indexBasic" :etpList="etpList"></IndexInfoTab1>
+                <IndexInfoTab1 v-if="tabFlag" :indexBasic="indexBasic" :etpList="etpList"></IndexInfoTab1>
               </v-tab-item>
               <!--
               <v-tab-item  v-if="!showDialog">
@@ -87,7 +87,6 @@
 </v-layout>
 </template>
 
-
 <script>
 import LineIndexChart   from  '@/components/common/chart/LineIndexChart.vue';
 import IndexInfoTab1 from "./IndexInfoTab1.vue";
@@ -97,13 +96,16 @@ import Config from "@/js/config.js";
 import util from "@/js/util.js";
 
 export default {
-  props: ['indexBasic'],
+  props: ['indexInfo'],
   data() {
     return {
         dialog: false, 
         tab: null,
         items: ["분석정보", "기본정보"],
+        indexBasic: {},
         etpList: [],
+        chartFlag: false,
+        tabFlag: false,
     };
   },
   components: {
@@ -122,7 +124,12 @@ export default {
   mounted: function() {
     this.dialog = true;
     console.log("Open IndexInfoModal...........");
-    this.getIndexInEtpInfo();
+    console.log(this.indexInfo);
+    if(this.indexInfo.F16013 == undefined) this.indexInfo.F16013 = this.indexInfo.f16013;
+    console.log("Open IndexInfoModal...........1");
+    console.log(this.indexInfo);
+    this.getIndexBasic(this.indexInfo);
+    // this.getIndexInEtpInfo(this.indexInfo);
   },
   methods: {
     closeModal: function() {
@@ -136,20 +143,41 @@ export default {
     formatInt:function(num) {
         return util.formatInt(num);
     },
-    getIndexInEtpInfo: function() {
+    getIndexBasic: function(rinfo) {
+      var vm = this;
+
+      axios.get(Config.base_url + "/user/marketinfo/getIndexBasic", {
+        params: {
+          f16013: rinfo.F16013,
+          market_id: rinfo.market_id
+        }
+      }).then(function(response) {
+        if (response.data.success == false) {
+            alert("해당 지수의 데이터가 없습니다");
+        } else {
+          vm.indexBasic = response.data.results[0];
+          vm.chartFlag = true;
+          vm.getIndexInEtpInfo(vm.indexInfo);
+        }
+      });
+    },
+    getIndexInEtpInfo: function(rinfo) {
+      console.log("getIndexInEtpInfo...............");
       var vm = this;
       vm.etpList = [];
       axios.get(Config.base_url + "/user/index/getIndexInEtpInfo", {
         params: {
-          jisu_cd : vm.indexBasic.F16013,
-          market_id : vm.indexBasic.market_id,
+          jisu_cd : rinfo.F16013,
+          market_id : rinfo.market_id,
         }
       }).then(response => { 
-        // console.log(response);
         if (response.data.success == false) {
           // alert("지수 관련 ETP정보가 없습니다.");
         } else {
           vm.etpList = response.data.results;
+          vm.tabFlag = true;
+        console.log("vm.etpList......................");
+        console.log(vm.etpList);
         }
       });
     },    
