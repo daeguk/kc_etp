@@ -139,8 +139,14 @@ export default {
       this.init();
     },
     'defaultTranFlag': function() {
-      this.getIndexAnal(this.indexBasic);
+      if(this.defaultTranFlag == true) {
+        this.getIndexAnal(this.indexBasic);
+      }
     },
+    'indexLists': function() {
+      console.log("indexLists...... watch");
+      console.log(this.indexLists);
+    }
   },
   components: {
     EtpPdfWeightModal,
