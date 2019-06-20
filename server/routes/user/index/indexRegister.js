@@ -478,7 +478,7 @@ var fileuploadSingle = function(req, res) {
                                                     try {
                                                         reqParam.dataLists = divideList;
                                                         stmt = mapper.getStatement('indexRegister', 'saveTmJisuTempUpload', reqParam, format);
-                                                        log.debug(stmt, reqParam);
+                                                        log.debug(stmt);
 
                                                         conn.query(stmt, function(err, rows) {
                                                             if (err) {
@@ -885,27 +885,28 @@ var registerJisu = function(req, res) {
                                 },
 
 
-                                /* 5. [지수 저장전 업로드] 를 조회한다. */
+                                /* 5. [tm_jisu_temp_upload] 데이터 건수를 조회한다. */
                                 function(data, callback) {
 
                                     try {
-                                        paramData.file_id = paramData.jisu_file_id;
+                                        paramData.uploadCnt =   0;
 
-                                        stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
+                                        paramData.file_id = paramData.jisu_file_id;
+                                        stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUploadCnt', paramData, format);
                                         log.debug(stmt, paramData);
 
                                         conn.query(stmt, function(err, rows) {
 
                                             if (err) {
                                                 resultMsg.result = false;
-                                                resultMsg.msg = "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
+                                                resultMsg.msg = "[error] indexRegister.getTmJisuTempUploadCnt Error while performing Query";
                                                 resultMsg.err = err;
 
                                                 return callback(resultMsg);
                                             }
 
-                                            if (rows && rows.length > 0) {
-                                                paramData.dataLists = rows;
+                                            if (rows && rows.length == 1) {
+                                                paramData.uploadCnt = rows[0].cnt;
                                             }
 
                                             callback(null, paramData);
@@ -915,54 +916,17 @@ var registerJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
+                                        resultMsg.msg = "[error] indexRegister.getTmJisuTempUploadCnt Error while performing Query";
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
                                     }
                                 },
 
-
-                                /* 6. [지수 엑셀업로드] 에 저장한다. */
+                                /* 6. [지수 엑셀업로드 이력] 에 저장하기 위해 지수별 최신 이력번호를 조회한다. */
                                 function(data, callback) {
 
-                                    if (paramData.dataLists != null && paramData.dataLists.length > 0) {
-
-                                        try {
-                                            stmt = mapper.getStatement('indexRegister', 'saveTmJisuUpload', paramData, format);
-                                            log.debug(stmt, paramData);
-
-                                            conn.query(stmt, function(err, rows) {
-
-                                                if (err) {
-                                                    resultMsg.result = false;
-                                                    resultMsg.msg = "[error] indexRegister.saveTmJisuUpload Error while performing Query";
-                                                    resultMsg.err = err;
-
-                                                    return callback(resultMsg);
-                                                }
-
-                                                callback(null, paramData);
-                                            });
-                                        } catch (err) {
-
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexRegister.saveTmJisuUpload Error while performing Query";
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                    } else {
-                                        callback(null, paramData);
-                                    }
-                                },
-
-
-                                /* 7. [지수 엑셀업로드 이력] 에 저장하기 위해 지수별 최신 이력번호를 조회한다. */
-                                function(data, callback) {
-
-                                    if (paramData.dataLists != null && paramData.dataLists.length > 0) {
+                                    if ( paramData.file_id != -1 && paramData.uploadCnt > 0 ) {
 
                                         try {
                                             stmt = mapper.getStatement('indexRegister', 'getHistNoByTmJisuUploadHist', paramData, format);
@@ -978,7 +942,7 @@ var registerJisu = function(req, res) {
                                                     return callback(resultMsg);
                                                 }
 
-                                                if (rows && rows[0].hist_no) {
+                                                if (rows && rows.length == 1 ) {
                                                     paramData.hist_no = rows[0].hist_no;
                                                 }
 
@@ -999,13 +963,12 @@ var registerJisu = function(req, res) {
                                     }
                                 },
 
-
-                                /* 8. [지수 엑셀업로드 이력] 에 저장한다. */
+                                /* 7. [지수 엑셀업로드 이력] 에 저장한다. */
                                 function(data, callback) {
 
-                                    if (paramData.dataLists != null && paramData.dataLists.length > 0) {
+                                    try {
+                                        if ( paramData.file_id != -1 && paramData.uploadCnt > 0 ) {
 
-                                        try {
                                             if (paramData.hist_no) {
 
                                                 stmt = mapper.getStatement('indexRegister', 'saveTmJisuUploadHist', paramData, format);
@@ -1028,18 +991,17 @@ var registerJisu = function(req, res) {
                                                 callback(null);
                                             }
 
-                                        } catch (err) {
-
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexRegister.saveTmJisuUploadHist Error while performing Query";
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
+                                        } else {
+                                            callback(null);
                                         }
+                                    } catch (err) {
 
-                                    } else {
-                                        callback(null);
-                                    }
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] indexRegister.saveTmJisuUploadHist Error while performing Query";
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }                                    
                                 }
 
                             ], function(err) {
