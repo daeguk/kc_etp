@@ -16,10 +16,10 @@ export default {
       canvas:{},
       ctx:{},
       chartId:"LineIndexChart",
-      chart:{width:1050, height:400},
+      chart:{width:1050, height:340},
       grad:{},
       mrect:{},
-      crect:{x1:80, y1:60, x2:1000, y2:360},
+      crect:{x1:80, y1:60, x2:1000, y2:300},
       dataArr: [],
       chartDataPosArr: [],
       chartDataHPosArr: [],
@@ -35,6 +35,7 @@ export default {
       dterm:2,
       wlen: 0,
       hlen: 0,
+      ydifflen: 0,
       intra_data:[],
       hist_data:[],
       sArr:[],
@@ -58,13 +59,15 @@ export default {
   created: function() {
   },
   mounted: function() {
-    console.log("LineIndexChart..........");
+    // console.log("LineIndexChart..........");
     this.canvas = document.getElementById(this.chartId);
     this.ctx = this.canvas.getContext('2d');
     this.mrect = this.canvas.getBoundingClientRect();
     this.wlen = this.crect.x2 - this.crect.x1;
     // -10 : 하단 라인 침범 수정
     this.hlen = this.crect.y2 - this.crect.y1 - 10;
+    this.ydifflen = (this.crect.y2 - this.crect.y1) / 6;
+    // console.log("ydifflen : " + this.ydifflen);
     this.dataInit();
     this.drawInit();
   },
@@ -89,8 +92,8 @@ export default {
         c.strokeStyle = "#BDBDBD";
         c.setLineDash([2]);
         for(var i=0; i < 6; i++) {
-          c.moveTo(this.crect.x1, this.crect.y1 + 50*i);
-          c.lineTo(this.crect.x2, this.crect.y1 + 50*i);
+          c.moveTo(this.crect.x1, this.crect.y1 + this.ydifflen*i);
+          c.lineTo(this.crect.x2, this.crect.y1 + this.ydifflen*i);
         }
         c.stroke();
 
@@ -105,7 +108,7 @@ export default {
           else this.getIndexHist(this.indexBasic, this.term[this.dterm]);
       },
       getIndexIntra: function(indexInfo, term) {
-        console.log("getIndexIntra : " + indexInfo.F16013);
+        // console.log("getIndexIntra : " + indexInfo.F16013);
         var vm = this;
 
         indexInfo.term = term;
@@ -113,8 +116,8 @@ export default {
         axios.get(Config.base_url + "/user/marketinfo/getIndexIntra1", {
           params: indexInfo
         }).then(function(response) {
-          console.log("getIndexIntra.....................");
-          console.log(response);
+          // console.log("getIndexIntra.....................");
+          // console.log(response);
           if (response.data.success == false) {
 //              alert("해당 ETP의 데이터가 없습니다");
           } else {
@@ -128,7 +131,7 @@ export default {
         });
       },
       getIndexHist: function(indexInfo, term) {
-        console.log("getIndexHist : " + indexInfo.F16013);
+        // console.log("getIndexHist : " + indexInfo.F16013);
         var vm = this;
 
         indexInfo.term = term;
@@ -248,7 +251,7 @@ export default {
         c.font = '12px san-serif';
         for(var i=0; i < 7; i++) {
           // console.log("yAxis : " + vm.yAxisVal[i]);
-          c.fillText(vm.yAxisVal[6-i], 75, vm.crect.y1 + 50 * i);
+          c.fillText(vm.yAxisVal[6-i], 75, vm.crect.y1 + this.ydifflen * i);
         }
         //X-Axis 그리기
         c.fillStyle = "#424242";
@@ -354,7 +357,7 @@ export default {
         c.font = '12px san-serif';
         for(var i=0; i < 7; i++) {
           // console.log("yAxis : " + vm.yAxisVal[i]);
-          c.fillText(vm.yAxisVal[6-i], 65, vm.crect.y1 + 50 * i);
+          c.fillText(vm.yAxisVal[6-i], 65, vm.crect.y1 + this.ydifflen * i);
         }
         //X-Axis 그리기
         c.fillStyle = "#424242";
@@ -376,7 +379,7 @@ export default {
         }else {
           var c = this.ctx;
           var _mwpos = event.layerX;
-          var _mhpos = event.layerY-125;
+          var _mhpos = event.layerY;
           c.putImageData(this.draw_chart_image, this.crect.x1, this.crect.y1-10);
           if(this.selectGuideCheck(_mwpos, _mhpos) !== -1) {
             // console.log("Got.......... guide");
@@ -490,7 +493,7 @@ export default {
         return this.chartDataHPosArr1[i];
       },
       mouseClick: function(event) {
-        console.log("mouseClick...................................................");
+        // console.log("mouseClick...................................................");
         // var _mwpos = event.pageX-this.mrect.left-200;
         // var _mhpos = event.pageY-this.mrect.top-210;
         var _mwpos = event.layerX;

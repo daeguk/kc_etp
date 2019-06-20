@@ -298,7 +298,7 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type tbody tr.selected{background:#edf3f6 !important;}
 .tbl_type .in_select{padding-top:0px !important;}
 
-.tbl_type.ver2{width:300px;}
+.tbl_type.ver2{width:290px !important;}
 .tbl_type.ver2 td.line2 span{ display: inline-block; font-weight: 400;padding-left:0px;}
 /*.tbl_type.ver2 th{background-color: #eeeeee; border:0px !important;}*/
 .tbl_type.ver2 td{font-weight: 600; font-size:12px !important;}
@@ -872,7 +872,8 @@ input[type='file']{
 .sumul_card_w ul.bot_line2{border-bottom:1px solid #d6d6e2 !important;}
 .sumul_card_w ul.bot_line3{border-bottom:3px solid #d6d6e2 !important;}
 .sumul_card_w ul li.align_r{width:140px; text-align: right;}
-.sumul_card_w ul.result{background:#ffffff; padding:10px 0 !important;}
+.sumul_card_w ul.result{background:#ffffff; padding:5px 0 2px !important;}
+.sumul_card_w ul.result.ver2{margin-top:15px;border-top:2px solid #d6d6e2 !important;}
 .sumul_card_w ul li.txt_point{color:#5e870b; font-weight:600;}
 .sumul_card_w ul li span.txt_point{color:#5e870b; font-weight:600;}
 .sumul_card_w ul li.txt_point1{color:#48485e; font-weight:600;}

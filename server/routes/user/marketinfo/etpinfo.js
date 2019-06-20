@@ -32,8 +32,7 @@ var getEtpList = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpinfo.getEtpList  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpinfo.getEtpList  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpinfo.getEtpList  req.body.data no data.";
@@ -43,11 +42,11 @@ var getEtpList = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -74,7 +73,7 @@ var getEtpList = function(req, res) {
 
                 paramData.com_mst_cd = "COM003"; /* 시장을 대표하는 지수 */
                 stmt = mapper.getStatement('etpinfo', 'getIndexInfoByCodeDtl', paramData, format);
-                log.debug("etpinfo.getIndexInfoByCodeDtl query call");
+                log.debug(stmt, paramData);
 
                 conn.query(stmt, function(err, rows) {
 
@@ -127,7 +126,7 @@ var getEtpList = function(req, res) {
                     paramData.com_val02 = ctgCodeItem.com_val02;
                     paramData.com_val03 = ctgCodeItem.com_val03;
                     stmt = mapper.getStatement('etpinfo', 'getJisuListByEtpRepresent', paramData, format);
-                    log.debug("etpinfo.getJisuListByEtpRepresent query call");
+                    log.debug(stmt, paramData);
 
                     conn.query(stmt, function(err, rows) {
 
@@ -236,7 +235,7 @@ var getEtpList = function(req, res) {
                 }
 
                 stmt = mapper.getStatement('etpinfo', 'getJisuListByCtgCode', paramData, format);
-                log.debug("etpinfo.getJisuListByCtgCode query call");
+                log.debug(stmt, paramData);
 
                 conn.query(stmt, function(err, rows) {
 
@@ -288,7 +287,7 @@ var getEtpList = function(req, res) {
 
                     paramData.ctg_code = ctgCodeItem.ctg_code;
                     stmt = mapper.getStatement('etpinfo', 'getEtpListByJisu', paramData, format);
-                    log.debug("etpinfo.getEtpListByJisu query call");
+                    log.debug(stmt, paramData);
 
                     conn.query(stmt, function(err, rows) {
 
@@ -398,7 +397,7 @@ var getEtpList = function(req, res) {
             async.waterfall(funcList, function(err) {
 
                 if (err) {
-                    log.error(err);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -413,23 +412,19 @@ var getEtpList = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpinfo.getEtpList 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpinfo.getEtpList 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.etpLists = [];
         resultMsg.carousel_info = {};
         resultMsg.carousel_data = [],
-            resultMsg.carousel_mod = [];
+        resultMsg.carousel_mod = [];
         resultMsg.ctgCodeList = [];
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }

@@ -27,6 +27,7 @@
 <script>
 
 import KrxIndexList from "./KrxIndexList.vue";
+import FngIndexList from "./FngIndexList.vue";
 
 export default {
 
@@ -50,6 +51,7 @@ export default {
   },
   components: {
     KrxIndexList,
+    FngIndexList,
   },
   updated: function() {
     

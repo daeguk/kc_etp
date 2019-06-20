@@ -116,8 +116,8 @@
                     <col width="20%">
                     <col width="15%">
                     <col width="7%">
-                    <col width="10%">
-                    <col width="10%">
+                    <col width="15%">
+                    <col width="15%">
                     <col width="16%">
                 </colgroup>
                 <thead>
@@ -223,7 +223,7 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "";
                         
-                        htm += "<input type='text' id='cu_cnt' class='txt_right' value='"+data+"'>";
+                        htm += "<input type='text' id='f16499' class='txt_right' value='"+data+"'>";
                         
                         return htm;
                     },
@@ -242,8 +242,8 @@ export default {
                 {  
                     "render": function ( data, type, row ) {
                         let htm = ""
-                            
-                        htm += util.formatNumber(data);
+                        
+                        htm += "<input type='text' id='f15001' class='txt_right' value='"+util.formatNumber(data)+"'>";
 
                         
                         if (row.f15004 >= 0) {
@@ -260,11 +260,21 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = ""
                             
+                        htm += "<input type='text' id='f15007' class='txt_right' value='"+util.formatNumber(data)+"'>";
+
+                        return htm;
+                    },
+                    "targets": 6
+                },
+                {  
+                    "render": function ( data, type, row ) {
+                        let htm = ""
+                            
                         htm = util.formatNumber(data);
 
                         return htm;
                     },
-                    "targets": [6, 7]
+                    "targets": 7
                 },
                 
                 
@@ -378,13 +388,18 @@ export default {
         pdf_table = $('#pdf_table').DataTable(vm.DefaultRender);
 
 
-        //  ETF 에서 그래프 선택시
+        // 값이 변경 되었을때 
         $('#pdf_table tbody').on('change', 'input', function () {            
             var table = $('#pdf_table').DataTable();
             var data = table.row($(this).parents('td').parents('tr')).data();
 
-
-            data.f16499 = $(this).val();
+            if ($(this).attr('id') == 'f16499') {
+                data.f16499 = $(this).val();
+            } else if ($(this).attr('id') == 'f15001') {
+                data.f15001 = vm.NtoS($(this).val());                
+            } else if ($(this).attr('id') == 'f15007') {
+                data.f15007 = vm.NtoS($(this).val());                
+            }
 
             vm.navCalcu();
             
@@ -420,7 +435,7 @@ export default {
                     var market_tot_amt = 0;
                     var index = 0;
                     for (let item of vm.pdfList) {                                            
-                        await vm.iNavCalulator(item).then(function(jongItem) {
+                        await vm.iNavCalulator(item, vm.SimulationSwitch).then(function(jongItem) {
                             /* 종목 정보 바인딩 */                            
                             item.f16588 = jongItem.market_amt; /* 시가 총액 (처음 로딩시는 etp 평가 금액으로 세팅)*/
                             item.f15001 = jongItem.f15001;  /* 현재가 */
@@ -428,6 +443,24 @@ export default {
                             item.f15004 = jongItem.f15004;  /* 등락률 */
                             item.f15472 = jongItem.f15472;  /* 대비 */
                             item.f16013 = jongItem.f16013;  /* 단축코드 */
+                            item.f15001_US = 0;                  /* 달러 현재가 */
+                            item.f14531 = 0;                     /* JPYUSD 매수호가 */
+                            item.f14501 = 0;                     /* JPYUSD 매도호가 */
+                            item.f03003 = 0;                     /* JPYUSD 전일종가 */
+                            item.f33904 = 0;                     /* 단위계약승수 */
+                            
+                            // 엔화예금일경우 
+                            if(item.f16316 == 'JPYZZ0000001') {
+                                item.f15001_US = jongItem.f15001_US;                  /* 달러 현재가 */
+                                item.f14531 = jongItem.f14531;                     /* JPYUSD 매수호가 */
+                                item.f14501 = jongItem.f14501;                     /* JPYUSD 매도호가 */
+                                item.f03003 = jongItem.f03003;                     /* JPYUSD 전일종가 */
+                            }
+
+                            // 선물 또는 옵션일 경우
+                            if(item.f33861 == '4') {
+                                item.f33904 = jongItem.f33904;                     /* 단위계약승수 */
+                            }
 
                             market_tot_amt += jongItem.market_amt;
                             
@@ -450,10 +483,7 @@ export default {
                                 vm.pdf_reload(vm.pdfList);
                                 
 
-                                /* input box readony 처리 */
-                                if (!vm.SimulationSwitch) {
-                                    $('#pdf_table tbody td input[id=cu_cnt]').attr("readonly", true);
-                                }
+                               
                             }
                             //console.log("market_amt:"+market_amt + "idx:" + index + "lenght:" + (vm.pdfList.length-1));     
                             
@@ -462,6 +492,7 @@ export default {
                     }
                 }
             }).catch(error => {
+                console.log(error);
                 util.processing(vm.$refs.progress, false);   
                 vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);             
             });
@@ -476,9 +507,11 @@ export default {
         formatNumber:function(num) {
             return util.formatNumber(num);
         },
-
         formatInt:function(num) {
             return util.formatInt(num);
+        },
+        NtoS: function(num) {
+            return util.NumtoStr(num);
         },
 
         /* 반복 계산 시작 및 스톱처리 */
@@ -494,7 +527,7 @@ export default {
         startLoopCalcu: function() {
             if (this.nav_timer == null) {                
                 this.btn_kind = 'pause_circle_outline'
-                this.nav_timer = setInterval(this.navCalcu, 10000);
+                this.nav_timer = setInterval(this.getiNavData(this.paramData.f16012), 10000);
             }
         },
         /* 반복 계산 스톱*/
@@ -514,7 +547,7 @@ export default {
             var index = 0;
             util.processing(vm.$refs.progress, true);
             for (let item of vm.pdfList) {                        
-                await vm.iNavCalulator(item).then(function(jongItem) {
+                await vm.iNavCalulator(item, vm.SimulationSwitch).then(function(jongItem) {
                     /* 종목 정보 바인딩 */                            
                     item.f16588 = jongItem.market_amt; /* 시가 총액 */
                     item.f15001 = jongItem.f15001;  /* 현재가 */
@@ -522,10 +555,30 @@ export default {
                     item.f15004 = jongItem.f15004;  /* 등락률 */
                     item.f15472 = jongItem.f15472;  /* 대비 */
                     item.f16013 = jongItem.f16013;  /* 단축코드 */
+                    item.f15001_US = 0;                  /* 달러 현재가 */
+                    item.f14531 = 0;                     /* JPYUSD 매수호가 */
+                    item.f14501 = 0;                     /* JPYUSD 매도호가 */
+                    item.f03003 = 0;                     /* JPYUSD 전일종가 */
+                    item.f33904 = 0;                     /* 단위계약승수 */
+
+                    // 엔화예금일경우 
+                    if(item.f16316 == 'JPYZZ0000001') {
+                        item.f15001_US = jongItem.f15001_US;                  /* 달러 현재가 */
+                        item.f14531 = jongItem.f14531;                     /* JPYUSD 매수호가 */
+                        item.f14501 = jongItem.f14501;                     /* JPYUSD 매도호가 */
+                        item.f03003 = jongItem.f03003;                     /* JPYUSD 전일종가 */
+                    }
+
+                    // 선물 또는 옵션일 경우
+                    if(item.f33861 == '4') {
+                        item.f33904 = jongItem.f33904;                     /* 단위계약승수 */
+                    }
 
                     market_tot_amt += jongItem.market_amt;
 
-                    
+                    /* 등락률 재계산 */
+                    item.f15004 = vm.formatNumber((item.f15001 / item.f15007)-1) * 100;
+
                     if (index == (vm.pdfList.length-1)) {                                
                         
                         vm.market_tot_amt = market_tot_amt;

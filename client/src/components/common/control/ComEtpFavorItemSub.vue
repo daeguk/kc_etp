@@ -131,7 +131,7 @@ export default {
             "info": false,   // control table information display field
             "stateSave": true,  //restore table state on page reload,
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-            "scrollY": vm.faverSize +'vh',
+            "scrollY": vm.faverSize +'px',
             thead: {
                 display:'none'
             },
@@ -229,7 +229,7 @@ export default {
             "info": false,   // control table information display field
             "stateSave": true,  //restore table state on page reload,
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-            "scrollY": vm.faverSize +'vh',
+            "scrollY": vm.faverSize +'px',
             thead: {
                 display:'none'
             },
@@ -416,6 +416,10 @@ export default {
                 params: {
                 }
             }).then(response => {
+                if( this.$refs.progress ) {
+                    util.processing(this.$refs.progress, false);
+                }
+                
                 // console.log(response);
                 if (response.data.success == false) {
                     this.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
@@ -426,9 +430,11 @@ export default {
                     publish_etp_table.rows.add(items).draw();
                                         
                 }
-                util.processing(this.$refs.progress, false);
+
             }).catch(error => {
-                util.processing(this.$refs.progress, false);
+                if( this.$refs.progress ) {
+                    util.processing(this.$refs.progress, false);
+                }
                 this.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         }, 
@@ -441,6 +447,11 @@ export default {
                 params: {
                 }
             }).then(response => {
+
+                if( this.$refs.progress ) {
+                    util.processing(this.$refs.progress, false);
+                }
+
                 // console.log(response);
                 if (response.data.success == false) {
                     this.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
@@ -452,9 +463,11 @@ export default {
                     all_etp_table.rows.add(items).draw();
             
                 }
-                util.processing(this.$refs.progress, false);
+                
             }).catch(error => {
-                util.processing(this.$refs.progress, false);
+                if( this.$refs.progress ) {
+                    util.processing(this.$refs.progress, false);
+                }
                 this.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         }, 
@@ -592,8 +605,8 @@ export default {
         
         filterAllData: function(mode) {
             var vm = this;
-
             var faverData = '-1';
+            vm.search = vm.search.toUpperCase();
 
             /* 이벤트 delay이로 부하 줄임 */
             var delay = (function(){

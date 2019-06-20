@@ -35,7 +35,8 @@
             <v-flex  class="conWidth_right">
                 <IndexDetailQuick   @fn_getIndexDetailList="fn_getIndexDetailList"
                                     @fn_getIndexJongmokList="fn_getIndexJongmokList"
-                                    @showProgress="showProgress">
+                                    @showProgress="showProgress"
+                                    @showMessageBox="showMessageBox">
                 </IndexDetailQuick>                
             </v-flex>
             
@@ -46,6 +47,7 @@
                             <v-progress-circular :size="50" indeterminate></v-progress-circular>
                             </template>
         </v-dialog>
+        <ConfirmDialog ref="confirm"></ConfirmDialog>
     </v-container>
 </template>
 
@@ -58,12 +60,14 @@ import buttons from 'datatables.net-buttons'
 import util       from "@/js/util.js";
 import Config from '@/js/config.js';
 import IndexDetailQuick from "@/components/Home/Index/Manage/IndexDetailQuick.vue";
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 var tableIndexList = null;
 
 export default {
     components: {
         IndexDetailQuick     :   IndexDetailQuick,
+        ConfirmDialog: ConfirmDialog,
     },
     data() {
         return {
@@ -120,7 +124,7 @@ export default {
                     "info": false,   // control table information display field
                     "stateSave": true,  //restore table state on page reload,
                     "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                    "scrollY": '72vh',
+                    "scrollY": '75vh',
                     paging: false,
                     searching: false,                
                     data : [],
@@ -193,7 +197,7 @@ export default {
                     } 
                 ],
                 columns: [
-                    { "title"   :   "ID"            ,   "data": "f16013"                ,   "orderable" : true, "width" : "12%", className:"txt_left"  },      /* ID */
+                    { "title"   :   "ID"            ,   "data": "isin_code"             ,   "orderable" : true, "width" : "12%", className:"txt_left"  },      /* ID */
                     { "title"   :   "지수명"         ,   "data": "f16002"                ,   "orderable" : true, "width" : "18%",className:"txt_left"  },      /* 지수명 */
                     { "title"   :   "편입비중(%)"    ,   "data": "in_out_rate"           ,   "orderable" : true, "width" : "14%",className:"txt_right"  },      /* 편입비중(%) */
                     { "title"   :   "Shrs"          ,   "data": "f30812"                ,   "orderable" : true, "width" : "14%",className:"txt_right"  },      /* shrs */
@@ -215,6 +219,9 @@ export default {
              
         showProgress: function(visible) {
             this.progress = visible;
+        },
+        showMessageBox: function(title, msg, option, gubun) {
+            this.$refs.confirm.open(title,msg, option, gubun);
         },
         fn_closePop() {
             var vm = this;

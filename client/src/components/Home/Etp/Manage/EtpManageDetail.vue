@@ -116,9 +116,7 @@
                                 <v-tabs-items v-model="tab5">
                                     <v-tab-item>
                                         <EtpManageDetailAnalysisTab     v-if="showEtpManageDetailDialogBySub"
-
-                                                                        :paramData="paramData" 
-                                                                        :etpBasic="etpBasic"
+                                                                        :etpBasic="paramData"
                                                                         @showMessageBox="showMessageBox">
                                         </EtpManageDetailAnalysisTab>
                                     </v-tab-item>
@@ -263,6 +261,15 @@ export default {
             }).then(function(response) {
                 // console.log(response);
                 if (response.data) {
+                    
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.showMessageBox('확인', msg,{},1);
+                            return  false;
+                        }
+                    }
+
                     vm.etpBasic = response.data.etpBasic;
                     vm.etpBasic.f15001 = util.formatStringNum(vm.etpBasic.f15001);
                     vm.indexBasic = response.data.indexBasic;

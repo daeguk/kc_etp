@@ -555,6 +555,10 @@ export default {
             util.processing(vm.$refs.progress, true);
 
             searchParam.isEtfYn     =   "Y";
+            searchParam.search_date =       new Date().getFullYear() 
+                                        +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
+                                        +   _.padStart( new Date().getDate(), 2, '0' );
+
             axios.post( Config.base_url + "/user/etp/getEtpOperPdfModify", {
                 data: searchParam
             }).then(function(response) {
@@ -563,6 +567,15 @@ export default {
                 util.processing(vm.$refs.progress, false);
 
                 if (response.data) {
+
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.$emit('showMessageBox', '확인', msg,{},1);
+                            return  false;
+                        }
+                    }
+
                     var etpBasic = response.data.etpBasic;
                     var dataList = response.data.dataList;
 
@@ -666,6 +679,15 @@ export default {
                 util.processing(vm.$refs.progress, false);
 
                 if (response.data) {
+
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.$emit('showMessageBox', '확인', msg,{},1);
+                            return  false;
+                        }
+                    }
+
                     var dataList = response.data.dataList;
 
                     if ( !dataList || dataList.length == 0 ) {
@@ -981,9 +1003,12 @@ export default {
 
                 if (response.data) {
 
-                    if( !response.data.result ) {
-                        vm.$emit("showMessageBox", '확인', response.data.msg,{},1);
-                        return  false;
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.$emit('showMessageBox', '확인', msg,{},1);
+                            return  false;
+                        }
                     }
 
                     vm.fn_getPdfByGroupNo();
@@ -1009,9 +1034,12 @@ export default {
                 util.processing(vm.$refs.progress, false);
                 if (response.data) {
 
-                    if( !response.data.result ) {
-                        vm.$emit("showMessageBox", '확인', response.data.msg,{},1);
-                        return  false;
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.$emit('showMessageBox', '확인', msg,{},1);
+                            return  false;
+                        }
                     }
 
                     if( response.data.allDataList.length > 0 ) {

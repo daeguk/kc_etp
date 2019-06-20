@@ -225,8 +225,9 @@ input[type="text"]:focus, input[type="number"]:focus{border-color:#1976d2;}
 
 .v-input--selection-controls__ripple{display: none;}
 .v-text-field input[type="text"]{border:none !important;}
+.v-text-field input{padding:2px 0 !important;}
 .v-text-field__details{padding-top:2px !important;}
-
+.v-select__selection--comma{margin-top:3px !important;}
 .select_table_in{margin-top:0px !important; padding-top:0px !important; font-size: 12px !important;}
 .select_table_in .v-messages{display: none;}
 
@@ -298,7 +299,7 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type tbody tr.selected{background:#edf3f6 !important;}
 .tbl_type .in_select{padding-top:0px !important;}
 
-.tbl_type.ver2{width:300px;}
+.tbl_type.ver2{width:290px !important;}
 .tbl_type.ver2 td.line2 span{ display: inline-block; font-weight: 400;padding-left:0px;}
 /*.tbl_type.ver2 th{background-color: #eeeeee; border:0px !important;}*/
 .tbl_type.ver2 td{font-weight: 600; font-size:12px !important;}
@@ -596,7 +597,7 @@ h3.subtit span.text_result_t2{color:#959eb1; margin-right:15px;margin-left:15px;
 .right_menu_w2 .rightmenu_con{padding:15px 16px 0px; font-size: 13px; font-weight: 600; color:#606060;}
 .right_menu_w2 .rightmenu_con.case2{padding-top:5px !important}
 .right_menu_w2 .rightmenu_con2{padding:5px 0px; font-size: 14px; font-weight: 600; color:#606060;}
-.right_menu_w2 .v-input input{max-height: 20px; font-size: 14px;}
+.right_menu_w2 .v-input input{max-height: 25px; font-size: 14px;}
 .right_menu_w2 .v-input label{display: none;}
 .right_menu_w2 .rightmenu_con .v-icon{padding-right:3px;padding-top:3px;}
 .right_menu_w2 .v-text-field--outline>.v-input__control>.v-input__slot{min-height: 20px;}
@@ -639,6 +640,7 @@ p span.info_text{padding-left:25px; color:#1e99e8;}
 .right_menu_con_w .v-input--slider{width:100%;padding:0 22px 0px 24px; margin-top:0px !important;}
 .right_menu_con_w .v-toolbar__content{width:100% !important;}
 .right_menu_sub_title{padding:20px 12px 23px; font-size: 15px; font-weight: 600; color:#5e870b !important;letter-spacing: -1}
+_:-ms-fullscreen, :root .right_menu_sub_title{padding:5px 12px 23px; font-size: 15px; font-weight: 600; color:#5e870b !important;letter-spacing: -1}
 .v-list-tile .right_menu_sub_title{padding-left:0 !important;}
 .register_t_w span.subtitle_sub{font-size:13px; font-weight: normal; padding-left:20px}
 .text_color_orange{color:#ff821d;}
@@ -743,8 +745,8 @@ input[type='file']{
 .marketrepre_graph .flex:last-child{margin-right:0px !important;}
 
 .market_layout_w{width:100%;}
-.market_card_layout{padding:0; }
-.market_card_layout .flex{margin-right:10px; margin-bottom:10px;}
+.market_card_layout{padding:0; margin-left:25px; }
+.market_card_layout .flex{ margin-bottom:10px;}
 .market_card_layout .flex:last-child{margin-right:0 !important;}
 .market_card_w{ height: 100%; padding-bottom:12px; position: relative;  }
 .market_card_w.line_l{border-right:1px solid #ccd0d4;}
@@ -755,7 +757,7 @@ input[type='file']{
 .market_card ul li{font-size: 18px; font-weight: 600; color:#606060; padding-left:0 !important; margin-top:10px;}
 .market_card ul li span{font-size: 16px; font-weight: normal;}
 
-.market_card2{ padding:12px 16px 0px 16px; width: 272px;}
+.market_card2{ padding:12px 16px 0px 20px; width: 335px; }
 .market_card2 h6{font-size: 16px; font-weight: 600;color:#606060;}
 .market_card2 ul li{line-height: 32px; font-size: 16px; font-weight: 600;}
 .market_card2 ul li dl dt{font-size: 12px; font-weight: 400; color:#808080; padding-left:0 !important; line-height: 34px; display: inline-block;}
@@ -872,7 +874,8 @@ input[type='file']{
 .sumul_card_w ul.bot_line2{border-bottom:1px solid #d6d6e2 !important;}
 .sumul_card_w ul.bot_line3{border-bottom:3px solid #d6d6e2 !important;}
 .sumul_card_w ul li.align_r{width:140px; text-align: right;}
-.sumul_card_w ul.result{background:#ffffff; padding:10px 0 !important;}
+.sumul_card_w ul.result{background:#ffffff; padding:5px 0 2px !important;}
+.sumul_card_w ul.result.ver2{margin-top:15px;border-top:2px solid #d6d6e2 !important;}
 .sumul_card_w ul li.txt_point{color:#5e870b; font-weight:600;}
 .sumul_card_w ul li span.txt_point{color:#5e870b; font-weight:600;}
 .sumul_card_w ul li.txt_point1{color:#48485e; font-weight:600;}

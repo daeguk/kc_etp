@@ -224,6 +224,18 @@ var util = {
 
       return myear + "" + mmonth + "" + mday;
     },
+    getUpAndDownStyle: function(value) {
+      var tmp = Number(value);
+      var rtn = {};
+      var upStyle = {color:'#FF5252'};
+      var sqStyle = {color: '#959EB1'};
+      var downStyle = {color: '#82B1FF'};
 
+      if(tmp > 0) rtn = upStyle;
+      else if(tmp < 0) rtn = downStyle;
+      else rtn = sqStyle;
+
+      return rtn;
+    },
 }  
   export default util

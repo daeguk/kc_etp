@@ -291,7 +291,7 @@
                                     <v-subheader>소급지수</v-subheader>
                                 </v-flex>
 
-                                <v-flex xs4 id="file-drag-drop" v-show="!jisuUploadResult" v-if="modForm.status != '03'">
+                                <v-flex xs4 id="file-drag-drop" v-show="!jisuUploadResult">
                                     <v-layout flat class="drag_box" ref="fileform1">
                                         <input
                                             type="file"
@@ -559,7 +559,7 @@
                         <v-icon small>priority_high</v-icon>플랫폼 연동이 완료된 상태이므로 일부 정보에 한해 변경이 가능합니다.
                     </p>
                     <v-btn depressed large color="primary" dark @click="fn_modifyJisu()">저장</v-btn>
-                    <v-btn depressed large color="#3158a1" dark v-if="modForm.status == '01'" @click="fn_modifyJisu( '02' )">연동신청</v-btn>
+                    <v-btn depressed large color="#209267" dark v-if="modForm.status == '01'" @click="fn_modifyJisu( '02' )">연동신청</v-btn>
                     <v-btn depressed large color="#9e9e9e" dark v-if="modForm.status != '03'" @click="fn_deleteJisu()">삭제</v-btn>
                 </div>
                      
@@ -1060,15 +1060,17 @@ export default {
                 }
             }
 
-            /* [연동신청] 또는 [연동신청] 완료된 상태인 경우 */
-            if( modStatus || this.modForm.status == "02"  ) {
+            /* [연동신청] 또는 [연동신청 완료] 또는 [연동완료] 된 상태인 경우 */
+            if( modStatus || this.modForm.status == "02" || this.modForm.status == "03"  ) {
 
                 if( modStatus ) {
                     this.modForm.modStatus = modStatus;
 
-                    msgTitle = "[연동신청] 요청시 ";
+                    msgTitle = "연동신청 요청시 ";
                 }else if( this.modForm.status == "02" ) {
                     msgTitle = "연동신청된 상태입니다.";
+                }else if( this.modForm.status == "02" ) {
+                    msgTitle = "연동완료 상태입니다.";
                 }
 
 

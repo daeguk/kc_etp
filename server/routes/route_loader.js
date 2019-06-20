@@ -26,13 +26,12 @@ route_loader.sessionCheckRegister = function(app) {
 // 보안을 강화하고자 한다면, session key / IP를 DB에 저장하고 모든 조회시 체크
 // route_loader.js 지금은 loginkey == undefined 로만 체크하기로 함
 // 필요하면, IP / ID 로 DB 세션값 체크, 속도 이슈 생기면 DB를 REDIS로 구성
-
 		if(curItem.session == 'check') {
-			
 			log.debug("seesionCheck path : [" + curItem.path + "]");
 			app.all(curItem.path, function(req, res, next) {
-				
-				                /*
+                
+                
+                /*
                     세션 정보 처리[개발시 사용];
                     ============================
                 */
@@ -44,7 +43,7 @@ route_loader.sessionCheckRegister = function(app) {
 //               req.session.krx_cd = '56'; // ETN 상품이 존재하는 운용사 ( 하나금융투자증권 )
 //               req.session.krx_cd = '2'; // ETN 상품이 존재하는 운용사 ( 신한금융투자증권 ) 
                req.session.save();
-                log.debug("loginkey : " + req.session.user_id);
+               log.debug("loginkey : " + req.session.user_id);
                 /*===================================*/
 
 				if(req.session.user_id) {
@@ -95,3 +94,4 @@ function initRoutes(app, router) {
 }
 
 module.exports = route_loader;
+

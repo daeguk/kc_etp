@@ -35,12 +35,17 @@
                             END
                         ,   ''
                     )                                               AS  f16583                  /* 사무수탁회사번호 */
-        <if test = '( krx_cd != null and krx_cd != "" )' >
+        <choose>
+            <when   test='type_cd != null  and  ( type_cd == "9998" or type_cd == "9999" )'>
+                ,   'Y'                                             AS  login_f33960_check      /* 로그인 운용사코드와 동일한지 체크 */
+            </when>                
+            <when test = '( krx_cd != null and krx_cd != "" )' >
                 ,   CASE    WHEN    td_etp_basic.f33960 =   #{krx_cd}
                             THEN    'Y'
                             ELSE    'N'
                     END                                             AS  login_f33960_check      /* 로그인 운용사코드와 동일한지 체크 */
-        </if>
+            </when>
+        </choose>
 
           FROM  td_etp_basic
          WHERE  1 = 1
@@ -896,7 +901,7 @@
     * ETP 비중 정보를 조회한다.
     * 2019-04-25  bkLove(촤병국)
     -->
-    <select id="getEtpImportanceList">
+    <select id="getEtpWeightList">
       SELECT
         sub.f16316                                                        AS  ISIN_CODE
         ,TRIM(sub.f16004)                                                         AS  JONG_NM

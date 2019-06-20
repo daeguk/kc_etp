@@ -31,8 +31,7 @@ var getIndexJongmokList = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] indexDetail.getIndexJongmokList  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] indexDetail.getIndexJongmokList  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] indexDetail.getIndexJongmokList  req.body.data no data.";
@@ -42,11 +41,11 @@ var getIndexJongmokList = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -54,64 +53,52 @@ var getIndexJongmokList = function(req, res) {
 
         Promise.using(pool.connect(), conn => {
 
+            try {
+                paramData.m168uidxmap_gubun = "FNGUIDE";
+                stmt = mapper.getStatement('indexDetail', 'getIndexJongmokList', paramData, format);
+                log.debug(stmt, paramData);
 
-            async.waterfall([
+                conn.query(stmt, function(err, rows) {
 
-                /* 1. 지수종목상세 정보를 조회한다. */
-                function(callback) {
+                    if (err) {
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] indexDetail.getIndexJongmokList Error while performing Query";
+                        resultMsg.err = err;
+                    }
 
-                    paramData.m168uidxmap_gubun = "FNGUIDE";
-                    stmt = mapper.getStatement('indexDetail', 'getIndexJongmokList', paramData, format);
-                    log.debug(stmt);
+                    if (rows) {
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
 
-                    conn.query(stmt, function(err, rows) {
+                        resultMsg.dataList = rows;
+                    }
 
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] indexDetail.getIndexJongmokList Error while performing Query";
-                            resultMsg.err = err;
+                    res.json(resultMsg);
+                    res.end();
+                });
 
-                            return callback(resultMsg);
-                        }
+            } catch (err) {
+                log.error(err, stmt, paramData);
 
-                        if (rows) {
-                            resultMsg.dataList = rows;
-                        }
-
-                        callback(null);
-                    });
-                }
-
-            ], function(err) {
-
-                if (err) {
-                    log.error(err);
-                } else {
-
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
-                    resultMsg.err = null;
-                }
+                resultMsg.result = false;
+                resultMsg.msg = "[error] etpDetail.getIndexJongmokList Error while performing Query";
+                resultMsg.err = err;
 
                 res.json(resultMsg);
                 res.end();
-            });
+            }
         });
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] indexDetail.getIndexJongmokList 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] indexDetail.getIndexJongmokList 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.dataList = [];
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -135,8 +122,7 @@ var getIndexDetailList = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] indexDetail.getIndexDetailList  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] indexDetail.getIndexDetailList  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] indexDetail.getIndexDetailList  req.body.data no data.";
@@ -146,11 +132,11 @@ var getIndexDetailList = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -165,7 +151,7 @@ var getIndexDetailList = function(req, res) {
                 function(callback) {
 
                     stmt = mapper.getStatement('indexDetail', 'getIndexBasicDetail', paramData, format);
-                    log.debug(stmt);
+                    log.debug(stmt, paramData);
 
                     conn.query(stmt, function(err, rows) {
 
@@ -190,7 +176,7 @@ var getIndexDetailList = function(req, res) {
 
                     paramData.m168uidxmap_gubun = "FNGUIDE";
                     stmt = mapper.getStatement('indexDetail', 'getIndexDetailList', paramData, format);
-                    log.debug(stmt);
+                    log.debug(stmt, paramData);
 
                     conn.query(stmt, function(err, rows) {
 
@@ -213,7 +199,7 @@ var getIndexDetailList = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -228,20 +214,16 @@ var getIndexDetailList = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] indexDetail.getIndexDetailList 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] indexDetail.getIndexDetailList 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.indexBasic = {};
         resultMsg.indexDetailList = [];
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -265,8 +247,7 @@ var getIndexFixList = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] indexDetail.getIndexFixList  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] indexDetail.getIndexFixList  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] indexDetail.getIndexFixList  req.body.data no data.";
@@ -276,11 +257,11 @@ var getIndexFixList = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -295,7 +276,7 @@ var getIndexFixList = function(req, res) {
                 function(callback) {
 
                     stmt = mapper.getStatement('indexDetail', 'getIndexFixData', paramData, format);
-                    log.debug(stmt);
+                    log.debug(stmt, paramData);
 
                     conn.query(stmt, function(err, rows) {
 
@@ -319,7 +300,7 @@ var getIndexFixList = function(req, res) {
                 function(data, callback) {
 
                     stmt = mapper.getStatement('indexDetail', 'getIndexFixJongmokInoutList', paramData, format);
-                    log.debug(stmt);
+                    log.debug(stmt, paramData);
 
                     conn.query(stmt, function(err, rows) {
 
@@ -343,7 +324,7 @@ var getIndexFixList = function(req, res) {
                 function(data, callback) {
 
                     stmt = mapper.getStatement('indexDetail', 'getIndexFixModifyList', paramData, format);
-                    log.debug(stmt);
+                    log.debug(stmt, paramData);
 
                     conn.query(stmt, function(err, rows) {
 
@@ -366,7 +347,7 @@ var getIndexFixList = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -381,21 +362,17 @@ var getIndexFixList = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] indexDetail.getIndexFixList 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] indexDetail.getIndexFixList 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.indexFixData = {};
         resultMsg.indexFixJongmokInoutList = [];
         resultMsg.indexFixModifyList = [];
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -420,8 +397,7 @@ var getIndexList = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] indexDetail.getIndexList  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] indexDetail.getIndexList  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] indexDetail.getIndexList  req.body.data no data.";
@@ -431,11 +407,11 @@ var getIndexList = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );        
 
 
         var format = { language: 'sql', indent: '' };
@@ -445,64 +421,53 @@ var getIndexList = function(req, res) {
         resultMsg.dataList = [];
         Promise.using(pool.connect(), conn => {
 
+            try {
+                paramData.m168uidxmap_gubun = "FNGUIDE";
+                stmt = mapper.getStatement('indexDetail', 'getIndexList', paramData, format);
+                log.debug(stmt, paramData);
 
-            async.waterfall([
+                conn.query(stmt, function(err, rows) {
 
-                /* 1. 지수정보를 조회한다. */
-                function(callback) {
+                    if (err) {
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] indexDetail.getIndexList Error while performing Query";
+                        resultMsg.err = err;
 
-                    paramData.m168uidxmap_gubun = "FNGUIDE";
-                    stmt = mapper.getStatement('indexDetail', 'getIndexList', paramData, format);
-                    log.debug(stmt);
+                        return callback(resultMsg);
+                    }
 
-                    conn.query(stmt, function(err, rows) {
+                    if (rows) {
+                        resultMsg.result = false;
+                        resultMsg.msg = "";
+                        resultMsg.dataList = rows;
+                    }
 
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] indexDetail.getIndexList Error while performing Query";
-                            resultMsg.err = err;
+                    res.json(resultMsg);
+                    res.end();
+                });
 
-                            return callback(resultMsg);
-                        }
+            } catch (err) {
+                log.error(err, stmt, paramData);
 
-                        if (rows) {
-                            resultMsg.dataList = rows;
-                        }
-
-                        callback(null);
-                    });
-                },
-
-            ], function(err) {
-
-                if (err) {
-                    log.error(err);
-                } else {
-
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
-                    resultMsg.err = null;
-                }
+                resultMsg.result = false;
+                resultMsg.msg = "[error] etpDetail.getIndexList Error while performing Query";
+                resultMsg.err = err;
 
                 res.json(resultMsg);
                 res.end();
-            });
+            }
         });
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] indexDetail.getIndexList 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] indexDetail.getIndexList 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.dataList = [];
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }

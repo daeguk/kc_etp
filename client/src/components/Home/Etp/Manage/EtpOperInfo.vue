@@ -305,26 +305,40 @@ export default {
             }).then(function(response) {
                 console.log(response);
 
+                vm.$emit( "fn_showProgress", false );
                 if (response.data) {
                     var dataList = response.data.dataList;
-                    
+
                     vm.result_cnt   =   0;
+
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.showMessageBox('확인', msg,{},1);
+                            return  false;
+                        }
+                    }
+
                     if( dataList && dataList.length > 0 ) {
 
                         if( vm.stateInfo.pageState == "performance" ) {
                             table02.rows.add( dataList ).draw();
+
+                            vm.etpBasic     =   table02.rows().data()[0];
                         }else{
                             table01.rows.add( dataList ).draw();
+
+                            vm.etpBasic     =   table01.rows().data()[0];
                         }
 
-                        vm.etpBasic     =   dataList[0];
-
-                        vm.fmt_f12506   =   dataList[0].fmt_f12506;
+//                        vm.etpBasic     =   dataList[0];
+                        vm.fmt_f12506   =   vm.etpBasic.fmt_f12506;
                         vm.result_cnt   =   util.formatInt( dataList.length );
+
+                        vm.$emit( "fn_setFirstData", vm.etpBasic );
                     }
                 }
 
-                vm.$emit( "fn_showProgress", false );
             }).catch(error => {
                 vm.$emit( "fn_showProgress", false );
                 vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
@@ -641,10 +655,10 @@ export default {
                         ,   "render": function ( data, type, row ) {
 
                                 let htm = "<span>";
-                                htm += "           <b>"+data+"</b>";
-                                htm += "            <br><span class='text_s'>"+row.f16013+"</span>";        /* ETF단축코드 */
-                                if (row.NEW_YN == "Y") {
-                                    htm += "<span><div class='text_new'>new</div></span>";
+                                htm +=          "<b>"+data+"</b>";
+                                htm +=          "<br><span class='text_s'>"+row.f16013+"</span>";        /* ETF단축코드 */
+                                if (row.new_yn == "Y") {
+                                    htm += " <span><div class='text_new'>new</div></span>";
                                 }
                                 return htm;
                             }

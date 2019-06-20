@@ -29,14 +29,15 @@ export default {
   },    
   watch: {
     'etpWeight': function() {
-      console.log("TableEtpWeightChart watch.........etpWeight ");
+      // console.log("TableEtpWeightChart watch.........etpWeight ");
       this.dataInit();
     },
   },
   created: function() {
   },
   mounted: function() {
-    // console.log("LineEtpMultiChart..........");
+    // console.log("TableEtpWeightChart.......... len : " + this.etpWeight.length);
+    // console.log(this.etpWeight)
     this.canvas = document.getElementById(this.chartId);
     this.ctx = this.canvas.getContext('2d');
     // this.mrect = this.canvas.getBoundingClientRect();

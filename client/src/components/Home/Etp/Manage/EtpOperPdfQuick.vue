@@ -96,7 +96,7 @@ import _ from "lodash";
 import Config from "@/js/config.js";
 import Constant from "@/store/store_constant.js";
 
-import ComEtpFavorItemSub   from "@/components/common/control/ComEtpFavorItemSub.vue"; 
+import ComEtpFavorItemSub   from "@/components/common/control/ComEtpFavorItemSub.vue";
 
 export default {
     props : [ "pdfData", "indexBasic", "toggle" ],
@@ -112,7 +112,7 @@ export default {
                 fix_disabled : true,
                 fix_msg : "조치현황 없음"
             },
-            faverSize : 50,            
+            faverSize : 420,            
         };
     },
     components: {

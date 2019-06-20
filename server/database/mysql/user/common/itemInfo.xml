@@ -1,6 +1,279 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="common.item">  
+    <select id="getIndexMast">
+      SELECT large_type, middle_type, market_id, F16013, F16002
+      FROM td_index_basic
+    </select>
+
+    <select id="getIndexBasic">
+      SELECT *
+      FROM td_index_basic
+      WHERE F16013 = #{f16013}
+      AND MARKET_ID = #{market_id}
+    </select>
+
+    <select id="getIndexIntra">
+      SELECT concat(substr(lpad(F20004,8, '0'), 1, 2), ':',substr(lpad(F20004,8, '0'), 3, 2), ':',substr(lpad(F20004,8, '0'), 5, 2)) AS F20004
+              ,DATE_FORMAT(F20044, "%Y.%m.%d") as F20044
+          ,F20008
+      FROM td_index_intra
+      WHERE F16013 = #{f16013}
+      AND MARKET_ID = #{market_id}
+      ORDER BY F20044 desc, F20004 desc LIMIT 100
+    </select>
+
+    <!--
+    * INTRA 기간 설정
+    -->
+    <select id="getIndexIntra1">
+        SELECT concat(substr(lpad(F20004,8, '0'), 1, 2), ':',substr(lpad(F20004,8, '0'), 3, 2), ':',substr(lpad(F20004,8, '0'), 5, 2)) AS F20004
+               ,DATE_FORMAT(F20044, "%Y.%m.%d") as F20044
+		       ,F20008
+        FROM td_index_intra
+        WHERE F16013 = #{f16013}
+        AND market_id = #{market_id}
+        ORDER BY F20044 desc, F20004 desc LIMIT ${limit}
+    </select>
+
+    <!--
+    * HIST 기간 설정
+    -->
+    <select id="getIndexHist1">
+        SELECT DATE_FORMAT(F12506, "%Y.%m.%d") as F12506
+		       ,F15001
+        FROM td_index_hist
+        WHERE F16013 = #{f16013}
+        AND market_id = #{market_id}
+        ORDER BY F12506 desc LIMIT ${limit}
+    </select>
+
+    <select id="getIndexListByType">
+        SELECT *
+        FROM td_index_basic
+        WHERE large_type = #{large_type}
+        <if test="middle_type != null and middle_type !=''">
+          AND middle_type like CONCAT('%',#{middle_type},'%')
+        </if>
+        ORDER BY F16013 ASC
+    </select>
+
+    <!--
+    * INDEX 분석정보
+    -->
+    <select id="getIndexAnal">
+        SELECT *,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef1Week}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Week,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef1Month}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Month,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{befYtd}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS befYtd,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef1Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Year,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef3Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef3Year,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef5Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef5Year,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef10Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef10Year
+        FROM td_index_basic A
+        WHERE A.market_id = #{market_id}
+          AND A.F16013 = #{F16013}
+    </select>
+
+    <select id="getIndexListAnalByType">
+        SELECT *,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef1Week}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Week,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef1Month}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Month,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{befYtd}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS befYtd,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef1Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Year,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef3Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef3Year,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef5Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef5Year,
+          (SELECT B.F15001 FROM td_index_hist B
+            WHERE B.market_id = A.market_id
+            AND B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef10Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef10Year
+        FROM td_index_basic A
+        WHERE A.large_type = #{large_type}
+        <if test="middle_type != null and middle_type !=''">
+          AND A.middle_type like CONCAT('%',#{middle_type},'%')
+        </if>
+        ORDER BY A.F15023 DESC
+    </select>
+
+    <select id="getEtpMast">
+        SELECT F16012, F16013, F16002, F16003, F34239, F16257, F16493
+        FROM td_etp_basic
+    </select>
+
+    <select id="getEtpBasic">
+        SELECT *
+        FROM td_etp_basic
+        WHERE F16013 = #{f16013}
+    </select>
+
+    <!--
+    * ETP 분석정보
+    -->
+    <select id="getEtpAnal">
+        SELECT *,
+          (SELECT B.F15001 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef1Week}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Week,
+          (SELECT B.F15001 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef1Month}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Month,
+          (SELECT B.F15001 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{befYtd}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS befYtd,
+          (SELECT B.F15001 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef1Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Year,
+          (SELECT B.F15001 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef3Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef3Year,
+          (SELECT B.F15001 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef5Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef5Year,
+          (SELECT B.F15001 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef10Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef10Year
+        FROM td_etp_basic A
+        WHERE A.F16013 = #{F16013}
+    </select>
+
+    <!--
+    * ETP 분석정보(NAV)
+    -->
+    <select id="getEtpNavAnal">
+        SELECT *,
+          (SELECT B.F15301 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef1Week}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Week,
+          (SELECT B.F15301 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef1Month}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Month,
+          (SELECT B.F15301 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{befYtd}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS befYtd,
+          (SELECT B.F15301 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef1Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Year,
+          (SELECT B.F15301 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef3Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef3Year,
+          (SELECT B.F15301 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef5Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef5Year,
+          (SELECT B.F15301 FROM td_etp_hist B
+            WHERE B.F16013 = A.F16013
+<![CDATA[            AND B.F12506 <= #{bef10Year}]]>
+            ORDER BY B.F12506 DESC LIMIT 1) AS bef10Year
+        FROM td_etp_basic A
+        WHERE A.F16013 = #{F16013}
+    </select>
+
+    <select id="getEtpIntra">
+        SELECT concat(substr(lpad(F20004,8, '0'), 1, 2), ':',substr(lpad(F20004,8, '0'), 3, 2), ':',substr(lpad(F20004,8, '0'), 5, 2)) AS F20004
+               ,DATE_FORMAT(F20044, "%Y.%m.%d") as F20044
+		       ,F20008
+        FROM td_etp_intra
+        WHERE F16013 = #{f16013}
+        ORDER BY F20044 desc, F20004 desc LIMIT 100
+    </select>
+
+    <select id="getEtpMultiIntra">
+        SELECT concat(substr(lpad(A.F20004,8, '0'), 1, 2), ':',substr(lpad(A.F20004,8, '0'), 3, 2), ':',substr(lpad(A.F20004,8, '0'), 5, 2)) AS F20004
+               ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as F20044
+		       ,A.F20008 as F20008, B.F20008 as iF20008
+        FROM td_etp_intra A, td_index_intra B
+        WHERE A.F16013 = #{f16013}
+        AND B.F16013 = #{f16257}
+        AND B.market_id = #{market_id}
+        AND A.F20044 = B.F20044
+        AND A.F20004 = B.F20004
+        ORDER BY F20044 desc, F20004 desc LIMIT ${limit}
+    </select>
+
+    <select id="getEtpMultiHist">
+        SELECT DATE_FORMAT(F12506, "%Y.%m.%d") as F12506
+		       ,F15001, F15318 as iF15001
+        FROM td_etp_hist
+        WHERE F16013 = #{f16013}
+        ORDER BY F12506 desc LIMIT ${limit}
+    </select>
+<!--
+    <select id="getEtpMultiHist">
+        SELECT DATE_FORMAT(A.F12506, "%Y.%m.%d") as F12506
+		       ,A.F15001 as F15001, B.F15001 as iF15001
+        FROM td_etp_hist A, td_index_hist B
+        WHERE A.F16013 = #{f16013}
+        AND B.F16013 = #{f16257}
+        AND B.market_id = #{market_id}
+        AND A.F12506 = B.F12506
+        ORDER BY F12506 desc LIMIT ${limit}
+    </select>
+    -->
     <!--
     * 마켓 정보의 구성 기본 정보
     -->
@@ -101,8 +374,6 @@
         </if>
     </delete>
 
-
-
     <insert id="insertFavorItem">
         INSERT INTO tm_favor_item
             (type_cd
@@ -128,144 +399,6 @@
 
     </insert>
 
-    <select id="getIndexBasic">
-      SELECT *
-      FROM td_index_basic
-      WHERE F16013 = #{f16013}
-      AND MARKET_ID = #{market_id}
-    </select>
-
-    <select id="getIndexIntra">
-      SELECT concat(substr(lpad(F20004,8, '0'), 1, 2), ':',substr(lpad(F20004,8, '0'), 3, 2), ':',substr(lpad(F20004,8, '0'), 5, 2)) AS F20004
-              ,DATE_FORMAT(F20044, "%Y.%m.%d") as F20044
-          ,F20008
-      FROM td_index_intra
-      WHERE F16013 = #{f16013}
-      AND MARKET_ID = #{market_id}
-      ORDER BY F20044 desc, F20004 desc LIMIT 100
-    </select>
-
-    <select id="getIndexIntra1">
-        SELECT concat(substr(lpad(F20004,8, '0'), 1, 2), ':',substr(lpad(F20004,8, '0'), 3, 2), ':',substr(lpad(F20004,8, '0'), 5, 2)) AS F20004
-               ,DATE_FORMAT(F20044, "%Y.%m.%d") as F20044
-		       ,F20008
-        FROM td_index_intra
-        WHERE F16013 = #{f16013}
-        AND market_id = #{market_id}
-        ORDER BY F20044 desc, F20004 desc LIMIT ${limit}
-    </select>
-
-    <select id="getIndexHist1">
-        SELECT DATE_FORMAT(F12506, "%Y.%m.%d") as F12506
-		       ,F15001
-        FROM td_index_hist
-        WHERE F16013 = #{f16013}
-        AND market_id = #{market_id}
-        ORDER BY F12506 desc LIMIT ${limit}
-    </select>
-
-    <select id="getIndexListByType">
-        SELECT *
-        FROM td_index_basic
-        WHERE large_type = #{large_type}
-        <if test="middle_type != null and middle_type !=''">
-          AND middle_type like CONCAT('%',#{middle_type},'%')
-        </if>
-        ORDER BY F16013 ASC
-    </select>
-
-    <select id="getIndexListAnalByType">
-        SELECT *,
-          (SELECT B.F15001 FROM td_index_hist B
-            WHERE B.market_id = A.market_id
-            AND B.F16013 = A.F16013
-<![CDATA[            AND B.F12506 <= #{bef1Week}]]>
-            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Week,
-          (SELECT B.F15001 FROM td_index_hist B
-            WHERE B.market_id = A.market_id
-            AND B.F16013 = A.F16013
-<![CDATA[            AND B.F12506 <= #{bef1Month}]]>
-            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Month,
-          (SELECT B.F15001 FROM td_index_hist B
-            WHERE B.market_id = A.market_id
-            AND B.F16013 = A.F16013
-<![CDATA[            AND B.F12506 <= #{befYtd}]]>
-            ORDER BY B.F12506 DESC LIMIT 1) AS befYtd,
-          (SELECT B.F15001 FROM td_index_hist B
-            WHERE B.market_id = A.market_id
-            AND B.F16013 = A.F16013
-<![CDATA[            AND B.F12506 <= #{bef1Year}]]>
-            ORDER BY B.F12506 DESC LIMIT 1) AS bef1Year,
-          (SELECT B.F15001 FROM td_index_hist B
-            WHERE B.market_id = A.market_id
-            AND B.F16013 = A.F16013
-<![CDATA[            AND B.F12506 <= #{bef3Year}]]>
-            ORDER BY B.F12506 DESC LIMIT 1) AS bef3Year,
-          (SELECT B.F15001 FROM td_index_hist B
-            WHERE B.market_id = A.market_id
-            AND B.F16013 = A.F16013
-<![CDATA[            AND B.F12506 <= #{bef5Year}]]>
-            ORDER BY B.F12506 DESC LIMIT 1) AS bef5Year,
-          (SELECT B.F15001 FROM td_index_hist B
-            WHERE B.market_id = A.market_id
-            AND B.F16013 = A.F16013
-<![CDATA[            AND B.F12506 <= #{bef10Year}]]>
-            ORDER BY B.F12506 DESC LIMIT 1) AS bef10Year
-        FROM td_index_basic A
-        WHERE A.large_type = #{large_type}
-        <if test="middle_type != null and middle_type !=''">
-          AND A.middle_type like CONCAT('%',#{middle_type},'%')
-        </if>
-        ORDER BY A.F15023 DESC
-    </select>
-
-    <select id="getEtpBasic">
-        SELECT *
-        FROM td_etp_basic
-        WHERE F16013 = #{f16013}
-    </select>
-
-    <select id="getEtpIntra">
-        SELECT concat(substr(lpad(F20004,8, '0'), 1, 2), ':',substr(lpad(F20004,8, '0'), 3, 2), ':',substr(lpad(F20004,8, '0'), 5, 2)) AS F20004
-               ,DATE_FORMAT(F20044, "%Y.%m.%d") as F20044
-		       ,F20008
-        FROM td_etp_intra
-        WHERE F16013 = #{f16013}
-        ORDER BY F20044 desc, F20004 desc LIMIT 100
-    </select>
-
-    <select id="getEtpMultiIntra">
-        SELECT concat(substr(lpad(A.F20004,8, '0'), 1, 2), ':',substr(lpad(A.F20004,8, '0'), 3, 2), ':',substr(lpad(A.F20004,8, '0'), 5, 2)) AS F20004
-               ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as F20044
-		       ,A.F20008 as F20008, B.F20008 as iF20008
-        FROM td_etp_intra A, td_index_intra B
-        WHERE A.F16013 = #{f16013}
-        AND B.F16013 = #{f16257}
-        AND B.market_id = #{market_id}
-        AND A.F20044 = B.F20044
-        AND A.F20004 = B.F20004
-        ORDER BY F20044 desc, F20004 desc LIMIT ${limit}
-    </select>
-
-    <select id="getEtpMultiHist">
-        SELECT DATE_FORMAT(F12506, "%Y.%m.%d") as F12506
-		       ,F15001, F15318 as iF15001
-        FROM td_etp_hist
-        WHERE F16013 = #{f16013}
-        ORDER BY F12506 desc LIMIT ${limit}
-    </select>
-<!--
-    <select id="getEtpMultiHist">
-        SELECT DATE_FORMAT(A.F12506, "%Y.%m.%d") as F12506
-		       ,A.F15001 as F15001, B.F15001 as iF15001
-        FROM td_etp_hist A, td_index_hist B
-        WHERE A.F16013 = #{f16013}
-        AND B.F16013 = #{f16257}
-        AND B.market_id = #{market_id}
-        AND A.F12506 = B.F12506
-        ORDER BY F12506 desc LIMIT ${limit}
-    </select>
-    -->
     <!-- 인덱스 기본정보-->
     <select id="getIndexBaseInfo">
     <![CDATA[

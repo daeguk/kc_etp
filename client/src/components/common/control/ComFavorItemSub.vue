@@ -166,7 +166,7 @@ export default {
             "info": false,   // control table information display field
             "stateSave": true,  //restore table state on page reload,
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-            "scrollY":        '125vh',
+            "scrollY":       '750px',
             thead: {
                 display:'none'
             },
@@ -265,7 +265,7 @@ export default {
             "info": false,   // control table information display field
             "stateSave": true,  //restore table state on page reload,
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-            "scrollY":        '125vh',
+            "scrollY":        '750px',
             thead: {
                 display:'none'
             },
@@ -366,7 +366,7 @@ export default {
             "info": false,   // control table information display field
             "stateSave": true,  //restore table state on page reload,
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-            "scrollY":        '125vh',
+            "scrollY":        '750px',
             thead: {
                 display:'none'
             },
@@ -555,6 +555,10 @@ export default {
                 }
             }).then(response => {
                 // console.log(response);
+
+                if( this.$refs.progress ) {
+                    util.processing(this.$refs.progress, false);
+                }
                 if (response.data.success == false) {
                     this.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
                 } else {
@@ -564,9 +568,10 @@ export default {
                     etn_table.rows.add(items).draw();
                                         
                 }
-                util.processing(this.$refs.progress, false);
             }).catch(error => {
-                util.processing(this.$refs.progress, false);
+                if( this.$refs.progress ) {
+                    util.processing(this.$refs.progress, false);
+                }
                 this.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         }, 
@@ -580,6 +585,10 @@ export default {
                 }
             }).then(response => {
                 // console.log(response);
+
+                if( this.$refs.progress ) {
+                    util.processing(this.$refs.progress, false);
+                }
                 if (response.data.success == false) {
                     this.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
                 } else {
@@ -590,9 +599,10 @@ export default {
                     etf_table.rows.add(items).draw();
             
                 }
-                util.processing(this.$refs.progress, false);
             }).catch(error => {
-                util.processing(this.$refs.progress, false);
+                if( this.$refs.progress ) {
+                    util.processing(this.$refs.progress, false);
+                }
                 this.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         }, 
@@ -606,6 +616,10 @@ export default {
                 }
             }).then(response => {
                 // console.log(response);
+                if( this.$refs.progress ) {     
+                    util.processing(this.$refs.progress, false);
+                }
+
                 if (response.data.success == false) {
                     this.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
                 } else {
@@ -616,9 +630,10 @@ export default {
                     index_table.rows.add(items).draw();
                     
                 }
-                util.processing(this.$refs.progress, false);
             }).catch(error => {
-                util.processing(this.$refs.progress, false);
+                if( this.$refs.progress ) {     
+                    util.processing(this.$refs.progress, false);
+                }
                 this.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         },
@@ -715,6 +730,7 @@ export default {
         filterData: function(mode) {
             var vm = this;
             var faverData = '-1';
+            vm.search = vm.search.toUpperCase();
             
             /* 이벤트 delay이로 부하 줄임 */
             var delay = (function(){

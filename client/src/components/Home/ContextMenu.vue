@@ -46,8 +46,8 @@ export default {
   data() {
     return {
       allMenuList: [
-        {path: '/info/etpinfo', imagePath:'/assets/img/icons/icons8-heat-map.svg', title: 'MARKET ETP INFO', stitle: 'MARKET ETP 정보 조회'},
-        {path: '/info/indexinfo', imagePath:'/assets/img/icons/icons8-heat-map.svg', title: 'MARKET INDEX INFO', stitle: 'INDEX INFO 정보 조회'},
+        {path: '/info/etpinfo', imagePath:'/assets/img/marketetp_icon.png', title: 'MARKET ETP INFO', stitle: 'MARKET ETP 정보 조회'},
+        {path: '/info/indexinfo', imagePath:'/assets/img/marketindex_icon.png', title: 'MARKET INDEX INFO', stitle: 'INDEX INFO 정보 조회'},
         {path: '/index/manage/indexSummary', imagePath:'/assets/img/icons/icons8-dashboard.svg', title: '지수 관리', stitle: '지수 관리 정보 조회'},
         {path: '/index/register', imagePath:'/assets/img/icons/icons8-login-rounded.svg', title: '지수 등록', stitle: '지수 등록 정보 조회'},
         {path: '/etp/manage', imagePath:'/assets/img/icons/icons8-investment-portfolio.svg', title: 'ETP 운용 관리', stitle: 'TP 운용 정보 조회'},
