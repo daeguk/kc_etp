@@ -575,6 +575,9 @@ export default {
                     vm.form.show_method_file    =   null;           /* 지수방법론 파일명 */
                     vm.form.method_file_id      =   -1;             /* 지수방법론 파일 ID */
                     vm.$refs.methodFile.value   =   null;           /* 지수방법론 파일정보 */
+                    if( vm.$refs.methodFile.files ) {
+                        vm.$refs.methodFile.files   =   null;       /* 지수방법론 파일정보 */
+                    }
 
                     vm.form.duplCheckResult     =   false;          /* 중복체크 결과 */
                     vm.form.req_content         =   "";             /* 요청사항 */
@@ -586,6 +589,9 @@ export default {
                     vm.jisuDataList             =   [];             /* 소급지수 업로드 후 목록정보 */
                     vm.jisuUploadResult         =   false;          /* 소급지수 업로드 결과 여부 */
                     vm.$refs.file.value         =   null;           /* 소급지수 파일정보 */
+                    if( vm.$refs.file.files ) {
+                        vm.$refs.file.files     =   null;           /* 소급지수 파일정보 */
+                    }
 
                     vm.pagination.rowsPerPage   =   -1;
 
@@ -676,8 +682,10 @@ export default {
                         }
                     }
 
+                    var flag    =   true;
                     new Promise(function(resolve, reject) {
                         if( !selfThis.fn_checkFile( file ) ) {
+                            flag    =   false;
                             return  false;
                         }
                         resolve();
@@ -686,6 +694,7 @@ export default {
                     }).then( function() {
                         new Promise(function(resolve, reject) {
                             if( !selfThis.fn_sizeCheck( file, "file" ) ) {
+                                flag    =   false;
                                 return  false;
                             }
                             resolve();                      
@@ -695,6 +704,16 @@ export default {
                             selfThis.fn_jisuFileUpload( file, selfThis );
                         });
                     });
+
+                    if( !flag ) {
+                        this.$refs.file.value  =   null;
+
+                        if( this.$refs.file.files ) {
+                            this.$refs.file.files  =   null;
+                        }
+
+                        return  false;
+                    }
 
                 }.bind(this)
             );
@@ -717,8 +736,10 @@ export default {
                         }
                     }
 
+                    var flag    =   true;
                     new Promise(function(resolve, reject) {
                         if( !selfThis.fn_sizeCheck( file, "methodFile" ) ) {
+                            flag    =   false;
                             return  false;
                         }
                         resolve();                      
@@ -729,6 +750,15 @@ export default {
                         this.$refs.methodFile.files =   files;
                     });
 
+                    if( !flag ) {
+                        this.$refs.methodFile.value  =   null;
+
+                        if( this.$refs.methodFile.files ) {
+                            this.$refs.methodFile.files  =   null;
+                        }
+                        
+                        return  false;
+                    }
 
                 }.bind(this)
             );            
@@ -751,8 +781,10 @@ export default {
                     }
                 }
 
+                var flag    =   true;
                 new Promise(function(resolve, reject) {
                     if( !selfThis.fn_checkFile( file ) ) {
+                        flag    =   false;
                         return  false;
                     }
                     resolve();
@@ -761,15 +793,26 @@ export default {
                 }).then( function() {
                     new Promise(function(resolve, reject) {
                         if( !selfThis.fn_sizeCheck( file, "file" ) ) {
+                            flag    =   false;
                             return  false;
                         }
                         resolve();                      
                     }).catch( function(e) {
                         console.log( e );
                     }).then( function() {    
-                        selfThis.fn_jisuFileUpload( file, selfThis );
+                        selfThis.fn_jisuFileUpload( file, selfThis );                       
                     });
-                });                
+                });
+
+                if( !flag ) {
+                    this.$refs.file.value  =   null;
+
+                    if( this.$refs.file.files ) {
+                        this.$refs.file.files  =   null;
+                    }
+
+                    return  false;
+                }
 
                 this.$refs.fileform.addEventListener(
                     evt,
@@ -778,7 +821,7 @@ export default {
                         e.stopPropagation();
                     }.bind(this),
                     false
-                );
+                );                 
             }.bind(this)
         );
 
@@ -797,9 +840,31 @@ export default {
                         this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
                         return  false;
                     }
-                }                
+                }
 
-                this.form.show_method_file  =   file.name;
+                var flag    =   true;
+                new Promise(function(resolve, reject) {
+                    if( !selfThis.fn_sizeCheck( file, "methodFile" ) ) {
+                        flag    =   false;
+                        return  false;
+                    }
+                    resolve();                      
+                }).catch( function(e) {
+                    console.log( e );
+                }).then( function() {    
+                    selfThis.form.show_method_file  =   file.name;
+//                    selfThis.$refs.methodFile.files =   file;                  
+                });
+
+                if( !flag ) {
+                    this.$refs.methodFile.value  =   null;
+
+                    if( this.$refs.methodFile.files ) {
+                        this.$refs.methodFile.files  =   null;
+                    }
+
+                    return  false;
+                }
 
                 this.$refs.methodForm.addEventListener(
                     evt,
@@ -809,6 +874,7 @@ export default {
                     }.bind(this),
                     false
                 );
+
             }.bind(this)
         ); 
 
@@ -1095,6 +1161,10 @@ export default {
             
             vm.form.jisu_file_id    =   -1;
             vm.$refs.file.value     =   null;
+
+            if( vm.$refs.file.files ) {
+                vm.$refs.file.files     =   null;
+            }
         },
 
         /*

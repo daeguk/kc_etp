@@ -320,8 +320,8 @@ var deleteEtpApply = function (req, res) {
         var async = require('async');
         var format = { language: 'sql', indent: ' ' };
         function replacer(name, val) {
-            if ( val == null || val==undefined ) {
-                return ""; 
+            if ( val == '' || val==undefined ) {
+                return null; 
             }  else {
                 return val; // return unchanged
             }
@@ -367,6 +367,7 @@ var deleteEtpApply = function (req, res) {
                         conn.query(stmt, function( err, rows ) {
                             if ( rows ) {
                                 params.dbMasterData.seq_hist = rows[0].SEQ_HIST;
+                                params.dbMasterData.user_id = params.user_id;
                             }
                             if( err ) {
                                 return callback( err );

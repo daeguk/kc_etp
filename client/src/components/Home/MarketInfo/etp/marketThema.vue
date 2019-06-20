@@ -2,7 +2,7 @@
     <v-container>
         <v-layout row wrap>
             <v-flex xs12>
-                <v-card flat>
+                <v-card flat class="text-xs-center">
                     <img src="/assets/img/strategy_img.png" height="200px">
                 </v-card>
             </v-flex>

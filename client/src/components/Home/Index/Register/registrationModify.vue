@@ -331,7 +331,13 @@
                                     </p>
                                     <p>
                                         <v-icon color="#1976d2">check</v-icon>
-                                        <b>양식</b>
+                                        <b>양식</b> <v-btn
+                                                    small
+                                                    depressed
+                                                    color="#1e99e8"
+                                                    dark
+                                                    class="mt-0"
+                                                >샘플 다운로드</v-btn>
                                         <br>
                                         <span class="info_text">date: YYYYMMDD</span>
                                         <br>
@@ -611,6 +617,10 @@ export default {
             tableName : "table01",
             jisuDataList : [],          /* 소급지수 업로드 후 목록정보 */
             jisuUploadResult : false,   /* 소급지수 업로드 결과 여부 */
+            limit : {
+                    method_max_size : 5      /* 지수방법론 (Mb) */
+                ,   jisu_max_size : 1        /* 소급지수 (Mb) */
+            },            
 
 
             /* 모달관련 정보 */
@@ -762,14 +772,37 @@ export default {
                         }
                     }                    
 
-                    this.fn_checkFile( file ).then(function (res) {
-                            if( !res ) {
+                    var flag    =   true;
+                    new Promise(function(resolve, reject) {
+                        if( !selfThis.fn_checkFile( file ) ) {
+                            flag    =   false;
+                            return  false;
+                        }
+                        resolve();
+                    }).catch( function(e) {
+                        console.log( e );
+                    }).then( function() {
+                        new Promise(function(resolve, reject) {
+                            if( !selfThis.fn_sizeCheck( file, "file" ) ) {
+                                flag    =   false;
                                 return  false;
                             }
-                            
+                            resolve();                      
+                        }).catch( function(e) {
+                            console.log( e );
+                        }).then( function() {    
                             selfThis.fn_jisuFileUpload( file, selfThis );
+                        });
+                    });
+
+                    if( !flag ) {
+                        this.$refs.file1.value  =   null;
+
+                        if( this.$refs.file1.files ) {
+                            this.$refs.file1.files  =   null;
                         }
-                    );
+                        return  false;
+                    }
 
                 }.bind(this)
             );
@@ -792,8 +825,30 @@ export default {
                         }
                     }                    
 
-                    this.modForm.show_method_file   =   file.name;
-                    this.$refs.methodFile1.files    =   files;
+                    var flag    =   true;
+                    new Promise(function(resolve, reject) {
+                        if( !selfThis.fn_sizeCheck( file, "methodFile" ) ) {
+                            flag    =   false;
+                            return  false;
+                        }
+                        resolve();                      
+                    }).catch( function(e) {
+                        console.log( e );
+                    }).then( function() {    
+                        this.modForm.show_method_file   =   file.name;
+                        this.$refs.methodFile1.files    =   files;
+                    });
+
+                    if( !flag ) {
+                        this.$refs.methodFile1.value =   null;
+
+                        if( this.$refs.methodFile1.files ) {
+                            this.$refs.methodFile1.files =   null;
+                        }
+
+                        return  false;
+                    }
+
                 }.bind(this)
             );            
         }
@@ -815,14 +870,37 @@ export default {
                     }
                 }                
 
-                this.fn_checkFile( file ).then(function (res) {
-                        if( !res ) {
+                var flag    =   true;
+                new Promise(function(resolve, reject) {
+                    if( !selfThis.fn_checkFile( file ) ) {
+                        flag    =   false;
+                        return  false;
+                    }
+                    resolve();
+                }).catch( function(e) {
+                    console.log( e );
+                }).then( function() {
+                    new Promise(function(resolve, reject) {
+                        if( !selfThis.fn_sizeCheck( file, "file" ) ) {
+                            flag    =   false;
                             return  false;
                         }
-                        
+                        resolve();                      
+                    }).catch( function(e) {
+                        console.log( e );
+                    }).then( function() {    
                         selfThis.fn_jisuFileUpload( file, selfThis );
+                    });
+                });
+
+                if( !flag ) {
+                    this.$refs.file1.value  =   null;
+
+                    if( this.$refs.file1.files ) {
+                        this.$refs.file1.files  =   null;
                     }
-                );
+                    return  false;
+                }
 
                 this.$refs.fileform1.addEventListener(
                     evt,
@@ -852,7 +930,30 @@ export default {
                     }
                 }                
 
-                this.modForm.show_method_file   =   file.name;
+                var flag    =   true;
+                new Promise(function(resolve, reject) {
+                    if( !selfThis.fn_sizeCheck( file, "methodFile" ) ) {
+                        flag    =   false;
+                        return  false;
+                    }
+                    resolve();                      
+                }).catch( function(e) {
+                    console.log( e );
+                }).then( function() {    
+                    selfThis.modForm.show_method_file  =   file.name;
+//                    selfThis.$refs.methodFile1.files =   file;
+                });
+
+                if( !flag ) {
+                    this.$refs.methodFile1.value  =   null;
+
+                    if( this.$refs.methodFile1.files ) {
+                        this.$refs.methodFile1.files  =   null;
+                    }
+                    return  false;
+                }
+
+//                this.modForm.show_method_file   =   file.name;
 
                 this.$refs.methodForm1.addEventListener(
                     evt,
@@ -1248,14 +1349,18 @@ export default {
             vm.jisuUploadResult         =   false;
             
             vm.modForm.jisu_file_id     =   -1;
-            vm.$refs.file1.value         =   null;
+            vm.$refs.file1.value        =   null;
+
+            if( vm.$refs.file1.files ) {
+                vm.$refs.file1.files    =   null;
+            }
         },
 
         /*
          * 엑셀 유형인지 파일을 체크한다.
          * 2019-04-02  bkLove(촤병국)
          */
-        async   fn_checkFile( file ) {
+        fn_checkFile( file ) {
 
             var fileLen = file.name.length;
             var lastDot = file.name.lastIndexOf(".");
@@ -1263,7 +1368,7 @@ export default {
             /* 1. 확장자가 존재하지 않는지 확인 */
             if (lastDot == -1) {
 
-                if( await this.$root.$confirm2.open(
+                if( this.$root.$confirm2.open(
                             '[엑셀파일 유형확인]',
                             "엑셀유형의 파일인지 확인 해 주세요.",
                             {}
@@ -1280,7 +1385,7 @@ export default {
             /* 2. 허용되는 확장자에 포함되는지 확인 */
             if (!allowExt.includes(fileExt)) {
 
-                if( await this.$root.$confirm2.open(
+                if( this.$root.$confirm2.open(
                             '[엑셀파일 유형확인]',
                             "엑셀유형의 파일인지 확인 해 주세요.",
                             {}
@@ -1551,7 +1656,58 @@ export default {
                 selfThis.$emit( "fn_showProgress", false );
                 selfThis.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
-        }
+        },
+
+        fn_sizeCheck( file, gubun ) {
+
+            var vm = this;
+
+            if( file ) {
+                var title = "";
+                var maxSize = 0;
+
+                if( gubun == "file") {
+                    title = "소급지수";
+
+                    if( vm.limit ) {
+                        maxSize = vm.limit.jisu_max_size;
+                    }
+                }else if( gubun == "methodFile" ) {
+                    title = "지수방법론";
+
+                    if( vm.limit ) {
+                        maxSize = vm.limit.method_max_size;
+                    }                    
+                }
+
+                if( maxSize > 0 ) {
+                    if( file.size == 0 ) {
+                        if( this.$root.$confirm1.open(
+                                    '확인',
+                                    title + ' 파일용량이 0 byte 입니다.',
+                                    {}
+                                ,   1
+                            )
+                        ) {
+                            return false;
+                        }
+                    }
+
+                    if( ( maxSize * 1024 * 1024 ) < file.size ) {
+                        if( this.$root.$confirm1.open(
+                                    '확인',
+                                    title + ' 파일용량은 ' + maxSize + ' Mb 보다 작아야 합니다.',
+                                    {}
+                                ,   1
+                            )
+                        ) {                       
+                            return false;
+                        }
+                    }
+                }
+            }
+            return  true;
+        }        
     }
 };
 </script>

@@ -257,16 +257,6 @@ var getEtpRegisterView = function(req, res) {
 
                                 
                             }
-                            // else{
-                            //     var masterData  ={
-                            //         seq_hist:"", seq:"", isu_kor_nm:"",isu_eng_nm:"",isin_code:"",isu_srt_cd:"",etp_type:"",inst_cd:"",req_date:"",list_req_date:"",list_date:"",krx_dist_yn:"",comp_dist_yn:"",ksd_dist_yn:"",mirae_dist_yn:"",idx_inst_cd:"",idx_sym_code:"",idx_nm:"",idx_dist_inst_cd:"",idx_close_type:"",idx_holy_cd:"",idx_trace_yd_mult_type:"",pre_idx_type:"",idx_file_nm:"",idx_comp_ksd_dist_yn:"",idx_comp_mirae_dist_yn:"",blom_ticker:"",user_req:"",real_yn:"N",ridx_inst_cd:"",ridx_dist_inst_cd:"",ridx_crt_sym_code:"",ridx_dist_sym_code:"",ridx_holy_cd:"",ridx_krx_dist_yn:"",ridx_comp_dist_yn:"",ridx_ksd_dist_yn:"",ridx_mirae_dist_yn:"",ridx_dist_term:"",refidx_sym_code:"",refidx_nm:"",refidx_inst_cd:"",refidx_file_nm:"",refidx_req:"",refidx_blom_ticker:"",ex_rate_cd:"",ex_hedge_yn:"",isin_stat_cd:"",inav_calc_cd:"",idx_rec_yn:"",idx_dis_yn:"",inav_calc_yn:"",idx_mid:"",ridx_mid:"",close_file:"",real_idx_tr:"",proc_stat:"",insert_id:"",insert_time:"",update_id:"",update_time:"",kor_for_type:"F",agent_cd:"",idx_comp_cd:"",krx_up_code:"",agent_up_code:""
-                            //        ,idx_file_path:""
-                            //        ,listDate:"", listReqDate:""
-                            //        ,kor_idx_sym_code:"", kor_idx_nm:"", kor_user_req:""
-                            //        };
-
-                            //        resultMsg.masterData.push(masterData);
-                            // }
                         
                             callback( null, param );
                             
@@ -446,13 +436,15 @@ var insertEtpRegister = function(req, res) {
         }
 
         if(real_yn =='N'){
-            paramData.ridx_dist_inst_cd='';  //지수입수기관
-            paramData.ridx_dist_sym_code=''; //지수입수기관심볼
-            paramData.ridx_holy_cd='';       //실시간휴장일기준
-            paramData.ridx_comp_dist_yn='';  //발행사
-            paramData.ridx_krx_dist_yn='';   //KRX 
-            paramData.ridx_ksd_dist_yn='';   //예탁원
-            paramData.ridx_mirae_dist_yn=''; //미래에셋펀드서비스
+            paramData.ridx_dist_inst_cd=null;  //지수입수기관
+            paramData.ridx_dist_sym_code=null; //지수입수기관심볼
+            paramData.ridx_holy_cd=null;       //실시간휴장일기준
+            paramData.ridx_comp_dist_yn=null;  //발행사
+            paramData.ridx_krx_dist_yn=null;   //KRX 
+            paramData.ridx_ksd_dist_yn=null;   //예탁원
+            paramData.ridx_mirae_dist_yn=null; //미래에셋펀드서비스
+            paramData.ex_hedge_yn=null;        //환헷지여부
+            paramData.ridx_dist_term=null;     //지수제공주기
         }
 
         if(paramData.kor_for_type =='K'){
@@ -464,26 +456,67 @@ var insertEtpRegister = function(req, res) {
 
 
         log.debug('###ETP CALL JSONPARSE LAST>>>###'+JSON.stringify(paramData));
-        var stmt = mapper.getStatement('EtpRegister', 'insertMaster', paramData, format);
+        var stmt = '';
         log.debug(stmt);
-        
+            
         
         Promise.using(pool.connect(), conn => {
-            conn.queryAsync(stmt).then(rows => {
+            try{
+                async.waterfall([
+                    function( callback ) {    
+                        stmt = mapper.getStatement('EtpRegister', 'insertMaster', paramData, format);
+                        log.debug(stmt);
+                        conn.query(stmt, function( err, rows ) {  
+                            if ( rows ) {
+                                log.debug( "insertMaster", rows);
+                               paramData.seq = rows.insertId ;
+                            }
+                            if( err ) {
+                                return callback( err );
+                            }
+                            callback( null, paramData );
+                        })
+                    },
+                    
+                    function( data, callback ) {
+                        log.debug("EtpRegister paramData insertMasterHistory before", paramData);
+                        paramData.seq_hist = 1;
+                        stmt = mapper.getStatement('EtpRegister', 'insertMasterHistory', paramData, format);
+                        log.debug(stmt);
+                        conn.query(stmt, function( err, rows ) {
+                            if ( rows ) {
+                                log.debug( "insertMasterHistory", rows );
+                            }
+                            if( err ) {
+                                return callback( err );
+                            }
+                            callback( null, paramData );
 
-                res.json({
-                    result: true
-                });
-                res.end();
-    
-            }).catch(err => {
-                log.debug("[error] EtpRegister.insertMaster Error while performing Query.", err);
+                        });
+                    
+                    },
+                    ],function (err) {
+                        if(err){
+                            log.debug("[err] EtpRegister.insertMaster Error while performing Query.", err);
+                            res.json({
+                                result: false
+                                ,msg: err
+                            });
+                        }else{
+                            res.json({
+                                result: true
+                            });
+                        }
+                        res.end();
+                    });
+            }catch(exception) {
+                log.debug("[error] EtpRegister.insertMaster Error while performing Query.", exception);
                 res.json({
                     result: false
-                    ,msg: err
+                    ,msg: exception
                 });
                 res.end();
-            });
+            }
         });
 };
 
@@ -514,13 +547,15 @@ var updateEtpRegister = function(req, res) {
     paramData.list_date = paramData.listDate;
 
     if(paramData.real_yn =='N'){
-        paramData.ridx_dist_inst_cd='';  //지수입수기관
-        paramData.ridx_dist_sym_code=''; //지수입수기관심볼
-        paramData.ridx_holy_cd='';       //실시간휴장일기준
-        paramData.ridx_comp_dist_yn='';  //발행사
-        paramData.ridx_krx_dist_yn='';   //KRX 
-        paramData.ridx_ksd_dist_yn='';   //예탁원
-        paramData.ridx_mirae_dist_yn=''; //미래에셋펀드서비스
+        paramData.ridx_dist_inst_cd=null;  //지수입수기관
+        paramData.ridx_dist_sym_code=null; //지수입수기관심볼
+        paramData.ridx_holy_cd=null;       //실시간휴장일기준
+        paramData.ridx_comp_dist_yn=null;  //발행사
+        paramData.ridx_krx_dist_yn=null;   //KRX 
+        paramData.ridx_ksd_dist_yn=null;   //예탁원
+        paramData.ridx_mirae_dist_yn=null; //미래에셋펀드서비스
+        paramData.ex_hedge_yn=null;        //환헷지여부
+        paramData.ridx_dist_term=null;     //지수제공주기
     }
 
     if(paramData.kor_for_type =='K'){

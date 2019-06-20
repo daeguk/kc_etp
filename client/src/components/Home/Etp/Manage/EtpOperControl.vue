@@ -205,7 +205,7 @@ export default {
             FaverClassName: '',
             pdfData : {},
             indexBasic : {},
-            faverSize : 80,
+            faverSize : 760,
             reloadYn : false,
             toggle : {
                 togglePdfEmergencyPop : false,

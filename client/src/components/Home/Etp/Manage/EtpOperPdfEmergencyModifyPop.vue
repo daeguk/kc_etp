@@ -1246,7 +1246,7 @@ export default {
             }            
 
             var searchParam                 =   {}
-            searchParam.f16012              =   vm.txtAddEtpCode;
+            searchParam.f16012              =   "";
             searchParam.searchCode          =   vm.txtAddEtpCode;
             searchParam.initYn              =   "N";
 
