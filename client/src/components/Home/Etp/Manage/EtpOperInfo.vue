@@ -195,7 +195,7 @@ export default {
                 "info": false,   // control table information display field
                 "stateSave": true,  //restore table state on page reload,
                 "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                "scrollY": '73vh',
+                "scrollY": '760px',
                 paging: false,
                 searching: false,
                 data : [],
@@ -403,7 +403,7 @@ export default {
                     "info": false,   // control table information display field
                     "stateSave": true,  //restore table state on page reload,
                     "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                    "scrollY": '75vh',
+                    "scrollY": '760px',
                     paging: false,
                     searching: false,
                     data : [],
