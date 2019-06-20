@@ -102,7 +102,7 @@ var getRegistedJisuData = function(req, res) {
                     try {
                         paramData.file_id = data.jisu_file_id;
                         stmt = mapper.getStatement('indexRegister', 'getTmJisuTempUpload', paramData, format);
-                        log.debug(stmt, paramData);
+                        log.debug(stmt);
 
                         conn.query(stmt, function(err, rows) {
 

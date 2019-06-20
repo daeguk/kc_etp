@@ -478,7 +478,7 @@ var fileuploadSingle = function(req, res) {
                                                     try {
                                                         reqParam.dataLists = divideList;
                                                         stmt = mapper.getStatement('indexRegister', 'saveTmJisuTempUpload', reqParam, format);
-//                                                        log.debug(stmt, reqParam);
+                                                        log.debug(stmt);
 
                                                         conn.query(stmt, function(err, rows) {
                                                             if (err) {
