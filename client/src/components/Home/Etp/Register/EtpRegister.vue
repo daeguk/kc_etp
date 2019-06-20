@@ -1247,9 +1247,15 @@ export default {
                 }
             });
         },
-
+        
          fn_insertEtpRegister: async function(arg) {
-          console.log(this.$root.$confirm);
+             function replacer(name, val) {
+                        if ( val == '' || val==undefined ) {
+                            return null; 
+                        }  else {
+                            return val; // return unchanged
+                        }
+                    }
             var vm = this;
             vm.errors = {seq_hist:true, seq:true, isu_kor_nm:true,isu_eng_nm:true,isin_code:true,isu_srt_cd:true,etp_type:true,inst_cd:true,req_date:true,list_req_date:true,list_date:true,krx_dist_yn:true,comp_dist_yn:true,ksd_dist_yn:true,mirae_dist_yn:true,idx_inst_cd:true,idx_sym_code:true,idx_nm:true,idx_dist_inst_cd:true,idx_close_type:true,idx_holy_cd:true,idx_trace_yd_mult_type:true,pre_idx_type:true,idx_file_nm:true,idx_comp_ksd_dist_yn:true,idx_comp_mirae_dist_yn:true,blom_ticker:true,user_req:true,real_yn:"N",ridx_inst_cd:true,ridx_dist_inst_cd:true,ridx_crt_sym_code:true,ridx_dist_sym_code:true,ridx_holy_cd:true,ridx_krx_dist_yn:true,ridx_comp_dist_yn:true,ridx_ksd_dist_yn:true,ridx_mirae_dist_yn:true,ridx_dist_term:true,refidx_sym_code:true,refidx_nm:true,refidx_inst_cd:true,refidx_file_nm:true,refidx_req:true,refidx_blom_ticker:true,ex_rate_cd:true,ex_hedge_yn:true,isin_stat_cd:true,inav_calc_cd:true,idx_rec_yn:true,idx_dis_yn:true,inav_calc_yn:true,idx_mid:true,ridx_mid:true,close_file:true,real_idx_tr:true,proc_stat:true,insert_id:true,insert_time:true,update_id:true,update_time:true,kor_for_type:"F",agent_cd:true,idx_comp_cd:true,krx_up_code:true,agent_up_code:true
                         ,idx_file_path:true
@@ -1459,9 +1465,9 @@ export default {
 
             }
 
-            if(vm.masterData.ex_rate_cd =='0000'){
-                vm.masterData.ex_hedge_yn ='Y';
-            } 
+            // if(vm.masterData.ex_rate_cd =='0000'){
+            //     vm.masterData.ex_hedge_yn ='Y';
+            // } 
 
    
                 if(arg ==='S' && hudleYn =='Y'){
@@ -1482,7 +1488,7 @@ export default {
                         vm.masterData.idx_file_nm= vm.masterData.idx_file_path + "/" + vm.masterData.idx_file_nm;
                     }
                     
-                    //int type파라미터 값 없을 시 null저장
+                    //int type파라미터
                     // idx_trace_yd_mult_type(지수추적배수)
                     // pre_idx_type(전일기초지수구분)
                     // ridx_dist_term(지수제공주기)
@@ -1494,7 +1500,7 @@ export default {
                     await axios({
                         method: 'post',
                         url: Config.base_url + "/user/etp/insertEtpRegister",
-                        data: { "data" : JSON.stringify(vm.masterData)},
+                        data: { "data" : JSON.stringify(vm.masterData, replacer)},
                         headers: {
                                 "Content-Type": "application/json"
                             }
@@ -1557,13 +1563,7 @@ export default {
                     if(vm.masterData.idx_file_path !=='' && vm.masterData.idx_file_path !=null){ 
                         vm.masterData.idx_file_nm= vm.masterData.idx_file_path + "/" + vm.masterData.idx_file_nm;
                     }
-                    function replacer(name, val) {
-                        if ( val == null || val==undefined ) {
-                            return ""; 
-                        }  else {
-                            return val; // return unchanged
-                        }
-                    }
+                 
                  
                     await axios({
                         method: 'post',
