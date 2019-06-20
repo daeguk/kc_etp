@@ -239,7 +239,7 @@ import ComIndexFixPopup     from "@/components/common/popup/ComIndexFixPopup.vue
 import ComEtpFavorItemSub   from "@/components/common/control/ComEtpFavorItemSub.vue"; 
 
 export default {
-    props: [ "indexBasic" ],
+    props: [ "etpBasic" ],
 
     components: {
             ComIndexFixPopup        :   ComIndexFixPopup
@@ -263,7 +263,7 @@ export default {
                 fix_disabled : true,
                 fix_msg : "조치현황 없음"
             },
-            faverSize : 50,
+            faverSize : 490,
         };
     },
     mounted: function() {},
@@ -275,7 +275,7 @@ export default {
         fn_showDetailIndex() {
             var vm = this;
 
-            vm.$emit( "fn_showDetailIndex", 4, vm.indexBasic );
+            vm.$emit( "fn_showDetailIndex", 4, vm.etpBasic );
         },
 
         /*

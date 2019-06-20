@@ -57,7 +57,7 @@
                     <v-layout>
                         <v-flex xs6>
                     <v-subheader>
-                        TOP101 비중정보
+                        TOP10 비중정보
                         <v-dialog v-model="dialog" persistent max-width="500">
                             <template v-slot:activator="{ on }">
                                 <v-btn outline small color="primary" dark v-on="on">VIEW ALL</v-btn>
@@ -440,10 +440,11 @@ export default {
             } 
 
             for (let i = 0; i < sel_items.length; i++) {
-                
+
                     let compare_cnt = perf_table.column(0).data().filter(
                         function(value, index) {
-                            return sel_items[i].JISU_CD == value ? true : false;
+                            var JISU_CD = ( gubun == '1' ? sel_items[i].F16012 : sel_items[i].F16013 );
+                            return JISU_CD == value ? true : false;
                         }
                     ).count();
                     
@@ -452,12 +453,12 @@ export default {
                         var market_id = '';
                         // ETP 정보일 경우
                         if (gubun == '1') {
-                            jisu_cd = sel_items[i].JISU_CD
+                            jisu_cd = sel_items[i].F16012;
                             market_id = '';
                         // Index 정보 일경우
                         } else if (gubun == '2') {
-                            jisu_cd = sel_items[i].JISU_CD
-                            market_id = sel_items[i].MARKET_ID;
+                            jisu_cd = sel_items[i].F16013;
+                            market_id = sel_items[i].market_id;
                         }
                         axios.get(Config.base_url + "/user/index/getIndexAnalysisData", {
                                 params: {
@@ -491,7 +492,7 @@ export default {
                        
                         });
                     } else {                            
-                            vm.$emit("showMessageBox", '확인',sel_items[i].JISU_NM +"은 이미 추가된 자산입니다.",{},1);
+                            vm.$emit("showMessageBox", '확인',sel_items[i].F16002 +"은 이미 추가된 자산입니다.",{},1);
                     }
                    
             }

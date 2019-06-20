@@ -10,8 +10,9 @@
                         <h3 class="headline subtit" pb-0>
                             {{ indexBasic.f16002 }} |
                             <span class="grey--text">{{ indexBasic.f16013 }}</span>
-                            <span class="text_result_t">기준일 : {{ indexBasic.fmt_f12506 }}</span>
-                            <span class="sub_txt">Last Updated : </span>
+
+                            <span class="text_result_t">기준일 : {{ indexBasic.fmt_std_date  /* 기준일 */ }}</span>
+                            <span class="sub_txt">Last Updated : {{ indexBasic.fmt_f12506   /* 입회일 */ }}</span>
                         </h3>
                     </v-card-title>
 
@@ -21,8 +22,8 @@
                         <h3 class="headline subtit" pb-0>
                             {{ indexBasic.f16002 }} 편입지수 목록
 
-                            <p class="grey--text">{{ form.resultsCnt }} results</p>
-                            <p class="sub_txt">Last Updated : </p>
+                            <span class="grey--text">{{ form.resultsCnt }} results</span>
+                            <span class="sub_txt">Last Updated : {{ indexBasic.fmt_f12506   /* 입회일 */ }}</span>
                         </h3>
                     </v-card-title>                    
 
@@ -34,7 +35,8 @@
             <v-flex  class="conWidth_right">
                 <IndexDetailQuick   @fn_getIndexDetailList="fn_getIndexDetailList"
                                     @fn_getIndexJongmokList="fn_getIndexJongmokList"
-                                    @showProgress="showProgress">
+                                    @showProgress="showProgress"
+                                    @showMessageBox="showMessageBox">
                 </IndexDetailQuick>                
             </v-flex>
             
@@ -45,6 +47,7 @@
                             <v-progress-circular :size="50" indeterminate></v-progress-circular>
                             </template>
         </v-dialog>
+        <ConfirmDialog ref="confirm"></ConfirmDialog>
     </v-container>
 </template>
 
@@ -57,12 +60,14 @@ import buttons from 'datatables.net-buttons'
 import util       from "@/js/util.js";
 import Config from '@/js/config.js';
 import IndexDetailQuick from "@/components/Home/Index/Manage/IndexDetailQuick.vue";
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 var tableIndexList = null;
 
 export default {
     components: {
         IndexDetailQuick     :   IndexDetailQuick,
+        ConfirmDialog: ConfirmDialog,
     },
     data() {
         return {
@@ -179,7 +184,7 @@ export default {
                 "info": false,   // control table information display field
                 "stateSave": true,  //restore table state on page reload,
                 "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                "scrollY": '68vh',
+                "scrollY": '72vh',
                 paging: false,
                 searching: false,
                 data : [],
@@ -192,7 +197,7 @@ export default {
                     } 
                 ],
                 columns: [
-                    { "title"   :   "ID"            ,   "data": "f16013"                ,   "orderable" : true, "width" : "12%", className:"txt_left"  },      /* ID */
+                    { "title"   :   "ID"            ,   "data": "isin_code"             ,   "orderable" : true, "width" : "12%", className:"txt_left"  },      /* ID */
                     { "title"   :   "지수명"         ,   "data": "f16002"                ,   "orderable" : true, "width" : "18%",className:"txt_left"  },      /* 지수명 */
                     { "title"   :   "편입비중(%)"    ,   "data": "in_out_rate"           ,   "orderable" : true, "width" : "14%",className:"txt_right"  },      /* 편입비중(%) */
                     { "title"   :   "Shrs"          ,   "data": "f30812"                ,   "orderable" : true, "width" : "14%",className:"txt_right"  },      /* shrs */
@@ -214,6 +219,9 @@ export default {
              
         showProgress: function(visible) {
             this.progress = visible;
+        },
+        showMessageBox: function(title, msg, option, gubun) {
+            this.$refs.confirm.open(title,msg, option, gubun);
         },
         fn_closePop() {
             var vm = this;

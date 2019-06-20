@@ -44,18 +44,22 @@ export default {
                     params = {state : '03'}
                 }
             }
-          
+            vm.$emit("showProgress", true ); 
             axios.get(url, {
                         params
             }).then(function(response) {
                 // console.log(response);
                 if (response.data.success == false) {
                 } else {
-                    if (response.data.results[0]) {
+                    if (response.data.results) {
                         vm.item.count = response.data.results[0].count;
                         vm.item.updateDate = response.data.results[0].updateDate;
                     }
                 }
+                vm.$emit("showProgress", false); 
+            }).catch(error => {
+                vm.$emit("showProgress", false ); 
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);             
             });
         },    
     }

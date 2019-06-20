@@ -1,5 +1,5 @@
 <template>
-     <v-dialog :value="dialog" persistent max-width="600">
+     <v-dialog :value="dialog" persistent max-width="900">
      <!-- iNAV 팝업 내용-->
        <v-card>
            <h5>
@@ -12,7 +12,7 @@
                </v-card-title>
            </h5>
             <v-card flat>
-               <table id="iNavConfirm" class="display table01_w" >
+               <table id="iNavConfirm" class="tbl_type ver6" >
                    <colgroup>
                        <col width="50%">
                        <col width="0%">
@@ -35,7 +35,7 @@
                </table>
             </v-card>
             <v-card>   
-                <table id="iNavConfirmData" class="display table01_w">
+                <table id="iNavConfirmData" class="tbl_type ver6 mt-3">
                     <colgroup>
                         <col width="10%">
                         <col width="10%">

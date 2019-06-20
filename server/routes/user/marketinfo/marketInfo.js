@@ -14,6 +14,40 @@ var util = require("util");
 var log = config.logger;
 
 /*
+* INDEX MAST 조회
+*/
+var getIndexMast = function(req, res) {
+  log.debug('marketInfo 모듈 안에 있는 getIndexMast 호출됨.');
+
+  var options = {
+  };
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('common.item', 'getIndexMast', options, {language:'sql', indent: '  '});
+    log.debug(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    log.error("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+
+/*
 * INDEX BASIC 조회
 */
 var getIndexBasic = function(req, res) {
@@ -50,20 +84,62 @@ try {
 };
 
 /*
-* KRX INDEX LIST 조회 (By Type)
+* INDEX 분석정보 조회
 */
-var getKrxIndexListByType = function(req, res) {
+var getIndexAnal = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getIndexAnal 호출됨.');
+
+  console.log(req.query);
+  /*
+  var options = {
+    F16013 : req.query.F16013,
+    market_id: req.query.market_id,
+  };
+  */
+ var options = req.query;
+  try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    console.log(options);
+    var stmt = mapper.getStatement('common.item', 'getIndexAnal', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    console.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+  }
+};
+
+/*
+* INDEX LIST 조회 (By Type)
+*/
+var getIndexListByType = function(req, res) {
   log.debug('marketInfo 모듈 안에 있는 getKrxIndexListByType 호출됨.');
 
   if(req.query.selIndexType == "TOTAL") req.query.selIndexType = "";
   var options = {
-    selIndexType : req.query.selIndexType,
+    large_type : req.query.large_type,
+    middle_type : req.query.middle_type,
   };
 try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
-    var stmt = mapper.getStatement('common.item', 'getKrxIndexListByType', options, {language:'sql', indent: '  '});
+    var stmt = mapper.getStatement('common.item', 'getIndexListByType', options, {language:'sql', indent: '  '});
     log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
@@ -85,25 +161,28 @@ try {
 }
 };
 /*
-* KRX INDEX LIST 조회 (By Type & 구간별 지수데이터)
+* INDEX LIST 조회 (By Type & 분석정보)
 */
-var getKrxIndexListByType1 = function(req, res) {
-  log.debug('marketInfo 모듈 안에 있는 getKrxIndexListByType1 호출됨.');
+var getIndexListAnalByType = function(req, res) {
+  log.debug('marketInfo 모듈 안에 있는 getIndexListAnalByType 호출됨.');
 
-  if(req.query.selIndexType == "TOTAL") req.query.selIndexType = "";
+  if(req.query.middle_type == "TOTAL") req.query.middle_type = "";
   var options = {
-    selIndexType : req.query.selIndexType,
+    large_type : req.query.large_type,
+    middle_type : req.query.middle_type,
     bef1Week: req.query.bef1Week,
     bef1Month: req.query.bef1Month,
     befYtd: req.query.befYtd,
     bef1Year: req.query.bef1Year,
     bef3Year: req.query.bef3Year,
+    bef5Year: req.query.bef5Year,
+    bef10Year: req.query.bef10Year,
   };
 try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
-    var stmt = mapper.getStatement('common.item', 'getKrxIndexListByType1', options, {language:'sql', indent: '  '});
+    var stmt = mapper.getStatement('common.item', 'getIndexListAnalByType', options, {language:'sql', indent: '  '});
     console.log(stmt);
 
     Promise.using(pool.connect(), conn => {
@@ -160,11 +239,119 @@ try {
     res.end();
 }
 };
+/*
+* INDEX INTRA TERM 조회
+*/
+var getIndexIntra1 = function(req, res) {
+  log.debug('marketInfo 모듈 안에 있는 getIndexIntra1 호출됨.');
+
+  var options = {
+    f16013 : req.query.F16013,
+    market_id : req.query.market_id,
+  };
+  if(req.query.term == '1D') options.limit = 100;
+  else options.limit = 300;
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('common.item', 'getIndexIntra1', options, {language:'sql', indent: '  '});
+    log.debug(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    log.error("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+/*
+* INDEX HIST TERM 조회
+*/
+var getIndexHist1 = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getIndexHist1 호출됨.');
+
+  var options = {
+    f16013 : req.query.F16013,
+    market_id : req.query.market_id,
+  };
+  if(req.query.term == '1M') options.limit = 30;
+  else if(req.query.term == '3M') options.limit = 90;
+  else if(req.query.term == '6M') options.limit = 180;
+  else if(req.query.term == '1Y') options.limit = 300;
+  else options.limit = 10000;
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    var stmt = mapper.getStatement('common.item', 'getIndexHist1', options, {language:'sql', indent: '  '});
+    log.debug(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    log.error("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+/*
+* ETP MAST 조회
+*/
+var getEtpMast = function(req, res) {
+  log.debug('marketInfo 모듈 안에 있는 getEtpMast 호출됨.');
+
+  var options = {
+  };
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('common.item', 'getEtpMast', options, {language:'sql', indent: '  '});
+    log.debug(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    log.error("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
 
 /*
 * ETP BASIC 조회
 */
-
 var getEtpBasic = function(req, res) {
   log.debug('marketInfo 모듈 안에 있는 getEtpBasic 호출됨.');
 
@@ -197,6 +384,87 @@ try {
 }
 };
 
+/*
+* ETP 분석정보 조회
+*/
+var getEtpAnal = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getEtpAnal 호출됨.');
+
+  console.log(req.query);
+  /*
+  var options = {
+    F16013 : req.query.F16013,
+    market_id: req.query.market_id,
+  };
+  */
+ var options = req.query;
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    console.log(options);
+    var stmt = mapper.getStatement('common.item', 'getEtpAnal', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    console.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+
+/*
+* ETP 분석정보 조회(NAV)
+*/
+var getEtpNavAnal = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getEtpNavAnal 호출됨.');
+
+  console.log(req.query);
+  /*
+  var options = {
+    F16013 : req.query.F16013,
+    market_id: req.query.market_id,
+  };
+  */
+ var options = req.query;
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    console.log(options);
+    var stmt = mapper.getStatement('common.item', 'getEtpNavAnal', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    console.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
 /*
 * ETP INTRA 조회
 */
@@ -271,7 +539,7 @@ try {
 }
 };
 /*
-* ETP Multi INTRA 조회
+* ETP Multi HIST 조회
 */
 var getEtpMultiHist = function(req, res) {
   log.debug('marketInfo 모듈 안에 있는 getEtpMultiHist 호출됨.');
@@ -289,7 +557,6 @@ var getEtpMultiHist = function(req, res) {
 try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
-    getEtpMultiHist
     var stmt = mapper.getStatement('common.item', 'getEtpMultiHist', options, {language:'sql', indent: '  '});
     log.debug(stmt);
 
@@ -946,11 +1213,18 @@ var getMarketIndexList = function (req, res) {
       
 };
 
+module.exports.getIndexMast = getIndexMast;
 module.exports.getIndexBasic = getIndexBasic;
 module.exports.getIndexIntra = getIndexIntra;
-module.exports.getKrxIndexListByType = getKrxIndexListByType;
-module.exports.getKrxIndexListByType1 = getKrxIndexListByType1;
+module.exports.getIndexIntra1 = getIndexIntra1;
+module.exports.getIndexHist1 = getIndexHist1;
+module.exports.getIndexAnal = getIndexAnal;
+module.exports.getIndexListByType = getIndexListByType;
+module.exports.getIndexListAnalByType = getIndexListAnalByType;
+module.exports.getEtpMast = getEtpMast;
 module.exports.getEtpBasic = getEtpBasic;
+module.exports.getEtpAnal = getEtpAnal;
+module.exports.getEtpNavAnal = getEtpNavAnal;
 module.exports.getEtpIntra = getEtpIntra;
 module.exports.getEtpMultiIntra = getEtpMultiIntra;
 module.exports.getEtpMultiHist = getEtpMultiHist;

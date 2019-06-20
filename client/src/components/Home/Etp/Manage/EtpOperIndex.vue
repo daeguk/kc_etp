@@ -6,9 +6,9 @@
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
                             지수관리
-                                <span class="text_result">{{ result_cnt }}</span>
-                                <span class="text_result_t"> results</span>
-                                <span class="sub_txt">기준일 : {{ nowDate }}</span>
+                            <span class="text_result">{{ result_cnt }}</span>
+                            <span class="text_result_t"> results</span>
+                            <span class="sub_txt">기준일 : {{ fmt_f12506 }}</span>
                         </h3>
                     </v-card-title>
                     
@@ -29,6 +29,8 @@
                     </EtpOperIndexQuick>
            </v-flex>
         </v-layout>
+    <IndexInfoModal v-if="IndexModalFlag" :indexInfo="paramData"
+      @closeIndexModal="closeIndexModal"></IndexInfoModal>
     </v-container>
 </template>
 
@@ -42,8 +44,8 @@ import dtFc from "datatables.net-fixedcolumns";
 
 import Config from "@/js/config.js";
 //import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
-import IndexInfoDetailPop from "./IndexInfoDetailPop.vue";
 import EtpOperIndexQuick     from    "@/components/Home/Etp/Manage/EtpOperIndexQuick.vue";
+import IndexInfoModal   from  '@/components/common/modal/IndexInfoModal.vue';
 
 var tableOperIndex = null;
 
@@ -51,6 +53,7 @@ export default {
 
     data() {
         return {
+            fmt_f12506 :   "",
             indexBasic  :   {},
             paramData   :   {},
             stateInfo   :   {
@@ -65,11 +68,13 @@ export default {
                         +   "." 
                         +   new Date().getDate(),
             result_cnt  :   0,
-            arrOverseaMarketList    :   []
+            arrOverseaMarketList    :   [],
+            IndexModalFlag: false,
         };
     },
     components: {
-        EtpOperIndexQuick: EtpOperIndexQuick
+        EtpOperIndexQuick,
+        IndexInfoModal,
     },
     mounted: function() {
 
@@ -123,19 +128,33 @@ export default {
             }).then(function(response) {
                 console.log(response);
 
+                vm.$emit( "fn_showProgress", false );
                 vm.result_cnt = 0;
                 if (response.data) {
+
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.$emit("showMessageBox", '확인', msg,{},1);
+                            return  false;
+                        }
+                    }
+
                     var dataList = response.data.dataList;
 
                     if( dataList && dataList.length > 0 ) {
                         tableOperIndex.rows.add( dataList ).draw();
 
                         vm.indexBasic   =   dataList[0];
-                        vm.result_cnt   =   dataList.length;
+
+                        vm.fmt_f12506   =   dataList[0].fmt_f12506;
+                        vm.result_cnt   =   util.formatInt( dataList.length );
                     }
                 }
 
+            }).catch(error => {
                 vm.$emit( "fn_showProgress", false );
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         },
 
@@ -248,6 +267,7 @@ export default {
                 vm.paramData.LARGE_TYPE     =   data.large_type;    /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */
                 vm.paramData.MARKET_ID      =   data.market_id;     /* 시장 ID  */
 
+                vm.paramData.F16013         =   data.f16013;        /* 단축코드  */
                 vm.paramData.f16013         =   data.f16013;        /* 단축코드  */
                 vm.paramData.market_id      =   data.market_id;     /* 시장 ID  */
 
@@ -258,7 +278,8 @@ export default {
 
                             /* 지수정보 */
                     case    'btnIndex'       :
-                                vm.$emit('showDetail', 2, vm.paramData);
+                                // vm.$emit('showDetail', 2, vm.paramData);
+                                vm.openIndexModal();
                                 break;
 
                             /* 지수구성정보 */
@@ -529,6 +550,12 @@ export default {
             var vm = this;
 
             vm.$emit( "fn_showDetailIndex", gubun, paramData );
+        },
+        openIndexModal: function() {
+          this.IndexModalFlag = true;
+        },
+        closeIndexModal: function() {
+          this.IndexModalFlag = false;
         },
     }
 };

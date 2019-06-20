@@ -91,7 +91,6 @@ export default {
             hp_no:response.data.results[0].hp_no, 
             tel_no:response.data.results[0].tel_no, 
           });
-          debugger;
 
           vm.loginDialog = false;
           // MainLanding.vue

@@ -12,7 +12,8 @@
 
                             @fn_showDetailIndex="fn_showDetailIndex"
                             @fn_showDetailPdf="fn_showDetailPdf"
-                            @fn_pageMove="fn_pageMove">
+                            @fn_pageMove="fn_pageMove"
+                            @fn_setFirstData="fn_setFirstData">
             </EtpOperInfo>
 
             <!-- 지수관리 -->
@@ -128,7 +129,7 @@
             </EtpOperPdfInavCalcPop>
 
             <!-- (지수 수익율) iNAV 계산기 팝업 -->
-            <v-dialog  v-model="showEtpOperIndexInavCalcPop"  persistent  max-width="700" >
+            <v-dialog  v-model="showEtpOperIndexInavCalcPop"  persistent  max-width="760" >
                 <EtpOperInfoInavIndex   v-if="showEtpOperIndexInavCalcPop"
 
                                         :paramData = "paramData"
@@ -204,7 +205,7 @@ export default {
             FaverClassName: '',
             pdfData : {},
             indexBasic : {},
-            faverSize : 80,
+            faverSize : 760,
             reloadYn : false,
             toggle : {
                 togglePdfEmergencyPop : false,
@@ -457,6 +458,13 @@ export default {
                             this.$emit( "fn_setActiveTab", 2, this.paramData );
                             break;
             }            
+        },
+
+        fn_setFirstData( firstData ) {
+            var vm = this;
+
+            vm.paramData = firstData;
+            vm.$emit( "fn_setFirstData", firstData );
         },
 
         /*

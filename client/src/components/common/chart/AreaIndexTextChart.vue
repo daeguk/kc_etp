@@ -6,6 +6,7 @@
 
 <script>
 import Config       from "@/js/config.js"
+import util       from "@/js/util.js";
 
 export default {
     props:['chartItem', 'dataSet'],
@@ -100,10 +101,10 @@ export default {
 
             // 좌즉 상단 현재가
             c.fillStyle = "#37474F";
-            c.font = '14px san-serif';
+            c.font = '14px Roboto, sans-serif, Noto-Sans';
             c.fillText(this.chartItem.name, 15, 30);
             c.fillStyle = "#263238";
-            c.font = 'bold 28px san-serif';
+            c.font = 'bold 28px Roboto, sans-serif, Noto-Sans';
             c.fillText(this.chartItem.f15001, 15, 60);
             var slen = this.chartItem.f15001.length;
             if(Number(this.chartItem.f15472) < 0) {
@@ -111,31 +112,33 @@ export default {
             }else {
               c.fillStyle = "#FF0000";
             }
-            c.font = '12px san-serif';
+            c.font = '12px Roboto, sans-serif, Noto-Sans';
+            this.chartItem.f15472 = util.getPlus(this.chartItem.f15472, 2);
+            this.chartItem.f15004 = util.getPlus(this.chartItem.f15004, 2);
             if(slen > 6) c.fillText(this.chartItem.f15472, 125, 47);
-            else  c.fillText(this.chartItem.f15472, 125, 47);
+            else  c.fillText(this.chartItem.f15472, 115, 47);
             if(slen > 6) c.fillText(this.chartItem.f15004 + "%", 125, 60);
-            else  c.fillText(this.chartItem.f15004 + "%", 125, 60);
+            else  c.fillText(this.chartItem.f15004 + "%", 115, 60);
 
             // 우측 하단 자산총액
             c.fillStyle = "#757575";
             c.fillRect(140, 108, 30, 14);
             c.fillStyle = "white";
-            c.font = '11px san-serif';
+            c.font = '11px Roboto, sans-serif, Noto-Sans';
             c.fillText("ETF", 147, 119);
 
             c.fillStyle = "#424242";
             c.fillRect(140, 125, 30, 14);
             c.fillStyle = "white";
-            c.font = '11px san-serif';
+            c.font = '11px Roboto, sans-serif, Noto-Sans';
             c.fillText("ETN", 146, 136);
 
             c.fillStyle = "#5e870b";
-            c.font = '14px san-serif';
+            c.font = '14px Roboto, sans-serif, Noto-Sans';
             c.textAlign = "end";
             c.fillText(this.chartItem.etf_sum + " AUM", 330, 120);
             c.fillStyle = "#5e870b";
-            c.font = '14px san-serif';
+            c.font = '14px Roboto, sans-serif, Noto-Sans';
             c.textAlign = "end";
             c.fillText(this.chartItem.etn_sum + " 원", 330, 137);
 
@@ -143,9 +146,15 @@ export default {
         },
         drawToolTip: function(event) {
           var c = this.ctx;
+          /*
           var _mwpos = event.clientX-this.rect.left;
           var _wpos = _mwpos;
           var _hpos = event.clientY-this.rect.top - 20;
+          */
+          var _mwpos = event.layerX;
+          var _wpos = _mwpos;
+          var _hpos = event.layerY;
+
           var item = [];
           var tooltip = "";
 
@@ -160,7 +169,7 @@ export default {
           item = this.getDataByPos(_mwpos);
           c.fillStyle = "black";
           c.textAlign = "left";
-          c.font = '11px san-serif';
+          c.font = '11px Roboto, sans-serif, Noto-Sans';
           tooltip = "" + item[0] + " " + item[1] + " " + item[2];
           c.fillText(tooltip, _wpos+2, _hpos+11);
 

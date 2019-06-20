@@ -1,5 +1,5 @@
 <template>
-     <v-dialog :value="dialog" persistent max-width="500">
+     <v-dialog :value="dialog" persistent max-width="550">
         <!--발행사 담당자 연락처 팝업--->
             <v-card>
                 <h5>
@@ -13,12 +13,6 @@
                 </h5>
                 <v-card flat>
                     <table id="companyContact_grid" class="tbl_type ver6">
-                        <colgroup>
-                            <col width="25%">
-                            <col width="25%">
-                            <col width="25%">
-                            <col width="25%">
-                        </colgroup>
                         <thead>
                             <tr>
                                 <th>담당자</th>
@@ -99,10 +93,10 @@ export default {
                             data: this.results,
                             destroy: true,
                                 columns: [
-                                   { "data": "user_nm", "orderable": true,className: "td_in_center" },
-                                   { "data": "tel_no", "orderable" : true,className: "td_in_center" },
-                                   { "data": "cel_no", "orderable": true ,className: "td_in_center"},
-                                   { "data": "email", "orderable" : true ,className: "td_in_center" },
+                                   { "data": "user_nm", "orderable": true,className: "td_in_center","width":"20%" },
+                                   { "data": "tel_no", "orderable" : true,className: "td_in_center","width":"20%" },
+                                   { "data": "cel_no", "orderable": true ,className: "td_in_center","width":"30%"},
+                                   { "data": "email", "orderable" : true ,className: "td_in_center","width":"30%" },
                                 ]
                             }); 
                     }

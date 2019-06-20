@@ -33,6 +33,7 @@
 
 <script>
 import Config from "@/js/config.js";
+import Constant from "@/store/store_constant.js";
 
 export default {
 
@@ -85,6 +86,15 @@ export default {
             }).then(function(response) {
 
                 if (response && response.data) {
+
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.$emit("showMessageBox", '확인', msg,{},1);
+                            return  false;
+                        }
+                    }
+
                     vm.statusList   = response.data.arrList;
 
                     vm.fn_getIndexSelectList();
@@ -104,6 +114,15 @@ export default {
                 data: {  }
             }).then(function(response) {
                 if (response && response.data) {
+
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.$emit("showMessageBox", '확인', msg,{},1);
+                            return  false;
+                        }
+                    }
+
                     vm.indexSelectList   = response.data.dataList;
                 }
             });
@@ -115,6 +134,15 @@ export default {
          */
         fn_showJisuEdit( param ) {
             var vm = this;
+
+            var typeCd  =   vm.$store.state.user.type_cd;
+
+            if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                if( typeCd != "0003" ) {
+                    vm.$emit("showMessageBox", '확인','지수사업자만 수정 하실수 있습니다.',{},1);
+                    return  false;
+                }
+            }
 
             if( param ) {
                 /*

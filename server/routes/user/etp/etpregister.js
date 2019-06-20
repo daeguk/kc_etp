@@ -5,6 +5,10 @@ var config = require('../../../config/config');
 var util = require("util");
 var Promise = require("bluebird");
 var async = require('async');
+const etpUser           = "0001";
+const etnUser           = "0002";
+const koscomUser        = "9998";
+const koscomSuperUser   = "9999";
 
 /* logging 추가함.  2019-06-10 */
 var log = config.logger;
@@ -13,7 +17,7 @@ var format = { language: 'sql', indent: '' };
 
 var getEtpRegisterView = function(req, res) {
     try {
-        //log.debug('###ETP VIEW CALL###', req.query.seq);
+        log.debug('###ETP VIEW CALL###', req.query.seq);
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper"); 
@@ -22,18 +26,14 @@ var getEtpRegisterView = function(req, res) {
         var resultMsg = {};
         paramData.seq = req.query.seq*1;
 
-       // log.debug('###ETP VIEW CALL paramData.seq###', paramData.seq);
-       // log.debug('###ETP VIEW CALL  req.session###',  req.session);
         paramData.user_id       =   req.session.user_id;
         paramData.inst_cd       =   req.session.inst_cd;
         paramData.inst_type_cd  =   req.session.type_cd;
         
-        //개발용 세팅
-        // paramData.inst_cd       =   '04870';
-        // paramData.inst_type_cd  =   '0002';
-     
-              
-        if ( paramData.inst_type_cd !=='0001' && paramData.inst_type_cd !=='0002') {
+
+        if ( paramData.inst_type_cd !== etpUser && paramData.inst_type_cd !==etnUser &&
+             paramData.inst_type_cd !== koscomUser && paramData.inst_type_cd !==koscomSuperUser
+            ) {
             resultMsg.result = false;
             resultMsg.msg = "발행사만 신청이 가능합니다. ";
             throw resultMsg;
@@ -317,7 +317,7 @@ var insertEtpRegister = function(req, res) {
 
         //일반->  세션
         //코스콤->선택값
-        if(req.session.type_cd !=='0002'){
+        if(req.session.type_cd !==koscomSuperUser && req.session.type_cd !==koscomUser){
             paramData.inst_cd       =   paramData.paramInstCd;
         }
         
@@ -334,8 +334,11 @@ var insertEtpRegister = function(req, res) {
             res.end();
             return;
         }
+
         log.debug("###ETP INSERT CALL HUDLE2##",  paramData);
-        if(paramData.paramInstTypeCd !=='0001' && paramData.paramInstTypeCd !=='0002'){
+        if ( paramData.paramInstTypeCd !== etpUser && paramData.paramInstTypeCd !== etnUser &&
+             paramData.paramInstTypeCd !== koscomUser && paramData.paramInstTypeCd !== koscomSuperUser
+            ) {
             res.json({
                 result: false
                 ,msg: "발행사만 신청이 가능합니다."
@@ -433,13 +436,15 @@ var insertEtpRegister = function(req, res) {
         }
 
         if(real_yn =='N'){
-            paramData.ridx_dist_inst_cd='';  //지수입수기관
-            paramData.ridx_dist_sym_code=''; //지수입수기관심볼
-            paramData.ridx_holy_cd='';       //실시간휴장일기준
-            paramData.ridx_comp_dist_yn='';  //발행사
-            paramData.ridx_krx_dist_yn='';   //KRX 
-            paramData.ridx_ksd_dist_yn='';   //예탁원
-            paramData.ridx_mirae_dist_yn=''; //미래에셋펀드서비스
+            paramData.ridx_dist_inst_cd=null;  //지수입수기관
+            paramData.ridx_dist_sym_code=null; //지수입수기관심볼
+            paramData.ridx_holy_cd=null;       //실시간휴장일기준
+            paramData.ridx_comp_dist_yn=null;  //발행사
+            paramData.ridx_krx_dist_yn=null;   //KRX 
+            paramData.ridx_ksd_dist_yn=null;   //예탁원
+            paramData.ridx_mirae_dist_yn=null; //미래에셋펀드서비스
+            paramData.ex_hedge_yn=null;        //환헷지여부
+            paramData.ridx_dist_term=null;     //지수제공주기
         }
 
         if(paramData.kor_for_type =='K'){
@@ -451,26 +456,67 @@ var insertEtpRegister = function(req, res) {
 
 
         log.debug('###ETP CALL JSONPARSE LAST>>>###'+JSON.stringify(paramData));
-        var stmt = mapper.getStatement('EtpRegister', 'insertMaster', paramData, format);
+        var stmt = '';
         log.debug(stmt);
-        
+            
         
         Promise.using(pool.connect(), conn => {
-            conn.queryAsync(stmt).then(rows => {
+            try{
+                async.waterfall([
+                    function( callback ) {    
+                        stmt = mapper.getStatement('EtpRegister', 'insertMaster', paramData, format);
+                        log.debug(stmt);
+                        conn.query(stmt, function( err, rows ) {  
+                            if ( rows ) {
+                                log.debug( "insertMaster", rows);
+                               paramData.seq = rows.insertId ;
+                            }
+                            if( err ) {
+                                return callback( err );
+                            }
+                            callback( null, paramData );
+                        })
+                    },
+                    
+                    function( data, callback ) {
+                        log.debug("EtpRegister paramData insertMasterHistory before", paramData);
+                        paramData.seq_hist = 1;
+                        stmt = mapper.getStatement('EtpRegister', 'insertMasterHistory', paramData, format);
+                        log.debug(stmt);
+                        conn.query(stmt, function( err, rows ) {
+                            if ( rows ) {
+                                log.debug( "insertMasterHistory", rows );
+                            }
+                            if( err ) {
+                                return callback( err );
+                            }
+                            callback( null, paramData );
 
-                res.json({
-                    result: true
-                });
-                res.end();
-    
-            }).catch(err => {
-                log.debug("[error] EtpRegister.insertMaster Error while performing Query.", err);
+                        });
+                    
+                    },
+                    ],function (err) {
+                        if(err){
+                            log.debug("[err] EtpRegister.insertMaster Error while performing Query.", err);
+                            res.json({
+                                result: false
+                                ,msg: err
+                            });
+                        }else{
+                            res.json({
+                                result: true
+                            });
+                        }
+                        res.end();
+                    });
+            }catch(exception) {
+                log.debug("[error] EtpRegister.insertMaster Error while performing Query.", exception);
                 res.json({
                     result: false
-                    ,msg: err
+                    ,msg: exception
                 });
                 res.end();
-            });
+            }
         });
 };
 
@@ -484,7 +530,7 @@ var updateEtpRegister = function(req, res) {
     
     paramData.user_id       =   req.session.user_id;
 
-    if(req.session.type_cd !=='0002'){
+    if(req.session.type_cd !==koscomSuperUser && req.session.type_cd !==koscomUser){
         paramData.inst_cd       =   paramData.paramInstCd;
     }
     
@@ -497,22 +543,19 @@ var updateEtpRegister = function(req, res) {
         return;
     }
     
-    //개발용 세팅 
-    // paramData.inst_cd       =   '04870';
-    // paramData.inst_type_cd  =   '0002';
-    //log.debug('###ETP UPDATE JSONPARSE HUDLE1>>>###',req.session);
-   
     paramData.list_req_date = paramData.listReqDate;
     paramData.list_date = paramData.listDate;
 
     if(paramData.real_yn =='N'){
-        paramData.ridx_dist_inst_cd='';  //지수입수기관
-        paramData.ridx_dist_sym_code=''; //지수입수기관심볼
-        paramData.ridx_holy_cd='';       //실시간휴장일기준
-        paramData.ridx_comp_dist_yn='';  //발행사
-        paramData.ridx_krx_dist_yn='';   //KRX 
-        paramData.ridx_ksd_dist_yn='';   //예탁원
-        paramData.ridx_mirae_dist_yn=''; //미래에셋펀드서비스
+        paramData.ridx_dist_inst_cd=null;  //지수입수기관
+        paramData.ridx_dist_sym_code=null; //지수입수기관심볼
+        paramData.ridx_holy_cd=null;       //실시간휴장일기준
+        paramData.ridx_comp_dist_yn=null;  //발행사
+        paramData.ridx_krx_dist_yn=null;   //KRX 
+        paramData.ridx_ksd_dist_yn=null;   //예탁원
+        paramData.ridx_mirae_dist_yn=null; //미래에셋펀드서비스
+        paramData.ex_hedge_yn=null;        //환헷지여부
+        paramData.ridx_dist_term=null;     //지수제공주기
     }
 
     if(paramData.kor_for_type =='K'){
@@ -623,7 +666,10 @@ var updateEtpRegister = function(req, res) {
                         dbMasterData  = rows[0];
                         //log.debug("UPDATE BEFORE MASTER Data:::", dbMasterData.isin_stat_cd);
                         
-                            if(dbMasterData.inst_cd !== paramData.paramInstCd && req.session.type_cd !=='0002' ){
+                            if(
+                              (dbMasterData.inst_cd !== paramData.paramInstCd)  &&
+                              (req.session.type_cd !==koscomSuperUser && req.session.type_cd !==koscomUser)
+                            ){
                                 return callback( "해당 발행사나 코스콤만 수정이 가능합니다." );
                             }    
 

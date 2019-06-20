@@ -1,8 +1,6 @@
 <template>
-<v-app>
     <v-container>
-       
-        <v-layout row wrap class="content_margin">
+       <v-layout row wrap class="content_margin">
             <v-flex grow>
                 <v-card flat>
                     <v-card-title primary-title>
@@ -36,13 +34,11 @@
 
                        
         </v-layout>
-         <v-flex>
+
              <ConfirmDialog ref="confirm"></ConfirmDialog>
              <ProgressBar ref="progress"></ProgressBar>
-        </v-flex>
-    </v-container>
-   
-</v-app>    
+
+    </v-container>      
 </template>
 
 <script>
@@ -172,6 +168,9 @@ export default {
                         
                     }                    
                     util.processing(this.$refs.progress, false);
+                }).catch(error => {
+                    util.processing(this.$refs.progress, false);
+                    this.$refs.confirm.open('', '서버로 부터 응답을 받지 못하였습니다.', {}, 1);
                 });
         }, 
         getReplace: function(text) {

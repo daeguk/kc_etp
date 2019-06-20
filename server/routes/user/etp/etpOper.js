@@ -29,8 +29,7 @@ var getEtpOperInfo = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getEtpOperInfo  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpOper.getEtpOperInfo  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getEtpOperInfo  req.body.data no data.";
@@ -40,11 +39,11 @@ var getEtpOperInfo = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -52,64 +51,56 @@ var getEtpOperInfo = function(req, res) {
 
         Promise.using(pool.connect(), conn => {
 
-
-            async.waterfall([
+            try {
 
                 /* 1. EtpBasic 의 기본정보를 조회한다. */
-                function(callback) {
+                stmt = mapper.getStatement('etpOper', 'getEtpOperInfo', paramData, format);
+                log.debug(stmt, paramData);
 
-                    stmt = mapper.getStatement('etpOper', 'getEtpOperInfo', paramData, format);
-                    log.debug(stmt);
+                conn.query(stmt, function(err, rows) {
 
-                    conn.query(stmt, function(err, rows) {
+                    if (err) {
+                        log.error(err, stmt, paramData);
 
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpOper.getEtpOperInfo Error while performing Query";
-                            resultMsg.err = err;
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getEtpOperInfo Error while performing Query";
+                        resultMsg.err = err;
+                    }
 
-                            return callback(resultMsg);
-                        }
+                    if (rows && rows.length > 0) {
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
 
-                        if (rows && rows.length > 0) {
-                            resultMsg.dataList = rows;
-                        }
+                        resultMsg.dataList = rows;
+                    }
 
-                        callback(null);
-                    });
-                }
+                    res.json(resultMsg);
+                    res.end();
+                });
 
-            ], function(err) {
+            } catch (err) {
+                log.error(err, stmt, paramData);
 
-                if (err) {
-                    log.error(err);
-                } else {
-
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
-                    resultMsg.err = null;
-                }
+                resultMsg.result = false;
+                resultMsg.msg = "[error] etpOper.getEtpOperInfo Error while performing Query";
+                resultMsg.err = err;
 
                 res.json(resultMsg);
                 res.end();
-            });
+            }
         });
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getEtpOperInfo 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getEtpOperInfo 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.dataList = [];
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -128,8 +119,7 @@ var getEtpOperIndex = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getEtpOperIndex  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpOper.getEtpOperIndex  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getEtpOperIndex  req.body.data no data.";
@@ -139,11 +129,11 @@ var getEtpOperIndex = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -159,52 +149,71 @@ var getEtpOperIndex = function(req, res) {
                 /* 1. Etp 운용관리 - 지수관리 기본정보를 조회한다. */
                 function(callback) {
 
-                    paramData.group_concat_max_len = 1000000;
-                    stmt = mapper.getStatement('etpOper', 'setGroupConcatMaxLen', paramData, format);
-                    log.debug(stmt);
+                    try{
+                        paramData.group_concat_max_len = 1000000;
+                        stmt = mapper.getStatement('etpOper', 'setGroupConcatMaxLen', paramData, format);
+                        log.debug(stmt, paramData);
 
-                    conn.query(stmt, function(err, rows) {
+                        conn.query(stmt, function(err, rows) {
 
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpOper.setGroupConcatMaxLen Error while performing Query";
-                            resultMsg.err = err;
+                            if (err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "[error] etpOper.setGroupConcatMaxLen Error while performing Query";
+                                resultMsg.err = err;
 
-                            return callback(resultMsg);
-                        }
+                                return callback(resultMsg);
+                            }
 
-                        callback(null, paramData);
-                    });
+                            callback(null, paramData);
+                        });
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.setGroupConcatMaxLen Error while performing Query";
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }
                 },
 
                 /* 2. Etp 운용관리 - 지수관리 기본정보를 조회한다. */
                 function(msg, callback) {
 
-                    stmt = mapper.getStatement('etpOper', 'getEtpOperIndex', paramData, format);
-                    log.debug(stmt);
+                    try{
+                        stmt = mapper.getStatement('etpOper', 'getEtpOperIndex', paramData, format);
+                        log.debug(stmt, paramData);
 
-                    conn.query(stmt, function(err, rows) {
+                        conn.query(stmt, function(err, rows) {
 
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpOper.getEtpOperIndex Error while performing Query";
-                            resultMsg.err = err;
+                            if (err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "[error] etpOper.getEtpOperIndex Error while performing Query";
+                                resultMsg.err = err;
 
-                            return callback(resultMsg);
-                        }
+                                return callback(resultMsg);
+                            }
 
-                        if (rows && rows.length > 0) {
-                            resultMsg.dataList = rows;
-                        }
+                            if (rows && rows.length > 0) {
+                                resultMsg.dataList = rows;
+                            }
 
-                        callback(null, paramData);
-                    });
+                            callback(null, paramData);
+                        });
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getEtpOperIndex Error while performing Query";
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }
                 },
 
             ], function(err) {
 
                 if (err) {
-                    log.error(err);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -219,19 +228,15 @@ var getEtpOperIndex = function(req, res) {
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getEtpOperIndex 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getEtpOperIndex 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.dataList = [];
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -251,8 +256,7 @@ var getEtpOperIndexOversea = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getEtpOperIndexOversea  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpOper.getEtpOperIndexOversea  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getEtpOperIndexOversea  req.body.data no data.";
@@ -262,11 +266,11 @@ var getEtpOperIndexOversea = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -274,64 +278,54 @@ var getEtpOperIndexOversea = function(req, res) {
 
         Promise.using(pool.connect(), conn => {
 
+            try {
+                stmt = mapper.getStatement('etpOper', 'getEtpOperIndexOversea', paramData, format);
+                log.debug(stmt, paramData);
 
-            async.waterfall([
+                conn.query(stmt, function(err, rows) {
 
-                /* 1. EtpBasic 의 기본정보를 조회한다. */
-                function(callback) {
+                    if (err) {
+                        log.error(err, stmt, paramData);
 
-                    stmt = mapper.getStatement('etpOper', 'getEtpOperIndexOversea', paramData, format);
-                    log.debug(stmt);
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getEtpOperIndexOversea Error while performing Query";
+                        resultMsg.err = err;
+                    }
 
-                    conn.query(stmt, function(err, rows) {
+                    if (rows && rows.length > 0) {
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
 
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpOper.getEtpOperIndexOversea Error while performing Query";
-                            resultMsg.err = err;
+                        resultMsg.dataList = rows;
+                    }
 
-                            return callback(resultMsg);
-                        }
+                    res.json(resultMsg);
+                    res.end();
+                });
 
-                        if (rows && rows.length > 0) {
-                            resultMsg.dataList = rows;
-                        }
+            } catch (err) {
+                log.error(err, stmt, paramData);
 
-                        callback(null);
-                    });
-                }
-
-            ], function(err) {
-
-                if (err) {
-                    log.error(err);
-                } else {
-
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
-                    resultMsg.err = null;
-                }
+                resultMsg.result = false;
+                resultMsg.msg = "[error] etpOper.getEtpOperIndexOversea Error while performing Query";
+                resultMsg.err = err;
 
                 res.json(resultMsg);
                 res.end();
-            });
+            }
         });
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getEtpOperIndexOversea 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getEtpOperIndexOversea 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.dataList = [];
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -350,8 +344,7 @@ var getEtpOperIndexError = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getEtpOperIndexError  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpOper.getEtpOperIndexError  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getEtpOperIndexOversea  req.body.data no data.";
@@ -361,11 +354,11 @@ var getEtpOperIndexError = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -379,65 +372,85 @@ var getEtpOperIndexError = function(req, res) {
                 /* 1. EtpBasic 의 기본정보를 조회한다. */
                 function(callback) {
 
-                    stmt = mapper.getStatement('etpOper', 'getEtpOperIndexError', paramData, format);
-                    log.debug(stmt);
-
-                    conn.query(stmt, function(err, rows) {
-
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpOper.getEtpOperIndexError Error while performing Query";
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-
-                        if (rows && rows.length > 0) {
-                            resultMsg.dataList = rows;
-                        }
-
-                        callback(null, paramData);
-                    });
-                },
-
-                /* 2. ETP Basic 정보를 조회한다. */
-                function(msg, callback) {
-
-                    if (resultMsg.dataList && resultMsg.dataList.length > 0) {
-
-                        stmt = mapper.getStatement('indexDetail', 'getIndexBasicDetail', paramData, format);
-
-                        // 대입 문자 치환
-                        stmt = stmt.replace(/\: =/g, ':=');
-
-                        log.debug(stmt);
+                    try{
+                        stmt = mapper.getStatement('etpOper', 'getEtpOperIndexError', paramData, format);
+                        log.debug(stmt, paramData);
 
                         conn.query(stmt, function(err, rows) {
 
                             if (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] indexDetail.getIndexBasicDetail Error while performing Query";
+                                resultMsg.msg = "[error] etpOper.getEtpOperIndexError Error while performing Query";
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
                             }
 
-                            if (rows) {
-                                resultMsg.indexBasic = rows[0];
+                            if (rows && rows.length > 0) {
+                                resultMsg.dataList = rows;
                             }
 
-                            callback(null);
+                            callback(null, paramData);
                         });
 
-                    } else {
-                        callback(null);
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getEtpOperIndexError Error while performing Query";
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
                     }
+                },
+
+                /* 2. ETP Basic 정보를 조회한다. */
+                function(msg, callback) {
+
+                    try{
+                        if (resultMsg.dataList && resultMsg.dataList.length > 0) {
+
+                            stmt = mapper.getStatement('indexDetail', 'getIndexBasicDetail', paramData, format);
+
+                            // 대입 문자 치환
+                            stmt = stmt.replace(/\: =/g, ':=');
+
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] etpOper.getIndexBasicDetail Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if (rows) {
+                                    resultMsg.indexBasic = rows[0];
+                                }
+
+                                callback(null);
+                            });
+
+                        } else {
+                            callback(null);
+                        }
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getEtpOperIndexError Error while performing Query";
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }                        
                 },
 
             ], function(err) {
 
                 if (err) {
-                    log.error(err);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -452,20 +465,16 @@ var getEtpOperIndexError = function(req, res) {
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getEtpOperIndexError 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getEtpOperIndexError 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.dataList = [];
         resultMsg.indexBasic = {};
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -485,8 +494,7 @@ var getEtpOperPdf = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getEtpOperPdf  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpOper.getEtpOperPdf  req.body.data no data.", paramData);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getEtpOperPdf  req.body.data no data.";
@@ -496,11 +504,11 @@ var getEtpOperPdf = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -511,79 +519,66 @@ var getEtpOperPdf = function(req, res) {
         resultMsg.allDataList = [];
         Promise.using(pool.connect(), conn => {
 
+            try {
 
-            async.waterfall([
+                /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                if (paramData.f16493 == "1" || paramData.f16493 == "2") {
 
-                /* 1. ETP 운용관리 - PDF관리 정보를 조회한다. ( ETF 인 경우 ) */
-                function(callback) {
+                    stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtfHist', paramData, format);
+                    log.debug(stmt, paramData);
 
-                    try {
-                        /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                        if (paramData.f16493 == "1" || paramData.f16493 == "2") {
+                    conn.query(stmt, function(err, rows) {
 
-                            stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtfHist', paramData, format);
-                            log.debug(stmt);
+                        if (err) {
+                            log.error(err, stmt, paramData);
 
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHist Error while performing Query";
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                if (rows && rows.length > 0) {
-                                    resultMsg.dataList = rows;
-                                }
-
-                                callback(null);
-                            });
-                        } else {
-                            callback(null);
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHist Error while performing Query";
+                            resultMsg.err = err;
                         }
 
-                    } catch (err) {
-                        resultMsg.result = false;
-                        resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHist Error while performing Query";
-                        resultMsg.err = err;
+                        if (rows && rows.length > 0) {
+                            resultMsg.result = true;
+                            resultMsg.msg = "";
 
-                        return callback(resultMsg);
-                    }
-                },
+                            resultMsg.dataList = rows;
+                        }
 
-            ], function(err) {
+                        res.json(resultMsg);
+                        res.end();
+                    });
 
-                if (err) {
-                    log.error(err);
                 } else {
-
                     resultMsg.result = true;
                     resultMsg.msg = "";
-                    resultMsg.err = null;
+
+                    res.json(resultMsg);
+                    res.end();
                 }
+
+            } catch (err) {
+                log.error(err, stmt, paramData);
+
+                resultMsg.result = false;
+                resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHist Error while performing Query";
+                resultMsg.err = err;
 
                 res.json(resultMsg);
                 res.end();
-            });
+            }
         });
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getEtpOperPdf 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHist 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.dataList = [];
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -602,8 +597,7 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getEtpOperPdfEmergencyHistNow  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpOper.getEtpOperPdfEmergencyHistNow  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getEtpOperPdfEmergencyHistNow  req.body.data no data.";
@@ -613,11 +607,11 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -626,7 +620,6 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
 
         resultMsg.allDataList = [];
         Promise.using(pool.connect(), conn => {
-
 
             async.waterfall([
 
@@ -638,7 +631,7 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
                         if (paramData.f16493 == "1" || paramData.f16493 == "2") {
 
                             stmt = mapper.getStatement('etpOper', 'getTmPdfModifyHistMastByNow', paramData, format);
-                            log.debug(stmt);
+                            log.debug(stmt, paramData);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -677,7 +670,7 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
                         if (paramData.f16493 == "1" || paramData.f16493 == "2") {
 
                             stmt = mapper.getStatement('etpOper', 'getTmPdfModifyHistDtlByNow', paramData, format);
-                            log.debug(stmt);
+                            log.debug(stmt, paramData);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -698,9 +691,9 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
                                         resultMsg.allDataList[i].etf_f16583 = resultMsg.allDataList[i].f16583; /* ETF 사무수탁회사번호 */
 
                                         var same = rows.filter(function(o, p) {
-                                            return (    o.f16583 === resultMsg.allDataList[i].f16583 /* 사무수탁회사번호 */ 
-                                                    &&  o.f16012 === resultMsg.allDataList[i].f16012 /* ETF종목코드 */ 
-                                                    &&  o.f16013 === resultMsg.allDataList[i].f16013 /* ETF단축코드 */
+                                            return (o.f16583 === resultMsg.allDataList[i].f16583 /* 사무수탁회사번호 */ &&
+                                                o.f16012 === resultMsg.allDataList[i].f16012 /* ETF종목코드 */ &&
+                                                o.f16013 === resultMsg.allDataList[i].f16013 /* ETF단축코드 */
                                             );
                                         });
 
@@ -729,7 +722,7 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -744,19 +737,15 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getEtpOperPdfEmergencyHistNow 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getEtpOperPdfEmergencyHistNow 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.allDataList = [];
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -775,8 +764,7 @@ var getEtpOperPdfByRateTitle = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getEtpOperPdfByRateTitle  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpOper.getEtpOperPdfByRateTitle  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getEtpOperPdfByRateTitle  req.body.data no data.";
@@ -786,91 +774,80 @@ var getEtpOperPdfByRateTitle = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
-
-
         var rateTitleList = [];
         Promise.using(pool.connect(), conn => {
 
-
-            async.waterfall([
+            try {
 
                 /* 1. ETP 운용관리 - 비중변경현황 - 최근 5개 날짜 정보를 조회한다. ( ETF 인 경우 ) */
-                function(callback) {
+                stmt = mapper.getStatement('etpOper', "getEtpOperPdfEtfHistByRateTitle", paramData, format);
+                log.debug(stmt, paramData);
 
-                    stmt = mapper.getStatement('etpOper', "getEtpOperPdfEtfHistByRateTitle", paramData, format);
-                    log.debug(stmt);
+                conn.query(stmt, function(err, rows) {
 
-                    conn.query(stmt, function(err, rows) {
+                    if (err) {
+                        log.error(err, stmt, paramData);
 
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHistByRateTitle Error while performing Query";
-                            resultMsg.err = err;
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHistByRateTitle Error while performing Query";
+                        resultMsg.err = err;
+                    }
 
-                            return callback(resultMsg);
+                    if (rows && rows.length > 0) {
+                        for (var i = 0; i < rows.length; i++) {
+                            var temp = {};
+
+                            temp.index = i;
+                            temp.name = "rate_day" + i;
+                            temp.show_date = rows[i].show_date;
+                            temp.date = rows[i].f12506;
+
+                            rateTitleList.push(temp);
                         }
 
-                        if (rows && rows.length > 0) {
-                            for (var i = 0; i < rows.length; i++) {
-                                var temp = {};
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
 
-                                temp.index = i;
-                                temp.name = "rate_day" + i;
-                                temp.show_date = rows[i].show_date;
-                                temp.date = rows[i].f12506;
+                        resultMsg.rateTitleList = rateTitleList;
+                    }
 
-                                rateTitleList.push(temp);
-                            }
+                    res.json(resultMsg);
+                    res.end();
+                });
 
-                            resultMsg.rateTitleList = rateTitleList;
-                        }
+            } catch (err) {
+                log.error(err, paramData);
 
-                        callback(null, paramData);
-                    });
-
-                },
-
-            ], function(err) {
-
-                if (err) {
-                    log.error(err);
-                } else {
-
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
-                    resultMsg.err = null;
-                }
+                resultMsg.result = false;
+                resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHistByRateTitle Error while performing Query";
+                resultMsg.err = err;
 
                 res.json(resultMsg);
                 res.end();
-            });
+            }
         });
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getEtpOperPdfByRateTitle 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getEtpOperPdfByRateTitle 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.rateTitleList = [];
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -901,11 +878,11 @@ var getEtpOperPdfByRate = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -916,82 +893,100 @@ var getEtpOperPdfByRate = function(req, res) {
         var rateTitleList = [];
         Promise.using(pool.connect(), conn => {
 
-
             async.waterfall([
 
                 /* 1. ETP 운용관리 - 비중변경현황 - 최근 5개 날짜 정보를 조회한다. ( ETF 인 경우 ) */
                 function(callback) {
 
-                    stmt = mapper.getStatement('etpOper', "getEtpOperPdfEtfHistByRateTitle", paramData, format);
-                    log.debug(stmt);
-
-                    conn.query(stmt, function(err, rows) {
-
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHistByRateTitle Error while performing Query";
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-
-                        if (rows && rows.length > 0) {
-                            for (var i = 0; i < rows.length; i++) {
-                                var temp = {};
-
-                                temp.index = i;
-                                temp.name = "rate_day" + i;
-                                temp.show_date = rows[i].show_date;
-                                temp.date = rows[i].f12506;
-
-                                rateTitleList.push(temp);
-                            }
-
-                            resultMsg.rateTitleList = rateTitleList;
-                        }
-
-                        callback(null, paramData);
-                    });
-
-                },
-
-                /* 2. ETP 운용관리 - PDF관리 정보를 조회한다. ( ETF 인 경우 ) */
-                function(msg, callback) {
-
-                    if (resultMsg.rateTitleList && resultMsg.rateTitleList.length > 0) {
-
-                        paramData.rateTitleList = resultMsg.rateTitleList;
-
-                        stmt = mapper.getStatement('etpOper', "getEtpOperPdfEtfHistByRate", paramData, format);
-                        log.debug(stmt);
+                    try{
+                        stmt = mapper.getStatement('etpOper', "getEtpOperPdfEtfHistByRateTitle", paramData, format);
+                        log.debug(stmt, paramData);
 
                         conn.query(stmt, function(err, rows) {
 
                             if (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHistByRate Error while performing Query";
+                                resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHistByRateTitle Error while performing Query";
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
                             }
 
                             if (rows && rows.length > 0) {
-                                resultMsg.dataList = rows;
+                                for (var i = 0; i < rows.length; i++) {
+                                    var temp = {};
+
+                                    temp.index = i;
+                                    temp.name = "rate_day" + i;
+                                    temp.show_date = rows[i].show_date;
+                                    temp.date = rows[i].f12506;
+
+                                    rateTitleList.push(temp);
+                                }
+
+                                resultMsg.rateTitleList = rateTitleList;
                             }
 
-                            callback(null);
+                            callback(null, paramData);
                         });
 
-                    } else {
+                    } catch (err) {
 
-                        callback(null);
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHistByRateTitle Error while performing Query";
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }
+                },
+
+                /* 2. ETP 운용관리 - PDF관리 정보를 조회한다. ( ETF 인 경우 ) */
+                function(msg, callback) {
+
+                    try{
+                        if (resultMsg.rateTitleList && resultMsg.rateTitleList.length > 0) {
+
+                            paramData.rateTitleList = resultMsg.rateTitleList;
+
+                            stmt = mapper.getStatement('etpOper', "getEtpOperPdfEtfHistByRate", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHistByRate Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if (rows && rows.length > 0) {
+                                    resultMsg.dataList = rows;
+                                }
+
+                                callback(null);
+                            });
+
+                        } else {
+
+                            callback(null);
+                        }
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfHistByRate Error while performing Query";
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
                     }
                 }
 
             ], function(err) {
 
                 if (err) {
-                    log.error(err);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -1006,20 +1001,16 @@ var getEtpOperPdfByRate = function(req, res) {
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getEtpOperPdfByRate 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getEtpOperPdfByRate 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.rateTitleList = [];
         resultMsg.dataList = [];
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -1038,8 +1029,7 @@ var getEtpOperPdfModify = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getEtpOperPdfModify  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpOper.getEtpOperPdfModify  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getEtpOperPdfModify  req.body.data no data.";
@@ -1049,15 +1039,16 @@ var getEtpOperPdfModify = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";
+
 
         resultMsg.dataList = [];
         Promise.using(pool.connect(), conn => {
@@ -1068,76 +1059,104 @@ var getEtpOperPdfModify = function(req, res) {
                 /* 1. ETP 기본 정보를 조회한다. */
                 function(callback) {
 
-                    stmt = mapper.getStatement('etpDetail', 'getEtpBasic', paramData, format);
-                    log.debug(stmt);
+                    try{
+                        var f16012 = paramData.f16012;
 
-                    conn.query(stmt, function(err, rows) {
-
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpDetail.getEtpBasic Error while performing Query";
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
+                        if (paramData.searchCode) {
+                            paramData.f16012 = "";
                         }
 
-                        if (rows && rows.length == 1) {
-                            resultMsg.etpBasic = rows[0];
-                        }
-
-                        callback(null, paramData);
-                    });
-                },
-
-                /* 2. ETF 정보를 조회한다. */
-                function(msg, callback) {
-
-                    /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                    if (resultMsg.etpBasic &&
-                        (resultMsg.etpBasic.f16493 == "1" || resultMsg.etpBasic.f16493 == "2")
-                    ) {
-
-                        stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtfEmergency', paramData, format);
-                        log.debug(stmt);
+                        stmt = mapper.getStatement('etpDetail', 'getEtpBasic', paramData, format);
+                        log.debug(stmt, paramData);
 
                         conn.query(stmt, function(err, rows) {
 
                             if (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfEmergency Error while performing Query";
+                                resultMsg.msg = "[error] etpDetail.getEtpBasic Error while performing Query";
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
                             }
 
-                            if (rows && rows.length > 0) {
-
-                                for (var i in rows) {
-                                    rows[i].status = "normal";
-
-                                    rows[i].f16499 = rows[i].f16499; /* 1CU단위증권수 */
-                                    rows[i].f16499_prev = rows[i].f16499; /* 1CU단위증권수 */
-
-                                    rows[i].f34840 = rows[i].f34840; /* 액면금액설정현금액 */
-                                    rows[i].f34840_prev = rows[i].f34840; /* 액면금액설정현금액 */
-
-                                    rows[i].code_check = true; /* 코드 체크 ( defulat : true ) */
-
-                                    resultMsg.dataList.push(rows[i]);
-                                }
+                            if (rows && rows.length == 1) {
+                                resultMsg.etpBasic = rows[0];
                             }
 
-                            callback(null);
+                            paramData.f16012 = f16012;
+
+                            callback(null, paramData);
                         });
-                    } else {
-                        callback(null);
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpDetail.getEtpBasic Error while performing Query";
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }
+                },
+
+                /* 2. ETF 정보를 조회한다. */
+                function(msg, callback) {
+
+                    try{
+                        /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                        if (resultMsg.etpBasic &&
+                            (resultMsg.etpBasic.f16493 == "1" || resultMsg.etpBasic.f16493 == "2")
+                        ) {
+
+                            stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtfEmergency', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfEmergency Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if (rows && rows.length > 0) {
+
+                                    for (var i in rows) {
+                                        rows[i].status = "normal";
+
+                                        rows[i].f16499 = rows[i].f16499; /* 1CU단위증권수 */
+                                        rows[i].f16499_prev = rows[i].f16499; /* 1CU단위증권수 */
+
+                                        rows[i].f34840 = rows[i].f34840; /* 액면금액설정현금액 */
+                                        rows[i].f34840_prev = rows[i].f34840; /* 액면금액설정현금액 */
+
+                                        rows[i].code_check = true; /* 코드 체크 ( defulat : true ) */
+
+                                        resultMsg.dataList.push(rows[i]);
+                                    }
+                                }
+
+                                callback(null);
+                            });
+                        } else {
+                            callback(null);
+                        }
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getEtpOperPdfEtfEmergency Error while performing Query";
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
                     }
                 },
 
             ], function(err) {
 
                 if (err) {
-                    log.error(err);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -1152,416 +1171,16 @@ var getEtpOperPdfModify = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getEtpOperPdfByRate 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getEtpOperPdfByRate 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.etpBasic = {};
         resultMsg.dataList = [];
 
-        res.json({
-            resultMsg
-        });
-        res.end();
-    }
-}
-
-/*
- * exchBasic 환율정보를 조회한다.
- * 2019-05-03  bkLove(촤병국)
- */
-var getExchBasic = function(req, res) {
-    try {
-        log.debug('etpOper.getExchBasic 호출됨.');
-
-        var pool = req.app.get("pool");
-        var mapper = req.app.get("mapper");
-        var resultMsg = {};
-
-        /* 1. body.data 값이 있는지 체크 */
-        if (!req.body.data) {
-            log.error("[error] etpOper.getExchBasic  req.body.data no data.");
-            log.error(req.body.data);
-
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getExchBasic  req.body.data no data.";
-
-            throw resultMsg;
-        }
-
-        var paramData = JSON.parse(JSON.stringify(req.body.data));
-
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
-
-
-        var format = { language: 'sql', indent: '' };
-        var stmt = "";
-
-        Promise.using(pool.connect(), conn => {
-
-
-            async.waterfall([
-
-                /* 1. EtpBasic 의 기본정보를 조회한다. */
-                function(callback) {
-
-                    stmt = mapper.getStatement('etpOper', 'getExchBasic', paramData, format);
-                    log.debug(stmt);
-
-                    conn.query(stmt, function(err, rows) {
-
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpOper.getExchBasic Error while performing Query";
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-
-                        if (rows && rows.length > 0) {
-                            resultMsg.dataList = rows;
-                        }
-
-                        callback(null);
-                    });
-                }
-
-            ], function(err) {
-
-                if (err) {
-                    log.error(err);
-                } else {
-
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
-                    resultMsg.err = null;
-                }
-
-                res.json(resultMsg);
-                res.end();
-            });
-        });
-
-    } catch (expetion) {
-
-        log.debug(expetion);
-
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getExchBasic 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
-
-        resultMsg.dataList = [];
-
-        res.json({
-            resultMsg
-        });
-        res.end();
-    }
-}
-
-/*
- * exchBasic 환율정보를 조회한다.
- * 2019-05-03  bkLove(촤병국)
- */
-var getExchBasic = function(req, res) {
-    try {
-        log.debug('etpOper.getExchBasic 호출됨.');
-
-        var pool = req.app.get("pool");
-        var mapper = req.app.get("mapper");
-        var resultMsg = {};
-
-        /* 1. body.data 값이 있는지 체크 */
-        if (!req.body.data) {
-            log.error("[error] etpOper.getExchBasic  req.body.data no data.");
-            log.error(req.body.data);
-
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getExchBasic  req.body.data no data.";
-
-            throw resultMsg;
-        }
-
-        var paramData = JSON.parse(JSON.stringify(req.body.data));
-
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
-
-
-        var format = { language: 'sql', indent: '' };
-        var stmt = "";
-
-        Promise.using(pool.connect(), conn => {
-
-
-            async.waterfall([
-
-                /* 1. EtpBasic 의 기본정보를 조회한다. */
-                function(callback) {
-
-                    stmt = mapper.getStatement('etpOper', 'getExchBasic', paramData, format);
-                    log.debug(stmt);
-
-                    conn.query(stmt, function(err, rows) {
-
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpOper.getExchBasic Error while performing Query";
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-
-                        if (rows && rows.length > 0) {
-                            resultMsg.dataList = rows;
-                        }
-
-                        callback(null);
-                    });
-                }
-
-            ], function(err) {
-
-                if (err) {
-                    log.error(err);
-                } else {
-
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
-                    resultMsg.err = null;
-                }
-
-                res.json(resultMsg);
-                res.end();
-            });
-        });
-
-    } catch (expetion) {
-
-        log.error(expetion);
-
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getExchBasic 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
-
-        resultMsg.dataList = [];
-
-        res.json({
-            resultMsg
-        });
-        res.end();
-    }
-}
-
-/*
- * kspjongBasic 데이터를 조회한다.
- * 2019-05-03  bkLove(촤병국)
- */
-var getKspjongBasic = function(req, res) {
-    try {
-        log.debug('etpOper.getKspjongBasic 호출됨.');
-
-        var pool = req.app.get("pool");
-        var mapper = req.app.get("mapper");
-        var resultMsg = {};
-
-        /* 1. body.data 값이 있는지 체크 */
-        if (!req.body.data) {
-            log.error("[error] etpOper.getKspjongBasic  req.body.data no data.");
-            log.error(req.body.data);
-
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getKspjongBasic  req.body.data no data.";
-
-            throw resultMsg;
-        }
-
-        var paramData = JSON.parse(JSON.stringify(req.body.data));
-
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
-
-
-        var format = { language: 'sql', indent: '' };
-        var stmt = "";
-
-        Promise.using(pool.connect(), conn => {
-
-
-            async.waterfall([
-
-                /* 1. EtpBasic 의 기본정보를 조회한다. */
-                function(callback) {
-
-                    stmt = mapper.getStatement('etpOper', 'getKspjongBasic', paramData, format);
-                    log.debug(stmt);
-
-                    conn.query(stmt, function(err, rows) {
-
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpOper.getKspjongBasic Error while performing Query";
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-
-                        if (rows && rows.length > 0) {
-                            resultMsg.dataList = rows;
-                        }
-
-                        callback(null);
-                    });
-                }
-
-            ], function(err) {
-
-                if (err) {
-                    log.error(err);
-                } else {
-
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
-                    resultMsg.err = null;
-                }
-
-                res.json(resultMsg);
-                res.end();
-            });
-        });
-
-    } catch (expetion) {
-
-        log.debug(expetion);
-
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getKspjongBasic 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
-
-        resultMsg.dataList = [];
-
-        res.json({
-            resultMsg
-        });
-        res.end();
-    }
-}
-
-/*
- * futureBasic 데이터를 조회한다.
- * 2019-05-03  bkLove(촤병국)
- */
-var getFutureBasic = function(req, res) {
-    try {
-        log.debug('etpOper.getFutureBasic 호출됨.');
-
-        var pool = req.app.get("pool");
-        var mapper = req.app.get("mapper");
-        var resultMsg = {};
-
-        /* 1. body.data 값이 있는지 체크 */
-        if (!req.body.data) {
-            log.error("[error] etpOper.getFutureBasic  req.body.data no data.");
-            log.error(req.body.data);
-
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getFutureBasic  req.body.data no data.";
-
-            throw resultMsg;
-        }
-
-        var paramData = JSON.parse(JSON.stringify(req.body.data));
-
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
-
-
-        var format = { language: 'sql', indent: '' };
-        var stmt = "";
-
-        Promise.using(pool.connect(), conn => {
-
-
-            async.waterfall([
-
-                /* 1. EtpBasic 의 기본정보를 조회한다. */
-                function(callback) {
-
-                    stmt = mapper.getStatement('etpOper', 'getFutureBasic', paramData, format);
-                    log.debug(stmt);
-
-                    conn.query(stmt, function(err, rows) {
-
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpOper.getFutureBasic Error while performing Query";
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-
-                        if (rows && rows.length > 0) {
-                            resultMsg.dataList = rows;
-                        }
-
-                        callback(null);
-                    });
-                }
-
-            ], function(err) {
-
-                if (err) {
-                    log.error(err);
-                } else {
-
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
-                    resultMsg.err = null;
-                }
-
-                res.json(resultMsg);
-                res.end();
-            });
-        });
-
-    } catch (expetion) {
-
-        log.debug(expetion);
-
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getFutureBasic 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
-
-        resultMsg.dataList = [];
-
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -1580,8 +1199,7 @@ var getJongmokData = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getJongmokData  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpOper.getJongmokData  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getJongmokData  req.body.data no data.";
@@ -1591,11 +1209,11 @@ var getJongmokData = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -1603,95 +1221,53 @@ var getJongmokData = function(req, res) {
 
         Promise.using(pool.connect(), conn => {
 
+            try {
+                stmt = mapper.getStatement('etpOper', 'getKspjongBasic', paramData, format);
+                log.debug(stmt, paramData);
 
-            async.waterfall([
+                conn.query(stmt, function(err, rows) {
 
-                /* 1. KspjongBasic 의 기본정보를 조회한다. */
-                function(callback) {
+                    if (err) {
+                        log.error(err, stmt, paramData);
 
-                    stmt = mapper.getStatement('etpOper', 'getKspjongBasic', paramData, format);
-                    log.debug(stmt);
-
-                    conn.query(stmt, function(err, rows) {
-
-                        if (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] etpOper.getKspjongBasic Error while performing Query";
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-
-                        if (rows && rows.length > 0) {
-                            resultMsg.dataList = rows;
-                        }
-
-                        callback(null, paramData);
-                    });
-                },
-
-                /* 2. FutureBasic 의 기본정보를 조회한다. */
-                function(msg, callback) {
-
-
-
-                    if (!(resultMsg.dataList && resultMsg.dataList.length > 0)) {
-                        stmt = mapper.getStatement('etpOper', 'getFutureBasic', paramData, format);
-                        log.debug(stmt);
-
-                        conn.query(stmt, function(err, rows) {
-
-                            if (err) {
-                                resultMsg.result = false;
-                                resultMsg.msg = "[error] etpOper.getFutureBasic Error while performing Query";
-                                resultMsg.err = err;
-
-                                return callback(resultMsg);
-                            }
-
-                            if (rows && rows.length > 0) {
-                                resultMsg.dataList = rows;
-                            }
-
-                            callback(null);
-                        });
-
-                    } else {
-                        callback(null);
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getKspjongBasic Error while performing Query";
+                        resultMsg.err = err;
                     }
-                }
 
-            ], function(err) {
+                    if (rows && rows.length > 0) {
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
+                        resultMsg.dataList = rows;
+                    }
 
-                if (err) {
-                    log.error(err);
-                } else {
+                    res.json(resultMsg);
+                    res.end();
+                });
 
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
-                    resultMsg.err = null;
-                }
+            } catch (err) {
+                log.error(err, stmt, paramData);
+
+                resultMsg.result = false;
+                resultMsg.msg = "[error] etpOper.getKspjongBasic Error while performing Query";
+                resultMsg.err = err;
 
                 res.json(resultMsg);
                 res.end();
-            });
+            }
         });
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getKspjongBasic 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getKspjongBasic 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.dataList = [];
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -1711,8 +1287,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.saveEtpOperPdfModify  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpOper.saveEtpOperPdfModify  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.saveEtpOperPdfModify  req.body.data no data.";
@@ -1722,11 +1297,11 @@ var saveEtpOperPdfModify = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -1749,25 +1324,35 @@ var saveEtpOperPdfModify = function(req, res) {
                     /* 1. 사용자별 처리한 그룹번호를 조회한다. */
                     function(callback) {
 
-                        stmt = mapper.getStatement('etpOper', 'getTmPdfModifyHistMastGroupNo', paramData, format);
-                        log.debug(stmt);
+                        try{
+                            stmt = mapper.getStatement('etpOper', 'getTmPdfModifyHistMastGroupNo', paramData, format);
+                            log.debug(stmt, paramData);
 
-                        conn.query(stmt, function(err, rows) {
+                            conn.query(stmt, function(err, rows) {
 
-                            if (err) {
-                                resultMsg.result = false;
-                                resultMsg.msg = "[error] etpOper.getTmPdfModifyHistMastGroupNo Error while performing Query";
-                                resultMsg.err = err;
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] etpOper.getTmPdfModifyHistMastGroupNo Error while performing Query";
+                                    resultMsg.err = err;
 
-                                return callback(resultMsg);
-                            }
+                                    return callback(resultMsg);
+                                }
 
-                            if (rows && rows.length == 1) {
-                                paramData.group_no = rows[0].group_no;
-                            }
+                                if (rows && rows.length == 1) {
+                                    paramData.group_no = rows[0].group_no;
+                                }
 
-                            callback(null, paramData);
-                        });
+                                callback(null, paramData);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] etpOper.getTmPdfModifyHistMastGroupNo Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
                     },
 
                     function(msg, callback) {
@@ -1812,7 +1397,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         try {
 
                                             var stmt = mapper.getStatement('etpOper', 'getTdEtfpdfBasicExistsCheck', paramData, { language: 'sql', indent: '  ' });
-                                            log.debug(stmt);
+                                            log.debug(stmt, paramData);
 
                                             conn.query(stmt, function(err, rows) {
 
@@ -1854,7 +1439,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                             if (arrInsertDtl && arrInsertDtl.length > 0) {
                                                 paramData.dataLists = arrInsertDtl;
                                                 var stmt = mapper.getStatement('etpOper', 'saveTdEtfpdfBasic', paramData, { language: 'sql', indent: '  ' });
-                                                log.debug(stmt);
+                                                log.debug(stmt, paramData);
 
                                                 conn.query(stmt, function(err, rows) {
 
@@ -1882,14 +1467,14 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 4. [tm_pdf_modify_dtl] 테이블의 f33837(구성종목수) 을 수정한다. */
+                                    /* 4. [td_etfpdf_basic] 테이블의 f33837(구성종목수) 을 수정한다. */
                                     function(msg, callback) {
 
                                         try {
 
                                             if (arrInsertDtl && arrInsertDtl.length > 0) {
                                                 var stmt = mapper.getStatement('etpOper', 'modifyTdEtfpdfBasicF33837', paramData, { language: 'sql', indent: '  ' });
-                                                log.debug(stmt);
+                                                log.debug(stmt, paramData);
 
                                                 conn.query(stmt, function(err, rows) {
 
@@ -1925,7 +1510,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                             if (arrModifyDtl && arrModifyDtl.length > 0) {
                                                 paramData.dataLists = arrModifyDtl;
                                                 var stmt = mapper.getStatement('etpOper', 'modifyTdEtfpdfBasic', paramData, { language: 'sql', indent: '  ' });
-                                                log.debug(stmt);
+                                                log.debug(stmt, paramData);
 
                                                 conn.query(stmt, function(err, rows) {
 
@@ -1962,7 +1547,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                             paramData.dataLists = subList.data;
                                             var stmt = mapper.getStatement('etpOper', 'getTdEtfpdfBasicAllData', paramData, { language: 'sql', indent: '  ' });
-                                            log.debug(stmt);
+                                            log.debug(stmt, paramData);
 
                                             conn.query(stmt, function(err, rows) {
 
@@ -1975,7 +1560,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                                 }
 
                                                 if (rows && rows.length > 0) {
-                                                    arrAllDtl   =   rows;
+                                                    arrAllDtl = rows;
                                                 }
 
                                                 callback(null, paramData);
@@ -1988,7 +1573,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                             return callback(resultMsg);
                                         }
-                                    },                                    
+                                    },
 
                                     /*
                                      * 7. ETP 운용관리 - PDF 긴급반영 - 저장시 td_etfpdf_hist 에 데이터가 존재하는지 체크한다.
@@ -2009,7 +1594,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                                 paramData.dataLists = arrAllDtl;
                                                 var stmt = mapper.getStatement('etpOper', 'getTdEtfpdfHistExistsCheck', paramData, { language: 'sql', indent: '  ' });
-                                                log.debug(stmt);
+                                                log.debug(stmt, paramData);
 
                                                 conn.query(stmt, function(err, rows) {
 
@@ -2052,7 +1637,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                             if (arrInsertDtl && arrInsertDtl.length > 0) {
                                                 paramData.dataLists = arrInsertDtl;
                                                 var stmt = mapper.getStatement('etpOper', 'saveTdEtfpdfHist', paramData, { language: 'sql', indent: '  ' });
-                                                log.debug(stmt);
+                                                log.debug(stmt, paramData);
 
                                                 conn.query(stmt, function(err, rows) {
 
@@ -2080,7 +1665,42 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 9. td_etfpdf_hist 에 수정한다. */
+                                    /* 9. [td_etfpdf_hist] 테이블의 f33837(구성종목수) 을 수정한다. */
+                                    function(msg, callback) {
+
+                                        try {
+
+                                            if (arrInsertDtl && arrInsertDtl.length > 0) {
+                                                var stmt = mapper.getStatement('etpOper', 'modifyTdEtfpdfHistF33837', paramData, { language: 'sql', indent: '  ' });
+                                                log.debug(stmt, paramData);
+
+                                                conn.query(stmt, function(err, rows) {
+
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = "[error] etpOper.modifyTdEtfpdfHistF33837 Error while performing Query";
+                                                        resultMsg.err = err;
+
+                                                        return callback(resultMsg);
+                                                    }
+
+                                                    callback(null, paramData);
+                                                })
+
+                                            } else {
+                                                callback(null, paramData);
+                                            }
+
+                                        } catch (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] etpOper.modifyTdEtfpdfHistF33837 Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+                                    },
+
+                                    /* 10. td_etfpdf_hist 에 수정한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -2088,7 +1708,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                             if (arrModifyDtl && arrModifyDtl.length > 0) {
                                                 paramData.dataLists = arrModifyDtl;
                                                 var stmt = mapper.getStatement('etpOper', 'modifyTdEtfpdfHist', paramData, { language: 'sql', indent: '  ' });
-                                                log.debug(stmt);
+                                                log.debug(stmt, paramData);
 
                                                 conn.query(stmt, function(err, rows) {
 
@@ -2117,7 +1737,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                     },
 
                                     /* 
-                                     * 10. ETP 운용관리 - PDF 긴급반영 - 저장시 상세에 이미 등록된 데이터가 존재하는지 체크한다.  
+                                     * 11. ETP 운용관리 - PDF 긴급반영 - 저장시 상세에 이미 등록된 데이터가 존재하는지 체크한다.  
                                      *
                                      * 1) tm_pdf_modify_dtl 에 없는 경우에는 'insert'
                                      * 2) tm_pdf_modify_dtl 에 존재하고 CU수량과 액면금액 모두 td_etfpdf_basic 의 값과 동일한 경우 'delete'
@@ -2135,7 +1755,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                             paramData.dataLists = subList.data;
                                             var stmt = mapper.getStatement('etpOper', 'getTmPdfModifyDtlExistsCheck', paramData, { language: 'sql', indent: '  ' });
-                                            log.debug(stmt);
+                                            log.debug(stmt, paramData);
 
                                             conn.query(stmt, function(err, rows) {
 
@@ -2173,7 +1793,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 11. PDF 변경 상세 정보 (구성종목) 정보를 저장한다. */
+                                    /* 12. PDF 변경 상세 정보 (구성종목) 정보를 저장한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -2182,7 +1802,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                                 paramData.dataLists = arrInsertDtl;
                                                 var stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyDtl', paramData, { language: 'sql', indent: '  ' });
-                                                log.debug(stmt);
+                                                log.debug(stmt, paramData);
 
                                                 conn.query(stmt, function(err, rows) {
 
@@ -2210,7 +1830,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 12. PDF 변경 상세 정보 (구성종목) 정보를 수정한다. */
+                                    /* 13. PDF 변경 상세 정보 (구성종목) 정보를 수정한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -2218,7 +1838,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                             if (arrModifyDtl && arrModifyDtl.length > 0) {
                                                 paramData.dataLists = arrModifyDtl;
                                                 var stmt = mapper.getStatement('etpOper', 'modifyTmPdfModifyDtl', paramData, { language: 'sql', indent: '  ' });
-                                                log.debug(stmt);
+                                                log.debug(stmt, paramData);
 
                                                 conn.query(stmt, function(err, rows) {
 
@@ -2246,7 +1866,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 13. PDF 변경 상세 정보 (구성종목) 정보를 삭제한다. */
+                                    /* 14. PDF 변경 상세 정보 (구성종목) 정보를 삭제한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -2254,7 +1874,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                             if (arrDeleteDtl && arrDeleteDtl.length > 0) {
                                                 paramData.dataLists = arrDeleteDtl;
                                                 var stmt = mapper.getStatement('etpOper', 'deleteTmPdfModifyDtl', paramData, { language: 'sql', indent: '  ' });
-                                                log.debug(stmt);
+                                                log.debug(stmt, paramData);
 
                                                 conn.query(stmt, function(err, rows) {
 
@@ -2282,12 +1902,12 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 14. ETP 운용관리 - PDF 긴급반영 - 저장시 마스터 상태정보를 조회한다. */
+                                    /* 15. ETP 운용관리 - PDF 긴급반영 - 저장시 마스터 상태정보를 조회한다. */
                                     function(msg, callback) {
 
                                         try {
                                             var stmt = mapper.getStatement('etpOper', 'getTmPdfModifyMastCheck', paramData, { language: 'sql', indent: '  ' });
-                                            log.debug(stmt);
+                                            log.debug(stmt, paramData);
 
                                             conn.query(stmt, function(err, rows) {
 
@@ -2315,7 +1935,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 15. PDF 변경 마스터 정보를 변경한다. */
+                                    /* 16. PDF 변경 마스터 정보를 변경한다. */
                                     function(msg, callback) {
 
                                         var queryId = "saveTmPdfModifyMast";
@@ -2330,7 +1950,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                             }
 
                                             var stmt = mapper.getStatement('etpOper', queryId, paramData, { language: 'sql', indent: '  ' });
-                                            log.debug(stmt);
+                                            log.debug(stmt, paramData);
 
                                             conn.query(stmt, function(err, rows) {
 
@@ -2354,50 +1974,69 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 16. PDF 변경 이력 마스터 정보를 저장한다. */
+                                    /* 17. PDF 변경 이력 마스터 정보를 저장한다. */
                                     function(msg, callback) {
 
-                                        var stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyHistMast', paramData, { language: 'sql', indent: '  ' });
-                                        log.debug(stmt);
+                                        try{
+                                            var stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyHistMast', paramData, { language: 'sql', indent: '  ' });
+                                            log.debug(stmt, paramData);
 
-                                        conn.query(stmt, function(err, rows) {
+                                            conn.query(stmt, function(err, rows) {
 
-                                            if (err) {
-                                                resultMsg.result = false;
-                                                resultMsg.msg = "[error] etpOper.saveTmPdfModifyHistMast Error while performing Query";
-                                                resultMsg.err = err;
+                                                if (err) {
+                                                    resultMsg.result = false;
+                                                    resultMsg.msg = "[error] etpOper.saveTmPdfModifyHistMast Error while performing Query";
+                                                    resultMsg.err = err;
 
-                                                return callback(resultMsg);
-                                            }
+                                                    return callback(resultMsg);
+                                                }
 
-                                            if (rows) {
-                                                paramData.hist_no = rows.insertId;
-                                            }
+                                                if (rows) {
+                                                    paramData.hist_no = rows.insertId;
+                                                }
 
-                                            callback(null, paramData);
-                                        })
+                                                callback(null, paramData);
+                                            })
 
+                                        } catch (err) {
+
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] etpOper.saveTmPdfModifyHistMast Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            callback(resultMsg);
+                                        }
                                     },
 
-                                    /* 17. PDF 변경 이력 상세 정보를 저장한다. */
+                                    /* 18. PDF 변경 이력 상세 정보를 저장한다. */
                                     function(msg, callback) {
 
-                                        paramData.dataLists = arrAllDtl;
-                                        stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyHistDtl', paramData, format);
-                                        log.debug(stmt);
+                                        try{
+                                            paramData.dataLists = arrAllDtl;
+                                            stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyHistDtl', paramData, format);
+                                            log.debug(stmt, paramData);
 
-                                        conn.query(stmt, function(err, rows) {
+                                            conn.query(stmt, function(err, rows) {
 
-                                            if (err) {
-                                                resultMsg.result = false;
-                                                resultMsg.msg = "[error] etpOper.saveTmPdfModifyHistDtl Error while performing Query";
-                                                resultMsg.err = err;
+                                                if (err) {
+                                                    resultMsg.result = false;
+                                                    resultMsg.msg = "[error] etpOper.saveTmPdfModifyHistDtl Error while performing Query";
+                                                    resultMsg.err = err;
 
-                                                return callback(resultMsg);
-                                            }
+                                                    return callback(resultMsg);
+                                                }
 
-                                            callback(null, paramData);
-                                        });
+                                                callback(null, paramData);
+                                            });
+
+                                        } catch (err) {
+
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] etpOper.saveTmPdfModifyHistDtl Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            callback(resultMsg);
+                                        }
 
                                     },
 
@@ -2426,7 +2065,7 @@ var saveEtpOperPdfModify = function(req, res) {
                 ], function(err) {
 
                     if (err) {
-                        log.error(err);
+                        log.error(err, stmt, paramData);
                         conn.rollback();
 
                     } else {
@@ -2446,17 +2085,13 @@ var saveEtpOperPdfModify = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.saveEtpOperPdfModify 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.saveEtpOperPdfModify 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -2476,8 +2111,7 @@ var getPdfByGroupNo = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getPdfByGroupNo  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpOper.getPdfByGroupNo  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getPdfByGroupNo  req.body.data no data.";
@@ -2487,11 +2121,11 @@ var getPdfByGroupNo = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -2508,7 +2142,7 @@ var getPdfByGroupNo = function(req, res) {
 
                     try {
                         stmt = mapper.getStatement('etpOper', 'getMaxGroupNo', paramData, format);
-                        log.debug(stmt);
+                        log.debug(stmt, paramData);
 
                         conn.query(stmt, function(err, rows) {
 
@@ -2550,7 +2184,7 @@ var getPdfByGroupNo = function(req, res) {
                     try {
                         if (paramData.group_no) {
                             stmt = mapper.getStatement('etpOper', 'getTmPdfModifyHistMastByGroupNo', paramData, format);
-                            log.debug(stmt);
+                            log.debug(stmt, paramData);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -2588,7 +2222,7 @@ var getPdfByGroupNo = function(req, res) {
                     try {
                         if (paramData.group_no) {
                             stmt = mapper.getStatement('etpOper', 'getTmPdfModifyHistDtlByGroupNo', paramData, format);
-                            log.debug(stmt);
+                            log.debug(stmt, paramData);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -2645,7 +2279,7 @@ var getPdfByGroupNo = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err);
+                    log.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -2660,19 +2294,15 @@ var getPdfByGroupNo = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion);
+        log.error(expetion, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getPdfByGroupNo 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getPdfByGroupNo 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
         resultMsg.dataList = [];
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -2693,8 +2323,7 @@ var getPdfExistYnByNow = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getPdfExistYnByNow  req.body.data no data.");
-            log.error(req.body.data);
+            log.error("[error] etpOper.getPdfExistYnByNow  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = "[error] etpOper.getPdfExistYnByNow  req.body.data no data.";
@@ -2704,11 +2333,11 @@ var getPdfExistYnByNow = function(req, res) {
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
 
-        paramData.user_id = req.session.user_id;
-        paramData.inst_cd = req.session.inst_cd;
-        paramData.type_cd = req.session.type_cd;
-        paramData.large_type = req.session.large_type;
-        paramData.krx_cd = req.session.krx_cd;
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
         var format = { language: 'sql', indent: '' };
@@ -2717,79 +2346,59 @@ var getPdfExistYnByNow = function(req, res) {
         resultMsg.emergency_exist_yn = "N";
         Promise.using(pool.connect(), conn => {
 
+            try {
+                stmt = mapper.getStatement('etpOper', 'getPdfExistYnByNow', paramData, format);
+                log.debug(stmt, paramData);
 
-            async.waterfall([
+                conn.query(stmt, function(err, rows) {
 
-                /* 1. 현재일자에 PDF 변경건이 존재하는지 반환한다. */
-                function(callback) {
+                    if (err) {
+                        log.error(err, stmt, paramData);
 
-                    try {
-                        stmt = mapper.getStatement('etpOper', 'getPdfExistYnByNow', paramData, format);
-                        log.debug(stmt);
-
-                        conn.query(stmt, function(err, rows) {
-
-                            if (err) {
-                                resultMsg.result = false;
-                                resultMsg.msg = "[error] etpOper.getPdfExistYnByNow Error while performing Query";
-                                resultMsg.err = err;
-
-                                return callback(resultMsg);
-                            }
-
-                            if (!rows || rows.length != 1) {
-                                resultMsg.result = false;
-                                resultMsg.msg = "[error] etpOper.getMaxGroupNo emergency_exist_yn 가 존재하지 않습니다.";
-                                resultMsg.err = err;
-
-                                return callback(resultMsg);
-                            }
-
-                            if (rows && rows.length == 1) {
-                                resultMsg.emergency_exist_yn = rows[0].emergency_exist_yn;
-                            }
-
-                            callback(null, paramData);
-                        });
-
-                    } catch (err) {
                         resultMsg.result = false;
                         resultMsg.msg = "[error] etpOper.getPdfExistYnByNow Error while performing Query";
                         resultMsg.err = err;
-
-                        return callback(resultMsg);
                     }
-                },
 
-            ], function(err) {
+                    if (!rows || rows.length != 1) {
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getMaxGroupNo emergency_exist_yn 가 존재하지 않습니다.";
+                        resultMsg.err = err;
+                    }
 
-                if (err) {
-                    log.error(err);
-                } else {
+                    if (rows && rows.length == 1) {
 
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
-                    resultMsg.err = null;
-                }
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
+
+                        resultMsg.emergency_exist_yn = rows[0].emergency_exist_yn;
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+                });
+
+            } catch (err) {
+                log.error(err, stmt, paramData);
+
+                resultMsg.result = false;
+                resultMsg.msg = "[error] etpOper.getPdfExistYnByNow Error while performing Query";
+                resultMsg.err = err;
 
                 res.json(resultMsg);
                 res.end();
-            });
+            }
         });
 
     } catch (expetion) {
 
-        log.debug(expetion);
+        log.error(expetion, stmt, paramData);
 
-        if (resultMsg && !resultMsg.msg) {
-            resultMsg.result = false;
-            resultMsg.msg = "[error] etpOper.getPdfExistYnByNow 오류가 발생하였습니다.";
-            resultMsg.err = expetion;
-        }
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getPdfExistYnByNow 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
 
-        res.json({
-            resultMsg
-        });
+        res.json(resultMsg);
         res.end();
     }
 }
@@ -2804,11 +2413,6 @@ module.exports.getEtpOperPdfByRateTitle = getEtpOperPdfByRateTitle;
 module.exports.getEtpOperPdfByRate = getEtpOperPdfByRate;
 module.exports.getEtpOperPdfModify = getEtpOperPdfModify;
 module.exports.getJongmokData = getJongmokData;
-
-
-module.exports.getExchBasic = getExchBasic;
-module.exports.getKspjongBasic = getKspjongBasic;
-module.exports.getFutureBasic = getFutureBasic;
 
 module.exports.saveEtpOperPdfModify = saveEtpOperPdfModify;
 module.exports.getPdfByGroupNo = getPdfByGroupNo;

@@ -28,6 +28,7 @@
          </v-flex>     
          <v-flex>
              <ConfirmDialog ref="confirm"></ConfirmDialog>
+             
          </v-flex>   
         </v-layout>
     </v-container>    
@@ -41,6 +42,7 @@ import $      from 'jquery'
 import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 import Config from "@/js/config.js";
+import util       from "@/js/util.js";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 var reqTable;
@@ -128,6 +130,8 @@ export default {
                          reqTable.clear().draw();
                          reqTable.rows.add(vm.results).draw();
                     }
+                }).catch(error => {
+                    vm.$root.$confirm.open('확인','서버로 부터 응답을 받지 못하였습니다.',{},4);             
                 });
         }, 
         async dialogOpen(flag, item) {

@@ -1,58 +1,62 @@
 <template>
-<v-app>
-    <v-container>
-        <v-layout row wrap class="content_margin">
+    <v-container class="content_margin">
+        <v-layout row wrap>
             <v-flex xs12>
                 <v-container>
                     <v-layout>
                         <v-flex xs4 mr-2>
-                            <IndexSummaryCard :item="cardItem1" :chartItem="chartItem1"></IndexSummaryCard>
+                            <IndexSummaryCard :item="cardItem1" :chartItem="chartItem1" @showMessageBox="showMessageBox" @showProgress="showProgress"></IndexSummaryCard>
                         </v-flex>
                         <v-flex xs4 mr-2>
-                            <IndexSummaryCard :item="cardItem2" :chartItem="chartItem2"></IndexSummaryCard>
+                            <IndexSummaryCard :item="cardItem2" :chartItem="chartItem2" @showMessageBox="showMessageBox" @showProgress="showProgress"></IndexSummaryCard>
                         </v-flex>
                         <v-flex xs4>
-                            <IndexSummaryCard :item="cardItem3" :chartItem="chartItem3"></IndexSummaryCard>
+                            <IndexSummaryCard :item="cardItem3" :chartItem="chartItem3" @showMessageBox="showMessageBox" @showProgress="showProgress"></IndexSummaryCard>
                         </v-flex>
                     </v-layout>
                 </v-container>
             </v-flex>
         </v-layout>
-        <v-layout row wrap mt-2  class="content_margin">
+        <v-layout row wrap mt-2  class="mt-2">
             <v-flex xs3 pr-2>
-                <IndexSummaryBox :item="boxItem1"></IndexSummaryBox>
+                <IndexSummaryBox :item="boxItem1" @showMessageBox="showMessageBox" @showProgress="showProgress"></IndexSummaryBox>
             </v-flex>
             <v-flex xs3 pr-2>
-                <IndexSummaryBox :item="boxItem2"></IndexSummaryBox>
+                <IndexSummaryBox :item="boxItem2" @showMessageBox="showMessageBox" @showProgress="showProgress"></IndexSummaryBox>
             </v-flex>
             <v-flex xs3 pr-2>
-                <IndexSummaryBox :item="boxItem3"></IndexSummaryBox>
+                <IndexSummaryBox :item="boxItem3" @showMessageBox="showMessageBox" @showProgress="showProgress"></IndexSummaryBox>
             </v-flex>
             <v-flex xs3>
-                <IndexSummaryBox :item="boxItem4"></IndexSummaryBox>
+                <IndexSummaryBox :item="boxItem4" @showMessageBox="showMessageBox" @showProgress="showProgress"></IndexSummaryBox>
             </v-flex>
         </v-layout>
-        <v-layout row wrap class="content_margin">
+        <v-layout row wrap class="mt-2">
             <v-flex xs12 >
                 <InfoOpenReq></InfoOpenReq>
             </v-flex>
         </v-layout>
-    </v-container>
-    <v-flex>
+        <v-layout>
+            <v-flex>
              <ConfirmDialog ref="confirm"></ConfirmDialog>
-    </v-flex>
-</v-app>
+             <ProgressBar ref="progress"></ProgressBar>
+            </v-flex>
+        </v-layout>
+    </v-container>
+
     
 </template>
 
 
 
 <script>
-import Config from "@/js/config.js";
+import Config from '@/js/config.js';
+import util       from "@/js/util.js";
 import IndexSummaryCard from "./IndexSummaryCard.vue";
 import IndexSummaryBox from "./IndexSummaryBox.vue";
 import InfoOpenReq from "./InfoOpenReq.vue";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
+import ProgressBar from "@/components/common/ProgressBar.vue";
 export default {
     props: [],
     data() {
@@ -146,7 +150,8 @@ export default {
         IndexSummaryCard: IndexSummaryCard,
         IndexSummaryBox: IndexSummaryBox,
         InfoOpenReq: InfoOpenReq,
-        ConfirmDialog: ConfirmDialog
+        ConfirmDialog: ConfirmDialog,
+        ProgressBar: ProgressBar
     },
     mounted: function() {
         // 메시지 박스 참조
@@ -158,7 +163,7 @@ export default {
     methods: {
         getIndexSummaryInfo: function() {
             var vm = this;
-
+            util.processing(vm.$refs.progress, true);
             axios
                 .post(Config.base_url + "/user/index/getIndexSummaryInfo", {
                     params: {}
@@ -206,8 +211,18 @@ export default {
                         vm.$EventBus.$emit("getIndexSummaryHist", "loading");
                         
                     }
+                    util.processing(vm.$refs.progress, false);
+                }).catch(error => {
+                    util.processing(vm.$refs.progress, false);
+                    vm.$root.$confirm.open('확인','서버로 부터 응답을 받지 못하였습니다.',{},4);             
                 });
-        }
+        }, 
+        showMessageBox: function(title, msg, option, gubun) {
+            this.$root.$confirm.open(title,msg, option, gubun);
+        },
+        showProgress: function(visible) {
+            util.processing(this.$refs.progress, visible);
+        },
     }
 };
 </script>

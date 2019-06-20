@@ -64,15 +64,15 @@ export default {
       this.showModalFlag = false;
     },
     menuClick: function(isDrawer) {
-      console.log('Home menuClick');
+      // console.log('Home menuClick');
       this.showFullFlag = isDrawer;
     },
     enterService: function() {
-      console.log('enterService............');
+      // console.log('enterService............');
       this.enterServiceFlag = true;
     },
     outService: function() {
-      console.log('outService............');
+      // console.log('outService............');
       this.enterServiceFlag = false;
       this.$store.commit(Constant.DELETE_USER);
 

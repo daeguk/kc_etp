@@ -125,7 +125,8 @@ export default {
         axios.get(Config.base_url + "/user/marketinfo/getEtpMultiIntra", {
           params: etpInfo
         }).then(function(response) {
-          // console.log(response);
+          console.log("getEtpMultiIntra.....................");
+          console.log(response);
           if (response.data.success == false) {
 //              alert("해당 ETP의 데이터가 없습니다");
           } else {
@@ -263,16 +264,16 @@ export default {
         c.fillStyle = "#424242";
         c.textBaseline = "middle";
         c.textAlign = "end";
-        c.font = '12px san-serif';
+        c.font = '12px Roboto, sans-serif, Noto-Sans';
         for(var i=0; i < 7; i++) {
           // console.log("yAxis : " + vm.yAxisVal[i]);
-          c.fillText(vm.yAxisVal[6-i], 75, vm.crect.y1 + 50 * i);
+          c.fillText(vm.yAxisVal[6-i], 65, vm.crect.y1 + 50 * i);
         }
         //X-Axis 그리기
         c.fillStyle = "#424242";
         c.textBaseline = "middle";
         c.textAlign = "center";
-        c.font = '12px san-serif';
+        c.font = '12px  Roboto, sans-serif, Noto-Sans';
         
         for(var i=0; i < 5; i++) {
           // console.log("xAxis : " + vm.xAxisDd[i] + " " + vm.xAxisTt[i]);
@@ -373,16 +374,16 @@ export default {
         c.fillStyle = "#424242";
         c.textBaseline = "middle";
         c.textAlign = "end";
-        c.font = '12px san-serif';
+        c.font = '12px Roboto, sans-serif, Noto-Sans';
         for(var i=0; i < 7; i++) {
           // console.log("yAxis : " + vm.yAxisVal[i]);
-          c.fillText(vm.yAxisVal[6-i], 75, vm.crect.y1 + 50 * i);
+          c.fillText(vm.yAxisVal[6-i], 65, vm.crect.y1 + 50 * i);
         }
         //X-Axis 그리기
         c.fillStyle = "#424242";
         c.textBaseline = "middle";
         c.textAlign = "center";
-        c.font = '12px san-serif';
+        c.font = '12px Roboto, sans-serif, Noto-Sans';
         
         for(var i=0; i < 5; i++) {
           // console.log("xAxis : " + vm.xAxisDd[i] + " " + vm.xAxisTt[i]);
@@ -526,16 +527,16 @@ export default {
         c.fillStyle = "#424242";
         c.textBaseline = "middle";
         c.textAlign = "end";
-        c.font = '12px san-serif';
+        c.font = '12px Roboto, sans-serif, Noto-Sans';
         for(var i=0; i < 7; i++) {
           // console.log("yAxis : " + vm.yAxisVal[i]);
-          c.fillText(vm.yAxisVal[6-i]+"%", 75, vm.crect.y1 + 50 * i);
+          c.fillText(vm.yAxisVal[6-i]+"%", 65, vm.crect.y1 + 50 * i);
         }
         //X-Axis 그리기
         c.fillStyle = "#424242";
         c.textBaseline = "middle";
         c.textAlign = "center";
-        c.font = '12px san-serif';
+        c.font = '12px Roboto, sans-serif, Noto-Sans';
         
         for(var i=0; i < 5; i++) {
           // console.log("xAxis : " + vm.xAxisDd[i] + " " + vm.xAxisTt[i]);
@@ -680,16 +681,16 @@ export default {
         c.fillStyle = "#424242";
         c.textBaseline = "middle";
         c.textAlign = "end";
-        c.font = '12px san-serif';
+        c.font = '12px Roboto, sans-serif, Noto-Sans';
         for(var i=0; i < 7; i++) {
           // console.log("yAxis : " + vm.yAxisVal[i]);
-          c.fillText(vm.yAxisVal[6-i]+"%", 75, vm.crect.y1 + 50 * i);
+          c.fillText(vm.yAxisVal[6-i]+"%", 65, vm.crect.y1 + 50 * i);
         }
         //X-Axis 그리기
         c.fillStyle = "#424242";
         c.textBaseline = "middle";
         c.textAlign = "center";
-        c.font = '12px san-serif';
+        c.font = '12px Roboto, sans-serif, Noto-Sans';
         
         for(var i=0; i < 5; i++) {
           // console.log("xAxis : " + vm.xAxisDd[i] + " " + vm.xAxisTt[i]);
@@ -760,7 +761,7 @@ export default {
         item = this.getDataByPos(wpos);
         c.fillStyle = "black";
         c.textAlign = "right";
-        c.font = '11px san-serif';
+        c.font = '11px Roboto, sans-serif, Noto-Sans';
         if(this.dterm == 0 || this.dterm == 1) {
           c.fillText(item.dd, twpos+tt_wlen, hpos+31);
           c.fillText(item.tt, twpos+tt_wlen, hpos+43);
@@ -802,7 +803,7 @@ export default {
         item = this.getDataByPos(wpos);
         c.fillStyle = "black";
         c.textAlign = "right";
-        c.font = '11px san-serif';
+        c.font = '11px Roboto, sans-serif, Noto-Sans';
         if(this.dterm == 0 || this.dterm == 1) {
           c.fillText(item.dd, twpos+tt_wlen, hpos+31);
           c.fillText("ETP : " + item.vv, twpos+tt_wlen, hpos+43);
@@ -983,7 +984,7 @@ export default {
 
         // Text
         c.fillStyle = "#37474F";
-        c.font = '12px san-serif';
+        c.font = '12px Roboto, sans-serif, Noto-Sans';
         c.textBaseline = "bottom";
         c.textAlign = "left";
         tword.forEach(function(item, index) {
@@ -1034,7 +1035,7 @@ export default {
 
         // Text
         c.fillStyle = "#37474F";
-        c.font = '12px san-serif';
+        c.font = '12px Roboto, sans-serif, Noto-Sans';
         c.textBaseline = "bottom";
         c.textAlign = "left";
         this.term.forEach(function(item, index) {

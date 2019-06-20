@@ -148,7 +148,7 @@ export default {
         if( vm.paramData ) {
             vm.pdfData  =   vm.paramData;
         }
-debugger;
+
         vm.fn_init();
     },
     created: function() {
@@ -181,7 +181,7 @@ debugger;
                     resolve();
 
                 }else{
-                    vm.fn_getEtpOperInfoFirstData( "A", resolve, reject );
+//                    vm.fn_getEtpOperInfoFirstData( "A", resolve, reject );
                 }
 
             }).catch( function(e) {
@@ -288,7 +288,17 @@ debugger;
                 }).then(function(response) {
                     console.log(response);
 
+                    vm.$emit( "fn_showProgress", false );
                     if (response.data) {
+
+                        var msg = ( response.data.msg ? response.data.msg : "" );
+                        if (!response.data.result) {
+                            if( msg ) {
+                                vm.showMessageBox('확인', msg,{},1);
+                                return  false;
+                            }
+                        }
+
                         var dataList = response.data.dataList;
 
                         if (dataList && dataList.length > 0) {
@@ -298,7 +308,9 @@ debugger;
                         }
                     }
 
+                }).catch(error => {
                     vm.$emit( "fn_showProgress", false );
+                    vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
                 });
             }
             
@@ -325,6 +337,15 @@ debugger;
                 console.log(response);
 
                 if (response.data) {
+
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.showMessageBox('확인', msg,{},1);
+                            return  false;
+                        }
+                    }
+
                     var rateTitleList = response.data.rateTitleList;
 
                     vm.rateTitleList =   rateTitleList;
@@ -372,10 +393,22 @@ debugger;
                 vm.$emit( "fn_showProgress", false );
 
                 if (response.data) {
+
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.showMessageBox('확인', msg,{},1);
+                            return  false;
+                        }
+                    }
+
                     if( response.data.emergency_exist_yn ) {
                         vm.emergency_exist_yn   =   response.data.emergency_exist_yn;
                     }
                 }
+            }).catch(error => {
+                vm.$emit( "fn_showProgress", false );
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         },        
 

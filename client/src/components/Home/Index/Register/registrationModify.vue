@@ -42,7 +42,7 @@
                                 </v-flex>
 
                                 <v-flex xs4 mt-1 mb-3>
-                                    <span class="text_color_blue">dbfn</span>
+                                    <span class="text_color_blue">{{ inst_name }}</span>
                                 </v-flex>
                             </v-layout>
 
@@ -57,6 +57,7 @@
                                         ref="jisu_id"
                                         label="지수ID"
                                         value="e.g.FDL001"
+                                        maxlength="20"
                                         outline
                                         v-model="modForm.jisu_id"
                                         :rules="rules.jisu_id"
@@ -128,6 +129,7 @@
                                         v-model="modForm.jisu_kor_nm"
                                         :rules="rules.jisu_kor_nm"
 
+                                        maxlength="100"
                                         :disabled="modForm.status == '03'"
                                     ></v-text-field>
                                 </v-flex>
@@ -146,6 +148,7 @@
                                         v-model="modForm.jisu_summary"
                                         :rules="rules.jisu_summary"
 
+                                        maxlength="4000"
                                         :disabled="modForm.status == '03'"
                                     ></v-textarea>
                                 </v-flex>
@@ -164,6 +167,7 @@
                                         v-model="modForm.base_jisu"
                                         :rules="rules.base_jisu"
 
+                                        maxlength="20"
                                         :disabled="modForm.status == '03'"
                                     ></v-text-field>
                                 </v-flex>
@@ -202,22 +206,18 @@
                                                         v-model="modForm.base_date"
                                                         :rules="rules.base_date"
 
+                                                        maxlength="10"
                                                         :disabled="modForm.status == '03'"
                                                     ></v-text-field>
                                                 </template>
 
-                                                <v-date-picker v-model="modForm.base_date" no-title scrollable>
-                                                    <v-spacer></v-spacer>
-                                                    <v-btn
-                                                        flat
-                                                        color="primary"
-                                                        @click="menu = false"
-                                                    >Cancel</v-btn>
-                                                    <v-btn
-                                                        flat
-                                                        color="primary"
-                                                        @click="$refs.menu.save(modForm.base_date)"
-                                                    >OK</v-btn>
+                                                <v-date-picker 
+                                                    v-model="modForm.base_date" 
+                                                    no-title 
+                                                    scrollable
+
+                                                    @input="$refs.menu.save(modForm.base_date)"
+                                                >
                                                 </v-date-picker>
                                             </v-menu>
                                         </v-flex>
@@ -254,12 +254,12 @@
                                         disabled
                                     >
 
-                                    <v-layout id="file-drag-drop" ref="methodForm" class="drag_box">
+                                    <v-layout id="file-drag-drop" ref="methodForm1" class="drag_box">
                                         <v-layout class="jumsun" align-center justify-center column>
                                             <input
                                                 type="file"
-                                                name="methodFile"
-                                                ref="methodFile"
+                                                name="methodFile1"
+                                                ref="methodFile1"
                                                 style="display:none;"
                                             >
 
@@ -291,12 +291,12 @@
                                     <v-subheader>소급지수</v-subheader>
                                 </v-flex>
 
-                                <v-flex xs4 id="file-drag-drop" v-show="!jisuUploadResult" v-if="modForm.status != '03'">
-                                    <v-layout flat class="drag_box" ref="fileform">
+                                <v-flex xs4 id="file-drag-drop" v-show="!jisuUploadResult">
+                                    <v-layout flat class="drag_box" ref="fileform1">
                                         <input
                                             type="file"
-                                            name="file"
-                                            ref="file"
+                                            name="file1"
+                                            ref="file1"
                                             style="display:none;"
                                         >
 
@@ -388,6 +388,7 @@
                                         v-model="modForm.req_content"
                                         :rules="[rules.req_content]"
 
+                                        maxlength="4000"
                                         :disabled="modForm.status == '03'"
                                     >
                                     </v-textarea>
@@ -558,7 +559,7 @@
                         <v-icon small>priority_high</v-icon>플랫폼 연동이 완료된 상태이므로 일부 정보에 한해 변경이 가능합니다.
                     </p>
                     <v-btn depressed large color="primary" dark @click="fn_modifyJisu()">저장</v-btn>
-                    <v-btn depressed large color="#3158a1" dark v-if="modForm.status == '01'" @click="fn_modifyJisu( '02' )">연동신청</v-btn>
+                    <v-btn depressed large color="#209267" dark v-if="modForm.status == '01'" @click="fn_modifyJisu( '02' )">연동신청</v-btn>
                     <v-btn depressed large color="#9e9e9e" dark v-if="modForm.status != '03'" @click="fn_deleteJisu()">삭제</v-btn>
                 </div>
                      
@@ -577,6 +578,7 @@ import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
+import Constant from "@/store/store_constant.js";
 
 var table01 = null;
 
@@ -609,6 +611,10 @@ export default {
             tableName : "table01",
             jisuDataList : [],          /* 소급지수 업로드 후 목록정보 */
             jisuUploadResult : false,   /* 소급지수 업로드 결과 여부 */
+            limit : {
+                    method_max_size : 5      /* 지수방법론 (Mb) */
+                ,   jisu_max_size : 1        /* 소급지수 (Mb) */
+            },            
 
 
             /* 모달관련 정보 */
@@ -619,7 +625,9 @@ export default {
                 titleErrorYn: false,
 
                 message: ""
-            },            
+            },
+
+            inst_name : "",
 
             /* 기관 관련 정보 */
             arr_org_inst : [],          /* (원본) 기관정보 원본 목록정보 */
@@ -708,7 +716,7 @@ export default {
                 "drop"
             ].forEach(
                 function(evt) {
-                    this.$refs.fileform.addEventListener(
+                    this.$refs.fileform1.addEventListener(
                         evt,
                         function(e) {
                             e.preventDefault();
@@ -729,7 +737,7 @@ export default {
                 "drop"
             ].forEach(
                 function(evt) {
-                    this.$refs.methodForm.addEventListener(
+                    this.$refs.methodForm1.addEventListener(
                         evt,
                         function(e) {
                             e.preventDefault();
@@ -741,55 +749,154 @@ export default {
             );            
 
             /* 소급지수 파일 영역 */
-            this.$refs.fileform.addEventListener(
+            this.$refs.fileform1.addEventListener(
                 "drop",
                 function(e) {
 
                     var selfThis    =   this;
                     let file        =   e.dataTransfer.files[0];
 
-                    this.fn_checkFile( file ).then(function (res) {
-                            if( !res ) {
+                    var typeCd      =   this.$store.state.user.type_cd;
+
+                    if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                        if( typeCd != "0003" ) {
+
+                            this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                            return  false;
+                        }
+                    }                    
+
+                    var flag    =   true;
+                    new Promise(function(resolve, reject) {
+                        if( !selfThis.fn_checkFile( file ) ) {
+                            flag    =   false;
+                            return  false;
+                        }
+                        resolve();
+                    }).catch( function(e) {
+                        console.log( e );
+                    }).then( function() {
+                        new Promise(function(resolve, reject) {
+                            if( !selfThis.fn_sizeCheck( file, "file" ) ) {
+                                flag    =   false;
                                 return  false;
                             }
-                            
+                            resolve();                      
+                        }).catch( function(e) {
+                            console.log( e );
+                        }).then( function() {    
                             selfThis.fn_jisuFileUpload( file, selfThis );
+                        });
+                    });
+
+                    if( !flag ) {
+                        this.$refs.file1.value  =   null;
+
+                        if( this.$refs.file1.files ) {
+                            this.$refs.file1.files  =   null;
                         }
-                    );
+                        return  false;
+                    }
 
                 }.bind(this)
             );
 
             /* 지수방법론 파일 영역 */
-            this.$refs.methodForm.addEventListener(
+            this.$refs.methodForm1.addEventListener(
                 "drop",
                 function(e) {
                     var selfThis    =   this;
-                    let file        =   e.dataTransfer.files[0];
+                    let files       =   e.dataTransfer.files;
+                    let file        =   files[0];
 
-                    this.modForm.show_method_file   =   file.name;
+                    var typeCd      =   this.$store.state.user.type_cd;
+
+                    if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                        if( typeCd != "0003" ) {
+
+                            this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                            return  false;
+                        }
+                    }                    
+
+                    var flag    =   true;
+                    new Promise(function(resolve, reject) {
+                        if( !selfThis.fn_sizeCheck( file, "methodFile" ) ) {
+                            flag    =   false;
+                            return  false;
+                        }
+                        resolve();                      
+                    }).catch( function(e) {
+                        console.log( e );
+                    }).then( function() {    
+                        this.modForm.show_method_file   =   file.name;
+                        this.$refs.methodFile1.files    =   files;
+                    });
+
+                    if( !flag ) {
+                        this.$refs.methodFile1.value =   null;
+
+                        if( this.$refs.methodFile1.files ) {
+                            this.$refs.methodFile1.files =   null;
+                        }
+
+                        return  false;
+                    }
 
                 }.bind(this)
             );            
         }
 
         /* 소급지수 파일 영역 */
-        this.$refs.file.addEventListener(
+        this.$refs.file1.addEventListener(
             "change",
             function(evt) {
                 var selfThis    =   this;
-                let file        =   this.$refs.file.files[0];
+                let file        =   this.$refs.file1.files[0];
 
-                this.fn_checkFile( file ).then(function (res) {
-                        if( !res ) {
+                var typeCd      =   this.$store.state.user.type_cd;
+
+                if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                    if( typeCd != "0003" ) {
+
+                        this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                        return  false;
+                    }
+                }                
+
+                var flag    =   true;
+                new Promise(function(resolve, reject) {
+                    if( !selfThis.fn_checkFile( file ) ) {
+                        flag    =   false;
+                        return  false;
+                    }
+                    resolve();
+                }).catch( function(e) {
+                    console.log( e );
+                }).then( function() {
+                    new Promise(function(resolve, reject) {
+                        if( !selfThis.fn_sizeCheck( file, "file" ) ) {
+                            flag    =   false;
                             return  false;
                         }
-                        
+                        resolve();                      
+                    }).catch( function(e) {
+                        console.log( e );
+                    }).then( function() {    
                         selfThis.fn_jisuFileUpload( file, selfThis );
-                    }
-                );
+                    });
+                });
 
-                this.$refs.fileform.addEventListener(
+                if( !flag ) {
+                    this.$refs.file1.value  =   null;
+
+                    if( this.$refs.file1.files ) {
+                        this.$refs.file1.files  =   null;
+                    }
+                    return  false;
+                }
+
+                this.$refs.fileform1.addEventListener(
                     evt,
                     function(e) {
                         e.preventDefault();
@@ -801,15 +908,48 @@ export default {
         );
 
         /* 지수방법론 파일 영역 */
-        this.$refs.methodFile.addEventListener(
+        this.$refs.methodFile1.addEventListener(
             "change",
             function(evt) {
                 var selfThis    =   this;
-                let file        =   this.$refs.methodFile.files[0];
+                let file        =   this.$refs.methodFile1.files[0];
 
-                this.modForm.show_method_file   =   file.name;
+                var typeCd      =   this.$store.state.user.type_cd;
 
-                this.$refs.methodForm.addEventListener(
+                if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                    if( typeCd != "0003" ) {
+
+                        this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                        return  false;
+                    }
+                }                
+
+                var flag    =   true;
+                new Promise(function(resolve, reject) {
+                    if( !selfThis.fn_sizeCheck( file, "methodFile" ) ) {
+                        flag    =   false;
+                        return  false;
+                    }
+                    resolve();                      
+                }).catch( function(e) {
+                    console.log( e );
+                }).then( function() {    
+                    selfThis.modForm.show_method_file  =   file.name;
+//                    selfThis.$refs.methodFile1.files =   file;
+                });
+
+                if( !flag ) {
+                    this.$refs.methodFile1.value  =   null;
+
+                    if( this.$refs.methodFile1.files ) {
+                        this.$refs.methodFile1.files  =   null;
+                    }
+                    return  false;
+                }
+
+//                this.modForm.show_method_file   =   file.name;
+
+                this.$refs.methodForm1.addEventListener(
                     evt,
                     function(e) {
                         e.preventDefault();
@@ -852,7 +992,9 @@ export default {
                 { "data": "col02"       , "orderable" : false , className: 'txt_right'  },              /* col02 */
                 { "data": "col03"       , "orderable" : false , className: 'txt_right'  },              /* col03 */
             ]
-        });        
+        });
+
+        this.inst_name   =  this.$store.state.user.inst_name;
 
         this.$nextTick().then(() => {
 
@@ -975,6 +1117,17 @@ export default {
             var vm = this;
 
             var msgTitle = "";
+            var typeCd  =   vm.$store.state.user.type_cd;
+
+            vm.modForm.modStatus    =   "";
+
+            if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                if( typeCd != "0003" ) {
+
+                    vm.$emit( 'showMessageBox', '확인','지수사업자만 수정 하실수 있습니다.',{},1 );
+                    return  false;
+                }
+            }
 
             // 선택된 공유 기관 바인딩 
             vm.modForm.arr_jisu_inst = vm.selectedInst;
@@ -1002,15 +1155,17 @@ export default {
                 }
             }
 
-            /* [연동신청] 또는 [연동신청] 완료된 상태인 경우 */
-            if( modStatus || this.modForm.status == "02"  ) {
+            /* [연동신청] 또는 [연동신청 완료] 또는 [연동완료] 된 상태인 경우 */
+            if( modStatus || this.modForm.status == "02" || this.modForm.status == "03"  ) {
 
                 if( modStatus ) {
                     this.modForm.modStatus = modStatus;
 
-                    msgTitle = "[연동신청] 요청시 ";
+                    msgTitle = "연동신청 요청시 ";
                 }else if( this.modForm.status == "02" ) {
                     msgTitle = "연동신청된 상태입니다.";
+                }else if( this.modForm.status == "02" ) {
+                    msgTitle = "연동완료 상태입니다.";
                 }
 
 
@@ -1061,9 +1216,10 @@ export default {
             }             
 
             this.formData = new FormData();
-            this.formData.append( "files", this.$refs.methodFile.files[0] );
+            this.formData.append( "files", this.$refs.methodFile1.files[0] );
             this.formData.append( "data", JSON.stringify(this.modForm) );
 
+            vm.$emit( "fn_showProgress", true );
             axios.post(
                 Config.base_url + "/user/index/modifyJisu",
                 this.formData,
@@ -1072,6 +1228,8 @@ export default {
                         "Content-Type": "multipart/form-data"
                     }
                 }).then( async function(response) {
+
+                    vm.$emit( "fn_showProgress", false );
                     if( response.data ) {
 
                         var resultData = response.data;
@@ -1086,15 +1244,28 @@ export default {
                         }
 
                         if( resultData.result ) {
-                            vm.$emit( "fn_refresh" );
-                            vm.$router.push( "/index/register" );
+                            vm.$emit( "fn_refresh", { 'jisu_id' : resultData.jisu_id, 'jisu_seq' : resultData.jisu_seq  } );
                         }
                     }
+                }).catch(error => {
+                    vm.$emit( "fn_showProgress", false );
+                    vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
                 });
         },
 
+
         async   fn_deleteJisu() {
             var vm = this;
+
+            var typeCd  =   vm.$store.state.user.type_cd;
+
+            if( !( typeCd == "9998" || typeCd == "9999" ) ) {
+                if( typeCd != "0003" ) {
+
+                    vm.$emit( 'showMessageBox', '확인','지수사업자만 삭제 하실수 있습니다.',{},1 );
+                    return  false;
+                }
+            }
 
             if( await this.$root.$confirm2.open(
                         '[지수 삭제]',
@@ -1127,7 +1298,7 @@ export default {
                     }
 
                     if( resultData.result ) {
-                        vm.$router.push( "/index/manage" );
+                        vm.$emit( "fn_moveRegisterPage" );
                     }
                 }
             });
@@ -1154,11 +1325,11 @@ export default {
 
             /* 소급지수 파일 클릭시 */
             if( gubun == "file" ) {
-                this.$refs.file.click();
+                this.$refs.file1.click();
             }
             /* 지수 방법론 파일 클릭시 */
             else{
-                this.$refs.methodFile.click();
+                this.$refs.methodFile1.click();
             }
         },
 
@@ -1172,14 +1343,18 @@ export default {
             vm.jisuUploadResult         =   false;
             
             vm.modForm.jisu_file_id     =   -1;
-            vm.$refs.file.value         =   null;
+            vm.$refs.file1.value        =   null;
+
+            if( vm.$refs.file1.files ) {
+                vm.$refs.file1.files    =   null;
+            }
         },
 
         /*
          * 엑셀 유형인지 파일을 체크한다.
          * 2019-04-02  bkLove(촤병국)
          */
-        async   fn_checkFile( file ) {
+        fn_checkFile( file ) {
 
             var fileLen = file.name.length;
             var lastDot = file.name.lastIndexOf(".");
@@ -1187,7 +1362,7 @@ export default {
             /* 1. 확장자가 존재하지 않는지 확인 */
             if (lastDot == -1) {
 
-                if( await this.$root.$confirm2.open(
+                if( this.$root.$confirm2.open(
                             '[엑셀파일 유형확인]',
                             "엑셀유형의 파일인지 확인 해 주세요.",
                             {}
@@ -1204,7 +1379,7 @@ export default {
             /* 2. 허용되는 확장자에 포함되는지 확인 */
             if (!allowExt.includes(fileExt)) {
 
-                if( await this.$root.$confirm2.open(
+                if( this.$root.$confirm2.open(
                             '[엑셀파일 유형확인]',
                             "엑셀유형의 파일인지 확인 해 주세요.",
                             {}
@@ -1224,6 +1399,7 @@ export default {
          * 2019-04-02  bkLove(촤병국)
          */
         fn_jisuFileUpload : function( file, selfThis ){
+            var vm = this;
 
             let formData = new FormData();
             formData.append("files", file);
@@ -1231,7 +1407,8 @@ export default {
             if( table01 ) {
                 table01.clear().draw();
             }                  
-            
+
+            vm.$emit( "fn_showProgress", true );
             axios.post(
                 Config.base_url + "/user/index/fileuploadSingle",
                 formData,
@@ -1243,6 +1420,7 @@ export default {
             ).then( async function(response) {
                 console.log( response );
 
+                vm.$emit( "fn_showProgress", false );
                 if( response.data ) {
                     selfThis.jisuUploadResult = response.data.result;
                     
@@ -1269,9 +1447,10 @@ export default {
                     }
                 }
 
-            }).catch(function(response) {
-                console.log( response );
-            });    
+            }).catch(error => {
+                vm.$emit( "fn_showProgress", false );
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+            });
         },
 
         /*
@@ -1284,8 +1463,26 @@ export default {
             /* 1. 기관정보를 조회한다. */
             axios.post(Config.base_url + "/user/index/getDomainInst", {
                 data: {}
-            }).then(function(response) {
+            }).then( async function(response) {
                 if (response && response.data) {
+
+                    var msg = ( response.data.message ? response.data.message : "" );
+
+                    if (!response.data.success) {
+
+                        if( msg ) {
+                            if( await selfThis.$root.$confirm1.open(
+                                        '확인',
+                                        msg,
+                                        {}
+                                    ,   1
+                                )
+                            ) {
+                                return false;
+                            }
+                        }
+                    }
+
                     selfThis.arr_group_inst = response.data.dataGroupList;
                     selfThis.arr_org_inst = response.data.dataList;
                 }
@@ -1396,18 +1593,37 @@ export default {
                 table01.clear().draw();
             }            
 
-            /* 1. 기관정보를 조회한다. */
+            selfThis.$emit( "fn_showProgress", true );
             axios.post(Config.base_url + "/user/index/getRegistedJisuData", {
                 data: selfThis.editData
-            }).then(function(response) {
+            }).then( async function(response) {
+
+                selfThis.$emit( "fn_showProgress", false );
 
                 if (response && response.data) {
+
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+
+                    if (!response.data.result) {
+
+                        if( msg ) {
+                            if( await selfThis.$root.$confirm1.open(
+                                        '확인',
+                                        msg,
+                                        {}
+                                    ,   1
+                                )
+                            ) {
+                                return false;
+                            }
+                        }
+                    }
+
                     if( response.data.jisuInfo ) {
                         selfThis.modForm = response.data.jisuInfo;
                         selfThis.modForm.duplCheckResult    =   true;
                     }
 
-                    //debugger;
                     selfThis.modForm.arr_jisu_inst          =   [];
                     selfThis.selectedInst          =   [];
                     if( response.data.arr_jisu_inst && response.data.arr_jisu_inst.length > 0 ) {
@@ -1430,8 +1646,62 @@ export default {
                         }
                     }
                 }
-            });            
-        }
+            }).catch(error => {
+                selfThis.$emit( "fn_showProgress", false );
+                selfThis.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+            });
+        },
+
+        fn_sizeCheck( file, gubun ) {
+
+            var vm = this;
+
+            if( file ) {
+                var title = "";
+                var maxSize = 0;
+
+                if( gubun == "file") {
+                    title = "소급지수";
+
+                    if( vm.limit ) {
+                        maxSize = vm.limit.jisu_max_size;
+                    }
+                }else if( gubun == "methodFile" ) {
+                    title = "지수방법론";
+
+                    if( vm.limit ) {
+                        maxSize = vm.limit.method_max_size;
+                    }                    
+                }
+
+                if( maxSize > 0 ) {
+                    if( file.size == 0 ) {
+                        if( this.$root.$confirm1.open(
+                                    '확인',
+                                    title + ' 파일용량이 0 byte 입니다.',
+                                    {}
+                                ,   1
+                            )
+                        ) {
+                            return false;
+                        }
+                    }
+
+                    if( ( maxSize * 1024 * 1024 ) < file.size ) {
+                        if( this.$root.$confirm1.open(
+                                    '확인',
+                                    title + ' 파일용량은 ' + maxSize + ' Mb 보다 작아야 합니다.',
+                                    {}
+                                ,   1
+                            )
+                        ) {                       
+                            return false;
+                        }
+                    }
+                }
+            }
+            return  true;
+        }        
     }
 };
 </script>

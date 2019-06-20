@@ -244,7 +244,6 @@
 
     <!-- 인덱스 기본정보-->
     <select id="getIndexBaseInfo">
-    <![CDATA[
         SELECT date_format(BAS.F12506, "%Y.%m.%d") F12506           /*입회일자*/
               ,BAS.F16013                                           /*단축코드*/
               ,BAS.F16002                                           /*한글종목명*/
@@ -269,10 +268,16 @@
               ,BAS.STD_CAPITAL                                      /*기준시가총액*/
               ,BAS.FIXED_CASH                                       /*고정현금*/
               ,BAS.FLOWRATE_YN                                      /*유동비율적용여부*/
+              ,BAS.INDEX_COMMENT                                    /*설명*/
+              ,(SELECT COUNT(*) 
+                  FROM tm_jisu_share_req
+                 WHERE inst_cd = #{inst_cd}
+                   AND jisu_id = #{jisu_cd}
+                   AND req_flag = '2') REQCNT 								      /* 지수 공개여부(카운트가 1이상이면 공개) */
         FROM  td_index_basic BAS
         WHERE BAS.F16013 = #{jisu_cd}
           and BAS.MARKET_ID = #{market_id}        
-    ]]>
+    
           <if test="large_type != null and large_type !=''">
             AND BAS.large_type = #{large_type}
           </if>
@@ -389,77 +394,7 @@
 
     <!--지수에 속한 ETP 정보-->
     <select id="getIndexInEtpInfo">
-      SELECT base.F12506
-            ,base.F16012
-            ,base.F16013
-            ,base.F16002
-            ,base.F16003
-            ,base.F16017
-            ,base.F15001
-            ,base.F15472
-            ,base.F15004
-            ,base.F15006
-            ,base.F15009
-            ,base.F15010
-            ,base.F15011
-            ,base.F15015
-            ,base.F15023
-            ,base.F15028
-            ,base.F15029
-            ,base.F30812
-            ,base.F30813
-            ,base.F18438
-            ,base.F16143
-            ,base.F16073
-            ,base.F15007
-            ,base.F16493
-            ,base.F15301
-            ,base.F15302
-            ,base.F15303
-            ,base.F15304
-            ,base.F15305
-            ,base.F30818
-            ,base.F15318
-            ,base.F16497
-            ,base.F31892
-            ,base.F18450
-            ,base.F18001
-            ,base.F16500
-            ,base.F33307
-            ,base.F33308
-            ,base.F33951
-            ,base.F15319
-            ,base.F30823
-            ,base.F15602
-            ,base.F15631
-            ,base.F15632
-            ,base.F15633
-            ,base.F19288
-            ,base.F34515
-            ,base.F16499
-            ,base.F03329
-            ,base.F18439
-            ,base.F16109
-            ,base.F16257
-            ,base.F34777
-            ,base.F34521
-            ,base.F34776
-            ,base.F34514
-            ,base.F34239
-            ,base.F34241
-            ,base.F34769
-            ,base.F34770
-            ,base.F34771
-            ,base.F34772
-            ,base.F34775
-            ,base.F34778
-            ,base.F34779
-            ,base.F34780
-            ,base.F34781
-            ,base.F34782
-            ,base.F34783
-            ,base.F33960
-            ,base.F33961
+      SELECT *
         FROM kc_etp.td_etp_basic base
         WHERE base.F34239 = CAST(substr(#{market_id}, 2) AS SIGNED) 
         AND base.F16257 = #{jisu_cd}

@@ -29,11 +29,11 @@
                         </v-list-tile>
                         <v-list-tile>
                             <v-list-tile-title>기준일</v-list-tile-title>
-                            <v-list-tile-content>{{ indexBasic.fmt_f12506  /* 입회일 */ }}</v-list-tile-content>
+                            <v-list-tile-content>{{ indexBasic.fmt_std_date  /* 기준일 */ }}</v-list-tile-content>
                         </v-list-tile>
                         <v-list-tile>
                             <v-list-tile-title>Last Updated</v-list-tile-title>
-                            <v-list-tile-content>{{ nowDate /* 현재일 */ }}</v-list-tile-content>
+                            <v-list-tile-content>{{ indexBasic.fmt_f12506 /* 입회일 */ }}</v-list-tile-content>
                         </v-list-tile>
                     </v-list>
 
@@ -153,6 +153,8 @@ export default {
                     }
                 }
 
+                util.processing(vm.$refs.progress, false);
+            }).catch(error => {
                 util.processing(vm.$refs.progress, false);
             });            
         },

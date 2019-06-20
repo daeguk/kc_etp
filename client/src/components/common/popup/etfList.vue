@@ -1,30 +1,28 @@
 <template>
 
 <v-card flat>
-    <v-card-title >
-        <v-text-field class="pt-0" v-model="search" v-on:keyup="filterData" append-icon="search" label="Search" single-line hide-details></v-text-field>
-    </v-card-title>                       
+  <v-card-title >
+    <v-text-field class="pt-0" v-model="search" v-on:keyup="filterData" append-icon="search" label="Search" single-line hide-details></v-text-field>
+  </v-card-title>                       
  <v-card flat>
-    <table id="etf_grid" class="tbl_type" style="width:100%;">
-        <colgroup>
-                <col width="15%">
-                <col width="30%">
-                <col width="55%">
-            </colgroup>
-        <thead>
-            <tr>
-                <th><!--input type='checkbox' class="selectAll " color='primary'  label='' value=''--></th>
-                <th class="txt_left">ID</th>
-                <th class="txt_left">종목/지수명</th>
-            </tr>
-        </thead>   
-    </table>
+  <table id="etf_grid" class="tbl_type" style="width:100%;">
+    <colgroup>
+      <col width="15%">
+      <col width="30%">
+      <col width="55%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th><!--input type='checkbox' class="selectAll " color='primary'  label='' value=''--></th>
+        <th class="txt_left">ID</th>
+        <th class="txt_left">종목/지수명</th>
+      </tr>
+    </thead>   
+  </table>
   </v-card>
-
-    <!--비교자산 탭end--->
-    <v-card class="pop_btn_w text-xs-center">
-        <v-btn depressed color="primary" @click="selectData()" >추가하기</v-btn>
-    </v-card>
+  <v-card class="pop_btn_w text-xs-center">
+    <v-btn depressed color="primary" @click="selectData" >추가하기</v-btn>
+  </v-card>
 </v-card>
 </template>
 
@@ -37,115 +35,88 @@ import select from 'datatables.net-select'
 import _ from "lodash";
 import Config from '@/js/config.js'
 var etf_grid = null;
-  export default {
-    data () {
-      return {
-        search: '',
-        resultes: [
-        ]
+export default {
+  data () {
+    return {
+      search: '',
+      resultes: [
+      ]
+    }
+  }, 
+  components: {},
+  computed: {
+      
+  },
+  created: function() {},
+  beforeDestroy() {},
+  mounted: function() {
+    var vm = this;
+    vm.getEtfList();
+    $('.selectAll').on('click', function () {
+        if ($(this).is( ":checked" )) {
+            etf_grid.rows().select();        
+        } else {
+            etf_grid.rows().deselect(); 
+        }
+    });
+  },
+  methods: {
+    getEtfList: function() {
+      this.results = this.$store.state.etfmast;
+      if (!$.fn.dataTable.isDataTable( '#etf_grid' ) ) {
+        etf_grid = $('#etf_grid').DataTable( {
+          "processing": true,
+          "serverSide": false,
+          "search": true,
+          scrollY:        '50vh',
+          scrollCollapse: true,
+          "info": true,   // control table information display field
+          "stateSave": true,  //restore table state on page reload,
+          "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+          "columnDefs": [
+          {  
+            'orderable': false,
+            'targets': 0,
+            'className': 'select-checkbox',
+          },],
+          select: {
+            style:    'multi',
+            selector: 'td:first-child'
+          },
+          paging: false,
+          searching: false,
+          data : this.results,
+          columns: [
+            { "data": null, "defaultContent": "", "orderable": false},
+            { "data": "F16013", "orderable": true, className:'txt_left' },
+            { "data": "F16002", "orderable" : true, className:'txt_left' },
+          ]
+        }); 
       }
     }, 
-    components: {},
-    computed: {
-        
+    selectData: function() {
+      console.log("data=" + etf_grid.rows( { selected: true } ).count());
+      var data = etf_grid.rows( { selected: true } ).data();
+      this.$emit("selectedItem", data, 1);
+      etf_grid.rows().deselect(); 
     },
-    created: function() {},
-    beforeDestroy() {},
-    mounted: function() {
-        var vm = this;
-        vm.getInfoIndexList();
 
-        $('.selectAll').on('click', function () {
-           
-            if ($(this).is( ":checked" )) {
-                etf_grid.rows().select();        
-            } else {
-                etf_grid.rows().deselect(); 
-            }
-        });
-    },
-    methods: {
-        getInfoIndexList: function() {
-            console.log("getEtfList");
-            axios.get(Config.base_url + "/user/common/getETFList", {
-                    params: {
-                    }
-                }).then(response => {
-                    // console.log(response);
-                    if (response.data.success == false) {
-                        alert("관리지수 목록이 없습니다");
-                    } else {
-                        var items = response.data.results;
-                        
-                        //console.log("response=" + JSON.stringify(items));
-                        this.results = items;
-
-                        if (!$.fn.dataTable.isDataTable( '#etf_grid' ) ) {
-                            etf_grid = $('#etf_grid').DataTable( {
-                                "processing": true,
-                                "serverSide": false,
-                                "search": true,
-                                scrollY:        '50vh',
-                                scrollCollapse: true,
-                                "info": true,   // control table information display field
-                                "stateSave": true,  //restore table state on page reload,
-                                "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                                "columnDefs": [
-                                {  
-                                    'orderable': false,
-                                    'targets': 0,
-                                    'className': 'select-checkbox',
-                                },],
-                                select: {
-                                    style:    'multi',
-                                    selector: 'td:first-child'
-                                },
-                                paging: false,
-                                searching: false,
-                                data : this.results,
-                                columns: [
-                                    { "data": null, "defaultContent": "", "orderable": false},
-                                    { "data": "JISU_CD", "orderable": true, className:'txt_left' },
-                                    { "data": "JISU_NM", "orderable" : true, className:'txt_left' },
-                                ]
-                            }); 
-                        }
-                    }
-                   
-                });
-        }, 
-
-        selectData: function() {
-           
-
-            console.log("data=" + etf_grid.rows( { selected: true } ).count());
-            var data = etf_grid.rows( { selected: true } ).data();
-           
-            this.$emit("selectedItem", data, 1);
-
-            etf_grid.rows().deselect(); 
-
-        },
-
-        filterData: function() {
-            var vm = this;
-        
-            var filterData = _.filter(vm.results, function(o) { 
-
-                var nmIdx = o.JISU_NM.indexOf(vm.search);
-                var cdIdx = o.JISU_CD.indexOf(vm.search);
-
-                if (nmIdx > -1 || cdIdx > -1) {
-                    return true; 
-                } else {
-                    return false;
-                }
-            });
-
-            etf_grid.clear().draw();
-            etf_grid.rows.add(filterData).draw();           
+    filterData: function() {
+      var vm = this;
+      vm.search = vm.search.toUpperCase();
+      var filterData = _.filter(vm.results, function(o) { 
+        var nmIdx = o.F16002.indexOf(vm.search);
+        var cdIdx = o.F16013.indexOf(vm.search);
+        var cdIdx1 = o.F16012.indexOf(vm.search);
+        if (nmIdx > -1 || cdIdx > -1 || cdIdx > -1) {
+            return true; 
+        } else {
+            return false;
         }
-
+      });
+      etf_grid.clear().draw();
+      etf_grid.rows.add(filterData).draw();           
     }
   }
+}
 </script>

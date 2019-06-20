@@ -58,14 +58,6 @@
                 ,   tm_jisu_mast.method_file_id     AS  prev_method_file_id
                 ,   tm_jisu_mast.jisu_file_id       AS  prev_jisu_file_id
 
-                ,   CASE    WHEN    /* 연동완료인 경우  */
-                                    tm_jisu_mast.STATUS = '03'
-                            THEN    /* 등록일+3일 날짜가 현재일 보다 큰 날짜만 조회되게 수정 ( 3일까지만 조회 ) */
-                                    DATE_add( tm_jisu_mast.reg_time, INTERVAL 3 DAY ) >= NOW()
-                            
-                            ELSE    1
-                    END     =   1                   AS  edit_date_check
-
           FROM  tm_jisu_mast
          INNER  JOIN    tm_code_dtl
 
@@ -80,6 +72,7 @@
 
            AND  CASE    WHEN    /* 연동완료인 경우  */
                                 tm_jisu_mast.STATUS = '03'
+
                         THEN    /* 등록일+3일 날짜가 현재일 보다 큰 날짜만 조회되게 수정 ( 3일까지만 조회 ) */
                                 DATE_add( tm_jisu_mast.reg_time, INTERVAL 3 DAY ) >= NOW()
                         

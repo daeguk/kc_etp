@@ -18,7 +18,8 @@
             <!--router-view></router-view-->
 
             <EtpOperControl :activeTab="activeTab"
-                            @fn_setActiveTab="fn_setActiveTab">
+                            @fn_setActiveTab="fn_setActiveTab"
+                            @fn_setFirstData="fn_setFirstData">
             </EtpOperControl>
 
         </v-flex>
@@ -38,6 +39,7 @@ export default {
                 { id: 1, name: "지수관리"           , route: '/etp/manage/etpOperIndex' },              /* 지수관리 */
                 { id: 2, name: "PDF 관리"           , route: '/etp/manage/etpOperPdf' },                /* PDF 관리 */
             ],
+            firstData : {}
         };
     },
     components: {
@@ -58,17 +60,29 @@ export default {
             this.$EventBus.$off('changeEtpInfo');
 
 
-            this.$EventBus.$emit("showList", {tab_id:tab_id, paramData : paramData });
+            this.$EventBus.$emit("showList", {tab_id:tab_id, paramData : ( ( paramData && Object.keys(paramData).length > 0 ) ? paramData : vm.firstData ) });
             //this.activeTab = id + 1;
             //this.$router.push({path:'/info/etpinfo/EtpMarketInfo', props:{activeTab:this.activeTab}});
         },
 
         /*
-         *  탭을 변경한다.
+         *  ETP 운용정보 리스트가 조회된 경우 첫번째 행의 레코드를 보관한다.
+         *  2019-05-03  bkLove(촤병국)
+         */
+        fn_setFirstData : function( firstData ) {
+            var vm = this;
+
+            vm.firstData    =   "";
+            vm.firstData    =   firstData;
+        },
+
+        /*
+         *  ETP 운용정보 리스트에서 PDF 행을 선택한 경우
          *  2019-05-03  bkLove(촤병국)
          */
         fn_setActiveTab : function( activeTab, paramData ) {
             this.activeTab = activeTab;
+            
             this.pageMove( activeTab, paramData );
         }
     }

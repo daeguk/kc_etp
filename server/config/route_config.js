@@ -33,11 +33,8 @@ module.exports = {
         { file: './user/etp/etpregister', path: '/user/etp/updateEtpRegister', method: 'updateEtpRegister', session: 'check', type: 'post' },
 
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpBasic', method: 'getEtpBasic', session: 'check', type: 'post' },
-        { file: './user/etp/etpDetail', path: '/user/etp/getEtpInfo', method: 'getEtpInfo', session: 'check', type: 'post' },
-        { file: './user/etp/etpDetail', path: '/user/etp/getEtpChartData', method: 'getEtpChartData', session: 'check', type: 'post' },
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpPerformance', method: 'getEtpPerformance', session: 'check', type: 'post' },
-        { file: './user/etp/etpDetail', path: '/user/etp/getExistEtpBasicCnt', method: 'getExistEtpBasicCnt', session: 'check', type: 'post' },
-        { file: './user/etp/etpDetail', path: '/user/etp/getEtpImportanceList', method: 'getEtpImportanceList', session: 'check', type: 'post' },
+        { file: './user/etp/etpDetail', path: '/user/etp/getEtpWeightList', method: 'getEtpWeightList', session: 'check', type: 'get' },
 
         { file: './user/etp/etpOper', path: '/user/etp/getEtpOperInfo', method: 'getEtpOperInfo', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getEtpOperIndex', method: 'getEtpOperIndex', session: 'check', type: 'post' },
@@ -50,9 +47,6 @@ module.exports = {
         { file: './user/etp/etpOper', path: '/user/etp/getJongmokData', method: 'getJongmokData', session: 'check', type: 'post' },
 
 
-        { file: './user/etp/etpOper', path: '/user/etp/getExchBasic', method: 'getExchBasic', session: 'check', type: 'post' },
-        { file: './user/etp/etpOper', path: '/user/etp/getKspjongBasic', method: 'getKspjongBasic', session: 'check', type: 'post' },
-        { file: './user/etp/etpOper', path: '/user/etp/getFutureBasic', method: 'getFutureBasic', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/saveEtpOperPdfModify', method: 'saveEtpOperPdfModify', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getPdfByGroupNo', method: 'getPdfByGroupNo', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getPdfExistYnByNow', method: 'getPdfExistYnByNow', session: 'check', type: 'post' },
@@ -109,11 +103,18 @@ module.exports = {
         { file: './user/marketinfo/etpInfo', path: '/user/marketinfo/getetnkorlist', method: 'getEtnKorList', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/etpInfo', path: '/user/marketinfo/getetnforlist', method: 'getEtnForList', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/etpInfo', path: '/user/marketinfo/getEtpList', method: 'getEtpList', session: 'uncheck', type: 'post' },
+        { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getIndexMast', method: 'getIndexMast', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getIndexBasic', method: 'getIndexBasic', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getIndexIntra', method: 'getIndexIntra', session: 'uncheck', type: 'get' },
-        { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getKrxIndexListByType', method: 'getKrxIndexListByType', session: 'uncheck', type: 'get' },
-        { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getKrxIndexListByType1', method: 'getKrxIndexListByType1', session: 'uncheck', type: 'get' },
+        { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getIndexIntra1', method: 'getIndexIntra1', session: 'uncheck', type: 'get' },
+        { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getIndexHist1', method: 'getIndexHist1', session: 'uncheck', type: 'get' },
+        { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getIndexAnal', method: 'getIndexAnal', session: 'uncheck', type: 'get' },
+        { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getIndexListByType', method: 'getIndexListByType', session: 'uncheck', type: 'get' },
+        { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getIndexListAnalByType', method: 'getIndexListAnalByType', session: 'uncheck', type: 'get' },
+        { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpMast', method: 'getEtpMast', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpBasic', method: 'getEtpBasic', session: 'uncheck', type: 'get' },
+        { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpAnal', method: 'getEtpAnal', session: 'uncheck', type: 'get' },
+        { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpNavAnal', method: 'getEtpNavAnal', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpIntra', method: 'getEtpIntra', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpMultiIntra', method: 'getEtpMultiIntra', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpMultiHist', method: 'getEtpMultiHist', session: 'uncheck', type: 'get' },
@@ -139,6 +140,10 @@ module.exports = {
         { file: './user/common/itemInfo', path: '/user/common/getIndexList', method: 'getIndexList', session: 'check', type: 'get' },
         { file: './user/common/itemInfo', path: '/user/common/getPublishEtpList', method: 'getPublishEtpList', session: 'check', type: 'get' },
         { file: './user/common/itemInfo', path: '/user/common/getALLEtpList', method: 'getALLEtpList', session: 'check', type: 'get' },
+
+
+        /* 고객지원 */
+        { file: './user/etc/custSupport', path: '/user/etc/saveCustSupport', method: 'saveCustSupport', session: 'check', type: 'post' },
 
         //풀 테스트 
 

@@ -15,14 +15,18 @@
       <v-flex grow xs12 mt-2>
         <v-card flat>
           <v-card-title primary-title>
-            <h3 class="headline subtit" pb-0>
-                  KRX
-              <v-combobox dense v-model="selIndexType" :items="indexTypes"
-                label="INDEX TYPE" @change="getKrxIndexList(selIndexType)">
-              </v-combobox>
+            <v-layout>
+            <v-flex xs1>
+              <h3 class="headline subtit" pb-0>KRX</h3>
               <span class="text_result">{{indexLists.length}} </span>
               <span class="text_result_t">results</span>
-            </h3>
+            </v-flex>
+            <v-flex xs2>
+              <v-combobox dense v-model="selIndexType" :items="indexTypes"
+                label="INDEX TYPE" @change="getIndexList(selIndexType)">
+              </v-combobox>
+            </v-flex>
+            </v-layout>
           </v-card-title>
 
           <div class="table-box-wrap">
@@ -32,41 +36,53 @@
               <colgroup>
                 <col width="21%">
                 <col width="9%">
-                <col width="9%">
-                <col width="9%">
-                <col width="9%">
-                <col width="9%">
-                <col width="9%">
-                <col width="9%">
-                <col width="9%">
+                <col width="7%">
+                <col width="7%">
+                <col width="7%">
+                <col width="7%">
+                <col width="7%">
+                <col width="7%">
+                <col width="7%">
+                <col width="7%">
+                <col width="7%">
                 <col width="7%">
               </colgroup>
               <thead>
                 <tr>
-                  <th style="width:21%" class="txt_left">지수명</th>
+                  <th @dblclick="sortTable(0)" style="width:21%" class="txt_center">지수명</th>
                   <th style="width:9%" class="txt_center">현재가</th>
-                  <th style="width:9%" class="txt_center">대비</th>
-                  <th style="width:9%" class="txt_center">Daily</th>
-                  <th style="width:9%" class="txt_center">1Week</th>
-                  <th style="width:9%" class="txt_center">1Month</th>
-                  <th style="width:9%" class="txt_center">YTD</th>
-                  <th style="width:9%" class="txt_center">1Year</th>
-                  <th style="width:9%" class="txt_center">3Year</th>
-                  <th style="width:7%" class="txt_center">비고</th>
+                  <th style="width:7%" class="txt_center">대비</th>
+                  <th @dblclick="sortTable(1)" style="width:7%" class="txt_center">Daily</th>
+                  <th @dblclick="sortTable(2)" style="width:7%" class="txt_center">1Week</th>
+                  <th @dblclick="sortTable(3)" style="width:7%" class="txt_center">1Month</th>
+                  <th @dblclick="sortTable(4)" style="width:7%" class="txt_center">YTD</th>
+                  <th @dblclick="sortTable(5)" style="width:7%" class="txt_center">1Year</th>
+                  <th @dblclick="sortTable(6)" style="width:7%" class="txt_center">3Year</th>
+                  <th @dblclick="sortTable(7)" style="width:7%" class="txt_center">5Year</th>
+                  <th @dblclick="sortTable(8)" style="width:7%" class="txt_center">10Year</th>
+                  <th style="width:7%" class="txt_center">지수정보</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(item, index) in indexLists" :key="index">
-                  <td class="txt_left">{{item.F16002}}</td>
+                  <td class="txt_left"><span style="font-weight:bold;">{{item.F16002}}</span></td>
                   <td class="txt_right">{{item.F15001}}</td>
-                  <td class="txt_right">{{item.F15472}}</td>
-                  <td class="txt_right">{{item.F15004}}%</td>
-                  <td class="txt_right">{{item.weekRate}}%</td>
-                  <td class="txt_right">{{item.monthRate}}%</td>
-                  <td class="txt_right">{{item.ytdRate}}%</td>
-                  <td class="txt_right">{{item.yearRate}}%</td>
-                  <td class="txt_right">{{item.tyearRate}}%</td>
-                  <td class="txt_right">TEST</td>
+                  <td class="txt_right" :style="item.dStyle">{{item.F15472}}</td>
+                  <td class="txt_right" :style="item.dStyle">{{item.F15004}}%</td>
+                  <td class="txt_right" :style="item.wStyle">{{item.weekRate}}%</td>
+                  <td class="txt_right" :style="item.mStyle">{{item.monthRate}}%</td>
+                  <td class="txt_right" :style="item.ytdStyle">{{item.ytdRate}}%</td>
+                  <td class="txt_right" :style="item.yStyle">{{item.yearRate}}%</td>
+                  <td class="txt_right" :style="item.y3Style">{{item.year3Rate}}%</td>
+                  <td class="txt_right" :style="item.y5Style">{{item.year5Rate}}%</td>
+                  <td class="txt_right" :style="item.y10Style">{{item.year10Rate}}%</td>
+                  <td class="txt_center">
+                    <div class='tooltip'>
+                      <button class='btn_icon v-icon material-icons' @click="openIndexModal(item)">equalizer
+                      </button>
+                      <span class='tooltiptext' style='width:80px;'>지수정보</span>
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -76,6 +92,8 @@
       </v-flex>
       <!---테이블1 end -->
     </v-layout>
+    <IndexInfoModal v-if="IndexModalFlag" :indexInfo="indexBasic"
+      @closeIndexModal="closeIndexModal"></IndexInfoModal>
   </v-container>
 </template>
 
@@ -85,6 +103,7 @@ import _ from "lodash";
 import Config       from "@/js/config.js";
 import util       from "@/js/util.js";
 import AreaIndexChart   from  '@/components/common/chart/AreaIndexChart.vue';
+import IndexInfoModal   from  '@/components/common/modal/IndexInfoModal.vue';
 
 export default {
   props: [],
@@ -92,21 +111,16 @@ export default {
     return {
       indexLists:[],
       resultLists:[],
+      indexBasic:{},
       chartLoadFlag: false,
+      IndexModalFlag: false,
       paramData : {},
       intra_data:[],
-      bef1Week:"",
-      bef1Month:"",
-      befYtd:"",
-      bef1Year:"",
-      bef3Year:"",
       indexTypes: [{text:"KOSPI", value:"KSP"}, 
         {text:"KOSDAQ", value:"KSQ"}, 
         {text:"SECTOR", value:"SECTOR"}, 
         {text:"ETC", value:"ETC"},
-        /*
-        {text:"전체", value:"TOTAL"},
-        */
+        // {text:"전체", value:"TOTAL"},
       ],
       selIndexType: {text:"KOSPI", value:"KSP"},
       rep_info:[{seq:1, f16013:"1", market_id:"M002", name:"KOSPI", f15001:"", 
@@ -120,52 +134,40 @@ export default {
                 width:340, height:150, marginW:1, marginH:40},
         {seq:4, f16013:"203", market_id:"M004", name:"KOSDAQ 150", f15001:"", 
                 f15472:"", f15004:"", sColor:"#def5ae", eColor:"#ffffff",
-                width:350, height:150, marginW:1, marginH:40}],
+                width:350, height:150, marginW:1, marginH:40}
+      ],
+      sortFlag: 1,
     };
   },
   components: {
     AreaIndexChart,
+    IndexInfoModal,
   },
   computed: {
       
   },
   mounted: function() {
-    this.bef1Week = util.getBef1Week();
-    this.bef1Month = util.getBef1Month();
-    this.befYtd = util.getBefYtd();
-    this.bef1Year = util.getBef1Year();
-    this.bef3Year = util.getBef3Year();
+    this.befDates = this.$store.state.befDates;
 
     for(var i=0; i<this.rep_info.length; i++) {
       this.getIndexBasic(this.rep_info[i]);
       this.getIndexIntra(this.rep_info[i]);
     }
 
-    this.getKrxIndexList(this.selIndexType);
-      // 테이블별 이벤트
-      /*
-      $('#krxIndexTable tbody').on('click', 'button', function (e) {
-          e.stopImmediatePropagation();
-
-          var table = $('#krxIndexTable').DataTable();
-          var data = table.row($(this).parents('tr')).data();
-
-          if ($(this).attr('id') == 'btnIndexDetail') {
-              vm.fn_movePage( data );
-          }
-
-          return  false; 
-      });
-      */
-
+    this.getIndexList(this.selIndexType);
   },
   created: function() {},
   beforeDestroy() {},
   methods: {
-    formatNumber:function(num) {
-      return util.formatNumber(num);
+    openIndexModal: function(item) {
+      console.log("openIndexModal : " + item.market_id + " " + item.F16013);
+      this.indexBasic = item;
+      this.IndexModalFlag = true;
     },
-
+    closeIndexModal: function() {
+      console.log("closeIndexModal One............");
+      this.IndexModalFlag = false;
+    },
     getIndexBasic: function(rinfo) {
       // console.log("getIndexBasic : " + rinfo.seq);
       var vm = this;
@@ -214,18 +216,21 @@ export default {
 
         return items;
     },
-    getKrxIndexList: function(indexType) {
-      console.log("getKrxIndexList");
+    getIndexList: function(indexType) {
+      // console.log("getKrxIndexList");
       var vm = this;
       vm.indexLists = [];          
-      axios.get(Config.base_url + "/user/marketinfo/getKrxIndexListByType1", {
+      axios.get(Config.base_url + "/user/marketinfo/getIndexListAnalByType", {
         params: {
-          selIndexType: indexType.value,
-          bef1Week: vm.bef1Week,
-          bef1Month: vm.bef1Month,
-          befYtd: vm.befYtd,
-          bef1Year: vm.bef1Year,
-          bef3Year: vm.bef3Year,
+          large_type: "KRX",
+          middle_type: indexType.value,
+          bef1Week: vm.befDates.bef1Week,
+          bef1Month: vm.befDates.bef1Month,
+          befYtd: vm.befDates.befYtd,
+          bef1Year: vm.befDates.bef1Year,
+          bef3Year: vm.befDates.bef3Year,
+          bef5Year: vm.befDates.bef5Year,
+          bef10Year: vm.befDates.bef10Year,
         }
       }).then(function(response) {
         // console.log(response);
@@ -236,21 +241,95 @@ export default {
           // console.log(vm.resultLists);
           for(let i=0; i < vm.resultLists.length; i++) {
             let tmp = {};
-            tmp.F16002 = vm.resultLists[i].F16002;
-            tmp.F15001 = vm.resultLists[i].F15001;
-            tmp.F15472 = vm.resultLists[i].F15472;
+            tmp = JSON.parse(JSON.stringify(vm.resultLists[i]));
+            tmp.F15472 = util.getPlus(tmp.F15472, 2);
             tmp.F15004 = vm.resultLists[i].F15004;
-            tmp.weekRate = util.getDiffRate(tmp.F15001, vm.resultLists[i].bef1Week);
-            tmp.monthRate = util.getDiffRate(tmp.F15001, vm.resultLists[i].bef1Month);
-            tmp.ytdRate = util.getDiffRate(tmp.F15001, vm.resultLists[i].befYtd);
-            tmp.yearRate = util.getDiffRate(tmp.F15001, vm.resultLists[i].bef1Year);
-            tmp.tyearRate = util.getDiffRate(tmp.F15001, vm.resultLists[i].bef3Year);
+            tmp.F15004 = util.getPlus(tmp.F15004, 2);
+            tmp.dStyle = util.getUpAndDownStyle(tmp.F15004);
+            tmp.weekRate = util.getDiffRate1(tmp.F15001, tmp.bef1Week);
+            tmp.wStyle = util.getUpAndDownStyle(tmp.weekRate);
+            tmp.monthRate = util.getDiffRate1(tmp.F15001, tmp.bef1Month);
+            tmp.mStyle = util.getUpAndDownStyle(tmp.monthRate);
+            tmp.ytdRate = util.getDiffRate1(tmp.F15001, tmp.befYtd);
+            tmp.ytdStyle = util.getUpAndDownStyle(tmp.ytdRate);
+            tmp.yearRate = util.getDiffRate1(tmp.F15001, tmp.bef1Year);
+            tmp.yStyle = util.getUpAndDownStyle(tmp.yearRate);
+            tmp.year3Rate = util.getDiffRate1(tmp.F15001, tmp.bef3Year);
+            tmp.y3Style = util.getUpAndDownStyle(tmp.year3Rate);
+            tmp.year5Rate = util.getDiffRate1(tmp.F15001, tmp.bef5Year);
+            tmp.y5Style = util.getUpAndDownStyle(tmp.year5Rate);
+            tmp.year10Rate = util.getDiffRate1(tmp.F15001, tmp.bef10Year);
+            tmp.y10Style = util.getUpAndDownStyle(tmp.year10Rate);
+            tmp.F15001 = util.formatNumber(tmp.F15001);
             vm.indexLists.push(tmp);
           }
-          console.log("vm.indexLists......." + vm.indexLists.length);
-          console.log(vm.indexLists);
+          vm.indexLists.sort(function(a, b) {
+            if(Number(a.ytdRate) > Number(b.ytdRate)) return -1;
+            else return 1;
+          });
         }
       });
+    },
+    getUpAndDownStyle: function(value) {
+      var tmp = Number(value);
+      var rtn = {};
+
+      if(tmp > 0) rtn = this.upStyle;
+      else if(tmp < 0) rtn = this.downStyle;
+      else rtn = this.sqStyle;
+
+      return rtn;
+    },
+    sortTable: function(num) {
+      var vm = this;
+      vm.sortFlag = vm.sortFlag * (-1);
+      
+      if(num == 0) {
+        vm.indexLists.sort(function(a, b) {
+          if(a.F16002 > b.F16002) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }else if(num == 1) {
+        vm.indexLists.sort(function(a, b) {
+          if(Number(a.F15004) > Number(b.F15004)) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }else if(num == 2) {
+        vm.indexLists.sort(function(a, b) {
+          if(Number(a.weekRate) > Number(b.weekRate)) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }else if(num == 3) {
+        vm.indexLists.sort(function(a, b) {
+          if(Number(a.monthRate) > Number(b.monthRate)) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }else if(num == 4) {
+        vm.indexLists.sort(function(a, b) {
+          if(Number(a.ytdRate) > Number(b.ytdRate)) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }else if(num == 5) {
+        vm.indexLists.sort(function(a, b) {
+          if(Number(a.yearRate) > Number(b.yearRate)) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }else if(num == 6) {
+        vm.indexLists.sort(function(a, b) {
+          if(Number(a.year3Rate) > Number(b.year3Rate)) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }else if(num == 7) {
+        vm.indexLists.sort(function(a, b) {
+          if(Number(a.year5Rate) > Number(b.year5Rate)) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }else if(num == 8) {
+        vm.indexLists.sort(function(a, b) {
+          if(Number(a.year10Rate) > Number(b.year10Rate)) return vm.sortFlag;
+          else return (vm.sortFlag * (-1));
+        });
+      }
     },
   }
 };

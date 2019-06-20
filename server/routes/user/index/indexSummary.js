@@ -322,7 +322,8 @@ var getIndexBaseInfo = function (req, res) {
         var options = {
             large_type : req.query.large_type,
             jisu_cd: req.query.jisu_cd,
-            market_id: req.query.market_id
+            market_id: req.query.market_id,            
+            inst_cd: req.session.inst_cd == null ? '' : req.session.inst_cd
         };
 
         log.debug("options", JSON.stringify(options));
@@ -423,7 +424,7 @@ var getIndexInEtpInfo = function (req, res) {
         log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('index', 'getIndexInEtpInfo', options, {language:'sql', indent: '  '});
-     
+        log.debug(stmt);
 
         Promise.using(pool.connect(), conn => {
             conn.queryAsync(stmt).then(rows => {

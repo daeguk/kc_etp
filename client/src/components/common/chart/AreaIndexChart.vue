@@ -1,11 +1,12 @@
 <template>
-    <canvas :id=chartItem.seq :width=chartItem.width :height=chartItem.height 
-      v-on:mousemove.stop="drawToolTip" v-on:mouseleave.stop="clearToolTip">
+  <canvas :id=chartItem.seq :width=chartItem.width :height=chartItem.height 
+    v-on:mousemove.stop="drawToolTip" v-on:mouseleave.stop="clearToolTip">
     </canvas>
 </template>
 
 <script>
 import Config       from "@/js/config.js"
+import util       from "@/js/util.js";
 
 export default {
     props:['chartItem', 'dataSet'],
@@ -112,20 +113,32 @@ export default {
               c.fillStyle = "#FF0000";
             }
             c.font = '12px san-serif';
+            this.chartItem.f15472 = util.getPlus(this.chartItem.f15472, 2);
+            this.chartItem.f15004 = util.getPlus(this.chartItem.f15004, 2);
             if(slen > 6) c.fillText(this.chartItem.f15472, 125, 47);
-            else  c.fillText(this.chartItem.f15472, 125, 47);
+            else  c.fillText(this.chartItem.f15472, 115, 47);
             if(slen > 6) c.fillText(this.chartItem.f15004 + "%", 125, 60);
-            else  c.fillText(this.chartItem.f15004 + "%", 125, 60);
+            else  c.fillText(this.chartItem.f15004 + "%", 115, 60);
+
 
             this.bef_tooltip_img = c.getImageData(0, 0, this.chartItem.width, this.chartItem.height);
         },
         drawToolTip: function(event) {
           var c = this.ctx;
+          /*
           var _mwpos = event.clientX-this.rect.left;
           var _wpos = _mwpos;
           var _hpos = event.clientY-this.rect.top - 20;
+          */
+          var _mwpos = event.layerX;
+          var _wpos = _mwpos;
+          var _hpos = event.layerY;
           var item = [];
           var tooltip = "";
+          // console.log("client : " + event.clientX + " "  + event.clientY);
+          // console.log("client : " + event.layerX + " "  + event.layerY);
+          // console.log("rec : " + this.rect.left + " " + this.rect.top);
+          // console.log("_wpos : " + _wpos + " _hpos : " + _hpos);
 
           if(_wpos > 200) _wpos -= this.tt_wlen;
 
