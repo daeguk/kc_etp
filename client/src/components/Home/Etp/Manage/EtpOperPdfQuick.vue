@@ -112,7 +112,7 @@ export default {
                 fix_disabled : true,
                 fix_msg : "조치현황 없음"
             },
-            faverSize : 50,            
+            faverSize : 40,            
         };
     },
     components: {
