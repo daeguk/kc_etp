@@ -126,7 +126,7 @@ export default {
                     arrOverseaMarketList    :   vm.arrOverseaMarketList
                 }
             }).then(function(response) {
-                console.log(response);
+                // console.log(response);
 
                 vm.$emit( "fn_showProgress", false );
                 vm.result_cnt = 0;

@@ -34,7 +34,7 @@
                                     <v-icon small color="primary">add</v-icon>자산추가
                                 </v-btn>
 
-                                <!---개발 중복 자산추가 팝업 end----->
+                                <!-- 개발 중복 자산추가 팝업 end -->
                             </v-toolbar>
                         </v-card>
                         
@@ -76,7 +76,7 @@
                         <v-spacer></v-spacer>
                         <v-btn color="primary" depressed @click="fn_stepCheck(1)">Next</v-btn>
                     </v-card-actions>
-<!---step1 END-->
+<!-- step1 END-->
                 </v-window-item>
 
 
@@ -296,8 +296,9 @@ import _ from "lodash";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
-
 import Config from "@/js/config.js";
+import tool       from "@/js/common/tool/tool.js";
+
 import ProgressBar from "@/components/common/ProgressBar.vue";
 
 var tblEmergeny01 = null;
@@ -990,6 +991,15 @@ export default {
                                 +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
                                 +   _.padStart( new Date().getDate(), 2, '0' );
 
+            // console.log("문자발송...........");
+            // axios.get("http://forms.koscom.co.kr/sms/EtpSmsAction.do", {
+            //   params: {
+            //     sendNo: '027677114',
+            //     recvNo: '01047191302',
+            //     message: 'ETP PDF 변경신청 접수중입니다.',
+            //   }
+            // });
+
             util.processing(vm.$refs.progress, true);
             axios.post( Config.base_url + "/user/etp/saveEtpOperPdfModify", {
                 data: {     
@@ -1000,6 +1010,7 @@ export default {
 
                 console.log(response);
                 util.processing(vm.$refs.progress, false);
+                tool.smsSend(0, "ETP PDF 변경신청 접수되었습니다.(테스트)");
 
                 if (response.data) {
 
@@ -1010,7 +1021,7 @@ export default {
                             return  false;
                         }
                     }
-
+            
                     vm.fn_getPdfByGroupNo();
                 }
             }).catch(error => {
