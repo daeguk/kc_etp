@@ -274,7 +274,7 @@
             ,#{refidx_sym_code},#{refidx_nm},#{refidx_inst_cd},#{refidx_file_nm},#{refidx_blom_ticker},#{refidx_req},#{inav_calc_cd}
             ,#{idx_rec_yn},#{idx_dis_yn},#{inav_calc_yn},#{idx_mid},#{ridx_mid},#{close_file},#{real_idx_tr},#{proc_stat},#{real_yn}
             ,#{isin_stat_cd},date_format(now(), '%Y%m%d%H%i%s'),#{insert_id} ,#{insert_time}, #{user_id} ,date_format(now(), '%Y%m%d%H%i%s')
-            ,#{kor_for_type},#{agent_cd},#{idx_comp_cd},#{krx_up_code},#{agent_up_code},#{listReqDate},#{list_date}
+            ,#{kor_for_type},#{agent_cd},#{idx_comp_cd},#{krx_up_code},#{agent_up_code},#{list_req_date},#{list_date}
     )
    
 </insert>
