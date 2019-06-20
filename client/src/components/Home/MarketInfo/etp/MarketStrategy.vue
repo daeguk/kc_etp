@@ -2,11 +2,11 @@
     <v-container>
         <v-layout row wrap>
             <v-flex xs12>
-                <v-carousel  light hide-delimiters height="250px" interval="10000">
+                <v-carousel  light hide-delimiters height="120px" interval="10000">
                     <v-carousel-item  class="bg_W market_layout_w" v-if="carousel_info.carousel_cnt > 0"  v-for="n in carousel_info.carousel_cnt" :key="n">
 
                         <v-layout class="market_card_layout">
-                            <v-flex  v-for="x in 5" :key="x">
+                            <v-flex  v-for="x in 4" :key="x">
                                 <v-card flat>
                                     <div class="market_card_w line_l">
                                         <div class="market_card2" wrap>
