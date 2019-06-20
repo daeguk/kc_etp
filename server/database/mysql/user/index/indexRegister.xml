@@ -38,6 +38,19 @@
     </select>
 
     <!--
+    * [tm_jisu_temp_upload] 데이터 건수를 조회한다.
+    * 2019-04-02  bkLove(촤병국)
+    -->
+    <select id="getTmJisuTempUploadCnt">
+    <![CDATA[
+        SELECT      /* indexRegister.getTmJisuTempUploadCnt [tm_jisu_temp_upload] 데이터 건수를 조회한다. */
+                    COUNT( *)                       AS  cnt
+          FROM  tm_jisu_temp_upload
+         WHERE  tm_jisu_temp_upload.file_id         =   #{file_id}
+    ]]>
+    </select>    
+
+    <!--
     * 기관정보를 조회한다.
     * 2019-04-02  bkLove(촤병국)
     -->
@@ -183,7 +196,7 @@
         SELECT	/* indexRegister.getHistNoByTmJisuUploadHist 지수 시퀀스 별 최신 이력번호를 조회한다. */
                 IFNULL( MAX( HIST_NO ), 0 ) + 1     AS  hist_no
         FROM	tm_jisu_upload_hist
-        WHERE	tm_jisu_upload_hist.jisu_seq        =   #{jisu_seq}#
+        WHERE	tm_jisu_upload_hist.jisu_seq        =   #{jisu_seq}
     ]]>
     </select>    
 
@@ -211,27 +224,23 @@
             ,   reg_id 
             ,   reg_time 
         ) 
-        VALUES 
-    ]]>
-        <foreach    collection="dataLists"   item="data"     separator="," >
-    <![CDATA[
-        ( 
-                ${hist_no}
-            ,   #{jisu_seq}
-            ,   ${data.row_no}
+        SELECT      ${hist_no}                      AS  hist_no
+                ,   #{jisu_seq}                     AS  jisu_seq
+                ,   tm_jisu_temp_upload.row_no      AS  row_no
 
-            ,   ${file_id}
-            ,   #{data.col01}
-            ,   #{data.col02}
-            ,   #{data.col03}
-            ,   #{data.col04}
-            ,   #{data.col05}
+                ,   tm_jisu_temp_upload.file_id     AS  file_id
+                ,   tm_jisu_temp_upload.col01       AS  col01
+                ,   tm_jisu_temp_upload.col02       AS  col02
+                ,   tm_jisu_temp_upload.col03       AS  col03
+                ,   tm_jisu_temp_upload.col04       AS  col04
+                ,   tm_jisu_temp_upload.col05       AS  col05
 
-            ,   #{user_id}
-            ,   now() 
-        )
+                ,   #{user_id}                      AS  reg_id
+                ,   now()                           AS  reg_time
+
+          FROM  tm_jisu_temp_upload
+         WHERE  tm_jisu_temp_upload.file_id         =   #{file_id}
     ]]>
-        </foreach>
     </insert>    
 
     <!--
