@@ -1060,12 +1060,6 @@ var getEtpOperPdfModify = function(req, res) {
                 function(callback) {
 
                     try{
-                        var f16012 = paramData.f16012;
-
-                        if (paramData.searchCode) {
-                            paramData.f16012 = "";
-                        }
-
                         stmt = mapper.getStatement('etpDetail', 'getEtpBasic', paramData, format);
                         log.debug(stmt, paramData);
 
@@ -1079,11 +1073,17 @@ var getEtpOperPdfModify = function(req, res) {
                                 return callback(resultMsg);
                             }
 
+                            if (rows && rows.length > 1) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "해당 코드는 1건 이상 존재합니다.";
+                                resultMsg.err = err;
+
+                                return callback(resultMsg);
+                            }                            
+
                             if (rows && rows.length == 1) {
                                 resultMsg.etpBasic = rows[0];
                             }
-
-                            paramData.f16012 = f16012;
 
                             callback(null, paramData);
                         });
