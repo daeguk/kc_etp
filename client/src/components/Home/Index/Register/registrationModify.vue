@@ -331,7 +331,13 @@
                                     </p>
                                     <p>
                                         <v-icon color="#1976d2">check</v-icon>
-                                        <b>양식</b>
+                                        <b>양식</b> <v-btn
+                                                    small
+                                                    depressed
+                                                    color="#1e99e8"
+                                                    dark
+                                                    class="mt-0"
+                                                >샘플 다운로드</v-btn>
                                         <br>
                                         <span class="info_text">date: YYYYMMDD</span>
                                         <br>
