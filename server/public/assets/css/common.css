@@ -225,8 +225,9 @@ input[type="text"]:focus, input[type="number"]:focus{border-color:#1976d2;}
 
 .v-input--selection-controls__ripple{display: none;}
 .v-text-field input[type="text"]{border:none !important;}
+.v-text-field input{padding:2px 0 !important;}
 .v-text-field__details{padding-top:2px !important;}
-
+.v-select__selection--comma{margin-top:3px !important;}
 .select_table_in{margin-top:0px !important; padding-top:0px !important; font-size: 12px !important;}
 .select_table_in .v-messages{display: none;}
 
@@ -596,7 +597,7 @@ h3.subtit span.text_result_t2{color:#959eb1; margin-right:15px;margin-left:15px;
 .right_menu_w2 .rightmenu_con{padding:15px 16px 0px; font-size: 13px; font-weight: 600; color:#606060;}
 .right_menu_w2 .rightmenu_con.case2{padding-top:5px !important}
 .right_menu_w2 .rightmenu_con2{padding:5px 0px; font-size: 14px; font-weight: 600; color:#606060;}
-.right_menu_w2 .v-input input{max-height: 20px; font-size: 14px;}
+.right_menu_w2 .v-input input{max-height: 25px; font-size: 14px;}
 .right_menu_w2 .v-input label{display: none;}
 .right_menu_w2 .rightmenu_con .v-icon{padding-right:3px;padding-top:3px;}
 .right_menu_w2 .v-text-field--outline>.v-input__control>.v-input__slot{min-height: 20px;}
@@ -639,6 +640,7 @@ p span.info_text{padding-left:25px; color:#1e99e8;}
 .right_menu_con_w .v-input--slider{width:100%;padding:0 22px 0px 24px; margin-top:0px !important;}
 .right_menu_con_w .v-toolbar__content{width:100% !important;}
 .right_menu_sub_title{padding:20px 12px 23px; font-size: 15px; font-weight: 600; color:#5e870b !important;letter-spacing: -1}
+_:-ms-fullscreen, :root .right_menu_sub_title{padding:5px 12px 23px; font-size: 15px; font-weight: 600; color:#5e870b !important;letter-spacing: -1}
 .v-list-tile .right_menu_sub_title{padding-left:0 !important;}
 .register_t_w span.subtitle_sub{font-size:13px; font-weight: normal; padding-left:20px}
 .text_color_orange{color:#ff821d;}
