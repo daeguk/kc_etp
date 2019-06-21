@@ -116,13 +116,13 @@
                             <li>
                                 <div v-if="SimulationSwitch == true">
                                     <v-text-field   v-model="f15007" outline class="txt_right"></v-text-field>
-                                    <span class="float_r">{{paramData.index_std_date}}</span>
+                                    <span class="float_r">{{formatDate(paramData.f12506)}}</span>
                                 </div>
                                 <div v-else>
                                     <li class="align_r">
                                         {{f15007}}
                                     </li><br>
-                                    <span class="float_r">{{paramData.index_std_date}}</span>
+                                    <span class="float_r">{{formatDate(paramData.f12506)}}</span>
                                 </div>
                             </li>
                         </ul>
@@ -394,6 +394,9 @@ export default {
         },
         formatDigit:function(num, digit) {
             return util.formatDigit(num, digit)
+        },
+        formatDate:function(date) {
+            return util.formatDate(date);
         },
         NtoS: function(num) {
             return util.NumtoStr(num);
