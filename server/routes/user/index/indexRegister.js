@@ -1061,6 +1061,45 @@ var registerJisu = function(req, res) {
     }
 };
 
+
+var getSampleFileDown = function(req, res) {
+    log.debug('indexRegister.getSampleFileDown 호출됨.');
+
+    var paramData = {};
+    try {
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        var savedFileNm = "index_sample.xlsx";
+        var file = config.sampleDownFolder + "/" + savedFileNm;
+
+/*        
+        var filestream = fs.createReadStream( file );
+        filestream.pipe(  res ).on( 'error', function(e) {
+            console.log(">>>>>>>>>>>>>>>>>>");
+        });
+*/
+//        res.set( "downIfo", { downInfo: { "orgFileNm" : orgFileNm, "savedFileNm" : savedFileNm, "savedPath" : savedPath } } );
+//        res.sendFile( file );
+
+
+//        res.attachment( file );
+//        res.end('Downloaded', 'UTF-8')
+
+        res.download( file, savedFileNm, function( err) {
+            log.error(paramData, err);
+        });
+        
+    } catch (err) {
+        log.error(paramData, err);
+    }
+};
+
 function    fn_sizeCheck( file, gubun, resultMsg ){
 
     if( file ) {
@@ -1104,3 +1143,4 @@ module.exports.getJisuDuplCheck = getJisuDuplCheck;
 module.exports.getDomainInst = getDomainInst;
 module.exports.fileuploadSingle = fileuploadSingle;
 module.exports.registerJisu = registerJisu;
+module.exports.getSampleFileDown = getSampleFileDown;

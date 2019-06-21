@@ -331,13 +331,15 @@
                                     </p>
                                     <p>
                                         <v-icon color="#1976d2">check</v-icon>
-                                        <b>양식</b> <v-btn
-                                                    small
-                                                    depressed
-                                                    color="#1e99e8"
-                                                    dark
-                                                    class="mt-0"
-                                                >샘플 다운로드</v-btn>
+                                        <b>양식</b>                                                 
+                                            <v-btn
+                                                small
+                                                depressed
+                                                color="#1e99e8"
+                                                dark
+                                                class="mt-0"
+                                                @click="fn_sampleFileDown()"
+                                            >샘플 다운로드</v-btn>
                                         <br>
                                         <span class="info_text">date: YYYYMMDD</span>
                                         <br>
@@ -1658,6 +1660,10 @@ export default {
             });
         },
 
+        /*
+         * 파일 사이즈를 체크한다.
+         * 2019-06-21  bkLove(촤병국)
+         */
         fn_sizeCheck( file, gubun ) {
 
             var vm = this;
@@ -1707,6 +1713,28 @@ export default {
                 }
             }
             return  true;
+        },
+
+        /*
+         * 소급지수 샘플을 다운로드 한다.
+         * 2019-06-21  bkLove(촤병국)
+         */
+        fn_sampleFileDown() {
+            var vm = this;
+
+            axios.get( Config.base_url + "/user/index/getSampleFileDown", {
+                responseType : "blob"
+            }).then((response, status, xhr) => {
+                const url = window.URL.createObjectURL(new Blob([response.data], {type: "application/vnd.ms-excel"}));
+                const link = document.createElement('a');
+
+                link.href = url;
+                link.setAttribute('download', 'index_sample.xlsx');
+                document.body.appendChild(link);
+                link.click();
+
+                document.body.removeChild( link );
+            });
         }        
     }
 };

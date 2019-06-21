@@ -109,7 +109,7 @@
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
                                                         label="기초지수명"
-                                                        value="index_nm"
+                                                        value="f34777"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
@@ -137,7 +137,7 @@
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
                                                         label="지수"
-                                                        value="index_f15001"
+                                                        value="f15318"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
@@ -164,17 +164,17 @@
                                                 <v-flex xs3>
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
-                                                        label="기초지수전일가"
-                                                        value="prev_f15001"
+                                                        label="과표기준가"
+                                                        value="f15007"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
-                                                        label="과표기준가"
-                                                        value="f15007"
+                                                        label="괴리율"
+                                                        value="f15304"
                                                     ></v-checkbox>
-                                                </v-flex>
+                                                </v-flex>                                                
                                             </v-layout>
                                             <v-layout
                                                 align-center
@@ -182,13 +182,6 @@
                                                 row
                                                 fill-height
                                             >
-                                                <v-flex xs3>
-                                                    <v-checkbox
-                                                        v-model="arrCustomizeColumn"
-                                                        label="괴리율"
-                                                        value="f15304"
-                                                    ></v-checkbox>
-                                                </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
@@ -203,6 +196,9 @@
                                                         value="f16073"
                                                     ></v-checkbox>
                                                 </v-flex>
+                                                <v-flex xs3>
+                 
+                                                </v-flex>                                                
                                             </v-layout>
 
                                             <v-card flat class="pop_btn_w text-xs-center">
@@ -253,7 +249,7 @@ export default {
 
             arrCustomizeColumn : [],
             customizeDialog : false,
-            arrAllCustomizedTextData : [ "f15301", "index_nm", "f18001", "f03329", "index_f15001", "f30812", "f15302", "prev_f15001", "f15007", "f15304", "f15001", "f16073"  ],
+            arrAllCustomizedTextData : [ "f15301", "f34777", "f18001", "f03329", "f15318", "f30812", "f15302", "f15007", "f15304", "f15001", "f16073"  ],
 
             indexFixDialog : false,
             showFaver : true,

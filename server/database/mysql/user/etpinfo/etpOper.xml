@@ -681,26 +681,6 @@
                                         END
                                     ,   ''
                                 )                                                               AS  f16583              /* 사무수탁회사번호 */
-                            ,   td_index_basic.f16002                                           AS  index_nm            /* 지수명 */
-                            ,   td_index_basic.f15001                                           AS  index_f15001        /* 지수 현재가 */
-                            ,   td_index_basic.f15007                                           AS  index_f15007        /* 지수 기준가 */
-                            ,   DATE_FORMAT(td_index_basic.std_date, '%Y.%m.%d' )               AS   index_std_date     /* 지수 기준일 */
-                            ,   td_index_basic.index_cal_method                                 AS  index_cal_method    /* 지수 산출방식 */
-
-                            ,   (
-                                    SELECT  td_index_basic01.f15001
-
-                                      FROM          td_index_hist
-                                     INNER  JOIN    td_index_basic      td_index_basic01
-                                        ON  (
-                                                    td_index_hist.F16013        =   td_index_basic01.F16013
-                                                AND td_index_hist.market_id     =   td_index_basic01.market_id
-                                            )
-                                     WHERE  1 = 1
-                                       AND  td_index_hist.F16013        =   td_index_basic.f16013         /* 단축코드 */
-                                       AND  td_index_hist.market_id     =   td_index_basic.market_id      /* 시장 ID */
-                                       AND  td_index_hist.F12506        =   DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 DAY ), '%Y%m%d' )      /* 입회일자 ( 1일전 ) */
-                                )                                                               AS  prev_f15001        /* 기초지수 전일 현재가 */
 
                             ,   td_etp_basic.F13510                                             AS  f13510      /* 거래량60일이동평균 */
                             ,   td_etp_basic.F13516                                             AS  f13516      /* 거래대금60일이동평균 */
@@ -738,11 +718,6 @@
                             ,   td_etffor_mast.EX_RATE_CODE                                     AS  ex_rate_code     /* 환율 코드 */        
 
                       FROM          td_etp_basic
-                      LEFT  JOIN    td_index_basic
-                        ON  (
-                                     td_index_basic.F16013           =  td_etp_basic.f16257                                                 /* 단축코드 = ETP기초지수코드 */
-                                AND  td_index_basic.MARKET_ID        LIKE    CONCAT( '_' , LPAD( td_etp_basic.f34239, 3, '0' ) , '%' )      /* 시장 ID = ETP기초지수MID */
-                            )
                       LEFT OUTER JOIN td_etffor_mast ON (
                                      td_etp_basic.f16012 = td_etffor_mast.ISIN_CODE
                       ) 

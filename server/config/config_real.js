@@ -23,6 +23,7 @@ module.exports = {
     pwd_salt: "11aabb..",
     pwd_default: "11aabb..",
     uploadFolder : "/data/koscom/kc_newetp/upload",
+    sampleDownFolder : "/data/koscom/kc_newetp/upload/samepleDown",
 
     logger : logger,
 }
