@@ -796,28 +796,12 @@
                 ,   DATE_FORMAT( td_index_basic.F12506, '%Y.%m.%d' )    AS  fmt_f12506          /* 입회일 */
                 ,   td_index_basic.F16013                               AS  f16013              /* 단축코드 */
                 ,   td_index_basic.F16002                               AS  f16002              /* 한글종목명 */
-                ,   td_index_basic.F15009                               AS  f15009              /* 시가 */
-                ,   td_index_basic.F15010                               AS  f15010              /* 고가 */
-                ,   td_index_basic.F15011                               AS  f15011              /* 저가 */
                 ,   td_index_basic.F15001                               AS  f15001              /* 현재가 */
-                ,   td_index_basic.F15007                               AS  f15007              /* 기준가 */
-                ,   td_index_basic.F15015                               AS  f15015              /* 거래량 */
-                ,   td_index_basic.F15023                               AS  f15023              /* 거래대금 */
-                ,   td_index_basic.F15472                               AS  f15472              /* 대비 */
                 ,   td_index_basic.F15004                               AS  f15004              /* 등락율 */
-                ,   td_index_basic.F15006                               AS  f15006              /* 등락구분(1:상한/2:상승/3:보합/4:하한/5:하락/6:기세상한/7:기세상승/8:기세하한/9:기세하락) */
-                ,   td_index_basic.F15028                               AS  f15028              /* 시가총액 */
                 ,   td_index_basic.large_type                           AS  large_type          /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
-                ,   td_index_basic.middle_type                          AS  middle_type         /* 지수중분류(FNGUIDE, WISEFN) */
                 ,   td_index_basic.market_id                            AS  market_id           /* 시장 ID */
-                ,   td_index_basic.std_index                            AS  std_index           /* 기준지수 */
                 ,   td_index_basic.std_date                             AS  std_date            /* 기준일 */
                 ,   DATE_FORMAT( td_index_basic.std_date, '%Y.%m.%d' )  AS  fmt_std_date        /* 기준일 */
-                ,   td_index_basic.anno_date                            AS  anno_date           /* 발표일 */
-                ,   td_index_basic.index_cal_method                     AS  index_cal_method    /* 지수산출방식 */
-                ,   td_index_basic.std_capital                          AS  std_capital         /* 기준시가총액 */
-                ,   td_index_basic.fixed_cash                           AS  fixed_cash          /* 고정현금 */
-                ,   td_index_basic.flowrate_yn                          AS  flowrate_yn         /* 유동비율적용여부 */
 
                 ,   ''                                                  AS  vendor
                 ,   ''                                                  AS  manage_type
@@ -892,37 +876,21 @@
                 ,   DATE_FORMAT( td_index_basic.F12506, '%Y.%m.%d' )    AS  fmt_f12506          /* 입회일 */
                 ,   td_index_basic.F16013                               AS  f16013              /* 단축코드 */
                 ,   td_index_basic.F16002                               AS  f16002              /* 한글종목명 */
-                ,   td_index_basic.F15009                               AS  f15009              /* 시가 */
-                ,   td_index_basic.F15010                               AS  f15010              /* 고가 */
-                ,   td_index_basic.F15011                               AS  f15011              /* 저가 */
                 ,   td_index_basic.F15001                               AS  f15001              /* 현재가 */
-                ,   td_index_basic.F15007                               AS  f15007              /* 기준가 */
-                ,   td_index_basic.F15015                               AS  f15015              /* 거래량 */
-                ,   td_index_basic.F15023                               AS  f15023              /* 거래대금 */
-                ,   td_index_basic.F15472                               AS  f15472              /* 대비 */
                 ,   td_index_basic.F15004                               AS  f15004              /* 등락율 */
-                ,   td_index_basic.F15006                               AS  f15006              /* 등락구분(1:상한/2:상승/3:보합/4:하한/5:하락/6:기세상한/7:기세상승/8:기세하한/9:기세하락) */
-                ,   td_index_basic.F15028                               AS  f15028              /* 시가총액 */
                 ,   td_index_basic.large_type                           AS  large_type          /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
-                ,   td_index_basic.middle_type                          AS  middle_type         /* 지수중분류(FNGUIDE, WISEFN) */
                 ,   td_index_basic.market_id                            AS  market_id           /* 시장 ID */
-                ,   td_index_basic.std_index                            AS  std_index           /* 기준지수 */
                 ,   td_index_basic.std_date                             AS  std_date            /* 기준일 */
                 ,   DATE_FORMAT( td_index_basic.std_date, '%Y.%m.%d' )  AS  fmt_std_date        /* 기준일 */
-                ,   td_index_basic.anno_date                            AS  anno_date           /* 발표일 */
-                ,   td_index_basic.index_cal_method                     AS  index_cal_method    /* 지수산출방식 */
-                ,   td_index_basic.std_capital                          AS  std_capital         /* 기준시가총액 */
-                ,   td_index_basic.fixed_cash                           AS  fixed_cash          /* 고정현금 */
-                ,   td_index_basic.flowrate_yn                          AS  flowrate_yn         /* 유동비율적용여부 */
 
-                ,   ''                                              AS  in_out          /* 입수 구분 */
-                ,   td_index_basic.f16002                           AS  f16002          /* 한글종목명 */
-                ,   td_index_basic.f16013                           AS  f16013          /* 단축코드 */
-                ,   ''                                              AS  incre_symbol    /* 증가 심볼 */
-                ,   ''                                              AS  rest_date       /* 휴장일 */
-                ,   td_index_basic.f12506                           AS  f12506          /* 입회일 */
-                ,   td_index_basic.f15001                           AS  f15001          /* 현재가 */
-                ,   td_index_basic.std_date                         AS  std_date        /* 기준일자 */
+                ,   ''                                                  AS  in_out              /* 입수 구분 */
+                ,   td_index_basic.f16002                               AS  f16002              /* 한글종목명 */
+                ,   td_index_basic.f16013                               AS  f16013              /* 단축코드 */
+                ,   ''                                                  AS  incre_symbol        /* 증가 심볼 */
+                ,   ''                                                  AS  rest_date           /* 휴장일 */
+                ,   td_index_basic.f12506                               AS  f12506              /* 입회일 */
+                ,   td_index_basic.f15001                               AS  f15001              /* 현재가 */
+                ,   td_index_basic.std_date                             AS  std_date            /* 기준일자 */
     ]]>
           FROM  td_index_basic
          WHERE  1 = 1
