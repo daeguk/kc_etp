@@ -24,6 +24,7 @@ module.exports = {
     pwd_salt: "11aabb..",
     pwd_default: "11aabb..",
     uploadFolder : "D:/koscom_etp/upload",
+    sampleDownFolder : "D:/koscom_etp/kc_etp/etc/sampleDown",
 
     logger : logger
 }
