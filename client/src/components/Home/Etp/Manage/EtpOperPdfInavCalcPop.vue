@@ -33,7 +33,7 @@
                                 </li>
                                 <li>
                                     <v-btn small flat icon>
-                                        <v-icon v-on:click="getiNavData(etpBasic.f16012)">refresh</v-icon>
+                                        <v-icon v-on:click="getiNavData(paramData.f16012)">refresh</v-icon>
                                     </v-btn>
                                 </li>
                             </ul>
@@ -415,7 +415,7 @@ export default {
          */
         getiNavData(f16012) {
             var vm = this;
-
+            let simulationMode = false; /* 데이터를 DB 상에서 가져 오기 때문에 무조건 false로 넘김*/
             util.processing(vm.$refs.progress, true);
             console.log( "EtpOperPdfInavCalcPop.vue -> getiNavData" );
 
@@ -436,7 +436,7 @@ export default {
                     var market_tot_amt = 0;
                     var index = 0;
                     for (let item of vm.pdfList) {                                            
-                        await vm.iNavCalulator(item, vm.SimulationSwitch).then(function(jongItem) {
+                        await vm.iNavCalulator(item, simulationMode).then(function(jongItem) {
                             /* 종목 정보 바인딩 */                            
                             item.f16588 = jongItem.market_amt; /* 시가 총액 (처음 로딩시는 etp 평가 금액으로 세팅)*/
                             item.f15001 = jongItem.f15001;  /* 현재가 */
@@ -478,7 +478,8 @@ export default {
                                 vm.iNav_percent =  ((vm.iNav_amt / vm.etpBasic.f03329) - 1) * 100;
 
                                 /* 비중 정보 산출*/
-                                for (let item of vm.pdfList) {         
+                                for (let item of vm.pdfList) {        
+                                   
                                     item.f34743 = ((item.f16588 /  vm.market_tot_amt) * 100).toFixed(2);                                    
                                 }
                                 vm.pdf_reload(vm.pdfList);
@@ -594,7 +595,7 @@ export default {
                         vm.iNav_percent =  ((vm.iNav_amt / vm.etpBasic.f03329) - 1) * 100;
 
                         /* 비중 정보 산출*/
-                        for (let item of vm.pdfList) {         
+                        for (let item of vm.pdfList) {     
                             item.f34743 = ((item.f16588 /  vm.market_tot_amt) * 100).toFixed(2);
                         }
 
