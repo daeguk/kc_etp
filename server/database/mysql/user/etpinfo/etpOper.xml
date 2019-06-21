@@ -670,116 +670,49 @@
                             ,   IF( td_etp_basic.F16017 >= DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 5 DAY ), '%Y%m%d' ), 'Y', 'N' )   AS  new_yn     /* 상장일이 최근 5일까지에 속하는 경우 new 아이콘 표시 */
                             ,   DATE_FORMAT( td_etp_basic.F16017, '%Y.%m.%d' )      AS  fmt_f16017          /* format 상장일 */
                             ,   td_etp_basic.F15001                                 AS  f15001              /* 현재가 */
-                            ,   td_etp_basic.F15028                                 AS  f15028              /* 시가총액 */
-                            ,   td_etp_basic.F15029                                 AS  f15029              /* 시가총액비중 */
                             ,   td_etp_basic.F30812                                 AS  f30812              /* 유동시가총액 */
-                            ,   td_etp_basic.F30813                                 AS  f30813              /* 유동시가총액비중 */
                             ,   td_etp_basic.F18438                                 AS  f18438              /* 적용환율 */
-                            ,   td_etp_basic.F16143                                 AS  f16143              /* 상장주식수 */
                             ,   td_etp_basic.F16073                                 AS  f16073              /* 락구분코드 */
                             ,   td_etp_basic.F15007                                 AS  f15007              /* 기준가 */
                             ,   td_etp_basic.F16493                                 AS  f16493              /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
                             ,   td_etp_basic.F15301                                 AS  f15301              /* ETP지표가치(NAV/IV) */
                             ,   td_etp_basic.F15302                                 AS  f15302              /* 추적오차율 */
-                            ,   td_etp_basic.F15303                                 AS  f15303              /* ETP장중지표가치(iNAV/iIV)대비 */
                             ,   td_etp_basic.F15304                                 AS  f15304              /* ETP괴리율 */
-                            ,   td_etp_basic.F15305                                 AS  f15305              /* ETP괴리도 */
                             ,   td_etp_basic.F30818                                 AS  f30818              /* 장중지표가치(iNAV/iIV)등락율 */
                             ,   td_etp_basic.F15318                                 AS  f15318              /* ETP기초지수현재가 */
-                            ,   td_etp_basic.F16497                                 AS  f16497              /* ETF구성종목수 */
-                            ,   td_etp_basic.F31892                                 AS  f31892              /* 전일현금배당금액 */
                             ,   td_etp_basic.F18450                                 AS  f18450              /* 해외ETF원주자산기준통화코드 */
                             ,   td_etp_basic.F18001                                 AS  f18001              /* 전일ETF순자산총액(원) */
-                            ,   td_etp_basic.F16500                                 AS  f16500              /* 전일ETF순자산총액(백만) */
-                            ,   td_etp_basic.F33307                                 AS  f33307              /* 주식순증감(ETN) */
-                            ,   td_etp_basic.F33308                                 AS  f33308              /* 상장증권수(ETN) */
-                            ,   td_etp_basic.F33951                                 AS  f33951              /* ETP기초지수소속시장구분코드 */
-                            ,   td_etp_basic.F15319                                 AS  f15319              /* ETP기초지수기준대비 */
                             ,   td_etp_basic.F30823                                 AS  f30823              /* ETF관련지수등락율 */
-                            ,   td_etp_basic.F15602                                 AS  f15602              /* ETP장중지표가치(iNAV/iIV) */
-                            ,   td_etp_basic.F15631                                 AS  f15631              /* ETP지표가치_로그수익률 */
-                            ,   td_etp_basic.F15632                                 AS  f15632              /* ETP기초지수_로그수익률 */
-                            ,   td_etp_basic.F15633                                 AS  f15633              /* ETP로그수익률차(15631-15632) */
-                            ,   td_etp_basic.F19288                                 AS  f19288              /* ETP지표가치_장종료-확정치차(NAV/IV) */
-                            ,   td_etp_basic.F34515                                 AS  f34515              /* ETF_1CU당금액 */
-                            ,   td_etp_basic.F16499                                 AS  f16499              /* ETF_CU구성단위 */
                             ,   td_etp_basic.F03329                                 AS  f03329              /* 전일ETP지표가치(예탁원)(NAV/IV) */
-                            ,   td_etp_basic.F18439                                 AS  f18439              /* 적용화폐명 */
-                            ,   td_etp_basic.F16109                                 AS  f16109              /* 유통주식수 */
                             ,   td_etp_basic.F16257                                 AS  f16257              /* ETP기초지수코드 */
                             ,   td_etp_basic.F34777                                 AS  f34777              /* ETP기초자산명 */
-                            ,   td_etp_basic.F34521                                 AS  f34521              /* ETF참고지수MID */
-                            ,   td_etp_basic.F34776                                 AS  f34776              /* ETF참고지수코드 */
-                            ,   td_etp_basic.F34514                                 AS  f34514              /* ETF복제방법구분코드(P:실물복제,S:합성복제,A:Active) */
                             ,   td_etp_basic.F34239                                 AS  f34239              /* ETP기초지수MID */
                             ,   td_etp_basic.F34241                                 AS  f34241              /* ETP지표가치산출구분(K:국내,F:해외) */
-                            ,   td_etp_basic.F34769                                 AS  f34769              /* ETP지수산출기관코드 */
-                            ,   td_etp_basic.F34770                                 AS  f34770              /* ETP지수시장대분류 */
-                            ,   td_etp_basic.F34771                                 AS  f34771              /* ETP지수시장중분류 */
-                            ,   td_etp_basic.F34772                                 AS  f34772              /* ETP지수시장소분류 */
-                            ,   td_etp_basic.F34775                                 AS  f34775              /* ETP레버리지인버스구분코드 */
-                            ,   td_etp_basic.F34778                                 AS  f34778              /* ETP지수자산대분류1 */
-                            ,   td_etp_basic.F34779                                 AS  f34779              /* ETP지수자산중분류1 */
-                            ,   td_etp_basic.F34780                                 AS  f34780              /* ETP지수자산소분류1 */
-                            ,   td_etp_basic.F34781                                 AS  f34781              /* ETP지수자산대분류2 */
-                            ,   td_etp_basic.F34782                                 AS  f34782              /* ETP지수자산중분류2 */
-                            ,   td_etp_basic.F34783                                 AS  f34783              /* ETP지수자산소분류2 */
                             ,   td_etp_basic.F33960                                 AS  f33960              /* ETP운용사코드 */
                             ,   td_etp_basic.F33961                                 AS  f33961              /* ETP운용사명(한글명) */
-                            ,   td_etp_basic.F34240                                 AS  f34240              /* ETP계산유형 */
                             ,   td_etp_basic.F33929                                 AS  f33929              /* ETP_iNAV산출방식(0:PDF,1:지수수익율) */
-                            ,   td_etp_basic.F34374                                 AS  f34374              /* 전일ETP기초지수등락율 */
                             ,   td_etp_basic.F30824                                 AS  f30824              /* 전일ETP기초지수등락율 */
                             ,   td_etp_basic.F30819                                 AS  f30819              /* 해외ETP매매기준율 */
-                            ,   td_etp_basic.F18453                                 AS  f18453              /* ETP 배율 */ 
-                            ,   td_etp_basic.F18101                                 AS  f18101              /* 예상배당수익률 : 배당율 */ 
-                            ,   td_etp_basic.F33128                                 AS  f33128              /* iNAV산출환율보정 */ 
+
                             ,   (
                                     SELECT  tm_code_dtl.com_dtl_name
                                       FROM  tm_code_dtl
                                      WHERE  tm_code_dtl.com_mst_cd  =   'COM005'
                                        AND  tm_code_dtl.com_dtl_cd  =   td_etp_basic.F33929
                                 )                                                   AS  f33929_nm           /* ETP_iNAV산출방식(0:PDF,1:지수수익율) */
-
-                            ,   td_etp_basic.F13510                                             AS  f13510      /* 거래량60일이동평균 */
-                            ,   td_etp_basic.F13516                                             AS  f13516      /* 거래대금60일이동평균 */
                                 
-                            ,   td_etp_basic.W00001                                             AS  w00001      /* 종가1일수익률 */
-                            ,   td_etp_basic.W00002                                             AS  w00002      /* 종가1주수익률 */
-                            ,   td_etp_basic.W00003                                             AS  w00003      /* 종가1달수익률 */
-                            ,   td_etp_basic.W00004                                             AS  w00004      /* 종가3달수익률 */
-                            ,   td_etp_basic.W00005                                             AS  w00005      /* 종가YTD수익률 */
-                            ,   td_etp_basic.W00006                                             AS  w00006      /* 종가1년수익률 */
-                            ,   td_etp_basic.W00007                                             AS  w00007      /* 종가3년수익률 */
-                            ,   td_etp_basic.W00008                                             AS  w00008      /* 종가5년수익률 */
-                            ,   td_etp_basic.W00009                                             AS  w00009      /* 종가10년수익률 */
+                            ,   td_etp_basic.W00002                                 AS  w00002              /* 종가1주수익률 */
+                            ,   td_etp_basic.W00003                                 AS  w00003              /* 종가1달수익률 */
+                            ,   td_etp_basic.W00004                                 AS  w00004              /* 종가3달수익률 */
+                            ,   td_etp_basic.W00005                                 AS  w00005              /* 종가YTD수익률 */
                                 
-                            ,   td_etp_basic.W00011                                             AS  w00011      /* NAV1일수익률 */
-                            ,   td_etp_basic.W00012                                             AS  w00012      /* NAV1주수익률 */
-                            ,   td_etp_basic.W00013                                             AS  w00013      /* NAV1달수익률 */
-                            ,   td_etp_basic.W00014                                             AS  w00014      /* NAV3달수익률 */
-                            ,   td_etp_basic.W00015                                             AS  w00015      /* NAVYTD수익률 */
-                            ,   td_etp_basic.W00016                                             AS  w00016      /* NAV1년수익률 */
-                            ,   td_etp_basic.W00017                                             AS  w00017      /* NAV3년수익률 */
-                            ,   td_etp_basic.W00018                                             AS  w00018      /* NAV5년수익률 */
-                            ,   td_etp_basic.W00019                                             AS  w00019      /* NAV10년수익률 */
-                                
-                            ,   td_etp_basic.W00021                                             AS  w00021      /* 기초지수1일수익률 */
-                            ,   td_etp_basic.W00022                                             AS  w00022      /* 기초지수1주수익률 */
-                            ,   td_etp_basic.W00023                                             AS  w00023      /* 기초지수1달수익률 */
-                            ,   td_etp_basic.W00024                                             AS  w00024      /* 기초지수3달수익률 */
-                            ,   td_etp_basic.W00025                                             AS  w00025      /* 기초지수YTD수익률 */
-                            ,   td_etp_basic.W00026                                             AS  w00026      /* 기초지수1년수익률 */
-                            ,   td_etp_basic.W00027                                             AS  w00027      /* 기초지수3년수익률 */
-                            ,   td_etp_basic.W00028                                             AS  w00028      /* 기초지수5년수익률 */
-                            ,   td_etp_basic.W00029                                             AS  w00029      /* 기초지수10년수익률 */
+                            ,   td_etp_basic.W00012                                 AS  w00012              /* NAV1주수익률 */
+                            ,   td_etp_basic.W00013                                 AS  w00013              /* NAV1달수익률 */
+                            ,   td_etp_basic.W00014                                 AS  w00014              /* NAV3달수익률 */
+                            ,   td_etp_basic.W00015                                 AS  w00015              /* NAVYTD수익률 */
 
-                            ,   td_etffor_mast.EX_RATE_CODE                                     AS  ex_rate_code     /* 환율 코드 */        
+                      FROM  td_etp_basic
 
-                      FROM          td_etp_basic
-                      LEFT OUTER JOIN td_etffor_mast ON (
-                                     td_etp_basic.f16012 = td_etffor_mast.ISIN_CODE
-                      ) 
                      WHERE  1 = 1
                        AND  td_etp_basic.f12506     IN
                             (
