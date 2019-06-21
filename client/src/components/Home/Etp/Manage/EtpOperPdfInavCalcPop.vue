@@ -28,7 +28,7 @@
                                 </li>
                                 <li>
                                     <v-btn small flat icon>
-                                        <v-icon :class="btn_class" v-on:click="startStop">{{btn_kind}}</v-icon>
+                                        <v-icon :class="btn_class" v-on:click="navCalcu">{{btn_kind}}</v-icon>
                                     </v-btn>
                                 </li>
                                 <li>
@@ -401,9 +401,10 @@ export default {
                 data.f15007 = vm.NtoS($(this).val());                
             }
 
-            vm.navCalcu();
+            //vm.navCalcu();
             
         });
+        
 
         vm.getiNavData( vm.paramData.f16012 );
     },
