@@ -1279,7 +1279,7 @@ var getJongmokData = function(req, res) {
  */
 var saveEtpOperPdfModify = function(req, res) {
     try {
-        log.debug('etpOper.saveEtpOperPdfModify 호출됨.');
+        console.log('etpOper.saveEtpOperPdfModify 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -1296,6 +1296,7 @@ var saveEtpOperPdfModify = function(req, res) {
         }
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
+console.log(paramData);        
 
         paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
         paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
@@ -1468,6 +1469,9 @@ var saveEtpOperPdfModify = function(req, res) {
                                     },
 
                                     /* 4. [td_etfpdf_basic] 테이블의 f33837(구성종목수) 을 수정한다. */
+                                    // 구성종목수 수정하지 않기로 함. (==> 민선기 과장 : 2019.06.21)
+                                    // 구성종목수 변경시 백오피스 후속작업에 혼선이 있다고 합니다.
+                                    /*
                                     function(msg, callback) {
 
                                         try {
@@ -1501,6 +1505,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                             return callback(resultMsg);
                                         }
                                     },
+                                    */
 
                                     /* 5. td_etfpdf_basic 에 수정한다. */
                                     function(msg, callback) {
@@ -1666,6 +1671,8 @@ var saveEtpOperPdfModify = function(req, res) {
                                     },
 
                                     /* 9. [td_etfpdf_hist] 테이블의 f33837(구성종목수) 을 수정한다. */
+                                    // 상동
+                                    /*
                                     function(msg, callback) {
 
                                         try {
@@ -1699,6 +1706,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                             return callback(resultMsg);
                                         }
                                     },
+                                    */
 
                                     /* 10. td_etfpdf_hist 에 수정한다. */
                                     function(msg, callback) {
@@ -2072,6 +2080,7 @@ var saveEtpOperPdfModify = function(req, res) {
                         resultMsg.result = true;
                         resultMsg.msg = "성공적으로 저장하였습니다.";
                         resultMsg.err = null;
+console.log('etpOper.saveEtpOperPdfModify 성공적으로 저장하였습니다.');
 
                         conn.commit();
                     }
