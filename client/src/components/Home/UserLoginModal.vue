@@ -53,8 +53,8 @@ export default {
   data() {
     return {
         loginDialog: true,
-        email: "test@koscom.co.kr",
-        password: "1111",
+        email: "",
+        password: "",
     };
   },
   mounted: function() {

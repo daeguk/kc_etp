@@ -199,12 +199,12 @@
                             <li class="text_red align_r" v-if="paramData.f30818 >= 0">                                        
                                 <b>{{formatNumber(paramData.f15301)}}</b>
                                 <br>
-                                <span class="float_r">{{formatNumber(paramData.f30818)}}</span>
+                                <span class="float_r">{{formatNumber(paramData.f30818)}}%</span>
                             </li>
                             <li class="text_blue align_r" v-if="paramData.f30818 < 0">                                        
                                 <b>{{formatNumber(paramData.f15301)}}</b>
                                 <br>
-                                <span class="float_r">{{formatNumber(paramData.f30818)}}</span>
+                                <span class="float_r">{{formatNumber(paramData.f30818)}}%</span>
                             </li>
                         </ul>
                         <ul class="result">

@@ -112,7 +112,7 @@ export default {
                 fix_disabled : true,
                 fix_msg : "조치현황 없음"
             },
-            faverSize : 380,            
+            faverSize : 430,            
         };
     },
     components: {
@@ -209,12 +209,12 @@ console.log( vm.pdfData );
                 vm.$emit("showMessageBox", '확인','ETF 상품만 가능합니다.',{},1);
                 return  false;
             }
-
+/*
             if( !vm.pdfData.f16583 ) {
                 vm.$emit("showMessageBox", '확인','사무수탁회사번호가 존재하지 않습니다.',{},1);
                 return  false;
             }
-
+*/
             /* PDF 긴급반영인 경우 */
             if( gubun == 6 ) {
                 var typeCd  =   vm.$store.state.user.type_cd;
