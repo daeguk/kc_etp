@@ -1060,14 +1060,14 @@ var getEtpOperPdfModify = function(req, res) {
                 function(callback) {
 
                     try{
-                        stmt = mapper.getStatement('etpDetail', 'getEtpBasic', paramData, format);
+                        stmt = mapper.getStatement('etpOper', 'getEtpBasic', paramData, format);
                         log.debug(stmt, paramData);
 
                         conn.query(stmt, function(err, rows) {
 
                             if (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] etpDetail.getEtpBasic Error while performing Query";
+                                resultMsg.msg = "[error] etpOper.getEtpBasic Error while performing Query";
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -1091,7 +1091,7 @@ var getEtpOperPdfModify = function(req, res) {
                     } catch (err) {
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] etpDetail.getEtpBasic Error while performing Query";
+                        resultMsg.msg = "[error] etpOper.getEtpBasic Error while performing Query";
                         resultMsg.err = err;
 
                         callback(resultMsg);
