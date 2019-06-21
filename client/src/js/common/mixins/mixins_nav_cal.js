@@ -52,11 +52,11 @@ export const nav_cal_common =   {
 
                     let jongItem = {};
                     jongItem.market_amt = 0;
-                    jongItem.f15001 = 0;
-                    jongItem.f15007 = 0;
+                    jongItem.f15001 = 1;
+                    jongItem.f15007 = 1;
                     jongItem.f15004 = 0;
                     jongItem.f15472 = 0;
-                    jongItem.f16013 = 0;
+                    jongItem.f16013 = 'CASH';
 
                     resolve(jongItem);
                     console.log(e);
@@ -135,7 +135,7 @@ export const nav_cal_common =   {
                         }
                     }) ;
                 } else {
-                    try {
+                    try {                        
                         assetValue = Number(pdf_info.f15001); /* 현재가 */
                         console.log("assetValue:"+assetValue);                    
                         let market_tot_amt = (assetValue * Number(pdf_info.f16499));  /* 시가총액 */
