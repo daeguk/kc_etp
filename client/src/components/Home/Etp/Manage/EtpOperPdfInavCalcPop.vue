@@ -26,12 +26,12 @@
                                 <li>
                                     <v-switch v-model="SimulationSwitch" v-on:change="SimulationMode" color="primary"></v-switch>
                                 </li>
-                                <li>
+                                <li v-if="SimulationSwitch == true">
                                     <v-btn small flat icon>
                                         <v-icon :class="btn_class" v-on:click="navCalcu">{{btn_kind}}</v-icon>
                                     </v-btn>
                                 </li>
-                                <li>
+                                <li v-if="SimulationSwitch == true">
                                     <v-btn small flat icon>
                                         <v-icon v-on:click="getiNavData(paramData.f16012)">refresh</v-icon>
                                     </v-btn>
