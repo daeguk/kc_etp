@@ -300,6 +300,8 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type .in_select{padding-top:0px !important;}
 
 .tbl_type.ver2{width:290px !important;}
+:-ms-fullscreen, :root .tbl_type.ver2{width:280px !important;}
+:-ms-fullscreen, :root .tbl_type.ver2 td .td_ellipsis{width:132px; overflow: hidden;  white-space: nowrap; text-overflow: ellipsis;}
 .tbl_type.ver2 td.line2 span{ display: inline-block; font-weight: 400;padding-left:0px;}
 /*.tbl_type.ver2 th{background-color: #eeeeee; border:0px !important;}*/
 .tbl_type.ver2 td{font-weight: 600; font-size:12px !important;}
