@@ -300,6 +300,8 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type .in_select{padding-top:0px !important;}
 
 .tbl_type.ver2{width:290px !important;}
+:-ms-fullscreen, :root .tbl_type.ver2{width:280px !important;}
+:-ms-fullscreen, :root .tbl_type.ver2 td .td_ellipsis{width:132px; overflow: hidden;  white-space: nowrap; text-overflow: ellipsis;}
 .tbl_type.ver2 td.line2 span{ display: inline-block; font-weight: 400;padding-left:0px;}
 /*.tbl_type.ver2 th{background-color: #eeeeee; border:0px !important;}*/
 .tbl_type.ver2 td{font-weight: 600; font-size:12px !important;}
@@ -745,8 +747,8 @@ input[type='file']{
 .marketrepre_graph .flex:last-child{margin-right:0px !important;}
 
 .market_layout_w{width:100%;}
-.market_card_layout{padding:0; }
-.market_card_layout .flex{margin-right:10px; margin-bottom:10px;}
+.market_card_layout{padding:0; margin-left:25px; }
+.market_card_layout .flex{ margin-bottom:10px;}
 .market_card_layout .flex:last-child{margin-right:0 !important;}
 .market_card_w{ height: 100%; padding-bottom:12px; position: relative;  }
 .market_card_w.line_l{border-right:1px solid #ccd0d4;}
@@ -757,7 +759,7 @@ input[type='file']{
 .market_card ul li{font-size: 18px; font-weight: 600; color:#606060; padding-left:0 !important; margin-top:10px;}
 .market_card ul li span{font-size: 16px; font-weight: normal;}
 
-.market_card2{ padding:12px 16px 0px 16px; width: 272px;}
+.market_card2{ padding:12px 16px 0px 20px; width: 335px; }
 .market_card2 h6{font-size: 16px; font-weight: 600;color:#606060;}
 .market_card2 ul li{line-height: 32px; font-size: 16px; font-weight: 600;}
 .market_card2 ul li dl dt{font-size: 12px; font-weight: 400; color:#808080; padding-left:0 !important; line-height: 34px; display: inline-block;}
