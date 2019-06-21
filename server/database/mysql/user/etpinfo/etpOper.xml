@@ -534,24 +534,19 @@
     -->
     <sql    id="sqlEtpOperPdfEtfHist01">
 
-                    td_etfpdf_hist.f12506                                   AS  f12506      /* 일자 */
-                ,   DATE_FORMAT( td_etfpdf_hist.f12506, '%Y.%m.%d' )        AS  fmt_f12506  /* 일자 */
+                    DATE_FORMAT( td_etfpdf_hist.f12506, '%Y.%m.%d' )        AS  fmt_f12506  /* 일자 */
                 ,   td_etfpdf_hist.f16583                                   AS  f16583      /* 사무수탁회사번호 */
                 ,   td_etfpdf_hist.f16012                                   AS  f16012      /* ETF종목코드 */
                 ,   td_etfpdf_hist.f16013                                   AS  f16013      /* ETF단축코드 */
                 ,   td_etfpdf_hist.f16316                                   AS  f16316      /* 구성종목코드 */
-                ,   td_etfpdf_hist.f33837                                   AS  f33837      /* 구성종목수 */
+
                 ,   td_etfpdf_hist.f16499                                   AS  f16499      /* 1CU단위증권수 */
-                ,   FORMAT( td_etfpdf_hist.f16499, 2)                       AS  fmt_f16499  /* 1CU단위증권수 */
                 ,   td_etfpdf_hist.f33861                                   AS  f33861      /* ETF시장구분 */
                 ,   td_etfpdf_hist.f16004                                   AS  f16004      /* 해외시장종목명 */
                 ,   td_etfpdf_hist.f34840                                   AS  f34840      /* 액면금액설정현금액 */
-                ,   td_etfpdf_hist.f33760                                   AS  f33760      /* 이익분배기준일 */
+
                 ,   td_etfpdf_hist.f16588                                   AS  f16588      /* 평가금액 */
-                ,   td_etfpdf_hist.f34743                                   AS  f34743      /* ETF_PDF비중 */
                 ,   FORMAT( td_etfpdf_hist.f34743 / 100, 2 )                AS  fmt_f34743  /* ETF_PDF비중 */
-                ,   td_etfpdf_hist.f34744                                   AS  f34744      /* ETF_PDF포함여부 */
-                ,   td_etfpdf_hist.f16006                                   AS  f16006      /* 영문심볼 */
 
           FROM  td_etfpdf_hist
 
