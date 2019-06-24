@@ -302,6 +302,7 @@ export default {
 
             if (gubun == '1') {
                 this.paramData = paramData;
+                this.faverSize = 1100;
 
                 if( this.activeTab != 2 ) {                
                     this.showIndexDetailDialog = false;
@@ -337,6 +338,7 @@ export default {
             } else if (gubun == '2') { 
                 this.paramData = paramData;
                 this.showEtpDetailDialog = false;
+                this.faverSize = 760;
 
                 if (this.showIndexDetailDialog) {
                     this.$EventBus.$off('changeEtpAnalysisInfo', paramData);
