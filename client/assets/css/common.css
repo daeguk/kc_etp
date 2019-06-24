@@ -919,7 +919,7 @@ input[type='file']{
 .v-card__title.pop_pdf{padding-bottom:0px !important;padding-top:16px !important}
 .pdf_calendar{width:150px;font-weight: 400; display:inline-block;}
 .pdf_calendar .v-messages{display:none;}
-.pdf_mody_w .v-toolbar{ border-top:1px solid #c2c2c2 !important;  background-color:#f7f7f7 !important;}
+.pdf_mody_w .v-toolbar{ border-top:1px solid #cacaca !important;  background-color:#f9f9f9 !important;}
 .pdf_mody_w .pdf_t{font-size: 14px !important; color:#ff4366; font-weight: 600;}
 .pdf_mody_w .v-icon{padding-right:10px; line-height: 16px;}
 .pdf_mody_w .v-toolbar__content{height:50px !important; width:100% !important;}
@@ -934,6 +934,6 @@ input[type='file']{
 .pdf_context .pdfmody_btn .v-expansion-panel .v-card__text{padding:0px 0 0 70px;}
 .pdf_context .pdfmody_btn .pdfmody_panel span{display:inline-block;}
 .importance .v-list__tile--active .v-list__tile__sub-title{font-weight: 600;}
-
-
+.pdfm_title{font-size:18px; font-weight: 600; padding-left:24px; padding-top:0px;}
+.pdfm_title span{font-size:14px; font-weight:400}
 

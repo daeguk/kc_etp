@@ -4,32 +4,23 @@
             <v-dialog v-model="showDialog" persistent  max-width="1100"  >
                 <v-card class="mx-auto" height="400">
                     <v-card flat class="listset_pop">
-                        <v-card flat>
-                            <v-layout row wrap >
-                                <v-flex grow>
-
-                                    <v-card flat>
-                                        <div class="title01_w case3">
-                                            <v-card-title primary-title>
-                                                <div class="title_wrap01">
-                                                    <div class="right_btn">
-                                                        <v-btn icon  @click="fn_close">
-                                                            <v-icon>close</v-icon>
-                                                        </v-btn>
-                                                    </div>
-                                                </div>
-                                            </v-card-title>
-                                        </div>      
-                                    </v-card>
+                        <h5>
+                            <v-card-title ma-0>
+                                PDF수정 내역<v-spacer></v-spacer>
+                                <v-btn icon  @click="fn_close">
+                                  <v-icon>close</v-icon>
+                                </v-btn>                                
+                            </v-card-title>
+                        </h5>
 
                                     <v-card flat>
                                         
                                         <v-flex xs12    v-for="subData in allDataList" :key='"step3_"  + subData.etf_f16012'>
 
-                                            <h4>
+                                            <div class="pdfm_title">
                                                 {{ subData.etf_f16002           /* ETF 한글종목명 */    }}
                                                 <span>{{ subData.etf_f16013     /* ETF 단축코드 */      }}</span>
-                                            </h4>
+                                            </div>
 
                                             <table v-bind:id='"step3_" + subData.etf_f16012' class="tbl_type ver7" style="width:100%">
                                                 <colgroup>
@@ -65,19 +56,13 @@
                                             </table>
 
                                         </v-flex>
+                                        <v-flex>
+                                            <ProgressBar ref="progress"></ProgressBar>
+                                        </v-flex>
 
-                                    </v-card>
+                             </v-card>
 
-                                </v-flex>
-
-                                <v-flex>
-                                    <ProgressBar ref="progress"></ProgressBar>
-                                </v-flex>
-
-                            </v-layout>
-
-                        </v-card>
-                    </v-card>
+                     </v-card>
                 </v-card>
             </v-dialog>
         </v-flex>
