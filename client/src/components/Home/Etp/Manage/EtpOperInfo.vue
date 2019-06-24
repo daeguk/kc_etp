@@ -361,8 +361,8 @@ export default {
                         'f16002'                        /* 종목 */
                     ,   'f15301'                        /* iNAV */
                     ,   'f03329'                        /* 전일최종NAV */
-                    ,   'f15302'                        /* 추적오차율 */
-                    ,   'f15304'                        /* 괴리율 */
+                    ,   'f19329'                        /* 전일추적오차율 */
+                    ,   'f19330'                        /* 전일괴리율 */
 
                     ,   'f34777'                        /* 기초지수 */
                     ,   'f15318'                        /* 지수현재가 */
@@ -621,9 +621,9 @@ export default {
                 { 'name' : 'f33929_nm'          , 'data': 'f33929_nm'        ,  'width' : '70',  'orderable' : true  , 'className': 'txt_left',  'title' : '산출방식'   },      /* 지표산출방식 */
                 { 'name' : 'f15301'             , 'data': 'f15301'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : 'iNAV'          },      /* ETP지표가치(NAV/IV) */
                 { 'name' : 'f03329'             , 'data': 'f03329'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : '전일NAV'},      /* 전일ETP지표가치(예탁원)(NAV/IV) */
-                { 'name' : 'f15302'             , 'data': 'f15302'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : 'TE' },      /* 추적오차율 */
+                { 'name' : 'f19329'             , 'data': 'f19329'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : 'TE' },      /* 추적오차율 */
                                                                                                                                                     
-                { 'name' : 'f15304'             , 'data': 'f15304'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : '괴리율'        },      /* ETP괴리율 */
+                { 'name' : 'f19330'             , 'data': 'f19330'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : '괴리율'        },      /* ETP괴리율 */
                 { 'name' : 'f34777'             , 'data': 'f34777'           ,  'width' : '120', 'orderable' : true  , 'className': 'txt_left' , 'title' : '기초지수'      },      /* 기초지수명 */
                 { 'name' : 'f15318'             , 'data': 'f15318'           ,  'width' : '60',  'orderable' : true  , 'className': 'txt_right', 'title' : '지수' },      /* 지수 현재가 */
                 { 'name' : 'f18450'             , 'data': 'f18450'           ,  'width' : '40',  'orderable' : true  , 'className': 'txt_right', 'title' : '환코드'         },      /* 해외ETF원주자산기준통화코드 */

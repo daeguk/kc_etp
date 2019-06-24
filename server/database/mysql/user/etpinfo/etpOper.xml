@@ -530,14 +530,11 @@
                     td_etp_basic.*
           FROM  (
                     SELECT      td_etp_basic.F12506                                 AS  f12506              /* 입회일 */
-                            ,   DATE_FORMAT( td_etp_basic.F12506, '%Y.%m.%d' )      AS  fmt_f12506          /* 입회일 */
                             ,   td_etp_basic.F16012                                 AS  f16012              /* 국제표준코드 */
                             ,   td_etp_basic.F16013                                 AS  f16013              /* 단축코드 */
                             ,   td_etp_basic.F16002                                 AS  f16002              /* 한글종목명 */
                             ,   td_etp_basic.F16003                                 AS  f16003              /* 한글종목약명 */
                             ,   td_etp_basic.F16017                                 AS  f16017              /* 상장일 */
-                            ,   IF( td_etp_basic.F16017 >= DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 5 DAY ), '%Y%m%d' ), 'Y', 'N' )   AS  new_yn     /* 상장일이 최근 5일까지에 속하는 경우 new 아이콘 표시 */
-                            ,   DATE_FORMAT( td_etp_basic.F16017, '%Y.%m.%d' )      AS  fmt_f16017          /* format 상장일 */
                             ,   td_etp_basic.F15001                                 AS  f15001              /* 현재가 */
                             ,   td_etp_basic.F15472                                 AS  f15472              /* 대비 */
                             ,   td_etp_basic.F15004                                 AS  f15004              /* 등락율 */
@@ -560,6 +557,8 @@
                             ,   td_etp_basic.F15302                                 AS  f15302              /* 추적오차율 */
                             ,   td_etp_basic.F15303                                 AS  f15303              /* ETP장중지표가치(iNAV/iIV)대비 */
                             ,   td_etp_basic.F15304                                 AS  f15304              /* ETP괴리율 */
+                            ,   td_etp_basic.F19329                                 AS  f19329              /* 전일추적오차율 */
+                            ,   td_etp_basic.F19330                                 AS  f19330              /* 전일ETP괴리율 */
                             ,   td_etp_basic.F15305                                 AS  f15305              /* ETP괴리도 */
                             ,   td_etp_basic.F30818                                 AS  f30818              /* 장중지표가치(iNAV/iIV)등락율 */
                             ,   td_etp_basic.F15318                                 AS  f15318              /* ETP기초지수현재가 */
@@ -611,12 +610,6 @@
                             ,   td_etp_basic.F18453                                 AS  f18453              /* ETP 배율 */ 
                             ,   td_etp_basic.F18101                                 AS  f18101              /* 예상배당수익률 : 배당율 */ 
                             ,   td_etp_basic.F33128                                 AS  f33128              /* iNAV산출환율보정 */ 
-                            ,   (
-                                    SELECT  tm_code_dtl.com_dtl_name
-                                      FROM  tm_code_dtl
-                                     WHERE  tm_code_dtl.com_mst_cd  =   'COM005'
-                                       AND  tm_code_dtl.com_dtl_cd  =   td_etp_basic.F33929
-                                )                                                   AS  f33929_nm           /* ETP_iNAV산출방식(0:PDF,1:지수수익율) */
 
                             ,   td_etp_basic.F13510                                             AS  f13510      /* 거래량60일이동평균 */
                             ,   td_etp_basic.F13516                                             AS  f13516      /* 거래대금60일이동평균 */
@@ -651,6 +644,15 @@
                             ,   td_etp_basic.W00028                                             AS  w00028      /* 기초지수5년수익률 */
                             ,   td_etp_basic.W00029                                             AS  w00029      /* 기초지수10년수익률 */
 
+                            ,   DATE_FORMAT( td_etp_basic.F12506, '%Y.%m.%d' )      AS  fmt_f12506          /* 입회일 */
+                            ,   IF( td_etp_basic.F16017 >= DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 5 DAY ), '%Y%m%d' ), 'Y', 'N' )   AS  new_yn     /* 상장일이 최근 5일까지에 속하는 경우 new 아이콘 표시 */
+                            ,   DATE_FORMAT( td_etp_basic.F16017, '%Y.%m.%d' )      AS  fmt_f16017          /* format 상장일 */
+                            ,   (
+                                    SELECT  tm_code_dtl.com_dtl_name
+                                      FROM  tm_code_dtl
+                                     WHERE  tm_code_dtl.com_mst_cd  =   'COM005'
+                                       AND  tm_code_dtl.com_dtl_cd  =   td_etp_basic.F33929
+                                )                                                   AS  f33929_nm           /* ETP_iNAV산출방식(0:PDF,1:지수수익율) */
                             ,   td_etffor_mast.EX_RATE_CODE                                     AS  ex_rate_code     /* 환율 코드 */
 
                       FROM  td_etp_basic
