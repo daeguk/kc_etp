@@ -306,7 +306,7 @@ var tblEmergeny01 = null;
 export default {
     props : [ "showDialog", "paramData" ],
     components : {
-        ProgressBar: ProgressBar
+        ProgressBar: ProgressBar,
     },
     data() {
         return {
@@ -332,6 +332,7 @@ export default {
     mounted: function() {
 
         var vm = this;
+
 
         console.log( ">>>>>> EtpOperPdfEmergencyModifyPop.vue ==> " );
         console.log( vm.paramData );
@@ -374,7 +375,7 @@ export default {
                                 htm = util.formatNumber( data );
                             }else{
                                 /* 1CU단위증권수 */
-                                htm = "<input type='text' name='f16499' id='f16499' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='15'>";
+                                htm = "<input type='text' name='f16499' id='f16499' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='20'>";
                             }
                         }
 
@@ -392,7 +393,7 @@ export default {
                                 htm = util.formatNumber( data );
                             }else{
                                 /* 액면금액 */
-                                htm = "<input type='text' name='f34840' id='f34840' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='15'>";
+                                htm = "<input type='text' name='f34840' id='f34840' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='20'>";
                             }
                         }
 
@@ -562,7 +563,7 @@ export default {
 
             axios.post( Config.base_url + "/user/etp/getEtpOperPdfModify", {
                 data: searchParam
-            }).then(function(response) {
+            }).then( async function(response) {
                 console.log(response);
 
                 util.processing(vm.$refs.progress, false);
@@ -572,8 +573,9 @@ export default {
                     var msg = ( response.data.msg ? response.data.msg : "" );
                     if (!response.data.result) {
                         if( msg ) {
-                            vm.$emit('showMessageBox', '확인', msg,{},1);
-                            return  false;
+                            if( await vm.$emit('showMessageBox', '확인', msg,{},1) ) {
+                                return  false;
+                            }
                         }
                     }
 
@@ -647,7 +649,7 @@ export default {
          * [자산 추가] 후 구성종목 찾기를 누를시 실행한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_getJongmokData( dataJson ) {
+        async fn_getJongmokData( dataJson ) {
             var vm = this;
 
             console.log("EtpOperPdfEmergencyModifyPop -> fn_getJongmokData");
@@ -656,15 +658,15 @@ export default {
                 if(     !dataJson.codeVal
                     ||  dataJson.codeVal.length == 0
                 ) {
-                    vm.$emit("showMessageBox", '확인','구성종목코드를 입력해 주세요.',{},1);
-
-                    return  false;
+                    if( await vm.$emit("showMessageBox", '확인','구성종목코드를 입력해 주세요.',{},1) ) {
+                        return  false;
+                    }
                 }
 
                 if(  dataJson.codeVal.length < 6 ) {
-                    vm.$emit("showMessageBox", '확인','구성종목코드를 6자리 이상 입력해 주세요.',{},1);
-
-                    return  false;
+                    if( await vm.$emit("showMessageBox", '확인','구성종목코드를 6자리 이상 입력해 주세요.',{},1) ) {
+                        return  false;
+                    }
                 }
             }
 
@@ -674,31 +676,35 @@ export default {
             util.processing(vm.$refs.progress, true);
             axios.post( Config.base_url + "/user/etp/getJongmokData", {
                 data: { "searchCode" : dataJson.codeVal }
-            }).then(function(response) {
+            }).then(async function(response) {
                 console.log(response);
 
                 util.processing(vm.$refs.progress, false);
 
                 if (response.data) {
-
                     var msg = ( response.data.msg ? response.data.msg : "" );
                     if (!response.data.result) {
                         if( msg ) {
-                            vm.$emit('showMessageBox', '확인', msg,{},1);
-                            return  false;
+                            if( await vm.$emit('showMessageBox', '확인', msg,{},1) ) {
+                                return  false;
+                            }
                         }
                     }
 
                     var dataList = response.data.dataList;
 
                     if ( !dataList || dataList.length == 0 ) {
-                        vm.$emit("showMessageBox", '확인','구성종목코드(' + dataJson.codeVal + ')가 존재하지 않습니다.',{},1);
+                        if( await vm.$emit('showMessageBox', '확인', '구성종목코드(' + dataJson.codeVal + ')가 존재하지 않습니다.',{},1) ) {
+                            return  false;
+                        }
+
                         return  false;
                     }
 
                     if ( dataList && dataList.length > 1 ) {
-                        vm.$emit("showMessageBox", '확인','구성종목코드(' + dataJson.codeVal + ')가 여러건 존재합니다.',{},1);
-                        return  false;
+                        if( await vm.$emit("showMessageBox", '확인','구성종목코드(' + dataJson.codeVal + ')가 여러건 존재합니다.',{},1) ) {
+                            return  false;
+                        }
                     }
 
                     if( dataJson.status == "insert" ) {
@@ -710,8 +716,9 @@ export default {
                         });
                     
                         if( filterData.length > 0 ) {
-                            vm.$emit("showMessageBox", '확인','구성종목코드(' + dataJson.codeVal + ')가 이미 존재합니다.',{},1);
-                            return  false;
+                            if( await vm.$emit("showMessageBox", '확인','구성종목코드(' + dataJson.codeVal + ')가 이미 존재합니다.',{},1) ) {
+                                return  false;
+                            }
                         }
 
                         var addData     =   {
@@ -768,7 +775,7 @@ export default {
             var addData     =   {
                     'fmt_f12506'    :   ''              /* Date */
                 ,   'f33861'        :   ''              /* 시장구분 */
-                ,   'f16316'        :   "<input type='text' name='jongmok' id='jongmok' class='txt_left' style='width:100%' placeholder='12자리/6자리코드' maxlength='15' >"            /* 구성종목코드 */
+                ,   'f16316'        :   "<input type='text' name='jongmok' id='jongmok' class='txt_left' style='width:100%' placeholder='12자리/6자리코드' maxlength='20' >"            /* 구성종목코드 */
                 ,   'f16004'        :   "<button  name='confirm' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01'>확인</button>"                              /* 종목명 */
                 ,   'f16499'        :   ''              /* CU shrs */
                 ,   'f34840'        :   ''              /* 액면금액 */
@@ -1006,7 +1013,7 @@ export default {
                         now_date    : now_date
                     ,   allDataList : vm.allDataList
                 }
-            }).then(function(response) {
+            }).then( async function(response) {
 
                 console.log(response);
                 util.processing(vm.$refs.progress, false);
@@ -1017,8 +1024,9 @@ export default {
                     var msg = ( response.data.msg ? response.data.msg : "" );
                     if (!response.data.result) {
                         if( msg ) {
-                            vm.$emit('showMessageBox', '확인', msg,{},1);
-                            return  false;
+                            if( await vm.$emit('showMessageBox', '확인', msg,{},1) ) {
+                                return  false;
+                            }
                         }
                     }
             
@@ -1038,7 +1046,7 @@ export default {
             util.processing(vm.$refs.progress, true);
             axios.post( Config.base_url + "/user/etp/getPdfByGroupNo", {
                 data: {}
-            }).then(function(response) {
+            }).then( async function(response) {
 
                 console.log(response);
 
@@ -1048,8 +1056,9 @@ export default {
                     var msg = ( response.data.msg ? response.data.msg : "" );
                     if (!response.data.result) {
                         if( msg ) {
-                            vm.$emit('showMessageBox', '확인', msg,{},1);
-                            return  false;
+                            if( await vm.$emit('showMessageBox', '확인', msg,{},1) ) {
+                                return  false;
+                            }
                         }
                     }
 
@@ -1225,7 +1234,7 @@ export default {
             vm.txtAddEtpCode            =   "";
         },        
 
-        fn_addEtfOperPdfModify() {
+        async fn_addEtfOperPdfModify() {
             var vm = this;
 
             console.log("EtpOperPdfEmergencyModifyPop.vue -> fn_addEtfOperPdfModify");
@@ -1233,16 +1242,16 @@ export default {
             if(     !vm.txtAddEtpCode
                 ||  vm.txtAddEtpCode.length == 0
             ) {
-                vm.$emit("showMessageBox", '확인','ETF 코드를 입력해 주세요.',{},1);
-
-                return  false;
+                if( await vm.$emit("showMessageBox", '확인','ETF 코드를 입력해 주세요.',{},1) ) {
+                    return  false;
+                }
             }
 
             if(  vm.txtAddEtpCode.length < 6
             ) {
-                vm.$emit("showMessageBox", '확인','ETF 코드를 6자리 이상 입력해 주세요.',{},1);
-
-                return  false;
+                if( await vm.$emit("showMessageBox", '확인','ETF 코드를 6자리 이상 입력해 주세요.',{},1) ) {
+                    return  false;
+                }
             }            
 
             var searchParam                 =   {}
@@ -1307,7 +1316,7 @@ export default {
 
                     if( tr.data() && tr.data().f16316 ) {
                         vm.fn_getJongmokData( { status : "modify", codeVal : tr.data().f16316, rowIndex : rowIndex, f16499 : nowData.f16499 }  );
-                    }                    
+                    }
                 }
                 /* 액면금액 */
                 else if( nowData.name == "f34840" ) {
@@ -1349,7 +1358,7 @@ export default {
          * 자산추가된 행에 대해 빈 값이 존재하는지 체크한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_emptyCheck() {
+        async fn_emptyCheck() {
 
             var vm = this;
 
@@ -1362,8 +1371,9 @@ export default {
             });
 
             if( filterData.length > 0 ) {
-                vm.$emit("showMessageBox", '확인','구성종목코드가 빈 항목이 존재합니다.',{},1);
-                return  false;
+                if( await vm.$emit("showMessageBox", '확인','구성종목코드가 빈 항목이 존재합니다.',{},1) ) {
+                    return  false;
+                }
             }
 
             return  true;
@@ -1373,7 +1383,7 @@ export default {
          * 추가 또는 수정건이 존재하는지 체크한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_modifyCheck() {
+        async fn_modifyCheck() {
 
             var vm = this;
 
@@ -1384,8 +1394,9 @@ export default {
             });
 
             if( filterData.length == 0 ) {
-                vm.$emit("showMessageBox", '확인','수정건이 1건 이상 존재해야 합니다.',{},1);
-                return  false;
+                if( await vm.$emit("showMessageBox", '확인','수정건이 1건 이상 존재해야 합니다.',{},1) ) {
+                    return  false;
+                }
             }
 
             return  true;
@@ -1395,7 +1406,7 @@ export default {
          * 자산추가 후 구성종목코드가 확인이 되지 않는건이 있는지 확인한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_codeCheck() {
+        async fn_codeCheck() {
 
             var vm = this;
 
@@ -1406,8 +1417,9 @@ export default {
             });
 
             if( filterData.length > 0 ) {
-                vm.$emit("showMessageBox", '확인','구성종목코드가 확인 되지 않은 건이 존재합니다.',{},1);
-                return  false;
+                if( await vm.$emit("showMessageBox", '확인','구성종목코드가 확인 되지 않은 건이 존재합니다.',{},1) ) {
+                    return  false;
+                }
             }
 
             return  true;
