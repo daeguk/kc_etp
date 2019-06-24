@@ -547,6 +547,8 @@
                             ,   td_etp_basic.F15301                                 AS  f15301              /* ETP지표가치(NAV/IV) */
                             ,   td_etp_basic.F15302                                 AS  f15302              /* 추적오차율 */
                             ,   td_etp_basic.F15304                                 AS  f15304              /* ETP괴리율 */
+                            ,   td_etp_basic.F19329                                 AS  f19329              /* 전일추적오차율 */
+                            ,   td_etp_basic.F19330                                 AS  f19330              /* 전일ETP괴리율 */
                             ,   td_etp_basic.F30818                                 AS  f30818              /* 장중지표가치(iNAV/iIV)등락율 */
                             ,   td_etp_basic.F15318                                 AS  f15318              /* ETP기초지수현재가 */
                             ,   td_etp_basic.F18450                                 AS  f18450              /* 해외ETF원주자산기준통화코드 */
