@@ -121,17 +121,17 @@ export default {
         // {text:"전체", value:"TOTAL"},
       ],
       selIndexType: {text:"FNGUIDE", value:"FNGUIDE"},
-      rep_info:[{seq:1, f16013:"60001", market_id:"M168", name:"MKF500", f15001:"", 
-                  f15472:"", f15004:"", sColor:"#def5ae", eColor:"#ffffff",
+      rep_info:[{seq:1, F16013:"60001", market_id:"M168", name:"MKF500", F15001:"", 
+                  F15472:"", F15004:"", sColor:"#def5ae", eColor:"#ffffff",
                   width:340, height:150, marginW:1, marginH:40},
-        {seq:2, f16013:"60003", market_id:"M168", name:"MKF 성장", f15001:"", 
-                f15472:"", f15004:"", sColor:"#def5ae", eColor:"#ffffff",
+        {seq:2, F16013:"60003", market_id:"M168", name:"MKF 성장", F15001:"", 
+                F15472:"", F15004:"", sColor:"#def5ae", eColor:"#ffffff",
                 width:340, height:150, marginW:1, marginH:40},
-        {seq:3, f16013:"60166", market_id:"M168", name:"FNGUIDE 성장", f15001:"", 
-                f15472:"", f15004:"", sColor:"#def5ae", eColor:"#ffffff",
+        {seq:3, F16013:"60166", market_id:"M168", name:"FNGUIDE 성장", F15001:"", 
+                F15472:"", F15004:"", sColor:"#def5ae", eColor:"#ffffff",
                 width:340, height:150, marginW:1, marginH:40},
-        {seq:4, f16013:"60019", market_id:"M168", name:"MKF 중대형", f15001:"", 
-                f15472:"", f15004:"", sColor:"#def5ae", eColor:"#ffffff",
+        {seq:4, F16013:"60019", market_id:"M168", name:"MKF 중대형", F15001:"", 
+                F15472:"", F15004:"", sColor:"#def5ae", eColor:"#ffffff",
                 width:350, height:150, marginW:1, marginH:40}
       ],
       sortFlag: 1,
@@ -177,9 +177,9 @@ export default {
         if (response.data.success == false) {
             alert("해당 지수의 데이터가 없습니다");
         } else {
-          rinfo.f15001 = response.data.results[0].F15001;
-          rinfo.f15472 = response.data.results[0].F15472;
-          rinfo.f15004 =  response.data.results[0].F15004;      
+          rinfo.F15001 = response.data.results[0].F15001;
+          rinfo.F15472 = response.data.results[0].F15472;
+          rinfo.F15004 =  response.data.results[0].F15004;      
         }
       });
     },

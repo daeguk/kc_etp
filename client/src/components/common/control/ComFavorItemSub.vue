@@ -549,7 +549,7 @@ export default {
         /* 전체 종목 etn 종목리스트 */
         getEtnList: function() {
             util.processing(this.$refs.progress, true);
-            console.log("etn_grid");
+            // console.log("etn_grid");
             axios.get(Config.base_url + "/user/common/getETNList", {
                 params: {
                 }
@@ -578,7 +578,7 @@ export default {
 
         /* 전체 종목 etf 종목리스트 */
         getEtfList: function() {
-            console.log("etn_grid");
+            // console.log("etn_grid");
             util.processing(this.$refs.progress, true);
             axios.get(Config.base_url + "/user/common/getETFList", {
                 params: {
@@ -609,7 +609,7 @@ export default {
 
         /* 전체 종목 index 종목리스트 */
         getIndexList: function() {
-            console.log("etn_grid");
+            // console.log("etn_grid");
             util.processing(this.$refs.progress, true);
             axios.get(Config.base_url + "/user/common/getIndexList", {
                 params: {

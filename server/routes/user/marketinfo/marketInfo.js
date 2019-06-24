@@ -54,7 +54,7 @@ var getIndexBasic = function(req, res) {
   log.debug('marketInfo 모듈 안에 있는 getIndexBasic 호출됨.');
 
   var options = {
-    f16013 : req.query.f16013,
+    F16013 : req.query.F16013,
     market_id: req.query.market_id,
   };
 try {
@@ -211,7 +211,7 @@ var getIndexIntra = function(req, res) {
   log.debug('marketInfo 모듈 안에 있는 getIndexIntra 호출됨.');
 
   var options = {
-    f16013 : req.query.f16013,
+    F16013 : req.query.F16013,
     market_id: req.query.market_id,
   };
 try {
@@ -246,7 +246,7 @@ var getIndexIntra1 = function(req, res) {
   log.debug('marketInfo 모듈 안에 있는 getIndexIntra1 호출됨.');
 
   var options = {
-    f16013 : req.query.F16013,
+    F16013 : req.query.F16013,
     market_id : req.query.market_id,
   };
   if(req.query.term == '1D') options.limit = 100;
@@ -283,7 +283,7 @@ var getIndexHist1 = function(req, res) {
   console.log('marketInfo 모듈 안에 있는 getIndexHist1 호출됨.');
 
   var options = {
-    f16013 : req.query.F16013,
+    F16013 : req.query.F16013,
     market_id : req.query.market_id,
   };
   if(req.query.term == '1M') options.limit = 30;
@@ -356,7 +356,7 @@ var getEtpBasic = function(req, res) {
   log.debug('marketInfo 모듈 안에 있는 getEtpBasic 호출됨.');
 
   var options = {
-    f16013 : req.query.f16013,
+    F16013 : req.query.F16013,
   };
 try {
     var pool = req.app.get("pool");
@@ -472,7 +472,7 @@ var getEtpIntra = function(req, res) {
   log.debug('marketInfo 모듈 안에 있는 getEtpIntra 호출됨.');
 
   var options = {
-    f16013 : req.query.f16013,
+    F16013 : req.query.F16013,
   };
 try {
     var pool = req.app.get("pool");
@@ -507,8 +507,8 @@ var getEtpMultiIntra = function(req, res) {
   log.debug('marketInfo 모듈 안에 있는 getEtpMultiIntra 호출됨.');
 
   var options = {
-    f16013 : req.query.f16013,
-    f16257 : req.query.f16257,
+    F16013 : req.query.F16013,
+    F16257 : req.query.F16257,
     market_id : req.query.market_id,
   };
   if(req.query.term == '1D') options.limit = 100;
@@ -545,8 +545,8 @@ var getEtpMultiHist = function(req, res) {
   log.debug('marketInfo 모듈 안에 있는 getEtpMultiHist 호출됨.');
 
   var options = {
-    f16013 : req.query.f16013,
-    f16257 : req.query.f16257,
+    F16013 : req.query.F16013,
+    F16257 : req.query.F16257,
     market_id : req.query.market_id,
   };
   if(req.query.term == '1M') options.limit = 30;
@@ -585,7 +585,7 @@ var getEtpGigsWeight = function(req, res) {
   log.debug('marketInfo 모듈 안에 있는 getEtpGigsWeight 호출됨.');
 
   var options = {
-    f16012 : req.query.f16012,
+    F16012 : req.query.F16012,
   };
 try {
     var pool = req.app.get("pool");
@@ -620,8 +620,8 @@ var getEtfSumByIndex = function(req, res) {
   log.debug('marketInfo 모듈 안에 있는 getEtfSumByIndex 호출됨.');
 
   var options = {
-    f34239 : req.query.f34239,
-    f16257 : req.query.f16257,
+    F34239 : req.query.F34239,
+    F16257 : req.query.F16257,
   };
 try {
     var pool = req.app.get("pool");
@@ -657,8 +657,8 @@ var getEtnSumByIndex = function(req, res) {
   log.debug('marketInfo 모듈 안에 있는 getEtnSumByIndex 호출됨.');
 
   var options = {
-    f34239 : req.query.f34239,
-    f16257 : req.query.f16257,
+    F34239 : req.query.F34239,
+    F16257 : req.query.F16257,
   };
 try {
     var pool = req.app.get("pool");

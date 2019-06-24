@@ -522,7 +522,7 @@ var getEtpOperPdf = function(req, res) {
             try {
 
                 /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                if (paramData.f16493 == "1" || paramData.f16493 == "2") {
+                if (paramData.F16493 == "1" || paramData.F16493 == "2") {
 
                     stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtfHist', paramData, format);
                     log.debug(stmt, paramData);
@@ -919,7 +919,7 @@ var getEtpOperPdfByRate = function(req, res) {
                                     temp.index = i;
                                     temp.name = "rate_day" + i;
                                     temp.show_date = rows[i].show_date;
-                                    temp.date = rows[i].f12506;
+                                    temp.date = rows[i].F12506;
 
                                     rateTitleList.push(temp);
                                 }
@@ -1104,7 +1104,7 @@ var getEtpOperPdfModify = function(req, res) {
                     try{
                         /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
                         if (resultMsg.etpBasic &&
-                            (resultMsg.etpBasic.f16493 == "1" || resultMsg.etpBasic.f16493 == "2")
+                            (resultMsg.etpBasic.F16493 == "1" || resultMsg.etpBasic.F16493 == "2")
                         ) {
 
                             stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtfEmergency', paramData, format);
@@ -1125,11 +1125,8 @@ var getEtpOperPdfModify = function(req, res) {
                                     for (var i in rows) {
                                         rows[i].status = "normal";
 
-                                        rows[i].f16499 = rows[i].f16499; /* 1CU단위증권수 */
-                                        rows[i].f16499_prev = rows[i].f16499; /* 1CU단위증권수 */
-
-                                        rows[i].f34840 = rows[i].f34840; /* 액면금액설정현금액 */
-                                        rows[i].f34840_prev = rows[i].f34840; /* 액면금액설정현금액 */
+                                        rows[i].F16499_prev = rows[i].F16499; /* 1CU단위증권수 */
+                                        rows[i].F34840_prev = rows[i].F34840; /* 액면금액설정현금액 */
 
                                         rows[i].code_check = true; /* 코드 체크 ( defulat : true ) */
 
@@ -1296,7 +1293,6 @@ var saveEtpOperPdfModify = function(req, res) {
         }
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
-console.log(paramData);        
 
         paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
         paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
@@ -1372,9 +1368,9 @@ console.log(paramData);
 
                             async.forEachOfLimit(paramData.allDataList, 1, function(subList, index, callback) {
 
-                                paramData.f16583 = subList.etf_f16583; /* 사무수탁회사번호 */
-                                paramData.f16012 = subList.etf_f16012; /* ETF종목코드 */
-                                paramData.f16013 = subList.etf_f16013; /* ETF단축코드 */
+                                paramData.F16583 = subList.etf_F16583; /* 사무수탁회사번호 */
+                                paramData.F16012 = subList.etf_F16012; /* ETF종목코드 */
+                                paramData.F16013 = subList.etf_F16013; /* ETF단축코드 */
                                 paramData.dataLists = subList.data;
 
                                 log.debug(paramData);
@@ -1396,9 +1392,8 @@ console.log(paramData);
                                     function(callback) {
 
                                         try {
-
                                             var stmt = mapper.getStatement('etpOper', 'getTdEtfpdfBasicExistsCheck', paramData, { language: 'sql', indent: '  ' });
-                                            log.debug(stmt, paramData);
+                                            log.debug(paramData);
 
                                             conn.query(stmt, function(err, rows) {
 
@@ -2080,7 +2075,7 @@ console.log(paramData);
                         resultMsg.result = true;
                         resultMsg.msg = "성공적으로 저장하였습니다.";
                         resultMsg.err = null;
-console.log('etpOper.saveEtpOperPdfModify 성공적으로 저장하였습니다.');
+// console.log('etpOper.saveEtpOperPdfModify 성공적으로 저장하였습니다.');
 
                         conn.commit();
                     }

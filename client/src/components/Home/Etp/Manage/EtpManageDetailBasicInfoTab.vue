@@ -10,35 +10,35 @@
                     <v-card flat class="indexinfo_list_table">
                         <v-layout row>
                             <v-flex xs6>발행사</v-flex>
-                            <v-flex xs6 class="text_r">{{ etpBasic.f33961    /* ETP운용사명(한글명) */ }}</v-flex>
+                            <v-flex xs6 class="text_r">{{ etpBasic.F33961    /* ETP운용사명(한글명) */ }}</v-flex>
                         </v-layout>
                         <v-layout row>
                             <v-flex xs6>상장일</v-flex>
-                            <v-flex xs6 class="text_r">{{ etpBasic.fmt_f16017 /* 상장일 */ }}</v-flex>
+                            <v-flex xs6 class="text_r">{{ etpBasic.fmt_F16017 /* 상장일 */ }}</v-flex>
                         </v-layout>
                         <v-layout row>
                             <v-flex xs6>AUM</v-flex>
-                            <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.f15028 ) /* 시가총액 */ }}</v-flex>
+                            <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.F15028 ) /* 시가총액 */ }}</v-flex>
                         </v-layout>
                         <v-layout row>
                             <v-flex xs6>CU수량</v-flex>
-                            <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.f34515 ) /* ETF_1CU당금액 */ }}</v-flex>
+                            <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.F34515 ) /* ETF_1CU당금액 */ }}</v-flex>
                         </v-layout>
                         <v-layout row>
                             <v-flex xs6>CU당 주식수</v-flex>
-                            <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.f16499 ) /* ETF_CU구성단위 */ }}</v-flex>
+                            <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.F16499 ) /* ETF_CU구성단위 */ }}</v-flex>
                         </v-layout>
                         <v-layout row>
                             <v-flex xs6>상장주식수</v-flex>
-                            <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.f16143 ) /* 상장 주식수 */ }}</v-flex>
+                            <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.F16143 ) /* 상장 주식수 */ }}</v-flex>
                         </v-layout>
                         <v-layout row>
                             <v-flex xs6>일평균거래량</v-flex>
-                            <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.f15015 ) /* 거래량 */ }}</v-flex>
+                            <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.F15015 ) /* 거래량 */ }}</v-flex>
                         </v-layout>
                         <v-layout row>
                             <v-flex xs6>과표기준가</v-flex>
-                            <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.f15007 ) /* 기준가 */ }}</v-flex>
+                            <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.F15007 ) /* 기준가 */ }}</v-flex>
                         </v-layout>
                     </v-card>
                 </div>
@@ -54,7 +54,7 @@
                     <v-card flat class="indexinfo_list_table">
                         <v-layout row>
                             <v-flex xs3>기초지수</v-flex>
-                            <v-flex xs7 class="text_r">{{ indexBasic.f16002     /* 한글종목명 */ }}</v-flex>
+                            <v-flex xs7 class="text_r">{{ indexBasic.F16002     /* 한글종목명 */ }}</v-flex>
                         </v-layout>
                         <v-layout row>
                             <v-flex xs3>지수산출기관</v-flex>
@@ -109,23 +109,23 @@
                             <v-card flat class="indexinfo_list_table" style="padding-right:24px;">
                                 <v-layout row>
                                     <v-flex xs6>전일NAV</v-flex>
-                                    <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.f03329 )   /* 전일ETP지표가치(예탁원)(NAV/IV) */ }}</v-flex>
+                                    <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.F03329 )   /* 전일ETP지표가치(예탁원)(NAV/IV) */ }}</v-flex>
                                 </v-layout>
                                 <v-layout row>
                                     <v-flex xs6>iNAV</v-flex>
                                     <v-flex xs6 class="text_r text_blue">
-                                        {{ new Intl.NumberFormat().format( etpBasic.f19288  ) /* ETP지표가치_장종료-확정치차(NAV/IV) */ }}
+                                        {{ new Intl.NumberFormat().format( etpBasic.F19288  ) /* ETP지표가치_장종료-확정치차(NAV/IV) */ }}
                                         <br>
-                                        <span>{{ etpBasic.f30818  /* 장중지표가치(iNAV/iIV)등락율 */ }}%</span>
+                                        <span>{{ etpBasic.F30818  /* 장중지표가치(iNAV/iIV)등락율 */ }}%</span>
                                     </v-flex>
                                 </v-layout>
                                 <v-layout row>
                                     <v-flex xs6>추적오차율</v-flex>
-                                    <v-flex xs6 class="text_r">{{ etpBasic.f15302       /* 추적오차율 */ }}%</v-flex>
+                                    <v-flex xs6 class="text_r">{{ etpBasic.F15302       /* 추적오차율 */ }}%</v-flex>
                                 </v-layout>
                                 <v-layout row>
                                     <v-flex xs6>괴리율</v-flex>
-                                    <v-flex xs6 class="text_r">{{ etpBasic.f15304       /* ETP괴리율 */ }}%</v-flex>
+                                    <v-flex xs6 class="text_r">{{ etpBasic.F15304       /* ETP괴리율 */ }}%</v-flex>
                                 </v-layout>
                             </v-card>
                         </v-flex>
@@ -133,14 +133,14 @@
                             <v-card flat class="indexinfo_list_table">
                                 <v-layout row>
                                     <v-flex xs6>지수전일가</v-flex>
-                                    <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.f31892 ) /* 전일현금배당금액 */ }}</v-flex>
+                                    <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.F31892 ) /* 전일현금배당금액 */ }}</v-flex>
                                 </v-layout>
                                 <v-layout row>
                                     <v-flex xs6>지수현재가</v-flex>
                                     <v-flex xs6 class="text_r text_blue">
-                                        {{ new Intl.NumberFormat().format( etpBasic.f15318 )    /* ETP기초지수현재가 */ }}
+                                        {{ new Intl.NumberFormat().format( etpBasic.F15318 )    /* ETP기초지수현재가 */ }}
                                         <br>
-                                        <span>{{ etpBasic.f30823    /* ETF관련지수등락율 */ }}%</span>
+                                        <span>{{ etpBasic.F30823    /* ETF관련지수등락율 */ }}%</span>
                                     </v-flex>
                                 </v-layout>
                             </v-card>

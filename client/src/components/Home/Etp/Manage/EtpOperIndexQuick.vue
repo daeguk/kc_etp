@@ -1,7 +1,6 @@
 <template>
     <v-container>
         <v-layout row wrap>
-            <!--rightmenu---->
             <v-card flat class="right_menu_w2 w100">
                  <v-list class="pt-0" dense>
                         <v-list-tile-content class="rightmenu_con">
@@ -40,7 +39,6 @@
                         </v-list-tile-content>
                     </v-list>
             </v-card>
-            <!--rightmenu end--->
         </v-layout>
     </v-container>
 </template>

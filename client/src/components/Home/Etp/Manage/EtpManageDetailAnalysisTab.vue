@@ -131,7 +131,7 @@ export default {
     };
   },
   watch: {
-    'etpBasic.f16013': function() {
+    'etpBasic.F16013': function() {
       // console.log("watch.........etpBasic.f16013: ");
       // console.log(this.etpBasic);
       this.defaultTranFlag = false;
@@ -172,8 +172,8 @@ export default {
     init: function() {
       console.log("EtpManageDetailAnaysisTab.................");
       console.log(this.etpBasic);
-      this.indexBasic.F16013 = this.etpBasic.f16257;
-      this.indexBasic.market_id = "M" + util.pad(this.etpBasic.f34239, 3);
+      this.indexBasic.F16013 = this.etpBasic.F16257;
+      this.indexBasic.market_id = "M" + util.pad(this.etpBasic.F34239, 3);
       console.log(this.indexBasic);
       this.getEtpNavAnal(this.etpBasic);
       this.getEtpWeightList();
@@ -224,7 +224,7 @@ export default {
     getEtpAnal: function(item) {
       var vm = this;
       // vm.indexLists = [];          
-      if(item.F16013 == undefined) item.F16013 = item.f16013;
+      if(item.F16013 == undefined) item.F16013 = item.F16013;
       console.log("getEtpAnal");
       axios.get(Config.base_url + "/user/marketinfo/getEtpAnal", {
         params: {
@@ -278,7 +278,6 @@ export default {
     getEtpNavAnal: function(item) {
       var vm = this;
       // vm.indexLists = [];          
-      if(item.F16013 == undefined) item.F16013 = item.f16013;
       console.log("getEtpAnal");
       axios.get(Config.base_url + "/user/marketinfo/getEtpAnal", {
         params: {
@@ -378,7 +377,6 @@ export default {
       });
     },
     sortTable: function(num) {
-console.log("sortTable...........");
       var vm = this;
       vm.sortFlag = vm.sortFlag * (-1);
         

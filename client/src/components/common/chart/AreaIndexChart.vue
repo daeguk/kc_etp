@@ -105,21 +105,20 @@ export default {
             c.fillText(this.chartItem.name, 15, 30);
             c.fillStyle = "#263238";
             c.font = 'bold 28px san-serif';
-            c.fillText(this.chartItem.f15001, 15, 60);
-            var slen = this.chartItem.f15001.length;
-            if(Number(this.chartItem.f15472) < 0) {
+            c.fillText(this.chartItem.F15001, 15, 60);
+            var slen = this.chartItem.F15001.length;
+            if(Number(this.chartItem.F15472) < 0) {
               c.fillStyle = "#039BE5";
             }else {
               c.fillStyle = "#FF0000";
             }
             c.font = '12px san-serif';
-            this.chartItem.f15472 = util.getPlus(this.chartItem.f15472, 2);
-            this.chartItem.f15004 = util.getPlus(this.chartItem.f15004, 2);
-            if(slen > 6) c.fillText(this.chartItem.f15472, 125, 47);
-            else  c.fillText(this.chartItem.f15472, 115, 47);
-            if(slen > 6) c.fillText(this.chartItem.f15004 + "%", 125, 60);
-            else  c.fillText(this.chartItem.f15004 + "%", 115, 60);
-
+            this.chartItem.F15472 = util.getPlus(this.chartItem.F15472, 2);
+            this.chartItem.F15004 = util.getPlus(this.chartItem.F15004, 2);
+            if(slen > 6) c.fillText(this.chartItem.F15472, 125, 47);
+            else  c.fillText(this.chartItem.F15472, 115, 47);
+            if(slen > 6) c.fillText(this.chartItem.F15004 + "%", 125, 60);
+            else  c.fillText(this.chartItem.F15004 + "%", 115, 60);
 
             this.bef_tooltip_img = c.getImageData(0, 0, this.chartItem.width, this.chartItem.height);
         },

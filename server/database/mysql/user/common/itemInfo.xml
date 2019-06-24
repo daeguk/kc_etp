@@ -9,7 +9,7 @@
     <select id="getIndexBasic">
       SELECT *
       FROM td_index_basic
-      WHERE F16013 = #{f16013}
+      WHERE F16013 = #{F16013}
       AND MARKET_ID = #{market_id}
     </select>
 
@@ -18,7 +18,7 @@
               ,DATE_FORMAT(F20044, "%Y.%m.%d") as F20044
           ,F20008
       FROM td_index_intra
-      WHERE F16013 = #{f16013}
+      WHERE F16013 = #{F16013}
       AND MARKET_ID = #{market_id}
       ORDER BY F20044 desc, F20004 desc LIMIT 100
     </select>
@@ -31,7 +31,7 @@
                ,DATE_FORMAT(F20044, "%Y.%m.%d") as F20044
 		       ,F20008
         FROM td_index_intra
-        WHERE F16013 = #{f16013}
+        WHERE F16013 = #{F16013}
         AND market_id = #{market_id}
         ORDER BY F20044 desc, F20004 desc LIMIT ${limit}
     </select>
@@ -43,7 +43,7 @@
         SELECT DATE_FORMAT(F12506, "%Y.%m.%d") as F12506
 		       ,F15001
         FROM td_index_hist
-        WHERE F16013 = #{f16013}
+        WHERE F16013 = #{F16013}
         AND market_id = #{market_id}
         ORDER BY F12506 desc LIMIT ${limit}
     </select>
@@ -156,7 +156,7 @@
     <select id="getEtpBasic">
         SELECT *
         FROM td_etp_basic
-        WHERE F16013 = #{f16013}
+        WHERE F16013 = #{F16013}
     </select>
 
     <!--
@@ -238,7 +238,7 @@
                ,DATE_FORMAT(F20044, "%Y.%m.%d") as F20044
 		       ,F20008
         FROM td_etp_intra
-        WHERE F16013 = #{f16013}
+        WHERE F16013 = #{F16013}
         ORDER BY F20044 desc, F20004 desc LIMIT 100
     </select>
 
@@ -247,8 +247,8 @@
                ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as F20044
 		       ,A.F20008 as F20008, B.F20008 as iF20008
         FROM td_etp_intra A, td_index_intra B
-        WHERE A.F16013 = #{f16013}
-        AND B.F16013 = #{f16257}
+        WHERE A.F16013 = #{F16013}
+        AND B.F16013 = #{F16257}
         AND B.market_id = #{market_id}
         AND A.F20044 = B.F20044
         AND A.F20004 = B.F20004
@@ -259,7 +259,7 @@
         SELECT DATE_FORMAT(F12506, "%Y.%m.%d") as F12506
 		       ,F15001, F15318 as iF15001
         FROM td_etp_hist
-        WHERE F16013 = #{f16013}
+        WHERE F16013 = #{F16013}
         ORDER BY F12506 desc LIMIT ${limit}
     </select>
 <!--
@@ -267,8 +267,8 @@
         SELECT DATE_FORMAT(A.F12506, "%Y.%m.%d") as F12506
 		       ,A.F15001 as F15001, B.F15001 as iF15001
         FROM td_etp_hist A, td_index_hist B
-        WHERE A.F16013 = #{f16013}
-        AND B.F16013 = #{f16257}
+        WHERE A.F16013 = #{F16013}
+        AND B.F16013 = #{F16257}
         AND B.market_id = #{market_id}
         AND A.F12506 = B.F12506
         ORDER BY F12506 desc LIMIT ${limit}

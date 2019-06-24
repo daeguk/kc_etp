@@ -49,7 +49,7 @@ export default {
     };
   },    
   watch: {
-    'etpBasic.f16013': function() {
+    'etpBasic.F16013': function() {
       // console.log("watch.........etpBasic.f16013: ");
       // console.log(this.etpBasic);
       this.dataInit();
@@ -120,7 +120,7 @@ export default {
         var vm = this;
 
         etpInfo.term = term;
-        etpInfo.market_id = "M" + util.pad(etpInfo.f34239, 3);
+        etpInfo.market_id = "M" + util.pad(etpInfo.F34239, 3);
 
         axios.get(Config.base_url + "/user/marketinfo/getEtpMultiIntra", {
           params: etpInfo
@@ -144,7 +144,7 @@ export default {
         var vm = this;
 
         etpInfo.term = term;
-        etpInfo.market_id = "M" + util.pad(etpInfo.f34239, 3);
+        etpInfo.market_id = "M" + util.pad(etpInfo.F34239, 3);
 
         axios.get(Config.base_url + "/user/marketinfo/getEtpMultiHist", {
           params: etpInfo

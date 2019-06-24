@@ -1,7 +1,6 @@
 <template>
     <v-container>
         <v-layout row wrap >
-            <!--rightmenu---->
             <v-card flat class="right_menu_w2">
                 <v-list class="pt-0" dense>
                         <v-list-tile-content class="rightmenu_con">
@@ -26,7 +25,6 @@
                             </v-subheader>
                             <v-card flat class="w100  ver2">
                                 <v-list>
-                                    <!---pdf긴급반영 팝업-->
                                     <v-list-tile :class="( toggle.togglePdfEmergencyPop ? 'border_b select' : 'border_b' )" @click.stop="fn_showDetailPdf(6)">
                                         <v-list-tile-avatar>
                                             <div :class="( toggle.togglePdfEmergencyPop ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon5"></span></div>
@@ -37,9 +35,6 @@
                                         </v-list-tile-content>
                                     </v-list-tile>
 
-                                    <!---pdf긴급반영 팝업 팝업 end-->
-                                    
-                                    <!---iNAV 계산기 팝업---->
                                     <v-list-tile :class="( toggle.toggleIanvPop ? 'border_b select' : 'border_b' )" @click.stop="fn_showDetailPdf(7)">
                                         <v-list-tile-avatar>
                                             <div :class="( toggle.toggleIanvPop ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon6"></span></div>
@@ -49,10 +44,6 @@
                                             <v-list-tile-sub-title>플랫폼 상에서 iNAV계산</v-list-tile-sub-title>
                                         </v-list-tile-content>
                                     </v-list-tile>
-
-                                    
-                                    <!---iNAV 계산기 팝업 end---->
-
                                     <v-list-tile
                                         :class="( togglePdfByRate ? 'border_b select' : 'border_b' )"
                                         @click="fn_setEtpOperPdfByRate"
@@ -69,9 +60,6 @@
                                 </v-list>
                             </v-card>
                         </v-list-tile-content>
-
-
-                        <!-- 관심종목 영역 -->
                         <ComEtpFavorItemSub     v-if="showFaver" 
                                                 :faverSize = "faverSize"
                                                 @showDetail="showDetail" 
@@ -81,7 +69,6 @@
                     </v-list>
 
             </v-card>
-            <!--rightmenu end--->
         </v-layout>
     </v-container>
 </template>
@@ -164,13 +151,13 @@ export default {
             }
 
             /* 기준 데이터가 존재하는지 체크 */
-            if( !vm.pdfData.f16012 || !vm.pdfData.f16493 ) {
+            if( !vm.pdfData.F16012 || !vm.pdfData.F16493 ) {
                 vm.$emit("showMessageBox", '확인','기준 데이터가 존재하지 않습니다.',{},1);
                 return  false;
             }
 
             /* ETF 인지 체크 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-            if( !( vm.pdfData.f16493 == "1" || vm.pdfData.f16493 == "2" ) ) {
+            if( !( vm.pdfData.F16493 == "1" || vm.pdfData.F16493 == "2" ) ) {
                 vm.$emit("showMessageBox", '확인','ETF 상품만 가능합니다.',{},1);
                 return  false;
             }
@@ -183,7 +170,9 @@ export default {
             var paramData   =   {};
             paramData.togglePdfByRate    =   vm.togglePdfByRate;            
 
-            vm.$emit( "fn_setEtpOperPdfByRate", paramData );
+            vm.$emit("showMessageBox", '확인','개발중입니다..',{},1);
+            return  false;
+            // vm.$emit( "fn_setEtpOperPdfByRate", paramData );
         },
 
         fn_showDetailPdf : function( gubun ) {
@@ -199,13 +188,13 @@ console.log( vm.pdfData );
             }
 
             /* 기준 데이터가 존재하는지 체크 */
-            if( !vm.pdfData.f16012 || !vm.pdfData.f16493 ) {
+            if( !vm.pdfData.F16012 || !vm.pdfData.F16493 ) {
                 vm.$emit("showMessageBox", '확인','기준 데이터가 존재하지 않습니다.',{},1);
                 return  false;
             }
 
             /* ETF 인지 체크 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-            if( !( vm.pdfData.f16493 == "1" || vm.pdfData.f16493 == "2" ) ) {
+            if( !( vm.pdfData.F16493 == "1" || vm.pdfData.F16493 == "2" ) ) {
                 vm.$emit("showMessageBox", '확인','ETF 상품만 가능합니다.',{},1);
                 return  false;
             }
@@ -218,9 +207,8 @@ console.log( vm.pdfData );
             /* PDF 긴급반영인 경우 */
             if( gubun == 6 ) {
                 var typeCd  =   vm.$store.state.user.type_cd;
-
                 if( !( typeCd == "9998" || typeCd == "9999" ) ) {
-                    if( vm.$store.state.user.krx_cd != vm.pdfData.f33960 ) {
+                    if( vm.$store.state.user.krx_cd != vm.pdfData.F33960 ) {
                         vm.$emit("showMessageBox", '확인','타 발행사의 종목은 PDF 긴급반영 하실 수 없습니다.',{},1);
                         return  false;
                     }
@@ -244,9 +232,9 @@ console.log( vm.pdfData );
                 var gubun   =   "7";
 
                 /* 0-PDF, 1-지수 수익율 */
-                if( vm.pdfData.f33929 == "0" ) {
+                if( vm.pdfData.F33929 == "0" ) {
                     gubun   =   "7";
-                }else if( vm.pdfData.f33929 == "1" ) {
+                }else if( vm.pdfData.F33929 == "1" ) {
                     gubun   =   "8";
                 }
 

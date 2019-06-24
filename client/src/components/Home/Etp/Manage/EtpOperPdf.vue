@@ -6,8 +6,8 @@
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
 
-                            {{ searchParam.f16002 }} |
-                            <span class="grey--text">({{ searchParam.f16013 }})</span>
+                            {{ searchParam.F16002 }} |
+                            <span class="grey--text">({{ searchParam.F16013 }})</span>
 
                             <span class="text_result_t pdf_calendar">
                                 <v-menu
@@ -144,6 +144,7 @@ export default {
         var vm = this;
 
         console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
+        console.log(this.paramData);
 
         if( vm.paramData ) {
             vm.pdfData  =   vm.paramData;
@@ -170,13 +171,13 @@ export default {
                 if( vm.pdfData && Object.keys( vm.pdfData ).length > 0 ) {
 
 //                    vm.searchParam.f16583       =   vm.pdfData.f16583;          /* 사무수탁회사번호 */
-                    vm.searchParam.f16002       =   vm.pdfData.f16002;          /* 한글종목명 */
-                    vm.searchParam.f16013       =   vm.pdfData.f16013;          /* 단축코드 */
+                    vm.searchParam.F16002       =   vm.pdfData.F16002;          /* 한글종목명 */
+                    vm.searchParam.F16013       =   vm.pdfData.F16013;          /* 단축코드 */
 
-                    vm.searchParam.f16493       =   vm.pdfData.f16493;          /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                    vm.searchParam.f16012       =   vm.pdfData.f16012;          /* 국제표준코드 */
+                    vm.searchParam.F16493       =   vm.pdfData.F16493;          /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                    vm.searchParam.F16012       =   vm.pdfData.F16012;          /* 국제표준코드 */
 
-                    vm.searchParam.search_nm    =   vm.searchParam.f16002 + "(" + vm.searchParam.f16013 + ")";  /* 한글종목명 / 단축코드 */
+                    vm.searchParam.search_nm    =   vm.searchParam.F16002 + "(" + vm.searchParam.F16013 + ")";  /* 한글종목명 / 단축코드 */
 
                     resolve();
 
@@ -217,7 +218,7 @@ export default {
 
                 axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
                     data: {
-                            f34241  :   gubun
+                            F34241  :   gubun
                         ,   isEtfYn :   "Y"
                         ,   firstYn :   "Y"
                     }
@@ -229,13 +230,13 @@ export default {
 
                         if (dataList && dataList.length == 1) {
 //                            vm.searchParam.f16583       =   dataList[0].f16583;     /* 사무수탁회사번호 */
-                            vm.searchParam.f16002       =   dataList[0].f16002;     /* 한글종목명 */
-                            vm.searchParam.f16013       =   dataList[0].f16013;     /* 단축코드 */
+                            vm.searchParam.F16002       =   dataList[0].F16002;     /* 한글종목명 */
+                            vm.searchParam.F16013       =   dataList[0].F16013;     /* 단축코드 */
 
-                            vm.searchParam.f16493       =   dataList[0].f16493;     /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                            vm.searchParam.f16012       =   dataList[0].f16012;     /* 국제표준코드 */
+                            vm.searchParam.F16493       =   dataList[0].F16493;     /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                            vm.searchParam.F16012       =   dataList[0].F16012;     /* 국제표준코드 */
 
-                            vm.searchParam.search_nm    =   vm.searchParam.f16002 + "(" + vm.searchParam.f16013 + ")";      /* 한글종목명 / 단축코드 */
+                            vm.searchParam.search_nm    =   vm.searchParam.F16002 + "(" + vm.searchParam.F16013 + ")";      /* 한글종목명 / 단축코드 */
 
                             vm.pdfData  =   dataList[0];
                         }
@@ -274,14 +275,15 @@ export default {
                 vm.searchParam.isInstCd     =   "N";        /* 기관에 속한 정보만 노출하는지 */
 
                 if( initYn == "N" ) {
-                    if(     !vm.searchParam.f16012          /* 국제표준코드 */
-                        ||  !vm.searchParam.f16493          /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                    if(     !vm.searchParam.F16012          /* 국제표준코드 */
+                        ||  !vm.searchParam.F16493          /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
                     ) {
                         vm.$emit("showMessageBox", '확인','기준코드가 존재하지 않습니다.',{},1);
                         return  false;
                     }
                 }
-
+// console.log("fn_getEtpOerPdf............");
+// console.log(vm.searchParam);
                 vm.$emit( "fn_showProgress", true );
                 axios.post( url, {
                     data: vm.searchParam
@@ -441,28 +443,28 @@ export default {
             if (vm.stateInfo.pageState == "pdf") {
 
                 vm.fn_setArrShowColumn([
-                        "fmt_f12506"        /* 입회일 - Date */
+                        "fmt_F12506"        /* 입회일 - Date */
                     ,   "status"            /* 상태 */
-                    ,   "f33861"            /* ETF시장구분 - 시장구분 -  */
-                    ,   "f16316"            /* 구성종목코드 - 종목코드 */
-                    ,   "f16004"            /* 해외시장종목명 - 종목명 */
-                    ,   "f16499"            /* 1CU단위증권수 - CU SHrs */
-                    ,   "f34840"            /* 액면금액설정현금액 - 액면금액 */
-                    ,   "f16588"            /* 평가금액 - 평가금액 */
-                    ,   "fmt_f34743"        /* ETF_PDF비중 - 비중 */
+                    ,   "F33861"            /* ETF시장구분 - 시장구분 -  */
+                    ,   "F16316"            /* 구성종목코드 - 종목코드 */
+                    ,   "F16004"            /* 해외시장종목명 - 종목명 */
+                    ,   "F16499"            /* 1CU단위증권수 - CU SHrs */
+                    ,   "F34840"            /* 액면금액설정현금액 - 액면금액 */
+                    ,   "F16588"            /* 평가금액 - 평가금액 */
+                    ,   "fmt_F34743"        /* ETF_PDF비중 - 비중 */
                 ]);
             } 
             /* [비중변경현황] 을 선택한 경우 */
             else if (vm.stateInfo.pageState == "pdfByRate") {
                 
                 vm.fn_setArrShowColumn([
-                        "fmt_f12506"        /* 입회일 - Date */,
-                    ,   "f33861"            /* ETF시장구분 - 시장구분 */,
-                    ,   "f16316"            /* 구성종목코드 - 종목코드 */,
-                    ,   "f16004"            /* 해외시장종목명 - 종목명 */,
-                    ,   "f16499"            /* 1CU단위증권수 - CU SHrs */,
-                    ,   "f34840"            /* 액면금액설정현금액 - 액면금액 */,
-                    ,   "f16588"            /* 평가금액 - 평가금액 */,
+                        "fmt_F12506"        /* 입회일 - Date */,
+                    ,   "F33861"            /* ETF시장구분 - 시장구분 */,
+                    ,   "F16316"            /* 구성종목코드 - 종목코드 */,
+                    ,   "F16004"            /* 해외시장종목명 - 종목명 */,
+                    ,   "F16499"            /* 1CU단위증권수 - CU SHrs */,
+                    ,   "F34840"            /* 액면금액설정현금액 - 액면금액 */,
+                    ,   "F16588"            /* 평가금액 - 평가금액 */,
 
                     ,   "rate_day0"         /* 비중 당일 */,
                     ,   "rate_day1"         /* 비중 1일전 */,
@@ -576,15 +578,15 @@ export default {
             var vm = this;
 
             var arrColumn  =   [
-                { 'name' : 'fmt_f12506'     , 'data': 'fmt_f12506'      ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-center'  , 'title' : 'Date'      },      /* Date */
+                { 'name' : 'fmt_F12506'     , 'data': 'fmt_F12506'      ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-center'  , 'title' : 'Date'      },      /* Date */
                 { 'name' : 'status'         , 'data': 'status'          ,  'width' : '30' , 'orderable' : true , 'className': 'dt-body-center'  , 'title' : '상태'      },       /* 상태 */
-                { 'name' : 'f33861'         , 'data': 'f33861'          ,  'width' : '60' , 'orderable' : true , 'className': 'dt-body-center'  , 'title' : '시장구분'  },       /* 시장구분 */
-                { 'name' : 'f16316'         , 'data': 'f16316'          ,  'width' : '120', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목코드'  },       /* 종목코드 */
-                { 'name' : 'f16004'         , 'data': 'f16004'          ,  'width' : '200', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목명'    },       /* 종목명 ( 해외시장종목명 ) */
-                { 'name' : 'f16499'         , 'data': 'f16499'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : 'CU SHrs'   },      /* CU SHrs */
-                { 'name' : 'f34840'         , 'data': 'f34840'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '액면금액'   },      /* 액면금액 */
-                { 'name' : 'f16588'         , 'data': 'f16588'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '평가금액'   },      /* 평가금액 */
-                { 'name' : 'fmt_f34743'     , 'data': 'fmt_f34743'      ,  'width' : '50' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중 (%)'   },      /* 비중 */
+                { 'name' : 'F33861'         , 'data': 'F33861'          ,  'width' : '60' , 'orderable' : true , 'className': 'dt-body-center'  , 'title' : '시장구분'  },       /* 시장구분 */
+                { 'name' : 'F16316'         , 'data': 'F16316'          ,  'width' : '120', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목코드'  },       /* 종목코드 */
+                { 'name' : 'F16004'         , 'data': 'F16004'          ,  'width' : '200', 'orderable' : true , 'className': 'dt-body-left'    , 'title' : '종목명'    },       /* 종목명 ( 해외시장종목명 ) */
+                { 'name' : 'F16499'         , 'data': 'F16499'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : 'CU SHrs'   },      /* CU SHrs */
+                { 'name' : 'F34840'         , 'data': 'F34840'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '액면금액'   },      /* 액면금액 */
+                { 'name' : 'F16588'         , 'data': 'F16588'          ,  'width' : '100', 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '평가금액'   },      /* 평가금액 */
+                { 'name' : 'fmt_F34743'     , 'data': 'fmt_F34743'      ,  'width' : '50' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중 (%)'   },      /* 비중 */
 
                 { 'name' : 'rate_day0'      , 'data': 'rate_day0'       ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중 (%)'  },      /* 비중 */
                 { 'name' : 'rate_day1'      , 'data': 'rate_day1'       ,  'width' : '80' , 'orderable' : true , 'className': 'dt-body-right'   , 'title' : '비중 (%)'  },      /* 비중 */
@@ -613,7 +615,7 @@ export default {
                     },
                     /* CU SHrs */
                     {      
-                            'name' : 'f16499'   
+                            'name' : 'F16499'   
                         ,   "render": function ( data, type, row, meta ) {
                                 let htm = "";
 
@@ -625,7 +627,7 @@ export default {
 
                     /* 액면금액 */
                     {      
-                            'name' : 'f34840'   
+                            'name' : 'F34840'   
                         ,   "render": function ( data, type, row, meta ) {
                                 let htm = "";
 
@@ -637,7 +639,7 @@ export default {
 
                     /* 평가금액 */
                     {      
-                            'name' : 'f16588'   
+                            'name' : 'F16588'   
                         ,   "render": function ( data, type, row, meta ) {
                                 let htm = "";
 

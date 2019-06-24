@@ -78,7 +78,7 @@ export  const  market_common =   {
                                             "render": function ( data, type, row ) {
                                                 let htm = "<span>";
                                                 htm += "           <b>"+data+"</b>";
-                                                htm += "            <br><span class='text_s'>"+row.f16013+"</span>";
+                                                htm += "            <br><span class='text_s'>"+row.F16013+"</span>";
                                                 if (row.NEW_YN == "Y") {
                                                     htm += "<span><div class='text_new'>new</div></span>";
                                                 }
@@ -92,10 +92,10 @@ export  const  market_common =   {
                             
                                                 htm += util.formatNumber(data);
 
-                                                if (row.f30818 >= 0) {
-                                                    htm += "<br><span class='text_S text_red'>"+row.f30818+"%</span>";
+                                                if (row.F30818 >= 0) {
+                                                    htm += "<br><span class='text_S text_red'>"+row.F30818+"%</span>";
                                                 } else {
-                                                    htm += "<br><span class='text_S text_blue'>"+row.f30818+"%</span>"; /* ETF관련지수등락율 */
+                                                    htm += "<br><span class='text_S text_blue'>"+row.F30818+"%</span>"; /* ETF관련지수등락율 */
                                                 }
 
                                                 return htm;
@@ -118,10 +118,10 @@ export  const  market_common =   {
                             
                                                 htm += util.formatNumber(data);
 
-                                                if (row.f30823 >= 0) {
-                                                    htm += "<br><span class='text_S text_red'>"+row.f30823+"%</span>";
+                                                if (row.F30823 >= 0) {
+                                                    htm += "<br><span class='text_S text_red'>"+row.F30823+"%</span>";
                                                 } else {
-                                                    htm += "<br><span class='text_S text_blue'>"+row.f30823+"%</span>"; /* ETF관련지수등락율 */
+                                                    htm += "<br><span class='text_S text_blue'>"+row.F30823+"%</span>"; /* ETF관련지수등락율 */
                                                 }
 
                                                 return htm;
@@ -139,13 +139,13 @@ export  const  market_common =   {
                                         }
                                     ],
                                     columns: [
-                                        { "data": "f16002", "orderable": true, className:"txt_left line2"}, /*종목*/
-                                        { "data": "f15301", "orderable": true, className:"txt_right" }, /*INAV*/
-                                        { "data": "f03329", "orderable" : true, className:"txt_right" }, /*전일최종Nav*/
-                                        { "data": "f15302", "orderable" : true, className:"txt_right" }, /*추적오차율*/
-                                        { "data": "f15304", "orderable" : true, className:"txt_right" }, /*괴리율*/
-                                        { "data": "f34777", "orderable" : true, className:"txt_left" }, /*기초지수*/
-                                        { "data": "f15318", "orderable" : true, className:"txt_right" }, /*지수현재가*/
+                                        { "data": "F16002", "orderable": true, className:"txt_left line2"}, /*종목*/
+                                        { "data": "F15301", "orderable": true, className:"txt_right" }, /*INAV*/
+                                        { "data": "F03329", "orderable" : true, className:"txt_right" }, /*전일최종Nav*/
+                                        { "data": "F15302", "orderable" : true, className:"txt_right" }, /*추적오차율*/
+                                        { "data": "F15304", "orderable" : true, className:"txt_right" }, /*괴리율*/
+                                        { "data": "F34777", "orderable" : true, className:"txt_left" }, /*기초지수*/
+                                        { "data": "F15318", "orderable" : true, className:"txt_right" }, /*지수현재가*/
                                         { "data": null, "orderable" : true, defaultContent:""},
                                     ]
                             }); 
@@ -153,7 +153,7 @@ export  const  market_common =   {
                             // ETP 갯수와 기준일 바인딩 
                             if (items) {
                                 $("#" + vm.table_name + "_count"+ ctgCodeItem.ctg_code).html(items.length);
-                                $("#" + vm.table_name + "_date" + ctgCodeItem.ctg_code).html("기준일 :"+items[0].f12506);
+                                $("#" + vm.table_name + "_date" + ctgCodeItem.ctg_code).html("기준일 :"+items[0].F12506);
                             }
 
                             // 테이블별 이벤트
@@ -184,9 +184,9 @@ export  const  market_common =   {
             var vm = this;
 
             console.log("########## mixins_marketinfo.js -> fn_movePageFromMarket ############");
-            console.log( "data.f16012=[" + data.f16012 + "] /* 국제표준코드  */" );
-            console.log( "data.f16257=[" + data.f16257 + "] /* ETP기초지수코드  */" );
-            console.log( "data.f34239=[" + data.f34239 + "] /* ETP기초지수MID  */" );
+            console.log( "data.F16012=[" + data.F16012 + "] /* 국제표준코드  */" );
+            console.log( "data.F16257=[" + data.F16257 + "] /* ETP기초지수코드  */" );
+            console.log( "data.F34239=[" + data.F34239 + "] /* ETP기초지수MID  */" );
 
 
             //vm.showEtpManageDetailDialog = true;

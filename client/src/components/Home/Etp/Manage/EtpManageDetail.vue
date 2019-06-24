@@ -21,8 +21,8 @@
                         <v-card-title primary-title>
                             <div class="title_wrap01">
                                 <h3 class="headline mb-0">
-                                    {{this.etpBasic.f16002}}
-                                    <span class="grey--text">{{etpBasic.f16013}}</span>
+                                    {{this.etpBasic.F16002}}
+                                    <span class="grey--text">{{etpBasic.F16013}}</span>
                                 </h3>
                                 <!--div class="right_btn"  v-if="showEtpManageDetailDialog">
                                     <v-layout align-right>
@@ -57,47 +57,47 @@
                     <div class="graph_01_w">
 
                         <div class="sub_title_num">
-                            {{etpBasic.f15001}}
-                            <span v-if="etpBasic.f15472 <= 0" class="text_blue">{{etpBasic.f15472}}({{etpBasic.f15004}})%</span>
-                            <span v-else class="text_red">{{etpBasic.f15472}}({{etpBasic.f15004}})%</span>
-                            <p>Last Updated : {{etpBasic.f12506}}</p>
+                            {{etpBasic.F15001}}
+                            <span v-if="etpBasic.F15472 <= 0" class="text_blue">{{etpBasic.F15472}}({{etpBasic.F15004}})%</span>
+                            <span v-else class="text_red">{{etpBasic.F15472}}({{etpBasic.F15004}})%</span>
+                            <p>Last Updated : {{etpBasic.F12506}}</p>
                         </div>
                         <div class="index_nums">
                             <v-layout>
                                 <v-flex>
                                         <ul>
                                             <li>iNAV</li>
-                                            <li class="number">{{formatNumber(etpBasic.f15301)}}</li>
-                                            <li v-if="etpBasic.f30818 <= 0" class="number2 text_blue"> {{formatNumber(etpBasic.f30818)}}%</li>
-                                            <li v-else class="number2 text_red"> {{formatNumber(etpBasic.f30818)}}%</li>
+                                            <li class="number">{{formatNumber(etpBasic.F15301)}}</li>
+                                            <li v-if="etpBasic.F30818 <= 0" class="number2 text_blue"> {{formatNumber(etpBasic.F30818)}}%</li>
+                                            <li v-else class="number2 text_red"> {{formatNumber(etpBasic.F30818)}}%</li>
                                         </ul>
                                 </v-flex>
                                 <v-flex><ul>
                                             <li>기초지수</li>
-                                            <li class="number">{{formatNumber(etpBasic.f15318)}}</li>
-                                            <li v-if="etpBasic.f30823 <= 0" class="number2 text_blue"> {{formatNumber(etpBasic.f30823)}}%</li>
-                                            <li v-else class="number2 text_red"> {{formatNumber(etpBasic.f30823)}}%</li>
+                                            <li class="number">{{formatNumber(etpBasic.F15318)}}</li>
+                                            <li v-if="etpBasic.F30823 <= 0" class="number2 text_blue"> {{formatNumber(etpBasic.F30823)}}%</li>
+                                            <li v-else class="number2 text_red"> {{formatNumber(etpBasic.F30823)}}%</li>
                                         </ul>
                                 </v-flex>
                                 <v-flex class="ver1">
                                     <ul>
                                             <li>시가총액</li>
-                                            <li class="number"> {{formatNumber(etpBasic.f15028 / 1000000000)}}십억</li>
+                                            <li class="number"> {{formatNumber(etpBasic.F15028 / 1000000000)}}십억</li>
                                             <li></li>
                                         </ul>
                                 </v-flex>
                                 <v-flex class="ver2">
                                         <ul>
                                             <li>거래량</li>
-                                            <li class="number">{{formatInt(etpBasic.f15015)}}주</li>
-                                            <li class="number2 text_green">AVG(3M):{{formatInt(etpBasic.f13510)}}</li>
+                                            <li class="number">{{formatInt(etpBasic.F15015)}}주</li>
+                                            <li class="number2 text_green">AVG(3M):{{formatInt(etpBasic.F13510)}}</li>
                                         </ul>
                                 </v-flex>
                                 <v-flex class="ver3">
                                     <ul>
                                             <li>거래대금</li>
-                                            <li class="number">{{formatNumber(etpBasic.f15023/10000000)}}억</li>
-                                            <li class="number2 text_green">AVG(3M):{{formatNumber(etpBasic.f13516/10000000)}}억</li>
+                                            <li class="number">{{formatNumber(etpBasic.F15023/10000000)}}억</li>
+                                            <li class="number2 text_green">AVG(3M):{{formatNumber(etpBasic.F13516/10000000)}}억</li>
                                         </ul>
                                 </v-flex>
                             </v-layout>
@@ -200,7 +200,6 @@ export default {
         });
     },
     updated: function() {
-        console.log("Etp_updated================");
     },
     beforeDestory: function() {
         this.$EventBus.$off('changeEtpInfo');
@@ -211,33 +210,33 @@ export default {
             var vm = this;
             vm.$nextTick().then(() => {
                 if(     vm.paramData 
-                    &&  (       vm.paramData.f16012
-                            ||  vm.paramData.f16257
-                            ||  vm.paramData.f34239
+                    &&  (       vm.paramData.F16012
+                            ||  vm.paramData.F16257
+                            ||  vm.paramData.F34239
                         )
                 ) {
-                    vm.basicData.f16012         =   vm.paramData.f16012;            /* 국제표준코드 */
-                    vm.basicData.f16257         =   vm.paramData.f16257;            /* ETP기초지수코드 */
-                    vm.basicData.f34239         =   vm.paramData.f34239;            /* ETP기초지수MID */
+                    vm.basicData.F16012         =   vm.paramData.F16012;            /* 국제표준코드 */
+                    vm.basicData.F16257         =   vm.paramData.F16257;            /* ETP기초지수코드 */
+                    vm.basicData.F34239         =   vm.paramData.F34239;            /* ETP기초지수MID */
                     vm.paramData.perf_class   = 'perf_chart_w2'; /* performanc 그래프 class */
                     vm.paramData.tbl_class   = 'tbl_type ver5'; /* performanc 테이블 class */
                     vm.paramData.chart_size  = '960'; /* performanc 차트 사이즈 */
                 }
                 else if(
-                        vm.$route.query.f16012  
-                    &&  vm.$route.query.f16257  
-                    &&  vm.$route.query.f34239  
+                        vm.$route.query.F16012  
+                    &&  vm.$route.query.F16257  
+                    &&  vm.$route.query.F34239  
                 ) {
-                    vm.basicData.f16012         =   vm.$route.query.f16012;         /* 국제표준코드 */
-                    vm.basicData.f16257         =   vm.$route.query.f16257;         /* ETP기초지수코드 */
-                    vm.basicData.f34239         =   vm.$route.query.f34239;         /* ETP기초지수MID */
+                    vm.basicData.F16012         =   vm.$route.query.F16012;         /* 국제표준코드 */
+                    vm.basicData.F16257         =   vm.$route.query.F16257;         /* ETP기초지수코드 */
+                    vm.basicData.F34239         =   vm.$route.query.F34239;         /* ETP기초지수MID */
                     vm.paramData.perf_class   = 'perf_chart_w'; /* performanc 그래프 class */
                     vm.paramData.tbl_class   = 'tbl_type ver4'; /* performanc 테이블 class */
                     vm.paramData.chart_size  = '1180'; /* performanc 차트 사이즈 */
                 }
-                if(     vm.basicData.f16012
-                    ||  vm.basicData.f16257
-                    ||  vm.basicData.f34239
+                if(     vm.basicData.F16012
+                    ||  vm.basicData.F16257
+                    ||  vm.basicData.F34239
                 )   {
                    // vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
                     vm.fn_getEtpBasic();                /* ETP 의 기본정보를 조회한다. */
@@ -259,7 +258,7 @@ export default {
             axios.post(Config.base_url + "/user/etp/getEtpBasic", {
                 data:   vm.basicData
             }).then(function(response) {
-                // console.log(response);
+                console.log(response);
                 if (response.data) {
                     
                     var msg = ( response.data.msg ? response.data.msg : "" );
@@ -271,10 +270,10 @@ export default {
                     }
 
                     vm.etpBasic = response.data.etpBasic;
-                    vm.etpBasic.f15001 = util.formatStringNum(vm.etpBasic.f15001);
+                    vm.etpBasic.F15001 = util.formatStringNum(vm.etpBasic.F15001);
                     vm.indexBasic = response.data.indexBasic;
 
-                    vm.indexBasic.F16257        =   vm.etpBasic.f16257;
+                    vm.indexBasic.F16257        =   vm.etpBasic.F16257;
                     vm.indexBasic.LARGE_TYPE    =   vm.indexBasic.large_type;
                     vm.indexBasic.MARKET_ID     =   vm.indexBasic.market_id;
 

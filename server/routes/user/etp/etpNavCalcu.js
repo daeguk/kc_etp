@@ -25,7 +25,7 @@ var getiNavData = function (req, res) {
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
 
-        var f16012 = req.query.f16012;  /* 국제 표준 코드*/
+        var F16012 = req.query.F16012;  /* 국제 표준 코드*/
             
 
         Promise.using(pool.connect(), conn => {
@@ -33,7 +33,7 @@ var getiNavData = function (req, res) {
             async.waterfall([    
                 function(callback) {
                     var params = {
-                        "f16012" : f16012
+                        "F16012" : F16012
                     };
                 
                     var stmt = mapper.getStatement('etpDetail', 'getEtpBasic', params, {language:'sql', indent: '  '});
@@ -47,7 +47,7 @@ var getiNavData = function (req, res) {
 
                 function(etpBasic, callback) {
                     var params = {
-                        "f16012" : f16012
+                        "F16012" : F16012
                     };
                     var etpItem = etpBasic[0];
 
@@ -55,9 +55,9 @@ var getiNavData = function (req, res) {
                     // ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN)
 
                     
-                    if (etpItem.f16493 == '1' || etpItem.f16493 == '2') {
+                    if (etpItem.F16493 == '1' || etpItem.F16493 == '2') {
                         query_id = "getEtpPdfEtf";
-                    } else if (etpItem.f16493 == '3' || etpItem.f16493 == '4') {
+                    } else if (etpItem.F16493 == '3' || etpItem.F16493 == '4') {
                         query_id = "getEtpPdfEtn";
                     }
 

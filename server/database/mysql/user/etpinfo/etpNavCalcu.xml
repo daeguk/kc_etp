@@ -4,39 +4,39 @@
 <mapper namespace="etpNav">
 
     <select  id="getEtpPdfEtf">
-         SELECT  td_kspjong_basic.f15001	 							 AS f15001		  /* 현재가 */
-			 ,   td_kspjong_basic.f15007							     AS f15007		  /* 기준가 */
-			 ,   td_kspjong_basic.f15004								 AS f15004		  /* 등락률 */
-			 ,   td_kspjong_basic.f15003								 AS f15472		  /* 대비 */
-			 ,   td_kspjong_basic.f16013								 AS f16013		  /* 종목코드 */
-			 ,   td_etfpdf_basic.f16583                                  AS  f16583      /* 사무수탁회사번호 */
-             ,   td_kspjong_basic.f16013                                  AS  f16013      /* 종목 단축코드 */
-             ,   td_etfpdf_basic.f16316                                  AS  f16316      /* 구성종목코드 */
-             ,   td_etfpdf_basic.f33837                                  AS  f33837      /* 구성종목수 */
-             ,   td_etfpdf_basic.f16499                                  AS  f16499      /* 1CU단위증권수 */
-             ,   FORMAT( td_etfpdf_basic.f16499, 2)                      AS  fmt_f16499  /* 1CU단위증권수 */
-             ,   td_etfpdf_basic.f33861                                  AS  f33861      /* ETF시장구분 */
-             ,   td_etfpdf_basic.f34840                                  AS  f34840      /* 액면금액설정현금액 */
-             ,   td_etfpdf_basic.f16588                                  AS  f16588      /* 평가금액 */
-             ,   td_etfpdf_basic.f34743                                  AS  f34743      /* ETF_PDF비중 */
-             ,   td_etfpdf_basic.f16004                                  AS  f16004      /* 해외시장종목명 */
+         SELECT  td_kspjong_basic.f15001	 							 AS F15001		  /* 현재가 */
+			 ,   td_kspjong_basic.f15007							     AS F15007		  /* 기준가 */
+			 ,   td_kspjong_basic.f15004								 AS F15004		  /* 등락률 */
+			 ,   td_kspjong_basic.f15003								 AS F15472		  /* 대비 */
+			 ,   td_kspjong_basic.f16013								 AS F16013		  /* 종목코드 */
+			 ,   td_etfpdf_basic.f16583                                  AS  F16583      /* 사무수탁회사번호 */
+             ,   td_kspjong_basic.f16013                                  AS  F16013      /* 종목 단축코드 */
+             ,   td_etfpdf_basic.f16316                                  AS  F16316      /* 구성종목코드 */
+             ,   td_etfpdf_basic.f33837                                  AS  F33837      /* 구성종목수 */
+             ,   td_etfpdf_basic.f16499                                  AS  F16499      /* 1CU단위증권수 */
+             ,   FORMAT( td_etfpdf_basic.f16499, 2)                      AS  fmt_F16499  /* 1CU단위증권수 */
+             ,   td_etfpdf_basic.f33861                                  AS  F33861      /* ETF시장구분 */
+             ,   td_etfpdf_basic.f34840                                  AS  F34840      /* 액면금액설정현금액 */
+             ,   td_etfpdf_basic.f16588                                  AS  F16588      /* 평가금액 */
+             ,   td_etfpdf_basic.f34743                                  AS  F34743      /* ETF_PDF비중 */
+             ,   td_etfpdf_basic.f16004                                  AS  F16004      /* 해외시장종목명 */
           FROM   td_etfpdf_basic
          LEFT OUTER  JOIN    td_kspjong_basic
                   ON    td_etfpdf_basic.f16316         =   td_kspjong_basic.f16012      /* 국제표준코드 */
          WHERE  1 = 1
-           AND  td_etfpdf_basic.f16012              =   #{f16012}                   /* 국제표준코드 */
+           AND  td_etfpdf_basic.f16012              =   #{F16012}                   /* 국제표준코드 */
     
     </select>
 
     <select    id="getEtpPdfEtn">
-           SELECT   td_etnpdf_basic.f16583                                  AS  f16583      /* 사무수탁회사번호 */
-                ,   td_etnpdf_basic.f16013                                  AS  f16013      /* ETF 단축코드 */
-                ,   td_etnpdf_basic.f16316                                  AS  f16316      /* 구성종목코드 */
-                ,   td_etnpdf_basic.f33837                                  AS  f33837      /* 구성종목수 */
-                ,   td_etnpdf_basic.f16541                                  AS  f16004      /* 종목명 */
-                ,   '4'                                                     AS  f33861      /* 시장구분 */
+           SELECT   td_etnpdf_basic.f16583                                  AS  F16583      /* 사무수탁회사번호 */
+                ,   td_etnpdf_basic.f16013                                  AS  F16013      /* ETF 단축코드 */
+                ,   td_etnpdf_basic.f16316                                  AS  F16316      /* 구성종목코드 */
+                ,   td_etnpdf_basic.f33837                                  AS  F33837      /* 구성종목수 */
+                ,   td_etnpdf_basic.f16541                                  AS  F16004      /* 종목명 */
+                ,   '4'                                                     AS  F33861      /* 시장구분 */
           FROM   td_etnpdf_basic
          WHERE  1 = 1
-           AND  td_etnpdf_basic.f16012              =   #{f16012}                   /* 국제표준코드 */
+           AND  td_etnpdf_basic.f16012              =   #{F16012}                   /* 국제표준코드 */
     </select>
 </mapper>

@@ -17,7 +17,7 @@
                            {{item.ctg_name}}
                                 <span class="text_result" v-bind:id="table_name + '_count'+item.ctg_code">120 </span>
                                 <span class="text_result_t">results</span>
-                                <span v-bind:id="table_name + '_date'+item.ctg_code">기준일 :2018.10.20</span>
+                                <span v-bind:id="table_name + '_date'+item.ctg_code">기준일111 :2018.10.20</span>
                         </h3>
                     </v-card-title>
                     <v-card flat>
@@ -76,17 +76,17 @@ export default {
             carousel_data:[],
             carousel_mod:[],
             intra_data:[],
-            rep_info:[{seq:1, f16013:"1", market_id:"M002", name:"KOSPI", f15001:"", 
-                        f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#def5ae", eColor:"#ffffff",
+            rep_info:[{seq:1, F16013:"1", market_id:"M002", name:"KOSPI", F15001:"", 
+                        F15472:"", F15004:"",etf_sum:"", etn_sum:"", sColor:"#def5ae", eColor:"#ffffff",
                         width:340, height:150, marginW:1, marginH:40},
-              {seq:2, f16013:"51", market_id:"M002", name:"KOSPI 200", f15001:"", 
-                      f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#def5ae", eColor:"#ffffff",
+              {seq:2, F16013:"51", market_id:"M002", name:"KOSPI 200", F15001:"", 
+                      F15472:"", F15004:"",etf_sum:"", etn_sum:"", sColor:"#def5ae", eColor:"#ffffff",
                       width:340, height:150, marginW:1, marginH:40},
-              {seq:3, f16013:"1", market_id:"M004", name:"KOSDAQ", f15001:"", 
-                      f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#def5ae", eColor:"#ffffff",
+              {seq:3, F16013:"1", market_id:"M004", name:"KOSDAQ", F15001:"", 
+                      F15472:"", F15004:"",etf_sum:"", etn_sum:"", sColor:"#def5ae", eColor:"#ffffff",
                       width:340, height:150, marginW:1, marginH:40},
-              {seq:4, f16013:"203", market_id:"M004", name:"KOSDAQ 150", f15001:"", 
-                      f15472:"", f15004:"",etf_sum:"", etn_sum:"", sColor:"#def5ae", eColor:"#ffffff",
+              {seq:4, F16013:"203", market_id:"M004", name:"KOSDAQ 150", F15001:"", 
+                      F15472:"", F15004:"",etf_sum:"", etn_sum:"", sColor:"#def5ae", eColor:"#ffffff",
                       width:350, height:150, marginW:1, marginH:40}],
             options: {
                 color: 'primary',
@@ -133,9 +133,9 @@ export default {
           if (response.data.success == false) {
               alert("해당 지수의 데이터가 없습니다");
           } else {
-            rinfo.f15001 = response.data.results[0].F15001;
-            rinfo.f15472 = response.data.results[0].F15472;
-            rinfo.f15004 =  response.data.results[0].F15004;      
+            rinfo.F15001 = response.data.results[0].F15001;
+            rinfo.F15472 = response.data.results[0].F15472;
+            rinfo.F15004 =  response.data.results[0].F15004;      
           }
         });
       },
@@ -145,9 +145,9 @@ export default {
 
         axios.get(Config.base_url + "/user/marketinfo/getEtfSumByIndex", {
           params: {
-            f34239: Number(rinfo.market_id.substring(1)),
+            F34239: Number(rinfo.market_id.substring(1)),
             // f34239: rinfo.market_id.substring(1),
-            f16257 : rinfo.f16013
+            F16257 : rinfo.F16013
           }
         }).then(function(response) {
           // console.log(response);
@@ -167,9 +167,9 @@ export default {
 
         axios.get(Config.base_url + "/user/marketinfo/getEtnSumByIndex", {
           params: {
-            f34239: Number(rinfo.market_id.substring(1)),
+            F34239: Number(rinfo.market_id.substring(1)),
             // f34239: rinfo.market_id.substring(1),
-            f16257 : rinfo.f16013
+            F16257 : rinfo.F16013
           }
         }).then(function(response) {
           // console.log(response);

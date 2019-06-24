@@ -125,7 +125,6 @@ export default {
     this.dialog = true;
     console.log("Open IndexInfoModal...........");
     console.log(this.indexInfo);
-    if(this.indexInfo.F16013 == undefined) this.indexInfo.F16013 = this.indexInfo.f16013;
     console.log("Open IndexInfoModal...........1");
     console.log(this.indexInfo);
     this.getIndexBasic(this.indexInfo);
@@ -148,7 +147,7 @@ export default {
 
       axios.get(Config.base_url + "/user/marketinfo/getIndexBasic", {
         params: {
-          f16013: rinfo.F16013,
+          F16013: rinfo.F16013,
           market_id: rinfo.market_id
         }
       }).then(function(response) {
