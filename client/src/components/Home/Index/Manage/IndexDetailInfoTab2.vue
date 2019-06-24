@@ -420,9 +420,8 @@ export default {
                     perf_table.rows.add(items).draw();
 
                     // 그래프 실행
-                    setTimeout(function() {
-                        vm.performance_chart();
-                    }, 2500);
+                    
+                    vm.performance_chart();
                 }
                    
             });
