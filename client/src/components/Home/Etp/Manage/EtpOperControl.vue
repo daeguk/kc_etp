@@ -302,7 +302,7 @@ export default {
 
             if (gubun == '1') {
                 this.paramData = paramData;
-                this.faverSize = 1100;
+                this.faverSize = 1081;
 
                 if( this.activeTab != 2 ) {                
                     this.showIndexDetailDialog = false;
