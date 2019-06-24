@@ -616,8 +616,8 @@ export default {
                 this.pdf_reload(this.pdfList);
             } else {
                 pdf_table.destroy();                
-                pdf_table = $('#pdf_table').DataTable(this.DefaultRender);
-                this.pdf_reload(this.pdfList);
+                pdf_table = $('#pdf_table').DataTable(this.DefaultRender);                
+                this.getiNavData(this.paramData.f16012);
             }
         },
         fn_closePop() {

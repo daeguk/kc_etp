@@ -2,7 +2,7 @@
 <v-container>
 
 
-    <v-dialog v-model="message_dialog" :max-width="options.width" @keydown.esc="cancel" @keydown.enter="cancel" v-bind:style="{ zIndex: options.zIndex }">
+    <v-dialog v-model="message_dialog" persistent :max-width="options.width" @keydown.esc="cancel" @keydown.enter="cancel" v-bind:style="{ zIndex: options.zIndex }">
         <v-card class="pop_alert">
         <h6><v-icon class="confirm">help</v-icon> Confirm</h6>
         <!--h6><v-icon class="warning_1">warning</v-icon> Warning</h6>
@@ -18,7 +18,7 @@
       </v-dialog>
 
 
-    <v-dialog v-model="confirm_dialog" :max-width="options.width" @keydown.esc="cancel" @keydown.enter="cancel" v-bind:style="{ zIndex: options.zIndex }">
+    <v-dialog v-model="confirm_dialog" persistent :max-width="options.width" @keydown.esc="cancel" @keydown.enter="cancel" v-bind:style="{ zIndex: options.zIndex }">
         <v-card class="pop_alert">
         <h6><v-icon class="confirm">help</v-icon> Confirm</h6>
         <!--h6><v-icon class="warning_1">warning</v-icon> Warning</h6>
@@ -38,7 +38,7 @@
       
 
 
-      <v-dialog v-model="warning_dialog" :max-width="options.width" @keydown.esc="cancel" @keydown.enter="cancel" v-bind:style="{ zIndex: options.zIndex }">
+      <v-dialog v-model="warning_dialog" persistent :max-width="options.width" @keydown.esc="cancel" @keydown.enter="cancel" v-bind:style="{ zIndex: options.zIndex }">
         <v-card class="pop_alert">
         <h6><v-icon class="warning_1">warning</v-icon> Warning</h6>
         <!--h6><v-icon class="warning_1">warning</v-icon> Warning</h6>
@@ -54,7 +54,7 @@
       </v-dialog>
 
 
-      <v-dialog v-model="error_dialog" :max-width="options.width" @keydown.esc="cancel" @keydown.enter="cancel" v-bind:style="{ zIndex: options.zIndex }">
+      <v-dialog v-model="error_dialog" persistent :max-width="options.width" @keydown.esc="cancel" @keydown.enter="cancel" v-bind:style="{ zIndex: options.zIndex }">
         <v-card class="pop_alert">
         <h6><v-icon class="error_1">error</v-icon> Error</h6>
         <!--h6><v-icon class="warning_1">warning</v-icon> Warning</h6>

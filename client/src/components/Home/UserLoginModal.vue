@@ -1,4 +1,7 @@
 <template>
+    <v-container>
+    <v-flex>
+
 <v-dialog v-model="loginDialog" persistent max-width="600px">
     <v-card>
         <v-container>
@@ -37,17 +40,27 @@
             </v-flex>
             <v-flex xs4>
             </v-flex>
+
+            
             </v-layout>
         </v-card>
       </v-container>
     </v-card>
 </v-dialog>
+    </v-flex>
+
+    <v-flex>
+        <ConfirmDialog ref="confirm"></ConfirmDialog>
+    </v-flex>
+
+    </v-container>
 
 </template>
 
 <script>
 import Config       from "@/js/config.js"
 import Constant from "@/store/store_constant.js"
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 export default {
   data() {
@@ -57,8 +70,10 @@ export default {
         password: "",
     };
   },
+  components : {
+      ConfirmDialog: ConfirmDialog
+  },
   mounted: function() {
-    // console.log("LoginInfo......");
   },
   methods: {
     closeModal: function() {
@@ -74,11 +89,12 @@ export default {
       axios.post(Config.base_url+'/user/member/userlogincheck', {
         "email" : vm.email,
         "password" : vm.password,
-      }).then(function(response) {
+      }).then(async function(response) {
         // console.log(response);
         if(response.data.success == false){
-            alert(response.data.message);
-          vm.$EventBus.$emit("userLoginCheck", false);
+           if( await vm.showMessageBox('확인',response.data.message,{},1) ) {
+            vm.$EventBus.$emit("userLoginCheck", false);
+           }
         }else {
           vm.$store.commit(Constant.ADD_USER, {
             email: response.data.results[0].email, 
@@ -111,7 +127,10 @@ export default {
       console.log("newAccount");
       // MainLanding.vue
       vm.$EventBus.$emit("userNewAccount");
-    }
+    },
+    showMessageBox: function(title, msg, option, gubun) {
+         this.$refs.confirm.open(title,msg, option, gubun);
+    }    
   }
 }
 </script>

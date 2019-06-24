@@ -460,8 +460,8 @@ export default {
 
                 var filterData = _.filter( vm.indexDataList, function(o) { 
 
-                    var nmIdx = o.f16002.toUpperCase().indexOf(vm.form.jisuSearch);       /* 한글종목명 */
-                    var cdIdx = o.f16013.toUpperCase().indexOf(vm.form.jisuSearch);       /* 단축코드 */
+                    var nmIdx = o.f16002 ? o.f16002.toUpperCase().indexOf(vm.form.jisuSearch) : -1;       /* 한글종목명 */
+                    var cdIdx = o.f16013 ? o.f16013.toUpperCase().indexOf(vm.form.jisuSearch) : -1;       /* 단축코드 */
 
                     if (nmIdx > -1 || cdIdx > -1) {
                         return true; 
