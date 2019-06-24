@@ -11,7 +11,7 @@
       -->
     </v-flex>
     <v-flex :class="FaverClassName">
-      <ComFavorItemSub v-if="showFaver"   @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
+      <ComFavorItemSub v-if="showFaver"  :faverSize = "faverSize" @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
     </v-flex>
   </v-layout> 
 </template>
@@ -41,6 +41,7 @@ export default {
       showFaver : false,
       className: '',
       FaverClassName: '',
+      faverSize: 1059
     };
   },    
 

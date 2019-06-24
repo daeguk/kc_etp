@@ -122,7 +122,7 @@ var etn_table = null;
 var index_table = null;
 
 export default {
-    props: [],
+    props: ["faverSize"],
     data() {
         return {
             jongMokDialog: false,
@@ -166,7 +166,7 @@ export default {
             "info": false,   // control table information display field
             "stateSave": true,  //restore table state on page reload,
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-            "scrollY":       '750px',
+            "scrollY":       vm.faverSize+'px',
             thead: {
                 display:'none'
             },
@@ -265,7 +265,7 @@ export default {
             "info": false,   // control table information display field
             "stateSave": true,  //restore table state on page reload,
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-            "scrollY":        '750px',
+            "scrollY":        vm.faverSize+'px',
             thead: {
                 display:'none'
             },
@@ -366,7 +366,7 @@ export default {
             "info": false,   // control table information display field
             "stateSave": true,  //restore table state on page reload,
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-            "scrollY":        '750px',
+            "scrollY":        vm.faverSize+'px',
             thead: {
                 display:'none'
             },
