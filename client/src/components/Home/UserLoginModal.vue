@@ -17,7 +17,7 @@
                 <v-text-field label="Sign in with your e-mail address" v-model="email"></v-text-field>
             </v-flex>
             <v-flex xs12>
-                <v-text-field label="Password" type="password" v-model="password" @keyup.enter="loginCheck"></v-text-field>
+                <v-text-field label="Password" type="password" v-model="password" @keyup.enter.stop="loginCheck"></v-text-field>
             </v-flex>
             </v-layout>
         <v-card flat>
@@ -25,13 +25,13 @@
             <v-flex xs12 class="login_pop_pad">
                 <v-card-title>
                 <v-spacer></v-spacer>
-              <v-btn depressed color="#85c406" dark @click="loginCheck">LOG-IN to ETP PLATFORM</v-btn>
+              <v-btn depressed color="#85c406" dark @click.stop="loginCheck">LOG-IN to ETP PLATFORM</v-btn>
                 </v-card-title>
             </v-flex>
             <v-flex xs12  class="login_pop_pad2">
                 <v-layout>
                     <v-flex>
-                         New to ETP Platform? <a @click="newAccount">Create an account.</a>
+                         New to ETP Platform? <a @click.stop="newAccount">Create an account.</a>
                     </v-flex>
                     <v-flex>
                         <a @click="forgotPassword">Forgot password.</a>
@@ -83,6 +83,7 @@ export default {
 
     },
     loginCheck: function() {
+
       // console.log('loginCheck');
       var vm = this;
 
@@ -93,7 +94,7 @@ export default {
         // console.log(response);
         if(response.data.success == false){
            if( await vm.showMessageBox('확인',response.data.message,{},1) ) {
-            vm.$EventBus.$emit("userLoginCheck", false);
+                //vm.$EventBus.$emit("userLoginCheck", false);
            }
         }else {
           vm.$store.commit(Constant.ADD_USER, {

@@ -2,7 +2,7 @@
 <v-container>
 
 
-    <v-dialog v-model="message_dialog" persistent :max-width="options.width" @keydown.esc="cancel" @keydown.enter="cancel" v-bind:style="{ zIndex: options.zIndex }">
+    <v-dialog v-model="message_dialog" persistent :max-width="options.width" @keydown.esc.stop="cancel" @keydown.enter.stop="cancel" v-bind:style="{ zIndex: options.zIndex }">
         <v-card class="pop_alert">
         <h6><v-icon class="confirm">help</v-icon> Confirm</h6>
         <!--h6><v-icon class="warning_1">warning</v-icon> Warning</h6>
@@ -12,13 +12,13 @@
          
             <v-card-actions>
                 <v-spacer></v-spacer>  
-            <v-btn class="pop_alret_yesbtn" depressed dark small @click.native="agree">확인</v-btn>
+            <v-btn class="pop_alret_yesbtn" depressed dark small @click.native.stop="agree">확인</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
 
 
-    <v-dialog v-model="confirm_dialog" persistent :max-width="options.width" @keydown.esc="cancel" @keydown.enter="cancel" v-bind:style="{ zIndex: options.zIndex }">
+    <v-dialog v-model="confirm_dialog" persistent :max-width="options.width" @keydown.esc.stop="cancel" @keydown.enter.stop="cancel" v-bind:style="{ zIndex: options.zIndex }">
         <v-card class="pop_alert">
         <h6><v-icon class="confirm">help</v-icon> Confirm</h6>
         <!--h6><v-icon class="warning_1">warning</v-icon> Warning</h6>
@@ -28,9 +28,9 @@
          
             <v-card-actions>
                 <v-spacer></v-spacer>  
-            <v-btn class="pop_alret_yesbtn" depressed dark small @click.native="agree">예</v-btn>
+            <v-btn class="pop_alret_yesbtn" depressed dark small @click.native.stop="agree">예</v-btn>
   
-            <v-btn class="pop_alret_nobtn" depressed dark small @click.native="cancel">아니요</v-btn>
+            <v-btn class="pop_alret_nobtn" depressed dark small @click.native.stop="cancel">아니요</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -38,7 +38,7 @@
       
 
 
-      <v-dialog v-model="warning_dialog" persistent :max-width="options.width" @keydown.esc="cancel" @keydown.enter="cancel" v-bind:style="{ zIndex: options.zIndex }">
+      <v-dialog v-model="warning_dialog" persistent :max-width="options.width" @keydown.esc.stop="cancel" @keydown.enter.stop="cancel" v-bind:style="{ zIndex: options.zIndex }">
         <v-card class="pop_alert">
         <h6><v-icon class="warning_1">warning</v-icon> Warning</h6>
         <!--h6><v-icon class="warning_1">warning</v-icon> Warning</h6>
@@ -48,13 +48,13 @@
          
             <v-card-actions>
                 <v-spacer></v-spacer>  
-            <v-btn class="pop_alret_yesbtn" depressed dark small @click.native="agree">확인</v-btn>
+            <v-btn class="pop_alret_yesbtn" depressed dark small @click.native.stop="agree">확인</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
 
 
-      <v-dialog v-model="error_dialog" persistent :max-width="options.width" @keydown.esc="cancel" @keydown.enter="cancel" v-bind:style="{ zIndex: options.zIndex }">
+      <v-dialog v-model="error_dialog" persistent :max-width="options.width" @keydown.esc.stop="cancel" @keydown.enter.stop="cancel" v-bind:style="{ zIndex: options.zIndex }">
         <v-card class="pop_alert">
         <h6><v-icon class="error_1">error</v-icon> Error</h6>
         <!--h6><v-icon class="warning_1">warning</v-icon> Warning</h6>
@@ -64,7 +64,7 @@
          
             <v-card-actions>
                 <v-spacer></v-spacer>  
-            <v-btn class="pop_alret_yesbtn" depressed dark small @click.native="agree">확인</v-btn>
+            <v-btn class="pop_alret_yesbtn" depressed dark small @click.native.stop="agree">확인</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>

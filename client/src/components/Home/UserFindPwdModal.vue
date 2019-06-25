@@ -1,4 +1,6 @@
 <template>
+    <v-container>
+    <v-flex>
 <v-dialog v-model="findpwdDialog" persistent max-width="600px">
   <v-card>
     <v-container>
@@ -41,18 +43,26 @@
       <v-flex xs12 class="login_pop_pad">
         <v-card-title>
             <v-spacer></v-spacer>
-            <v-btn  depressed color="primary" outline @click="findPassword">FIND PASSWORD</v-btn>
+            <v-btn  depressed color="primary" outline @click.stop="findPassword">FIND PASSWORD</v-btn>
         </v-card-title>
       </v-flex>
       </v-layout>
     </v-container>
   </v-card>
 </v-dialog>
+    </v-flex>
+
+    <v-flex>
+        <ConfirmDialog ref="confirm"></ConfirmDialog>
+    </v-flex>
+
+    </v-container>
 </template>
 
 <script>
 import Config       from "@/js/config.js"
 import Constant from "@/store/store_constant.js"
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 export default {
   data() {
@@ -68,6 +78,9 @@ export default {
         typeList: [],
         domainList: [],
     };
+  },
+    components : {
+      ConfirmDialog: ConfirmDialog
   },
   computed: {
     comDomainList: function() {
@@ -103,10 +116,12 @@ export default {
         params: {
           // "bbs_id" : vm.bbs_id,
         }
-      }).then(function(response) {
+      }).then(async function(response) {
         console.log(response);
         if(response.data.success == false){
-          alert(response.data.message);
+            if( await vm.showMessageBox('확인',response.data.message,{},1) ) {
+                return  false;
+            }
         }else {
           vm.typeList = response.data.results;
         }
@@ -120,10 +135,12 @@ export default {
         params: {
           // "bbs_id" : vm.bbs_id,
         }
-      }).then(function(response) {
+      }).then(async function(response) {
         console.log(response);
         if(response.data.success == false){
-          alert(response.data.message);
+            if( await vm.showMessageBox('확인',response.data.message,{},1) ) {
+                return  false;
+            }          
         }else {
           vm.domainList = response.data.results;
         }
@@ -142,33 +159,48 @@ export default {
       vm.editedItem.domain_url = "@" + filtered[0].domain_url;
       // vm.editedItem.email = "@" + filtered[0].domain_url;
     },
-    findPassword: function() {
+    async findPassword() {
       var vm = this;
       if(this.editedItem.type_cd.length == 0 || 
         this.editedItem.type_cd == "0000") {
-        alert("사용자 그룹을 선택해주세요");
+
+        if( await vm.showMessageBox('확인',"사용자 그룹을 선택해주세요",{},1) ) {
+            return  false;
+        }
       }else if(this.editedItem.inst_cd.length == 0 || 
         this.editedItem.inst_cd == "00000") {
-        alert("사용자 기관 코드를 선택해주세요");
+        if( await vm.showMessageBox('확인',"사용자 기관 코드를 선택해주세요",{},1) ) {
+            return  false;
+        }
       }else {
         this.editedItem.email = this.editedItem.in_email + this.editedItem.domain_url;
         if(this.editedItem.email.includes(this.editedItem.domain_url)) {
           axios.post(Config.base_url+'/user/member/userfindpwd', 
             vm.editedItem
-          ).then(function(response) {
+          ).then(async function(response) {
             console.log(response);
             if(response.data.success == false){
-              alert(response.data.message);
+
+                if( await vm.showMessageBox('확인',response.data.message,{},1) ) {
+                    return  false;
+                }
             }else {
-              alert("이메일주소로 초기화된 패스워드가 발송되었습니다.");
+                if( await vm.showMessageBox('확인',"이메일주소로 초기화된 패스워드가 발송되었습니다.",{},1) ) {
+                    return  false;
+                }
             }
           });
 
         }else {
-          alert("이메일 주소는 회사의 도메인주소를 사용하여야 합니다.");
+            if( await vm.showMessageBox('확인',"이메일 주소는 회사의 도메인주소를 사용하여야 합니다.",{},1) ) {
+                return  false;
+            }
         }
       }
-    }
+    },
+    showMessageBox: function(title, msg, option, gubun) {
+         this.$refs.confirm.open(title,msg, option, gubun);
+    }    
   }
 }
 </script>

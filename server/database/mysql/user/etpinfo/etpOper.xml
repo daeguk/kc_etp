@@ -8,9 +8,12 @@
     * 2019-04-25  bkLove(촤병국)
     -->
     <select id="getEtpBasic">
-      SELECT      td_etp_basic.*
-              ,   DATE_FORMAT( td_etp_basic.F12506, '%Y.%m.%d' )      AS  fmt_F12506          /* 입회일 */
+      SELECT      /* etpOper.getEtpBasic  EtpBasic 의 기본정보를 조회한다. */
+
+                  td_etp_basic.*
+
               ,   IF( td_etp_basic.F16017 >= DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 5 DAY ), '%Y%m%d' ), 'Y', 'N' )   AS  new_yn     /* 상장일이 최근 5일까지에 속하는 경우 new 아이콘 표시 */
+              ,   DATE_FORMAT( td_etp_basic.F12506, '%Y.%m.%d' )      AS  fmt_F12506          /* 입회일 */
               ,   DATE_FORMAT( td_etp_basic.F16017, '%Y.%m.%d' )      AS  fmt_F16017          /* format 상장일 */
               ,   IFNULL(
                           CASE    WHEN    /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
@@ -88,11 +91,14 @@
     -->
     <select id="getEtpOperPdfEtfEmergency">
 
-        SELECT td_etfpdf_basic.*
-          ,   DATE_FORMAT( td_etfpdf_basic.F12506, '%Y.%m.%d' )       AS  fmt_F12506  /* 입회일 */
-          ,   FORMAT( td_etfpdf_basic.F16499, 2 )                     AS  fmt_F16499  /* 1CU단위증권수 */
-          ,   FORMAT( td_etfpdf_basic.F34840, 2 )                     AS  fmt_F34840  /* 액면금액설정현금액 */
-          ,   FORMAT( td_etfpdf_basic.F34743 / 100, 2 )               AS  fmt_F34743  /* ETF_PDF비중 */
+        SELECT      /* etpOper.getEtpOperPdfEtfEmergency  ETP 운용관리 - PDF관리 - PDF 긴급반영 목록을 조회한다. ( ETF 인 경우 ) */
+
+                    td_etfpdf_basic.*
+
+                ,   FORMAT( td_etfpdf_basic.F16499, 2 )                     AS  fmt_F16499  /* 1CU단위증권수 */
+                ,   FORMAT( td_etfpdf_basic.F34840, 2 )                     AS  fmt_F34840  /* 액면금액설정현금액 */
+                ,   FORMAT( td_etfpdf_basic.F34743 / 100, 2 )               AS  fmt_F34743  /* ETF_PDF비중 */
+                ,   DATE_FORMAT( td_etfpdf_basic.F12506, '%Y.%m.%d' )       AS  fmt_F12506  /* 입회일 */
 
           FROM  td_etfpdf_basic
          WHERE  1 = 1
