@@ -286,7 +286,7 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type td{padding:6px 17px 4px 12px;border-bottom:1px solid #eeeeee;color:#263147; line-height: 16px; font-size:14px !important; font-weight: 600; }
 .tbl_type.ver2 th{padding:8px 10px 8px 12px;}
 .tbl_type.ver2 td{padding:6px 10px 4px 12px;}
-.tbl_type.ver2 td .td_ellipsis{width:145px; overflow: hidden;  white-space: nowrap; text-overflow: ellipsis;}
+.tbl_type.ver2 td .td_ellipsis{width:142px; overflow: hidden;  white-space: nowrap; text-overflow: ellipsis;}
 .tbl_type.ver2 td .td_ellipsis2{width:188px; overflow: hidden;  white-space: nowrap; text-overflow: ellipsis;}
 .tbl_type.ver2 tr:hover{cursor: pointer;}
 .tbl_type td.txt_left{text-align: left;}
