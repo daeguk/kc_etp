@@ -121,8 +121,8 @@ export default {
                 show_date : "",
                 search_date : "",
                 search_nm : "",
-                f16493 : "",
-                f16012 : ""
+                F16493 : "",
+                F16012 : ""
             },
             pdfData : {},
             indexBasic : {},
@@ -170,7 +170,7 @@ export default {
 
                 if( vm.pdfData && Object.keys( vm.pdfData ).length > 0 ) {
 
-//                    vm.searchParam.f16583       =   vm.pdfData.f16583;          /* 사무수탁회사번호 */
+//                    vm.searchParam.F16583       =   vm.pdfData.F16583;          /* 사무수탁회사번호 */
                     vm.searchParam.F16002       =   vm.pdfData.F16002;          /* 한글종목명 */
                     vm.searchParam.F16013       =   vm.pdfData.F16013;          /* 단축코드 */
 
@@ -229,7 +229,7 @@ export default {
                         var dataList = response.data.dataList;
 
                         if (dataList && dataList.length == 1) {
-//                            vm.searchParam.f16583       =   dataList[0].f16583;     /* 사무수탁회사번호 */
+//                            vm.searchParam.F16583       =   dataList[0].F16583;     /* 사무수탁회사번호 */
                             vm.searchParam.F16002       =   dataList[0].F16002;     /* 한글종목명 */
                             vm.searchParam.F16013       =   dataList[0].F16013;     /* 단축코드 */
 

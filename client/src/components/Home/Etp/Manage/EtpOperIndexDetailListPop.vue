@@ -8,7 +8,7 @@
 
                 <h5>
                     <v-card-title ma-0>
-                        {{ indexBasic.f16002     /* 한글종목명 */ }}
+                        {{ indexBasic.F16002     /* 한글종목명 */ }}
                         <v-spacer></v-spacer>
                         <v-btn
                             icon
@@ -25,7 +25,7 @@
 
                     <v-list subheader two-line>
                         <v-list-tile>
-                            <v-list-tile-title>{{ indexBasic.f16013  /* 단축코드 */ }}</v-list-tile-title>
+                            <v-list-tile-title>{{ indexBasic.F16013  /* 단축코드 */ }}</v-list-tile-title>
                         </v-list-tile>
                         <v-list-tile>
                             <v-list-tile-title>기준일</v-list-tile-title>
@@ -33,7 +33,7 @@
                         </v-list-tile>
                         <v-list-tile>
                             <v-list-tile-title>Last Updated</v-list-tile-title>
-                            <v-list-tile-content>{{ indexBasic.fmt_f12506 /* 입회일 */ }}</v-list-tile-content>
+                            <v-list-tile-content>{{ indexBasic.fmt_F12506 /* 입회일 */ }}</v-list-tile-content>
                         </v-list-tile>
                     </v-list>
 
@@ -101,12 +101,12 @@ export default {
             "columnDefs": [ {} ],
             columns: [
                 { "data": "isin_code"             ,   "orderable" : true, 'className': 'txt_left'  ,  "width" :   "12%" , "title"   :   "Code"          },      /* 종목코드 */
-                { "data": "f16002"                ,   "orderable" : true, 'className': 'txt_left'  ,  "width" :   "18%" , "title"   :   "Name"           },     /* 한글종목명 */
-                { "data": "f03003"                ,   "orderable" : true, 'className': 'txt_right' ,  "width" :   "14%" , "title"   :   "BasePrc"       },      /* 전일종가 */
-                { "data": "f30812"                ,   "orderable" : true, 'className': 'txt_right' ,  "width" :   "14%" , "title"   :   "Shrs"          },      /* 상장주식수 */
+                { "data": "F16002"                ,   "orderable" : true, 'className': 'txt_left'  ,  "width" :   "18%" , "title"   :   "Name"           },     /* 한글종목명 */
+                { "data": "F03003"                ,   "orderable" : true, 'className': 'txt_right' ,  "width" :   "14%" , "title"   :   "BasePrc"       },      /* 전일종가 */
+                { "data": "F30812"                ,   "orderable" : true, 'className': 'txt_right' ,  "width" :   "14%" , "title"   :   "Shrs"          },      /* 상장주식수 */
                 { "data": "style_includ_percnt"   ,   "orderable" : true, 'className': 'txt_right' ,  "width" :   "14%" , "title"   :   "Float rto"     },      /* 스타일포함비중 */
                 { "data": "ceiling_percnt"        ,   "orderable" : true, 'className': 'txt_right' ,  "width" :   "14%" , "title"   :   "Ceiling rto"   },      /* CEILING비중 */
-                { "data": "f30813"                ,   "orderable" : true, 'className': 'txt_right' ,  "width" :   "14%" , "title"   :   "Factor rto"    }       /* 유동주식비율 */
+                { "data": "F30813"                ,   "orderable" : true, 'className': 'txt_right' ,  "width" :   "14%" , "title"   :   "Factor rto"    }       /* 유동주식비율 */
             ]
         });
 

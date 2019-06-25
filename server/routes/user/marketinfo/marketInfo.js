@@ -1005,12 +1005,12 @@ var getSectorEtpList = function (req, res) {
                                 //log.debug("data:=====================", index);
 
                                 async.forEachOf( rows, function ( item, idx){ 
-                                    total_amt += Number(item.f15028);
-                                    log.debug("tot_amt"+ item.f15028);
+                                    total_amt += Number(item.F15028);
+                                    log.debug("tot_amt"+ item.F15028);
                                     // ctf 구분자가 1과 2일 경우 
-                                    if (item.f16493 == '1' || item.f16493 == '2') {
+                                    if (item.F16493 == '1' || item.F16493 == '2') {
                                         etf_cnt++; 
-                                    } else if (item.f16493 == '3' || item.f16493 == '4') {
+                                    } else if (item.F16493 == '3' || item.F16493 == '4') {
                                         etn_cnt++; 
                                     }
                                 });
@@ -1019,12 +1019,12 @@ var getSectorEtpList = function (req, res) {
                             } else {
                                 //log.debug("mode:=====================", index);
                                 async.forEachOf( rows, function ( item, idx){                                    
-                                    total_amt += Number(item.f15028);
-                                    log.debug("tot_amt"+ item.f15028);
+                                    total_amt += Number(item.F15028);
+                                    log.debug("tot_amt"+ item.F15028);
                                     // ctf 구분자가 1과 2일 경우 
-                                    if (item.f16493 == '1' || item.f16493 == '2') {
+                                    if (item.F16493 == '1' || item.F16493 == '2') {
                                         etf_cnt++; 
-                                    } else if (item.f16493 == '3' || item.f16493 == '4') {
+                                    } else if (item.F16493 == '3' || item.F16493 == '4') {
                                         etn_cnt++; 
                                     }
                                 });
@@ -1114,11 +1114,11 @@ var getMarketIndexList = function (req, res) {
                     // 항목 갯수 만큼 쿼리 
                     async.forEachOf( marketRepList, function ( marketItem, index){                                
                         var params = {
-                            f16013 : marketItem.f16013,
+                            F16013 : marketItem.F16013,
                             market_id : marketItem.market_id,
                         };
                 
-                        log.debug("현재가=", marketItem.f15001)
+                        log.debug("현재가=", marketItem.F15001)
                         var stmt = mapper.getStatement('common.item', 'getIndexIntra', params, {language:'sql', indent: '  '});
 
 

@@ -156,8 +156,8 @@ export default {
             // alert("해당 지수의 데이터가 없습니다");
             rinfo.ctg_name = "";
           } else {
-            rinfo.f15004 = response.data.results[0].F15004;
-            rinfo.f16002 = response.data.results[0].F16002;
+            rinfo.F15004 = response.data.results[0].F15004;
+            rinfo.F16002 = response.data.results[0].F16002;
           }
         });
       },

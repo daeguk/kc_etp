@@ -146,7 +146,7 @@ export default {
         axios.get(Config.base_url + "/user/marketinfo/getEtfSumByIndex", {
           params: {
             F34239: Number(rinfo.market_id.substring(1)),
-            // f34239: rinfo.market_id.substring(1),
+            // F34239: rinfo.market_id.substring(1),
             F16257 : rinfo.F16013
           }
         }).then(function(response) {
@@ -168,7 +168,7 @@ export default {
         axios.get(Config.base_url + "/user/marketinfo/getEtnSumByIndex", {
           params: {
             F34239: Number(rinfo.market_id.substring(1)),
-            // f34239: rinfo.market_id.substring(1),
+            // F34239: rinfo.market_id.substring(1),
             F16257 : rinfo.F16013
           }
         }).then(function(response) {

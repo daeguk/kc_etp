@@ -170,9 +170,9 @@ export default {
             var paramData   =   {};
             paramData.togglePdfByRate    =   vm.togglePdfByRate;            
 
-            vm.$emit("showMessageBox", '확인','개발중입니다..',{},1);
-            return  false;
-            // vm.$emit( "fn_setEtpOperPdfByRate", paramData );
+//            vm.$emit("showMessageBox", '확인','개발중입니다..',{},1);
+//            return  false;
+              vm.$emit( "fn_setEtpOperPdfByRate", paramData );
         },
 
         fn_showDetailPdf : function( gubun ) {
@@ -199,7 +199,7 @@ console.log( vm.pdfData );
                 return  false;
             }
 /*
-            if( !vm.pdfData.f16583 ) {
+            if( !vm.pdfData.F16583 ) {
                 vm.$emit("showMessageBox", '확인','사무수탁회사번호가 존재하지 않습니다.',{},1);
                 return  false;
             }

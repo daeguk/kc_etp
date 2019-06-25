@@ -151,54 +151,54 @@ var getEtpList = function(req, res) {
                             if ((carousel_info.carousel_cnt * carousel_info.carousel_div) > index) {
 
                                 rows.forEach(function(item, idx) {
-                                    total_amt += Number(item.f15028); /* 시가총액 */
+                                    total_amt += Number(item.F15028); /* 시가총액 */
 
                                     // ctf 구분자가 1과 2일 경우 
-                                    if (item.f16493 == '1' || item.f16493 == '2') {
+                                    if (item.F16493 == '1' || item.F16493 == '2') {
                                         etf_cnt++;
-                                        etf_sum += Number(item.f15028); /* ETF_시가총액 누적 */
-                                    } else if (item.f16493 == '3' || item.f16493 == '4') {
+                                        etf_sum += Number(item.F15028); /* ETF_시가총액 누적 */
+                                    } else if (item.F16493 == '3' || item.F16493 == '4') {
                                         etn_cnt++;
-                                        etn_sum += Number(item.f15028); /* ETN_시가총액 누적 */
+                                        etn_sum += Number(item.F15028); /* ETN_시가총액 누적 */
                                     }
                                 });
 
                                 carousel_data.push({
-                                    "name": ctgCodeItem.f16002 /* 한글종목명 */ ,
+                                    "name": ctgCodeItem.F16002 /* 한글종목명 */ ,
                                     "total_amt": total_amt,
                                     "etf_cnt": etf_cnt,
                                     "etn_cnt": etn_cnt,
                                     "etf_sum": etf_sum,
                                     "etn_sum": etn_sum,
-                                    "f15001": ctgCodeItem.f15001 /* 현재가 */ ,
-                                    "f15472": ctgCodeItem.f15472 /* 대비 */ ,
-                                    "f15004": ctgCodeItem.f15004 /* 등락율 */
+                                    "F15001": ctgCodeItem.F15001 /* 현재가 */ ,
+                                    "F15472": ctgCodeItem.F15472 /* 대비 */ ,
+                                    "F15004": ctgCodeItem.F15004 /* 등락율 */
                                 });
                             } else {
 
                                 rows.forEach(function(item, idx) {
-                                    total_amt += Number(item.f15028); /* 시가총액 */
+                                    total_amt += Number(item.F15028); /* 시가총액 */
 
                                     // ctf 구분자가 1과 2일 경우 
-                                    if (item.f16493 == '1' || item.f16493 == '2') {
+                                    if (item.F16493 == '1' || item.F16493 == '2') {
                                         etf_cnt++;
-                                        etf_sum += Number(item.f15028); /* ETF_시가총액 누적 */
-                                    } else if (item.f16493 == '3' || item.f16493 == '4') {
+                                        etf_sum += Number(item.F15028); /* ETF_시가총액 누적 */
+                                    } else if (item.F16493 == '3' || item.F16493 == '4') {
                                         etn_cnt++;
-                                        etn_sum += Number(item.f15028); /* ETN_시가총액 누적 */
+                                        etn_sum += Number(item.F15028); /* ETN_시가총액 누적 */
                                     }
                                 });
 
                                 carousel_mod.push({
-                                    "name": ctgCodeItem.f16002 /* 한글종목명 */ ,
+                                    "name": ctgCodeItem.F16002 /* 한글종목명 */ ,
                                     "total_amt": total_amt,
                                     "etf_cnt": etf_cnt,
                                     "etn_cnt": etn_cnt,
                                     "etf_sum": etf_sum,
                                     "etn_sum": etn_sum,
-                                    "f15001": ctgCodeItem.f15001 /* 현재가 */ ,
-                                    "f15472": ctgCodeItem.f15472 /* 대비 */ ,
-                                    "f15004": ctgCodeItem.f15004 /* 등락율 */
+                                    "F15001": ctgCodeItem.F15001 /* 현재가 */ ,
+                                    "F15472": ctgCodeItem.F15472 /* 대비 */ ,
+                                    "F15004": ctgCodeItem.F15004 /* 등락율 */
                                 });
                             }
                         }
@@ -318,12 +318,12 @@ var getEtpList = function(req, res) {
                                     //log.debug("data:=====================", index);
 
                                     async.forEachOf(rows, function(item, idx) {
-                                        total_amt += Number(item.f15028);
+                                        total_amt += Number(item.F15028);
 
                                         // ctf 구분자가 1과 2일 경우 
-                                        if (item.f16493 == '1' || item.f16493 == '2') {
+                                        if (item.F16493 == '1' || item.F16493 == '2') {
                                             etf_cnt++;
-                                        } else if (item.f16493 == '3' || item.f16493 == '4') {
+                                        } else if (item.F16493 == '3' || item.F16493 == '4') {
                                             etn_cnt++;
                                         }
                                     });
@@ -332,12 +332,12 @@ var getEtpList = function(req, res) {
                                 } else {
                                     //log.debug("mode:=====================", index);
                                     async.forEachOf(rows, function(item, idx) {
-                                        total_amt += Number(item.f15028);
+                                        total_amt += Number(item.F15028);
 
                                         // ctf 구분자가 1과 2일 경우 
-                                        if (item.f16493 == '1' || item.f16493 == '2') {
+                                        if (item.F16493 == '1' || item.F16493 == '2') {
                                             etf_cnt++;
-                                        } else if (item.f16493 == '3' || item.f16493 == '4') {
+                                        } else if (item.F16493 == '3' || item.F16493 == '4') {
                                             etn_cnt++;
                                         }
                                     });

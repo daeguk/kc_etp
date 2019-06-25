@@ -106,10 +106,10 @@ var getExchBasic = function (req, res) {
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
         // var options = {id:'admin'};
-        var f16012 = req.query.f16012;  /* 국제 표준 코드*/
+        var F16012 = req.query.F16012;  /* 국제 표준 코드*/
 
         var options = {
-            "f16012" : f16012
+            "F16012" : F16012
         };
 
         log.debug("options", JSON.stringify(options));
@@ -154,10 +154,10 @@ var getKspjongBasic = function (req, res) {
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
 
-        var f16012 = req.query.f16012;  /* 국제 표준 코드*/
+        var F16012 = req.query.F16012;  /* 국제 표준 코드*/
         
         var options = {
-            "f16012" : f16012
+            "F16012" : F16012
         };
 
         log.debug("options", JSON.stringify(options));
@@ -203,17 +203,17 @@ var getFutureBasic = function (req, res) {
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
 
-        var f16012 = req.query.f16012; /* 국제 표준 코드*/
+        var F16012 = req.query.F16012; /* 국제 표준 코드*/
 /*
-        호출하는 쪽에서 f34239 값을 넘겨주지 않아 주석 처리함.
-        var f34239 = req.query.f34239;
+        호출하는 쪽에서 F34239 값을 넘겨주지 않아 주석 처리함.
+        var F34239 = req.query.F34239;
 */  
         
         var options = {
-            "f16012" : f16012,
+            "F16012" : F16012,
 /*
-            호출하는 쪽에서 f34239 값을 넘겨주지 않아 주석 처리함.
-            "f34239" : f34239,
+            호출하는 쪽에서 F34239 값을 넘겨주지 않아 주석 처리함.
+            "F34239" : F34239,
 */
         };
 
@@ -259,10 +259,10 @@ var getBondBasic = function (req, res) {
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
 
-        var f16012 = req.query.f16012;
+        var F16012 = req.query.F16012;
         
         var options = {
-            "f16012" : f16012
+            "F16012" : F16012
         };
 
         log.debug("options", JSON.stringify(options));

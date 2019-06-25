@@ -40,13 +40,13 @@ export default {
             c.font = 'bold 16px  Roboto, sans-serif, Noto-Sans';
             c.fillText(this.chartItem.ctg_name, 15, 30);
             
-            if(Number(this.chartItem.f15004) > 0) c.fillStyle = "#ff4366";
+            if(Number(this.chartItem.F15004) > 0) c.fillStyle = "#ff4366";
             else  c.fillStyle = "#1e99e8"
             c.font = 'bold 26px  Roboto, sans-serif, Noto-Sans';
-            c.fillText(this.chartItem.f15004+"%", 15, 58);
+            c.fillText(this.chartItem.F15004+"%", 15, 58);
             c.fillStyle = "#37474F";
             c.font = '10px   Roboto, sans-serif, Noto-Sans';
-            c.fillText(this.chartItem.f16002, 110, 56);
+            c.fillText(this.chartItem.F16002, 110, 56);
             
             // 자산총액
             c.font = '11px   Roboto, sans-serif, Noto-Sans';

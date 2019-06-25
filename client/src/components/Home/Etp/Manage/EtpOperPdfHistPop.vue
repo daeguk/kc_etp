@@ -15,14 +15,14 @@
 
                                     <v-card flat>
                                         
-                                        <v-flex xs12    v-for="subData in allDataList" :key='"step3_"  + subData.etf_f16012'>
+                                        <v-flex xs12    v-for="subData in allDataList" :key='"step3_"  + subData.etf_F16012'>
 
                                             <div class="pdfm_title">
-                                                {{ subData.etf_f16002           /* ETF 한글종목명 */    }}
-                                                <span>{{ subData.etf_f16013     /* ETF 단축코드 */      }}</span>
+                                                {{ subData.etf_F16002           /* ETF 한글종목명 */    }}
+                                                <span>{{ subData.etf_F16013     /* ETF 단축코드 */      }}</span>
                                             </div>
 
-                                            <table v-bind:id='"step3_" + subData.etf_f16012' class="tbl_type ver7" style="width:100%">
+                                            <table v-bind:id='"step3_" + subData.etf_F16012' class="tbl_type ver7" style="width:100%">
                                                 <colgroup>
                                                     <col width="18%">       <!-- email -->
                                                     <col width="8%">        <!-- 시간 -->
@@ -95,10 +95,10 @@ export default {
                 now_date : "",
                 search_date : "",
                 search_nm : "",
-                f16493 : "",
-                f16012 : "",
+                F16493 : "",
+                F16012 : "",
             },
-            f16002 : "",
+            F16002 : "",
             pdfData : {},
             allDataList : []
         };
@@ -127,12 +127,12 @@ export default {
             new Promise(function(resolve, reject) {
 
                 if( vm.paramData ) {
-                    vm.searchParam.f16583       =   vm.paramData.f16583;            /* 사무수탁회사번호 */
-                    vm.searchParam.f16002       =   vm.paramData.f16002;            /* 한글종목명 */
-                    vm.searchParam.f16013       =   vm.paramData.f16013;            /* 단축코드 */
+                    vm.searchParam.F16583       =   vm.paramData.F16583;            /* 사무수탁회사번호 */
+                    vm.searchParam.F16002       =   vm.paramData.F16002;            /* 한글종목명 */
+                    vm.searchParam.F16013       =   vm.paramData.F16013;            /* 단축코드 */
 
-                    vm.searchParam.f16493       =   vm.paramData.f16493;            /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                    vm.searchParam.f16012       =   vm.paramData.f16012;            /* 국제표준코드 */
+                    vm.searchParam.F16493       =   vm.paramData.F16493;            /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                    vm.searchParam.F16012       =   vm.paramData.F16012;            /* 국제표준코드 */
                 }
 
                 resolve();
@@ -188,8 +188,8 @@ export default {
                             var items = [];
 
                             for ( let subData of vm.allDataList ) {
-                                if ( $.fn.DataTable.isDataTable('#step3_' + subData.etf_f16012 ) ) {
-                                    $('#step3_' + subData.etf_f16012).DataTable().destroy();
+                                if ( $.fn.DataTable.isDataTable('#step3_' + subData.etf_F16012 ) ) {
+                                    $('#step3_' + subData.etf_F16012).DataTable().destroy();
                                 }
                             }
 
@@ -197,17 +197,17 @@ export default {
 
                                 vm.$nextTick().then(() => {
 
-                                    if ( $.fn.DataTable.isDataTable('#step3_' + subData.etf_f16012 ) ) {
-                                        $('#step3_' + subData.etf_f16012).DataTable().destroy();
+                                    if ( $.fn.DataTable.isDataTable('#step3_' + subData.etf_F16012 ) ) {
+                                        $('#step3_' + subData.etf_F16012).DataTable().destroy();
                                     }   
 
                                     items = subData.data;
 
-                                    console.log("subData.etf_f16012=[" + subData.etf_f16012 + "]");
+                                    console.log("subData.etf_F16012=[" + subData.etf_F16012 + "]");
                                     console.log( "items" );
                                     console.log( items );
                                     
-                                    $( '#step3_' + subData.etf_f16012 ).DataTable( {
+                                    $( '#step3_' + subData.etf_F16012 ).DataTable( {
                                             "processing": true,
                                             "serverSide": false,
                                             "info": false,   // control table information display field
@@ -301,14 +301,14 @@ export default {
                                                 { "data" : "email"          ,   "width" :   "18%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 이메일 */
                                                 { "data" : "fmt_reg_time"   ,   "width" :   "8%"    ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 시간 */
                                                 { "data" : "status"         ,   "width" :   "6%"    ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 상태 */
-                                                { "data" : "f16316"         ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 코드 */
-                                                { "data" : "f16004"         ,   "width" :   "18%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 종목명 */
+                                                { "data" : "F16316"         ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 코드 */
+                                                { "data" : "F16004"         ,   "width" :   "18%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 종목명 */
 
-                                                { "data" : "f16499_prev"    ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs (변경전) */
-                                                { "data" : "f16499"         ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs */
+                                                { "data" : "F16499_prev"    ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs (변경전) */
+                                                { "data" : "F16499"         ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs */
 
-                                                { "data" : "f34840_prev"    ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 (변경전) */
-                                                { "data" : "f34840"         ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 */
+                                                { "data" : "F34840_prev"    ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 (변경전) */
+                                                { "data" : "F34840"         ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 */
                                             ]
                                     }).draw();
                                 });

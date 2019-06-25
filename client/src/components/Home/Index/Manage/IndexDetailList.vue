@@ -8,11 +8,11 @@
                     <!-- 지수 찾기 결과 -->
                     <v-card-title primary-title v-if="form.jisuSearchYn == 'Y'">
                         <h3 class="headline subtit" pb-0>
-                            {{ indexBasic.f16002 }} |
-                            <span class="grey--text">{{ indexBasic.f16013 }}</span>
+                            {{ indexBasic.F16002 }} |
+                            <span class="grey--text">{{ indexBasic.F16013 }}</span>
 
                             <span class="text_result_t">기준일 : {{ indexBasic.fmt_std_date  /* 기준일 */ }}</span>
-                            <span class="sub_txt">Last Updated : {{ indexBasic.fmt_f12506   /* 입회일 */ }}</span>
+                            <span class="sub_txt">Last Updated : {{ indexBasic.fmt_F12506   /* 입회일 */ }}</span>
                         </h3>
                     </v-card-title>
 
@@ -20,10 +20,10 @@
                     <!-- 종목 찾기 결과 -->
                     <v-card-title primary-title v-if="form.jisuSearchYn == 'N'">
                         <h3 class="headline subtit" pb-0>
-                            {{ indexBasic.f16002 }} 편입지수 목록
+                            {{ indexBasic.FA16002 }} 편입지수 목록
 
                             <span class="grey--text">{{ form.resultsCnt }} results</span>
-                            <span class="sub_txt">Last Updated : {{ indexBasic.fmt_f12506   /* 입회일 */ }}</span>
+                            <span class="sub_txt">Last Updated : {{ indexBasic.fmt_F12506   /* 입회일 */ }}</span>
                         </h3>
                     </v-card-title>                    
 
@@ -138,12 +138,12 @@ export default {
                     ],
                     columns: [
                         { "title"   :   "Code"          ,   "data": "isin_code"             ,   "orderable" : true, "width" : "12%", className:"txt_left" },      /* 종목코드 */
-                        { "title"   :   "Name"          ,   "data": "f16002"                ,   "orderable" : true, "width" : "18%", className:"txt_left"  },      /* 한글종목명 */
-                        { "title"   :   "BasePrc"       ,   "data": "f03003"                ,   "orderable" : true, "width" : "14%", className:"txt_right"  },      /* 전일종가 */
-                        { "title"   :   "Shrs"          ,   "data": "f30812"                ,   "orderable" : true, "width" : "14%", className:"txt_right"  },      /* 상장주식수 */
+                        { "title"   :   "Name"          ,   "data": "F16002"                ,   "orderable" : true, "width" : "18%", className:"txt_left"  },      /* 한글종목명 */
+                        { "title"   :   "BasePrc"       ,   "data": "F03003"                ,   "orderable" : true, "width" : "14%", className:"txt_right"  },      /* 전일종가 */
+                        { "title"   :   "Shrs"          ,   "data": "F30812"                ,   "orderable" : true, "width" : "14%", className:"txt_right"  },      /* 상장주식수 */
                         { "title"   :   "Float rto"     ,   "data": "style_includ_percnt"   ,   "orderable" : true, "width" : "14%", className:"txt_right"  },      /* 스타일포함비중 */
                         { "title"   :   "Ceiling rto"   ,   "data": "ceiling_percnt"        ,   "orderable" : true, "width" : "14%", className:"txt_right"  },      /* CEILING비중 */
-                        { "title"   :   "Factor rto"    ,   "data": "f30813"                ,   "orderable" : true, "width" : "14%", className:"txt_right"  }       /* 유동주식비율 */
+                        { "title"   :   "Factor rto"    ,   "data": "F30813"                ,   "orderable" : true, "width" : "14%", className:"txt_right"  }       /* 유동주식비율 */
                     ]
             });            
 
@@ -198,12 +198,12 @@ export default {
                 ],
                 columns: [
                     { "title"   :   "ID"            ,   "data": "isin_code"             ,   "orderable" : true, "width" : "12%", className:"txt_left"  },      /* ID */
-                    { "title"   :   "지수명"         ,   "data": "f16002"                ,   "orderable" : true, "width" : "18%",className:"txt_left"  },      /* 지수명 */
+                    { "title"   :   "지수명"         ,   "data": "F16002"                ,   "orderable" : true, "width" : "18%",className:"txt_left"  },      /* 지수명 */
                     { "title"   :   "편입비중(%)"    ,   "data": "in_out_rate"           ,   "orderable" : true, "width" : "14%",className:"txt_right"  },      /* 편입비중(%) */
-                    { "title"   :   "Shrs"          ,   "data": "f30812"                ,   "orderable" : true, "width" : "14%",className:"txt_right"  },      /* shrs */
+                    { "title"   :   "Shrs"          ,   "data": "F30812"                ,   "orderable" : true, "width" : "14%",className:"txt_right"  },      /* shrs */
                     { "title"   :   "Float rto"     ,   "data": "style_includ_percnt"   ,   "orderable" : true, "width" : "14%",className:"txt_right"  },      /* float_rto */
                     { "title"   :   "Ceiling rto"   ,   "data": "ceiling_percnt"        ,   "orderable" : true, "width" : "14%",className:"txt_right"  },      /* ceiling_rto */
-                    { "title"   :   "Factor rto"    ,   "data": "f30813"                ,   "orderable" : true, "width" : "14%",className:"txt_right"  }       /* factor_rto */
+                    { "title"   :   "Factor rto"    ,   "data": "F30813"                ,   "orderable" : true, "width" : "14%",className:"txt_right"  }       /* factor_rto */
                 ]
             });
 

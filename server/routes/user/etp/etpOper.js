@@ -628,7 +628,7 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
 
                     try {
                         /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                        if (paramData.f16493 == "1" || paramData.f16493 == "2") {
+                        if (paramData.F16493 == "1" || paramData.F16493 == "2") {
 
                             stmt = mapper.getStatement('etpOper', 'getTmPdfModifyHistMastByNow', paramData, format);
                             log.debug(stmt, paramData);
@@ -667,7 +667,7 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
 
                     try {
                         /* ETF 인 경우 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                        if (paramData.f16493 == "1" || paramData.f16493 == "2") {
+                        if (paramData.F16493 == "1" || paramData.F16493 == "2") {
 
                             stmt = mapper.getStatement('etpOper', 'getTmPdfModifyHistDtlByNow', paramData, format);
                             log.debug(stmt, paramData);
@@ -685,15 +685,15 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
                                 if (rows && rows.length > 0) {
                                     for (var i in resultMsg.allDataList) {
 
-                                        resultMsg.allDataList[i].etf_f16012 = resultMsg.allDataList[i].f16012; /* ETF 국제표준코드 */
-                                        resultMsg.allDataList[i].etf_f16013 = resultMsg.allDataList[i].f16013; /* ETF 단축코드 */
-                                        resultMsg.allDataList[i].etf_f16002 = resultMsg.allDataList[i].f16002; /* ETF 한글종목명 */
-                                        resultMsg.allDataList[i].etf_f16583 = resultMsg.allDataList[i].f16583; /* ETF 사무수탁회사번호 */
+                                        resultMsg.allDataList[i].etf_F16012 = resultMsg.allDataList[i].F16012; /* ETF 국제표준코드 */
+                                        resultMsg.allDataList[i].etf_F16013 = resultMsg.allDataList[i].F16013; /* ETF 단축코드 */
+                                        resultMsg.allDataList[i].etf_F16002 = resultMsg.allDataList[i].F16002; /* ETF 한글종목명 */
+                                        resultMsg.allDataList[i].etf_F16583 = resultMsg.allDataList[i].F16583; /* ETF 사무수탁회사번호 */
 
                                         var same = rows.filter(function(o, p) {
-                                            return (o.f16583 === resultMsg.allDataList[i].f16583 /* 사무수탁회사번호 */ &&
-                                                o.f16012 === resultMsg.allDataList[i].f16012 /* ETF종목코드 */ &&
-                                                o.f16013 === resultMsg.allDataList[i].f16013 /* ETF단축코드 */
+                                            return (o.F16583 === resultMsg.allDataList[i].F16583 /* 사무수탁회사번호 */ 
+                                                &&  o.F16012 === resultMsg.allDataList[i].F16012 /* ETF종목코드 */ 
+                                                &&  o.F16013 === resultMsg.allDataList[i].F16013 /* ETF단축코드 */
                                             );
                                         });
 
@@ -810,7 +810,7 @@ var getEtpOperPdfByRateTitle = function(req, res) {
                             temp.index = i;
                             temp.name = "rate_day" + i;
                             temp.show_date = rows[i].show_date;
-                            temp.date = rows[i].f12506;
+                            temp.date = rows[i].F12506;
 
                             rateTitleList.push(temp);
                         }
@@ -1463,7 +1463,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 4. [td_etfpdf_basic] 테이블의 f33837(구성종목수) 을 수정한다. */
+                                    /* 4. [td_etfpdf_basic] 테이블의 F33837(구성종목수) 을 수정한다. */
                                     // 구성종목수 수정하지 않기로 함. (==> 민선기 과장 : 2019.06.21)
                                     // 구성종목수 변경시 백오피스 후속작업에 혼선이 있다고 합니다.
                                     /*
@@ -1665,7 +1665,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 9. [td_etfpdf_hist] 테이블의 f33837(구성종목수) 을 수정한다. */
+                                    /* 9. [td_etfpdf_hist] 테이블의 F33837(구성종목수) 을 수정한다. */
                                     // 상동
                                     /*
                                     function(msg, callback) {
@@ -2242,17 +2242,17 @@ var getPdfByGroupNo = function(req, res) {
 
                                     for (var i in resultMsg.allDataList) {
 
-                                        resultMsg.allDataList[i].etf_f16012 = resultMsg.allDataList[i].f16012; /* ETF 국제표준코드 */
-                                        resultMsg.allDataList[i].etf_f16013 = resultMsg.allDataList[i].f16013; /* ETF 단축코드 */
-                                        resultMsg.allDataList[i].etf_f16002 = resultMsg.allDataList[i].f16002; /* ETF 한글종목명 */
-                                        resultMsg.allDataList[i].etf_f16583 = resultMsg.allDataList[i].f16583; /* ETF 사무수탁회사번호 */
+                                        resultMsg.allDataList[i].etf_F16012 = resultMsg.allDataList[i].F16012; /* ETF 국제표준코드 */
+                                        resultMsg.allDataList[i].etf_F16013 = resultMsg.allDataList[i].F16013; /* ETF 단축코드 */
+                                        resultMsg.allDataList[i].etf_F16002 = resultMsg.allDataList[i].F16002; /* ETF 한글종목명 */
+                                        resultMsg.allDataList[i].etf_F16583 = resultMsg.allDataList[i].F16583; /* ETF 사무수탁회사번호 */
 
                                         var same = rows.filter(function(o, p) {
                                             return (o.hist_no === resultMsg.allDataList[i].hist_no /* 이력번호 */ &&
                                                 o.email === resultMsg.allDataList[i].email /* 이메일 */ &&
-                                                o.f16583 === resultMsg.allDataList[i].f16583 /* 사무수탁회사번호 */ &&
-                                                o.f16012 === resultMsg.allDataList[i].f16012 /* ETF종목코드 */ &&
-                                                o.f16013 === resultMsg.allDataList[i].f16013 /* ETF단축코드 */ &&
+                                                o.F16583 === resultMsg.allDataList[i].F16583 /* 사무수탁회사번호 */ &&
+                                                o.F16012 === resultMsg.allDataList[i].F16012 /* ETF종목코드 */ &&
+                                                o.F16013 === resultMsg.allDataList[i].F16013 /* ETF단축코드 */ &&
                                                 o.group_no === resultMsg.allDataList[i].group_no /* 사용자별 처리한 그룹번호 */
                                             );
                                         });

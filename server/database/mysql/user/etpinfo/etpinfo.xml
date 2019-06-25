@@ -10,14 +10,14 @@
     <select id="getIndexInfoByCodeDtl">
     <![CDATA[
         SELECT      /* etpinfo.getIndexInfoByCodeDtl 시장을 대표하는 코드와 지수정보를 조회한다. */
-                    td_index_basic.f16013                               AS  F16013          /* 단축코드 */
-                ,   td_index_basic.f16002                               AS  F16002          /* 한글종목명 */
+                    td_index_basic.F16013                               AS  F16013          /* 단축코드 */
+                ,   td_index_basic.F16002                               AS  F16002          /* 한글종목명 */
                 ,   td_index_basic.market_id                            AS  market_id       /* 시장 ID */
                 ,   td_index_basic.middle_type                          AS  middle_type     /* 지수중분류(FNGUIDE, WISEFN) */
                 
-                ,   td_index_basic.f15001                               AS  F15001          /* 현재가 */
-                ,   td_index_basic.f15472                               AS  F15472          /* 대비 */
-                ,   td_index_basic.f15004                               AS  F15004          /* 등락율 */
+                ,   td_index_basic.F15001                               AS  F15001          /* 현재가 */
+                ,   td_index_basic.F15472                               AS  F15472          /* 대비 */
+                ,   td_index_basic.F15004                               AS  F15004          /* 등락율 */
                 
                 ,   tm_code_dtl.com_val01                               AS  com_val01       /* 단축코드 */
                 ,   tm_code_dtl.com_val02                               AS  com_val02       /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
@@ -35,7 +35,7 @@
                                AND  tm_code_dtl.use_yn          =   '1'   
                         )   tm_code_dtl 
                   ON    (
-                                    td_index_basic.f16013       =   tm_code_dtl.com_val01
+                                    td_index_basic.F16013       =   tm_code_dtl.com_val01
                             AND     td_index_basic.large_type   =   tm_code_dtl.com_val02
                             AND     td_index_basic.middle_type  =   tm_code_dtl.com_val03
                         )
@@ -51,28 +51,28 @@
     <select id="getJisuListByEtpRepresent">
     <![CDATA[
         SELECT  td_etp_basic.*
-                , DATE_FORMAT( td_etp_basic.F12506, '%Y.%m.%d' )      AS  f12506              /* 입회일 */
+                , DATE_FORMAT( td_etp_basic.F12506, '%Y.%m.%d' )      AS  F12506              /* 입회일 */
 
           FROM      td_etp_basic
                 ,   (
-                        SELECT      td_index_basic.f16013               AS  f16013              /* 단축코드 */
+                        SELECT      td_index_basic.F16013               AS  F16013              /* 단축코드 */
                                 ,   td_index_basic.middle_type          AS  middle_type         /* 지수중분류(FNGUIDE, WISEFN) */
                           FROM  td_index_basic
                          WHERE  1 = 1
-                           AND  td_index_basic.f16013                   =   #{com_val01}        /* 단축코드 */
+                           AND  td_index_basic.F16013                   =   #{com_val01}        /* 단축코드 */
                            AND  td_index_basic.large_type               =   #{com_val02}        /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
                            AND  td_index_basic.middle_type              =   #{com_val03}        /* 지수중분류(FNGUIDE, WISEFN) */
                     )   base
 
             WHERE  1 = 1
-              AND  td_etp_basic.f16257          =   base.f16013     /* ETP기초지수코드 */
-              AND  base.middle_type             =   CASE    WHEN    td_etp_basic.f34239     =   '2'     /* ETP기초지수MID */
+              AND  td_etp_basic.F16257          =   base.F16013     /* ETP기초지수코드 */
+              AND  base.middle_type             =   CASE    WHEN    td_etp_basic.F34239     =   '2'     /* ETP기초지수MID */
                                                             THEN    'KSP'
                                                         
-                                                            WHEN    td_etp_basic.f34239     =   '4'     /* ETP기초지수MID */
+                                                            WHEN    td_etp_basic.F34239     =   '4'     /* ETP기초지수MID */
                                                             THEN    'KSQ'
                                                     END
-            ORDER  BY       td_etp_basic.f16257
+            ORDER  BY       td_etp_basic.F16257
                         ,   base.middle_type
     ]]>
     </select>
@@ -130,13 +130,13 @@
 
                     tm_etpctg_map.ctg_code                              AS  ctg_code            /* ETP분류코드 */
                 ,   DATE_FORMAT( td_etp_basic.F12506, '%Y.%m.%d' )      AS  F12506              /* 입회일 */
-                ,   CASE    WHEN    DATE_FORMAT(f16017, '%Y%m%d') > DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y%m%d') 
+                ,   CASE    WHEN    DATE_FORMAT(F16017, '%Y%m%d') > DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y%m%d') 
                             THEN    "Y" 
                             ELSE    "N" 
                     END                                                 AS  NEW_YN              /* new 태그 표시여부 */
-                ,   format(td_etp_basic.F15301, '###,###,###.00')                                 AS  fmt_f15301              /* ETP지표가치(NAV/IV) */
-                ,   format(td_etp_basic.F15318, '###,###,###.00')          AS  fmt_f15318          /* ETP기초지수현재가 */
-                ,   format(td_etp_basic.F03329, '###,###,###.00')          AS  fmt_f03329              /* 전일ETP지표가치(예탁원)(NAV/IV) */
+                ,   format(td_etp_basic.F15301, '###,###,###.00')       AS  fmt_F15301          /* ETP지표가치(NAV/IV) */
+                ,   format(td_etp_basic.F15318, '###,###,###.00')       AS  fmt_F15318          /* ETP기초지수현재가 */
+                ,   format(td_etp_basic.F03329, '###,###,###.00')       AS  fmt_F03329          /* 전일ETP지표가치(예탁원)(NAV/IV) */
                 ,   td_etp_basic.F16012                                 AS  F16012              /* 국제표준코드 */
                 ,   td_etp_basic.F16013                                 AS  F16013              /* 단축코드 */
                 ,   td_etp_basic.F16002                                 AS  F16002              /* 한글종목명 */

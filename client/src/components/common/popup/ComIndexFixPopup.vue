@@ -9,7 +9,7 @@
                     <h5>
                         <v-card-title ma-0>
                             
-                            지수조치 현황 ( {{ indexFixData.f16002 }} )
+                            지수조치 현황 ( {{ indexFixData.F16002 }} )
                             <v-spacer></v-spacer>
 
                             <v-btn icon dark @click="fn_closePop">
