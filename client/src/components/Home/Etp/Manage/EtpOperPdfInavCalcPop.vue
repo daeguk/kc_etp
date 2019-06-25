@@ -199,7 +199,8 @@ export default {
             thead: {
                 display:'none'
             },
-            //"ordering": false,
+            "ordering": true,
+            "order": [[ 4, "desc" ]],
             "columnDefs": [
                  {  
                     "render": function ( data, type, row ) {
@@ -308,7 +309,8 @@ export default {
             thead: {
                 display:'none'
             },
-            //"ordering": true,
+            "ordering": true,
+            "order": [[ 4, "desc" ]],
             "columnDefs": [
                  {  
                     "render": function ( data, type, row ) {
