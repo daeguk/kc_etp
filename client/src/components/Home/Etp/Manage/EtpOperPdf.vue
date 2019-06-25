@@ -135,8 +135,7 @@ export default {
             var vm = this;
             
             if( !vm.reloadYn  ) {
-                vm.fn_getPdfExistYnByNow();
-                vm.fn_init();
+                vm.fn_init(); 
             }
         }
     },
@@ -199,11 +198,15 @@ export default {
                                                     +   _.padStart( new Date().getDate(), 2, '0' ) ;
                 }
 
-                vm.fn_getPdfExistYnByNow();
-
-                vm.fn_setTableInfo();
-                vm.fn_getEtpOerPdf( 'Y' );
-            });            
+                new Promise(function(resolve, reject) {
+                    vm.fn_getPdfExistYnByNow( resolve, reject );
+                }).catch( function(e) {
+                    console.log( e );
+                }).then( function() {
+                    vm.fn_setTableInfo();
+                    vm.fn_getEtpOerPdf( 'Y' );       
+                });         
+            }); 
         },
 
 
@@ -381,7 +384,7 @@ export default {
          * 현재일자에 PDF 변경건이 존재하는지 반환한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_getPdfExistYnByNow() {
+        fn_getPdfExistYnByNow( resolve, reject ) {
 
             var vm = this;
 
@@ -410,9 +413,13 @@ export default {
                         vm.emergency_exist_yn   =   response.data.emergency_exist_yn;
                     }
                 }
+
+                resolve();
             }).catch(error => {
                 vm.$emit( "fn_showProgress", false );
                 vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+
+                resolve();
             });
         },        
 
@@ -429,7 +436,7 @@ export default {
                 info: false, // control table information display field
                 stateSave: true, //restore table state on page reload,
                 lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                "scrollY": '720px',
+                "scrollY": ( vm.emergency_exist_yn && vm.emergency_exist_yn == "Y" ? "680px" : '730px' ),
                 paging: false,
                 searching: false,
                 data: [],
