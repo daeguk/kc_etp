@@ -191,11 +191,13 @@ export default {
 
             }).then( function() {
 
-                vm.searchParam.show_date    =       new Date().getFullYear() 
-                                                +   "-" 
-                                                +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
-                                                +   "-" 
-                                                +   _.padStart( new Date().getDate(), 2, '0' ) ;
+                if( !vm.searchParam.show_date ) {
+                    vm.searchParam.show_date    =       new Date().getFullYear() 
+                                                    +   "-" 
+                                                    +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
+                                                    +   "-" 
+                                                    +   _.padStart( new Date().getDate(), 2, '0' ) ;
+                }
 
                 vm.fn_getPdfExistYnByNow();
 
