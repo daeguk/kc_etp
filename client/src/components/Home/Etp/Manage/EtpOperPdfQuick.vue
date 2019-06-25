@@ -170,9 +170,9 @@ export default {
             var paramData   =   {};
             paramData.togglePdfByRate    =   vm.togglePdfByRate;            
 
-            vm.$emit("showMessageBox", '확인','개발중입니다..',{},1);
-            return  false;
-            // vm.$emit( "fn_setEtpOperPdfByRate", paramData );
+//            vm.$emit("showMessageBox", '확인','개발중입니다..',{},1);
+//            return  false;
+              vm.$emit( "fn_setEtpOperPdfByRate", paramData );
         },
 
         fn_showDetailPdf : function( gubun ) {
