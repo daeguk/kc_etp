@@ -817,6 +817,40 @@ export default {
 
                                 return htm;
                             },
+                    },
+
+                    /* 과표기준가 */
+                    {       'name' : 'F15007'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+            
+                                htm += util.formatNumber(data);
+
+                                return htm;
+                            },
+                    },
+
+                    /* ETF 현재가 */
+                    {       'name' : 'F15001'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+            
+                                htm += util.formatNumber(data);
+
+                                return htm;
+                            },
+                    },
+
+
+                    /* ETF 전일가 */
+                    {       'name' : 'F18001'   
+                        ,   "render": function ( data, type, row ) {
+                                let htm = ""
+            
+                                htm += util.formatNumber(data);
+
+                                return htm;
+                            },
                     },                    
 
                     /* 그래프 */
