@@ -105,6 +105,7 @@
 
                                 <v-flex xs4>
                                     <v-text-field
+                                        type="number"
                                         label="기준지수"
                                         value="e.g.FDL001"
                                         outline
