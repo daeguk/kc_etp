@@ -33,7 +33,7 @@
                                 </li>
                                 <li v-if="SimulationSwitch == true">
                                     <v-btn small flat icon>
-                                        <v-icon v-on:click="getiNavData(paramData.f16012)">refresh</v-icon>
+                                        <v-icon v-on:click="getiNavData(paramData.F16012)">refresh</v-icon>
                                     </v-btn>
                                 </li>
                             </ul>
