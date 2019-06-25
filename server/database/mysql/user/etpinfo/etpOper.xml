@@ -275,7 +275,7 @@
            AND  td_etfpdf_hist.F12506                   >=  DATE_FORMAT( DATE_SUB( #{search_date}, INTERVAL 1 MONTH ), '%Y%m%d' )
            AND  td_etfpdf_hist.F12506                   <=  DATE_FORMAT( #{search_date}, '%Y%m%d')
 
-         GROUP  BY  td_etfpdf_histF12506
+         GROUP  BY  td_etfpdf_hist.F12506
 
         HAVING  COUNT(*) > 0
          ORDER  BY  td_etfpdf_hist.F12506   DESC
