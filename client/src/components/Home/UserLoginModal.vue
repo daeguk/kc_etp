@@ -94,7 +94,7 @@ export default {
         // console.log(response);
         if(response.data.success == false){
            if( await vm.showMessageBox('확인',response.data.message,{},1) ) {
-                //vm.$EventBus.$emit("userLoginCheck", false);
+                vm.$EventBus.$emit("userLoginCheck", false);
            }
         }else {
           vm.$store.commit(Constant.ADD_USER, {
