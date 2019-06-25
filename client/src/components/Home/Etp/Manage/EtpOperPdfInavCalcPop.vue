@@ -199,7 +199,7 @@ export default {
             thead: {
                 display:'none'
             },
-            "ordering": false,
+            //"ordering": false,
             "columnDefs": [
                  {  
                     "render": function ( data, type, row ) {
@@ -223,7 +223,7 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "";
                         
-                        htm += "<input type='text' id='F16499' class='txt_right' value='"+data+"'>";
+                        htm += "<input type='text' id='F16499' class='txt_right' value='"+util.formatNumber(data)+"'>";
                         
                         return htm;
                     },
@@ -308,7 +308,7 @@ export default {
             thead: {
                 display:'none'
             },
-            "ordering": true,
+            //"ordering": true,
             "columnDefs": [
                  {  
                     "render": function ( data, type, row ) {
@@ -327,6 +327,16 @@ export default {
                         return htm;
                     },
                     "targets": 0
+                },
+                {  
+                    "render": function ( data, type, row ) {
+                        let htm = "";
+                        
+                        htm += util.formatNumber(data);
+
+                        return htm;
+                    },
+                    "targets": 3
                 },
                 {  
                     "render": function ( data, type, row ) {
@@ -394,7 +404,7 @@ export default {
             var data = table.row($(this).parents('td').parents('tr')).data();
 
             if ($(this).attr('id') == 'F16499') {
-                data.F16499 = $(this).val();
+                data.F16499 = vm.NtoS($(this).val());
             } else if ($(this).attr('id') == 'F15001') {
                 data.F15001 = vm.NtoS($(this).val());                
             } else if ($(this).attr('id') == 'F15007') {
