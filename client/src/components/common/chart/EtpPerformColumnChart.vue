@@ -27,7 +27,7 @@ export default {
       disCnt: 5,
       maxRate: 0,
       xGugan: [],
-      color2: ['#42A5F5', '#26C6DA', '#D4E157', '#FFCA28', '#FF7043'],
+      color2: ['#85c406', '#1e99e8', '#434343', '#ff4366', '#fbb040'],
       init_chart_image:{},
     };
   },    
@@ -74,7 +74,7 @@ export default {
       c.fillStyle = "#424242";
       c.textBaseline = "middle";
       c.textAlign = "end";
-      c.font = '12px san-serif';
+      c.font = '12px  Roboto, sans-serif, Noto-Sans';
       c.fillText(this.xGugan[0] + " %", this.crect.x1 - 10, this.crect.y1);
       c.fillText(this.xGugan[1] + " %", this.crect.x1 - 10, this.crect.y1+this.dt);
       c.fillText(this.xGugan[2] + " %", this.crect.x1 - 10, this.cY);
