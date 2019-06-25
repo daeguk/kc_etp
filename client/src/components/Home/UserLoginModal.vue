@@ -34,7 +34,7 @@
                          New to ETP Platform? <a @click.stop="newAccount">Create an account.</a>
                     </v-flex>
                     <v-flex>
-                        <a @click="forgotPassword">Forgot password.</a>
+                        <a @click.stop="forgotPassword">Forgot password.</a>
                     </v-flex>
                 </v-layout>
             </v-flex>
@@ -94,7 +94,7 @@ export default {
         // console.log(response);
         if(response.data.success == false){
            if( await vm.showMessageBox('확인',response.data.message,{},1) ) {
-                //vm.$EventBus.$emit("userLoginCheck", false);
+                vm.$EventBus.$emit("userLoginCheck", false);
            }
         }else {
           vm.$store.commit(Constant.ADD_USER, {

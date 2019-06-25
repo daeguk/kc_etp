@@ -12,7 +12,7 @@
          
             <v-card-actions>
                 <v-spacer></v-spacer>  
-            <v-btn class="pop_alret_yesbtn" depressed dark small @click.native.stop="agree">확인</v-btn>
+            <v-btn class="pop_alret_yesbtn" ref="btn_message_yes" depressed dark small @click.native.stop="agree">확인</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -28,7 +28,7 @@
          
             <v-card-actions>
                 <v-spacer></v-spacer>  
-            <v-btn class="pop_alret_yesbtn" depressed dark small @click.native.stop="agree">예</v-btn>
+            <v-btn class="pop_alret_yesbtn" ref="btn_confirm_yes" depressed dark small @click.native.stop="agree">예</v-btn>
   
             <v-btn class="pop_alret_nobtn" depressed dark small @click.native.stop="cancel">아니요</v-btn>
           </v-card-actions>
@@ -48,7 +48,7 @@
          
             <v-card-actions>
                 <v-spacer></v-spacer>  
-            <v-btn class="pop_alret_yesbtn" depressed dark small @click.native.stop="agree">확인</v-btn>
+            <v-btn class="pop_alret_yesbtn" ref="btn_warning_yes" depressed dark small @click.native.stop="agree">확인</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -64,7 +64,7 @@
          
             <v-card-actions>
                 <v-spacer></v-spacer>  
-            <v-btn class="pop_alret_yesbtn" depressed dark small @click.native.stop="agree">확인</v-btn>
+            <v-btn class="pop_alret_yesbtn" ref="btn_error_yes" depressed dark small @click.native.stop="agree">확인</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -95,12 +95,16 @@ export default {
         open(title, message, options, kind) {
             if (kind == 1) {
                 this.message_dialog = true;
+                this.$nextTick(() => this.$refs.btn_message_yes.$el.focus());
             } else if (kind == 2) {
                 this.confirm_dialog = true;
+                this.$nextTick(() => this.$refs.btn_confirm_yes.$el.focus());
             } else if (kind == 3) {
                 this.warning_dialog = true;
+                this.$nextTick(() => this.$refs.btn_warning_yes.$el.focus());
             } else if (kind == 4) {
                 this.error_dialog = true;
+                this.$nextTick(() => this.$refs.btn_error_yes.$el.focus());
             }
 
             this.kind = kind;

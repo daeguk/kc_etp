@@ -1,7 +1,7 @@
 <template>
     <v-container>
     <v-flex>
-    <v-dialog v-model="showDialog" persistent max-width="900" @keydown.enter.prevent="fn_prevent_event">
+    <v-dialog v-model="showDialog" persistent max-width="900">
         
         <v-card class="mx-auto">
 
@@ -444,7 +444,6 @@ export default {
         });
 
         /* [자산추가] 후 확인 종목코드에 엔터키 입력시 */
-/*        
         $("#" + vm.tblEmergeny01 + " tbody").on('keyup', "input[name='jongmok']", function (e) {
             if( e.keyCode == 13 ) {
 
@@ -452,10 +451,10 @@ export default {
                 var data = table.row($(this).parents("tr")).data();
                 var rowIndex = table.row($(this).parents("tr")).index();
 
-                vm.fn_getJongmokData( $(this).eq(0).val() , rowIndex  );
+                vm.fn_getJongmokData( { status : "insert", codeVal : $(this).parents("tr").find( "input[name='jongmok']" ).eq(0).val() , rowIndex : rowIndex, F16499 : 0 }  );
             }
         });        
-*/
+
         /* [자산추가] 후 확인 버튼 클릭시 */
         $("#" + vm.tblEmergeny01 + " tbody").on('click', "button[name='confirm']", function () {
 
@@ -1457,11 +1456,6 @@ console.log("[" + Number( tableData.F16499_prev ) + "] ]" + nowData.F16499 + "]"
 
             vm.$emit( "fn_closePop", "close" );
         },
-
-        fn_prevent_event() {
-
-            return  true;
-        }
     },
 };
 </script>
