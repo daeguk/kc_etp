@@ -9,36 +9,29 @@
     -->
     <select id="getEtpBasic">
 
-        SELECT  /* etpDetail.getEtpBasic EtpBasic 의 기본정보를 조회한다. */
-                td_etp_basic.*
-          FROM  (
-                    SELECT      <include    refid="sqlEtpBasic01" />
-                      FROM  td_etp_basic
-                     WHERE  1 = 1
-
-                    <if test= 'F16012 != null  and  F16012 != "" ' >
-                       AND  td_etp_basic.F16012                 =   #{F16012}                               /* 국제표준코드 */
-                    </if>
-
-                    <if test= 'searchCode != null  and  searchCode != "" ' >
-                        <if test= 'searchCode.length <= 6' >
-                       AND  td_etp_basic.F16013                 LIKE    CONCAT( #{searchCode}, '%' )        /* 단축코드 */
-                        </if>
-
-                        <if test= 'searchCode.length > 6' >
-                       AND  td_etp_basic.F16012                 LIKE    CONCAT( #{searchCode}, '%' )        /* 국제표준코드 */
-                        </if>
-                    </if>
-
-                    <if test = '( F16013 != null  and  F16013 != "" ) and ( market_id != null  and  market_id != "" )' >
-                       AND  td_etp_basic.F16257                 =   #{F16013}                   /* ETP기초지수코드 = 단축코드 */
-                       AND  td_etp_basic.F34239                 =   #{market_id}                /* ETP기초지수MID = 시장 ID  */
-                    </if>
-
-                     LIMIT 0, 2
-
-                )   td_etp_basic
+        SELECT  /* etpDetail.getEtpBasic EtpBasic 의 기본정보를 조회한다. */    
+                <include    refid="sqlEtpBasic01" />
+          FROM  td_etp_basic
          WHERE  1 = 1
+
+        <if test= 'F16012 != null  and  F16012 != "" ' >
+           AND  td_etp_basic.F16012                 =   #{F16012}                               /* 국제표준코드 */
+        </if>
+
+        <if test= 'searchCode != null  and  searchCode != "" ' >
+            <if test= 'searchCode.length <= 6' >
+           AND  td_etp_basic.F16013                 LIKE    CONCAT( #{searchCode}, '%' )        /* 단축코드 */
+            </if>
+
+            <if test= 'searchCode.length > 6' >
+           AND  td_etp_basic.F16012                 LIKE    CONCAT( #{searchCode}, '%' )        /* 국제표준코드 */
+            </if>
+        </if>
+
+        <if test = '( F16013 != null  and  F16013 != "" ) and ( market_id != null  and  market_id != "" )' >
+           AND  td_etp_basic.F16257                 =   #{F16013}                   /* ETP기초지수코드 = 단축코드 */
+           AND  td_etp_basic.F34239                 =   #{market_id}                /* ETP기초지수MID = 시장 ID  */
+        </if>
 
     </select>
 

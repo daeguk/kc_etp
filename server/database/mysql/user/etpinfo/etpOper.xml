@@ -8,81 +8,89 @@
     * 2019-04-25  bkLove(촤병국)
     -->
     <select id="getEtpBasic">
-      SELECT      /* etpOper.getEtpBasic  EtpBasic 의 기본정보를 조회한다. */
 
-                  td_etp_basic.*
+        SELECT  /* etpOper.getEtpBasic  EtpBasic 의 기본정보를 조회한다. */
 
-              ,   IF( td_etp_basic.F16017 >= DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 5 DAY ), '%Y%m%d' ), 'Y', 'N' )   AS  new_yn     /* 상장일이 최근 5일까지에 속하는 경우 new 아이콘 표시 */
-              ,   DATE_FORMAT( td_etp_basic.F12506, '%Y.%m.%d' )      AS  fmt_F12506          /* 입회일 */
-              ,   DATE_FORMAT( td_etp_basic.F16017, '%Y.%m.%d' )      AS  fmt_F16017          /* format 상장일 */
-              ,   IFNULL(
-                          CASE    WHEN    /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                                          /* ETP 상품구분이 ETF 인 경우 */
-                                          td_etp_basic.F16493                     IN  ( '1', '2' ) 
-                                  THEN    (
-                                              SELECT  td_etfpdf_basic.F16583
-                                                FROM  td_etfpdf_basic
-                                                WHERE  td_etfpdf_basic.F16012      =   td_etp_basic.F16012         /* 국제표준코드 */
-                                                  AND  td_etfpdf_basic.F16013      =   td_etp_basic.F16013         /* ETF단축코드 */
-                                                LIMIT  1
-                                          )
+                td_etp_basic.*
 
-                                          /* ETP 상품구분이 ETN 인 경우 */
-                                  WHEN    td_etp_basic.F16493                     IN  ( '3', '4' )
-                                  THEN    (
-                                              SELECT  td_etnpdf_basic.F16583
-                                                FROM  td_etnpdf_basic
-                                                WHERE  td_etnpdf_basic.F16012      =   td_etp_basic.F16012         /* 국제표준코드 */
-                                                  AND  td_etnpdf_basic.F16013      =   td_etp_basic.F16013         /* ETF단축코드 */
-                                                LIMIT  1
-                                          )
-                          END
-                      ,   ''
-                  ) AS  F16583                  /* 사무수탁회사번호 */
+          FROM  (
+                    SELECT      td_etp_basic.*
 
-      <choose>
-          <when   test='type_cd != null  and  ( type_cd == "9998" or type_cd == "9999" )'>
-              ,   'Y'                                             AS  login_F33960_check      /* 로그인 운용사코드와 동일한지 체크 */
-          </when>                
-          <when test = '( krx_cd != null and krx_cd != "" )' >
-              ,   CASE    WHEN    td_etp_basic.F33960 =   #{krx_cd}
-                          THEN    'Y'
-                          ELSE    'N'
-                  END                                             AS  login_F33960_check      /* 로그인 운용사코드와 동일한지 체크 */
-          </when>
-      </choose>
+                            ,   IF( td_etp_basic.F16017 >= DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 5 DAY ), '%Y%m%d' ), 'Y', 'N' )   AS  new_yn     /* 상장일이 최근 5일까지에 속하는 경우 new 아이콘 표시 */
+                            ,   DATE_FORMAT( td_etp_basic.F12506, '%Y.%m.%d' )      AS  fmt_F12506          /* 입회일 */
+                            ,   DATE_FORMAT( td_etp_basic.F16017, '%Y.%m.%d' )      AS  fmt_F16017          /* format 상장일 */
+                            ,   IFNULL(
+                                        CASE    WHEN    /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                                                        /* ETP 상품구분이 ETF 인 경우 */
+                                                        td_etp_basic.F16493                     IN  ( '1', '2' ) 
+                                                THEN    (
+                                                            SELECT  td_etfpdf_basic.F16583
+                                                              FROM  td_etfpdf_basic
+                                                              WHERE  td_etfpdf_basic.F16012      =   td_etp_basic.F16012         /* 국제표준코드 */
+                                                                AND  td_etfpdf_basic.F16013      =   td_etp_basic.F16013         /* ETF단축코드 */
+                                                              LIMIT  1
+                                                        )
 
-        FROM  td_etp_basic
-        WHERE  1 = 1
+                                                        /* ETP 상품구분이 ETN 인 경우 */
+                                                WHEN    td_etp_basic.F16493                     IN  ( '3', '4' )
+                                                THEN    (
+                                                            SELECT  td_etnpdf_basic.F16583
+                                                              FROM  td_etnpdf_basic
+                                                              WHERE  td_etnpdf_basic.F16012      =   td_etp_basic.F16012         /* 국제표준코드 */
+                                                                AND  td_etnpdf_basic.F16013      =   td_etp_basic.F16013         /* ETF단축코드 */
+                                                              LIMIT  1
+                                                        )
+                                        END
+                                    ,   ''
+                                )                                                   AS  F16583                  /* 사무수탁회사번호 */
 
-      <if test= 'F16012 != null  and  F16012 != "" ' >
-          AND  td_etp_basic.F16012                 =   #{F16012}                               /* 국제표준코드 */
-      </if>
+                      <choose>
+                          <when   test='type_cd != null  and  ( type_cd == "9998" or type_cd == "9999" )'>
+                            ,   'Y'                                             AS  login_F33960_check      /* 로그인 운용사코드와 동일한지 체크 */
+                          </when>                
+                          <when test = '( krx_cd != null and krx_cd != "" )' >
+                            ,   CASE    WHEN    td_etp_basic.F33960 =   #{krx_cd}
+                                        THEN    'Y'
+                                        ELSE    'N'
+                                END                                             AS  login_F33960_check      /* 로그인 운용사코드와 동일한지 체크 */
+                          </when>
+                      </choose>
 
-      <if test= 'searchCode != null  and  searchCode != "" ' >
-          <if test= 'searchCode.length <= 6' >
-          AND  td_etp_basic.F16013                 LIKE    CONCAT( #{searchCode}, '%' )        /* 단축코드 */
-          </if>
+                      FROM  td_etp_basic
+                     WHERE  1 = 1
 
-          <if test= 'searchCode.length > 6' >
-          AND  td_etp_basic.F16012                 LIKE    CONCAT( #{searchCode}, '%' )        /* 국제표준코드 */
-          </if>
-      </if>
+                  <if test= 'F16012 != null  and  F16012 != "" ' >
+                       AND  td_etp_basic.F16012                 =   #{F16012}                               /* 국제표준코드 */
+                  </if>
 
-      <if test = '( F16013 != null  and  F16013 != "" ) and ( market_id != null  and  market_id != "" )' >
-          AND  td_etp_basic.F16257                 =   #{F16013}                   /* ETP기초지수코드 = 단축코드 */
-          AND  td_etp_basic.F34239                 =   #{market_id}                /* ETP기초지수MID = 시장 ID  */
-      </if>
+                  <if test= 'searchCode != null  and  searchCode != "" ' >
+                      <if test= 'searchCode.length <= 6' >
+                       AND  td_etp_basic.F16013                 LIKE    CONCAT( #{searchCode}, '%' )        /* 단축코드 */
+                      </if>
 
-      <if test = '(login_F33960_check != null and login_F33960_check == "Y")' >
-          AND  td_etp_basic.F33960                 =   #{krx_cd}                   /* ETP운용사코드 */
-      </if>
+                      <if test= 'searchCode.length > 6' >
+                       AND  td_etp_basic.F16012                 LIKE    CONCAT( #{searchCode}, '%' )        /* 국제표준코드 */
+                      </if>
+                  </if>
 
-      <if test = '(isEtfYn != null and isEtfYn == "Y")' >
-          AND  td_etp_basic.F16493                 IN  ( '1', '2' )                /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-      </if>
+                  <if test = '( F16013 != null  and  F16013 != "" ) and ( market_id != null  and  market_id != "" )' >
+                       AND  td_etp_basic.F16257                 =   #{F16013}                   /* ETP기초지수코드 = 단축코드 */
+                       AND  td_etp_basic.F34239                 =   #{market_id}                /* ETP기초지수MID = 시장 ID  */
+                  </if>
 
-        LIMIT 0, 2
+                  <if test = '(login_F33960_check != null and login_F33960_check == "Y")' >
+                       AND  td_etp_basic.F33960                 =   #{krx_cd}                   /* ETP운용사코드 */
+                  </if>
+
+                  <if test = '(isEtfYn != null and isEtfYn == "Y")' >
+                       AND  td_etp_basic.F16493                 IN  ( '1', '2' )                /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                  </if>
+
+                     LIMIT 0, 2
+
+                )   td_etp_basic
+
+         WHERE  1 = 1
     </select>
 
     <!--
