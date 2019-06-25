@@ -124,7 +124,7 @@ export default {
       }
     },
     getEtpGigsWeight: function() {
-      // console.log("getEtpGigsWeight : " + this.etpBasic.f16012);
+      // console.log("getEtpGigsWeight : " + this.etpBasic.F16012);
       var vm = this;
 
       axios.get(Config.base_url + "/user/marketinfo/getEtpGigsWeight", {

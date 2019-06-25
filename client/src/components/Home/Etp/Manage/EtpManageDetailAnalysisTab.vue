@@ -132,7 +132,7 @@ export default {
   },
   watch: {
     'etpBasic.F16013': function() {
-      // console.log("watch.........etpBasic.f16013: ");
+      // console.log("watch.........etpBasic.F16013: ");
       // console.log(this.etpBasic);
       this.defaultTranFlag = false;
       this.indexLists = [];

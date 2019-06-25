@@ -11,7 +11,7 @@
                             ETP 운용 정보
                                 <span class="text_result">{{ result_cnt }}</span>
                                 <span class="text_result_t">results</span>
-                                <span class="sub_txt">기준일 : {{ fmt_f12506 }}</span>
+                                <span class="sub_txt">기준일 : {{ fmt_F12506 }}</span>
                             </h3>
                             <div class="right_btn">
                                 <span class="toggle2">
@@ -140,7 +140,7 @@ export default {
     data() {
         return {
             text: "전종목",
-            fmt_f12506 :   "",
+            fmt_F12506 :   "",
 
             stateInfo :     {       
                                     pageState : 'etpInfo'   /* etpInfo - ETP운용정보, iNav - iNav 산출현황, performance - ETP Performance, customize - 컬럼 선택 */
@@ -213,9 +213,9 @@ export default {
                 var btnId   =   $(this).attr('id');
 
                 console.log("########## EtpOperInfo.vue -> pageMove START ############");
-                console.log( "data.f16012=[" + data.F16012 + "] /* 국제표준코드  */" );
-                console.log( "data.f16257=[" + data.F16257 + "] /* ETP기초지수코드  */" );
-                console.log( "data.f34239=[" + data.F34239 + "] /* ETP기초지수MID  */" );
+                console.log( "data.F16012=[" + data.F16012 + "] /* 국제표준코드  */" );
+                console.log( "data.F16257=[" + data.F16257 + "] /* ETP기초지수코드  */" );
+                console.log( "data.F34239=[" + data.F34239 + "] /* ETP기초지수MID  */" );
 
                 vm.paramData.F16012         =   data.F16012;        /* 국제표준코드  */
                 vm.paramData.F16257         =   data.F16257;        /* ETP기초지수코드  */
@@ -667,7 +667,7 @@ export default {
             
                                 htm += util.formatNumber(data);
 
-                                if (row.f30818 >= 0) {
+                                if (row.F30818 >= 0) {
                                     htm += "<br><span class='text_S text_red'>"+row.F30818+"%</span>";      /* 장중지표가치(iNAV/iIV)등락율 */
                                 } else {
                                     htm += "<br><span class='text_S text_blue'>"+row.F30818+"%</span>";     /* 장중지표가치(iNAV/iIV)등락율 */
@@ -695,7 +695,7 @@ export default {
             
                                 htm += util.formatNumber(data);
 
-                                if (row.f30823 >= 0) {
+                                if (row.F30823 >= 0) {
                                     htm += "<br><span class='text_S text_red'>"+row.F30823+"%</span>";      /* ETF관련지수등락율 */
                                 } else {
                                     htm += "<br><span class='text_S text_blue'>"+row.F30823+"%</span>";     /* ETF관련지수등락율 */
@@ -709,8 +709,8 @@ export default {
                     {       'name' : 'F18438'   
                         ,   "render": function ( data, type, row ) {
 
-                                row.f30819      =   util.formatNumber( row.F30819 );        /* 매매기준율 */
-                                row.f30824      =   util.formatNumber( row.F30824 );        /* 장전기준율 */
+                                row.F30819      =   util.formatNumber( row.F30819 );        /* 매매기준율 */
+                                row.F30824      =   util.formatNumber( row.F30824 );        /* 장전기준율 */
 
                                 var rateData    =   util.formatNumber( ( ( util.NumtoStr(row.F30819) / util.NumtoStr(row.F30824) ) - 1 ) * 100 );    /* ( 장전기준율 / 매매기준율 - 1 ) * 100 */
 
@@ -830,7 +830,7 @@ export default {
                                 if( vm.stateInfo.pageState === 'iNav' ) {
 
                                     if(     ( typeCd == "9998" || typeCd == "9999" ) 
-                                        ||  krxCd == row.f33960                         /* 로그인 운용사 코드와 해당 row의 ETP운용사코드 가 같은 경우 */
+                                        ||  krxCd == row.F33960                         /* 로그인 운용사 코드와 해당 row의 ETP운용사코드 가 같은 경우 */
                                     ) {
                                         graphContent    +=  '<div class="tooltip"><button type="button" id="btnInav" name="btnInav" class="calcu_icon"></button><span class="tooltiptext" style="width:70px;">투자지표</span></div>';
                                     }
@@ -861,7 +861,7 @@ export default {
                             }
                         }
                 },
-                {       'name' : 'f15301'             
+                {       'name' : 'F15301'             
                     ,   "render": function ( data, type, row ) {
                             if (data) {
                                 return "<img src='/assets/img/icon_bar01.png'><span>&nbsp;&nbsp;&nbsp;" + data + "</span>";
@@ -870,7 +870,7 @@ export default {
                             }
                         }            
                 },
-                {       'name' : 'f03329'             
+                {       'name' : 'F03329'             
                     ,   "render": function ( data, type, row ) {
                                 let htm = "<span>";
                                 htm += "           <b>"+data+"</b>";

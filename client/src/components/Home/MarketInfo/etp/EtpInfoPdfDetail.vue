@@ -110,8 +110,8 @@ export default {
                 show_date : "",
                 search_date : "",
                 search_nm : "",
-                f16493 : "",
-                f16012 : ""
+                F16493 : "",
+                F16012 : ""
             },
             pdfData : {},
             emergency_exist_yn : "N",

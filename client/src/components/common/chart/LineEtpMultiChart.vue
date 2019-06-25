@@ -50,7 +50,7 @@ export default {
   },    
   watch: {
     'etpBasic.F16013': function() {
-      // console.log("watch.........etpBasic.f16013: ");
+      // console.log("watch.........etpBasic.F16013: ");
       // console.log(this.etpBasic);
       this.dataInit();
     },
@@ -116,7 +116,7 @@ export default {
           else this.getEtpMultiHist(this.etpBasic, this.term[this.dterm]);
       },
       getEtpMultiIntra: function(etpInfo, term) {
-        // console.log("getEtpMultiIntra : " + etpInfo.f16013);
+        // console.log("getEtpMultiIntra : " + etpInfo.F16013);
         var vm = this;
 
         etpInfo.term = term;
@@ -140,7 +140,7 @@ export default {
         });
       },
       getEtpMultiHist: function(etpInfo, term) {
-        // console.log("getEtpMultiHist : " + etpInfo.f16013);
+        // console.log("getEtpMultiHist : " + etpInfo.F16013);
         var vm = this;
 
         etpInfo.term = term;

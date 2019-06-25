@@ -192,7 +192,7 @@ export default {
                         "render": function ( data, type, row ) {
                             let htm = "<div class='td_ellipsis2'>";
                             htm += "           "+data+"";
-                            htm += "            <br><span class='text_S'>"+row.f16013+"</div>";
+                            htm += "            <br><span class='text_S'>"+row.F16013+"</div>";
                             return htm;
                         },
                         "targets": 0
@@ -203,10 +203,10 @@ export default {
                                 
                                 htm += "<div>" + util.formatNumber(data) + "</div>";
 
-                                if (row.f15004 >= 0) {
-                                    htm += "<span class='text_S text_red'>"+row.f15004+"%</span>";
+                                if (row.F15004 >= 0) {
+                                    htm += "<span class='text_S text_red'>"+row.F15004+"%</span>";
                                 } else {
-                                    htm += "<span class='text_S text_blue'>"+row.f15004+"%</span>";
+                                    htm += "<span class='text_S text_blue'>"+row.F15004+"%</span>";
                                 }
 
                                 return htm;
@@ -220,8 +220,8 @@ export default {
                 paging: false,
                 searching: false,
                 columns: [
-                    { data: "f16002", orderable: false, className:"txt_left line2 in_icon"},
-                    { "data": "f15001", "orderable": false, className:'txt_right'},            
+                    { data: "F16002", orderable: false, className:"txt_left line2 in_icon"},
+                    { "data": "F15001", "orderable": false, className:'txt_right'},            
                 ]
             });
 
@@ -460,8 +460,8 @@ export default {
 
                 var filterData = _.filter( vm.indexDataList, function(o) { 
 
-                    var nmIdx = o.f16002 ? o.f16002.toUpperCase().indexOf(vm.form.jisuSearch) : -1;       /* 한글종목명 */
-                    var cdIdx = o.f16013 ? o.f16013.toUpperCase().indexOf(vm.form.jisuSearch) : -1;       /* 단축코드 */
+                    var nmIdx = o.F16002 ? o.F16002.toUpperCase().indexOf(vm.form.jisuSearch) : -1;       /* 한글종목명 */
+                    var cdIdx = o.F16013 ? o.F16013.toUpperCase().indexOf(vm.form.jisuSearch) : -1;       /* 단축코드 */
 
                     if (nmIdx > -1 || cdIdx > -1) {
                         return true; 

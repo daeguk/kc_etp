@@ -102,21 +102,21 @@
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
                                                         label="iNAV"
-                                                        value="f15301"
+                                                        value="F15301"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
                                                         label="기초지수명"
-                                                        value="f34777"
+                                                        value="F34777"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
                                                         label="ETF전일가"
-                                                        value="f18001"
+                                                        value="F18001"
                                                     ></v-checkbox>
                                                 </v-flex>
                                             </v-layout>
@@ -130,21 +130,21 @@
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
                                                         label="전일NAV"
-                                                        value="f03329"
+                                                        value="F03329"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
                                                         label="지수"
-                                                        value="f15318"
+                                                        value="F15318"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
                                                         label="AUM"
-                                                        value="f30812"
+                                                        value="F30812"
                                                     ></v-checkbox>
                                                 </v-flex>
                                             </v-layout>
@@ -158,21 +158,21 @@
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
                                                         label="TE"
-                                                        value="f15302"
+                                                        value="F15302"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
                                                         label="과표기준가"
-                                                        value="f15007"
+                                                        value="F15007"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
                                                         label="괴리율"
-                                                        value="f15304"
+                                                        value="F15304"
                                                     ></v-checkbox>
                                                 </v-flex>                                                
                                             </v-layout>
@@ -186,14 +186,14 @@
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
                                                         label="ETF현재가"
-                                                        value="f15001"
+                                                        value="F15001"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
                                                         label="과세구분"
-                                                        value="f16073"
+                                                        value="F16073"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
@@ -249,7 +249,7 @@ export default {
 
             arrCustomizeColumn : [],
             customizeDialog : false,
-            arrAllCustomizedTextData : [ "f15301", "f34777", "f18001", "f03329", "f15318", "f30812", "f15302", "f15007", "f15304", "f15001", "f16073"  ],
+            arrAllCustomizedTextData : [ "F15301", "F34777", "F18001", "F03329", "F15318", "F30812", "F15302", "F15007", "F15304", "F15001", "F16073"  ],
 
             indexFixDialog : false,
             showFaver : true,
@@ -330,7 +330,7 @@ export default {
          */
         fn_setCustomizeData() {
             var vm = this;
-            var arrFixTitle = [ "f16002" ];     /* 종목은 선택하지 않아도 출력되게 수정 */
+            var arrFixTitle = [ "F16002" ];     /* 종목은 선택하지 않아도 출력되게 수정 */
 
             vm.toggleINav  =   false;
             vm.toggleEtpPerformance =   false;

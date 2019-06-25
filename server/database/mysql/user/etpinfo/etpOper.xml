@@ -493,7 +493,7 @@
         SELECT      /* etpOper.getEtpOperIndex  ETP 운용관리 - 지수관리 를 조회한다. */
 
                     td_index_basic.F12506                               AS  F12506              /* 입회일 */
-                ,   DATE_FORMAT( td_index_basic.F12506, '%Y.%m.%d' )    AS  fmt_f12506          /* 입회일 */
+                ,   DATE_FORMAT( td_index_basic.F12506, '%Y.%m.%d' )    AS  fmt_F12506          /* 입회일 */
                 ,   td_index_basic.F16013                               AS  F16013              /* 단축코드 */
                 ,   td_index_basic.F16002                               AS  F16002              /* 한글종목명 */
                 ,   td_index_basic.F15001                               AS  F15001              /* 현재가 */
@@ -1253,7 +1253,7 @@
            SET      tm_pdf_modify_dtl.F16499        =   base.F16499             /* 1CU단위증권수 */
                 ,   tm_pdf_modify_dtl.F16499_prev   =   base.F16499_prev        /* 1CU단위증권수 ( 변경전 ) */
                 ,   tm_pdf_modify_dtl.F34840        =   base.F34840             /* 액면금액 */
-                ,   tm_pdf_modify_dtl.f34840_prev   =   base.F34840_prev        /* 액면금액 ( 변경전 ) */
+                ,   tm_pdf_modify_dtl.F34840_prev   =   base.F34840_prev        /* 액면금액 ( 변경전 ) */
 
                 ,   tm_pdf_modify_dtl.group_no      =   base.group_no           /* 사용자별 처리한 그룹번호 */
                 ,   tm_pdf_modify_dtl.upd_id        =   #{user_id}              /* 수정자 ID */
@@ -1642,7 +1642,7 @@
                 ,   tm_pdf_modify_hist_dtl.F16499                       AS  F16499          /* 1CU단위증권수 */
                 ,   tm_pdf_modify_hist_dtl.F16499_prev                  AS  F16499_prev     /* 1CU단위증권수 (변경전) */
                 ,   tm_pdf_modify_hist_dtl.F34840                       AS  F34840          /* 액면금액 */
-                ,   tm_pdf_modify_hist_dtl.f34840_prev                  AS  F34840_prev     /* 액면금액 ( 변경전 ) */
+                ,   tm_pdf_modify_hist_dtl.F34840_prev                  AS  F34840_prev     /* 액면금액 ( 변경전 ) */
 
                 ,   (
 						SELECT  td_etfpdf_basic.F16004
@@ -1842,7 +1842,7 @@
                 ,   tm_pdf_modify_hist_dtl.F16499                       AS  F16499          /* 1CU단위증권수 */
                 ,   tm_pdf_modify_hist_dtl.F16499_prev                  AS  F16499_prev     /* 1CU단위증권수 (변경전) */
                 ,   tm_pdf_modify_hist_dtl.F34840                       AS  F34840          /* 액면금액 */
-                ,   tm_pdf_modify_hist_dtl.f34840_prev                  AS  F34840_prev     /* 액면금액 ( 변경전 ) */
+                ,   tm_pdf_modify_hist_dtl.F34840_prev                  AS  F34840_prev     /* 액면금액 ( 변경전 ) */
 
                 ,   (
                         SELECT  td_etfpdf_basic.F16004

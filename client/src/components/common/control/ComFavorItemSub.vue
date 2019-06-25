@@ -668,14 +668,14 @@ export default {
                 //    return  false;
                 //}
 
-                vm.paramData.f16012     =   param.F16012;           /* 국제표준코드 */
-                vm.paramData.f16257     =   param.F16257;           /* ETP기초지수코드 */
-                vm.paramData.f34239     =   param.F34239;           /* ETP기초지수MID */
+                vm.paramData.F16012     =   param.F16012;           /* 국제표준코드 */
+                vm.paramData.F16257     =   param.F16257;           /* ETP기초지수코드 */
+                vm.paramData.F34239     =   param.F34239;           /* ETP기초지수MID */
 
-                vm.paramData.f16002     =   param.JISU_NM;          /* 한글종목명 */
-                vm.paramData.f16013     =   param.F16013;           /* 단축코드 */
-                vm.paramData.f16493     =   param.F16493;           /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                vm.paramData.f33960     =   param.F33960;           /* ETP운용사코드 */
+                vm.paramData.F16002     =   param.JISU_NM;          /* 한글종목명 */
+                vm.paramData.F16013     =   param.F16013;           /* 단축코드 */
+                vm.paramData.F16493     =   param.F16493;           /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                vm.paramData.F33960     =   param.F33960;           /* ETP운용사코드 */
              
                 vm.$emit('showDetail', 1, vm.paramData);
             }
@@ -695,16 +695,16 @@ export default {
                 //    return  false;
                 //}
 
-                vm.paramData.f16012     =   param.F16012;           /* 국제표준코드 */
-                vm.paramData.f16257     =   param.F16257;           /* ETP기초지수코드 */
-                vm.paramData.f34239     =   param.F34239;           /* ETP기초지수MID */
+                vm.paramData.F16012     =   param.F16012;           /* 국제표준코드 */
+                vm.paramData.F16257     =   param.F16257;           /* ETP기초지수코드 */
+                vm.paramData.F34239     =   param.F34239;           /* ETP기초지수MID */
 
                 vm.paramData.F16257     =   param.F16257;           /* ETP기초지수코드 */
                 vm.paramData.LARGE_TYPE =   param.LARGE_TYPE;       /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
                 vm.paramData.MARKET_ID  =   param.MARKET_ID;        /* 시장 ID  */
 
-                vm.paramData.f16002     =   param.JISU_NM;          /* 한글종목명 */
-                vm.paramData.f16013     =   param.F16013;           /* 단축코드 */
+                vm.paramData.F16002     =   param.JISU_NM;          /* 한글종목명 */
+                vm.paramData.F16013     =   param.F16013;           /* 단축코드 */
                 vm.paramData.index_cal_method     =   param.INDEX_CAL_METHOD;            /* 지수산출방식 */
 
                 vm.$emit('showDetail', 2, vm.paramData);

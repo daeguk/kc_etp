@@ -375,21 +375,21 @@ export default {
                 var checkResult = false;
 
                 if( paramData ) {
-                    console.log( "paramData.f16013=[" + paramData.f16013 + "]/paramData.market_id=[" + paramData.market_id + "]/paramData.f16257=[" + paramData.f16257+ "]/paramData.f34239=[" + paramData.f34239 + "]" );
+                    console.log( "paramData.F16013=[" + paramData.F16013 + "]/paramData.market_id=[" + paramData.market_id + "]/paramData.F16257=[" + paramData.F16257+ "]/paramData.F34239=[" + paramData.F34239 + "]" );
                 }else{
                     console.log( "paramData is null");
                 }
 
                 if(     paramData 
-                    &&  paramData.f16013        /* 단축코드 */
+                    &&  paramData.F16013        /* 단축코드 */
                     &&  paramData.market_id     /* 시장 ID */
                 ) {
                     checkResult =   true;
                 }
                 else if(    
                         paramData
-                    &&  paramData.f16257        /* ETP기초지수코드 */
-                    &&  paramData.f34239        /* ETP기초지수MID */
+                    &&  paramData.F16257        /* ETP기초지수코드 */
+                    &&  paramData.F34239        /* ETP기초지수MID */
                 ) {
                     checkResult = true;
                 }

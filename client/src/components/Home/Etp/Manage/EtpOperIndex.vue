@@ -8,7 +8,7 @@
                             지수관리
                             <span class="text_result">{{ result_cnt }}</span>
                             <span class="text_result_t"> results</span>
-                            <span class="sub_txt">기준일 : {{ fmt_f12506 }}</span>
+                            <span class="sub_txt">기준일 : {{ fmt_F12506 }}</span>
                         </h3>
                     </v-card-title>
                     
@@ -53,7 +53,7 @@ export default {
 
     data() {
         return {
-            fmt_f12506 :   "",
+            fmt_F12506 :   "",
             indexBasic  :   {},
             paramData   :   {},
             stateInfo   :   {
@@ -147,7 +147,7 @@ export default {
 
                         vm.indexBasic   =   dataList[0];
 
-                        vm.fmt_f12506   =   dataList[0].fmt_f12506;
+                        vm.fmt_F12506   =   dataList[0].fmt_F12506;
                         vm.result_cnt   =   util.formatInt( dataList.length );
                     }
                 }
@@ -201,7 +201,7 @@ export default {
             if( vm.stateInfo.pageState == "index" ) {
                 
                 vm.fn_setArrShowColumn( [ 
-                        'f16002'                        /* 지수 */
+                        'F16002'                        /* 지수 */
                     ,   'large_type'                    /* 산출기관 */
                     ,   'vendor'                        /* 벤더 */
                     ,   'manage_type'                   /* 관리유형 */
@@ -217,13 +217,13 @@ export default {
 
                 vm.fn_setArrShowColumn( [ 
                         'in_out'                        /* 입수 구분 */
-                    ,   'f16002'                        /* 지수 */
-                    ,   'f16013'                        /* 실시간 심볼 */
+                    ,   'F16002'                        /* 지수 */
+                    ,   'F16013'                        /* 실시간 심볼 */
                     ,   'incre_symbol'                  /* 증가 심볼 */
                     ,   'rest_date'                     /* 휴장일 */
-                    ,   'f15001'                        /* 최근종가 */
+                    ,   'F15001'                        /* 최근종가 */
 
-                    ,   'fmt_f12506'                    /* 최근일자 */
+                    ,   'fmt_F12506'                    /* 최근일자 */
                     ,   'fmt_std_date'                  /* 기준일자 */
                 ] );
             }
@@ -258,17 +258,17 @@ export default {
 
 
                 console.log("########## EtpOperIndex.vue -> pageMove START ############");
-                console.log( "data.f16013=["        +   data.f16013         +   "]  /* 단축코드  */" );
+                console.log( "data.F16013=["        +   data.F16013         +   "]  /* 단축코드  */" );
                 console.log( "data.large_type=["    +   data.large_type     +   "]  /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */" );
                 console.log( "data.market_id=["     +   data.market_id      +   "]  /* 시장 ID  */" );
 
 
-                vm.paramData.F16257         =   data.f16013;        /* 단축코드  */
+                vm.paramData.F16257         =   data.F16013;        /* 단축코드  */
                 vm.paramData.LARGE_TYPE     =   data.large_type;    /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */
                 vm.paramData.MARKET_ID      =   data.market_id;     /* 시장 ID  */
 
-                vm.paramData.F16013         =   data.f16013;        /* 단축코드  */
-                vm.paramData.f16013         =   data.f16013;        /* 단축코드  */
+                vm.paramData.F16013         =   data.F16013;        /* 단축코드  */
+                vm.paramData.F16013         =   data.F16013;        /* 단축코드  */
                 vm.paramData.market_id      =   data.market_id;     /* 시장 ID  */
 
                 vm.paramData.rowIndex       =   rowInx;
@@ -359,7 +359,7 @@ export default {
             var vm = this;
 
             var arrColumn  =   [
-                { 'name' : 'f16002'             , 'data': 'f16002'          ,  'width' : '200', 'orderable' : true  , 'className': 'txt_left'   , 'title' : '지수'          },      /* 한글종목명 */
+                { 'name' : 'F16002'             , 'data': 'F16002'          ,  'width' : '200', 'orderable' : true  , 'className': 'txt_left'   , 'title' : '지수'          },      /* 한글종목명 */
                 { 'name' : 'large_type'         , 'data': 'large_type'      ,  'width' : '60',  'orderable' : true  , 'className': 'txt_left'   , 'title' : '산출기관'      },      /* 지수대분류(FNGUIDE, KRX, KIS, KAP) */
                 { 'name' : 'vendor'             , 'data': 'vendor'          ,  'width' : '40',  'orderable' : true  , 'className': 'txt_left'   , 'title' : '벤더'          },      /* 벤더 */
                 { 'name' : 'manage_type'        , 'data': 'manage_type'     ,  'width' : '60',  'orderable' : true  , 'className': ''           , 'title' : '관리유형'      },      /* 관리유형 */
@@ -369,11 +369,11 @@ export default {
                 { 'name' : 'graph'              , 'data': null              ,  'width' : '150', 'orderable' : false },
 
                 { 'name' : 'in_out'             , 'data': 'in_out'          ,  'width' : '60' , 'orderable' : true  , 'className': 'txt_left'   , 'title' : '입수 구분'     },      /* 입수 구분 */
-                { 'name' : 'f16013'             , 'data': 'f16013'          ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_left'   , 'title' : '실시간 심볼'   },      /* 단축코드 */
+                { 'name' : 'F16013'             , 'data': 'F16013'          ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_left'   , 'title' : '실시간 심볼'   },      /* 단축코드 */
                 { 'name' : 'incre_symbol'       , 'data': 'incre_symbol'    ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_left'   , 'title' : '증가 심볼'     },      /* 증가 심볼 */
                 { 'name' : 'rest_date'          , 'data': 'rest_date'       ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_right'  , 'title' : '휴장일'        },       /* 휴장일 */
-                { 'name' : 'fmt_f12506'         , 'data': 'fmt_f12506'      ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_right'  , 'title' : '최근일자'      },       /* 입회일 */
-                { 'name' : 'f15001'             , 'data': 'f15001'          ,  'width' : '100', 'orderable' : true  , 'className': 'txt_right'  , 'title' : '최근종가'      },     /* 현재가 */
+                { 'name' : 'fmt_F12506'         , 'data': 'fmt_F12506'      ,  'width' : '80' , 'orderable' : true  , 'className': 'txt_right'  , 'title' : '최근일자'      },       /* 입회일 */
+                { 'name' : 'F15001'             , 'data': 'F15001'          ,  'width' : '100', 'orderable' : true  , 'className': 'txt_right'  , 'title' : '최근종가'      },     /* 현재가 */
                 { 'name' : 'fmt_std_date'       , 'data': 'fmt_std_date'    ,  'width' : '100', 'orderable' : true  , 'className': 'txt_center' , 'title' : '기준일자'      },     /* 기준일자 */
             ];        
 
@@ -381,16 +381,16 @@ export default {
 
                     /* 지수 */
                     {       
-                            'name' : 'f16002'   
+                            'name' : 'F16002'   
                         ,   "render": function ( data, type, row, meta ) {
                                 var content = "";
 
                                 if( data ) {
 
                                     content +=  "<div>";
-                                    content +=      "<b>" + row.f16002 + "</b>";        /* 한글종목명 */
+                                    content +=      "<b>" + row.F16002 + "</b>";        /* 한글종목명 */
                                     content +=      "<br>";
-                                    content +=      row.f16013;                         /* 단축코드 */
+                                    content +=      row.F16013;                         /* 단축코드 */
                                     content +=  "</div>";
 /*
                                     if( true ) {
@@ -413,10 +413,10 @@ export default {
   
                                 htm += data;           /* 한글종목명 */
 
-                                if (row.f15004 >= 0) {
-                                    htm += "<br><span class='text_S text_red'>"+row.f15004+"%</span>";      /* 등락율 */
+                                if (row.F15004 >= 0) {
+                                    htm += "<br><span class='text_S text_red'>"+row.F15004+"%</span>";      /* 등락율 */
                                 } else {
-                                    htm += "<br><span class='text_S text_blue'>"+row.f15004+"%</span>";     /* 등락율 */
+                                    htm += "<br><span class='text_S text_blue'>"+row.F15004+"%</span>";     /* 등락율 */
                                 }
 
                                 return  htm;
@@ -433,7 +433,7 @@ export default {
                                     var arrData = JSON.parse( data );
 
                                     for( var i in arrData ) {
-                                        content +=      arrData[i].f16002;
+                                        content +=      arrData[i].F16002;
                                         content +=      "<br>";
                                     }
                                 }
@@ -444,16 +444,16 @@ export default {
 
                     /* 최근종가 */
                     {      
-                            'name' : 'f15001'   
+                            'name' : 'F15001'   
                         ,   "render": function ( data, type, row, meta ) {
                                 let htm = "";
 
                                 htm += util.formatNumber(data);
 
-                                if (row.f15004 >= 0) {
-                                    htm += "<br><span class='text_S text_red'>"+row.f15004+"%</span>";      /* 등락율 */
+                                if (row.F15004 >= 0) {
+                                    htm += "<br><span class='text_S text_red'>"+row.F15004+"%</span>";      /* 등락율 */
                                 } else {
-                                    htm += "<br><span class='text_S text_blue'>"+row.f15004+"%</span>";     /* 등락율 */
+                                    htm += "<br><span class='text_S text_blue'>"+row.F15004+"%</span>";     /* 등락율 */
                                 }
 
                                 return  htm;

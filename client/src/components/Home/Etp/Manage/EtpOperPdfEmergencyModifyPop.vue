@@ -507,7 +507,7 @@ console.log("change................");
         var searchParam                 =   {}
         searchParam.F16012              =   vm.paramData.F16012;                   /* 국제표준코드 */
 /* 여러종류의 ETF 코드 데이터 저장을 위해 임시로 처리함 */
-//        searchParam.f16012              =   "KR7322410002";
+//        searchParam.F16012              =   "KR7322410002";
         searchParam.initYn              =   "Y";
 
         vm.fn_getEtpOperPdfModify( searchParam );
@@ -596,7 +596,7 @@ console.log("change................");
 
                             /* 사무수탁회사번호 가 없는 경우 */
 /* 여러종류의 ETF 코드 데이터 저장을 위해 임시로 처리함 */
-//etpBasic.f16583 = 10;
+//etpBasic.F16583 = 10;
                             if( etpBasic.F16583 == "" ) {
                                 vm.result.flag  =   false;
                                 vm.result.msg   =   '사무수탁회사번호가 존재하지 않습니다.';
@@ -697,7 +697,7 @@ console.log("change................");
                     if( dataJson.status == "insert" ) {
                         
                         var filterData = _.filter( tblEmergeny01.rows().data() , function(o) {
-                            if ( o.f16316 == dataList[0].F16012 ) {
+                            if ( o.F16316 == dataList[0].F16012 ) {
                                 return true; 
                             }
                         });
@@ -1071,7 +1071,7 @@ console.log("change................");
 
                                     items = subData.data;
 
-                                    // console.log("subData.etf_f16012=[" + subData.etf_F16012 + "]");
+                                    // console.log("subData.etf_F16012=[" + subData.etf_F16012 + "]");
                                     // console.log( "items" );
                                     // console.log( items );
                                     
@@ -1251,7 +1251,7 @@ console.log("change................");
          * 삭제버튼 클릭시 로직을 수행한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_deleteTableData( tableData, f16499, rowIndex, jongmokTagYn ) {
+        fn_deleteTableData( tableData, F16499, rowIndex, jongmokTagYn ) {
             var vm = this;
 
             var table = $("#" + vm.tblEmergeny01 ).DataTable();

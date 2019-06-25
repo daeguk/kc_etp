@@ -134,9 +134,9 @@
                             THEN    "Y" 
                             ELSE    "N" 
                     END                                                 AS  NEW_YN              /* new 태그 표시여부 */
-                ,   format(td_etp_basic.F15301, '###,###,###.00')                                 AS  fmt_f15301              /* ETP지표가치(NAV/IV) */
-                ,   format(td_etp_basic.F15318, '###,###,###.00')          AS  fmt_f15318          /* ETP기초지수현재가 */
-                ,   format(td_etp_basic.F03329, '###,###,###.00')          AS  fmt_f03329              /* 전일ETP지표가치(예탁원)(NAV/IV) */
+                ,   format(td_etp_basic.F15301, '###,###,###.00')       AS  fmt_F15301          /* ETP지표가치(NAV/IV) */
+                ,   format(td_etp_basic.F15318, '###,###,###.00')       AS  fmt_F15318          /* ETP기초지수현재가 */
+                ,   format(td_etp_basic.F03329, '###,###,###.00')       AS  fmt_F03329          /* 전일ETP지표가치(예탁원)(NAV/IV) */
                 ,   td_etp_basic.F16012                                 AS  F16012              /* 국제표준코드 */
                 ,   td_etp_basic.F16013                                 AS  F16013              /* 단축코드 */
                 ,   td_etp_basic.F16002                                 AS  F16002              /* 한글종목명 */

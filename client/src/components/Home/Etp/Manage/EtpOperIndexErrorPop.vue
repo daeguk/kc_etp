@@ -8,7 +8,7 @@
 
                 <h5>
                     <v-card-title ma-0>
-                        지수 오류 내역 ({{ indexBasic.f16002     /* 한글종목명 */ }} Index)
+                        지수 오류 내역 ({{ indexBasic.F16002     /* 한글종목명 */ }} Index)
                         <v-spacer></v-spacer>
                         <v-btn
                             icon

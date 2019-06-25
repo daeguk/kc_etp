@@ -246,7 +246,7 @@ export default {
                         htm += "<input type='text' id='F15001' class='txt_right' value='"+util.formatNumber(data)+"'>";
 
                         
-                        if (row.f15004 >= 0) {
+                        if (row.F15004 >= 0) {
                             htm += "<br><span class='text_S text_red'>"+util.formatNumber(row.F15004)+"%</span>";
                         } else {
                             htm += "<br><span class='text_S text_blue'>"+util.formatNumber(row.F15004)+"%</span>";                    
@@ -421,7 +421,7 @@ export default {
 
             axios.get( Config.base_url + "/user/etp/getiNavData", {
                 params: {
-                    //f16012 : 'KR7261110001',
+                    //F16012 : 'KR7261110001',
                     F16012 : F16012,
                 }
             }).then(async function(response) {
