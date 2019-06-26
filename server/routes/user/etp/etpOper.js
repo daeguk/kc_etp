@@ -4,13 +4,14 @@
  * @date 2019-02-08
  * @author ThreeOn
  */
+var os = require('os');
+var fs = require('fs');
 var config = require('../../../config/config');
-var util = require("util");
+var util = require('../../../util/util');
 var Promise = require("bluebird");
 
-var multer = require('multer');
-var xlsx = require('xlsx');
-var fs = require('fs');
+// var multer = require('multer');
+// var xlsx = require('xlsx');
 var async = require('async');
 
 var log = config.logger;
@@ -1212,7 +1213,6 @@ var getJongmokData = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
-
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
@@ -1281,7 +1281,11 @@ var saveEtpOperPdfModify = function(req, res) {
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
         var resultMsg = {};
-
+        var arrAllDtl = [];
+        var arrInsertDtl = [];
+        var arrModifyDtl = [];
+        var arrDeleteDtl = [];
+        
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
             log.error("[error] etpOper.saveEtpOperPdfModify  req.body.data no data.", req.body.data);
@@ -1293,13 +1297,15 @@ var saveEtpOperPdfModify = function(req, res) {
         }
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
+        var fsData = JSON.parse(JSON.stringify(req.body.data));
 
         paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
         paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
         paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
-
+        console.log("paramData.............");
+        console.log(paramData.allDataList[0].data);
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";
@@ -1374,11 +1380,6 @@ var saveEtpOperPdfModify = function(req, res) {
                                 paramData.dataLists = subList.data;
 
                                 log.debug(paramData);
-
-                                var arrAllDtl = [];
-                                var arrInsertDtl = [];
-                                var arrModifyDtl = [];
-                                var arrDeleteDtl = [];
 
                                 async.waterfall([
 
@@ -2076,8 +2077,8 @@ var saveEtpOperPdfModify = function(req, res) {
                         resultMsg.msg = "성공적으로 저장하였습니다.";
                         resultMsg.err = null;
 // console.log('etpOper.saveEtpOperPdfModify 성공적으로 저장하였습니다.');
-
                         conn.commit();
+                        makePdfModify(fsData);
                     }
 
                     res.json(resultMsg);
@@ -2099,6 +2100,107 @@ var saveEtpOperPdfModify = function(req, res) {
         res.end();
     }
 }
+/*
+ * 최근 pdf 수정정보를 파일로 저장하고 문자발송
+ * 2019-06-26  ThreeOn
+ */
+var makePdfModify = function(fsData) {
+  var wItem = {
+    fld000: util.padNonZero(8),         // 8자리 데이터일련번호 (X)
+    fld001: '620',      // 3자리 데이터종류
+    fld002: '102',      // 3자리 데이터분류
+    fld003: '',         // 8자리 일자
+    fld004: '',         // 3자리 사무수탁번호
+    fld005: '',         // 12자리 ETF코드
+    fld006: '',         // 4자리 구성종목수
+    fld007: '',         // 12자리 구성종목코드
+    fld008: '',         // 18자리 1CU단위증권수
+    fld009: '',         // 1자리 구성종목시장구분(0:유가 1:코스닥 2:기타)
+    fld010: util.padNonZero(40),         // 40자리 해외시장종목명(X)
+    fld011: util.padNonZero(18),         // 18자리 액면금액(X)
+    fld012: util.padNonZero(8),         // 8자리 이익분배기준일(X)
+    fld013: util.padNonZero(18),         // 18자리 평가금액(X)
+    fld014: '0',        // 1자리 구분(0:수정, 1:추가, 2:삭제)
+    filler: util.padNonZero(43),         // 43자리 (X)
+    filler2: os.EOL,       // 1자리 개행문자
+  }
+  /*
+  { F12506: '20190626',
+  fmt_F12506: '2019.06.26',
+  F16012: 'KR7152100004',
+  F16583: '903',
+  F16013: '152100',
+  F16316: 'KR7000070003',
+  F33837: '201',
+  F16499: '1110.00',
+  fmt_F16499: '110.00',
+  F33861: '0',
+  F34840: '0',
+  fmt_F34840: '0.00',
+  F16588: null,
+  F34743: '3',
+  fmt_F34743: '0.03',
+  F16004: '삼양홀딩스                              ',
+  status: 'modify',
+  F16499_prev: '110.00',
+  F34840_prev: '0',
+  code_check: true } */
+console.log("makePdfModify.......................");
+  var ifname = config.pdfmodify_nas_path + "pdfmodify." + util.getTodayDate();
+
+  for(var i=0; i<fsData.allDataList.length; i++) {
+      var tmp = fsData.allDataList[i];
+      for(var j=0; j<tmp.data.length; j++) {
+        wItem.fld003 = tmp.data[j].F12506;
+        wItem.fld004 = tmp.data[j].F16583;
+        wItem.fld005 = tmp.data[j].F16012;
+        wItem.fld006 = util.padZero(tmp.data[j].F33837, 4);
+        wItem.fld007 = tmp.data[j].F16316;
+        wItem.fld008 = util.padZero(tmp.data[j].F16499, 18);
+        wItem.fld009 = tmp.data[j].F33861;
+        if(tmp.data[j].status == 'insert') wItem.fld014 = '1';
+        else if(tmp.data[j].status == 'delete') wItem.fld014 = '2';
+        else  wItem.fld014 = '0';
+
+        fs.stat(ifname, function(err, stat) {
+          if(err == null || err.code == 'ENOENT' ) {
+            var ostr = wItem.fld000 + wItem.fld001 + wItem.fld002 + wItem.fld003 + 
+              wItem.fld004 + wItem.fld005 + wItem.fld006 + wItem.fld007 + wItem.fld008 + 
+              wItem.fld009 + wItem.fld010 + wItem.fld011 + wItem.fld012 + wItem.fld013 + 
+              wItem.fld014 + wItem.filler + wItem.filler2; 
+
+            console.log("strlen : " + ostr.length);
+            fs.writeFileSync(ifname, ostr, {flag: 'a+'}, 'utf8');
+          }else {
+            // 기타 에러
+            console.log("File Write Error : " + ifname);
+          }
+        });
+      }
+      console.log("wItem..................");
+      console.log(wItem);
+    }
+}
+/*
+{ fld000: '00000000',
+  fld001: '620',
+  fld002: '102',
+  fld003: '20190626',
+  fld004: '903',
+  fld005: 'KR7152100004',
+  fld006: '0201',
+  fld007: 'KR7000080002',
+  fld008: '000000000000000011',
+  fld009: '0',
+  fld010: '0000000000000000000000000000000000000000',
+  fld011: '000000000000000000',
+  fld012: '00000000',
+  fld013: '000000000000000000',
+  fld014: '0',
+  filler: '0000000000000000000000000000000000000000000',
+  filler2: '\r\n' }
+strlen : 202 (window : 202, linux : 201)
+*/
 
 /*
  * 최근 group_no 에 속한 pdf 수정정보를 조회한다.
