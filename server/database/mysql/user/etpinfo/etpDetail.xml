@@ -11,7 +11,11 @@
 
         SELECT  /* etpDetail.getEtpBasic EtpBasic 의 기본정보를 조회한다. */    
                 <include    refid="sqlEtpBasic01" />
+                ,  td_etffor_mast.EX_RATE_CODE                                     AS  ex_rate_code /* 환율 코드 */
           FROM  td_etp_basic
+          LEFT OUTER JOIN td_etffor_mast ON (
+                    td_etp_basic.F16012 = td_etffor_mast.ISIN_CODE
+          ) 
          WHERE  1 = 1
 
         <if test= 'F16012 != null  and  F16012 != "" ' >
@@ -42,7 +46,8 @@
     -->
     <sql    id="sqlEtpBasic01">
     <![CDATA[
-                    DATE_FORMAT( td_etp_basic.F12506, '%Y.%m.%d' )      AS  F12506              /* 입회일 */
+                    DATE_FORMAT( td_etp_basic.F12506, '%Y.%m.%d' )      AS  fmt_F12506              /* 입회일 */
+                ,   td_etp_basic.F12506                                 AS  F12506              /* 입회일 */
                 ,   td_etp_basic.F16012                                 AS  F16012              /* 국제표준코드 */
                 ,   td_etp_basic.F16013                                 AS  F16013              /* 단축코드 */
                 ,   td_etp_basic.F16002                                 AS  F16002              /* 한글종목명 */
