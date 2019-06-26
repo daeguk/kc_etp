@@ -525,7 +525,6 @@
     * 2019-05-03  bkLove(촤병국)
     -->
     <select id="getEtpOperInfo">
-
         SELECT      /* etpOper.getEtpOperInfo  ETP 운용관리 - ETP 운영정보를 조회한다. */
                     td_etp_basic.*
           FROM  (
@@ -609,8 +608,7 @@
                 )   td_etp_basic
 
          WHERE  1 =1
-
-    </select>    
+    </select>
 
 
     <insert id="setGroupConcatMaxLen">
@@ -844,7 +842,8 @@
           FROM  (        
                 <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
                 <![CDATA[              
-                    SELECT      #{F16583}                       AS  F16583      /* 사무수탁회사번호 */
+                    SELECT      #{now_date}                     AS  F12506      /* 일자 */
+                            ,   #{F16583}                       AS  F16583      /* 사무수탁회사번호 */
                             ,   #{F16012}                       AS  F16012      /* ETF종목코드 */
                             ,   #{F16013}                       AS  F16013      /* ETF단축코드 */
                             ,   #{data.F16316}                  AS  F16316      /* 구성종목코드 */
@@ -882,7 +881,8 @@
         /* etpOper.saveTdEtfpdfBasic      [td_etfpdf_basic] 테이블에 저장한다. */
         td_etfpdf_basic 
         ( 
-                F16583                      /* 사무수탁회사번호 */
+                F12506                      /* 일자 */
+            ,   F16583                      /* 사무수탁회사번호 */
             ,   F16012                      /* ETF종목코드 */
             ,   F16013                      /* ETF단축코드 */
             ,   F16316                      /* 구성종목코드 */
@@ -900,7 +900,8 @@
         <foreach    collection="dataLists"   item="data"     separator="," >
     <![CDATA[        
         ( 
-                #{F16583}                   /* 사무수탁회사번호 */
+                #{data.F12506}              /* 일자 */
+            ,   #{F16583}                   /* 사무수탁회사번호 */
             ,   #{F16012}                   /* ETF종목코드 */
             ,   #{F16013}                   /* ETF단축코드 */
             ,   #{data.F16316}              /* 구성종목코드 */
@@ -931,7 +932,8 @@
          INNER  JOIN    (
                             <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
                             <![CDATA[              
-                                SELECT      #{F16583}                       AS  F16583      /* 사무수탁회사번호 */
+                                SELECT      #{now_date}                     AS  F12506      /* 일자 */
+                                        ,   #{F16583}                       AS  F16583      /* 사무수탁회사번호 */
                                         ,   #{F16012}                       AS  F16012      /* ETF종목코드 */
                                         ,   #{F16013}                       AS  F16013      /* ETF단축코드 */
                                         ,   #{data.F16316}                  AS  F16316      /* 구성종목코드 */
@@ -1006,7 +1008,8 @@
 
         SELECT      /* etpOper.getTdEtfpdfBasicAllData  td_etfpdf_hist에 저장하기 위해 변경된 td_etfpdf_basic 의 데이터를 조회한다. */
 
-                    td_etfpdf_basic.F16583                                  AS  F16583      /* 사무수탁회사번호 */
+                    td_etfpdf_basic.F12506                                  AS  F12506      /* 일자 */
+                ,   td_etfpdf_basic.F16583                                  AS  F16583      /* 사무수탁회사번호 */
                 ,   td_etfpdf_basic.F16012                                  AS  F16012      /* ETF종목코드 */
                 ,   td_etfpdf_basic.F16013                                  AS  F16013      /* ETF단축코드 */
                 ,   td_etfpdf_basic.F16316                                  AS  F16316      /* 구성종목코드 */
