@@ -96,6 +96,54 @@ var getiNavData = function (req, res) {
 
 
 /*
+*   ETP INav 지수 수익률 기본 정보
+*/
+
+var getiNavIndexData = function (req, res) {
+    try {
+        log.debug('etpNavCalcu=>getiNavIndexData 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        // var options = {id:'admin'};
+        var F16012 = req.query.F16012;  /* 국제 표준 코드*/
+
+        var options = {
+            "F16012" : F16012
+        };
+
+        log.debug("options", JSON.stringify(options));
+
+        var stmt = mapper.getStatement('etpDetail', 'getEtpBasic', options, {language:'sql', indent: '  '});
+        
+        // 대입 연산자 치환
+        stmt = stmt.replace(/\: =/g,':='); 
+     
+        log.debug(stmt);
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    etpBasic: rows[0]
+                });
+                res.end();
+            }).catch(err => {
+                log.debug("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        log.debug("err=>", exception);
+    }
+};
+
+
+/*
 *   환율 정보
 */
 
@@ -297,6 +345,7 @@ var getBondBasic = function (req, res) {
 
 
 module.exports.getiNavData = getiNavData;
+module.exports.getiNavIndexData = getiNavIndexData;
 module.exports.getExchBasic = getExchBasic;
 module.exports.getKspjongBasic = getKspjongBasic;
 module.exports.getFutureBasic = getFutureBasic;

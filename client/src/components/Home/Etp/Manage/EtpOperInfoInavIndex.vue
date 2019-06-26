@@ -276,9 +276,9 @@ export default {
         init: function(F16012) {
             var vm = this;            
             util.processing(vm.$refs.progress, true);
-            console.log( "EtpOperInfoInavIndex.vue -> getiNavData" );
+            console.log( "EtpOperInfoInavIndex.vue -> getiNavIndexData" );
 
-            axios.get( Config.base_url + "/user/etp/getiNavData", {
+            axios.get( Config.base_url + "/user/etp/getiNavIndexData", {
                 params: {
                     //F16012 : 'KR7261110001',
                     F16012 : F16012,
