@@ -709,10 +709,10 @@ export default {
                     {       'name' : 'F18438'   
                         ,   "render": function ( data, type, row ) {
 
-                                row.F30819      =   util.formatNumber( row.F30819 );        /* 매매기준율 */
-                                row.F30824      =   util.formatNumber( row.F30824 );        /* 장전기준율 */
+                                var v_F30819      =   util.formatNumber( row.F30819 );        /* 매매기준율 */
+                                var v_F30824      =   util.formatNumber( row.F30824 );        /* 장전기준율 */
 
-                                var rateData    =   util.formatNumber( ( ( util.NumtoStr(row.F30819) / util.NumtoStr(row.F30824) ) - 1 ) * 100 );    /* ( 장전기준율 / 매매기준율 - 1 ) * 100 */
+                                var rateData    =   util.formatNumber( ( ( util.NumtoStr( v_F30819 ) / util.NumtoStr( v_F30824 ) ) - 1 ) * 100 );    /* ( 장전기준율 / 매매기준율 - 1 ) * 100 */
 
                                 let htm = ""
 
