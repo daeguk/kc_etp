@@ -1001,7 +1001,7 @@ console.log("change................");
 
                 console.log(response);
                 util.processing(vm.$refs.progress, false);
-                tool.smsSend(0, "ETP PDF 변경신청 접수되었습니다.(테스트)");
+                // tool.smsSend(0, "ETP PDF 변경신청 접수되었습니다.(테스트)");
 
                 if (response.data) {
 

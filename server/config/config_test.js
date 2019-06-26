@@ -7,7 +7,7 @@
 
 const log4js = require('log4js');
 log4js.configure({
-    appenders:  { output:   { type: 'file', filename: 'D:/koscom_etp/log/etp.log' } },
+    appenders:  { output:   { type: 'file', filename: '/home/sinfo/etp.log' } },
     categories: { default :  { appenders: ['output'], level: 'error' } }
 });
 
@@ -22,8 +22,8 @@ module.exports = {
     // base_url: "https://emp.koscom.co.kr",
     pwd_salt: "11aabb..",
     pwd_default: "11aabb..",
-    uploadFolder : "D:/koscom_etp/upload",
-    sampleDownFolder : "D:/koscom_etp/kc_etp/etc/sampleDown",
-
+    uploadFolder : "/data/koscom/kc_newetp/upload",
+    sampleDownFolder : "/data/koscom/kc_newetp/upload/samepleDown",
+    pdfmodify_nas_path: "/nas3/nfs_data2/checkapi/pdfmodify/",
     logger : logger,
 }

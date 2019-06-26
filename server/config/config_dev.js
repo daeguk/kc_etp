@@ -24,6 +24,6 @@ module.exports = {
     pwd_default: "11aabb..",
     uploadFolder : "D:/koscom_etp/upload",
     sampleDownFolder : "D:/koscom_etp/kc_etp/etc/sampleDown",
-
+    pdfmodify_nas_path: "D:/koscom_etp/kc_etp/pdfmodify/",
     logger : logger,
 }

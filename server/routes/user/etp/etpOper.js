@@ -1281,6 +1281,10 @@ var saveEtpOperPdfModify = function(req, res) {
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
         var resultMsg = {};
+        var arrAllDtl = [];
+        var arrInsertDtl = [];
+        var arrModifyDtl = [];
+        var arrDeleteDtl = [];
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
@@ -1374,11 +1378,6 @@ var saveEtpOperPdfModify = function(req, res) {
                                 paramData.dataLists = subList.data;
 
                                 log.debug(paramData);
-
-                                var arrAllDtl = [];
-                                var arrInsertDtl = [];
-                                var arrModifyDtl = [];
-                                var arrDeleteDtl = [];
 
                                 async.waterfall([
 
@@ -2076,8 +2075,8 @@ var saveEtpOperPdfModify = function(req, res) {
                         resultMsg.msg = "성공적으로 저장하였습니다.";
                         resultMsg.err = null;
 // console.log('etpOper.saveEtpOperPdfModify 성공적으로 저장하였습니다.');
-
                         conn.commit();
+                        makePdfModify(arrInsertDtl, arrModifyDtl, arrDeleteDtl);
                     }
 
                     res.json(resultMsg);
@@ -2098,6 +2097,16 @@ var saveEtpOperPdfModify = function(req, res) {
         res.json(resultMsg);
         res.end();
     }
+}
+/*
+ * 최근 pdf 수정정보를 파일로 저장하고 문자발송
+ * 2019-06-26  ThreeOn
+ */
+var makePdfModify = function(arrInsertDtl, arrModifyDtl, arrDeleteDtl) {
+console.log("makePdfModify.......................");
+console.log(arrInsertDtl);
+console.log(arrModifyDtl);
+console.log(arrDeleteDtl);
 }
 
 /*
