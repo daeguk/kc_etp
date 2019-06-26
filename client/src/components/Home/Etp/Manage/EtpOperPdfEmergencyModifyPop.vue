@@ -450,8 +450,18 @@ export default {
                 var table = $("#" + vm.tblEmergeny01 ).DataTable();
                 var data = table.row($(this).parents("tr")).data();
                 var rowIndex = table.row($(this).parents("tr")).index();
+                var nowData = {
+                    F16499 : 0
+                };
 
-                vm.fn_getJongmokData( { status : "insert", codeVal : $(this).parents("tr").find( "input[name='jongmok']" ).eq(0).val() , rowIndex : rowIndex, F16499 : 0 }  );
+                vm.fn_getJongmokData( { 
+                        status : "insert"
+                    ,   codeVal : $(this).parents("tr").find( "input[name='jongmok']" ).eq(0).val()
+                    ,   tableData: data
+                    ,   nowData : nowData
+                    ,   rowIndex : rowIndex
+                    ,   F16499_prev : 0
+                });
             }
         });        
 
@@ -461,8 +471,18 @@ export default {
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
             var data = table.row($(this).parents("tr")).data();
             var rowIndex = table.row($(this).parents("tr")).index();
+            var nowData = {
+                F16499 : 0
+            };            
 
-            vm.fn_getJongmokData( { status : "insert", codeVal : $(this).parents("tr").find( "input[name='jongmok']" ).eq(0).val() , rowIndex : rowIndex, F16499 : 0 }  );
+            vm.fn_getJongmokData( { 
+                    status : "insert"
+                ,   codeVal : $(this).parents("tr").find( "input[name='jongmok']" ).eq(0).val()
+                ,   tableData: data
+                ,   nowData : nowData
+                ,   rowIndex : rowIndex
+                ,   F16499_prev : 0
+            });            
         });
 
         /* CU shrs 수정시 */
@@ -476,7 +496,6 @@ export default {
             var tdData = _.replace( $(this).eq(0).val(), /,/g, "" );
             $(this).eq(0).val( tdData );            
 
-console.log("change................");
             /* CU shrs */
             if ( $(this).attr('name') == 'F16499' ) {
                 nowData.name    =   "F16499";
@@ -490,7 +509,7 @@ console.log("change................");
 
             $(this).eq(0).val( util.formatNumber( tdData ) );
 
-            vm.fn_setStatus( data, nowData, rowIndex, ( jongmokTag ? jongmokTag.length : 0 ) );
+            vm.fn_setStatus( data, nowData, rowIndex, ( jongmokTag ? jongmokTag.length : 0 ), $(this) );
         });
 
         // 삭제버튼 클릭시
@@ -606,7 +625,7 @@ console.log("change................");
                         }else{
 
                             vm.result.flag  =   false;
-                            vm.result.msg   =   '해당코드의 데이터가 존재하지 않습니다.';
+                            vm.result.msg   =   '해당코드의 종목이 존재하지 않습니다.';
 
                             return  false;
                         }
@@ -672,6 +691,11 @@ console.log("change................");
                     if (!response.data.result) {
                         if( msg ) {
                             if( await vm.$emit('showMessageBox', '확인', msg,{},1) ) {
+                                if( typeof dataJson.tableData.F16499_prev != "undefined" ) {
+                                    if( dataJson.thisTag ) {
+                                        dataJson.thisTag.eq(0).val( dataJson.tableData.F16499_prev );
+                                    }
+                                }                                
                                 return  false;
                             }
                         }
@@ -681,6 +705,11 @@ console.log("change................");
 
                     if ( !dataList || dataList.length == 0 ) {
                         if( await vm.$emit('showMessageBox', '확인', '구성종목코드(' + dataJson.codeVal + ')가 존재하지 않습니다.',{},1) ) {
+                            if( typeof dataJson.tableData.F16499_prev != "undefined" ) {
+                                if( dataJson.thisTag ) {
+                                    dataJson.thisTag.eq(0).val( dataJson.tableData.F16499_prev );
+                                }
+                            }
                             return  false;
                         }
 
@@ -689,6 +718,11 @@ console.log("change................");
 
                     if ( dataList && dataList.length > 1 ) {
                         if( await vm.$emit("showMessageBox", '확인','구성종목코드(' + dataJson.codeVal + ')가 여러건 존재합니다.',{},1) ) {
+                            if( typeof dataJson.tableData.F16499_prev != "undefined" ) {
+                                if( dataJson.thisTag ) {
+                                    dataJson.thisTag.eq(0).val( dataJson.tableData.F16499_prev );
+                                }
+                            }                            
                             return  false;
                         }
                     }
@@ -731,6 +765,28 @@ console.log("change................");
 
                         table.cell( tr, 6 ).data( v_F16588 );
                         vm.dataList[ dataJson.rowIndex ].F16588    =   v_F16588;
+
+                        /* 
+                        *   상태값 normal 로 변경
+                        *
+                        *   수정한 [1CU단위증권수] 와 원본 [1CU단위증권수] 이 같고
+                        *   수정했던 [액면금액] 과 원본 [액면금액] 이 같은 경우
+                        */
+                        if( dataJson.nowStatus == "insert" ) {
+                            table.cell( tr, 9 ).data( { "status" : "insert" } );
+                            vm.dataList[ dataJson.rowIndex ].status  =   "insert";
+                        }
+                        else if(    Number( dataJson.tableData.F16499_prev ) == Number( dataJson.nowData.F16499 )
+                                &&  Number( dataJson.tableData.F34840_prev ) == Number( dataJson.tableData.F34840 ) ) {
+                            table.cell( tr, 9 ).data( { "status" : "normal" } );
+                            vm.dataList[ dataJson.rowIndex ].status  =   "normal";
+                        }                            
+                        else{
+                            table.cell( tr, 9 ).data( { "status" : "modify" } );
+                            vm.dataList[ dataJson.rowIndex ].status  =   "modify";                            
+                        }
+
+                        vm.dataList[ dataJson.rowIndex ].F16499      =   dataJson.nowData.F16499;                        
                     }
                 }
             }).catch(error => {
@@ -796,8 +852,7 @@ console.log("change................");
                     return  false;
                 }
 
-
-                /* 이전건 + 현재건 데이터가 존재하는 경우 */
+                /* 이전건이 존재하는 경우 */
                 if( vm.allDataList.length > 0 ) {
 
                     /* 변경된 데이터만 추출 */
@@ -814,11 +869,14 @@ console.log("change................");
                                                 ,   "etf_F16013"    :   vm.etpBasic.F16013      /* ETF 단축코드 */
                                             });
 
-                        /* 현재건 삭제 */
-                        vm.allDataList.splice( filterIndex, 1 );
+                        if( filterIndex > -1 ) {
+                            /* 현재건 삭제 */
+                            vm.allDataList.splice( filterIndex, 1 );
+                        }
                     }
-                }                
+                }
 
+                vm.fn_modifyAllDataList();
 
 
                 /* 추가 또는 수정건이 존재하는지 체크한다. */
@@ -830,8 +888,6 @@ console.log("change................");
                     }
                 }
 
-
-                vm.fn_modifyAllDataList();
 
 
                 if( vm.allDataList.length > 0 ) {
@@ -1265,7 +1321,7 @@ console.log("change................");
          * CU shrs 변경시 상태값을 변경한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_setStatus( tableData, nowData, rowIndex, jongmokTagYn ) {
+        fn_setStatus( tableData, nowData, rowIndex, jongmokTagYn, thisTag ) {
             var vm = this;
 
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
@@ -1277,30 +1333,30 @@ console.log("change................");
                 /* 1CU단위증권수 */
                 if( nowData.name == "F16499" ) {
 
-console.log("[" + Number( tableData.F16499_prev ) + "] ]" + nowData.F16499 + "]");
-                    if( tableData.status != "insert" ) {
-                        
-                        /* 
-                        *   상태값 normal 로 변경
-                        *
-                        *   수정한 [1CU단위증권수] 와 원본 [1CU단위증권수] 이 같고
-                        *   수정했던 [액면금액] 과 원본 [액면금액] 이 같은 경우
-                        */
-                        if(     Number( tableData.F16499_prev ) == Number( nowData.F16499 )
-                            &&  Number( tableData.F34840_prev ) == Number( tableData.F34840 ) ) {
-                            table.cell( tr, 9 ).data( { "status" : "normal" } );
-                            vm.dataList[ rowIndex ].status  =   "normal";
-                        }else{
-                            table.cell( tr, 9 ).data( { "status" : "modify" } );
-                            vm.dataList[ rowIndex ].status  =   "modify";
-                        }
-                    }
-
-                    vm.dataList[ rowIndex ].F16499      =   nowData.F16499;
-
+                    /* 구성종목 코드가 존재하는 경우 */
                     if( tr.data() && tr.data().F16316 ) {
-                        vm.fn_getJongmokData( { status : "modify", codeVal : tr.data().F16316, rowIndex : rowIndex, F16499 : nowData.F16499 }  );
+                        vm.fn_getJongmokData( { status : "modify", nowStatus : tableData.status, codeVal : tr.data().F16316, tableData: tableData, nowData : nowData, rowIndex : rowIndex, thisTag : thisTag } );
                     }
+
+                    // if( tableData.status != "insert" ) {
+                        
+                    //     /* 
+                    //     *   상태값 normal 로 변경
+                    //     *
+                    //     *   수정한 [1CU단위증권수] 와 원본 [1CU단위증권수] 이 같고
+                    //     *   수정했던 [액면금액] 과 원본 [액면금액] 이 같은 경우
+                    //     */
+                    //     if(     Number( tableData.F16499_prev ) == Number( nowData.F16499 )
+                    //         &&  Number( tableData.F34840_prev ) == Number( tableData.F34840 ) ) {
+                    //         table.cell( tr, 9 ).data( { "status" : "normal" } );
+                    //         vm.dataList[ rowIndex ].status  =   "normal";
+                    //     }else{
+                    //         table.cell( tr, 9 ).data( { "status" : "modify" } );
+                    //         vm.dataList[ rowIndex ].status  =   "modify";
+                    //     }
+                    // }
+
+                    // vm.dataList[ rowIndex ].F16499      =   nowData.F16499;
                 }
                 /* 액면금액 */
                 else if( nowData.name == "F34840" ) {
@@ -1342,7 +1398,7 @@ console.log("[" + Number( tableData.F16499_prev ) + "] ]" + nowData.F16499 + "]"
          * 자산추가된 행에 대해 빈 값이 존재하는지 체크한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        async fn_emptyCheck() {
+        fn_emptyCheck() {
 
             var vm = this;
 
@@ -1355,7 +1411,7 @@ console.log("[" + Number( tableData.F16499_prev ) + "] ]" + nowData.F16499 + "]"
             });
 
             if( filterData.length > 0 ) {
-                if( await vm.$emit("showMessageBox", '확인','구성종목코드가 빈 항목이 존재합니다.',{},1) ) {
+                if( vm.$emit("showMessageBox", '확인','구성종목코드가 빈 항목이 존재합니다.',{},1) ) {
                     return  false;
                 }
             }
@@ -1367,7 +1423,7 @@ console.log("[" + Number( tableData.F16499_prev ) + "] ]" + nowData.F16499 + "]"
          * 추가 또는 수정건이 존재하는지 체크한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        async fn_modifyCheck() {
+        fn_modifyCheck() {
 
             var vm = this;
 
@@ -1378,7 +1434,7 @@ console.log("[" + Number( tableData.F16499_prev ) + "] ]" + nowData.F16499 + "]"
             });
 
             if( filterData.length == 0 ) {
-                if( await vm.$emit("showMessageBox", '확인','수정건이 1건 이상 존재해야 합니다.',{},1) ) {
+                if( vm.$emit("showMessageBox", '확인','수정건이 1건 이상 존재해야 합니다.',{},1) ) {
                     return  false;
                 }
             }
@@ -1390,7 +1446,7 @@ console.log("[" + Number( tableData.F16499_prev ) + "] ]" + nowData.F16499 + "]"
          * 자산추가 후 구성종목코드가 확인이 되지 않는건이 있는지 확인한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        async fn_codeCheck() {
+        fn_codeCheck() {
 
             var vm = this;
 
@@ -1401,7 +1457,7 @@ console.log("[" + Number( tableData.F16499_prev ) + "] ]" + nowData.F16499 + "]"
             });
 
             if( filterData.length > 0 ) {
-                if( await vm.$emit("showMessageBox", '확인','구성종목코드가 확인 되지 않은 건이 존재합니다.',{},1) ) {
+                if( vm.$emit("showMessageBox", '확인','구성종목코드가 확인 되지 않은 건이 존재합니다.',{},1) ) {
                     return  false;
                 }
             }
@@ -1420,30 +1476,32 @@ console.log("[" + Number( tableData.F16499_prev ) + "] ]" + nowData.F16499 + "]"
                 }
             });
 
-            /* 추가할 데이터 */
-            var jsonData    =   {
-                    "etf_F16012"    :   vm.etpBasic.F16012      /* ETF 국제표준코드 */
-                ,   "etf_F16013"    :   vm.etpBasic.F16013      /* ETF 단축코드 */
-                ,   "etf_F16002"    :   vm.etpBasic.F16002      /* ETF 한글종목명 */
-                ,   "etf_F16583"    :   vm.etpBasic.F16583      /* ETF 사무수탁회사번호 */
-                ,   "data"          :   filterData
-            };
+            if( filterData.length > 0 ) {
+                /* 추가할 데이터 */
+                var jsonData    =   {
+                        "etf_F16012"    :   vm.etpBasic.F16012      /* ETF 국제표준코드 */
+                    ,   "etf_F16013"    :   vm.etpBasic.F16013      /* ETF 단축코드 */
+                    ,   "etf_F16002"    :   vm.etpBasic.F16002      /* ETF 한글종목명 */
+                    ,   "etf_F16583"    :   vm.etpBasic.F16583      /* ETF 사무수탁회사번호 */
+                    ,   "data"          :   filterData
+                };
 
 
 
-            /* allDataList 에서 존재하는 인덱스를 확인한다. */
-            var filterIndex  =   _.findIndex( vm.allDataList,    {
-                                        "etf_F16012"    :   vm.etpBasic.F16012      /* ETF 국제표준코드 */
-                                    ,   "etf_F16013"    :   vm.etpBasic.F16013      /* ETF 단축코드 */
-                                });
+                /* allDataList 에서 존재하는 인덱스를 확인한다. */
+                var filterIndex  =   _.findIndex( vm.allDataList,    {
+                                            "etf_F16012"    :   vm.etpBasic.F16012      /* ETF 국제표준코드 */
+                                        ,   "etf_F16013"    :   vm.etpBasic.F16013      /* ETF 단축코드 */
+                                    });
 
-            /* 존재하지 않는 경우 */
-            if( filterIndex == -1 ) {
-                vm.allDataList.push( jsonData );
-            }
-            /* 존재하는 경우 해당 인덱스에 데이터 교체 */
-            else{
-                vm.allDataList[ filterIndex ]   =   jsonData;
+                /* 존재하지 않는 경우 */
+                if( filterIndex == -1 ) {
+                    vm.allDataList.push( jsonData );
+                }
+                /* 존재하는 경우 해당 인덱스에 데이터 교체 */
+                else{
+                    vm.allDataList[ filterIndex ]   =   jsonData;
+                }
             }
         },
 

@@ -12,14 +12,14 @@
         <div class="ETPInavpop1">
             <v-list subheader>
                 <h6>
-                    {{paramData.F16002}} <span>{{paramData.F16012}}</span>
+                    {{etpBasic.F16002}} <span>{{etpBasic.F16012}}</span>
                 </h6>
                 <v-list-tile>
                     <v-list-tile-title class="sumu_text">Simulation Mode</v-list-tile-title>
                     <v-list-tile-content class="sumul_btn_w">
                         <ul>
                             <li>
-                                <v-switch v-model="SimulationSwitch" color="primary"></v-switch>
+                                <v-switch v-model="SimulationSwitch" color="primary" v-on:change="SimulationMode"></v-switch>
                             </li>
                             <li v-if="SimulationSwitch == true">
                                 <v-btn small flat icon>
@@ -28,7 +28,7 @@
                             </li>
                             <li v-if="SimulationSwitch == true">
                                 <v-btn small flat icon>
-                                    <v-icon v-on:click="init()">refresh</v-icon>
+                                    <v-icon v-on:click="init(paramData.F16012)">refresh</v-icon>
                                 </v-btn>
                             </li>
                         </ul>
@@ -42,29 +42,29 @@
                     <v-flex xs12>
                         <ul>
                             <li class="list_tit">산출방식</li>
-                            <li>{{paramData.F33929 == '0' ? 'PDF' : '지수수익율'}}</li>
+                            <li>{{etpBasic.F33929 == '0' ? 'PDF' : '지수수익율'}}</li>
                         </ul>
                         <ul>
                             <li class="list_tit">유형</li>
-                            <li v-if="paramData.F34240 == 'H'">환헷지(H)</li>
-                            <li v-if="paramData.F34240 == 'F'">환노출일반(F)</li>
-                            <li v-if="paramData.F34240 == 'A'">지수환노출(A)</li>
-                            <li v-if="paramData.F34240 == 'T'">복합배율(T)</li>
-                            <li v-if="paramData.F34240 == 'K'">복합배율2(K)</li>
-                            <li v-if="paramData.F34240 == 'I'">인도레버리지(I)</li>
-                            <li v-if="paramData.F34240 == 'J'">KINDEX합성일본인버스(J)</li>
-                            <li v-if="paramData.F34240 == 'G'">KODEX 미국채10년 선물 ETF(G)</li>
+                            <li v-if="etpBasic.F34240 == 'H'">환헷지(H)</li>
+                            <li v-if="etpBasic.F34240 == 'F'">환노출일반(F)</li>
+                            <li v-if="etpBasic.F34240 == 'A'">지수환노출(A)</li>
+                            <li v-if="etpBasic.F34240 == 'T'">복합배율(T)</li>
+                            <li v-if="etpBasic.F34240 == 'K'">복합배율2(K)</li>
+                            <li v-if="etpBasic.F34240 == 'I'">인도레버리지(I)</li>
+                            <li v-if="etpBasic.F34240 == 'J'">KINDEX합성일본인버스(J)</li>
+                            <li v-if="etpBasic.F34240 == 'G'">KODEX 미국채10년 선물 ETF(G)</li>
                         </ul>
                         <ul>
                             <li class="list_tit">산출식</li>
-                            <li v-if="paramData.F34240 == 'H'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)</li>
-                            <li v-if="paramData.F34240 == 'F'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)×(<span class="txt_point4">④매매기준율/장전매매기준율</span>)</li>
-                            <li v-if="paramData.F34240 == 'A'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>×<span class="txt_point4">④매매기준율/장전매매기준율</span>)</li>
-                            <li v-if="paramData.F34240 == 'T'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)<br>×(1+(매매기준율-장전매매기준율)/장전매매기준율×<span class="txt_point2">②배율</span>)</li>
-                            <li v-if="paramData.F34240 == 'K'">iNAV=<span class="txt_point">①전일NAV</span>×(1+((1+<span class="txt_point3">③기초지수등락율</span>)<br>×<span class="txt_point4">④매매기준율/장전매매기준율</span>-1)×<span class="txt_point2">②배율</span>)</li>
-                            <li v-if="paramData.F34240 == 'I'">iNAV=<span class="txt_point">①전일NAV</span>×(1+((1+<span class="txt_point3">③기초지수등락율</span>)×<span class="txt_point4">④매매기준율/장전매매기준율</span>-1)×<span class="txt_point2">②배율</span>) ×(1+전일등락율×<span class="txt_point2">②배율</span>)</li>
-                            <li v-if="paramData.F34240 == 'J'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>-예상배당수익률)</li>
-                            <li v-if="paramData.F34240 == 'G'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point2">②배율</span>×<span class="txt_point3">③지수등락율</span>)×(환율보정계수/장전매매기준율)</li>
+                            <li v-if="etpBasic.F34240 == 'H'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)</li>
+                            <li v-if="etpBasic.F34240 == 'F'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)×(<span class="txt_point4">④매매기준율/장전매매기준율</span>)</li>
+                            <li v-if="etpBasic.F34240 == 'A'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>×<span class="txt_point4">④매매기준율/장전매매기준율</span>)</li>
+                            <li v-if="etpBasic.F34240 == 'T'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)<br>×(1+(매매기준율-장전매매기준율)/장전매매기준율×<span class="txt_point2">②배율</span>)</li>
+                            <li v-if="etpBasic.F34240 == 'K'">iNAV=<span class="txt_point">①전일NAV</span>×(1+((1+<span class="txt_point3">③기초지수등락율</span>)<br>×<span class="txt_point4">④매매기준율/장전매매기준율</span>-1)×<span class="txt_point2">②배율</span>)</li>
+                            <li v-if="etpBasic.F34240 == 'I'">iNAV=<span class="txt_point">①전일NAV</span>×(1+((1+<span class="txt_point3">③기초지수등락율</span>)×<span class="txt_point4">④매매기준율/장전매매기준율</span>-1)×<span class="txt_point2">②배율</span>) ×(1+전일등락율×<span class="txt_point2">②배율</span>)</li>
+                            <li v-if="etpBasic.F34240 == 'J'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>-예상배당수익률)</li>
+                            <li v-if="etpBasic.F34240 == 'G'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point2">②배율</span>×<span class="txt_point3">③지수등락율</span>)×(환율보정계수/장전매매기준율)</li>
                         </ul>
                         
                         <ul v-if="SimulationSwitch == true">
@@ -94,7 +94,7 @@
                     <v-flex xs12 class="sumul_card_w ver3">
                         <ul class="bot_line">
                             <li class="list_tit">기초지수</li>
-                            <li>{{paramData.F34777}}</li>
+                            <li>{{etpBasic.F34777}}</li>
                         </ul>
                         <ul class="bot_line1">
                             <li class="list_tit">지수현재가</li>
@@ -116,13 +116,13 @@
                             <li>
                                 <div v-if="SimulationSwitch == true">
                                     <v-text-field   v-model="F15007" outline class="txt_right"></v-text-field>
-                                    <span class="float_r">{{formatDate(paramData.F12506)}}</span>
+                                    <span class="float_r">{{formatDate(etpBasic.F12506)}}</span>
                                 </div>
                                 <div v-else>
                                     <li class="align_r">
                                         {{F15007}}
                                     </li><br>
-                                    <span class="float_r">{{formatDate(paramData.F12506)}}</span>
+                                    <span class="float_r">{{formatDate(etpBasic.F12506)}}</span>
                                 </div>
                             </li>
                         </ul>
@@ -132,13 +132,13 @@
                                 <b>{{F30823}}%</b>
                             </li>
                         </ul>
-                        <ul v-if="paramData.F34240 == 'I'"> <!-- 인도레버리지 -->
+                        <ul v-if="etpBasic.F34240 == 'I'"> <!-- 인도레버리지 -->
                             <li class="list_tit"><b>전일등락율(%)</b></li>
                             <li class="align_r">
                                 <b>{{F34374}}%</b>
                             </li>
                         </ul>
-                        <ul v-if="paramData.F34240 == 'J'"> <!-- KINDEX합성일본인버스 -->
+                        <ul v-if="etpBasic.F34240 == 'J'"> <!-- KINDEX합성일본인버스 -->
                             <li class="list_tit"><b>예상배당수익률(%)</b></li>
                             <li class="align_r">
                                 <b>{{F18101}}%</b>
@@ -150,7 +150,7 @@
                     <v-flex xs12 class="sumul_card_w ver3">
                         <ul class="bot_line">
                             <li class="list_tit">적용환율</li>
-                            <li class="align_r">{{paramData.ex_rate_code}}</li>
+                            <li class="align_r">{{etpBasic.ex_rate_code}}</li>
                         </ul>
                         <ul class="bot_line1">
                             <li class="list_tit">매매기준율</li>
@@ -168,13 +168,13 @@
                                 {{F30824}}
                             </li>
                         </ul>
-                        <ul v-if="paramData.F34240 == 'F' || paramData.F34240 == 'A' || paramData.F34240 == 'K' || paramData.F34240 == 'I' ">
+                        <ul v-if="etpBasic.F34240 == 'F' || etpBasic.F34240 == 'A' || etpBasic.F34240 == 'K' || etpBasic.F34240 == 'I' ">
                             <li class="list_tit txt_point4">④매매기준율/장전기준율</li>
                             <li class="align_r">
                                 <b>{{F15004_1}}</b>
                             </li>
                         </ul>
-                        <ul v-else-if="paramData.F34240 == 'T'">
+                        <ul v-else-if="etpBasic.F34240 == 'T'">
                             <li class="list_tit txt_point3"><b>③등락률(%)</b></li>
                             <li class="align_r">
                                 <b>{{F15004_2}}</b>
@@ -186,7 +186,7 @@
                                 <b>{{F15004}}</b>
                             </li>
                         </ul>
-                        <ul class="bot_line3" v-if="paramData.F34240 == 'J'" >
+                        <ul class="bot_line3" v-if="etpBasic.F34240 == 'J'" >
                             <li class="list_tit txt_point">Other Factor</li>
                             <li class="align_r">
                                 <b>{{F18101}}</b>
@@ -196,15 +196,15 @@
                             <li class="list_tit">
                                 <b>외부공표 iNAV</b>
                             </li>
-                            <li class="text_red align_r" v-if="paramData.F30818 >= 0">                                        
-                                <b>{{formatNumber(paramData.F15301)}}</b>
+                            <li class="text_red align_r" v-if="etpBasic.F30818 >= 0">                                        
+                                <b>{{formatNumber(etpBasic.F15301)}}</b>
                                 <br>
-                                <span class="float_r">{{formatNumber(paramData.F30818)}}%</span>
+                                <span class="float_r">{{formatNumber(etpBasic.F30818)}}%</span>
                             </li>
-                            <li class="text_blue align_r" v-if="paramData.F30818 < 0">                                        
-                                <b>{{formatNumber(paramData.F15301)}}</b>
+                            <li class="text_blue align_r" v-if="etpBasic.F30818 < 0">                                        
+                                <b>{{formatNumber(etpBasic.F15301)}}</b>
                                 <br>
-                                <span class="float_r">{{formatNumber(paramData.F30818)}}%</span>
+                                <span class="float_r">{{formatNumber(etpBasic.F30818)}}%</span>
                             </li>
                         </ul>
                         <ul class="result">
@@ -241,6 +241,7 @@ export default {
     data() {
         return {
             SimulationSwitch: false,
+            etpBasic: {}, /* ETP 정보 */
             F15318: 0,  /* 기초지수 현재가 */
             F30823: 0,  /* 기초지수 등락률 */
             F03329: 0,  /* 전일Nav */
@@ -265,53 +266,72 @@ export default {
         ProgressBar: ProgressBar
     },    
     mounted: function() {        
-        this.init();
+        this.init(this.paramData.F16012);
     },
     created: function() {},
     beforeDestory: function() {
         var vm = this;
     },
     methods: {
-        init: function() {
-            var vm = this;
-            // 전일 Nav
-            vm.F03329 = vm.formatNumber(vm.paramData.F03329);
-            // 추적수익률
-            vm.F15302 = vm.formatNumber(vm.paramData.F15302);
-            // 기준가
-            vm.F15007 = vm.formatNumber(vm.paramData.F15318 - vm.paramData.F15319);
-            // 매매기준율
-            vm.F30819 = vm.formatNumber(vm.paramData.F30819);
-            // 장전 기준윻
-            vm.F30824 = vm.formatNumber(vm.paramData.F30824);
-            
-            // 기초 지수 현재가
-            vm.F15318 = vm.formatNumber(vm.paramData.F15318);
-            //기초지수 등락률 
-            vm.F30823 = vm.formatDigit(vm.paramData.F30823, 5);
-            // 전일ETP기초지수등락율
-            vm.F34374 = vm.formatNumber(vm.paramData.F34374);
-            // 예상배당수익률 : 배당율
-            vm.F18101 = vm.paramData.F18101;
-            // ETP 배율 
-            vm.F18453 = vm.paramData.F18453;
-            // 변동률 
-            vm.F15004 = (vm.NtoS(vm.F30819) / vm.NtoS(vm.F30824)-1) * 100;
-            vm.F15004 = vm.formatDigit(vm.F15004, 5);
-            // (ETP계산유형: F, A, K, I)매매기준율 /장전 매매 기준율
-            vm.F15004_1 = vm.formatDigit(vm.paramData.F30819 / vm.paramData.F30824, 5);
-            // (ETP계산유형: T)(매매기준율 - 장전 매매 기준율)/ 장전매매기준율
-            vm.F15004_2 = vm.formatDigit((vm.paramData.F30819 - vm.paramData.F30824) / vm.paramData.F30824, 5);
-            // 예상배당 수익률
-            vm.F18101 = vm.formatNumber(vm.paramData.F18101);
-            // 환율 보정 계수 
-            vm.F33128 =  vm.formatNumber(vm.paramData.F33128);
-            // INav 계산결과
-            vm.iNav = vm.formatNumber(0);    
-            // INav 계산결과 율
-            vm.iNavRate = vm.formatNumber(0);    
-            
-            vm.indexInavCal();
+        init: function(F16012) {
+            var vm = this;            
+            util.processing(vm.$refs.progress, true);
+            console.log( "EtpOperInfoInavIndex.vue -> getiNavIndexData" );
+
+            axios.get( Config.base_url + "/user/etp/getiNavIndexData", {
+                params: {
+                    //F16012 : 'KR7261110001',
+                    F16012 : F16012,
+                }
+            }).then(async function(response) {
+
+                if (response.data) {
+                    vm.etpBasic = response.data.etpBasic;
+
+                    // 전일 Nav
+                    vm.F03329 = vm.formatNumber(vm.etpBasic.F03329);
+                    // 추적수익률
+                    vm.F15302 = vm.formatNumber(vm.etpBasic.F15302);
+                    // 기준가
+                    vm.F15007 = vm.formatNumber(vm.etpBasic.F15318 - vm.etpBasic.F15319);
+                    // 매매기준율
+                    vm.F30819 = vm.formatNumber(vm.etpBasic.F30819);
+                    // 장전 기준윻
+                    vm.F30824 = vm.formatNumber(vm.etpBasic.F30824);
+                    
+                    // 기초 지수 현재가
+                    vm.F15318 = vm.formatNumber(vm.etpBasic.F15318);
+                    //기초지수 등락률 
+                    vm.F30823 = vm.formatDigit(vm.etpBasic.F30823, 5);
+                    // 전일ETP기초지수등락율
+                    vm.F34374 = vm.formatNumber(vm.etpBasic.F34374);
+                    // 예상배당수익률 : 배당율
+                    vm.F18101 = vm.etpBasic.F18101;
+                    // ETP 배율 
+                    vm.F18453 = vm.etpBasic.F18453;
+                    // 변동률 
+                    vm.F15004 = (vm.NtoS(vm.F30819) / vm.NtoS(vm.F30824)-1) * 100;
+                    vm.F15004 = vm.formatDigit(vm.F15004, 5);
+                    // (ETP계산유형: F, A, K, I)매매기준율 /장전 매매 기준율
+                    vm.F15004_1 = vm.formatDigit(vm.etpBasic.F30819 / vm.etpBasic.F30824, 5);
+                    // (ETP계산유형: T)(매매기준율 - 장전 매매 기준율)/ 장전매매기준율
+                    vm.F15004_2 = vm.formatDigit((vm.etpBasic.F30819 - vm.etpBasic.F30824) / vm.etpBasic.F30824, 5);
+                    // 예상배당 수익률
+                    vm.F18101 = vm.formatNumber(vm.etpBasic.F18101);
+                    // 환율 보정 계수 
+                    vm.F33128 =  vm.formatNumber(vm.etpBasic.F33128);
+                    // INav 계산결과
+                    vm.iNav = vm.formatNumber(0);    
+                    // INav 계산결과 율
+                    vm.iNavRate = vm.formatNumber(0);    
+                    
+                    vm.indexInavCal();
+                }
+            }).catch(error => {
+                console.log(error);
+                util.processing(vm.$refs.progress, false);   
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);             
+            });
         },
         indexInavCal : function() {
             var vm = this;
@@ -326,50 +346,50 @@ export default {
                 H. 환헷지
                 iNAV=전일NAV*(1+기초지수등락율*배율)
                 */
-                if (vm.paramData.F34240 == 'H') {
+                if (vm.etpBasic.F34240 == 'H') {
                     vm.iNav = vm.NtoS(vm.F03329) * ( 1 + vm.F30823 * vm.F18453 );
                 /* 
                 F. 환노출일반
                 iNAV=전일NAV*(1+기초지수등락율*배율)*(매매기준율/장전매매기준율)
                 */           
-                } else if (vm.paramData.F34240 == 'F') {
+                } else if (vm.etpBasic.F34240 == 'F') {
                     vm.iNav = vm.NtoS(vm.F03329) * ( 1 + vm.F30823 * vm.NtoS(vm.F18453) ) * ( vm.NtoS(vm.F30819)	/ vm.NtoS(vm.F30824) );
                     
                 /* 
                 A.지수환노출 : ARIRAN차이나H레버리지(합성)
                 iNAV=전일NAV*(1+기초지수등락율*배율*매매기준율/장전매매기준율)
                 */
-                } else if (vm.paramData.F34240 == 'A') {
+                } else if (vm.etpBasic.F34240 == 'A') {
                     vm.iNav = vm.NtoS(vm.F03329) * ( 1 + vm.F30823 * vm.NtoS(vm.F18453)  * vm.NtoS(vm.F30819)	/ vm.NtoS(vm.F30824) );
                 /* 
                 K. 복합배율2 : KINDEX 중국본토 레버리지 CSI300
                 iNAV=전일NAV*(1+((1+기초지수등락율)*매매기준율/장전매매기준율-1)*배율)
                 */
-                } else if (vm.paramData.F34240 == 'K') {
+                } else if (vm.etpBasic.F34240 == 'K') {
                     vm.iNav = vm.NtoS(vm.F03329) * ( 1 + (( 1 + vm.F30823 ) * vm.NtoS(vm.F30819) /  vm.NtoS(vm.F30824) - 1 ) * vm.NtoS(vm.F18453) );
                 /* 
                 T.복합배율 :  TIGER 차이나A레버리지(합성)
                 iNAV=전일NAV*(1+기초지수등락율*배율)*(1+(매매기준율-장전매매기준율)/장전매매기준율*배율)               
                 */
-                } else if (vm.paramData.F34240 == 'T') {
+                } else if (vm.etpBasic.F34240 == 'T') {
                     vm.iNav = vm.NtoS(vm.F03329) * ( 1 + vm.F30823 * vm.NtoS(vm.F18453) ) * (1 + (vm.NtoS(vm.F30819)  - vm.NtoS(vm.F30824)) / vm.NtoS(vm.F30824)	* vm.NtoS(vm.F18453) );
                 /*
                     I. 인도레버리지, 전일ETP기초지수등락율(FID 34374 사용 하드코딩되있음)
                     iNAV=전일NAV*(1+((1+기초지수등락율)*매매기준율/장전매매기준율-1)*배율) *(1+전일등락율*배율)
                 */
-                } else if (vm.paramData.F34240 == 'I') {
+                } else if (vm.etpBasic.F34240 == 'I') {
                     vm.iNav = vm.NtoS(vm.F03329) * ( 1 + (( 1 + vm.F30823 ) * vm.NtoS(vm.F30819) /  vm.NtoS(vm.F30824) - 1 ) * vm.NtoS(vm.F18453) ) * (1 + vm.NtoS(vm.F34374) * vm.NtoS(vm.F18453));
                 /* 
                 J. KINDEX합성일본인버스, 1년에 2번 inav를 예상배당수익률(FID 18101 (주의)DEC -6)로 조정한다.
                 iNAV=전일NAV*(1+기초지수등락율*배율-예상배당수익률)
                 */
-                } else if (vm.paramData.F34240 == 'J') {
+                } else if (vm.etpBasic.F34240 == 'J') {
                     vm.iNav = vm.NtoS(vm.F03329) * (1 + vm.F30823 * vm.NtoS(vm.F18453) - vm.NtoS(vm.F18101)); 
                 /* 
                 G.  KODEX 미국채10년 선물 ETF
                 iNAV = 전일NAV * (1+지수등락율*배율)*(환율보정계수 / 장전매매기준율)
                 */
-                } else if (vm.paramData.F34240 == 'G') {
+                } else if (vm.etpBasic.F34240 == 'G') {
                     vm.iNav = vm.NtoS(vm.F03329) * ( 1 + vm.F30823 * vm.NtoS(vm.F18453) ) * ( vm.NtoS(vm.F33128) / vm.NtoS(vm.F30824) );
                 } 
                 
@@ -396,7 +416,8 @@ export default {
             return util.formatDigit(num, digit)
         },
         formatDate:function(date) {
-            return util.formatDate(date);
+            if (date == null) return '';
+            else return util.formatDate(date);
         },
         NtoS: function(num) {
             return util.NumtoStr(num);
@@ -404,7 +425,12 @@ export default {
         fn_close() {
             var vm = this;
             vm.$emit( "fn_close", "index" );
-        },       
+        },    
+        SimulationMode: function() {
+            if (!this.SimulationSwitch) {
+               this.init(this.paramData.F16012);
+            } 
+        },   
     }
 };
 </script>

@@ -53,6 +53,7 @@ module.exports = {
         { file: './user/etp/etpOper', path: '/user/etp/getEtpOperPdfEmergencyHistNow', method: 'getEtpOperPdfEmergencyHistNow', session: 'check', type: 'post' },
 
         { file: './user/etp/etpNavCalcu', path: '/user/etp/getiNavData', method: 'getiNavData', session: 'check', type: 'get' },
+        { file: './user/etp/etpNavCalcu', path: '/user/etp/getiNavIndexData', method: 'getiNavIndexData', session: 'check', type: 'get' },
         { file: './user/etp/etpNavCalcu', path: '/user/etp/getExchBasic', method: 'getExchBasic', session: 'check', type: 'get' },
         { file: './user/etp/etpNavCalcu', path: '/user/etp/getKspjongBasic', method: 'getKspjongBasic', session: 'check', type: 'get' },
         { file: './user/etp/etpNavCalcu', path: '/user/etp/getFutureBasic', method: 'getFutureBasic', session: 'check', type: 'get' },
