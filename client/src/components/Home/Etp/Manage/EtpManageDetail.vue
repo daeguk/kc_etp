@@ -60,7 +60,7 @@
                             {{etpBasic.F15001}}
                             <span v-if="etpBasic.F15472 <= 0" class="text_blue">{{etpBasic.F15472}}({{etpBasic.F15004}})%</span>
                             <span v-else class="text_red">{{etpBasic.F15472}}({{etpBasic.F15004}})%</span>
-                            <p>Last Updated : {{etpBasic.F12506}}</p>
+                            <p>Last Updated : {{etpBasic.fmt_F12506}}</p>
                         </div>
                         <div class="index_nums">
                             <v-layout>
