@@ -91,39 +91,20 @@ export default {
             zIndex: 200
         }
     }),
-    watch:{
-        message_dialog (val) {
-            if(val){
-                this.$nextTick(this.$refs.btn_message_yes.focus);
-            }
-        },
-        confirm_dialog (val) {
-            if(val){
-                this.$nextTick(this.$refs.btn_confirm_yes.focus);
-            }
-        },
-        warning_dialog (val) {
-            if(val){
-                this.$nextTick(this.$refs.btn_warning_yes.focus);
-            }
-        },
-        error_dialog (val) {
-            if(val){
-                this.$nextTick(this.$refs.btn_error_yes.focus);
-            }
-        },                      
-
-    },    
     methods: {
         open(title, message, options, kind) {
             if (kind == 1) {
                 this.message_dialog = true;
+                this.$nextTick(() => this.$refs.btn_message_yes.$el.focus());
             } else if (kind == 2) {
                 this.confirm_dialog = true;
+                this.$nextTick(() => this.$refs.btn_confirm_yes.$el.focus());
             } else if (kind == 3) {
                 this.warning_dialog = true;
+                this.$nextTick(() => this.$refs.btn_warning_yes.$el.focus());
             } else if (kind == 4) {
                 this.error_dialog = true;
+                this.$nextTick(() => this.$refs.btn_error_yes.$el.focus());
             }
 
             this.kind = kind;
