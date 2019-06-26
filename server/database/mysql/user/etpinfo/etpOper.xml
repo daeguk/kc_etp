@@ -539,12 +539,12 @@
                                      WHERE  tm_code_dtl.com_mst_cd  =   'COM005'
                                        AND  tm_code_dtl.com_dtl_cd  =   td_etp_basic.F33929
                                 )                                                   AS  F33929_nm           /* ETP_iNAV산출방식(0:PDF,1:지수수익율) */
-                            /*,   td_etffor_mast.EX_RATE_CODE                                     AS  ex_rate_code*/     /* 환율 코드 */
+                            ,   td_etffor_mast.EX_RATE_CODE                                     AS  ex_rate_code     /* 환율 코드 */
 
                       FROM  td_etp_basic
-                      /*LEFT OUTER JOIN td_etffor_mast ON (
+                      LEFT OUTER JOIN td_etffor_mast ON (
                                      td_etp_basic.F16012 = td_etffor_mast.ISIN_CODE
-                      )*/                       
+                      )                       
 
                      WHERE  1 = 1
                        AND  td_etp_basic.F12506     IN
