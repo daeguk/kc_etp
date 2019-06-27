@@ -2425,6 +2425,94 @@ var getPdfExistYnByNow = function(req, res) {
     }
 }
 
+/*
+ * tm_pdf_basic 에서 최근 F12506(일자) 정보를 조회한다.
+ * 2019-05-03  bkLove(촤병국)
+ */
+var getTmPdfBaiscMaxF12506 = function(req, res) {
+    try {
+        log.debug('etpOper.getTmPdfBaiscMaxF12506 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] etpOper.getTmPdfBaiscMaxF12506  req.body.data no data.", paramData);
+
+            resultMsg.result = false;
+            resultMsg.msg = "[error] etpOper.getTmPdfBaiscMaxF12506  req.body.data no data.";
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        Promise.using(pool.connect(), conn => {
+
+            try {
+                stmt = mapper.getStatement('etpOper', 'getTmPdfBaiscMaxF12506', paramData, format);
+                log.debug(stmt, paramData);
+
+                conn.query(stmt, function(err, rows) {
+
+                    if (err) {
+                        log.error(err, stmt, paramData);
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getTmPdfBaiscMaxF12506 Error while performing Query";
+                        resultMsg.err = err;
+                    }
+
+                    if (rows && rows.length == 1) {
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
+
+                        resultMsg.max_F12506 = rows[0].max_F12506;
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+                });
+
+            } catch (err) {
+                log.error(err, stmt, paramData);
+
+                resultMsg.result = false;
+                resultMsg.msg = "[error] etpOper.getTmPdfBaiscMaxF12506 Error while performing Query";
+                resultMsg.err = err;
+
+                res.json(resultMsg);
+                res.end();
+            }
+        });
+
+    } catch (expetion) {
+
+        log.error(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getTmPdfBaiscMaxF12506 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
+
+        resultMsg.max_F12506 = "";
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
 
 module.exports.getEtpOperInfo = getEtpOperInfo;
 module.exports.getEtpOperIndex = getEtpOperIndex;
@@ -2440,3 +2528,4 @@ module.exports.saveEtpOperPdfModify = saveEtpOperPdfModify;
 module.exports.getPdfByGroupNo = getPdfByGroupNo;
 module.exports.getPdfExistYnByNow = getPdfExistYnByNow;
 module.exports.getEtpOperPdfEmergencyHistNow = getEtpOperPdfEmergencyHistNow;
+module.exports.getTmPdfBaiscMaxF12506 = getTmPdfBaiscMaxF12506;
