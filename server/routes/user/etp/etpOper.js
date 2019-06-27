@@ -2028,7 +2028,7 @@ var makePdfModify = function(fsData) {
   var wItem = {
     fld000: util.padNonZero(8),         // 8자리 데이터일련번호 (X)
     fld001: '620',      // 3자리 데이터종류
-    fld002: '102',      // 3자리 데이터분류
+    fld002: '103',      // 3자리 데이터분류
     fld003: '',         // 8자리 일자
     fld004: '',         // 3자리 사무수탁번호
     fld005: '',         // 12자리 ETF코드
@@ -2036,7 +2036,7 @@ var makePdfModify = function(fsData) {
     fld007: '',         // 12자리 구성종목코드
     fld008: '',         // 18자리 1CU단위증권수
     fld009: '',         // 1자리 구성종목시장구분(0:유가 1:코스닥 2:기타)
-    fld010: util.padNonZero(40),         // 40자리 해외시장종목명(X)
+    fld010: util.padNonZero(40),         // 40자리 시장종목명(X)
     fld011: util.padNonZero(18),         // 18자리 액면금액(X)
     fld012: util.padNonZero(8),         // 8자리 이익분배기준일(X)
     fld013: util.padNonZero(18),         // 18자리 평가금액(X)
@@ -2078,6 +2078,7 @@ var makePdfModify = function(fsData) {
       wItem.fld007 = tmp.data[j].F16316;
       wItem.fld008 = util.padZero(Number(tmp.data[j].F16499) * 100, 18); // 백엔드에서 나누기 100 해서 씀
       wItem.fld009 = tmp.data[j].F33861;
+      wItem.fld010 = util.padSpace(tmp.data[j].F16004, 40);
       if(tmp.data[j].status == 'insert') wItem.fld014 = '1';
       else if(tmp.data[j].status == 'delete') wItem.fld014 = '2';
       else  wItem.fld014 = '0';
@@ -2085,7 +2086,8 @@ var makePdfModify = function(fsData) {
       var ostr = wItem.fld000 + wItem.fld001 + wItem.fld002 + wItem.fld003 + 
       wItem.fld004 + wItem.fld005 + wItem.fld006 + wItem.fld007 + wItem.fld008 + 
       wItem.fld009 + wItem.fld010 + wItem.fld011 + wItem.fld012 + wItem.fld013 + 
-      wItem.fld014 + wItem.filler + wItem.filler2; 
+      wItem.fld014 + wItem.filler + wItem.filler2;
+      log.debug("strlen : " + ostr.length);
       fs.writeFileSync(ifname, ostr, {flag: 'a+'}, 'utf8');
       log.debug("wItem..................");
       log.debug(wItem);
@@ -2093,23 +2095,26 @@ var makePdfModify = function(fsData) {
   }
 }
 /*
-{ fld000: '00000000',
-  fld001: '620',
-  fld002: '102',
-  fld003: '20190626',
-  fld004: '903',
-  fld005: 'KR7152100004',
-  fld006: '0201',
-  fld007: 'KR7000080002',
-  fld008: '000000000000001100',
-  fld009: '0',
-  fld010: '0000000000000000000000000000000000000000',
-  fld011: '000000000000000000',
-  fld012: '00000000',
-  fld013: '000000000000000000',
-  fld014: '0',
-  filler: '0000000000000000000000000000000000000000000',
-  filler2: '\r\n' }
+{ F12506: '20190627',
+    fmt_F12506: '2019.06.27',
+    F16012: 'KR7152100004',
+    F16583: '903',
+    F16013: '152100',
+    F16316: 'KR7000070003',
+    F33837: '201',
+    F16499: '121211.00',
+    fmt_F16499: '11.00',
+    F33861: '0',
+    F34840: '0',
+    fmt_F34840: '0.00',
+    F16588: 8896887400,
+    F34743: '3',
+    fmt_F34743: '0.03',
+    F16004: '삼양홀딩스                              ',
+    status: 'modify',
+    F16499_prev: '11.00',
+    F34840_prev: '0',
+    code_check: true },
 strlen : 202 (window : 202, linux : 201)
 */
 
