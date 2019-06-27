@@ -11,8 +11,8 @@
           <v-layout row wrap>
             <v-flex xs12 text-xs-center>
               <div class="intro_logo">EMP<span>ETP Management<br> Platform</span>
-                  <p>Nam dapibu nisl vitae elit fringilla rutrum. Aenean sollicitudin, erat a elementum rutrum,<br>
-                  neque sempretium metus, quis mollisnisl nunc et massa. vestibulum sed metus inlorem</p>
+                  <p>Securities Derivatives MarketㆍFinancial Investment Industry Capital Market <br> 
+                     IT Solution Leader KOSCOM</p>
               </div>
             </v-flex>
             <v-flex xs12>
