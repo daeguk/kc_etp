@@ -840,8 +840,7 @@
           FROM  (        
                 <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
                 <![CDATA[              
-                    SELECT      #{now_date}                     AS  F12506      /* 일자 */
-                            ,   #{F16583}                       AS  F16583      /* 사무수탁회사번호 */
+                    SELECT      #{F16583}                       AS  F16583      /* 사무수탁회사번호 */
                             ,   #{F16012}                       AS  F16012      /* ETF종목코드 */
                             ,   #{F16013}                       AS  F16013      /* ETF단축코드 */
                             ,   #{data.F16316}                  AS  F16316      /* 구성종목코드 */
@@ -885,32 +884,38 @@
             ,   F16013                      /* ETF단축코드 */
             ,   F16316                      /* 구성종목코드 */
 
+            ,   F33837                      /* 구성종목수 */
             ,   F16499                      /* 1CU단위증권수 */
             ,   F33861                      /* ETF시장구분 */
             ,   F16004                      /* 해외시장종목명 */
             ,   F34840                      /* 액면금액 */
+            ,   F33760                      /* 이익분배기준일 */
             ,   F16588                      /* 평가금액 */
             ,   F34743                      /* ETF_PDF비중 */
             ,   F34744                      /* ETF_PDF포함여부 */
+            ,   F16006                      /* 영문심볼 */
         ) 
     ]]>
         VALUES
         <foreach    collection="dataLists"   item="data"     separator="," >
     <![CDATA[        
         ( 
-                #{data.F12506}              /* 일자 */
+                #{now_date}                 /* 일자 */
             ,   #{F16583}                   /* 사무수탁회사번호 */
             ,   #{F16012}                   /* ETF종목코드 */
             ,   #{F16013}                   /* ETF단축코드 */
             ,   #{data.F16316}              /* 구성종목코드 */
 
+            ,   0                           /* 구성종목수 */
             ,   #{data.F16499}              /* 1CU단위증권수 */
             ,   #{data.F33861}              /* ETF시장구분 */
             ,   #{data.F16004}              /* 해외시장종목명 */
             ,   #{data.F34840}              /* 액면금액 */
+            ,   ''                          /* 이익분배기준일 */
             ,   #{data.F16588}              /* 평가금액 */
             ,   0                           /* ETF_PDF비중 */
             ,   0                           /* ETF_PDF포함여부 */
+            ,   ''                          /* 영문심볼 */
         )
     ]]>
         </foreach>
@@ -999,54 +1004,6 @@
 -->
 
     <!--
-    * td_etfpdf_hist에 저장하기 위해 변경된 td_etfpdf_basic 의 데이터를 조회한다.
-    * 2019-05-20  bkLove(촤병국)
-    -->
-    <select id="getTdEtfpdfBasicAllData">
-
-        SELECT      /* etpOper.getTdEtfpdfBasicAllData  td_etfpdf_hist에 저장하기 위해 변경된 td_etfpdf_basic 의 데이터를 조회한다. */
-
-                    td_etfpdf_basic.F12506                                  AS  F12506      /* 일자 */
-                ,   td_etfpdf_basic.F16583                                  AS  F16583      /* 사무수탁회사번호 */
-                ,   td_etfpdf_basic.F16012                                  AS  F16012      /* ETF종목코드 */
-                ,   td_etfpdf_basic.F16013                                  AS  F16013      /* ETF단축코드 */
-                ,   td_etfpdf_basic.F16316                                  AS  F16316      /* 구성종목코드 */
-                ,   td_etfpdf_basic.F33837                                  AS  F33837      /* 구성종목수 */
-                ,   td_etfpdf_basic.F16499                                  AS  F16499      /* 1CU단위증권수 */
-                ,   td_etfpdf_basic.F33861                                  AS  F33861      /* ETF시장구분 */
-                ,   td_etfpdf_basic.F16004                                  AS  F16004      /* 해외시장종목명 */
-                ,   td_etfpdf_basic.F34840                                  AS  F34840      /* 액면금액설정현금액 */
-                ,   td_etfpdf_basic.F33760                                  AS  F33760      /* 이익분배기준일 */
-                ,   td_etfpdf_basic.F16588                                  AS  F16588      /* 평가금액 */
-                ,   td_etfpdf_basic.F34743                                  AS  F34743      /* ETF_PDF비중 */
-                ,   td_etfpdf_basic.F34744                                  AS  F34744      /* ETF_PDF포함여부 */
-                ,   td_etfpdf_basic.F16006                                  AS  F16006      /* 영문심볼 */
-
-          FROM  (        
-                <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
-                <![CDATA[              
-                    SELECT      #{F16583}                       AS  F16583      /* 사무수탁회사번호 */
-                            ,   #{F16012}                       AS  F16012      /* ETF종목코드 */
-                            ,   #{F16013}                       AS  F16013      /* ETF단축코드 */
-                            ,   #{data.F16316}                  AS  F16316      /* 구성종목코드 */
-                    FROM  DUAL
-                ]]>
-                </foreach>
-                )       base
-
-          JOIN  td_etfpdf_basic
-            ON  (
-                            1 = 1
-                    AND     td_etfpdf_basic.F16583              =   base.F16583     /* 사무수탁회사번호 */
-                    AND     td_etfpdf_basic.F16012              =   base.F16012     /* ETF종목코드 */
-                    AND     td_etfpdf_basic.F16013              =   base.F16013     /* ETF단축코드 */
-                    AND     td_etfpdf_basic.F16316              =   base.F16316     /* 구성종목코드 */
-                )
-         WHERE  1 = 1
-
-    </select>
-
-    <!--
     * ETP 운용관리 - PDF 긴급반영 - 저장시 td_etfpdf_hist 에 데이터가 존재하는지 체크한다.
     *
     * 1) td_etfpdf_hist 에 없는 경우 'insert'
@@ -1072,16 +1029,11 @@
                             ,   #{F16013}                       AS  F16013      /* ETF단축코드 */
                             ,   #{data.F16316}                  AS  F16316      /* 구성종목코드 */
 
-                            ,   #{data.F33837}                  AS  F33837      /* 구성종목수 */
                             ,   #{data.F16499}                  AS  F16499      /* 1CU단위증권수 */
                             ,   #{data.F33861}                  AS  F33861      /* ETF시장구분 */
                             ,   #{data.F16004}                  AS  F16004      /* 해외시장종목명 */
                             ,   #{data.F34840}                  AS  F34840      /* 액면금액 */
-                            ,   #{data.F33760}                  AS  F33760      /* 이익분배기준일 */
                             ,   #{data.F16588}                  AS  F16588      /* 평가금액 */
-                            ,   #{data.F34743}                  AS  F34743      /* ETF_PDF비중 */
-                            ,   #{data.F34744}                  AS  F34744      /* ETF_PDF포함여부 */
-                            ,   #{data.F16006}                  AS  F16006      /* 영문심볼 */
                     FROM  DUAL
                 ]]>
                 </foreach>
@@ -1126,6 +1078,7 @@
             ,   F16588                      /* 평가금액 */
             ,   F34743                      /* ETF_PDF비중 */
             ,   F34744                      /* ETF_PDF포함여부 */
+            ,   F16006                      /* 영문심볼 */
         ) 
     ]]>
         VALUES
@@ -1138,16 +1091,17 @@
             ,   #{F16013}                   /* ETF단축코드 */
             ,   #{data.F16316}              /* 구성종목코드 */
 
-            ,   #{data.F33837}              /* 구성종목수 */
+            ,   0                           /* 구성종목수 */
             ,   #{data.F16499}              /* 1CU단위증권수 */
             ,   #{data.F33861}              /* ETF시장구분 */
             ,   #{data.F16004}              /* 해외시장종목명 */
             ,   #{data.F34840}              /* 액면금액 */
 
-            ,   #{data.F33760}              /* 이익분배기준일 */
+            ,   ''                          /* 이익분배기준일 */
             ,   #{data.F16588}              /* 평가금액 */
-            ,   #{data.F34743}              /* ETF_PDF비중 */
-            ,   #{data.F34744}              /* ETF_PDF포함여부 */
+            ,   0                           /* ETF_PDF비중 */
+            ,   0                           /* ETF_PDF포함여부 */
+            ,   ''                          /* 영문심볼 */
         )
     ]]>
         </foreach>
@@ -1396,42 +1350,6 @@
 
     </update>
 
-    <!--
-    * [tm_pdf_modify] 테이블을 삭제한다.
-    * 2019-05-20  bkLove(촤병국)
-    -->
-    <delete     id="deleteTmPdfModifyDtl">
-
-        DELETE  /* etpOper.deleteTmPdfModifyDtl      [tm_pdf_modify_dtl] 테이블을 수정한다. */
-
-                tm_pdf_modify_dtl
-
-          FROM  tm_pdf_modify_dtl
-        
-         INNER  JOIN    (
-                            <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
-                            <![CDATA[              
-                                SELECT      #{user_id}                      AS  email           /* 이메일 */
-                                        ,   #{F16583}                       AS  F16583          /* 사무수탁회사번호 */
-                                        ,   #{F16012}                       AS  F16012          /* ETF종목코드 */
-                                        ,   #{F16013}                       AS  F16013          /* ETF단축코드 */
-                                        ,   #{data.F16316}                  AS  F16316          /* 구성종목코드 */
-                                FROM  DUAL
-                            ]]>
-                            </foreach>
-                        )       base
-                        
-                  ON            1 = 1
-
-                        AND     tm_pdf_modify_dtl.email     =   base.email      /* 이메일 */
-                        AND     tm_pdf_modify_dtl.F16583    =   base.F16583     /* 사무수탁회사번호 */
-                        AND     tm_pdf_modify_dtl.F16012    =   base.F16012     /* ETF종목코드 */
-                        AND     tm_pdf_modify_dtl.F16013    =   base.F16013     /* ETF단축코드 */
-                        AND     tm_pdf_modify_dtl.F16316    =   base.F16316     /* 구성종목코드 */
-
-    </delete>
-
-
 
 <!--
 ***************************************************************
@@ -1541,26 +1459,7 @@
            AND  F16012                      =   #{F16012}                   /* ETF종목코드 */
            AND  F16013                      =   #{F16013}                   /* ETF단축코드 */
     ]]>
-    </update>    
-
-    <!--
-    * [tm_pdf_modify_mast] 테이블을 삭제한다.
-    * 2019-05-20  bkLove(촤병국)
-    -->
-    <delete     id="deleteTmPdfModifyMast">
-    <![CDATA[      
-        DELETE  /* etpOper.deleteTmPdfModifyMast      [tm_pdf_modify_mast] 테이블을 삭제한다. */
-          FROM  tm_pdf_modify_mast
-         WHERE  1 = 1
-
-           AND  email                       =   #{user_id}                  /* 이메일 */
-           AND  F16583                      =   #{F16583}                   /* 사무수탁회사번호 */
-           AND  F16012                      =   #{F16012}                   /* ETF종목코드 */
-           AND  F16013                      =   #{F16013}                   /* ETF단축코드 */
-    ]]>
-    </delete>
-
-
+    </update>
 
 
 
