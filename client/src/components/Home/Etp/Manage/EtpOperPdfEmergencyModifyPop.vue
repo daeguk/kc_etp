@@ -524,6 +524,7 @@ export default {
 
         var searchParam                 =   {}
         searchParam.F16012              =   vm.paramData.F16012;                   /* 국제표준코드 */
+        searchParam.F16013              =   vm.paramData.F16013;                   /* 단축코드 */
 /* 여러종류의 ETF 코드 데이터 저장을 위해 임시로 처리함 */
 //        searchParam.F16012              =   "KR7322410002";
         searchParam.initYn              =   "Y";
@@ -559,96 +560,159 @@ export default {
             vm.result.flag  =   true;
             vm.result.msg   =   '';
 
-            util.processing(vm.$refs.progress, true);
+            
 
-            searchParam.isEtfYn     =   "Y";
-            searchParam.search_date =       new Date().getFullYear() 
-                                        +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
-                                        +   _.padStart( new Date().getDate(), 2, '0' );
 
-            axios.post( Config.base_url + "/user/etp/getEtpOperPdfModify", {
-                data: searchParam
-            }).then( async function(response) {
-                console.log(response);
+            /* tm_pdf_basic 에서 최근 F12506(일자) 정보를 조회한다. */
+            vm.fn_getTmPdfBaiscMaxF12506( searchParam ).then( function(e1){
+                if( !e1 ) {
+                    return  false;
+                }            
 
-                util.processing(vm.$refs.progress, false);
+                searchParam.isEtfYn     =   "Y";
 
-                if (response.data) {
+                util.processing(vm.$refs.progress, true);
+                axios.post( Config.base_url + "/user/etp/getEtpOperPdfModify", {
+                    data: searchParam
+                }).then( async function(response) {
+                    console.log(response);
 
-                    var msg = ( response.data.msg ? response.data.msg : "" );
-                    if (!response.data.result) {
-                        if( msg ) {
-                            if( await vm.$emit('showMessageBox', '확인', msg,{},1) ) {
+                    util.processing(vm.$refs.progress, false);
+
+                    if (response.data) {
+
+                        var msg = ( response.data.msg ? response.data.msg : "" );
+                        if (!response.data.result) {
+                            if( msg ) {
+                                if( await vm.$emit('showMessageBox', '확인', msg,{},1) ) {
+                                    return  false;
+                                }
+                            }
+                        }
+
+                        var etpBasic = response.data.etpBasic;
+                        var dataList = response.data.dataList;
+
+                        if( searchParam.initYn == "N" ) {
+
+                            if( etpBasic && Object.keys( etpBasic ).length > 0 ) {
+
+                                /* allDataList 에서 존재하는 인덱스를 확인한다. */
+                                var filterIndex  =   _.findIndex( vm.allDataList,    {
+                                        "etf_F16012"    :   etpBasic.F16012      /* ETF 국제표준코드 */
+                                    ,   "etf_F16013"    :   etpBasic.F16013      /* ETF 단축코드 */
+                                });
+
+                                if( filterIndex > -1 ) {
+                                    vm.result.flag  =   false;
+                                    vm.result.msg   =   '해당 코드는 이미 변경작업에 존재합니다. 다른 코드를 선택해 주세요.';
+
+                                    return  false;
+                                }
+
+                                /* 로그인 운용사코드와 동일한지 체크 */
+                                if( etpBasic.login_F33960_check != "Y" ) {
+                                    vm.result.flag  =   false;
+                                    vm.result.msg   =   '타 발행사의 종목은 변경하실수 없습니다.';
+
+                                    return  false;
+                                }
+
+                                /* 사무수탁회사번호 가 없는 경우 */
+    /* 여러종류의 ETF 코드 데이터 저장을 위해 임시로 처리함 */
+    //etpBasic.F16583 = 10;
+                                if( etpBasic.F16583 == "" ) {
+                                    vm.result.flag  =   false;
+                                    vm.result.msg   =   '사무수탁회사번호가 존재하지 않습니다.';
+
+                                    return  false;
+                                }
+
+                            }else{
+
+                                vm.result.flag  =   false;
+                                vm.result.msg   =   '해당코드의 종목이 존재하지 않습니다.';
+
                                 return  false;
                             }
                         }
-                    }
 
-                    var etpBasic = response.data.etpBasic;
-                    var dataList = response.data.dataList;
+                        vm.txtAddEtpCode    =   "";
 
-                    if( searchParam.initYn == "N" ) {
+                        vm.step             =   1;
+                        vm.etpBasic         =   etpBasic;
 
-                        if( etpBasic && Object.keys( etpBasic ).length > 0 ) {
+                        if (dataList && dataList.length > 0) {
+                            tblEmergeny01.rows.add( dataList ).draw();
+                            tblEmergeny01.draw();
 
-                            /* allDataList 에서 존재하는 인덱스를 확인한다. */
-                            var filterIndex  =   _.findIndex( vm.allDataList,    {
-                                    "etf_F16012"    :   etpBasic.F16012      /* ETF 국제표준코드 */
-                                ,   "etf_F16013"    :   etpBasic.F16013      /* ETF 단축코드 */
-                            });
-
-                            if( filterIndex > -1 ) {
-                                vm.result.flag  =   false;
-                                vm.result.msg   =   '해당 코드는 이미 변경작업에 존재합니다. 다른 코드를 선택해 주세요.';
-
-                                return  false;
-                            }
-
-                            /* 로그인 운용사코드와 동일한지 체크 */
-                            if( etpBasic.login_F33960_check != "Y" ) {
-                                vm.result.flag  =   false;
-                                vm.result.msg   =   '타 발행사의 종목은 변경하실수 없습니다.';
-
-                                return  false;
-                            }
-
-                            /* 사무수탁회사번호 가 없는 경우 */
-/* 여러종류의 ETF 코드 데이터 저장을 위해 임시로 처리함 */
-//etpBasic.F16583 = 10;
-                            if( etpBasic.F16583 == "" ) {
-                                vm.result.flag  =   false;
-                                vm.result.msg   =   '사무수탁회사번호가 존재하지 않습니다.';
-
-                                return  false;
-                            }
-
-                        }else{
-
-                            vm.result.flag  =   false;
-                            vm.result.msg   =   '해당코드의 종목이 존재하지 않습니다.';
-
-                            return  false;
+                            vm.dataList =   dataList;
                         }
                     }
-
-                    vm.txtAddEtpCode    =   "";
-
-                    vm.step             =   1;
-                    vm.etpBasic         =   etpBasic;
-
-                    if (dataList && dataList.length > 0) {
-                        tblEmergeny01.rows.add( dataList ).draw();
-                        tblEmergeny01.draw();
-
-                        vm.dataList =   dataList;
-                    }
-                }
-                
-            }).catch(error => {
-                util.processing(vm.$refs.progress, false);
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+                    
+                }).catch(error => {
+                    util.processing(vm.$refs.progress, false);
+                    vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+                });
             });
         },
+
+        /*
+         * tm_pdf_basic 에서 최근 F12506(일자) 정보를 조회한다.
+         * 2019-05-03  bkLove(촤병국)
+         */
+        fn_getTmPdfBaiscMaxF12506( searchParam ) {
+            var vm = this;
+
+            return  new Promise(function(resolve, reject) {
+                console.log( "fn_getTmPdfBaiscMaxF12506 called" );
+                
+                // 이미 검색일자가 존재하는 경우 조회하지 않게 함.
+                if( searchParam.search_date ) {
+                    resolve(true);
+                }else{
+                    util.processing(vm.$refs.progress, true);
+                    axios.post( Config.base_url + "/user/etp/getTmPdfBaiscMaxF12506", {
+                        data: searchParam
+                    }).then(function(response) {
+                        console.log(response);
+
+                        util.processing(vm.$refs.progress, false);
+                        if (response.data) {
+
+                            var msg = ( response.data.msg ? response.data.msg : "" );
+                            if (!response.data.result) {
+                                if( msg ) {
+                                    vm.$emit("showMessageBox", '확인', msg,{},1);
+                                    return  false;
+                                }
+                            }
+
+                            if( response.data.dateInfo ) {
+                                searchParam.search_date      =   response.data.dateInfo.F12506;
+                            }
+                        }
+
+                        resolve(true);
+                        
+                    }).catch(error => {
+                        console.log( error );
+                        util.processing(vm.$refs.progress, false);
+                        vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+
+                        resolve(false);
+                    });
+                }
+
+            }).catch( function(e) {
+                console.log( e );
+
+                util.processing(vm.$refs.progress, false);
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+
+                resolve(false);
+            });
+        },        
 
         /*
          * [자산 추가] 후 구성종목 찾기를 누를시 실행한다.

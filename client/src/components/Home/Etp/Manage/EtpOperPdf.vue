@@ -174,7 +174,7 @@ export default {
                 vm.fn_getTmPdfBaiscMaxF12506().then( function(e1){
                     if( !e1 ) {
                         return  false;
-                    }                    
+                    }
 
                     /* 현재일자에 PDF 변경건이 존재하는지 반환한다. */
                     vm.fn_getPdfExistYnByNow().then( function(e2) {
@@ -374,6 +374,7 @@ export default {
             return  new Promise(function(resolve, reject) {
                 console.log( "fn_getTmPdfBaiscMaxF12506 called" );
                 
+                // 이미 검색일자가 존재하는 경우 조회하지 않게 함.
                 if( vm.searchParam.show_date ) {
                     resolve(true);
                 }else{
@@ -389,7 +390,7 @@ export default {
                             var msg = ( response.data.msg ? response.data.msg : "" );
                             if (!response.data.result) {
                                 if( msg ) {
-                                    vm.showMessageBox('확인', msg,{},1);
+                                    vm.$emit("showMessageBox", '확인', msg,{},1);
                                     return  false;
                                 }
                             }
@@ -400,7 +401,10 @@ export default {
                         }
 
                         resolve(true);
+
                     }).catch(error => {
+                        console.log( error );
+
                         vm.$emit( "fn_showProgress", false );
                         vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
 
@@ -410,6 +414,10 @@ export default {
 
             }).catch( function(e) {
                 console.log( e );
+
+                vm.$emit( "fn_showProgress", false );
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);                
+
                 resolve(false);
             })
         },
