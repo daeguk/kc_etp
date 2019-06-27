@@ -52,6 +52,7 @@ module.exports = {
     return new Array(len+1).join('0');
   },
   padZero: function(str, len) {
+    str = str + '';
     return str.length >= len ? str : new Array(len-str.length+1).join('0') + str;
   },
 }

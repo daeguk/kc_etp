@@ -2065,41 +2065,32 @@ var makePdfModify = function(fsData) {
   F16499_prev: '110.00',
   F34840_prev: '0',
   code_check: true } */
-console.log("makePdfModify.......................");
+  log.debug("makePdfModify.......................");
   var ifname = config.pdfmodify_nas_path + "pdfmodify." + util.getTodayDate();
 
   for(var i=0; i<fsData.allDataList.length; i++) {
-      var tmp = fsData.allDataList[i];
-      for(var j=0; j<tmp.data.length; j++) {
-        wItem.fld003 = tmp.data[j].F12506;
-        wItem.fld004 = tmp.data[j].F16583;
-        wItem.fld005 = tmp.data[j].F16012;
-        wItem.fld006 = util.padZero(tmp.data[j].F33837, 4);
-        wItem.fld007 = tmp.data[j].F16316;
-        wItem.fld008 = util.padZero(tmp.data[j].F16499, 18);
-        wItem.fld009 = tmp.data[j].F33861;
-        if(tmp.data[j].status == 'insert') wItem.fld014 = '1';
-        else if(tmp.data[j].status == 'delete') wItem.fld014 = '2';
-        else  wItem.fld014 = '0';
+    var tmp = fsData.allDataList[i];
+    for(var j=0; j<tmp.data.length; j++) {
+      wItem.fld003 = tmp.data[j].F12506;
+      wItem.fld004 = tmp.data[j].F16583;
+      wItem.fld005 = tmp.data[j].F16012;
+      wItem.fld006 = util.padZero(tmp.data[j].F33837, 4);
+      wItem.fld007 = tmp.data[j].F16316;
+      wItem.fld008 = util.padZero(Number(tmp.data[j].F16499) * 100, 18); // 백엔드에서 나누기 100 해서 씀
+      wItem.fld009 = tmp.data[j].F33861;
+      if(tmp.data[j].status == 'insert') wItem.fld014 = '1';
+      else if(tmp.data[j].status == 'delete') wItem.fld014 = '2';
+      else  wItem.fld014 = '0';
 
-        fs.stat(ifname, function(err, stat) {
-          if(err == null || err.code == 'ENOENT' ) {
-            var ostr = wItem.fld000 + wItem.fld001 + wItem.fld002 + wItem.fld003 + 
-              wItem.fld004 + wItem.fld005 + wItem.fld006 + wItem.fld007 + wItem.fld008 + 
-              wItem.fld009 + wItem.fld010 + wItem.fld011 + wItem.fld012 + wItem.fld013 + 
-              wItem.fld014 + wItem.filler + wItem.filler2; 
-
-            console.log("strlen : " + ostr.length);
-            fs.writeFileSync(ifname, ostr, {flag: 'a+'}, 'utf8');
-          }else {
-            // 기타 에러
-            console.log("File Write Error : " + ifname);
-          }
-        });
-      }
-      console.log("wItem..................");
-      console.log(wItem);
+      var ostr = wItem.fld000 + wItem.fld001 + wItem.fld002 + wItem.fld003 + 
+      wItem.fld004 + wItem.fld005 + wItem.fld006 + wItem.fld007 + wItem.fld008 + 
+      wItem.fld009 + wItem.fld010 + wItem.fld011 + wItem.fld012 + wItem.fld013 + 
+      wItem.fld014 + wItem.filler + wItem.filler2; 
+      fs.writeFileSync(ifname, ostr, {flag: 'a+'}, 'utf8');
+      log.debug("wItem..................");
+      log.debug(wItem);
     }
+  }
 }
 /*
 { fld000: '00000000',
@@ -2110,7 +2101,7 @@ console.log("makePdfModify.......................");
   fld005: 'KR7152100004',
   fld006: '0201',
   fld007: 'KR7000080002',
-  fld008: '000000000000000011',
+  fld008: '000000000000001100',
   fld009: '0',
   fld010: '0000000000000000000000000000000000000000',
   fld011: '000000000000000000',
