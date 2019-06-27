@@ -28,7 +28,7 @@
                                             box
                                             outline
                                             v-on="on"
-                                            @change="$refs.menu2.save(searchParam.show_date);fn_getEtpOerPdf( 'N' )"
+                                            @keyup.enter="$refs.menu2.save(searchParam.show_date);fn_getEtpOerPdf( 'N' )"
                                             widh="100%"
                                         ></v-text-field>
                                     </template>
