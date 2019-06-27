@@ -235,7 +235,7 @@ import ComIndexFixPopup     from "@/components/common/popup/ComIndexFixPopup.vue
 import ComEtpFavorItemSub   from "@/components/common/control/ComEtpFavorItemSub.vue"; 
 
 export default {
-    props: [ "etpBasic" ],
+    props: [ "etpBasic", "toggle" ],
 
     components: {
             ComIndexFixPopup        :   ComIndexFixPopup
@@ -262,7 +262,28 @@ export default {
             faverSize : 490,
         };
     },
-    mounted: function() {},
+    mounted: function() {
+        var vm = this;
+
+        if( vm.toggle ) {
+
+            if( vm.toggle.toggleINav ) {
+                vm.toggleINav   =   vm.toggle.toggleINav;
+            }
+
+            if( vm.toggle.toggleEtpPerformance ) {
+                vm.toggleEtpPerformance   =   vm.toggle.toggleEtpPerformance;
+            }
+
+            if( vm.toggle.toggleCustomize ) {
+                vm.toggleCustomize   =   vm.toggle.toggleCustomize;
+            }
+
+            if( vm.toggle.arrCustomizeColumn ) {
+                vm.arrCustomizeColumn   =   vm.toggle.arrCustomizeColumn;
+            }            
+        }
+    },
     created: function() {},
     beforeDestory: function() {},
 
@@ -292,7 +313,6 @@ export default {
             var vm = this;
 
             vm.toggleEtpPerformance =   false;
-
             vm.toggleINav       =   !vm.toggleINav;
             vm.toggleCustomize  =   false;
 
@@ -312,7 +332,6 @@ export default {
             var vm = this;
 
             vm.toggleINav  =   false;
-
             vm.toggleEtpPerformance =   !vm.toggleEtpPerformance;
             vm.toggleCustomize      =   false;
 
@@ -352,7 +371,11 @@ export default {
                 }
             });
 
-            vm.$emit( "fn_setCustomizeData", vm.arrCustomizeColumn );
+            var paramData   =   {};
+            paramData.toggleCustomize    =   vm.toggleCustomize;
+            paramData.arrCustomizeColumn    =   vm.arrCustomizeColumn;
+
+            vm.$emit( "fn_setCustomizeData", paramData );
 
             console.log("########## EtpOperInfoQuick.vue -> fn_setCustomizeData END ############");
         },
