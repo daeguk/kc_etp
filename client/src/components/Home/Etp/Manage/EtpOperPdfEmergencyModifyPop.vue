@@ -761,7 +761,8 @@ export default {
                         tblEmergeny01.row(  dataJson.rowIndex ).data( addData ).order( [0, "asc"] ).draw(  );
                         vm.dataList[ dataJson.rowIndex ]            =   addData;
                     }else{
-                        var  v_F16588   =   dataList[0].F15007 * dataJson.F16499
+                        /* F16588 (평가금액) = F15007 ( td_kspjong_basic 의 기준가 ) * F16499 ( CU shrs ) */
+                        var  v_F16588   =   Number( dataList[0].F15007 ) * Number( dataJson.nowData.F16499 );
 
                         table.cell( tr, 6 ).data( v_F16588 );
                         vm.dataList[ dataJson.rowIndex ].F16588    =   v_F16588;
