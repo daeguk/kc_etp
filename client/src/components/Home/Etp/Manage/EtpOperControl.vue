@@ -5,6 +5,9 @@
 
             <!-- ETP 운용정보 -->
             <EtpOperInfo    v-if="showEtpOerInfo == 0" 
+
+                            :toggle="toggle"
+                            :state="state"
             
                             @showDetail="showDetail" 
                             @showMessageBox="showMessageBox"
@@ -13,7 +16,11 @@
                             @fn_showDetailIndex="fn_showDetailIndex"
                             @fn_showDetailPdf="fn_showDetailPdf"
                             @fn_pageMove="fn_pageMove"
-                            @fn_setFirstData="fn_setFirstData">
+                            @fn_setFirstData="fn_setFirstData"
+                            
+                            @fn_setInavData="fn_setInavData"
+                            @fn_setEtpPerformanceData="fn_setEtpPerformanceData"
+                            @fn_setCustomizeData="fn_setCustomizeData">
             </EtpOperInfo>
 
             <!-- 지수관리 -->
@@ -209,8 +216,17 @@ export default {
             reloadYn : false,
             toggle : {
                 togglePdfEmergencyPop : false,
-                toggleIanvPop : false
-            }
+                toggleIanvPop : false,
+
+                toggleINav :   false,
+                toggleEtpPerformance :  false,
+                toggleCustomize :  false,
+                arrCustomizeColumn : []
+            },
+            state :     {       
+                    pageState : 'etpInfo'   /* etpInfo - ETP운용정보, iNav - iNav 산출현황, performance - ETP Performance, customize - 컬럼 선택 */
+                ,   gubun : 'A' 
+            }            
     	};
     },    
 
@@ -248,6 +264,9 @@ export default {
         this.$root.$confirm = this.$refs.confirm;
 
         this.className = "conWidth_100";
+
+
+        console.log( ">>>>>>>>>>> this.toggle", this.toggle );
     },
     created: function() {
         this.$EventBus.$on('showList', data => {
@@ -273,6 +292,16 @@ export default {
 
             this.paramData                          =   data.paramData;
 
+            if( this.showEtpOerInfo != 0 ) {
+                this.toggle.toggleINav =   false;
+                this.toggle.toggleEtpPerformance =   false;
+                this.toggle.toggleCustomize =   false;
+                this.toggle.arrCustomizeColumn =   [];
+
+                this.state.pageState = 'etpInfo';   /* etpInfo - ETP운용정보, iNav - iNav 산출현황, performance - ETP Performance, customize - 컬럼 선택 */
+                this.state.gubun = 'A';
+            }
+
             if( this.showEtpOerInfo == 2 ) {
                 this.className      =   "conWidth_left";
                 this.FaverClassName =   "conWidth_right";
@@ -285,7 +314,7 @@ export default {
             }else{
                 this.$EventBus.$off('changeEtpAnalysisInfo');
             }
-*/            
+*/
         });
     },
     beforeUpdated: function() {
@@ -467,6 +496,61 @@ export default {
 
             vm.paramData = firstData;
             vm.$emit( "fn_setFirstData", firstData );
+        },
+
+        fn_setInavData( paramData, stateInfo ) {
+            var vm = this;
+
+            if( paramData && paramData.toggleINav ) {
+                vm.toggle.toggleINav    =   paramData.toggleINav;
+            }
+
+            vm.toggle.toggleEtpPerformance  =   false;
+            vm.toggle.toggleCustomize  =   false;
+            vm.toggle.arrCustomizeColumn  =   [];
+
+            if( stateInfo ) {
+                vm.state.pageState  =   stateInfo.pageState;
+                vm.state.gubun  =   stateInfo.gubun;
+            }
+        },
+
+        fn_setEtpPerformanceData( paramData, stateInfo ) {
+            var vm = this;
+
+            if( paramData && paramData.toggleEtpPerformance ) {
+                vm.toggle.toggleEtpPerformance    =   paramData.toggleEtpPerformance;
+            }
+
+            vm.toggle.toggleINav  =   false;
+            vm.toggle.toggleCustomize  =   false;
+            vm.toggle.arrCustomizeColumn  =   [];
+
+            if( stateInfo ) {
+                vm.state.pageState  =   stateInfo.pageState;
+                vm.state.gubun  =   stateInfo.gubun;
+            }            
+        },
+        
+        fn_setCustomizeData( paramData, stateInfo ) {
+            var vm = this;
+
+            if( paramData ) {
+                if( paramData.toggleCustomize ) {
+                    vm.toggle.toggleCustomize    =   paramData.toggleCustomize;
+                }
+                if( paramData.arrCustomizeColumn ) {
+                    vm.toggle.arrCustomizeColumn    =   paramData.arrCustomizeColumn;
+                }                
+            }
+
+            vm.toggle.toggleINav  =   false;
+            vm.toggle.toggleEtpPerformance  =   false;
+
+            if( stateInfo ) {
+                vm.state.pageState  =   stateInfo.pageState;
+                vm.state.gubun  =   stateInfo.gubun;
+            }            
         },
 
         /*
