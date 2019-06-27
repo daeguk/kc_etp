@@ -285,7 +285,7 @@ export default {
                 }
             }).then(async function(response) {
 
-                if (response.data) {
+                if (response.data.success) {
                     vm.etpBasic = response.data.etpBasic;
 
                     // 전일 Nav
