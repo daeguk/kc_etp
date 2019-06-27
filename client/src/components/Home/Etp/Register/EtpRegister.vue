@@ -209,18 +209,9 @@
                                                             no-title
                                                             scrollable
                                                             v-model="masterData.list_req_date"
+
+                                                            locale="ko" @input="$refs.menu.save(masterData.list_req_date)"
                                                         >
-                                                            <v-spacer></v-spacer>
-                                                            <v-btn
-                                                                flat
-                                                                color="primary"
-                                                                @click="menu = false"
-                                                            >Cancel</v-btn>
-                                                            <v-btn
-                                                                flat
-                                                                color="primary"
-                                                                @click="$refs.menu.save(masterData.list_req_date)"
-                                                            >OK</v-btn>
                                                         </v-date-picker>
                                                     </v-menu>
                                                 </v-flex>
@@ -268,18 +259,9 @@
                                                             no-title
                                                             scrollable
                                                              v-model="masterData.list_date"
+
+                                                             locale="ko" @input="$refs.menu2.save(masterData.list_date)"
                                                         >
-                                                            <v-spacer></v-spacer>
-                                                            <v-btn
-                                                                flat
-                                                                color="primary" 
-                                                                @click="menu2 = false"
-                                                            >Cancel</v-btn>
-                                                            <v-btn
-                                                                flat
-                                                                color="primary"
-                                                                @click="$refs.menu2.save(masterData.list_date)"
-                                                            >OK</v-btn>
                                                         </v-date-picker>
                                                     </v-menu>
                                                 </v-flex>

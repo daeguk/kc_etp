@@ -33,14 +33,7 @@
                                             widh="100%"
                                         ></v-text-field>
                                     </template>
-                                    <v-date-picker v-model="searchParam.show_date" no-title scrollable>
-                                        <v-spacer></v-spacer>
-                                        <v-btn flat @click="menu = false">Cancel</v-btn>
-                                        <v-btn
-                                            flat
-                                            color="primary"
-                                            @click="$refs.menu2.save(searchParam.show_date);fn_getEtpOerPdf( 'N' )"
-                                        >OK</v-btn>
+                                    <v-date-picker v-model="searchParam.show_date" no-title scrollable locale="ko" @input="$refs.menu2.save(searchParam.show_date);fn_getEtpOerPdf( 'N' )">
                                     </v-date-picker>
                                 </v-menu>                            
                             </span>
