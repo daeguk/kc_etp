@@ -1116,6 +1116,8 @@ var getSampleFileDown = function(req, res) {
 //        res.attachment( file );
 //        res.end('Downloaded', 'UTF-8')
 
+        log.debug( "#### getSampleFileDown START ###", file, "#### getSampleFileDown SEND ###" );
+
         res.download( file, savedFileNm, function( err) {
             log.error(paramData, err);
         });

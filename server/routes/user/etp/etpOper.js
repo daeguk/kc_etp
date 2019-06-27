@@ -2384,7 +2384,7 @@ var getPdfExistYnByNow = function(req, res) {
 
                     if (!rows || rows.length != 1) {
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] etpOper.getMaxGroupNo emergency_exist_yn 가 존재하지 않습니다.";
+                        resultMsg.msg = "etpOper.getPdfExistYnByNow 오류가 발생하였습니다.";
                         resultMsg.err = err;
                     }
 
