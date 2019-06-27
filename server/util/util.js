@@ -55,4 +55,8 @@ module.exports = {
     str = str + '';
     return str.length >= len ? str : new Array(len-str.length+1).join('0') + str;
   },
+  padSpace: function(str, len) {
+    str = str + '';
+    return str.length >= len ? str : str + new Array(len-str.length+1).join(' ');
+  },
 }
