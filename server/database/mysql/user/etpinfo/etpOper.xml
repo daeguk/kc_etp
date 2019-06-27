@@ -1967,7 +1967,8 @@
     <select id="getTmPdfBaiscMaxF12506">
     <![CDATA[
         SELECT  /* etpOper.getTmPdfBaiscMaxF12506   tm_pdf_basic 에서 최근 F12506(일자) 정보를 조회한다. */
-                td_etfpdf_basic.F12506          AS  max_F12506
+                    td_etfpdf_basic.F12506                                  AS  F12506
+                ,   DATE_FORMAT( td_etfpdf_basic.F12506, '%Y-%m-%d' )       AS  fmt_F12506
 
           FROM  td_etfpdf_basic
          WHERE  1 = 1

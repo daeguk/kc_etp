@@ -2479,7 +2479,7 @@ var getTmPdfBaiscMaxF12506 = function(req, res) {
                         resultMsg.result = true;
                         resultMsg.msg = "";
 
-                        resultMsg.max_F12506 = rows[0].max_F12506;
+                        resultMsg.dateInfo = rows[0];
                     }
 
                     res.json(resultMsg);
@@ -2506,7 +2506,7 @@ var getTmPdfBaiscMaxF12506 = function(req, res) {
         resultMsg.msg = "[error] etpOper.getTmPdfBaiscMaxF12506 오류가 발생하였습니다.";
         resultMsg.err = expetion;
 
-        resultMsg.max_F12506 = "";
+        resultMsg.dateInfo = {};
 
         res.json(resultMsg);
         res.end();
