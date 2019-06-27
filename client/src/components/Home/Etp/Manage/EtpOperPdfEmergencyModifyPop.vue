@@ -565,10 +565,16 @@ export default {
 
 
             /* tm_pdf_basic 에서 최근 F12506(일자) 정보를 조회한다. */
-            vm.fn_getTmPdfBaiscMaxF12506( searchParam ).then( function(e1){
+            vm.fn_getTmPdfBaiscMaxF12506( searchParam ).then( async function(e1){
                 if( !e1 ) {
                     return  false;
                 }            
+
+                if( !vm.search_date ) {
+                    if( await vm.$emit('showMessageBox', '확인', "최근일자 정보가 존재하지 않습니다.",{},1) ) {
+                        return  false;
+                    }
+                }
 
                 searchParam.isEtfYn     =   "Y";
 
@@ -686,8 +692,7 @@ export default {
                             var msg = ( response.data.msg ? response.data.msg : "" );
                             if (!response.data.result) {
                                 if( msg ) {
-                                    vm.$emit("showMessageBox", '확인', msg,{},1);
-                                    return  false;
+                                    resolve(false);
                                 }
                             }
 
@@ -1102,9 +1107,6 @@ export default {
 
             console.log("EtpOperPdfEmergencyModifyPop -> fn_saveEtpOperPdfModify");
 
-            var now_date    =       new Date().getFullYear()
-                                +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
-                                +   _.padStart( new Date().getDate(), 2, '0' );
 
             // console.log("문자발송...........");
             // axios.get("http://forms.koscom.co.kr/sms/EtpSmsAction.do", {
@@ -1118,7 +1120,7 @@ export default {
             util.processing(vm.$refs.progress, true);
             axios.post( Config.base_url + "/user/etp/saveEtpOperPdfModify", {
                 data: {     
-                        now_date    : now_date
+                        now_date    : vm.search_date
                     ,   allDataList : vm.allDataList
                 }
             }).then( async function(response) {

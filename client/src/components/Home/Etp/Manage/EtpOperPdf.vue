@@ -236,7 +236,7 @@ export default {
                         var msg = ( response.data.msg ? response.data.msg : "" );
                         if (!response.data.result) {
                             if( msg ) {
-                                vm.showMessageBox('확인', msg,{},1);
+                                vm.$emit("showMessageBox", '확인', msg,{},1);
                                 return  false;
                             }
                         }
@@ -283,7 +283,7 @@ export default {
                     var msg = ( response.data.msg ? response.data.msg : "" );
                     if (!response.data.result) {
                         if( msg ) {
-                            vm.showMessageBox('확인', msg,{},1);
+                            vm.$emit("showMessageBox", '확인', msg,{},1);
                             return  false;
                         }
                     }
@@ -336,12 +336,11 @@ export default {
                     vm.$emit( "fn_showProgress", false );
 
                     if (response.data) {
-
                         var msg = ( response.data.msg ? response.data.msg : "" );
                         if (!response.data.result) {
                             if( msg ) {
-                                vm.showMessageBox('확인', msg,{},1);
-                                return  false;
+                                vm.$emit("showMessageBox", '확인',msg,{},4);
+                                resolve(false);
                             }
                         }
 
@@ -352,6 +351,8 @@ export default {
 
                     resolve(true);
                 }).catch(error => {
+                    console.log( error );
+
                     vm.$emit( "fn_showProgress", false );
                     vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
 
@@ -360,6 +361,10 @@ export default {
 
             }).catch( function(e) {
                 console.log( e );
+
+                vm.$emit( "fn_showProgress", false );
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+
                 resolve(false);
             })
         },
@@ -391,7 +396,7 @@ export default {
                             if (!response.data.result) {
                                 if( msg ) {
                                     vm.$emit("showMessageBox", '확인', msg,{},1);
-                                    return  false;
+                                    resolve(false);
                                 }
                             }
 
