@@ -258,9 +258,9 @@
                                 </b>
                             </div>
                             <div class="pdf_coment text-xs-center">
-                                신일식 과장 767-0000
-                                <br>이형준 과장 767-0000
-                                <br>오춘교 대리 767-0000
+                                신일식 과장 02-767-8747
+                                <br>이형준 과장 767-8750
+                                <br>오춘교 대리 767-8735
                             </div>
                             <p class="text-xs-center">
                                 <v-btn dark depressed color="primary" @click="fn_close">닫기</v-btn>
