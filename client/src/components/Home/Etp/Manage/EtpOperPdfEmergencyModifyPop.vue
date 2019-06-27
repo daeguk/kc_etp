@@ -317,7 +317,8 @@ export default {
             result : {
                     flag : true
                 ,   msg: ""
-            }
+            },
+            search_date : "",
         };
     },
     created: function() {
@@ -668,7 +669,9 @@ export default {
                 console.log( "fn_getTmPdfBaiscMaxF12506 called" );
                 
                 // 이미 검색일자가 존재하는 경우 조회하지 않게 함.
-                if( searchParam.search_date ) {
+                if( vm.search_date ) {
+                    searchParam.search_date     =  vm.search_date;
+ 
                     resolve(true);
                 }else{
                     util.processing(vm.$refs.progress, true);
@@ -689,7 +692,7 @@ export default {
                             }
 
                             if( response.data.dateInfo ) {
-                                searchParam.search_date      =   response.data.dateInfo.F12506;
+                                vm.search_date      =   response.data.dateInfo.F12506;
                             }
                         }
 
