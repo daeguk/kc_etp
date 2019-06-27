@@ -159,6 +159,7 @@
                                                     v-model="form.base_date"
                                                     no-title
                                                     scrollable
+                                                    locale="ko"
 
                                                     @input="$refs.menu.save(form.base_date)"
                                                 >

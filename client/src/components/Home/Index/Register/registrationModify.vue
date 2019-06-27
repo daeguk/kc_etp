@@ -216,6 +216,7 @@
                                                     v-model="modForm.base_date" 
                                                     no-title 
                                                     scrollable
+                                                    locale="ko"
 
                                                     @input="$refs.menu.save(modForm.base_date)"
                                                 >
