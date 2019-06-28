@@ -11,7 +11,7 @@
           <v-layout row wrap>
             <v-flex xs12 text-xs-center>
               <div class="intro_logo">EMP<span>ETP Management<br> Platform</span>
-                  <p>Build to create, manage and analyze capital market <br> 
+                  <p>Built to create, manage and analyze capital market <br> 
                      Live simple, it's all in EMP</p>
               </div>
             </v-flex>
