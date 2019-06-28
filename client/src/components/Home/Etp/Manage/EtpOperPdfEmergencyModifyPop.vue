@@ -772,7 +772,7 @@ export default {
                                         dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
                                     }
                                 } 
-                                if( vm.allDataList.length > 0 ) {
+                                if( vm.dataList.length > 0 || vm.allDataList.length > 0 ) {
                                     vm.jongmok_state    =   "no_ing";
                                 }
                                 return  false;
@@ -789,7 +789,7 @@ export default {
                                     dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
                                 }
                             }
-                            if( vm.allDataList.length > 0 ) {
+                            if( vm.dataList.length > 0 || vm.allDataList.length > 0 ) {
                                 vm.jongmok_state    =   "no_ing";
                             }
                             return  false;
@@ -1600,7 +1600,9 @@ export default {
             
             if( vm.allDataList.length > 0 && vm.jongmok_state=="no_ing" ) {
                 return  false;
-            }else if( vm.jongmok_state=="" ){
+            }else if( vm.dataList.length > 0 && vm.jongmok_state=="no_ing" ){
+                return  false;
+            }else if( vm.jongmok_state=="" ) {
                 return  false;
             }else{
                 return  true;
