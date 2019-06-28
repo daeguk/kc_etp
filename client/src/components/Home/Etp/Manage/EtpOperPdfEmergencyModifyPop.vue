@@ -767,7 +767,9 @@ export default {
                 else{
                     table.cell( tr, 9 ).data( { "status" : "modify" } );
                     vm.dataList[ dataJson.rowIndex ].status  =   "modify";                            
-                }                
+                }
+
+                vm.dataList[ dataJson.rowIndex ].F16499      =   dataJson.nowData.F16499;
             }
 
             util.processing(vm.$refs.progress, true);
@@ -857,9 +859,7 @@ export default {
                         var  v_F16588   =   Number( dataList[0].F15007 ) * Number( dataJson.nowData.F16499 );
 
                         table.cell( tr, 6 ).data( v_F16588 );
-                        vm.dataList[ dataJson.rowIndex ].F16588    =   v_F16588;
-
-                        vm.dataList[ dataJson.rowIndex ].F16499      =   dataJson.nowData.F16499;                        
+                        vm.dataList[ dataJson.rowIndex ].F16588    =   v_F16588;                   
                     }
                 }
             }).catch(error => {
