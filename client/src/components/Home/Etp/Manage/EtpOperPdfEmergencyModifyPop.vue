@@ -491,7 +491,7 @@ export default {
         });
 
         /* CU shrs 수정시 */
-        $("#" + vm.tblEmergeny01 + " tbody").on('change', "input[name='F16499'],input[name='F34840']", function () {
+        $("#" + vm.tblEmergeny01 + " tbody").on('blur', "input[name='F16499'],input[name='F34840']", function () {
 
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
             var data = table.row($(this).parents("tr")).data();
