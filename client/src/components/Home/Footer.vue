@@ -1,18 +1,7 @@
 <template>
 <v-footer>
     <v-layout row wrap align-center>
-    <v-flex md4>
-        <span style="padding-left:30px;"></span>
-        <v-icon small>error</v-icon>
-        <span>도움말</span>
-        <span style="padding-left:20px;"></span>
-        <v-icon small>local_offer</v-icon>
-        <span>KOSCOM 연락처</span>
-        <span style="padding-left:20px;"></span>
-        <v-icon small>assignment_ind</v-icon>
-        <span>사용자등록</span>
-    </v-flex>
-    <v-flex md-3 offset-md5>
+    <v-flex md-3 offset-md5 ml-3 mt-1>
         <span>&copy; Copyright KOSCOM 2019. All rights reserved.</span>
     </v-flex>
     </v-layout>
