@@ -487,7 +487,7 @@ export default {
         });
 
         /* CU shrs 수정시 */
-        $("#" + vm.tblEmergeny01 + " tbody").on('blur', "input[name='F16499'],input[name='F34840']", function () {
+        $("#" + vm.tblEmergeny01 + " tbody").on('change', "input[name='F16499'],input[name='F34840']", function () {
 
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
             var data = table.row($(this).parents("tr")).data();
@@ -731,6 +731,9 @@ export default {
 
             console.log("EtpOperPdfEmergencyModifyPop -> fn_getJongmokData");
 
+            var table = $("#" + vm.tblEmergeny01 ).DataTable();
+            var tr = table.row( dataJson.rowIndex );                
+
             if( dataJson.status == "insert" ) {
                 if(     !dataJson.codeVal
                     ||  dataJson.codeVal.length == 0
@@ -745,10 +748,29 @@ export default {
                         return  false;
                     }
                 }
-            }
+            }else{
+                /* 
+                *   상태값 normal 로 변경
+                *
+                *   수정한 [1CU단위증권수] 와 원본 [1CU단위증권수] 이 같고
+                *   수정했던 [액면금액] 과 원본 [액면금액] 이 같은 경우
+                */
+                if( dataJson.nowStatus == "insert" ) {
+                    table.cell( tr, 9 ).data( { "status" : "insert" } );
+                    vm.dataList[ dataJson.rowIndex ].status  =   "insert";
+                }
+                else if(    Number( dataJson.tableData.F16499_prev ) == Number( dataJson.nowData.F16499 )
+                        &&  Number( dataJson.tableData.F34840_prev ) == Number( dataJson.tableData.F34840 ) ) {
+                    table.cell( tr, 9 ).data( { "status" : "normal" } );
+                    vm.dataList[ dataJson.rowIndex ].status  =   "normal";
+                }                            
+                else{
+                    table.cell( tr, 9 ).data( { "status" : "modify" } );
+                    vm.dataList[ dataJson.rowIndex ].status  =   "modify";                            
+                }
 
-            var table = $("#" + vm.tblEmergeny01 ).DataTable();
-            var tr = table.row( dataJson.rowIndex );            
+                vm.dataList[ dataJson.rowIndex ].F16499      =   dataJson.nowData.F16499;
+            }
 
             util.processing(vm.$refs.progress, true);
             axios.post( Config.base_url + "/user/etp/getJongmokData", {
@@ -837,29 +859,7 @@ export default {
                         var  v_F16588   =   Number( dataList[0].F15007 ) * Number( dataJson.nowData.F16499 );
 
                         table.cell( tr, 6 ).data( v_F16588 );
-                        vm.dataList[ dataJson.rowIndex ].F16588    =   v_F16588;
-
-                        /* 
-                        *   상태값 normal 로 변경
-                        *
-                        *   수정한 [1CU단위증권수] 와 원본 [1CU단위증권수] 이 같고
-                        *   수정했던 [액면금액] 과 원본 [액면금액] 이 같은 경우
-                        */
-                        if( dataJson.nowStatus == "insert" ) {
-                            table.cell( tr, 9 ).data( { "status" : "insert" } );
-                            vm.dataList[ dataJson.rowIndex ].status  =   "insert";
-                        }
-                        else if(    Number( dataJson.tableData.F16499_prev ) == Number( dataJson.nowData.F16499 )
-                                &&  Number( dataJson.tableData.F34840_prev ) == Number( dataJson.tableData.F34840 ) ) {
-                            table.cell( tr, 9 ).data( { "status" : "normal" } );
-                            vm.dataList[ dataJson.rowIndex ].status  =   "normal";
-                        }                            
-                        else{
-                            table.cell( tr, 9 ).data( { "status" : "modify" } );
-                            vm.dataList[ dataJson.rowIndex ].status  =   "modify";                            
-                        }
-
-                        vm.dataList[ dataJson.rowIndex ].F16499      =   dataJson.nowData.F16499;                        
+                        vm.dataList[ dataJson.rowIndex ].F16588    =   v_F16588;                   
                     }
                 }
             }).catch(error => {
