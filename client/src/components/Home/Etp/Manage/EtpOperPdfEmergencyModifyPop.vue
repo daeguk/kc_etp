@@ -319,6 +319,7 @@ export default {
                 ,   msg: ""
             },
             search_date : "",
+            jongmok_state : "", /* ksp_jongbasic DB 조회 상태 */
         };
     },
     created: function() {
@@ -731,6 +732,8 @@ export default {
 
             console.log("EtpOperPdfEmergencyModifyPop -> fn_getJongmokData");
 
+            vm.jongmok_state    =   "";
+
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
             var tr = table.row( dataJson.rowIndex );                
 
@@ -739,12 +742,14 @@ export default {
                     ||  dataJson.codeVal.length == 0
                 ) {
                     if( await vm.$emit("showMessageBox", '확인','구성종목코드를 입력해 주세요.',{},1) ) {
+                        vm.jongmok_state    =   "check";
                         return  false;
                     }
                 }
 
                 if(  dataJson.codeVal.length < 6 ) {
                     if( await vm.$emit("showMessageBox", '확인','구성종목코드를 6자리 이상 입력해 주세요.',{},1) ) {
+                        vm.jongmok_state    =   "check";
                         return  false;
                     }
                 }
@@ -779,7 +784,7 @@ export default {
                 console.log(response);
 
                 util.processing(vm.$refs.progress, false);
-
+debugger;
                 if (response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
                     if (!response.data.result) {
@@ -787,9 +792,11 @@ export default {
                             if( await vm.$emit('showMessageBox', '확인', msg,{},1) ) {
                                 if( typeof dataJson.tableData.F16499_prev != "undefined" ) {
                                     if( dataJson.thisTag ) {
-                                        dataJson.thisTag.eq(0).val( dataJson.tableData.F16499_prev );
+                                        vm.dataList[ dataJson.rowIndex ].F16499      =   dataJson.tableData.F16499_prev;
+                                        dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
                                     }
-                                }                                
+                                }
+                                vm.jongmok_state    =   "check";
                                 return  false;
                             }
                         }
@@ -801,22 +808,26 @@ export default {
                         if( await vm.$emit('showMessageBox', '확인', '구성종목코드(' + dataJson.codeVal + ')가 존재하지 않습니다.',{},1) ) {
                             if( typeof dataJson.tableData.F16499_prev != "undefined" ) {
                                 if( dataJson.thisTag ) {
-                                    dataJson.thisTag.eq(0).val( dataJson.tableData.F16499_prev );
+                                    vm.dataList[ dataJson.rowIndex ].F16499      =    dataJson.tableData.F16499_prev;
+                                    dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
                                 }
                             }
+
+                            vm.jongmok_state    =   "check";
                             return  false;
                         }
-
-                        return  false;
                     }
 
                     if ( dataList && dataList.length > 1 ) {
                         if( await vm.$emit("showMessageBox", '확인','구성종목코드(' + dataJson.codeVal + ')가 여러건 존재합니다.',{},1) ) {
                             if( typeof dataJson.tableData.F16499_prev != "undefined" ) {
                                 if( dataJson.thisTag ) {
-                                    dataJson.thisTag.eq(0).val( dataJson.tableData.F16499_prev );
+                                    vm.dataList[ dataJson.rowIndex ].F16499      =   dataJson.tableData.F16499_prev;
+                                    dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
                                 }
-                            }                            
+                            }          
+
+                            vm.jongmok_state    =   "check";                  
                             return  false;
                         }
                     }
@@ -831,6 +842,7 @@ export default {
                     
                         if( filterData.length > 0 ) {
                             if( await vm.$emit("showMessageBox", '확인','구성종목코드(' + dataJson.codeVal + ')가 이미 존재합니다.',{},1) ) {
+                                vm.jongmok_state    =   "check";
                                 return  false;
                             }
                         }
@@ -862,9 +874,14 @@ export default {
                         vm.dataList[ dataJson.rowIndex ].F16588    =   v_F16588;                   
                     }
                 }
+
+                vm.jongmok_state    =   "";
             }).catch(error => {
+console.log( error );
                 util.processing(vm.$refs.progress, false);
                 vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+
+                vm.jongmok_state    =   "";
             });
         },
 
@@ -1530,6 +1547,13 @@ export default {
                 if( vm.$emit("showMessageBox", '확인','구성종목코드가 확인 되지 않은 건이 존재합니다.',{},1) ) {
                     return  false;
                 }
+            }
+
+            if( vm.jongmok_state != "" ) {
+                console.log( "jongmok_state=[" + vm.jongmok_state + "]" );
+                vm.jongmok_state = "";
+
+                return  false;
             }
 
             return  true;
