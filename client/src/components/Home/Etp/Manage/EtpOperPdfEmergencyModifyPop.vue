@@ -771,7 +771,17 @@ export default {
                                     if( dataJson.thisTag ) {
                                         dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
                                     }
-                                } 
+                                }
+
+
+                                /*
+                                *   no_ing 용도
+                                *   -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
+                                * 
+                                *   1)  Next 를 통해 ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력된 경우
+                                *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
+                                *   2)  구성종목을 한건 이상 수정하고, 구성종목 DB 검색 후 callback 에서 오류 메시지 팝업창이 출력된 경우
+                                */
                                 if( vm.dataList.length > 0 || vm.allDataList.length > 0 ) {
                                     vm.jongmok_state    =   "no_ing";
                                 }
@@ -789,6 +799,15 @@ export default {
                                     dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
                                 }
                             }
+
+                            /*
+                            *   no_ing 용도
+                            *   -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
+                            * 
+                            *   1)  Next 를 통해 ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력된 경우
+                            *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
+                            *   2)  구성종목을 한건 이상 수정하고, 구성종목 DB 검색 후 callback 에서 오류 메시지 팝업창이 출력된 경우
+                            */                            
                             if( vm.dataList.length > 0 || vm.allDataList.length > 0 ) {
                                 vm.jongmok_state    =   "no_ing";
                             }
@@ -1104,6 +1123,14 @@ export default {
 
                     vm.fn_addEtfOperPdfModifyCancel();
 
+
+                    /*
+                    *   Next 버튼 클릭시
+                    *   1)  ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력되는 경우
+                    *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
+                    *       -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
+                    *       -   step2로 화면이 전환된 경우에 callback 을 받은 경우에는  step=1 로 이동시키고 다시 next 버튼을 누를수 있게 jongmok_state 를 초기화 한다.
+                    */
                     if( vm.allDataList.length > 0 && vm.jongmok_state=="no_ing" ) {
                         vm.step = 1;
                         vm.jongmok_state="";
@@ -1595,6 +1622,18 @@ export default {
             }
         },
 
+        /*
+        *   Next 버튼이 보이는 경우
+        *   1)  최초
+        *   2)  Next 를 통해 ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력된 경우
+        *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
+        *       -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
+        *       -   해당 오류건은 무시하고 next 버튼을 보이도록 함.
+        *   3)  구성종목을 한건 이상 수정하고, 구성종목 DB 검색 후 callback 에서 오류 메시지 팝업창이 출력된 경우
+        *       -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
+        *       -   해당 오류건은 무시하고 next 버튼을 보이도록 함.
+        *   4)  정상적으로 구성종목 DB 검색 후 callback 을 받은 경우
+        */
         fn_nextButtonDisabledCheck() {
             var vm = this;
             
