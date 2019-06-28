@@ -41,10 +41,11 @@ export default {
     };
   },    
   mounted: function() {
+    this.activeTab = 0;
     this.pageMove(this.tabs[0]);
   },
   created: function() {
-      
+    
   },
   beforeUpdated: function() {
       
@@ -54,7 +55,10 @@ export default {
     FngIndexList,
   },
   updated: function() {
-    
+    if (this.activeTab == 0) {
+      this.activeTab = 0;
+      this.pageMove(this.tabs[0]);
+    }
   },
   methods: {
     pageMove : function(tab) {
