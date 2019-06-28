@@ -72,10 +72,9 @@
                     </v-card>
                     <v-divider></v-divider>
 
-                    <v-card-actions>
+                    <v-card-actions>         
                         <v-spacer></v-spacer>
-                        <span style="color:red">{{ jongmok_state_msg }}</span>
-                        <v-btn color="primary" depressed @click="fn_stepCheck(1)">Next</v-btn>
+                        <v-btn color="primary" :disabled='fn_nextButtonDisabledCheck()' depressed @click="fn_stepCheck(1)">Next</v-btn>
                     </v-card-actions>
 <!-- step1 END-->
                 </v-window-item>
@@ -89,7 +88,7 @@
                     <v-card flat class="listset_pop">
                         <h5>
                             <v-card-title ma-0>
-                                <v-btn icon :disabled="step === 1" flat @click='step--; jongmok_state = ""; jongmok_state_msg = "";' >
+                                <v-btn icon :disabled="step === 1" flat @click='step--;'>
                                     <v-icon>arrow_back_ios</v-icon>
                                 </v-btn>PDF 변경신청 현황
 
@@ -322,7 +321,6 @@ export default {
             search_date : "",
 
             jongmok_state : "", /* ksp_jongbasic DB 조회 상태 */
-            jongmok_state_msg : "",
         };
     },
     created: function() {
@@ -773,19 +771,26 @@ export default {
                                     if( dataJson.thisTag ) {
                                         dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
                                     }
-                                }                                
+                                } 
+                                if( vm.allDataList.length > 0 ) {
+                                    vm.jongmok_state    =   "no_ing";
+                                }
                                 return  false;
                             }
                         }
                     }
 
                     var dataList = response.data.dataList;
+
                     if ( !dataList || dataList.length == 0 ) {
                         if( await vm.$emit('showMessageBox', '확인', '구성종목코드(' + dataJson.codeVal + ')가 존재하지 않습니다.',{},1) ) {
                             if( typeof dataJson.tableData.F16499_prev != "undefined" ) {
                                 if( dataJson.thisTag ) {
                                     dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
                                 }
+                            }
+                            if( vm.allDataList.length > 0 ) {
+                                vm.jongmok_state    =   "no_ing";
                             }
                             return  false;
                         }
@@ -799,7 +804,7 @@ export default {
                                 if( dataJson.thisTag ) {
                                     dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
                                 }
-                            }                            
+                            }
                             return  false;
                         }
                     }
@@ -870,6 +875,8 @@ export default {
 
                 vm.jongmok_state    =   "";
             }).catch(error => {
+                vm.jongmok_state    =   "";
+                
                 util.processing(vm.$refs.progress, false);
                 vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
@@ -922,194 +929,188 @@ export default {
 
             if( step == 1) {
 
-                vm.jongmok_state_msg    =   "";
+                /* 자산추가된 행에 대해 빈 값이 존재하는지 체크한다. */
+                if( !vm.fn_emptyCheck() )   {
+                    return  false;
+                }
 
-                vm.fn_jongmokStateCheck().then( async function(e1){
+                /* 자산추가 후 구성종목코드가 확인이 되지 않는건이 있는지 확인한다. */
+                if( !vm.fn_codeCheck() ) {
+                    return  false;
+                }
 
-                    if( !e1 ) {
-                        vm.jongmok_state_msg   =   "처리 중 입니다. Next 버튼을 다시 눌러주세요.";
+                /* 이전건이 존재하는 경우 */
+                if( vm.allDataList.length > 0 ) {
+
+                    /* 변경된 데이터만 추출 */
+                    var filterData  =   _.filter( vm.dataList, function( o, i ) {
+                        if( o.status == "insert" || o.status == "modify" ) {
+                            return  true;
+                        }
+                    });
+
+                    /* 현재 수정된 건이 없는 경우 */
+                    if( filterData.length == 0 ) {
+                        var filterIndex  =   _.findIndex( vm.allDataList,    {
+                                                    "etf_F16012"    :   vm.etpBasic.F16012      /* ETF 국제표준코드 */
+                                                ,   "etf_F16013"    :   vm.etpBasic.F16013      /* ETF 단축코드 */
+                                            });
+
+                        if( filterIndex > -1 ) {
+                            /* 현재건 삭제 */
+                            vm.allDataList.splice( filterIndex, 1 );
+                        }
+                    }
+                }
+
+                vm.fn_modifyAllDataList();
+
+
+                /* 추가 또는 수정건이 존재하는지 체크한다. */
+                if(     !vm.allDataList 
+                    ||  vm.allDataList.length == 0  
+                ) {
+                    if( !vm.fn_modifyCheck() ) {
                         return  false;
                     }
+                }
 
-                    /* 자산추가된 행에 대해 빈 값이 존재하는지 체크한다. */
-                    if( !vm.fn_emptyCheck() )   {
-                        return  false;
-                    }
 
-                    /* 자산추가 후 구성종목코드가 확인이 되지 않는건이 있는지 확인한다. */
-                    if( !vm.fn_codeCheck() ) {
-                        return  false;
-                    }
 
-                    /* 이전건이 존재하는 경우 */
-                    if( vm.allDataList.length > 0 ) {
+                if( vm.allDataList.length > 0 ) {
 
-                        /* 변경된 데이터만 추출 */
-                        var filterData  =   _.filter( vm.dataList, function( o, i ) {
-                            if( o.status == "insert" || o.status == "modify" ) {
-                                return  true;
-                            }
-                        });
+                    var items = [];
 
-                        /* 현재 수정된 건이 없는 경우 */
-                        if( filterData.length == 0 ) {
-                            var filterIndex  =   _.findIndex( vm.allDataList,    {
-                                                        "etf_F16012"    :   vm.etpBasic.F16012      /* ETF 국제표준코드 */
-                                                    ,   "etf_F16013"    :   vm.etpBasic.F16013      /* ETF 단축코드 */
-                                                });
-
-                            if( filterIndex > -1 ) {
-                                /* 현재건 삭제 */
-                                vm.allDataList.splice( filterIndex, 1 );
-                            }
+                    for ( let subData of vm.allDataList ) {
+                        if ( $.fn.DataTable.isDataTable('#step2_' + subData.etf_F16012 ) ) {
+                            $('#step2_' + subData.etf_F16012).DataTable().destroy();
                         }
                     }
 
-                    vm.fn_modifyAllDataList();
+                    for ( let subData of vm.allDataList ) {
 
+                        vm.$nextTick().then(() => {
 
-                    /* 추가 또는 수정건이 존재하는지 체크한다. */
-                    if(     !vm.allDataList 
-                        ||  vm.allDataList.length == 0  
-                    ) {
-                        if( !vm.fn_modifyCheck() ) {
-                            return  false;
-                        }
-                    }
+                            items = subData.data;
 
+                            // console.log("subData.etf_F16012=[" + subData.etf_F16012 + "]");
+                            // console.log( "items" );
+                            // console.log( items );
+                            
+                            $( '#step2_' + subData.etf_F16012 ).DataTable( {
+                                    "processing": true,
+                                    "serverSide": false,
+                                    "info": false,   // control table information display field
+                                    "stateSave": true,  //restore table state on page reload,
+                                    "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                                    "scrollY": '15vh',
+                                    select: {
+                                        style:    'single',
+                                        selector: 'td:first-child'
+                                    },
+                                    paging: false,
+                                    searching: false,
+                                    data : items,
+                                    ordering : false,
+                                    "columnDefs": [
+                                        {  
+                                            /* 구분 */
+                                            "render": function ( data, type, row ) {
 
+                                                var htm = "";
+                                                if( typeof row.status != "undefined" ) {
+                                                    if( row.status == "insert" ) {
+                                                        htm = "신규";
+                                                    }else{
+                                                        htm = "변경";
+                                                    }
+                                                }
 
-                    if( vm.allDataList.length > 0 ) {
-
-                        var items = [];
-
-                        for ( let subData of vm.allDataList ) {
-                            if ( $.fn.DataTable.isDataTable('#step2_' + subData.etf_F16012 ) ) {
-                                $('#step2_' + subData.etf_F16012).DataTable().destroy();
-                            }
-                        }
-
-                        for ( let subData of vm.allDataList ) {
-
-                            vm.$nextTick().then(() => {
-
-                                items = subData.data;
-
-                                // console.log("subData.etf_F16012=[" + subData.etf_F16012 + "]");
-                                // console.log( "items" );
-                                // console.log( items );
-                                
-                                $( '#step2_' + subData.etf_F16012 ).DataTable( {
-                                        "processing": true,
-                                        "serverSide": false,
-                                        "info": false,   // control table information display field
-                                        "stateSave": true,  //restore table state on page reload,
-                                        "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                                        "scrollY": '15vh',
-                                        select: {
-                                            style:    'single',
-                                            selector: 'td:first-child'
+                                                return htm;
+                                            },
+                                            "targets": 0
                                         },
-                                        paging: false,
-                                        searching: false,
-                                        data : items,
-                                        ordering : false,
-                                        "columnDefs": [
-                                            {  
-                                                /* 구분 */
-                                                "render": function ( data, type, row ) {
+                                        {  
+                                            /* CU shrs (변경전) */
+                                            "render": function ( data, type, row ) {
 
-                                                    var htm = "";
-                                                    if( typeof row.status != "undefined" ) {
-                                                        if( row.status == "insert" ) {
-                                                            htm = "신규";
-                                                        }else{
-                                                            htm = "변경";
-                                                        }
+                                                var htm = "";
+                                                if( typeof row.status != "undefined" ) {
+                                                    if( row.status == "insert" ) {
+                                                        htm = "-";
+                                                    }else{
+                                                        htm = util.formatNumber( data );
                                                     }
+                                                }
 
-                                                    return htm;
-                                                },
-                                                "targets": 0
+                                                return htm;
                                             },
-                                            {  
-                                                /* CU shrs (변경전) */
-                                                "render": function ( data, type, row ) {
+                                            "targets": 3
+                                        },
+                                        {  
+                                            /* CU shrs (변경후) */
+                                            "render": function ( data, type, row ) {
 
-                                                    var htm = "";
-                                                    if( typeof row.status != "undefined" ) {
-                                                        if( row.status == "insert" ) {
-                                                            htm = "-";
-                                                        }else{
-                                                            htm = util.formatNumber( data );
-                                                        }
+                                                var htm = "";
+                                                htm    +=  util.formatNumber( data );
+
+                                                return htm;
+                                            },
+                                            "targets": 4
+                                        },
+                                        {  
+                                            /* 액면금액 (변경전) */
+                                            "render": function ( data, type, row ) {
+
+                                                var htm = "";
+                                                if( typeof row.status != "undefined" ) {
+                                                    if( row.status == "insert" ) {
+                                                        htm = "-";
+                                                    }else{
+                                                        htm = util.formatNumber( data );
                                                     }
+                                                }
 
-                                                    return htm;
-                                                },
-                                                "targets": 3
+                                                return htm;
                                             },
-                                            {  
-                                                /* CU shrs (변경후) */
-                                                "render": function ( data, type, row ) {
+                                            "targets": 5
+                                        },
+                                        {  
+                                            /* 액면금액 (변경후) */
+                                            "render": function ( data, type, row ) {
 
-                                                    var htm = "";
-                                                    htm    +=  util.formatNumber( data );
+                                                var htm = "";
+                                                htm    +=  util.formatNumber( data );
 
-                                                    return htm;
-                                                },
-                                                "targets": 4
+                                                return htm;
                                             },
-                                            {  
-                                                /* 액면금액 (변경전) */
-                                                "render": function ( data, type, row ) {
+                                            "targets": 6
+                                        },
+                                    ],
+                                    columns: [
+                                        { "data" : "status"         ,   "width" :   "15%"   ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 구분 */
+                                        { "data" : "F16316"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 코드 */
+                                        { "data" : "F16004"         ,   "width" :   "25%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 종목명 */
+                                        
+                                        { "data" : "F16499_prev"    ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs (변경전) */
+                                        { "data" : "F16499"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs */
 
-                                                    var htm = "";
-                                                    if( typeof row.status != "undefined" ) {
-                                                        if( row.status == "insert" ) {
-                                                            htm = "-";
-                                                        }else{
-                                                            htm = util.formatNumber( data );
-                                                        }
-                                                    }
+                                        { "data" : "F34840_prev"    ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 (변경전) */
+                                        { "data" : "F34840"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 */
+                                    ]
+                            }).draw();
+                        });
+                    }
 
-                                                    return htm;
-                                                },
-                                                "targets": 5
-                                            },
-                                            {  
-                                                /* 액면금액 (변경후) */
-                                                "render": function ( data, type, row ) {
+                    vm.fn_addEtfOperPdfModifyCancel();
 
-                                                    var htm = "";
-                                                    htm    +=  util.formatNumber( data );
-
-                                                    return htm;
-                                                },
-                                                "targets": 6
-                                            },
-                                        ],
-                                        columns: [
-                                            { "data" : "status"         ,   "width" :   "15%"   ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 구분 */
-                                            { "data" : "F16316"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 코드 */
-                                            { "data" : "F16004"         ,   "width" :   "25%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 종목명 */
-                                            
-                                            { "data" : "F16499_prev"    ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs (변경전) */
-                                            { "data" : "F16499"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs */
-
-                                            { "data" : "F34840_prev"    ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 (변경전) */
-                                            { "data" : "F34840"         ,   "width" :   "20%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 */
-                                        ]
-                                }).draw();
-                            });
-                        }
-
-                        vm.fn_addEtfOperPdfModifyCancel();
-
+                    if( vm.allDataList.length > 0 && vm.jongmok_state=="no_ing" ) {
+                        vm.step = 1;
+                        vm.jongmok_state="";
+                    }else{
                         vm.step = 2;
-                    }                    
-
-                });
+                    }
+                }
 
             }else if( step == 2 ) {
 
@@ -1484,27 +1485,6 @@ export default {
         },
 
         /*
-         *  ksp_jongbasic DB 조회 상태를 체크한다.
-         * 2019-05-03  bkLove(촤병국)
-         */
-        fn_jongmokStateCheck() {
-
-            var vm = this;
-
-            return  new Promise(function(resolve, reject) {
-                if( vm.jongmok_state ) {
-                    resolve( false );
-                }
-
-                resolve( true );
-
-            }).catch( function(e) {
-                console.log( e );
-                resolve(false);
-            });            
-        },        
-
-        /*
          * 자산추가된 행에 대해 빈 값이 존재하는지 체크한다.
          * 2019-05-03  bkLove(촤병국)
          */
@@ -1612,6 +1592,18 @@ export default {
                 else{
                     vm.allDataList[ filterIndex ]   =   jsonData;
                 }
+            }
+        },
+
+        fn_nextButtonDisabledCheck() {
+            var vm = this;
+            
+            if( vm.allDataList.length > 0 && vm.jongmok_state=="no_ing" ) {
+                return  false;
+            }else if( vm.jongmok_state=="" ){
+                return  false;
+            }else{
+                return  true;
             }
         },
 
