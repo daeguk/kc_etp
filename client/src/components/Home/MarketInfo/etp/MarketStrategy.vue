@@ -1,6 +1,7 @@
 <template>
     <v-container>
         <v-layout row wrap>
+<!--            
             <v-flex xs12>
                 <v-carousel  light hide-delimiters height="120px" interval="10000">
                     <v-carousel-item  class="bg_W market_layout_w" v-if="carousel_info.carousel_cnt > 0"  v-for="n in carousel_info.carousel_cnt" :key="n">
@@ -58,9 +59,10 @@
                     </v-carousel-item>
                 </v-carousel>
             </v-flex>
+-->
             <!-- 테이블1 -->
             
-            <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12 mt-3>
+            <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12>
                 <v-card flat>
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>
