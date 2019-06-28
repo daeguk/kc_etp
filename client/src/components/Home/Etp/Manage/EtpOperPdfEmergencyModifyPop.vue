@@ -72,9 +72,9 @@
                     </v-card>
                     <v-divider></v-divider>
 
-                    <v-card-actions>
+                    <v-card-actions>         
                         <v-spacer></v-spacer>
-                        <v-btn color="primary" depressed @click="fn_stepCheck(1)">Next</v-btn>
+                        <v-btn color="primary" :disabled='fn_nextButtonDisabledCheck()' depressed @click="fn_stepCheck(1)">Next</v-btn>
                     </v-card-actions>
 <!-- step1 END-->
                 </v-window-item>
@@ -88,7 +88,7 @@
                     <v-card flat class="listset_pop">
                         <h5>
                             <v-card-title ma-0>
-                                <v-btn icon :disabled="step === 1" flat @click="step--">
+                                <v-btn icon :disabled="step === 1" flat @click='step--;'>
                                     <v-icon>arrow_back_ios</v-icon>
                                 </v-btn>PDF 변경신청 현황
 
@@ -319,6 +319,7 @@ export default {
                 ,   msg: ""
             },
             search_date : "",
+
             jongmok_state : "", /* ksp_jongbasic DB 조회 상태 */
         };
     },
@@ -488,7 +489,7 @@ export default {
         });
 
         /* CU shrs 수정시 */
-        $("#" + vm.tblEmergeny01 + " tbody").on('change', "input[name='F16499'],input[name='F34840']", function () {
+        $("#" + vm.tblEmergeny01 + " tbody").on('blur', "input[name='F16499'],input[name='F34840']", function () {
 
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
             var data = table.row($(this).parents("tr")).data();
@@ -732,50 +733,26 @@ export default {
 
             console.log("EtpOperPdfEmergencyModifyPop -> fn_getJongmokData");
 
-            vm.jongmok_state    =   "";
-
-            var table = $("#" + vm.tblEmergeny01 ).DataTable();
-            var tr = table.row( dataJson.rowIndex );                
+            vm.jongmok_state    =   "ing";
 
             if( dataJson.status == "insert" ) {
                 if(     !dataJson.codeVal
                     ||  dataJson.codeVal.length == 0
                 ) {
                     if( await vm.$emit("showMessageBox", '확인','구성종목코드를 입력해 주세요.',{},1) ) {
-                        vm.jongmok_state    =   "check";
                         return  false;
                     }
                 }
 
                 if(  dataJson.codeVal.length < 6 ) {
                     if( await vm.$emit("showMessageBox", '확인','구성종목코드를 6자리 이상 입력해 주세요.',{},1) ) {
-                        vm.jongmok_state    =   "check";
                         return  false;
                     }
                 }
-            }else{
-                /* 
-                *   상태값 normal 로 변경
-                *
-                *   수정한 [1CU단위증권수] 와 원본 [1CU단위증권수] 이 같고
-                *   수정했던 [액면금액] 과 원본 [액면금액] 이 같은 경우
-                */
-                if( dataJson.nowStatus == "insert" ) {
-                    table.cell( tr, 9 ).data( { "status" : "insert" } );
-                    vm.dataList[ dataJson.rowIndex ].status  =   "insert";
-                }
-                else if(    Number( dataJson.tableData.F16499_prev ) == Number( dataJson.nowData.F16499 )
-                        &&  Number( dataJson.tableData.F34840_prev ) == Number( dataJson.tableData.F34840 ) ) {
-                    table.cell( tr, 9 ).data( { "status" : "normal" } );
-                    vm.dataList[ dataJson.rowIndex ].status  =   "normal";
-                }                            
-                else{
-                    table.cell( tr, 9 ).data( { "status" : "modify" } );
-                    vm.dataList[ dataJson.rowIndex ].status  =   "modify";                            
-                }
-
-                vm.dataList[ dataJson.rowIndex ].F16499      =   dataJson.nowData.F16499;
             }
+
+            var table = $("#" + vm.tblEmergeny01 ).DataTable();
+            var tr = table.row( dataJson.rowIndex );            
 
             util.processing(vm.$refs.progress, true);
             axios.post( Config.base_url + "/user/etp/getJongmokData", {
@@ -784,7 +761,7 @@ export default {
                 console.log(response);
 
                 util.processing(vm.$refs.progress, false);
-debugger;
+
                 if (response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
                     if (!response.data.result) {
@@ -792,11 +769,22 @@ debugger;
                             if( await vm.$emit('showMessageBox', '확인', msg,{},1) ) {
                                 if( typeof dataJson.tableData.F16499_prev != "undefined" ) {
                                     if( dataJson.thisTag ) {
-                                        vm.dataList[ dataJson.rowIndex ].F16499      =   dataJson.tableData.F16499_prev;
                                         dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
                                     }
                                 }
-                                vm.jongmok_state    =   "check";
+
+
+                                /*
+                                *   no_ing 용도
+                                *   -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
+                                * 
+                                *   1)  Next 를 통해 ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력된 경우
+                                *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
+                                *   2)  구성종목을 한건 이상 수정하고, 구성종목 DB 검색 후 callback 에서 오류 메시지 팝업창이 출력된 경우
+                                */
+                                if( vm.dataList.length > 0 || vm.allDataList.length > 0 ) {
+                                    vm.jongmok_state    =   "no_ing";
+                                }
                                 return  false;
                             }
                         }
@@ -808,26 +796,34 @@ debugger;
                         if( await vm.$emit('showMessageBox', '확인', '구성종목코드(' + dataJson.codeVal + ')가 존재하지 않습니다.',{},1) ) {
                             if( typeof dataJson.tableData.F16499_prev != "undefined" ) {
                                 if( dataJson.thisTag ) {
-                                    vm.dataList[ dataJson.rowIndex ].F16499      =    dataJson.tableData.F16499_prev;
                                     dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
                                 }
                             }
 
-                            vm.jongmok_state    =   "check";
+                            /*
+                            *   no_ing 용도
+                            *   -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
+                            * 
+                            *   1)  Next 를 통해 ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력된 경우
+                            *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
+                            *   2)  구성종목을 한건 이상 수정하고, 구성종목 DB 검색 후 callback 에서 오류 메시지 팝업창이 출력된 경우
+                            */                            
+                            if( vm.dataList.length > 0 || vm.allDataList.length > 0 ) {
+                                vm.jongmok_state    =   "no_ing";
+                            }
                             return  false;
                         }
+
+                        return  false;
                     }
 
                     if ( dataList && dataList.length > 1 ) {
                         if( await vm.$emit("showMessageBox", '확인','구성종목코드(' + dataJson.codeVal + ')가 여러건 존재합니다.',{},1) ) {
                             if( typeof dataJson.tableData.F16499_prev != "undefined" ) {
                                 if( dataJson.thisTag ) {
-                                    vm.dataList[ dataJson.rowIndex ].F16499      =   dataJson.tableData.F16499_prev;
                                     dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
                                 }
-                            }          
-
-                            vm.jongmok_state    =   "check";                  
+                            }
                             return  false;
                         }
                     }
@@ -842,7 +838,6 @@ debugger;
                     
                         if( filterData.length > 0 ) {
                             if( await vm.$emit("showMessageBox", '확인','구성종목코드(' + dataJson.codeVal + ')가 이미 존재합니다.',{},1) ) {
-                                vm.jongmok_state    =   "check";
                                 return  false;
                             }
                         }
@@ -871,17 +866,38 @@ debugger;
                         var  v_F16588   =   Number( dataList[0].F15007 ) * Number( dataJson.nowData.F16499 );
 
                         table.cell( tr, 6 ).data( v_F16588 );
-                        vm.dataList[ dataJson.rowIndex ].F16588    =   v_F16588;                   
+                        vm.dataList[ dataJson.rowIndex ].F16588    =   v_F16588;
+
+                        /* 
+                        *   상태값 normal 로 변경
+                        *
+                        *   수정한 [1CU단위증권수] 와 원본 [1CU단위증권수] 이 같고
+                        *   수정했던 [액면금액] 과 원본 [액면금액] 이 같은 경우
+                        */
+                        if( dataJson.nowStatus == "insert" ) {
+                            table.cell( tr, 9 ).data( { "status" : "insert" } );
+                            vm.dataList[ dataJson.rowIndex ].status  =   "insert";
+                        }
+                        else if(    Number( dataJson.tableData.F16499_prev ) == Number( dataJson.nowData.F16499 )
+                                &&  Number( dataJson.tableData.F34840_prev ) == Number( dataJson.tableData.F34840 ) ) {
+                            table.cell( tr, 9 ).data( { "status" : "normal" } );
+                            vm.dataList[ dataJson.rowIndex ].status  =   "normal";
+                        }                            
+                        else{
+                            table.cell( tr, 9 ).data( { "status" : "modify" } );
+                            vm.dataList[ dataJson.rowIndex ].status  =   "modify";                            
+                        }
+
+                        vm.dataList[ dataJson.rowIndex ].F16499      =   dataJson.nowData.F16499;                        
                     }
                 }
 
                 vm.jongmok_state    =   "";
             }).catch(error => {
-console.log( error );
+                vm.jongmok_state    =   "";
+                
                 util.processing(vm.$refs.progress, false);
                 vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
-
-                vm.jongmok_state    =   "";
             });
         },
 
@@ -1107,8 +1123,22 @@ console.log( error );
 
                     vm.fn_addEtfOperPdfModifyCancel();
 
-                    vm.step = 2;
+
+                    /*
+                    *   Next 버튼 클릭시
+                    *   1)  ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력되는 경우
+                    *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
+                    *       -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
+                    *       -   step2로 화면이 전환된 경우에 callback 을 받은 경우에는  step=1 로 이동시키고 다시 next 버튼을 누를수 있게 jongmok_state 를 초기화 한다.
+                    */
+                    if( vm.allDataList.length > 0 && vm.jongmok_state=="no_ing" ) {
+                        vm.step = 1;
+                        vm.jongmok_state="";
+                    }else{
+                        vm.step = 2;
+                    }
                 }
+
             }else if( step == 2 ) {
 
                 vm.fn_saveEtpOperPdfModify();
@@ -1549,13 +1579,6 @@ console.log( error );
                 }
             }
 
-            if( vm.jongmok_state != "" ) {
-                console.log( "jongmok_state=[" + vm.jongmok_state + "]" );
-                vm.jongmok_state = "";
-
-                return  false;
-            }
-
             return  true;
         },
 
@@ -1596,6 +1619,32 @@ console.log( error );
                 else{
                     vm.allDataList[ filterIndex ]   =   jsonData;
                 }
+            }
+        },
+
+        /*
+        *   Next 버튼이 보이는 경우
+        *   1)  최초
+        *   2)  Next 를 통해 ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력된 경우
+        *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
+        *       -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
+        *       -   해당 오류건은 무시하고 next 버튼을 보이도록 함.
+        *   3)  구성종목을 한건 이상 수정하고, 구성종목 DB 검색 후 callback 에서 오류 메시지 팝업창이 출력된 경우
+        *       -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
+        *       -   해당 오류건은 무시하고 next 버튼을 보이도록 함.
+        *   4)  정상적으로 구성종목 DB 검색 후 callback 을 받은 경우
+        */
+        fn_nextButtonDisabledCheck() {
+            var vm = this;
+            
+            if( vm.allDataList.length > 0 && vm.jongmok_state=="no_ing" ) {
+                return  false;
+            }else if( vm.dataList.length > 0 && vm.jongmok_state=="no_ing" ){
+                return  false;
+            }else if( vm.jongmok_state=="" ) {
+                return  false;
+            }else{
+                return  true;
             }
         },
 

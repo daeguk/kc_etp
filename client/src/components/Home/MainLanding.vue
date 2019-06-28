@@ -11,8 +11,8 @@
           <v-layout row wrap>
             <v-flex xs12 text-xs-center>
               <div class="intro_logo">EMP<span>ETP Management<br> Platform</span>
-                  <p>Securities Derivatives MarketㆍFinancial Investment Industry Capital Market <br> 
-                     IT Solution Leader KOSCOM</p>
+                  <p>Built to create, manage and analyze capital market <br> 
+                     Live simple, it's all in EMP</p>
               </div>
             </v-flex>
             <v-flex xs12>
