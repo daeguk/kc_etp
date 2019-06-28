@@ -13,6 +13,7 @@ var Promise = require("bluebird");
 // var multer = require('multer');
 // var xlsx = require('xlsx');
 var async = require('async');
+var iconv = require('iconv-lite');
 
 var log = config.logger;
 
@@ -2087,8 +2088,12 @@ var makePdfModify = function(fsData) {
       wItem.fld004 + wItem.fld005 + wItem.fld006 + wItem.fld007 + wItem.fld008 + 
       wItem.fld009 + wItem.fld010 + wItem.fld011 + wItem.fld012 + wItem.fld013 + 
       wItem.fld014 + wItem.filler + wItem.filler2;
-      log.debug("strlen : " + ostr.length);
-      fs.writeFileSync(ifname, ostr, {flag: 'a+'}, 'utf8');
+      console.log("strlen : " + ostr.length);
+      ostr = iconv.encode(ostr, "ISO-8859-1");
+      console.log("strlen : " + ostr.length);
+      // fs.writeFileSync(ifname, ostr, {flag: 'a+'}, 'utf8');
+      // fs.writeFileSync(ifname, ostr, {flag: 'a+', encoding:'latin1'});  // latin1 == ISO-8859-1
+      fs.writeFileSync(ifname, ostr, {flag: 'a+'});
       log.debug("wItem..................");
       log.debug(wItem);
     }
