@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12 flat>
-      <div class="indexinfo_box01">
+      <div class="indexinfo_box01 pb-3">
         <h4 class="mb-0">Performance</h4>
         <div class="graph_02_w">
           <IndexPerformColumnChart :itemLists="indexLists"></IndexPerformColumnChart>
