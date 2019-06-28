@@ -1,15 +1,17 @@
 <template>
     <v-container>
         <v-layout row wrap>
+
+<!--            
             <v-flex xs12>
                 <v-card flat class="text-xs-center">
                     <img src="/assets/img/strategy_img.png" height="200px">
                 </v-card>
             </v-flex>
-
+-->
 
             <!-- 테이블 start -->
-            <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12 mt-3>
+            <v-flex v-for="item in ctg_results" :key="item.ctg_code"  grow xs12>
                 <v-card flat>
                     <v-card-title primary-title>
                         <h3 class="headline subtit" pb-0>

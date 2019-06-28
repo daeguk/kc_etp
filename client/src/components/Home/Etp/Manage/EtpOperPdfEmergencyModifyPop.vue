@@ -258,9 +258,9 @@
                                 </b>
                             </div>
                             <div class="pdf_coment text-xs-center">
-                                신일식 과장 767-0000
-                                <br>이형준 과장 767-0000
-                                <br>오춘교 대리 767-0000
+                                신일식 과장 02-767-8747
+                                <br>이형준 과장 02-767-8750
+                                <br>오춘교 대리 02-767-8735
                             </div>
                             <p class="text-xs-center">
                                 <v-btn dark depressed color="primary" @click="fn_close">닫기</v-btn>
@@ -317,7 +317,8 @@ export default {
             result : {
                     flag : true
                 ,   msg: ""
-            }
+            },
+            search_date : "",
         };
     },
     created: function() {
@@ -486,7 +487,7 @@ export default {
         });
 
         /* CU shrs 수정시 */
-        $("#" + vm.tblEmergeny01 + " tbody").on('change', "input[name='F16499'],input[name='F34840']", function () {
+        $("#" + vm.tblEmergeny01 + " tbody").on('blur', "input[name='F16499'],input[name='F34840']", function () {
 
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
             var data = table.row($(this).parents("tr")).data();
@@ -524,6 +525,7 @@ export default {
 
         var searchParam                 =   {}
         searchParam.F16012              =   vm.paramData.F16012;                   /* 국제표준코드 */
+        searchParam.F16013              =   vm.paramData.F16013;                   /* 단축코드 */
 /* 여러종류의 ETF 코드 데이터 저장을 위해 임시로 처리함 */
 //        searchParam.F16012              =   "KR7322410002";
         searchParam.initYn              =   "Y";
@@ -559,96 +561,166 @@ export default {
             vm.result.flag  =   true;
             vm.result.msg   =   '';
 
-            util.processing(vm.$refs.progress, true);
+            
 
-            searchParam.isEtfYn     =   "Y";
-            searchParam.search_date =       new Date().getFullYear() 
-                                        +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
-                                        +   _.padStart( new Date().getDate(), 2, '0' );
 
-            axios.post( Config.base_url + "/user/etp/getEtpOperPdfModify", {
-                data: searchParam
-            }).then( async function(response) {
-                console.log(response);
+            /* tm_pdf_basic 에서 최근 F12506(일자) 정보를 조회한다. */
+            vm.fn_getTmPdfBaiscMaxF12506( searchParam ).then( async function(e1){
+                if( !e1 ) {
+                    return  false;
+                }            
 
-                util.processing(vm.$refs.progress, false);
-
-                if (response.data) {
-
-                    var msg = ( response.data.msg ? response.data.msg : "" );
-                    if (!response.data.result) {
-                        if( msg ) {
-                            if( await vm.$emit('showMessageBox', '확인', msg,{},1) ) {
-                                return  false;
-                            }
-                        }
-                    }
-
-                    var etpBasic = response.data.etpBasic;
-                    var dataList = response.data.dataList;
-
-                    if( searchParam.initYn == "N" ) {
-
-                        if( etpBasic && Object.keys( etpBasic ).length > 0 ) {
-
-                            /* allDataList 에서 존재하는 인덱스를 확인한다. */
-                            var filterIndex  =   _.findIndex( vm.allDataList,    {
-                                    "etf_F16012"    :   etpBasic.F16012      /* ETF 국제표준코드 */
-                                ,   "etf_F16013"    :   etpBasic.F16013      /* ETF 단축코드 */
-                            });
-
-                            if( filterIndex > -1 ) {
-                                vm.result.flag  =   false;
-                                vm.result.msg   =   '해당 코드는 이미 변경작업에 존재합니다. 다른 코드를 선택해 주세요.';
-
-                                return  false;
-                            }
-
-                            /* 로그인 운용사코드와 동일한지 체크 */
-                            if( etpBasic.login_F33960_check != "Y" ) {
-                                vm.result.flag  =   false;
-                                vm.result.msg   =   '타 발행사의 종목은 변경하실수 없습니다.';
-
-                                return  false;
-                            }
-
-                            /* 사무수탁회사번호 가 없는 경우 */
-/* 여러종류의 ETF 코드 데이터 저장을 위해 임시로 처리함 */
-//etpBasic.F16583 = 10;
-                            if( etpBasic.F16583 == "" ) {
-                                vm.result.flag  =   false;
-                                vm.result.msg   =   '사무수탁회사번호가 존재하지 않습니다.';
-
-                                return  false;
-                            }
-
-                        }else{
-
-                            vm.result.flag  =   false;
-                            vm.result.msg   =   '해당코드의 종목이 존재하지 않습니다.';
-
-                            return  false;
-                        }
-                    }
-
-                    vm.txtAddEtpCode    =   "";
-
-                    vm.step             =   1;
-                    vm.etpBasic         =   etpBasic;
-
-                    if (dataList && dataList.length > 0) {
-                        tblEmergeny01.rows.add( dataList ).draw();
-                        tblEmergeny01.draw();
-
-                        vm.dataList =   dataList;
+                if( !vm.search_date ) {
+                    if( await vm.$emit('showMessageBox', '확인', "최근일자 정보가 존재하지 않습니다.",{},1) ) {
+                        return  false;
                     }
                 }
-                
-            }).catch(error => {
-                util.processing(vm.$refs.progress, false);
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+
+                searchParam.isEtfYn     =   "Y";
+
+                util.processing(vm.$refs.progress, true);
+                axios.post( Config.base_url + "/user/etp/getEtpOperPdfModify", {
+                    data: searchParam
+                }).then( async function(response) {
+                    console.log(response);
+
+                    util.processing(vm.$refs.progress, false);
+
+                    if (response.data) {
+
+                        var msg = ( response.data.msg ? response.data.msg : "" );
+                        if (!response.data.result) {
+                            if( msg ) {
+                                if( await vm.$emit('showMessageBox', '확인', msg,{},1) ) {
+                                    return  false;
+                                }
+                            }
+                        }
+
+                        var etpBasic = response.data.etpBasic;
+                        var dataList = response.data.dataList;
+
+                        if( searchParam.initYn == "N" ) {
+
+                            if( etpBasic && Object.keys( etpBasic ).length > 0 ) {
+
+                                /* allDataList 에서 존재하는 인덱스를 확인한다. */
+                                var filterIndex  =   _.findIndex( vm.allDataList,    {
+                                        "etf_F16012"    :   etpBasic.F16012      /* ETF 국제표준코드 */
+                                    ,   "etf_F16013"    :   etpBasic.F16013      /* ETF 단축코드 */
+                                });
+
+                                if( filterIndex > -1 ) {
+                                    vm.result.flag  =   false;
+                                    vm.result.msg   =   '해당 코드는 이미 변경작업에 존재합니다. 다른 코드를 선택해 주세요.';
+
+                                    return  false;
+                                }
+
+                                /* 로그인 운용사코드와 동일한지 체크 */
+                                if( etpBasic.login_F33960_check != "Y" ) {
+                                    vm.result.flag  =   false;
+                                    vm.result.msg   =   '타 발행사의 종목은 변경하실수 없습니다.';
+
+                                    return  false;
+                                }
+
+                                /* 사무수탁회사번호 가 없는 경우 */
+    /* 여러종류의 ETF 코드 데이터 저장을 위해 임시로 처리함 */
+    //etpBasic.F16583 = 10;
+                                if( etpBasic.F16583 == "" ) {
+                                    vm.result.flag  =   false;
+                                    vm.result.msg   =   '사무수탁회사번호가 존재하지 않습니다.';
+
+                                    return  false;
+                                }
+
+                            }else{
+
+                                vm.result.flag  =   false;
+                                vm.result.msg   =   '해당코드의 종목이 존재하지 않습니다.';
+
+                                return  false;
+                            }
+                        }
+
+                        vm.txtAddEtpCode    =   "";
+
+                        vm.step             =   1;
+                        vm.etpBasic         =   etpBasic;
+
+                        if (dataList && dataList.length > 0) {
+                            tblEmergeny01.rows.add( dataList ).draw();
+                            tblEmergeny01.draw();
+
+                            vm.dataList =   dataList;
+                        }
+                    }
+                    
+                }).catch(error => {
+                    util.processing(vm.$refs.progress, false);
+                    vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+                });
             });
         },
+
+        /*
+         * tm_pdf_basic 에서 최근 F12506(일자) 정보를 조회한다.
+         * 2019-05-03  bkLove(촤병국)
+         */
+        fn_getTmPdfBaiscMaxF12506( searchParam ) {
+            var vm = this;
+
+            return  new Promise(function(resolve, reject) {
+                console.log( "fn_getTmPdfBaiscMaxF12506 called" );
+                
+                // 이미 검색일자가 존재하는 경우 조회하지 않게 함.
+                if( vm.search_date ) {
+                    searchParam.search_date     =  vm.search_date;
+ 
+                    resolve(true);
+                }else{
+                    util.processing(vm.$refs.progress, true);
+                    axios.post( Config.base_url + "/user/etp/getTmPdfBaiscMaxF12506", {
+                        data: searchParam
+                    }).then(function(response) {
+                        console.log(response);
+
+                        util.processing(vm.$refs.progress, false);
+                        if (response.data) {
+
+                            var msg = ( response.data.msg ? response.data.msg : "" );
+                            if (!response.data.result) {
+                                if( msg ) {
+                                    resolve(false);
+                                }
+                            }
+
+                            if( response.data.dateInfo ) {
+                                vm.search_date      =   response.data.dateInfo.F12506;
+                            }
+                        }
+
+                        resolve(true);
+                        
+                    }).catch(error => {
+                        console.log( error );
+                        util.processing(vm.$refs.progress, false);
+                        vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+
+                        resolve(false);
+                    });
+                }
+
+            }).catch( function(e) {
+                console.log( e );
+
+                util.processing(vm.$refs.progress, false);
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+
+                resolve(false);
+            });
+        },        
 
         /*
          * [자산 추가] 후 구성종목 찾기를 누를시 실행한다.
@@ -1035,9 +1107,6 @@ export default {
 
             console.log("EtpOperPdfEmergencyModifyPop -> fn_saveEtpOperPdfModify");
 
-            var now_date    =       new Date().getFullYear()
-                                +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
-                                +   _.padStart( new Date().getDate(), 2, '0' );
 
             // console.log("문자발송...........");
             // axios.get("http://forms.koscom.co.kr/sms/EtpSmsAction.do", {
@@ -1051,7 +1120,7 @@ export default {
             util.processing(vm.$refs.progress, true);
             axios.post( Config.base_url + "/user/etp/saveEtpOperPdfModify", {
                 data: {     
-                        now_date    : now_date
+                        now_date    : vm.search_date
                     ,   allDataList : vm.allDataList
                 }
             }).then( async function(response) {

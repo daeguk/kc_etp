@@ -29,7 +29,7 @@
                                             box
                                             outline
                                             v-on="on"
-                                            @change ="$refs.menu2.save(searchParam.show_date);fn_getEtpOerPdf( 'N' )"
+                                            @keyup.enter ="$refs.menu2.save(searchParam.show_date);fn_getEtpOerPdf( 'N' )"
                                             widh="100%"
                                         ></v-text-field>
                                     </template>
@@ -135,36 +135,26 @@ export default {
 
             var vm = this;
 
-            new Promise(function(resolve, reject) {
+            if( vm.pdfData ) {
 
-                if( vm.pdfData ) {
+                vm.searchParam.F16002       =   vm.pdfData.F16002;          /* 한글종목명 */
+                vm.searchParam.F16013       =   vm.pdfData.F16013;          /* 단축코드 */
 
-                    vm.searchParam.F16002       =   vm.pdfData.F16002;          /* 한글종목명 */
-                    vm.searchParam.F16013       =   vm.pdfData.F16013;          /* 단축코드 */
+                vm.searchParam.F16493       =   vm.pdfData.F16493;          /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
+                vm.searchParam.F16012       =   vm.pdfData.F16012;          /* 국제표준코드 */
 
-                    vm.searchParam.F16493       =   vm.pdfData.F16493;          /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                    vm.searchParam.F16012       =   vm.pdfData.F16012;          /* 국제표준코드 */
+                vm.searchParam.search_nm    =   vm.searchParam.F16002 + "(" + vm.searchParam.F16013 + ")";  /* 한글종목명 / 단축코드 */
 
-                    vm.searchParam.search_nm    =   vm.searchParam.F16002 + "(" + vm.searchParam.F16013 + ")";  /* 한글종목명 / 단축코드 */
-                }
+                /* tm_pdf_basic 에서 최근 F12506(일자) 정보를 조회한다. */
+                vm.fn_getTmPdfBaiscMaxF12506().then( function(e1){
+                    if( !e1 ) {
+                        return  false;
+                    }     
 
-                resolve();
-
-            }).catch( function(e) {
-
-                console.log( e );
-
-            }).then( function() {
-
-                vm.searchParam.show_date    =       new Date().getFullYear() 
-                                                +   "-" 
-                                                +   _.padStart( (parseInt(new Date().getMonth()) + 1) , 2 , '0' )
-                                                +   "-" 
-                                                +   _.padStart( new Date().getDate(), 2, '0' )
-
-                vm.fn_setTableInfo();
-                vm.fn_getEtpOerPdf( 'Y' );
-            });            
+                    vm.fn_setTableInfo();
+                    vm.fn_getEtpOerPdf( 'Y' );
+                });                               
+            }
         },
 
         /*
@@ -446,6 +436,64 @@ export default {
                 }
             }
         },
+                    
+        /*
+         * tm_pdf_basic 에서 최근 F12506(일자) 정보를 조회한다.
+         * 2019-05-03  bkLove(촤병국)
+         */
+        fn_getTmPdfBaiscMaxF12506() {
+            var vm = this;
+
+            return  new Promise(function(resolve, reject) {
+                console.log( "fn_getTmPdfBaiscMaxF12506 called" );
+                
+                // 이미 검색일자가 존재하는 경우 조회하지 않게 함.
+                if( vm.searchParam.show_date ) {
+                    resolve(true);
+                }else{
+                    util.processing(vm.$refs.progress, true);
+                    axios.post( Config.base_url + "/user/etp/getTmPdfBaiscMaxF12506", {
+                        data: vm.searchParam
+                    }).then(function(response) {
+                        console.log(response);
+
+                        util.processing(vm.$refs.progress, false);
+                        if (response.data) {
+
+                            var msg = ( response.data.msg ? response.data.msg : "" );
+                            if (!response.data.result) {
+                                if( msg ) {
+                                    vm.$emit("showMessageBox", '확인', msg,{},1);
+                                    resolve(false);
+                                }
+                            }
+
+                            if( response.data.dateInfo ) {
+                                vm.searchParam.show_date    =   response.data.dateInfo.fmt_F12506;
+                            }
+                        }
+
+                        resolve(true);
+
+                    }).catch(error => {
+                        console.log( error );
+
+                        util.processing(vm.$refs.progress, false);
+                        vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+
+                        resolve(false);
+                    });
+                }
+
+            }).catch( function(e) {
+                console.log( e );
+
+                util.processing(vm.$refs.progress, false);
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);                
+
+                resolve(false);
+            })
+        },        
 
         /*
          * 팝업창을 종료한다.

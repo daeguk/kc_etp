@@ -100,6 +100,7 @@
             <v-flex class="conWidth_right">
                  <!-- [ETP 운영정보] Quick 메뉴 정보 -->
                     <EtpOperInfoQuick   :etpBasic = "etpBasic"
+                                        :toggle = "toggle"
 
                                         @fn_setInavData = "fn_setInavData"
                                         @fn_setEtpPerformanceData = "fn_setEtpPerformanceData"
@@ -132,6 +133,7 @@ var table01 = null;
 var table02 = null;
 
 export default {
+    props : [ "toggle", "state" ],
     components: {
         //indexDetailrtmenupop: indexDetailrtmenupop
             EtpOperInfoQuick        :   EtpOperInfoQuick
@@ -164,6 +166,11 @@ export default {
         var vm = this;
 
         console.log( "######### EtpOperInfo.vue mounted ");
+
+        if( vm.state ) {
+            vm.stateInfo.pageState  =   vm.state.pageState;
+            vm.stateInfo.gubun  =   vm.state.gubun;
+        }
 
 
         new Promise(function(resolve, reject) {
@@ -503,6 +510,8 @@ export default {
             vm.fn_setTableInfo();
             vm.fn_getEtpOperInfo( vm.stateInfo.gubun );
 
+            vm.$emit( "fn_setInavData", paramData, vm.stateInfo );
+
             console.log("########## EtpOperInfo.vue -> fn_setInavData END ############");
         },
 
@@ -530,6 +539,8 @@ export default {
             vm.fn_setTableInfo();
             vm.fn_getEtpOperInfo( vm.stateInfo.gubun );
 
+            vm.$emit( "fn_setEtpPerformanceData", paramData, vm.stateInfo );
+
             console.log("########## EtpOperInfo.vue -> fn_setEtpPerformanceData END ############");
         },
 
@@ -547,10 +558,12 @@ export default {
 
             vm.stateInfo.pageState  =  'customize';
 
-            if( paramData && paramData.length > 0 ) {
-                vm.fn_setTableInfo( paramData );
+            if( paramData && paramData.arrCustomizeColumn.length > 0 ) {
+                vm.fn_setTableInfo( paramData.arrCustomizeColumn );
                 vm.fn_getEtpOperInfo( vm.stateInfo.gubun );
             }
+
+            vm.$emit( "fn_setCustomizeData", paramData, vm.stateInfo );
 
             console.log("########## EtpOperInfo.vue -> fn_setCustomizeData END ############");
         },
