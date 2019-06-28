@@ -8,9 +8,7 @@
           <EtpPerformColumnChart :itemLists="indexLists"></EtpPerformColumnChart>
         </div>
         <v-card flat>
-          <div class="table-box-wrap">
-            <div class="table-box" style="max-height:200px;">
-            <table class="tbl_type ver8">
+            <table class="tbl_type ver5">
               <caption> 헤더 고정 테이블</caption>
               <colgroup>
                 <col width="19%">
@@ -60,8 +58,6 @@
                 </tr>
               </tbody>
             </table>
-            </div>
-          </div>
         </v-card>
         <v-layout row>
             <v-btn outline small color="primary" dark v-on:click="openMastModal">
