@@ -13,11 +13,12 @@ var bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
     static = require('serve-static'),
     cors = require('cors'),
-    fs = require('fs'),
-    errorHandler = require('errorhandler');
+    fs = require('fs');
+    // errorHandler = require('errorhandler');
 
 // 에러 핸들러 모듈 사용
-var expressErrorHandler = require('express-error-handler');
+// var expressErrorHandler = require('express-error-handler');
+var expressErrorHandler = require('./util/error-handler');
 
 // Session 미들웨어 불러오기
 var expressSession = require('express-session');
