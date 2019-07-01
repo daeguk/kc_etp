@@ -16,8 +16,10 @@
                                 {{ etpBasic.F16002          /* 한글종목명 */ }}
                                 <span>{{ etpBasic.F16013    /* 단축코드 */ }}</span>
 
+                                <v-text-field v-show="false"></v-text-field>
+
                                 <v-spacer></v-spacer>
-                                <v-btn icon @click="fn_close">
+                                <v-btn icon @click="fn_close()">
                                     <v-icon>close</v-icon>
                                 </v-btn>                                
                             </v-card-title>
@@ -278,6 +280,7 @@
     </v-flex>
     <v-flex>
         <ProgressBar ref="progress"></ProgressBar>
+        <ConfirmDialog ref="confirm2"></ConfirmDialog>
     </v-flex>    
     </v-container>    
 
@@ -293,6 +296,7 @@ import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
 import Config from "@/js/config.js";
 import tool       from "@/js/common/tool/tool.js";
+import ConfirmDialog                from "@/components/common/ConfirmDialog.vue";
 
 import ProgressBar from "@/components/common/ProgressBar.vue";
 
@@ -302,6 +306,7 @@ export default {
     props : [ "showDialog", "paramData" ],
     components : {
         ProgressBar: ProgressBar,
+        ConfirmDialog: ConfirmDialog
     },
     data() {
         return {
@@ -321,6 +326,8 @@ export default {
             search_date : "",
 
             jongmok_state : "", /* ksp_jongbasic DB 조회 상태 */
+
+            status: 0,
         };
     },
     created: function() {
@@ -331,6 +338,7 @@ export default {
 
         var vm = this;
 
+//        this.$root.$confirm2 = this.$refs.confirm2;
 
         console.log( ">>>>>> EtpOperPdfEmergencyModifyPop.vue ==> " );
         console.log( vm.paramData );
@@ -457,6 +465,8 @@ export default {
                     F16499 : 0
                 };
 
+                vm.jongmok_state    =   "ing";
+
                 vm.fn_getJongmokData( { 
                         status : "insert"
                     ,   codeVal : $(this).parents("tr").find( "input[name='jongmok']" ).eq(0).val()
@@ -476,7 +486,9 @@ export default {
             var rowIndex = table.row($(this).parents("tr")).index();
             var nowData = {
                 F16499 : 0
-            };            
+            };      
+
+            vm.jongmok_state    =   "ing";      
 
             vm.fn_getJongmokData( { 
                     status : "insert"
@@ -485,7 +497,7 @@ export default {
                 ,   nowData : nowData
                 ,   rowIndex : rowIndex
                 ,   F16499_prev : 0
-            });            
+            });
         });
 
         /* CU shrs 수정시 */
@@ -511,6 +523,8 @@ export default {
             }
 
             $(this).eq(0).val( util.formatNumber( tdData ) );
+
+            vm.jongmok_state    =   "ing";
 
             vm.fn_setStatus( data, nowData, rowIndex, ( jongmokTag ? jongmokTag.length : 0 ), $(this) );
         });
@@ -564,7 +578,7 @@ export default {
             vm.result.msg   =   '';
 
             
-
+            vm.status = 1;
 
             /* tm_pdf_basic 에서 최근 F12506(일자) 정보를 조회한다. */
             vm.fn_getNowDate( searchParam ).then( async function(e1){
@@ -573,8 +587,16 @@ export default {
                 }            
 
                 if( !vm.search_date ) {
-                    if( await vm.$emit('showMessageBox', '확인', "최근일자 정보가 존재하지 않습니다.",{},1) ) {
-                        return  false;
+                    if ( await vm.$refs.confirm2.open(
+                            '확인',
+                            '최근일자 정보가 존재하지 않습니다.',
+                            {}
+                            ,1
+                        )
+                    ) {
+                        if(vm.$refs.confirm2.val == 'Y') {
+                            vm.status = 0;
+                        }
                     }
                 }
 
@@ -594,7 +616,19 @@ export default {
                         var msg = ( response.data.msg ? response.data.msg : "" );
                         if (!response.data.result) {
                             if( msg ) {
-                                if( await vm.$emit('showMessageBox', '확인', msg,{},1) ) {
+                                if ( await vm.$refs.confirm2.open(
+                                        '확인',
+                                        msg,
+                                        {}
+                                        ,1
+                                    )
+                                ) {
+                                    if(vm.$refs.confirm2.val == 'Y') {
+                                        vm.status = 0;
+                                        return  false;
+                                    }
+
+                                    vm.status = 0;
                                     return  false;
                                 }
                             }
@@ -662,7 +696,15 @@ export default {
                     
                 }).catch(error => {
                     util.processing(vm.$refs.progress, false);
-                    vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+                    if ( vm.$refs.confirm2.open(
+                            '확인',
+                            '서버로 부터 응답을 받지 못하였습니다.',
+                            {}
+                            ,4
+                        )
+                    ) {
+                        vm.status = 0;
+                    }
                 });
             });
         },
@@ -674,13 +716,15 @@ export default {
         fn_getNowDate( searchParam ) {
             var vm = this;
 
+            vm.status   =   1;
             return  new Promise(function(resolve, reject) {
                 console.log( "fn_getNowDate called" );
 
                 // 이미 검색일자가 존재하는 경우 조회하지 않게 함.
                 if( vm.search_date ) {
                     searchParam.search_date     =  vm.search_date;
- 
+                    vm.status   =   0;
+
                     resolve(true);
                 }else{
                     util.processing(vm.$refs.progress, true);
@@ -695,11 +739,13 @@ export default {
                             var msg = ( response.data.msg ? response.data.msg : "" );
                             if (!response.data.result) {
                                 if( msg ) {
+                                    vm.status   =   0;
                                     resolve(false);
                                 }
                             }
 
                             if( response.data.dateInfo ) {
+                                vm.status           =   0;
                                 vm.search_date      =   response.data.dateInfo.now_date;
                             }
                         }
@@ -709,7 +755,16 @@ export default {
                     }).catch(error => {
                         console.log( error );
                         util.processing(vm.$refs.progress, false);
-                        vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+
+                        if ( vm.$refs.confirm2.open(
+                                '확인',
+                                '서버로 부터 응답을 받지 못하였습니다.',
+                                {}
+                                ,4
+                            )
+                        ) {
+                            vm.status = 0;
+                        }
 
                         resolve(false);
                     });
@@ -719,7 +774,16 @@ export default {
                 console.log( e );
 
                 util.processing(vm.$refs.progress, false);
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '서버로 부터 응답을 받지 못하였습니다.',
+                        {}
+                        ,4
+                    )
+                ) {
+                    vm.status = 0;
+                }
 
                 resolve(false);
             });
@@ -734,19 +798,42 @@ export default {
 
             console.log("EtpOperPdfEmergencyModifyPop -> fn_getJongmokData");
 
-            vm.jongmok_state    =   "ing";
-
+            vm.status = 1;
             if( dataJson.status == "insert" ) {
                 if(     !dataJson.codeVal
                     ||  dataJson.codeVal.length == 0
                 ) {
-                    if( await vm.$emit("showMessageBox", '확인','구성종목코드를 입력해 주세요.',{},1) ) {
+                    if (await vm.$refs.confirm2.open(
+                            '확인',
+                            '구성종목코드를 입력해 주세요.',
+                            {}
+                            ,1
+                        )
+                    ) {
+                        if(vm.$refs.confirm2.val == 'Y') {
+                            vm.status = 0;
+                            return  false;
+                        }
+
+                        vm.status = 0;
                         return  false;
                     }
                 }
 
                 if(  dataJson.codeVal.length < 6 ) {
-                    if( await vm.$emit("showMessageBox", '확인','구성종목코드를 6자리 이상 입력해 주세요.',{},1) ) {
+                    if (await vm.$refs.confirm2.open(
+                            '확인',
+                            '구성종목코드를 6자리 이상 입력해 주세요.',
+                            {}
+                            ,1
+                        )
+                    ) {
+                        if(vm.$refs.confirm2.val == 'Y') {
+                            vm.status = 0;
+                            return  false;
+                        }
+
+                        vm.status = 0;
                         return  false;
                     }
                 }
@@ -767,13 +854,61 @@ export default {
                     var msg = ( response.data.msg ? response.data.msg : "" );
                     if (!response.data.result) {
                         if( msg ) {
-                            if( await vm.$emit('showMessageBox', '확인', msg,{},1) ) {
+                            if (await vm.$refs.confirm2.open(
+                                    '확인',
+                                    msg,
+                                    {}
+                                    ,1
+                                )
+                            ) {
+                                if(vm.$refs.confirm2.val == 'Y') {
+                                    vm.status = 0;
+
+                                    if( typeof dataJson.tableData.F16499_prev != "undefined" ) {
+                                        if( dataJson.thisTag ) {
+                                            dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
+                                        }
+                                    }
+
+
+                                    /*
+                                    *   no_ing 용도
+                                    *   -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
+                                    * 
+                                    *   1)  Next 를 통해 ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력된 경우
+                                    *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
+                                    *   2)  구성종목을 한건 이상 수정하고, 구성종목 DB 검색 후 callback 에서 오류 메시지 팝업창이 출력된 경우
+                                    */
+                                    if( vm.dataList.length > 0 || vm.allDataList.length > 0 ) {
+                                        vm.jongmok_state    =   "no_ing";
+                                    }
+
+                                    return  false;
+                                }
+
+                                vm.status = 0;
+                                return  false;                                
+                            }
+                        }
+                    }
+
+                    var dataList = response.data.dataList;
+                    if ( !dataList || dataList.length == 0 ) {
+                        if (await vm.$refs.confirm2.open(
+                                '확인',
+                                '구성종목코드(' + dataJson.codeVal + ')가 존재하지 않습니다.',
+                                {}
+                                ,1
+                            )
+                        ) {
+                            if(vm.$refs.confirm2.val == 'Y') {
+                                vm.status = 0;
+
                                 if( typeof dataJson.tableData.F16499_prev != "undefined" ) {
                                     if( dataJson.thisTag ) {
                                         dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
                                     }
                                 }
-
 
                                 /*
                                 *   no_ing 용도
@@ -782,49 +917,34 @@ export default {
                                 *   1)  Next 를 통해 ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력된 경우
                                 *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
                                 *   2)  구성종목을 한건 이상 수정하고, 구성종목 DB 검색 후 callback 에서 오류 메시지 팝업창이 출력된 경우
-                                */
+                                */                            
                                 if( vm.dataList.length > 0 || vm.allDataList.length > 0 ) {
                                     vm.jongmok_state    =   "no_ing";
                                 }
+
                                 return  false;
                             }
-                        }
-                    }
 
-                    var dataList = response.data.dataList;
-
-                    if ( !dataList || dataList.length == 0 ) {
-                        if( await vm.$emit('showMessageBox', '확인', '구성종목코드(' + dataJson.codeVal + ')가 존재하지 않습니다.',{},1) ) {
-                            if( typeof dataJson.tableData.F16499_prev != "undefined" ) {
-                                if( dataJson.thisTag ) {
-                                    dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
-                                }
-                            }
-
-                            /*
-                            *   no_ing 용도
-                            *   -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
-                            * 
-                            *   1)  Next 를 통해 ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력된 경우
-                            *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
-                            *   2)  구성종목을 한건 이상 수정하고, 구성종목 DB 검색 후 callback 에서 오류 메시지 팝업창이 출력된 경우
-                            */                            
-                            if( vm.dataList.length > 0 || vm.allDataList.length > 0 ) {
-                                vm.jongmok_state    =   "no_ing";
-                            }
+                            vm.status = 0;
                             return  false;
                         }
-
                         return  false;
                     }
 
                     if ( dataList && dataList.length > 1 ) {
-                        if( await vm.$emit("showMessageBox", '확인','구성종목코드(' + dataJson.codeVal + ')가 여러건 존재합니다.',{},1) ) {
-                            if( typeof dataJson.tableData.F16499_prev != "undefined" ) {
-                                if( dataJson.thisTag ) {
-                                    dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
-                                }
+                        if (await vm.$refs.confirm2.open(
+                                '확인',
+                                '구성종목코드(' + dataJson.codeVal + ')가 여러건 존재합니다.',
+                                {}
+                                ,1
+                            )
+                        ) {
+                            if(vm.$refs.confirm2.val == 'Y') {
+                                vm.status = 0;
+                                return  false;
                             }
+
+                            vm.status = 0;
                             return  false;
                         }
                     }
@@ -838,7 +958,20 @@ export default {
                         });
                     
                         if( filterData.length > 0 ) {
-                            if( await vm.$emit("showMessageBox", '확인','구성종목코드(' + dataJson.codeVal + ')가 이미 존재합니다.',{},1) ) {
+                            if (await vm.$refs.confirm2.open(
+                                    '확인',
+                                    '구성종목코드(' + dataJson.codeVal + ')가 이미 존재합니다.',
+                                    {}
+                                    ,1
+                                )
+                            ) {
+                                if(vm.$refs.confirm2.val == 'Y') {
+                                    vm.status = 0;                                
+
+                                    return  false;
+                                }
+
+                                vm.status = 0;
                                 return  false;
                             }
                         }
@@ -894,11 +1027,21 @@ export default {
                 }
 
                 vm.jongmok_state    =   "";
+                vm.status = 0;
+
             }).catch(error => {
                 vm.jongmok_state    =   "";
                 
                 util.processing(vm.$refs.progress, false);
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+                if (vm.$refs.confirm2.open(
+                        '확인',
+                        '서버로 부터 응답을 받지 못하였습니다.',
+                        {}
+                        ,4
+                    )
+                ) {
+                    vm.status = 0;
+                }
             });
         },
 
@@ -1124,6 +1267,7 @@ export default {
 
                     vm.fn_addEtfOperPdfModifyCancel();
 
+                    vm.step = 2;
 
                     /*
                     *   Next 버튼 클릭시
@@ -1132,12 +1276,14 @@ export default {
                     *       -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
                     *       -   step2로 화면이 전환된 경우에 callback 을 받은 경우에는  step=1 로 이동시키고 다시 next 버튼을 누를수 있게 jongmok_state 를 초기화 한다.
                     */
+/*
                     if( vm.allDataList.length > 0 && vm.jongmok_state=="no_ing" ) {
                         vm.step = 1;
                         vm.jongmok_state="";
                     }else{
                         vm.step = 2;
                     }
+*/                    
                 }
 
             }else if( step == 2 ) {
@@ -1165,6 +1311,7 @@ export default {
             //   }
             // });
 
+            vm.status   =   1;
             util.processing(vm.$refs.progress, true);
             axios.post( Config.base_url + "/user/etp/saveEtpOperPdfModify", {
                 data: {     
@@ -1179,7 +1326,15 @@ export default {
                 try{
                     tool.smsSend(0, "ETP PDF 변경신청 접수되었습니다.");
                 }catch( e ) {
-                   vm.$emit('showMessageBox', '확인', '문자발송 중 오류가 발생하였으나 긴급반영 처리는 완료되었습니다.',{},1) ;
+                    if ( vm.$refs.confirm2.open(
+                            '확인',
+                            '문자발송 중 오류가 발생하였으나 긴급반영 처리는 완료되었습니다.',
+                            {}
+                            ,1
+                        )
+                    ) {     
+                        vm.status = 0;
+                    }
                 }
 
                 if (response.data) {
@@ -1187,17 +1342,38 @@ export default {
                     var msg = ( response.data.msg ? response.data.msg : "" );
                     if (!response.data.result) {
                         if( msg ) {
-                            if( await vm.$emit('showMessageBox', '확인', msg,{},1) ) {
+                            if ( await vm.$refs.confirm2.open(
+                                    '확인',
+                                    msg,
+                                    {}
+                                    ,1
+                                )
+                            ) {
+                                if(vm.$refs.confirm2.val == 'Y') {
+                                    vm.status = 0;                                
+                                    return  false;
+                                }
+
+                                vm.status = 0;
                                 return  false;
                             }
                         }
                     }
             
+                    vm.status = 0;
                     vm.fn_getPdfByGroupNo();
                 }
             }).catch(error => {
                 util.processing(vm.$refs.progress, false);
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '서버로 부터 응답을 받지 못하였습니다.',
+                        {}
+                        ,4
+                    )
+                ) {
+                    vm.status = 0;
+                }
             });
         },
 
@@ -1206,6 +1382,7 @@ export default {
 
             console.log("EtpOperPdfEmergencyModifyPop -> fn_getPdfByGroupNo");            
 
+            vm.status = 1;
             util.processing(vm.$refs.progress, true);
             axios.post( Config.base_url + "/user/etp/getPdfByGroupNo", {
                 data: {}
@@ -1219,8 +1396,17 @@ export default {
                     var msg = ( response.data.msg ? response.data.msg : "" );
                     if (!response.data.result) {
                         if( msg ) {
-                            if( await vm.$emit('showMessageBox', '확인', msg,{},1) ) {
-                                return  false;
+                            if ( await vm.$refs.confirm2.open(
+                                    '확인',
+                                    msg,
+                                    {}
+                                    ,1
+                                )
+                            ) {
+                                if(vm.$refs.confirm2.val == 'Y') {
+                                    vm.status = 0;                                
+                                    return  false;
+                                }
                             }
                         }
                     }
@@ -1360,9 +1546,19 @@ export default {
                         }
                     }
                 }
+
+                vm.status = 0;
             }).catch(error => {
                 util.processing(vm.$refs.progress, false);
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '서버로 부터 응답을 받지 못하였습니다.',
+                        {}
+                        ,4
+                    )
+                ) {
+                    vm.status = 0;
+                }
             });
         },
 
@@ -1402,19 +1598,30 @@ export default {
 
             console.log("EtpOperPdfEmergencyModifyPop.vue -> fn_addEtfOperPdfModify");
 
+            vm.status = 1;
             if(     !vm.txtAddEtpCode
                 ||  vm.txtAddEtpCode.length == 0
             ) {
-                if( await vm.$emit("showMessageBox", '확인','ETF 코드를 입력해 주세요.',{},1) ) {
-                    return  false;
-                }
+                vm.result.flag  =   false;
+                vm.result.msg   =   'ETF 코드를 입력해 주세요.';
+
+                return  false;
             }
 
             if(  vm.txtAddEtpCode.length < 6
             ) {
-                if( await vm.$emit("showMessageBox", '확인','ETF 코드를 6자리 이상 입력해 주세요.',{},1) ) {
-                    return  false;
-                }
+                vm.result.flag  =   false;
+                vm.result.msg   =   'ETF 코드를 6자리 이상 입력해 주세요.';
+
+                return  false;
+            }
+
+            if(  vm.txtAddEtpCode.length > 12
+            ) {
+                vm.result.flag  =   false;
+                vm.result.msg   =   'ETF 코드를 12자리 까지 입력해 주세요.';
+
+                return  false;
             }            
 
             var searchParam                 =   {}
@@ -1503,6 +1710,8 @@ export default {
                         }
                     }
 
+
+                    vm.jongmok_state   =   '';
                     vm.dataList[ rowIndex ].F34840      =   nowData.F34840;
                 }
 
@@ -1525,6 +1734,7 @@ export default {
 
             var vm = this;
 
+            vm.status   =   1;
             var jongmokData = $("#tblEmergeny01 tbody").find("input[name='jongmok']" );
 
             var filterData  =   _.filter( tblEmergeny01.rows( jongmokData.parents("tr") ).data(), function( o, i ) {
@@ -1534,10 +1744,24 @@ export default {
             });
 
             if( filterData.length > 0 ) {
-                if( vm.$emit("showMessageBox", '확인','구성종목코드가 빈 항목이 존재합니다.',{},1) ) {
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '구성종목코드가 빈 항목이 존재합니다.',
+                        {}
+                        ,1
+                    )
+                ) {
+                    if(vm.$refs.confirm2.val == 'Y') {
+                        vm.status = 0;                    
+                        return  false;
+                    }
+
+                    vm.status = 0;
                     return  false;
                 }
             }
+
+            vm.status = 0;
 
             return  true;
         },
@@ -1550,6 +1774,7 @@ export default {
 
             var vm = this;
 
+            vm.status   =   1;
             var filterData  =   _.filter( vm.dataList, function( o, i ) {
                 if( o.status == "insert" || o.status == "modify" ) {
                     return  true;
@@ -1557,10 +1782,24 @@ export default {
             });
 
             if( filterData.length == 0 ) {
-                if( vm.$emit("showMessageBox", '확인','수정건이 1건 이상 존재해야 합니다.',{},1) ) {
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '수정건이 1건 이상 존재해야 합니다.',
+                        {}
+                        ,1
+                    )
+                ) {
+                    if(vm.$refs.confirm2.val == 'Y') {
+                        vm.status = 0;
+                        return  false;
+                    }
+
+                    vm.status = 0;
                     return  false;
                 }
             }
+
+            vm.status = 0;
 
             return  true;
         },
@@ -1573,6 +1812,7 @@ export default {
 
             var vm = this;
 
+            vm.status   =   1;
             var filterData  =   _.filter( vm.dataList, function( o, i ) {
                 if( o.code_check != true ) {
                     return  true;
@@ -1580,10 +1820,24 @@ export default {
             });
 
             if( filterData.length > 0 ) {
-                if( vm.$emit("showMessageBox", '확인','구성종목코드가 확인 되지 않은 건이 존재합니다.',{},1) ) {
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '구성종목코드가 확인 되지 않은 건이 존재합니다.',
+                        {}
+                        ,1
+                    )
+                ) {
+                    if(vm.$refs.confirm2.val == 'Y') {
+                        vm.status = 0;
+                        return  false;
+                    }
+
+                    vm.status = 0;
                     return  false;
                 }
             }
+
+            vm.status = 0;
 
             return  true;
         },
@@ -1661,7 +1915,9 @@ export default {
         fn_close() {
             var vm = this;
 
-            vm.$emit( "fn_closePop", "close" );
+            if( vm.status == 0 ) {
+                vm.$emit( "fn_closePop", "close" );
+            }
         },
     },
 };
