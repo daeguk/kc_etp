@@ -1,13 +1,13 @@
 <template>
   <v-app>
-    <v-card>
-      <v-img
+    <v-card class="intro_bg">
+      <!--v-img
         class="white--text"
-        height="1200px"
+        height="100%"
         src="/assets/img/main.jpg"
         gradient="to top, rgba(0,0,0,0.5), rgba(0,0,0,0.5)"
-      >
-        <v-container>
+      -->
+
           <v-layout row wrap>
             <v-flex xs12 text-xs-center>
               <div class="intro_logo">EMP<span>ETP Management<br> Platform</span>
@@ -21,12 +21,11 @@
                 <v-btn depressed color="#85c406" dark @click="doLogin">LOG-IN</v-btn>
               </div>
             </v-flex>
+            
           </v-layout>
-          <UserLoginModal v-if="login_flag"></UserLoginModal>
-          <UserSignupModal v-if="signup_flag"></UserSignupModal>
-          <UserFindPwdModal v-if="findpwd_flag"></UserFindPwdModal>
-        </v-container>
-      </v-img>
+          <UserLoginModal v-if="login_flag" ></UserLoginModal>
+          <UserSignupModal v-if="signup_flag" ></UserSignupModal>
+          <UserFindPwdModal v-if="findpwd_flag" ></UserFindPwdModal>
     </v-card>
   </v-app>
 </template> 
