@@ -68,7 +68,7 @@ export default {
         loginDialog: true,
         email: "",
         password: "",
-        //status: 0,
+        status: 0,
     };
   },
   components : {
