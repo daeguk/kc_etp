@@ -96,7 +96,12 @@ export default {
         // console.log(response);
         if(response.data.success == false){
            vm.status = 1;
-           vm.showMessageBox('확인',response.data.message, {}, 1);
+           if( await vm.$refs.confirm.open('확인',response.data.message, {}, 1)) {
+              if(vm.$refs.confirm.val == 'Y') {
+                  vm.status = 0;
+                  //vm.$EventBus.$emit("userLoginCheck", false);
+              }
+           }
         }else {
           vm.$store.commit(Constant.ADD_USER, {
             email: response.data.results[0].email, 
