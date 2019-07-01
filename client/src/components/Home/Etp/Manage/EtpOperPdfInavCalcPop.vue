@@ -437,7 +437,6 @@ export default {
                     F16012 : F16012,
                 }
             }).then(async function(response) {
-
                 if (response.data.success) {
 
                     vm.etpBasic = response.data.etpBasic;
@@ -447,6 +446,10 @@ export default {
                     var market_amt = 0;
                     var market_tot_amt = 0;
                     var index = 0;
+                    /* pdf데이터가 없을 경우 */
+                    if (vm.pdfList.length == 0) {
+                        util.processing(vm.$refs.progress, false);                      
+                    }
                     for (let item of vm.pdfList) {                                            
                         await vm.iNavCalulator(item, simulationMode).then(function(jongItem) {
                             /* 종목 정보 바인딩 */                            
@@ -504,6 +507,8 @@ export default {
                             index++;
                         });                        
                     }
+                } else {
+                    util.processing(vm.$refs.progress, false);
                 }
             }).catch(error => {
                 console.log(error);
