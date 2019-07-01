@@ -15,7 +15,9 @@ var tool = {
     console.log(recvNo);
     for(let i=0; i < recvNo.length; i++) {
       console.log("i : " + i + " no : " + recvNo[i]);
-      axios.get("http://forms.koscom.co.kr/sms/EtpSmsAction.do", {
+      // 운영에서 CORS 걸려서 안됨
+      // axios.get("https://forms.koscom.co.kr/sms/EtpSmsAction.do", {
+      axios.get(Config.base_url + "/user/etp/getEtpBasic", {
         params: {
           sendNo: '027677114',
           recvNo: recvNo[i],
