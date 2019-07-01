@@ -567,7 +567,7 @@ export default {
 
 
             /* tm_pdf_basic 에서 최근 F12506(일자) 정보를 조회한다. */
-            vm.fn_getTmPdfBaiscMaxF12506( searchParam ).then( async function(e1){
+            vm.fn_getNowDate( searchParam ).then( async function(e1){
                 if( !e1 ) {
                     return  false;
                 }            
@@ -579,6 +579,7 @@ export default {
                 }
 
                 searchParam.isEtfYn     =   "Y";
+                searchParam.search_date =   vm.search_date;
 
                 util.processing(vm.$refs.progress, true);
                 axios.post( Config.base_url + "/user/etp/getEtpOperPdfModify", {
@@ -667,15 +668,15 @@ export default {
         },
 
         /*
-         * tm_pdf_basic 에서 최근 F12506(일자) 정보를 조회한다.
+         * 현재일자를 조회한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_getTmPdfBaiscMaxF12506( searchParam ) {
+        fn_getNowDate( searchParam ) {
             var vm = this;
 
             return  new Promise(function(resolve, reject) {
-                console.log( "fn_getTmPdfBaiscMaxF12506 called" );
-                
+                console.log( "fn_getNowDate called" );
+
                 // 이미 검색일자가 존재하는 경우 조회하지 않게 함.
                 if( vm.search_date ) {
                     searchParam.search_date     =  vm.search_date;
@@ -683,7 +684,7 @@ export default {
                     resolve(true);
                 }else{
                     util.processing(vm.$refs.progress, true);
-                    axios.post( Config.base_url + "/user/etp/getTmPdfBaiscMaxF12506", {
+                    axios.post( Config.base_url + "/user/etp/getNowDate", {
                         data: searchParam
                     }).then(function(response) {
                         console.log(response);
@@ -699,7 +700,7 @@ export default {
                             }
 
                             if( response.data.dateInfo ) {
-                                vm.search_date      =   response.data.dateInfo.F12506;
+                                vm.search_date      =   response.data.dateInfo.now_date;
                             }
                         }
 

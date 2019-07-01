@@ -52,6 +52,8 @@ module.exports = {
         { file: './user/etp/etpOper', path: '/user/etp/getPdfExistYnByNow', method: 'getPdfExistYnByNow', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getEtpOperPdfEmergencyHistNow', method: 'getEtpOperPdfEmergencyHistNow', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getTmPdfBaiscMaxF12506', method: 'getTmPdfBaiscMaxF12506', session: 'check', type: 'post' },
+        { file: './user/etp/etpOper', path: '/user/etp/getNowDate', method: 'getNowDate', session: 'check', type: 'post' },
+        { file: './user/etp/etpOper', path: '/user/etp/getExistsNowPdfBaisc', method: 'getExistsNowPdfBaisc', session: 'check', type: 'post' },        
         
 
         { file: './user/etp/etpNavCalcu', path: '/user/etp/getiNavData', method: 'getiNavData', session: 'check', type: 'get' },

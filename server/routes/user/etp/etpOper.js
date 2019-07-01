@@ -2518,6 +2518,183 @@ var getTmPdfBaiscMaxF12506 = function(req, res) {
     }
 }
 
+/*
+ * 현재일자를 조회한다.
+ * 2019-05-03  bkLove(촤병국)
+ */
+var getNowDate = function(req, res) {
+    try {
+        log.debug('etpOper.getNowDate 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] etpOper.getNowDate  req.body.data no data.", paramData);
+
+            resultMsg.result = false;
+            resultMsg.msg = "[error] etpOper.getNowDate  req.body.data no data.";
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        Promise.using(pool.connect(), conn => {
+
+            try {
+                stmt = mapper.getStatement('etpOper', 'getNowDate', paramData, format);
+                log.debug(stmt, paramData);
+
+                conn.query(stmt, function(err, rows) {
+
+                    if (err) {
+                        log.error(err, stmt, paramData);
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getNowDate Error while performing Query";
+                        resultMsg.err = err;
+                    }
+
+                    if (rows && rows.length == 1) {
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
+
+                        resultMsg.dateInfo = rows[0];
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+                });
+
+            } catch (err) {
+                log.error(err, stmt, paramData);
+
+                resultMsg.result = false;
+                resultMsg.msg = "[error] etpOper.getNowDate Error while performing Query";
+                resultMsg.err = err;
+
+                res.json(resultMsg);
+                res.end();
+            }
+        });
+
+    } catch (expetion) {
+
+        log.error(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getNowDate 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
+
+        resultMsg.dateInfo = {};
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+/*
+ * 현재일자에 pdf basic 데이터가 존재하는지 체크한다.
+ * 2019-05-03  bkLove(촤병국)
+ */
+var getExistsNowPdfBaisc = function(req, res) {
+    try {
+        log.debug('etpOper.getExistsNowEtpBasic 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] etpOper.getExistsNowEtpBasic  req.body.data no data.", paramData);
+
+            resultMsg.result = false;
+            resultMsg.msg = "[error] etpOper.getExistsNowEtpBasic  req.body.data no data.";
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        Promise.using(pool.connect(), conn => {
+
+            try {
+
+                stmt = mapper.getStatement('etpOper', 'getExistsNowPdfBaisc', paramData, format);
+                log.debug(stmt, paramData);
+
+                conn.query(stmt, function(err, rows) {
+
+                    if (err) {
+                        log.error(err, stmt, paramData);
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getExistsNowPdfBaisc Error while performing Query";
+                        resultMsg.err = err;
+                    }
+
+                    if (rows && rows.length == 1) {
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
+
+                        resultMsg.exists_now_pdf_yn = rows[0].exists_now_pdf_yn;
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+                });
+
+            } catch (err) {
+                log.error(err, stmt, paramData);
+
+                resultMsg.result = false;
+                resultMsg.msg = "[error] etpOper.getExistsNowPdfBaisc Error while performing Query";
+                resultMsg.err = err;
+
+                res.json(resultMsg);
+                res.end();
+            }
+        });
+
+    } catch (expetion) {
+
+        log.error(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getExistsNowEtpBasic 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
+
+        resultMsg.exists_now_etpbasic_yn = "N";
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
 
 module.exports.getEtpOperInfo = getEtpOperInfo;
 module.exports.getEtpOperIndex = getEtpOperIndex;
@@ -2534,3 +2711,5 @@ module.exports.getPdfByGroupNo = getPdfByGroupNo;
 module.exports.getPdfExistYnByNow = getPdfExistYnByNow;
 module.exports.getEtpOperPdfEmergencyHistNow = getEtpOperPdfEmergencyHistNow;
 module.exports.getTmPdfBaiscMaxF12506 = getTmPdfBaiscMaxF12506;
+module.exports.getNowDate = getNowDate;
+module.exports.getExistsNowPdfBaisc = getExistsNowPdfBaisc;

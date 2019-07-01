@@ -99,7 +99,9 @@ export default {
                 fix_disabled : true,
                 fix_msg : "조치현황 없음"
             },
-            faverSize : 430,            
+            faverSize : 430,       
+
+            exists_now_etpbasic_yn : "N",
         };
     },
     components: {
@@ -206,6 +208,13 @@ console.log( vm.pdfData );
 */
             /* PDF 긴급반영인 경우 */
             if( gubun == 6 ) {
+
+//                vm.togglePdfEmergencyPop    =   true;
+//                vm.toggleIanvPop            =   false;
+                vm.togglePdfByRate          =   false;
+                
+                console.log( "krx_cd >>>>>>>>>>>>>>>>>>>>>" + vm.$store.state.user.krx_cd );
+
                 var typeCd  =   vm.$store.state.user.type_cd;
                 if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                     if( vm.$store.state.user.krx_cd != vm.pdfData.F33960 ) {
@@ -214,13 +223,19 @@ console.log( vm.pdfData );
                     }
                 }
 
-//                vm.togglePdfEmergencyPop    =   true;
-//                vm.toggleIanvPop            =   false;
-                vm.togglePdfByRate          =   false;
-                
-                console.log( "krx_cd >>>>>>>>>>>>>>>>>>>>>" + vm.$store.state.user.krx_cd );
+                vm.fn_getExistsNowPdfBaisc().then( function( e ) {
 
-                vm.$emit( "fn_showDetailPdf", gubun, vm.pdfData );
+                    if( !e ) {
+                        return  false;
+                    }
+
+                    if( vm.exists_now_etpbasic_yn != "Y" ) {
+                        vm.$emit("showMessageBox", '확인','과거 PDF 는 수정할 수 없습니다',{},1);
+                        return  false;
+                    }
+
+                    vm.$emit( "fn_showDetailPdf", gubun, vm.pdfData );
+                });
             }
             /* iNAV 계산기인 경우 */
             else if( gubun == 7 ) {
@@ -241,7 +256,57 @@ console.log( vm.pdfData );
                 vm.$emit( "fn_showDetailPdf", gubun, vm.pdfData );
             }
             
-        }
+        },
+
+        /*
+         * 현재일자에 pdf basic 데이터가 존재하는지 체크한다.
+         * 2019-05-03  bkLove(촤병국)
+         */
+        fn_getExistsNowPdfBaisc() {
+            var vm = this;
+
+            return  new Promise(function(resolve, reject) {
+                console.log( "fn_getExistsNowPdfBaisc called" );
+
+                vm.$emit( "fn_showProgress", true );
+                axios.post( Config.base_url + "/user/etp/getExistsNowPdfBaisc", {
+                    data: vm.pdfData
+                }).then(function(response) {
+                    console.log(response);
+
+                    vm.$emit( "fn_showProgress", false );
+                    if (response.data) {
+
+                        var msg = ( response.data.msg ? response.data.msg : "" );
+                        if (!response.data.result) {
+                            if( msg ) {
+                                resolve(false);
+                            }
+                        }
+
+                        vm.exists_now_pdf_yn      =   response.data.exists_now_pdf_yn;
+                    }
+
+                    resolve(true);
+                    
+                }).catch(error => {
+                    console.log( error );
+
+                    vm.$emit( "fn_showProgress", false );
+                    vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+
+                    resolve(false);
+                });
+
+            }).catch( function(e) {
+                console.log( e );
+
+                vm.$emit( "fn_showProgress", false );
+                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+
+                resolve(false);
+            });
+        },        
     }
 };
 </script>
