@@ -141,7 +141,7 @@ export default {
             axios.post(Config.base_url+'/user/etc/saveCustSupport', {
                 "data" : { contents : vm.contents },
             }).then( async function(response) {
-                tool.smsSend(1, "고객지원 접수되었습니다. : " + vm.contents);
+                // tool.smsSend(1, "고객지원 접수되었습니다. : " + vm.contents);
 
                 var resultData = response.data;
 
