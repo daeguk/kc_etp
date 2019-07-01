@@ -16,13 +16,13 @@ var bodyParser = require('body-parser'),
     fs = require('fs');
     // errorHandler = require('errorhandler');
 
-// 에러 핸들러 모듈 사용
-// var expressErrorHandler = require('express-error-handler');
-var expressErrorHandler = require('./util/error-handler');
+// 에러 핸들러 모듈 사용 
+// express-error-handler 못 가져옴 (이유를 모르겠슴)
+var expressErrorHandler = require('express-error-handler');
+// var expressErrorHandler = require('./util/error-handler');
 
 // Session 미들웨어 불러오기
 var expressSession = require('express-session');
-
 
 // connect-flash 미들웨어 불러오기
 var flash = require('connect-flash');
@@ -99,14 +99,23 @@ var router = express.Router();
 route_loader.routerInit(app, router);
 
 //===== 404 에러 페이지 처리 =====//
+app.get('*', function(req, res) {
+  res.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
+  fs.readFile(__dirname + '/public/error/404.html', (err, data) => {
+    res.end(data, 'utf-8');
+  });
+});
+// express-error-handler 못 가져옴
+/*
 var errorHandler = expressErrorHandler({
-    static: {
-        '404': './public/error/404.html'
-    }
+  static: {
+      '404': './public/error/404.html'
+  }
 });
 
 app.use(expressErrorHandler.httpError(404));
 app.use(errorHandler);
+*/
 
 
 // cron 작업 등록

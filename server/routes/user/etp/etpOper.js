@@ -2089,11 +2089,8 @@ var makePdfModify = function(fsData) {
       wItem.fld009 + wItem.fld010 + wItem.fld011 + wItem.fld012 + wItem.fld013 + 
       wItem.fld014 + wItem.filler + wItem.filler2;
       console.log("strlen : " + ostr.length);
-      ostr = iconv.encode(ostr, "ISO-8859-1");
-      console.log("strlen : " + ostr.length);
-      // fs.writeFileSync(ifname, ostr, {flag: 'a+'}, 'utf8');
+      fs.writeFileSync(ifname, ostr, {flag: 'a+'}, 'utf8');
       // fs.writeFileSync(ifname, ostr, {flag: 'a+', encoding:'latin1'});  // latin1 == ISO-8859-1
-      fs.writeFileSync(ifname, ostr, {flag: 'a+'});
       log.debug("wItem..................");
       log.debug(wItem);
     }

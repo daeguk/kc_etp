@@ -326,6 +326,8 @@ export default {
                     vm.iNavRate = vm.formatNumber(0);    
                     
                     vm.indexInavCal();
+                } else {
+                    util.processing(vm.$refs.progress, false);                
                 }
             }).catch(error => {
                 console.log(error);
