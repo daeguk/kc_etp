@@ -101,7 +101,7 @@ export default {
             },
             faverSize : 430,       
 
-            exists_now_etpbasic_yn : "N",
+            exists_now_pdf_yn : "N",
         };
     },
     components: {
@@ -229,7 +229,7 @@ console.log( vm.pdfData );
                         return  false;
                     }
 
-                    if( vm.exists_now_etpbasic_yn != "Y" ) {
+                    if( vm.exists_now_pdf_yn != "Y" ) {
                         vm.$emit("showMessageBox", '확인','과거 PDF 는 수정할 수 없습니다',{},1);
                         return  false;
                     }
