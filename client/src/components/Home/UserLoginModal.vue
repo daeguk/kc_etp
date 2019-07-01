@@ -68,6 +68,7 @@ export default {
         loginDialog: true,
         email: "",
         password: "",
+        status: 0,
     };
   },
   components : {
@@ -77,10 +78,11 @@ export default {
   },
   methods: {
     closeModal: function() {
-      this.loginDialog = false;
-      // MainLanding.vue
-      this.$EventBus.$emit("closeLoginModal");
-
+      if (this.status == 0) {
+        this.loginDialog = false;
+        // MainLanding.vue
+        this.$EventBus.$emit("closeLoginModal");
+      }
     },
     loginCheck: function() {
 
@@ -93,8 +95,12 @@ export default {
       }).then(async function(response) {
         // console.log(response);
         if(response.data.success == false){
-           if( await vm.showMessageBox('확인',response.data.message,{},1) ) {
-                vm.$EventBus.$emit("userLoginCheck", false);
+           vm.status = 1;
+           if( await vm.$refs.confirm.open('확인',response.data.message, {}, 1)) {
+              if(vm.$refs.confirm.val == 'Y') {
+                  vm.status = 0;
+                  //vm.$EventBus.$emit("userLoginCheck", false);
+              }
            }
         }else {
           vm.$store.commit(Constant.ADD_USER, {
