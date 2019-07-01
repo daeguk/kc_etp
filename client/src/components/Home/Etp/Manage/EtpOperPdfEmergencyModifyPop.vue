@@ -567,7 +567,7 @@ export default {
 
 
             /* tm_pdf_basic 에서 최근 F12506(일자) 정보를 조회한다. */
-            vm.fn_getTmPdfBaiscMaxF12506( searchParam ).then( async function(e1){
+            vm.fn_getNowDate( searchParam ).then( async function(e1){
                 if( !e1 ) {
                     return  false;
                 }            
@@ -579,6 +579,7 @@ export default {
                 }
 
                 searchParam.isEtfYn     =   "Y";
+                searchParam.search_date =   vm.search_date;
 
                 util.processing(vm.$refs.progress, true);
                 axios.post( Config.base_url + "/user/etp/getEtpOperPdfModify", {
@@ -667,15 +668,15 @@ export default {
         },
 
         /*
-         * tm_pdf_basic 에서 최근 F12506(일자) 정보를 조회한다.
+         * 현재일자를 조회한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_getTmPdfBaiscMaxF12506( searchParam ) {
+        fn_getNowDate( searchParam ) {
             var vm = this;
 
             return  new Promise(function(resolve, reject) {
-                console.log( "fn_getTmPdfBaiscMaxF12506 called" );
-                
+                console.log( "fn_getNowDate called" );
+
                 // 이미 검색일자가 존재하는 경우 조회하지 않게 함.
                 if( vm.search_date ) {
                     searchParam.search_date     =  vm.search_date;
@@ -683,7 +684,7 @@ export default {
                     resolve(true);
                 }else{
                     util.processing(vm.$refs.progress, true);
-                    axios.post( Config.base_url + "/user/etp/getTmPdfBaiscMaxF12506", {
+                    axios.post( Config.base_url + "/user/etp/getNowDate", {
                         data: searchParam
                     }).then(function(response) {
                         console.log(response);
@@ -699,7 +700,7 @@ export default {
                             }
 
                             if( response.data.dateInfo ) {
-                                vm.search_date      =   response.data.dateInfo.F12506;
+                                vm.search_date      =   response.data.dateInfo.now_date;
                             }
                         }
 
@@ -771,8 +772,18 @@ export default {
                                     if( dataJson.thisTag ) {
                                         dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
                                     }
-                                } 
-                                if( vm.allDataList.length > 0 ) {
+                                }
+
+
+                                /*
+                                *   no_ing 용도
+                                *   -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
+                                * 
+                                *   1)  Next 를 통해 ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력된 경우
+                                *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
+                                *   2)  구성종목을 한건 이상 수정하고, 구성종목 DB 검색 후 callback 에서 오류 메시지 팝업창이 출력된 경우
+                                */
+                                if( vm.dataList.length > 0 || vm.allDataList.length > 0 ) {
                                     vm.jongmok_state    =   "no_ing";
                                 }
                                 return  false;
@@ -789,7 +800,16 @@ export default {
                                     dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
                                 }
                             }
-                            if( vm.allDataList.length > 0 ) {
+
+                            /*
+                            *   no_ing 용도
+                            *   -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
+                            * 
+                            *   1)  Next 를 통해 ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력된 경우
+                            *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
+                            *   2)  구성종목을 한건 이상 수정하고, 구성종목 DB 검색 후 callback 에서 오류 메시지 팝업창이 출력된 경우
+                            */                            
+                            if( vm.dataList.length > 0 || vm.allDataList.length > 0 ) {
                                 vm.jongmok_state    =   "no_ing";
                             }
                             return  false;
@@ -1104,6 +1124,14 @@ export default {
 
                     vm.fn_addEtfOperPdfModifyCancel();
 
+
+                    /*
+                    *   Next 버튼 클릭시
+                    *   1)  ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력되는 경우
+                    *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
+                    *       -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
+                    *       -   step2로 화면이 전환된 경우에 callback 을 받은 경우에는  step=1 로 이동시키고 다시 next 버튼을 누를수 있게 jongmok_state 를 초기화 한다.
+                    */
                     if( vm.allDataList.length > 0 && vm.jongmok_state=="no_ing" ) {
                         vm.step = 1;
                         vm.jongmok_state="";
@@ -1147,7 +1175,12 @@ export default {
 
                 console.log(response);
                 util.processing(vm.$refs.progress, false);
-                // tool.smsSend(0, "ETP PDF 변경신청 접수되었습니다.(테스트)");
+                
+                try{
+                    tool.smsSend(0, "ETP PDF 변경신청 접수되었습니다.");
+                }catch( e ) {
+                   vm.$emit('showMessageBox', '확인', '문자발송 중 오류가 발생하였으나 긴급반영 처리는 완료되었습니다.',{},1) ;
+                }
 
                 if (response.data) {
 
@@ -1595,12 +1628,26 @@ export default {
             }
         },
 
+        /*
+        *   Next 버튼이 보이는 경우
+        *   1)  최초
+        *   2)  Next 를 통해 ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력된 경우
+        *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
+        *       -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
+        *       -   해당 오류건은 무시하고 next 버튼을 보이도록 함.
+        *   3)  구성종목을 한건 이상 수정하고, 구성종목 DB 검색 후 callback 에서 오류 메시지 팝업창이 출력된 경우
+        *       -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
+        *       -   해당 오류건은 무시하고 next 버튼을 보이도록 함.
+        *   4)  정상적으로 구성종목 DB 검색 후 callback 을 받은 경우
+        */
         fn_nextButtonDisabledCheck() {
             var vm = this;
             
             if( vm.allDataList.length > 0 && vm.jongmok_state=="no_ing" ) {
                 return  false;
-            }else if( vm.jongmok_state=="" ){
+            }else if( vm.dataList.length > 0 && vm.jongmok_state=="no_ing" ){
+                return  false;
+            }else if( vm.jongmok_state=="" ) {
                 return  false;
             }else{
                 return  true;

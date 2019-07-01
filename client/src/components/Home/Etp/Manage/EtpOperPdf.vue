@@ -72,6 +72,7 @@
                     @showDetail="showDetail"
                     @showMessageBox="showMessageBox"
 
+                    @fn_showProgress="fn_showProgress"
                     @fn_showDetailIndex="fn_showDetailIndex"
                     @fn_setEtpOperPdfByRate="fn_setEtpOperPdfByRate"
                     @fn_showDetailPdf="fn_showDetailPdf">
@@ -734,7 +735,13 @@ export default {
             var vm = this;
 
             vm.$emit( "fn_showDetailPdf", gubun, paramData );
-        },            
+        },
+
+        fn_showProgress( param ) {
+            var vm = this;
+
+            vm.$emit( "fn_showProgress", param );
+        }      
     }
 };
 </script>

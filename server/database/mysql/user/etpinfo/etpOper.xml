@@ -112,6 +112,10 @@
                        AND  td_etp_basic.F16493                 IN  ( '1', '2' )                /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
                     </if>
 
+                    <if test = '( search_date != null  and  search_date != "" )' >
+                       AND  td_etp_basic.F12506                 =   #{search_date}
+                    </if>
+
                      LIMIT 0, 2
 
                 )   td_etp_basic
@@ -238,19 +242,6 @@
 
         <if test= 'F16013 != null  and  F16013 != "" ' >
            AND  td_etfpdf_hist.F16013                   =   #{F16013}                   /* ETF단축코드 */
-        </if>
-
-        <if test= 'F16012 != null  and  F16012 != "" ' >
-            <if test= 'F16013 != null  and  F16013 != "" ' >
-           AND  td_etfpdf_hist.F16583                   =
-                (
-                    SELECT  td_etfpdf_basic.F16583
-                      FROM  td_etfpdf_basic
-                     WHERE  td_etfpdf_basic.F16012      =   #{F16012}           /* 국제표준코드 */
-                       AND  td_etfpdf_basic.F16013      =   #{F16013}           /* ETF단축코드 */
-                     LIMIT  1
-                )
-            </if>
         </if>
 
         <if test= 'search_date != null  and  search_date != "" ' >
@@ -1967,8 +1958,17 @@
     <select id="getTmPdfBaiscMaxF12506">
     <![CDATA[
         SELECT  /* etpOper.getTmPdfBaiscMaxF12506   tm_pdf_basic 에서 최근 F12506(일자) 정보를 조회한다. */
-                    td_etfpdf_basic.F12506                                  AS  F12506
-                ,   DATE_FORMAT( td_etfpdf_basic.F12506, '%Y-%m-%d' )       AS  fmt_F12506
+                    IFNULL(
+                            MAX( td_etfpdf_basic.F12506 )
+                        ,   DATE_FORMAT( now(), '%Y%m%d' )
+                    )                                                       AS  F12506
+                ,   DATE_FORMAT( 
+                            IFNULL(
+                                    MAX( td_etfpdf_basic.F12506 )
+                                ,   DATE_FORMAT( now(), '%Y%m%d' )
+                            )
+                        ,   '%Y-%m-%d'
+                    )                                                       AS  fmt_F12506
 
           FROM  td_etfpdf_basic
          WHERE  1 = 1
@@ -1984,6 +1984,40 @@
            AND  td_etfpdf_basic.F16013          =   #{F16013}       /* ETF단축코드 */
 
          LIMIT  1
+    ]]>
+    </select>    
+
+    <!--
+    * 현재일자를 조회한다.
+    * 2019-05-20  bkLove(촤병국)
+    -->
+    <select id="getNowDate">
+    <![CDATA[
+        SELECT  /* etpOper.getNowDate   현재일자를 조회한다. */
+                DATE_FORMAT(now(), '%Y%m%d')                            AS  now_date
+
+          FROM  dual
+    ]]>
+    </select>
+
+    <!--
+    * 현재일자에 pdf basic 데이터가 존재하는지 체크한다.
+    * 2019-04-25  bkLove(촤병국)
+    -->
+    <select id="getExistsNowPdfBaisc">
+    <![CDATA[
+        SELECT  /* etpOper.getExistsNowPdfBaisc     현재일자에 pdf basic 데이터가 존재하는지 체크한다. */
+
+                CASE    WHEN    MAX( td_etfpdf_basic.F12506 )  IS  NOT  NULL
+                        THEN    'Y'
+                        ELSE    'N'
+                END                                                 AS  exists_now_pdf_yn   /* 존재여부 */
+          FROM  td_etfpdf_basic
+         WHERE  1 = 1
+           AND  td_etfpdf_basic.F16012                 =   #{F16012}                        /* 국제표준코드 */
+           AND  td_etfpdf_basic.F12506                 =   DATE_FORMAT(now(), '%Y%m%d')
+
+         LIMIT 1
     ]]>
     </select>    
 

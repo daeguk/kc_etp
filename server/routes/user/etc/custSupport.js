@@ -75,6 +75,7 @@ var saveCustSupport = function(req, res) {
                     resultMsg.msg = "성공적으로 전송하였습니다.";
                     resultMsg.err = "";
 
+                    smsSend(req);
                     res.json(resultMsg);
                     res.end();
                 });
@@ -106,6 +107,10 @@ var saveCustSupport = function(req, res) {
         res.json(resultMsg);
         res.end();
     }
+}
+
+var smsSend = function(req) {
+
 }
 
 module.exports.saveCustSupport = saveCustSupport;
