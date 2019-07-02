@@ -577,8 +577,6 @@ export default {
             vm.result.flag  =   true;
             vm.result.msg   =   '';
 
-            
-            vm.status = 1;
 
             /* tm_pdf_basic 에서 최근 F12506(일자) 정보를 조회한다. */
             vm.fn_getNowDate( searchParam ).then( async function(e1){
@@ -587,6 +585,7 @@ export default {
                 }            
 
                 if( !vm.search_date ) {
+                    vm.status = 1;
                     if ( await vm.$refs.confirm2.open(
                             '확인',
                             '최근일자 정보가 존재하지 않습니다.',
@@ -596,7 +595,11 @@ export default {
                     ) {
                         if(vm.$refs.confirm2.val == 'Y') {
                             vm.status = 0;
+                            return  false;
                         }
+
+                        vm.status = 0;
+                        return  false;                        
                     }
                 }
 
@@ -616,6 +619,7 @@ export default {
                         var msg = ( response.data.msg ? response.data.msg : "" );
                         if (!response.data.result) {
                             if( msg ) {
+                                vm.status = 1;
                                 if ( await vm.$refs.confirm2.open(
                                         '확인',
                                         msg,
@@ -703,7 +707,6 @@ export default {
                             ,4
                         )
                     ) {
-                        vm.status = 0;
                     }
                 });
             });
@@ -716,14 +719,12 @@ export default {
         fn_getNowDate( searchParam ) {
             var vm = this;
 
-            vm.status   =   1;
             return  new Promise(function(resolve, reject) {
                 console.log( "fn_getNowDate called" );
 
                 // 이미 검색일자가 존재하는 경우 조회하지 않게 함.
                 if( vm.search_date ) {
                     searchParam.search_date     =  vm.search_date;
-                    vm.status   =   0;
 
                     resolve(true);
                 }else{
@@ -739,13 +740,11 @@ export default {
                             var msg = ( response.data.msg ? response.data.msg : "" );
                             if (!response.data.result) {
                                 if( msg ) {
-                                    vm.status   =   0;
                                     resolve(false);
                                 }
                             }
 
                             if( response.data.dateInfo ) {
-                                vm.status           =   0;
                                 vm.search_date      =   response.data.dateInfo.now_date;
                             }
                         }
@@ -763,7 +762,6 @@ export default {
                                 ,4
                             )
                         ) {
-                            vm.status = 0;
                         }
 
                         resolve(false);
@@ -782,7 +780,6 @@ export default {
                         ,4
                     )
                 ) {
-                    vm.status = 0;
                 }
 
                 resolve(false);
@@ -798,11 +795,11 @@ export default {
 
             console.log("EtpOperPdfEmergencyModifyPop -> fn_getJongmokData");
 
-            vm.status = 1;
             if( dataJson.status == "insert" ) {
                 if(     !dataJson.codeVal
                     ||  dataJson.codeVal.length == 0
                 ) {
+                    vm.status = 1;
                     if (await vm.$refs.confirm2.open(
                             '확인',
                             '구성종목코드를 입력해 주세요.',
@@ -821,6 +818,7 @@ export default {
                 }
 
                 if(  dataJson.codeVal.length < 6 ) {
+                    vm.status = 1;
                     if (await vm.$refs.confirm2.open(
                             '확인',
                             '구성종목코드를 6자리 이상 입력해 주세요.',
@@ -854,6 +852,7 @@ export default {
                     var msg = ( response.data.msg ? response.data.msg : "" );
                     if (!response.data.result) {
                         if( msg ) {
+                            vm.status = 1;
                             if (await vm.$refs.confirm2.open(
                                     '확인',
                                     msg,
@@ -862,7 +861,6 @@ export default {
                                 )
                             ) {
                                 if(vm.$refs.confirm2.val == 'Y') {
-                                    vm.status = 0;
 
                                     if( typeof dataJson.tableData.F16499_prev != "undefined" ) {
                                         if( dataJson.thisTag ) {
@@ -883,6 +881,7 @@ export default {
                                         vm.jongmok_state    =   "no_ing";
                                     }
 
+                                    vm.status = 0;
                                     return  false;
                                 }
 
@@ -894,6 +893,7 @@ export default {
 
                     var dataList = response.data.dataList;
                     if ( !dataList || dataList.length == 0 ) {
+                        vm.status = 1;
                         if (await vm.$refs.confirm2.open(
                                 '확인',
                                 '구성종목코드(' + dataJson.codeVal + ')가 존재하지 않습니다.',
@@ -902,7 +902,6 @@ export default {
                             )
                         ) {
                             if(vm.$refs.confirm2.val == 'Y') {
-                                vm.status = 0;
 
                                 if( typeof dataJson.tableData.F16499_prev != "undefined" ) {
                                     if( dataJson.thisTag ) {
@@ -922,6 +921,7 @@ export default {
                                     vm.jongmok_state    =   "no_ing";
                                 }
 
+                                vm.status = 0;
                                 return  false;
                             }
 
@@ -932,6 +932,7 @@ export default {
                     }
 
                     if ( dataList && dataList.length > 1 ) {
+                        vm.status = 1;
                         if (await vm.$refs.confirm2.open(
                                 '확인',
                                 '구성종목코드(' + dataJson.codeVal + ')가 여러건 존재합니다.',
@@ -958,6 +959,7 @@ export default {
                         });
                     
                         if( filterData.length > 0 ) {
+                            vm.status = 1;
                             if (await vm.$refs.confirm2.open(
                                     '확인',
                                     '구성종목코드(' + dataJson.codeVal + ')가 이미 존재합니다.',
@@ -1027,7 +1029,6 @@ export default {
                 }
 
                 vm.jongmok_state    =   "";
-                vm.status = 0;
 
             }).catch(error => {
                 vm.jongmok_state    =   "";
@@ -1040,7 +1041,6 @@ export default {
                         ,4
                     )
                 ) {
-                    vm.status = 0;
                 }
             });
         },
@@ -1311,7 +1311,6 @@ export default {
             //   }
             // });
 
-            vm.status   =   1;
             util.processing(vm.$refs.progress, true);
             axios.post( Config.base_url + "/user/etp/saveEtpOperPdfModify", {
                 data: {     
@@ -1332,8 +1331,7 @@ export default {
                             {}
                             ,1
                         )
-                    ) {     
-                        vm.status = 0;
+                    ) {
                     }
                 }
 
@@ -1342,6 +1340,7 @@ export default {
                     var msg = ( response.data.msg ? response.data.msg : "" );
                     if (!response.data.result) {
                         if( msg ) {
+                            vm.status = 1;
                             if ( await vm.$refs.confirm2.open(
                                     '확인',
                                     msg,
@@ -1359,8 +1358,7 @@ export default {
                             }
                         }
                     }
-            
-                    vm.status = 0;
+
                     vm.fn_getPdfByGroupNo();
                 }
             }).catch(error => {
@@ -1372,7 +1370,6 @@ export default {
                         ,4
                     )
                 ) {
-                    vm.status = 0;
                 }
             });
         },
@@ -1382,7 +1379,6 @@ export default {
 
             console.log("EtpOperPdfEmergencyModifyPop -> fn_getPdfByGroupNo");            
 
-            vm.status = 1;
             util.processing(vm.$refs.progress, true);
             axios.post( Config.base_url + "/user/etp/getPdfByGroupNo", {
                 data: {}
@@ -1396,6 +1392,7 @@ export default {
                     var msg = ( response.data.msg ? response.data.msg : "" );
                     if (!response.data.result) {
                         if( msg ) {
+                            vm.status = 1;
                             if ( await vm.$refs.confirm2.open(
                                     '확인',
                                     msg,
@@ -1547,7 +1544,6 @@ export default {
                     }
                 }
 
-                vm.status = 0;
             }).catch(error => {
                 util.processing(vm.$refs.progress, false);
                 if ( vm.$refs.confirm2.open(
@@ -1557,7 +1553,6 @@ export default {
                         ,4
                     )
                 ) {
-                    vm.status = 0;
                 }
             });
         },
@@ -1598,7 +1593,6 @@ export default {
 
             console.log("EtpOperPdfEmergencyModifyPop.vue -> fn_addEtfOperPdfModify");
 
-            vm.status = 1;
             if(     !vm.txtAddEtpCode
                 ||  vm.txtAddEtpCode.length == 0
             ) {
@@ -1734,7 +1728,6 @@ export default {
 
             var vm = this;
 
-            vm.status   =   1;
             var jongmokData = $("#tblEmergeny01 tbody").find("input[name='jongmok']" );
 
             var filterData  =   _.filter( tblEmergeny01.rows( jongmokData.parents("tr") ).data(), function( o, i ) {
@@ -1744,6 +1737,7 @@ export default {
             });
 
             if( filterData.length > 0 ) {
+                vm.status = 1;
                 if ( vm.$refs.confirm2.open(
                         '확인',
                         '구성종목코드가 빈 항목이 존재합니다.',
@@ -1752,7 +1746,7 @@ export default {
                     )
                 ) {
                     if(vm.$refs.confirm2.val == 'Y') {
-                        vm.status = 0;                    
+                        vm.status = 0;
                         return  false;
                     }
 
@@ -1760,8 +1754,6 @@ export default {
                     return  false;
                 }
             }
-
-            vm.status = 0;
 
             return  true;
         },
@@ -1774,7 +1766,6 @@ export default {
 
             var vm = this;
 
-            vm.status   =   1;
             var filterData  =   _.filter( vm.dataList, function( o, i ) {
                 if( o.status == "insert" || o.status == "modify" ) {
                     return  true;
@@ -1782,6 +1773,7 @@ export default {
             });
 
             if( filterData.length == 0 ) {
+                vm.status = 1;
                 if ( vm.$refs.confirm2.open(
                         '확인',
                         '수정건이 1건 이상 존재해야 합니다.',
@@ -1799,8 +1791,6 @@ export default {
                 }
             }
 
-            vm.status = 0;
-
             return  true;
         },
 
@@ -1812,7 +1802,6 @@ export default {
 
             var vm = this;
 
-            vm.status   =   1;
             var filterData  =   _.filter( vm.dataList, function( o, i ) {
                 if( o.code_check != true ) {
                     return  true;
@@ -1820,6 +1809,7 @@ export default {
             });
 
             if( filterData.length > 0 ) {
+                vm.status = 1;
                 if ( vm.$refs.confirm2.open(
                         '확인',
                         '구성종목코드가 확인 되지 않은 건이 존재합니다.',
@@ -1836,8 +1826,6 @@ export default {
                     return  false;
                 }
             }
-
-            vm.status = 0;
 
             return  true;
         },
