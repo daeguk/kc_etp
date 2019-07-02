@@ -2069,7 +2069,7 @@ var makePdfModify = function(fsData) {
   code_check: true } */
   log.debug("makePdfModify.......................");
   var ifname = config.pdfmodify_nas_path + "pdfmodify." + util.getTodayDate();
-
+  var msg = "ETP PDF 변경신청 접수되었습니다.";
   for(var i=0; i<fsData.allDataList.length; i++) {
     var tmp = fsData.allDataList[i];
     for(var j=0; j<tmp.data.length; j++) {
@@ -2089,6 +2089,8 @@ var makePdfModify = function(fsData) {
       wItem.fld004 + wItem.fld005 + wItem.fld006 + wItem.fld007 + wItem.fld008 + 
       wItem.fld009 + wItem.fld010 + wItem.fld011 + wItem.fld012 + wItem.fld013 + 
       wItem.fld014 + wItem.filler + wItem.filler2;
+
+      msg = msg + "[" + tmp.data[j].F16013 + "]";
       console.log("strlen : " + ostr.length);
       fs.writeFileSync(ifname, ostr, {flag: 'a+'}, 'utf8');
       // fs.writeFileSync(ifname, ostr, {flag: 'a+', encoding:'latin1'});  // latin1 == ISO-8859-1
@@ -2097,7 +2099,7 @@ var makePdfModify = function(fsData) {
     }
   }
 
-  sms.smsSend(0, "ETP PDF 변경신청 접수되었습니다.")
+  sms.smsSend(0, msg)
 }
 /*
 { F12506: '20190627',
