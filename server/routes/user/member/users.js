@@ -6,7 +6,7 @@
  */
 var crypto = require('crypto');
 var config = require('../../../config/config');
-var util = require("util");
+var util = require('../../../util/util');
 var Promise = require("bluebird");
 
 /* logging 추가함.  2019-06-10 */
@@ -38,13 +38,7 @@ log.debug("email : " + req.body.email + " password : " + req.body.password);
     *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
     *   written by bkLove(최병국)   2019-06-25
     */
-    for( var i in options ) {
-        if( options[i] && typeof options[i] === "string" ) {
-            if( options[i].indexOf( "\\" ) > -1 ) {
-                options[i] = options[i].replace( /\\/g, "\\\\" );
-            }
-        }
-    }
+    util.fn_replaceSpecialChar( options );
 
     log.debug("options==> ", JSON.stringify(options));
 
@@ -103,13 +97,7 @@ var setLoginHistory = function(req) {
     *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
     *   written by bkLove(최병국)   2019-06-25
     */
-    for( var i in options ) {
-        if( options[i] && typeof options[i] === "string" ) {
-            if( options[i].indexOf( "\\" ) > -1 ) {
-                options[i] = options[i].replace( /\\/g, "\\\\" );
-            }
-        }
-    }
+    util.fn_replaceSpecialChar( options );
     
     var stmt = mapper.getStatement('member', 'setLoginHistory', options, {language:'sql', indent: '  '});
     log.debug(stmt);
@@ -208,13 +196,7 @@ var userNewAccount = function(req, res) {
     *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
     *   written by bkLove(최병국)   2019-06-25
     */
-    for( var i in options ) {
-        if( options[i] && typeof options[i] === "string" ) {
-            if( options[i].indexOf( "\\" ) > -1 ) {
-                options[i] = options[i].replace( /\\/g, "\\\\" );
-            }
-        }
-    }
+    util.fn_replaceSpecialChar( options );
     
     var stmt = mapper.getStatement('member', 'userNewAccount', options, {language:'sql', indent: '  '});
     log.debug(stmt);
@@ -254,13 +236,7 @@ var userFindPwd = function(req, res) {
     *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
     *   written by bkLove(최병국)   2019-06-25
     */
-    for( var i in options ) {
-        if( options[i] && typeof options[i] === "string" ) {
-            if( options[i].indexOf( "\\" ) > -1 ) {
-                options[i] = options[i].replace( /\\/g, "\\\\" );
-            }
-        }
-    }    
+    util.fn_replaceSpecialChar( options );
     
     var stmt = mapper.getStatement('member', 'userFindPwd', options, {language:'sql', indent: '  '});
     log.debug(stmt);
@@ -309,13 +285,7 @@ var userUpdateInfo = function(req, res) {
     *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
     *   written by bkLove(최병국)   2019-06-25
     */
-    for( var i in options ) {
-        if( options[i] && typeof options[i] === "string" ) {
-            if( options[i].indexOf( "\\" ) > -1 ) {
-                options[i] = options[i].replace( /\\/g, "\\\\" );
-            }
-        }
-    }
+    util.fn_replaceSpecialChar( options );
     
     var stmt = mapper.getStatement('member', 'setUserInfo', options, {language:'sql', indent: '  '});
     log.debug(stmt);

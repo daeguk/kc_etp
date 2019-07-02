@@ -5,7 +5,7 @@
  * @author ThreeOn
  */
 var config = require('../../../config/config');
-var util = require("util");
+var util = require('../../../util/util');
 var Promise = require("bluebird");
 
 var multer = require('multer');
@@ -401,13 +401,7 @@ var modifyJisu = function(req, res) {
                     *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
                     *   written by bkLove(최병국)   2019-06-25
                     */
-                    for( var i in paramData ) {
-                        if( paramData[i] && typeof paramData[i] === "string" ) {
-                            if( paramData[i].indexOf( "\\" ) > -1 ) {
-                                paramData[i] = paramData[i].replace( /\\/g, "\\\\" );
-                            }
-                        }
-                    }
+                   util.fn_replaceSpecialChar( paramData );
 
                     var format = { language: 'sql', indent: '' };
                     var stmt = "";
