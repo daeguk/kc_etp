@@ -15,11 +15,11 @@
                             </h3>
                             <div class="right_btn">
                                 <span class="toggle2">
-                                    <v-btn-toggle v-model="text" class="toggle_01">
-                                        <v-btn flat value="전종목"      @click="fn_getEtpOperInfo('A')">전종목</v-btn>
-                                        <v-btn flat value="국내"        @click="fn_getEtpOperInfo('K')">국내</v-btn>
-                                        <v-btn flat value="해외"        @click="fn_getEtpOperInfo('F')">해외</v-btn>
-                                        <v-btn flat value="관심종목"    @click="fn_getEtpOperInfo('I')">관심종목</v-btn>
+                                    <v-btn-toggle v-model="stateInfo.gubun" class="toggle_01">
+                                        <v-btn flat value="A"       @click="fn_getEtpOperInfo('A')">전종목</v-btn>
+                                        <v-btn flat value="K"        @click="fn_getEtpOperInfo('K')">국내</v-btn>
+                                        <v-btn flat value="F"       @click="fn_getEtpOperInfo('F')">해외</v-btn>
+                                        <v-btn flat value="I"       @click="fn_getEtpOperInfo('I')">관심종목</v-btn>
                                     </v-btn-toggle>
                                 </span>
                             </div>
@@ -172,6 +172,12 @@ export default {
             vm.stateInfo.gubun  =   vm.state.gubun;
         }
 
+        if( vm.toggle ) {
+            if( vm.toggle.arrCustomizeColumn && vm.toggle.arrCustomizeColumn.length > 0 ) {
+                vm.arrCustomizeColumn   =   vm.toggle.arrCustomizeColumn;
+            }
+        }
+
 
         new Promise(function(resolve, reject) {
 
@@ -266,7 +272,7 @@ export default {
 
         }).then( function() {
 
-            vm.fn_setTableInfo();
+            vm.fn_setTableInfo( vm.arrCustomizeColumn );
             vm.fn_getEtpOperInfo( vm.stateInfo.gubun );
         });
     },
@@ -344,6 +350,8 @@ export default {
 
                         vm.$emit( "fn_setFirstData", vm.etpBasic );
                     }
+                    
+                    vm.$emit( "fn_setStateInfo", vm.stateInfo );
                 }
 
             }).catch(error => {
@@ -396,7 +404,9 @@ export default {
             /* customize 를 선택한 경우 */
             else if( vm.stateInfo.pageState == "customize" ) {
                 
-                vm.fn_setArrShowColumn( arrCustomizeColumn );                
+                if( arrCustomizeColumn && arrCustomizeColumn.length > 0  ) {
+                    vm.fn_setArrShowColumn( arrCustomizeColumn );                
+                }
             }
 
             if( vm.stateInfo.pageState != "performance" ) {

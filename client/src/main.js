@@ -6,8 +6,8 @@ import store      from './store'
 import App        from './App.vue'
 import VueResource from 'vue-resource'
 import Vuetify from 'vuetify'
-import 'date-input-polyfill'
-import 'vuetify/dist/vuetify.min.css'
+//import 'date-input-polyfill'
+//import 'vuetify/dist/vuetify.min.css'
 // import 'bootstrap';
 // import 'bootstrap/dist/css/bootstrap.css';
 // import 'vue-awesome/icons';

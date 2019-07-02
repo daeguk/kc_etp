@@ -1,6 +1,9 @@
 /*
  * 설정
  */
+var config = require('../config/config');
+
+var log = config.logger;
 
 module.exports = {
   getYearMonth: function() {
@@ -59,4 +62,22 @@ module.exports = {
     str = str + '';
     return str.length >= len ? str : str + new Array(len-str.length+1).join(' ');
   },
+
+
+
+    /*
+    *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+    *   written by bkLove(최병국)   2019-06-25
+    */
+    fn_replaceSpecialChar : function( options ) {
+        log.debug( "변경 전=>", options );
+        for( var i in options ) {
+            if( options[i] && typeof options[i] === "string" ) {
+                if( options[i].indexOf( "\\" ) > -1 ) {
+                    options[i] = options[i].replace( /\\/g, "\\\\" );
+                }
+            }
+        }
+        log.debug( "변경 후=>", options );
+    }
 }

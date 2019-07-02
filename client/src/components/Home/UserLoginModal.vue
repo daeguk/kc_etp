@@ -34,7 +34,7 @@
                          New to ETP Platform? <a @click.stop="newAccount">Create an account.</a>
                     </v-flex>
                     <v-flex>
-                        <a @click.stop="forgotPassword">Forgot password.</a>
+                        <!-- <a @click.stop="forgotPassword">Forgot password.</a> -->
                     </v-flex>
                 </v-layout>
             </v-flex>

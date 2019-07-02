@@ -196,21 +196,19 @@
                                                 full-width
                                                 min-width="290px"
                                             >
-                                                <template v-slot:activator="{ on }">
-                                                    <v-text-field
-                                                        label="Picker in menu"
-                                                        append-icon="event"
-                                                        box
-                                                        outline
-                                                        v-on="on"
-                                                        widh="100%"
-                                                        v-model="modForm.base_date"
-                                                        :rules="rules.base_date"
+                                                <v-text-field
+                                                    slot="activator"
+                                                    label="Picker in menu"
+                                                    append-icon="event"
+                                                    box
+                                                    outline
+                                                    widh="100%"
+                                                    v-model="modForm.base_date"
+                                                    :rules="rules.base_date"
 
-                                                        maxlength="10"
-                                                        :disabled="modForm.status == '03'"
-                                                    ></v-text-field>
-                                                </template>
+                                                    maxlength="10"
+                                                    :disabled="modForm.status == '03'"
+                                                ></v-text-field>
 
                                                 <v-date-picker 
                                                     v-model="modForm.base_date" 

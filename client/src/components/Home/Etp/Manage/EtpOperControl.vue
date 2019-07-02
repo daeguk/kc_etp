@@ -16,11 +16,12 @@
                             @fn_showDetailIndex="fn_showDetailIndex"
                             @fn_showDetailPdf="fn_showDetailPdf"
                             @fn_pageMove="fn_pageMove"
+
                             @fn_setFirstData="fn_setFirstData"
-                            
                             @fn_setInavData="fn_setInavData"
                             @fn_setEtpPerformanceData="fn_setEtpPerformanceData"
-                            @fn_setCustomizeData="fn_setCustomizeData">
+                            @fn_setCustomizeData="fn_setCustomizeData"
+                            @fn_setStateInfo="fn_setStateInfo">
             </EtpOperInfo>
 
             <!-- 지수관리 -->
@@ -264,9 +265,6 @@ export default {
         this.$root.$confirm = this.$refs.confirm;
 
         this.className = "conWidth_100";
-
-
-        console.log( ">>>>>>>>>>> this.toggle", this.toggle );
     },
     created: function() {
         this.$EventBus.$on('showList', data => {
@@ -291,16 +289,6 @@ export default {
             this.showFaver                          =   false;
 
             this.paramData                          =   data.paramData;
-
-            if( this.showEtpOerInfo != 0 ) {
-                this.toggle.toggleINav =   false;
-                this.toggle.toggleEtpPerformance =   false;
-                this.toggle.toggleCustomize =   false;
-                this.toggle.arrCustomizeColumn =   [];
-
-                this.state.pageState = 'etpInfo';   /* etpInfo - ETP운용정보, iNav - iNav 산출현황, performance - ETP Performance, customize - 컬럼 선택 */
-                this.state.gubun = 'A';
-            }
 
             if( this.showEtpOerInfo == 2 ) {
                 this.className      =   "conWidth_left";
@@ -551,6 +539,15 @@ export default {
                 vm.state.pageState  =   stateInfo.pageState;
                 vm.state.gubun  =   stateInfo.gubun;
             }            
+        },
+
+        fn_setStateInfo( stateInfo ) {
+            var vm = this;
+
+            if( stateInfo ) {
+                vm.state.pageState = stateInfo.pageState;
+                vm.state.gubun = stateInfo.gubun;
+            }
         },
 
         /*

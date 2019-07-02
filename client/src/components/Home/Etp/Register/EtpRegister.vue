@@ -190,21 +190,21 @@
                                                         full-width
                                                         min-width="290px"
                                                     >
-                                                     
-                                                        <template v-slot:activator="{ on }" >
-                                                            <v-text-field v-bind:disabled = inputDisabled
-                                                                v-model="masterData.list_req_date"
-                                                                label="Picker in menu"
-                                                                append-icon="event"
-                                                                box
-                                                                outline
-                                                                v-on="on"
-                                                                width="100%"
-                                                                ref="list_req_date"
-                                                                maxlength="10"
-                                                               :rules ="[errors.list_req_date]"
-                                                            ></v-text-field>
-                                                        </template>
+
+                                                        <v-text-field 
+                                                            slot="activator"
+                                                            v-bind:disabled = inputDisabled
+                                                            v-model="masterData.list_req_date"
+                                                            label="Picker in menu"
+                                                            append-icon="event"
+                                                            box
+                                                            outline
+                                                            v-on="on"
+                                                            width="100%"
+                                                            ref="list_req_date"
+                                                            maxlength="10"
+                                                            :rules ="[errors.list_req_date]"
+                                                        ></v-text-field>
                                                         <v-date-picker
                                                             no-title
                                                             scrollable
@@ -241,20 +241,19 @@
                                                         min-width="290px"
                                                         
                                                     >
-                                                        <template v-slot:activator="{ on }">
-                                                            <v-text-field v-bind:disabled = inputDisabled
-                                                                v-model="masterData.list_date"
-                                                                label="Picker in menu"
-                                                                append-icon="event"
-                                                                box
-                                                                outline
-                                                                v-on="on"
-                                                                width="100%"
-                                                                ref="list_date"
-                                                                maxlength="10"
-                                                                :rules ="[errors.list_date]"
-                                                            ></v-text-field>
-                                                        </template>
+                                                        <v-text-field 
+                                                            slot="activator"
+                                                            v-bind:disabled = inputDisabled
+                                                            v-model="masterData.list_date"
+                                                            label="Picker in menu"
+                                                            append-icon="event"
+                                                            box
+                                                            outline
+                                                            width="100%"
+                                                            ref="list_date"
+                                                            maxlength="10"
+                                                            :rules ="[errors.list_date]"
+                                                        ></v-text-field>
                                                         <v-date-picker
                                                             no-title
                                                             scrollable

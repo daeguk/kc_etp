@@ -20,18 +20,16 @@
                                     offset-y
                                     min-width="290px"
                                 >
-                                    <template v-slot:activator="{ on }">
-                                        <v-text-field
-                                            v-model="searchParam.show_date"
-                                            label="Picker in menu"
-                                            append-icon="event"
-                                            box
-                                            outline
-                                            v-on="on"
-                                            @keyup.enter="$refs.menu2.save(searchParam.show_date);fn_getEtpOerPdf( 'N' )"
-                                            widh="100%"
-                                        ></v-text-field>
-                                    </template>
+                                    <v-text-field
+                                        slot="activator"
+                                        v-model="searchParam.show_date"
+                                        label="Picker in menu"
+                                        append-icon="event"
+                                        box
+                                        outline
+                                        @keyup.enter="$refs.menu2.save(searchParam.show_date);fn_getEtpOerPdf( 'N' )"
+                                        width="100%"
+                                    ></v-text-field>
                                     <v-date-picker v-model="searchParam.show_date" no-title scrollable locale="ko" @input="$refs.menu2.save(searchParam.show_date);fn_getEtpOerPdf( 'N' )">
                                     </v-date-picker>
                                 </v-menu>
