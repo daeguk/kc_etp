@@ -46,10 +46,10 @@ export default {
     mounted: function() {
         if (this.$route.query.activeTab == 2) {
             this.activeTab = 1;
-            this.pageMove(tabs[1].route);
+            this.pageMove(this.tabs[1].route);
         } else {
             this.activeTab = 0;
-            this.pageMove(tabs[0].route);
+            this.pageMove(this.tabs[0].route);
         }
     },
     created: function() {
