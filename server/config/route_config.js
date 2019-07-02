@@ -124,6 +124,7 @@ module.exports = {
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpIntra', method: 'getEtpIntra', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpMultiIntra', method: 'getEtpMultiIntra', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpMultiHist', method: 'getEtpMultiHist', session: 'uncheck', type: 'get' },
+        { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpMultiHist1', method: 'getEtpMultiHist1', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtfSumByIndex', method: 'getEtfSumByIndex', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtnSumByIndex', method: 'getEtnSumByIndex', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpCtgBasic', method: 'getEtpCtgBasic', session: 'uncheck', type: 'get' },

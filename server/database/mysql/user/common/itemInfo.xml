@@ -255,6 +255,10 @@
         ORDER BY F20044 desc, F20004 desc LIMIT ${limit}
     </select>
 
+    <!--
+      장전에 F15318 이 메모리 값이 0가 됨. 그래서, 당일 데이터 0가 됨.
+      장전 기준가 필요한 경우, 아래 getEtpMultiHist1 을 써야함. 조회 속도 느려짐.
+    -->
     <select id="getEtpMultiHist">
         SELECT DATE_FORMAT(F12506, "%Y.%m.%d") as F12506
 		       ,F15001, F15318 as iF15001
@@ -262,8 +266,8 @@
         WHERE F16013 = #{F16013}
         ORDER BY F12506 desc LIMIT ${limit}
     </select>
-<!--
-    <select id="getEtpMultiHist">
+
+    <select id="getEtpMultiHist1">
         SELECT DATE_FORMAT(A.F12506, "%Y.%m.%d") as F12506
 		       ,A.F15001 as F15001, B.F15001 as iF15001
         FROM td_etp_hist A, td_index_hist B
@@ -273,7 +277,7 @@
         AND A.F12506 = B.F12506
         ORDER BY F12506 desc LIMIT ${limit}
     </select>
-    -->
+
     <!--
     * 마켓 정보의 구성 기본 정보
     -->

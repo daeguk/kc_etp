@@ -146,7 +146,7 @@ export default {
         etpInfo.term = term;
         etpInfo.market_id = "M" + util.pad(etpInfo.F34239, 3);
 
-        axios.get(Config.base_url + "/user/marketinfo/getEtpMultiHist", {
+        axios.get(Config.base_url + "/user/marketinfo/getEtpMultiHist1", {
           params: etpInfo
         }).then(function(response) {
           // console.log(response);

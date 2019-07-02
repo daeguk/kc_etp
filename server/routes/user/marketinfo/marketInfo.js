@@ -540,21 +540,24 @@ try {
 };
 /*
 * ETP Multi HIST 조회
+  장전에 F15318 이 메모리 값이 0가 됨. 그래서, 당일 데이터 0가 됨.
+  장전 기준가 필요한 경우, 아래 getEtpMultiHist1 을 써야함. 조회 속도 느려짐.
 */
 var getEtpMultiHist = function(req, res) {
   log.debug('marketInfo 모듈 안에 있는 getEtpMultiHist 호출됨.');
 
   var options = {
     F16013 : req.query.F16013,
-    F16257 : req.query.F16257,
     market_id : req.query.market_id,
   };
+
   if(req.query.term == '1M') options.limit = 30;
   else if(req.query.term == '3M') options.limit = 90;
   else if(req.query.term == '6M') options.limit = 180;
   else if(req.query.term == '1Y') options.limit = 300;
   else options.limit = 10000;
-try {
+
+  try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     var stmt = mapper.getStatement('common.item', 'getEtpMultiHist', options, {language:'sql', indent: '  '});
@@ -576,7 +579,46 @@ try {
       message: "Error while performing Query.",
     });
     res.end();
-}
+  }
+};
+var getEtpMultiHist1 = function(req, res) {
+  log.debug('marketInfo 모듈 안에 있는 getEtpMultiHist1 호출됨.');
+
+  var options = {
+    F16013 : req.query.F16013,
+    F16257 : req.query.F16257,
+    market_id : req.query.market_id,
+  };
+
+  if(req.query.term == '1M') options.limit = 30;
+  else if(req.query.term == '3M') options.limit = 90;
+  else if(req.query.term == '6M') options.limit = 180;
+  else if(req.query.term == '1Y') options.limit = 300;
+  else options.limit = 10000;
+
+  try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    var stmt = mapper.getStatement('common.item', 'getEtpMultiHist1', options, {language:'sql', indent: '  '});
+    log.debug(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    log.error("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+  }
 };
 /*
 * ETP GIGS SECTOR 비중 조회
@@ -1228,6 +1270,7 @@ module.exports.getEtpNavAnal = getEtpNavAnal;
 module.exports.getEtpIntra = getEtpIntra;
 module.exports.getEtpMultiIntra = getEtpMultiIntra;
 module.exports.getEtpMultiHist = getEtpMultiHist;
+module.exports.getEtpMultiHist1 = getEtpMultiHist1;
 module.exports.getEtpGigsWeight = getEtpGigsWeight;
 module.exports.getEtfSumByIndex = getEtfSumByIndex;
 module.exports.getEtnSumByIndex = getEtnSumByIndex;
