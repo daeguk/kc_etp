@@ -77,6 +77,7 @@ export default {
         },
         typeList: [],
         domainList: [],
+        status: 0,
     };
   },
     components : {
@@ -103,9 +104,11 @@ export default {
   },
   methods: {
     closeModal: function() {
-      this.findpwdDialog = false;
-      // MainLanding.vue
-      this.$EventBus.$emit("closeFindPwdModal");
+        if (this.status == 0) {
+            this.findpwdDialog = false;
+            // MainLanding.vue
+            this.$EventBus.$emit("closeFindPwdModal");
+        }
 
     },
     getMemberTypeList: function() {
@@ -119,8 +122,12 @@ export default {
       }).then(async function(response) {
         console.log(response);
         if(response.data.success == false){
-            if( await vm.showMessageBox('확인',response.data.message,{},1) ) {
-                return  false;
+           vm.status = 1;            
+            if( await vm.$refs.confirm.open('확인',response.data.message,{},1) ) {
+                if(vm.$refs.confirm.val == 'Y') {
+                    vm.status = 0;
+                    return  false;
+                }
             }
         }else {
           vm.typeList = response.data.results;
@@ -138,8 +145,12 @@ export default {
       }).then(async function(response) {
         console.log(response);
         if(response.data.success == false){
-            if( await vm.showMessageBox('확인',response.data.message,{},1) ) {
-                return  false;
+            vm.status = 1;
+            if( await vm.$refs.confirm.open('확인',response.data.message,{},1) ) {
+                if(vm.$refs.confirm.val == 'Y') {
+                    vm.status = 0;                
+                    return  false;
+                }
             }          
         }else {
           vm.domainList = response.data.results;
@@ -164,13 +175,22 @@ export default {
       if(this.editedItem.type_cd.length == 0 || 
         this.editedItem.type_cd == "0000") {
 
-        if( await vm.showMessageBox('확인',"사용자 그룹을 선택해주세요",{},1) ) {
-            return  false;
+        vm.status = 1;
+        if( await vm.$refs.confirm.open('확인',"사용자 그룹을 선택해주세요",{},1) ) {
+            if(vm.$refs.confirm.val == 'Y') {
+                vm.status = 0; 
+                return  false;
+            }
         }
       }else if(this.editedItem.inst_cd.length == 0 || 
         this.editedItem.inst_cd == "00000") {
-        if( await vm.showMessageBox('확인',"사용자 기관 코드를 선택해주세요",{},1) ) {
-            return  false;
+
+        vm.status = 1;
+        if( await vm.$refs.confirm.open('확인',"사용자 기관 코드를 선택해주세요",{},1) ) {
+            if(vm.$refs.confirm.val == 'Y') {
+                vm.status = 0;             
+                return  false;
+            }
         }
       }else {
         this.editedItem.email = this.editedItem.in_email + this.editedItem.domain_url;
@@ -181,26 +201,35 @@ export default {
             console.log(response);
             if(response.data.success == false){
 
-                if( await vm.showMessageBox('확인',response.data.message,{},1) ) {
-                    return  false;
+                vm.status = 1;
+                if( await vm.$refs.confirm.open('확인',response.data.message,{},1) ) {
+                    if(vm.$refs.confirm.val == 'Y') {
+                        vm.status = 0;                     
+                        return  false;
+                    }
                 }
             }else {
-                if( await vm.showMessageBox('확인',"이메일주소로 초기화된 패스워드가 발송되었습니다.",{},1) ) {
-                    return  false;
+                vm.status = 1;
+                if( await vm.$refs.confirm.open('확인',"이메일주소로 초기화된 패스워드가 발송되었습니다.",{},1) ) {
+                    if(vm.$refs.confirm.val == 'Y') {
+                        vm.status = 0;                    
+                        return  false;
+                    }
                 }
             }
           });
 
         }else {
-            if( await vm.showMessageBox('확인',"이메일 주소는 회사의 도메인주소를 사용하여야 합니다.",{},1) ) {
-                return  false;
+            vm.status = 1;
+            if( await vm.$refs.confirm.open('확인',"이메일 주소는 회사의 도메인주소를 사용하여야 합니다.",{},1) ) {
+                if(vm.$refs.confirm.val == 'Y') {
+                    vm.status = 0;                    
+                    return  false;
+                }
             }
         }
       }
     },
-    showMessageBox: function(title, msg, option, gubun) {
-         this.$refs.confirm.open(title,msg, option, gubun);
-    }    
   }
 }
 </script>
