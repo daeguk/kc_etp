@@ -5,14 +5,8 @@
  * @author ThreeOn
  */
 var config = require('../../../config/config');
-var util = require("util");
+var sms = require('../../../util/sms');
 var Promise = require("bluebird");
-
-var multer = require('multer');
-var xlsx = require('xlsx');
-var fs = require('fs');
-var async = require('async');
-
 var log = config.logger;
 
 /*
@@ -75,7 +69,8 @@ var saveCustSupport = function(req, res) {
                     resultMsg.msg = "성공적으로 전송하였습니다.";
                     resultMsg.err = "";
 
-                    smsSend(req);
+                    var msg = "고객지원 접수되었습니다. [" + paramData.subject + "]";
+                    sms.smsSend(1, msg)
                     res.json(resultMsg);
                     res.end();
                 });
@@ -107,10 +102,6 @@ var saveCustSupport = function(req, res) {
         res.json(resultMsg);
         res.end();
     }
-}
-
-var smsSend = function(req) {
-
 }
 
 module.exports.saveCustSupport = saveCustSupport;
