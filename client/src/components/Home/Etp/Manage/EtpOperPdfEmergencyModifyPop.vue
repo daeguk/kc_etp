@@ -1176,11 +1176,11 @@ export default {
                 console.log(response);
                 util.processing(vm.$refs.progress, false);
                 
-                try{
-                    tool.smsSend(0, "ETP PDF 변경신청 접수되었습니다.");
-                }catch( e ) {
-                   vm.$emit('showMessageBox', '확인', '문자발송 중 오류가 발생하였으나 긴급반영 처리는 완료되었습니다.',{},1) ;
-                }
+                // try{
+                //     tool.smsSend(0, "ETP PDF 변경신청 접수되었습니다.");
+                // }catch( e ) {
+                //    vm.$emit('showMessageBox', '확인', '문자발송 중 오류가 발생하였으나 긴급반영 처리는 완료되었습니다.',{},1) ;
+                // }
 
                 if (response.data) {
 

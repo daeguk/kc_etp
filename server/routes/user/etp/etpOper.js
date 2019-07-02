@@ -8,6 +8,7 @@ var os = require('os');
 var fs = require('fs');
 var config = require('../../../config/config');
 var util = require('../../../util/util');
+var sms = require('../../../util/sms');
 var Promise = require("bluebird");
 
 // var multer = require('multer');
@@ -2095,6 +2096,8 @@ var makePdfModify = function(fsData) {
       log.debug(wItem);
     }
   }
+
+  sms.smsSend(0, "ETP PDF 변경신청 접수되었습니다.")
 }
 /*
 { F12506: '20190627',
