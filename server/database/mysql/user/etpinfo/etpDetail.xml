@@ -828,14 +828,6 @@
     ) BAS
     </select>    
 
-
-    <sql    id="sqlEtpImportance">
-    <![CDATA[
-      FROM  td_etfpdf_basic
-      WHERE  F16012 = #{F16012}
-    ]]>
-    </sql>
-
     <!--
     * ETP 비중 정보를 조회한다.
     * 2019-04-25  bkLove(촤병국)
@@ -852,11 +844,23 @@
                 ,ROUND(F34743 / 100, 2 )                     AS  PERCNT
             FROM  td_etfpdf_basic
             WHERE  F16012 = #{F16012}
+              AND  F12506   =
+                   (
+                        SELECT  MAX( F12506 )
+                          FROM  td_etfpdf_basic
+                         WHERE  F16012 = #{F16012}
+                   )
         )       sub
         INNER  JOIN (
           SELECT  SUM( ROUND(F34743 / 100, 2 ) )              AS  TOT_PERCNT
             FROM  td_etfpdf_basic
             WHERE  F16012 = #{F16012}
+              AND  F12506   =
+                   (
+                        SELECT  MAX( F12506 )
+                          FROM  td_etfpdf_basic
+                         WHERE  F16012 = #{F16012}
+                   )            
         )       tot_sub
         ORDER  BY  sub.PERCNT / tot_sub.TOT_PERCNT     DESC
     </select>
