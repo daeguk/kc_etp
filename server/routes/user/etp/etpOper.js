@@ -1469,45 +1469,6 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 4. [td_etfpdf_basic] 테이블의 F33837(구성종목수) 을 수정한다. */
-                                    // 구성종목수 수정하지 않기로 함. (==> 민선기 과장 : 2019.06.21)
-                                    // 구성종목수 변경시 백오피스 후속작업에 혼선이 있다고 합니다.
-                                    /*
-                                    function(msg, callback) {
-
-                                        try {
-
-                                            if (arrInsertDtl && arrInsertDtl.length > 0) {
-                                                var stmt = mapper.getStatement('etpOper', 'modifyTdEtfpdfBasicF33837', paramData, { language: 'sql', indent: '  ' });
-                                                log.debug(stmt, paramData);
-
-                                                conn.query(stmt, function(err, rows) {
-
-                                                    if (err) {
-                                                        resultMsg.result = false;
-                                                        resultMsg.msg = "[error] etpOper.modifyTdEtfpdfBasicF33837 Error while performing Query";
-                                                        resultMsg.err = err;
-
-                                                        return callback(resultMsg);
-                                                    }
-
-                                                    callback(null, paramData);
-                                                })
-
-                                            } else {
-                                                callback(null, paramData);
-                                            }
-
-                                        } catch (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] etpOper.modifyTdEtfpdfBasicF33837 Error while performing Query";
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-                                    },
-                                    */
-
                                     /* 5. td_etfpdf_basic 에 수정한다. */
                                     function(msg, callback) {
 
