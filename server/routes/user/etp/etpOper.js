@@ -1399,7 +1399,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                             arrModifyDtl = [];
 
                                             var stmt = mapper.getStatement('etpOper', 'getTdEtfpdfBasicExistsCheck', paramData, { language: 'sql', indent: '  ' });
-                                            log.debug(paramData);
+                                            log.debug(stmt, paramData);
 
                                             conn.query(stmt, function(err, rows) {
 

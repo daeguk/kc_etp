@@ -905,7 +905,8 @@
           FROM  (        
                 <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
                 <![CDATA[              
-                    SELECT      #{F16583}                       AS  F16583      /* 사무수탁회사번호 */
+                    SELECT      #{now_date}                     AS  F12506      /* 일자 */
+                            ,   #{F16583}                       AS  F16583      /* 사무수탁회사번호 */
                             ,   #{F16012}                       AS  F16012      /* ETF종목코드 */
                             ,   #{F16013}                       AS  F16013      /* ETF단축코드 */
                             ,   #{data.F16316}                  AS  F16316      /* 구성종목코드 */
@@ -924,6 +925,7 @@
           LEFT  OUTER   JOIN    td_etfpdf_basic
                           ON    (
                                             1 = 1
+                                    AND     td_etfpdf_basic.F12506              =   base.F12506     /* 일자 */
                                     AND     td_etfpdf_basic.F16583              =   base.F16583     /* 사무수탁회사번호 */
                                     AND     td_etfpdf_basic.F16012              =   base.F16012     /* ETF종목코드 */
                                     AND     td_etfpdf_basic.F16013              =   base.F16013     /* ETF단축코드 */
