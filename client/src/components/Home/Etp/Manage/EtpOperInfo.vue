@@ -17,7 +17,7 @@
                                 <span class="toggle2">
                                     <v-btn-toggle v-model="stateInfo.gubun" class="toggle_01">
                                         <v-btn flat value="A"       @click="fn_getEtpOperInfo('A')">전종목</v-btn>
-                                        <v-btn flat value="K"        @click="fn_getEtpOperInfo('K')">국내</v-btn>
+                                        <v-btn flat value="K"       @click="fn_getEtpOperInfo('K')">국내</v-btn>
                                         <v-btn flat value="F"       @click="fn_getEtpOperInfo('F')">해외</v-btn>
                                         <v-btn flat value="I"       @click="fn_getEtpOperInfo('I')">관심종목</v-btn>
                                     </v-btn-toggle>

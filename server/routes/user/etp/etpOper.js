@@ -1469,7 +1469,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 5. td_etfpdf_basic 에 수정한다. */
+                                    /* 4. td_etfpdf_basic 에 수정한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -1506,7 +1506,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                     },
 
                                     /*
-                                     * 7. ETP 운용관리 - PDF 긴급반영 - 저장시 td_etfpdf_hist 에 데이터가 존재하는지 체크한다.
+                                     * 5. ETP 운용관리 - PDF 긴급반영 - 저장시 td_etfpdf_hist 에 데이터가 존재하는지 체크한다.
                                      *
                                      * 1) td_etfpdf_hist 에 없는 경우 'insert'
                                      * 2) td_etfpdf_hist 에 존재하는 경우 'update'
@@ -1555,7 +1555,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 8. td_etfpdf_hist 에 저장한다. */
+                                    /* 6. td_etfpdf_hist 에 저장한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -1591,7 +1591,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 10. td_etfpdf_hist 에 수정한다. */
+                                    /* 7. td_etfpdf_hist 에 수정한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -1628,7 +1628,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                     },
 
                                     /* 
-                                     * 11. ETP 운용관리 - PDF 긴급반영 - 저장시 상세에 이미 등록된 데이터가 존재하는지 체크한다.  
+                                     * 8. ETP 운용관리 - PDF 긴급반영 - 저장시 상세에 이미 등록된 데이터가 존재하는지 체크한다.  
                                      *
                                      * 1) tm_pdf_modify_dtl 에 없는 경우에는 'insert'
                                      * 2) tm_pdf_modify_dtl 에 존재하고 CU수량과 액면금액이 td_etfpdf_basic 의 값과 다른 경우 'modify'
@@ -1680,7 +1680,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 12. PDF 변경 상세 정보 (구성종목) 정보를 저장한다. */
+                                    /* 9. PDF 변경 상세 정보 (구성종목) 정보를 저장한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -1717,7 +1717,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 13. PDF 변경 상세 정보 (구성종목) 정보를 수정한다. */
+                                    /* 10. PDF 변경 상세 정보 (구성종목) 정보를 수정한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -1753,7 +1753,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 15. ETP 운용관리 - PDF 긴급반영 - 저장시 마스터 상태정보를 조회한다. */
+                                    /* 11. ETP 운용관리 - PDF 긴급반영 - 저장시 마스터 상태정보를 조회한다. */
                                     function(msg, callback) {
 
                                         try {
@@ -1786,7 +1786,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 16. PDF 변경 마스터 정보를 변경한다. */
+                                    /* 12. PDF 변경 마스터 정보를 변경한다. */
                                     function(msg, callback) {
 
                                         var queryId = "saveTmPdfModifyMast";
@@ -1823,7 +1823,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 17. PDF 변경 이력 마스터 정보를 저장한다. */
+                                    /* 13. PDF 변경 이력 마스터 정보를 저장한다. */
                                     function(msg, callback) {
 
                                         try{
@@ -1857,7 +1857,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 18. PDF 변경 이력 상세 정보를 저장한다. */
+                                    /* 14. PDF 변경 이력 상세 정보를 저장한다. */
                                     function(msg, callback) {
 
                                         try{
