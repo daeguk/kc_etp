@@ -1191,39 +1191,6 @@
 
     </update>
 
-    <!--
-    * [td_etfpdf_hist] 테이블의 F33837(구성종목수) 을 수정한다.
-    * 2019-05-20  bkLove(촤병국)
-    -->
-    <update     id="modifyTdEtfpdfHistF33837">
-
-        UPDATE  /* etpOper.modifyTdEtfpdfHistF33837      [td_etfpdf_hist] 테이블의 F33837(구성종목수) 을 수정한다. */
-
-                td_etfpdf_hist
-
-           SET      /* 구성종목수 */
-                    F33837      =   
-                    (
-                        SELECT  base.cnt
-                          FROM  (
-                                    SELECT  COUNT(*)        AS      cnt
-                                      FROM  td_etfpdf_hist          sub
-                                     WHERE  1 = 1
-                                       AND  sub.F12506      =   #{now_date}         /* 일자 */
-                                       AND  sub.F16583      =   #{F16583}           /* 사무수탁회사번호 */
-                                       AND  sub.F16012      =   #{F16012}           /* ETF종목코드 */
-                                       AND  sub.F16013      =   #{F16013}           /* ETF단축코드 */
-                                )       base
-                    )
-
-         WHERE  1 = 1
-           AND  td_etfpdf_hist.F12506   =   #{now_date}                 /* 일자 */
-           AND  td_etfpdf_hist.F16583   =   #{F16583}                   /* 사무수탁회사번호 */
-           AND  td_etfpdf_hist.F16012   =   #{F16012}                   /* ETF종목코드 */
-           AND  td_etfpdf_hist.F16013   =   #{F16013}                   /* ETF단축코드 */
-
-    </update>    
-
 
 <!-- 
 ***************************************************************
@@ -1252,6 +1219,7 @@
                 <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
                 <![CDATA[              
                     SELECT      #{user_id}                      AS  email       /* 이메일 */
+                            ,   #{now_date}                     AS  F12506      /* 일자 */
                             ,   #{F16583}                       AS  F16583      /* 사무수탁회사번호 */
                             ,   #{F16012}                       AS  F16012      /* ETF종목코드 */
                             ,   #{F16013}                       AS  F16013      /* ETF단축코드 */
@@ -1271,6 +1239,7 @@
                           ON    (
                                             1 = 1
                                     AND     tm_pdf_modify_dtl.email             =   base.email      /* 이메일 */
+                                    AND     tm_pdf_modify_dtl.F12506            =   base.F12506     /* 일자 */
                                     AND     tm_pdf_modify_dtl.F16583            =   base.F16583     /* 사무수탁회사번호 */
                                     AND     tm_pdf_modify_dtl.F16012            =   base.F16012     /* ETF종목코드 */
                                     AND     tm_pdf_modify_dtl.F16013            =   base.F16013     /* ETF단축코드 */
@@ -1291,6 +1260,7 @@
         tm_pdf_modify_dtl 
         ( 
                 email                       /* 이메일 */
+            ,   F12506                      /* 일자 */
             ,   F16583                      /* 사무수탁회사번호 */
             ,   F16012                      /* ETF종목코드 */
             ,   F16013                      /* ETF단축코드 */
@@ -1316,6 +1286,7 @@
     <![CDATA[        
         ( 
                 #{user_id}                  /* 이메일 */
+            ,   #{now_date}                 /* 일자 */
             ,   #{F16583}                   /* 사무수탁회사번호 */
             ,   #{F16012}                   /* ETF종목코드 */
             ,   #{F16013}                   /* ETF단축코드 */
@@ -1354,6 +1325,7 @@
                             <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
                             <![CDATA[              
                                 SELECT      #{user_id}                      AS  email           /* 이메일 */
+                                        ,   #{now_date}                     AS  F12506          /* 일자 */
                                         ,   #{F16583}                       AS  F16583          /* 사무수탁회사번호 */
                                         ,   #{F16012}                       AS  F16012          /* ETF종목코드 */
                                         ,   #{F16013}                       AS  F16013          /* ETF단축코드 */
@@ -1373,6 +1345,7 @@
                   ON            1 = 1
 
                         AND     tm_pdf_modify_dtl.email     =   base.email      /* 이메일 */
+                        AND     tm_pdf_modify_dtl.F12506    =   base.F12506     /* 일자 */
                         AND     tm_pdf_modify_dtl.F16583    =   base.F16583     /* 사무수탁회사번호 */
                         AND     tm_pdf_modify_dtl.F16012    =   base.F16012     /* ETF종목코드 */
                         AND     tm_pdf_modify_dtl.F16013    =   base.F16013     /* ETF단축코드 */
@@ -1416,6 +1389,7 @@
 
           FROM  (
                     SELECT      #{user_id}                      AS  email       /* 이메일 */
+                            ,   #{now_date}                     AS  F12506      /* 일자 */
                             ,   #{F16583}                       AS  F16583      /* 사무수탁회사번호 */
                             ,   #{F16012}                       AS  F16012      /* ETF종목코드 */
                             ,   #{F16013}                       AS  F16013      /* ETF단축코드 */
@@ -1426,6 +1400,7 @@
                           ON    (
                                             1 = 1                
                                     AND     tm_pdf_modify_mast.email        =   base.email      /* 이메일 */
+                                    AND     tm_pdf_modify_mast.F12506       =   base.F12506     /* 일자 */
                                     AND     tm_pdf_modify_mast.F16583       =   base.F16583     /* 사무수탁회사번호 */
                                     AND     tm_pdf_modify_mast.F16012       =   base.F16012     /* ETF종목코드 */
                                     AND     tm_pdf_modify_mast.F16013       =   base.F16013     /* ETF단축코드 */
@@ -1445,6 +1420,7 @@
         tm_pdf_modify_mast 
         ( 
                 email                       /* 이메일 */
+            ,   F12506                      /* 일자 */
             ,   F16583                      /* 사무수탁회사번호 */
             ,   F16012                      /* ETF종목코드 */
             ,   F16013                      /* ETF단축코드 */
@@ -1461,6 +1437,7 @@
         VALUES  
         ( 
                 #{user_id}                  /* 이메일 */
+            ,   #{now_date}                 /* 일자 */
             ,   #{F16583}                   /* 사무수탁회사번호 */
             ,   #{F16012}                   /* ETF종목코드 */
             ,   #{F16013}                   /* ETF단축코드 */
@@ -1494,6 +1471,7 @@
          WHERE  1 = 1
 
            AND  email                       =   #{user_id}                  /* 이메일 */
+           AND  F12506                      =   #{now_date}                 /* 일자 */
            AND  F16583                      =   #{F16583}                   /* 사무수탁회사번호 */
            AND  F16012                      =   #{F16012}                   /* ETF종목코드 */
            AND  F16013                      =   #{F16013}                   /* ETF단축코드 */
@@ -1533,6 +1511,7 @@
         tm_pdf_modify_hist_mast 
         ( 
                 email                       /* 이메일 */
+            ,   F12506                      /* 일자 */
             ,   F16583                      /* 사무수탁회사번호 */
             ,   F16012                      /* ETF종목코드 */
             ,   F16013                      /* ETF단축코드 */
@@ -1546,6 +1525,7 @@
         VALUES  
         ( 
                 #{user_id}                  /* 이메일 */
+            ,   #{now_date}                 /* 일자 */
             ,   #{F16583}                   /* 사무수탁회사번호 */
             ,   #{F16012}                   /* ETF종목코드 */
             ,   #{F16013}                   /* ETF단축코드 */
@@ -1581,6 +1561,7 @@
         ( 
                 hist_no                     /* 이력번호 */
             ,   email                       /* 이메일 */
+            ,   F12506                      /* 일자 */
             ,   F16583                      /* 사무수탁회사번호 */
             ,   F16012                      /* ETF종목코드 */
             ,   F16013                      /* ETF단축코드 */
@@ -1606,6 +1587,7 @@
         ( 
                 #{hist_no}                  /* 이력번호 */
             ,   #{user_id}                  /* 이메일 */
+            ,   #{now_date}                 /* 일자 */
             ,   #{F16583}                   /* 사무수탁회사번호 */
             ,   #{F16012}                   /* ETF종목코드 */
             ,   #{F16013}                   /* ETF단축코드 */
@@ -1653,6 +1635,7 @@
 
                     tm_pdf_modify_hist_mast.hist_no                     AS  hist_no         /* 이력번호 */
                 ,   tm_pdf_modify_hist_mast.email                       AS  email           /* 이메일 */
+                ,   tm_pdf_modify_hist_mast.F12506                      AS  F12506          /* 일자 */
                 ,   tm_pdf_modify_hist_mast.F16583                      AS  F16583          /* 사무수탁회사번호 */
                 ,   tm_pdf_modify_hist_mast.F16012                      AS  F16012          /* ETF종목코드 */
                 ,   tm_pdf_modify_hist_mast.F16013                      AS  F16013          /* ETF단축코드 */
@@ -1671,6 +1654,7 @@
          WHERE  1 = 1
            AND  (    
                         tm_pdf_modify_hist_mast.email
+                    ,   tm_pdf_modify_hist_mast.F12506
                     ,   tm_pdf_modify_hist_mast.F16583
                     ,   tm_pdf_modify_hist_mast.F16012
                     ,   tm_pdf_modify_hist_mast.F16013
@@ -1679,6 +1663,7 @@
                 IN
                 (
                     SELECT      tm_pdf_modify_mast.email
+                            ,   tm_pdf_modify_mast.F12506
                             ,   tm_pdf_modify_mast.F16583
                             ,   tm_pdf_modify_mast.F16012
                             ,   tm_pdf_modify_mast.F16013
@@ -1702,6 +1687,7 @@
 
                     tm_pdf_modify_hist_dtl.hist_no                      AS  hist_no         /* 이력번호 */
                 ,   tm_pdf_modify_hist_dtl.email                        AS  email           /* 이메일 */
+                ,   tm_pdf_modify_hist_dtl.F12506                       AS  F12506          /* 일자 */
                 ,   tm_pdf_modify_hist_dtl.F16583                       AS  F16583          /* 사무수탁회사번호 */
                 ,   tm_pdf_modify_hist_dtl.F16012                       AS  F16012          /* ETF종목코드 */
                 ,   tm_pdf_modify_hist_dtl.F16013                       AS  F16013          /* ETF단축코드 */
@@ -1721,6 +1707,7 @@
 						SELECT  td_etfpdf_basic.F16004
 						  FROM  td_etfpdf_basic
 						 WHERE  1 = 1
+                           AND  td_etfpdf_basic.F12506      =   tm_pdf_modify_hist_dtl.F12506   /* 일자 */
                            AND  td_etfpdf_basic.F16583      =   tm_pdf_modify_hist_dtl.F16583   /* 사무수탁회사번호 */
                            AND  td_etfpdf_basic.F16012      =   tm_pdf_modify_hist_dtl.F16012   /* ETF종목코드 */
 						   AND  td_etfpdf_basic.F16013      =   tm_pdf_modify_hist_dtl.F16013   /* ETF단축코드 */
@@ -1733,6 +1720,7 @@
            AND  (
                         tm_pdf_modify_hist_dtl.hist_no
                     ,   tm_pdf_modify_hist_dtl.email
+                    ,   tm_pdf_modify_hist_dtl.F12506
                     ,   tm_pdf_modify_hist_dtl.F16583
                     ,   tm_pdf_modify_hist_dtl.F16012
                     ,   tm_pdf_modify_hist_dtl.F16013
@@ -1742,6 +1730,7 @@
                 (
                     SELECT      tm_pdf_modify_hist_mast.hist_no
                             ,   tm_pdf_modify_hist_mast.email
+                            ,   tm_pdf_modify_hist_mast.F12506
                             ,   tm_pdf_modify_hist_mast.F16583
                             ,   tm_pdf_modify_hist_mast.F16012
                             ,   tm_pdf_modify_hist_mast.F16013
@@ -1750,6 +1739,7 @@
                      WHERE  1 = 1
                        AND  (    
                                     tm_pdf_modify_hist_mast.email
+                                ,   tm_pdf_modify_hist_mast.F12506
                                 ,   tm_pdf_modify_hist_mast.F16583
                                 ,   tm_pdf_modify_hist_mast.F16012
                                 ,   tm_pdf_modify_hist_mast.F16013
@@ -1758,6 +1748,7 @@
                             IN
                             (
                                 SELECT      tm_pdf_modify_mast.email
+                                        ,   tm_pdf_modify_mast.F12506
                                         ,   tm_pdf_modify_mast.F16583
                                         ,   tm_pdf_modify_mast.F16012
                                         ,   tm_pdf_modify_mast.F16013
@@ -1795,10 +1786,12 @@
                             (
                                 SELECT  td_etfpdf_basic.F16583
                                   FROM  td_etfpdf_basic
-                                 WHERE  td_etfpdf_basic.F16012      =   #{F16012}           /* 국제표준코드 */
+                                 WHERE  td_etfpdf_basic.F12506      =   DATE_FORMAT( now(), '%Y%m%d' )      /* 일자 */
+                                   AND  td_etfpdf_basic.F16012      =   #{F16012}           /* 국제표준코드 */
                                    AND  td_etfpdf_basic.F16013      =   #{F16013}           /* ETF단축코드 */
                                  LIMIT  1
-                            )
+                            )                                                               /* 사무수탁회사번호 */
+
                        AND  tm_pdf_modify_mast.F16012               =   #{F16012}           /* ETF종목코드 */
                        AND  tm_pdf_modify_mast.F16013               =   #{F16013}           /* ETF단축코드 */
 
@@ -1824,6 +1817,7 @@
 
                     tm_pdf_modify_hist_mast.hist_no                     AS  hist_no         /* 이력번호 */
                 ,   tm_pdf_modify_hist_mast.email                       AS  email           /* 이메일 */
+                ,   tm_pdf_modify_hist_mast.F12506                      AS  F12506          /* 일자 */
                 ,   tm_pdf_modify_hist_mast.F16583                      AS  F16583          /* 사무수탁회사번호 */
                 ,   tm_pdf_modify_hist_mast.F16012                      AS  F16012          /* ETF종목코드 */
                 ,   tm_pdf_modify_hist_mast.F16013                      AS  F16013          /* ETF단축코드 */
@@ -1844,6 +1838,7 @@
 
            AND  (
                         tm_pdf_modify_hist_mast.hist_no
+                    ,   tm_pdf_modify_hist_mast.F12506
                     ,   tm_pdf_modify_hist_mast.F16583
                     ,   tm_pdf_modify_hist_mast.F16012
                     ,   tm_pdf_modify_hist_mast.F16013
@@ -1851,6 +1846,7 @@
                 IN
                 (
                     SELECT      MAX( hist_no )
+                            ,   tm_pdf_modify_hist_mast.F12506
                             ,   tm_pdf_modify_hist_mast.F16583
                             ,   tm_pdf_modify_hist_mast.F16012
                             ,   tm_pdf_modify_hist_mast.F16013
@@ -1861,10 +1857,12 @@
                             (
                                 SELECT  td_etfpdf_basic.F16583
                                   FROM  td_etfpdf_basic
-                                 WHERE  td_etfpdf_basic.F16012      =   #{F16012}   /* 국제표준코드 */
+                                 WHERE  td_etfpdf_basic.F12506      =   #{now_date} /* 일자 */
+                                   AND  td_etfpdf_basic.F16012      =   #{F16012}   /* 국제표준코드 */
                                    AND  td_etfpdf_basic.F16013      =   #{F16013}   /* ETF단축코드 */
                                  LIMIT  1
                             )                                                       /* 사무수탁회사번호 */
+
                        AND  tm_pdf_modify_hist_mast.F16012      =   #{F16012}       /* ETF종목코드 */
                        AND  tm_pdf_modify_hist_mast.F16013      =   #{F16013}       /* ETF단축코드 */
 
@@ -1880,13 +1878,15 @@
 
                        AND  tm_pdf_modify_hist_mast.reg_time    BETWEEN     STR_TO_DATE( CONCAT( #{now_date}, ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
                                                                     AND     STR_TO_DATE( CONCAT( #{now_date}, ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
-                     GROUP  BY      tm_pdf_modify_hist_mast.F16583
+                     GROUP  BY      tm_pdf_modify_hist_mast.F12506
+                                ,   tm_pdf_modify_hist_mast.F16583
                                 ,   tm_pdf_modify_hist_mast.F16012
                                 ,   tm_pdf_modify_hist_mast.F16013
                 )
 
          ORDER  BY      tm_pdf_modify_hist_mast.hist_no         /* 이력번호 */
                     ,   tm_pdf_modify_hist_mast.email           /* 이메일 */
+                    ,   tm_pdf_modify_hist_mast.F12506          /* 일자 */
                     ,   tm_pdf_modify_hist_mast.F16583          /* 사무수탁회사번호 */
                     ,   tm_pdf_modify_hist_mast.F16012          /* ETF종목코드 */
                     ,   tm_pdf_modify_hist_mast.F16013          /* ETF단축코드 */
@@ -1902,6 +1902,7 @@
 
                     tm_pdf_modify_hist_dtl.hist_no                      AS  hist_no         /* 이력번호 */
                 ,   tm_pdf_modify_hist_dtl.email                        AS  email           /* 이메일 */
+                ,   tm_pdf_modify_hist_dtl.F12506                       AS  F12506          /* 일자 */
                 ,   tm_pdf_modify_hist_dtl.F16583                       AS  F16583          /* 사무수탁회사번호 */
                 ,   tm_pdf_modify_hist_dtl.F16012                       AS  F16012          /* ETF종목코드 */
                 ,   tm_pdf_modify_hist_dtl.F16013                       AS  F16013          /* ETF단축코드 */
@@ -1921,6 +1922,7 @@
                         SELECT  td_etfpdf_basic.F16004
                           FROM  td_etfpdf_basic
                          WHERE  1 = 1
+                           AND  td_etfpdf_basic.F12506      =   tm_pdf_modify_hist_dtl.F12506   /* 일자 */
                            AND  td_etfpdf_basic.F16583      =   tm_pdf_modify_hist_dtl.F16583   /* 사무수탁회사번호 */
                            AND  td_etfpdf_basic.F16012      =   tm_pdf_modify_hist_dtl.F16012   /* ETF종목코드 */
                            AND  td_etfpdf_basic.F16013      =   tm_pdf_modify_hist_dtl.F16013   /* ETF단축코드 */
@@ -1945,13 +1947,15 @@
 
 
            AND  (
-                        tm_pdf_modify_hist_dtl.F16583
+                        tm_pdf_modify_hist_dtl.F12506
+                    ,   tm_pdf_modify_hist_dtl.F16583
                     ,   tm_pdf_modify_hist_dtl.F16012
                     ,   tm_pdf_modify_hist_dtl.F16013
                 )
                 IN
                 (
-                    SELECT      tm_pdf_modify_hist_mast.F16583
+                    SELECT      tm_pdf_modify_hist_mast.F12506
+                            ,   tm_pdf_modify_hist_mast.F16583
                             ,   tm_pdf_modify_hist_mast.F16012
                             ,   tm_pdf_modify_hist_mast.F16013
                             
@@ -1962,10 +1966,12 @@
                             (
                                 SELECT  td_etfpdf_basic.F16583
                                   FROM  td_etfpdf_basic
-                                 WHERE  td_etfpdf_basic.F16012      =   #{F16012}         /* 국제표준코드 */
+                                 WHERE  td_etfpdf_basic.F12506      =   #{now_date}       /* 일자 */
+                                   AND  td_etfpdf_basic.F16012      =   #{F16012}         /* 국제표준코드 */
                                    AND  td_etfpdf_basic.F16013      =   #{F16013}         /* ETF단축코드 */
                                  LIMIT  1
                             )                                                       /* 사무수탁회사번호 */
+
                        AND  tm_pdf_modify_hist_mast.F16012      =   #{F16012}       /* ETF종목코드 */
                        AND  tm_pdf_modify_hist_mast.F16013      =   #{F16013}       /* ETF단축코드 */
         <choose>
@@ -1980,16 +1986,19 @@
                        AND  tm_pdf_modify_hist_mast.reg_time    BETWEEN     STR_TO_DATE( CONCAT( #{now_date}, ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
                                                                     AND     STR_TO_DATE( CONCAT( #{now_date}, ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
 
-                     GROUP  BY      tm_pdf_modify_hist_mast.F16583
+                     GROUP  BY      tm_pdf_modify_hist_mast.F12506
+                                ,   tm_pdf_modify_hist_mast.F16583
                                 ,   tm_pdf_modify_hist_mast.F16012
                                 ,   tm_pdf_modify_hist_mast.F16013
                                             
-                     ORDER  BY      tm_pdf_modify_hist_mast.F16583          /* 사무수탁회사번호 */
+                     ORDER  BY      tm_pdf_modify_hist_mast.F12506          /* 일자 */
+                                ,   tm_pdf_modify_hist_mast.F16583          /* 사무수탁회사번호 */
                                 ,   tm_pdf_modify_hist_mast.F16012          /* ETF종목코드 */
                                 ,   tm_pdf_modify_hist_mast.F16013          /* ETF단축코드 */
                 )
 
-         ORDER  BY      tm_pdf_modify_hist_dtl.F16583               /* 사무수탁회사번호 */
+         ORDER  BY      tm_pdf_modify_hist_dtl.F12506               /* 일자 */
+                    ,   tm_pdf_modify_hist_dtl.F16583               /* 사무수탁회사번호 */
                     ,   tm_pdf_modify_hist_dtl.F16012               /* ETF종목코드 */
                     ,   tm_pdf_modify_hist_dtl.F16013               /* ETF단축코드 */
                     ,   tm_pdf_modify_hist_dtl.F16316               /* 구성종목코드 */

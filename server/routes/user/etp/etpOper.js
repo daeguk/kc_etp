@@ -1591,44 +1591,6 @@ var saveEtpOperPdfModify = function(req, res) {
                                         }
                                     },
 
-                                    /* 9. [td_etfpdf_hist] 테이블의 F33837(구성종목수) 을 수정한다. */
-                                    // 상동
-                                    /*
-                                    function(msg, callback) {
-
-                                        try {
-
-                                            if (arrInsertDtl && arrInsertDtl.length > 0) {
-                                                var stmt = mapper.getStatement('etpOper', 'modifyTdEtfpdfHistF33837', paramData, { language: 'sql', indent: '  ' });
-                                                log.debug(stmt, paramData);
-
-                                                conn.query(stmt, function(err, rows) {
-
-                                                    if (err) {
-                                                        resultMsg.result = false;
-                                                        resultMsg.msg = "[error] etpOper.modifyTdEtfpdfHistF33837 Error while performing Query";
-                                                        resultMsg.err = err;
-
-                                                        return callback(resultMsg);
-                                                    }
-
-                                                    callback(null, paramData);
-                                                })
-
-                                            } else {
-                                                callback(null, paramData);
-                                            }
-
-                                        } catch (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] etpOper.modifyTdEtfpdfHistF33837 Error while performing Query";
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-                                    },
-                                    */
-
                                     /* 10. td_etfpdf_hist 에 수정한다. */
                                     function(msg, callback) {
 
