@@ -1380,7 +1380,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                 paramData.F16013 = subList.etf_F16013; /* ETF단축코드 */
                                 paramData.dataLists = subList.data;
 
-                                log.debug(paramData);
+                                log.debug( "$$$$$$$ 인자값 $$$$$$$ START", paramData, subList, "$$$$$$$ 인자값 $$$$$$$ END");
 
                                 async.waterfall([
 
