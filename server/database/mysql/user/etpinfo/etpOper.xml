@@ -1024,6 +1024,7 @@
                         
                   ON            1 = 1
 
+                        AND     td_etfpdf_basic.F12506      =   base.F12506     /* 일자 */
                         AND     td_etfpdf_basic.F16583      =   base.F16583     /* 사무수탁회사번호 */
                         AND     td_etfpdf_basic.F16012      =   base.F16012     /* ETF종목코드 */
                         AND     td_etfpdf_basic.F16013      =   base.F16013     /* ETF단축코드 */
