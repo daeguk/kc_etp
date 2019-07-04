@@ -195,44 +195,6 @@
         SELECT      /* etpOper.getEtpOperPdfEtfHist  ETP 운용관리 - PDF관리 정보를 조회한다. ( ETF 인 경우 ) */
                     DATE_FORMAT( td_etfpdf_hist.F12506, '%Y.%m.%d' )        AS  fmt_F12506  /* 일자 */
                 ,   td_etfpdf_hist.F12506                                   AS  F12506      /* 일자 */
-                ,   (
-                        SELECT  tm_pdf_modify_hist_dtl.status               AS  status
-                          FROM  tm_pdf_modify_hist_dtl
-                         WHERE  1 = 1
-                           AND  (   
-                                        tm_pdf_modify_hist_dtl.hist_no
-                                    ,   tm_pdf_modify_hist_dtl.F16583
-                                    ,   tm_pdf_modify_hist_dtl.F16012
-                                    ,   tm_pdf_modify_hist_dtl.F16013
-                                    ,   tm_pdf_modify_hist_dtl.F16316
-                                )
-                                IN
-                                (
-                                    SELECT      MAX( hist_no )
-                                            ,   tm_pdf_modify_hist_dtl.F16583
-                                            ,   tm_pdf_modify_hist_dtl.F16012
-                                            ,   tm_pdf_modify_hist_dtl.F16013
-                                            ,   tm_pdf_modify_hist_dtl.F16316
-                                      FROM  tm_pdf_modify_hist_dtl
-                                     WHERE  1 = 1
-                                    
-                                       AND  tm_pdf_modify_hist_dtl.F16583      =   td_etfpdf_hist.F16583           /* 사무수탁회사번호 */
-                                       AND  tm_pdf_modify_hist_dtl.F16012      =   td_etfpdf_hist.F16012           /* ETF종목코드 */
-                                       AND  tm_pdf_modify_hist_dtl.F16013      =   td_etfpdf_hist.F16013           /* ETF단축코드 */
-                                       AND  tm_pdf_modify_hist_dtl.reg_time    BETWEEN     STR_TO_DATE( CONCAT( #{search_date}, ' 00:00:00' ), '%Y%m%d %H:%i:%s' )
-                                                                                   AND     STR_TO_DATE( CONCAT( #{search_date}, ' 23:59:59' ), '%Y%m%d %H:%i:%s' )
-                                     GROUP  BY      tm_pdf_modify_hist_dtl.F16583
-                                                ,   tm_pdf_modify_hist_dtl.F16012
-                                                ,   tm_pdf_modify_hist_dtl.F16013
-                                                ,   tm_pdf_modify_hist_dtl.F16316        
-                                )
-
-                           AND  tm_pdf_modify_hist_dtl.F16583       =   td_etfpdf_hist.F16583
-                           AND  tm_pdf_modify_hist_dtl.F16012       =   td_etfpdf_hist.F16012
-                           AND  tm_pdf_modify_hist_dtl.F16013       =   td_etfpdf_hist.F16013
-                           AND  tm_pdf_modify_hist_dtl.F16316       =   td_etfpdf_hist.F16316
-                           AND  CAST( DATE_FORMAT( tm_pdf_modify_hist_dtl.reg_time, '%Y%m%d' ) AS UNSIGNED )      =   td_etfpdf_hist.F12506
-                    )                                                       AS  status                
                 ,   td_etfpdf_hist.F16583                                   AS  F16583      /* 사무수탁회사번호 */
                 ,   td_etfpdf_hist.F16012                                   AS  F16012      /* ETF종목코드 */
                 ,   td_etfpdf_hist.F16013                                   AS  F16013      /* ETF단축코드 */
