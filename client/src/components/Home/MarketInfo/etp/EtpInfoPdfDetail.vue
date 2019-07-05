@@ -1,5 +1,5 @@
 <template>
-    <v-card flat>
+    <v-card flat height="560">
         <v-layout row wrap >
             <v-flex grow>
                 <v-card flat>
