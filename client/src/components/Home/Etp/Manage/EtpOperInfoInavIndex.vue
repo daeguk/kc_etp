@@ -46,27 +46,33 @@
                         </ul>
                         <ul>
                             <li class="list_tit">유형</li>
-                            <li v-if="etpBasic.F34240 == 'H'">환헷지(H)</li>
-                            <li v-if="etpBasic.F34240 == 'F'">환노출일반(F)</li>
-                            <li v-if="etpBasic.F34240 == 'A'">지수환노출(A)</li>
-                            <li v-if="etpBasic.F34240 == 'T'">복합배율(T)</li>
-                            <li v-if="etpBasic.F34240 == 'K'">복합배율2(K)</li>
-                            <li v-if="etpBasic.F34240 == 'I'">인도레버리지(I)</li>
-                            <li v-if="etpBasic.F34240 == 'J'">KINDEX합성일본인버스(J)</li>
-                            <li v-if="etpBasic.F34240 == 'G'">KODEX 미국채10년 선물 ETF(G)</li>
                             <li v-if="etpBasic.F34241 == 'K'">일반</li>
+                            <li v-else>
+                                <span v-if="etpBasic.F34240 == 'H'">환헷지(H)</span>
+                                <span v-else-if="etpBasic.F34240 == 'F'">환노출일반(F)</span>
+                                <span v-else-if="etpBasic.F34240 == 'A'">지수환노출(A)</span>
+                                <span v-else-if="etpBasic.F34240 == 'T'">복합배율(T)</span>
+                                <span v-else-if="etpBasic.F34240 == 'K'">복합배율2(K)</span>
+                                <span v-else-if="etpBasic.F34240 == 'I'">인도레버리지(I)</span>
+                                <span v-else-if="etpBasic.F34240 == 'J'">KINDEX합성일본인버스(J)</span>
+                                <span v-else-if="etpBasic.F34240 == 'G'">KODEX 미국채10년 선물 ETF(G)</span>
+                            </li>
+                           
+                            
                         </ul>
                         <ul>
                             <li class="list_tit">산출식</li>
-                            <li v-if="etpBasic.F34240 == 'H'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)</li>
-                            <li v-if="etpBasic.F34240 == 'F'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)×(<span class="txt_point4">④매매기준율/장전매매기준율</span>)</li>
-                            <li v-if="etpBasic.F34240 == 'A'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>×<span class="txt_point4">④매매기준율/장전매매기준율</span>)</li>
-                            <li v-if="etpBasic.F34240 == 'T'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)<br>×(1+(매매기준율-장전매매기준율)/장전매매기준율×<span class="txt_point2">②배율</span>)</li>
-                            <li v-if="etpBasic.F34240 == 'K'">iNAV=<span class="txt_point">①전일NAV</span>×(1+((1+<span class="txt_point3">③기초지수등락율</span>)<br>×<span class="txt_point4">④매매기준율/장전매매기준율</span>-1)×<span class="txt_point2">②배율</span>)</li>
-                            <li v-if="etpBasic.F34240 == 'I'">iNAV=<span class="txt_point">①전일NAV</span>×(1+((1+<span class="txt_point3">③기초지수등락율</span>)×<span class="txt_point4">④매매기준율/장전매매기준율</span>-1)×<span class="txt_point2">②배율</span>) ×(1+전일등락율×<span class="txt_point2">②배율</span>)</li>
-                            <li v-if="etpBasic.F34240 == 'J'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>-예상배당수익률)</li>
-                            <li v-if="etpBasic.F34240 == 'G'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point2">②배율</span>×<span class="txt_point3">③지수등락율</span>)×(환율보정계수/장전매매기준율)</li>
                             <li v-if="etpBasic.F34241 == 'K'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)</li>
+                            <li v-else>
+                                <span v-if="etpBasic.F34240 == 'H'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)</span>
+                                <span v-else-if="etpBasic.F34240 == 'F'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)×(<span class="txt_point4">④매매기준율/장전매매기준율</span>)</span>
+                                <span v-else-if="etpBasic.F34240 == 'A'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>×<span class="txt_point4">④매매기준율/장전매매기준율</span>)</span>
+                                <span v-else-if="etpBasic.F34240 == 'T'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)<br>×(1+(매매기준율-장전매매기준율)/장전매매기준율×<span class="txt_point2">②배율</span>)</span>
+                                <span v-else-if="etpBasic.F34240 == 'K'">iNAV=<span class="txt_point">①전일NAV</span>×(1+((1+<span class="txt_point3">③기초지수등락율</span>)<br>×<span class="txt_point4">④매매기준율/장전매매기준율</span>-1)×<span class="txt_point2">②배율</span>)</span>
+                                <span v-else-if="etpBasic.F34240 == 'I'">iNAV=<span class="txt_point">①전일NAV</span>×(1+((1+<span class="txt_point3">③기초지수등락율</span>)×<span class="txt_point4">④매매기준율/장전매매기준율</span>-1)×<span class="txt_point2">②배율</span>) ×(1+전일등락율×<span class="txt_point2">②배율</span>)</span>
+                                <span v-else-if="etpBasic.F34240 == 'J'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>-예상배당수익률)</span>
+                                <span v-else-if="etpBasic.F34240 == 'G'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point2">②배율</span>×<span class="txt_point3">③지수등락율</span>)×(환율보정계수/장전매매기준율)</span>                                
+                            </li>
                         </ul>
                         
                         <ul v-if="SimulationSwitch == true">
@@ -353,56 +359,57 @@ export default {
                 */
                 if (vm.etpBasic.F34241 == 'K') {
                     vm.iNav = vm.NtoS(vm.F03329) * ( 1 + vm.F30823 * vm.F18453 );
-                }
-                /* 
-                H. 환헷지
-                iNAV=전일NAV*(1+기초지수등락율*배율)
-                */
-                if (vm.etpBasic.F34240 == 'H') {
-                    vm.iNav = vm.NtoS(vm.F03329) * ( 1 + vm.F30823 * vm.F18453 );
-                /* 
-                F. 환노출일반
-                iNAV=전일NAV*(1+기초지수등락율*배율)*(매매기준율/장전매매기준율)
-                */           
-                } else if (vm.etpBasic.F34240 == 'F') {
-                    vm.iNav = vm.NtoS(vm.F03329) * ( 1 + vm.F30823 * vm.NtoS(vm.F18453) ) * ( vm.NtoS(vm.F30819)	/ vm.NtoS(vm.F30824) );
-                    
-                /* 
-                A.지수환노출 : ARIRAN차이나H레버리지(합성)
-                iNAV=전일NAV*(1+기초지수등락율*배율*매매기준율/장전매매기준율)
-                */
-                } else if (vm.etpBasic.F34240 == 'A') {
-                    vm.iNav = vm.NtoS(vm.F03329) * ( 1 + vm.F30823 * vm.NtoS(vm.F18453)  * vm.NtoS(vm.F30819)	/ vm.NtoS(vm.F30824) );
-                /* 
-                K. 복합배율2 : KINDEX 중국본토 레버리지 CSI300
-                iNAV=전일NAV*(1+((1+기초지수등락율)*매매기준율/장전매매기준율-1)*배율)
-                */
-                } else if (vm.etpBasic.F34240 == 'K') {
-                    vm.iNav = vm.NtoS(vm.F03329) * ( 1 + (( 1 + vm.F30823 ) * vm.NtoS(vm.F30819) /  vm.NtoS(vm.F30824) - 1 ) * vm.NtoS(vm.F18453) );
-                /* 
-                T.복합배율 :  TIGER 차이나A레버리지(합성)
-                iNAV=전일NAV*(1+기초지수등락율*배율)*(1+(매매기준율-장전매매기준율)/장전매매기준율*배율)               
-                */
-                } else if (vm.etpBasic.F34240 == 'T') {
-                    vm.iNav = vm.NtoS(vm.F03329) * ( 1 + vm.F30823 * vm.NtoS(vm.F18453) ) * (1 + (vm.NtoS(vm.F30819)  - vm.NtoS(vm.F30824)) / vm.NtoS(vm.F30824)	* vm.NtoS(vm.F18453) );
-                /*
-                    I. 인도레버리지, 전일ETP기초지수등락율(FID 34374 사용 하드코딩되있음)
-                    iNAV=전일NAV*(1+((1+기초지수등락율)*매매기준율/장전매매기준율-1)*배율) *(1+전일등락율*배율)
-                */
-                } else if (vm.etpBasic.F34240 == 'I') {
-                    vm.iNav = vm.NtoS(vm.F03329) * ( 1 + (( 1 + vm.F30823 ) * vm.NtoS(vm.F30819) /  vm.NtoS(vm.F30824) - 1 ) * vm.NtoS(vm.F18453) ) * (1 + vm.NtoS(vm.F34374) * vm.NtoS(vm.F18453));
-                /* 
-                J. KINDEX합성일본인버스, 1년에 2번 inav를 예상배당수익률(FID 18101 (주의)DEC -6)로 조정한다.
-                iNAV=전일NAV*(1+기초지수등락율*배율-예상배당수익률)
-                */
-                } else if (vm.etpBasic.F34240 == 'J') {
-                    vm.iNav = vm.NtoS(vm.F03329) * (1 + vm.F30823 * vm.NtoS(vm.F18453) - vm.NtoS(vm.F18101)); 
-                /* 
-                G.  KODEX 미국채10년 선물 ETF
-                iNAV = 전일NAV * (1+지수등락율*배율)*(환율보정계수 / 장전매매기준율)
-                */
-                } else if (vm.etpBasic.F34240 == 'G') {
-                    vm.iNav = vm.NtoS(vm.F03329) * ( 1 + vm.F30823 * vm.NtoS(vm.F18453) ) * ( vm.NtoS(vm.F33128) / vm.NtoS(vm.F30824) );
+                } else {
+                    /* 
+                    H. 환헷지
+                    iNAV=전일NAV*(1+기초지수등락율*배율)
+                    */
+                    if (vm.etpBasic.F34240 == 'H') {
+                        vm.iNav = vm.NtoS(vm.F03329) * ( 1 + vm.F30823 * vm.F18453 );
+                    /* 
+                    F. 환노출일반
+                    iNAV=전일NAV*(1+기초지수등락율*배율)*(매매기준율/장전매매기준율)
+                    */           
+                    } else if (vm.etpBasic.F34240 == 'F') {
+                        vm.iNav = vm.NtoS(vm.F03329) * ( 1 + vm.F30823 * vm.NtoS(vm.F18453) ) * ( vm.NtoS(vm.F30819)	/ vm.NtoS(vm.F30824) );
+                        
+                    /* 
+                    A.지수환노출 : ARIRAN차이나H레버리지(합성)
+                    iNAV=전일NAV*(1+기초지수등락율*배율*매매기준율/장전매매기준율)
+                    */
+                    } else if (vm.etpBasic.F34240 == 'A') {
+                        vm.iNav = vm.NtoS(vm.F03329) * ( 1 + vm.F30823 * vm.NtoS(vm.F18453)  * vm.NtoS(vm.F30819)	/ vm.NtoS(vm.F30824) );
+                    /* 
+                    K. 복합배율2 : KINDEX 중국본토 레버리지 CSI300
+                    iNAV=전일NAV*(1+((1+기초지수등락율)*매매기준율/장전매매기준율-1)*배율)
+                    */
+                    } else if (vm.etpBasic.F34240 == 'K') {
+                        vm.iNav = vm.NtoS(vm.F03329) * ( 1 + (( 1 + vm.F30823 ) * vm.NtoS(vm.F30819) /  vm.NtoS(vm.F30824) - 1 ) * vm.NtoS(vm.F18453) );
+                    /* 
+                    T.복합배율 :  TIGER 차이나A레버리지(합성)
+                    iNAV=전일NAV*(1+기초지수등락율*배율)*(1+(매매기준율-장전매매기준율)/장전매매기준율*배율)               
+                    */
+                    } else if (vm.etpBasic.F34240 == 'T') {
+                        vm.iNav = vm.NtoS(vm.F03329) * ( 1 + vm.F30823 * vm.NtoS(vm.F18453) ) * (1 + (vm.NtoS(vm.F30819)  - vm.NtoS(vm.F30824)) / vm.NtoS(vm.F30824)	* vm.NtoS(vm.F18453) );
+                    /*
+                        I. 인도레버리지, 전일ETP기초지수등락율(FID 34374 사용 하드코딩되있음)
+                        iNAV=전일NAV*(1+((1+기초지수등락율)*매매기준율/장전매매기준율-1)*배율) *(1+전일등락율*배율)
+                    */
+                    } else if (vm.etpBasic.F34240 == 'I') {
+                        vm.iNav = vm.NtoS(vm.F03329) * ( 1 + (( 1 + vm.F30823 ) * vm.NtoS(vm.F30819) /  vm.NtoS(vm.F30824) - 1 ) * vm.NtoS(vm.F18453) ) * (1 + vm.NtoS(vm.F34374) * vm.NtoS(vm.F18453));
+                    /* 
+                    J. KINDEX합성일본인버스, 1년에 2번 inav를 예상배당수익률(FID 18101 (주의)DEC -6)로 조정한다.
+                    iNAV=전일NAV*(1+기초지수등락율*배율-예상배당수익률)
+                    */
+                    } else if (vm.etpBasic.F34240 == 'J') {
+                        vm.iNav = vm.NtoS(vm.F03329) * (1 + vm.F30823 * vm.NtoS(vm.F18453) - vm.NtoS(vm.F18101)); 
+                    /* 
+                    G.  KODEX 미국채10년 선물 ETF
+                    iNAV = 전일NAV * (1+지수등락율*배율)*(환율보정계수 / 장전매매기준율)
+                    */
+                    } else if (vm.etpBasic.F34240 == 'G') {
+                        vm.iNav = vm.NtoS(vm.F03329) * ( 1 + vm.F30823 * vm.NtoS(vm.F18453) ) * ( vm.NtoS(vm.F33128) / vm.NtoS(vm.F30824) );
+                    }
                 } 
                 
                 /* iNav 등락률 */
