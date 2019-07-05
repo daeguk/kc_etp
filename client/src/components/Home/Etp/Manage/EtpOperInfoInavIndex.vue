@@ -54,6 +54,7 @@
                             <li v-if="etpBasic.F34240 == 'I'">인도레버리지(I)</li>
                             <li v-if="etpBasic.F34240 == 'J'">KINDEX합성일본인버스(J)</li>
                             <li v-if="etpBasic.F34240 == 'G'">KODEX 미국채10년 선물 ETF(G)</li>
+                            <li v-if="etpBasic.F34241 == 'K'">일반</li>
                         </ul>
                         <ul>
                             <li class="list_tit">산출식</li>
@@ -65,6 +66,7 @@
                             <li v-if="etpBasic.F34240 == 'I'">iNAV=<span class="txt_point">①전일NAV</span>×(1+((1+<span class="txt_point3">③기초지수등락율</span>)×<span class="txt_point4">④매매기준율/장전매매기준율</span>-1)×<span class="txt_point2">②배율</span>) ×(1+전일등락율×<span class="txt_point2">②배율</span>)</li>
                             <li v-if="etpBasic.F34240 == 'J'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>-예상배당수익률)</li>
                             <li v-if="etpBasic.F34240 == 'G'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point2">②배율</span>×<span class="txt_point3">③지수등락율</span>)×(환율보정계수/장전매매기준율)</li>
+                            <li v-if="etpBasic.F34241 == 'K'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)</li>
                         </ul>
                         
                         <ul v-if="SimulationSwitch == true">
@@ -344,6 +346,14 @@ export default {
                 // 변동률 
                 vm.F15004 = (vm.NtoS(vm.F30819) / vm.NtoS(vm.F30824) - 1) * 100;
                 // ETP 계산 유형(H: 환햇지, F: 환노출, A: 지수환노출, T: 복합배율, K: 복합배율2, I: 인도레버리지, J: KINDEX합성일본인버스)
+
+                /* 
+                일반(국내) : 국내는 유형이 없음
+                iNAV=전일NAV*(1+기초지수등락율*배율)
+                */
+                if (vm.etpBasic.F34241 == 'K') {
+                    vm.iNav = vm.NtoS(vm.F03329) * ( 1 + vm.F30823 * vm.F18453 );
+                }
                 /* 
                 H. 환헷지
                 iNAV=전일NAV*(1+기초지수등락율*배율)
