@@ -70,6 +70,7 @@ var saveCustSupport = function(req, res) {
                     resultMsg.err = "";
 
                     var msg = "고객지원 접수되었습니다. [" + paramData.subject + "]";
+                    console.log(msg);
                     sms.smsSend(1, msg)
                     res.json(resultMsg);
                     res.end();

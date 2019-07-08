@@ -23,14 +23,15 @@ module.exports = {
       }
 
       for(let i=0; i < recvNo.length; i++) {
-        str = str + "&recvNo=" + recvNo[i];
-        options.path = encodeURI(str);
+        var msgstr = str + "&recvNo=" + recvNo[i];
+        options.path = encodeURI(msgstr);
         console.log("smsSEnd...........");
         console.log(options.path);
         http.request(options, function(res) {
-          console.log(res);
+          console.log("response........" + i);
         }).end();
       }
     }
   },
+
 }
