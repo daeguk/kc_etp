@@ -627,9 +627,9 @@
                         </when>        
                     </choose>
 
-                     ORDER  BY      td_etp_basic.F16017         /* 상장일 */
-                                ,   td_etp_basic.F16002         /* 한글종목명 */
-                                ,   td_etp_basic.F16012         /* 국제표준코드 */
+                     ORDER  BY      td_etp_basic.F16017     DESC        /* 상장일 */
+                                ,   td_etp_basic.F16002                 /* 한글종목명 */
+                                ,   td_etp_basic.F16012                 /* 국제표준코드 */
 
                     <if test= 'firstYn != null  and  firstYn == "Y" ' >
                     LIMIT  0, 1
