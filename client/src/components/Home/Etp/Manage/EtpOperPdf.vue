@@ -4,7 +4,7 @@
             <v-flex grow class="conWidth_left">
                 <v-card flat>
                     <v-card-title primary-title>
-                        <h3 class="headline subtit" pb-0>
+                        <h3 class="headline subtit w100" pb-0>
 
                             {{ searchParam.F16002 }} |
                             <span class="grey--text">({{ searchParam.F16013 }})</span>
@@ -34,6 +34,9 @@
                                     </v-date-picker>
                                 </v-menu>
                             </span>
+                            <div class="excel_btn_down">
+                            <v-btn color="#85c406" depressed outline><v-icon dark>get_app</v-icon> 엑셀 다운로드</v-btn>
+                            </div>
                         </h3>
                     </v-card-title>
 

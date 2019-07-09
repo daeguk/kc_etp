@@ -924,6 +924,7 @@ input[type='file']{
 .pdf_calendar{width:150px;font-weight: 400; display:inline-block; vertical-align: bottom;}
 .pdf_calendar .v-messages{display:none;}
 .pdf_calendar .v-text-field.v-text-field--enclosed .v-text-field__details{display:none;}
+.excel_btn_down{float:right !important; display: block;}
 
 /*달력 선택일 bg*/
 .v-btn.v-btn--active.v-btn--icon.accent{background-color:#1976d2 !important; border-color:#1976d2 !important;}
