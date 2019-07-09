@@ -27,7 +27,24 @@
                                 <v-list>
                                     <v-list-tile :class="( toggle.togglePdfEmergencyPop ? 'border_b select' : 'border_b' )" @click.stop="fn_showDetailPdf(6)">
                                         <v-list-tile-avatar>
+                                            <!--말풍선 추가---->
+                                            <div class="text-xs-center">
+                                            <v-menu v-model="menu" :nudge-width="200" offset-x left class="arrow_menu">
+                                                <template v-slot:activator="{ on }">
                                             <div :class="( toggle.togglePdfEmergencyPop ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon5"></span></div>
+                                             </template>
+                                                <v-layout>
+                                                    <v-flex >
+                                                        <div class="arrow_box">
+                                                          <span> 해당 기능은 점검 중입니다. 점검이 완료되는 시점에 다시 안내드리겠습니다.</span>
+                                                        <v-btn flat @click="menu = false" icon small dark><v-icon>close</v-icon></v-btn>
+                                                        </div>
+                                                    </v-flex>
+                                                    <v-flex class="arrow_flex"></v-flex>
+                                                </v-layout>
+                                            </v-menu>
+                                        </div>
+                                        <!---말풍선 추가end---->
                                         </v-list-tile-avatar>
                                         <v-list-tile-content class="rm_con_h">
                                             <v-list-tile-title>PDF 긴급반영</v-list-tile-title>
@@ -73,7 +90,9 @@
     </v-container>
 </template>
 
-
+<style scoped>
+.v-menu__content{box-shadow: none !important;}
+</style>
 <script>
 import $ from "jquery";
 import dt from "datatables.net";
@@ -89,6 +108,7 @@ export default {
     props : [ "pdfData", "indexBasic", "toggle" ],
     data() {
         return {
+            menu:true,
             showFaver : true,
             //togglePdfEmergencyPop : false,
             //toggleIanvPop : false,
