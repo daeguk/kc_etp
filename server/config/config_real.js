@@ -7,7 +7,7 @@
 
 const log4js = require('log4js');
 log4js.configure({
-    appenders:  { output:   { type: 'dateFile', pattern:"yyyy-MM-dd.log", alwaysIncludePattern: true, filename: '/home/sinfo/etp.log' } },
+    appenders:  { output:   { type: 'dateFile', pattern:"yyyy-MM-dd.log", alwaysIncludePattern: true, filename: '/home/sinfo/.pm2/logs/etp.log' } },
     categories: { default :  { appenders: ['output'], level: 'debug' } }
 });
 
@@ -23,7 +23,7 @@ module.exports = {
     pwd_salt: "11aabb..",
     pwd_default: "11aabb..",
     uploadFolder : "/data/koscom/kc_newetp/upload",
-    sampleDownFolder : "/data/koscom/kc_newetp/upload/samepleDown",
+    sampleDownFolder : "/data/koscom/kc_newetp/upload/sampleDown",
     pdfmodify_nas_path: "/nas3/nfs_data2/checkapi/pdfmodify/",
     logger : logger,
 }

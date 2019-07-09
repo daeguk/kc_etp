@@ -4,12 +4,11 @@
 var http = require('http');
 var config = require('../config/config');
 const recvNoList = [
-  // PDF 담당 : 김상용, 민선기, 오인명, 이형준
-  ['01047191302', '01091703352', '01088939334', '01071397335'],
+  // PDF 담당 : 민선기, 김상용, 오인명, 이형준
+  ['01091703352', '01047191302', '01088939334', '01071397335'],
   // ['01047191302',],
-  // ['01035575178'],
-  // 고객지원 담당 : 김상용, 민선기
-  ['01047191302', '01091703352',],
+  // 고객지원 담당 : 민선기, 김상용
+  ['01091703352','01047191302',],
 ];
 
 module.exports = {
@@ -24,14 +23,15 @@ module.exports = {
       }
 
       for(let i=0; i < recvNo.length; i++) {
-        str = str + "&recvNo=" + recvNo[i];
-        options.path = encodeURI(str);
+        var msgstr = str + "&recvNo=" + recvNo[i];
+        options.path = encodeURI(msgstr);
         console.log("smsSEnd...........");
         console.log(options.path);
         http.request(options, function(res) {
-          console.log(res);
+          console.log("response........" + i);
         }).end();
       }
     }
   },
+
 }
