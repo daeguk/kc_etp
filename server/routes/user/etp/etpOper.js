@@ -547,6 +547,10 @@ var getEtpOperPdf = function(req, res) {
 
                                 if (rows && rows.length > 0) {
                                     resultMsg.dataList = rows;
+
+                                    for (var i in resultMsg.dataList) {
+                                        resultMsg.dataList[i].status = "";
+                                    }
                                 }
 
                                 callback(null, paramData);
@@ -583,6 +587,7 @@ var getEtpOperPdf = function(req, res) {
 
                             if (rows && rows.length > 0) {
                                 for (var i in resultMsg.dataList) {
+
                                     var same = rows.filter(function(o, p) {
                                         return (o.F12506 === resultMsg.dataList[i].F12506 /* 일자 */ 
                                             &&  o.F16583 === resultMsg.dataList[i].F16583 /* 사무수탁회사번호 */ 
@@ -1021,14 +1026,18 @@ var getEtpOperPdfByRate = function(req, res) {
 
                                 if (rows && rows.length > 0) {
                                     resultMsg.dataList = rows;
+
+                                    for (var i in resultMsg.dataList) {
+                                        resultMsg.dataList[i].status = "";
+                                    }                                    
                                 }
 
-                                callback(null);
+                                callback(null, paramData);
                             });
 
                         } else {
 
-                            callback(null);
+                            callback(null, paramData);
                         }
 
                     } catch (err) {
@@ -1039,7 +1048,60 @@ var getEtpOperPdfByRate = function(req, res) {
 
                         callback(resultMsg);
                     }
-                }
+                },
+
+                /* 3. etfpdf_hist 에서 선택된 날짜에 속한 정보 중 가장 최근 데이터의 상태값을 조회한다. */
+                function(msg, callback) {
+
+                    try {
+                        if (resultMsg.rateTitleList && resultMsg.rateTitleList.length > 0) {
+                            stmt = mapper.getStatement('etpOper', 'getStatusByEtpOperPdfEtfHist', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] etpOper.getStatusByEtpOperPdfEtfHist Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if (rows && rows.length > 0) {
+                                    for (var i in resultMsg.dataList) {
+
+                                        var same = rows.filter(function(o, p) {
+                                            return (o.F12506 === resultMsg.dataList[i].F12506 /* 일자 */ 
+                                                &&  o.F16583 === resultMsg.dataList[i].F16583 /* 사무수탁회사번호 */ 
+                                                &&  o.F16012 === resultMsg.dataList[i].F16012 /* ETF종목코드 */
+                                                &&  o.F16013 === resultMsg.dataList[i].F16013 /* ETF단축코드 */
+                                                &&  o.F16316 === resultMsg.dataList[i].F16316 /* 구성종목코드 */
+                                            );
+                                        });
+
+                                        if (same.length == 1) {
+                                            resultMsg.dataList[i].status = same[0].status;
+                                        }
+                                    }
+                                }
+
+                                callback(null);
+                            });
+                            
+                        } else {
+
+                            callback(null, paramData);
+                        }
+
+                    } catch (err) {
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getStatusByEtpOperPdfEtfHist Error while performing Query";
+                        resultMsg.err = err;
+
+                        return callback(resultMsg);
+                    }
+                },                
 
             ], function(err) {
 
@@ -1183,8 +1245,10 @@ var getEtpOperPdfModify = function(req, res) {
                                     for (var i in rows) {
                                         rows[i].status = "normal";
 
-                                        rows[i].F16499_prev = rows[i].F16499; /* 1CU단위증권수 */
-                                        rows[i].F34840_prev = rows[i].F34840; /* 액면금액설정현금액 */
+                                        rows[i].F16499_prev = rows[i].F16499;   /* 1CU단위증권수 (변경전) */
+                                        rows[i].F34840_prev = rows[i].F34840;   /* 액면금액설정현금액 (변경전) */
+                                        rows[i].F16588_prev = rows[i].F16588;   /* 평가금액 (변경전) */
+                                        rows[i].F15007      = 0;                /* kspjong_basic 기준가 (신규추가시 사용) */
 
                                         rows[i].code_check = true; /* 코드 체크 ( defulat : true ) */
 

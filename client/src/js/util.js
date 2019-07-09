@@ -1,3 +1,4 @@
+import excel from "xlsx";
 
 var util = {    
     /* 천단위 콤마 처리 */
@@ -237,5 +238,64 @@ var util = {
 
       return rtn;
     },
+
+    /*
+    *  엑셀을 다운로드 한다.
+    *  2019-07-09  bkLove(촤병국)
+    */
+    fn_downExcel : function( excelInfo ) {
+        var vm = this;
+
+        if( !excelInfo || Object.keys(excelInfo).length == 0 ) {
+            console.log( "엑셀 다운로드시 필요한 정보를 확인해 주세요." )
+            return  false;
+        }
+
+        if( !excelInfo.arrHeaderNm || excelInfo.arrHeaderNm.length == 0 ) {
+            console.log( "노출할 헤더 정보를 확인해 주세요." );
+            return  false;            
+        }
+
+        if( !excelInfo.arrHeaderKey || excelInfo.arrHeaderKey.length == 0 ) {
+            console.log( "노출할 헤더의 key 정보를 확인해 주세요." );
+            return  false;
+        }
+
+        if( !excelInfo.sheetNm ) {
+            console.log( "엑셀 seeht 명 정보를 확인해 주세요." );
+            return  false;
+        }
+
+        if( !excelInfo.excelFileNm ) {
+            console.log( "다운로드 파일명 정보를 확인해 주세요." );
+            return  false;
+        }
+
+        if( !excelInfo.dataInfo ) {
+            console.log( "엑셀 다운로드할 데이터 정보를 확인해 주세요." );
+            return  false;
+        }
+
+        var options     =   {
+                skipHeader          :   true
+            ,   origin              :   "A2"
+            ,   hiddenStartIndex    :   54
+        };
+
+        var dataWS = excel.utils.aoa_to_sheet( [ excelInfo.arrHeaderNm ] );
+        options = Object.assign( options, excelInfo.options );
+
+        /* hide  column */
+        dataWS['!cols'] = [];
+        for (var i = options.hiddenStartIndex ; i < 100 ; i++) {
+            dataWS['!cols'][i] = { hidden: true };
+        }
+        excel.utils.sheet_add_json( dataWS, excelInfo.dataInfo, { header: excelInfo.arrHeaderKey , skipHeader : options.skipHeader, origin : options.origin });
+
+
+        var wb = excel.utils.book_new();
+        excel.utils.book_append_sheet(wb, dataWS, excelInfo.sheetNm );
+        excel.writeFile( wb, excelInfo.excelFileNm + "_"+ vm.getToday() +  ".xlsx" );
+    }
 }  
   export default util

@@ -430,11 +430,15 @@
                        AND  td_kspjong_basic.F16012         =   #{F16012}               /* 국제표준코드 */
                     </if>
 
+
                     <if test= 'searchCode != null  and  searchCode != "" ' >
-                       AND  (  
-                                    td_kspjong_basic.F16012         LIKE    CONCAT( #{searchCode}, '%' )        /* 국제표준코드 */
-                                OR  td_kspjong_basic.F16013         LIKE    CONCAT( #{searchCode}, '%' )        /* 단축코드 */
-                            )
+                        <if test= 'searchCode.length <= 6' >
+                       AND  td_kspjong_basic.F16013         LIKE    CONCAT( #{searchCode}, '%' )        /* 단축코드 */
+                        </if>
+
+                        <if test= 'searchCode.length > 6' >
+                       AND  td_kspjong_basic.F16012         LIKE    CONCAT( #{searchCode}, '%' )        /* 국제표준코드 */
+                        </if>
                     </if>
 
                     <if test= 'F34239 != null  and  F34239 != "" ' >
@@ -524,6 +528,7 @@
     <sql    id="sqlEtpOperPdfEtfHist01">
 
                     DATE_FORMAT( td_etfpdf_hist.F12506, '%Y.%m.%d' )        AS  fmt_F12506  /* 일자 */
+                ,   td_etfpdf_hist.F12506                                   AS  F12506      /* 일자 */
                 ,   td_etfpdf_hist.F16583                                   AS  F16583      /* 사무수탁회사번호 */
                 ,   td_etfpdf_hist.F16012                                   AS  F16012      /* ETF종목코드 */
                 ,   td_etfpdf_hist.F16013                                   AS  F16013      /* ETF단축코드 */
@@ -2043,6 +2048,6 @@
 
          LIMIT 1
     ]]>
-    </select>    
+    </select>
 
 </mapper>

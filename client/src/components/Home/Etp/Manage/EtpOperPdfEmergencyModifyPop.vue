@@ -377,12 +377,8 @@ export default {
                     "render": function ( data, type, row ) {
                         var htm = "";
                         if( typeof row.F16316 != "undefined" && row.F16316.length > 0 ) {       /* 구성종목코드 */
-                            if( row.F16316.indexOf( "<input" ) > -1 ) {
-                                htm = util.formatNumber( data );
-                            }else{
-                                /* 1CU단위증권수 */
-                                htm = "<input type='text' name='F16499' id='F16499' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='20'>";
-                            }
+                            /* 1CU단위증권수 */
+                            htm = "<input type='text' name='F16499' id='F16499' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='20'>";
                         }
 
                         return htm;
@@ -395,12 +391,8 @@ export default {
                     "render": function ( data, type, row ) {
                         var htm = "";
                         if( typeof row.F16316 != "undefined" && row.F16316.length > 0 ) {       /* 구성종목코드 */
-                            if( row.F16316.indexOf( "<input" ) > -1 ) {
-                                htm = util.formatNumber( data );
-                            }else{
-                                /* 액면금액 */
-                                htm = "<input type='text' name='F34840' id='F34840' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='20'>";
-                            }
+                            /* 액면금액 */
+                            htm = "<input type='text' name='F34840' id='F34840' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='20'>";
                         }
 
                         return htm;
@@ -438,24 +430,58 @@ export default {
             ],
             columns: [  
                 { "data" : "fmt_F12506"     ,   "orderable" : false  ,   "className" : "txt_center" ,   "width" :   "10%"   , "title" :   "Date"          },   /* Date */
-                { "data" : "F33861"         ,   "orderable" : false  ,   "className" : "txt_center" ,   "width" :   "8%"    , "title" :   "시장<br>구분"      },  /* 시장구분 */
-                { "data" : "F16316"         ,   "orderable" : false  ,   "className" : "txt_left"   ,   "width" :   "12%"   , "title" :   "구성종목코드"  },  /* 구성종목코드 */
-                { "data" : "F16004"         ,   "orderable" : false  ,   "className" : "txt_left"   ,   "width" :   "14%"   , "title" :   "종목명"        },  /* 종목명 */
-                { "data" : "F16499"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "12%"   , "title" :   "CU shrs"       },  /* CU shrs */
-                { "data" : "F34840"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "12%"   , "title" :   "액면금액"      },  /* 액면금액 */
-                { "data" : "F16588"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "12%"   , "title" :   "평가금액"      },  /* 평가금액 */
-                { "data" : "fmt_F34743"     ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "10%"    , "title" :   "비중(%)"      },  /* 비중 */
+                { "data" : "F33861"         ,   "orderable" : false  ,   "className" : "txt_center" ,   "width" :   "8%"    , "title" :   "시장<br>구분"  },    /* 시장구분 */
+                { "data" : "F16316"         ,   "orderable" : false  ,   "className" : "txt_left"   ,   "width" :   "12%"   , "title" :   "구성종목코드"  },    /* 구성종목코드 */
+                { "data" : "F16004"         ,   "orderable" : false  ,   "className" : "txt_left"   ,   "width" :   "14%"   , "title" :   "종목명"        },    /* 종목명 */
+                { "data" : "F16499"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "12%"   , "title" :   "CU shrs"       },   /* CU shrs */
+                { "data" : "F34840"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "12%"   , "title" :   "액면금액"      },    /* 액면금액 */
+                { "data" : "F16588"         ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "12%"   , "title" :   "평가금액"      },    /* 평가금액 */
+                { "data" : "fmt_F34743"     ,   "orderable" : false  ,   "className" : "txt_right"  ,   "width" :   "10%"   , "title" :   "비중(%)"       },    /* 비중 */
                 { "data": null              ,   "orderable" : false  ,   "align":"center"           ,   "width" :   "9%"    , defaultContent:"" },
 
                 { "data" : "status"         ,   "visible"   : false   },                                                                /* status */
                 { "data" : "code_check"     ,   "visible"   : false   },                                                                /* code_check */
                 { "data" : "F16499_prev"    ,   "visible"   : false   },                                                                /* CU shrs (변경전) */
                 { "data" : "F34840_prev"    ,   "visible"   : false   },                                                                /* 액면금액 (변경전) */
+                { "data" : "F16588_prev"    ,   "visible"   : false   },                                                                /* 평가금액 (변경전) */
+                { "data" : "F15007"         ,   "visible"   : false   },                                                                /* kspjong_basic 기준가 (신규추가시 사용) */
             ]
         });
 
         /* [자산추가] 후 확인 종목코드에 엔터키 입력시 */
         $("#" + vm.tblEmergeny01 + " tbody").on('keyup', "input[name='jongmok']", function (e) {
+
+            var keyCode = e.keyCode == 0 ? e.charCode : e.keyCode;
+            var specialKeys = new Array();
+
+            specialKeys.push(8); //Backspace
+            specialKeys.push(9); //Tab
+            specialKeys.push(13); //Enter
+            specialKeys.push(16); //Shift
+            specialKeys.push(17); //Control
+            specialKeys.push(46); //Delete
+            specialKeys.push(36); //Home
+            specialKeys.push(35); //End
+            specialKeys.push(37); //Left
+            specialKeys.push(39); //Right
+
+            var ret = ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90) || (keyCode >= 97 && keyCode <= 122) || (specialKeys.indexOf(e.keyCode) != -1 && e.charCode != e.keyCode));
+
+            if ( !ret ) {
+                var inputData = $(this).val();
+                var oneChar   = escape( inputData.charAt( inputData.length-1 ) );                
+
+                if( oneChar.length >= 4 ) {
+                    $(this).val( inputData.substr( 0, inputData.length-2 ) );
+                }else if( oneChar.indexOf("%A7") != -1 ) {
+                    $(this).val( inputData.substr( 0, inputData.length-2 ) );
+                }else{
+                    $(this).val( inputData.substr( 0, inputData.length-1 ) );
+                }
+
+                return false;
+            }
+
             if( e.keyCode == 13 ) {
 
                 var table = $("#" + vm.tblEmergeny01 ).DataTable();
@@ -474,9 +500,35 @@ export default {
                     ,   nowData : nowData
                     ,   rowIndex : rowIndex
                     ,   F16499_prev : 0
+                    ,   nowTr : $(this).parents("tr")
                 });
             }
+        });
+
+        /* [자산추가] 후 [종목코드] 변경시 */
+        $("#" + vm.tblEmergeny01 + " tbody").on('change', "input[name='jongmok']", function (e) {
+
+            var table = $("#" + vm.tblEmergeny01 ).DataTable();
+            var data = table.row($(this).parents("tr")).data();
+            var rowIndex = table.row($(this).parents("tr")).index();
+            var nowData = {
+                F16499 : 0
+            };
+
+            vm.jongmok_state    =   "ing";
+
+            vm.fn_getJongmokData( { 
+                    status : "insert"
+                ,   codeVal : $(this).parents("tr").find( "input[name='jongmok']" ).eq(0).val()
+                ,   tableData: data
+                ,   nowData : nowData
+                ,   rowIndex : rowIndex
+                ,   F16499_prev : 0
+                ,   nowTr : $(this).parents("tr")
+            });
         });        
+
+        
 
         /* [자산추가] 후 확인 버튼 클릭시 */
         $("#" + vm.tblEmergeny01 + " tbody").on('click', "button[name='confirm']", function () {
@@ -497,18 +549,33 @@ export default {
                 ,   nowData : nowData
                 ,   rowIndex : rowIndex
                 ,   F16499_prev : 0
+                ,   nowTr : $(this).parents("tr")
             });
         });
 
-        /* CU shrs 수정시 */
-        $("#" + vm.tblEmergeny01 + " tbody").on('blur', "input[name='F16499'],input[name='F34840']", function () {
+        /* F16004=[종목명] 수정시 */
+        $("#" + vm.tblEmergeny01 + " tbody").on('change', "input[name='F16004']", function () {
 
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
             var data = table.row($(this).parents("tr")).data();
             var rowIndex = table.row($(this).parents("tr")).index();
-            var jongmokTag = $(this).parents("tr").find( "input[name='jongmok']" );
+            var nowData = {};
+            var tdData = $(this).eq(0).val();
+
+            vm.jongmok_state=""
+
+            vm.dataList[ rowIndex ].F16004      =   tdData;
+        });        
+
+        /* F16499=[CU shrs], F34840=[액면금액] 수정시 */
+        $("#" + vm.tblEmergeny01 + " tbody").on('change', "input[name='F16499'],input[name='F34840']", function () {
+
+            var table = $("#" + vm.tblEmergeny01 ).DataTable();
+            var data = table.row($(this).parents("tr")).data();
+            var rowIndex = table.row($(this).parents("tr")).index();
             var nowData = {};
             var tdData = _.replace( $(this).eq(0).val(), /,/g, "" );
+            
             $(this).eq(0).val( tdData );            
 
             /* CU shrs */
@@ -524,19 +591,18 @@ export default {
 
             $(this).eq(0).val( util.formatNumber( tdData ) );
 
-            vm.jongmok_state    =   "ing";
-
-            vm.fn_setStatus( data, nowData, rowIndex, ( jongmokTag ? jongmokTag.length : 0 ), $(this) );
+            vm.jongmok_state=""
+            vm.fn_setStatus( data, nowData, rowIndex );
         });
 
         // 삭제버튼 클릭시
         $('#' + vm.tblEmergeny01 + ' tbody').on('click', 'button[name=btnDelete]', function () {
             var table = $('#' + vm.tblEmergeny01 ).DataTable();
+            var tr = $(this).parents('tr');
             var data = table.row($(this).parents('tr')).data();
             var rowIndex = table.row($(this).parents("tr")).index();
-            var jongmokTag = $(this).parents("tr").find( "input[name='jongmok']" );            
 
-            vm.fn_deleteTableData( data, $(this).eq(0).val(), rowIndex, ( jongmokTag ? jongmokTag.length : 0 ) );
+            vm.fn_deleteTableData( data, tr, rowIndex );
         });
 
         var searchParam                 =   {}
@@ -807,12 +873,9 @@ export default {
                             ,1
                         )
                     ) {
-                        if(vm.$refs.confirm2.val == 'Y') {
-                            vm.status = 0;
-                            return  false;
-                        }
-
                         vm.status = 0;
+                        vm.jongmok_state    =   "";
+
                         return  false;
                     }
                 }
@@ -826,19 +889,16 @@ export default {
                             ,1
                         )
                     ) {
-                        if(vm.$refs.confirm2.val == 'Y') {
-                            vm.status = 0;
-                            return  false;
-                        }
-
                         vm.status = 0;
+                        vm.jongmok_state    =   "";
+
                         return  false;
                     }
                 }
             }
 
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
-            var tr = table.row( dataJson.rowIndex );            
+            var tr = dataJson.nowTr;
 
             util.processing(vm.$refs.progress, true);
             axios.post( Config.base_url + "/user/etp/getJongmokData", {
@@ -859,78 +919,21 @@ export default {
                                     {}
                                     ,1
                                 )
-                            ) {
-                                if(vm.$refs.confirm2.val == 'Y') {
-
-                                    if( typeof dataJson.tableData.F16499_prev != "undefined" ) {
-                                        if( dataJson.thisTag ) {
-                                            dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
-                                        }
-                                    }
-
-
-                                    /*
-                                    *   no_ing 용도
-                                    *   -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
-                                    * 
-                                    *   1)  Next 를 통해 ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력된 경우
-                                    *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
-                                    *   2)  구성종목을 한건 이상 수정하고, 구성종목 DB 검색 후 callback 에서 오류 메시지 팝업창이 출력된 경우
-                                    */
-                                    if( vm.dataList.length > 0 || vm.allDataList.length > 0 ) {
-                                        vm.jongmok_state    =   "no_ing";
-                                    }
-
-                                    vm.status = 0;
-                                    return  false;
-                                }
+                            ) {                                
+                                dataJson.codeVal    =   "";
+                                vm.fn_setInitData( vm, dataJson );
 
                                 vm.status = 0;
-                                return  false;                                
+                                vm.jongmok_state    =   "";
+
+                                return  false;
                             }
                         }
                     }
 
                     var dataList = response.data.dataList;
-                    if ( !dataList || dataList.length == 0 ) {
-                        vm.status = 1;
-                        if (await vm.$refs.confirm2.open(
-                                '확인',
-                                '구성종목코드(' + dataJson.codeVal + ')가 존재하지 않습니다.',
-                                {}
-                                ,1
-                            )
-                        ) {
-                            if(vm.$refs.confirm2.val == 'Y') {
 
-                                if( typeof dataJson.tableData.F16499_prev != "undefined" ) {
-                                    if( dataJson.thisTag ) {
-                                        dataJson.thisTag.eq(0).val( util.formatNumber( dataJson.tableData.F16499_prev ) );
-                                    }
-                                }
-
-                                /*
-                                *   no_ing 용도
-                                *   -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
-                                * 
-                                *   1)  Next 를 통해 ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력된 경우
-                                *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
-                                *   2)  구성종목을 한건 이상 수정하고, 구성종목 DB 검색 후 callback 에서 오류 메시지 팝업창이 출력된 경우
-                                */                            
-                                if( vm.dataList.length > 0 || vm.allDataList.length > 0 ) {
-                                    vm.jongmok_state    =   "no_ing";
-                                }
-
-                                vm.status = 0;
-                                return  false;
-                            }
-
-                            vm.status = 0;
-                            return  false;
-                        }
-                        return  false;
-                    }
-
+            /** kspjong_basic 코드 검색건수가 여러건인 경우  **/
                     if ( dataList && dataList.length > 1 ) {
                         vm.status = 1;
                         if (await vm.$refs.confirm2.open(
@@ -940,24 +943,104 @@ export default {
                                 ,1
                             )
                         ) {
-                            if(vm.$refs.confirm2.val == 'Y') {
-                                vm.status = 0;
-                                return  false;
-                            }
+                            dataJson.codeVal    =   "";
+                            vm.fn_setInitData( vm, dataJson );
 
                             vm.status = 0;
+                            vm.jongmok_state    =   "";
                             return  false;
                         }
                     }
 
-                    if( dataJson.status == "insert" ) {
+
+
+
+                    /* 구성종목코드 중복체크 ( 이미 저장되어 있는 건에 대해 체크 ) */
+                    var duplCheck = _.filter( tblEmergeny01.rows().data() , function(o) {
+                        if ( o.status != "insert" && o.F16316 == dataJson.codeVal ) {
+                            return true; 
+                        }
+                    });
+
+                    if( duplCheck.length  > 0 ) {
+                        vm.status = 1;
+                        if (await vm.$refs.confirm2.open(
+                                '확인',
+                                '구성종목코드(' + dataJson.codeVal + ')가 이미 존재합니다.',
+                                {}
+                                ,1
+                            )
+                        ) {
+                            dataJson.codeVal    =   "";
+                            vm.fn_setInitData( vm, dataJson );
+
+                            vm.status = 0;                                
+                            vm.jongmok_state    =   "";
+
+                            return  false;
+                        }
+                    }                    
+
+
+            /** kspjong_basic 코드 검색건수가 없는 경우  **/
+                    if ( !dataList || dataList.length == 0 ) {
+                        vm.status = 1;
+
+                        /* 구성종목코드 중복체크 ( input box 로 추가된 경우 ) */
+                        var jongmokData = $("#tblEmergeny01 tbody").find("input[name='jongmok']" );     /* 종목코드 */
+                        var insertDuplCheck  =   _.filter( tblEmergeny01.rows( jongmokData.parents("tr") ).data(), function( o, i ) {
+                            if( o.status == "insert" && jongmokData.eq(i).val() == dataJson.codeVal ) {
+                                return  true;
+                            }
+                        });
+                        if( insertDuplCheck.length  > 1 ) {
+                            vm.status = 1;
+                            if (await vm.$refs.confirm2.open(
+                                    '확인',
+                                    '구성종목코드(' + dataJson.codeVal + ')가 이미 추가되어 있습니다.',
+                                    {}
+                                    ,1
+                                )
+                            ) {
+                                dataJson.codeVal    =   "";
+                                vm.fn_setInitData( vm, dataJson );
+
+                                vm.status = 0;                                
+                                vm.jongmok_state    =   "";
+
+                                return  false;
+                            }
+                        }
+
+                        if (await vm.$refs.confirm2.open(
+                                '확인',
+                                '구성종목코드(' + dataJson.codeVal + ')가 존재하지 않습니다. 종목명을 입력해 주세요.',
+                                {}
+                                ,1
+                            )
+                        ) {
+                            dataJson.code_check     =   true;
+                            vm.fn_setInitData( vm, dataJson );
+
+                            vm.status = 0;
+                            vm.jongmok_state    =   ""
+
+                            return  false;
+                        }
                         
+                        return  false;
+                    }
+
+            /** kspjong_basic 코드 검색건수가 1건인 경우  **/
+                    else{
+
+                        /* 구성종목코드 중복체크 ( input box 가 아니고 1건으로 추가된 경우 ) */
                         var filterData = _.filter( tblEmergeny01.rows().data() , function(o) {
-                            if ( o.F16316 == dataList[0].F16012 ) {
+                            if ( o.status == "insert" && o.F16316 == dataList[0].F16012 ) {
                                 return true; 
                             }
                         });
-                    
+
                         if( filterData.length > 0 ) {
                             vm.status = 1;
                             if (await vm.$refs.confirm2.open(
@@ -967,13 +1050,12 @@ export default {
                                     ,1
                                 )
                             ) {
-                                if(vm.$refs.confirm2.val == 'Y') {
-                                    vm.status = 0;                                
+                                dataJson.codeVal    =   "";
+                                vm.fn_setInitData( vm, dataJson );
 
-                                    return  false;
-                                }
+                                vm.status = 0;                                
+                                vm.jongmok_state    =   "";
 
-                                vm.status = 0;
                                 return  false;
                             }
                         }
@@ -993,38 +1075,12 @@ export default {
                             ,   "code_check"    :   true
                             ,   "F16499_prev"   :   '0'                         /* CU shrs ( 변경전 ) */
                             ,   "F34840_prev"   :   '0'                         /* 액면금액 ( 변경전 ) */
+                            ,   "F16588_prev"   :   '0'                         /* 평가금액 (변경전) */
+                            ,   "F15007"        :   dataList[0].F15007          /* kspjong_basic 기준가 (신규추가시 사용) */
                         }
 
                         tblEmergeny01.row(  dataJson.rowIndex ).data( addData ).order( [0, "asc"] ).draw(  );
                         vm.dataList[ dataJson.rowIndex ]            =   addData;
-                    }else{
-                        /* F16588 (평가금액) = F15007 ( td_kspjong_basic 의 기준가 ) * F16499 ( CU shrs ) */
-                        var  v_F16588   =   Number( dataList[0].F15007 ) * Number( dataJson.nowData.F16499 );
-
-                        table.cell( tr, 6 ).data( v_F16588 );
-                        vm.dataList[ dataJson.rowIndex ].F16588    =   v_F16588;
-
-                        /* 
-                        *   상태값 normal 로 변경
-                        *
-                        *   수정한 [1CU단위증권수] 와 원본 [1CU단위증권수] 이 같고
-                        *   수정했던 [액면금액] 과 원본 [액면금액] 이 같은 경우
-                        */
-                        if( dataJson.nowStatus == "insert" ) {
-                            table.cell( tr, 9 ).data( { "status" : "insert" } );
-                            vm.dataList[ dataJson.rowIndex ].status  =   "insert";
-                        }
-                        else if(    Number( dataJson.tableData.F16499_prev ) == Number( dataJson.nowData.F16499 )
-                                &&  Number( dataJson.tableData.F34840_prev ) == Number( dataJson.tableData.F34840 ) ) {
-                            table.cell( tr, 9 ).data( { "status" : "normal" } );
-                            vm.dataList[ dataJson.rowIndex ].status  =   "normal";
-                        }                            
-                        else{
-                            table.cell( tr, 9 ).data( { "status" : "modify" } );
-                            vm.dataList[ dataJson.rowIndex ].status  =   "modify";                            
-                        }
-
-                        vm.dataList[ dataJson.rowIndex ].F16499      =   dataJson.nowData.F16499;                        
                     }
                 }
 
@@ -1052,6 +1108,9 @@ export default {
         fn_addRow() {
             var vm = this;
 
+
+            vm.jongmok_state=""
+
             /* 자산추가된 행에 대해 빈 값이 존재하는지 체크한다. */
             if( !vm.fn_emptyCheck() )   {
                 return  false;
@@ -1061,7 +1120,7 @@ export default {
             if( !vm.fn_codeCheck() ) {
                 return  false;
             }            
-                                                
+
             var addData     =   {
                     'fmt_F12506'    :   ''              /* Date */
                 ,   'F33861'        :   ''              /* 시장구분 */
@@ -1076,11 +1135,68 @@ export default {
                 ,   "code_check"    :   false
                 ,   "F16499_prev"   :   '0'             /* CU shrs ( 변경전 ) */
                 ,   "F34840_prev"   :   '0'             /* 액면금액 ( 변경전 ) */
+                ,   "F16588_prev"   :   '0'             /* 평가금액 (변경전) */
+                ,   "F15007"        :   '0'             /* kspjong_basic 기준가 (신규추가시 사용) */
             }
 
             tblEmergeny01.row.add( addData ).order( [0, "asc"] ).draw(  );            
 
             vm.dataList.push( addData );
+        },
+
+        fn_setInitData( vm, dataJson ) {
+
+            try{
+                var table = $("#" + vm.tblEmergeny01 ).DataTable();
+                var tr = dataJson.nowTr;
+
+                var addData     =   {
+
+                        "fmt_F12506"    :   ""                          /* Date */
+                    ,   "F33861"        :   ""                          /* 시장구분 */
+                    ,   "F16316"        :   dataJson.codeVal            /* 구성종목코드 */
+//                  ,   "F16004"        :   "<input type='text' name='F16004' id='F16004' class='txt_left' style='width:100%' maxlength='20' >" /* 종목명 */
+//                  ,   "F16499"        :   0                           /* CU shrs */
+//                  ,   "F34840"        :   0                           /* 액면금액 */
+//                  ,   "F16588"        :   0                           /* 평가금액 */
+                    ,   "fmt_F34743"    :   0                           /* 비중 */
+
+                    ,   "status"        :   "insert"
+                    ,   "code_check"    :   true
+                    ,   "F16499_prev"   :   '0'                         /* CU shrs ( 변경전 ) */
+                    ,   "F34840_prev"   :   '0'                         /* 액면금액 ( 변경전 ) */
+                    ,   "F16588_prev"   :   '0'                         /* 평가금액 (변경전) */
+                    ,   "F15007"        :   '0'                         /* kspjong_basic 기준가 (신규추가시 사용) */
+                }
+
+                if( !dataJson.code_check ) {
+                    addData.code_check =   false;
+                }
+
+                var v_F16004    =   "";         /* 종콕명 */
+                var v_F16499    =   "0";        /* CU shrs */
+                var v_F34840    =   "0";        /* 액면금액 */
+                var v_F16588    =   "0";        /* 평가금액 */
+
+                tblEmergeny01.row(  dataJson.rowIndex ).data( addData );
+                table.cell( tr, 2 ).data( "<input type='text' name='jongmok' id='jongmok' class='txt_left' style='width:100%' maxlength='20' value='" + dataJson.codeVal + "'>" );  /* 종목코드 */
+                table.cell( tr, 3 ).data( "<input type='text' name='F16004'  id='F16004'  class='txt_left' style='width:100%' maxlength='20' value='" + v_F16004 + "'>" );          /* 종목명 */
+                table.cell( tr, 4 ).data( v_F16499 );          /* CU shrs */
+                table.cell( tr, 5 ).data( v_F34840 );          /* 액면금액 */
+                table.cell( tr, 6 ).data( v_F16588 );          /* 평가금액 */
+                tblEmergeny01.order( [0, "asc"] ).draw();
+
+                vm.dataList[ dataJson.rowIndex ]            =   addData;
+
+                vm.dataList[ dataJson.rowIndex ].F16316     =   dataJson.codeVal;       /* 종목코드 */
+                vm.dataList[ dataJson.rowIndex ].F16004     =   v_F16004;               /* 종목명 */
+                vm.dataList[ dataJson.rowIndex ].F16499     =   v_F16499;               /* CU shrs */
+                vm.dataList[ dataJson.rowIndex ].F34840     =   v_F34840;               /* 액면금액 */
+                vm.dataList[ dataJson.rowIndex ].F16588     =   v_F16588;               /* 평가금액 */
+
+            }catch( e ) {
+                console.log( e );
+            }
         },
 
         /*
@@ -1155,6 +1271,12 @@ export default {
                         vm.$nextTick().then(() => {
 
                             items = subData.data;
+
+for( var tt in items ) {
+    for( var tt1 in items[tt] ) {
+        console.log( "items[" + tt1 + "]========>", items[tt][tt1] );
+    }
+}
 
                             // console.log("subData.etf_F16012=[" + subData.etf_F16012 + "]");
                             // console.log( "items" );
@@ -1268,22 +1390,6 @@ export default {
                     vm.fn_addEtfOperPdfModifyCancel();
 
                     vm.step = 2;
-
-                    /*
-                    *   Next 버튼 클릭시
-                    *   1)  ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력되는 경우
-                    *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
-                    *       -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
-                    *       -   step2로 화면이 전환된 경우에 callback 을 받은 경우에는  step=1 로 이동시키고 다시 next 버튼을 누를수 있게 jongmok_state 를 초기화 한다.
-                    */
-/*
-                    if( vm.allDataList.length > 0 && vm.jongmok_state=="no_ing" ) {
-                        vm.step = 1;
-                        vm.jongmok_state="";
-                    }else{
-                        vm.step = 2;
-                    }
-*/                    
                 }
 
             }else if( step == 2 ) {
@@ -1623,10 +1729,27 @@ export default {
          * 삭제버튼 클릭시 로직을 수행한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_deleteTableData( tableData, F16499, rowIndex, jongmokTagYn ) {
+        async fn_deleteTableData( tableData, tr, rowIndex ) {
             var vm = this;
-
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
+
+            if( vm.jongmok_state != "" ) {
+                vm.status = 1;
+
+                var jongmokCodeData = tr.find("input[name='jongmok']" );
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '구성종목코드(' + jongmokCodeData.eq(0).val() + ')가 처리 중입니다. 다시 삭제버튼을 눌러주세요.',
+                        {}
+                        ,1
+                    )
+                ) {
+                    vm.jongmok_state = "";
+                    vm.status = 0;
+
+                    return  false;
+                }
+            }
             
             table.row( rowIndex ).remove().order( [0, "asc"] ).draw();
             vm.dataList.splice( rowIndex, 1 );
@@ -1635,50 +1758,59 @@ export default {
         },
 
         /*
-         * CU shrs 변경시 상태값을 변경한다.
+         * [CU shrs], [액면금액] 변경시 상태값을 변경한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_setStatus( tableData, nowData, rowIndex, jongmokTagYn, thisTag ) {
+        fn_setStatus( tableData, nowData, rowIndex ) {
             var vm = this;
 
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
             var tr = table.row( rowIndex );
 
-            /* 종목코드 태그가 존재하지 않는 경우 */
-            if( jongmokTagYn == 0 ) {
+                /* 계산된 평가금액 */
+                var  v_F16588   =   0;
 
                 /* 1CU단위증권수 */
                 if( nowData.name == "F16499" ) {
 
-                    /* 구성종목 코드가 존재하는 경우 */
-                    if( tr.data() && tr.data().F16316 ) {
-                        vm.fn_getJongmokData( { status : "modify", nowStatus : tableData.status, codeVal : tr.data().F16316, tableData: tableData, nowData : nowData, rowIndex : rowIndex, thisTag : thisTag } );
+                    if( tableData.status == "insert" ) {
+                        /* v_F16588 (계산된 평가금액) = tableData.F15007 ( kspjong_basic 기준가 ) * nowData.F16499 ( 변경후 CU shrs ) */
+                        v_F16588    =   Number( tableData.F15007 ) * Number( nowData.F16499 );
+                    }else{
+                        
+                        /* 
+                        *   상태값 normal 로 변경
+                        *
+                        *   수정한 [1CU단위증권수] 와 원본 [1CU단위증권수] 이 같고
+                        *   수정했던 [액면금액] 과 원본 [액면금액] 이 같은 경우
+                        */
+                        if(     Number( tableData.F16499_prev ) == Number( nowData.F16499 )
+                            &&  Number( tableData.F34840_prev ) == Number( tableData.F34840 ) ) {
+                            table.cell( tr, 9 ).data( { "status" : "normal" } );
+                            vm.dataList[ rowIndex ].status  =   "normal";
+                        }else{
+                            table.cell( tr, 9 ).data( { "status" : "modify" } );
+                            vm.dataList[ rowIndex ].status  =   "modify";
+                        }
+
+                        /* 변경전 CU shrs 이 0 인 경우 ( 분모가 0 ) */
+                        if( Number( tableData.F16499_prev ) == 0  ) {
+                            v_F16588    =   0;
+                        }else{
+                            /* v_F16588 (계산된 평가금액) = tableData.F16588_prev ( 변경전 평가금액 ) * nowData.F16499 ( 변경후 CU shrs ) / tableData.F16499_prev ( 변경전 CU shrs )  */
+                            v_F16588    =   Number( tableData.F16588_prev ) * Number( nowData.F16499 ) / Number( tableData.F16499_prev );
+                        }
                     }
 
-                    // if( tableData.status != "insert" ) {
-                        
-                    //     /* 
-                    //     *   상태값 normal 로 변경
-                    //     *
-                    //     *   수정한 [1CU단위증권수] 와 원본 [1CU단위증권수] 이 같고
-                    //     *   수정했던 [액면금액] 과 원본 [액면금액] 이 같은 경우
-                    //     */
-                    //     if(     Number( tableData.F16499_prev ) == Number( nowData.F16499 )
-                    //         &&  Number( tableData.F34840_prev ) == Number( tableData.F34840 ) ) {
-                    //         table.cell( tr, 9 ).data( { "status" : "normal" } );
-                    //         vm.dataList[ rowIndex ].status  =   "normal";
-                    //     }else{
-                    //         table.cell( tr, 9 ).data( { "status" : "modify" } );
-                    //         vm.dataList[ rowIndex ].status  =   "modify";
-                    //     }
-                    // }
-
-                    // vm.dataList[ rowIndex ].F16499      =   nowData.F16499;
+                    vm.dataList[ rowIndex ].F16499      =   nowData.F16499;
                 }
                 /* 액면금액 */
                 else if( nowData.name == "F34840" ) {
 
-                    if( tableData.status != "insert" ) {
+                    if( tableData.status == "insert" ) {
+                        /* v_F16588 (계산된 평가금액)  */
+                        v_F16588    =   0;
+                    }else {
                                             
                         /* 
                         *   상태값 normal 로 변경
@@ -1695,22 +1827,21 @@ export default {
                             table.cell( tr, 9 ).data( { "status" : "modify" } );
                             vm.dataList[ rowIndex ].status  =   "modify";
                         }
+
+                        /* 변경전 액면금액 이 0 인 경우 ( 분모가 0 ) */
+                        if( Number( tableData.F34840_prev ) == 0  ) {
+                            v_F16588    =   0;
+                        }else{
+                            /* v_F16588 (계산된 평가금액) = tableData.F16588_prev ( 변경전 평가금액 ) * nowData.F34840 ( 변경후 액면금액 ) / tableData.F34840_prev ( 변경전 액면금액 )  */
+                            v_F16588    =   Number( tableData.F16588_prev ) * Number( nowData.F34840 ) / Number( tableData.F34840_prev );
+                        }                        
                     }
 
-
-                    vm.jongmok_state   =   '';
                     vm.dataList[ rowIndex ].F34840      =   nowData.F34840;
                 }
 
-            }else{
-                vm.dataList[ rowIndex ].code_check  =   false;
-
-                if( nowData.name == "F16499" ) {
-                    vm.dataList[ rowIndex ].F16499      =   nowData.F16499;
-                }else{
-                    vm.dataList[ rowIndex ].F34840      =   nowData.F34840;
-                }                
-            }
+                table.cell( tr, 6 ).data( v_F16588 );                   /* 화면 table 의 평가금액 컬럼 데이터 변경 */
+                vm.dataList[ rowIndex ].F16588    =   v_F16588;         /* DB 에 저장하기 위해 계산된 평가금액 보관 */
         },
 
         /*
@@ -1721,8 +1852,11 @@ export default {
 
             var vm = this;
 
-            var jongmokData = $("#tblEmergeny01 tbody").find("input[name='jongmok']" );
+            var jongmokData = $("#tblEmergeny01 tbody").find("input[name='jongmok']" );     /* 종목코드 */
+            var F16004Data = $("#tblEmergeny01 tbody").find("input[name='F16004']" );       /* 종목명 */
 
+
+        /* 종목코드 빈값 체크 */
             var filterData  =   _.filter( tblEmergeny01.rows( jongmokData.parents("tr") ).data(), function( o, i ) {
                 if( o.status == "insert" && jongmokData.eq(i).val() == "" ) {
                     return  true;
@@ -1733,7 +1867,7 @@ export default {
                 vm.status = 1;
                 if ( vm.$refs.confirm2.open(
                         '확인',
-                        '구성종목코드가 빈 항목이 존재합니다.',
+                        '구성종목코드 빈 항목이 존재합니다.',
                         {}
                         ,1
                     )
@@ -1747,6 +1881,35 @@ export default {
                     return  false;
                 }
             }
+
+         /* 종목명 빈값 체크 */
+            filterData  =   _.filter( tblEmergeny01.rows( F16004Data.parents("tr") ).data(), function( o, i ) {
+                if( o.status == "insert" && F16004Data.eq(i).val() == "" ) {
+                    return  true;
+                }
+            });
+
+
+            if( filterData.length > 0 ) {
+                vm.status = 1;
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '종목명 빈 항목이 존재합니다.',
+                        {}
+                        ,1
+                    )
+                ) {
+                    if(vm.$refs.confirm2.val == 'Y') {
+                        vm.status = 0;
+                        return  false;
+                    }
+
+                    vm.status = 0;
+                    return  false;
+                }
+            }            
+
+
 
             return  true;
         },
@@ -1863,26 +2026,12 @@ export default {
             }
         },
 
-        /*
-        *   Next 버튼이 보이는 경우
-        *   1)  최초
-        *   2)  Next 를 통해 ETF 코드가 한건 이상 추가되어 있고, 구성종목 DB 검색 후 callback 에서 오류메시지 팝업창이 출력된 경우
-        *       시점 차이로 step2 로 이동된 상태에서 메시지가 출력되는 경우 발생.
-        *       -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
-        *       -   해당 오류건은 무시하고 next 버튼을 보이도록 함.
-        *   3)  구성종목을 한건 이상 수정하고, 구성종목 DB 검색 후 callback 에서 오류 메시지 팝업창이 출력된 경우
-        *       -   no_ing 는 callback 을 통해 오류로 받았지만, 해당건은 무시하기 위한 용도.
-        *       -   해당 오류건은 무시하고 next 버튼을 보이도록 함.
-        *   4)  정상적으로 구성종목 DB 검색 후 callback 을 받은 경우
-        */
         fn_nextButtonDisabledCheck() {
             var vm = this;
             
-            if( vm.allDataList.length > 0 && vm.jongmok_state=="no_ing" ) {
+            if( vm.jongmok_state=="" ){
                 return  false;
-            }else if( vm.dataList.length > 0 && vm.jongmok_state=="no_ing" ){
-                return  false;
-            }else if( vm.jongmok_state=="" ) {
+            }else if( ( vm.allDataList.length > 0 || vm.dataList.length > 0 ) && vm.jongmok_state=="" ){
                 return  false;
             }else{
                 return  true;
