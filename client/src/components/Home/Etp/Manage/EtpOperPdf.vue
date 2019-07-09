@@ -453,7 +453,7 @@ export default {
                 autoWidth: false,
 
                 fixedColumns:   {
-                    leftColumns: 4,
+                    leftColumns: 5,
                 }
             };
 
