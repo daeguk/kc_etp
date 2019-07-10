@@ -1087,7 +1087,7 @@ export default {
 
                         addData.F12506      =   dataList[0].F12506;         /* Date */
                         addData.F34743      =   0;                          /* 비중 */
-                        addData.F33837      -   0;                          /* 구성종목수 */
+                        addData.F33837      =   0;                          /* 구성종목수 */
 
                         if( vm.etpBasic && Object.keys( vm.etpBasic).length > 0 ) {
                             if( vm.etpBasic.F16583 ) {
@@ -1166,7 +1166,7 @@ export default {
 
             addData.F12506      =   "";                         /* Date */
             addData.F34743      =   0;                          /* 비중 */
-            addData.F33837      -   0;                          /* 구성종목수 */
+            addData.F33837      =   0;                          /* 구성종목수 */
 
             if( vm.etpBasic && Object.keys( vm.etpBasic).length > 0 ) {
 
@@ -1237,7 +1237,7 @@ export default {
 
                 addData.F12506      =   dataJson.now_date;          /* Date */
                 addData.F34743      =   0;                          /* 비중 */
-                addData.F33837      -   0;                          /* 구성종목수 */
+                addData.F33837      =   0;                          /* 구성종목수 */
 
                 if( vm.etpBasic && Object.keys( vm.etpBasic).length > 0 ) {
                     if( vm.etpBasic.F16583 ) {
