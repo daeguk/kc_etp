@@ -324,6 +324,7 @@ export default {
                 ,   msg: ""
             },
             search_date : "",
+            fmt_search_date : "",
 
             jongmok_state : "", /* ksp_jongbasic DB 조회 상태 */
 
@@ -812,6 +813,7 @@ export default {
 
                             if( response.data.dateInfo ) {
                                 vm.search_date      =   response.data.dateInfo.now_date;
+                                vm.fmt_search_date  =   response.data.dateInfo.fmt_now_date;
                             }
                         }
 
@@ -956,7 +958,7 @@ export default {
 
 
                     /* 구성종목코드 중복체크 ( 이미 저장되어 있는 건에 대해 체크 ) */
-                    var duplCheck = _.filter( tblEmergeny01.rows().data() , function(o) {
+                    var duplCheck = await _.filter( tblEmergeny01.rows().data() , function(o) {
                         if ( o.status != "insert" && o.F16316 == dataJson.codeVal ) {
                             return true; 
                         }
@@ -988,7 +990,7 @@ export default {
 
                         /* 구성종목코드 중복체크 ( input box 로 추가된 경우 ) */
                         var jongmokData = $("#tblEmergeny01 tbody").find("input[name='jongmok']" );     /* 종목코드 */
-                        var insertDuplCheck  =   _.filter( tblEmergeny01.rows( jongmokData.parents("tr") ).data(), function( o, i ) {
+                        var insertDuplCheck  =  await _.filter( tblEmergeny01.rows( jongmokData.parents("tr") ).data(), function( o, i ) {
                             if( o.status == "insert" && jongmokData.eq(i).val() == dataJson.codeVal ) {
                                 return  true;
                             }
@@ -1020,6 +1022,9 @@ export default {
                             )
                         ) {
                             dataJson.code_check     =   true;
+                            dataJson.now_date       =   vm.search_date;
+                            dataJson.fmt_now_date   =   vm.fmt_search_date;
+
                             vm.fn_setInitData( vm, dataJson );
 
                             vm.status = 0;
@@ -1035,7 +1040,7 @@ export default {
                     else{
 
                         /* 구성종목코드 중복체크 ( input box 가 아니고 1건으로 추가된 경우 ) */
-                        var filterData = _.filter( tblEmergeny01.rows().data() , function(o) {
+                        var filterData = await _.filter( tblEmergeny01.rows().data() , function(o) {
                             if ( o.status == "insert" && o.F16316 == dataList[0].F16012 ) {
                                 return true; 
                             }
@@ -1061,7 +1066,6 @@ export default {
                         }
 
                         var addData     =   {
-
                                 "fmt_F12506"    :   dataList[0].fmt_F12506      /* Date */
                             ,   "F33861"        :   dataList[0].F33861          /* 시장구분 */
                             ,   "F16316"        :   dataList[0].F16012          /* 구성종목코드 */
@@ -1079,7 +1083,9 @@ export default {
                             ,   "F15007"        :   dataList[0].F15007          /* kspjong_basic 기준가 (신규추가시 사용) */
                         }
 
-                        tblEmergeny01.row(  dataJson.rowIndex ).data( addData ).order( [0, "asc"] ).draw(  );
+                        tblEmergeny01.row(  dataJson.rowIndex ).data( addData ).order( [0, "asc"] ).draw();
+
+                        addData.F12506                              =   dataList[0].F12506;     /* Date */
                         vm.dataList[ dataJson.rowIndex ]            =   addData;
                     }
                 }
@@ -1141,6 +1147,7 @@ export default {
 
             tblEmergeny01.row.add( addData ).order( [0, "asc"] ).draw(  );            
 
+            addData.F12506      =   "";     /* Date */
             vm.dataList.push( addData );
         },
 
@@ -1150,9 +1157,16 @@ export default {
                 var table = $("#" + vm.tblEmergeny01 ).DataTable();
                 var tr = dataJson.nowTr;
 
-                var addData     =   {
+                if( !dataJson.now_date ) {
+                    dataJson.now_date   =   "";
+                }
 
-                        "fmt_F12506"    :   ""                          /* Date */
+                if( !dataJson.fmt_now_date ) {
+                    dataJson.fmt_now_date   =   "";
+                }
+
+                var addData     =   {
+                        "fmt_F12506"    :   dataJson.fmt_now_date       /* Date */
                     ,   "F33861"        :   ""                          /* 시장구분 */
                     ,   "F16316"        :   dataJson.codeVal            /* 구성종목코드 */
 //                  ,   "F16004"        :   "<input type='text' name='F16004' id='F16004' class='txt_left' style='width:100%' maxlength='20' >" /* 종목명 */
@@ -1186,8 +1200,9 @@ export default {
                 table.cell( tr, 6 ).data( v_F16588 );          /* 평가금액 */
                 tblEmergeny01.order( [0, "asc"] ).draw();
 
-                vm.dataList[ dataJson.rowIndex ]            =   addData;
+                addData.F12506     =   dataJson.now_date;      /* Date */
 
+                vm.dataList[ dataJson.rowIndex ]            =   addData;
                 vm.dataList[ dataJson.rowIndex ].F16316     =   dataJson.codeVal;       /* 종목코드 */
                 vm.dataList[ dataJson.rowIndex ].F16004     =   v_F16004;               /* 종목명 */
                 vm.dataList[ dataJson.rowIndex ].F16499     =   v_F16499;               /* CU shrs */
@@ -1271,12 +1286,6 @@ export default {
                         vm.$nextTick().then(() => {
 
                             items = subData.data;
-
-for( var tt in items ) {
-    for( var tt1 in items[tt] ) {
-        console.log( "items[" + tt1 + "]========>", items[tt][tt1] );
-    }
-}
 
                             // console.log("subData.etf_F16012=[" + subData.etf_F16012 + "]");
                             // console.log( "items" );

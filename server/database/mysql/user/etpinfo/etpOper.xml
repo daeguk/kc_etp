@@ -2023,7 +2023,9 @@
     <select id="getNowDate">
     <![CDATA[
         SELECT  /* etpOper.getNowDate   현재일자를 조회한다. */
-                DATE_FORMAT(now(), '%Y%m%d')                            AS  now_date
+        
+                    DATE_FORMAT(now(), '%Y%m%d')                            AS  now_date
+                ,   DATE_FORMAT(now(), '%Y.%m.%d')                          AS  fmt_now_date
 
           FROM  dual
     ]]>
