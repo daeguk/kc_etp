@@ -958,7 +958,7 @@ export default {
 
 
                     /* 구성종목코드 중복체크 ( 이미 저장되어 있는 건에 대해 체크 ) */
-                    var duplCheck = await _.filter( tblEmergeny01.rows().data() , function(o) {
+                    var duplCheck = _.filter( tblEmergeny01.rows().data() , function(o) {
                         if ( o.status != "insert" && o.F16316 == dataJson.codeVal ) {
                             return true; 
                         }
@@ -980,7 +980,7 @@ export default {
                             vm.jongmok_state    =   "";
 
                             return  false;
-                        }
+                        }                        
                     }                    
 
 
@@ -990,7 +990,7 @@ export default {
 
                         /* 구성종목코드 중복체크 ( input box 로 추가된 경우 ) */
                         var jongmokData = $("#tblEmergeny01 tbody").find("input[name='jongmok']" );     /* 종목코드 */
-                        var insertDuplCheck  =  await _.filter( tblEmergeny01.rows( jongmokData.parents("tr") ).data(), function( o, i ) {
+                        var insertDuplCheck  =  _.filter( tblEmergeny01.rows( jongmokData.parents("tr") ).data(), function( o, i ) {
                             if( o.status == "insert" && jongmokData.eq(i).val() == dataJson.codeVal ) {
                                 return  true;
                             }
@@ -1040,7 +1040,7 @@ export default {
                     else{
 
                         /* 구성종목코드 중복체크 ( input box 가 아니고 1건으로 추가된 경우 ) */
-                        var filterData = await _.filter( tblEmergeny01.rows().data() , function(o) {
+                        var filterData = _.filter( tblEmergeny01.rows().data() , function(o) {
                             if ( o.status == "insert" && o.F16316 == dataList[0].F16012 ) {
                                 return true; 
                             }
@@ -1085,7 +1085,24 @@ export default {
 
                         tblEmergeny01.row(  dataJson.rowIndex ).data( addData ).order( [0, "asc"] ).draw();
 
-                        addData.F12506                              =   dataList[0].F12506;     /* Date */
+                        addData.F12506      =   dataList[0].F12506;         /* Date */
+                        addData.F34743      =   0;                          /* 비중 */
+                        addData.F33837      -   0;                          /* 구성종목수 */
+
+                        if( vm.etpBasic && Object.keys( vm.etpBasic).length > 0 ) {
+                            if( vm.etpBasic.F16583 ) {
+                                addData.F16583  =   vm.etpBasic.F16583;     /* 사무수탁회사번호 */
+                            }
+
+                            if( vm.etpBasic.F16012 ) {
+                                addData.F16012  =   vm.etpBasic.F16012;     /* ETF종목코드 */
+                            }
+
+                            if( vm.etpBasic.F16013 ) {
+                                addData.F16013  =   vm.etpBasic.F16013;     /* ETF단축코드 */
+                            }
+                        }
+
                         vm.dataList[ dataJson.rowIndex ]            =   addData;
                     }
                 }
@@ -1129,7 +1146,7 @@ export default {
 
             var addData     =   {
                     'fmt_F12506'    :   ''              /* Date */
-                ,   'F33861'        :   ''              /* 시장구분 */
+                ,   'F33861'        :   '0'             /* 시장구분 */
                 ,   'F16316'        :   "<input type='text' name='jongmok' id='jongmok' class='txt_left' style='width:100%' placeholder='12자리/6자리코드' maxlength='20' >"            /* 구성종목코드 */
                 ,   'F16004'        :   "<button  name='confirm' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01'>확인</button>"                              /* 종목명 */
                 ,   'F16499'        :   ''              /* CU shrs */
@@ -1147,7 +1164,25 @@ export default {
 
             tblEmergeny01.row.add( addData ).order( [0, "asc"] ).draw(  );            
 
-            addData.F12506      =   "";     /* Date */
+            addData.F12506      =   "";                         /* Date */
+            addData.F34743      =   0;                          /* 비중 */
+            addData.F33837      -   0;                          /* 구성종목수 */
+
+            if( vm.etpBasic && Object.keys( vm.etpBasic).length > 0 ) {
+
+                if( vm.etpBasic.F16583 ) {
+                    addData.F16583  =   vm.etpBasic.F16583;     /* 사무수탁회사번호 */
+                }
+
+                if( vm.etpBasic.F16012 ) {
+                    addData.F16012  =   vm.etpBasic.F16012;     /* ETF종목코드 */
+                }
+
+                if( vm.etpBasic.F16013 ) {
+                    addData.F16013  =   vm.etpBasic.F16013;     /* ETF단축코드 */
+                }
+            }
+
             vm.dataList.push( addData );
         },
 
@@ -1167,7 +1202,7 @@ export default {
 
                 var addData     =   {
                         "fmt_F12506"    :   dataJson.fmt_now_date       /* Date */
-                    ,   "F33861"        :   ""                          /* 시장구분 */
+                    ,   "F33861"        :   "0"                         /* 시장구분 */
                     ,   "F16316"        :   dataJson.codeVal            /* 구성종목코드 */
 //                  ,   "F16004"        :   "<input type='text' name='F16004' id='F16004' class='txt_left' style='width:100%' maxlength='20' >" /* 종목명 */
 //                  ,   "F16499"        :   0                           /* CU shrs */
@@ -1200,9 +1235,26 @@ export default {
                 table.cell( tr, 6 ).data( v_F16588 );          /* 평가금액 */
                 tblEmergeny01.order( [0, "asc"] ).draw();
 
-                addData.F12506     =   dataJson.now_date;      /* Date */
+                addData.F12506      =   dataJson.now_date;          /* Date */
+                addData.F34743      =   0;                          /* 비중 */
+                addData.F33837      -   0;                          /* 구성종목수 */
+
+                if( vm.etpBasic && Object.keys( vm.etpBasic).length > 0 ) {
+                    if( vm.etpBasic.F16583 ) {
+                        addData.F16583  =   vm.etpBasic.F16583;     /* 사무수탁회사번호 */
+                    }
+
+                    if( vm.etpBasic.F16012 ) {
+                        addData.F16012  =   vm.etpBasic.F16012;     /* ETF종목코드 */
+                    }
+
+                    if( vm.etpBasic.F16013 ) {
+                        addData.F16013  =   vm.etpBasic.F16013;     /* ETF단축코드 */
+                    }
+                }
 
                 vm.dataList[ dataJson.rowIndex ]            =   addData;
+
                 vm.dataList[ dataJson.rowIndex ].F16316     =   dataJson.codeVal;       /* 종목코드 */
                 vm.dataList[ dataJson.rowIndex ].F16004     =   v_F16004;               /* 종목명 */
                 vm.dataList[ dataJson.rowIndex ].F16499     =   v_F16499;               /* CU shrs */
