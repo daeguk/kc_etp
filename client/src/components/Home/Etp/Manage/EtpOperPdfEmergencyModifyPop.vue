@@ -449,7 +449,7 @@ export default {
             ]
         });
 
-        /* [자산추가] 후 확인 종목코드에 엔터키 입력시 */
+        /* [자산추가] 후 [종목코드] 변경시 */
         $("#" + vm.tblEmergeny01 + " tbody").on('keyup', "input[name='jongmok']", function (e) {
 
             var keyCode = e.keyCode == 0 ? e.charCode : e.keyCode;
@@ -481,41 +481,31 @@ export default {
                 }
 
                 return false;
-            }
-
-            if( e.keyCode == 13 ) {
-
-                var table = $("#" + vm.tblEmergeny01 ).DataTable();
-                var data = table.row($(this).parents("tr")).data();
-                var rowIndex = table.row($(this).parents("tr")).index();
-                var nowData = {
-                    F16499 : 0
-                };
-
-                vm.jongmok_state    =   "ing";
-
-                vm.fn_getJongmokData( { 
-                        status : "insert"
-                    ,   codeVal : $(this).parents("tr").find( "input[name='jongmok']" ).eq(0).val()
-                    ,   tableData: data
-                    ,   nowData : nowData
-                    ,   rowIndex : rowIndex
-                    ,   F16499_prev : 0
-                    ,   nowTr : $(this).parents("tr")
-                });
-            }
-        });
-
-        /* [자산추가] 후 [종목코드] 변경시 */
-        $("#" + vm.tblEmergeny01 + " tbody").on('change', "input[name='jongmok']", function (e) {
+            }            
 
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
+            var tr = $(this).parents("tr");
             var data = table.row($(this).parents("tr")).data();
             var rowIndex = table.row($(this).parents("tr")).index();
             var nowData = {
                 F16499 : 0
             };
 
+            table.cell( tr, 3 ).data( "<button  name='confirm' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01'>확인</button>" );  /* 종목명 */            
+            table.cell( tr, 4 ).data( 0 );          /* CU shrs */
+            table.cell( tr, 5 ).data( 0 );          /* 액면금액 */
+            table.cell( tr, 6 ).data( 0 );          /* 평가금액 */
+            table.cell( tr, 10).data( false );
+
+            vm.dataList[ rowIndex ].fmt_F12506 =   "";                      /* Date */
+            vm.dataList[ rowIndex ].F16316     =   $(this).val();           /* 종목코드 */
+            vm.dataList[ rowIndex ].F16004     =   "";                      /* 종목명 */
+            vm.dataList[ rowIndex ].F16499     =   0;                       /* CU shrs */
+            vm.dataList[ rowIndex ].F34840     =   0;                       /* 액면금액 */
+            vm.dataList[ rowIndex ].F16588     =   0;                       /* 평가금액 */
+            vm.dataList[ rowIndex ].code_check =   false;
+
+/*
             vm.jongmok_state    =   "ing";
 
             vm.fn_getJongmokData( { 
@@ -527,6 +517,7 @@ export default {
                 ,   F16499_prev : 0
                 ,   nowTr : $(this).parents("tr")
             });
+*/            
         });        
 
         
@@ -1046,7 +1037,7 @@ export default {
                             }
                         });
 
-                        if( filterData.length > 0 ) {
+                        if( filterData.length > 1 ) {
                             vm.status = 1;
                             if (await vm.$refs.confirm2.open(
                                     '확인',
@@ -1066,7 +1057,7 @@ export default {
                         }
 
                         var addData     =   {
-                                "fmt_F12506"    :   dataList[0].fmt_F12506      /* Date */
+                                "fmt_F12506"    :   vm.fmt_search_date          /* Date */
                             ,   "F33861"        :   dataList[0].F33861          /* 시장구분 */
                             ,   "F16316"        :   dataList[0].F16012          /* 구성종목코드 */
                             ,   "F16004"        :   dataList[0].F16002          /* 종목명 */
@@ -1085,7 +1076,7 @@ export default {
 
                         tblEmergeny01.row(  dataJson.rowIndex ).data( addData ).order( [0, "asc"] ).draw();
 
-                        addData.F12506      =   dataList[0].F12506;         /* Date */
+                        addData.F12506      =   vm.search_date;             /* Date */
                         addData.F34743      =   0;                          /* 비중 */
                         addData.F33837      =   0;                          /* 구성종목수 */
 
@@ -1146,7 +1137,7 @@ export default {
 
             var addData     =   {
                     'fmt_F12506'    :   ''              /* Date */
-                ,   'F33861'        :   '0'             /* 시장구분 */
+                ,   'F33861'        :   ''              /* 시장구분 */
                 ,   'F16316'        :   "<input type='text' name='jongmok' id='jongmok' class='txt_left' style='width:100%' placeholder='12자리/6자리코드' maxlength='20' >"            /* 구성종목코드 */
                 ,   'F16004'        :   "<button  name='confirm' class='v-btn v-btn--outline v-btn--small v-btn--depressed btn_intable_01'>확인</button>"                              /* 종목명 */
                 ,   'F16499'        :   ''              /* CU shrs */
