@@ -114,7 +114,7 @@
                                 <v-layout row>
                                     <v-flex xs6>iNAV</v-flex>
                                     <v-flex xs6 class="text_r text_blue">
-                                        {{ new Intl.NumberFormat().format( etpBasic.F19288  ) /* ETP지표가치_장종료-확정치차(NAV/IV) */ }}
+                                        {{ new Intl.NumberFormat().format( etpBasic.F15301  ) /* ETP지표가치(NAV/IV) */ }}
                                         <br>
                                         <span>{{ etpBasic.F30818  /* 장중지표가치(iNAV/iIV)등락율 */ }}%</span>
                                     </v-flex>
@@ -133,7 +133,7 @@
                             <v-card flat class="indexinfo_list_table">
                                 <v-layout row>
                                     <v-flex xs6>지수전일가</v-flex>
-                                    <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.F31892 ) /* 전일현금배당금액 */ }}</v-flex>
+                                    <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( Number( etpBasic.F15318 ) - Number( etpBasic.F15319 ) ) /* ETP기초지수현재가 - ETP기초지수기준대비 */ }}</v-flex>
                                 </v-layout>
                                 <v-layout row>
                                     <v-flex xs6>지수현재가</v-flex>

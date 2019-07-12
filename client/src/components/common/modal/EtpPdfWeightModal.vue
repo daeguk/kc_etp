@@ -40,8 +40,8 @@
           <tr v-for="(item, index) in etpWeight" :key="index">
             <td class="txt_left">{{item.ISIN_CODE}}</td>
             <td class="txt_left">{{item.JONG_NM}}</td>
-            <td class="txt_right">{{item.PERCNT}}</td>
-            <td class="txt_right">{{item.GUBUN}}</td>
+            <td class="txt_right">{{item.PERCNT}} %</td>
+            <td class="txt_right">{{fn_F33861_nm( item.GUBUN )}}</td>
           </tr>
         </tbody>
       </table>
@@ -93,7 +93,24 @@ export default {
       var vm = this;
       vm.$emit("closeWeightModal");
       vm.dialog = false;
-    }
+    },
+    fn_F33861_nm( data ) {
+        var htm = "";
+
+        if (data == 0) {
+            htm = 'KSP';
+        } else if (data == 1) {
+            htm = 'KSQ';
+        } else if (data == 2) {
+            htm = '기타';
+        } else if (data == 3) {
+            htm = '채권';
+        } else if (data == 4) {
+            htm = '파생';
+        }     
+
+        return  htm;     
+    }    
   }  
 }
 </script>

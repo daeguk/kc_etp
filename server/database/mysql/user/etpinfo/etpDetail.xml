@@ -837,11 +837,12 @@
         sub.F16316                                                        AS  ISIN_CODE
         ,TRIM(sub.F16004)                                                         AS  JONG_NM
         ,ROUND( ( sub.PERCNT / tot_sub.TOT_PERCNT ) * 100, 2 )               AS  PERCNT
-        ,'ETF'                                                               AS  GUBUN
+        ,sub.F33861                                                               AS  GUBUN
         FROM  (
           SELECT F16316
                 ,F16004
                 ,ROUND(F34743 / 100, 2 )                     AS  PERCNT
+                , F33861
             FROM  td_etfpdf_basic
             WHERE  F16012 = #{F16012}
               AND  F12506   =
