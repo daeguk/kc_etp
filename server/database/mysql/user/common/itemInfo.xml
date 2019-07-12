@@ -606,7 +606,6 @@
 		           AND type_cd = #{type_cd}
 		           AND inst_cd = #{inst_cd}
 		           AND email = #{user_id}
-              LIMIT 0, 1
             ) faver
           ON base.F16012 = faver.F16012
 		WHERE (base.F16493 = '1' OR base.F16493 = '2') 
@@ -698,7 +697,6 @@
 		           AND type_cd = #{type_cd}
 		           AND inst_cd = #{inst_cd}
 		           AND email = #{user_id}
-              LIMIT 0, 1
             ) faver
           ON base.F16012 = faver.F16012
        where (F16493 = '3' OR F16493 = '4') 
@@ -791,7 +789,6 @@
 		           AND type_cd = #{type_cd}
 		           AND inst_cd = #{inst_cd}
 		           AND email = #{user_id}
-              LIMIT 0, 1
             ) faver
           ON base.F16012 = faver.F16012
       
@@ -884,7 +881,6 @@
 		           AND type_cd = #{type_cd}
 		           AND inst_cd = #{inst_cd}
 		           AND email = #{user_id}
-              LIMIT 0, 1
             ) faver
           ON base.F16012 = faver.F16012
 		WHERE (base.F16493 = '1' OR base.F16493 = '2') 
@@ -977,7 +973,6 @@
 		           AND type_cd = #{type_cd}
 		           AND inst_cd = #{inst_cd}
 		           AND email = #{user_id}
-              LIMIT 0, 1
             ) faver
           ON base.F16012 = faver.F16012
        where (F16493 = '3' OR F16493 = '4') 
@@ -1071,7 +1066,6 @@
 		           AND type_cd = #{type_cd}
 		           AND inst_cd = #{inst_cd}
 		           AND email = #{user_id}
-              LIMIT 0, 1
             ) faver
           ON base.F16012 = faver.F16012
     </select>
@@ -1125,7 +1119,6 @@
                             AND type_cd = #{type_cd}
                             AND inst_cd = #{inst_cd}
                             AND email = #{user_id}
-                          LIMIT 0, 1
                     ) faver
                     ON BAS.F16013 = faver.F16013
                    AND BAS.MARKET_ID = faver.MARKET_ID
