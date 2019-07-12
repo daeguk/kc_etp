@@ -149,8 +149,8 @@ module.exports = {
         { file: './user/common/itemInfo', path: '/user/common/getALLEtpList', method: 'getALLEtpList', session: 'check', type: 'get' },
 
 
-        /* 고객지원 */
-        { file: './user/etc/custSupport', path: '/user/etc/saveCustSupport', method: 'saveCustSupport', session: 'check', type: 'post' },
+        /* 고객지원 (수정하시 마세요. 고객지원은 uncheck 입니다.)*/
+        { file: './user/etc/custSupport', path: '/user/etc/saveCustSupport', method: 'saveCustSupport', session: 'uncheck', type: 'post' },
 
         //풀 테스트 
 

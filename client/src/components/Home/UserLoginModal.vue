@@ -34,7 +34,7 @@
                          New to ETP Platform? <a @click.stop="newAccount">Create an account.</a>
                     </v-flex>
                     <v-flex>
-                        <!-- <a @click.stop="forgotPassword">Forgot password.</a> -->
+                         <a @click.stop="forgotPassword">Forgot password.</a>
                     </v-flex>
                 </v-layout>
             </v-flex>
@@ -59,6 +59,7 @@
 
 <script>
 import Config       from "@/js/config.js"
+import Tool       from "@/js/common/tool/tool.js"
 import Constant from "@/store/store_constant.js"
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
@@ -123,17 +124,27 @@ export default {
     },
     forgotPassword: function() {
       var vm = this;
-      this.loginDialog = false;
+      let msg = '';
+      // this.loginDialog = false;
       console.log("forgotPassword");
       // MainLanding.vue
-      vm.$EventBus.$emit("forgotPassword");
+      // vm.$EventBus.$emit("forgotPassword");
+      
+      if(Tool.chkEmail(vm.email) == false) {
+        msg = "정확한 이메일 주소를 입력하시면, 임시비밀번호를 발송해드립니다.";
+      }else {
+        msg = "입력하신 이메일 주소로 임시비밀번호를 발송했습니다.";
+      }
+      alert(msg);
     },
     newAccount: function() {
       var vm = this;
-      this.loginDialog = false;
+      // this.loginDialog = false;
       console.log("newAccount");
       // MainLanding.vue
-      vm.$EventBus.$emit("userNewAccount");
+      // vm.$EventBus.$emit("userNewAccount");
+      let msg = "기관 메일 계정 확인후, 계정을 발급해드리고 있습니다. 담당자에게 문의하시기 바랍니다. (코스콤 정보사업실 민선기 과장 : 02-767-8752)"
+      alert(msg);
     },
     showMessageBox: function(title, msg, option, gubun) {
          this.$refs.confirm.open(title,msg, option, gubun);

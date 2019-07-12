@@ -28,7 +28,7 @@
                 </div>
 
                     <v-card flat>
-                        <div v-show='stateInfo.pageState != "performance"' >
+                        <div v-show='stateInfo.pageState == "etpInfo"' >
                             <table id="table01" class="tbl_type ver7"    style="width:100%"/>
                         </div>
 
@@ -104,7 +104,6 @@
 
                                         @fn_setInavData = "fn_setInavData"
                                         @fn_setEtpPerformanceData = "fn_setEtpPerformanceData"
-                                        @fn_setEtpLpspread = "fn_setEtpLpspread"
                                         @fn_setCustomizeData = "fn_setCustomizeData"
 
                                         @showDetail="showDetail" 
@@ -128,6 +127,7 @@ import Config from '@/js/config.js';
 import Constant from "@/store/store_constant.js"
 
 import EtpOperInfoQuick         from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
+import EtpOperInfoInavIndex     from    "@/components/Home/Etp/Manage/EtpOperInfoInavIndex.vue";
 
 var table01 = null;
 var table02 = null;
@@ -136,7 +136,8 @@ export default {
     props : [ "toggle", "state" ],
     components: {
         //indexDetailrtmenupop: indexDetailrtmenupop
-            EtpOperInfoQuick,
+            EtpOperInfoQuick        :   EtpOperInfoQuick
+        ,   EtpOperInfoInavIndex    :   EtpOperInfoInavIndex
     },
     data() {
         return {
@@ -400,19 +401,6 @@ export default {
                     ,   'graph'                         /* 그래프 영역 */
                 ] );
             }
-            /* [LP spread] 을 선택한 경우 */
-            else if( vm.stateInfo.pageState == "lpspread" ) {
-
-                vm.fn_setArrShowColumn( [ 
-                        'F16002'                        /* 종목 */
-                    ,   'F15301'                        /* iNAV */
-                    ,   'F15318'                        /* 지수현재가 */
-                    ,   'F40544'                        /* LP매도호가1 */
-                    ,   'F40545'                        /* LP매수호가1 */
-                    ,   'F33294'                        /* LP스프레드 */
-                    ,   'graph'                         /* 그래프 영역 */
-                ] );
-            }
             /* customize 를 선택한 경우 */
             else if( vm.stateInfo.pageState == "customize" ) {
                 
@@ -461,7 +449,7 @@ export default {
 
 
             // 테이블별 이벤트
-            $('#table01 tbody').on('click', 'button[id=btnInav],button[id=btnSpread],button[id=btnEtpInfo],button[id=btnPdf]', function () {
+            $('#table01 tbody').on('click', 'button[id=btnInav],button[id=btnEtpInfo],button[id=btnPdf]', function () {
 
                 var table = $('#table01').DataTable();
                 var data = table.row($(this).parents('tr')).data();
@@ -493,10 +481,6 @@ export default {
 
                                 vm.$emit( "fn_showDetailPdf", gubun, data );
 
-                                break;
-
-                    case    'btnSpread'    :
-                                vm.$emit('showLpSpread', 1, data );
                                 break;
 
                     case    'btnEtpInfo'    :
@@ -568,31 +552,6 @@ export default {
             vm.$emit( "fn_setEtpPerformanceData", paramData, vm.stateInfo );
 
             console.log("########## EtpOperInfo.vue -> fn_setEtpPerformanceData END ############");
-        },
-
-        fn_setEtpLpspread( paramData ) {
-
-            var vm = this;
-
-            console.log("########## EtpOperInfo.vue -> fn_setEtpLpspread START ############");
-            console.log("# paramData");
-            console.log( paramData );
-
-            /* ETP Lpspread 버튼이 체크된 경우에는 iNAV 정보를 노출한다. */
-            if( paramData && paramData.toggleEtpLpspread ) {
-                vm.stateInfo.pageState  =  'lpspread';              /* etpInfo - ETP운용정보, iNav - iNav 산출현황, performance - ETP Performance, customize - 컬럼 선택 */
-            }
-            /* ETP Performance 버튼이 두번 눌러 체크해제된 경우 etp 기본 정보를 노출한다.  */
-            else{
-                vm.stateInfo.pageState  =  'etpInfo';
-            }
-
-            vm.fn_setTableInfo();
-            vm.fn_getEtpOperInfo( vm.stateInfo.gubun );
-
-            vm.$emit( "fn_setEtpPerformanceData", paramData, vm.stateInfo );
-
-            console.log("########## EtpOperInfo.vue -> fn_setEtpLpspread END ############");
         },
 
         /*
@@ -682,9 +641,6 @@ export default {
                 { 'name' : 'F33929_nm'          , 'data': 'F33929_nm'        ,  'width' : '70',  'orderable' : true  , 'className': 'txt_left',  'title' : '산출방식'   },      /* 지표산출방식 */
                 { 'name' : 'F15301'             , 'data': 'F15301'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : 'iNAV'          },      /* ETP지표가치(NAV/IV) */
                 { 'name' : 'F03329'             , 'data': 'F03329'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : '전일NAV'},      /* 전일ETP지표가치(예탁원)(NAV/IV) */
-                { 'name' : 'F40544'             , 'data': 'F40544'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : 'LP매도호가'},      /* LP매도호가 */
-                { 'name' : 'F40545'             , 'data': 'F40545'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : 'LP매수호가'},      /* LP매수호가 */
-                { 'name' : 'F33294'             , 'data': 'F33294'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : 'LP스프레드'},      /* LP스프레드 */
                 { 'name' : 'F19329'             , 'data': 'F19329'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : 'TE' },      /* 추적오차율 */
                                                                                                                                                     
                 { 'name' : 'F19330'             , 'data': 'F19330'           ,  'width' : '50',  'orderable' : true  , 'className': 'txt_right', 'title' : '괴리율'        },      /* ETP괴리율 */
@@ -750,39 +706,6 @@ export default {
                                 let htm = ""
             
                                 htm += util.formatNumber(data);
-
-                                return htm;
-                            },
-                    },
-
-                    /* LP매도호가 */
-                    {       'name' : 'F40544'   
-                        ,   "render": function ( data, type, row ) {
-                                let htm = ""
-            
-                                htm += util.formatNumber(data);
-
-                                return htm;
-                            },
-                    },
-
-                    /* LP매수호가 */
-                    {       'name' : 'F40545'   
-                        ,   "render": function ( data, type, row ) {
-                                let htm = ""
-            
-                                htm += util.formatNumber(data);
-
-                                return htm;
-                            },
-                    },
-
-                    /* LP스프레드 */
-                    {       'name' : 'F33294'   
-                        ,   "render": function ( data, type, row ) {
-                                let htm = ""
-            
-                                htm += util.formatNumber(data)+"%";
 
                                 return htm;
                             },
@@ -969,8 +892,6 @@ export default {
                                         graphContent    +=  '<div class="tooltip"><button type="button" id="btnInav" name="btnInav" class="calcu_icon"></button><span class="tooltiptext" style="width:70px;">투자지표</span></div>';
                                     }
 //                                    graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnInav", "btnContent" : "visibility", "btnSpanContent" : "투자지표" } );
-                                }else if( vm.stateInfo.pageState === 'lpspread' ) {
-                                        graphContent    +=  '<div class="tooltip"><button type="button" id="btnSpread" name="btnSpread" class="calcu_icon"></button><span class="tooltiptext" style="width:70px;">LP스프레드차트</span></div>';
                                 }
                                 
                                 /* ETF 상세정보 */

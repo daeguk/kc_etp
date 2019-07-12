@@ -33,5 +33,27 @@ module.exports = {
       }
     }
   },
+  emailSend: function(gubun, msg) {
+    if(config.runenv == 'prod') {
+      let recvNo = recvNoList[gubun];
+      let str = '/ems/EtpEmailAction.do?recvEmail=027677114&message='+msg;
+      let options = {
+        host:'127.0.0.1',
+        port:8090,
+        path:'',
+      }
+
+      for(let i=0; i < recvNo.length; i++) {
+        var msgstr = str + "&recvNo=" + recvNo[i];
+        options.path = encodeURI(msgstr);
+        console.log("smsSEnd...........");
+        console.log(options.path);
+        http.request(options, function(res) {
+          console.log("response........" + i);
+        }).end();
+      }
+    }
+  },
+
 
 }

@@ -92,6 +92,10 @@
                                                 <v-card-title ma-0>
                                                     ETP 운용화면 항목설정
                                                     <v-spacer></v-spacer>
+<!--
+                                                    <v-btn @click="arrCustomizeColumn = arrAllCustomizedTextData">전체선택</v-btn>
+                                                    <v-btn @click="arrCustomizeColumn = []">전체해제</v-btn>
+-->
                                                     <v-btn icon @click="customizeDialog = false">
                                                         <v-icon>close</v-icon>
                                                     </v-btn>
@@ -256,6 +260,7 @@ export default {
 
             arrCustomizeColumn : [],
             customizeDialog : false,
+            arrAllCustomizedTextData : [ "F15301", "F34777", "F18001", "F03329", "F15318", "F30812", "F15302", "F15007", "F15304", "F15001", "F16073"  ],
 
             indexFixDialog : false,
             showFaver : true,
