@@ -149,6 +149,15 @@ var insertFavorItem = function (req, res) {
                         function(callback) {
                             
                             async.forEachOf(addFaverItems, function(item, index) {
+                                var del_params = {
+                                    type_cd : req.session.type_cd,
+                                    inst_cd : req.session.inst_cd,
+                                    user_id : req.session.user_id,
+                                    gubun   : item.GUBUN,
+                                    jisu_cd : item.GUBUN == '1' ? item.F16012 : item.F16013,
+                                    market_id : item.MARKET_ID
+                                };
+
                                 var params = {
                                     type_cd : req.session.type_cd,
                                     inst_cd : req.session.inst_cd,
@@ -160,12 +169,20 @@ var insertFavorItem = function (req, res) {
                                     large_type : item.LARGE_TYPE,
                                     middle_type : item.MIDDLE_TYPE,
                                 };
-                            
-                                var stmt = mapper.getStatement('common.item', 'insertFavorItem', params, {language:'sql', indent: '  '});
                                 
-                                 log.debug(stmt);
+                                var stmt1 = mapper.getStatement('common.item', 'deleteFavorItem', del_params, {language:'sql', indent: '  '});
+                                var stmt2 = mapper.getStatement('common.item', 'insertFavorItem', params, {language:'sql', indent: '  '});
+                                
+                                log.debug(stmt1);
 
-                                conn.query(stmt, function( err, rows ) {
+                                conn.query(stmt1, function( err, rows ) {
+                                    if(err) {                                        
+                                        conn.rollback();
+                                        throw err;
+                                    }                                                                    
+                                })  
+
+                                conn.query(stmt2, function( err, rows ) {
                                     if(err) {                                        
                                         conn.rollback();
                                         throw err;
