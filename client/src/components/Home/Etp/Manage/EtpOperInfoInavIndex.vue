@@ -65,13 +65,13 @@
                             <li v-if="etpBasic.F34241 == 'K'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)</li>
                             <li v-else>
                                 <span v-if="etpBasic.F34240 == 'H'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)</span>
-                                <span v-else-if="etpBasic.F34240 == 'F'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)×(<span class="txt_point4">④매매기준율/장전매매기준율</span>)</span>
-                                <span v-else-if="etpBasic.F34240 == 'A'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>×<span class="txt_point4">④매매기준율/장전매매기준율</span>)</span>
-                                <span v-else-if="etpBasic.F34240 == 'T'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)<br>×(1+(매매기준율-장전매매기준율)/장전매매기준율×<span class="txt_point2">②배율</span>)</span>
-                                <span v-else-if="etpBasic.F34240 == 'K'">iNAV=<span class="txt_point">①전일NAV</span>×(1+((1+<span class="txt_point3">③기초지수등락율</span>)<br>×<span class="txt_point4">④매매기준율/장전매매기준율</span>-1)×<span class="txt_point2">②배율</span>)</span>
-                                <span v-else-if="etpBasic.F34240 == 'I'">iNAV=<span class="txt_point">①전일NAV</span>×(1+((1+<span class="txt_point3">③기초지수등락율</span>)×<span class="txt_point4">④매매기준율/장전매매기준율</span>-1)<br>×<span class="txt_point2">②배율</span>) ×(1+전일등락율×<span class="txt_point2">②배율</span>)</span>
+                                <span v-else-if="etpBasic.F34240 == 'F'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)×(<span class="txt_point4">④적용환율/기준환율</span>)</span>
+                                <span v-else-if="etpBasic.F34240 == 'A'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>×<span class="txt_point4">④적용환율/기준환율</span>)</span>
+                                <span v-else-if="etpBasic.F34240 == 'T'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>)<br>×(1+(적용환율-기준환율)/기준환율×<span class="txt_point2">②배율</span>)</span>
+                                <span v-else-if="etpBasic.F34240 == 'K'">iNAV=<span class="txt_point">①전일NAV</span>×(1+((1+<span class="txt_point3">③기초지수등락율</span>)<br>×<span class="txt_point4">④적용환율/기준환율</span>-1)×<span class="txt_point2">②배율</span>)</span>
+                                <span v-else-if="etpBasic.F34240 == 'I'">iNAV=<span class="txt_point">①전일NAV</span>×(1+((1+<span class="txt_point3">③기초지수등락율</span>)×<span class="txt_point4">④적용환율/기준환율</span>-1)<br>×<span class="txt_point2">②배율</span>) ×(1+전일등락율×<span class="txt_point2">②배율</span>)</span>
                                 <span v-else-if="etpBasic.F34240 == 'J'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point3">③기초지수등락율</span>×<span class="txt_point2">②배율</span>-예상배당수익률)</span>
-                                <span v-else-if="etpBasic.F34240 == 'G'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point2">②배율</span>×<span class="txt_point3">③지수등락율</span>)×(환율보정계수/장전매매기준율)</span>                                
+                                <span v-else-if="etpBasic.F34240 == 'G'">iNAV=<span class="txt_point">①전일NAV</span>×(1+<span class="txt_point2">②배율</span>×<span class="txt_point3">③지수등락율</span>)×(환율보정계수/기준환율)</span>                                
                             </li>
                         </ul>
                         
@@ -157,18 +157,18 @@
                 <v-layout>
                     <v-flex xs12 class="sumul_card_w ver3">
                         <ul class="bot_line">
-                            <li class="list_tit">적용환율</li>
+                            <li class="list_tit">환율</li>
                             <li class="align_r">{{etpBasic.ex_rate_code}}</li>
                         </ul>
                         <ul class="bot_line1">
-                            <li class="list_tit">매매기준율</li>
+                            <li class="list_tit">적용환율</li>
                             <li class="input_mid" v-if="SimulationSwitch == true">
                                 <v-text-field v-model="F30819" outline class="txt_right"></v-text-field>
                             </li>
                             <li v-else class="align_r text_red">{{F30819}}</li>
                         </ul>
                         <ul class="bot_line2">
-                            <li class="list_tit case2">장전기준율</li>
+                            <li class="list_tit case2">기준환율</li>
                             <li class="input_mid" v-if="SimulationSwitch == true">
                                 <v-text-field v-model="F30824" outline class="txt_right"></v-text-field>
                             </li>
@@ -177,7 +177,7 @@
                             </li>
                         </ul>
                         <ul v-if="etpBasic.F34240 == 'F' || etpBasic.F34240 == 'A' || etpBasic.F34240 == 'K' || etpBasic.F34240 == 'I' ">
-                            <li class="list_tit txt_point4">④매매기준율/장전기준율</li>
+                            <li class="list_tit txt_point4">④적용환율/기준환율</li>
                             <li class="align_r">
                                 <b>{{F15004_1}}</b>
                             </li>
@@ -255,11 +255,11 @@ export default {
             F03329: 0,  /* 전일Nav */
             F15302: 0,  /* 추적수익률 */
             F15007: 0,  /* 지수기준가  */
-            F30824: 0,  /* 장전기준율 */
-            F30819: 0,  /* 매매기준율 */
+            F30824: 0,  /* 장전기준율(기준환율) */
+            F30819: 0,  /* 매매기준율(적용환율) */
             F15004: 0,  /* 변동률 */ 
-            F15004_1: 0,  /* (매매기준율/장전매매기준율) */ 
-            F15004_2: 0,  /* (매매기준율-장전매매기준율)/장전매매기준율 */ 
+            F15004_1: 0,  /* (매매기준율(적용환율)/장전매매기준율(기준환율)) */ 
+            F15004_2: 0,  /* (매매기준율(적용환율)-장전매매기준율(기준환율))/장전매매기준율(기준환율) */ 
             F34374: 0,  /* 전일ETP기초지수등락율 */
             F18101: 0,  /* 예상배당수익률 : 배당율 */
             F18453: 0,  /* ETP 배율 */
