@@ -279,17 +279,55 @@ var util = {
         var options     =   {
                 skipHeader          :   true
             ,   origin              :   "A2"
-            ,   hiddenStartIndex    :   54
+            ,   colStartIndex       :   0
+            ,   rowStartIndex       :   1
+            ,   colsInfo            :   {
+                        hidden  :   false
+                    ,   width   :   15
+                }
+            ,   rowsInfo        :   {
+                        hidden  :   false
+                    ,   hpt     :   20
+                }
         };
+
 
         var dataWS = excel.utils.aoa_to_sheet( [ excelInfo.arrHeaderNm ] );
         options = Object.assign( options, excelInfo.options );
 
-        /* hide  column */
-        dataWS['!cols'] = [];
-        for (var i = options.hiddenStartIndex ; i < 100 ; i++) {
-            dataWS['!cols'][i] = { hidden: true };
+        if( excelInfo.arrColsInfo && excelInfo.arrColsInfo.length > 0 ) {
+            dataWS['!cols'] = [];
+
+            for (var i = options.colStartIndex ; i < excelInfo.arrHeaderKey.length ; i++) {
+                var colsInfo    =   {};
+
+                if( i < excelInfo.arrColsInfo.length ) {
+                    colsInfo    =   excelInfo.arrColsInfo[i];
+                }else{
+                    colsInfo    =   options.colsInfo;
+                }
+
+                dataWS['!cols'][i] = colsInfo;
+            }
         }
+
+
+        if( excelInfo.arrRowsInfo && excelInfo.arrRowsInfo.length > 0 ) {
+            dataWS['!rows'] = [];
+
+            for (var i = 0, row= options.rowStartIndex; i < excelInfo.dataInfo.length; i++, row++) {
+                var rowsInfo    =   {};
+
+                if( i < excelInfo.arrRowsInfo.length ) {
+                    rowsInfo    =   excelInfo.arrRowsInfo[i];
+                }else{
+                    rowsInfo    =   options.rowsInfo;
+                }
+
+                dataWS['!rows'][row] = rowsInfo;
+            }
+        }
+
         excel.utils.sheet_add_json( dataWS, excelInfo.dataInfo, { header: excelInfo.arrHeaderKey , skipHeader : options.skipHeader, origin : options.origin });
 
 
