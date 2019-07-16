@@ -842,6 +842,9 @@ input[type='file']{
 .oper_list_icon.select span.icon7{background-position:-44px -296px;}
 
 
+.exceldown_btn{background: url(../img/exceldown_btn.png)no-repeat; width:26px; height:29px; display:inline-block; vertical-align: bottom; margin-right: 5px;}
+.exceldown_btn:hover{background: url(../img/exceldown_btn_over.png)no-repeat; }
+
 .calcu_icon{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat 7px -345px; display:inline-block;}
 .calcu_icon:hover{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat -43px -345px; display:inline-block;}
 
