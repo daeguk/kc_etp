@@ -37,11 +37,7 @@
                         <v-list-tile>
                             <v-list-tile-title>Last Updated</v-list-tile-title>
                             <v-list-tile-content>{{ indexBasic.fmt_F12506 /* 입회일 */ }}</v-list-tile-content>
-
-                            <div class="excel_btn_down"><v-btn color="#85c406" depressed outline    @click.stop="fn_downExcel">
-                                <v-icon dark>get_app</v-icon> 엑셀 다운로드</v-btn>
-                            </div>
-
+                            <div class="excel_btn_down"><button type='button'  class="exceldown_btn" @click.stop="fn_downExcel"></button></div>
                         </v-list-tile>
                     </v-list>
 

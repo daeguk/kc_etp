@@ -34,8 +34,7 @@
                                     </v-date-picker>
                                 </v-menu>
                             </span>
-                            <div class="excel_btn_down"><v-btn color="#85c406" depressed outline    @click.stop="fn_downExcel">
-                                <v-icon dark>get_app</v-icon> 엑셀 다운로드</v-btn>
+                            <div class="excel_btn_down"><button type='button'  class="exceldown_btn" @click.stop="fn_downExcel"></button>
                             </div>
                         </h3>
                     </v-card-title>
