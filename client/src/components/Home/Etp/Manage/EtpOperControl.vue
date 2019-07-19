@@ -20,6 +20,7 @@
                             @fn_setFirstData="fn_setFirstData"
                             @fn_setInavData="fn_setInavData"
                             @fn_setEtpPerformanceData="fn_setEtpPerformanceData"
+                            @fn_setEtpLpspread="fn_setEtpLpspread"
                             @fn_setCustomizeData="fn_setCustomizeData"
                             @fn_setStateInfo="fn_setStateInfo">
             </EtpOperInfo>
@@ -221,6 +222,7 @@ export default {
 
                 toggleINav :   false,
                 toggleEtpPerformance :  false,
+                toggleEtpLpspread : false,
                 toggleCustomize :  false,
                 arrCustomizeColumn : []
             },
@@ -495,6 +497,7 @@ export default {
 
             vm.toggle.toggleEtpPerformance  =   false;
             vm.toggle.toggleCustomize  =   false;
+            vm.toggle.toggleEtpLpspread  =   false;
             vm.toggle.arrCustomizeColumn  =   [];
 
             if( stateInfo ) {
@@ -512,6 +515,7 @@ export default {
 
             vm.toggle.toggleINav  =   false;
             vm.toggle.toggleCustomize  =   false;
+            vm.toggle.toggleEtpLpspread  =   false;
             vm.toggle.arrCustomizeColumn  =   [];
 
             if( stateInfo ) {
@@ -519,6 +523,24 @@ export default {
                 vm.state.gubun  =   stateInfo.gubun;
             }            
         },
+
+        fn_setEtpLpspread( paramData, stateInfo ) {
+            var vm = this;
+
+            if( paramData && paramData.toggleEtpLpspread ) {
+                vm.toggle.toggleEtpLpspread    =   paramData.toggleEtpLpspread;
+            }
+
+            vm.toggle.toggleINav  =   false;
+            vm.toggle.toggleEtpPerformance  =   false;
+            vm.toggle.toggleCustomize  =   false;
+            vm.toggle.arrCustomizeColumn  =   [];
+
+            if( stateInfo ) {
+                vm.state.pageState  =   stateInfo.pageState;
+                vm.state.gubun  =   stateInfo.gubun;
+            }            
+        },        
         
         fn_setCustomizeData( paramData, stateInfo ) {
             var vm = this;
@@ -534,6 +556,7 @@ export default {
 
             vm.toggle.toggleINav  =   false;
             vm.toggle.toggleEtpPerformance  =   false;
+            vm.toggle.toggleEtpLpspread  =   false;
 
             if( stateInfo ) {
                 vm.state.pageState  =   stateInfo.pageState;

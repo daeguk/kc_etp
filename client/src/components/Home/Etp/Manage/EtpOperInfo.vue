@@ -593,7 +593,7 @@ export default {
             vm.fn_setTableInfo();
             vm.fn_getEtpOperInfo( vm.stateInfo.gubun );
 
-            vm.$emit( "fn_setEtpPerformanceData", paramData, vm.stateInfo );
+            vm.$emit( "fn_setEtpLpspread", paramData, vm.stateInfo );
 
             console.log("########## EtpOperInfo.vue -> fn_setEtpLpspread END ############");
         },
