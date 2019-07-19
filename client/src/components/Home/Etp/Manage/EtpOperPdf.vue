@@ -755,13 +755,15 @@ export default {
         fn_downExcel: function() {
             var vm = this;
 
-            if( !vm.pdfDataList || vm.pdfDataList.length == 0 ) {
+            if( !tblPdfList.rows().data() || tblPdfList.rows().data().length == 0 ) {
                 vm.$emit("showMessageBox", '확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
                 return  false;
             }          
 
             var arrHeaderNm     =   [ "Date", "상태", "시장구분", "종목코드", "종목명", "CU SHrs", "액면금액", "평가금액" ];
             var arrHeaderKey    =   [ "fmt_F12506", "status", "F33861", "F16316", "F16004", "F16499", "F34840", "F16588" ];
+            var arrColsInfo     =   [];
+
             var sheetNm         =   "PDF 정보";
             var execelDataList  =   [];
 
@@ -780,22 +782,29 @@ export default {
                     }
                 }
                 arrHeaderKey    =   arrHeaderKey.concat( [ "rate_day0", "rate_day1", "rate_day2", "rate_day3", "rate_day4" ] );
+                arrColsInfo     =   [ , {width : 10}, {width : 10}, , {width : 20}, , , , , , , , ];
             }
             else{
                 arrHeaderNm.push( "비중(%)" );
                 arrHeaderKey.push( "fmt_F34743" );
+                arrColsInfo     =   [ , {width : 10}, {width : 10}, , {width : 20}, , , ];
             }
 
+
             /* key에 존재하는 데이터를 기준으로 원본 데이터 추출 */
-            for( var i in vm.pdfDataList ) {
+            for( var i in tblPdfList.rows().data() ) {
+                var dataRow = tblPdfList.rows().data()[i];
+                
                 var tempObj = {};
                 var existCheck = _.filter( arrHeaderKey, function(o) {
-                    if ( typeof vm.pdfDataList[i][o] != "undefined" ) {
+
+                    if ( typeof dataRow[o] != "undefined" ) {
+
                         /* F16499="CU SHrs", F34840="액면금액", F16588="평가금액", fmt_F34743="비중(%)", rate_day0~5=비중 인 경우 */
                         if( [ "F16499", "F34840", "F16588", "fmt_F34743", "rate_day0", "rate_day1", "rate_day2", "rate_day3", "rate_day4" ].includes( o ) ) {
-                            tempObj[o]  =   Number( vm.pdfDataList[i][o] );
+                            tempObj[o]  =   Number( dataRow[o] );
                         }else{
-                            tempObj[o]  =   vm.pdfDataList[i][o];
+                            tempObj[o]  =   dataRow[o];
                         }
                     }
                 });
@@ -812,6 +821,8 @@ export default {
 
                 ,   arrHeaderNm     :   arrHeaderNm
                 ,   arrHeaderKey    :   arrHeaderKey
+
+                ,   arrColsInfo     :   arrColsInfo
             };
 
             util.fn_downExcel( excelInfo );

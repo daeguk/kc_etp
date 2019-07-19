@@ -10,6 +10,9 @@
                             <span class="text_result_t"> results</span>
                             <span class="sub_txt">기준일 : {{ fmt_F12506 }}</span>
                         </h3>
+                        <div class="excel_btn_down"><v-btn color="#85c406" depressed outline    @click.stop="fn_downExcel">
+                            <v-icon dark>get_app</v-icon> 엑셀 다운로드</v-btn>
+                        </div>                        
                     </v-card-title>
                     
                     <v-card flat>
@@ -55,6 +58,7 @@ export default {
         return {
             fmt_F12506 :   "",
             indexBasic  :   {},
+            indexList   :   [],
             paramData   :   {},
             stateInfo   :   {
                                     pageState : 'index'     /* index - 지수관리 , oversea - 해외지수 종가 모니터링 */
@@ -120,6 +124,8 @@ export default {
                 tableOperIndex.clear().draw();
             }
 
+            vm.indexList    =   [];
+
             vm.$emit( "fn_showProgress", true );
             axios.post( url, {
                 data: {
@@ -149,6 +155,8 @@ export default {
 
                         vm.fmt_F12506   =   dataList[0].fmt_F12506;
                         vm.result_cnt   =   util.formatInt( dataList.length );
+
+                        vm.indexList    =   dataList;
                     }
                 }
 
@@ -557,6 +565,100 @@ export default {
         closeIndexModal: function() {
           this.IndexModalFlag = false;
         },
+
+        /*
+         *  엑셀을 다운로드 한다.
+         *  2019-07-09  bkLove(촤병국)
+         */
+        fn_downExcel: function() {
+            var vm = this;
+
+            if( !tableOperIndex.rows().data() || tableOperIndex.rows().data().length == 0 ) {
+                vm.$emit("showMessageBox", '확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
+                return  false;
+            }          
+
+            var arrHeaderNm     =   [];
+            var arrHeaderKey    =   [];
+            var arrColsInfo     =   [];
+
+            var sheetNm         =   "";
+            var execelDataList  =   [];
+
+
+            /* [해외지수 종가 모니터링]을 선택하는 경우 */
+            if( vm.stateInfo.pageState == "oversea" ) {
+                sheetNm         =   "해외지수 종가 모니터링";
+                arrHeaderNm     =   [ "입수 구분", "지수", "실시간 심볼", "증가 심볼", "휴장일", "최근종가", "최근일자", "기준일자" ];
+                arrHeaderKey    =   [ "in_out", "F16002", "F16013", "incre_symbol", "rest_date", "F15001", "fmt_F12506", "fmt_std_date" ];
+                arrColsInfo     =   [ ,{width : 40}, {width : 40} ];
+            }
+            else{
+                sheetNm         =   "지수관리";
+                arrHeaderNm     =   [ "지수", "산출기관", "벤더", "관리유형", "Last", "Time", "ETF" ];
+                arrHeaderKey    =   [ "F16002", "large_type", "vendor", "manage_type", "last_date", "last_time", "etp_info_json" ];
+                arrColsInfo     =   [ {width : 40},,,,,,{width:40} ];
+            }
+
+
+            /* key에 존재하는 데이터를 기준으로 원본 데이터 추출 */
+            for( var i in tableOperIndex.rows().data() ) {
+                var dataRow = tableOperIndex.rows().data()[i];
+                
+                var tempObj = {};
+                var existCheck = _.filter( arrHeaderKey, function(o) {
+
+                    if ( typeof dataRow[o] != "undefined" ) {
+
+                        /* 지수="F16002" 인 경우 */
+                        if( "F16002" == o ) {
+                            tempObj[o]  =   dataRow[o] + "\n" + dataRow.F16013;     /* F16002=한글종목명, F16013=단축코드 */
+                        }
+                        /* Last="last_date" 인 경우 */
+                        else if( "last_date" == o ) {
+                            tempObj[o]  =   dataRow[o] + "\n" + dataRow.F15004;     /* F15004=등락율 */
+                        }
+                        /* ETF="etp_info_json" 인 경우 */
+                        else if( "etp_info_json" == o ) {
+                            var arrData = JSON.parse( dataRow[o] );
+
+                            var arrEtfData = "";
+                            for( var j in arrData ) {
+                                arrEtfData  +=  arrData[j].F16002 + "\n"; 
+                            }
+
+                            if( arrEtfData ) {
+                                tempObj[o]  =   arrEtfData;
+                            }
+                        }
+                        /* 최근종가="F15001" 인 경우 */
+                        else if( "F15001" == o ) {
+                            tempObj[o]  =   dataRow[o] + "\n" + dataRow.F15004;     /* F15004=등락율 */
+                        }
+                        else{
+                            tempObj[o]  =   dataRow[o];
+                        }
+                    }
+                });
+
+                if( Object.keys(tempObj).length > 0 ) {
+                    execelDataList[i]   =   tempObj;
+                }
+            }
+
+            var excelInfo = {
+                    excelFileNm     :   "지수 관리"
+                ,   sheetNm         :   sheetNm
+                ,   dataInfo        :   execelDataList
+
+                ,   arrHeaderNm     :   arrHeaderNm
+                ,   arrHeaderKey    :   arrHeaderKey
+
+                ,   arrColsInfo     :   arrColsInfo
+            };
+
+            util.fn_downExcel( excelInfo );
+        }        
     }
 };
 </script>
