@@ -571,7 +571,9 @@ export default {
         fn_downExcel: function() {
             var vm = this;
 
-            if( !tableOperIndex.rows().data() || tableOperIndex.rows().data().length == 0 ) {
+            var tableList = tableOperIndex.rows().data();
+
+            if( !tableList || tableList.length == 0 ) {
                 vm.$emit("showMessageBox", '확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
                 return  false;
             }          
@@ -600,8 +602,8 @@ export default {
 
 
             /* key에 존재하는 데이터를 기준으로 원본 데이터 추출 */
-            for( var i in tableOperIndex.rows().data() ) {
-                var dataRow = tableOperIndex.rows().data()[i];
+            for( var i in tableList ) {
+                var dataRow = tableList[i];
                 
                 var tempObj = {};
                 var existCheck = _.filter( arrHeaderKey, function(o) {
