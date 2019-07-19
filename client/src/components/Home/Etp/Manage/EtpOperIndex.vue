@@ -10,16 +10,17 @@
                             <span class="text_result_t"> results</span>
                             <span class="sub_txt">기준일 : {{ fmt_F12506 }}</span>
                         </h3>
-                        <div class="excel_btn_down"><v-btn color="#85c406" depressed outline    @click.stop="fn_downExcel">
-                            <v-icon dark>get_app</v-icon> 엑셀 다운로드</v-btn>
-                        </div>                        
+
+                        <div class="right_btn">
+                            <span><button type='button'  class="exceldown_btn" @click.stop="fn_downExcel"></button></span>
+                        </div>
                     </v-card-title>
                     
                     <v-card flat>
                         <table id="tableOperIndex" class="tbl_type ver7"></table>
 
                     </v-card>
-             </v-card>
+                </v-card>
            </v-flex>
            <v-flex class="conWidth_right">
                 <!-- [지수관리] Quick 메뉴 정보 -->

@@ -34,8 +34,8 @@
                                     </v-date-picker>
                                 </v-menu>
                             </span>
-                            <div class="excel_btn_down"><button type='button'  class="exceldown_btn" @click.stop="fn_downExcel"></button>
-                            </div>
+
+                            <div class="excel_btn_down"><button type='button'  class="exceldown_btn" @click.stop="fn_downExcel"></button></div>
                         </h3>
                     </v-card-title>
 
