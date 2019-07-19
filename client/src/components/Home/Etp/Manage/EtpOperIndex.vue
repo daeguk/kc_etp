@@ -3,18 +3,15 @@
         <v-layout row wrap class="con_wrap">
             <v-flex grow class="conWidth_left">
                 <v-card flat>
-                    <v-card-title primary-title>
-                        <h3 class="headline subtit" pb-0>
+                    <v-card-title primary-title class="title_wrap02">
+                        <h3 class="headline subtit  w100" pb-0>
                             지수관리
                             <span class="text_result">{{ result_cnt }}</span>
                             <span class="text_result_t"> results</span>
                             <span class="sub_txt">기준일 : {{ fmt_F12506 }}</span>
+                            <div class="right_btn"><button type='button'  class="exceldown_btn" @click.stop="fn_downExcel"></button></div>
                         </h3>
-
-                        <div class="right_btn">
-                            <span><button type='button'  class="exceldown_btn" @click.stop="fn_downExcel"></button></span>
-                        </div>
-                    </v-card-title>
+                     </v-card-title>
                     
                     <v-card flat>
                         <table id="tableOperIndex" class="tbl_type ver7"></table>
