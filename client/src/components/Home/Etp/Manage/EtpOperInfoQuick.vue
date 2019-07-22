@@ -121,11 +121,12 @@
                                                 <v-flex xs3>
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
-                                                        label="ETF전일가"
-                                                        value="F18001"
+                                                        label="과세구분"
+                                                        value="F16073"
                                                     ></v-checkbox>
                                                 </v-flex>
                                             </v-layout>
+
                                             <v-layout
                                                 align-center
                                                 justify-space-around
@@ -154,6 +155,7 @@
                                                     ></v-checkbox>
                                                 </v-flex>
                                             </v-layout>
+
                                             <v-layout
                                                 align-center
                                                 justify-space-around
@@ -164,7 +166,7 @@
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
                                                         label="TE"
-                                                        value="F15302"
+                                                        value="F19329"
                                                     ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
@@ -178,10 +180,11 @@
                                                     <v-checkbox
                                                         v-model="arrCustomizeColumn"
                                                         label="괴리율"
-                                                        value="F15304"
+                                                        value="F19330"
                                                     ></v-checkbox>
                                                 </v-flex>                                                
                                             </v-layout>
+
                                             <v-layout
                                                 align-center
                                                 justify-space-around
@@ -195,12 +198,8 @@
                                                         value="F15001"
                                                     ></v-checkbox>
                                                 </v-flex>
+
                                                 <v-flex xs3>
-                                                    <v-checkbox
-                                                        v-model="arrCustomizeColumn"
-                                                        label="과세구분"
-                                                        value="F16073"
-                                                    ></v-checkbox>
                                                 </v-flex>
                                                 <v-flex xs3>
                  

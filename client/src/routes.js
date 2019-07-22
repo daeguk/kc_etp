@@ -33,6 +33,12 @@ import  FngIndexList   from './components/Home/MarketInfo/index/FngIndexList.vue
 import  sampleChart   from '@/components/Sample/test.vue'
 import  sampleUpload   from '@/components/Sample/fileUpload.vue'
 
+// simulation
+import  Simullist   from '@/components/Home/Simulation/Simullist.vue'
+import  Simulation   from '@/components/Home/Simulation/Simulation.vue'
+import  SimulationResult   from '@/components/Home/Simulation/SimulationResult.vue'
+
+
 // 관리자
 export const routes = [
   { path : '/',
@@ -161,6 +167,25 @@ export const routes = [
               requiresType: ['0001', '0002', '0004', '0005']
             },
         },
+        {   path : 'Simulation/Simullist',
+            component: Simullist,
+            meta: {
+              requiresAuth: false,
+            },
+        },
+        {   path : 'Simulation/Simulation',
+            component: Simulation,
+            meta: {
+              requiresAuth: false,
+            },
+        },
+        {   path : 'Simulation/SimulationResult',
+            component: SimulationResult,
+            meta: {
+              requiresAuth: false,
+            },
+        },
+        
         
     ]
   }
