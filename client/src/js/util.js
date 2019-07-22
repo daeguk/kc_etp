@@ -279,17 +279,83 @@ var util = {
         var options     =   {
                 skipHeader          :   true
             ,   origin              :   "A2"
-            ,   hiddenStartIndex    :   54
+            ,   colStartIndex       :   0
+            ,   rowStartIndex       :   1
+            ,   colsInfo            :   {
+                        hidden  :   false
+                    ,   width   :   15
+                }
+            ,   rowsInfo        :   {
+                        hidden  :   false
+                    ,   hpt     :   20
+                }
         };
+
 
         var dataWS = excel.utils.aoa_to_sheet( [ excelInfo.arrHeaderNm ] );
         options = Object.assign( options, excelInfo.options );
 
-        /* hide  column */
-        dataWS['!cols'] = [];
-        for (var i = options.hiddenStartIndex ; i < 100 ; i++) {
-            dataWS['!cols'][i] = { hidden: true };
+
+    /* 설정할 컬럼 정보 */
+
+        /* 헤더 컬럼별 설정정보가 있는 경우 */
+        if( excelInfo.arrColsInfo && excelInfo.arrColsInfo.length > 0 ) {
+            dataWS['!cols'] = [];
+
+            for (var i = options.colStartIndex ; i < excelInfo.arrHeaderKey.length ; i++) {
+                var colsInfo    =   {};
+
+                colsInfo    =   Object.assign( colsInfo, options.colsInfo );
+
+                /* arrColsInfo 갯수와 arrHeaderKey 갯수가 다를수 있기에 arrColsInfo 의 인덱스가 arrHeaderKey 인덱스 안에 포함되는 경우 */
+                if( i < excelInfo.arrColsInfo.length ) {
+                    colsInfo    =   Object.assign( colsInfo, excelInfo.arrColsInfo[i] );
+                }
+
+                dataWS['!cols'][i] = colsInfo;
+            }
         }
+        /* 기본 컬럼 설정정보가 있는 경우 */
+        else if( excelInfo.colsInfo && Object.keys( excelInfo.colsInfo ).length > 0 ) {
+            dataWS['!cols'] = [];
+
+            for (var i = options.colStartIndex ; i < excelInfo.arrHeaderKey.length ; i++) {
+                var colsInfo    =   Object.assign( {}, options.colsInfo, excelInfo.colsInfo );
+                dataWS['!cols'][i] = colsInfo;
+            }
+        }
+
+
+
+    /* 설정할 레코드 정보 */
+
+        /* 레코드별 설정정보가 있는 경우 */
+        if( excelInfo.arrRowsInfo && excelInfo.arrRowsInfo.length > 0 ) {
+            dataWS['!rows'] = [];
+
+            for (var i = 0, row= options.rowStartIndex; i < excelInfo.dataInfo.length; i++, row++) {
+                var rowsInfo    =   {};
+
+                rowsInfo    =   Object.assign( rowsInfo, options.rowsInfo );
+
+                /* arrRowsInfo 갯수와 dataInfo 갯수가 다를수 있기에 arrRowsInfo 의 인덱스가 dataInfo 인덱스 안에 포함되는 경우 */
+                if( i < excelInfo.arrRowsInfo.length ) {
+                    rowsInfo    =   Object.assign( rowsInfo, excelInfo.arrRowsInfo[i] );
+                }
+
+                dataWS['!rows'][row] = rowsInfo;
+            }
+        }
+        /* 기본 레코드 설정정보가 있는 경우 */
+        else if( excelInfo.rowsInfo && Object.keys( excelInfo.rowsInfo ).length > 0 ) {
+            dataWS['!rows'] = [];
+
+            for (var i = options.colStartIndex ; i < excelInfo.arrHeaderKey.length ; i++) {
+                var rowsInfo    =   Object.assign( {}, options.rowsInfo, excelInfo.rowsInfo );
+                dataWS['!rows'][i] = rowsInfo;
+            }
+        }
+
         excel.utils.sheet_add_json( dataWS, excelInfo.dataInfo, { header: excelInfo.arrHeaderKey , skipHeader : options.skipHeader, origin : options.origin });
 
 

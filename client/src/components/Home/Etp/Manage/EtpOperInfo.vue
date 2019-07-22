@@ -14,6 +14,8 @@
                                 <span class="sub_txt">기준일 : {{ fmt_F12506 }}</span>
                             </h3>
                             <div class="right_btn">
+                                <span><button type='button'  class="exceldown_btn" @click.stop="fn_downExcel"></button></span>
+
                                 <span class="toggle2">
                                     <v-btn-toggle v-model="stateInfo.gubun" class="toggle_01">
                                         <v-btn flat value="A"       @click="fn_getEtpOperInfo('A')">전종목</v-btn>
@@ -22,7 +24,9 @@
                                         <v-btn flat value="I"       @click="fn_getEtpOperInfo('I')">관심종목</v-btn>
                                     </v-btn-toggle>
                                 </span>
+                                
                             </div>
+                            
                         </div>
                     </v-card-title>
                 </div>
@@ -590,7 +594,7 @@ export default {
             vm.fn_setTableInfo();
             vm.fn_getEtpOperInfo( vm.stateInfo.gubun );
 
-            vm.$emit( "fn_setEtpPerformanceData", paramData, vm.stateInfo );
+            vm.$emit( "fn_setEtpLpspread", paramData, vm.stateInfo );
 
             console.log("########## EtpOperInfo.vue -> fn_setEtpLpspread END ############");
         },
@@ -610,6 +614,8 @@ export default {
             vm.stateInfo.pageState  =  'customize';
 
             if( paramData && paramData.arrCustomizeColumn.length > 0 ) {
+                vm.arrCustomizeColumn   =   paramData.arrCustomizeColumn;
+
                 vm.fn_setTableInfo( paramData.arrCustomizeColumn );
                 vm.fn_getEtpOperInfo( vm.stateInfo.gubun );
             }
@@ -1091,7 +1097,158 @@ export default {
             var vm = this;
 
             vm.$emit( "fn_showDetailIndex", gubun, paramData );
-        },        
+        },
+
+        /*
+         *  엑셀을 다운로드 한다.
+         *  2019-07-09  bkLove(촤병국)
+         */
+        fn_downExcel: function() {
+            var vm = this;
+
+            var tableList = null;
+
+            /* Performance 인 경우 */
+            if( vm.stateInfo.pageState == "performance" ) {
+                tableList   =   table02.rows().data();
+            }
+            /* 그외 인 경우 */
+            else{
+                tableList   =   table01.rows().data();
+            }
+
+            if( !tableList || tableList.length == 0 ) {
+                vm.$emit("showMessageBox", '확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
+                return  false;
+            }            
+
+            var arrHeaderNm     =   [];
+            var arrHeaderKey    =   [];
+            var arrColsInfo     =   [];
+
+            var sheetNm         =   "";
+            var execelDataList  =   [];
+
+
+            /* [default]를 선택하는 경우 */
+            if( vm.stateInfo.pageState == "etpInfo" ) {
+                sheetNm         =   "ETP 운용정보";
+                arrHeaderNm     =   [ "종목", "iNAV", "전일NAV", "TE", "괴리율", "기초지수", "지수" ];
+                arrHeaderKey    =   [ "F16002", "F15301", "F03329", "F19329", "F19330", "F34777", "F15318" ];
+                arrColsInfo     =   [ {width : 30}, , , , , {width : 30}, {width : 20} ];
+            }
+            /* [iNAV]를 선택하는 경우 */
+            else if( vm.stateInfo.pageState == "iNav" ) {
+                sheetNm         =   "iNav 산출현황";
+                arrHeaderNm     =   [ "종목", "산출방식", "iNAV", "전일NAV", "기초지수", "지수", "환코드", "환율" ];
+                arrHeaderKey    =   [ "F16002", "F33929_nm", "F15301", "F03329", "F34777", "F15318", "F18450", "F18438" ];
+                arrColsInfo     =   [ {width : 30}, , , , {width : 30}, {width : 20}, , , ];
+            }
+            /* [Performance]를 선택하는 경우 */
+            else if( vm.stateInfo.pageState == "performance" ) {
+                sheetNm         =   "performance";
+                arrHeaderNm     =   [ "종목", "수익율(증가) 1주", "수익율(증가) 1개월", "수익율(증가) 3개월", "수익율(증가) YTD", "수익율(NAV) 1주", "수익율(NAV) 1개월", "수익율(NAV) 3개월", "수익율(NAV) YTD" ];
+                arrHeaderKey    =   [ "F16002", "W00002", "W00003", "W00004", "W00005", "W00012", "W00013", "W00014", "W00015" ];
+                arrColsInfo     =   [ {width : 30}, {width : 20}, {width : 20}, {width : 20}, {width : 20}, {width : 20}, {width : 20}, {width : 20}, {width : 20} ];
+            }            
+            /* [LP Spread]를 선택하는 경우 */
+            else if( vm.stateInfo.pageState == "lpspread" ) {
+                sheetNm         =   "LP spread";
+                arrHeaderNm     =   [ "종목", "iNAV", "지수", "LP매도호가", "LP매수호가", "LP스프레드" ];
+                arrHeaderKey    =   [ "F16002", "F15301", "F15318", "F40544", "F40545", "F33294" ];
+                arrColsInfo     =   [ {width : 30}, , {width : 20}, , , ];
+            }
+            /* [customize]를 선택하는 경우 */
+            else if( vm.stateInfo.pageState == "customize" ) {
+
+                sheetNm         =   "customize";
+                arrHeaderNm     =   [];
+                arrHeaderKey    =   vm.arrCustomizeColumn;
+                arrColsInfo     =   [ {width : 30} ];
+
+                for( var i in arrHeaderKey ) {
+                    var same = vm.arrShowColumn.filter(function(o, p) {
+                        return arrHeaderKey[i] === o.name;
+                    });                                
+
+                    if( same && same.length == 1 ) {
+                        arrHeaderNm.push( same[0].title );
+                    }
+                }
+            }
+
+
+            /* key에 존재하는 데이터를 기준으로 원본 데이터 추출 */
+            for( var i in tableList ) {
+                var dataRow = tableList[i];
+                
+                var tempObj = {};
+                var existCheck = _.filter( arrHeaderKey, function(o) {
+
+                    if ( typeof dataRow[o] != "undefined" ) {
+
+                        /* 종목="F16002" 인 경우 */
+                        if( "F16002" == o ) {
+                            tempObj[o]  =   dataRow[o] + "\n" + dataRow.F16013;     /* F16002=한글종목명, F16013=단축코드 */
+                        }
+                        /* 전일NAV="F03329", LP매도호가="F40544", LP매수호가="F40545" */
+                        /* 종가1주수익률="W00002", 종가1달수익률="W00003", 종가3달수익률="W00004", 종가YTD수익률="W00005" */
+                        /* NAV1주수익률="W00012", NAV1달수익률="W00013", NAV3달수익률="W00014", NAVYTD수익률="W00015" */
+                        /* 과표기준가="F15007", ETF 현재가="F15001", ETF 전일가="F18001", 괴리율="F19330" */
+                        else if( [ "F03329", "F40544", "F40545", "W00002", "W00003", "W00004", "W00005", "W00012", "W00013", "W00014", "W00015", "F15007", "F15001", "F18001", "F19330" ].includes( o ) ) {
+                            tempObj[o]  =   Number( util.NumtoStr( util.formatNumber( dataRow[o] ) ) );
+                        }
+                        /* iNAV="F15301" 인 경우 */
+                        else if( "F15301" == o ) {
+                            tempObj[o]  =   util.formatNumber( dataRow[o] ) + "\n" + dataRow.F30818;     /* F30818=장중지표가치(iNAV/iIV)등락율 */
+                        }
+                        /* LP스프레드="F33294" 인 경우 */
+                        else if( "F33294" == o ) {
+                            tempObj[o]  =   Number( util.NumtoStr( util.formatNumber( dataRow[o] ) ) );
+                        }
+                        /* 지수="F15318" 인 경우 */
+                        else if( "F15318" == o ) {
+                            tempObj[o]  =   util.formatNumber( dataRow[o] ) + "\n" + dataRow.F30823;     /* F30823=ETF관련지수등락율 */
+                        }                        
+                        /* 환율="F18438" 인 경우 */
+                        else if( "F18438" == o ) {
+                            var v_F30819    =   util.formatNumber( dataRow.F30819 );        /* 매매기준율 */
+                            var v_F30824    =   util.formatNumber( dataRow.F30824 );        /* 장전기준율 */
+
+                            var rateData    =   util.formatNumber( ( ( util.NumtoStr( v_F30819 ) / util.NumtoStr( v_F30824 ) ) - 1 ) * 100 );    /* ( 장전기준율 / 매매기준율 - 1 ) * 100 */
+
+                            tempObj[o]      =       util.formatNumber( dataRow.F30819 )     /* 매매기준율 */
+                                                +   "\n" 
+                                                +   rateData;
+                        }
+                        /* 최근종가="F15001" 인 경우 */
+                        else if( "F15001" == o ) {
+                            tempObj[o]  =   dataRow[o] + "\n" + dataRow.F15004;     /* F15004=등락율 */
+                        }
+                        else{
+                            tempObj[o]  =   dataRow[o];
+                        }
+                    }
+                });
+
+                if( Object.keys(tempObj).length > 0 ) {
+                    execelDataList[i]   =   tempObj;
+                }
+            }
+
+            var excelInfo = {
+                    excelFileNm     :   "ETP 운용정보"
+                ,   sheetNm         :   sheetNm
+                ,   dataInfo        :   execelDataList
+
+                ,   arrHeaderNm     :   arrHeaderNm
+                ,   arrHeaderKey    :   arrHeaderKey
+
+                ,   arrColsInfo     :   arrColsInfo
+            };
+
+            util.fn_downExcel( excelInfo );
+        }
     }
 };
 </script>
