@@ -784,12 +784,12 @@ export default {
                     }
                 }
                 arrHeaderKey    =   arrHeaderKey.concat( [ "rate_day0", "rate_day1", "rate_day2", "rate_day3", "rate_day4" ] );
-                arrColsInfo     =   [ , {width : 10}, {width : 10}, , {width : 20}, , , , , , , , ];
+                arrColsInfo     =   [ {width : 15}, {width : 10}, {width : 10}, {width : 15}, {width : 30}, {width : 15}, {width : 15}, {width : 15}, {width : 15}, {width : 15}, {width : 15}, {width : 15}, {width : 15} ];
             }
             else{
                 arrHeaderNm.push( "비중(%)" );
                 arrHeaderKey.push( "fmt_F34743" );
-                arrColsInfo     =   [ , {width : 10}, {width : 10}, , {width : 20}, , , ];
+                arrColsInfo     =   [ {width : 15}, {width : 10}, {width : 10}, {width : 15}, {width : 30}, {width : 15}, {width : 15}, {width : 15}];
             }
 
 
