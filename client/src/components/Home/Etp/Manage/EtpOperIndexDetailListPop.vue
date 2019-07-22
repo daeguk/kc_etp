@@ -201,7 +201,9 @@ export default {
         fn_downExcel: function() {
             var vm = this;
 
-            if( !vm.indexDetailList || vm.indexDetailList.length == 0 ) {
+            var tableList = tableIndexDetailList.rows().data();
+
+            if( !tableList || tableList.length == 0 ) {
                 vm.showMessageBox( '확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1 );
                 return  false;
             }          
@@ -213,15 +215,15 @@ export default {
 
 
             /* key에 존재하는 데이터를 기준으로 원본 데이터 추출 */
-            for( var i in vm.indexDetailList ) {
+            for( var i in tableList ) {
                 var tempObj = {};
                 var existCheck = _.filter( arrHeaderKey, function(o) {
-                    if ( typeof vm.indexDetailList[i][o] != "undefined" ) {
+                    if ( typeof tableList[i][o] != "undefined" ) {
                         /* F03003="BasePrc", F30812="Shrs", style_includ_percnt="Float rto", ceiling_percnt="Ceiling rto", F30813="Factor rto" 인 경우 */
                         if( [ "F03003", "F30812", "style_includ_percnt", "ceiling_percnt", "F30813" ].includes( o ) ) {
-                            tempObj[o]  =   Number( util.NumtoStr( util.formatNumber( vm.indexDetailList[i][o] ) ) );
+                            tempObj[o]  =   Number( util.NumtoStr( util.formatNumber( tableList[i][o] ) ) );
                         }else{
-                            tempObj[o]  =   vm.indexDetailList[i][o];
+                            tempObj[o]  =   tableList[i][o];
                         }
                     }
                 });
