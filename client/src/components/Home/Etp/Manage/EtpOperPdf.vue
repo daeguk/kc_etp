@@ -762,8 +762,10 @@ export default {
                 return  false;
             }          
 
-            var arrHeaderNm     =   [ "Date", "상태", "시장구분", "종목코드", "종목명", "CU SHrs", "액면금액", "평가금액" ];
-            var arrHeaderKey    =   [ "fmt_F12506", "status", "F33861", "F16316", "F16004", "F16499", "F34840", "F16588" ];
+            var arrHeaderNm     =   [       "Date", "상태", "시장구분", "종목코드", "종목명"
+                                        ,   "CU SHrs", "액면금액", "평가금액" ];
+            var arrHeaderKey    =   [       "fmt_F12506", "status", "F33861", "F16316", "F16004"
+                                        ,   "F16499", "F34840", "F16588" ];
             var arrColsInfo     =   [];
 
             var sheetNm         =   "PDF 정보";

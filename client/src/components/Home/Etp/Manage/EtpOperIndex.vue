@@ -589,15 +589,18 @@ export default {
             /* [해외지수 종가 모니터링]을 선택하는 경우 */
             if( vm.stateInfo.pageState == "oversea" ) {
                 sheetNm         =   "해외지수 종가 모니터링";
-                arrHeaderNm     =   [ "입수 구분", "지수", "실시간 심볼", "증가 심볼", "휴장일", "최근종가", "최근일자", "기준일자" ];
-                arrHeaderKey    =   [ "in_out", "F16002", "F16013", "incre_symbol", "rest_date", "F15001", "fmt_F12506", "fmt_std_date" ];
-                arrColsInfo     =   [ ,{width : 40}, {width : 40} ];
+                arrHeaderNm     =   [       "입수 구분", "지수", "단축코드", "실시간 심볼", "증가 심볼"
+                                        ,   "휴장일", "최근종가", "등락율", "최근일자", "기준일자" ];
+                arrHeaderKey    =   [       "in_out", "F16002", "F16013", "incre_symbol", "rest_date"
+                                        ,   "F15001",  "F15004", "fmt_F12506", "fmt_std_date" ];
+                arrColsInfo     =   [       {width : 10},{width : 40},{width : 15},{width : 15},{width : 30}
+                                        ,   {width : 15},{width : 15},{width : 15},{width : 15} ];
             }
             else{
                 sheetNm         =   "지수관리";
-                arrHeaderNm     =   [ "지수", "산출기관", "벤더", "관리유형", "Last", "Time", "ETF" ];
-                arrHeaderKey    =   [ "F16002", "large_type", "vendor", "manage_type", "last_date", "last_time", "etp_info_json" ];
-                arrColsInfo     =   [ {width : 40},,,,,,{width:40} ];
+                arrHeaderNm     =   [ "지수", "단축코드", "산출기관", "벤더", "관리유형", "Last", "등락율", "Time", "ETF" ];
+                arrHeaderKey    =   [ "F16002", "F16013", "large_type", "vendor", "manage_type", "last_date", "F15004", "last_time", "etp_info_json" ];
+                arrColsInfo     =   [ {width : 40},,,,,,,,{width:40} ];
             }
 
 
@@ -610,12 +613,8 @@ export default {
 
                     if ( typeof dataRow[o] != "undefined" ) {
 
-                        /* 지수="F16002" 인 경우 */
-                        if( "F16002" == o ) {
-                            tempObj[o]  =   dataRow[o] + "\n" + dataRow.F16013;     /* F16002=한글종목명, F16013=단축코드 */
-                        }
                         /* Last="last_date" 인 경우 */
-                        else if( "last_date" == o ) {
+                        if( "last_date" == o ) {
                             tempObj[o]  =   dataRow[o] + "\n" + dataRow.F15004;     /* F15004=등락율 */
                         }
                         /* ETF="etp_info_json" 인 경우 */
@@ -631,10 +630,10 @@ export default {
                                 tempObj[o]  =   arrEtfData;
                             }
                         }
-                        /* 최근종가="F15001" 인 경우 */
-                        else if( "F15001" == o ) {
-                            tempObj[o]  =   dataRow[o] + "\n" + dataRow.F15004;     /* F15004=등락율 */
-                        }
+                        /* 최근종가="F15001", 등락율="F15004" 인 경우 */
+                        else if( [ "F15001", "F15004" ].includes( o ) ) {
+                            tempObj[o]  =   Number( dataRow[o] );
+                        } 
                         else{
                             tempObj[o]  =   dataRow[o];
                         }
