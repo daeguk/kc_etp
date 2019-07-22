@@ -999,3 +999,4 @@ input[type='file']{
 
 /*시뮬레이션*/
 .simul_graph{ margin:5px 24px 24px; height:300px; border:1px solid #e2e2e2;}
+.warning_box{width:100%; border:1px solid #ff4366 ; padding:15px; margin-top:10px; color:#ff4366; font-weight: 600; border-radius: 2px;}

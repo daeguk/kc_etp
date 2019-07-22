@@ -7,6 +7,7 @@
                             PORTFOLIO SIMULATION |
                    <span class="grey--text">KOSPI, KOSDAQ, ETF를 이용해 포트폴리오를 구성하고 백테스트를 수행합니다.</span>
                 </h3>
+                <div class="warning_box"><v-icon color="#ff4366">error_outline</v-icon> 문구가 들어갑니다.</div>
              </v-card-title>
              <v-card class="register_wrap  pt0"  flat xs12  color="lighten-1">
                 <h4>조건 설정</h4>
@@ -104,47 +105,47 @@
                         </v-flex>
                     </v-layout>
                      <v-card flat class="pt-3">
-            <table class="tbl_type ver10">
-              <caption> 헤더 고정 테이블</caption>
-              <colgroup>
-                <col width="10%">
-                <col width="16%">
-                <col width="16%">
-                <col width="15%">
-                <col width="16%">
-                <col width="16%">
-            </colgroup>
-              <thead>
-              <tr>
-                  <th></th>
-                  <th>종목코드</th>
-                  <th class="txt_left">종목명</th>
-                  <th class="txt_right">시가총액</th>
-                  <th class="txt_right">YTD</th>
-                  <th class="txt_right">지수적용비율</th>
-            </tr>
-              </thead>
-              <tbody>
-                <tr>
-                    <td><button class='btn_icon v-icon material-icons' @click="">add_circle_outline</button>
-                        <span class="add_btn_span">Asset1</span></td>
-                    <td class="td_in_input"><input type='text' id='' class='txt_right wid100'  value=''>
-                        <span><button class='btn_icon v-icon material-icons' @click="">search</button></span></td>
-                    <td class="txt_left" >삼성전자</td>
-                    <td class="txt_right" >999.999.999.999.999</td>
-                    <td class="txt_right" ><input type='text' id='' class='txt_right wid100'  value=''></td>
-                    <td class="txt_right" >25.3</td>
-                </tr>
-                <tr class="sum">
-                    <td>Total</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="txt_right" ><input type='text' id='' class='txt_right wid100'  value='100%'></td>
-                    <td></td>
-                </tr>
-              </tbody>
-            </table>
+                        <table class="tbl_type ver10">
+                        <caption> 헤더 고정 테이블</caption>
+                        <colgroup>
+                            <col width="10%">
+                            <col width="16%">
+                            <col width="16%">
+                            <col width="15%">
+                            <col width="16%">
+                            <col width="16%">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>종목코드</th>
+                            <th class="txt_left">종목명</th>
+                            <th class="txt_right">시가총액</th>
+                            <th class="txt_right">YTD</th>
+                            <th class="txt_right">지수적용비율</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><button class='btn_icon v-icon material-icons' @click="">add_circle_outline</button>
+                                <span class="add_btn_span">Asset1</span></td>
+                            <td class="td_in_input"><input type='text' id='' class='txt_right wid100'  value=''>
+                                <span><button class='btn_icon v-icon material-icons' @click="">search</button></span></td>
+                            <td class="txt_left" >삼성전자</td>
+                            <td class="txt_right" >999.999.999.999.999</td>
+                            <td class="txt_right" ><input type='text' id='' class='txt_right wid100'  value=''></td>
+                            <td class="txt_right" >25.3</td>
+                        </tr>
+                        <tr class="sum">
+                            <td>Total</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="txt_right" ><input type='text' id='' class='txt_right wid100'  value='100%'></td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
             <div class="text-xs-center mt-3"><v-btn depressed color="primary" @click="fn_test">백테스트 실행</v-btn>
         </div>
         </v-card>
