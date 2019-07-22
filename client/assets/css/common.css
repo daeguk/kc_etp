@@ -1002,5 +1002,5 @@ input[type='file']{
 .warning_box{width:100%; border:1px solid #ff4366 ; padding:15px; margin-top:10px; color:#ff4366; font-weight: 600; border-radius: 2px;}
 .folder_2dep{padding-left:22px;}
 .wid200{width:200px}
-.creat_f span{display:inline-block;}
+.creat_f span{display:inline-block; margin-top:13px; margin-left:5px;}
 .margin_t1 .v-btn{margin-top:2px; margin-left:3px;}
