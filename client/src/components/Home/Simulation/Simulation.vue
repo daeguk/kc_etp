@@ -31,7 +31,7 @@
                             <v-subheader class="subheader_r">리밸런싱주기</v-subheader>
                         </v-flex>
                         <v-flex xs2> 
-                            <v-select item-text="text" placeholder="선택하세요" outline></v-select>
+                            <v-select :items="items2" placeholder="선택하세요" outline></v-select>
                         </v-flex>
                         <v-flex xs8 row class="checkbox_w pl-2">
                             <v-layout row wrap class="light--text">
@@ -83,7 +83,7 @@
                             <v-subheader class="subheader_r">벤치마크 설정</v-subheader>
                         </v-flex>
                         <v-flex xs2> 
-                            <v-select item-text="text" placeholder="선택하세요" outline></v-select>
+                            <v-select :items="items3" placeholder="선택하세요" outline></v-select>
                         </v-flex>
                     </v-layout> 
                   </v-card>
@@ -160,6 +160,8 @@
       return {
         toggle_one: 0,
         items1: ['2000', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019'],
+        items2: ['매년', '반기', '분기', '매월'],
+        items3: ['설정안함', 'KOSPI200', 'KOSDAQ150', 'KOSPI', 'KOSDAQ'],
         item: [
         {
 
