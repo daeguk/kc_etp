@@ -28,8 +28,6 @@ const router = new VueRouter({
     mode: 'history'
 });
 
-
-
 // Event Bus
 Vue.prototype.$EventBus = new Vue();
 
