@@ -34,7 +34,7 @@ import  sampleChart   from '@/components/Sample/test.vue'
 import  sampleUpload   from '@/components/Sample/fileUpload.vue'
 
 // simulation
-import  Simullist   from '@/components/Home/Simulation/Simullist.vue'
+import  SimulationList   from '@/components/Home/Simulation/SimulationList.vue'
 import  Simulation   from '@/components/Home/Simulation/Simulation.vue'
 import  SimulationResult   from '@/components/Home/Simulation/SimulationResult.vue'
 
@@ -167,8 +167,8 @@ export const routes = [
               requiresType: ['0001', '0002', '0004', '0005']
             },
         },
-        {   path : 'Simulation/Simullist',
-            component: Simullist,
+        {   path : 'Simulation/SimulationList',
+            component: SimulationList,
             meta: {
               requiresAuth: false,
             },
