@@ -208,8 +208,10 @@ export default {
                 return  false;
             }          
 
-            var arrHeaderNm     =   [ "Code", "Name", "BasePrc", "Shrs", "Float rto", "Ceiling rto", "Factor rto" ];
-            var arrHeaderKey    =   [ "isin_code", "F16002", "F03003", "F30812", "style_includ_percnt", "ceiling_percnt", "F30813" ];
+            var arrHeaderNm     =   [       "Code", "Name", "BasePrc", "Shrs", "Float rto"
+                                        ,   "Ceiling rto", "Factor rto" ];
+            var arrHeaderKey    =   [ "isin_code", "F16002", "F03003", "F30812", "style_includ_percnt"
+                                        , " ceiling_percnt", "F30813" ];
             var sheetNm         =   vm.indexBasic.F16002 + " ( " + vm.indexBasic.F16013 + " )";
             var execelDataList  =   [];
 

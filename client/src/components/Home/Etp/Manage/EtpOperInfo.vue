@@ -1133,48 +1133,80 @@ export default {
             /* [default]를 선택하는 경우 */
             if( vm.stateInfo.pageState == "etpInfo" ) {
                 sheetNm         =   "ETP 운용정보";
-                arrHeaderNm     =   [ "종목", "iNAV", "전일NAV", "TE", "괴리율", "기초지수", "지수" ];
-                arrHeaderKey    =   [ "F16002", "F15301", "F03329", "F19329", "F19330", "F34777", "F15318" ];
-                arrColsInfo     =   [ {width : 30}, , , , , {width : 30}, {width : 20} ];
+                arrHeaderNm     =   [       "종목", "단축코드", "iNAV", "iNAV 등락율", "전일NAV"
+                                        ,   "TE", "괴리율", "기초지수", "지수", "지수 등락율" ];
+                arrHeaderKey    =   [       "F16002", "F16013", "F15301", "F30818", "F03329"
+                                        ,   "F19329", "F19330", "F34777", "F15318", "F30823" ];
+                arrColsInfo     =   [       {width : 30}, {width : 10}, {width : 15}, {width : 15}, {width : 15}
+                                        ,   {width : 15}, {width : 15}, {width : 30}, {width : 15}, {width : 15} ];
             }
             /* [iNAV]를 선택하는 경우 */
             else if( vm.stateInfo.pageState == "iNav" ) {
                 sheetNm         =   "iNav 산출현황";
-                arrHeaderNm     =   [ "종목", "산출방식", "iNAV", "전일NAV", "기초지수", "지수", "환코드", "환율" ];
-                arrHeaderKey    =   [ "F16002", "F33929_nm", "F15301", "F03329", "F34777", "F15318", "F18450", "F18438" ];
-                arrColsInfo     =   [ {width : 30}, , , , {width : 30}, {width : 20}, , , ];
+                arrHeaderNm     =   [        "종목", "단축코드", "산출방식", "iNAV", "iNAV 등락율"
+                                        ,   "전일NAV", "기초지수", "지수", "지수 등락율", "환코드"
+                                        ,   "환율 (매매기준율)", "환율 (장전 대비 매매기준율)" ];
+                arrHeaderKey    =   [       "F16002", "F16013", "F33929_nm", "F15301", "F30818"
+                                        ,   "F03329", "F34777", "F15318", "F30823", "F18450"
+                                        ,   "F30819", "F18438" ];
+                arrColsInfo     =   [       {width : 30}, {width : 10}, {width : 15}, {width : 15}, {width : 15}
+                                        ,   {width : 15}, {width : 30}, {width : 15}, {width : 15}, {width : 15}
+                                        ,   {width : 15}, {width : 20} ];
             }
             /* [Performance]를 선택하는 경우 */
             else if( vm.stateInfo.pageState == "performance" ) {
                 sheetNm         =   "performance";
-                arrHeaderNm     =   [ "종목", "수익율(증가) 1주", "수익율(증가) 1개월", "수익율(증가) 3개월", "수익율(증가) YTD", "수익율(NAV) 1주", "수익율(NAV) 1개월", "수익율(NAV) 3개월", "수익율(NAV) YTD" ];
-                arrHeaderKey    =   [ "F16002", "W00002", "W00003", "W00004", "W00005", "W00012", "W00013", "W00014", "W00015" ];
-                arrColsInfo     =   [ {width : 30}, {width : 20}, {width : 20}, {width : 20}, {width : 20}, {width : 20}, {width : 20}, {width : 20}, {width : 20} ];
+                arrHeaderNm     =   [       "종목", "단축코드", "수익율(증가) 1주", "수익율(증가) 1개월", "수익율(증가) 3개월"
+                                        ,   "수익율(증가) YTD",   "수익율(NAV) 1주", "수익율(NAV) 1개월", "수익율(NAV) 3개월", "수익율(NAV) YTD" ];
+                arrHeaderKey    =   [       "F16002", "F16013", "W00002", "W00003", "W00004"
+                                        ,   "W00005", "W00012", "W00013", "W00014", "W00015" ];
+                arrColsInfo     =   [       {width : 30}, {width : 10}, {width : 20}, {width : 20}, {width : 20}
+                                        ,   {width : 20}, {width : 20}, {width : 20}, {width : 20}, {width : 20} ];
             }            
             /* [LP Spread]를 선택하는 경우 */
             else if( vm.stateInfo.pageState == "lpspread" ) {
                 sheetNm         =   "LP spread";
-                arrHeaderNm     =   [ "종목", "iNAV", "지수", "LP매도호가", "LP매수호가", "LP스프레드" ];
-                arrHeaderKey    =   [ "F16002", "F15301", "F15318", "F40544", "F40545", "F33294" ];
-                arrColsInfo     =   [ {width : 30}, , {width : 20}, , , ];
+                arrHeaderNm     =   [       "종목", "단축코드", "iNAV", "iNAV 등락율", "지수"
+                                        ,   "지수 등락율", "LP매도호가", "LP매수호가", "LP스프레드" ];
+                arrHeaderKey    =   [       "F16002", "F16013", "F15301", "F30818", "F15318"
+                                        ,   "F30823", "F40544", "F40545", "F33294" ];
+                arrColsInfo     =   [       {width : 30}, {width : 10}, {width : 15}, {width : 15}, {width : 15}
+                                        ,   {width : 15}, {width : 20}, {width : 15}, {width : 15} ];
             }
             /* [customize]를 선택하는 경우 */
             else if( vm.stateInfo.pageState == "customize" ) {
-
                 sheetNm         =   "customize";
                 arrHeaderNm     =   [];
-                arrHeaderKey    =   vm.arrCustomizeColumn;
+                arrHeaderKey    =   vm.arrCustomizeColumn.slice();
                 arrColsInfo     =   [ {width : 30} ];
 
+                vm.fn_arrInsertAtFind( arrHeaderKey, "F16002", "F16013" );      /* F16002=종목, F16013=단축코드 */
+                vm.fn_arrInsertAtFind( arrHeaderKey, "F15301", "F30818" );      /* F15301=iNAV, F30818=iNAV 등락율 */
+                vm.fn_arrInsertAtFind( arrHeaderKey, "F15318", "F30823" );      /* F15318=지수, F30823=지수 등락율 */
+
                 for( var i in arrHeaderKey ) {
+                    if( "F16013" === arrHeaderKey[i] ) {
+                        arrHeaderNm.push( "단축코드" );
+                        continue;
+                    }
+                    else if( "F30818" === arrHeaderKey[i] ) {
+                        arrHeaderNm.push( "iNAV 등락율" );
+                        continue;
+                    }   
+                    else if( "F30823" === arrHeaderKey[i] ) {
+                        arrHeaderNm.push( "지수 등락율" );
+                        continue;
+                    }
+
                     var same = vm.arrShowColumn.filter(function(o, p) {
                         return arrHeaderKey[i] === o.name;
-                    });                                
+                    });
 
                     if( same && same.length == 1 ) {
-                        arrHeaderNm.push( same[0].title );
+                        arrHeaderNm.push( same[0].title );                       
                     }
                 }
+
             }
 
 
@@ -1187,29 +1219,18 @@ export default {
 
                     if ( typeof dataRow[o] != "undefined" ) {
 
-                        /* 종목="F16002" 인 경우 */
-                        if( "F16002" == o ) {
-                            tempObj[o]  =   dataRow[o] + "\n" + dataRow.F16013;     /* F16002=한글종목명, F16013=단축코드 */
-                        }
-                        /* 전일NAV="F03329", LP매도호가="F40544", LP매수호가="F40545" */
-                        /* 종가1주수익률="W00002", 종가1달수익률="W00003", 종가3달수익률="W00004", 종가YTD수익률="W00005" */
-                        /* NAV1주수익률="W00012", NAV1달수익률="W00013", NAV3달수익률="W00014", NAVYTD수익률="W00015" */
-                        /* 과표기준가="F15007", ETF 현재가="F15001", ETF 전일가="F18001", 괴리율="F19330" */
-                        else if( [ "F03329", "F40544", "F40545", "W00002", "W00003", "W00004", "W00005", "W00012", "W00013", "W00014", "W00015", "F15007", "F15001", "F18001", "F19330" ].includes( o ) ) {
+                        /* 전일NAV="F03329", LP매도호가="F40544", LP매수호가="F40545", 종가1주수익률="W00002", 종가1달수익률="W00003" */
+                        /* 종가3달수익률="W00004", 종가YTD수익률="W00005", NAV1주수익률="W00012", NAV1달수익률="W00013", NAV3달수익률="W00014" */
+                        /* NAVYTD수익률="W00015", 과표기준가="F15007", ETF 현재가="F15001", ETF 전일가="F18001", 괴리율="F19330" */
+                        /* iNAV="F15301", 장중지표가치(iNAV/iIV)등락율="F30818", 지수="F15318", ETF관련지수등락율="F30823", LP스프레드="F33294" */
+                        /* 환율 (매매기준율)="F30819" */
+                        if( [       "F03329", "F40544", "F40545", "W00002", "W00003"
+                                ,   "W00004", "W00005", "W00012", "W00013", "W00014"
+                                ,   "W00015", "F15007", "F15001", "F18001", "F19330"
+                                ,   "F15301", "F30818", "F15318", "F30823", "F33294"
+                                ,   "F30819" ].includes( o ) ) {
                             tempObj[o]  =   Number( util.NumtoStr( util.formatNumber( dataRow[o] ) ) );
                         }
-                        /* iNAV="F15301" 인 경우 */
-                        else if( "F15301" == o ) {
-                            tempObj[o]  =   util.formatNumber( dataRow[o] ) + "\n" + dataRow.F30818;     /* F30818=장중지표가치(iNAV/iIV)등락율 */
-                        }
-                        /* LP스프레드="F33294" 인 경우 */
-                        else if( "F33294" == o ) {
-                            tempObj[o]  =   Number( util.NumtoStr( util.formatNumber( dataRow[o] ) ) );
-                        }
-                        /* 지수="F15318" 인 경우 */
-                        else if( "F15318" == o ) {
-                            tempObj[o]  =   util.formatNumber( dataRow[o] ) + "\n" + dataRow.F30823;     /* F30823=ETF관련지수등락율 */
-                        }                        
                         /* 환율="F18438" 인 경우 */
                         else if( "F18438" == o ) {
                             var v_F30819    =   util.formatNumber( dataRow.F30819 );        /* 매매기준율 */
@@ -1217,13 +1238,7 @@ export default {
 
                             var rateData    =   util.formatNumber( ( ( util.NumtoStr( v_F30819 ) / util.NumtoStr( v_F30824 ) ) - 1 ) * 100 );    /* ( 장전기준율 / 매매기준율 - 1 ) * 100 */
 
-                            tempObj[o]      =       util.formatNumber( dataRow.F30819 )     /* 매매기준율 */
-                                                +   "\n" 
-                                                +   rateData;
-                        }
-                        /* 최근종가="F15001" 인 경우 */
-                        else if( "F15001" == o ) {
-                            tempObj[o]  =   dataRow[o] + "\n" + dataRow.F15004;     /* F15004=등락율 */
+                            tempObj[o]      =   rateData;
                         }
                         else{
                             tempObj[o]  =   dataRow[o];
@@ -1248,6 +1263,14 @@ export default {
             };
 
             util.fn_downExcel( excelInfo );
+        },
+
+        fn_arrInsertAtFind( arr, findStr, nextAddStr ) {
+            for( var i=arr.length-1; i >=0; i-- ) {
+                if( arr[i] === findStr ) {
+                    arr.splice( i+1, 0, nextAddStr );
+                }
+            }
         }
     }
 };

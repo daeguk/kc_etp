@@ -38,7 +38,7 @@
                                 </li>
                             </ul>
                         </v-list-tile-content>
-                        <span><button type='button'  class="exceldown_btn"></button></span>
+                        <span><button type='button'  class="exceldown_btn" @click.stop="fn_downExcel"></button></span>
                     </v-list-tile>
                 </v-list>
             </div>
@@ -643,7 +643,90 @@ export default {
             vm.$emit("fn_closePop", "close");
         }, 
 
-        
+        /*
+         *  엑셀을 다운로드 한다.
+         *  2019-07-09  bkLove(촤병국)
+         */
+        fn_downExcel: function() {
+            var vm = this;
+
+            var tableList = pdf_table.rows().data();
+
+            if( !tableList || tableList.length == 0 ) {
+                vm.$emit("showMessageBox", '확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
+                return  false;
+            }          
+
+            var arrHeaderNm     =   [];
+            var arrHeaderKey    =   [];
+            var arrColsInfo     =   [];
+
+            var sheetNm         =   "";
+            var execelDataList  =   [];
+
+
+            sheetNm         =   "PDF";
+            arrHeaderNm     =   [       "분류", "코드", "종목", "CU 수량", "비중"
+                                    ,   "현재가", "등락율", "기준가", "CU시가총액" ];
+            arrHeaderKey    =   [       "F33861", "F16013", "F16004", "F16499", "F34743"
+                                    ,   "F15001", "F15004", "F15007", "F16588" ];
+            arrColsInfo     =   [       {width : 10}, {width : 10}, {width : 30}, {width : 15}, {width : 15}
+                                    ,   {width : 15}, {width : 15}, {width : 15}, {width : 15} ];
+
+
+            /* key에 존재하는 데이터를 기준으로 원본 데이터 추출 */
+            for( var i in tableList ) {
+                var dataRow = tableList[i];
+                
+                var tempObj = {};
+                var existCheck = _.filter( arrHeaderKey, function(o) {
+
+                    if ( typeof dataRow[o] != "undefined" ) {
+
+                        /* 분류="F33861" 인 경우 */
+                        if( "F33861" == o ) {
+                            var htm = "";
+                            if ( dataRow[o] == 0) {
+                                htm = 'KSP';
+                            } else if ( dataRow[o] == 1) {
+                                htm = 'KSQ';
+                            } else if ( dataRow[o] == 2) {
+                                htm = '기타';
+                            } else if ( dataRow[o] == 3) {
+                                htm = '채권';
+                            } else if ( dataRow[o] == 4) {
+                                htm = '파생';
+                            }                            
+                            tempObj[o]  =   htm;
+                        }
+                        /* CU수량="F16499", 비중="F34743", 기준가="F15007", CU시가총액="F16588", 등락율="F15004", 현재가="F15001"  인 경우 */
+                        else if( [ "F16499", "F34743", "F15007", "F16588", "F15004", "F15001" ].includes( o ) ) {
+                            tempObj[o]  =   Number( util.NumtoStr( util.formatNumber( dataRow[o] ) ) );
+                        }
+                        else{
+                            tempObj[o]  =   dataRow[o];
+                        }
+                    }
+                });
+
+                if( Object.keys(tempObj).length > 0 ) {
+                    execelDataList[i]   =   tempObj;
+                }
+            }
+
+            var excelInfo = {
+                    excelFileNm     :   "iNAV 계산기"
+                ,   sheetNm         :   sheetNm
+                ,   dataInfo        :   execelDataList
+
+                ,   arrHeaderNm     :   arrHeaderNm
+                ,   arrHeaderKey    :   arrHeaderKey
+
+                ,   arrColsInfo     :   arrColsInfo
+            };
+
+            util.fn_downExcel( excelInfo );
+        }
     }
 };
 </script>
