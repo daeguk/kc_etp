@@ -1,9 +1,14 @@
 <template>
     <v-container>
+
         <v-tabs v-model="activeTab" align-with-title light>
             <v-tabs-slider></v-tabs-slider>
-            <v-tab v-for="item in item" :key="item">{{ item }}</v-tab>
+
+            <v-tab v-for="tab of tabs"  :key="tab.id">
+                {{ tab.name }}
+            </v-tab>
         </v-tabs>
+
         <v-tabs-items v-model="activeTab">
             <v-tab-item>
                 <v-layout row wrap class="content_margin">
@@ -61,18 +66,9 @@
                                         </td>
                                         <td>2019.01.12</td>
                                         <td class="txt_right">
-                                            <button
-                                                class="btn_icon v-icon material-icons"
-                                                @click
-                                            >inbox</button>
-                                            <button
-                                                class="btn_icon v-icon material-icons"
-                                                @click
-                                            >equalizer</button>
-                                            <button
-                                                class="btn_icon v-icon material-icons"
-                                                @click
-                                            >more_horiz</button>
+                                            <button class="btn_icon v-icon material-icons"  @click.stop="" >inbox</button>
+                                            <button class="btn_icon v-icon material-icons"  @click.stop="" >equalizer</button>
+                                            <button class="btn_icon v-icon material-icons"  @click.stop="" >more_horiz</button>
                                         </td>
                                     </tr>
                                     <tr>
@@ -88,18 +84,9 @@
                                         </td>
                                         <td>2019.01.12</td>
                                         <td class="txt_right">
-                                            <button
-                                                class="btn_icon v-icon material-icons"
-                                                @click
-                                            >inbox</button>
-                                            <button
-                                                class="btn_icon v-icon material-icons"
-                                                @click
-                                            >equalizer</button>
-                                            <button
-                                                class="btn_icon v-icon material-icons"
-                                                @click
-                                            >more_horiz</button>
+                                            <button class="btn_icon v-icon material-icons"  @click.stop="" >inbox</button>
+                                            <button class="btn_icon v-icon material-icons"  @click.stop="" >equalizer</button>
+                                            <button class="btn_icon v-icon material-icons"  @click.stop="" >more_horiz</button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -109,7 +96,7 @@
                 </v-layout>
             </v-tab-item>
             <v-tab-item>
-                <Simulation></Simulation>
+                <Simulation v-if="activeTab==1"></Simulation>
             </v-tab-item>
         </v-tabs-items>
     </v-container>
@@ -129,11 +116,14 @@ var table01 = null;
 
 
 export default {
-    
+
     data() {
         return {
             activeTab: 0,
-            item: ["관리목록", "Simulation"]
+            tabs: [
+                { id: 0, name: "관리목록"       },
+                { id: 1, name: "Simulation"     },
+            ],            
         };
     },
     components: {
@@ -150,9 +140,8 @@ export default {
 
     methods: {
         fn_test: function() {
-            this.$router.push({ path: "/Simulation/SimulationResult" });
+            this.$router.push({ path: "/simulation/SimulationResult" });
         },
-        
     }    
 };
 </script>

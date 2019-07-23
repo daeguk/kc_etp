@@ -54,6 +54,7 @@ module.exports = {
         { file: './user/etp/etpOper', path: '/user/etp/getTmPdfBaiscMaxF12506', method: 'getTmPdfBaiscMaxF12506', session: 'uncheck', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getNowDate', method: 'getNowDate', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getExistsNowPdfBaisc', method: 'getExistsNowPdfBaisc', session: 'check', type: 'post' },        
+//      { file: './user/etp/etpOper', path: '/user/etp/getPdfFileUpload', method: 'getPdfFileUpload', session: 'check', type: 'post' },
         
 
         { file: './user/etp/etpNavCalcu', path: '/user/etp/getiNavData', method: 'getiNavData', session: 'check', type: 'get' },
@@ -151,6 +152,9 @@ module.exports = {
 
         /* 고객지원 (수정하시 마세요. 고객지원은 uncheck 입니다.)*/
         { file: './user/etc/custSupport', path: '/user/etc/saveCustSupport', method: 'saveCustSupport', session: 'uncheck', type: 'post' },
+
+        /* 시뮬레이션 관련 */
+        { file: './user/simulation/simulation', path: '/user/simulation/getInitData', method: 'getInitData', session: 'uncheck', type: 'post' },    // 시뮬레이션 공통코드 초기 데이터 조회
 
         //풀 테스트 
 

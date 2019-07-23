@@ -206,7 +206,7 @@ var table01 = null;
 
 
 export default {
-    
+
     data() {
         return {
             toggle_one: 0,
@@ -256,13 +256,46 @@ export default {
 
     mounted() {
         var vm = this;
+
+        vm.fn_initData();
     },
 
     methods: {
 
         fn_test: function() {
-            this.$router.push({ path: "/Simulation/SimulationResult" });
+            this.$router.push( { path: "/Simulation/SimulationResult" }) ;
         },
+
+        /*
+         * 초기 설정 데이터를 조회한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_initData() {
+            var vm = this;
+
+            /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
+            /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+            /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
+            /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
+            var arrComMstCd = [ "COM006", "COM007", "COM008", "COM009" ];            
+
+            vm.arrShowErrorMessage  =   null;
+console.log( ">>>>>>>>>>>>>>>>>>> fn_initData");
+            axios.post(Config.base_url + "/user/simulation/getInitData", {
+                data: { arrComMstCd : arrComMstCd }
+            }).then( function(response) {
+
+                if (response && response.data) {
+                    var msg = ( response.data.message ? response.data.message : "" );
+
+                    if (!response.data.success) {
+                        if( msg ) {
+                            vm.arrShowErrorMessage.push( msg );
+                        }
+                    }
+                }
+            });            
+        }
         
     }
 };

@@ -167,19 +167,19 @@ export const routes = [
               requiresType: ['0001', '0002', '0004', '0005']
             },
         },
-        {   path : 'Simulation/SimulationList',
+        {   path : 'simulation/simulationList',
             component: SimulationList,
             meta: {
               requiresAuth: false,
             },
         },
-        {   path : 'Simulation/Simulation',
+        {   path : 'simulation/simulation',
             component: Simulation,
             meta: {
               requiresAuth: false,
             },
         },
-        {   path : 'Simulation/SimulationResult',
+        {   path : 'simulation/simulationResult',
             component: SimulationResult,
             meta: {
               requiresAuth: false,
