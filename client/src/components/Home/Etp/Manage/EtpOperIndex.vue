@@ -3,20 +3,21 @@
         <v-layout row wrap class="con_wrap">
             <v-flex grow class="conWidth_left">
                 <v-card flat>
-                    <v-card-title primary-title>
-                        <h3 class="headline subtit" pb-0>
+                    <v-card-title primary-title class="title_wrap02">
+                        <h3 class="headline subtit  w100" pb-0>
                             지수관리
                             <span class="text_result">{{ result_cnt }}</span>
                             <span class="text_result_t"> results</span>
                             <span class="sub_txt">기준일 : {{ fmt_F12506 }}</span>
+                            <div class="right_btn"><button type='button'  class="exceldown_btn" @click.stop="fn_downExcel"></button></div>
                         </h3>
-                    </v-card-title>
+                     </v-card-title>
                     
                     <v-card flat>
                         <table id="tableOperIndex" class="tbl_type ver7"></table>
 
                     </v-card>
-             </v-card>
+                </v-card>
            </v-flex>
            <v-flex class="conWidth_right">
                 <!-- [지수관리] Quick 메뉴 정보 -->
@@ -55,6 +56,7 @@ export default {
         return {
             fmt_F12506 :   "",
             indexBasic  :   {},
+            indexList   :   [],
             paramData   :   {},
             stateInfo   :   {
                                     pageState : 'index'     /* index - 지수관리 , oversea - 해외지수 종가 모니터링 */
@@ -120,6 +122,8 @@ export default {
                 tableOperIndex.clear().draw();
             }
 
+            vm.indexList    =   [];
+
             vm.$emit( "fn_showProgress", true );
             axios.post( url, {
                 data: {
@@ -149,6 +153,8 @@ export default {
 
                         vm.fmt_F12506   =   dataList[0].fmt_F12506;
                         vm.result_cnt   =   util.formatInt( dataList.length );
+
+                        vm.indexList    =   dataList;
                     }
                 }
 
@@ -557,6 +563,101 @@ export default {
         closeIndexModal: function() {
           this.IndexModalFlag = false;
         },
+
+        /*
+         *  엑셀을 다운로드 한다.
+         *  2019-07-09  bkLove(촤병국)
+         */
+        fn_downExcel: function() {
+            var vm = this;
+
+            var tableList = tableOperIndex.rows().data();
+
+            if( !tableList || tableList.length == 0 ) {
+                vm.$emit("showMessageBox", '확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
+                return  false;
+            }          
+
+            var arrHeaderNm     =   [];
+            var arrHeaderKey    =   [];
+            var arrColsInfo     =   [];
+
+            var sheetNm         =   "";
+            var execelDataList  =   [];
+
+
+            /* [해외지수 종가 모니터링]을 선택하는 경우 */
+            if( vm.stateInfo.pageState == "oversea" ) {
+                sheetNm         =   "해외지수 종가 모니터링";
+                arrHeaderNm     =   [       "입수 구분", "지수", "단축코드", "실시간 심볼", "증가 심볼"
+                                        ,   "휴장일", "최근종가", "등락율", "최근일자", "기준일자" ];
+                arrHeaderKey    =   [       "in_out", "F16002", "F16013", "incre_symbol", "rest_date"
+                                        ,   "F15001",  "F15004", "fmt_F12506", "fmt_std_date" ];
+                arrColsInfo     =   [       {width : 10},{width : 40},{width : 15},{width : 15},{width : 30}
+                                        ,   {width : 15},{width : 15},{width : 15},{width : 15} ];
+            }
+            else{
+                sheetNm         =   "지수관리";
+                arrHeaderNm     =   [ "지수", "단축코드", "산출기관", "벤더", "관리유형", "Last", "등락율", "Time", "ETF" ];
+                arrHeaderKey    =   [ "F16002", "F16013", "large_type", "vendor", "manage_type", "last_date", "F15004", "last_time", "etp_info_json" ];
+                arrColsInfo     =   [ {width : 40},,,,,,,,{width:40} ];
+            }
+
+
+            /* key에 존재하는 데이터를 기준으로 원본 데이터 추출 */
+            for( var i in tableList ) {
+                var dataRow = tableList[i];
+                
+                var tempObj = {};
+                var existCheck = _.filter( arrHeaderKey, function(o) {
+
+                    if ( typeof dataRow[o] != "undefined" ) {
+
+                        /* Last="last_date" 인 경우 */
+                        if( "last_date" == o ) {
+                            tempObj[o]  =   dataRow[o] + "\n" + dataRow.F15004;     /* F15004=등락율 */
+                        }
+                        /* ETF="etp_info_json" 인 경우 */
+                        else if( "etp_info_json" == o ) {
+                            var arrData = JSON.parse( dataRow[o] );
+
+                            var arrEtfData = "";
+                            for( var j in arrData ) {
+                                arrEtfData  +=  arrData[j].F16002 + "\n"; 
+                            }
+
+                            if( arrEtfData ) {
+                                tempObj[o]  =   arrEtfData;
+                            }
+                        }
+                        /* 최근종가="F15001", 등락율="F15004" 인 경우 */
+                        else if( [ "F15001", "F15004" ].includes( o ) ) {
+                            tempObj[o]  =   Number( dataRow[o] );
+                        } 
+                        else{
+                            tempObj[o]  =   dataRow[o];
+                        }
+                    }
+                });
+
+                if( Object.keys(tempObj).length > 0 ) {
+                    execelDataList[i]   =   tempObj;
+                }
+            }
+
+            var excelInfo = {
+                    excelFileNm     :   "지수 관리"
+                ,   sheetNm         :   sheetNm
+                ,   dataInfo        :   execelDataList
+
+                ,   arrHeaderNm     :   arrHeaderNm
+                ,   arrHeaderKey    :   arrHeaderKey
+
+                ,   arrColsInfo     :   arrColsInfo
+            };
+
+            util.fn_downExcel( excelInfo );
+        }        
     }
 };
 </script>
