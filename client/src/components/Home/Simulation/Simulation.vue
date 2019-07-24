@@ -8,8 +8,8 @@
                         PORTFOLIO SIMULATION |
                         <span   class="grey--text">KOSPI, KOSDAQ, ETF를 이용해 포트폴리오를 구성하고 백테스트를 수행합니다.</span>
                     </h3>
-                    <div class="warning_box"    v-if="arrShowErrorMessage != null && arrShowErrorMessage.length > 0">
-                        <span v-for="(item, index) in arrShowErrorMessage" :key="index">
+                    <div class="warning_box"    v-if="arr_show_error_message != null && arr_show_error_message.length > 0">
+                        <span v-for="(item, index) in arr_show_error_message" :key="index">
                             <v-icon color="#ff4366">error_outline</v-icon> {{item}} <br>
                         </span>
                     </div>
@@ -21,10 +21,19 @@
 
                     <v-layout row>
                         <v-flex xs2>
+                            <v-subheader class="subheader_r">상위그룹</v-subheader>
+                        </v-flex>
+                        <v-flex xs2>
+                            <v-select :items="arr_grp_cd" item-text="scen_name" item-value="grp_cd"  v-model="grp_cd"  outline></v-select>
+                        </v-flex>
+                    </v-layout>                    
+
+                    <v-layout row>
+                        <v-flex xs2>
                             <v-subheader class="subheader_r">시나리오명</v-subheader>
                         </v-flex>
                         <v-flex xs2>
-                            <v-text-field label="unnamed-1" outline></v-text-field>
+                            <v-text-field   outline     v-model="scen_name"></v-text-field>
                         </v-flex>
                     </v-layout>
 
@@ -33,7 +42,7 @@
                             <v-subheader class="subheader_r">시작년도</v-subheader>
                         </v-flex>
                         <v-flex xs2>
-                            <v-select :items="items1" placeholder="선택하세요" outline></v-select>
+                            <v-select :items="items1" item-text="text" item-value="value"  v-model="start_year" placeholder="선택하세요" outline></v-select>
                         </v-flex>
                     </v-layout>
 
@@ -96,7 +105,7 @@
                             <v-subheader class="subheader_r">초기투자금액(KRW)</v-subheader>
                         </v-flex>
                         <v-flex xs2>
-                            <v-text-field label="1,000,000" outline></v-text-field>
+                            <v-text-field   v-model="init_invest_money" outline></v-text-field>
                         </v-flex>
                     </v-layout>
 
@@ -209,40 +218,55 @@ export default {
 
     data() {
         return {
-            toggle_one: 0,
-            items1: [
-                "2000",
-                "2001",
-                "2002",
-                "2003",
-                "2004",
-                "2005",
-                "2006",
-                "2007",
-                "2008",
-                "2009",
-                "2010",
-                "2011",
-                "2012",
-                "2013",
-                "2014",
-                "2015",
-                "2016",
-                "2017",
-                "2018",
-                "2019"
-            ],
-            items2: ["매년", "반기", "분기", "매월"],
-            items3: ["설정안함", "KOSPI200", "KOSDAQ150", "KOSPI", "KOSDAQ"],
-            item: [
-                {
-                    link: "Simulation/SimulationResult"
-                }
-            ],
-            inputDisabled : false,
+                toggle_one: 0
+            ,   items1: [
+                    "2000",
+                    "2001",
+                    "2002",
+                    "2003",
+                    "2004",
+                    "2005",
+                    "2006",
+                    "2007",
+                    "2008",
+                    "2009",
+                    "2010",
+                    "2011",
+                    "2012",
+                    "2013",
+                    "2014",
+                    "2015",
+                    "2016",
+                    "2017",
+                    "2018",
+                    "2019"
+                ]
+            ,   items2: ["매년", "반기", "분기", "매월"]
+            ,   items3: ["설정안함", "KOSPI200", "KOSDAQ150", "KOSPI", "KOSDAQ"]
+            ,   item: [
+                    {
+                        link: "Simulation/SimulationResult"
+                    }
+                ]
 
+            ,   inputDisabled : false
+            ,   arr_show_error_message      :   []          /* 에러 메시지 노출 정보 */
 
-            arrShowErrorMessage    :   []       /* 에러 메시지 노출 정보 */
+            ,   arr_grp_cd                  :   []          /* 상위 그룹정보 */
+            ,   arr_start_year              :   []          /* 초기설정 시작년도 array */
+            ,   arr_rebalance_cycle_cd      :   []          /* 초기설정 리밸런싱주기 array */
+            ,   arr_rebalance_date_cd       :   []          /* 초기설정 리밸런싱일자 array */
+            ,   arr_bench_mark_cd           :   []          /* 초기설정 벤치마크 array */
+            ,   arr_importance_method_cd    :   []          /* 초기설정 비중설정방식 array */
+
+            ,   grp_cd                      :   ""          /* 상위 그룹코드 */
+            ,   scen_name                   :   ""          /* 시나리오명 */
+            ,   start_year                  :   "2000"      /* 시작년도 */
+            ,   rebalance_cycle_cd          :   ""          /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
+            ,   rebalance_date_cd           :   ""          /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+            ,   init_invest_money           :   1000000     /* 초기투자금액 */
+            ,   bench_mark_cd               :   "0"         /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
+            ,   importance_method_cd        :   "1"         /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
         };
     },
 
@@ -257,6 +281,13 @@ export default {
     mounted() {
         var vm = this;
 
+        /* 상위 그룹정보를 조회한다. */
+        vm.fn_initGrpCd();
+
+        /* next 시나리오명을 조회한다. */
+        vm.fn_getNextScenName();        
+
+        /* 초기 설정 데이터를 조회한다. */
         vm.fn_initData();
     },
 
@@ -265,6 +296,55 @@ export default {
         fn_test: function() {
             this.$router.push( { path: "/Simulation/SimulationResult" }) ;
         },
+
+        /*
+         * 상위 그룹정보를 조회한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_initGrpCd() {
+            var vm = this;
+
+            vm.arr_show_error_message  =   [];
+            axios.post(Config.base_url + "/user/simulation/getInitGrpCd", {
+                data: {}
+            }).then( function(response) {
+                if (response && response.data) {
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.arr_show_error_message.push( msg );
+                        }
+                    }else{
+                        vm.arr_grp_cd   =   response.data.dataList;
+                    }
+                }
+            });            
+        },
+
+        /*
+         * next 시나리오명을 조회한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_getNextScenName() {
+            var vm = this;
+
+            axios.post(Config.base_url + "/user/simulation/getNextScenName", {
+                data: {}
+            }).then( function(response) {
+                if (response && response.data) {
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.arr_show_error_message.push( msg );
+                        }
+                    }else{
+                        vm.scen_name   =   response.data.scen_name;
+                    }
+                }
+            });            
+        },        
 
         /*
          * 초기 설정 데이터를 조회한다.
@@ -279,18 +359,16 @@ export default {
             /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
             var arrComMstCd = [ "COM006", "COM007", "COM008", "COM009" ];            
 
-            vm.arrShowErrorMessage  =   null;
-console.log( ">>>>>>>>>>>>>>>>>>> fn_initData");
             axios.post(Config.base_url + "/user/simulation/getInitData", {
                 data: { arrComMstCd : arrComMstCd }
             }).then( function(response) {
 
                 if (response && response.data) {
-                    var msg = ( response.data.message ? response.data.message : "" );
+                    var arrMsg = ( response.data.arrMsg && response.data.arrMsg.length > 0 ? response.data.arrMsg : [] );
 
-                    if (!response.data.success) {
-                        if( msg ) {
-                            vm.arrShowErrorMessage.push( msg );
+                    if (!response.data.result) {
+                        if( arrMsg.length > 0 ) {
+                            vm.arr_show_error_message.push( ...arrMsg );
                         }
                     }
                 }

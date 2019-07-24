@@ -4,6 +4,66 @@
 <mapper namespace="simulation">
 
     <!--
+    *   상위 그룹정보를 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getInitGrpCd">
+        SELECT      /* simulation.getInitGrpCd 상위 그룹정보를 조회한다. */
+
+                    tm_simul_mast.grp_cd            AS  grp_cd              /* 그룹코드(상위코드) */
+                ,   tm_simul_mast.scen_cd           AS  scen_cd             /* 시나리오 코드 */
+                ,   tm_simul_mast.scen_name         AS  scen_name           /* 시나리오명 */
+
+          FROM  tm_simul_mast
+
+         WHERE  1 = 1
+           AND  tm_simul_mast.grp_yn                =   '1'
+
+         ORDER  BY      tm_simul_mast.scen_name
+    </select>
+
+    <!--
+    *   next 시나리오명을 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getNextScenName">
+        SELECT      /* simulation.getNextScenName next 시나리오명을 조회한다. */
+
+                    CONCAT(
+                            #{search_scen_name}
+                        ,   '-'
+                        ,   CAST(
+                                IFNULL(
+                                        MAX( 
+                                            REPLACE( 
+                                                    SUBSTR(     tm_simul_mast.scen_name
+                                                            ,   INSTR( tm_simul_mast.scen_name, #{search_scen_name} ) + LENGTH( #{search_scen_name} ) 
+                                                    )
+                                                ,   '-'
+                                                ,   '' 
+                                            ) 
+                                        )
+                                    ,   0
+                                )   AS  UNSIGNED INTEGER 
+                            ) + 1
+                    )                               AS  next_scen_name
+
+          FROM  tm_simul_mast
+
+         WHERE  1 = 1
+           AND  tm_simul_mast.scen_name             LIKE    CONCAT( #{search_scen_name}, '%' )        /* 시나리오명 */
+
+                /* 검색문자열 이후 숫자만 추출 */
+           AND  REPLACE( 
+                                SUBSTR(     tm_simul_mast.scen_name
+                                        ,   INSTR( tm_simul_mast.scen_name, #{search_scen_name} ) + LENGTH( #{search_scen_name} ) 
+                                )
+                            ,   '-'
+                            ,   '' 
+                )                                   REGEXP  ( '^[0-9]+$' )
+    </select>    
+
+    <!--
     *   시뮬레이션 공통코드 초기 데이터를 조회한다.
     *   2019-07-26  bkLove(촤병국)
     -->
@@ -28,7 +88,7 @@
            AND  tm_code_mast.com_mst_cd             IN
                 (
                     <foreach    collection="arrComMstCd"   item="item"    index="index"   separator=" ," >
-                        #{item}  COLLATE utf8_general_ci
+                        #{item}
                     </foreach>
                 )
          ORDER  BY      tm_code_dtl.com_mst_cd
