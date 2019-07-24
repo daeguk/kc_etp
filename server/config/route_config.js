@@ -157,6 +157,8 @@ module.exports = {
         { file: './user/simulation/simulation', path: '/user/simulation/getInitGrpCd'   , method: 'getInitGrpCd'    , session: 'uncheck', type: 'post' },    // 상위 그룹정보 조회
         { file: './user/simulation/simulation', path: '/user/simulation/getNextScenName', method: 'getNextScenName' , session: 'uncheck', type: 'post' },    // next 시나리오명을 조회한다.
         { file: './user/simulation/simulation', path: '/user/simulation/getInitData'    , method: 'getInitData'     , session: 'uncheck', type: 'post' },    // 공통코드 초기 데이터 조회
+        { file: './user/simulation/simulation', path: '/user/simulation/getJongmokInfo' , method: 'getJongmokInfo'  , session: 'uncheck', type: 'post' },    // 선택된 종목의 구성정보 조회
+        { file: './user/simulation/simulation', path: '/user/simulation/saveBaicInfo'   , method: 'saveBaicInfo'    , session: 'uncheck', type: 'post' },    // 기본정보 저장
 
         //풀 테스트 
 

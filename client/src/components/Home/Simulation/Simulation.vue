@@ -24,7 +24,14 @@
                             <v-subheader class="subheader_r">상위그룹</v-subheader>
                         </v-flex>
                         <v-flex xs2>
-                            <v-select :items="arr_grp_cd" item-text="scen_name" item-value="grp_cd"  v-model="grp_cd"  outline></v-select>
+                            <v-select   :items="arr_grp_cd" 
+
+                                        item-text="scen_name" 
+                                        item-value="scen_cd" 
+
+                                        v-model="grp_cd"  
+                                        outline>
+                            </v-select>
                         </v-flex>
                     </v-layout>                    
 
@@ -42,7 +49,15 @@
                             <v-subheader class="subheader_r">시작년도</v-subheader>
                         </v-flex>
                         <v-flex xs2>
-                            <v-select :items="items1" item-text="text" item-value="value"  v-model="start_year" placeholder="선택하세요" outline></v-select>
+                            <v-select   :items="arr_start_year" 
+                            
+                                        item-text="text" 
+                                        item-value="value"  
+                                        
+                                        v-model="start_year" 
+                                        placeholder="선택하세요" 
+                                        outline>
+                            </v-select>
                         </v-flex>
                     </v-layout>
 
@@ -51,50 +66,31 @@
                             <v-subheader class="subheader_r">리밸런싱주기</v-subheader>
                         </v-flex>
                         <v-flex xs2>
-                            <v-select :items="items2" placeholder="선택하세요" outline></v-select>
+                            <v-select   :items="arr_rebalance_cycle_cd" 
+                                        
+                                        item-text="com_dtl_name" 
+                                        item-value="com_dtl_cd"
+                                        
+                                        v-model="rebalance_cycle_cd" 
+                                        placeholder="선택하세요" 
+                                        outline>
+                            </v-select>
                         </v-flex>
                         <v-flex xs8 row class="checkbox_w pl-2">
                             <v-layout row wrap class="light--text">
-                                <v-flex xs1>
-                                    <v-checkbox
-                                        v-bind:disabled="inputDisabled"
-                                        color="primary"
-                                        label="첫영업일"
-                                        value="Y"
-                                    ></v-checkbox>
-                                </v-flex>
-                                <v-flex xs2>
-                                    <v-checkbox
-                                        v-bind:disabled="inputDisabled"
-                                        color="primary"
-                                        label="동시만기 익일"
-                                        value="Y"
-                                    ></v-checkbox>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-checkbox
-                                        v-bind:disabled="inputDisabled"
-                                        color="primary"
-                                        label="동시만기 익주 첫영업일"
-                                        value="Y"
-                                    ></v-checkbox>
-                                </v-flex>
-                                <v-flex xs2>
-                                    <v-checkbox
-                                        v-bind:disabled="inputDisabled"
-                                        color="primary"
-                                        label="옵션만기 익일"
-                                        value="Y"
-                                    ></v-checkbox>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-checkbox
-                                        v-bind:disabled="inputDisabled"
-                                        color="primary"
-                                        label="옵션만기 익주 첫영업일"
-                                        value="Y"
-                                    ></v-checkbox>
-                                </v-flex>
+
+                                <v-checkbox
+                                    v-for="(item, index) in arr_rebalance_date_cd"
+
+                                    :key="'rebalance_date_cd_' + index"
+                                    :label="item.com_dtl_name"
+                                    :value="item.com_dtl_cd"
+                                    :disabled="rebalance_cd[index]"
+
+                                    v-model="rebalance_date_cd"
+                                    color="primary"
+                                ></v-checkbox>
+
                             </v-layout>
                         </v-flex>
                     </v-layout>
@@ -140,15 +136,15 @@
 
 
                     <v-card flat class="pt-3">
-                        <table class="tbl_type ver10">
+                        <table class="tbl_type ver10"   id="table01">
                             <caption>헤더 고정 테이블</caption>
                             <colgroup>
                                 <col width="10%" />
-                                <col width="16%" />
-                                <col width="16%" />
+                                <col width="25%" />
                                 <col width="15%" />
-                                <col width="16%" />
-                                <col width="16%" />
+                                <col width="15%" />
+                                <col width="20%" />
+                                <col width="15%" />
                             </colgroup>
                             <thead>
                                 <tr>
@@ -156,29 +152,11 @@
                                     <th>종목코드</th>
                                     <th class="txt_left">종목명</th>
                                     <th class="txt_right">시가총액</th>
-                                    <th class="txt_right">YTD</th>
+                                    <th class="txt_right">비중</th>
                                     <th class="txt_right">지수적용비율</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>
-                                        <button class="btn_icon v-icon material-icons"  @click.stop="">add_circle_outline</button>
-                                        <span class="add_btn_span">Asset1</span>
-                                    </td>
-                                    <td class="td_in_input">
-                                        <input type="text" id class="txt_right wid100" value />
-                                        <span>
-                                            <button class="btn_icon v-icon material-icons"  @click.stop="" >search</button>
-                                        </span>
-                                    </td>
-                                    <td class="txt_left">삼성전자</td>
-                                    <td class="txt_right">999.999.999.999.999</td>
-                                    <td class="txt_right">
-                                        <input type="text" id class="txt_right wid100" value />
-                                    </td>
-                                    <td class="txt_right">25.3</td>
-                                </tr>
                                 <tr class="sum">
                                     <td>Total</td>
                                     <td></td>
@@ -193,9 +171,13 @@
                         </table>
 
                         <div class="text-xs-center mt-3">
-                            <v-btn depressed color="primary" @click.stop="fn_test">백테스트 실행</v-btn>
+                            <v-btn depressed color="primary" @click.stop="fn_saveBaicInfo()">백테스트 실행</v-btn>
                         </div>
+
+                        <MastPopup v-if="MastModalFlag" @selectedItem="fn_getSelectedItem" @closeMastModal="fn_closeMastModal" ></MastPopup>
+
                     </v-card>
+
                 </v-card>
 
             </v-card>
@@ -211,6 +193,8 @@ import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
 
+import MastPopup from "@/components/common/popup/MastPopup";
+
 var table01 = null;
 
 
@@ -219,29 +203,6 @@ export default {
     data() {
         return {
                 toggle_one: 0
-            ,   items1: [
-                    "2000",
-                    "2001",
-                    "2002",
-                    "2003",
-                    "2004",
-                    "2005",
-                    "2006",
-                    "2007",
-                    "2008",
-                    "2009",
-                    "2010",
-                    "2011",
-                    "2012",
-                    "2013",
-                    "2014",
-                    "2015",
-                    "2016",
-                    "2017",
-                    "2018",
-                    "2019"
-                ]
-            ,   items2: ["매년", "반기", "분기", "매월"]
             ,   items3: ["설정안함", "KOSPI200", "KOSDAQ150", "KOSPI", "KOSDAQ"]
             ,   item: [
                     {
@@ -249,7 +210,26 @@ export default {
                     }
                 ]
 
-            ,   inputDisabled : false
+
+            ,   rebalance_cd:[false, true, true, true, false]
+            ,   MastModalFlag: false
+            ,   selectedRowIndex    :   -1
+            ,   arr_rebalance_disabled_check    :   { 
+                        /* 1- 매년 */
+                        "1" :   [ false , true, true, true, false ]
+
+                        /* 2-반기 */
+                    ,   "2" :   [ false , false, true, true, false ]
+
+                        /* 3-분기 */
+                    ,   "3" :   [ false , true, false, true, false ]
+
+                        /* 4-매월 */
+                    ,   "4" :   [ false , true, true, false, false ]
+
+                        /* 5-매주 */
+                    ,   "5" :   [ false , false, false, false, false ]
+                }
             ,   arr_show_error_message      :   []          /* 에러 메시지 노출 정보 */
 
             ,   arr_grp_cd                  :   []          /* 상위 그룹정보 */
@@ -261,17 +241,19 @@ export default {
 
             ,   grp_cd                      :   ""          /* 상위 그룹코드 */
             ,   scen_name                   :   ""          /* 시나리오명 */
-            ,   start_year                  :   "2000"      /* 시작년도 */
-            ,   rebalance_cycle_cd          :   ""          /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
+            ,   start_year                  :   2000        /* 시작년도 */
+            ,   rebalance_cycle_cd          :   "1"         /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
             ,   rebalance_date_cd           :   ""          /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
             ,   init_invest_money           :   1000000     /* 초기투자금액 */
             ,   bench_mark_cd               :   "0"         /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
             ,   importance_method_cd        :   "1"         /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
+
+            ,   arr_portfolio               :   []
         };
     },
 
     components: {
-
+        MastPopup,
     },    
 
     created() {
@@ -289,6 +271,29 @@ export default {
 
         /* 초기 설정 데이터를 조회한다. */
         vm.fn_initData();
+
+
+
+        table01 =   $( "#table01" );
+
+        /* 최초 5개의 레코드를 노출한다. */
+        vm.fn_addRecords( 0, 5 );
+
+        /* table tr 에서 추가 버튼을 누르는 경우 */
+        $('#table01 tbody').on('click', "[name='btn_asset']", function() {
+            var tr          =   $(this).closest('tr');
+            var rowIndex    =   tr.index();
+
+            vm.fn_addRecords( rowIndex+1, 5 );
+        });
+        
+        /* table tr 에서 자산찾기 버튼을 누르는 경우  */
+        $('#table01 tbody').on('click', "[name='btn_F16316_search']", function() {
+            var tr          =   $(this).closest('tr');
+            var rowIndex    =   tr.index();
+
+            vm.fn_openMastModal( rowIndex );
+        });        
     },
 
     methods: {
@@ -310,7 +315,7 @@ export default {
             }).then( function(response) {
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
-
+debugger;
                     if (!response.data.result) {
                         if( msg ) {
                             vm.arr_show_error_message.push( msg );
@@ -343,8 +348,8 @@ export default {
                         vm.scen_name   =   response.data.scen_name;
                     }
                 }
-            });            
-        },        
+            });
+        },
 
         /*
          * 초기 설정 데이터를 조회한다.
@@ -370,11 +375,278 @@ export default {
                         if( arrMsg.length > 0 ) {
                             vm.arr_show_error_message.push( ...arrMsg );
                         }
+                    }else{
+
+                        /* 초기설정 시작년도 array */
+                        if( response.data.arr_start_year && response.data.arr_start_year.length > 0 ) {
+                            vm.arr_start_year   =   response.data.arr_start_year;
+                        }
+
+                        /* 초기설정 리밸런싱주기 array */
+                        if( response.data.arr_rebalance_cycle_cd && response.data.arr_rebalance_cycle_cd.length > 0 ) {
+                            vm.arr_rebalance_cycle_cd   =   response.data.arr_rebalance_cycle_cd;
+                        }
+
+                        /* 초기설정 리밸런싱일자 array */
+                        if( response.data.arr_rebalance_date_cd && response.data.arr_rebalance_date_cd.length > 0 ) {
+                            vm.arr_rebalance_date_cd   =   response.data.arr_rebalance_date_cd;
+                        }
+
+                        /* 초기설정 벤치마크 array */
+                        if( response.data.arr_bench_mark_cd && response.data.arr_bench_mark_cd.length > 0 ) {
+                            vm.arr_bench_mark_cd   =   response.data.arr_bench_mark_cd;
+                        }
+
+                        /* 초기설정 비중설정방식 array */
+                        if( response.data.arr_importance_method_cd && response.data.arr_importance_method_cd.length > 0 ) {
+                            vm.arr_importance_method_cd   =   response.data.arr_importance_method_cd;
+                        }
                     }
                 }
             });            
+        },
+
+        fn_checkDisabled() {
+            var vm = this;
+
+            vm.rebalance_cd =   vm.arr_rebalance_disabled_check[ vm.rebalance_cycle_cd ];
+        },
+
+        /*
+         * 레코드를 추가한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_addRecords( rowIndex=0, addCount=1 ) {
+            var vm  =   this;
+            
+            var trHtml      =   "";
+            for( var i=1; i <= addCount; i++ ) {
+                trHtml      +=  `<tr>`;
+
+                trHtml      +=  `    <td>`;
+                if( i == addCount ) {
+                    trHtml      +=  `       <button class="btn_icon v-icon material-icons" name="btn_asset">add_circle_outline</button>`;
+                }else{
+                    trHtml      +=  `       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`;
+                }
+                trHtml      +=  `        <span class="add_btn_span">Asset` + (rowIndex+i) + `</span>`;
+                trHtml      +=  `    </td>`;
+
+                trHtml      +=  `    <td class="td_in_input">`;
+                trHtml      +=  `        <input type="text" name="F16316" class="txt_right wid100" value />`;
+                trHtml      +=  `        <span>`;
+                trHtml      +=  `            <button class="btn_icon v-icon material-icons"  name="btn_F16316_search" >search</button>`;
+                trHtml      +=  `        </span>`;
+                trHtml      +=  `    </td>`;
+
+                trHtml      +=  `    <td class="txt_left"></td>`;
+                trHtml      +=  `    <td class="txt_right"></td>`;
+                trHtml      +=  `    <td class="txt_right">`;
+                trHtml      +=  `        <input type="text" name="importance" class="txt_right wid100" value />`;
+                trHtml      +=  `    </td>`;
+                trHtml      +=  `    <td class="txt_right"></td>`;
+                trHtml      +=  `</tr>`;
+            }
+
+            $( "#table01 tbody > tr").eq( rowIndex ).before( trHtml );
+        },
+
+        /*
+         * 자산추가 창을 오픈한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_openMastModal: function( rowIndex ) {  
+            var vm = this;
+
+            vm.selectedRowIndex =   rowIndex;
+            vm.MastModalFlag    =   true;
+        },
+
+        /*
+         * 자산추가 창을 종료한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_closeMastModal: function() { 
+            var vm = this;
+
+            vm.MastModalFlag    =   false;
+        },
+
+        /*
+         *  자산추가에서 선택한 정보를 반환한다.
+         *  gubun : 1 ETF, 2 ETN, 3 INDEX
+         * 
+         *  2019-07-26  bkLove(촤병국)
+         */        
+        fn_getSelectedItem: function( items, gubun ) {
+            var vm = this;
+
+            for( let i=0; i < items.length; i++ ) {
+
+                /* 추가된 자산정보를 table 에 설정한다. */
+                vm.fn_setMastRowData( vm.selectedRowIndex + i, items[i], gubun );
+            }
+        },
+
+        /*
+         * 추가된 자산정보를 table 에 설정한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_setMastRowData: function( rowIndex=0, rowItem, gubun ) {
+            var vm = this;
+
+
+            var dataTrCnt   =   table01.find( "tbody tr" ).length - 1;
+            if( rowIndex > dataTrCnt-1 ) {
+                vm.fn_addRecords( dataTrCnt, 5 );
+            }
+
+            var tr;          
+
+            new Promise(function(resolve, reject) {
+
+            /* 한건씩 자산을 추가한다. */
+                tr  =   table01.find( "tbody tr" ).eq( rowIndex );
+
+                tr.find( "td input[name=F16316]" ).val( rowItem.F16012 );       /* 종목코드 */
+                tr.find( "td:eq(2)" ).text( rowItem.F16002 );                   /* 종목명 */
+
+                resolve( { result : true } );
+
+            }).catch( function(e) {
+                console.log( e );
+
+                resolve( { result : false } );
+
+            }).then( function(e1) {
+
+                if( e1 && e1.result ) {
+
+                    new Promise(function(resolve, reject) {
+
+                    /* 선택된 종목의 구성정보를 조회한다. */
+                        axios.post(Config.base_url + "/user/simulation/getJongmokInfo", {
+                            data: { "F16012" : rowItem.F16012 }
+                        }).then( function(response) {
+                            if (response && response.data) {
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.arr_show_error_message.push( msg );
+                                    }
+
+                                    resolve( { result : false } );
+                                }else{
+                                    var jongmokInfo = response.data.jongmokInfo;
+                                    
+                                    if( !jongmokInfo || Object.keys( jongmokInfo ).length == 0 ) {
+                                        jongmokInfo =   {};
+                                    }
+
+                                    if( jongmokInfo.F15028 ) {
+                                        tr.find( "td:eq(3)" ).text( jongmokInfo.F15028 );               /* 시가총액 */
+
+                                        tr.find( "td:eq(5)" ).text( rowIndex / 100 );                   /* 지수적용비율 */
+                                    }
+
+                                    resolve( { result : true } );
+                                }
+
+                            }else{
+                                resolve( { result : false } );
+                            }
+
+                        }).catch( function(e) {
+                            console.log( e );
+                            resolve( { result : false } );
+                        });
+
+                    }).catch( function(e1) {
+                        console.log( e1 );
+                        resolve( { result : false } );
+                    });
+                }
+
+            });
+        },
+
+        /*
+         * 시뮬레이션 기본정보를 저장한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_saveBaicInfo() {
+            var vm = this;
+
+            vm.arr_show_error_message   =   [];
+            vm.fn_table2List();
+
+            if( !vm.arr_portfolio || vm.arr_portfolio.length == 0 ) {
+                vm.arr_show_error_message.push( "[포트폴리오] 종목코드가 한건 이상 존재해야 합니다." );
+                return  false;
+            }
+
+            axios.post(Config.base_url + "/user/simulation/saveBaicInfo", {
+                data: { 
+                        "grp_cd"                :   vm.grp_cd
+                    ,   "scen_name"             :   vm.scen_name
+                    ,   "start_year"            :   vm.start_year
+                    ,   "rebalance_cycle_cd"    :   vm.rebalance_cycle_cd
+                    ,   "rebalance_date_cd"     :   vm.rebalance_date_cd
+                    ,   "init_invest_money"     :   vm.init_invest_money
+                    ,   "bench_mark_cd"         :   vm.bench_mark_cd
+                    ,   "importance_method_cd"  :   vm.importance_method_cd
+
+                    ,   "arr_portfolio"         :   vm.arr_portfolio
+                }
+            }).then( function(response) {
+                if (response && response.data) {
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.arr_show_error_message.push( msg );
+                        }
+                    }else{
+                        vm.scen_name   =   response.data.scen_name;
+                    }
+                }
+            });            
+        },
+
+        /*
+         * 테이블 정보를 점검 후 list 에 저장한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_table2List() {
+            var vm = this;
+
+            vm.arr_portfolio    =   [];
+            table01.find( "tbody tr" ).each( function( inx, rowItem ) {
+                var tr = $(this);
+
+                var v_text0         =   tr.find( "td:eq(0) .add_btn_span" ).text();         /* 첫번째 컬럼 */
+                var v_F16316        =   tr.find( "td input[name=F16316]" ).val();           /* 종목코드 */
+                var v_importance    =   tr.find( "td input[name=importance]" ).val();       /* 비중 */
+                var v_jisu_rate     =   tr.find( "td:eq(5)" ).text();                       /* 지수적용비율 */
+
+                if( typeof v_F16316 != "undefined" ) {
+
+                    if( v_F16316 != "" ) {
+                        vm.arr_portfolio.push({
+                                "F16316"        :   v_F16316            /* 종목코드 */
+                            ,   "importance"    :   v_importance        /* 비중 */
+                            ,   "jisu_rate"     :   v_jisu_rate         /* 지수적용비율 */
+                        })
+                    }else{
+
+                        if( v_importance != "" ) {
+                            vm.arr_show_error_message.push( "[포트폴리오] " + v_text0 + " 종목코드가 비어 있습니다." );
+                        }
+                    }
+                }
+            });
         }
-        
     }
 };
 </script>
