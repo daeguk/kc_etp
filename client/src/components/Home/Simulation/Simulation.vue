@@ -182,6 +182,12 @@
 
             </v-card>
         </v-flex>
+
+        <v-flex>
+            <ProgressBar ref="progress"></ProgressBar>
+            <ConfirmDialog ref="confirm2"></ConfirmDialog>
+        </v-flex>
+
     </v-layout>
 </template>
 
@@ -194,6 +200,8 @@ import select from "datatables.net-select";
 import Config from "@/js/config.js";
 
 import MastPopup from "@/components/common/popup/MastPopup";
+import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
+import ProgressBar from "@/components/common/ProgressBar.vue";
 
 var table01 = null;
 
@@ -254,6 +262,8 @@ export default {
 
     components: {
         MastPopup,
+        ProgressBar,
+        ConfirmDialog        
     },    
 
     created() {
@@ -315,7 +325,7 @@ export default {
             }).then( function(response) {
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
-debugger;
+
                     if (!response.data.result) {
                         if( msg ) {
                             vm.arr_show_error_message.push( msg );
@@ -599,17 +609,32 @@ debugger;
 
                     ,   "arr_portfolio"         :   vm.arr_portfolio
                 }
-            }).then( function(response) {
+            }).then( async function(response) {
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
 
                     if (!response.data.result) {
                         if( msg ) {
                             vm.arr_show_error_message.push( msg );
+                            return  false;
                         }
                     }else{
-                        vm.scen_name   =   response.data.scen_name;
+                        if( msg ) {
+                            if ( await vm.$refs.confirm2.open(
+                                    '확인',
+                                    msg,
+                                    {}
+                                    ,1
+                                )
+                            ) {
+                                if(vm.$refs.confirm2.val == 'Y') {
+                                    return  false;
+                                }
+                            }
+                        }
                     }
+
+
                 }
             });            
         },
