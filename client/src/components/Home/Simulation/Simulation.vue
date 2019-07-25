@@ -133,11 +133,19 @@
                             <div class="right_btn">
                                 <span>비중설정방식:</span>
                                 <span class="toggle2">
-                                    <v-btn-toggle v-model="toggle_one" class="toggle_01">
-                                        <v-btn flat>직접입력</v-btn>
-                                        <v-btn flat>동일가중</v-btn>
-                                        <v-btn flat>시총비중</v-btn>
+
+                                    <v-btn-toggle   v-model="importance_method_cd"  class="toggle_01" >
+                                        <v-btn  v-for="(item, index) in arr_importance_method_cd"
+
+                                                :key="'importance_method_cd_' + index" 
+                                                :value="item.com_dtl_cd" 
+                                                
+                                                flat
+
+                                                @click.stop="fn_setImportanceMethodCd( item.com_dtl_cd )"
+                                        >{{ item.com_dtl_name }}</v-btn>
                                     </v-btn-toggle>
+
                                 </span>
                             </div>
                         </v-flex>
@@ -256,6 +264,11 @@ export default {
             ,   arr_bench_mark_cd           :   []          /* 초기설정 벤치마크 array */
             ,   arr_importance_method_cd    :   []          /* 초기설정 비중설정방식 array */
 
+            ,   prev_grp_cd                 :   ""          /* 그룹 코드 (변경전) */
+            ,   prev_scen_cd                :   ""          /* 시나리오 코드 */
+            ,   scen_cd                     :   ""          /* 시나리오 코드 */
+            ,   scen_order_no               :   ""          /* 시나리오 정렬순번 */
+
             ,   grp_cd                      :   ""          /* 상위 그룹코드 */
             ,   scen_name                   :   ""          /* 시나리오명 */
             ,   start_year                  :   2000        /* 시작년도 */
@@ -265,7 +278,7 @@ export default {
             ,   bench_mark_cd               :   "0"         /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
             ,   importance_method_cd        :   "1"         /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
 
-            ,   arr_portfolio               :   []
+            ,   arr_portfolio               :   []          /* 포트폴리오 설정 정보 */
         };
     },
 
@@ -354,6 +367,16 @@ export default {
 
             vm.disabled_rebalance_cd    =   vm.arr_rebalance_disabled_check[ vm.rebalance_cycle_cd ];
             vm.arr_rebalance_cycle_cd   =   [ ...arr_temp ];
+        },
+
+        /*
+         * 비중설정방식 선택시 테이블의 비중정보를 설정한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_setImportanceMethodCd: function( importance_method_cd ) {
+            var vm = this;
+
+console.log( "importance_method_cd", importance_method_cd );
         },
 
         /*
@@ -646,14 +669,14 @@ export default {
                         /* 종목코드가 존재시 비중정보 체크 */
                         try{
                             if( v_importance == "" ) {
-                                vm.arr_show_error_message.push( "[포트폴리오] " + v_text0 + " 초기투자금액을 입력해 주세요." );
+                                vm.arr_show_error_message.push( "[포트폴리오] " + v_text0 + " 비중을 입력해 주세요." );
                             }else if( isNaN( v_importance ) ) {
-                                vm.arr_show_error_message.push( "[포트폴리오] " + v_text0 + " 초기투자금액은 숫자만 입력해 주세요." );
+                                vm.arr_show_error_message.push( "[포트폴리오] " + v_text0 + " 비중은 숫자만 입력해 주세요." );
                             }else if( Number( v_importance ) <= 0 ) {
-                                vm.arr_show_error_message.push( "[포트폴리오] " + v_text0 + " 초기투자금액은 0 보다 큰수를 입력해 주세요." );
+                                vm.arr_show_error_message.push( "[포트폴리오] " + v_text0 + " 비중은 0 보다 큰수를 입력해 주세요." );
                             }
                         }catch( e ) {
-                            vm.arr_show_error_message.push( "[포트폴리오] " + v_text0 + " 초기투자금액은 숫자만 입력해 주세요." );
+                            vm.arr_show_error_message.push( "[포트폴리오] " + v_text0 + " 비중은 숫자만 입력해 주세요." );
                         }
                     }else{
 
@@ -727,18 +750,25 @@ export default {
 
             axios.post(Config.base_url + "/user/simulation/saveBaicInfo", {
                 data: { 
-                        "grp_cd"                :   vm.grp_cd
-                    ,   "scen_name"             :   vm.scen_name
-                    ,   "start_year"            :   vm.start_year
-                    ,   "rebalance_cycle_cd"    :   vm.rebalance_cycle_cd
-                    ,   "rebalance_date_cd"     :   vm.rebalance_date_cd
-                    ,   "init_invest_money"     :   vm.init_invest_money
-                    ,   "bench_mark_cd"         :   vm.bench_mark_cd
-                    ,   "importance_method_cd"  :   vm.importance_method_cd
+                        
+                        "prev_grp_cd"           :   vm.prev_grp_cd              /* 그룹 코드 (변경전) */
+                    ,   "prev_scen_cd"          :   vm.prev_scen_cd             /* 시나리오 코드 (변경전) */
+                    ,   "scen_cd"               :   vm.scen_cd                  /* 시나리오 코드 */
+                    ,   "scen_order_no"         :   vm.scen_order_no            /* 시나리오 정렬순번 */
 
-                    ,   "arr_portfolio"         :   vm.arr_portfolio
+                    ,   "grp_cd"                :   vm.grp_cd                   /* 상위 그룹코드 */
+                    ,   "scen_name"             :   vm.scen_name                /* 시나리오명 */
+                    ,   "start_year"            :   vm.start_year               /* 시작년도 */
+                    ,   "rebalance_cycle_cd"    :   vm.rebalance_cycle_cd       /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
+                    ,   "rebalance_date_cd"     :   vm.rebalance_date_cd        /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+                    ,   "init_invest_money"     :   vm.init_invest_money        /* 초기투자금액 */
+                    ,   "bench_mark_cd"         :   vm.bench_mark_cd            /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
+                    ,   "importance_method_cd"  :   vm.importance_method_cd     /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
+
+                    ,   "arr_portfolio"         :   vm.arr_portfolio            /* 포트폴리오 설정 정보 */
                 }
             }).then( async function(response) {
+
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
 
@@ -748,6 +778,12 @@ export default {
                             return  false;
                         }
                     }else{
+
+                        vm.prev_grp_cd      =   response.data.grp_cd;           /* 그룹 코드 */
+                        vm.prev_scen_cd     =   response.data.scen_cd;          /* 시나리오 코드 */
+                        vm.scen_cd          =   response.data.scen_cd;          /* 시나리오 코드 */
+                        vm.scen_order_no    =   response.data.scen_order_no;    /* 시나리오 정렬순번 */
+
                         if( msg ) {
                             if ( await vm.$refs.confirm2.open(
                                     '확인',
@@ -762,8 +798,6 @@ export default {
                             }
                         }
                     }
-
-
                 }
             });            
         },
