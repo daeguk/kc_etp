@@ -232,6 +232,7 @@ input[type="text"]:focus, input[type="number"]:focus{border-color:#1976d2;}
 .select_table_in{margin-top:0px !important; padding-top:0px !important; font-size: 12px !important;}
 .select_table_in .v-messages{display: none;}
 .wid100{width:100px !important;}
+.wid150{width:150px !important;}
 
 
 /*  Tooltip container  */
@@ -1003,4 +1004,9 @@ input[type='file']{
 .folder_2dep{padding-left:22px;}
 .wid200{width:200px}
 .creat_f span{display:inline-block; margin-top:13px; margin-left:5px;}
+h4 span.excel_btn{float:right; margin-right:25px;}
 .margin_t1 .v-btn{margin-top:2px; margin-left:3px;}
+.bullet{padding-left:3px; width:3px; height:14px; display:inline-block; background:#85c406;margin-right:3px;}
+.simul_setup{width:700px; margin:0 auto; padding-bottom:40px;}
+.simul_setup h6{margin-top:20px; margin-bottom:10px;}
+.bot_pad1{padding-bottom:15px;}
