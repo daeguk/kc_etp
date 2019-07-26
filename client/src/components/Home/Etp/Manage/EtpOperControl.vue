@@ -49,12 +49,6 @@
                             @fn_showDetailPdf="fn_showDetailPdf">
             </EtpOperPdf>
 
-            
-
-
-
-
-
             <!-- 메시지 관리 -->
             <ConfirmDialog ref="confirm"></ConfirmDialog>
 

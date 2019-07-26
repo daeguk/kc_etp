@@ -52,6 +52,9 @@ var util = {
     formatDate: function(inDate) {
       return inDate.substring(0, 4) + "." + inDate.substring(4,6) + "." + inDate.substring(6,8);
     },
+    formatTime: function(inTime) {
+      return inTime.substring(0, 2) + ":" + inTime.substring(2,4) + ":" + inTime.substring(4,6);
+    },
     pad: function(n, width) {
         n = n + '';
         return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;

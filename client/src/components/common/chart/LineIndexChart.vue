@@ -378,6 +378,10 @@ export default {
 
         }else {
           var c = this.ctx;
+          // modal 이 아닌 경우
+          // var _mwpos = event.pageX-this.mrect.left;
+          // var _mhpos = event.pageY-this.mrect.top;
+          // modal 인 경우
           var _mwpos = event.layerX;
           var _mhpos = event.layerY;
           c.putImageData(this.draw_chart_image, this.crect.x1, this.crect.y1-10);

@@ -1254,6 +1254,89 @@ var getMarketIndexList = function (req, res) {
     
       
 };
+/*
+* ETP AVG 값 조회(HIST)
+*/
+var getEtpHistAvg = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getEtpHistAvg 호출됨.');
+
+  // console.log(req.query);
+  // var options = {
+  //   F16013 : req.query.F16013,
+  //   colName: req.query.colName,
+  //   num: req.query.num
+  // };
+
+  var options = req.query;
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    console.log(options);
+    var stmt = mapper.getStatement('common.item', 'getEtpHistAvg', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        console.log(rows);
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    console.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+/*
+* ETP AVG 값 조회(INTRA)
+*/
+var getEtpIntraAvg = function(req, res) {
+  console.log('marketInfo 모듈 안에 있는 getEtpIntraAvg 호출됨.');
+
+  // console.log(req.query);
+  // var options = {
+  //   F16013 : req.query.F16013,
+  //   colName: req.query.colName,
+  //   num: req.query.num
+  // };
+
+  var options = req.query;
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    console.log(options);
+    var stmt = mapper.getStatement('common.item', 'getEtpIntraAvg', options, {language:'sql', indent: '  '});
+    console.log(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        console.log(rows);
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    console.log("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+
 
 module.exports.getIndexMast = getIndexMast;
 module.exports.getIndexBasic = getIndexBasic;
@@ -1283,3 +1366,5 @@ module.exports.getEtpSectorDown = getEtpSectorDown;
 module.exports.getEtpSectorBohap = getEtpSectorBohap;
 module.exports.getSectorEtpList = getSectorEtpList;
 module.exports.getMarketIndexList = getMarketIndexList;
+module.exports.getEtpHistAvg = getEtpHistAvg;
+module.exports.getEtpIntraAvg = getEtpIntraAvg;
