@@ -29,7 +29,7 @@ var INIT_START_YEAR     =   { value : 2000, text : "2000" };    /* 시작년도 
 var SEARCH_SCEN_NAME    =   "unnamed";                          /* 시나리오명 prefix */
 var initGrpInfo         =   {
         INIT_GRP_CD         :   "*"                             /* 그룹코드 최초값 */
-    ,   INIT_INCRE_GRP_CD   :   10000                           /* 그룹인 경우 시나리오 코드는 해당값 단위로 증가 */
+    ,   INIT_INCRE_GRP_CD   :   100000                          /* 그룹인 경우 시나리오 코드는 해당값 단위로 증가 */
 };
 
 
@@ -521,7 +521,11 @@ var saveBaicInfo = function(req, res) {
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
-        resultMsg.dataList = [];
+        var arrInsertDtl    =   [];
+        var arrModifyDtl    =   [];
+        var arrDeleteDtl    =   [];
+        var divideList      =   [];
+
         Promise.using(pool.connect(), conn => {
 
             conn.beginTransaction(txerr => {
@@ -797,83 +801,358 @@ var saveBaicInfo = function(req, res) {
                         }
                     },
 
-                    /* 6. 시뮬레이션 포트폴리오 정보를 저장한다. */
+                    /* 6. 입력할 값을 기준으로 tm_simul_portfolio 와 비교하여 insert, modify 대상을 추출한다.  */
                     function( msg, callback) {
 
-                        var divideList  =   [];
-                        async.forEachOfLimit( paramData.arr_portfolio, 1, function(subList, i, innerCallback) {
+                        try {
+                            arrInsertDtl = [];
+                            arrModifyDtl = [];
 
-                            async.waterfall([
+                            /* 포트폴리오 설정 건이 존재하는 경우 */
+                            if( paramData.arr_portfolio && paramData.arr_portfolio.length > 0  ){
+                                stmt = mapper.getStatement('simulation', 'getTmSimulPortfolioExistCheck1', paramData, { language: 'sql', indent: '  ' });
+                                log.debug(stmt, paramData);
 
-                                function(innerCallback) {
-                                    subList.order_no    =   i+1;
-                                    divideList.push( subList );
-                                    
-                                    innerCallback(null, paramData);
-                                },
+                                conn.query(stmt, function(err, rows) {
 
-                                function(msg, innerCallback) {
-
-                                    var divide_size = ( limit && limit.divide_size ? limit.divide_size : 1 );
-                                    if( divideList && ( divideList.length == divide_size || i == paramData.arr_portfolio.length-1 ) ) {
-                                        try {
-                                            paramData.dataLists =   divideList;
-                                            stmt = mapper.getStatement('simulation', 'saveTmSimulPortfolio', paramData, format);
-                                            log.debug(stmt);
-
-                                            conn.query(stmt, function(err, rows) {
-                                                if (err) {
-                                                    resultMsg.result = false;
-                                                    resultMsg.msg = "[error] simulation.saveTmSimulPortfolio Error while performing Query";
-                                                    resultMsg.err = err;
-
-                                                    return innerCallback(resultMsg);
-                                                }
-
-                                                innerCallback(null);
-                                            });
-
-                                            divideList  =   [];                                                        
-
-                                        } catch (err) {
-
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] simulation.saveTmSimulPortfolio Error while performing Query";
-
-                                            if( !resultMsg.err ) {
-                                                resultMsg.err = err;
-                                            }
-
-                                            return innerCallback(resultMsg);
-                                        }
-
-                                    }else{
-                                        innerCallback(null);
-                                    }
-                                }
-
-                            ], function(err) {
-
-                                if( err ) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulation.saveTmSimulPortfolio Error while performing Query";
-                                    if( !resultMsg.err ) {
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulation.getTmSimulPortfolioExistCheck1 Error while performing Query";
                                         resultMsg.err = err;
+
+                                        return callback(resultMsg);
                                     }
 
-                                    return innerCallback(resultMsg);
-                                }
+                                    if (rows && rows.length > 0) {
+                                        for (var i in rows) {
+                                            if (rows[i].dtl_status == "insert") {
+                                                arrInsertDtl.push(rows[i]);
+                                            } else if (rows[i].dtl_status == "modify") {
+                                                arrModifyDtl.push(rows[i]);
+                                            }
+                                        }
+                                    }
 
-                                innerCallback(null);
-                            });                                            
-
-                        }, function(err) {
-                            if (err) {
-                                return callback(resultMsg);
+                                    callback(null, paramData);
+                                });
+                            
+                            }else{
+                                callback(null, paramData);
                             }
 
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulation.getTmSimulPortfolioExistCheck1 Error while performing Query";
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 7. tm_simul_portfolio 을 기준으로 입력할 값과 비교하여 delete 대상을 추출한다.  */
+                    function( msg, callback) {
+
+                        try {
+                            arrDeleteDtl = [];
+
+                            /* 수정인 경우 */
+                            if( paramData.status  ==  "modify" ) {
+
+                                /* 포트폴리오 설정 건이 존재하는 경우 */
+                                if( paramData.arr_portfolio && paramData.arr_portfolio.length > 0  ){
+                                    stmt = mapper.getStatement('simulation', 'getTmSimulPortfolioExistCheck2', paramData, { language: 'sql', indent: '  ' });
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] simulation.getTmSimulPortfolioExistCheck2 Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        if (rows && rows.length > 0) {
+                                            for (var i in rows) {
+                                                if (rows[i].dtl_status == "delete") {
+                                                    arrDeleteDtl.push(rows[i]);
+                                                }
+                                            }
+                                        }
+
+                                        callback(null, paramData);
+                                    })
+                                }else{
+                                    callback(null, paramData);
+                                }
+
+                            }else{
+                                callback(null, paramData);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulation.getTmSimulPortfolioExistCheck2 Error while performing Query";
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 8. 시뮬레이션 포트폴리오 정보를 저장한다. ( insert 건 ) */
+                    function( msg, callback) {
+
+                        divideList  =   [];
+
+                        /* 등록건이 존재하는 경우 */
+                        if( arrInsertDtl && arrInsertDtl.length > 0 ) {
+                            async.forEachOfLimit( arrInsertDtl, 1, function(subList, i, innerCallback) {
+
+                                async.waterfall([
+
+                                    function(innerCallback) {
+                                        divideList.push( subList );
+                                        
+                                        innerCallback(null, paramData);
+                                    },
+
+                                    function(msg, innerCallback) {
+
+                                        var divide_size = ( limit && limit.divide_size ? limit.divide_size : 1 );
+                                        if( divideList && ( divideList.length == divide_size || i == arrInsertDtl.length-1 ) ) {
+                                            try {
+                                                paramData.arr_portfolio =   divideList;
+                                                stmt = mapper.getStatement('simulation', 'saveTmSimulPortfolio', paramData, format);
+                                                log.debug(stmt);
+
+                                                conn.query(stmt, function(err, rows) {
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = "[error] simulation.saveTmSimulPortfolio Error while performing Query";
+                                                        resultMsg.err = err;
+
+                                                        return innerCallback(resultMsg);
+                                                    }
+
+                                                    innerCallback(null);
+                                                });
+
+                                                divideList  =   [];                                                        
+
+                                            } catch (err) {
+
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] simulation.saveTmSimulPortfolio Error while performing Query";
+
+                                                if( !resultMsg.err ) {
+                                                    resultMsg.err = err;
+                                                }
+
+                                                return innerCallback(resultMsg);
+                                            }
+
+                                        }else{
+                                            innerCallback(null);
+                                        }
+                                    }
+
+                                ], function(err) {
+
+                                    if( err ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulation.saveTmSimulPortfolio Error while performing Query";
+                                        if( !resultMsg.err ) {
+                                            resultMsg.err = err;
+                                        }
+
+                                        return innerCallback(resultMsg);
+                                    }
+
+                                    innerCallback(null);
+                                });                                            
+
+                            }, function(err) {
+                                if (err) {
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, paramData);
+                            });
+
+                        }else{
                             callback(null, paramData);
-                        });
+                        }
+                    },
+
+                    /* 9. 시뮬레이션 포트폴리오 정보를 저장한다. ( modify 건 ) */
+                    function( msg, callback) {
+
+                        divideList  =   [];
+
+                        /* 수정건이 존재하는 경우 */
+                        if( arrModifyDtl && arrModifyDtl.length > 0 ) {
+                            async.forEachOfLimit( arrModifyDtl, 1, function(subList, i, innerCallback) {
+
+                                async.waterfall([
+
+                                    function(innerCallback) {
+                                        divideList.push( subList );
+                                        
+                                        innerCallback(null, paramData);
+                                    },
+
+                                    function(msg, innerCallback) {
+
+                                        var divide_size = ( limit && limit.divide_size ? limit.divide_size : 1 );
+                                        if( divideList && ( divideList.length == divide_size || i == arrModifyDtl.length-1 ) ) {
+                                            try {
+                                                paramData.arr_portfolio =   divideList;
+                                                stmt = mapper.getStatement('simulation', 'modifyTmSimulPortfolio', paramData, format);
+                                                log.debug(stmt);
+
+                                                conn.query(stmt, function(err, rows) {
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = "[error] simulation.modifyTmSimulPortfolio Error while performing Query";
+                                                        resultMsg.err = err;
+
+                                                        return innerCallback(resultMsg);
+                                                    }
+
+                                                    innerCallback(null);
+                                                });
+
+                                                divideList  =   [];                                                        
+
+                                            } catch (err) {
+
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] simulation.modifyTmSimulPortfolio Error while performing Query";
+
+                                                if( !resultMsg.err ) {
+                                                    resultMsg.err = err;
+                                                }
+
+                                                return innerCallback(resultMsg);
+                                            }
+
+                                        }else{
+                                            innerCallback(null);
+                                        }
+                                    }
+
+                                ], function(err) {
+
+                                    if( err ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulation.modifyTmSimulPortfolio Error while performing Query";
+                                        if( !resultMsg.err ) {
+                                            resultMsg.err = err;
+                                        }
+
+                                        return innerCallback(resultMsg);
+                                    }
+
+                                    innerCallback(null);
+                                });                                            
+
+                            }, function(err) {
+                                if (err) {
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, paramData);
+                            });
+
+                        }else{
+                            callback(null, paramData);
+                        }
+                    },
+
+                    /* 10. 시뮬레이션 포트폴리오 정보를 저장한다. ( delete 건 ) */
+                    function( msg, callback) {
+
+                        divideList  =   [];
+
+                        /* 삭제건이 존재하는 경우 */
+                        if( arrDeleteDtl && arrDeleteDtl.length > 0 ) {
+                            async.forEachOfLimit( arrDeleteDtl, 1, function(subList, i, innerCallback) {
+
+                                async.waterfall([
+
+                                    function(innerCallback) {
+                                        divideList.push( subList );
+                                        
+                                        innerCallback(null, paramData);
+                                    },
+
+                                    function(msg, innerCallback) {
+
+                                        var divide_size = ( limit && limit.divide_size ? limit.divide_size : 1 );
+                                        if( divideList && ( divideList.length == divide_size || i == arrDeleteDtl.length-1 ) ) {
+                                            try {
+                                                paramData.arr_portfolio =   divideList;
+                                                stmt = mapper.getStatement('simulation', 'deleteTmSimulPortfolio', paramData, format);
+                                                log.debug(stmt);
+
+                                                conn.query(stmt, function(err, rows) {
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = "[error] simulation.deleteTmSimulPortfolio Error while performing Query";
+                                                        resultMsg.err = err;
+
+                                                        return innerCallback(resultMsg);
+                                                    }
+
+                                                    innerCallback(null);
+                                                });
+
+                                                divideList  =   [];                                                        
+
+                                            } catch (err) {
+
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] simulation.deleteTmSimulPortfolio Error while performing Query";
+
+                                                if( !resultMsg.err ) {
+                                                    resultMsg.err = err;
+                                                }
+
+                                                return innerCallback(resultMsg);
+                                            }
+
+                                        }else{
+                                            innerCallback(null);
+                                        }
+                                    }
+
+                                ], function(err) {
+
+                                    if( err ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulation.deleteTmSimulPortfolio Error while performing Query";
+                                        if( !resultMsg.err ) {
+                                            resultMsg.err = err;
+                                        }
+
+                                        return innerCallback(resultMsg);
+                                    }
+
+                                    innerCallback(null);
+                                });                                            
+
+                            }, function(err) {
+                                if (err) {
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null);
+                            });
+
+                        }else{
+                            callback(null);
+                        }
                     },                    
 
                 ], function(err) {
