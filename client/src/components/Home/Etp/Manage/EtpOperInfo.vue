@@ -117,6 +117,7 @@
                     </EtpOperInfoQuick>
             </v-flex>       
         </v-layout>
+    <EtpLpModal v-if="EtpLpModalFlag" :etpInfo="etpBasic" @closeEtpLpModal="closeEtpLpModal"></EtpLpModal>
     </v-container>
 </template>
 
@@ -132,6 +133,7 @@ import Config from '@/js/config.js';
 import Constant from "@/store/store_constant.js"
 
 import EtpOperInfoQuick         from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
+import EtpLpModal   from  '@/components/common/modal/EtpLpModal.vue';
 
 var table01 = null;
 var table02 = null;
@@ -141,6 +143,7 @@ export default {
     components: {
         //indexDetailrtmenupop: indexDetailrtmenupop
             EtpOperInfoQuick,
+            EtpLpModal,
     },
     data() {
         return {
@@ -163,6 +166,7 @@ export default {
             inavGubun   :   "",
             showInavPdfYn : false,
             showInavIndexYn : false,
+            EtpLpModalFlag: false,
         };
     },
     mounted: function() {
@@ -500,8 +504,10 @@ export default {
                                 break;
 
                     case    'btnSpread'    :
-                                vm.$emit('showLpSpread', 1, data );
-                                break;
+                      console.log("btnSpread..........");
+                      console.log(data);
+                      vm.openEtpLpModal(data);
+                      break;
 
                     case    'btnEtpInfo'    :
                                 vm.$emit('showDetail', 1, data );
@@ -976,7 +982,7 @@ export default {
                                     }
 //                                    graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnInav", "btnContent" : "visibility", "btnSpanContent" : "투자지표" } );
                                 }else if( vm.stateInfo.pageState === 'lpspread' ) {
-                                        graphContent    +=  '<div class="tooltip"><button type="button" id="btnSpread" name="btnSpread" class="calcu_icon"></button><span class="tooltiptext" style="width:70px;">LP스프레드차트</span></div>';
+                                        graphContent    +=  '<div class="tooltip"><button type="button" id="btnSpread" name="btnSpread" class="calcu_icon"></button><span class="tooltiptext" style="width:70px;">LP차트</span></div>';
                                 }
                                 
                                 /* ETF 상세정보 */
@@ -1271,7 +1277,14 @@ export default {
                     arr.splice( i+1, 0, nextAddStr );
                 }
             }
-        }
+        },
+        openEtpLpModal: function(data) {
+          this.etpBasic = data;
+          this.EtpLpModalFlag = true;
+        },
+        closeEtpLpModal: function() {
+          this.EtpLpModalFlag = false;
+        },
     }
 };
 </script>

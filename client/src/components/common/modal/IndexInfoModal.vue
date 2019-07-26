@@ -125,8 +125,6 @@ export default {
     this.dialog = true;
     console.log("Open IndexInfoModal...........");
     console.log(this.indexInfo);
-    console.log("Open IndexInfoModal...........1");
-    console.log(this.indexInfo);
     this.getIndexBasic(this.indexInfo);
     // this.getIndexInEtpInfo(this.indexInfo);
   },
@@ -155,6 +153,7 @@ export default {
             alert("해당 지수의 데이터가 없습니다");
         } else {
           vm.indexBasic = response.data.results[0];
+          vm.indexBasic.dStyle = util.getUpAndDownStyle(vm.indexBasic.F15472);
           vm.chartFlag = true;
           vm.getIndexInEtpInfo(vm.indexInfo);
         }

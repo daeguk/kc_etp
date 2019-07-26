@@ -29,8 +29,7 @@
                     </EtpOperIndexQuick>
            </v-flex>
         </v-layout>
-    <IndexInfoModal v-if="IndexModalFlag" :indexInfo="paramData"
-      @closeIndexModal="closeIndexModal"></IndexInfoModal>
+    <IndexInfoModal v-if="IndexModalFlag" :indexInfo="paramData" @closeIndexModal="closeIndexModal"></IndexInfoModal>
     </v-container>
 </template>
 
