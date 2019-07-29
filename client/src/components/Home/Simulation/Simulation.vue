@@ -26,8 +26,8 @@
                         <v-flex xs2>
                             <v-select   :items="arr_grp_cd" 
 
-                                        item-text="scen_name" 
-                                        item-value="scen_cd" 
+                                        item-text="grp_name" 
+                                        item-value="grp_cd" 
 
                                         @change="fn_resetErrorMessage();"
 
@@ -178,11 +178,11 @@
                                     <td>Total</td>
                                     <td></td>
                                     <td></td>
-                                    <td></td>
+                                    <td class="txt_right"></td>
                                     <td class="txt_right">
-                                        <input type="text" id class="txt_right wid100" value="" /> %
+                                        <input type="text"  name="importance"   class="txt_right wid100" value=""   disabled="true" /> %
                                     </td>
-                                    <td></td>
+                                    <td class="txt_right"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -213,6 +213,7 @@
 import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
+import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
 
@@ -224,6 +225,8 @@ var table01 = null;
 
 
 export default {
+
+    props : [ "paramData" ],
 
     data() {
         return {
@@ -269,9 +272,9 @@ export default {
             ,   scen_cd                     :   ""          /* 시나리오 코드 */
             ,   scen_order_no               :   ""          /* 시나리오 정렬순번 */
 
-            ,   grp_cd                      :   ""          /* 상위 그룹코드 */
+            ,   grp_cd                      :   "*"         /* 상위 그룹코드 */
             ,   scen_name                   :   ""          /* 시나리오명 */
-            ,   start_year                  :   2000        /* 시작년도 */
+            ,   start_year                  :   "2000"      /* 시작년도 */
             ,   rebalance_cycle_cd          :   "1"         /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
             ,   rebalance_date_cd           :   ""          /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
             ,   init_invest_money           :   1000000     /* 초기투자금액 */
@@ -295,21 +298,50 @@ export default {
     mounted() {
         var vm = this;
 
-        /* 상위 그룹정보를 조회한다. */
-        vm.fn_initGrpCd();
-
-        /* next 시나리오명을 조회한다. */
-        vm.fn_getNextScenName();        
-
-        /* 초기 설정 데이터를 조회한다. */
-        vm.fn_initData();
-
-
-
         table01 =   $( "#table01" );
 
-        /* 최초 5개의 레코드를 노출한다. */
-        vm.fn_addRecords( 0, 5 );
+        /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
+        if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
+
+            /* 상위 그룹 정보 및 초기 데이터가 설정된 이후 상세정보 설정되도록 함. */
+            
+            /* 상위 그룹정보를 조회한다. */
+            vm.fn_initGrpCd().then( async function(e) {
+
+                if( e && e.result ) {
+
+                    /* 초기 설정 데이터를 조회한다. */
+                    await vm.fn_initData().then( async function(e1) {
+
+                        if( e1 && e1.result ) {
+
+                            /* 시뮬레이션 마스터 정보를 조회한다. */
+                            vm.fn_getSimulMast( vm.paramData );
+
+                            /* 시뮬레이션 포트폴리오 정보를 조회한다. */
+                            vm.fn_getSimulPortfolio( vm.paramData );
+                        }
+                    });
+                }
+            });
+
+        }else{
+
+            /* 상위 그룹정보를 조회한다. */
+            vm.fn_initGrpCd();
+
+            /* 초기 설정 데이터를 조회한다. */
+            vm.fn_initData();            
+
+            /* next 시나리오명을 조회한다. */
+            vm.fn_getNextScenName();
+
+            /* 최초 5개의 레코드를 노출한다. */
+            vm.fn_addRecords( 0, 5 );
+
+            /* total 레코드를 설정한다. */
+            vm.fn_setTotalRecord();
+        }
 
 
         /* table tr 에서 추가 버튼을 누르는 경우 */
@@ -349,17 +381,23 @@ export default {
 
             vm.fn_resetErrorMessage();
             vm.fn_resetRecords( rowIndex );
+
+            vm.fn_setImportanceMethodCd( vm.importance_method_cd );
+        });
+
+        /* table tr 에서 비중 change 시 total 영역 계산   */
+        $('#table01 tbody').on('change', "input[name='importance']", function() {
+            var tr          =   $(this).closest('tr');
+            var rowIndex    =   tr.index();
+
+            vm.fn_resetErrorMessage();
             vm.fn_setTotalRecord();
-        });        
+        });
     },
 
 
 
     methods: {
-
-        fn_test: function() {
-            this.$router.push( { path: "/Simulation/SimulationResult" }) ;
-        },
 
         /*
          * 에러내용을 초기화 한다.
@@ -393,113 +431,187 @@ export default {
         fn_setImportanceMethodCd: function( importance_method_cd ) {
             var vm = this;
 
-            var siga    = [ 101.00, 201.00, 301.00 ];
-            var sigiTot = 603;
-            var sameTot = 100;
-            var len     =   3;
+            /* total 정보 */
+            var total   =   {
+                    length          :   0       /* 총건수 */
+                ,   same_rate_sum   :   100     /* 동일가중 합계 */
+
+                ,   F15028          :   0       /* (합계) 시가총액 */
+                ,   importance      :   0       /* (합계) 비중 */
+                ,   jisu_rate       :   0       /* (합계) 지수적용 비율 */
+            };
+            var result  =   [];
 
 
-            table01.find( "tbody tr" ).each( function( inx, rowItem ) {
+            /* 계산할 항목에 대한 전체 정보를 구한다. */
+            table01.find( "tbody tr input[name=F16316]" ).parents("tr").each( function( inx, rowItem ) {
                 var tr = $(this);
 
-                var v_text0         =   tr.find( "td:eq(0) .add_btn_span" ).text();         /* 첫번째 컬럼 */
-                var v_F16316        =   tr.find( "td input[name=F16316]" ).val();           /* 종목코드 */
-                var v_importance    =   tr.find( "td input[name=importance]" ).val();       /* 비중 */
-                var v_jisu_rate     =   tr.find( "td:eq(5)" ).text();                       /* 지수적용비율 */
+                var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );            /* 첫번째 컬럼 */
+                var v_F16316        =   tr.find( "td input[name=F16316]" );             /* 종목코드 */
 
-                if( typeof v_F16316 != "undefined" ) {
+                var v_F15028        =   tr.find( "td:eq(3)" );                          /* 시가총액 */
+                var v_importance    =   tr.find( "td input[name=importance]" );         /* 비중 */
+                var v_jisu_rate     =   tr.find( "td:eq(5)" );                          /* 지수적용비율 */           
 
-                    if( v_F16316 != "" ) {
 
+                /* 비중이 존재하는 경우 ( 직접입력이 아닌 경우 input 객체 수정불가 처리 ) */
+                if( typeof v_importance != "undefined" ) {
+
+                    /* 직접입력 인 경우 */
+                    if( importance_method_cd == "1" ) {
+                        v_importance.attr( "disabled", false );
+                    }else{
+                        v_importance.attr( "disabled", true );
+                    }
+
+                    v_importance.val( "" );
+                }
+
+
+                /* 종목코드가 존재하는 경우 */
+                if( typeof v_F16316.val() != "undefined" ) {
+
+                    if( v_F16316.val() != "" ) {
+                        result.push( { 
+                                F15028      :   0       /* 시가총액 */
+                            ,   importance  :   0       /* 비중 */
+                            ,   jisu_rate   :   0       /* 지수적용비율 */
+                        } );
+
+                        total.length++;         /* 총건수 */
+
+                        total.F15028            =   Number( total.F15028 )  +  Number( util.NumtoStr( v_F15028.text() ) );                                          /* (합계) 시가총액 */
+//                      total.importance        =   Math.floor( ( total.importance * 100 )  +  ( Number( util.NumtoStr( v_importance.val() ) ) * 100 ) ) / 100;     /* (합계) 비중 */
+//                      total.jisu_rate         =   Math.floor( ( total.jisu_rate * 100 )   +  ( Number( util.NumtoStr( v_jisu_rate.text() ) ) * 100 ) ) / 100;     /* (합계) 지수적용비율 */
                     }
                 }
             });
 
 
-            var result  =   vm.fn_temp( sigiTot, len, siga );
-            //  vm.fn_temp( result, sameTot, len );
-debugger;
-        },
+            /*  레코드별 비중정보를 구한다. */
+            if( [ "2", "3"].includes( importance_method_cd ) ) {
+                var same_rate           =   Math.floor( parseFloat( total.same_rate_sum / total.length ) * 100 ) / 100;     /* 동일 가중 비율 */
+                var v_temp_importance   =   0;
+                var v_inx               =   0;
 
-        fn_temp : function( tot=0, divide=1, rows=[] ) {
+                table01.find( "tbody tr input[name=F16316]" ).parents("tr").each( function( inx, rowItem ) {
+                    var tr = $(this);
 
-            var result = [];
+                    var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
+                    var v_F16316        =   tr.find( "td input[name=F16316]" );                 /* 종목코드 */
 
-            for( var i=0 ; i < divide; i++ ) {
-                result.push( { rate : 0, money : 0 } );
-            }            
+                    var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
+                    var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
+                    var v_jisu_rate     =   tr.find( "td:eq(5)" );                              /* 지수적용비율 */
 
-            var imsi = Math.floor( parseFloat( tot / divide ) * 100 ) / 100;
-       
-            var sumData = 0;
-            var sumTot = 0;
+                    if( typeof v_F16316.val() != "undefined" ) {
+                        if( v_F16316.val() != "" ) {
 
-            for( var i in result) {
-                imsi    =   Math.floor( parseFloat( rows[i] / tot ) * 100 * 100 ) / 100;
+                            /* 동일가중인 경우 */
+                            if( importance_method_cd == "2" ) {
+                                v_temp_importance   =   same_rate;
+                            }
+                            /* 시총비중인 경우 */
+                            else if( importance_method_cd == "3" ) {
+                                v_temp_importance   =   Math.floor( parseFloat( Number( util.NumtoStr( v_F15028.text() ) ) / total.F15028 ) * 100 * 100 ) / 100;
+                            }
 
-                sumTot  += rows[i];
-                sumData = Math.floor( ( sumData * 100 ) +  parseFloat( imsi * 100 ) ) / 100
+//                          total.F15028                =   Number( total.F15028 )  +  Number( util.NumtoStr( v_F15028.text() ) );                                          /* (합계) 시가총액 */
+                            total.importance            =   Math.floor( ( total.importance * 100 )  +  parseFloat( v_temp_importance * 100 ) ) / 100;                       /* (합계) 비중 */
+                            total.jisu_rate             =   Math.floor( ( total.jisu_rate * 100 )   +  ( Number( util.NumtoStr( v_jisu_rate.text() ) ) * 100 ) ) / 100;     /* (합계) 지수적용비율 */                            
 
-                result[i].rate      =   imsi;
-                result[i].money    =   rows[i];
-            }
+                            result[v_inx].F15028        =   Number( util.NumtoStr( v_F15028.text() ) );             /* 시가총액 */
+                            result[v_inx].importance    =   v_temp_importance;                                      /* 비중 */
+                            result[v_inx].jisu_rate     =   Number( util.NumtoStr( v_jisu_rate.text() ) );          /* 지수적용비율 */
+
+                            v_inx++;
+                        }
+                    }
+                });
 
 
-            for( var i in result ) {
-                sumData = Math.floor( ( sumData * 100 ) +  parseFloat( 0.01 * 100 ) ) / 100 ;
+                /* 비중 합계가 100 이  아닌 경우 0.01 값을 더해 100 이 되면 중단 */
+                if( Math.floor( ( total.same_rate_sum - total.importance ) * 100 ) / 100 != 0 ) {
 
-                result[i].rate  =   Math.floor( ( result[i] * 100 ) +  parseFloat( 0.01 * 100 ) ) / 100;
-                if( sumData >= tot ) {
-                    break;
+                    for( var i in result ) {
+                        total.importance = Math.floor( ( total.importance * 100 ) +  parseFloat( 0.01 * 100 ) ) / 100 ;
+
+                        result[i].importance   =   Math.floor( ( result[i].importance * 100 ) +  parseFloat( 0.01 * 100 ) ) / 100;
+                        if( total.importance == total.same_rate_sum ) {
+                            break;
+                        }
+                    }
                 }
+
+
+                /* 비중 정보를 tr 에 설정한다. */
+                v_inx   =   0;
+                table01.find( "tbody tr input[name=F16316]" ).parents("tr").each( function( inx, rowItem ) {
+                    var tr = $(this);
+
+                    var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
+                    var v_F16316        =   tr.find( "td input[name=F16316]" );                 /* 종목코드 */
+
+                    var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
+                    var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
+                    var v_jisu_rate     =   tr.find( "td:eq(5)" );                              /* 지수적용비율 */
+
+                    if( typeof v_F16316.val() != "undefined" ) {
+                        if( v_F16316.val() != "" ) {
+                            v_importance.val( result[v_inx].importance );                       /* 비중 */
+
+                            v_inx++;
+                        }
+                    }
+                });
             }
 
-            return  result;
-debugger;            
-/*
-            for( var i in result) {
-                sumData = Math.floor( ( sumData * 100 ) +  parseFloat( imsi * 100 ) ) / 100
+            vm.importance_method_cd =   importance_method_cd;
 
-                result[i].rate   =  imsi;
-                if( sumData >= tot ) {
-                    break;
-                } 
-            }
-
-            var temp1 = Math.floor( (tot - sumData ) * 100 ) / 100;
-            for( var i in result ) {
-                sumData = Math.floor( ( sumData * 100 ) +  parseFloat( 0.01 * 100 ) ) / 100 ;
-
-                result[i].rate   =   Math.floor( ( result[i] * 100 ) +  parseFloat( 0.01 * 100 ) ) / 100;
-                if( sumData >= tot ) {
-                    break;
-                }
-            }
-*/            
+            /* total 레코드를 설정한다. */
+            vm.fn_setTotalRecord( total );
         },
 
         /*
          * 상위 그룹정보를 조회한다.
          * 2019-07-26  bkLove(촤병국)
          */
-        fn_initGrpCd() {
+        async fn_initGrpCd() {
             var vm = this;
 
-            axios.post(Config.base_url + "/user/simulation/getInitGrpCd", {
-                data: {}
-            }).then( function(response) {
-                if (response && response.data) {
-                    var msg = ( response.data.msg ? response.data.msg : "" );
+            vm.arr_show_error_message   =   [];
 
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.arr_show_error_message.push( msg );
+            return  await new Promise(function(resolve, reject) {
+                axios.post(Config.base_url + "/user/simulation/getInitGrpCd", {
+                    data: {}
+                }).then( function(response) {
+                    if (response && response.data) {
+                        var msg = ( response.data.msg ? response.data.msg : "" );
+
+                        if (!response.data.result) {
+                            if( msg ) {
+                                vm.arr_show_error_message.push( msg );
+                            }
+
+                            resolve( { result : false } );
+                        }else{
+                            vm.arr_grp_cd   =   response.data.dataList;
+
+                            resolve( { result : true } );
                         }
                     }else{
-                        vm.arr_grp_cd   =   response.data.dataList;
+                        resolve( { result : false } );
                     }
-                }
-            });            
+                }).catch( function(e) {
+                    console.log( e );
+                    resolve( { result : false } );
+                });
+
+            }).catch( function(e1) {
+                console.log( e1 );
+                resolve( { result : false } );
+            });
         },
 
         /*
@@ -509,6 +621,7 @@ debugger;
         fn_getNextScenName() {
             var vm = this;
 
+            vm.arr_show_error_message   =   [];
             axios.post(Config.base_url + "/user/simulation/getNextScenName", {
                 data: {}
             }).then( function(response) {
@@ -539,59 +652,104 @@ debugger;
             /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
             var arrComMstCd = [ "COM006", "COM007", "COM008", "COM009" ];            
 
-            axios.post(Config.base_url + "/user/simulation/getInitData", {
-                data: { arrComMstCd : arrComMstCd }
-            }).then( function(response) {
+            vm.arr_show_error_message   =   [];
 
-                if (response && response.data) {
-                    var arrMsg = ( response.data.arrMsg && response.data.arrMsg.length > 0 ? response.data.arrMsg : [] );
+            return  new Promise(function(resolve, reject) {
+                axios.post(Config.base_url + "/user/simulation/getInitData", {
+                    data: { arrComMstCd : arrComMstCd }
+                }).then( function(response) {
 
-                    if (!response.data.result) {
-                        if( arrMsg.length > 0 ) {
-                            vm.arr_show_error_message.push( ...arrMsg );
+                    if (response && response.data) {
+                        var arrMsg = ( response.data.arrMsg && response.data.arrMsg.length > 0 ? response.data.arrMsg : [] );
+
+                        if (!response.data.result) {
+                            if( arrMsg.length > 0 ) {
+                                vm.arr_show_error_message.push( ...arrMsg );
+                            }
+
+                            resolve( { result : false } );
+                        }else{
+
+                            /* 초기설정 시작년도 array */
+                            if( response.data.arr_start_year && response.data.arr_start_year.length > 0 ) {
+                                vm.arr_start_year   =   response.data.arr_start_year;
+                            }
+
+                            /* 초기설정 리밸런싱주기 array */
+                            if( response.data.arr_rebalance_cycle_cd && response.data.arr_rebalance_cycle_cd.length > 0 ) {
+                                vm.arr_rebalance_cycle_cd   =   response.data.arr_rebalance_cycle_cd;
+                            }
+
+                            /* 초기설정 리밸런싱일자 array */
+                            if( response.data.arr_rebalance_date_cd && response.data.arr_rebalance_date_cd.length > 0 ) {
+                                vm.arr_rebalance_date_cd   =   response.data.arr_rebalance_date_cd;
+                            }
+
+                            /* 초기설정 벤치마크 array */
+                            if( response.data.arr_bench_mark_cd && response.data.arr_bench_mark_cd.length > 0 ) {
+                                vm.arr_bench_mark_cd   =   response.data.arr_bench_mark_cd;
+                            }
+
+                            /* 초기설정 비중설정방식 array */
+                            if( response.data.arr_importance_method_cd && response.data.arr_importance_method_cd.length > 0 ) {
+                                vm.arr_importance_method_cd   =   response.data.arr_importance_method_cd;
+                            }
+
+                            resolve( { result : true } );
                         }
                     }else{
 
-                        /* 초기설정 시작년도 array */
-                        if( response.data.arr_start_year && response.data.arr_start_year.length > 0 ) {
-                            vm.arr_start_year   =   response.data.arr_start_year;
-                        }
-
-                        /* 초기설정 리밸런싱주기 array */
-                        if( response.data.arr_rebalance_cycle_cd && response.data.arr_rebalance_cycle_cd.length > 0 ) {
-                            vm.arr_rebalance_cycle_cd   =   response.data.arr_rebalance_cycle_cd;
-                        }
-
-                        /* 초기설정 리밸런싱일자 array */
-                        if( response.data.arr_rebalance_date_cd && response.data.arr_rebalance_date_cd.length > 0 ) {
-                            vm.arr_rebalance_date_cd   =   response.data.arr_rebalance_date_cd;
-                        }
-
-                        /* 초기설정 벤치마크 array */
-                        if( response.data.arr_bench_mark_cd && response.data.arr_bench_mark_cd.length > 0 ) {
-                            vm.arr_bench_mark_cd   =   response.data.arr_bench_mark_cd;
-                        }
-
-                        /* 초기설정 비중설정방식 array */
-                        if( response.data.arr_importance_method_cd && response.data.arr_importance_method_cd.length > 0 ) {
-                            vm.arr_importance_method_cd   =   response.data.arr_importance_method_cd;
-                        }
+                        resolve( { result : false } );
                     }
-                }
-            });            
+
+                }).catch( function(e) {
+                    console.log( e );
+                    resolve( { result : false } );
+                });
+
+            }).catch( function(e1) {
+                console.log( e1 );
+                resolve( { result : false } );
+            });                
         },
 
         /*
          * 레코드를 추가한다.
          * 2019-07-26  bkLove(촤병국)
          */
-        fn_addRecords( rowIndex=0, addCount=1 ) {
+        fn_addRecords( rowIndex=0, addCount=1, dataList=[] ) {
             var vm  =   this;
             
             var trHtml      =   "";
+            var rowData     =   {};
+            var strJson     =   "";
             for( var i=1; i <= addCount; i++ ) {
+                rowData = {
+                        grp_cd      :   ""      /* 그룹코드(상위코드) */
+                    ,   scen_cd     :   ""      /* 시나리오코드 */
+                    ,   F16316      :   ""      /* 구성종목코드 */
+                    
+                    ,   F16002      :   ""      /* 종목명 */
+                    ,   order_no    :   0       /* 정렬 순번 */
+                    ,   importance  :   ""      /* 비중 */
+                    ,   jisu_rate   :   ""      /* 지수적용비율 */
+
+                    ,   F16013      :   ""      /* 단축코드 */
+                    ,   F15028      :   ""      /* 시가총액 */
+                    ,   F16017      :   ""      /* 상장일 */
+                };
+
+
+                if( dataList.length > 0 && i-1 <= dataList.length-1 ) {
+                    rowData =   dataList[ i-1 ];
+
+                    strJson =   JSON.stringify( { "F16013" : rowData.F16013 , "F15028" : rowData.F15028, "F16017" : rowData.F16017 } )
+                }
+
+
                 trHtml      +=  `<tr>`;
 
+                                    /* asset 순번 */
                 trHtml      +=  `    <td>`;
                 if( i == addCount ) {
                     trHtml      +=  `       <button class="btn_icon v-icon material-icons" name="btn_asset">add_circle_outline</button>`;
@@ -601,19 +759,28 @@ debugger;
                 trHtml      +=  `        <span class="add_btn_span">Asset` + (rowIndex+i) + `</span>`;
                 trHtml      +=  `    </td>`;
 
+                                    /* 종목코드 */
                 trHtml      +=  `    <td class="td_in_input">`;
-                trHtml      +=  `        <input type="text"     name="F16316" class="txt_right wid150"  maxlength="15" value />`;
+                trHtml      +=  `        <input type="text"     name="F16316" class="txt_right wid150"  maxlength="15" value="` + rowData.F16316 + `" />`;
                 trHtml      +=  `        <span>`;
                 trHtml      +=  `            <button class="btn_icon v-icon material-icons"  name="btn_F16316_search" >search</button>`;
                 trHtml      +=  `        </span>`;
                 trHtml      +=  `    </td>`;
 
-                trHtml      +=  `    <td class="txt_left"></td>`;
-                trHtml      +=  `    <td class="txt_right"></td>`;
+                                    /* 종목명 */
+                trHtml      +=  `    <td class="txt_left">` + rowData.F16002 + `</td>`;
+
+                                    /* 시가총액 */
+                trHtml      +=  `    <td class="txt_right">` + util.formatInt( rowData.F15028 ) + `</td>`;
+
+                                    /* 비중 */
                 trHtml      +=  `    <td class="txt_right">`;
-                trHtml      +=  `        <input type="text"     name="importance" class="txt_right wid100"  maxlength="5" value /> %`;
+                trHtml      +=  `        <input type="hidden"   name="strJson"      value="` + strJson + `" />`;
+                trHtml      +=  `        <input type="text"     name="importance"   class="txt_right wid100"  maxlength="5" value="` + rowData.importance + `" /> %`;
                 trHtml      +=  `    </td>`;
-                trHtml      +=  `    <td class="txt_right"></td>`;
+
+                                    /* 지수적용비율 */
+                trHtml      +=  `    <td class="txt_right">` + rowData.jisu_rate + `</td>`; 
                 trHtml      +=  `</tr>`;
             }
 
@@ -627,7 +794,7 @@ debugger;
         fn_resetRecords : function( rowIndex ) {
             var vm = this;
 
-            var tr  =   table01.find( "tbody tr" ).eq( rowIndex );
+            var tr  =   table01.find( "tbody tr input[name=F16316]" ).parents("tr").eq( rowIndex );
 
             tr.find( "td input[name=F16316]" ).val( "" );       /* 종목코드 */
             tr.find( "td:eq(2)" ).text( "" );                   /* 종목명 */
@@ -641,41 +808,53 @@ debugger;
          * total 레코드를 설정한다.
          * 2019-07-26  bkLove(촤병국)
          */
-        fn_setTotalRecord : function() {
+        fn_setTotalRecord : function( v_total ) {
             var vm = this;
 
-            var totalRecord   =   {
-                    tot_F16316      :   0           /* (합계) 시가총액 */
-                ,   tot_importance  :   0           /* (합계) 비중 */
-            };
+            /* total 정보 */
+            var total   =   {
+                    length          :   0       /* 총건수 */
+                ,   same_rate_sum   :   100     /* 동일가중 합계 */
 
-            table01.find( "tbody tr" ).each( function( inx, rowItem ) {
-                var tr = $(this);
+                ,   F15028          :   0       /* (합계) 시가총액 */
+                ,   importance      :   0       /* (합계) 비중 */
+                ,   jisu_rate       :   0       /* (합계) 지수적용 비율 */
 
-                var v_text0         =   tr.find( "td:eq(0) .add_btn_span" ).text();         /* 첫번째 컬럼 */
-                var v_F16316        =   tr.find( "td input[name=F16316]" ).val();           /* 종목코드 */
+                ,   sum_importance  :   0       /* 누적 비중 */
+            };            
 
-                var v_F15028        =   tr.find( "td:eq(3)" ).text();                       /* 시가총액 */
-                var v_importance    =   tr.find( "td input[name=importance]" ).val();       /* 비중 */
-                var v_jisu_rate     =   tr.find( "td:eq(5)" ).text();                       /* 지수적용비율 */
 
-                if( typeof v_F16316 != "undefined" ) {
+            /* v_total 에 값이 있는 경우 tr 들을 순회하지 않는다.  */
+            if( !v_total || Object.keys( v_total ).length == 0 ) {
 
-                    if( v_F16316 != "" ) {
-                        totalRecord.tot_F16316      =   Number( totalRecord.tot_F16316 ) + Number( v_F15028 );
-                        totalRecord.tot_importance  =   ( ( Number( totalRecord.tot_importance ) * 100 ) + ( Number( v_importance ) * 100 ) ) / 100;
+                table01.find( "tbody tr input[name=F16316]" ).parents("tr").each( function( inx, rowItem ) {
+                    var tr = $(this);
+
+                    var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
+                    var v_F16316        =   tr.find( "td input[name=F16316]" );                 /* 종목코드 */
+
+                    var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
+                    var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
+                    var v_jisu_rate     =   tr.find( "td:eq(5)" );                              /* 지수적용비율 */
+
+                    if( typeof v_F16316.val() != "undefined" ) {
+                        if( v_F16316.val() != "" ) {
+                            total.F15028            =   Number( total.F15028 )  +  Number( util.NumtoStr( v_F15028.text() ) );                                          /* (합계) 시가총액 */
+                            total.importance        =   Math.floor( ( total.importance * 100 )  +  ( Number( util.NumtoStr( v_importance.val() ) ) * 100 ) ) / 100;     /* (합계) 비중 */
+                            total.jisu_rate         =   Math.floor( ( total.jisu_rate * 100 )   +  ( Number( util.NumtoStr( v_jisu_rate.text() ) ) * 100 ) ) / 100;     /* (합계) 지수적용비율 */
+                        }
                     }
-                }
-            });
+                });
+            }
 
-
+            /* tr 에 합계를 설정한다.  */
+            total   =   Object.assign( total, v_total );
             table01.find( "tbody tr:last" ).each( function( inx, rowItem ) {
                 var tr = $(this);
 
-                tr.find( "td:eq(3)").text( totalRecord.tot_F16316 );        /* (합계) 시가총액 */
-                tr.find( "td:eq(5)").text( totalRecord.tot_importance );    /* (합계) 비중 */
+                tr.find( "td:eq(3)").text( util.formatInt( total.F15028 ) );                /* (합계) 시가총액 */
+                tr.find( "td input[name=importance]").val( total.importance );              /* (합계) 비중 */
             });
-
         },
 
         /*
@@ -705,18 +884,20 @@ debugger;
          * 
          *  2019-07-26  bkLove(촤병국)
          */        
-        fn_getSelectedItem: function( items, gubun ) {
+        async fn_getSelectedItem( items, gubun ) {
             var vm = this;
 
             for( let i=0; i < items.length; i++ ) {
 
                 /* 추가된 자산정보를 table 에 설정한다. */
-                vm.fn_setMastRowData( vm.selectedRowIndex + i, items[i], gubun ).then( async function(e) {
+                await vm.fn_setMastRowData( vm.selectedRowIndex + i, items[i], gubun ).then( async function(e) {
                     if( e && e.result ) {
-                        vm.fn_setTotalRecord();
+//                        vm.fn_setTotalRecord();
                     }
                 });
             }
+
+            vm.fn_setImportanceMethodCd( vm.importance_method_cd );
         },
 
         /*
@@ -726,8 +907,7 @@ debugger;
         fn_setMastRowData: function( rowIndex=0, rowItem, gubun ) {
             var vm = this;
 
-
-            var dataTrCnt   =   table01.find( "tbody tr" ).length - 1;
+            var dataTrCnt   =   table01.find( "tbody tr input[name=F16316]" ).parents("tr").length;
             if( rowIndex > dataTrCnt-1 ) {
                 vm.fn_addRecords( dataTrCnt, 5 );
             }
@@ -737,67 +917,52 @@ debugger;
             return  new Promise(function(resolve, reject) {
 
             /* 한건씩 자산을 추가한다. */
-                tr  =   table01.find( "tbody tr" ).eq( rowIndex );
+                tr  =   table01.find( "tbody tr input[name=F16316]" ).parents("tr").eq( rowIndex );
 
                 tr.find( "td input[name=F16316]" ).val( rowItem.F16012 );       /* 종목코드 */
-                tr.find( "td:eq(2)" ).text( rowItem.F16002 );                   /* 종목명 */
+                tr.find( "td:eq(2)" ).text( rowItem.F16002 );                   /* 종목명 */                        
 
-                resolve( { result : true } );
 
-            }).catch( function(e) {
-                console.log( e );
+            /* 선택된 종목의 구성정보를 조회한다. */
+                axios.post(Config.base_url + "/user/simulation/getJongmokInfo", {
+                    data: { "F16012" : rowItem.F16012 }
+                }).then( function(response) {
+                    if (response && response.data) {
+                        var msg = ( response.data.msg ? response.data.msg : "" );
 
-                resolve( { result : false } );
-
-            }).then( async function(e1) {
-
-                if( e1 && e1.result ) {
-
-                    return  await new Promise(function(resolve1, reject1) {
-
-                    /* 선택된 종목의 구성정보를 조회한다. */
-                        axios.post(Config.base_url + "/user/simulation/getJongmokInfo", {
-                            data: { "F16012" : rowItem.F16012 }
-                        }).then( function(response) {
-                            if (response && response.data) {
-                                var msg = ( response.data.msg ? response.data.msg : "" );
-
-                                if (!response.data.result) {
-                                    if( msg ) {
-                                        vm.arr_show_error_message.push( msg );
-                                    }
-
-                                    resolve1( { result : false } );
-                                }else{
-                                    var jongmokInfo = response.data.jongmokInfo;
-                                    
-                                    if( !jongmokInfo || Object.keys( jongmokInfo ).length == 0 ) {
-                                        jongmokInfo =   {};
-                                    }
-
-                                    if( jongmokInfo.F15028 ) {
-                                        tr.find( "td:eq(3)" ).text( jongmokInfo.F15028 );               /* 시가총액 */
-
-                                        tr.find( "td:eq(5)" ).text( rowIndex / 100 );                   /* 지수적용비율 */
-                                    }
-                                    resolve1( { result : true } );
-                                }
-
-                            }else{
-                                resolve1( { result : false } );
+                        if (!response.data.result) {
+                            if( msg ) {
+                                vm.arr_show_error_message.push( msg );
                             }
 
-                        }).catch( function(e) {
-                            console.log( e );
-                            resolve1( { result : false } );
-                        });
+                            resolve( { result : false } );
+                        }else{
+                            var jongmokInfo = response.data.jongmokInfo;
+                            
+                            if( !jongmokInfo || Object.keys( jongmokInfo ).length == 0 ) {
+                                jongmokInfo =   {};
+                            }
 
-                    }).catch( function(e1) {
-                        console.log( e1 );
-                        resolve1( { result : false } );
-                    });
-                }
+                            if( jongmokInfo.F15028 ) {
+                                tr.find( "td:eq(3)" ).text( util.formatInt( jongmokInfo.F15028 ) );     /* 시가총액 */
 
+                                tr.find( "td:eq(5)" ).text( rowIndex / 100 );                           /* 지수적용비율 */
+                            }
+                            resolve( { result : true } );
+                        }
+
+                    }else{
+                        resolve( { result : false } );
+                    }
+
+                }).catch( function(e) {
+                    console.log( e );
+                    resolve( { result : false } );
+                });
+
+            }).catch( function(e1) {
+                console.log( e1 );
+                resolve( { result : false } );
             });
         },
 
@@ -812,7 +977,7 @@ debugger;
 
             vm.arr_portfolio    =   [];
             
-            table01.find( "tbody tr" ).each( function( inx, rowItem ) {
+            table01.find( "tbody tr input[name=F16316]" ).parents("tr").each( function( inx, rowItem ) {
                 var tr = $(this);
 
                 var v_text0         =   tr.find( "td:eq(0) .add_btn_span" ).text();         /* 첫번째 컬럼 */
@@ -838,10 +1003,10 @@ debugger;
                         }
 
                         vm.arr_portfolio.push({
-                                "F16316"        :   v_F16316            /* 종목코드 */
-                            ,   "importance"    :   v_importance        /* 비중 */
-                            ,   "jisu_rate"     :   v_jisu_rate         /* 지수적용비율 */
-                            ,   "order_no"      :   rowIndex++          /* 정렬 순번 */
+                                "F16316"        :   v_F16316                            /* 종목코드 */
+                            ,   "importance"    :   util.NumtoStr( v_importance )       /* 비중 */
+                            ,   "jisu_rate"     :   util.NumtoStr( v_jisu_rate )        /* 지수적용비율 */
+                            ,   "order_no"      :   rowIndex++                          /* 정렬 순번 */
                         });                        
                     }else{
 
@@ -868,6 +1033,42 @@ debugger;
          */
         fn_saveBaicInfo() {
             var vm = this;
+
+            /* 상위그룹 array */
+            if( !vm.arr_grp_cd || vm.arr_grp_cd.length == 0 ) {
+                vm.arr_show_error_message.push( "초기 데이터 [상위그룹] 정보가 존재하지 않습니다." );
+            }            
+
+            /* 초기설정 시작년도 array */
+            if( !vm.arr_start_year || vm.arr_start_year.length == 0 ) {
+                vm.arr_show_error_message.push( "초기 데이터 [시작년도] 값이 존재하지 않습니다." );
+            }
+
+            /* 초기설정 리밸런싱주기 array */
+            if( !vm.arr_rebalance_cycle_cd || vm.arr_rebalance_cycle_cd.length == 0 ) {
+                vm.arr_show_error_message.push( "초기 데이터 [리밸런싱주기] 값이 존재하지 않습니다." );
+            }
+
+            /* 초기설정 리밸런싱일자 array */
+            if( !vm.arr_rebalance_date_cd || vm.arr_rebalance_date_cd.length == 0 ) {
+                vm.arr_show_error_message.push( "초기 데이터 [리밸런싱일자] 값이 존재하지 않습니다." );
+            }
+
+            /* 초기설정 벤치마크 array */
+            if( !vm.arr_bench_mark_cd || vm.arr_bench_mark_cd.length == 0 ) {
+                vm.arr_show_error_message.push( "초기 데이터 [벤치마크] 값이 존재하지 않습니다." );
+            }
+
+            /* 초기설정 비중설정방식 array */
+            if( !vm.arr_importance_method_cd || vm.arr_importance_method_cd.length == 0 ) {
+                vm.arr_show_error_message.push( "초기 데이터 [비중설정방식] 값이 존재하지 않습니다." );
+            }
+
+            if( vm.arr_show_error_message && vm.arr_show_error_message.length > 0  ) {
+                return  false;
+            }
+
+
 
             if( !vm.scen_name || vm.scen_name.length == 0 ) {
                 vm.arr_show_error_message.push( "[조건설정] 시나리오명을 입력해 주세요." );
@@ -963,6 +1164,117 @@ debugger;
             });            
         },
 
+        /*
+         * 시뮬레이션 마스터 정보를 조회한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_getSimulMast( v_paramData ) {
+            var vm = this;
+
+            vm.arr_show_error_message   =   [];
+
+            axios.post(Config.base_url + "/user/simulation/getSimulMast", {
+                data: v_paramData
+            }).then( function(response) {
+                if (response && response.data) {
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.arr_show_error_message.push( msg );
+                        }
+                    }else{
+                        var mastInfo = response.data.mastInfo;
+
+                        if( mastInfo && Object.keys( mastInfo ).length > 0 ) {
+                            vm.prev_grp_cd              =   mastInfo.grp_cd;                /* 상위 그룹코드 (변경전) */
+                            vm.prev_scen_cd             =   mastInfo.scen_cd;               /* 시나리오 코드 (변경전) */
+
+                            vm.scen_cd                  =   mastInfo.scen_cd;               /* 시나리오 코드 */
+                            vm.scen_order_no            =   mastInfo.scen_order_no;         /* 시나리오 정렬순번 */
+
+                            vm.grp_cd                   =   mastInfo.grp_cd;                /* 상위 그룹코드 */
+                            vm.scen_name                =   mastInfo.scen_name;             /* 시나리오명 */
+                            vm.start_year               =   mastInfo.start_year;            /* 시작년도 */
+                            vm.rebalance_cycle_cd       =   mastInfo.rebalance_cycle_cd;    /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
+                            vm.rebalance_date_cd        =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+                            vm.init_invest_money        =   mastInfo.init_invest_money;     /* 초기투자금액 */
+                            vm.bench_mark_cd            =   mastInfo.bench_mark_cd;         /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
+                            vm.importance_method_cd     =   mastInfo.importance_method_cd;  /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
+
+                            /* 리밸런싱주기 선택시 v-radio 의 disabled 정보를 다시 셋팅한다. */
+                            vm.fn_resetRebalanceDateCd();
+                        }
+                    }
+                }
+            });
+        },
+
+        /*
+         * 시뮬레이션 포트폴리오 정보를 조회한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_getSimulPortfolio( v_paramData ) {
+            var vm = this;
+
+            vm.arr_show_error_message   =   [];
+
+            axios.post(Config.base_url + "/user/simulation/getSimulPortfolio", {
+                data: v_paramData
+            }).then( function(response) {
+
+                /* 레코드를 초기화 한다. */
+                vm.fn_initRecords();
+
+                if (response && response.data) {
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.arr_show_error_message.push( msg );
+                        }
+                    }else{
+                        var dataList = response.data.dataList;
+
+                        if( dataList && dataList.length > 0 ) {
+                            var cnt = Math.ceil( dataList.length / 5 ) * 5;
+                            
+                            /* 레코드를 추가한다. */
+                            vm.fn_addRecords( 0, cnt, dataList );
+
+                            /* total 레코드를 설정한다. */
+                            vm.fn_setTotalRecord();
+
+                            vm.arr_portfolio    =   dataList;
+                        }
+                    }
+                }
+            });
+        },
+
+        /*
+         * 레코드를 초기화 한다.
+         * 2019-07-26  bkLove(촤병국)
+         */        
+        fn_initRecords() {
+
+            var vm = this;
+
+            $( table01.find( "tbody tr input[name=F16316]" ).parents("tr").get().reverse() ).each(function(inx){
+                var tr = $(this);
+
+                var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
+                var v_F16316        =   tr.find( "td input[name=F16316]" );                 /* 종목코드 */
+
+                var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
+                var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
+                var v_jisu_rate     =   tr.find( "td:eq(5)" );                              /* 지수적용비율 */
+
+                if( typeof v_F16316 != "undefined" ) {
+                    $(this).remove();
+                }                
+            });
+        }
     }
 };
 </script>

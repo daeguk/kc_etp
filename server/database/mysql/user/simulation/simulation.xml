@@ -10,9 +10,8 @@
     <select id="getInitGrpCd">
         SELECT      /* simulation.getInitGrpCd 상위 그룹정보를 조회한다. */
 
-                    tm_simul_mast.grp_cd            AS  grp_cd              /* 그룹코드(상위코드) */
-                ,   tm_simul_mast.scen_cd           AS  scen_cd             /* 시나리오 코드 */
-                ,   tm_simul_mast.scen_name         AS  scen_name           /* 시나리오명 */
+                    tm_simul_mast.scen_cd           AS  grp_cd              /* 시나리오 코드 */
+                ,   tm_simul_mast.scen_name         AS  grp_name            /* 시나리오명 */
 
           FROM  tm_simul_mast
 
@@ -464,9 +463,7 @@
     * 2019-07-26  bkLove(촤병국)
     -->
     <delete     id="deleteTmSimulPortfolio">
-
         DELETE  /* simulation.deleteTmSimulPortfolio      [tm_simul_portfolio] 테이블을 삭제한다. */
-
           FROM  tm_simul_portfolio
          USING  tm_simul_portfolio
 
@@ -491,8 +488,99 @@
                         AND     tm_simul_portfolio.grp_cd           =   base.prev_grp_cd    /* 그룹코드(상위코드) */
                         AND     tm_simul_portfolio.scen_cd          =   base.prev_scen_cd   /* 시나리오코드 */
                         AND     tm_simul_portfolio.F16316           =   base.F16316         /* 구성종목코드 */
+    </delete>
 
-    </delete>        
+    <!--
+    *   시뮬레이션 목록정보를 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getSimulList">
+        SELECT      /* simulation.getSimulList 시뮬레이션 목록정보를 조회한다. */
 
+                    tm_simul_mast.grp_cd                                    AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   tm_simul_mast.scen_cd                                   AS  scen_cd                     /* 시나리오 코드 */
+
+                ,   tm_simul_mast.scen_depth                                AS  scen_depth                  /* 시나리오 DEPTH */
+                ,   tm_simul_mast.scen_order_no                             AS  scen_order_no               /* 시나리오 정렬 순번 */
+                ,   tm_simul_mast.scen_name                                 AS  scen_name                   /* 시나리오명 */
+                ,   tm_simul_mast.grp_yn                                    AS  grp_yn                      /* 그룹여부(1-그룹) */
+                ,   tm_simul_mast.start_year                                AS  start_year                  /* 시작년도 */
+                ,   tm_simul_mast.rebalance_cycle_cd                        AS  rebalance_cycle_cd          /* 리밸런싱주기 (COM006) */
+                ,   tm_simul_mast.rebalance_date_cd                         AS  rebalance_date_cd           /* 리밸런싱일자 (COM007) */
+                ,   tm_simul_mast.init_invest_money                         AS  init_invest_money           /* 초기투자금액 */
+                ,   tm_simul_mast.bench_mark_cd                             AS  bench_mark_cd               /* 벤치마크 (COM008) */
+                ,   tm_simul_mast.importance_method_cd                      AS  importance_method_cd        /* 비중설정방식 (COM009) */
+
+                ,   DATE_FORMAT( tm_simul_mast.upd_time, '%Y.%m.%d' )       AS  fmt_upd_time                /* 수정일 */
+
+          FROM  tm_simul_mast
+
+         ORDER  BY      tm_simul_mast.scen_cd
+                    ,   tm_simul_mast.scen_order_no
+    </select>
+
+    <!--
+    *   시뮬레이션 마스터 정보를 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getSimulMast">
+
+        SELECT      /* simulation.getSimulList 시뮬레이션 마스터 정보를 조회한다. */
+
+                    tm_simul_mast.grp_cd                                    AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   tm_simul_mast.scen_cd                                   AS  scen_cd                     /* 시나리오 코드 */
+
+                ,   tm_simul_mast.scen_depth                                AS  scen_depth                  /* 시나리오 DEPTH */
+                ,   tm_simul_mast.scen_order_no                             AS  scen_order_no               /* 시나리오 정렬 순번 */
+                ,   tm_simul_mast.scen_name                                 AS  scen_name                   /* 시나리오명 */
+                ,   tm_simul_mast.grp_yn                                    AS  grp_yn                      /* 그룹여부(1-그룹) */
+                ,   tm_simul_mast.start_year                                AS  start_year                  /* 시작년도 */
+                ,   tm_simul_mast.rebalance_cycle_cd                        AS  rebalance_cycle_cd          /* 리밸런싱주기 (COM006) */
+                ,   tm_simul_mast.rebalance_date_cd                         AS  rebalance_date_cd           /* 리밸런싱일자 (COM007) */
+                ,   tm_simul_mast.init_invest_money                         AS  init_invest_money           /* 초기투자금액 */
+                ,   tm_simul_mast.bench_mark_cd                             AS  bench_mark_cd               /* 벤치마크 (COM008) */
+                ,   tm_simul_mast.importance_method_cd                      AS  importance_method_cd        /* 비중설정방식 (COM009) */
+
+          FROM  tm_simul_mast
+         WHERE  1 = 1
+           AND  tm_simul_mast.grp_cd            =   #{grp_cd}       /* 그룹코드(상위코드) */
+           AND  tm_simul_mast.scen_cd           =   #{scen_cd}      /* 시나리오 코드 */
+
+         ORDER  BY      tm_simul_mast.scen_cd
+                    ,   tm_simul_mast.scen_order_no
+    </select>
+
+    <!--
+    *   시뮬레이션 포트폴리오 정보를 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getSimulPortfolio">
+        SELECT      /* simulation.getSimulPortfolio 시뮬레이션 포트폴리오 정보를 조회한다. */
+
+                    tm_simul_portfolio.grp_cd                               AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   tm_simul_portfolio.scen_cd                              AS  scen_cd                     /* 시나리오코드  */
+                ,   tm_simul_portfolio.F16316                               AS  F16316                      /* 구성종목코드  */
+
+                ,   tm_simul_portfolio.order_no                             AS  order_no                    /* 정렬 순번  */
+                ,   tm_simul_portfolio.importance                           AS  importance                  /* 비중  */
+                ,   tm_simul_portfolio.jisu_rate                            AS  jisu_rate                   /* 지수적용비율  */
+
+                ,   td_kspjong_basic.F16013                                 AS  F16013                      /* 단축코드 */
+                ,   td_kspjong_basic.F16002                                 AS  F16002                      /* 한글종목명 */
+                ,   td_kspjong_basic.F15028                                 AS  F15028                      /* 시가총액 */
+                ,   td_kspjong_basic.F16017                                 AS  F16017                      /* 상장일 */
+                ,   td_kspjong_basic.F16109                                 AS  F16109                      /* 유통주식수 */
+
+          FROM  tm_simul_portfolio
+          JOIN  td_kspjong_basic
+            ON  tm_simul_portfolio.F16316       =   td_kspjong_basic.F16012
+
+         WHERE  1 = 1
+           AND  tm_simul_portfolio.grp_cd       =   #{grp_cd}       /* 그룹코드(상위코드) */
+           AND  tm_simul_portfolio.scen_cd      =   #{scen_cd}      /* 시나리오 코드 */
+
+         ORDER  BY      tm_simul_portfolio.scen_cd
+                    ,   tm_simul_portfolio.order_no
+    </select>
 
 </mapper>

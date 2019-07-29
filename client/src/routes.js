@@ -34,9 +34,10 @@ import  sampleChart   from '@/components/Sample/test.vue'
 import  sampleUpload   from '@/components/Sample/fileUpload.vue'
 
 // simulation
-import  SimulationList   from '@/components/Home/Simulation/SimulationList.vue'
-import  Simulation   from '@/components/Home/Simulation/Simulation.vue'
-import  SimulationResult   from '@/components/Home/Simulation/SimulationResult.vue'
+import  SimulationControl   from '@/components/Home/Simulation/SimulationControl.vue'
+import  SimulationList      from '@/components/Home/Simulation/SimulationList.vue'
+import  Simulation          from '@/components/Home/Simulation/Simulation.vue'
+import  SimulationResult    from '@/components/Home/Simulation/SimulationResult.vue'
 
 
 // 관리자
@@ -167,6 +168,12 @@ export const routes = [
               requiresType: ['0001', '0002', '0004', '0005']
             },
         },
+        {   path : 'simulation/simulationControl',
+            component: SimulationControl,
+            meta: {
+              requiresAuth: false,
+            },
+        },        
         {   path : 'simulation/simulationList',
             component: SimulationList,
             meta: {
@@ -185,7 +192,6 @@ export const routes = [
               requiresAuth: false,
             },
         },
-        
         
     ]
   }
