@@ -596,7 +596,7 @@ var saveBaicInfo = function(req, res) {
                             paramData.scen_depth        =   "2";                                    /* 시나리오 DEPTH */
 
                             /* 상위그룹이 없는 경우 그룹여부='1' 설정 */
-                            if( !paramData.grp_cd ) {
+                            if( !paramData.grp_cd || paramData.grp_cd == initGrpInfo.INIT_GRP_CD ) {
                                 paramData.grp_yn        =   "1";                                    /* 그룹여부(1-그룹) */
                                 paramData.scen_depth    =   "1";                                    /* 시나리오 DEPTH */
 
