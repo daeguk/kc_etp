@@ -38,6 +38,12 @@
 
                                 <!-- 개발 중복 자산추가 팝업 end -->
                             </v-toolbar>
+
+                            <div class="warning_box"    v-if="arr_show_error_message != null && arr_show_error_message.length > 0">
+                                <span v-for="(item, index) in arr_show_error_message" :key="index">
+                                    <v-icon color="#ff4366">error_outline</v-icon> {{item}} <br>
+                                </span>
+                            </div>                            
                         </v-card>
                         
                         <v-card flat>
@@ -329,6 +335,7 @@ export default {
             jongmok_state : "", /* ksp_jongbasic DB 조회 상태 */
 
             status: 0,
+            arr_show_error_message : []
         };
     },
     created: function() {
@@ -461,12 +468,19 @@ export default {
             specialKeys.push(16); //Shift
             specialKeys.push(17); //Control
             specialKeys.push(46); //Delete
-            specialKeys.push(36); //Home
-            specialKeys.push(35); //End
-            specialKeys.push(37); //Left
-            specialKeys.push(39); //Right
+            specialKeys.push(36); //Home    keypad  7
+            specialKeys.push(35); //End     keypad  1
+            specialKeys.push(37); //Left    keypad  4
+            specialKeys.push(39); //Right   keypad  6
 
-            var ret = ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90) || (keyCode >= 97 && keyCode <= 122) || (specialKeys.indexOf(e.keyCode) != -1 && e.charCode != e.keyCode));
+            specialKeys.push(45); // keypad  0
+            specialKeys.push(40); // keypad  2
+            specialKeys.push(34); // keypad  3
+            specialKeys.push(12); // keypad  5
+            specialKeys.push(38); // keypad  8
+            specialKeys.push(33); // keypad  9
+            
+            var ret = ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90) || (keyCode >= 96 && keyCode <= 122) || (specialKeys.indexOf(e.keyCode) != -1 && e.charCode != e.keyCode));
 
             if ( !ret ) {
                 var inputData = $(this).val();
@@ -566,22 +580,41 @@ export default {
             var data = table.row($(this).parents("tr")).data();
             var rowIndex = table.row($(this).parents("tr")).index();
             var nowData = {};
-            var tdData = _.replace( $(this).eq(0).val(), /,/g, "" );
+            var tdData = $(this).eq(0).val();
             
-            $(this).eq(0).val( tdData );            
+            $(this).eq(0).val( tdData );
+
+
+            vm.arr_show_error_message   =  [];
+
+            $(this).css( "borderColor", "" );
 
             /* CU shrs */
             if ( $(this).attr('name') == 'F16499' ) {
+
+                if( isNaN(tdData) ) {
+                    $(this).css( "borderColor", "red" );
+                    vm.arr_show_error_message.push( "[CU shrs] 숫자형식만 입력가능합니다." );
+                    return  false;
+                }
+
                 nowData.name    =   "F16499";
-                nowData.F16499  =   tdData;
+                nowData.F16499  =   util.NumtoStr( tdData );
             }
             /* 액면금액 */
             else if( $(this).attr('name') == 'F34840' ) {
+
+                if( isNaN(tdData) ) {
+                    $(this).css( "borderColor", "red" );
+                    vm.arr_show_error_message.push( "[액면금액] 숫자형식만 입력가능합니다." );
+                    return  false;
+                }
+
                 nowData.name    =   "F34840";
-                nowData.F34840  =   tdData;
+                nowData.F34840  =   util.NumtoStr( tdData );
             }
 
-            $(this).eq(0).val( util.formatNumber( tdData ) );
+            $(this).eq(0).val( util.formatNumber( util.NumtoStr( tdData ) ) );
 
             vm.jongmok_state=""
             vm.fn_setStatus( data, nowData, rowIndex );
@@ -1265,6 +1298,11 @@ export default {
             var vm = this;
 
             if( step == 1) {
+
+                /* 오류메시지가 존재하는 경우 */
+                if( vm.arr_show_error_message.length > 0 ) {
+                    return  false;
+                }
 
                 /* 자산추가된 행에 대해 빈 값이 존재하는지 체크한다. */
                 if( !vm.fn_emptyCheck() )   {
