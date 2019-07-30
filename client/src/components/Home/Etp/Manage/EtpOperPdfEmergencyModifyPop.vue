@@ -461,12 +461,19 @@ export default {
             specialKeys.push(16); //Shift
             specialKeys.push(17); //Control
             specialKeys.push(46); //Delete
-            specialKeys.push(36); //Home
-            specialKeys.push(35); //End
-            specialKeys.push(37); //Left
-            specialKeys.push(39); //Right
+            specialKeys.push(36); //Home    keypad  7
+            specialKeys.push(35); //End     keypad  1
+            specialKeys.push(37); //Left    keypad  4
+            specialKeys.push(39); //Right   keypad  6
 
-            var ret = ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90) || (keyCode >= 97 && keyCode <= 122) || (specialKeys.indexOf(e.keyCode) != -1 && e.charCode != e.keyCode));
+            specialKeys.push(45); // keypad  0
+            specialKeys.push(40); // keypad  2
+            specialKeys.push(34); // keypad  3
+            specialKeys.push(12); // keypad  5
+            specialKeys.push(38); // keypad  8
+            specialKeys.push(33); // keypad  9
+
+            var ret = ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90) || (keyCode >= 96 && keyCode <= 122) || (specialKeys.indexOf(e.keyCode) != -1 && e.charCode != e.keyCode));
 
             if ( !ret ) {
                 var inputData = $(this).val();
