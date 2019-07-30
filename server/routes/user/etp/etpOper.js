@@ -2110,47 +2110,50 @@ var makePdfModify = function(fsData) {
   F34840_prev: '0',
   code_check: true } */
   log.debug("makePdfModify.......................");
-
-  var etf_F33960    =   ""; /* 운용사 코드 추가 ( written by bkLove 2019-07-30 ) */
-  var ifname = "";
+  var ifname = config.pdfmodify_nas_path + "pdfmodify." + util.getTodayDate();
   var msg = "ETP PDF 변경신청 접수되었습니다.";
-  for(var i=0; i<fsData.allDataList.length; i++) {
-    var tmp = fsData.allDataList[i];
 
-    /* 운용사 코드 추가 ( written by bkLove 2019-07-30 ) */
-    if( tmp.etf_F33960 && typeof tmp.etf_F33960 != "undefined" ) {
-        etf_F33960  =   tmp.etf_F33960 + ".";
+  /* 파일내용이 초기화 된 이후에 수정된 내용만 저장되게 수정 ( written by bkLove 2019-07-30 )  */
+  fs.writeFile(ifname, "", function( err) {
+
+    log.debug( "### 파일초기화 ###" );
+
+    if( err ) {
+        log.debug( err );
+        return false;
     }
-    ifname = config.pdfmodify_nas_path + "pdfmodify." + etf_F33960 + util.getTodayDate();
 
-    log.debug( "##   ifname", ifname );
+    log.debug( "### 파일초기화 완료 ###" );
 
-    for(var j=0; j<tmp.data.length; j++) {
-      wItem.fld003 = tmp.data[j].F12506;
-      wItem.fld004 = util.padZero(tmp.data[j].F16583, 3);       /* 사무수탁회사번호 3자리가 아닌 경우 0 추가 ( written by bkLove 2019-07-30 ) */
-      wItem.fld005 = tmp.data[j].F16012;
-      wItem.fld006 = util.padZero(tmp.data[j].F33837, 4);
-      wItem.fld007 = tmp.data[j].F16316;
-      wItem.fld008 = util.padZero(Number(tmp.data[j].F16499) * 100, 18); // 백엔드에서 나누기 100 해서 씀
-      wItem.fld009 = tmp.data[j].F33861;
-      wItem.fld010 = util.padSpace(tmp.data[j].F16004, 40);
-      if(tmp.data[j].status == 'insert') wItem.fld014 = '1';
-      else if(tmp.data[j].status == 'delete') wItem.fld014 = '2';
-      else  wItem.fld014 = '0';
+    for(var i=0; i<fsData.allDataList.length; i++) {
+        var tmp = fsData.allDataList[i];
+        for(var j=0; j<tmp.data.length; j++) {
+        wItem.fld003 = tmp.data[j].F12506;
+        wItem.fld004 = util.padZero(tmp.data[j].F16583, 3);       /* 사무수탁회사번호 3자리가 아닌 경우 0 추가 ( written by bkLove 2019-07-30 ) */
+        wItem.fld005 = tmp.data[j].F16012;
+        wItem.fld006 = util.padZero(tmp.data[j].F33837, 4);
+        wItem.fld007 = tmp.data[j].F16316;
+        wItem.fld008 = util.padZero(Number(tmp.data[j].F16499) * 100, 18); // 백엔드에서 나누기 100 해서 씀
+        wItem.fld009 = tmp.data[j].F33861;
+        wItem.fld010 = util.padSpace(tmp.data[j].F16004, 40);
+        if(tmp.data[j].status == 'insert') wItem.fld014 = '1';
+        else if(tmp.data[j].status == 'delete') wItem.fld014 = '2';
+        else  wItem.fld014 = '0';
 
-      var ostr = wItem.fld000 + wItem.fld001 + wItem.fld002 + wItem.fld003 + 
-      wItem.fld004 + wItem.fld005 + wItem.fld006 + wItem.fld007 + wItem.fld008 + 
-      wItem.fld009 + wItem.fld010 + wItem.fld011 + wItem.fld012 + wItem.fld013 + 
-      wItem.fld014 + wItem.filler + wItem.filler2;
+        var ostr = wItem.fld000 + wItem.fld001 + wItem.fld002 + wItem.fld003 + 
+        wItem.fld004 + wItem.fld005 + wItem.fld006 + wItem.fld007 + wItem.fld008 + 
+        wItem.fld009 + wItem.fld010 + wItem.fld011 + wItem.fld012 + wItem.fld013 + 
+        wItem.fld014 + wItem.filler + wItem.filler2;
 
-      msg = msg + "[" + tmp.data[j].F16013 + "]";
-      console.log("strlen : " + ostr.length);
-      fs.writeFileSync(ifname, ostr, {flag: 'a+'}, 'utf8');
-      // fs.writeFileSync(ifname, ostr, {flag: 'a+', encoding:'latin1'});  // latin1 == ISO-8859-1
-      log.debug("wItem..................");
-      log.debug(wItem);
+        msg = msg + "[" + tmp.data[j].F16013 + "]";
+        console.log("strlen : " + ostr.length);
+        fs.writeFileSync(ifname, ostr, {flag: 'a+'}, 'utf8');
+        // fs.writeFileSync(ifname, ostr, {flag: 'a+', encoding:'latin1'});  // latin1 == ISO-8859-1
+        log.debug("wItem..................");
+        log.debug(wItem);
+        }
     }
-  }
+  });
 
   sms.smsSend(0, msg)
 }
