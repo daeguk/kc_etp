@@ -32,7 +32,7 @@ export default {
       valHeight: 0.0,
       term:['1D', '1W', '1M', '3M', '6M', '1Y', 'ALL'],
       dmode:2,
-      dterm:2,
+      dterm:5,
       wlen: 0,
       hlen: 0,
       intra_data:[],
@@ -238,7 +238,7 @@ export default {
           grd.addColorStop(0, "#b8b8b8");
           grd.addColorStop(1, "#8c8c8c");
         }
-        c.lineWidth = 3;
+        c.lineWidth = 1;
         c.setLineDash([]);
         c.strokeStyle = grd ;
         vm.sArr.forEach(function(item, index) {
@@ -348,7 +348,7 @@ export default {
           grd.addColorStop(0, "#b8b8b8");
           grd.addColorStop(1, "#8c8c8c");
         }
-        c.lineWidth = 3;
+        c.lineWidth = 1;
         c.setLineDash([]);
         c.strokeStyle = grd ;
         vm.sArr.forEach(function(item, index) {
@@ -481,7 +481,7 @@ export default {
         grd.addColorStop(0, "#C5E1A5");
         grd.addColorStop(1, "#85c406");
 
-        c.lineWidth = 3;
+        c.lineWidth = 1;
         c.setLineDash([]);
         c.strokeStyle = grd ;
         vm.sArr.forEach(function(item, index) {
@@ -635,7 +635,7 @@ export default {
         grd.addColorStop(0, "#C5E1A5");
         grd.addColorStop(1, "#85c406");
 
-        c.lineWidth = 3;
+        c.lineWidth = 1;
         c.setLineDash([]);
         c.strokeStyle = grd ;
         vm.sArr.forEach(function(item, index) {

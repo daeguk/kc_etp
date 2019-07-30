@@ -31,8 +31,7 @@ export default {
       itemNum: 0,
       valHeight: 0.0,
       term:['1D', '1W', '1M', '3M', '6M', '1Y', 'ALL'],
-      dmode:2,
-      dterm:2,
+      dterm:5,
       wlen: 0,
       hlen: 0,
       ydifflen: 0,
@@ -220,7 +219,7 @@ export default {
         var grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
         grd.addColorStop(0, "#C5E1A5");
         grd.addColorStop(1, "#85c406");
-        c.lineWidth = 3;
+        c.lineWidth = 1;
         c.setLineDash([]);
         c.strokeStyle = grd ;
         vm.chartDataPosArr = [];
@@ -326,7 +325,7 @@ export default {
         var grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
         grd.addColorStop(0, "#C5E1A5");
         grd.addColorStop(1, "#85c406");
-        c.lineWidth = 3;
+        c.lineWidth = 1;
         c.setLineDash([]);
         c.strokeStyle = grd ;
         vm.chartDataPosArr = [];
