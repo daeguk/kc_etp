@@ -29,7 +29,7 @@ var INIT_START_YEAR     =   { value : 2000, text : "2000" };    /* 시작년도 
 var SEARCH_SCEN_NAME    =   "unnamed";                          /* 시나리오명 prefix */
 var initGrpInfo         =   {
         INIT_GRP_CD         :   "*"                             /* 그룹코드 최초값 */
-    ,   INIT_INCRE_GRP_CD   :   10000                           /* 그룹인 경우 시나리오 코드는 해당값 단위로 증가 */
+    ,   INIT_INCRE_GRP_CD   :   100000                          /* 그룹인 경우 시나리오 코드는 해당값 단위로 증가 */
 };
 
 
@@ -65,9 +65,8 @@ var getInitGrpCd = function(req, res) {
 
 
         resultMsg.dataList      =   [{
-                grp_cd          :   ""
-            ,   scen_cd         :   ""
-            ,   scen_name       :   "선택안함"
+                grp_cd          :   initGrpInfo.INIT_GRP_CD
+            ,   grp_name        :   "선택안함"
         }];
 
         var format = { language: 'sql', indent: '' };
@@ -268,7 +267,7 @@ var getInitData = function(req, res) {
             /* 초기설정 시작년도 array */
                 var nowYear = new Date().getFullYear();
                 for( var i=INIT_START_YEAR.value; i <= nowYear; i++ ) {
-                    resultMsg.arr_start_year.push( { value : i, text : new String(i) } );
+                    resultMsg.arr_start_year.push( { value : new String(i), text : new String(i) } );
                 }
 
                 stmt = mapper.getStatement('simulation', 'getInitData', paramData, format);
@@ -521,7 +520,11 @@ var saveBaicInfo = function(req, res) {
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
-        resultMsg.dataList = [];
+        var arrInsertDtl    =   [];
+        var arrModifyDtl    =   [];
+        var arrDeleteDtl    =   [];
+        var divideList      =   [];
+
         Promise.using(pool.connect(), conn => {
 
             conn.beginTransaction(txerr => {
@@ -593,7 +596,7 @@ var saveBaicInfo = function(req, res) {
                             paramData.scen_depth        =   "2";                                    /* 시나리오 DEPTH */
 
                             /* 상위그룹이 없는 경우 그룹여부='1' 설정 */
-                            if( !paramData.grp_cd ) {
+                            if( !paramData.grp_cd || paramData.grp_cd == initGrpInfo.INIT_GRP_CD ) {
                                 paramData.grp_yn        =   "1";                                    /* 그룹여부(1-그룹) */
                                 paramData.scen_depth    =   "1";                                    /* 시나리오 DEPTH */
 
@@ -797,83 +800,358 @@ var saveBaicInfo = function(req, res) {
                         }
                     },
 
-                    /* 6. 시뮬레이션 포트폴리오 정보를 저장한다. */
+                    /* 6. 입력할 값을 기준으로 tm_simul_portfolio 와 비교하여 insert, modify 대상을 추출한다.  */
                     function( msg, callback) {
 
-                        var divideList  =   [];
-                        async.forEachOfLimit( paramData.arr_portfolio, 1, function(subList, i, innerCallback) {
+                        try {
+                            arrInsertDtl = [];
+                            arrModifyDtl = [];
 
-                            async.waterfall([
+                            /* 포트폴리오 설정 건이 존재하는 경우 */
+                            if( paramData.arr_portfolio && paramData.arr_portfolio.length > 0  ){
+                                stmt = mapper.getStatement('simulation', 'getTmSimulPortfolioExistCheck1', paramData, { language: 'sql', indent: '  ' });
+                                log.debug(stmt, paramData);
 
-                                function(innerCallback) {
-                                    subList.order_no    =   i+1;
-                                    divideList.push( subList );
-                                    
-                                    innerCallback(null, paramData);
-                                },
+                                conn.query(stmt, function(err, rows) {
 
-                                function(msg, innerCallback) {
-
-                                    var divide_size = ( limit && limit.divide_size ? limit.divide_size : 1 );
-                                    if( divideList && ( divideList.length == divide_size || i == paramData.arr_portfolio.length-1 ) ) {
-                                        try {
-                                            paramData.dataLists =   divideList;
-                                            stmt = mapper.getStatement('simulation', 'saveTmSimulPortfolio', paramData, format);
-                                            log.debug(stmt);
-
-                                            conn.query(stmt, function(err, rows) {
-                                                if (err) {
-                                                    resultMsg.result = false;
-                                                    resultMsg.msg = "[error] simulation.saveTmSimulPortfolio Error while performing Query";
-                                                    resultMsg.err = err;
-
-                                                    return innerCallback(resultMsg);
-                                                }
-
-                                                innerCallback(null);
-                                            });
-
-                                            divideList  =   [];                                                        
-
-                                        } catch (err) {
-
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] simulation.saveTmSimulPortfolio Error while performing Query";
-
-                                            if( !resultMsg.err ) {
-                                                resultMsg.err = err;
-                                            }
-
-                                            return innerCallback(resultMsg);
-                                        }
-
-                                    }else{
-                                        innerCallback(null);
-                                    }
-                                }
-
-                            ], function(err) {
-
-                                if( err ) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulation.saveTmSimulPortfolio Error while performing Query";
-                                    if( !resultMsg.err ) {
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulation.getTmSimulPortfolioExistCheck1 Error while performing Query";
                                         resultMsg.err = err;
+
+                                        return callback(resultMsg);
                                     }
 
-                                    return innerCallback(resultMsg);
-                                }
+                                    if (rows && rows.length > 0) {
+                                        for (var i in rows) {
+                                            if (rows[i].dtl_status == "insert") {
+                                                arrInsertDtl.push(rows[i]);
+                                            } else if (rows[i].dtl_status == "modify") {
+                                                arrModifyDtl.push(rows[i]);
+                                            }
+                                        }
+                                    }
 
-                                innerCallback(null);
-                            });                                            
-
-                        }, function(err) {
-                            if (err) {
-                                return callback(resultMsg);
+                                    callback(null, paramData);
+                                });
+                            
+                            }else{
+                                callback(null, paramData);
                             }
 
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulation.getTmSimulPortfolioExistCheck1 Error while performing Query";
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 7. tm_simul_portfolio 을 기준으로 입력할 값과 비교하여 delete 대상을 추출한다.  */
+                    function( msg, callback) {
+
+                        try {
+                            arrDeleteDtl = [];
+
+                            /* 수정인 경우 */
+                            if( paramData.status  ==  "modify" ) {
+
+                                /* 포트폴리오 설정 건이 존재하는 경우 */
+                                if( paramData.arr_portfolio && paramData.arr_portfolio.length > 0  ){
+                                    stmt = mapper.getStatement('simulation', 'getTmSimulPortfolioExistCheck2', paramData, { language: 'sql', indent: '  ' });
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] simulation.getTmSimulPortfolioExistCheck2 Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        if (rows && rows.length > 0) {
+                                            for (var i in rows) {
+                                                if (rows[i].dtl_status == "delete") {
+                                                    arrDeleteDtl.push(rows[i]);
+                                                }
+                                            }
+                                        }
+
+                                        callback(null, paramData);
+                                    })
+                                }else{
+                                    callback(null, paramData);
+                                }
+
+                            }else{
+                                callback(null, paramData);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulation.getTmSimulPortfolioExistCheck2 Error while performing Query";
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 8. 시뮬레이션 포트폴리오 정보를 저장한다. ( insert 건 ) */
+                    function( msg, callback) {
+
+                        divideList  =   [];
+
+                        /* 등록건이 존재하는 경우 */
+                        if( arrInsertDtl && arrInsertDtl.length > 0 ) {
+                            async.forEachOfLimit( arrInsertDtl, 1, function(subList, i, innerCallback) {
+
+                                async.waterfall([
+
+                                    function(innerCallback) {
+                                        divideList.push( subList );
+                                        
+                                        innerCallback(null, paramData);
+                                    },
+
+                                    function(msg, innerCallback) {
+
+                                        var divide_size = ( limit && limit.divide_size ? limit.divide_size : 1 );
+                                        if( divideList && ( divideList.length == divide_size || i == arrInsertDtl.length-1 ) ) {
+                                            try {
+                                                paramData.arr_portfolio =   divideList;
+                                                stmt = mapper.getStatement('simulation', 'saveTmSimulPortfolio', paramData, format);
+                                                log.debug(stmt);
+
+                                                conn.query(stmt, function(err, rows) {
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = "[error] simulation.saveTmSimulPortfolio Error while performing Query";
+                                                        resultMsg.err = err;
+
+                                                        return innerCallback(resultMsg);
+                                                    }
+
+                                                    innerCallback(null);
+                                                });
+
+                                                divideList  =   [];                                                        
+
+                                            } catch (err) {
+
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] simulation.saveTmSimulPortfolio Error while performing Query";
+
+                                                if( !resultMsg.err ) {
+                                                    resultMsg.err = err;
+                                                }
+
+                                                return innerCallback(resultMsg);
+                                            }
+
+                                        }else{
+                                            innerCallback(null);
+                                        }
+                                    }
+
+                                ], function(err) {
+
+                                    if( err ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulation.saveTmSimulPortfolio Error while performing Query";
+                                        if( !resultMsg.err ) {
+                                            resultMsg.err = err;
+                                        }
+
+                                        return innerCallback(resultMsg);
+                                    }
+
+                                    innerCallback(null);
+                                });                                            
+
+                            }, function(err) {
+                                if (err) {
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, paramData);
+                            });
+
+                        }else{
                             callback(null, paramData);
-                        });
+                        }
+                    },
+
+                    /* 9. 시뮬레이션 포트폴리오 정보를 저장한다. ( modify 건 ) */
+                    function( msg, callback) {
+
+                        divideList  =   [];
+
+                        /* 수정건이 존재하는 경우 */
+                        if( arrModifyDtl && arrModifyDtl.length > 0 ) {
+                            async.forEachOfLimit( arrModifyDtl, 1, function(subList, i, innerCallback) {
+
+                                async.waterfall([
+
+                                    function(innerCallback) {
+                                        divideList.push( subList );
+                                        
+                                        innerCallback(null, paramData);
+                                    },
+
+                                    function(msg, innerCallback) {
+
+                                        var divide_size = ( limit && limit.divide_size ? limit.divide_size : 1 );
+                                        if( divideList && ( divideList.length == divide_size || i == arrModifyDtl.length-1 ) ) {
+                                            try {
+                                                paramData.arr_portfolio =   divideList;
+                                                stmt = mapper.getStatement('simulation', 'modifyTmSimulPortfolio', paramData, format);
+                                                log.debug(stmt);
+
+                                                conn.query(stmt, function(err, rows) {
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = "[error] simulation.modifyTmSimulPortfolio Error while performing Query";
+                                                        resultMsg.err = err;
+
+                                                        return innerCallback(resultMsg);
+                                                    }
+
+                                                    innerCallback(null);
+                                                });
+
+                                                divideList  =   [];                                                        
+
+                                            } catch (err) {
+
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] simulation.modifyTmSimulPortfolio Error while performing Query";
+
+                                                if( !resultMsg.err ) {
+                                                    resultMsg.err = err;
+                                                }
+
+                                                return innerCallback(resultMsg);
+                                            }
+
+                                        }else{
+                                            innerCallback(null);
+                                        }
+                                    }
+
+                                ], function(err) {
+
+                                    if( err ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulation.modifyTmSimulPortfolio Error while performing Query";
+                                        if( !resultMsg.err ) {
+                                            resultMsg.err = err;
+                                        }
+
+                                        return innerCallback(resultMsg);
+                                    }
+
+                                    innerCallback(null);
+                                });                                            
+
+                            }, function(err) {
+                                if (err) {
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, paramData);
+                            });
+
+                        }else{
+                            callback(null, paramData);
+                        }
+                    },
+
+                    /* 10. 시뮬레이션 포트폴리오 정보를 저장한다. ( delete 건 ) */
+                    function( msg, callback) {
+
+                        divideList  =   [];
+
+                        /* 삭제건이 존재하는 경우 */
+                        if( arrDeleteDtl && arrDeleteDtl.length > 0 ) {
+                            async.forEachOfLimit( arrDeleteDtl, 1, function(subList, i, innerCallback) {
+
+                                async.waterfall([
+
+                                    function(innerCallback) {
+                                        divideList.push( subList );
+                                        
+                                        innerCallback(null, paramData);
+                                    },
+
+                                    function(msg, innerCallback) {
+
+                                        var divide_size = ( limit && limit.divide_size ? limit.divide_size : 1 );
+                                        if( divideList && ( divideList.length == divide_size || i == arrDeleteDtl.length-1 ) ) {
+                                            try {
+                                                paramData.arr_portfolio =   divideList;
+                                                stmt = mapper.getStatement('simulation', 'deleteTmSimulPortfolio', paramData, format);
+                                                log.debug(stmt);
+
+                                                conn.query(stmt, function(err, rows) {
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = "[error] simulation.deleteTmSimulPortfolio Error while performing Query";
+                                                        resultMsg.err = err;
+
+                                                        return innerCallback(resultMsg);
+                                                    }
+
+                                                    innerCallback(null);
+                                                });
+
+                                                divideList  =   [];                                                        
+
+                                            } catch (err) {
+
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] simulation.deleteTmSimulPortfolio Error while performing Query";
+
+                                                if( !resultMsg.err ) {
+                                                    resultMsg.err = err;
+                                                }
+
+                                                return innerCallback(resultMsg);
+                                            }
+
+                                        }else{
+                                            innerCallback(null);
+                                        }
+                                    }
+
+                                ], function(err) {
+
+                                    if( err ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulation.deleteTmSimulPortfolio Error while performing Query";
+                                        if( !resultMsg.err ) {
+                                            resultMsg.err = err;
+                                        }
+
+                                        return innerCallback(resultMsg);
+                                    }
+
+                                    innerCallback(null);
+                                });                                            
+
+                            }, function(err) {
+                                if (err) {
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null);
+                            });
+
+                        }else{
+                            callback(null);
+                        }
                     },                    
 
                 ], function(err) {
@@ -913,8 +1191,540 @@ var saveBaicInfo = function(req, res) {
     }
 }
 
+
+/*
+ * 그룹 정보를 추가한다.
+ * 2019-05-20  bkLove(촤병국)
+ */
+var crateGroup = function(req, res) {
+    try {
+        log.debug('simulation.crateGroup 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+        
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation.crateGroup  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = "[error] simulation.crateGroup  req.body.data no data.";
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        Promise.using(pool.connect(), conn => {
+
+            conn.beginTransaction(txerr => {
+
+                if (txerr) {
+                    return log.error(txerr);
+                }
+
+                async.waterfall([
+
+                    /* 1. 시나리오명이 존재하는지 체크한다. */
+                    function(callback) {
+
+                        try{
+                            var exist_yn   =   "Y";
+
+                            stmt = mapper.getStatement('simulation', 'getExistScenName', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulation.getExistScenName Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( rows && rows.length == 1) {
+                                    exist_yn   =   rows[0].exist_yn;
+                                }
+
+                                if( exist_yn == "Y" ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg   = "시나리오명이 이미 존재합니다.";
+                                    resultMsg.err   = "[error] simulation.getExistScenName Error while performing Query";
+
+                                    return callback(resultMsg);                                    
+                                }
+
+                                callback(null, paramData);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulation.getExistScenName Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },               
+
+                    /* 2. 시뮬레이션 시나리오 코드를 채번한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            paramData.grp_yn                =   '1';                                /* 그룹여부(1-그룹) */
+                            paramData.scen_depth            =   "1";                                /* 시나리오 DEPTH */
+                            paramData.grp_cd                =   initGrpInfo.INIT_GRP_CD;            /* 그룹코드 최초값 */
+
+                            paramData.init_incre_grp_cd     =   initGrpInfo.INIT_INCRE_GRP_CD;      /* 그룹인 경우 시나리오 코드는 해당값 단위로 증가 */
+                            stmt = mapper.getStatement('simulation', 'getScenCd', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulation.getScenCd Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if (rows && rows.length == 1) {
+                                    paramData.scen_cd = rows[0].scen_cd;
+                                }
+
+                                callback(null, paramData);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulation.getScenCd Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 3. 시뮬레이션 시나리오 정렬순번을 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !paramData.grp_cd  ) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "[error] simulation.getScenOrderNo  'grp_cd' 가 존재하지 않습니다.";
+                                resultMsg.err = "[error] simulation.getScenOrderNo Error while performing Query";
+
+                                callback( resultMsg, paramData)
+
+                            }else if( !paramData.scen_cd  ) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "[error] simulation.getScenOrderNo  'scen_cd' 가 존재하지 않습니다.";
+                                resultMsg.err = "[error] simulation.getScenOrderNo Error while performing Query";
+
+                                callback( resultMsg, paramData)
+
+                            }else{
+
+                                stmt = mapper.getStatement('simulation', 'getScenOrderNo', paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulation.getScenOrderNo Error while performing Query";
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if (rows && rows.length == 1) {
+                                        paramData.scen_order_no     =   rows[0].scen_order_no;
+                                    }
+
+                                    callback(null, paramData);
+                                });
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulation.getScenOrderNo Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 4. 시뮬레이션 기본 정보를 저장한다. */
+                    function( msg, callback) {
+
+                        try{
+
+                            paramData.start_year            =   "";         /* 시작년도 */
+                            paramData.rebalance_cycle_cd    =   "";         /* 리밸런싱주기 (COM006) */
+                            paramData.rebalance_date_cd     =   "";         /* 리밸런싱일자 (COM007) */
+                            paramData.init_invest_money     =   0;          /* 초기투자금액 */
+                            paramData.bench_mark_cd         =   "";         /* 벤치마크 (COM008) */
+                            paramData.importance_method_cd  =   "";         /* 비중설정방식 (COM009) */
+
+                            stmt = mapper.getStatement('simulation', "saveTmSimulMast", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulation.saveTmSimulMast Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulation.saveTmSimulMast Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    callback(resultMsg, paramData);
+                                }else{
+                                    callback(null, paramData);
+                                }
+                                
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulation.saveTmSimulMast Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                ], function(err) {
+
+                    if (err) {
+                        log.error(err, stmt, paramData);
+                        conn.rollback();
+
+                    } else {
+                        resultMsg.result        =   true;
+                        resultMsg.msg           =   "성공적으로 저장하였습니다.";
+                        resultMsg.err           =   null;
+
+                        conn.commit();
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+
+                });
+            });
+        });
+
+    } catch (expetion) {
+
+        log.error(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = "[error] simulation.crateGroup 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+/*
+ * 시뮬레이션 목록정보를 조회한다.
+ * 2019-07-26  bkLove(촤병국)
+ */
+var getSimulList = function(req, res) {
+    try {
+        log.debug('simulation.getSimulList 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation.getSimulList  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = "[error] simulation.getSimulList  req.body.data no data.";
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+     
+        resultMsg.dataList  =   [];
+        Promise.using(pool.connect(), conn => {
+
+            try {
+                stmt = mapper.getStatement('simulation', 'getSimulList', paramData, format);
+                log.debug(stmt, paramData);
+
+                conn.query(stmt, function(err, rows) {
+
+                    if (err) {
+                        log.error(err, stmt, paramData);
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] simulation.getSimulList Error while performing Query";
+                        resultMsg.err = err;
+                    }
+                    
+                    if (rows && rows.length > 0) {
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
+
+                        resultMsg.dataList = rows;
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+                });
+
+            } catch (err) {
+                log.error(err, stmt, paramData);
+
+                resultMsg.result = false;
+                resultMsg.msg = "[error] simulation.getSimulList Error while performing Query";
+                resultMsg.err = err;
+
+                res.json(resultMsg);
+                res.end();
+            }
+        });
+
+    } catch (expetion) {
+
+        log.error(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = "[error] simulation.getSimulList 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
+
+        resultMsg.dataList      =   [];
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+/*
+ * 시뮬레이션 마스터 정보를 조회한다.
+ * 2019-07-26  bkLove(촤병국)
+ */
+var getSimulMast = function(req, res) {
+    try {
+        log.debug('simulation.getSimulMast 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation.getSimulMast  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = "[error] simulation.getSimulMast  req.body.data no data.";
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+     
+        resultMsg.mastInfo  =   {};
+        Promise.using(pool.connect(), conn => {
+
+            try {
+                stmt = mapper.getStatement('simulation', 'getSimulMast', paramData, format);
+                log.debug(stmt, paramData);
+
+                conn.query(stmt, function(err, rows) {
+
+                    if (err) {
+                        log.error(err, stmt, paramData);
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] simulation.getSimulMast Error while performing Query";
+                        resultMsg.err = err;
+                    }
+                    
+                    if (rows && rows.length == 1) {
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
+
+                        resultMsg.mastInfo = rows[0];
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+                });
+
+            } catch (err) {
+                log.error(err, stmt, paramData);
+
+                resultMsg.result = false;
+                resultMsg.msg = "[error] simulation.getSimulMast Error while performing Query";
+                resultMsg.err = err;
+
+                res.json(resultMsg);
+                res.end();
+            }
+        });
+
+    } catch (expetion) {
+
+        log.error(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = "[error] simulation.getSimulMast 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
+
+        resultMsg.mastInfo  =   {};
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+/*
+ * 시뮬레이션 포트폴리오 정보를 조회한다.
+ * 2019-07-26  bkLove(촤병국)
+ */
+var getSimulPortfolio = function(req, res) {
+    try {
+        log.debug('simulation.getSimulPortfolio 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation.getSimulPortfolio  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = "[error] simulation.getSimulPortfolio  req.body.data no data.";
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+     
+        resultMsg.dataList  =   [];
+        Promise.using(pool.connect(), conn => {
+
+            try {
+                stmt = mapper.getStatement('simulation', 'getSimulPortfolio', paramData, format);
+                log.debug(stmt, paramData);
+
+                conn.query(stmt, function(err, rows) {
+
+                    if (err) {
+                        log.error(err, stmt, paramData);
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] simulation.getSimulPortfolio Error while performing Query";
+                        resultMsg.err = err;
+                    }
+                    
+                    if (rows && rows.length > 0) {
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
+
+                        resultMsg.dataList = rows;
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+                });
+
+            } catch (err) {
+                log.error(err, stmt, paramData);
+
+                resultMsg.result = false;
+                resultMsg.msg = "[error] simulation.getSimulPortfolio Error while performing Query";
+                resultMsg.err = err;
+
+                res.json(resultMsg);
+                res.end();
+            }
+        });
+
+    } catch (expetion) {
+
+        log.error(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = "[error] simulation.getSimulPortfolio 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
+
+        resultMsg.dataList  =   [];
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
 module.exports.getInitGrpCd = getInitGrpCd;
 module.exports.getNextScenName = getNextScenName;
 module.exports.getInitData = getInitData;
 module.exports.getJongmokInfo = getJongmokInfo;
 module.exports.saveBaicInfo = saveBaicInfo;
+module.exports.crateGroup = crateGroup;
+module.exports.getSimulList = getSimulList;
+module.exports.getSimulMast = getSimulMast;
+module.exports.getSimulPortfolio = getSimulPortfolio;

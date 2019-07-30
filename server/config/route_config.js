@@ -155,12 +155,18 @@ module.exports = {
         /* 고객지원 (수정하시 마세요. 고객지원은 uncheck 입니다.)*/
         { file: './user/etc/custSupport', path: '/user/etc/saveCustSupport', method: 'saveCustSupport', session: 'uncheck', type: 'post' },
 
+
         /* 시뮬레이션 관련 */
-        { file: './user/simulation/simulation', path: '/user/simulation/getInitGrpCd'   , method: 'getInitGrpCd'    , session: 'uncheck', type: 'post' },    // 상위 그룹정보 조회
-        { file: './user/simulation/simulation', path: '/user/simulation/getNextScenName', method: 'getNextScenName' , session: 'uncheck', type: 'post' },    // next 시나리오명을 조회한다.
-        { file: './user/simulation/simulation', path: '/user/simulation/getInitData'    , method: 'getInitData'     , session: 'uncheck', type: 'post' },    // 공통코드 초기 데이터 조회
-        { file: './user/simulation/simulation', path: '/user/simulation/getJongmokInfo' , method: 'getJongmokInfo'  , session: 'uncheck', type: 'post' },    // 선택된 종목의 구성정보 조회
-        { file: './user/simulation/simulation', path: '/user/simulation/saveBaicInfo'   , method: 'saveBaicInfo'    , session: 'uncheck', type: 'post' },    // 기본정보 저장
+        { file: './user/simulation/simulation', path: '/user/simulation/getInitGrpCd'       , method: 'getInitGrpCd'        , session: 'uncheck', type: 'post' },    // 상위 그룹정보 조회
+        { file: './user/simulation/simulation', path: '/user/simulation/getNextScenName'    , method: 'getNextScenName'     , session: 'uncheck', type: 'post' },    // next 시나리오명을 조회한다.
+        { file: './user/simulation/simulation', path: '/user/simulation/getInitData'        , method: 'getInitData'         , session: 'uncheck', type: 'post' },    // 공통코드 초기 데이터 조회
+        { file: './user/simulation/simulation', path: '/user/simulation/getJongmokInfo'     , method: 'getJongmokInfo'      , session: 'uncheck', type: 'post' },    // 선택된 종목의 구성정보 조회
+        { file: './user/simulation/simulation', path: '/user/simulation/saveBaicInfo'       , method: 'saveBaicInfo'        , session: 'uncheck', type: 'post' },    // 기본정보 저장
+        { file: './user/simulation/simulation', path: '/user/simulation/crateGroup'         , method: 'crateGroup'          , session: 'uncheck', type: 'post' },    // 그룹정보 추가
+        { file: './user/simulation/simulation', path: '/user/simulation/getSimulList'       , method: 'getSimulList'        , session: 'uncheck', type: 'post' },    // 목록정보 조회
+        { file: './user/simulation/simulation', path: '/user/simulation/getSimulMast'       , method: 'getSimulMast'        , session: 'uncheck', type: 'post' },    // 마스터 정보 조회
+        { file: './user/simulation/simulation', path: '/user/simulation/getSimulPortfolio'  , method: 'getSimulPortfolio'   , session: 'uncheck', type: 'post' },    // 포트폴리오 정보 조회
+
 
         //풀 테스트 
 
