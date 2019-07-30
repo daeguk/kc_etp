@@ -472,7 +472,7 @@ export default {
             specialKeys.push(12); // keypad  5
             specialKeys.push(38); // keypad  8
             specialKeys.push(33); // keypad  9
-
+            
             var ret = ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90) || (keyCode >= 96 && keyCode <= 122) || (specialKeys.indexOf(e.keyCode) != -1 && e.charCode != e.keyCode));
 
             if ( !ret ) {
@@ -2063,8 +2063,6 @@ export default {
                     ,   "etf_F16013"    :   vm.etpBasic.F16013      /* ETF 단축코드 */
                     ,   "etf_F16002"    :   vm.etpBasic.F16002      /* ETF 한글종목명 */
                     ,   "etf_F16583"    :   vm.etpBasic.F16583      /* ETF 사무수탁회사번호 */
-                    ,   "etf_F33960"    :   vm.etpBasic.F33960      /* ETF 운용사코드 */
-
                     ,   "data"          :   filterData
                 };
 
