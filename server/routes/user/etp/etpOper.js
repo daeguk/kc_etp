@@ -2110,10 +2110,21 @@ var makePdfModify = function(fsData) {
   F34840_prev: '0',
   code_check: true } */
   log.debug("makePdfModify.......................");
-  var ifname = config.pdfmodify_nas_path + "pdfmodify." + util.getTodayDate();
+
+  var etf_F33960    =   ""; /* 운용사 코드 추가 ( written by bkLove 2019-07-30 ) */
+  var ifname = "";
   var msg = "ETP PDF 변경신청 접수되었습니다.";
   for(var i=0; i<fsData.allDataList.length; i++) {
     var tmp = fsData.allDataList[i];
+
+    /* 운용사 코드 추가 ( written by bkLove 2019-07-30 ) */
+    if( tmp.etf_F33960 && typeof tmp.etf_F33960 != "undefined" ) {
+        etf_F33960  =   tmp.etf_F33960 + ".";
+    }
+    ifname = config.pdfmodify_nas_path + "pdfmodify." + etf_F33960 + util.getTodayDate();
+
+    log.debug( "##   ifname", ifname );
+
     for(var j=0; j<tmp.data.length; j++) {
       wItem.fld003 = tmp.data[j].F12506;
       wItem.fld004 = util.padZero(tmp.data[j].F16583, 3);       /* 사무수탁회사번호 3자리가 아닌 경우 0 추가 ( written by bkLove 2019-07-30 ) */

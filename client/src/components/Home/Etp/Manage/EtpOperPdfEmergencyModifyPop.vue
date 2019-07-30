@@ -2056,6 +2056,8 @@ export default {
                     ,   "etf_F16013"    :   vm.etpBasic.F16013      /* ETF 단축코드 */
                     ,   "etf_F16002"    :   vm.etpBasic.F16002      /* ETF 한글종목명 */
                     ,   "etf_F16583"    :   vm.etpBasic.F16583      /* ETF 사무수탁회사번호 */
+                    ,   "etf_F33960"    :   vm.etpBasic.F33960      /* ETF 운용사코드 */
+
                     ,   "data"          :   filterData
                 };
 
