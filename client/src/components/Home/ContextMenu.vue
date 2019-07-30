@@ -67,6 +67,7 @@ export default {
     console.log("this : ");
     console.log(this.$store.state.user);
     var type_cd = this.$store.state.user.type_cd;
+    var tmp = this.$store.state.user.email;
 /*
 (1) 로그인없이 들어올경우 - 1,2
 (2) 지수사업자 - 1,2,3,4
@@ -92,7 +93,9 @@ export default {
     }else {
 
     }
-    this.menuList.push(this.allMenuList[6]);
+    if(tmp.indexOf("test@") !== -1) {
+      this.menuList.push(this.allMenuList[6]);
+    }
 },
   methods: {
     movePage: function(menu) {

@@ -58,6 +58,7 @@
                                     </v-list-tile>
 
                                     <v-list-tile
+                                        v-if="testFlag"
                                         :class="( toggleEtpLpspread ? 'border_b select' : 'border_b' )"
                                         @click="fn_setEtpLpspread"
                                         v-model="toggleEtpLpspread"
@@ -259,6 +260,8 @@ export default {
             indexFixDialog : false,
             showFaver : true,
 
+            testFlag : false,
+
             /* 지수 조치현황 */
             fix_info : {
                 fix_disabled : true,
@@ -292,6 +295,9 @@ export default {
                 vm.arrCustomizeColumn   =   vm.toggle.arrCustomizeColumn;
             }            
         }
+
+        var tmp = this.$store.state.user.email;
+        if(tmp.indexOf("test@") !== -1) this.testFlag = true;
     },
     created: function() {},
     beforeDestory: function() {},
