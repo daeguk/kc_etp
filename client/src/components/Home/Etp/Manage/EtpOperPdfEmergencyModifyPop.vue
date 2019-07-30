@@ -573,12 +573,12 @@ export default {
             /* CU shrs */
             if ( $(this).attr('name') == 'F16499' ) {
                 nowData.name    =   "F16499";
-                nowData.F16499  =   tdData;
+                nowData.F16499  =   util.NumtoStr( util.formatNumber( tdData ) );
             }
             /* 액면금액 */
             else if( $(this).attr('name') == 'F34840' ) {
                 nowData.name    =   "F34840";
-                nowData.F34840  =   tdData;
+                nowData.F34840  =   util.NumtoStr( util.formatNumber( tdData ) );
             }
 
             $(this).eq(0).val( util.formatNumber( tdData ) );
