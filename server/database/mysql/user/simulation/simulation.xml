@@ -48,19 +48,20 @@
                     CONCAT(
                             #{search_scen_name}
                         ,   '-'
-                        ,   CAST(
-                                IFNULL(
-                                        MAX( 
+                        ,   IFNULL(
+                                    MAX( 
+                                        CAST(
                                             REPLACE( 
                                                     SUBSTR(     tm_simul_mast.scen_name
                                                             ,   INSTR( tm_simul_mast.scen_name, #{search_scen_name} ) + LENGTH( #{search_scen_name} ) 
                                                     )
                                                 ,   '-'
                                                 ,   '' 
-                                            ) 
+                                            )
+                                            AS  UNSIGNED INTEGER
                                         )
-                                    ,   0
-                                )   AS  UNSIGNED INTEGER 
+                                    )
+                                ,   0
                             ) + 1
                     )                               AS  next_scen_name
 
@@ -300,7 +301,7 @@
 
                             ,   #{data.order_no}                AS  order_no        /* 정렬 순번 */
                             ,   #{data.importance}              AS  importance      /* 비중 */
-                            ,   #{data.jisu_rate}               AS  jisu_rate       /* 지수적용비율 */
+                            ,   0                               AS  jisu_rate       /* 지수적용비율 */
                     FROM  DUAL
                 ]]>
                 </foreach>
@@ -349,7 +350,7 @@
 
                                             ,   #{data.order_no}                AS  order_no        /* 정렬 순번 */
                                             ,   #{data.importance}              AS  importance      /* 비중 */
-                                            ,   #{data.jisu_rate}               AS  jisu_rate       /* 지수적용비율 */
+                                            ,   0                               AS  jisu_rate       /* 지수적용비율 */
                                     FROM  DUAL
                                 ]]>
                                 </foreach>
@@ -400,7 +401,7 @@
 
             ,   #{data.order_no}                    /* 정렬 순번 */
             ,   #{data.importance}                  /* 비중 */
-            ,   #{data.jisu_rate}                   /* 지수적용비율 */
+            ,   0                                   /* 지수적용비율 */
 
             ,   #{user_id}                          /* 등록자 ID */
             ,   now()                               /* 등록시간 */
@@ -433,7 +434,7 @@
 
                                         ,   #{data.order_no}                AS  order_no        /* 정렬 순번 */
                                         ,   #{data.importance}              AS  importance      /* 비중 */
-                                        ,   #{data.jisu_rate}               AS  jisu_rate       /* 지수적용비율 */
+                                        ,   0                               AS  jisu_rate       /* 지수적용비율 */
                                 FROM  DUAL
                             ]]>
                             </foreach>
@@ -478,7 +479,7 @@
 
                                         ,   #{data.order_no}                AS  order_no        /* 정렬 순번 */
                                         ,   #{data.importance}              AS  importance      /* 비중 */
-                                        ,   #{data.jisu_rate}               AS  jisu_rate       /* 지수적용비율 */
+                                        ,   0                               AS  jisu_rate       /* 지수적용비율 */
                                 FROM  DUAL
                             ]]>
                             </foreach>

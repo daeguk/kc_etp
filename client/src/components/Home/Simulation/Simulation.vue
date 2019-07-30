@@ -161,7 +161,6 @@
                                 <col width="15%" />
                                 <col width="15%" />
                                 <col width="20%" />
-                                <col width="15%" />
                             </colgroup>
                             <thead>
                                 <tr>
@@ -170,7 +169,6 @@
                                     <th class="txt_left">종목명</th>
                                     <th class="txt_right">시가총액</th>
                                     <th class="txt_right">비중</th>
-                                    <th class="txt_right">지수적용비율</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -180,9 +178,8 @@
                                     <td></td>
                                     <td class="txt_right"></td>
                                     <td class="txt_right">
-                                        <input type="text"  name="importance"   class="txt_right wid100" value=""   disabled="true" /> %
+                                        <input type="text"  name="importance"   class="txt_right wid100" value="" /> %
                                     </td>
-                                    <td class="txt_right"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -243,20 +240,22 @@ export default {
             ,   MastModalFlag: false
             ,   selectedRowIndex    :   -1
             ,   arr_rebalance_disabled_check    :   { 
+                        /* 0번째- 첫영업일 / 1번째- 동시만기 익일 / 2번째- 동시만기 익주 첫영업일 / 3번째- 옵션만기 익일 / 4번째- 옵션만기 익주 첫영업일 */
+
                         /* 1- 매년 */
-                        "1" :   [ false , true, true, true, false ]
+                        "1" :   [ false , true, true, false, false ]        /* disabled : 1번째- 동시만기 익일 / 2번째- 동시만기 익주 첫영업일 */
 
                         /* 2-반기 */
-                    ,   "2" :   [ false , false, true, true, false ]
+                    ,   "2" :   [ false , false, false, false, false ]      /* disabled : 없음 */
 
                         /* 3-분기 */
-                    ,   "3" :   [ false , true, false, true, false ]
+                    ,   "3" :   [ false , false, false, false, false ]      /* disabled : 없음 */
 
                         /* 4-매월 */
-                    ,   "4" :   [ false , true, true, false, false ]
+                    ,   "4" :   [ false , true, true, false, false ]        /* disabled : 1번째- 동시만기 익일 / 2번째- 동시만기 익주 첫영업일 */
 
                         /* 5-매주 */
-                    ,   "5" :   [ false , false, false, false, false ]
+                    ,   "5" :   [ false , true, true, true, true ]          /* disabled : 1번째- 동시만기 익일 / 2번째- 동시만기 익주 첫영업일 / 3번째- 옵션만기 익일 / 4번째- 옵션만기 익주 첫영업일 */
                 }
             ,   arr_show_error_message      :   []          /* 에러 메시지 노출 정보 */
 
@@ -390,6 +389,9 @@ export default {
             var tr          =   $(this).closest('tr');
             var rowIndex    =   tr.index();
 
+            /* 비중을 변경하는 경우 [직접입력] 으로 강제 설정 */
+            vm.importance_method_cd =   "1";
+
             vm.fn_resetErrorMessage();
             vm.fn_setTotalRecord();
         });
@@ -438,7 +440,7 @@ export default {
 
                 ,   F15028          :   0       /* (합계) 시가총액 */
                 ,   importance      :   0       /* (합계) 비중 */
-                ,   jisu_rate       :   0       /* (합계) 지수적용 비율 */
+//              ,   jisu_rate       :   0       /* (합계) 지수적용 비율 */
             };
             var result  =   [];
 
@@ -452,21 +454,7 @@ export default {
 
                 var v_F15028        =   tr.find( "td:eq(3)" );                          /* 시가총액 */
                 var v_importance    =   tr.find( "td input[name=importance]" );         /* 비중 */
-                var v_jisu_rate     =   tr.find( "td:eq(5)" );                          /* 지수적용비율 */           
-
-
-                /* 비중이 존재하는 경우 ( 직접입력이 아닌 경우 input 객체 수정불가 처리 ) */
-                if( typeof v_importance != "undefined" ) {
-
-                    /* 직접입력 인 경우 */
-                    if( importance_method_cd == "1" ) {
-                        v_importance.attr( "disabled", false );
-                    }else{
-                        v_importance.attr( "disabled", true );
-                    }
-
-                    v_importance.val( "" );
-                }
+//              var v_jisu_rate     =   tr.find( "td:eq(5)" );                          /* 지수적용비율 */           
 
 
                 /* 종목코드가 존재하는 경우 */
@@ -476,7 +464,7 @@ export default {
                         result.push( { 
                                 F15028      :   0       /* 시가총액 */
                             ,   importance  :   0       /* 비중 */
-                            ,   jisu_rate   :   0       /* 지수적용비율 */
+//                          ,   jisu_rate   :   0       /* 지수적용비율 */
                         } );
 
                         total.length++;         /* 총건수 */
@@ -503,7 +491,7 @@ export default {
 
                     var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
                     var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
-                    var v_jisu_rate     =   tr.find( "td:eq(5)" );                              /* 지수적용비율 */
+//                  var v_jisu_rate     =   tr.find( "td:eq(5)" );                              /* 지수적용비율 */
 
                     if( typeof v_F16316.val() != "undefined" ) {
                         if( v_F16316.val() != "" ) {
@@ -519,11 +507,11 @@ export default {
 
 //                          total.F15028                =   Number( total.F15028 )  +  Number( util.NumtoStr( v_F15028.text() ) );                                          /* (합계) 시가총액 */
                             total.importance            =   Math.floor( ( total.importance * 100 )  +  parseFloat( v_temp_importance * 100 ) ) / 100;                       /* (합계) 비중 */
-                            total.jisu_rate             =   Math.floor( ( total.jisu_rate * 100 )   +  ( Number( util.NumtoStr( v_jisu_rate.text() ) ) * 100 ) ) / 100;     /* (합계) 지수적용비율 */                            
+//                          total.jisu_rate             =   Math.floor( ( total.jisu_rate * 100 )   +  ( Number( util.NumtoStr( v_jisu_rate.text() ) ) * 100 ) ) / 100;     /* (합계) 지수적용비율 */                            
 
                             result[v_inx].F15028        =   Number( util.NumtoStr( v_F15028.text() ) );             /* 시가총액 */
                             result[v_inx].importance    =   v_temp_importance;                                      /* 비중 */
-                            result[v_inx].jisu_rate     =   Number( util.NumtoStr( v_jisu_rate.text() ) );          /* 지수적용비율 */
+//                          result[v_inx].jisu_rate     =   Number( util.NumtoStr( v_jisu_rate.text() ) );          /* 지수적용비율 */
 
                             v_inx++;
                         }
@@ -555,7 +543,7 @@ export default {
 
                     var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
                     var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
-                    var v_jisu_rate     =   tr.find( "td:eq(5)" );                              /* 지수적용비율 */
+//                  var v_jisu_rate     =   tr.find( "td:eq(5)" );                              /* 지수적용비율 */
 
                     if( typeof v_F16316.val() != "undefined" ) {
                         if( v_F16316.val() != "" ) {
@@ -719,7 +707,7 @@ export default {
          */
         fn_addRecords( rowIndex=0, addCount=1, dataList=[] ) {
             var vm  =   this;
-            
+
             var trHtml      =   "";
             var rowData     =   {};
             var strJson     =   "";
@@ -732,7 +720,7 @@ export default {
                     ,   F16002      :   ""      /* 종목명 */
                     ,   order_no    :   0       /* 정렬 순번 */
                     ,   importance  :   ""      /* 비중 */
-                    ,   jisu_rate   :   ""      /* 지수적용비율 */
+//                  ,   jisu_rate   :   ""      /* 지수적용비율 */
 
                     ,   F16013      :   ""      /* 단축코드 */
                     ,   F15028      :   ""      /* 시가총액 */
@@ -779,8 +767,6 @@ export default {
                 trHtml      +=  `        <input type="text"     name="importance"   class="txt_right wid100"  maxlength="5" value="` + rowData.importance + `" /> %`;
                 trHtml      +=  `    </td>`;
 
-                                    /* 지수적용비율 */
-                trHtml      +=  `    <td class="txt_right">` + rowData.jisu_rate + `</td>`; 
                 trHtml      +=  `</tr>`;
             }
 
@@ -818,9 +804,7 @@ export default {
 
                 ,   F15028          :   0       /* (합계) 시가총액 */
                 ,   importance      :   0       /* (합계) 비중 */
-                ,   jisu_rate       :   0       /* (합계) 지수적용 비율 */
-
-                ,   sum_importance  :   0       /* 누적 비중 */
+//              ,   jisu_rate       :   0       /* (합계) 지수적용 비율 */
             };            
 
 
@@ -835,13 +819,13 @@ export default {
 
                     var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
                     var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
-                    var v_jisu_rate     =   tr.find( "td:eq(5)" );                              /* 지수적용비율 */
+//                  var v_jisu_rate     =   tr.find( "td:eq(5)" );                              /* 지수적용비율 */
 
                     if( typeof v_F16316.val() != "undefined" ) {
                         if( v_F16316.val() != "" ) {
                             total.F15028            =   Number( total.F15028 )  +  Number( util.NumtoStr( v_F15028.text() ) );                                          /* (합계) 시가총액 */
                             total.importance        =   Math.floor( ( total.importance * 100 )  +  ( Number( util.NumtoStr( v_importance.val() ) ) * 100 ) ) / 100;     /* (합계) 비중 */
-                            total.jisu_rate         =   Math.floor( ( total.jisu_rate * 100 )   +  ( Number( util.NumtoStr( v_jisu_rate.text() ) ) * 100 ) ) / 100;     /* (합계) 지수적용비율 */
+//                          total.jisu_rate         =   Math.floor( ( total.jisu_rate * 100 )   +  ( Number( util.NumtoStr( v_jisu_rate.text() ) ) * 100 ) ) / 100;     /* (합계) 지수적용비율 */
                         }
                     }
                 });
@@ -973,46 +957,65 @@ export default {
         fn_table2List() {
             var vm = this;
 
+            /* total 정보 */
+            var total   =   {
+                    length          :   0       /* 총건수 */
+                ,   same_rate_sum   :   100     /* 동일가중 합계 */
+
+                ,   F15028          :   0       /* (합계) 시가총액 */
+                ,   importance      :   0       /* (합계) 비중 */
+//              ,   jisu_rate       :   0       /* (합계) 지수적용 비율 */
+            };            
+            
+
             var rowIndex = 1;
 
             vm.arr_portfolio    =   [];
             
-            table01.find( "tbody tr input[name=F16316]" ).parents("tr").each( function( inx, rowItem ) {
+            table01.find( "tbody  tr" ).each( function( inx, rowItem ) {
                 var tr = $(this);
 
-                var v_text0         =   tr.find( "td:eq(0) .add_btn_span" ).text();         /* 첫번째 컬럼 */
-                var v_F16316        =   tr.find( "td input[name=F16316]" ).val();           /* 종목코드 */
-                var v_importance    =   tr.find( "td input[name=importance]" ).val();       /* 비중 */
-                var v_jisu_rate     =   tr.find( "td:eq(5)" ).text();                       /* 지수적용비율 */
+                var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );            /* 첫번째 컬럼 */
+                var v_F16316        =   tr.find( "td input[name=F16316]" );             /* 종목코드 */
 
-                if( typeof v_F16316 != "undefined" ) {
+                var v_F15028        =   tr.find( "td:eq(3)" );                          /* 시가총액 */
+                var v_importance    =   tr.find( "td input[name=importance]" );         /* 비중 */
+//              var v_jisu_rate     =   tr.find( "td:eq(5)" ).text();                   /* 지수적용비율 */
 
-                    if( v_F16316 != "" ) {
+                if( typeof v_F16316.val() != "undefined" ) {
+
+                    if( v_F16316.val() != "" ) {
 
                         /* 종목코드가 존재시 비중정보 체크 */
                         try{
-                            if( v_importance == "" ) {
-                                vm.arr_show_error_message.push( "[포트폴리오] " + v_text0 + " 비중을 입력해 주세요." );
-                            }else if( isNaN( v_importance ) ) {
-                                vm.arr_show_error_message.push( "[포트폴리오] " + v_text0 + " 비중은 숫자만 입력해 주세요." );
-                            }else if( Number( v_importance ) <= 0 ) {
-                                vm.arr_show_error_message.push( "[포트폴리오] " + v_text0 + " 비중은 0 보다 큰수를 입력해 주세요." );
+                            if( v_importance.val() == "" ) {
+                                vm.arr_show_error_message.push( "[포트폴리오] " + v_text0.text() + " 비중을 입력해 주세요." );
+                            }else if( isNaN( v_importance.val() ) ) {
+                                vm.arr_show_error_message.push( "[포트폴리오] " + v_text0.text() + " 비중은 숫자만 입력해 주세요." );
+                            }else if( Number( v_importance.val() ) <= 0 ) {
+                                vm.arr_show_error_message.push( "[포트폴리오] " + v_text0.text() + " 비중은 0 보다 큰수를 입력해 주세요." );
                             }
                         }catch( e ) {
-                            vm.arr_show_error_message.push( "[포트폴리오] " + v_text0 + " 비중은 숫자만 입력해 주세요." );
+                            vm.arr_show_error_message.push( "[포트폴리오] " + v_text0.text() + " 비중은 숫자만 입력해 주세요." );
                         }
 
+                        total.length++;         /* 총건수 */
+                        total.F15028            =   Number( total.F15028 )  +  Number( util.NumtoStr( v_F15028.text() ) );                                          /* (합계) 시가총액 */
+                        total.importance        =   Math.floor( ( total.importance * 100 )  +  ( Number( util.NumtoStr( v_importance.val() ) ) * 100 ) ) / 100;     /* (합계) 비중 */
+//                      total.jisu_rate         =   Math.floor( ( total.jisu_rate * 100 )   +  ( Number( util.NumtoStr( v_jisu_rate.text() ) ) * 100 ) ) / 100;     /* (합계) 지수적용비율 */                        
+
                         vm.arr_portfolio.push({
-                                "F16316"        :   v_F16316                            /* 종목코드 */
-                            ,   "importance"    :   util.NumtoStr( v_importance )       /* 비중 */
-                            ,   "jisu_rate"     :   util.NumtoStr( v_jisu_rate )        /* 지수적용비율 */
-                            ,   "order_no"      :   rowIndex++                          /* 정렬 순번 */
+                                "F16316"        :   v_F16316.val()                          /* 종목코드 */
+                            ,   "importance"    :   util.NumtoStr( v_importance.val() )     /* 비중 */
+//                          ,   "jisu_rate"     :   util.NumtoStr( v_jisu_rate )            /* 지수적용비율 */
+                            ,   "order_no"      :   rowIndex++                              /* 정렬 순번 */
+                            ,   "trIndex"       :   inx                                     /* 테이블 레코드 순번 */
                         });                        
                     }else{
 
                         /* 종목코드 없이 비중을 입력한 경우 */
-                        if( v_importance != "" ) {
-                            vm.arr_show_error_message.push( "[포트폴리오] " + v_text0 + " 종목코드를 선택해주세요" );
+                        if( v_importance.val() != "" ) {
+                            vm.arr_show_error_message.push( "[포트폴리오] " + v_text0.text() + " 종목코드를 선택해주세요" );
                         }
 
                     }
@@ -1025,6 +1028,56 @@ export default {
                 if( !vm.arr_portfolio || vm.arr_portfolio.length == 0 ) {
                     vm.arr_show_error_message.push( "[포트폴리오] 종목코드가 한건 이상 존재해야 합니다." );
                     return  false;
+                }              
+            }
+
+        /**************/
+            if( vm.arr_show_error_message && vm.arr_show_error_message.length > 0  ) {
+                return  false;
+            }
+
+            /* [포트폴리오] 2건 이상인 경우 중복을 체크한다. */
+            if( vm.arr_portfolio && vm.arr_portfolio.length > 1 ) {
+                var     tr1         =   null;
+                var     tr2         =   null;
+
+                var     row1        =   null;
+                var     row2        =   null;
+
+                var     v_text01    =   null;
+                var     v_text02    =   null;                
+                for( var i = 0; i < vm.arr_portfolio.length -1; i++ ) {
+                    row1    =   vm.arr_portfolio[i];
+
+                    for( var j = i+1; j < vm.arr_portfolio.length ; j++ ) {
+                        row2        =   vm.arr_portfolio[j];
+
+                        v_text01    =   null;
+                        v_text02    =   null;
+                        if( row1.F16316 == row2.F16316 ) {
+                            tr1         =   $( "#table01 tbody > tr").eq( vm.arr_portfolio[i].trIndex );
+                            tr2         =   $( "#table01 tbody > tr").eq( vm.arr_portfolio[j].trIndex );
+
+                            v_text01    =   tr1.find( "td:eq(0) .add_btn_span" );           /* 첫번째 컬럼 */
+                            v_text02    =   tr2.find( "td:eq(0) .add_btn_span" );           /* 첫번째 컬럼 */
+
+                            vm.arr_show_error_message.push( "[포트폴리오] " + v_text01.text() + ", " + v_text02.text() + " 종목코드가 중복 존재합니다. " );
+                        }
+                    }
+                }
+            }
+
+        /**************/
+            if( vm.arr_show_error_message && vm.arr_show_error_message.length > 0  ) {
+                return  false;
+            }            
+
+            /* 상위그룹이 '선택안함' 이고 */
+            if( vm.grp_cd == "*" ){
+                /* 포트폴리오 1건 이상 입력한 경우에는 비중의 합은 100 이 되어야 함.  */
+                if( vm.arr_portfolio.length > 0 && total.importance != 100 ) {
+                    vm.arr_show_error_message.push( "[포트폴리오] 비중의 합은 100 이 되어야 합니다." );
+                    return  false;
                 }
             }
         },        
@@ -1035,6 +1088,8 @@ export default {
          */
         fn_saveBaicInfo() {
             var vm = this;
+
+            vm.arr_show_error_message   =   [];
 
             /* 상위그룹 array */
             if( !vm.arr_grp_cd || vm.arr_grp_cd.length == 0 ) {
@@ -1165,7 +1220,13 @@ export default {
                                 )
                             ) {
                                 if(vm.$refs.confirm2.val == 'Y') {
-                                    return  false;
+
+                                    /* 시뮬레이션 마스터 정보를 조회한다. */
+                                    vm.fn_getSimulMast( { grp_cd : vm.grp_cd, scen_cd : vm.scen_cd } );
+
+                                    /* 시뮬레이션 포트폴리오 정보를 조회한다. */
+                                    vm.fn_getSimulPortfolio( { grp_cd : vm.grp_cd, scen_cd : vm.scen_cd } );
+
                                 }
                             }
                         }
@@ -1245,18 +1306,22 @@ export default {
                         }
                     }else{
                         var dataList = response.data.dataList;
+                        var cnt = 0;
 
-                        if( dataList && dataList.length > 0 ) {
-                            var cnt = Math.ceil( dataList.length / 5 ) * 5;
-                            
-                            /* 레코드를 추가한다. */
-                            vm.fn_addRecords( 0, cnt, dataList );
-
-                            /* total 레코드를 설정한다. */
-                            vm.fn_setTotalRecord();
-
-                            vm.arr_portfolio    =   dataList;
+                        if( !dataList ) {
+                            dataList    =   [];
                         }
+
+                        /* 건수가 0 인 경우 레코드 5개는 추가한다. */
+                        var cnt = ( Math.ceil( dataList.length / 5 ) == 0 ? 1 : Math.ceil( dataList.length / 5 ) ) * 5;                  
+
+                        /* 레코드를 추가한다. */
+                        vm.fn_addRecords( 0, cnt, dataList );
+
+                        /* total 레코드를 설정한다. */
+                        vm.fn_setTotalRecord();
+
+                        vm.arr_portfolio    =   dataList;
                     }
                 }
             });
@@ -1278,7 +1343,7 @@ export default {
 
                 var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
                 var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
-                var v_jisu_rate     =   tr.find( "td:eq(5)" );                              /* 지수적용비율 */
+//              var v_jisu_rate     =   tr.find( "td:eq(5)" );                              /* 지수적용비율 */
 
                 if( typeof v_F16316 != "undefined" ) {
                     $(this).remove();

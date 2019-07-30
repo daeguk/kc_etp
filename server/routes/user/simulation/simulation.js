@@ -1681,10 +1681,9 @@ var getSimulPortfolio = function(req, res) {
                         resultMsg.err = err;
                     }
                     
+                    resultMsg.result = true;
+                    resultMsg.msg = "";
                     if (rows && rows.length > 0) {
-                        resultMsg.result = true;
-                        resultMsg.msg = "";
-
                         resultMsg.dataList = rows;
                     }
 
