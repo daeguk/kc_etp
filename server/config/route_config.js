@@ -162,7 +162,7 @@ module.exports = {
         { file: './user/simulation/simulation', path: '/user/simulation/getInitData'        , method: 'getInitData'         , session: 'uncheck', type: 'post' },    // 공통코드 초기 데이터 조회
         { file: './user/simulation/simulation', path: '/user/simulation/getJongmokInfo'     , method: 'getJongmokInfo'      , session: 'uncheck', type: 'post' },    // 선택된 종목의 구성정보 조회
         { file: './user/simulation/simulation', path: '/user/simulation/saveBaicInfo'       , method: 'saveBaicInfo'        , session: 'uncheck', type: 'post' },    // 기본정보 저장
-        { file: './user/simulation/simulation', path: '/user/simulation/crateGroup'         , method: 'crateGroup'          , session: 'uncheck', type: 'post' },    // 그룹정보 추가
+        { file: './user/simulation/simulation', path: '/user/simulation/modifyGroup'        , method: 'modifyGroup'         , session: 'uncheck', type: 'post' },    // 그룹정보 수정
         { file: './user/simulation/simulation', path: '/user/simulation/getSimulList'       , method: 'getSimulList'        , session: 'uncheck', type: 'post' },    // 목록정보 조회
         { file: './user/simulation/simulation', path: '/user/simulation/getSimulMast'       , method: 'getSimulMast'        , session: 'uncheck', type: 'post' },    // 마스터 정보 조회
         { file: './user/simulation/simulation', path: '/user/simulation/getSimulPortfolio'  , method: 'getSimulPortfolio'   , session: 'uncheck', type: 'post' },    // 포트폴리오 정보 조회

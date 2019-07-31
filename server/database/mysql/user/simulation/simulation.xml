@@ -174,6 +174,70 @@
     </select>
 
     <!--
+    *   시뮬레이션 시나리오 코드를 채번한다. ( 그룹인 경우 )
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getScenCd1">
+        SELECT      /* simulation.getScenCd1 시뮬레이션 시나리오 코드를 채번한다. ( 그룹인 경우 ) */
+                    LPAD(
+                                /* 시나리오 코드 순번값 ( 기존 코드가 존재하지 않는 경우 - 그룹: 0, 비그룹: 100000 부터 시작 ) */
+                                IFNULL(
+                                        CAST( MAX( tm_simul_mast.scen_cd )  AS  UNSIGNED INTEGER  )
+                                    ,   0
+                                )
+                            +   /* 증가값 ( 그룹: 100000, 비그룹: 1 씩 증가 ) */
+                                CAST( #{init_incre_grp_cd}                  AS  UNSIGNED INTEGER  )
+                        ,   10
+                        ,   '0' 
+                    )                               AS  scen_cd             /* 시나리오 코드 */
+
+          FROM  tm_simul_mast
+
+         WHERE  1 = 1
+           AND  tm_simul_mast.grp_yn                =   '1'                /* 그룹여부(1-그룹) */
+
+        <if test= 'status != null  and  status == "modify" ' >
+            <if test= 'grp_cd != null  and  grp_cd != "" ' >
+                /* 수정 상태 일때 변경후 그룹코드 추출 */
+           AND  tm_simul_mast.grp_cd                =   #{grp_cd}           /* 그룹 코드 */
+            </if>
+        </if>
+        
+    </select>
+
+    <!--
+    *   시뮬레이션 시나리오 코드를 채번한다. ( 그룹이 아닌 경우 )
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getScenCd2">
+        SELECT      /* simulation.getScenCd2 시뮬레이션 시나리오 코드를 채번한다. ( 그룹이 아닌 경우 ) */
+                    LPAD(
+                                /* 시나리오 코드 순번값 ( 기존 코드가 존재하지 않는 경우 - 그룹: 0, 비그룹: 100000 부터 시작 ) */
+                                IFNULL(
+                                        CAST( MAX( tm_simul_mast.scen_cd )  AS  UNSIGNED INTEGER  )
+                                    ,   CAST( #{init_incre_grp_cd}          AS  UNSIGNED INTEGER  )
+                                )
+                            +   /* 증가값 ( 그룹: 100000, 비그룹: 1 씩 증가 ) */
+                                1
+                        ,   10
+                        ,   '0' 
+                    )                               AS  scen_cd             /* 시나리오 코드 */
+
+          FROM  tm_simul_mast
+
+         WHERE  1 = 1
+           AND  tm_simul_mast.grp_yn                =   '0'                 /* 그룹여부(1-그룹) */
+
+        <if test= 'status != null  and  status == "modify" ' >
+            <if test= 'grp_cd != null  and  grp_cd != "" ' >
+                /* 수정 상태 일때 변경후 그룹코드 추출 */
+           AND  tm_simul_mast.grp_cd                =   #{grp_cd}           /* 그룹 코드 */
+            </if>
+        </if>
+        
+    </select>    
+
+    <!--
     *   시뮬레이션 시나리오 정렬순번을 조회한다.
     *   2019-07-26  bkLove(촤병국)
     -->
@@ -276,6 +340,22 @@
            AND  scen_cd                     =   #{prev_scen_cd}                 /* 시나리오 코드 - 변경전 */
     ]]>
     </update>
+
+    <!--
+    * [tm_simul_mast] 테이블을 삭제한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <delete     id="deleteTmSimulMast">
+    <![CDATA[
+        DELETE  /* simulation.deleteTmSimulMast      [tm_simul_mast] 테이블을 삭제한다. */
+
+          FROM  tm_simul_mast
+
+         WHERE  1 = 1
+           AND  grp_cd                      =   #{grp_cd}                   /* 그룹코드(상위코드) */
+           AND  scen_cd                     =   #{scen_cd}                  /* 시나리오 코드 */
+    ]]>
+    </delete>
 
     <!--
     *   입력할 값을 기준으로 tm_simul_portfolio 와 비교하여 insert, modify 대상 추출

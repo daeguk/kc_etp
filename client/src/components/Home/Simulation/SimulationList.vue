@@ -19,10 +19,12 @@
 
                 <div style="display:inline" v-if="showCreateGroup=='Y'">
                     <span>
-                        <v-text-field   v-model="scen_name" outline class="wid200 text_in01"  maxlegnth="50"></v-text-field>
+                        <v-text-field   v-model="scen_name" outline class="wid200 text_in01"  maxlegnth="50"    ref="scen_name"></v-text-field>
                     </span>
                     <span class="margin_t1">
-                        <v-btn depressed small outline color="primary" @click="fn_createGroup()">추가</v-btn>
+                        <v-btn depressed small outline color="primary" @click="fn_modifyGroup( 'insert' )">추가</v-btn>
+                        <v-btn depressed small outline color="primary" @click="fn_modifyGroup( 'modify' )">수정</v-btn>
+                        <v-btn depressed small outline color="primary" @click="fn_modifyGroup( 'delete' )">삭제</v-btn>
                     </span>
                 </div>
             </v-card>
@@ -53,12 +55,20 @@
 
                             <!-- Name -->
                             <td class="txt_left">
+                                <!-- 시나리오 그룹 인 경우 -->
                                 <div class=""  v-if="item.grp_yn == '1'">
                                     <v-icon>folder_open</v-icon> {{ item.scen_name }}
                                 </div>
-                                <div class="folder_2dep"  v-if="item.grp_yn == '0'">
+
+                                <!-- 시나리오 이지만 그룹이 선택안함 경우 -->
+                                <div class="folder_1dep"  v-if="item.grp_yn == '0' && item.grp_cd == '*'">
                                     <v-icon>description</v-icon> {{ item.scen_name }}
-                                </div>                                
+                                </div>
+
+                                <!-- 시나리오 이지만 그룹코드가 있는 경우 -->
+                                <div class="folder_2dep"  v-if="item.grp_yn == '0' && item.grp_cd != '*'">
+                                    <v-icon>description</v-icon> {{ item.scen_name }}
+                                </div>
                             </td>
 
                             <!-- Index -->
@@ -75,7 +85,7 @@
                             <!-- Last modified -->
                             <td>
                                 {{ item.fmt_upd_time }}
-                                <input  type="hidden"   name="strParam"    :value="JSON.stringify( { 'grp_cd' : item.grp_cd, 'scen_cd' : item.scen_cd } )" />
+                                <input  type="hidden"   name="strParam"    :value="JSON.stringify( { 'grp_cd' : item.grp_cd, 'scen_cd' : item.scen_cd, 'scen_name' : item.scen_name, 'grp_yn' : item.grp_yn } )" />
                             </td>
 
                             <!-- 버튼 영역 -->
@@ -94,6 +104,11 @@
                 
             </v-card>
         </v-flex>
+
+        <v-flex>
+            <ProgressBar ref="progress"></ProgressBar>
+            <ConfirmDialog ref="confirm2"></ConfirmDialog>
+        </v-flex>        
     </v-layout>
 </template>
 
@@ -104,6 +119,9 @@ import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
+
+import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
+import ProgressBar from "@/components/common/ProgressBar.vue";
 
 import Simulation from "@/components/Home/Simulation/Simulation.vue";
 
@@ -122,12 +140,17 @@ export default {
 
             ,   arr_show_error_message      :   []          /* 에러 메시지 노출 정보 */
             ,   showCreateGroup             :   'N'         /* 그룹추가 노출여부 */
+            ,   arr_simul_list              :   []          /* 시뮬레이션 목록 정보 */
+
+            ,   grp_cd                      :   ""          /* 선택한 그룹코드 */
+            ,   scen_cd                     :   ""          /* 선택한 시나리오 코드 */
             ,   scen_name                   :   ""          /* 그룹명 */
-            ,   arr_simul_list               :  []          /* 시뮬레이션 목록 정보 */
         };
     },
     components: {
-        Simulation: Simulation
+        ProgressBar,
+        ConfirmDialog,        
+        Simulation
     },
     
     created() {
@@ -166,7 +189,8 @@ export default {
                                 console.log( "simulation v_jsonParam parameter 인자값이 없습니다." );
                                 return  false;
                             }                                
-                            
+
+                            /* 수정정보를 보여준다. */
                             vm.fn_showSimulationModify( v_jsonParam );
 
                             break;
@@ -207,25 +231,56 @@ export default {
         },
 
         /*
-         * 그룹 정보를 추가한다.
+         * 그룹 정보를 수정한다.
          * 2019-07-26  bkLove(촤병국)
          */
-        fn_createGroup() {
+        fn_modifyGroup( v_status="insert" ) {
             var vm = this;
+
+            var param   =   {
+                    grp_cd      :   ""
+                ,   scen_cd     :   ""
+                ,   scen_name   :   ""
+                ,   status      :   v_status
+            };
 
             vm.arr_show_error_message   =   [];
 
 
-            if( !vm.scen_name || vm.scen_name.length == 0 ) {
-                vm.arr_show_error_message.push( "그룹명 을 입력해 주세요." );
-                return  false;
-            }            
-
-            axios.post(Config.base_url + "/user/simulation/crateGroup", {
-                data: {
-                    scen_name   :   vm.scen_name
+            /* 등록, 수정인 경우 그룹명 필수 */
+            if( ["insert", "modify" ].includes( v_status ) ) {
+                if( !vm.scen_name || vm.scen_name.length == 0 ) {
+                    vm.arr_show_error_message.push( "그룹명 을 입력해 주세요." );
+                    return  false;
                 }
-            }).then( function(response) {
+            }
+
+            /* 수정, 삭제인 경우 그룹코드, 시나리오 코드 필수 */
+            if( ["modify", "delete" ].includes( v_status ) ) {
+
+                if( !vm.grp_cd ) {
+                    vm.arr_show_error_message.push( "그룹코드가 존재하지 않습니다." );
+                    console.log( "그룹코드가 존재하지 않습니다." );
+                    return  false;
+                }
+
+                if( !vm.scen_cd ) {
+                    vm.arr_show_error_message.push( "시나리오 코드가 존재하지 않습니다." );
+                    console.log( "시나리오 코드가 존재하지 않습니다." );
+                    return  false;
+                }                
+
+                param.grp_cd        =   vm.grp_cd;          /* 선택한 그룹코드 */
+                param.scen_cd       =   vm.scen_cd;         /* 선택한 시나리오 코드 */             
+            }
+
+            param.scen_name     =   vm.scen_name;           /* 그룹명 */    
+
+            axios.post(Config.base_url + "/user/simulation/modifyGroup", {
+                data: {
+                    scen_name   :   param
+                }
+            }).then( async function(response) {
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
 
@@ -234,15 +289,26 @@ export default {
                             vm.arr_show_error_message.push( msg );
                         }
                     }else{
-                        /* 시뮬레이션 목록정보를 조회한다. */
-                        vm.fn_getSimulList();
+
+                        if( msg ) {
+                            if ( await vm.$refs.confirm2.open(
+                                    '확인',
+                                    msg,
+                                    {}
+                                    ,1
+                                )
+                            ) {                        
+                                /* 시뮬레이션 목록정보를 조회한다. */
+                                vm.fn_getSimulList();
+                            }
+                        }
                     }
                 }
             });
         },
 
         /*
-         * 수정화면으로 이동한다.
+         * 수정정보를 보여준다.
          * 2019-07-26  bkLove(촤병국)
          */
         fn_showSimulationModify( v_jsonParam ) {
@@ -256,8 +322,22 @@ export default {
                 return  false;
             }            
 
+            /* 시나리오 그룹인 경우 */
+            if( v_jsonParam.grp_yn == '1' ) {
+                vm.grp_cd           =   v_jsonParam.grp_cd;         /* 그룹코드 */
+                vm.scen_cd          =   v_jsonParam.scen_cd;        /* 시나리오 코드 */
+                vm.scen_name        =   v_jsonParam.scen_name;      /* 시나리오 명 */
 
-            vm.$emit( "fn_showSimulationModify", v_jsonParam );
+                vm.showCreateGroup  =   'Y';
+
+                vm.$nextTick(function(){
+                    vm.$refs.scen_name.focus();
+                });
+            }
+            /* 시나리오 그룹이 아닌 경우 - 시나리오 수정화면으로 이동한다.*/
+            else{
+                vm.$emit( "fn_showSimulationModify", v_jsonParam );
+            }
         }
     }    
 };
