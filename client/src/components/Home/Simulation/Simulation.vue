@@ -392,6 +392,8 @@ export default {
             /* 비중을 변경하는 경우 [직접입력] 으로 강제 설정 */
             vm.importance_method_cd =   "1";
 
+            $(this).val( util.formatNumber( $(this).val() ) );
+
             vm.fn_resetErrorMessage();
             vm.fn_setTotalRecord();
         });
@@ -1023,12 +1025,9 @@ export default {
             });
 
 
-            /* 상위그룹이 '선택안함' 인 경우에는 포트폴리오 체크안함. */
-            if( vm.grp_cd != "*" ){
-                if( !vm.arr_portfolio || vm.arr_portfolio.length == 0 ) {
-                    vm.arr_show_error_message.push( "[포트폴리오] 종목코드가 한건 이상 존재해야 합니다." );
-                    return  false;
-                }              
+            if( !vm.arr_portfolio || vm.arr_portfolio.length == 0 ) {
+                vm.arr_show_error_message.push( "[포트폴리오] 종목코드가 한건 이상 존재해야 합니다." );
+                return  false;
             }
 
         /**************/
@@ -1072,13 +1071,11 @@ export default {
                 return  false;
             }            
 
-            /* 상위그룹이 '선택안함' 이고 */
-            if( vm.grp_cd == "*" ){
-                /* 포트폴리오 1건 이상 입력한 경우에는 비중의 합은 100 이 되어야 함.  */
-                if( vm.arr_portfolio.length > 0 && total.importance != 100 ) {
-                    vm.arr_show_error_message.push( "[포트폴리오] 비중의 합은 100 이 되어야 합니다." );
-                    return  false;
-                }
+
+            /* 포트폴리오 1건 이상 입력한 경우에는 비중의 합은 100 이 되어야 함.  */
+            if( vm.arr_portfolio.length > 0 && total.importance != 100 ) {
+                vm.arr_show_error_message.push( "[포트폴리오] 비중의 합은 100 이 되어야 합니다." );
+                return  false;
             }
         },        
 
@@ -1133,32 +1130,28 @@ export default {
             }
 
 
-            /* 상위그룹이 '선택안함' 인 경우에는 시나리오명만 체크한다. */
-            if( vm.grp_cd != "*" ){
+            if( !vm.start_year ) {
+                vm.arr_show_error_message.push( "[조건설정] 시작년도를 선택해 주세요." );
+            }
 
-                if( !vm.start_year ) {
-                    vm.arr_show_error_message.push( "[조건설정] 시작년도를 선택해 주세요." );
-                }
+            if( !vm.rebalance_cycle_cd ) {
+                vm.arr_show_error_message.push( "[조건설정] 리밸런싱주기를 선택해 주세요." );
+            }
 
-                if( !vm.rebalance_cycle_cd ) {
-                    vm.arr_show_error_message.push( "[조건설정] 리밸런싱주기를 선택해 주세요." );
-                }
+            if( !vm.rebalance_date_cd ) {
+                vm.arr_show_error_message.push( "[조건설정] 리밸런싱 일자를 선택해 주세요." );
+            }
 
-                if( !vm.rebalance_date_cd ) {
-                    vm.arr_show_error_message.push( "[조건설정] 리밸런싱 일자를 선택해 주세요." );
-                }
-
-                try{
-                    if( vm.init_invest_money == "" ) {
-                        vm.arr_show_error_message.push( "[조건설정] 초기투자금액을 입력해 주세요." );
-                    }else if( isNaN( vm.init_invest_money ) ) {
-                        vm.arr_show_error_message.push( "[조건설정] 초기투자금액은 숫자만 입력해 주세요." );
-                    }else if( Number( vm.init_invest_money ) <= 0 ) {
-                        vm.arr_show_error_message.push( "[조건설정] 초기투자금액은 0 보다 큰수를 입력해 주세요." );
-                    }
-                }catch( e ) {
+            try{
+                if( vm.init_invest_money == "" ) {
+                    vm.arr_show_error_message.push( "[조건설정] 초기투자금액을 입력해 주세요." );
+                }else if( isNaN( vm.init_invest_money ) ) {
                     vm.arr_show_error_message.push( "[조건설정] 초기투자금액은 숫자만 입력해 주세요." );
+                }else if( Number( vm.init_invest_money ) <= 0 ) {
+                    vm.arr_show_error_message.push( "[조건설정] 초기투자금액은 0 보다 큰수를 입력해 주세요." );
                 }
+            }catch( e ) {
+                vm.arr_show_error_message.push( "[조건설정] 초기투자금액은 숫자만 입력해 주세요." );
             }
 
         /**************/

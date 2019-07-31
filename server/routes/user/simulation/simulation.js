@@ -595,15 +595,6 @@ var saveBaicInfo = function(req, res) {
                             paramData.grp_yn            =   "0";                                    /* 그룹여부(1-그룹) */
                             paramData.scen_depth        =   "2";                                    /* 시나리오 DEPTH */
 
-                            /* 상위그룹이 없는 경우 그룹여부='1' 설정 */
-                            if( !paramData.grp_cd || paramData.grp_cd == initGrpInfo.INIT_GRP_CD ) {
-                                paramData.grp_yn        =   "1";                                    /* 그룹여부(1-그룹) */
-                                paramData.scen_depth    =   "1";                                    /* 시나리오 DEPTH */
-
-                                paramData.grp_cd        =   initGrpInfo.INIT_GRP_CD;                /* 그룹코드 최초값 */
-                            }
-                                                        
-
                             /* 수정 건 이고 상위 그룹이 변경된 경우 */
                             if(     paramData.status        ==  "modify"
                                 &&  paramData.prev_grp_cd   !=  paramData.grp_cd ) {
@@ -655,20 +646,24 @@ var saveBaicInfo = function(req, res) {
 
                         try{
 
-                            /* 신규 건 이거나 상위 그룹이 변경된 경우 정렬순번 조회 */
-                            if(     paramData.status        ==  "insert"
-                                ||  paramData.prev_grp_cd   !=  paramData.grp_cd  ) {
+                            /* modify 상태이고 상위그룹이 변경되지 않는 경우 기존 scen_cd 사용 */
+                            if(     paramData.status        ==  "modify"
+                                &&  paramData.prev_grp_cd   ==  paramData.grp_cd  ) {
+
+                                    callback(null, paramData);
+
+                            }else{
 
                                 paramData.init_incre_grp_cd     =   initGrpInfo.INIT_INCRE_GRP_CD;      /* 그룹인 경우 시나리오 코드는 해당값 단위로 증가 */
 
-                                stmt = mapper.getStatement('simulation', 'getScenCd', paramData, format);
+                                stmt = mapper.getStatement('simulation', "getScenCd1", paramData, format);
                                 log.debug(stmt, paramData);
 
                                 conn.query(stmt, function(err, rows) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulation.getScenCd Error while performing Query";
+                                        resultMsg.msg = "[error] simulation.getScenCd1 Error while performing Query";
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -681,14 +676,12 @@ var saveBaicInfo = function(req, res) {
                                     callback(null, paramData);
                                 });
 
-                            }else{
-                                callback(null, paramData);
                             }
 
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulation.getScenCd Error while performing Query";
+                            resultMsg.msg = "[error] simulation.getScenCd1 Error while performing Query";
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -1193,7 +1186,7 @@ var saveBaicInfo = function(req, res) {
 
 
 /*
- * 그룹 정보를 추가한다.
+ * 그룹 정보를 수정한다.
  * 2019-05-20  bkLove(촤병국)
  */
 var modifyGroup = function(req, res) {
@@ -1235,17 +1228,78 @@ var modifyGroup = function(req, res) {
 
                 async.waterfall([
 
-                    /* 1. 시나리오명이 존재하는지 체크한다. */
+                    /* 2. grp_cd, scen_cd 가 존재하는지 체크한다. */
                     function(callback) {
+
+                        try{
+
+                            /* 넘겨받은 상태값이 없는 경우 */
+                            if( typeof paramData.status == "undefined" || paramData.status == "" ) {
+                                paramData.status    =   "insert";
+                            }
+
+                            /* insert 인 경우 grp_cd, scen_cd 가 존재하는지 체크하지 않는다. */
+                            if( paramData.status == "insert" ) {
+
+                                callback(null, paramData);
+
+                            }else{                            
+
+                                stmt = mapper.getStatement('simulation', 'getExistCodeCheckByGroup', paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulation.getExistCodeCheckByGroup Error while performing Query";
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if (rows && rows.length == 1) {
+
+                                        if( rows[0].grp_cd_yn != "Y" ) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "선택한 그룹코드가 존재하지 않습니다.";
+                                            resultMsg.err = "선택한 그룹코드가 존재하지 않습니다.";
+
+                                            return callback(resultMsg);
+                                        }
+                                        else if( rows[0].scen_cd_yn != "Y" ) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "선택한 시나리오 코드가 존재하지 않습니다.";
+                                            resultMsg.err = "선택한 시나리오 코드가 존재하지 않습니다.";
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        callback(null, paramData);
+                                    }
+                                });
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulation.getExistCodeCheckByGroup Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 2. 시나리오명이 존재하는지 체크한다. */
+                    function(msg, callback) {
 
                         try{
                             var exist_yn   =   "Y";
 
-                            /* 기존에 등록된 scen_cd 가 없는 경우 ( 신규 건 ) */
-                            if( typeof paramData.scen_cd == "undefined" || paramData.scen_cd == "" ) {
-                                paramData.status    =   "insert";
-                            }else if( typeof paramData.status == "undefined" || paramData.status == "" ){
-                                paramData.status    =   "modify";
+                            /* 상태값이 modify 인 경우 */
+                            if( paramData.status == "modify" ){
+                                paramData.prev_grp_cd   =   paramData.grp_cd;
+                                paramData.prev_scen_cd  =   paramData.scen_cd;
                             }
 
                             /* delete 인 경우 시나리오명 중복체크를 하지 않는다. */
@@ -1294,42 +1348,42 @@ var modifyGroup = function(req, res) {
                         }
                     },
 
-                    /* 2. 수정 삭제시 grp_cd, scen_cd 가 존재하는지 체크한다. */
+                    /* 3. 하위에 시나리오 건수를 조회한다. ( 시나리오 그룹에서 삭제시 ) */
                     function(msg, callback) {
 
                         try{
+                            var exist_cnt   =   1;
 
-                            /* delete 인 경우 시뮬레이션 시나리오 코드를 채번하지 않는다. */
-                            if( paramData.status  == "delete" ) {
+                            /* 등록, 수정 인 경우 하위에 시나리오 건수를 조회하지 않는다. */
+                            if( [ "insert", "modify" ].includes( paramData.status ) ) {
 
                                 callback(null, paramData);
 
-                            }else{                            
+                            }else{
 
-                                paramData.grp_yn                =   '1';                                /* 그룹여부(1-그룹) */
-                                paramData.scen_depth            =   "1";                                /* 시나리오 DEPTH */
-                                paramData.init_incre_grp_cd     =   initGrpInfo.INIT_INCRE_GRP_CD;      /* 그룹인 경우 시나리오 코드는 해당값 단위로 증가 */
-
-                                /* 상위그룹이 없는 경우 그룹여부='1' 설정 */
-                                if( typeof paramData.grp_cd == "undefined" || !paramData.grp_cd ) {
-                                    paramData.grp_cd            =   initGrpInfo.INIT_GRP_CD;            /* 그룹코드 최초값 */
-                                }
-
-                                stmt = mapper.getStatement('simulation', 'getScenCd1', paramData, format);
+                                stmt = mapper.getStatement('simulation', 'getExistSubCntByGroup', paramData, format);
                                 log.debug(stmt, paramData);
 
                                 conn.query(stmt, function(err, rows) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulation.getScenCd1 Error while performing Query";
+                                        resultMsg.msg = "[error] simulation.getExistSubCntByGroup Error while performing Query";
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
                                     }
 
-                                    if (rows && rows.length == 1) {
-                                        paramData.scen_cd = rows[0].scen_cd;
+                                    if ( rows && rows.length == 1) {
+                                        exist_cnt   =   rows[0].exist_cnt;
+                                    }
+
+                                    if( exist_cnt > 0 ) {
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "시나리오가 한건 이상  존재합니다.";
+                                        resultMsg.err       =   "[error] simulation.getExistSubCntByGroup Error while performing Query";
+
+                                        return callback(resultMsg);                                    
                                     }
 
                                     callback(null, paramData);
@@ -1339,7 +1393,7 @@ var modifyGroup = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulation.getScenCd1 Error while performing Query";
+                            resultMsg.msg = "[error] simulation.getExistSubCntByGroup Error while performing Query";
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -1351,8 +1405,8 @@ var modifyGroup = function(req, res) {
 
                         try{
 
-                            /* delete 인 경우 시뮬레이션 시나리오 코드를 채번하지 않는다. */
-                            if( paramData.status  == "delete" ) {
+                            /* modify, delete 인 경우 시뮬레이션 시나리오 코드를 채번하지 않는다. */
+                            if( [ "modify", "delete" ].includes( paramData.status ) ) {
 
                                 callback(null, paramData);
 
@@ -1367,14 +1421,14 @@ var modifyGroup = function(req, res) {
                                     paramData.grp_cd            =   initGrpInfo.INIT_GRP_CD;            /* 그룹코드 최초값 */
                                 }
 
-                                stmt = mapper.getStatement('simulation', 'getScenCd1', paramData, format);
+                                stmt = mapper.getStatement('simulation', 'getScenCdByGroup', paramData, format);
                                 log.debug(stmt, paramData);
 
                                 conn.query(stmt, function(err, rows) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulation.getScenCd1 Error while performing Query";
+                                        resultMsg.msg = "[error] simulation.getScenCdByGroup Error while performing Query";
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -1391,7 +1445,7 @@ var modifyGroup = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulation.getScenCd1 Error while performing Query";
+                            resultMsg.msg = "[error] simulation.getScenCdByGroup Error while performing Query";
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -1419,7 +1473,7 @@ var modifyGroup = function(req, res) {
 
                             }else{
 
-                                /* delete 인 경우 시뮬레이션 시나리오 코드를 채번하지 않는다. */
+                                /* delete 인 경우 시뮬레이션 시나리오 정렬순번을 조회하지 않는다. */
                                 if( paramData.status  == "delete" ) {
 
                                     callback(null, paramData);
@@ -1461,13 +1515,13 @@ var modifyGroup = function(req, res) {
                     /* 5. 시뮬레이션 기본 정보를 저장한다. */
                     function( msg, callback) {
 
-                        var queryId =   "saveTmSimulMast";           
+                        var queryId =   "saveTmSimulMastByGroup";           
 
                         try{
                             if( paramData.status  ==  "modify" ) {
-                                queryId =   "modifyTmSimulMast";
+                                queryId =   "modifyTmSimulMastByGroup";
                             }else if( paramData.status  ==  "delete" ) {
-                                queryId =   "deleteTmSimulMast";
+                                queryId =   "deleteTmSimulMastByGroup";
                             }
 
                             paramData.start_year            =   "";         /* 시작년도 */

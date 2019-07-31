@@ -234,18 +234,22 @@ export default {
          * 그룹 정보를 수정한다.
          * 2019-07-26  bkLove(촤병국)
          */
-        fn_modifyGroup( v_status="insert" ) {
+        async fn_modifyGroup( v_status="insert" ) {
             var vm = this;
 
             var param   =   {
-                    grp_cd      :   ""
-                ,   scen_cd     :   ""
-                ,   scen_name   :   ""
-                ,   status      :   v_status
+                    grp_cd          :   ""
+                ,   scen_cd         :   ""
+                ,   prev_grp_cd     :   ""
+                ,   prev_scen_cd    :   ""
+
+                ,   scen_name       :   ""
+                ,   status          :   v_status
             };
 
             vm.arr_show_error_message   =   [];
 
+            var confirm_nm          =   "저장";
 
             /* 등록, 수정인 경우 그룹명 필수 */
             if( ["insert", "modify" ].includes( v_status ) ) {
@@ -276,10 +280,28 @@ export default {
 
             param.scen_name     =   vm.scen_name;           /* 그룹명 */    
 
-            axios.post(Config.base_url + "/user/simulation/modifyGroup", {
-                data: {
-                    scen_name   :   param
+
+
+            if( param.status == "modify" ) {
+                confirm_nm          =   "수정";
+            }else if( param.status == "delete" ) {
+                confirm_nm          =   "삭제";
+            }
+
+            if( await vm.$refs.confirm2.open(
+                        '[시나리오 그룹]',
+                        confirm_nm + '하시겠습니까?',
+                        {}
+                    ,   2
+                )
+            ) {
+                if( "Y" != vm.$refs.confirm2.val ) {
+                    return  false;
                 }
+            }
+
+            axios.post(Config.base_url + "/user/simulation/modifyGroup", {
+                data: param
             }).then( async function(response) {
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
@@ -297,7 +319,14 @@ export default {
                                     {}
                                     ,1
                                 )
-                            ) {                        
+                            ) {
+                                vm.grp_cd           =   "";         /* 선택한 그룹코드 */
+                                vm.scen_cd          =   "";         /* 선택한 시나리오 코드 */
+                                vm.scen_name        =   "";         /* 그룹명 */
+
+                                /* 정상적으로 수정된 경우 create group 영역을 보이지 않게 한다. */
+                                vm.showCreateGroup  =   'N';
+
                                 /* 시뮬레이션 목록정보를 조회한다. */
                                 vm.fn_getSimulList();
                             }
