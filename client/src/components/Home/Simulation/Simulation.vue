@@ -388,11 +388,14 @@ export default {
         $('#table01 tbody').on('change', "input[name='importance']", function() {
             var tr          =   $(this).closest('tr');
             var rowIndex    =   tr.index();
+            var v_importance=   $(this);
 
             /* 비중을 변경하는 경우 [직접입력] 으로 강제 설정 */
             vm.importance_method_cd =   "1";
 
-            $(this).val( util.formatNumber( $(this).val() ) );
+            if( v_importance.val() ) {
+                v_importance.val( util.formatNumber( v_importance.val() ) );
+            }
 
             vm.fn_resetErrorMessage();
             vm.fn_setTotalRecord();
