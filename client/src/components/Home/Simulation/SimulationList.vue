@@ -19,7 +19,7 @@
 
                 <div style="display:inline" v-if="showCreateGroup=='Y'">
                     <span>
-                        <v-text-field   v-model="scen_name" outline class="wid200"  maxlegnth="50"></v-text-field>
+                        <v-text-field   v-model="scen_name" outline class="wid200 text_in01"  maxlegnth="50"></v-text-field>
                     </span>
                     <span class="margin_t1">
                         <v-btn depressed small outline color="primary" @click="fn_createGroup()">추가</v-btn>
@@ -28,6 +28,8 @@
             </v-card>
 
             <v-card flat>
+           <div class="table-box-wrap">
+            <div class="table-box" style="max-height:690px;">
                 <table  id="table01" class="tbl_type ver10">
                     <caption></caption>
                     <colgroup>
@@ -87,6 +89,8 @@
                     </tbody>
 
                 </table>
+            </div>
+           </div>
                 
             </v-card>
         </v-flex>
