@@ -77,7 +77,7 @@
 
                                         @change="fn_resetErrorMessage();fn_resetRebalanceDateCd()"
                                         
-                                        v-model="rebalance_cycle_cd" 
+                                        v-model="rebalance_cycle_cd"
                                         placeholder="선택하세요" 
                                         outline>
                             </v-select>
@@ -759,7 +759,7 @@ export default {
                 trHtml      +=  `    <td class="txt_left">` + rowData.F16002 + `</td>`;
 
                                     /* 시가총액 */
-                trHtml      +=  `    <td class="txt_right">` + util.formatInt( rowData.F15028 ) + `</td>`;
+                trHtml      +=  `    <td class="txt_right">` + ( rowData.F15028 ? util.formatInt( rowData.F15028 ) : '' ) + `</td>`;
 
                                     /* 비중 */
                 trHtml      +=  `    <td class="txt_right">`;
@@ -1272,6 +1272,10 @@ export default {
                             vm.init_invest_money        =   mastInfo.init_invest_money;     /* 초기투자금액 */
                             vm.bench_mark_cd            =   mastInfo.bench_mark_cd;         /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
                             vm.importance_method_cd     =   mastInfo.importance_method_cd;  /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
+
+                            if( !vm.rebalance_cycle_cd ) {
+                                vm.rebalance_cycle_cd   =   "1";
+                            }
 
                             /* 리밸런싱주기 선택시 v-radio 의 disabled 정보를 다시 셋팅한다. */
                             vm.fn_resetRebalanceDateCd();
