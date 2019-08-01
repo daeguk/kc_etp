@@ -5,7 +5,7 @@
 
             <v-card flat class="creat_f">
                 <div class="warning_box"    v-if="arr_show_error_message != null && arr_show_error_message.length > 0">
-                    <span v-for="(item, index) in arr_show_error_message" :key="index">
+                    <span class="margin_n" v-for="(item, index) in arr_show_error_message" :key="index">
                         <v-icon color="#ff4366">error_outline</v-icon> {{item}} <br>
                     </span>
                 </div>
