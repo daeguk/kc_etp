@@ -1354,6 +1354,9 @@ var modifyGroup = function(req, res) {
                         try{
                             var exist_cnt   =   1;
 
+                            paramData.grp_yn                =   '1';                                /* 그룹여부(1-그룹) */
+                            paramData.scen_depth            =   "1";                                /* 시나리오 DEPTH */
+
                             /* 등록, 수정 인 경우 하위에 시나리오 건수를 조회하지 않는다. */
                             if( [ "insert", "modify" ].includes( paramData.status ) ) {
 
@@ -1412,8 +1415,6 @@ var modifyGroup = function(req, res) {
 
                             }else{                            
 
-                                paramData.grp_yn                =   '1';                                /* 그룹여부(1-그룹) */
-                                paramData.scen_depth            =   "1";                                /* 시나리오 DEPTH */
                                 paramData.init_incre_grp_cd     =   initGrpInfo.INIT_INCRE_GRP_CD;      /* 그룹인 경우 시나리오 코드는 해당값 단위로 증가 */
 
                                 /* 상위그룹이 없는 경우 그룹여부='1' 설정 */

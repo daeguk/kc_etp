@@ -576,9 +576,14 @@ export default {
             vm.arr_show_error_message   =   [];
 
             return  await new Promise(function(resolve, reject) {
+
+                util.processing(vm.$refs.progress, true);
                 axios.post(Config.base_url + "/user/simulation/getInitGrpCd", {
                     data: {}
                 }).then( function(response) {
+
+                    util.processing(vm.$refs.progress, false);
+
                     if (response && response.data) {
                         var msg = ( response.data.msg ? response.data.msg : "" );
 
@@ -596,9 +601,17 @@ export default {
                     }else{
                         resolve( { result : false } );
                     }
-                }).catch( function(e) {
-                    console.log( e );
+                }).catch(error => {
                     resolve( { result : false } );
+                    util.processing(vm.$refs.progress, false);
+                    if ( vm.$refs.confirm2.open(
+                            '확인',
+                            '서버로 부터 응답을 받지 못하였습니다.',
+                            {}
+                            ,4
+                        )
+                    ) {
+                    }
                 });
 
             }).catch( function(e1) {
@@ -615,9 +628,15 @@ export default {
             var vm = this;
 
             vm.arr_show_error_message   =   [];
+
+            util.processing(vm.$refs.progress, true);
+
             axios.post(Config.base_url + "/user/simulation/getNextScenName", {
                 data: {}
             }).then( function(response) {
+
+                util.processing(vm.$refs.progress, false);
+
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
 
@@ -628,6 +647,16 @@ export default {
                     }else{
                         vm.scen_name   =   response.data.scen_name;
                     }
+                }
+            }).catch(error => {
+                util.processing(vm.$refs.progress, false);
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '서버로 부터 응답을 받지 못하였습니다.',
+                        {}
+                        ,4
+                    )
+                ) {
                 }
             });
         },
@@ -648,9 +677,14 @@ export default {
             vm.arr_show_error_message   =   [];
 
             return  new Promise(function(resolve, reject) {
+
+                util.processing(vm.$refs.progress, true);
+
                 axios.post(Config.base_url + "/user/simulation/getInitData", {
                     data: { arrComMstCd : arrComMstCd }
                 }).then( function(response) {
+
+                    util.processing(vm.$refs.progress, false);
 
                     if (response && response.data) {
                         var arrMsg = ( response.data.arrMsg && response.data.arrMsg.length > 0 ? response.data.arrMsg : [] );
@@ -694,10 +728,17 @@ export default {
 
                         resolve( { result : false } );
                     }
-
-                }).catch( function(e) {
-                    console.log( e );
+                }).catch(error => {
                     resolve( { result : false } );
+                    util.processing(vm.$refs.progress, false);
+                    if ( vm.$refs.confirm2.open(
+                            '확인',
+                            '서버로 부터 응답을 받지 못하였습니다.',
+                            {}
+                            ,4
+                        )
+                    ) {
+                    }
                 });
 
             }).catch( function(e1) {
@@ -909,13 +950,18 @@ export default {
                 tr  =   table01.find( "tbody tr" ).eq( rowIndex );
 
                 tr.find( "td input[name=F16316]" ).val( rowItem.F16012 );       /* 종목코드 */
-                tr.find( "td:eq(2)" ).text( rowItem.F16002 );                   /* 종목명 */                        
+                tr.find( "td:eq(2)" ).text( rowItem.F16002 );                   /* 종목명 */
 
+
+                util.processing(vm.$refs.progress, true);
 
             /* 선택된 종목의 구성정보를 조회한다. */
                 axios.post(Config.base_url + "/user/simulation/getJongmokInfo", {
                     data: { "F16012" : rowItem.F16012 }
                 }).then( function(response) {
+
+                    util.processing(vm.$refs.progress, false);
+
                     if (response && response.data) {
                         var msg = ( response.data.msg ? response.data.msg : "" );
 
@@ -944,9 +990,17 @@ export default {
                         resolve( { result : false } );
                     }
 
-                }).catch( function(e) {
-                    console.log( e );
+                }).catch(error => {
                     resolve( { result : false } );
+                    util.processing(vm.$refs.progress, false);
+                    if ( vm.$refs.confirm2.open(
+                            '확인',
+                            '서버로 부터 응답을 받지 못하였습니다.',
+                            {}
+                            ,4
+                        )
+                    ) {
+                    }
                 });
 
             }).catch( function(e1) {
@@ -1169,7 +1223,9 @@ export default {
         /**************/
             if( vm.arr_show_error_message && vm.arr_show_error_message.length > 0  ) {
                 return  false;
-            }            
+            }
+
+            util.processing(vm.$refs.progress, true);
 
             axios.post(Config.base_url + "/user/simulation/saveBaicInfo", {
                 data: { 
@@ -1191,6 +1247,8 @@ export default {
                     ,   "arr_portfolio"         :   vm.arr_portfolio            /* 포트폴리오 설정 정보 */
                 }
             }).then( async function(response) {
+
+                util.processing(vm.$refs.progress, false);
 
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
@@ -1228,7 +1286,17 @@ export default {
                         }
                     }
                 }
-            });            
+            }).catch(error => {
+                util.processing(vm.$refs.progress, false);
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '서버로 부터 응답을 받지 못하였습니다.',
+                        {}
+                        ,4
+                    )
+                ) {
+                }
+            });
         },
 
         /*
@@ -1240,9 +1308,14 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
+            util.processing(vm.$refs.progress, true);
+
             axios.post(Config.base_url + "/user/simulation/getSimulMast", {
                 data: v_paramData
             }).then( function(response) {
+
+                util.processing(vm.$refs.progress, false);
+
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
 
@@ -1278,6 +1351,16 @@ export default {
                         }
                     }
                 }
+            }).catch(error => {
+                util.processing(vm.$refs.progress, false);
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '서버로 부터 응답을 받지 못하였습니다.',
+                        {}
+                        ,4
+                    )
+                ) {
+                }
             });
         },
 
@@ -1290,9 +1373,13 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
+            util.processing(vm.$refs.progress, true);
+
             axios.post(Config.base_url + "/user/simulation/getSimulPortfolio", {
                 data: v_paramData
             }).then( function(response) {
+
+                util.processing(vm.$refs.progress, false);
 
                 /* 레코드를 초기화 한다. */
                 vm.fn_initRecords();
@@ -1323,6 +1410,16 @@ export default {
 
                         vm.arr_portfolio    =   dataList;
                     }
+                }
+            }).catch(error => {
+                util.processing(vm.$refs.progress, false);
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '서버로 부터 응답을 받지 못하였습니다.',
+                        {}
+                        ,4
+                    )
+                ) {
                 }
             });
         },

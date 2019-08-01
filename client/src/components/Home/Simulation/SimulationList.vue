@@ -117,6 +117,7 @@
 import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
+import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
 
@@ -213,9 +214,15 @@ export default {
             var vm = this;
 
             vm.arr_show_error_message   =   [];
+
+            util.processing(vm.$refs.progress, true);
+
             axios.post(Config.base_url + "/user/simulation/getSimulList", {
                 data: {}
             }).then( function(response) {
+
+                util.processing(vm.$refs.progress, false);
+
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
 
@@ -226,6 +233,17 @@ export default {
                     }else{
                         vm.arr_simul_list   =   response.data.dataList;
                     }
+                }
+            }).catch(error => {
+
+                util.processing(vm.$refs.progress, false);
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '서버로 부터 응답을 받지 못하였습니다.',
+                        {}
+                        ,4
+                    )
+                ) {
                 }
             });
         },
@@ -300,9 +318,14 @@ export default {
                 }
             }
 
+            util.processing(vm.$refs.progress, true);
+
             axios.post(Config.base_url + "/user/simulation/modifyGroup", {
                 data: param
             }).then( async function(response) {
+
+                util.processing(vm.$refs.progress, false);
+
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
 
@@ -332,6 +355,17 @@ export default {
                             }
                         }
                     }
+                }
+            }).catch(error => {
+
+                util.processing(vm.$refs.progress, false);
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '서버로 부터 응답을 받지 못하였습니다.',
+                        {}
+                        ,4
+                    )
+                ) {
                 }
             });
         },

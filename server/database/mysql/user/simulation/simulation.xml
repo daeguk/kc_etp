@@ -226,6 +226,7 @@
 
          WHERE  1 = 1
            AND  tm_simul_mast.grp_cd                =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_mast.grp_yn                =   #{grp_yn}           /* 그룹여부(1-그룹) */
     </select>    
 
     <!--
