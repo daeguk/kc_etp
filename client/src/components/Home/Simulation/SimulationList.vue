@@ -11,10 +11,10 @@
                 </div>
 
                 <span>
-                    <v-btn depressed color="primary" @click="showCreateGroup = 'N'" >Create Senario</v-btn>
+                    <v-btn depressed color="primary" @click="fn_showSenario()" >Create Senario</v-btn>
                 </span>
                 <span>
-                    <v-btn depressed outline color="primary" @click="showCreateGroup = 'Y'">Create A Group</v-btn>
+                    <v-btn depressed outline color="primary" @click="fn_showCreateGroup();">Create A Group</v-btn>
                 </span>
 
                 <div style="display:inline" v-if="showCreateGroup=='Y'">
@@ -22,9 +22,9 @@
                         <v-text-field   v-model="scen_name" outline class="wid200 text_in01"  maxlegnth="50"    ref="scen_name"></v-text-field>
                     </span>
                     <span class="margin_t1">
-                        <v-btn depressed small outline color="primary" @click="fn_modifyGroup( 'insert' )">추가</v-btn>
-                        <v-btn depressed small outline color="primary" @click="fn_modifyGroup( 'modify' )">수정</v-btn>
-                        <v-btn depressed small outline color="primary" @click="fn_modifyGroup( 'delete' )">삭제</v-btn>
+                        <v-btn  v-if="['insert', 'modify'].includes( status )"    depressed small outline color="primary" @click="fn_modifyGroup( 'insert' )">추가</v-btn>
+                        <v-btn  v-if="['modify'].includes( status )"              depressed small outline color="primary" @click="fn_modifyGroup( 'modify' )">수정</v-btn>
+                        <v-btn  v-if="['modify'].includes( status )"              depressed small outline color="primary" @click="fn_modifyGroup( 'delete' )">삭제</v-btn>
                     </span>
                 </div>
             </v-card>
@@ -146,6 +146,7 @@ export default {
             ,   grp_cd                      :   ""          /* 선택한 그룹코드 */
             ,   scen_cd                     :   ""          /* 선택한 시나리오 코드 */
             ,   scen_name                   :   ""          /* 그룹명 */
+            ,   status                      :   "insert"    /* 버튼명 */
         };
     },
     components: {
@@ -205,6 +206,28 @@ export default {
     },
 
     methods: {
+
+
+        /*
+         * 시나리오 버튼 클릭시
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_showSenario : function() {
+            var vm = this;
+
+            vm.showCreateGroup  =   'N';
+        },
+
+        /*
+         * 시나리오 그룹 버튼 클릭시
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_showCreateGroup : function() {
+            var vm = this;
+
+            vm.status           =   'insert';
+            vm.showCreateGroup  =   'Y'
+        },
 
         /*
          * 시뮬레이션 목록정보를 조회한다. 
@@ -347,6 +370,8 @@ export default {
                                 vm.scen_cd          =   "";         /* 선택한 시나리오 코드 */
                                 vm.scen_name        =   "";         /* 그룹명 */
 
+                                vm.status           =   "insert";
+
                                 /* 정상적으로 수정된 경우 create group 영역을 보이지 않게 한다. */
                                 vm.showCreateGroup  =   'N';
 
@@ -391,6 +416,7 @@ export default {
                 vm.scen_cd          =   v_jsonParam.scen_cd;        /* 시나리오 코드 */
                 vm.scen_name        =   v_jsonParam.scen_name;      /* 시나리오 명 */
 
+                vm.status           =   "modify";
                 vm.showCreateGroup  =   'Y';
 
                 vm.$nextTick(function(){
