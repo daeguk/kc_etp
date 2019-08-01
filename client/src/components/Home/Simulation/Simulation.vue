@@ -451,7 +451,7 @@ export default {
 
 
             /* 계산할 항목에 대한 전체 정보를 구한다. */
-            table01.find( "tbody tr input[name=F16316]" ).parents("tr").each( function( inx, rowItem ) {
+            table01.find( "tbody tr" ).each( function( inx, rowItem ) {
                 var tr = $(this);
 
                 var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );            /* 첫번째 컬럼 */
@@ -488,7 +488,7 @@ export default {
                 var v_temp_importance   =   0;
                 var v_inx               =   0;
 
-                table01.find( "tbody tr input[name=F16316]" ).parents("tr").each( function( inx, rowItem ) {
+                table01.find( "tbody tr" ).each( function( inx, rowItem ) {
                     var tr = $(this);
 
                     var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
@@ -540,7 +540,7 @@ export default {
 
                 /* 비중 정보를 tr 에 설정한다. */
                 v_inx   =   0;
-                table01.find( "tbody tr input[name=F16316]" ).parents("tr").each( function( inx, rowItem ) {
+                table01.find( "tbody tr" ).each( function( inx, rowItem ) {
                     var tr = $(this);
 
                     var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
