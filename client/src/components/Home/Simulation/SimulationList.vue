@@ -155,7 +155,7 @@ export default {
             ,   grp_cd                      :   ""          /* 선택한 그룹코드 */
             ,   scen_cd                     :   ""          /* 선택한 시나리오 코드 */
             ,   scen_name                   :   ""          /* 그룹명 */
-            ,   status                      :   "insert"    /* 버튼명 */
+            ,   status                      :   "insert"    /* 상태정보 */
         };
     },
     components: {

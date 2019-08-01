@@ -381,8 +381,44 @@ export default {
             vm.fn_resetErrorMessage();
             vm.fn_resetRecords( rowIndex );
 
+            /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
             vm.fn_setImportanceMethodCd( vm.importance_method_cd );
         });
+
+
+        /* table tr 에서 종목코드 엔터키 누를시   */
+        $('#table01 tbody').on('keypress', "input[name='F16316']", function(e) {
+            var tr          =   $(this).closest('tr');
+            var rowIndex    =   tr.index();
+
+            vm.fn_resetErrorMessage();
+
+            if( e.which == 13 ) {
+
+                /* 종목코드를 검색한다. */
+                vm.fn_getJongmokData( rowIndex, $(this) ).then(function(e){
+
+                    if( e && e.result ) {
+                        
+                        var rowItem;
+                        if( e.rowItem && Object.keys( e.rowItem ).length > 0 )  {
+                            rowItem =   e.rowItem;
+
+                            tr.find( "td input[name=F16316]" ).val( rowItem.F16012 );               /* 종목코드 */
+                            tr.find( "td:eq(2)" ).text( rowItem.F16002 );                           /* 종목명 */
+
+                            tr.find( "td:eq(3)" ).text( util.formatInt( rowItem.F15028 ) );         /* 시가총액 */
+    //                      tr.find( "td:eq(5)" ).text( rowIndex / 100 );                           /* 지수적용비율 */
+
+                            /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
+                            vm.fn_setImportanceMethodCd( vm.importance_method_cd );
+                        }
+                    }
+                });                
+            }
+        });        
+
+        
 
         /* table tr 에서 비중 change 시 total 영역 계산   */
         $('#table01 tbody').on('change', "input[name='importance']", function() {
@@ -621,6 +657,114 @@ export default {
         },
 
         /*
+         * 종목코드를 검색한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        async fn_getJongmokData( rowIndex=0, v_obj={} ) {
+            var vm = this;
+
+            if( v_obj.val() == "" ) {
+                if (await vm.$refs.confirm2.open(
+                        '확인',
+                        '종목코드를 입력해 주세요.',
+                        {}
+                        ,1
+                    )
+                ) {
+                    return  false;
+                }
+                return  false;
+            }
+
+            if( v_obj.val().length < 6 ) {
+                if (await vm.$refs.confirm2.open(
+                        '확인',
+                        '종목코드를 6자리 이상 입력해 주세요.',
+                        {}
+                        ,1
+                    )
+                ) {
+                    return  false;
+                }
+                return  false;
+            }            
+
+
+            return  new Promise(function(resolve, reject) {
+
+                util.processing(vm.$refs.progress, true);
+
+                axios.post( Config.base_url + "/user/etp/getJongmokData", {
+                    data: { "searchCode" : v_obj.val() }
+                }).then(async function(response) {
+                    console.log(response);
+
+                    util.processing(vm.$refs.progress, false);
+
+                    if (response.data) {
+                        var msg = ( response.data.msg ? response.data.msg : "" );
+                        if (!response.data.result) {
+                            if( msg ) {
+                                if (await vm.$refs.confirm2.open(
+                                        '확인',
+                                        msg,
+                                        {}
+                                        ,1
+                                    )
+                                ) {
+                                    resolve( { result : false } );
+                                }
+                            }
+                        }else{
+                            var dataList = response.data.dataList;
+
+                            if ( !dataList || dataList.length == 0 ) {
+                                if (await vm.$refs.confirm2.open(
+                                        '확인',
+                                        '종목코드(' + v_obj.val() + ')가 존재하지 않습니다.',
+                                        {}
+                                        ,1
+                                    )
+                                ) {
+                                    resolve( { result : false } );
+                                }
+                            }
+                            else if ( dataList.length > 1 ) {
+                                if (await vm.$refs.confirm2.open(
+                                        '확인',
+                                        '종목코드(' + v_obj.val() + ')가 여러건 존재합니다.',
+                                        {}
+                                        ,1
+                                    )
+                                ) {
+                                    resolve( { result : false } );
+                                }
+                            
+                            }else if(  dataList.length == 1 ) {
+                                resolve( { result : true, rowItem : dataList[0] } );
+                            }
+                        }
+                    }
+                }).catch(error => {
+                    resolve( { result : false } );
+
+                    util.processing(vm.$refs.progress, false);
+                    if ( vm.$refs.confirm2.open(
+                            '확인',
+                            '서버로 부터 응답을 받지 못하였습니다.',
+                            {}
+                            ,4
+                        )
+                    ) {
+                    }
+                });
+            }).catch( function(e1) {
+                console.log( e1 );
+                resolve( { result : false } );
+            });
+        },
+
+        /*
          * next 시나리오명을 조회한다.
          * 2019-07-26  bkLove(촤병국)
          */
@@ -828,12 +972,12 @@ export default {
 
             var tr  =   table01.find( "tbody tr" ).eq( rowIndex );
 
-            tr.find( "td input[name=F16316]" ).val( "" );       /* 종목코드 */
+//          tr.find( "td input[name=F16316]" ).val( "" );       /* 종목코드 */
             tr.find( "td:eq(2)" ).text( "" );                   /* 종목명 */
             tr.find( "td:eq(3)" ).text( "" );                   /* 시가총액 */
 
             tr.find( "td [name=importance]" ).val( "" );        /* 비중 */
-            tr.find( "td:eq(5)" ).text( "" );                   /* 지수적용비율 */
+//          tr.find( "td:eq(5)" ).text( "" );                   /* 지수적용비율 */
         },
 
         /*
@@ -920,13 +1064,10 @@ export default {
             for( let i=0; i < items.length; i++ ) {
 
                 /* 추가된 자산정보를 table 에 설정한다. */
-                await vm.fn_setMastRowData( vm.selectedRowIndex + i, items[i], gubun ).then( async function(e) {
-                    if( e && e.result ) {
-//                        vm.fn_setTotalRecord();
-                    }
-                });
+                await vm.fn_setMastRowData( vm.selectedRowIndex + i, items[i], gubun );
             }
 
+            /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
             vm.fn_setImportanceMethodCd( vm.importance_method_cd );
         },
 
@@ -978,11 +1119,8 @@ export default {
                                 jongmokInfo =   {};
                             }
 
-                            if( jongmokInfo.F15028 ) {
-                                tr.find( "td:eq(3)" ).text( util.formatInt( jongmokInfo.F15028 ) );     /* 시가총액 */
-
-                                tr.find( "td:eq(5)" ).text( rowIndex / 100 );                           /* 지수적용비율 */
-                            }
+                            tr.find( "td:eq(3)" ).text( util.formatInt( jongmokInfo.F15028 ) );     /* 시가총액 */
+//                          tr.find( "td:eq(5)" ).text( rowIndex / 100 );                           /* 지수적용비율 */
                             resolve( { result : true } );
                         }
 
@@ -1036,6 +1174,7 @@ export default {
 
                 var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );            /* 첫번째 컬럼 */
                 var v_F16316        =   tr.find( "td input[name=F16316]" );             /* 종목코드 */
+                var v_F16316_nm     =   tr.find( "td:eq(2)" );                          /* 종목코드 명 */
 
                 var v_F15028        =   tr.find( "td:eq(3)" );                          /* 시가총액 */
                 var v_importance    =   tr.find( "td input[name=importance]" );         /* 비중 */
@@ -1044,6 +1183,11 @@ export default {
                 if( typeof v_F16316.val() != "undefined" ) {
 
                     if( v_F16316.val() != "" ) {
+
+                        /* 종목코드가 존재시 종목명이 없는 경우 ( 종목코드를 수정한 경우 종목명을 지움 ) */
+                        if( v_F16316_nm.text() == "" ) {
+                            vm.arr_show_error_message.push( "[포트폴리오] " + v_text0.text() + " 종목명이 존재하지 않습니다. 종목코드를 확인해 주세요." );
+                        }
 
                         /* 종목코드가 존재시 비중정보 체크 */
                         try{
