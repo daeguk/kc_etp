@@ -92,7 +92,16 @@
                             <td class="txt_right">
                                 <button name="btn1" class="btn_icon v-icon material-icons"  >inbox</button>
                                 <button name="btn2" class="btn_icon v-icon material-icons"  >equalizer</button>
-                                <button name="btn3" class="btn_icon v-icon material-icons"  >more_horiz</button>               
+                                <v-menu bottom left>
+                                    <template v-slot:activator="{ on }">
+                                        <button name="btn2" class="btn_icon v-icon material-icons" v-on="on" >more_horiz</button>
+                                    </template>
+                                    <ul class="more_menu_w">
+                                        <li @click="">menu1</li>
+                                        <li @click="">menu2</li>
+                                        <li @click="">menu3</li>
+                                    </ul>
+                                </v-menu>             
                             </td>
                         </tr>
 
