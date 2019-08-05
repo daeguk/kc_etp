@@ -2136,6 +2136,10 @@ var makePdfModify = function(fsData) {
         wItem.fld006 = util.padZero(tmp.data[j].F33837, 4);
         wItem.fld007 = tmp.data[j].F16316;
         wItem.fld008 = util.padZero(Number(tmp.data[j].F16499) * 100, 18); // 백엔드에서 나누기 100 해서 씀
+
+console.log("tmp F16499 : " + tmp.data[j].F16499);
+console.log("wItem F16499 : " + wItem.fld008);
+
         wItem.fld009 = tmp.data[j].F33861;
         wItem.fld010 = util.padSpace(tmp.data[j].F16004, 40);
         wItem.fld013 = util.padZero(tmp.data[j].F16588, 18);    /* 평가금액 ( written by bkLove 2019-08-05 ) */

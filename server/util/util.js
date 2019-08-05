@@ -55,8 +55,15 @@ module.exports = {
     return new Array(len+1).join('0');
   },
   padZero: function(str, len) {
+    var rtnStr = '';
+
     str = str + '';
-    return str.length >= len ? str : new Array(len-str.length+1).join('0') + str;
+    if(Number(str) < 0) {
+      rtnStr = str.length >= len ? str : '-' + new Array(len-str.length+1).join('0') + Math.abs(Number(str));
+    }else {
+      rtnStr = str.length >= len ? str : new Array(len-str.length+1).join('0') + str;
+    }
+    return rtnStr;
   },
   padSpace: function(str, len) {
     str = str + '';
