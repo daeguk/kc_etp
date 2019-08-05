@@ -198,7 +198,6 @@
         </v-flex>
 
         <v-flex>
-            <ProgressBar ref="progress"></ProgressBar>
             <ConfirmDialog ref="confirm2"></ConfirmDialog>
         </v-flex>
 
@@ -216,7 +215,6 @@ import Config from "@/js/config.js";
 
 import MastPopup from "@/components/common/popup/MastPopup";
 import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
-import ProgressBar from "@/components/common/ProgressBar.vue";
 
 var table01 = null;
 
@@ -286,7 +284,6 @@ export default {
 
     components: {
         MastPopup,
-        ProgressBar,
         ConfirmDialog        
     },    
 
@@ -453,6 +450,15 @@ export default {
         },
 
         /*
+         * 진행 progress 를 보여준다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_showProgress: function( visible ) {
+            var vm = this;
+            vm.$emit("fn_showProgress", visible );
+        },
+
+        /*
          * 리밸런싱주기 선택시 v-radio 의 disabled 정보를 다시 셋팅한다.
          * 2019-07-26  bkLove(촤병국)
          */
@@ -613,12 +619,12 @@ export default {
 
             return  await new Promise(function(resolve, reject) {
 
-                util.processing(vm.$refs.progress, true);
+                vm.fn_showProgress( true );
                 axios.post(Config.base_url + "/user/simulation/getInitGrpCd", {
                     data: {}
                 }).then( function(response) {
 
-                    util.processing(vm.$refs.progress, false);
+                    vm.fn_showProgress( false );
 
                     if (response && response.data) {
                         var msg = ( response.data.msg ? response.data.msg : "" );
@@ -639,7 +645,8 @@ export default {
                     }
                 }).catch(error => {
                     resolve( { result : false } );
-                    util.processing(vm.$refs.progress, false);
+
+                    vm.fn_showProgress( false );
                     if ( vm.$refs.confirm2.open(
                             '확인',
                             '서버로 부터 응답을 받지 못하였습니다.',
@@ -673,6 +680,7 @@ export default {
                 ) {
                     return  false;
                 }
+
                 return  false;
             }
 
@@ -692,14 +700,14 @@ export default {
 
             return  new Promise(function(resolve, reject) {
 
-                util.processing(vm.$refs.progress, true);
+                vm.fn_showProgress( true );
 
                 axios.post( Config.base_url + "/user/etp/getJongmokData", {
                     data: { "searchCode" : v_obj.val() }
                 }).then(async function(response) {
                     console.log(response);
 
-                    util.processing(vm.$refs.progress, false);
+                    vm.fn_showProgress( false );
 
                     if (response.data) {
                         var msg = ( response.data.msg ? response.data.msg : "" );
@@ -748,7 +756,7 @@ export default {
                 }).catch(error => {
                     resolve( { result : false } );
 
-                    util.processing(vm.$refs.progress, false);
+                    vm.fn_showProgress( false );
                     if ( vm.$refs.confirm2.open(
                             '확인',
                             '서버로 부터 응답을 받지 못하였습니다.',
@@ -773,13 +781,13 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
-            util.processing(vm.$refs.progress, true);
+            vm.fn_showProgress( true );
 
             axios.post(Config.base_url + "/user/simulation/getNextScenName", {
                 data: {}
             }).then( function(response) {
 
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
 
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
@@ -793,7 +801,7 @@ export default {
                     }
                 }
             }).catch(error => {
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
                 if ( vm.$refs.confirm2.open(
                         '확인',
                         '서버로 부터 응답을 받지 못하였습니다.',
@@ -822,13 +830,13 @@ export default {
 
             return  new Promise(function(resolve, reject) {
 
-                util.processing(vm.$refs.progress, true);
+                vm.fn_showProgress( true );
 
                 axios.post(Config.base_url + "/user/simulation/getInitData", {
                     data: { arrComMstCd : arrComMstCd }
                 }).then( function(response) {
 
-                    util.processing(vm.$refs.progress, false);
+                    vm.fn_showProgress( false );
 
                     if (response && response.data) {
                         var arrMsg = ( response.data.arrMsg && response.data.arrMsg.length > 0 ? response.data.arrMsg : [] );
@@ -874,7 +882,8 @@ export default {
                     }
                 }).catch(error => {
                     resolve( { result : false } );
-                    util.processing(vm.$refs.progress, false);
+
+                    vm.fn_showProgress( false );
                     if ( vm.$refs.confirm2.open(
                             '확인',
                             '서버로 부터 응답을 받지 못하였습니다.',
@@ -1094,14 +1103,14 @@ export default {
                 tr.find( "td:eq(2)" ).text( rowItem.F16002 );                   /* 종목명 */
 
 
-                util.processing(vm.$refs.progress, true);
+                vm.fn_showProgress( true );
 
             /* 선택된 종목의 구성정보를 조회한다. */
                 axios.post(Config.base_url + "/user/simulation/getJongmokInfo", {
                     data: { "F16012" : rowItem.F16012 }
                 }).then( function(response) {
 
-                    util.processing(vm.$refs.progress, false);
+                    vm.fn_showProgress( false );
 
                     if (response && response.data) {
                         var msg = ( response.data.msg ? response.data.msg : "" );
@@ -1130,7 +1139,8 @@ export default {
 
                 }).catch(error => {
                     resolve( { result : false } );
-                    util.processing(vm.$refs.progress, false);
+
+                    vm.fn_showProgress( false );
                     if ( vm.$refs.confirm2.open(
                             '확인',
                             '서버로 부터 응답을 받지 못하였습니다.',
@@ -1369,7 +1379,8 @@ export default {
                 return  false;
             }
 
-            util.processing(vm.$refs.progress, true);
+
+            vm.fn_showProgress( true );
 
             axios.post(Config.base_url + "/user/simulation/saveBaicInfo", {
                 data: { 
@@ -1392,7 +1403,7 @@ export default {
                 }
             }).then( async function(response) {
 
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
 
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
@@ -1431,7 +1442,7 @@ export default {
                     }
                 }
             }).catch(error => {
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
                 if ( vm.$refs.confirm2.open(
                         '확인',
                         '서버로 부터 응답을 받지 못하였습니다.',
@@ -1452,13 +1463,13 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
-            util.processing(vm.$refs.progress, true);
+            vm.fn_showProgress( true );
 
             axios.post(Config.base_url + "/user/simulation/getSimulMast", {
                 data: v_paramData
             }).then( function(response) {
 
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
 
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
@@ -1496,7 +1507,7 @@ export default {
                     }
                 }
             }).catch(error => {
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
                 if ( vm.$refs.confirm2.open(
                         '확인',
                         '서버로 부터 응답을 받지 못하였습니다.',
@@ -1517,13 +1528,13 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
-            util.processing(vm.$refs.progress, true);
+            vm.fn_showProgress( true );
 
             axios.post(Config.base_url + "/user/simulation/getSimulPortfolio", {
                 data: v_paramData
             }).then( function(response) {
 
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
 
                 /* 레코드를 초기화 한다. */
                 vm.fn_initRecords();
@@ -1556,7 +1567,7 @@ export default {
                     }
                 }
             }).catch(error => {
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
                 if ( vm.$refs.confirm2.open(
                         '확인',
                         '서버로 부터 응답을 받지 못하였습니다.',
