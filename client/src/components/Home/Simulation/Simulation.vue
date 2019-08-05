@@ -297,7 +297,9 @@ export default {
         table01 =   $( "#table01" );
 
         /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
-        if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
+        if(     vm.paramData && Object.keys( vm.paramData ).length > 0 
+            &&  vm.paramData.grp_cd && vm.paramData.scen_cd 
+        ) {
 
             /* 상위 그룹 정보 및 초기 데이터가 설정된 이후 상세정보 설정되도록 함. */
             
