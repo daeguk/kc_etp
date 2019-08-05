@@ -252,7 +252,7 @@ export default {
             var vm = this;
 
             vm.showCreateGroup  =   'N';
-            vm.$emit("fn_showSimulation", { showSimulatioId : 1 } );
+            vm.$emit("fn_showSimulation", { showSimulationId : 1 } );
         },
 
         /*
