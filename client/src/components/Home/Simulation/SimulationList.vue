@@ -115,7 +115,6 @@
         </v-flex>
 
         <v-flex>
-            <ProgressBar ref="progress"></ProgressBar>
             <ConfirmDialog ref="confirm2"></ConfirmDialog>
         </v-flex>        
     </v-layout>
@@ -159,7 +158,6 @@ export default {
         };
     },
     components: {
-        ProgressBar,
         ConfirmDialog,        
         Simulation
     },
@@ -216,6 +214,14 @@ export default {
 
     methods: {
 
+        /*
+         * 진행 progress 를 보여준다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_showProgress: function( visible ) {
+            var vm = this;
+            vm.$emit("fn_showProgress", visible );
+        },
 
         /*
          * 시나리오 버튼 클릭시
@@ -247,13 +253,13 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
-            util.processing(vm.$refs.progress, true);
+            vm.fn_showProgress( true );
 
             axios.post(Config.base_url + "/user/simulation/getSimulList", {
                 data: {}
             }).then( function(response) {
 
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
 
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
@@ -268,7 +274,7 @@ export default {
                 }
             }).catch(error => {
 
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
                 if ( vm.$refs.confirm2.open(
                         '확인',
                         '서버로 부터 응답을 받지 못하였습니다.',
@@ -350,13 +356,13 @@ export default {
                 }
             }
 
-            util.processing(vm.$refs.progress, true);
+            vm.fn_showProgress( true );
 
             axios.post(Config.base_url + "/user/simulation/modifyGroup", {
                 data: param
             }).then( async function(response) {
 
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
 
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
@@ -392,7 +398,7 @@ export default {
                 }
             }).catch(error => {
 
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
                 if ( vm.$refs.confirm2.open(
                         '확인',
                         '서버로 부터 응답을 받지 못하였습니다.',
@@ -436,7 +442,8 @@ export default {
             else{
                 vm.$emit( "fn_showSimulationModify", v_jsonParam );
             }
-        }
+        },
+
     }    
 };
 </script>
