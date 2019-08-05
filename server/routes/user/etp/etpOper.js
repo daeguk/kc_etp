@@ -2138,6 +2138,8 @@ var makePdfModify = function(fsData) {
         wItem.fld008 = util.padZero(Number(tmp.data[j].F16499) * 100, 18); // 백엔드에서 나누기 100 해서 씀
         wItem.fld009 = tmp.data[j].F33861;
         wItem.fld010 = util.padSpace(tmp.data[j].F16004, 40);
+        wItem.fld013 = util.padZero(tmp.data[j].F16588, 18);    /* 평가금액 ( written by bkLove 2019-08-05 ) */
+
         if(tmp.data[j].status == 'insert') wItem.fld014 = '1';
         else if(tmp.data[j].status == 'delete') wItem.fld014 = '2';
         else  wItem.fld014 = '0';

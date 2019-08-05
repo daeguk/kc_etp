@@ -386,7 +386,7 @@ export default {
                         var htm = "";
                         if( typeof row.F16316 != "undefined" && row.F16316.length > 0 ) {       /* 구성종목코드 */
                             /* 1CU단위증권수 */
-                            htm = "<input type='text' name='F16499' id='F16499' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='20'>";
+                            htm = "<input type='text' name='F16499' id='F16499' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='18'>";
                         }
 
                         return htm;
@@ -400,7 +400,7 @@ export default {
                         var htm = "";
                         if( typeof row.F16316 != "undefined" && row.F16316.length > 0 ) {       /* 구성종목코드 */
                             /* 액면금액 */
-                            htm = "<input type='text' name='F34840' id='F34840' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='20'>";
+                            htm = "<input type='text' name='F34840' id='F34840' style='width:100%; text-align:right' value='" + util.formatNumber( data ) + "' maxlength='18'>";
                         }
 
                         return htm;
@@ -592,7 +592,7 @@ export default {
             /* CU shrs */
             if ( $(this).attr('name') == 'F16499' ) {
 
-                if( isNaN(tdData) ) {
+                if( isNaN(util.NumtoStr( tdData )) ) {
                     $(this).css( "borderColor", "red" );
                     vm.arr_show_error_message.push( "[CU shrs] 숫자형식만 입력가능합니다." );
                     return  false;
@@ -604,7 +604,7 @@ export default {
             /* 액면금액 */
             else if( $(this).attr('name') == 'F34840' ) {
 
-                if( isNaN(tdData) ) {
+                if( isNaN(util.NumtoStr( tdData )) ) {
                     $(this).css( "borderColor", "red" );
                     vm.arr_show_error_message.push( "[액면금액] 숫자형식만 입력가능합니다." );
                     return  false;
@@ -1299,8 +1299,22 @@ export default {
 
             if( step == 1) {
 
+                var v_check =   true;
+
                 /* 오류메시지가 존재하는 경우 */
-                if( vm.arr_show_error_message.length > 0 ) {
+                $("#" + vm.tblEmergeny01 + " tbody tr" ).each( function( inx, rowItem ) {
+                    var tr = $(this);
+
+                    var v_F16499        =   tr.find( "td input[name='F16499']" );            /* CU 수량 */
+                    var v_F34840        =   tr.find( "td input[name='F34840']" );            /* 액믄금액 */
+
+                    if( v_F16499.css("borderColor") == 'rgb(255, 0, 0)' || v_F34840.css("borderColor") == 'rgb(255, 0, 0)' ) {
+                        v_check =   false;
+                        return  false;
+                    }
+                });
+
+                if( !v_check ) {
                     return  false;
                 }
 
