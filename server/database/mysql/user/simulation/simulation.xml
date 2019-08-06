@@ -94,7 +94,6 @@
            AND  tm_simul_mast.scen_name             =   #{scen_name}        /* 시나리오명 */
 
         <if test= 'status != null  and  status == "modify" ' >
-           AND  tm_simul_mast.grp_cd                !=  #{prev_grp_cd}      /* 그룹 코드 */
            AND  tm_simul_mast.scen_cd               !=  #{prev_scen_cd}     /* 시나리오 코드 */
         </if>           
     </select>
