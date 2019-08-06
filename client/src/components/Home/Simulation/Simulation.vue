@@ -198,7 +198,6 @@
         </v-flex>
 
         <v-flex>
-            <ProgressBar ref="progress"></ProgressBar>
             <ConfirmDialog ref="confirm2"></ConfirmDialog>
         </v-flex>
 
@@ -216,7 +215,6 @@ import Config from "@/js/config.js";
 
 import MastPopup from "@/components/common/popup/MastPopup";
 import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
-import ProgressBar from "@/components/common/ProgressBar.vue";
 
 var table01 = null;
 
@@ -286,7 +284,6 @@ export default {
 
     components: {
         MastPopup,
-        ProgressBar,
         ConfirmDialog        
     },    
 
@@ -300,7 +297,9 @@ export default {
         table01 =   $( "#table01" );
 
         /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
-        if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
+        if(     vm.paramData && Object.keys( vm.paramData ).length > 0 
+            &&  vm.paramData.grp_cd && vm.paramData.scen_cd 
+        ) {
 
             /* 상위 그룹 정보 및 초기 데이터가 설정된 이후 상세정보 설정되도록 함. */
             
@@ -370,6 +369,27 @@ export default {
             var rowIndex    =   tr.index();
 
             vm.fn_resetErrorMessage();
+
+            /* 종목코드를 검색한다. */
+            vm.fn_getJongmokData( rowIndex, $(this) ).then(function(e){
+
+                if( e && e.result ) {
+                    
+                    var rowItem;
+                    if( e.rowItem && Object.keys( e.rowItem ).length > 0 )  {
+                        rowItem =   e.rowItem;
+
+                        tr.find( "td input[name=F16316]" ).val( rowItem.F16012 );               /* 종목코드 */
+                        tr.find( "td:eq(2)" ).text( rowItem.F16002 );                           /* 종목명 */
+
+                        tr.find( "td:eq(3)" ).text( util.formatInt( rowItem.F15028 ) );         /* 시가총액 */
+//                      tr.find( "td:eq(5)" ).text( rowIndex / 100 );                           /* 지수적용비율 */
+
+                        /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
+                        vm.fn_setImportanceMethodCd( vm.importance_method_cd );
+                    }
+                }
+            });                
         });
 
 
@@ -450,6 +470,15 @@ export default {
             var vm = this;
 
             vm.arr_show_error_message   =   [];
+        },
+
+        /*
+         * 진행 progress 를 보여준다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_showProgress: function( visible ) {
+            var vm = this;
+            vm.$emit("fn_showProgress", visible );
         },
 
         /*
@@ -613,12 +642,12 @@ export default {
 
             return  await new Promise(function(resolve, reject) {
 
-                util.processing(vm.$refs.progress, true);
+                vm.fn_showProgress( true );
                 axios.post(Config.base_url + "/user/simulation/getInitGrpCd", {
                     data: {}
                 }).then( function(response) {
 
-                    util.processing(vm.$refs.progress, false);
+                    vm.fn_showProgress( false );
 
                     if (response && response.data) {
                         var msg = ( response.data.msg ? response.data.msg : "" );
@@ -639,7 +668,8 @@ export default {
                     }
                 }).catch(error => {
                     resolve( { result : false } );
-                    util.processing(vm.$refs.progress, false);
+
+                    vm.fn_showProgress( false );
                     if ( vm.$refs.confirm2.open(
                             '확인',
                             '서버로 부터 응답을 받지 못하였습니다.',
@@ -673,6 +703,7 @@ export default {
                 ) {
                     return  false;
                 }
+
                 return  false;
             }
 
@@ -692,14 +723,14 @@ export default {
 
             return  new Promise(function(resolve, reject) {
 
-                util.processing(vm.$refs.progress, true);
+                vm.fn_showProgress( true );
 
                 axios.post( Config.base_url + "/user/etp/getJongmokData", {
                     data: { "searchCode" : v_obj.val() }
                 }).then(async function(response) {
                     console.log(response);
 
-                    util.processing(vm.$refs.progress, false);
+                    vm.fn_showProgress( false );
 
                     if (response.data) {
                         var msg = ( response.data.msg ? response.data.msg : "" );
@@ -748,7 +779,7 @@ export default {
                 }).catch(error => {
                     resolve( { result : false } );
 
-                    util.processing(vm.$refs.progress, false);
+                    vm.fn_showProgress( false );
                     if ( vm.$refs.confirm2.open(
                             '확인',
                             '서버로 부터 응답을 받지 못하였습니다.',
@@ -773,13 +804,13 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
-            util.processing(vm.$refs.progress, true);
+            vm.fn_showProgress( true );
 
             axios.post(Config.base_url + "/user/simulation/getNextScenName", {
                 data: {}
             }).then( function(response) {
 
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
 
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
@@ -793,7 +824,7 @@ export default {
                     }
                 }
             }).catch(error => {
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
                 if ( vm.$refs.confirm2.open(
                         '확인',
                         '서버로 부터 응답을 받지 못하였습니다.',
@@ -822,13 +853,13 @@ export default {
 
             return  new Promise(function(resolve, reject) {
 
-                util.processing(vm.$refs.progress, true);
+                vm.fn_showProgress( true );
 
                 axios.post(Config.base_url + "/user/simulation/getInitData", {
                     data: { arrComMstCd : arrComMstCd }
                 }).then( function(response) {
 
-                    util.processing(vm.$refs.progress, false);
+                    vm.fn_showProgress( false );
 
                     if (response && response.data) {
                         var arrMsg = ( response.data.arrMsg && response.data.arrMsg.length > 0 ? response.data.arrMsg : [] );
@@ -874,7 +905,8 @@ export default {
                     }
                 }).catch(error => {
                     resolve( { result : false } );
-                    util.processing(vm.$refs.progress, false);
+
+                    vm.fn_showProgress( false );
                     if ( vm.$refs.confirm2.open(
                             '확인',
                             '서버로 부터 응답을 받지 못하였습니다.',
@@ -1094,14 +1126,14 @@ export default {
                 tr.find( "td:eq(2)" ).text( rowItem.F16002 );                   /* 종목명 */
 
 
-                util.processing(vm.$refs.progress, true);
+                vm.fn_showProgress( true );
 
             /* 선택된 종목의 구성정보를 조회한다. */
                 axios.post(Config.base_url + "/user/simulation/getJongmokInfo", {
                     data: { "F16012" : rowItem.F16012 }
                 }).then( function(response) {
 
-                    util.processing(vm.$refs.progress, false);
+                    vm.fn_showProgress( false );
 
                     if (response && response.data) {
                         var msg = ( response.data.msg ? response.data.msg : "" );
@@ -1130,7 +1162,8 @@ export default {
 
                 }).catch(error => {
                     resolve( { result : false } );
-                    util.processing(vm.$refs.progress, false);
+
+                    vm.fn_showProgress( false );
                     if ( vm.$refs.confirm2.open(
                             '확인',
                             '서버로 부터 응답을 받지 못하였습니다.',
@@ -1369,7 +1402,8 @@ export default {
                 return  false;
             }
 
-            util.processing(vm.$refs.progress, true);
+
+            vm.fn_showProgress( true );
 
             axios.post(Config.base_url + "/user/simulation/saveBaicInfo", {
                 data: { 
@@ -1392,7 +1426,7 @@ export default {
                 }
             }).then( async function(response) {
 
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
 
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
@@ -1431,7 +1465,7 @@ export default {
                     }
                 }
             }).catch(error => {
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
                 if ( vm.$refs.confirm2.open(
                         '확인',
                         '서버로 부터 응답을 받지 못하였습니다.',
@@ -1452,13 +1486,13 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
-            util.processing(vm.$refs.progress, true);
+            vm.fn_showProgress( true );
 
             axios.post(Config.base_url + "/user/simulation/getSimulMast", {
                 data: v_paramData
             }).then( function(response) {
 
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
 
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
@@ -1496,7 +1530,7 @@ export default {
                     }
                 }
             }).catch(error => {
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
                 if ( vm.$refs.confirm2.open(
                         '확인',
                         '서버로 부터 응답을 받지 못하였습니다.',
@@ -1517,13 +1551,13 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
-            util.processing(vm.$refs.progress, true);
+            vm.fn_showProgress( true );
 
             axios.post(Config.base_url + "/user/simulation/getSimulPortfolio", {
                 data: v_paramData
             }).then( function(response) {
 
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
 
                 /* 레코드를 초기화 한다. */
                 vm.fn_initRecords();
@@ -1556,7 +1590,7 @@ export default {
                     }
                 }
             }).catch(error => {
-                util.processing(vm.$refs.progress, false);
+                vm.fn_showProgress( false );
                 if ( vm.$refs.confirm2.open(
                         '확인',
                         '서버로 부터 응답을 받지 못하였습니다.',
