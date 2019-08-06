@@ -370,26 +370,29 @@ export default {
 
             vm.fn_resetErrorMessage();
 
-            /* 종목코드를 검색한다. */
-            vm.fn_getJongmokData( rowIndex, $(this) ).then(function(e){
+            /* 종목코드인 경우에만 코드 검색 */
+            if( $(this).attr("name") == "F16316" ) {
+                /* 종목코드를 검색한다. */
+                vm.fn_getJongmokData( rowIndex, $(this) ).then(function(e){
 
-                if( e && e.result ) {
-                    
-                    var rowItem;
-                    if( e.rowItem && Object.keys( e.rowItem ).length > 0 )  {
-                        rowItem =   e.rowItem;
+                    if( e && e.result ) {
+                        
+                        var rowItem;
+                        if( e.rowItem && Object.keys( e.rowItem ).length > 0 )  {
+                            rowItem =   e.rowItem;
 
-                        tr.find( "td input[name=F16316]" ).val( rowItem.F16012 );               /* 종목코드 */
-                        tr.find( "td:eq(2)" ).text( rowItem.F16002 );                           /* 종목명 */
+                            tr.find( "td input[name=F16316]" ).val( rowItem.F16012 );               /* 종목코드 */
+                            tr.find( "td:eq(2)" ).text( rowItem.F16002 );                           /* 종목명 */
 
-                        tr.find( "td:eq(3)" ).text( util.formatInt( rowItem.F15028 ) );         /* 시가총액 */
-//                      tr.find( "td:eq(5)" ).text( rowIndex / 100 );                           /* 지수적용비율 */
+                            tr.find( "td:eq(3)" ).text( util.formatInt( rowItem.F15028 ) );         /* 시가총액 */
+    //                      tr.find( "td:eq(5)" ).text( rowIndex / 100 );                           /* 지수적용비율 */
 
-                        /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
-                        vm.fn_setImportanceMethodCd( vm.importance_method_cd );
+                            /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
+                            vm.fn_setImportanceMethodCd( vm.importance_method_cd );
+                        }
                     }
-                }
-            });                
+                });
+            }
         });
 
 
