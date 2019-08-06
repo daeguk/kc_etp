@@ -2132,6 +2132,7 @@ var makePdfModify = function(fsData) {
     // wItem.fld010 = util.padSpace(tmp.data[j].F16004, 40);
     // 종목명 인코딩 문제로 스페이스 처리 (2019.08.06. 이형준 과장 요청)
     wItem.fld010 = util.padSpace('', 40);
+    wItem.fld011 = util.padZero(tmp.data[j].F34840, 18);    /* 액면금액 ( written by bkLove 2019-08-05 ) */
     wItem.fld013 = util.padZero(tmp.data[j].F16588, 18);    /* 평가금액 ( written by bkLove 2019-08-05 ) */
 
     if(tmp.data[j].status == 'insert') wItem.fld014 = '1';
