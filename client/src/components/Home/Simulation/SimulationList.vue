@@ -92,9 +92,10 @@
                             <td class="txt_right">
                                 <button name="btn1" class="btn_icon v-icon material-icons"  >inbox</button>
                                 <button name="btn2" class="btn_icon v-icon material-icons"  >equalizer</button>
+
                                 <v-menu bottom left>
                                     <template v-slot:activator="{ on }">
-                                        <button name="btn2" class="btn_icon v-icon material-icons" v-on="on" >more_horiz</button>
+                                        <button name="btn3" class="btn_icon v-icon material-icons" v-on="on" >more_horiz</button>
                                     </template>
                                     <ul class="more_menu_w">
                                         <li @click="">menu1</li>
@@ -181,11 +182,12 @@ export default {
             var tr          =   $(this).closest('tr');
             var rowIndex    =   tr.index();
 
+            var strParam    =   tr.find( "td input[name=strParam]" );
+
             switch( $(this).attr( "name" ) ) {
 
                         /* 수정화면으로 이동한다. */
                 case    "btn1"  :
-                            var strParam    =   tr.find( "td input[name=strParam]" );
 
                             if( !strParam ) {
                                 console.log( "simulation strParam parameter 인자값이 없습니다." );
@@ -197,14 +199,33 @@ export default {
                             if( !v_jsonParam || Object.keys( v_jsonParam ).length == 0 ) {
                                 console.log( "simulation v_jsonParam parameter 인자값이 없습니다." );
                                 return  false;
-                            }                                
+                            }
+
 
                             /* 수정정보를 보여준다. */
-                            vm.fn_showSimulationModify( v_jsonParam );
+                            v_jsonParam.showSimulationId        =   1;
+                            vm.fn_showSimulation( v_jsonParam );
 
                             break;
 
                 case    "btn2"  :
+
+                            if( !strParam ) {
+                                console.log( "simulation strParam parameter 인자값이 없습니다." );
+                                return  false;
+                            }
+
+                            var v_jsonParam =   JSON.parse( strParam.val() );
+
+                            if( !v_jsonParam || Object.keys( v_jsonParam ).length == 0 ) {
+                                console.log( "simulation v_jsonParam parameter 인자값이 없습니다." );
+                                return  false;
+                            }
+
+
+                            /* 결과화면을 보여준다. */
+                            v_jsonParam.showSimulationId        =   2;
+                            vm.$emit( "fn_showSimulation", v_jsonParam );
 
                             break;
                 
@@ -231,6 +252,7 @@ export default {
             var vm = this;
 
             vm.showCreateGroup  =   'N';
+            vm.$emit("fn_showSimulation", { showSimulationId : 1 } );
         },
 
         /*
@@ -414,7 +436,7 @@ export default {
          * 수정정보를 보여준다.
          * 2019-07-26  bkLove(촤병국)
          */
-        fn_showSimulationModify( v_jsonParam ) {
+        fn_showSimulation( v_jsonParam ) {
             var vm = this;
 
             vm.arr_show_error_message   =   [];
@@ -440,7 +462,7 @@ export default {
             }
             /* 시나리오 그룹이 아닌 경우 - 시나리오 수정화면으로 이동한다.*/
             else{
-                vm.$emit( "fn_showSimulationModify", v_jsonParam );
+                vm.$emit( "fn_showSimulation", v_jsonParam );
             }
         },
 

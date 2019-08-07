@@ -297,7 +297,9 @@ export default {
         table01 =   $( "#table01" );
 
         /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
-        if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
+        if(     vm.paramData && Object.keys( vm.paramData ).length > 0 
+            &&  vm.paramData.grp_cd && vm.paramData.scen_cd 
+        ) {
 
             /* 상위 그룹 정보 및 초기 데이터가 설정된 이후 상세정보 설정되도록 함. */
             
@@ -367,6 +369,30 @@ export default {
             var rowIndex    =   tr.index();
 
             vm.fn_resetErrorMessage();
+
+            /* 종목코드인 경우에만 코드 검색 */
+            if( $(this).attr("name") == "F16316" ) {
+                /* 종목코드를 검색한다. */
+                vm.fn_getJongmokData( rowIndex, $(this) ).then(function(e){
+
+                    if( e && e.result ) {
+                        
+                        var rowItem;
+                        if( e.rowItem && Object.keys( e.rowItem ).length > 0 )  {
+                            rowItem =   e.rowItem;
+
+                            tr.find( "td input[name=F16316]" ).val( rowItem.F16012 );               /* 종목코드 */
+                            tr.find( "td:eq(2)" ).text( rowItem.F16002 );                           /* 종목명 */
+
+                            tr.find( "td:eq(3)" ).text( util.formatInt( rowItem.F15028 ) );         /* 시가총액 */
+    //                      tr.find( "td:eq(5)" ).text( rowIndex / 100 );                           /* 지수적용비율 */
+
+                            /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
+                            vm.fn_setImportanceMethodCd( vm.importance_method_cd );
+                        }
+                    }
+                });
+            }
         });
 
 

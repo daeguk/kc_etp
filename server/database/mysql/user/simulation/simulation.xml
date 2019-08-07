@@ -17,6 +17,7 @@
 
          WHERE  1 = 1
            AND  tm_simul_mast.grp_yn                =   '1'
+           AND  tm_simul_mast.reg_id                =   #{user_id}          /* 등록자 ID */
 
          ORDER  BY      tm_simul_mast.scen_name
     </select>
@@ -35,6 +36,8 @@
          WHERE  1 = 1
            AND  tm_simul_mast.grp_cd                =   #{prev_scen_cd}     /* 그룹코드(상위코드) */
            AND  tm_simul_mast.grp_yn                =   '0'                 /* 그룹여부(1-그룹) */
+
+           AND  tm_simul_mast.reg_id                =   #{user_id}          /* 등록자 ID */
     </select>
 
     <!--
@@ -69,6 +72,8 @@
          WHERE  1 = 1
            AND  tm_simul_mast.scen_name             LIKE    CONCAT( #{search_scen_name}, '%' )        /* 시나리오명 */
 
+           AND  tm_simul_mast.reg_id                =   #{user_id}          /* 등록자 ID */
+
                 /* 검색문자열 이후 숫자만 추출 */
            AND  REPLACE( 
                                 SUBSTR(     tm_simul_mast.scen_name
@@ -93,8 +98,9 @@
          WHERE  1 = 1
            AND  tm_simul_mast.scen_name             =   #{scen_name}        /* 시나리오명 */
 
+           AND  tm_simul_mast.reg_id                =   #{user_id}          /* 등록자 ID */
+
         <if test= 'status != null  and  status == "modify" ' >
-           AND  tm_simul_mast.grp_cd                !=  #{prev_grp_cd}      /* 그룹 코드 */
            AND  tm_simul_mast.scen_cd               !=  #{prev_scen_cd}     /* 시나리오 코드 */
         </if>           
     </select>
@@ -311,6 +317,8 @@
          WHERE  1 = 1
            AND  grp_cd                      =   #{prev_grp_cd}                  /* 그룹코드(상위코드) - 변경전 */
            AND  scen_cd                     =   #{prev_scen_cd}                 /* 시나리오 코드 - 변경전 */
+
+           AND  reg_id                      =   #{user_id}                      /* 등록자 ID */
     ]]>
     </update>
 
@@ -405,6 +413,8 @@
          WHERE  1 = 1
            AND  grp_cd                      =   #{grp_cd}                       /* 그룹코드(상위코드) */
            AND  scen_cd                     =   #{scen_cd}                      /* 시나리오 코드 */
+
+           AND  reg_id                      =   #{user_id}                      /* 등록자 ID */
     ]]>
     </update>    
 
@@ -421,6 +431,8 @@
          WHERE  1 = 1
            AND  grp_cd                      =   #{grp_cd}                   /* 그룹코드(상위코드) */
            AND  scen_cd                     =   #{scen_cd}                  /* 시나리오 코드 */
+
+           AND  reg_id                      =   #{user_id}                  /* 등록자 ID */
     ]]>
     </delete>
 
@@ -441,6 +453,7 @@
 
                           FROM  tm_simul_mast
                          WHERE  tm_simul_mast.grp_cd            =   #{grp_cd}
+
                          LIMIT  1
                     )                                           AS  grp_cd_yn
                 ,   (
@@ -451,6 +464,7 @@
 
                           FROM  tm_simul_mast
                          WHERE  tm_simul_mast.scen_cd           =   #{scen_cd}
+
                          LIMIT  1
                     )                                           AS  scen_cd_yn
 
@@ -472,6 +486,9 @@
          WHERE  1 = 1
            AND  tm_simul_mast.grp_cd                =   #{scen_cd}          /* 그룹코드(상위코드) */
            AND  tm_simul_mast.grp_yn                =   '0'                 /* 그룹여부(1-그룹) */
+
+           AND  tm_simul_mast.reg_id                =   #{user_id}          /* 등록자 ID */
+
          LIMIT  2
     </select>    
 
@@ -517,7 +534,9 @@
                                     AND     tm_simul_portfolio.grp_cd           =   base.prev_grp_cd    /* 그룹코드(상위코드) */
                                     AND     tm_simul_portfolio.scen_cd          =   base.prev_scen_cd   /* 시나리오코드 */
                             </if>
+
                                     AND     tm_simul_portfolio.F16316           =   base.F16316         /* 구성종목코드 */
+                                    AND     tm_simul_portfolio.reg_id           =   #{user_id}          /* 등록자 ID */
                                 )
          WHERE  1 = 1
 
@@ -562,6 +581,8 @@
          WHERE  1 = 1
            AND  tm_simul_portfolio.grp_cd           =   #{prev_grp_cd}          /* 그룹코드(상위코드) */
            AND  tm_simul_portfolio.scen_cd          =   #{prev_scen_cd}         /* 시나리오코드 */
+
+           AND  tm_simul_portfolio.reg_id           =   #{user_id}              /* 등록자 ID */
 
     </select>    
 
@@ -644,6 +665,8 @@
                         AND     tm_simul_portfolio.scen_cd          =   base.prev_scen_cd   /* 시나리오코드 */
                         AND     tm_simul_portfolio.F16316           =   base.F16316         /* 구성종목코드 */
 
+                        AND     tm_simul_portfolio.reg_id           =   #{user_id}          /* 등록자 ID */
+
            SET      tm_simul_portfolio.grp_cd       =   base.grp_cd             /* 그룹코드(상위코드) */
                 ,   tm_simul_portfolio.scen_cd      =   base.scen_cd            /* 시나리오코드 */
 
@@ -687,6 +710,8 @@
                         AND     tm_simul_portfolio.grp_cd           =   base.prev_grp_cd    /* 그룹코드(상위코드) */
                         AND     tm_simul_portfolio.scen_cd          =   base.prev_scen_cd   /* 시나리오코드 */
                         AND     tm_simul_portfolio.F16316           =   base.F16316         /* 구성종목코드 */
+
+                        AND     tm_simul_portfolio.reg_id           =   #{user_id}          /* 등록자 ID */
     </delete>
 
     <!--
@@ -720,8 +745,10 @@
                             ,   DATE_FORMAT( tm_simul_mast.upd_time, '%Y.%m.%d' )       AS  fmt_upd_time                /* 수정일 */
 
                     FROM  tm_simul_mast
-                    WHERE  1 = 1
-                    AND  tm_simul_mast.grp_yn    =   '1'
+                   WHERE  1 = 1
+                     AND  tm_simul_mast.grp_yn          =   '1'
+
+                     AND  tm_simul_mast.reg_id          =   #{user_id}                 /* 등록자 ID */
 
                     UNION   ALL
 
@@ -745,8 +772,10 @@
                             ,   DATE_FORMAT( tm_simul_mast.upd_time, '%Y.%m.%d' )       AS  fmt_upd_time                /* 수정일 */
 
                     FROM  tm_simul_mast
-                    WHERE  1 = 1
-                    AND  tm_simul_mast.grp_yn    =   '0'
+                   WHERE  1 = 1
+                     AND  tm_simul_mast.grp_yn          =   '0'
+
+                     AND  tm_simul_mast.reg_id          =   #{user_id}                 /* 등록자 ID */
 
                 )   base
 
@@ -792,6 +821,8 @@
            AND  tm_simul_mast.grp_cd            =   #{grp_cd}       /* 그룹코드(상위코드) */
            AND  tm_simul_mast.scen_cd           =   #{scen_cd}      /* 시나리오 코드 */
 
+           AND  tm_simul_mast.reg_id            =   #{user_id}      /* 등록자 ID */
+
          ORDER  BY      tm_simul_mast.scen_cd
                     ,   tm_simul_mast.scen_order_no
     </select>
@@ -824,6 +855,8 @@
          WHERE  1 = 1
            AND  tm_simul_portfolio.grp_cd       =   #{grp_cd}       /* 그룹코드(상위코드) */
            AND  tm_simul_portfolio.scen_cd      =   #{scen_cd}      /* 시나리오 코드 */
+
+           AND  tm_simul_portfolio.reg_id       =   #{user_id}      /* 등록자 ID */
 
          ORDER  BY      tm_simul_portfolio.scen_cd
                     ,   tm_simul_portfolio.order_no

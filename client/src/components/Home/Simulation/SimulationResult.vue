@@ -171,7 +171,7 @@
                 </v-tabs-items>
                 <v-card flat>
                     <div class="text-xs-center mt-3">
-                        <v-btn depressed color="primary" @click="fn_test">저장하기</v-btn>
+                        <v-btn depressed color="primary" @click.stop="">저장하기</v-btn>
                     </div>
                 </v-card>
             </v-card>
@@ -188,6 +188,9 @@ import select from "datatables.net-select";
 import Config from "@/js/config.js";
 
 export default {
+
+    props : [ "paramData" ],
+
     data() {
         return {
             activeTab: 0,
@@ -211,7 +214,9 @@ export default {
         var vm = this;
     },
 
-    methods: {}
+    methods: {
+
+    }
 };
 </script>
 
