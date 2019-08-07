@@ -2125,16 +2125,20 @@ var makePdfModify = function(fsData) {
     wItem.fld007 = tmp.data[j].F16316;
     wItem.fld008 = util.padZero(Number(tmp.data[j].F16499) * 100, 18); // 백엔드에서 나누기 100 해서 씀
 
-// console.log("tmp F16499 : " + tmp.data[j].F16499);
-// console.log("wItem F16499 : " + wItem.fld008);
+console.log("tmp F16499 : " + tmp.data[j].F16499);
+console.log("wItem fld008 : " + wItem.fld008);
 
     wItem.fld009 = tmp.data[j].F33861;
     // wItem.fld010 = util.padSpace(tmp.data[j].F16004, 40);
     // 종목명 인코딩 문제로 스페이스 처리 (2019.08.06. 이형준 과장 요청)
     wItem.fld010 = util.padSpace('', 40);
     wItem.fld011 = util.padZero(tmp.data[j].F34840, 18);    /* 액면금액 ( written by bkLove 2019-08-05 ) */
+console.log("tmp F34840 : " + tmp.data[j].F34840);
+console.log("wItem fld011 : " + wItem.fld011);
     wItem.fld013 = util.padZero(tmp.data[j].F16588, 18);    /* 평가금액 ( written by bkLove 2019-08-05 ) */
-
+console.log("tmp F16588 : " + tmp.data[j].F16588);
+console.log("wItem fld013 : " + wItem.fld013);
+        
     if(tmp.data[j].status == 'insert') wItem.fld014 = '1';
     else if(tmp.data[j].status == 'delete') wItem.fld014 = '2';
     else  wItem.fld014 = '0';

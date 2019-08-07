@@ -1944,6 +1944,7 @@ export default {
                     vm.dataList[ rowIndex ].F34840      =   nowData.F34840;
                 }
 
+                v_F16588 = Math.round(v_F16588);
                 table.cell( tr, 6 ).data( v_F16588 );                   /* 화면 table 의 평가금액 컬럼 데이터 변경 */
                 vm.dataList[ rowIndex ].F16588    =   v_F16588;         /* DB 에 저장하기 위해 계산된 평가금액 보관 */
         },
