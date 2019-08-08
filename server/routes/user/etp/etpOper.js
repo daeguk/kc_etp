@@ -1305,7 +1305,7 @@ var getEtpOperPdfModify = function(req, res) {
 }
 
 /*
- * 국제표준코드에 속한 종목정보( td_kspjong_basic, td_future_basic )를 조회한다.
+ * 국제표준코드에 속한 종목정보( td_kspjong_basic )를 조회한다.
  * 2019-05-03  bkLove(촤병국)
  */
 var getJongmokData = function(req, res) {
@@ -1354,11 +1354,13 @@ var getJongmokData = function(req, res) {
                         resultMsg.err = err;
                     }
 
-                    resultMsg.result = true;
-                    resultMsg.msg = "";
+                    if (!err) {
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
 
-                    if (rows && rows.length > 0) {
-                        resultMsg.dataList = rows;
+                        if (rows && rows.length > 0) {
+                            resultMsg.dataList = rows;
+                        }
                     }
 
                     res.json(resultMsg);
@@ -1391,6 +1393,96 @@ var getJongmokData = function(req, res) {
         res.end();
     }
 }
+
+/*
+ * 국제표준코드에 속한 종목정보( td_future_basic )를 조회한다.
+ * 2019-05-03  bkLove(촤병국)
+ */
+var getFutureBasic1 = function (req, res) {
+    try {
+        log.debug('etpOper=>getFutureBasic1 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] etpOper.getFutureBasic1  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = "[error] etpOper.getFutureBasic1  req.body.data no data.";
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        resultMsg.dataList  =   [];
+        Promise.using(pool.connect(), conn => {
+
+            try {
+                stmt = mapper.getStatement('etpOper', 'getFutureBasic', paramData, format);
+                log.debug(stmt, paramData);
+
+                conn.query(stmt, function(err, rows) {
+
+                    if (err) {
+                        log.error(err, stmt, paramData);
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getFutureBasic1 Error while performing Query";
+                        resultMsg.err = err;
+                    }
+
+                    if (!err) {
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
+
+                        if (rows && rows.length > 0) {
+                            resultMsg.dataList = rows;
+                        }
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+                });
+
+            } catch (err) {
+                log.error(err, stmt, paramData);
+
+                resultMsg.result = false;
+                resultMsg.msg = "[error] etpOper.getFutureBasic1 Error while performing Query";
+                resultMsg.err = err;
+
+                res.json(resultMsg);
+                res.end();
+            }
+        });
+
+    } catch (expetion) {
+
+        log.error(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getFutureBasic1 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
+
+        resultMsg.dataList = [];
+
+        res.json(resultMsg);
+        res.end();
+    }
+};
 
 
 /*
@@ -2761,6 +2853,7 @@ module.exports.getEtpOperPdfByRateTitle = getEtpOperPdfByRateTitle;
 module.exports.getEtpOperPdfByRate = getEtpOperPdfByRate;
 module.exports.getEtpOperPdfModify = getEtpOperPdfModify;
 module.exports.getJongmokData = getJongmokData;
+module.exports.getFutureBasic1 = getFutureBasic1;
 
 module.exports.saveEtpOperPdfModify = saveEtpOperPdfModify;
 module.exports.getPdfByGroupNo = getPdfByGroupNo;

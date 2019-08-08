@@ -45,6 +45,7 @@ module.exports = {
         { file: './user/etp/etpOper', path: '/user/etp/getEtpOperPdfByRate', method: 'getEtpOperPdfByRate', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getEtpOperPdfModify', method: 'getEtpOperPdfModify', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getJongmokData', method: 'getJongmokData', session: 'check', type: 'post' },
+        { file: './user/etp/etpOper', path: '/user/etp/getFutureBasic1', method: 'getFutureBasic1', session: 'check', type: 'post' },
 
 
         { file: './user/etp/etpOper', path: '/user/etp/saveEtpOperPdfModify', method: 'saveEtpOperPdfModify', session: 'check', type: 'post' },
@@ -166,6 +167,7 @@ module.exports = {
         { file: './user/simulation/simulation', path: '/user/simulation/getSimulList'       , method: 'getSimulList'        , session: 'check', type: 'post' },     // 목록정보 조회
         { file: './user/simulation/simulation', path: '/user/simulation/getSimulMast'       , method: 'getSimulMast'        , session: 'check', type: 'post' },     // 마스터 정보 조회
         { file: './user/simulation/simulation', path: '/user/simulation/getSimulPortfolio'  , method: 'getSimulPortfolio'   , session: 'check', type: 'post' },     // 포트폴리오 정보 조회
+//      { file: './user/simulation/simulation', path: '/user/simulation/getBacktestResult'  , method: 'getBacktestResult'   , session: 'check', type: 'post' },     // 백테스트 결과 조회
 
 
         //풀 테스트 

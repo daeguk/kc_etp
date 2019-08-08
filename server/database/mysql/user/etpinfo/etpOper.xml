@@ -418,9 +418,9 @@
                             ,   td_kspjong_basic.F16109                                 AS  F16109          /* 유통주식수 */
                             ,   td_kspjong_basic.market_id                              AS  market_id       /* 거래량시장 ID */
                             ,   CASE    WHEN    td_kspjong_basic.market_id  =   'M001'
-                                        THEN    '1'         /* 코스피 */
+                                        THEN    '0'         /* 유가증권(현금포함) */
                                         WHEN    td_kspjong_basic.market_id  =   'M003'
-                                        THEN    '2'         /* 코스닥 */
+                                        THEN    '1'         /* 코스닥 */
                                 END                                                     AS  F33861          /* ETF시장구분 */
 
                       FROM  td_kspjong_basic
@@ -1798,10 +1798,22 @@
                 ,   tm_pdf_modify_hist_mast.inst_cd                     AS  inst_cd         /* 기관구분코드 */
 
                 ,   (
-                        SELECT  td_kspjong_basic.F16002
-                          FROM  td_kspjong_basic
-                         WHERE  1 = 1
-                           AND  td_kspjong_basic.F16012     =   tm_pdf_modify_hist_mast.F16012
+                        SELECT  base.F16002
+                          FROM  (
+                                    SELECT  td_kspjong_basic.F16002
+                                      FROM  td_kspjong_basic
+                                     WHERE  1 = 1
+                                       AND  td_kspjong_basic.F16012     =   tm_pdf_modify_hist_mast.F16012
+
+                                    UNION   ALL
+
+                                    SELECT  td_future_basic.F16002
+                                      FROM  td_future_basic
+                                     WHERE  1 = 1
+                                       AND  td_future_basic.F16012      =   tm_pdf_modify_hist_mast.F16012
+
+                                )   base
+
                          LIMIT  1
                     )                                                   AS  F16002          /* 한글종목명 */
 
