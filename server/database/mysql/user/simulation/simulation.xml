@@ -17,6 +17,7 @@
 
          WHERE  1 = 1
            AND  tm_simul_mast.grp_yn                =   '1'
+           AND  tm_simul_mast.reg_id                =   #{user_id}          /* 등록자 ID */
 
          ORDER  BY      tm_simul_mast.scen_name
     </select>
@@ -33,9 +34,10 @@
           FROM  tm_simul_mast
 
          WHERE  1 = 1
-           AND  tm_simul_mast.grp_cd                =   #{prev_grp_cd}      /* 그룹코드(상위코드) */
-           AND  tm_simul_mast.scen_cd               !=  #{prev_scen_cd}     /* 시나리오 코드 - 변경전 코드는 제외 */
+           AND  tm_simul_mast.grp_cd                =   #{prev_scen_cd}     /* 그룹코드(상위코드) */
            AND  tm_simul_mast.grp_yn                =   '0'                 /* 그룹여부(1-그룹) */
+
+           AND  tm_simul_mast.reg_id                =   #{user_id}          /* 등록자 ID */
     </select>
 
     <!--
@@ -70,6 +72,8 @@
          WHERE  1 = 1
            AND  tm_simul_mast.scen_name             LIKE    CONCAT( #{search_scen_name}, '%' )        /* 시나리오명 */
 
+           AND  tm_simul_mast.reg_id                =   #{user_id}          /* 등록자 ID */
+
                 /* 검색문자열 이후 숫자만 추출 */
            AND  REPLACE( 
                                 SUBSTR(     tm_simul_mast.scen_name
@@ -94,8 +98,9 @@
          WHERE  1 = 1
            AND  tm_simul_mast.scen_name             =   #{scen_name}        /* 시나리오명 */
 
+           AND  tm_simul_mast.reg_id                =   #{user_id}          /* 등록자 ID */
+
         <if test= 'status != null  and  status == "modify" ' >
-           AND  tm_simul_mast.grp_cd                !=  #{prev_grp_cd}      /* 그룹 코드 */
            AND  tm_simul_mast.scen_cd               !=  #{prev_scen_cd}     /* 시나리오 코드 */
         </if>           
     </select>
@@ -174,6 +179,44 @@
     </select>
 
     <!--
+    *   시뮬레이션 시나리오 코드를 채번한다. ( 그룹이 아닌 경우 )
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getScenCd1">
+    <![CDATA[
+        SELECT      /* simulation.getScenCd1 시뮬레이션 시나리오 코드를 채번한다. ( 그룹이 아닌 경우 ) */
+                    LPAD(
+                                /* 시나리오 코드 순번값 ( 기존 코드가 존재하지 않는 경우 - 그룹: 0, 비그룹: 100000 부터 시작 ) */
+                                IFNULL(
+                                        CAST( MAX( tm_simul_mast.scen_cd )  AS  UNSIGNED INTEGER  )
+                                    ,   CAST( #{init_incre_grp_cd}          AS  UNSIGNED INTEGER  )
+                                )
+                            +   /* 증가값 ( 그룹: 100000, 비그룹: 1 씩 증가 ) */
+                                1
+                        ,   10
+                        ,   '0' 
+                    )                                       AS  scen_cd             /* 시나리오 코드 */
+
+          FROM  tm_simul_mast
+
+         WHERE  1 = 1
+           AND  (
+                    /* 시나리오 그룹인 경우 */
+                    (
+                             tm_simul_mast.grp_yn                =   '1'                 /* 그룹여부(1-그룹) */
+                        AND  tm_simul_mast.scen_cd               =   #{grp_cd}           /* 그룹 코드 */
+                    )
+                    OR
+                    /* 이미 생성된 시나리오가 존재하는 경우 */
+                    (
+                             tm_simul_mast.grp_yn                =   '0'                 /* 그룹여부(1-그룹) */
+                        AND  tm_simul_mast.grp_cd                =   #{grp_cd}           /* 그룹 코드 */
+                    )
+                )
+    ]]>
+    </select>
+
+    <!--
     *   시뮬레이션 시나리오 정렬순번을 조회한다.
     *   2019-07-26  bkLove(촤병국)
     -->
@@ -189,7 +232,7 @@
 
          WHERE  1 = 1
            AND  tm_simul_mast.grp_cd                =   #{grp_cd}           /* 그룹코드(상위코드) */
-           AND  tm_simul_mast.scen_cd               =   #{scen_cd}          /* 시나리오 코드 */
+           AND  tm_simul_mast.grp_yn                =   #{grp_yn}           /* 그룹여부(1-그룹) */
     </select>    
 
     <!--
@@ -274,8 +317,180 @@
          WHERE  1 = 1
            AND  grp_cd                      =   #{prev_grp_cd}                  /* 그룹코드(상위코드) - 변경전 */
            AND  scen_cd                     =   #{prev_scen_cd}                 /* 시나리오 코드 - 변경전 */
+
+           AND  reg_id                      =   #{user_id}                      /* 등록자 ID */
     ]]>
     </update>
+
+
+
+
+    <!--
+    *   시뮬레이션 시나리오 코드를 채번한다. ( 시나리오 그룹에서 저장시 )
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getScenCdByGroup">
+        SELECT      /* simulation.getScenCdByGroup 시뮬레이션 시나리오 코드를 채번한다. ( 시나리오 그룹에서 저장시 ) */
+                    LPAD(
+                                /* 시나리오 코드 순번값 ( 기존 코드가 존재하지 않는 경우 - 그룹: 0, 비그룹: 100000 부터 시작 ) */
+                                IFNULL(
+                                        CAST( MAX( tm_simul_mast.scen_cd )  AS  UNSIGNED INTEGER  )
+                                    ,   0
+                                )
+                            +   /* 증가값 ( 그룹: 100000, 비그룹: 1 씩 증가 ) */
+                                CAST( #{init_incre_grp_cd}                  AS  UNSIGNED INTEGER  )
+                        ,   10
+                        ,   '0' 
+                    )                               AS  scen_cd             /* 시나리오 코드 */
+
+          FROM  tm_simul_mast
+
+         WHERE  1 = 1
+           AND  tm_simul_mast.grp_yn                =   '1'                /* 그룹여부(1-그룹) */
+
+        <if test= 'grp_cd != null  and  grp_cd != "" ' >
+                /* 수정 상태 일때 변경후 그룹코드 추출 */
+           AND  tm_simul_mast.grp_cd                =   #{grp_cd}           /* 그룹 코드 */
+        </if>
+        
+    </select>    
+
+    <!--
+    * [tm_simul_mast] 테이블에 저장한다. ( 시나리오 그룹에서 저장시 )
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <insert     id="saveTmSimulMastByGroup">
+    <![CDATA[
+        INSERT  INTO    
+        /* simulation.saveTmSimulMastByGroup      [tm_simul_mast] 테이블에 저장한다. ( 시나리오 그룹에서 저장시 ) */
+        tm_simul_mast 
+        ( 
+                grp_cd                              /* 그룹코드(상위코드) */
+            ,   scen_cd                             /* 시나리오 코드 */
+
+            ,   scen_depth                          /* 시나리오 DEPTH */
+            ,   scen_order_no                       /* 시나리오 정렬 순번 */
+            ,   scen_name                           /* 시나리오명 */
+            ,   grp_yn                              /* 그룹여부(1-그룹) */
+
+            ,   reg_id                              /* 등록자 ID */
+            ,   reg_time                            /* 등록시간 */
+            ,   upd_id                              /* 수정자 ID */
+            ,   upd_time                            /* 수정시간 */
+        )
+        VALUES    
+        ( 
+                #{grp_cd}                           /* 그룹코드(상위코드) */
+            ,   #{scen_cd}                          /* 시나리오 코드 */
+
+            ,   #{scen_depth}                       /* 시나리오 DEPTH */
+            ,   #{scen_order_no}                    /* 시나리오 정렬 순번 */
+            ,   #{scen_name}                        /* 시나리오명 */
+            ,   #{grp_yn}                           /* 그룹여부(1-그룹) */
+
+            ,   #{user_id}                          /* 등록자 ID */
+            ,   now()                               /* 등록시간 */
+            ,   #{user_id}                          /* 수정자 ID */
+            ,   now()                               /* 수정시간 */
+        )
+    ]]>
+    </insert>
+
+    <!--
+    * [tm_simul_mast] 테이블을 수정한다. ( 시나리오 그룹에서 수정시 )
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <update     id="modifyTmSimulMastByGroup">
+    <![CDATA[
+        UPDATE      /* simulation.modifyTmSimulMastByGroup      [tm_simul_mast] 테이블을 수정한다. ( 시나리오 그룹에서 수정시 ) */
+                    tm_simul_mast
+
+           SET      scen_name               =   #{scen_name}                    /* 시나리오명 */
+
+                ,   upd_id                  =   #{user_id}                      /* 수정자 ID */
+                ,   upd_time                =   now()                           /* 수정시간 */                
+
+         WHERE  1 = 1
+           AND  grp_cd                      =   #{grp_cd}                       /* 그룹코드(상위코드) */
+           AND  scen_cd                     =   #{scen_cd}                      /* 시나리오 코드 */
+
+           AND  reg_id                      =   #{user_id}                      /* 등록자 ID */
+    ]]>
+    </update>    
+
+    <!--
+    * [tm_simul_mast] 테이블을 삭제한다. ( 시나리오 그룹에서 삭제시 )
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <delete     id="deleteTmSimulMastByGroup">
+    <![CDATA[
+        DELETE  /* simulation.deleteTmSimulMastByGroup        [tm_simul_mast] 테이블을 삭제한다. ( 시나리오 그룹에서 삭제시 ) */
+
+          FROM  tm_simul_mast
+
+         WHERE  1 = 1
+           AND  grp_cd                      =   #{grp_cd}                   /* 그룹코드(상위코드) */
+           AND  scen_cd                     =   #{scen_cd}                  /* 시나리오 코드 */
+
+           AND  reg_id                      =   #{user_id}                  /* 등록자 ID */
+    ]]>
+    </delete>
+
+
+    <!--
+    *   grp_cd, scen_cd 가 존재하는지 체크한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getExistCodeCheckByGroup">
+
+        SELECT      /* simulation.getExistCodeCheckByGroup  grp_cd, scen_cd 가 존재하는지 체크한다. */
+
+                    (
+                        SELECT  CASE    WHEN    MAX( tm_simul_mast.grp_cd ) IS  NOT NULL
+                                        THEN    'Y'
+                                        ELSE    "N"
+                                END                             AS  grp_cd_yn
+
+                          FROM  tm_simul_mast
+                         WHERE  tm_simul_mast.grp_cd            =   #{grp_cd}
+
+                         LIMIT  1
+                    )                                           AS  grp_cd_yn
+                ,   (
+                        SELECT  CASE    WHEN    MAX( tm_simul_mast.scen_cd ) IS  NOT NULL
+                                        THEN    'Y'
+                                        ELSE    "N"
+                                END                             AS  scen_cd_yn
+
+                          FROM  tm_simul_mast
+                         WHERE  tm_simul_mast.scen_cd           =   #{scen_cd}
+
+                         LIMIT  1
+                    )                                           AS  scen_cd_yn
+
+          FROM  dual
+
+    </select>
+
+    <!--
+    *   하위에 시나리오 건수를 조회한다. ( 시나리오 그룹에서 삭제시 )
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getExistSubCntByGroup">
+        SELECT      /* simulation.getExistSubCntByGroup  하위에 시나리오 건수를 조회한다. ( 시나리오 그룹에서 삭제시 ) */
+                    
+                    COUNT( tm_simul_mast.scen_cd )  AS  exist_cnt           /* 존재 건수 */
+
+          FROM  tm_simul_mast
+
+         WHERE  1 = 1
+           AND  tm_simul_mast.grp_cd                =   #{scen_cd}          /* 그룹코드(상위코드) */
+           AND  tm_simul_mast.grp_yn                =   '0'                 /* 그룹여부(1-그룹) */
+
+           AND  tm_simul_mast.reg_id                =   #{user_id}          /* 등록자 ID */
+
+         LIMIT  2
+    </select>    
 
     <!--
     *   입력할 값을 기준으로 tm_simul_portfolio 와 비교하여 insert, modify 대상 추출
@@ -319,7 +534,9 @@
                                     AND     tm_simul_portfolio.grp_cd           =   base.prev_grp_cd    /* 그룹코드(상위코드) */
                                     AND     tm_simul_portfolio.scen_cd          =   base.prev_scen_cd   /* 시나리오코드 */
                             </if>
+
                                     AND     tm_simul_portfolio.F16316           =   base.F16316         /* 구성종목코드 */
+                                    AND     tm_simul_portfolio.reg_id           =   #{user_id}          /* 등록자 ID */
                                 )
          WHERE  1 = 1
 
@@ -364,6 +581,8 @@
          WHERE  1 = 1
            AND  tm_simul_portfolio.grp_cd           =   #{prev_grp_cd}          /* 그룹코드(상위코드) */
            AND  tm_simul_portfolio.scen_cd          =   #{prev_scen_cd}         /* 시나리오코드 */
+
+           AND  tm_simul_portfolio.reg_id           =   #{user_id}              /* 등록자 ID */
 
     </select>    
 
@@ -446,6 +665,8 @@
                         AND     tm_simul_portfolio.scen_cd          =   base.prev_scen_cd   /* 시나리오코드 */
                         AND     tm_simul_portfolio.F16316           =   base.F16316         /* 구성종목코드 */
 
+                        AND     tm_simul_portfolio.reg_id           =   #{user_id}          /* 등록자 ID */
+
            SET      tm_simul_portfolio.grp_cd       =   base.grp_cd             /* 그룹코드(상위코드) */
                 ,   tm_simul_portfolio.scen_cd      =   base.scen_cd            /* 시나리오코드 */
 
@@ -489,6 +710,8 @@
                         AND     tm_simul_portfolio.grp_cd           =   base.prev_grp_cd    /* 그룹코드(상위코드) */
                         AND     tm_simul_portfolio.scen_cd          =   base.prev_scen_cd   /* 시나리오코드 */
                         AND     tm_simul_portfolio.F16316           =   base.F16316         /* 구성종목코드 */
+
+                        AND     tm_simul_portfolio.reg_id           =   #{user_id}          /* 등록자 ID */
     </delete>
 
     <!--
@@ -496,28 +719,79 @@
     *   2019-07-26  bkLove(촤병국)
     -->
     <select id="getSimulList">
-        SELECT      /* simulation.getSimulList 시뮬레이션 목록정보를 조회한다. */
 
-                    tm_simul_mast.grp_cd                                    AS  grp_cd                      /* 그룹코드(상위코드) */
-                ,   tm_simul_mast.scen_cd                                   AS  scen_cd                     /* 시나리오 코드 */
+        SELECT  /* simulation.getSimulList 시뮬레이션 목록정보를 조회한다. */
 
-                ,   tm_simul_mast.scen_depth                                AS  scen_depth                  /* 시나리오 DEPTH */
-                ,   tm_simul_mast.scen_order_no                             AS  scen_order_no               /* 시나리오 정렬 순번 */
-                ,   tm_simul_mast.scen_name                                 AS  scen_name                   /* 시나리오명 */
-                ,   tm_simul_mast.grp_yn                                    AS  grp_yn                      /* 그룹여부(1-그룹) */
-                ,   tm_simul_mast.start_year                                AS  start_year                  /* 시작년도 */
-                ,   tm_simul_mast.rebalance_cycle_cd                        AS  rebalance_cycle_cd          /* 리밸런싱주기 (COM006) */
-                ,   tm_simul_mast.rebalance_date_cd                         AS  rebalance_date_cd           /* 리밸런싱일자 (COM007) */
-                ,   tm_simul_mast.init_invest_money                         AS  init_invest_money           /* 초기투자금액 */
-                ,   tm_simul_mast.bench_mark_cd                             AS  bench_mark_cd               /* 벤치마크 (COM008) */
-                ,   tm_simul_mast.importance_method_cd                      AS  importance_method_cd        /* 비중설정방식 (COM009) */
+                base.*
+          FROM  (
 
-                ,   DATE_FORMAT( tm_simul_mast.upd_time, '%Y.%m.%d' )       AS  fmt_upd_time                /* 수정일 */
+                /* 시나리오 그룹만 추출 */
+                    SELECT      tm_simul_mast.scen_cd                                   AS  temp_order                  /* 시나리오 코드 */
 
-          FROM  tm_simul_mast
+                            ,   tm_simul_mast.grp_cd                                    AS  grp_cd                      /* 그룹코드(상위코드) */
+                            ,   tm_simul_mast.scen_cd                                   AS  scen_cd                     /* 시나리오 코드 */
 
-         ORDER  BY      tm_simul_mast.scen_cd
-                    ,   tm_simul_mast.scen_order_no
+                            ,   tm_simul_mast.scen_depth                                AS  scen_depth                  /* 시나리오 DEPTH */
+                            ,   tm_simul_mast.scen_order_no                             AS  scen_order_no               /* 시나리오 정렬 순번 */
+                            ,   tm_simul_mast.scen_name                                 AS  scen_name                   /* 시나리오명 */
+                            ,   tm_simul_mast.grp_yn                                    AS  grp_yn                      /* 그룹여부(1-그룹) */
+                            ,   tm_simul_mast.start_year                                AS  start_year                  /* 시작년도 */
+                            ,   tm_simul_mast.rebalance_cycle_cd                        AS  rebalance_cycle_cd          /* 리밸런싱주기 (COM006) */
+                            ,   tm_simul_mast.rebalance_date_cd                         AS  rebalance_date_cd           /* 리밸런싱일자 (COM007) */
+                            ,   tm_simul_mast.init_invest_money                         AS  init_invest_money           /* 초기투자금액 */
+                            ,   tm_simul_mast.bench_mark_cd                             AS  bench_mark_cd               /* 벤치마크 (COM008) */
+                            ,   tm_simul_mast.importance_method_cd                      AS  importance_method_cd        /* 비중설정방식 (COM009) */
+
+                            ,   DATE_FORMAT( tm_simul_mast.upd_time, '%Y.%m.%d' )       AS  fmt_upd_time                /* 수정일 */
+
+                    FROM  tm_simul_mast
+                   WHERE  1 = 1
+                     AND  tm_simul_mast.grp_yn          =   '1'
+
+                     AND  tm_simul_mast.reg_id          =   #{user_id}                 /* 등록자 ID */
+
+                    UNION   ALL
+
+                /* 시나리오만 추출 */
+                    SELECT      tm_simul_mast.grp_cd                                    AS  temp_order                  /* 그룹코드(상위코드) */
+
+                            ,   tm_simul_mast.grp_cd                                    AS  grp_cd                      /* 그룹코드(상위코드) */
+                            ,   tm_simul_mast.scen_cd                                   AS  scen_cd                     /* 시나리오 코드 */
+
+                            ,   tm_simul_mast.scen_depth                                AS  scen_depth                  /* 시나리오 DEPTH */
+                            ,   tm_simul_mast.scen_order_no                             AS  scen_order_no               /* 시나리오 정렬 순번 */
+                            ,   tm_simul_mast.scen_name                                 AS  scen_name                   /* 시나리오명 */
+                            ,   tm_simul_mast.grp_yn                                    AS  grp_yn                      /* 그룹여부(1-그룹) */
+                            ,   tm_simul_mast.start_year                                AS  start_year                  /* 시작년도 */
+                            ,   tm_simul_mast.rebalance_cycle_cd                        AS  rebalance_cycle_cd          /* 리밸런싱주기 (COM006) */
+                            ,   tm_simul_mast.rebalance_date_cd                         AS  rebalance_date_cd           /* 리밸런싱일자 (COM007) */
+                            ,   tm_simul_mast.init_invest_money                         AS  init_invest_money           /* 초기투자금액 */
+                            ,   tm_simul_mast.bench_mark_cd                             AS  bench_mark_cd               /* 벤치마크 (COM008) */
+                            ,   tm_simul_mast.importance_method_cd                      AS  importance_method_cd        /* 비중설정방식 (COM009) */
+
+                            ,   DATE_FORMAT( tm_simul_mast.upd_time, '%Y.%m.%d' )       AS  fmt_upd_time                /* 수정일 */
+
+                    FROM  tm_simul_mast
+                   WHERE  1 = 1
+                     AND  tm_simul_mast.grp_yn          =   '0'
+
+                     AND  tm_simul_mast.reg_id          =   #{user_id}                 /* 등록자 ID */
+
+                )   base
+
+            ORDER  BY       /* 상위그룹 '선택안함' 을 제일 먼저 노출되게 하고, 그룹코드는 역순으로 노출 */
+                            CASE    WHEN    base.temp_order     =   '*'
+                                    THEN    '1'
+                                    ELSE    base.temp_order
+                            END                     DESC
+
+                        ,   base.grp_cd             ASC     /* 그룹코드(상위코드) */
+
+                        ,   /* 상위그룹 '선택안함' 인 경우 정렬순번 역순 노출, 그룹코드는 정방향 노출 */
+                            CASE    WHEN    base.temp_order     =   '*'
+                                    THEN    -base.scen_order_no
+                                    ELSE    base.scen_order_no
+                            END                     ASC     /* 시나리오 정렬 순번 */
     </select>
 
     <!--
@@ -546,6 +820,8 @@
          WHERE  1 = 1
            AND  tm_simul_mast.grp_cd            =   #{grp_cd}       /* 그룹코드(상위코드) */
            AND  tm_simul_mast.scen_cd           =   #{scen_cd}      /* 시나리오 코드 */
+
+           AND  tm_simul_mast.reg_id            =   #{user_id}      /* 등록자 ID */
 
          ORDER  BY      tm_simul_mast.scen_cd
                     ,   tm_simul_mast.scen_order_no
@@ -580,8 +856,184 @@
            AND  tm_simul_portfolio.grp_cd       =   #{grp_cd}       /* 그룹코드(상위코드) */
            AND  tm_simul_portfolio.scen_cd      =   #{scen_cd}      /* 시나리오 코드 */
 
+           AND  tm_simul_portfolio.reg_id       =   #{user_id}      /* 등록자 ID */
+
          ORDER  BY      tm_simul_portfolio.scen_cd
                     ,   tm_simul_portfolio.order_no
     </select>
+
+
+    <!--
+    *   (백테스트) 시뮬레이션 할 기본정보를 조회한다.
+    *   2019-08-14  bkLove(촤병국)
+    -->
+    <select id="getSimulListByBacktest">
+    <![CDATA[
+        SELECT      /* simulation.getSimulListByBacktest (백테스트) 시뮬레이션 할 기본정보를 조회한다. */
+
+                    tm_simul_mast.grp_cd                                AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   tm_simul_mast.scen_cd                               AS  scen_cd                     /* 시나리오 코드 */
+
+                ,   tm_simul_mast.start_year                            AS  start_year                  /* 시작년도 */
+                ,   tm_simul_mast.rebalance_cycle_cd                    AS  rebalance_cycle_cd          /* 리밸런싱주기 (COM006) */
+                ,   tm_simul_mast.rebalance_date_cd                     AS  rebalance_date_cd           /* 리밸런싱일자 (COM007) */
+                ,   tm_simul_mast.init_invest_money                     AS  init_invest_money           /* 초기투자금액 */
+                ,   tm_simul_mast.bench_mark_cd                         AS  bench_mark_cd               /* 벤치마크 (COM008) */
+                ,   tm_simul_mast.importance_method_cd                  AS  importance_method_cd        /* 비중설정방식 (COM009) */
+                        
+                ,   tm_simul_portfolio.F16316                           AS  F16316                      /* 구성종목코드 */       
+                ,   tm_simul_portfolio.importance                       AS  importance                  /* 비중 */
+                ,   tm_simul_portfolio.jisu_rate                        AS  jisu_rate                   /* 지수적용비율 */
+                
+                ,   td_kspjong_basic.F16013                             AS  F16013                      /* 단축코드 */
+                ,   td_kspjong_basic.F16002                             AS  F16002                      /* 종목명 */
+                ,   td_kspjong_basic.F16017                             AS  F16017                      /* 상장일 */
+                
+          FROM  tm_simul_mast
+          JOIN  tm_simul_portfolio
+            ON  (
+                            tm_simul_mast.grp_cd        =   tm_simul_portfolio.grp_cd                   /* 그룹코드(상위코드) */
+                    AND     tm_simul_mast.scen_cd       =   tm_simul_portfolio.scen_cd                  /* 시나리오 코드 */
+                    AND     tm_simul_mast.reg_id        =   tm_simul_portfolio.reg_id                   /* 등록자 ID */
+                )
+
+          LEFT  JOIN    td_kspjong_basic
+                  ON    (   tm_simul_portfolio.F16316   =   td_kspjong_basic.F16012 )
+        
+         WHERE  1 = 1
+           AND  tm_simul_mast.grp_cd        =   #{grp_cd}
+           AND  tm_simul_mast.scen_cd       =   #{scen_cd}
+           
+         ORDER  BY  td_kspjong_basic.F16013    
+    ]]>
+    </select>
+
+    <!--
+    *   (백테스트) 시뮬레이션 할 이력 데이터를 조회한다.
+    *   2019-08-14  bkLove(촤병국)
+    -->
+    <select id="getSimulHistListByBacktest">
+    <![CDATA[
+        SELECT      /* simulation.getSimulHistListByBacktest (백테스트) 시뮬레이션 할 이력 데이터를 조회한다. */
+
+                    /* COM006 리밸런싱주기( 1-매년, 2-반기, 3-분기,     4-매월, 5-매주 ) */
+                    CASE    WHEN    td_kspjong_hist.F12506  IN  ( '20180102', '20180702', '20190102', '20190701' )
+                            THEN    '2'
+                            ELSE    '0'
+                    END                                                 AS  chk_rebalance_cycle_cd  /* 리밸런싱 주기 표시 */
+
+
+                    /* COM007 리밸런싱일자( 1-첫영업일, 2-동시만기익일, 3-동시만기 익주 첫영업일, 4-옵션만기일, 5-옵션만기 익주 첫영업일 ) */
+               ,    CASE    WHEN    td_kspjong_hist.F12506  IN  ( '20180102', '20180702', '20190102', '20190701' )
+                            THEN    '1'
+                            ELSE    '0'
+                    END                                                 AS  chk_rebalance_date_cd   /* 리밸런싱 일자 표시 */
+                    
+
+                ,   td_kspjong_hist.F16013                              AS  F16013                  /* 단축코드 */
+                ,   td_kspjong_hist.F12506                              AS  F12506                  /* 입회일자 */
+
+                ,   td_kspjong_hist.F15001                              AS  F15001                  /* 현재가 ( 당일 종가 ) - 종가 */
+                ,   td_kspjong_hist.F15007                              AS  F15007                  /* 기준가 ( 전일 종가 ) - 기준가 */
+                ,   td_kspjong_hist.F16143                              AS  F16143                  /* 상장주식수*/
+
+         FROM   td_kspjong_hist
+
+         WHERE  1 = 1
+           AND  td_kspjong_hist.F16013      IN
+                (
+                    SELECT  td_kspjong_basic.F16013
+                      FROM          tm_simul_portfolio
+                      LEFT  JOIN    td_kspjong_basic
+                              ON    tm_simul_portfolio.F16316   =   td_kspjong_basic.F16012
+                     WHERE  1 = 1
+                       AND  tm_simul_portfolio.grp_cd    =   #{grp_cd}
+                       AND  tm_simul_portfolio.scen_cd   =   #{scen_cd}
+                )
+           
+           AND  td_kspjong_hist.F12506      >=      /* CONCAT( #{start_year}, '0101' ) */
+                                                    CONCAT( '2018', '0101' )                 /* 입회일자 ( 시뮬레이션 시작년도 + '0101' 부터 시작 ) */
+
+         ORDER  BY      td_kspjong_hist.F12506      /* 입회일자 */
+                    ,   td_kspjong_hist.F16013      /* 단축코드 */
+    ]]>
+    </select>
+
+
+    <!--
+    * [tm_simul_result] 테이블에 저장한다.
+    * 2019-08-14  bkLove(촤병국)
+    -->
+    <insert     id="saveTmSimulResult">
+    <![CDATA[
+        INSERT  INTO    
+        /* simulation.saveTmSimulResult      [tm_simul_result] 테이블에 저장한다. */
+        tm_simul_result
+        (
+                grp_cd                      /* 그룹코드(상위코드) */
+            ,   scen_cd                     /* 시나리오코드 */
+            ,   F12506	                    /* 입회일자 */
+            ,   F16013	                    /* 단축 코드(현금은 KRW로 처리) */
+
+            ,   rebalancing                 /* 리밸런싱 여부(Y,N) */
+            ,   F15007	                    /* 기준가 */
+            ,   F15001	                    /* 종가 */
+            ,   F16143	                    /* 상장주식수 */
+            ,   BEFORE_RATE                 /* (직전)지수적용비율 */
+            ,   TODAY_RATE                  /* (당일)지수적용비율 */
+            ,   F15028_S	                /* 기준시총 */
+            ,   F15028_C	                /* 비교시총 */
+            ,   INDEX_RATE                  /* 지수 */
+            ,   RETURN_VAL                  /* 결과 */
+            ,   EVENT_FLAG                  /* 이벤트(비중조절, 종목편입) */
+
+            ,   reg_id	                    /* 등록자 ID */
+            ,   reg_time	                /* 등록시간 */
+            ,   upd_id	                    /* 수정자 ID */
+            ,   upd_time	                /* 수정시간 */
+        )
+        VALUES
+    ]]>
+        <foreach    collection="dataLists"   item="data"     separator="," >
+    <![CDATA[  
+        ( 
+                #{data.grp_cd}              /* 그룹코드(상위코드) */
+            ,   #{data.scen_cd}             /* 시나리오코드 */
+            ,   #{data.F12506}	            /* 입회일자 */
+            ,   #{data.F16013}	            /* 단축 코드(현금은 KRW로 처리) */
+
+            ,   #{data.rebalancing}         /* 리밸런싱 여부(Y,N) */
+            ,   #{data.F15007}	            /* 기준가 */
+            ,   #{data.F15001}	            /* 종가 */
+            ,   #{data.F16143}	            /* 상장주식수 */
+            ,   #{data.BEFORE_RATE}         /* (직전)지수적용비율 */
+            ,   #{data.TODAY_RATE}          /* (당일)지수적용비율 */
+            ,   #{data.F15028_S}	        /* 기준시총 */
+            ,   #{data.F15028_C}	        /* 비교시총 */
+            ,   #{data.INDEX_RATE}          /* 지수 */
+            ,   #{data.RETURN_VAL}          /* 결과 */
+            ,   #{data.EVENT_FLAG}          /* 이벤트(비중조절, 종목편입) */
+
+            ,   #{user_id}	                /* 등록자 ID */
+            ,   now()	                    /* 등록시간 */
+            ,   #{user_id}	                /* 수정자 ID */
+            ,   now()	                    /* 수정시간 */
+        )
+    ]]>
+        </foreach>            
+
+    </insert>
+
+    <!--
+    * [tm_simul_result] 테이블을 삭제한다.
+    * 2019-08-14  bkLove(촤병국)
+    -->
+    <delete     id="deleteTmSimulResult">
+        DELETE  /* simulation.deleteTmSimulResult      [tm_simul_result] 테이블을 삭제한다. */
+          FROM  tm_simul_result
+         WHERE  1 = 1
+           AND     tm_simul_result.grp_cd           =   #{grp_cd}       /* 그룹코드(상위코드) */
+           AND     tm_simul_result.scen_cd          =   #{scen_cd}      /* 시나리오코드 */
+    </delete>    
 
 </mapper>

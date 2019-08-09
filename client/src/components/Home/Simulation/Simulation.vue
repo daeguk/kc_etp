@@ -198,7 +198,6 @@
         </v-flex>
 
         <v-flex>
-            <ProgressBar ref="progress"></ProgressBar>
             <ConfirmDialog ref="confirm2"></ConfirmDialog>
         </v-flex>
 
@@ -216,7 +215,6 @@ import Config from "@/js/config.js";
 
 import MastPopup from "@/components/common/popup/MastPopup";
 import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
-import ProgressBar from "@/components/common/ProgressBar.vue";
 
 var table01 = null;
 
@@ -286,7 +284,6 @@ export default {
 
     components: {
         MastPopup,
-        ProgressBar,
         ConfirmDialog        
     },    
 
@@ -300,7 +297,9 @@ export default {
         table01 =   $( "#table01" );
 
         /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
-        if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
+        if(     vm.paramData && Object.keys( vm.paramData ).length > 0 
+            &&  vm.paramData.grp_cd && vm.paramData.scen_cd 
+        ) {
 
             /* 상위 그룹 정보 및 초기 데이터가 설정된 이후 상세정보 설정되도록 함. */
             
@@ -370,6 +369,30 @@ export default {
             var rowIndex    =   tr.index();
 
             vm.fn_resetErrorMessage();
+
+            /* 종목코드인 경우에만 코드 검색 */
+            if( $(this).attr("name") == "F16316" ) {
+                /* 종목코드를 검색한다. */
+                vm.fn_getJongmokData( rowIndex, $(this) ).then(function(e){
+
+                    if( e && e.result ) {
+                        
+                        var rowItem;
+                        if( e.rowItem && Object.keys( e.rowItem ).length > 0 )  {
+                            rowItem =   e.rowItem;
+
+                            tr.find( "td input[name=F16316]" ).val( rowItem.F16012 );               /* 종목코드 */
+                            tr.find( "td:eq(2)" ).text( rowItem.F16002 );                           /* 종목명 */
+
+                            tr.find( "td:eq(3)" ).text( util.formatInt( rowItem.F15028 ) );         /* 시가총액 */
+    //                      tr.find( "td:eq(5)" ).text( rowIndex / 100 );                           /* 지수적용비율 */
+
+                            /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
+                            vm.fn_setImportanceMethodCd( vm.importance_method_cd );
+                        }
+                    }
+                });
+            }
         });
 
 
@@ -381,16 +404,57 @@ export default {
             vm.fn_resetErrorMessage();
             vm.fn_resetRecords( rowIndex );
 
+            /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
             vm.fn_setImportanceMethodCd( vm.importance_method_cd );
         });
+
+
+        /* table tr 에서 종목코드 엔터키 누를시   */
+        $('#table01 tbody').on('keypress', "input[name='F16316']", function(e) {
+            var tr          =   $(this).closest('tr');
+            var rowIndex    =   tr.index();
+
+            vm.fn_resetErrorMessage();
+
+            if( e.which == 13 ) {
+
+                /* 종목코드를 검색한다. */
+                vm.fn_getJongmokData( rowIndex, $(this) ).then(function(e){
+
+                    if( e && e.result ) {
+                        
+                        var rowItem;
+                        if( e.rowItem && Object.keys( e.rowItem ).length > 0 )  {
+                            rowItem =   e.rowItem;
+
+                            tr.find( "td input[name=F16316]" ).val( rowItem.F16012 );               /* 종목코드 */
+                            tr.find( "td:eq(2)" ).text( rowItem.F16002 );                           /* 종목명 */
+
+                            tr.find( "td:eq(3)" ).text( util.formatInt( rowItem.F15028 ) );         /* 시가총액 */
+    //                      tr.find( "td:eq(5)" ).text( rowIndex / 100 );                           /* 지수적용비율 */
+
+                            /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
+                            vm.fn_setImportanceMethodCd( vm.importance_method_cd );
+                        }
+                    }
+                });                
+            }
+        });        
+
+        
 
         /* table tr 에서 비중 change 시 total 영역 계산   */
         $('#table01 tbody').on('change', "input[name='importance']", function() {
             var tr          =   $(this).closest('tr');
             var rowIndex    =   tr.index();
+            var v_importance=   $(this);
 
             /* 비중을 변경하는 경우 [직접입력] 으로 강제 설정 */
             vm.importance_method_cd =   "1";
+
+            if( v_importance.val() ) {
+                v_importance.val( util.formatNumber( v_importance.val() ) );
+            }
 
             vm.fn_resetErrorMessage();
             vm.fn_setTotalRecord();
@@ -409,6 +473,15 @@ export default {
             var vm = this;
 
             vm.arr_show_error_message   =   [];
+        },
+
+        /*
+         * 진행 progress 를 보여준다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_showProgress: function( visible ) {
+            var vm = this;
+            vm.$emit("fn_showProgress", visible );
         },
 
         /*
@@ -446,7 +519,7 @@ export default {
 
 
             /* 계산할 항목에 대한 전체 정보를 구한다. */
-            table01.find( "tbody tr input[name=F16316]" ).parents("tr").each( function( inx, rowItem ) {
+            table01.find( "tbody tr" ).each( function( inx, rowItem ) {
                 var tr = $(this);
 
                 var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );            /* 첫번째 컬럼 */
@@ -483,7 +556,7 @@ export default {
                 var v_temp_importance   =   0;
                 var v_inx               =   0;
 
-                table01.find( "tbody tr input[name=F16316]" ).parents("tr").each( function( inx, rowItem ) {
+                table01.find( "tbody tr" ).each( function( inx, rowItem ) {
                     var tr = $(this);
 
                     var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
@@ -535,7 +608,7 @@ export default {
 
                 /* 비중 정보를 tr 에 설정한다. */
                 v_inx   =   0;
-                table01.find( "tbody tr input[name=F16316]" ).parents("tr").each( function( inx, rowItem ) {
+                table01.find( "tbody tr" ).each( function( inx, rowItem ) {
                     var tr = $(this);
 
                     var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
@@ -571,9 +644,14 @@ export default {
             vm.arr_show_error_message   =   [];
 
             return  await new Promise(function(resolve, reject) {
+
+                vm.fn_showProgress( true );
                 axios.post(Config.base_url + "/user/simulation/getInitGrpCd", {
                     data: {}
                 }).then( function(response) {
+
+                    vm.fn_showProgress( false );
+
                     if (response && response.data) {
                         var msg = ( response.data.msg ? response.data.msg : "" );
 
@@ -591,11 +669,129 @@ export default {
                     }else{
                         resolve( { result : false } );
                     }
-                }).catch( function(e) {
-                    console.log( e );
+                }).catch(error => {
                     resolve( { result : false } );
+
+                    vm.fn_showProgress( false );
+                    if ( vm.$refs.confirm2.open(
+                            '확인',
+                            '서버로 부터 응답을 받지 못하였습니다.',
+                            {}
+                            ,4
+                        )
+                    ) {
+                    }
                 });
 
+            }).catch( function(e1) {
+                console.log( e1 );
+                resolve( { result : false } );
+            });
+        },
+
+        /*
+         * 종목코드를 검색한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        async fn_getJongmokData( rowIndex=0, v_obj={} ) {
+            var vm = this;
+
+            if( v_obj.val() == "" ) {
+                if (await vm.$refs.confirm2.open(
+                        '확인',
+                        '종목코드를 입력해 주세요.',
+                        {}
+                        ,1
+                    )
+                ) {
+                    return  false;
+                }
+
+                return  false;
+            }
+
+            if( v_obj.val().length < 6 ) {
+                if (await vm.$refs.confirm2.open(
+                        '확인',
+                        '종목코드를 6자리 이상 입력해 주세요.',
+                        {}
+                        ,1
+                    )
+                ) {
+                    return  false;
+                }
+                return  false;
+            }            
+
+
+            return  new Promise(function(resolve, reject) {
+
+                vm.fn_showProgress( true );
+
+                axios.post( Config.base_url + "/user/etp/getJongmokData", {
+                    data: { "searchCode" : v_obj.val() }
+                }).then(async function(response) {
+                    console.log(response);
+
+                    vm.fn_showProgress( false );
+
+                    if (response.data) {
+                        var msg = ( response.data.msg ? response.data.msg : "" );
+                        if (!response.data.result) {
+                            if( msg ) {
+                                if (await vm.$refs.confirm2.open(
+                                        '확인',
+                                        msg,
+                                        {}
+                                        ,1
+                                    )
+                                ) {
+                                    resolve( { result : false } );
+                                }
+                            }
+                        }else{
+                            var dataList = response.data.dataList;
+
+                            if ( !dataList || dataList.length == 0 ) {
+                                if (await vm.$refs.confirm2.open(
+                                        '확인',
+                                        '종목코드(' + v_obj.val() + ')가 존재하지 않습니다.',
+                                        {}
+                                        ,1
+                                    )
+                                ) {
+                                    resolve( { result : false } );
+                                }
+                            }
+                            else if ( dataList.length > 1 ) {
+                                if (await vm.$refs.confirm2.open(
+                                        '확인',
+                                        '종목코드(' + v_obj.val() + ')가 여러건 존재합니다.',
+                                        {}
+                                        ,1
+                                    )
+                                ) {
+                                    resolve( { result : false } );
+                                }
+                            
+                            }else if(  dataList.length == 1 ) {
+                                resolve( { result : true, rowItem : dataList[0] } );
+                            }
+                        }
+                    }
+                }).catch(error => {
+                    resolve( { result : false } );
+
+                    vm.fn_showProgress( false );
+                    if ( vm.$refs.confirm2.open(
+                            '확인',
+                            '서버로 부터 응답을 받지 못하였습니다.',
+                            {}
+                            ,4
+                        )
+                    ) {
+                    }
+                });
             }).catch( function(e1) {
                 console.log( e1 );
                 resolve( { result : false } );
@@ -610,9 +806,15 @@ export default {
             var vm = this;
 
             vm.arr_show_error_message   =   [];
+
+            vm.fn_showProgress( true );
+
             axios.post(Config.base_url + "/user/simulation/getNextScenName", {
                 data: {}
             }).then( function(response) {
+
+                vm.fn_showProgress( false );
+
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
 
@@ -623,6 +825,16 @@ export default {
                     }else{
                         vm.scen_name   =   response.data.scen_name;
                     }
+                }
+            }).catch(error => {
+                vm.fn_showProgress( false );
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '서버로 부터 응답을 받지 못하였습니다.',
+                        {}
+                        ,4
+                    )
+                ) {
                 }
             });
         },
@@ -643,9 +855,14 @@ export default {
             vm.arr_show_error_message   =   [];
 
             return  new Promise(function(resolve, reject) {
+
+                vm.fn_showProgress( true );
+
                 axios.post(Config.base_url + "/user/simulation/getInitData", {
                     data: { arrComMstCd : arrComMstCd }
                 }).then( function(response) {
+
+                    vm.fn_showProgress( false );
 
                     if (response && response.data) {
                         var arrMsg = ( response.data.arrMsg && response.data.arrMsg.length > 0 ? response.data.arrMsg : [] );
@@ -689,10 +906,18 @@ export default {
 
                         resolve( { result : false } );
                     }
-
-                }).catch( function(e) {
-                    console.log( e );
+                }).catch(error => {
                     resolve( { result : false } );
+
+                    vm.fn_showProgress( false );
+                    if ( vm.$refs.confirm2.open(
+                            '확인',
+                            '서버로 부터 응답을 받지 못하였습니다.',
+                            {}
+                            ,4
+                        )
+                    ) {
+                    }
                 });
 
             }).catch( function(e1) {
@@ -782,12 +1007,12 @@ export default {
 
             var tr  =   table01.find( "tbody tr" ).eq( rowIndex );
 
-            tr.find( "td input[name=F16316]" ).val( "" );       /* 종목코드 */
+//          tr.find( "td input[name=F16316]" ).val( "" );       /* 종목코드 */
             tr.find( "td:eq(2)" ).text( "" );                   /* 종목명 */
             tr.find( "td:eq(3)" ).text( "" );                   /* 시가총액 */
 
             tr.find( "td [name=importance]" ).val( "" );        /* 비중 */
-            tr.find( "td:eq(5)" ).text( "" );                   /* 지수적용비율 */
+//          tr.find( "td:eq(5)" ).text( "" );                   /* 지수적용비율 */
         },
 
         /*
@@ -874,13 +1099,10 @@ export default {
             for( let i=0; i < items.length; i++ ) {
 
                 /* 추가된 자산정보를 table 에 설정한다. */
-                await vm.fn_setMastRowData( vm.selectedRowIndex + i, items[i], gubun ).then( async function(e) {
-                    if( e && e.result ) {
-//                        vm.fn_setTotalRecord();
-                    }
-                });
+                await vm.fn_setMastRowData( vm.selectedRowIndex + i, items[i], gubun );
             }
 
+            /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
             vm.fn_setImportanceMethodCd( vm.importance_method_cd );
         },
 
@@ -904,13 +1126,18 @@ export default {
                 tr  =   table01.find( "tbody tr" ).eq( rowIndex );
 
                 tr.find( "td input[name=F16316]" ).val( rowItem.F16012 );       /* 종목코드 */
-                tr.find( "td:eq(2)" ).text( rowItem.F16002 );                   /* 종목명 */                        
+                tr.find( "td:eq(2)" ).text( rowItem.F16002 );                   /* 종목명 */
 
+
+                vm.fn_showProgress( true );
 
             /* 선택된 종목의 구성정보를 조회한다. */
                 axios.post(Config.base_url + "/user/simulation/getJongmokInfo", {
                     data: { "F16012" : rowItem.F16012 }
                 }).then( function(response) {
+
+                    vm.fn_showProgress( false );
+
                     if (response && response.data) {
                         var msg = ( response.data.msg ? response.data.msg : "" );
 
@@ -927,11 +1154,8 @@ export default {
                                 jongmokInfo =   {};
                             }
 
-                            if( jongmokInfo.F15028 ) {
-                                tr.find( "td:eq(3)" ).text( util.formatInt( jongmokInfo.F15028 ) );     /* 시가총액 */
-
-                                tr.find( "td:eq(5)" ).text( rowIndex / 100 );                           /* 지수적용비율 */
-                            }
+                            tr.find( "td:eq(3)" ).text( util.formatInt( jongmokInfo.F15028 ) );     /* 시가총액 */
+//                          tr.find( "td:eq(5)" ).text( rowIndex / 100 );                           /* 지수적용비율 */
                             resolve( { result : true } );
                         }
 
@@ -939,9 +1163,18 @@ export default {
                         resolve( { result : false } );
                     }
 
-                }).catch( function(e) {
-                    console.log( e );
+                }).catch(error => {
                     resolve( { result : false } );
+
+                    vm.fn_showProgress( false );
+                    if ( vm.$refs.confirm2.open(
+                            '확인',
+                            '서버로 부터 응답을 받지 못하였습니다.',
+                            {}
+                            ,4
+                        )
+                    ) {
+                    }
                 });
 
             }).catch( function(e1) {
@@ -977,6 +1210,7 @@ export default {
 
                 var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );            /* 첫번째 컬럼 */
                 var v_F16316        =   tr.find( "td input[name=F16316]" );             /* 종목코드 */
+                var v_F16316_nm     =   tr.find( "td:eq(2)" );                          /* 종목코드 명 */
 
                 var v_F15028        =   tr.find( "td:eq(3)" );                          /* 시가총액 */
                 var v_importance    =   tr.find( "td input[name=importance]" );         /* 비중 */
@@ -985,6 +1219,11 @@ export default {
                 if( typeof v_F16316.val() != "undefined" ) {
 
                     if( v_F16316.val() != "" ) {
+
+                        /* 종목코드가 존재시 종목명이 없는 경우 ( 종목코드를 수정한 경우 종목명을 지움 ) */
+                        if( v_F16316_nm.text() == "" ) {
+                            vm.arr_show_error_message.push( "[포트폴리오] " + v_text0.text() + " 종목명이 존재하지 않습니다. 종목코드를 확인해 주세요." );
+                        }
 
                         /* 종목코드가 존재시 비중정보 체크 */
                         try{
@@ -1023,12 +1262,9 @@ export default {
             });
 
 
-            /* 상위그룹이 '선택안함' 인 경우에는 포트폴리오 체크안함. */
-            if( vm.grp_cd != "*" ){
-                if( !vm.arr_portfolio || vm.arr_portfolio.length == 0 ) {
-                    vm.arr_show_error_message.push( "[포트폴리오] 종목코드가 한건 이상 존재해야 합니다." );
-                    return  false;
-                }              
+            if( !vm.arr_portfolio || vm.arr_portfolio.length == 0 ) {
+                vm.arr_show_error_message.push( "[포트폴리오] 종목코드가 한건 이상 존재해야 합니다." );
+                return  false;
             }
 
         /**************/
@@ -1072,13 +1308,11 @@ export default {
                 return  false;
             }            
 
-            /* 상위그룹이 '선택안함' 이고 */
-            if( vm.grp_cd == "*" ){
-                /* 포트폴리오 1건 이상 입력한 경우에는 비중의 합은 100 이 되어야 함.  */
-                if( vm.arr_portfolio.length > 0 && total.importance != 100 ) {
-                    vm.arr_show_error_message.push( "[포트폴리오] 비중의 합은 100 이 되어야 합니다." );
-                    return  false;
-                }
+
+            /* 포트폴리오 1건 이상 입력한 경우에는 비중의 합은 100 이 되어야 함.  */
+            if( vm.arr_portfolio.length > 0 && total.importance != 100 ) {
+                vm.arr_show_error_message.push( "[포트폴리오] 비중의 합은 100 이 되어야 합니다." );
+                return  false;
             }
         },        
 
@@ -1133,32 +1367,28 @@ export default {
             }
 
 
-            /* 상위그룹이 '선택안함' 인 경우에는 시나리오명만 체크한다. */
-            if( vm.grp_cd != "*" ){
+            if( !vm.start_year ) {
+                vm.arr_show_error_message.push( "[조건설정] 시작년도를 선택해 주세요." );
+            }
 
-                if( !vm.start_year ) {
-                    vm.arr_show_error_message.push( "[조건설정] 시작년도를 선택해 주세요." );
-                }
+            if( !vm.rebalance_cycle_cd ) {
+                vm.arr_show_error_message.push( "[조건설정] 리밸런싱주기를 선택해 주세요." );
+            }
 
-                if( !vm.rebalance_cycle_cd ) {
-                    vm.arr_show_error_message.push( "[조건설정] 리밸런싱주기를 선택해 주세요." );
-                }
+            if( !vm.rebalance_date_cd ) {
+                vm.arr_show_error_message.push( "[조건설정] 리밸런싱 일자를 선택해 주세요." );
+            }
 
-                if( !vm.rebalance_date_cd ) {
-                    vm.arr_show_error_message.push( "[조건설정] 리밸런싱 일자를 선택해 주세요." );
-                }
-
-                try{
-                    if( vm.init_invest_money == "" ) {
-                        vm.arr_show_error_message.push( "[조건설정] 초기투자금액을 입력해 주세요." );
-                    }else if( isNaN( vm.init_invest_money ) ) {
-                        vm.arr_show_error_message.push( "[조건설정] 초기투자금액은 숫자만 입력해 주세요." );
-                    }else if( Number( vm.init_invest_money ) <= 0 ) {
-                        vm.arr_show_error_message.push( "[조건설정] 초기투자금액은 0 보다 큰수를 입력해 주세요." );
-                    }
-                }catch( e ) {
+            try{
+                if( vm.init_invest_money == "" ) {
+                    vm.arr_show_error_message.push( "[조건설정] 초기투자금액을 입력해 주세요." );
+                }else if( isNaN( vm.init_invest_money ) ) {
                     vm.arr_show_error_message.push( "[조건설정] 초기투자금액은 숫자만 입력해 주세요." );
+                }else if( Number( vm.init_invest_money ) <= 0 ) {
+                    vm.arr_show_error_message.push( "[조건설정] 초기투자금액은 0 보다 큰수를 입력해 주세요." );
                 }
+            }catch( e ) {
+                vm.arr_show_error_message.push( "[조건설정] 초기투자금액은 숫자만 입력해 주세요." );
             }
 
         /**************/
@@ -1173,7 +1403,10 @@ export default {
         /**************/
             if( vm.arr_show_error_message && vm.arr_show_error_message.length > 0  ) {
                 return  false;
-            }            
+            }
+
+
+            vm.fn_showProgress( true );
 
             axios.post(Config.base_url + "/user/simulation/saveBaicInfo", {
                 data: { 
@@ -1195,6 +1428,8 @@ export default {
                     ,   "arr_portfolio"         :   vm.arr_portfolio            /* 포트폴리오 설정 정보 */
                 }
             }).then( async function(response) {
+
+                vm.fn_showProgress( false );
 
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
@@ -1232,7 +1467,17 @@ export default {
                         }
                     }
                 }
-            });            
+            }).catch(error => {
+                vm.fn_showProgress( false );
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '서버로 부터 응답을 받지 못하였습니다.',
+                        {}
+                        ,4
+                    )
+                ) {
+                }
+            });
         },
 
         /*
@@ -1244,9 +1489,14 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
+            vm.fn_showProgress( true );
+
             axios.post(Config.base_url + "/user/simulation/getSimulMast", {
                 data: v_paramData
             }).then( function(response) {
+
+                vm.fn_showProgress( false );
+
                 if (response && response.data) {
                     var msg = ( response.data.msg ? response.data.msg : "" );
 
@@ -1282,6 +1532,16 @@ export default {
                         }
                     }
                 }
+            }).catch(error => {
+                vm.fn_showProgress( false );
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '서버로 부터 응답을 받지 못하였습니다.',
+                        {}
+                        ,4
+                    )
+                ) {
+                }
             });
         },
 
@@ -1294,9 +1554,13 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
+            vm.fn_showProgress( true );
+
             axios.post(Config.base_url + "/user/simulation/getSimulPortfolio", {
                 data: v_paramData
             }).then( function(response) {
+
+                vm.fn_showProgress( false );
 
                 /* 레코드를 초기화 한다. */
                 vm.fn_initRecords();
@@ -1327,6 +1591,16 @@ export default {
 
                         vm.arr_portfolio    =   dataList;
                     }
+                }
+            }).catch(error => {
+                vm.fn_showProgress( false );
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '서버로 부터 응답을 받지 못하였습니다.',
+                        {}
+                        ,4
+                    )
+                ) {
                 }
             });
         },

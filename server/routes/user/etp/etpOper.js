@@ -1305,7 +1305,7 @@ var getEtpOperPdfModify = function(req, res) {
 }
 
 /*
- * 국제표준코드에 속한 종목정보( td_kspjong_basic, td_future_basic )를 조회한다.
+ * 국제표준코드에 속한 종목정보( td_kspjong_basic )를 조회한다.
  * 2019-05-03  bkLove(촤병국)
  */
 var getJongmokData = function(req, res) {
@@ -1337,6 +1337,7 @@ var getJongmokData = function(req, res) {
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
+        resultMsg.dataList  =   [];
         Promise.using(pool.connect(), conn => {
 
             try {
@@ -1353,10 +1354,13 @@ var getJongmokData = function(req, res) {
                         resultMsg.err = err;
                     }
 
-                    if (rows && rows.length > 0) {
+                    if (!err) {
                         resultMsg.result = true;
                         resultMsg.msg = "";
-                        resultMsg.dataList = rows;
+
+                        if (rows && rows.length > 0) {
+                            resultMsg.dataList = rows;
+                        }
                     }
 
                     res.json(resultMsg);
@@ -1389,6 +1393,96 @@ var getJongmokData = function(req, res) {
         res.end();
     }
 }
+
+/*
+ * 국제표준코드에 속한 종목정보( td_future_basic )를 조회한다.
+ * 2019-05-03  bkLove(촤병국)
+ */
+var getFutureBasic1 = function (req, res) {
+    try {
+        log.debug('etpOper=>getFutureBasic1 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] etpOper.getFutureBasic1  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = "[error] etpOper.getFutureBasic1  req.body.data no data.";
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        resultMsg.dataList  =   [];
+        Promise.using(pool.connect(), conn => {
+
+            try {
+                stmt = mapper.getStatement('etpOper', 'getFutureBasic', paramData, format);
+                log.debug(stmt, paramData);
+
+                conn.query(stmt, function(err, rows) {
+
+                    if (err) {
+                        log.error(err, stmt, paramData);
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] etpOper.getFutureBasic1 Error while performing Query";
+                        resultMsg.err = err;
+                    }
+
+                    if (!err) {
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
+
+                        if (rows && rows.length > 0) {
+                            resultMsg.dataList = rows;
+                        }
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+                });
+
+            } catch (err) {
+                log.error(err, stmt, paramData);
+
+                resultMsg.result = false;
+                resultMsg.msg = "[error] etpOper.getFutureBasic1 Error while performing Query";
+                resultMsg.err = err;
+
+                res.json(resultMsg);
+                res.end();
+            }
+        });
+
+    } catch (expetion) {
+
+        log.error(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = "[error] etpOper.getFutureBasic1 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
+
+        resultMsg.dataList = [];
+
+        res.json(resultMsg);
+        res.end();
+    }
+};
 
 
 /*
@@ -2113,47 +2207,47 @@ var makePdfModify = function(fsData) {
   var ifname = config.pdfmodify_nas_path + "pdfmodify." + util.getTodayDate();
   var msg = "ETP PDF 변경신청 접수되었습니다.";
 
-  /* 파일내용이 초기화 된 이후에 수정된 내용만 저장되게 수정 ( written by bkLove 2019-07-30 )  */
-  fs.writeFile(ifname, "", function( err) {
+  for(var i=0; i<fsData.allDataList.length; i++) {
+    var tmp = fsData.allDataList[i];
+    for(var j=0; j<tmp.data.length; j++) {
+    wItem.fld003 = tmp.data[j].F12506;
+    wItem.fld004 = util.padZero(tmp.data[j].F16583, 3);       /* 사무수탁회사번호 3자리가 아닌 경우 0 추가 ( written by bkLove 2019-07-30 ) */
+    wItem.fld005 = tmp.data[j].F16012;
+    wItem.fld006 = util.padZero(tmp.data[j].F33837, 4);
+    wItem.fld007 = tmp.data[j].F16316;
+    wItem.fld008 = util.padZero(Number(tmp.data[j].F16499) * 100, 18); // 백엔드에서 나누기 100 해서 씀
 
-    log.debug( "### 파일초기화 ###" );
+console.log("tmp F16499 : " + tmp.data[j].F16499);
+console.log("wItem fld008 : " + wItem.fld008);
 
-    if( err ) {
-        log.debug( err );
-        return false;
+    wItem.fld009 = tmp.data[j].F33861;
+    // wItem.fld010 = util.padSpace(tmp.data[j].F16004, 40);
+    // 종목명 인코딩 문제로 스페이스 처리 (2019.08.06. 이형준 과장 요청)
+    wItem.fld010 = util.padSpace('', 40);
+    wItem.fld011 = util.padZero(tmp.data[j].F34840, 18);    /* 액면금액 ( written by bkLove 2019-08-05 ) */
+console.log("tmp F34840 : " + tmp.data[j].F34840);
+console.log("wItem fld011 : " + wItem.fld011);
+    wItem.fld013 = util.padZero(tmp.data[j].F16588, 18);    /* 평가금액 ( written by bkLove 2019-08-05 ) */
+console.log("tmp F16588 : " + tmp.data[j].F16588);
+console.log("wItem fld013 : " + wItem.fld013);
+        
+    if(tmp.data[j].status == 'insert') wItem.fld014 = '1';
+    else if(tmp.data[j].status == 'delete') wItem.fld014 = '2';
+    else  wItem.fld014 = '0';
+
+    var ostr = wItem.fld000 + wItem.fld001 + wItem.fld002 + wItem.fld003 + 
+    wItem.fld004 + wItem.fld005 + wItem.fld006 + wItem.fld007 + wItem.fld008 + 
+    wItem.fld009 + wItem.fld010 + wItem.fld011 + wItem.fld012 + wItem.fld013 + 
+    wItem.fld014 + wItem.filler + wItem.filler2;
+
+    msg = msg + "[" + tmp.data[j].F16013 + "]";
+    console.log("strlen : " + ostr.length);
+    fs.appendFileSync(ifname, ostr, 'utf8');
+    // fs.writeFileSync(ifname, ostr, {flag: 'a+', encoding:'latin1'});  // latin1 == ISO-8859-1
+    log.debug("wItem..................");
+    log.debug(wItem);
     }
-
-    log.debug( "### 파일초기화 완료 ###" );
-
-    for(var i=0; i<fsData.allDataList.length; i++) {
-        var tmp = fsData.allDataList[i];
-        for(var j=0; j<tmp.data.length; j++) {
-        wItem.fld003 = tmp.data[j].F12506;
-        wItem.fld004 = util.padZero(tmp.data[j].F16583, 3);       /* 사무수탁회사번호 3자리가 아닌 경우 0 추가 ( written by bkLove 2019-07-30 ) */
-        wItem.fld005 = tmp.data[j].F16012;
-        wItem.fld006 = util.padZero(tmp.data[j].F33837, 4);
-        wItem.fld007 = tmp.data[j].F16316;
-        wItem.fld008 = util.padZero(Number(tmp.data[j].F16499) * 100, 18); // 백엔드에서 나누기 100 해서 씀
-        wItem.fld009 = tmp.data[j].F33861;
-        wItem.fld010 = util.padSpace(tmp.data[j].F16004, 40);
-        if(tmp.data[j].status == 'insert') wItem.fld014 = '1';
-        else if(tmp.data[j].status == 'delete') wItem.fld014 = '2';
-        else  wItem.fld014 = '0';
-
-        var ostr = wItem.fld000 + wItem.fld001 + wItem.fld002 + wItem.fld003 + 
-        wItem.fld004 + wItem.fld005 + wItem.fld006 + wItem.fld007 + wItem.fld008 + 
-        wItem.fld009 + wItem.fld010 + wItem.fld011 + wItem.fld012 + wItem.fld013 + 
-        wItem.fld014 + wItem.filler + wItem.filler2;
-
-        msg = msg + "[" + tmp.data[j].F16013 + "]";
-        console.log("strlen : " + ostr.length);
-        fs.writeFileSync(ifname, ostr, {flag: 'a+'}, 'utf8');
-        // fs.writeFileSync(ifname, ostr, {flag: 'a+', encoding:'latin1'});  // latin1 == ISO-8859-1
-        log.debug("wItem..................");
-        log.debug(wItem);
-        }
-    }
-  });
+  }
 
   sms.smsSend(0, msg)
 }
@@ -2763,6 +2857,7 @@ module.exports.getEtpOperPdfByRateTitle = getEtpOperPdfByRateTitle;
 module.exports.getEtpOperPdfByRate = getEtpOperPdfByRate;
 module.exports.getEtpOperPdfModify = getEtpOperPdfModify;
 module.exports.getJongmokData = getJongmokData;
+module.exports.getFutureBasic1 = getFutureBasic1;
 
 module.exports.saveEtpOperPdfModify = saveEtpOperPdfModify;
 module.exports.getPdfByGroupNo = getPdfByGroupNo;
