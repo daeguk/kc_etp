@@ -34,7 +34,9 @@
         <!-- 시뮬레이션 결과화면 -->
         <SimulationResult   v-if="showSimulationId == 2"
 
-                            :paramData  =   "paramData">
+                            :paramData  =   "paramData"
+
+                            @fn_showProgress="fn_showProgress">
         </SimulationResult>        
 
 
