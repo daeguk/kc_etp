@@ -1874,6 +1874,527 @@ var getSimulPortfolio = function(req, res) {
     }
 }
 
+/*
+ * 백테스트 결과를 조회한다.
+ * 2019-08-14  bkLove(촤병국)
+ */
+var getBacktestResult = function(req, res) {
+    try {
+        log.debug('simulation.runBacktest 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation.runBacktest  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = "[error] simulation.runBacktest  req.body.data no data.";
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        /* 시뮬레이션 포트폴리오 종목정보 */
+        var simulPortfolio  =   {};
+        var arrInsertDtl    =   [];
+        var divideList      =   [];
+
+        resultMsg.dataList = [];
+        Promise.using(pool.connect(), conn => {
+
+            async.waterfall([
+
+                /* 1. (백테스트) 시뮬레이션 할 기본정보를 조회한다. */
+                function(callback) {
+
+                    try{
+
+                        if(  !paramData.grp_cd || !paramData.scen_cd  ) {
+                            resultMsg.result = false;
+                            resultMsg.msg = "[백테스트] 기본 인자값 정보가 존재하지 않습니다.";
+                            resultMsg.err = "[백테스트] 기본 인자값 정보가 존재하지 않습니다.";
+
+                            callback(resultMsg, paramData);
+                        }
+                        else{
+                            stmt = mapper.getStatement('simulation', 'getSimulListByBacktest', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulation.getSimulListByBacktest Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0 || !rows[0].start_year ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[백테스트] 시뮬레이션 할 기본 데이터가 존재하지 않습니다.";
+                                    resultMsg.err = "[백테스트] 시뮬레이션 할 기본 데이터가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                }else{
+                                    paramData.start_year    =   rows[0].start_year;     /* 시작년도 */
+                                }
+
+
+                                /* 단축코드별 시뮬레이션 포트폴리오 정보를 저장한다. */
+                                for( var i in rows ) {
+                                    simulPortfolio[ rows[i].F16013 ]    =   rows[i];
+                                }
+
+                                callback(null, paramData);
+                            });
+                        }
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] simulation.getSimulListByBacktest Error while performing Query";
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }
+                },
+
+                /* 2. (백테스트) 시뮬레이션 할 이력 데이터를 조회한다. */
+                function(msg, callback) {
+
+                    try{
+                        stmt = mapper.getStatement('simulation', 'getSimulHistListByBacktest', paramData, format);
+                        log.debug(stmt, paramData);
+
+                        conn.query(stmt, function(err, rows) {
+
+                            if (err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "[error] simulation.getSimulHistListByBacktest Error while performing Query";
+                                resultMsg.err = err;
+
+                                return callback(resultMsg);
+                            }
+
+                            if ( !rows || rows.length == 0  ) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "[백테스트] 시뮬레이션 할 이력 데이터가 존재하지 않습니다.";
+                                resultMsg.err = "[백테스트] 시뮬레이션 할 이력 데이터가 존재하지 않습니다.";
+
+                                return callback(resultMsg);
+                            }                            
+
+
+                            if (rows && rows.length > 0) {
+
+                                var v_next_F12506   =   "";         /* 이후 입회일자 */
+                                var subListObj      =   {};         /* 일자별 종목 데이터 */
+                                var subMastObj      =   {};         /* 일자별 결과 정보 */
+
+                                for( var i=0; i < rows.length; i++ ) {
+
+                                    v_next_F12506   =   "";
+
+                                    if( !subListObj[ rows[i].F12506 ] || Object.keys( subListObj[ rows[i].F12506 ] ).length == 0  ) {
+                                        subListObj[ rows[i].F12506 ]    =   {};
+                                    }
+
+                                    if( !subMastObj[ rows[i].F12506 ] || Object.keys( subMastObj[ rows[i].F12506 ] ).length == 0  ) {
+                                        subMastObj[ rows[i].F12506 ]    =   {};
+                                    }                                    
+
+                                    subListObj[ rows[i].F12506 ][ rows[i].F16013 ]  =   rows[i];
+
+
+                                    /* i+1 이 마지막 인 경우 - i+1 입회일자 셋팅 */
+                                    if( i+1 <= rows.length-1 ) {
+                                        v_next_F12506   =   rows[i+1].F12506;
+                                    }
+                                    /* i 가 마지막인 경우 - 마지막 입회일자 셋팅 */
+                                    else if( i == rows.length-1 ) {
+                                        v_next_F12506   =   rows[i].F12506;
+                                    }
+
+
+                                    /* 입회일자가 달라지는 경우 */
+                                    if(     v_next_F12506 != rows[i].F12506
+                                        ||  i == rows.length-1 
+                                    ) {
+
+                                        /* 입회일(F12506) 종목들의 기준정보로 데이터를 설정한다. */
+                                        fn_set_F12506( i, rows[i].F12506, subListObj[ rows[i].F12506 ], simulPortfolio, subMastObj[ rows[i].F12506 ] );
+
+                                        /* 
+                                            T일이 리밸런싱 일자인가? ( 주기와 일자가 같은 경우 ) 
+                                        */
+                                        if(     subMastObj[ rows[i].F12506 ].rebalance_cycle_cd_yn == 'Y'
+                                            &&  subMastObj[ rows[i].F12506 ].rebalance_date_cd_yn == 'Y'
+                                        ) {
+
+                                            /*                                        
+                                                1. 리밸런싱 종목정보 LOAD
+                                                - 화면에서 입력받는 정보: 주기에 해당하는 종목 리스트, 배분비율
+                                                - DB에서 입력받는 정보: 종목의 T일 기준가, 종가, 상장주식수
+                                            */
+
+                                            /*
+                                                2. 종목별 지수적용비율 계산
+                                                - 구성 종목들의 지수적용비율을 각각계산한다
+                                                - A종목_지수적용비율 = 배분비율 * SUM(기준가 * 상장주식수) /  (A종목_기준가 * A종목상장주식수)
+                                                - 여기서 SUM(기준가 * 상장주식수) 는 T일의 구성종목의 [기준가*상장주식수] 총 합을 의미한다.
+                                            */
+
+                                            /*
+                                                3. 기준시가총액 재계산
+                                                - T일_기준시가총액 = T-1일_기준시가총액 * SUM( T일_기준가 * T일_상장주식수 * T일_지수적용비율) / T-1일_비교시가총액
+                                            */
+
+                                            /*
+                                                6. 비교시가총액 계산
+                                                - 비교시가총액 = SUM(종가*상장주식수*지수적용비율)
+                                            */
+
+                                            /*
+                                                7. 지수 산출
+                                                - 지수 = 비교시가총액 / 기준시가총액 * 1000
+                                            */
+                                        }
+                                        else{
+                                            /*
+                                                4. 시장조치 확인을 위한 T-1일 비교시총과 T일 시가기준 비교시총  비교
+                                                - (1)T-1일 비교시가총액: 이전 루프에서 계산된 직전일의 비교시가총액 사용
+                                                - (2)T일 시가기준 비교시가총액: SUM(기준가 * 상장주식수 * 지수적용비율)
+                                                - (1) 과 (2) 의 값이 다를 경우 시장조치가 발생했다고 판단할 수 있다
+                                            */
+
+                                            /*
+                                                비교시가총액 변동이 발생했나?
+                                            */
+                                            if( true ) {
+                                                    /*
+                                                        5. 종목별 지수적용비율 계산
+                                                        - [2. 종목별 지수적용비율 계산] 과 다른 점은 배분비율을 사용하는 대신 직전일(T-1)의 종목비중을 넣어 계산한다는 것이다.
+                                                        - A종목_지수적용비율 = (T-1일_A종목종가 * T-1일_A종목상장주식수 * T-1일_A종목지수적용비율) * SUM(T일_기준가 * T일_상장주식수) / (T일_ A종목기준가 * T일_A종목상장주식수)
+                                                    */
+                                            }
+                                        }
+
+                                        /*
+                                            8. 지수 및 구성종목 정보 LOAD
+                                            - 직전일의 지수 및 구성종목 정보는 당일에 사용되므로 관리한다.
+                                            - 지수정보 : 기준시가총액, 비교시가총액, 지수
+                                            - 구성종목정보 : 종목 리스트, 기준가, 종가, 상장주식수, 배분비율, 지수적용비율
+                                        */                                     
+                                    }
+                                }
+
+
+                                for( var i=0; i < Object.keys( subListObj ).length; i++ ) {
+                                    var v_F12506        =   Object.keys( subListObj )[i];
+                                    var v_subItem       =   subListObj[ v_F12506 ];
+                                    var v_mastItem      =   subMastObj[ v_F12506 ];
+
+                                    for( var j=0; j < Object.keys( subListObj[ v_F12506 ] ).length; j++ ) {
+                                        var v_dataKey       =   Object.keys( subListObj[ v_F12506 ] )[j];
+                                        var v_dataItem      =   subListObj[ v_F12506 ][ v_dataKey ];
+
+console.log( "v_dataItem", v_dataItem );
+                                    }
+                                }
+                            }
+
+                            callback(null, paramData);
+                        });
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] simulation.runBacktest Error while performing Query";
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }
+                },
+
+            ], function(err) {
+
+                if (err) {
+                    log.error(err, stmt, paramData);
+                } else {
+
+                    resultMsg.result = true;
+                    resultMsg.msg = "";
+                    resultMsg.err = null;
+                }
+
+                res.json(resultMsg);
+                res.end();
+            });
+        });
+
+    } catch (expetion) {
+
+        log.error(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = "[error] simulation.runBacktest 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
+
+        resultMsg.dataList = [];
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+/*
+ * 입회일(F12506) 종목들의 기준정보로 데이터를 설정한다.
+ * 2019-08-14  bkLove(촤병국)
+ */
+var fn_set_F12506 = function( p_rowInx, p_F12506,  p_subListObj, p_simulPortfolioObj, p_subMastObj ) {
+
+    /* 소수점시 계산시 사용할 고정값 */
+    var numInfo     =   {
+            IMPORTANCE_FIX_NUM      :   100             /* 비중  소수점 계산시 사용할 고정값 */
+        ,   IMPORTANCE_FIX_NUM1     :   10000           /* 비중  소수점 계산시 사용할 고정값 */
+        ,   JISU_RATE_FIX_NUM       :   10000000000     /* 지수적용비율 소수점 계산시 사용할 고정값 */
+    };
+
+    /* 현금 정보 */
+    var krwInfo  =   {  
+            F16013                  :   "KRW"           /* 종목코드 */
+        ,   F16002                  :   "현금"          /* 종목명 */
+        ,   importance              :   0               /* 비중 */
+
+        ,   F15007                  :   1               /* 기준가 ( 전일 종가 ) - 기준가 */    
+        ,   F15001                  :   1               /* 현재가 ( 당일 종가 ) - 종가 */
+        ,   F16143                  :   100000000       /* 상장주식수 */
+        ,   F15028                  :   0               /* 시가기준 시총 */
+        ,   jisu_rate               :   0               /* 지수적용비율 */
+        ,   KRW_exists_yn           :   "N"             /* 현금 존재여부 */
+    };
+
+    /* total 정보 */
+    var totalInfo  =   {
+            tot_F15028              :   0               /* 시가기준 시총 */
+        ,   tot_F15028_S            :   0               /* 기준 시가총액 */
+        ,   tot_F15028_C            :   0               /* 비교 시가총액 */
+
+        ,   start_year              :   ""              /* 시작년도 */
+        ,   rebalance_cycle_cd      :   ""              /* 리밸런싱주기 (COM006) */
+        ,   rebalance_date_cd       :   ""              /* 리밸런싱일자 (COM007) */
+        ,   init_invest_money       :   0               /* 초기투자금액 */
+        ,   bench_mark_cd           :   ""              /* 벤치마크 (COM008) */
+        ,   importance_method_cd    :   ""              /* 비중설정방식 (COM009) */
+
+        ,   rebalance_cycle_cd_yn   :   "N"             /* 리밸런싱주기 에 포함되는지 체크 */
+        ,   rebalance_date_cd_yn    :   "N"             /* 리밸런싱일자 에 포함되는지 체크 */
+    };
+
+
+    /* 1. 포트 폴리오를 기준으로 종목코드 할당 및 total 정보를 설정한다. */
+    for( var i = 0; i < Object.keys( p_simulPortfolioObj ).length; i++ ) {
+        var v_portKey     =   Object.keys( p_simulPortfolioObj )[i];
+        var v_portItem    =   Object.assign( {}, p_simulPortfolioObj[ v_portKey ] );
+
+
+        /*  일자별 이력에 존재하는 종목코드가 시뮬레이션 포트폴리오 종목에 존재하는 경우 
+            - 시뮬레이션 포트폴리오 정보를 일자별 종목코드에 할당
+        */
+        if( Object.keys( p_subListObj ).includes( v_portKey ) ) {
+            v_portItem.F16013_exists_yn         =   "Y";                        /* 종목코드 존재여부 */
+            Object.assign( p_subListObj[ v_portKey ],  v_portItem );
+
+            if( totalInfo.rebalance_cycle_cd_yn == "N" ) {
+                if( p_subListObj[ v_portKey ].chk_rebalance_cycle_cd    ==  v_portItem.rebalance_cycle_cd  ) {
+                    totalInfo.rebalance_cycle_cd_yn     =   "Y";
+                }
+            }
+
+            if( totalInfo.rebalance_date_cd_yn == "N" ) {
+                if( p_subListObj[ v_portKey ].chk_rebalance_date_cd  ==  v_portItem.rebalance_date_cd  ) {
+                    totalInfo.rebalance_date_cd_yn   =   "Y";
+                }
+            }
+        }
+        else{
+            /* importance_method_cd ( 비중) - 1 : 직접입력 / 2 : 동일가중 / 3 : 시총비중 */
+
+            /* 일자별 이력에 종목코드가 없는 경우 현금존재여부 = 'Y' 로 설정 */
+            if( krwInfo.KRW_exists_yn  ==  "N" ) {
+                krwInfo.KRW_exists_yn   =   "Y";
+            }
+           
+        /* 현금에서 사용할 정보 설정 */
+            krwInfo.importance                  =       Number( krwInfo.importance )
+                                                    +   (
+                                                                Number( v_portItem.importance )
+                                                            /   numInfo.IMPORTANCE_FIX_NUM 
+                                                        );                                              /* 존재하지 않는 항목들의 비중 합계 ( 비중이 정수로 되어 있어 100을 나눈다. ) */
+
+        /* 항목정보 설정 */
+            v_portItem.importance               =   0;                                                  /* 비중 */
+            v_portItem.F15007                   =   0;                                                  /* 기준가 ( 전일 종가 ) - 기준가 */
+            v_portItem.F15001                   =   0;                                                  /* 현재가 ( 당일 종가 ) - 종가 */
+            v_portItem.F16143                   =   0;                                                  /* 상장주식수 */
+            v_portItem.F16013_exists_yn         =   "N";                                                /* 종목코드 존재여부 */
+
+            p_subListObj[ v_portKey ]           =   Object.assign( {},  v_portItem );
+        }
+
+        p_subListObj[ v_portKey ].importance    =   (
+                                                            Number( p_subListObj[ v_portKey ].importance )
+                                                        /   numInfo.IMPORTANCE_FIX_NUM
+                                                    );                                                  /* 비중 ( 비중이 정수로 되어 있어 100을 나눈다. ) */
+
+        p_subListObj[ v_portKey ].F15028        =   fn_calc_data( 
+                                                            "F15028"
+                                                        ,   { F15007 : p_subListObj[ v_portKey ].F15007, F16143 : p_subListObj[ v_portKey ].F16143 } 
+                                                    );                                                  /* 시가기준 시총 */
+
+
+    /* total 정보 설정 */
+        totalInfo.tot_F15028                    =       Number( totalInfo.tot_F15028 ) 
+                                                    +   Number( p_subListObj[ v_portKey ].F15028 );     /* 시가기준 시총 */
+
+        if( i == 0 ) {
+            totalInfo.start_year                =   v_portItem.start_year;                              /* 시작년도 */
+            totalInfo.rebalance_cycle_cd        =   v_portItem.rebalance_cycle_cd;                      /* 리밸런싱주기 (COM006) */
+            totalInfo.rebalance_date_cd         =   v_portItem.rebalance_date_cd;                       /* 리밸런싱일자 (COM007) */
+            totalInfo.init_invest_money         =   v_portItem.init_invest_money;                       /* 초기투자금액 */
+            totalInfo.bench_mark_cd             =   v_portItem.bench_mark_cd;                           /* 벤치마크 (COM008) */
+            totalInfo.importance_method_cd      =   v_portItem.importance_method_cd;                    /* 비중설정방식 (COM009) */
+        }
+    }
+
+
+    /* 2. 현금이 존재하는 경우 현금 종목을 추가한다. */
+    if( krwInfo.KRW_exists_yn == "Y" ) {
+        p_subListObj[ krwInfo.F16013 ]  =   Object.assign( {},  krwInfo );
+
+        p_subListObj[ krwInfo.F16013 ].F15028   =   fn_calc_data( 
+                                                            "F15028"
+                                                        ,   { F15007 : p_subListObj[ krwInfo.F16013 ].F15007, F16143 : p_subListObj[ krwInfo.F16013 ].F16143 } 
+                                                    );                                                      /* 시가기준 시총 */
+
+        totalInfo.tot_F15028                    =       Number( totalInfo.tot_F15028 ) 
+                                                    +   Number( p_subListObj[ krwInfo.F16013 ].F15028 );    /* 시가기준 시총 */
+    }
+
+
+    /* 3. total 정보로 지수정보를 계산한다. */
+    for( var i = 0; i < Object.keys( p_subListObj ).length; i++ ) {
+        var v_dataKey     =   Object.keys( p_subListObj )[i];
+        var v_dataItem    =   p_subListObj[ v_dataKey ];
+
+        v_dataItem.jisu_rate            =       fn_calc_data( 
+                                                        "jisu_rate"
+                                                    ,   { importance : v_dataItem.importance, F15028 : v_dataItem.F15028 }
+                                                    ,   { tot_F15028 : totalInfo.tot_F15028 }
+                                                );                                  /* 지수적용비율 */
+
+        v_dataItem.F15028_S             =       fn_calc_data( 
+                                                        "F15028_S"
+                                                    ,   { F15007 : v_dataItem.F15007, F16143 : v_dataItem.F16143, jisu_rate : v_dataItem.jisu_rate }
+                                                    ,   {}
+                                                );                                  /* 기준시가총액 */
+
+        v_dataItem.F15028_C             =       fn_calc_data( 
+                                                        "F15028_C"
+                                                    ,   { F15007 : v_dataItem.F15001, F16143 : v_dataItem.F16143, jisu_rate : v_dataItem.jisu_rate }
+                                                    ,   { }
+                                                );                                  /* 비교시가총액 */
+
+    /* total 정보 */
+        totalInfo.tot_F15028_S          =       Number( totalInfo.tot_F15028_S )
+                                            +   Number( v_dataItem.F15028_S );      /* 기준 시가총액 */
+
+        totalInfo.tot_F15028_C          =       Number( totalInfo.tot_F15028_C )
+                                            +   Number( v_dataItem.F15028_S );      /* 비교 시가총액 */
+    }
+
+    Object.assign( p_subMastObj, totalInfo );
+}
+
+
+/*
+ * 구분에 따라 계산식을 수행한다.
+ * 2019-08-14  bkLove(촤병국)
+ */
+var fn_calc_data = function(        p_gubun = 'F15028'
+                                ,   p_param={ importance : 0,  F15007 : 0, F15001 : 0, F16143 : 0, F15028 : 0, jisu_rate : 0 }
+                                ,   p_totalInfo={ tot_F15028 : 0, tot_F15028_S : 0, tot_F15028_C : 0 }   ) {
+
+    /* p_param */
+    //  importance      /* 비중 */
+    //  F15007          /* 기준가 ( 전일 종가 ) - 기준가 */
+    //  F15001          /* 현재가 ( 당일 종가 ) - 종가 */
+    //  F16143          /* 상장주식수 */
+    //  F15028          /* 시가기준 시총 */
+    //  jisu_rate       /* 지수적용비율 */    
+
+    /* p_totalInfo */
+    //  tot_F15028      /* 시가기준 시총 */
+    //  tot_F15028_S    /* 기준 시가총액 */
+    //  tot_F15028_C    /* 비교 시가총액 */
+
+    /* 소수점시 계산시 사용할 고정값 */
+    var numInfo     =   {
+            IMPORTANCE_FIX_NUM      :   100             /* 비중  소수점 계산시 사용할 고정값 */
+        ,   IMPORTANCE_FIX_NUM1     :   10000           /* 비중  소수점 계산시 사용할 고정값 */
+        ,   JISU_RATE_FIX_NUM       :   10000000000     /* 지수적용비율 소수점 계산시 사용할 고정값 */
+    };
+
+    var v_calc      =   0;
+
+    switch ( p_gubun ) {
+
+                /* 시가기준 시총 = 상장주식수(p_param.F16143) * 기준가(p_param.F15007) */
+        case    "F15028"    :
+                    v_calc  =   Number( p_param.F16143 )  *  Number( p_param.F15007 );
+                    break;
+
+                /* 지수적용비율 = ( 비중(p_param.importance) * SUM(시가기준 시총 p_totalInfo.tot_F15028 ) ) / 현재종목 시가 총액( p_param.F15028 ) */
+        case    "jisu_rate"    :
+
+                    /* 분모가 0 인 경우 */
+                    if( !p_param.F15028 || p_param.F15028 == 0 ) {
+                        v_calc  =   0;
+                    }else{
+                        v_calc  =   Math.round( 
+                                        ( ( Number( p_param.importance ) * Number( p_totalInfo.tot_F15028 ) ) / p_param.F15028 ) * numInfo.JISU_RATE_FIX_NUM
+                                    ) / ( numInfo.JISU_RATE_FIX_NUM * numInfo.IMPORTANCE_FIX_NUM );
+                    }
+                    break;
+
+                /* 기준 시가총액 = 기준가(p_param.F15007) * 상장주식수(p_param.F16143) * 지수적용비율(p_param.jisu_rate) */
+        case    "F15028_S"    :
+                    v_calc  =   Number( p_param.F16143 )  *  Number( p_param.F16143 ) * Number( p_param.jisu_rate );
+                    break;
+
+                /* 비교 시가총액 = 종가(p_param.F15001) * 상장주식수(p_param.F16143) * 지수적용비율(p_param.jisu_rate) */
+        case    "F15028"    :
+                    v_calc  =   Number( p_param.F15001 )  *  Number( p_param.F16143 ) *  Number( p_param.jisu_rate );
+                    break;                    
+    }
+
+    return  v_calc;
+}
+
 module.exports.getInitGrpCd = getInitGrpCd;
 module.exports.getNextScenName = getNextScenName;
 module.exports.getInitData = getInitData;
@@ -1883,3 +2404,4 @@ module.exports.modifyGroup = modifyGroup;
 module.exports.getSimulList = getSimulList;
 module.exports.getSimulMast = getSimulMast;
 module.exports.getSimulPortfolio = getSimulPortfolio;
+module.exports.getBacktestResult = getBacktestResult;

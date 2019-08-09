@@ -36,9 +36,9 @@
                     <caption></caption>
                     <colgroup>
                         <col width="40%" />
+                        <col width="28%" />
                         <col width="20%" />
-                        <col width="20%" />
-                        <col width="20%" />
+                        <col width="12%" />
                     </colgroup>
                     <thead>
                         <tr>
@@ -89,9 +89,9 @@
                             </td>
 
                             <!-- 버튼 영역 -->
-                            <td class="txt_right">
+                            <td class="txt_left">
                                 <button name="btn1" class="btn_icon v-icon material-icons"  >inbox</button>
-                                <button name="btn2" class="btn_icon v-icon material-icons"  >equalizer</button>
+                                <button name="btn2" class="btn_icon v-icon material-icons"  v-if="item.grp_yn == '0'" >equalizer</button>
 
                                 <v-menu bottom left>
                                     <template v-slot:activator="{ on }">

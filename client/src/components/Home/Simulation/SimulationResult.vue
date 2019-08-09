@@ -1,6 +1,7 @@
 <template>
     <v-layout row wrap class="content_margin etp_new">
         <v-flex grow>
+
             <v-card flat>
                 <v-card-title primary-title>
                     <h3 class="headline" pb-0>
@@ -11,7 +12,14 @@
                     </h3>
                 </v-card-title>
             </v-card>
+
             <v-card flat class="bot_pad1">
+                <div class="warning_box"    v-if="arr_show_error_message != null && arr_show_error_message.length > 0">
+                    <span class="margin_n" v-for="(item, index) in arr_show_error_message" :key="index">
+                        <v-icon color="#ff4366">error_outline</v-icon> {{item}} <br>
+                    </span>
+                </div>
+
                 <h4>
                     테스트 결과
                     <span class="excel_btn">
@@ -176,6 +184,11 @@
                 </v-card>
             </v-card>
         </v-flex>
+
+        <v-flex>
+            <ConfirmDialog ref="confirm2"></ConfirmDialog>
+        </v-flex>
+        
     </v-layout>
 </template>
 
@@ -184,8 +197,11 @@
 import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
+import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
+
+import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
 
 export default {
 
@@ -193,18 +209,22 @@ export default {
 
     data() {
         return {
-            activeTab: 0,
-            item: [
-                "일자별지수",
-                "리밸런싱내역",
-                "시뮬레이션 설정",
-                "분석정보#1",
-                "분석정보#2"
-            ]
+                activeTab: 0
+            ,   item: [
+                    "일자별지수",
+                    "리밸런싱내역",
+                    "시뮬레이션 설정",
+                    "분석정보#1",
+                    "분석정보#2"
+                ]
+
+            ,   arr_show_error_message      :   []
         };
     },
 
-    components: {},
+    components: {
+        ConfirmDialog,
+    },
 
     created() {
         var vm = this;
@@ -212,10 +232,83 @@ export default {
 
     mounted() {
         var vm = this;
+
+        /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
+        if(     vm.paramData && Object.keys( vm.paramData ).length > 0 
+            &&  vm.paramData.grp_cd && vm.paramData.scen_cd 
+        ) {
+            vm.fn_getBacktestResult( vm.paramData );
+        }else{
+            console.log( ">>>>>>>>>>>>" );
+        }
     },
 
     methods: {
 
+        /*
+         * 진행 progress 를 보여준다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_showProgress: function( visible ) {
+            var vm = this;
+            vm.$emit("fn_showProgress", visible );
+        },        
+
+        /*
+         * 백테스트 결과를 조회한다.
+         * 2019-08-14  bkLove(촤병국)
+         */
+        fn_getBacktestResult( v_param ) {
+            var vm = this;
+
+            vm.arr_show_error_message   =   [];
+
+            return  new Promise(function(resolve, reject) {
+
+                vm.fn_showProgress( true );
+
+                axios.post(Config.base_url + "/user/simulation/getBacktestResult", {
+                    data: v_param
+                }).then( function(response) {
+
+                    vm.fn_showProgress( false );
+
+                    if (response && response.data) {
+                        var msg = ( response.data.msg ? response.data.msg : "" );
+
+                        if (!response.data.result) {
+                            if( msg ) {
+                                vm.arr_show_error_message.push( msg );
+                            }
+
+                            resolve( { result : false } );
+                        }else{
+                            vm.arr_grp_cd   =   response.data.dataList;
+
+                            resolve( { result : true } );
+                        }
+                    }else{
+                        resolve( { result : false } );
+                    }
+                }).catch(error => {
+                    resolve( { result : false } );
+
+                    vm.fn_showProgress( false );
+                    if ( vm.$refs.confirm2.open(
+                            '확인',
+                            '서버로 부터 응답을 받지 못하였습니다.',
+                            {}
+                            ,4
+                        )
+                    ) {
+                    }
+                });
+
+            }).catch( function(e1) {
+                console.log( e1 );
+                resolve( { result : false } );
+            });
+        },
     }
 };
 </script>
