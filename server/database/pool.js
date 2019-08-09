@@ -95,6 +95,8 @@ module.exports = class {
         // 시뮬레이션 정보
         ibatisMapper.createMapper(['./database/mysql/user/simulation/simulation.xml']);
 
+        // 시뮬레이션 정보
+        ibatisMapper.createMapper(['./database/mysql/user/simulation/simulation_calcu.xml']);
         return ibatisMapper;
     }
 };
