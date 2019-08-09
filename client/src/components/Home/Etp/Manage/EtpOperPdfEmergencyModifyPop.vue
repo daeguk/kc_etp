@@ -793,6 +793,7 @@ export default {
                     ,   "F34840_prev"   :   '0'                         /* 액면금액 ( 변경전 ) */
                     ,   "F16588_prev"   :   '0'                         /* 평가금액 (변경전) */
                     ,   "F15007"        :   dataList[0].F15007          /* 검색 기준가 (신규추가시 사용) */
+                    ,   "F33904"        :   dataList[0].F33904          /* 선물 옵션 계약 승수 */
                 }
 
                 tblEmergeny01.row(  dataJson.rowIndex ).data( addData ).order( [0, "asc"] ).draw();
@@ -1265,6 +1266,7 @@ export default {
                 ,   "F34840_prev"   :   '0'             /* 액면금액 ( 변경전 ) */
                 ,   "F16588_prev"   :   '0'             /* 평가금액 (변경전) */
                 ,   "F15007"        :   '0'             /* kspjong_basic 기준가 (신규추가시 사용) */
+                ,   "F33904"        :   '1'             /* 계약승수*/
             }
 
             tblEmergeny01.row.add( addData ).order( [0, "asc"] ).draw(  );            
@@ -1325,6 +1327,7 @@ export default {
                     ,   "F34840_prev"   :   '0'                         /* 액면금액 ( 변경전 ) */
                     ,   "F16588_prev"   :   '0'                         /* 평가금액 (변경전) */
                     ,   "F15007"        :   '0'                         /* kspjong_basic 기준가 (신규추가시 사용) */
+                    ,   "F33904"        :   '0'                         /* 선물 옵션 계약 숭수 */
                 }
 
                 if( !dataJson.code_check ) {
@@ -1984,13 +1987,20 @@ export default {
 
                 /* 계산된 평가금액 */
                 var  v_F16588   =   0;
-
                 /* 1CU단위증권수 */
                 if( nowData.name == "F16499" ) {
 
                     if( tableData.status == "insert" ) {
                         /* v_F16588 (계산된 평가금액) = tableData.F15007 ( kspjong_basic 기준가 ) * nowData.F16499 ( 변경후 CU shrs ) */
-                        v_F16588    =   Number( tableData.F15007 ) * Number( nowData.F16499 );
+                        //F33861 -> 시장구분
+                        //F33904 -> 계약승수                        
+                        /* 선물 옵션 : 평가금액 = 기준가 * CU수량 * 단위 계약승수*/
+                        if (tableData.F33861 == '4') {                        
+                            v_F16588    =   Number( tableData.F15007 ) * Number( nowData.F16499 ) * Number(tableData.F33904);
+                        /* 코스피, 코스닥 그외 : 평가금액 = 기준가 * CU수량 */
+                        } else {
+                            v_F16588    =   Number( tableData.F15007 ) * Number( nowData.F16499 );
+                        }
                     }else{
                         
                         /* 

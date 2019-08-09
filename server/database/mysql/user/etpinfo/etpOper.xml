@@ -159,12 +159,16 @@
                 ,   td_etfpdf_basic.F34840                                  AS  F34840      /* 액면금액설정현금액 */
                 ,   FORMAT( td_etfpdf_basic.F34840, 2 )                     AS  fmt_F34840  /* 액면금액설정현금액 */
                 ,   td_etfpdf_basic.F16588                                  AS  F16588      /* 평가금액 */
+                ,   td_future_basic.F33904                                  AS  F33904      /* 선물 옵션 계약승수*/ 
                 ,   td_etfpdf_basic.F34743                                  AS  F34743      /* ETF_PDF비중 */
                 ,   FORMAT( td_etfpdf_basic.F34743 / 100, 2 )               AS  fmt_F34743  /* ETF_PDF비중 */
 
                 ,   td_etfpdf_basic.F16004                                  AS  F16004      /* 해외시장종목명 */
 
           FROM  td_etfpdf_basic
+        LEFT OUTER JOIN td_future_basic 
+             ON td_etfpdf_basic.F12506 = td_future_basic.F12506
+             AND td_etfpdf_basic.F16316 = td_future_basic.F16012
          WHERE  1 = 1
 
         <if test= 'F16012 != null  and  F16012 != "" ' >
