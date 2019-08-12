@@ -952,11 +952,35 @@
                 )
            
            AND  td_kspjong_hist.F12506      >=      /* CONCAT( #{start_year}, '0101' ) */
-                                                    CONCAT( '2018', '0101' )                 /* 입회일자 ( 시뮬레이션 시작년도 + '0101' 부터 시작 ) */
+                                                    CONCAT( '2017', '1228' )                 /* 입회일자 ( 시뮬레이션 시작년도 + '0101' 부터 시작 ) */
+
+/*           AND  td_kspjong_hist.F12506      IN  (' 20171228', '20180102', '20180103' ) */
 
          ORDER  BY      td_kspjong_hist.F12506      /* 입회일자 */
                     ,   td_kspjong_hist.F16013      /* 단축코드 */
     ]]>
+    </select>
+
+
+
+    <!--
+    *   (백테스트) 시뮬레이션 할 이력 데이터를 조회한다.
+    *   2019-08-14  bkLove(촤병국)
+    -->
+    <select id="getSimulHistListByBacktest1">
+
+        SELECT  '20171228'    AS  F12506,     '005930'  AS  F16013  /* 단축코드 */,  '0'    AS  chk_rebalance_cycle_cd,   '0'   AS  chk_rebalance_date_cd,  2468000	    AS  F15007  /* 기준가 */,     50960     AS  F15001 /* 종가 */,	129098494   AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL
+        SELECT  '20171228'    AS  F12506,     '068270'  AS  F16013  /* 단축코드 */,  '0'    AS  chk_rebalance_cycle_cd,   '0'   AS  chk_rebalance_date_cd,  220000	    AS  F15007  /* 기준가 */,     217221	AS  F15001 /* 종가 */ , 122666424   AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL
+        SELECT  '20171228'    AS  F12506,     '084990'  AS  F16013  /* 단축코드 */,  '0'    AS  chk_rebalance_cycle_cd,   '0'   AS  chk_rebalance_date_cd,  160000	    AS  F15007  /* 기준가 */,     160257	AS  F15001 /* 종가 */ , 15956260    AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL    
+
+        SELECT  '20180102'    AS  F12506,     '005930'  AS  F16013  /* 단축코드 */,  '2'    AS  chk_rebalance_cycle_cd,   '1'   AS  chk_rebalance_date_cd,  50960	    AS  F15007  /* 기준가 */,     51020     AS  F15001 /* 종가 */,	129098494   AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL
+        SELECT  '20180102'    AS  F12506,     '068270'  AS  F16013  /* 단축코드 */,  '2'    AS  chk_rebalance_cycle_cd,   '1'   AS  chk_rebalance_date_cd,  217221	    AS  F15007  /* 기준가 */,     221936	AS  F15001 /* 종가 */ , 122666424   AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL
+        SELECT  '20180102'    AS  F12506,     '084990'  AS  F16013  /* 단축코드 */,  '2'    AS  chk_rebalance_cycle_cd,   '1'   AS  chk_rebalance_date_cd,  160257	    AS  F15007  /* 기준가 */,     163201	AS  F15001 /* 종가 */ , 15956260    AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL
+
+        SELECT  '20180103'    AS  F12506,     '005930'  AS  F16013  /* 단축코드 */,  '0'    AS  chk_rebalance_cycle_cd,   '0'   AS  chk_rebalance_date_cd,  51020	    AS  F15007  /* 기준가 */,     51620     AS  F15001 /* 종가 */,	129098494   AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL
+        SELECT  '20180103'    AS  F12506,     '068270'  AS  F16013  /* 단축코드 */,  '0'    AS  chk_rebalance_cycle_cd,   '0'   AS  chk_rebalance_date_cd,  221936	    AS  F15007  /* 기준가 */,     242371	AS  F15001 /* 종가 */ , 122666424   AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL 
+        SELECT  '20180103'    AS  F12506,     '084990'  AS  F16013  /* 단축코드 */,  '0'    AS  chk_rebalance_cycle_cd,   '0'   AS  chk_rebalance_date_cd,  163201	    AS  F15007  /* 기준가 */,     161140	AS  F15001 /* 종가 */ , 15956260    AS  F16143  /* 상장주식수*/    FROM    DUAL
+
     </select>
 
 
@@ -1032,8 +1056,8 @@
         DELETE  /* simulation.deleteTmSimulResult      [tm_simul_result] 테이블을 삭제한다. */
           FROM  tm_simul_result
          WHERE  1 = 1
-           AND     tm_simul_result.grp_cd           =   #{grp_cd}       /* 그룹코드(상위코드) */
-           AND     tm_simul_result.scen_cd          =   #{scen_cd}      /* 시나리오코드 */
+           AND  tm_simul_result.grp_cd          =   #{grp_cd}       /* 그룹코드(상위코드) */
+           AND  tm_simul_result.scen_cd         =   #{scen_cd}      /* 시나리오코드 */
     </delete>    
 
 </mapper>
