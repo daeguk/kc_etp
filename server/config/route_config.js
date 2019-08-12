@@ -175,7 +175,5 @@ module.exports = {
         { file: './sample/bluebirdTest', path: '/sample/getBluelist', method: 'getBlueList', session: 'uncheck', type: 'post' },
         { file: './sample/fileupload', path: '/sample/fileuploadSingle', method: 'fileuploadSingle', session: 'uncheck', type: 'post' },
         { file: './sample/fileupload', path: '/sample/fileuploadMulti', method: 'fileuploadMulti', session: 'uncheck', type: 'post' },
-
-        { file: './user/simulation/simulation_calcu', path: '/user/simulation/simulation_cal'  , method: 'simulation_cal'   , session: 'check', type: 'post' },     // 포트폴리오 정보 조회
     ]
 }
