@@ -526,6 +526,14 @@ var saveBaicInfo = function(req, res) {
         var arrDeleteDtl    =   [];
         var divideList      =   [];
 
+        var simulPortfolio  =   {};
+        var firstHistObj    =   {};         /* 백테스트 실행시 start_year 기준 직전 영업일 하루 데이터 정보 */
+        var subListObj      =   {};         /* 일자별 종목 데이터 */
+        var subMastObj      =   {};         /* 일자별 결과 정보 */
+
+        resultMsg.subListObj    =   {};
+        resultMsg.subMastObj    =   {};
+
         Promise.using(pool.connect(), conn => {
 
             conn.beginTransaction(txerr => {
@@ -1140,13 +1148,376 @@ var saveBaicInfo = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-                                callback(null);
+                                callback(null, paramData);
                             });
 
                         }else{
-                            callback(null);
+                            callback(null, paramData);
+                        }
+                    },
+
+                    /* 11. (백테스트) 백테스트 실행시 기본정보를 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            stmt = mapper.getStatement('simulation', 'getSimulListByBacktest2', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulation.getSimulListByBacktest2 Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[백테스트] 시뮬레이션 할 기본 데이터가 존재하지 않습니다.";
+                                    resultMsg.err = "[백테스트] 시뮬레이션 할 기본 데이터가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                }
+
+
+                                for( var i in rows ) {
+                                    simulPortfolio[ rows[i].F16013 ]    =   rows[i];
+                                }                                
+
+                                callback(null, paramData);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulation.getSimulListByBacktest2 Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 12. (백테스트) 백테스트 실행시 start_year 기준 직전 영업일 하루 데이터를 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            stmt = mapper.getStatement('simulation', 'getSimulHistListByBacktestBeforeDate', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulation.getSimulHistListByBacktestBeforeDate Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[백테스트] " + paramData.start_year + "0101 직전 영업일 정보가 존재하지 않습니다.";
+                                    resultMsg.err = "[백테스트] " + paramData.start_year + "0101 직전 영업일 정보가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                }
+
+
+                                for( var i in rows ) {
+                                    firstHistObj[ rows[i].F16013 ]      =   rows[i];
+                                }
+
+                                callback(null, paramData);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulation.getSimulHistListByBacktestBeforeDate Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
                         }
                     },                    
+
+                    /* 13. (백테스트) 백테스트 실행시 이력정보를 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !firstHistObj || Object.keys( firstHistObj ).length == 0 ) {
+                                resultMsg.result = false;
+                                resultMsg.msg   = "[백테스트] " + paramData.start_year + "0101 직전 영업일 정보가 존재하지 않습니다.";
+                                resultMsg.err   = "[백테스트] " + paramData.start_year + "0101 직전 영업일 정보가 존재하지 않습니다.";
+
+                                return callback(resultMsg);                                
+                            }
+
+                            stmt = mapper.getStatement('simulation', 'getSimulHistListByBacktest2', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulation.getSimulHistListByBacktest2 Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0  ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[백테스트] 시뮬레이션 할 이력 데이터가 존재하지 않습니다.";
+                                    resultMsg.err = "[백테스트] 시뮬레이션 할 이력 데이터가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                }
+
+
+                                if (rows && rows.length > 0) {
+
+                                    var v_prev_F12506   =   "";         /* 이전 입회일자 */
+                                    var v_next_F12506   =   "";         /* 이후 입회일자 */
+
+                                    var v_before_F12506 =   "";         /* 직전 입회일자 */
+                                    var v_fist_F12506   =   "";         /* 최초 입회일자 */
+                                    var v_first_yn      =   "N";        /* 최초여부 */
+
+                                    if( rows.length > 0 ) {
+                                        v_fist_F12506   =   rows[0].F12506;
+                                        v_prev_F12506   =   rows[0].F12506;
+                                        v_before_F12506 =   rows[0].F12506;
+                                    }
+
+                                    var subInx = 0;
+                                    for( var i=0; i < rows.length; i++ ) {
+
+                                        v_next_F12506   =   "";
+
+                                        if( !subListObj[ rows[i].F12506 ] || Object.keys( subListObj[ rows[i].F12506 ] ).length == 0  ) {
+                                            subListObj[ rows[i].F12506 ]    =   {};
+                                        }
+
+                                        if( !subMastObj[ rows[i].F12506 ] || Object.keys( subMastObj[ rows[i].F12506 ] ).length == 0  ) {
+                                            subMastObj[ rows[i].F12506 ]    =   {};
+                                        }
+
+                                        subListObj[ rows[i].F12506 ][ rows[i].F16013 ]  =   rows[i];
+
+
+                                    /* 입회일자 기준 직전 일자 추출 */
+                                        /* i-1 이 0 보다 큰 경우 - i-1 입회일자 셋팅 */
+                                        if( i-1 >= 0 ) {
+                                            v_prev_F12506   =   rows[i-1].F12506;
+                                        }
+
+                                        /* 입회일자가 달라지는 경우 */
+                                        if( v_prev_F12506  !=  rows[i].F12506 ) {
+                                            v_before_F12506 =   v_prev_F12506;
+                                        }
+
+
+                                    /* 입회일자가 바뀌는 경우 */
+
+                                        /* i+1 이 마지막 인 경우 - i+1 입회일자 셋팅 */
+                                        if( i+1 <= rows.length-1 ) {
+                                            v_next_F12506   =   rows[i+1].F12506;
+                                        }
+                                        /* i 가 마지막인 경우 - 마지막 입회일자 셋팅 */
+                                        else if( i == rows.length-1 ) {
+                                            v_next_F12506   =   rows[i].F12506;
+                                        }
+
+
+                                        /* 입회일자가 달라지는 경우 */
+                                        if(     v_next_F12506 != rows[i].F12506
+                                            ||  i == rows.length-1 
+                                        ) {
+
+                                            /* 비교시가총액 변동 발생 여부 */
+                                            subMastObj[ rows[i].F12506 ].changeYn   =   "N";
+
+                                            v_first_yn  =   "N";
+                                            if( v_fist_F12506 == rows[i].F12506 ) {
+                                                v_first_yn  =   "Y";
+                                            }
+                                            
+                                            /* 입회일(F12506) 종목들의 기준정보로 데이터를 설정한다. */
+                                            fn_set_F12506( 
+                                                    {       
+                                                            rowInx          :   i
+                                                        ,   F12506          :   rows[i].F12506
+                                                        ,   v_before_F12506 :   v_before_F12506 
+                                                        ,   first_yn        :   v_first_yn
+                                                    }
+                                                ,   subListObj
+                                                ,   simulPortfolio
+                                                ,   subMastObj
+                                            );
+
+                                            /* 변동여부 발생 등 데이터 확인을 위해 지수정보를 조회한다. */
+                                            fn_get_jisu(
+                                                    {       
+                                                            rowInx          :   i
+                                                        ,   F12506          :   rows[i].F12506
+                                                        ,   v_before_F12506 :   v_before_F12506
+                                                        ,   first_yn        :   v_first_yn
+                                                    }
+                                                ,   subListObj
+                                                ,   subMastObj
+                                            );
+
+
+console.log( "rows[i].F12506", rows[i].F12506, "subListObj", subListObj[ rows[i].F12506 ], "subMastObj", subMastObj[ rows[i].F12506 ]  );
+                                            /* 
+                                                T일이 리밸런싱 일자인가? ( 주기와 일자가 같은 경우 ) 
+                                            */
+                                            if(     subMastObj[ rows[i].F12506 ].rebalance_cycle_cd_yn == 'Y'
+                                                &&  subMastObj[ rows[i].F12506 ].rebalance_date_cd_yn == 'Y'
+                                            ) {
+                                                    subMastObj[ rows[i].F12506 ].rebalancing   =   "1";
+
+                                                /*                                        
+                                                    1. 리밸런싱 종목정보 LOAD
+                                                    - 화면에서 입력받는 정보: 주기에 해당하는 종목 리스트, 배분비율
+                                                    - DB에서 입력받는 정보: 종목의 T일 기준가, 종가, 상장주식수
+                                                */
+
+                                                /*
+                                                    2. 종목별 지수적용비율 계산
+                                                    - 구성 종목들의 지수적용비율을 각각계산한다
+                                                    - A종목_지수적용비율 = 배분비율 * SUM(기준가 * 상장주식수) /  (A종목_기준가 * A종목상장주식수)
+                                                    - 여기서 SUM(기준가 * 상장주식수) 는 T일의 구성종목의 [기준가*상장주식수] 총 합을 의미한다.
+                                                */
+
+                                                /*
+                                                    3. 기준시가총액 재계산
+                                                    - T일_기준시가총액 = T-1일_기준시가총액 * SUM( T일_기준가 * T일_상장주식수 * T일_지수적용비율) / T-1일_비교시가총액
+                                                */
+
+                                                /*
+                                                    6. 비교시가총액 계산
+                                                    - 비교시가총액 = SUM(종가*상장주식수*지수적용비율)
+                                                */
+
+                                                /*
+                                                    7. 지수 산출
+                                                    - 지수 = 비교시가총액 / 기준시가총액 * 1000
+                                                */
+
+/*
+for( var j = 0; j < Object.keys( subListObj[ rows[i].F12506 ] ).length; j++ ) {
+
+    var v_dataKey     =   Object.keys( subListObj[ rows[i].F12506 ] )[j];
+    var v_dataItem    =   subListObj[ rows[i].F12506 ][ v_dataKey ];
+
+
+    console.log( "######### ##########################" );
+    console.log( "rows[i].F12506", rows[i].F12506, "v_dataItem.importance", v_dataItem.importance, "v_dataItem.F15028 ", v_dataItem.F15028, "tot_F15028", subMastObj[ rows[i].F12506 ].tot_F15028  );
+}
+*/
+                                                /* 비교시가총액 변동여부에 따라 지수정보를 계산한다. */
+                                                fn_calc_jisu(
+                                                        {       
+                                                                rowInx          :   i
+                                                            ,   F12506          :   rows[i].F12506
+                                                            ,   v_before_F12506 :   v_before_F12506
+                                                        }
+                                                    ,   subListObj
+                                                    ,   subMastObj
+                                                );
+                                            }
+                                            else{
+
+// console.log( "subMastObj[ rows[i].F12506 ].prev_tot_F15028_C", subMastObj[ rows[i].F12506 ].prev_tot_F15028_C, "subMastObj[ rows[i].F12506 ].tot_F15028_S", subMastObj[ rows[i].F12506 ].tot_F15028_S );
+
+                                                /*
+                                                    4. 시장조치 확인을 위한 T-1일 비교시총과 T일 시가기준 비교시총  비교
+                                                    - (1)T-1일 비교시가총액: 이전 루프에서 계산된 직전일의 비교시가총액 사용
+                                                    - (2)T일 시가기준 비교시가총액: SUM(기준가 * 상장주식수 * 지수적용비율)
+                                                    - (1) 과 (2) 의 값이 다를 경우 시장조치가 발생했다고 판단할 수 있다
+                                                */
+                                                /* 비교시가총액 변동이 발생했나? ( 전일 비교시총 총액 과 당일 기준시총 총액이 다른 경우 ) */
+                                                if( subMastObj[ rows[i].F12506 ].prev_tot_F15028_C != subMastObj[ rows[i].F12506 ].tot_F15028_S ) {
+
+                                                      /* 비교시가총액 변동 발생 여부 */
+                                                      subMastObj[ rows[i].F12506 ].changeYn   =   "Y";
+                                                }
+// console.log( "######### 1" );
+                                                /*
+                                                    5. 종목별 지수적용비율 계산
+                                                    - [2. 종목별 지수적용비율 계산] 과 다른 점은 배분비율을 사용하는 대신 직전일(T-1)의 종목비중을 넣어 계산한다는 것이다.
+                                                    - A종목_지수적용비율 = (T-1일_A종목종가 * T-1일_A종목상장주식수 * T-1일_A종목지수적용비율) * SUM(T일_기준가 * T일_상장주식수) / (T일_ A종목기준가 * T일_A종목상장주식수)
+                                                */
+
+                                                /* 비교시가총액 변동여부에 따라 지수정보를 계산한다. */
+                                                fn_calc_jisu(
+                                                        {       
+                                                                rowInx          :   i
+                                                            ,   F12506          :   rows[i].F12506
+                                                            ,   v_before_F12506 :   v_before_F12506
+                                                        }
+                                                    ,   subListObj
+                                                    ,   subMastObj
+                                                );
+                                            }
+
+//                                             subInx++;
+
+//                                             /*
+//                                                 8. 지수 및 구성종목 정보 LOAD
+//                                                 - 직전일의 지수 및 구성종목 정보는 당일에 사용되므로 관리한다.
+//                                                 - 지수정보 : 기준시가총액, 비교시가총액, 지수
+//                                                 - 구성종목정보 : 종목 리스트, 기준가, 종가, 상장주식수, 배분비율, 지수적용비율
+//                                             */                                     
+                                         }
+                                    }
+
+                                    resultMsg.subListObj    =   subListObj;
+                                    resultMsg.subMastObj    =   subMastObj;
+
+
+
+
+//                                     for( var i=0; i < Object.keys( subListObj ).length; i++ ) {
+//                                         var v_F12506        =   Object.keys( subListObj )[i];
+//                                         var v_subItem       =   subListObj[ v_F12506 ];
+//                                         var v_mastItem      =   subMastObj[ v_F12506 ];
+
+//                                         for( var j=0; j < Object.keys( subListObj[ v_F12506 ] ).length; j++ ) {
+//                                             var v_dataKey       =   Object.keys( subListObj[ v_F12506 ] )[j];
+//                                             var v_dataItem      =   subListObj[ v_F12506 ][ v_dataKey ];
+
+//                                             var v_insertItem    =   Object.assign( v_dataItem, v_mastItem );
+
+// // console.log( v_insertItem );
+//                                                 arrInsertDtl.push( v_insertItem  );
+//                                         }
+//                                     }
+                                }
+
+                                callback(null);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulation.getSimulHistListByBacktest2 Error while performing Query";
+                            resultMsg.err = err;
+
+                            resultMsg.subListObj    =   {};
+                            resultMsg.subMastObj    =   {};
+
+                            callback(resultMsg);
+                        }
+                    }                    
 
                 ], function(err) {
 
@@ -1160,6 +1531,10 @@ var saveBaicInfo = function(req, res) {
                         resultMsg.grp_cd        =   paramData.grp_cd;               /* 그룹 코드 */
                         resultMsg.scen_cd       =   paramData.scen_cd;              /* 시나리오 코드 */
                         resultMsg.scen_order_no =   paramData.scen_order_no;        /* 시나리오 정렬순번 */
+
+                        resultMsg.subListObj    =   subListObj;
+                        resultMsg.subMastObj    =   subMastObj;
+
                         resultMsg.err           =   null;
 
                         conn.commit();
@@ -1179,6 +1554,8 @@ var saveBaicInfo = function(req, res) {
         resultMsg.result = false;
         resultMsg.msg = "[error] simulation.saveBaicInfo 오류가 발생하였습니다.";
         resultMsg.err = expetion;
+        resultMsg.subListObj    =   {};
+        resultMsg.subMastObj    =   {};
 
         res.json(resultMsg);
         res.end();

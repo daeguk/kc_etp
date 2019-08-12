@@ -864,6 +864,264 @@
 
 
     <!--
+    *   (백테스트) 백테스트 실행시 기본정보를 조회한다.
+    *   2019-08-14  bkLove(촤병국)
+    -->
+    <select id="getSimulListByBacktest2">
+    
+        SELECT      /* simulation.getSimulListByBacktest2 (백테스트) 백테스트 실행시 기본정보를 조회한다. */
+
+                    base.grp_cd                                         AS  grp_cd                  /* 그룹코드(상위코드) */
+                ,   base.scen_cd                                        AS  scen_cd                 /* 시나리오 코드 */
+
+                ,   base.start_year                                     AS  start_year              /* 시작년도 */
+                ,   base.rebalance_cycle_cd                             AS  rebalance_cycle_cd      /* 리밸런싱주기 (COM006) */
+                ,   base.rebalance_date_cd                              AS  rebalance_date_cd       /* 리밸런싱일자 (COM007) */
+                ,   base.init_invest_money                              AS  init_invest_money       /* 초기투자금액 */
+                ,   base.bench_mark_cd                                  AS  bench_mark_cd           /* 벤치마크 (COM008) */
+                ,   base.importance_method_cd                           AS  importance_method_cd    /* 비중설정방식 (COM009) */
+                        
+                ,   base.F16316                                         AS  F16316                  /* 구성종목코드 */       
+                ,   base.importance                                     AS  importance              /* 비중 */
+                
+                ,   td_kspjong_basic.F16013                             AS  F16013                  /* 단축코드 */
+                ,   td_kspjong_basic.F16002                             AS  F16002                  /* 종목명 */
+                ,   td_kspjong_basic.F16017                             AS  F16017                  /* 상장일 */
+                
+          FROM  (        
+                <foreach    collection="arr_portfolio"   item="data"     separator=" UNION ALL" >
+                <![CDATA[              
+                    SELECT      #{grp_cd}                               AS  grp_cd                  /* 그룹코드(상위코드) */
+                            ,   #{scen_cd}                              AS  scen_cd                 /* 시나리오코드 */
+
+                            ,   #{start_year}                           AS  start_year              /* 시작년도 */
+                            ,   #{rebalance_cycle_cd}                   AS  rebalance_cycle_cd      /* 리밸런싱주기 (COM006) */
+                            ,   #{rebalance_date_cd}                    AS  rebalance_date_cd       /* 리밸런싱일자 (COM007) */
+                            ,   #{init_invest_money}                    AS  init_invest_money       /* 초기투자금액 */
+                            ,   #{bench_mark_cd}                        AS  bench_mark_cd           /* 벤치마크 (COM008) */
+                            ,   #{importance_method_cd}                 AS  importance_method_cd    /* 비중설정방식 (COM009) */
+
+                            ,   #{data.F16316}                          AS  F16316                  /* 구성종목코드 */
+                            ,   #{data.importance}                      AS  importance              /* 비중 */
+
+                    FROM  DUAL
+                ]]>
+                </foreach>
+                )       base
+
+          JOIN  td_kspjong_basic
+            ON  (   base.F16316     =   td_kspjong_basic.F16012 )
+           
+         ORDER  BY  td_kspjong_basic.F16013    
+
+    </select>
+
+    <!--
+    *   (백테스트) 백테스트 실행시 start_year 기준 직전 영업일 하루 데이터를 조회한다.
+    *   2019-08-14  bkLove(촤병국)
+    -->
+    <select id="getSimulHistListByBacktestBeforeDate">
+    
+        SELECT      /* simulation.getSimulHistListByBacktestBeforeDate (백테스트) 백테스트 실행시 start_year 기준 직전 영업일 하루 데이터를 조회한다. */
+
+                    td_kspjong_hist.F16013                              AS  F16013                  /* 단축코드 */
+                ,   td_kspjong_hist.F12506                              AS  F12506                  /* 입회일자 */
+
+                ,   td_kspjong_hist.F15001                              AS  F15001                  /* 현재가 ( 당일 종가 ) - 종가 */
+                ,   td_kspjong_hist.F15007                              AS  F15007                  /* 기준가 ( 전일 종가 ) - 기준가 */
+                ,   td_kspjong_hist.F16143                              AS  F16143                  /* 상장주식수*/
+                ,   (
+                        CASE    WHEN    (
+                                            SELECT  tm_date_manage.F12506
+                                              FROM  tm_date_manage
+                                             WHERE  tm_date_manage.F12506       =   td_kspjong_hist.F12506
+                                               AND  tm_date_manage.GUBUN        =   base.GUBUN
+
+                                             LIMIT  1
+                                        )   IS  NULL
+                                THEN    'N'
+                                ELSE    'Y'
+                        END
+                    )                                                   AS  rebanance_yn            /* 리밸런싱 여부 */
+                
+            FROM  (
+                    SELECT      td_kspjong_basic.F16013                 AS  F16013                  /* 단축코드 */
+                            ,   (
+                                    SELECT  tm_code_dtl.com_val02
+                                      FROM  tm_code_dtl
+                                     WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
+                                       AND  tm_code_dtl.com_dtl_cd      =       base.rebalance_cycle_cd 
+                                                                            ||  IFNULL( base.rebalance_date_cd, '' )
+                                     LIMIT  1
+                                )                                       AS  GUBUN                   /* 구분 */
+
+                      FROM  (
+                            <foreach    collection="arr_portfolio"   item="data"     separator=" UNION ALL" >
+                            <![CDATA[
+                                SELECT      #{rebalance_cycle_cd}       AS  rebalance_cycle_cd      /* 리밸런싱주기 (COM006) */
+                                        ,   #{rebalance_date_cd}        AS  rebalance_date_cd       /* 리밸런싱일자 (COM007) */
+
+                                        ,   #{data.F16316}              AS  F16316                  /* 구성종목코드 */
+                                FROM  DUAL
+                            ]]>
+                            </foreach>
+                            )       base
+
+                      JOIN  td_kspjong_basic
+                        ON  (   
+                                base.F16316                 =   td_kspjong_basic.F16012  
+                            )
+
+                )     base
+
+          JOIN  td_kspjong_hist
+            ON  (   
+                            base.F16013                 =   td_kspjong_hist.F16013
+                    AND     td_kspjong_hist.F12506      =
+                            (
+                            <![CDATA[
+                                SELECT  MAX( td_kspjong_hist.F12506 )
+                                  FROM  td_kspjong_hist
+                                 WHERE  1 = 1
+                                   AND  base.F16013                 =   td_kspjong_hist.F16013
+                                   AND  td_kspjong_hist.F12506      <   CONCAT( #{start_year}, '0101' )         /* 입회일자 이전 */
+                                   AND  td_kspjong_hist.F12506      >=  DATE_FORMAT( 
+                                                                                    DATE_SUB( 
+                                                                                            CONCAT( #{start_year}, '0101' )
+                                                                                        , INTERVAL 3 MONTH 
+                                                                                    )
+                                                                                ,   '%Y%m%d' 
+                                                                            )                                   /* start_year 기준 3 달 전부터 시작  */
+                            ]]>
+                            )
+                )
+
+    </select>    
+
+    <!--
+    *   (백테스트) 백테스트 실행시 이력정보를 조회한다.
+    *   2019-08-14  bkLove(촤병국)
+    -->
+    <select id="getSimulHistListByBacktest2">
+    
+        SELECT      /* simulation.getSimulHistListByBacktest2 (백테스트) 백테스트 실행시 이력정보를 조회한다. */
+
+                    td_kspjong_hist.F16013                              AS  F16013                  /* 단축코드 */
+                ,   td_kspjong_hist.F12506                              AS  F12506                  /* 입회일자 */
+
+                ,   td_kspjong_hist.F15001                              AS  F15001                  /* 현재가 ( 당일 종가 ) - 종가 */
+                ,   td_kspjong_hist.F15007                              AS  F15007                  /* 기준가 ( 전일 종가 ) - 기준가 */
+                ,   td_kspjong_hist.F16143                              AS  F16143                  /* 상장주식수*/
+                ,   (
+                        CASE    WHEN    (
+                                            SELECT  tm_date_manage.F12506
+                                              FROM  tm_date_manage
+                                             WHERE  tm_date_manage.F12506       =   td_kspjong_hist.F12506
+                                               AND  tm_date_manage.GUBUN        =   base.GUBUN
+
+                                             LIMIT  1
+                                        )   IS  NULL
+                                THEN    'N'
+                                ELSE    'Y'
+                        END
+                    )                                                   AS  rebanance_yn            /* 리밸런싱 여부 */
+                
+            FROM  (
+                    SELECT      td_kspjong_basic.F16013                 AS  F16013                  /* 단축코드 */
+                            ,   (
+                                    SELECT  tm_code_dtl.com_val02
+                                      FROM  tm_code_dtl
+                                     WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
+                                       AND  tm_code_dtl.com_dtl_cd      =       base.rebalance_cycle_cd 
+                                                                            ||  IFNULL( base.rebalance_date_cd, '' )
+                                     LIMIT  1
+                                )                                       AS  GUBUN                   /* 구분 */
+
+                      FROM  (
+                            <foreach    collection="arr_portfolio"   item="data"     separator=" UNION ALL" >
+                            <![CDATA[              
+                                SELECT      #{rebalance_cycle_cd}       AS  rebalance_cycle_cd      /* 리밸런싱주기 (COM006) */
+                                        ,   #{rebalance_date_cd}        AS  rebalance_date_cd       /* 리밸런싱일자 (COM007) */
+
+                                        ,   #{data.F16316}              AS  F16316                  /* 구성종목코드 */
+                                FROM  DUAL
+                            ]]>
+                            </foreach>
+                            )       base
+
+                      JOIN  td_kspjong_basic
+                        ON  (   
+                                base.F16316                 =   td_kspjong_basic.F16012  
+                            )
+
+                )     base
+
+          JOIN  td_kspjong_hist
+            ON  (   
+                <![CDATA[
+                            base.F16013                 =   td_kspjong_hist.F16013
+                    AND     td_kspjong_hist.F12506      >=  CONCAT( #{start_year}, '0101' )     /* 입회일자 ( 시뮬레이션 시작년도 + '0101' 부터 시작 ) */
+                    AND     td_kspjong_hist.F12506      <=  CONCAT( #{start_year}, '0103' )
+                ]]>
+                )
+
+         ORDER  BY      td_kspjong_hist.F12506          /* 입회일자 */
+                    ,   td_kspjong_hist.F16013          /* 단축코드 */
+
+    </select>
+
+    <!--
+    *   (백테스트) 시뮬레이션 할 이력 데이터를 조회한다.
+    *   2019-08-14  bkLove(촤병국)
+    -->
+    <select id="getSimulHistListByBacktest">
+    <![CDATA[
+        SELECT      /* simulation.getSimulHistListByBacktest (백테스트) 시뮬레이션 할 이력 데이터를 조회한다. */
+
+                    /* COM006 리밸런싱주기( 1-매년, 2-반기, 3-분기,     4-매월, 5-매주 ) */
+                    CASE    WHEN    td_kspjong_hist.F12506  IN  ( '20180102', '20180702', '20190102', '20190701' )
+                            THEN    '2'
+                            ELSE    '0'
+                    END                                                 AS  chk_rebalance_cycle_cd  /* 리밸런싱 주기 표시 */
+
+
+                    /* COM007 리밸런싱일자( 1-첫영업일, 2-동시만기익일, 3-동시만기 익주 첫영업일, 4-옵션만기일, 5-옵션만기 익주 첫영업일 ) */
+               ,    CASE    WHEN    td_kspjong_hist.F12506  IN  ( '20180102', '20180702', '20190102', '20190701' )
+                            THEN    '1'
+                            ELSE    '0'
+                    END                                                 AS  chk_rebalance_date_cd   /* 리밸런싱 일자 표시 */
+                    
+
+                ,   td_kspjong_hist.F16013                              AS  F16013                  /* 단축코드 */
+                ,   td_kspjong_hist.F12506                              AS  F12506                  /* 입회일자 */
+
+                ,   td_kspjong_hist.F15001                              AS  F15001                  /* 현재가 ( 당일 종가 ) - 종가 */
+                ,   td_kspjong_hist.F15007                              AS  F15007                  /* 기준가 ( 전일 종가 ) - 기준가 */
+                ,   td_kspjong_hist.F16143                              AS  F16143                  /* 상장주식수*/
+
+         FROM   td_kspjong_hist
+
+         WHERE  1 = 1
+           AND  td_kspjong_hist.F16013      IN
+                (
+                    SELECT  td_kspjong_basic.F16013
+                      FROM          tm_simul_portfolio
+                      LEFT  JOIN    td_kspjong_basic
+                              ON    tm_simul_portfolio.F16316   =   td_kspjong_basic.F16012
+                     WHERE  1 = 1
+                       AND  tm_simul_portfolio.grp_cd    =   #{grp_cd}
+                       AND  tm_simul_portfolio.scen_cd   =   #{scen_cd}
+                )
+           
+           AND  td_kspjong_hist.F12506      >=      CONCAT( #{start_year}, '0101' )                 /* 입회일자 ( 시뮬레이션 시작년도 + '0101' 부터 시작 ) */
+
+         ORDER  BY      td_kspjong_hist.F12506      /* 입회일자 */
+                    ,   td_kspjong_hist.F16013      /* 단축코드 */
+    ]]>
+    </select>
+
+
+    <!--
     *   (백테스트) 시뮬레이션 할 기본정보를 조회한다.
     *   2019-08-14  bkLove(촤병국)
     -->
@@ -951,10 +1209,7 @@
                        AND  tm_simul_portfolio.scen_cd   =   #{scen_cd}
                 )
            
-           AND  td_kspjong_hist.F12506      >=      /* CONCAT( #{start_year}, '0101' ) */
-                                                    CONCAT( '2017', '1228' )                 /* 입회일자 ( 시뮬레이션 시작년도 + '0101' 부터 시작 ) */
-
-/*           AND  td_kspjong_hist.F12506      IN  (' 20171228', '20180102', '20180103' ) */
+           AND  td_kspjong_hist.F12506      >=      CONCAT( #{start_year}, '0101' )                 /* 입회일자 ( 시뮬레이션 시작년도 + '0101' 부터 시작 ) */
 
          ORDER  BY      td_kspjong_hist.F12506      /* 입회일자 */
                     ,   td_kspjong_hist.F16013      /* 단축코드 */

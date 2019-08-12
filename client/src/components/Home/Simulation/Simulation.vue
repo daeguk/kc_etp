@@ -234,26 +234,30 @@ export default {
                 ]
 
 
-            ,   disabled_rebalance_cd:[ false, true, true, true, false ]
+            ,   disabled_rebalance_cd:[ true, true, true, true, true ]
             ,   MastModalFlag: false
             ,   selectedRowIndex    :   -1
             ,   arr_rebalance_disabled_check    :   { 
-                        /* 0번째- 첫영업일 / 1번째- 동시만기 익일 / 2번째- 동시만기 익주 첫영업일 / 3번째- 옵션만기 익일 / 4번째- 옵션만기 익주 첫영업일 */
+                        /* 0번째- 첫영업일 / 1번째- 동시만기 영업일 / 2번째- 동시만기 익주 첫영업일 / 3번째- 옵션만기 영업일 / 4번째- 옵션만기 익주 첫영업일 */
 
-                        /* 1- 매년 */
-                        "1" :   [ false , true, true, false, false ]        /* disabled : 1번째- 동시만기 익일 / 2번째- 동시만기 익주 첫영업일 */
+                        /* 0- 모든영업일 */
+                        "0" :   [ true , true, true, true, true ]           /* disabled : 모두 */
 
-                        /* 2-반기 */
-                    ,   "2" :   [ false , false, false, false, false ]      /* disabled : 없음 */
+                        /* 1-매주 */
+                    ,   "1" :   [ false , true, true, true, true ]          /* disabled : 1번째- 동시만기 영업일 / 2번째- 동시만기 익주 첫영업일 / 3번째- 옵션만기 영업일 / 4번째- 옵션만기 익주 첫영업일 */
+
+                        /* 2-매월 */
+                    ,   "2" :   [ false , true, true, false, false ]        /* disabled : 1번째- 동시만기 영업일 / 2번째- 동시만기 익주 첫영업일 */
 
                         /* 3-분기 */
-                    ,   "3" :   [ false , false, false, false, false ]      /* disabled : 없음 */
+                    ,   "3" :   [ false , false, false, true, true ]        /* disabled : 3번째- 옵션만기 영업일 / 4번째- 옵션만기 익주 첫영업일 */                    
 
-                        /* 4-매월 */
-                    ,   "4" :   [ false , true, true, false, false ]        /* disabled : 1번째- 동시만기 익일 / 2번째- 동시만기 익주 첫영업일 */
+                        /* 4-반기 */
+                    ,   "4" :   [ false , true, true, true, true ]          /* disabled : 1번째- 동시만기 영업일 / 2번째- 동시만기 익주 첫영업일 / 3번째- 옵션만기 영업일 / 4번째- 옵션만기 익주 첫영업일 */
 
-                        /* 5-매주 */
-                    ,   "5" :   [ false , true, true, true, true ]          /* disabled : 1번째- 동시만기 익일 / 2번째- 동시만기 익주 첫영업일 / 3번째- 옵션만기 익일 / 4번째- 옵션만기 익주 첫영업일 */
+                        /* 5-분기 */
+                    ,   "5" :   [ false , true, true, true, true ]          /* disabled : 1번째- 동시만기 영업일 / 2번째- 동시만기 익주 첫영업일 / 3번째- 옵션만기 영업일 / 4번째- 옵션만기 익주 첫영업일 */
+
                 }
             ,   arr_show_error_message      :   []          /* 에러 메시지 노출 정보 */
 
@@ -272,7 +276,7 @@ export default {
             ,   grp_cd                      :   "*"         /* 상위 그룹코드 */
             ,   scen_name                   :   ""          /* 시나리오명 */
             ,   start_year                  :   "2000"      /* 시작년도 */
-            ,   rebalance_cycle_cd          :   "1"         /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
+            ,   rebalance_cycle_cd          :   "0"         /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
             ,   rebalance_date_cd           :   ""          /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
             ,   init_invest_money           :   1000000     /* 초기투자금액 */
             ,   bench_mark_cd               :   "0"         /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
@@ -1446,6 +1450,9 @@ export default {
                         vm.scen_cd          =   response.data.scen_cd;          /* 시나리오 코드 */
                         vm.scen_order_no    =   response.data.scen_order_no;    /* 시나리오 정렬순번 */
 
+                        var subListObj      =   response.data.subListObj;
+                        var subMastObj      =   response.data.subMastObj;
+
                         if( msg ) {
                             if ( await vm.$refs.confirm2.open(
                                     '확인',
@@ -1456,11 +1463,13 @@ export default {
                             ) {
                                 if(vm.$refs.confirm2.val == 'Y') {
 
+                                    vm.$emit( "fn_showSimulation", { showSimulationId : 2, subListObj: subListObj, subMastObj: subMastObj } );
+
                                     /* 시뮬레이션 마스터 정보를 조회한다. */
-                                    vm.fn_getSimulMast( { grp_cd : vm.grp_cd, scen_cd : vm.scen_cd } );
+//                                    vm.fn_getSimulMast( { grp_cd : vm.grp_cd, scen_cd : vm.scen_cd } );
 
                                     /* 시뮬레이션 포트폴리오 정보를 조회한다. */
-                                    vm.fn_getSimulPortfolio( { grp_cd : vm.grp_cd, scen_cd : vm.scen_cd } );
+//                                    vm.fn_getSimulPortfolio( { grp_cd : vm.grp_cd, scen_cd : vm.scen_cd } );
 
                                 }
                             }
@@ -1524,7 +1533,7 @@ export default {
                             vm.importance_method_cd     =   mastInfo.importance_method_cd;  /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
 
                             if( !vm.rebalance_cycle_cd ) {
-                                vm.rebalance_cycle_cd   =   "1";
+                                vm.rebalance_cycle_cd   =   "0";
                             }
 
                             /* 리밸런싱주기 선택시 v-radio 의 disabled 정보를 다시 셋팅한다. */

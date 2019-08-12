@@ -25,7 +25,8 @@
 
                                     :paramData  =   "paramData"
 
-                                    @fn_showProgress="fn_showProgress">
+                                    @fn_showProgress="fn_showProgress"
+                                    @fn_showSimulation="fn_showSimulation">
                 </Simulation>
             </v-tab-item>
 
@@ -135,7 +136,7 @@ export default {
          *  param 과 일치하는 정보를 보여준다.
          *  2019-08-12  bkLove(촤병국)
          */
-        async fn_showSimulation( v_param={ showSimulationId : 1,  grp_cd  : "",  scen_cd : "" } ) {
+        async fn_showSimulation( v_param={ showSimulationId : 1,  grp_cd  : "",  scen_cd : "", subListObj : {}, subMastObj : {} } ) {
             var vm = this;
 
             vm.paramData    =   v_param;
