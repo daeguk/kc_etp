@@ -267,7 +267,7 @@ export default {
                 fix_disabled : true,
                 fix_msg : "조치현황 없음"
             },
-            faverSize : 490,
+            faverSize : 448,
         };
     },
     mounted: function() {
