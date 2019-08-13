@@ -1230,6 +1230,7 @@
                 <![CDATA[
                             base.F16013                 =   td_kspjong_hist.F16013
                     AND     td_kspjong_hist.F12506      >=  CONCAT( #{start_year}, '0101' )     /* 입회일자 ( 시뮬레이션 시작년도 + '0101' 부터 시작 ) */
+                    AND     td_kspjong_hist.F12506      <=  CONCAT( #{start_year}, '0212' )
                 ]]>
                 )
 
