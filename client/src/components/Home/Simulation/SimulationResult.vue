@@ -49,7 +49,7 @@
                                             <col width="14%" />
                                         </colgroup>
                                         <thead>
-                                            <tr>
+                                            <tr >
                                                 <th class="txt_left">일자</th>
                                                 <th class="txt_right">Index</th>
                                                 <th class="txt_right">Balance</th>
@@ -60,32 +60,14 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td class="txt_left">20190701</td>
-                                                <td class="txt_right">1023.01</td>
-                                                <td class="txt_right">1,234,567</td>
-                                                <td class="txt_right">0.23%</td>
-                                                <td class="txt_right">1023.01</td>
-                                                <td class="txt_right">1023.01</td>
-                                                <td class="txt_right">0.23%</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="txt_left">20190701</td>
-                                                <td class="txt_right">1023.01</td>
-                                                <td class="txt_right">1,234,567</td>
-                                                <td class="txt_right">0.23%</td>
-                                                <td class="txt_right">1023.01</td>
-                                                <td class="txt_right">1023.01</td>
-                                                <td class="txt_right">0.23%</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="txt_left">20190701</td>
-                                                <td class="txt_right">1023.01</td>
-                                                <td class="txt_right">1,234,567</td>
-                                                <td class="txt_right">0.23%</td>
-                                                <td class="txt_right">1023.01</td>
-                                                <td class="txt_right">1023.01</td>
-                                                <td class="txt_right">0.23%</td>
+                                            <tr v-for="(row, prop, index) in arrDayJisuList" v-bind:key="index">
+                                                <td class="txt_left">{{ row.date    /* 일자 */ }}</td>
+                                                <td class="txt_right">{{ row.INDEX_RATE     /* 지수 */ }}</td>
+                                                <td class="txt_right"></td>
+                                                <td class="txt_right">{{ row.RETURN_VAL     /* 결과 */ }} %</td>
+                                                <td class="txt_right"></td>
+                                                <td class="txt_right"></td>
+                                                <td class="txt_right"></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -119,9 +101,9 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td class="txt_left">20190701</td>
-                                                <td>비중조절</td>
+                                            <tr v-for="(row, prop, index) in this.arrRebalanceList" v-bind:key="index">
+                                                <td class="txt_left">{{ row.date    /* 일자 */ }}</td>
+                                                <td>{{ prop.EVENT_FLAG    /* 일자 */ }}</td>
                                                 <td class="txt_left">삼성전자(005930)</td>
                                                 <td class="txt_right">30.0%</td>
                                                 <td class="txt_right">33.33%</td>
@@ -219,6 +201,12 @@ export default {
                 ]
 
             ,   arr_show_error_message      :   []
+
+            ,   arrSubListObj               :   []
+            ,   arrDayJisuList              :   []      /* 일자별 지수 */
+            ,   arrRebalanceList            :   []      /* 리밸런싱 내역 */
+            ,   arrRebalanceList            :   []      /* 리밸런싱 내역 */
+            ,   simulMast                   :   {}      /* 시뮬레이션 설정 */
         };
     },
 
@@ -230,20 +218,46 @@ export default {
         var vm = this;
     },
 
+    computed: {
+
+    },
+
     mounted() {
         var vm = this;
-
+debugger;
         /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
-        if(     vm.paramData && Object.keys( vm.paramData ).length > 0 
-            &&  vm.paramData.grp_cd && vm.paramData.scen_cd 
-        ) {
-            vm.fn_getBacktestResult( vm.paramData );
-        }else{
-            console.log( ">>>>>>>>>>>>" );
+        if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
+            if( vm.paramData.grp_cd && vm.paramData.scen_cd  ) {
+                vm.fn_getBacktestResult( vm.paramData );
+            }else if( vm.paramData.subListObj && vm.paramData.subMastObj && vm.paramData.simulMastObj ){
+                vm.fn_convertData();
+            }
         }
     },
 
     methods: {
+
+        /*
+         * 
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_convertData : function() {
+            var vm = this;
+
+            vm.arrDayJisuList   =   [];
+			Object.keys( vm.paramData.subMastObj ).forEach( function( item, index, array ) {
+				vm.arrDayJisuList.push( Object.assign( { date : item }, vm.paramData.subMastObj[ item ] ) );
+			});
+
+            vm.arrRebalanceList   =   [];
+			Object.keys( vm.paramData.subListObj ).forEach( function( item, index, array ) {
+				Object.keys( vm.paramData.subListObj[ item ] ).forEach( function( sub_item, sub_index, sub_array ) {
+					vm.arrRebalanceList.push( Object.assign( { date : item }, vm.paramData.subListObj[ item ][ sub_item ] ) );
+				});
+			});	
+
+            console.log( vm.arrRebalanceList );
+        },        
 
         /*
          * 진행 progress 를 보여준다.
