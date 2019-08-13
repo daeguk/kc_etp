@@ -1452,6 +1452,7 @@ export default {
 
                         var subListObj      =   response.data.subListObj;
                         var subMastObj      =   response.data.subMastObj;
+                        var simulMastObj    =   response.data.simulMastObj;
 
                         if( msg ) {
                             if ( await vm.$refs.confirm2.open(
@@ -1463,7 +1464,7 @@ export default {
                             ) {
                                 if(vm.$refs.confirm2.val == 'Y') {
 
-                                    vm.$emit( "fn_showSimulation", { showSimulationId : 2, subListObj: subListObj, subMastObj: subMastObj } );
+                                    vm.$emit( "fn_showSimulation", { showSimulationId : 2, subListObj: subListObj, subMastObj: subMastObj, simulMastObj : simulMastObj } );
 
                                     /* 시뮬레이션 마스터 정보를 조회한다. */
 //                                    vm.fn_getSimulMast( { grp_cd : vm.grp_cd, scen_cd : vm.scen_cd } );

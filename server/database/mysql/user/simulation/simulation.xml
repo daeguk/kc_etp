@@ -927,7 +927,7 @@
                     td_kspjong_hist.F16013                              AS  F16013                  /* 단축코드 */
                 ,   td_kspjong_hist.F12506                              AS  F12506                  /* 입회일자 */
 
-                ,   td_kspjong_hist.F15001                              AS  F15001                  /* 현재가 ( 당일 종가 ) - 종가 */
+                ,   td_kspjong_hist.F30700                              AS  F30700                  /* 현재가 ( 당일 종가 ) - 종가 */
                 ,   td_kspjong_hist.F15007                              AS  F15007                  /* 기준가 ( 전일 종가 ) - 기준가 */
                 ,   td_kspjong_hist.F16143                              AS  F16143                  /* 상장주식수*/
                 ,   (
@@ -988,7 +988,7 @@
                                    AND  td_kspjong_hist.F12506      >=  DATE_FORMAT( 
                                                                                     DATE_SUB( 
                                                                                             CONCAT( #{start_year}, '0101' )
-                                                                                        , INTERVAL 3 MONTH 
+                                                                                        ,   INTERVAL 2 WEEK
                                                                                     )
                                                                                 ,   '%Y%m%d' 
                                                                             )                                   /* start_year 기준 3 달 전부터 시작  */
@@ -1009,7 +1009,7 @@
                     td_kspjong_hist.F16013                              AS  F16013                  /* 단축코드 */
                 ,   td_kspjong_hist.F12506                              AS  F12506                  /* 입회일자 */
 
-                ,   td_kspjong_hist.F15001                              AS  F15001                  /* 현재가 ( 당일 종가 ) - 종가 */
+                ,   td_kspjong_hist.F30700                              AS  F30700                  /* 현재가 ( 당일 종가 ) - 종가 */
                 ,   td_kspjong_hist.F15007                              AS  F15007                  /* 기준가 ( 전일 종가 ) - 기준가 */
                 ,   td_kspjong_hist.F16143                              AS  F16143                  /* 상장주식수*/
                 ,   (
@@ -1061,7 +1061,7 @@
                 <![CDATA[
                             base.F16013                 =   td_kspjong_hist.F16013
                     AND     td_kspjong_hist.F12506      >=  CONCAT( #{start_year}, '0101' )     /* 입회일자 ( 시뮬레이션 시작년도 + '0101' 부터 시작 ) */
-                    AND     td_kspjong_hist.F12506      <=  CONCAT( #{start_year}, '0103' )
+                    AND     td_kspjong_hist.F12506      <=  CONCAT( #{start_year}, '0104' )
                 ]]>
                 )
 
@@ -1095,7 +1095,7 @@
                 ,   td_kspjong_hist.F16013                              AS  F16013                  /* 단축코드 */
                 ,   td_kspjong_hist.F12506                              AS  F12506                  /* 입회일자 */
 
-                ,   td_kspjong_hist.F15001                              AS  F15001                  /* 현재가 ( 당일 종가 ) - 종가 */
+                ,   td_kspjong_hist.F30700                              AS  F30700                  /* 현재가 ( 당일 종가 ) - 종가 */
                 ,   td_kspjong_hist.F15007                              AS  F15007                  /* 기준가 ( 전일 종가 ) - 기준가 */
                 ,   td_kspjong_hist.F16143                              AS  F16143                  /* 상장주식수*/
 
@@ -1191,7 +1191,7 @@
                 ,   td_kspjong_hist.F16013                              AS  F16013                  /* 단축코드 */
                 ,   td_kspjong_hist.F12506                              AS  F12506                  /* 입회일자 */
 
-                ,   td_kspjong_hist.F15001                              AS  F15001                  /* 현재가 ( 당일 종가 ) - 종가 */
+                ,   td_kspjong_hist.F30700                              AS  F30700                  /* 현재가 ( 당일 종가 ) - 종가 */
                 ,   td_kspjong_hist.F15007                              AS  F15007                  /* 기준가 ( 전일 종가 ) - 기준가 */
                 ,   td_kspjong_hist.F16143                              AS  F16143                  /* 상장주식수*/
 
@@ -1224,17 +1224,17 @@
     -->
     <select id="getSimulHistListByBacktest1">
 
-        SELECT  '20171228'    AS  F12506,     '005930'  AS  F16013  /* 단축코드 */,  '0'    AS  chk_rebalance_cycle_cd,   '0'   AS  chk_rebalance_date_cd,  2468000	    AS  F15007  /* 기준가 */,     50960     AS  F15001 /* 종가 */,	129098494   AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL
-        SELECT  '20171228'    AS  F12506,     '068270'  AS  F16013  /* 단축코드 */,  '0'    AS  chk_rebalance_cycle_cd,   '0'   AS  chk_rebalance_date_cd,  220000	    AS  F15007  /* 기준가 */,     217221	AS  F15001 /* 종가 */ , 122666424   AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL
-        SELECT  '20171228'    AS  F12506,     '084990'  AS  F16013  /* 단축코드 */,  '0'    AS  chk_rebalance_cycle_cd,   '0'   AS  chk_rebalance_date_cd,  160000	    AS  F15007  /* 기준가 */,     160257	AS  F15001 /* 종가 */ , 15956260    AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL    
+        SELECT  '20171228'    AS  F12506,     '005930'  AS  F16013  /* 단축코드 */,  '0'    AS  chk_rebalance_cycle_cd,   '0'   AS  chk_rebalance_date_cd,  2468000	    AS  F15007  /* 기준가 */,     50960     AS  F30700 /* 종가 */,	129098494   AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL
+        SELECT  '20171228'    AS  F12506,     '068270'  AS  F16013  /* 단축코드 */,  '0'    AS  chk_rebalance_cycle_cd,   '0'   AS  chk_rebalance_date_cd,  220000	    AS  F15007  /* 기준가 */,     217221	AS  F30700 /* 종가 */ , 122666424   AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL
+        SELECT  '20171228'    AS  F12506,     '084990'  AS  F16013  /* 단축코드 */,  '0'    AS  chk_rebalance_cycle_cd,   '0'   AS  chk_rebalance_date_cd,  160000	    AS  F15007  /* 기준가 */,     160257	AS  F30700 /* 종가 */ , 15956260    AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL    
 
-        SELECT  '20180102'    AS  F12506,     '005930'  AS  F16013  /* 단축코드 */,  '2'    AS  chk_rebalance_cycle_cd,   '1'   AS  chk_rebalance_date_cd,  50960	    AS  F15007  /* 기준가 */,     51020     AS  F15001 /* 종가 */,	129098494   AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL
-        SELECT  '20180102'    AS  F12506,     '068270'  AS  F16013  /* 단축코드 */,  '2'    AS  chk_rebalance_cycle_cd,   '1'   AS  chk_rebalance_date_cd,  217221	    AS  F15007  /* 기준가 */,     221936	AS  F15001 /* 종가 */ , 122666424   AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL
-        SELECT  '20180102'    AS  F12506,     '084990'  AS  F16013  /* 단축코드 */,  '2'    AS  chk_rebalance_cycle_cd,   '1'   AS  chk_rebalance_date_cd,  160257	    AS  F15007  /* 기준가 */,     163201	AS  F15001 /* 종가 */ , 15956260    AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL
+        SELECT  '20180102'    AS  F12506,     '005930'  AS  F16013  /* 단축코드 */,  '2'    AS  chk_rebalance_cycle_cd,   '1'   AS  chk_rebalance_date_cd,  50960	    AS  F15007  /* 기준가 */,     51020     AS  F30700 /* 종가 */,	129098494   AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL
+        SELECT  '20180102'    AS  F12506,     '068270'  AS  F16013  /* 단축코드 */,  '2'    AS  chk_rebalance_cycle_cd,   '1'   AS  chk_rebalance_date_cd,  217221	    AS  F15007  /* 기준가 */,     221936	AS  F30700 /* 종가 */ , 122666424   AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL
+        SELECT  '20180102'    AS  F12506,     '084990'  AS  F16013  /* 단축코드 */,  '2'    AS  chk_rebalance_cycle_cd,   '1'   AS  chk_rebalance_date_cd,  160257	    AS  F15007  /* 기준가 */,     163201	AS  F30700 /* 종가 */ , 15956260    AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL
 
-        SELECT  '20180103'    AS  F12506,     '005930'  AS  F16013  /* 단축코드 */,  '0'    AS  chk_rebalance_cycle_cd,   '0'   AS  chk_rebalance_date_cd,  51020	    AS  F15007  /* 기준가 */,     51620     AS  F15001 /* 종가 */,	129098494   AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL
-        SELECT  '20180103'    AS  F12506,     '068270'  AS  F16013  /* 단축코드 */,  '0'    AS  chk_rebalance_cycle_cd,   '0'   AS  chk_rebalance_date_cd,  221936	    AS  F15007  /* 기준가 */,     242371	AS  F15001 /* 종가 */ , 122666424   AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL 
-        SELECT  '20180103'    AS  F12506,     '084990'  AS  F16013  /* 단축코드 */,  '0'    AS  chk_rebalance_cycle_cd,   '0'   AS  chk_rebalance_date_cd,  163201	    AS  F15007  /* 기준가 */,     161140	AS  F15001 /* 종가 */ , 15956260    AS  F16143  /* 상장주식수*/    FROM    DUAL
+        SELECT  '20180103'    AS  F12506,     '005930'  AS  F16013  /* 단축코드 */,  '0'    AS  chk_rebalance_cycle_cd,   '0'   AS  chk_rebalance_date_cd,  51020	    AS  F15007  /* 기준가 */,     51620     AS  F30700 /* 종가 */,	129098494   AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL
+        SELECT  '20180103'    AS  F12506,     '068270'  AS  F16013  /* 단축코드 */,  '0'    AS  chk_rebalance_cycle_cd,   '0'   AS  chk_rebalance_date_cd,  221936	    AS  F15007  /* 기준가 */,     242371	AS  F30700 /* 종가 */ , 122666424   AS  F16143  /* 상장주식수*/    FROM    DUAL    UNION   ALL 
+        SELECT  '20180103'    AS  F12506,     '084990'  AS  F16013  /* 단축코드 */,  '0'    AS  chk_rebalance_cycle_cd,   '0'   AS  chk_rebalance_date_cd,  163201	    AS  F15007  /* 기준가 */,     161140	AS  F30700 /* 종가 */ , 15956260    AS  F16143  /* 상장주식수*/    FROM    DUAL
 
     </select>
 
@@ -1256,7 +1256,7 @@
 
             ,   rebalancing                 /* 리밸런싱 여부(Y,N) */
             ,   F15007	                    /* 기준가 */
-            ,   F15001	                    /* 종가 */
+            ,   F30700	                    /* 종가 */
             ,   F16143	                    /* 상장주식수 */
             ,   BEFORE_RATE                 /* (직전)지수적용비율 */
             ,   TODAY_RATE                  /* (당일)지수적용비율 */
@@ -1283,7 +1283,7 @@
 
             ,   #{data.rebalancing}         /* 리밸런싱 여부(Y,N) */
             ,   #{data.F15007}	            /* 기준가 */
-            ,   #{data.F15001}	            /* 종가 */
+            ,   #{data.F30700}	            /* 종가 */
             ,   #{data.F16143}	            /* 상장주식수 */
             ,   #{data.BEFORE_RATE}         /* (직전)지수적용비율 */
             ,   #{data.TODAY_RATE}          /* (당일)지수적용비율 */

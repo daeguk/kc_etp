@@ -60,8 +60,8 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(row, prop, index) in paramData.subMastObj" v-bind:key="index">
-                                                <td class="txt_left">{{ prop    /* 일자 */ }}</td>
+                                            <tr v-for="(row, prop, index) in arrDayJisuList" v-bind:key="index">
+                                                <td class="txt_left">{{ row.date    /* 일자 */ }}</td>
                                                 <td class="txt_right">{{ row.INDEX_RATE     /* 지수 */ }}</td>
                                                 <td class="txt_right"></td>
                                                 <td class="txt_right">{{ row.RETURN_VAL     /* 결과 */ }} %</td>
@@ -101,8 +101,8 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(row, prop, index) in this.arrSubListObj" v-bind:key="index">
-                                                <td class="txt_left">{{ prop    /* 일자 */ }}</td>
+                                            <tr v-for="(row, prop, index) in this.arrRebalanceList" v-bind:key="index">
+                                                <td class="txt_left">{{ row.date    /* 일자 */ }}</td>
                                                 <td>{{ prop.EVENT_FLAG    /* 일자 */ }}</td>
                                                 <td class="txt_left">삼성전자(005930)</td>
                                                 <td class="txt_right">30.0%</td>
@@ -203,6 +203,10 @@ export default {
             ,   arr_show_error_message      :   []
 
             ,   arrSubListObj               :   []
+            ,   arrDayJisuList              :   []      /* 일자별 지수 */
+            ,   arrRebalanceList            :   []      /* 리밸런싱 내역 */
+            ,   arrRebalanceList            :   []      /* 리밸런싱 내역 */
+            ,   simulMast                   :   {}      /* 시뮬레이션 설정 */
         };
     },
 
@@ -225,26 +229,34 @@ debugger;
         if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
             if( vm.paramData.grp_cd && vm.paramData.scen_cd  ) {
                 vm.fn_getBacktestResult( vm.paramData );
-            }else if( vm.paramData.subListObj && vm.paramData.subMastObj  ){
-                console.log( ">>>>>>>>>>>>", vm.paramData.subListObj, vm.paramData.subMastObj );
-console.log("#####1");
-                vm.getSubData();
-console.log("#####2");                
+            }else if( vm.paramData.subListObj && vm.paramData.subMastObj && vm.paramData.simulMastObj ){
+                vm.fn_convertData();
             }
         }
     },
 
     methods: {
 
-        getSubData : function() {
+        /*
+         * 
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_convertData : function() {
             var vm = this;
-console.log( ">>>>>>>>>> getSubData");
-            vm.arrSubListObj   =   [];
 
-            for( var subObj in vm.paramData.subListObj ) {
-                console.log( vm.paramData.subListObj[ subObj ] );
-                vm.arrSubListObj.push( vm.paramData.subListObj[ subObj ] );
-            }
+            vm.arrDayJisuList   =   [];
+			Object.keys( vm.paramData.subMastObj ).forEach( function( item, index, array ) {
+				vm.arrDayJisuList.push( Object.assign( { date : item }, vm.paramData.subMastObj[ item ] ) );
+			});
+
+            vm.arrRebalanceList   =   [];
+			Object.keys( vm.paramData.subListObj ).forEach( function( item, index, array ) {
+				Object.keys( vm.paramData.subListObj[ item ] ).forEach( function( sub_item, sub_index, sub_array ) {
+					vm.arrRebalanceList.push( Object.assign( { date : item }, vm.paramData.subListObj[ item ][ sub_item ] ) );
+				});
+			});	
+
+            console.log( vm.arrRebalanceList );
         },        
 
         /*
