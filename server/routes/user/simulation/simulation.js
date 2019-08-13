@@ -1288,11 +1288,11 @@ var saveBaicInfo = function(req, res) {
                                     var v_next_F12506   =   "";         /* 이후 입회일자 */
 
                                     var v_before_F12506 =   "";         /* 직전 입회일자 */
-                                    var v_fist_F12506   =   "";         /* 최초 입회일자 */
+                                    var v_first_F12506  =   "";         /* 최초 입회일자 */
                                     var v_first_yn      =   "N";        /* 최초여부 */
 
                                     if( rows.length > 0 ) {
-                                        v_fist_F12506   =   rows[0].F12506;
+                                        v_first_F12506  =   rows[0].F12506;
                                         v_prev_F12506   =   rows[0].F12506;
                                         v_before_F12506 =   rows[0].F12506;
                                     }
@@ -1346,7 +1346,7 @@ var saveBaicInfo = function(req, res) {
                                             subMastObj[ rows[i].F12506 ].changeYn   =   "N";
 
                                             v_first_yn  =   "N";
-                                            if( v_fist_F12506 == rows[i].F12506 ) {
+                                            if( v_first_F12506 == rows[i].F12506 ) {
                                                 v_first_yn  =   "Y";
                                             }
                                             
@@ -2301,6 +2301,9 @@ var getBacktestResult = function(req, res) {
 
         /* 시뮬레이션 포트폴리오 종목정보 */
         var simulPortfolio  =   {};
+        var firstHistObj    =   {};
+        var arrFirstHist    =   [];
+
         var arrInsertDtl    =   [];
         var divideList      =   [];
 
@@ -2370,7 +2373,54 @@ var getBacktestResult = function(req, res) {
                         }
                     },
 
-                    /* 2. (백테스트) 시뮬레이션 할 이력 데이터를 조회한다. */
+                    /* 2. (백테스트) 백테스트 실행시 start_year 기준 직전 영업일 하루 데이터를 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            stmt = mapper.getStatement('simulation', 'getSimulHistListByBacktestBeforeDate', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulation.getSimulHistListByBacktestBeforeDate Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[백테스트] " + paramData.start_year + "0101 직전 영업일 정보가 존재하지 않습니다.";
+                                    resultMsg.err = "[백테스트] " + paramData.start_year + "0101 직전 영업일 정보가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                }
+
+
+                                for( var i in rows ) {
+                                    firstHistObj[ rows[i].F16013 ]      =   rows[i];
+                                }
+
+                                arrFirstHist    =   rows;
+
+                                callback(null, paramData);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulation.getSimulHistListByBacktestBeforeDate Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 3. (백테스트) 시뮬레이션 할 이력 데이터를 조회한다. */
                     function(msg, callback) {
 
                         try{
@@ -2398,20 +2448,23 @@ var getBacktestResult = function(req, res) {
 
                                 if (rows && rows.length > 0) {
 
-                                    var v_prev_F12506   =   "";         /* 이전 입회일자 */
                                     var v_next_F12506   =   "";         /* 이후 입회일자 */
 
                                     var v_before_F12506 =   "";         /* 직전 입회일자 */
-                                    var v_fist_F12506   =   "";         /* 최초 입회일자 */
+                                    var v_first_F12506  =   "";         /* 최초 입회일자 */
                                     var v_first_yn      =   "N";        /* 최초여부 */
 
                                     var subListObj      =   {};         /* 일자별 종목 데이터 */
                                     var subMastObj      =   {};         /* 일자별 결과 정보 */
 
                                     if( rows.length > 0 ) {
-                                        v_fist_F12506   =   rows[0].F12506;
-                                        v_prev_F12506   =   rows[0].F12506;
-                                        v_before_F12506 =   rows[0].F12506;
+
+                                        v_first_F12506  =   rows[0].F12506;
+                                        
+                                        /* 최초 영업일이 존재하는 경우 */
+                                        if( arrFirstHist.length > 0 && arrFirstHist[0].F12506 ) {
+                                            v_before_F12506 =   arrFirstHist[0].F12506;
+                                        }
                                     }
 
                                     var subInx = 0;
@@ -2431,14 +2484,10 @@ var getBacktestResult = function(req, res) {
 
 
                                     /* 입회일자 기준 직전 일자 추출 */
-                                        /* i-1 이 0 보다 큰 경우 - i-1 입회일자 셋팅 */
-                                        if( i-1 >= 0 ) {
-                                            v_prev_F12506   =   rows[i-1].F12506;
-                                        }
 
                                         /* 입회일자가 달라지는 경우 */
-                                        if( v_prev_F12506  !=  rows[i].F12506 ) {
-                                            v_before_F12506 =   v_prev_F12506;
+                                        if( i-1 >= 0 && v_before_F12506  !=  rows[i-1].F12506 ) {
+                                            v_before_F12506     =   rows[i-1].F12506;
                                         }
 
 
@@ -2463,7 +2512,7 @@ var getBacktestResult = function(req, res) {
                                             subMastObj[ rows[i].F12506 ].changeYn   =   "N";
 
                                             v_first_yn  =   "N";
-                                            if( v_fist_F12506 == rows[i].F12506 ) {
+                                            if( v_first_F12506 == rows[i].F12506 ) {
                                                 v_first_yn  =   "Y";
                                             }
                                             
@@ -2490,6 +2539,7 @@ var getBacktestResult = function(req, res) {
                                                     }
                                                 ,   subListObj
                                                 ,   subMastObj
+                                                ,   firstHistObj
                                             );
 
 
@@ -2497,9 +2547,7 @@ console.log( "rows[i].F12506", rows[i].F12506, "subListObj", subListObj[ rows[i]
                                             /* 
                                                 T일이 리밸런싱 일자인가? ( 주기와 일자가 같은 경우 ) 
                                             */
-                                            if(     subMastObj[ rows[i].F12506 ].rebalance_cycle_cd_yn == 'Y'
-                                                &&  subMastObj[ rows[i].F12506 ].rebalance_date_cd_yn == 'Y'
-                                            ) {
+                                            if(  subMastObj[ rows[i].F12506 ].rebanance_yn == 'Y' ) {
                                                     subMastObj[ rows[i].F12506 ].rebalancing   =   "1";
 
                                                 /*                                        
@@ -2550,6 +2598,7 @@ for( var j = 0; j < Object.keys( subListObj[ rows[i].F12506 ] ).length; j++ ) {
                                                         }
                                                     ,   subListObj
                                                     ,   subMastObj
+                                                    ,   firstHistObj
                                                 );
                                             }
                                             else{
@@ -2584,6 +2633,7 @@ for( var j = 0; j < Object.keys( subListObj[ rows[i].F12506 ] ).length; j++ ) {
                                                         }
                                                     ,   subListObj
                                                     ,   subMastObj
+                                                    ,   firstHistObj
                                                 );
                                             }
 
@@ -2615,7 +2665,7 @@ for( var j = 0; j < Object.keys( subListObj[ rows[i].F12506 ] ).length; j++ ) {
                                             var v_insertItem    =   Object.assign( v_dataItem, v_mastItem );
 
 // console.log( v_insertItem );
-                                                arrInsertDtl.push( v_insertItem  );
+//                                                arrInsertDtl.push( v_insertItem  );
                                         }
                                     }
 
@@ -2839,8 +2889,7 @@ var fn_set_F12506 = function( p_param={ rowInx : -1, F12506 : "", v_before_F1250
         ,   importance_method_cd    :   ""              /* 비중설정방식 (COM009) */
 
         ,   rebalancing             :   "0"
-        ,   rebalance_cycle_cd_yn   :   "N"             /* 리밸런싱주기 에 포함되는지 체크 */
-        ,   rebalance_date_cd_yn    :   "N"             /* 리밸런싱일자 에 포함되는지 체크 */
+        ,   rebanance_yn            :   "N"             /* 리밸런싱에 포함되는지 체크 */
     };
 
 
@@ -2857,15 +2906,9 @@ var fn_set_F12506 = function( p_param={ rowInx : -1, F12506 : "", v_before_F1250
             v_portItem.F16013_exists_yn         =   "Y";                        /* 종목코드 존재여부 */
             Object.assign( p_subListObj[ p_param.F12506 ][ v_portKey ],  v_portItem );
 
-            if( totalInfo.rebalance_cycle_cd_yn == "N" ) {
-                if( p_subListObj[ p_param.F12506 ][ v_portKey ].chk_rebalance_cycle_cd    ==  v_portItem.rebalance_cycle_cd  ) {
-                    totalInfo.rebalance_cycle_cd_yn     =   "Y";
-                }
-            }
-
-            if( totalInfo.rebalance_date_cd_yn == "N" ) {
-                if( p_subListObj[ p_param.F12506 ][ v_portKey ].chk_rebalance_date_cd  ==  v_portItem.rebalance_date_cd  ) {
-                    totalInfo.rebalance_date_cd_yn   =   "Y";
+            if( totalInfo.rebanance_yn == "N" ) {
+                if( p_subListObj[ p_param.F12506 ][ v_portKey ].rebanance_yn    ==  "Y"  ) {
+                    totalInfo.rebanance_yn     =   "Y";
                 }
             }
         }
@@ -3013,7 +3056,7 @@ var fn_set_F12506 = function( p_param={ rowInx : -1, F12506 : "", v_before_F1250
  * 변동여부 발생 등 데이터 확인을 위해 지수정보를 조회한다.
  * 2019-08-14  bkLove(촤병국)
  */
-var fn_get_jisu    =   function( p_param={ rowInx : -1, F12506 : "", v_before_F12506: "", first_yn : "N" }, p_subListObj, p_subMastObj ) {
+var fn_get_jisu    =   function( p_param={ rowInx : -1, F12506 : "", v_before_F12506: "", first_yn : "N" }, p_subListObj, p_subMastObj, firstHistObj ) {
     /* total 정보 */
     var totalInfo  =   {
             tot_F15028              :   p_subMastObj[ p_param.F12506 ].tot_F15028           /* 시가기준 시총 */

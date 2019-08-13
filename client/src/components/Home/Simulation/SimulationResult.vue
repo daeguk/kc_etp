@@ -224,7 +224,7 @@ export default {
 
     mounted() {
         var vm = this;
-debugger;
+
         /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
         if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
             if( vm.paramData.grp_cd && vm.paramData.scen_cd  ) {
