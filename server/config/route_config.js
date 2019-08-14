@@ -162,12 +162,13 @@ module.exports = {
         { file: './user/simulation/simulation', path: '/user/simulation/getNextScenName'    , method: 'getNextScenName'     , session: 'check', type: 'post' },     // next 시나리오명을 조회한다.
         { file: './user/simulation/simulation', path: '/user/simulation/getInitData'        , method: 'getInitData'         , session: 'check', type: 'post' },     // 공통코드 초기 데이터 조회
         { file: './user/simulation/simulation', path: '/user/simulation/getJongmokInfo'     , method: 'getJongmokInfo'      , session: 'check', type: 'post' },     // 선택된 종목의 구성정보 조회
-        { file: './user/simulation/simulation', path: '/user/simulation/saveBaicInfo'       , method: 'saveBaicInfo'        , session: 'check', type: 'post' },     // 기본정보 저장
         { file: './user/simulation/simulation', path: '/user/simulation/modifyGroup'        , method: 'modifyGroup'         , session: 'check', type: 'post' },     // 그룹정보 수정
         { file: './user/simulation/simulation', path: '/user/simulation/getSimulList'       , method: 'getSimulList'        , session: 'check', type: 'post' },     // 목록정보 조회
         { file: './user/simulation/simulation', path: '/user/simulation/getSimulMast'       , method: 'getSimulMast'        , session: 'check', type: 'post' },     // 마스터 정보 조회
         { file: './user/simulation/simulation', path: '/user/simulation/getSimulPortfolio'  , method: 'getSimulPortfolio'   , session: 'check', type: 'post' },     // 포트폴리오 정보 조회
-        { file: './user/simulation/simulation', path: '/user/simulation/getBacktestResult'  , method: 'getBacktestResult'   , session: 'check', type: 'post' },     // 백테스트 결과 조회
+
+        { file: './user/simulation/simulationBacktest', path: '/user/simulation/saveBaicInfo'       , method: 'saveBaicInfo'        , session: 'check', type: 'post' },     // 기본정보 저장
+        { file: './user/simulation/simulationBacktest', path: '/user/simulation/getBacktestResult'  , method: 'getBacktestResult'   , session: 'check', type: 'post' },     // 백테스트 결과 조회
 
 
         //풀 테스트 
