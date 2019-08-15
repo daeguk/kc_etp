@@ -961,17 +961,6 @@ var saveBaicInfo = function(req, res) {
                                                     - 지수 = 비교시가총액 / 기준시가총액 * 1000
                                                 */
 
-/*
-for( var j = 0; j < Object.keys( v_dailyJongmokObj[ rows[i].F12506 ] ).length; j++ ) {
-
-    var v_dataKey     =   Object.keys( v_dailyJongmokObj[ rows[i].F12506 ] )[j];
-    var v_dataItem    =   v_dailyJongmokObj[ rows[i].F12506 ][ v_dataKey ];
-
-
-    console.log( "######### ##########################" );
-    console.log( "rows[i].F12506", rows[i].F12506, "v_dataItem.importance", v_dataItem.importance, "v_dataItem.F15028 ", v_dataItem.F15028, "tot_F15028", v_dailyObj[ rows[i].F12506 ].tot_F15028  );
-}
-*/
                                                 /* 지수 정보를 계산하여 설정한다. */
                                                 fn_set_index_rate(
                                                         {       
@@ -984,8 +973,6 @@ for( var j = 0; j < Object.keys( v_dailyJongmokObj[ rows[i].F12506 ] ).length; j
                                                 );
                                             }
                                             else{
-
-// console.log( "v_dailyObj[ rows[i].F12506 ].prev_tot_F15028_C", v_dailyObj[ rows[i].F12506 ].prev_tot_F15028_C, "v_dailyObj[ rows[i].F12506 ].tot_F15028_S", v_dailyObj[ rows[i].F12506 ].tot_F15028_S );
 
                                                 /*
                                                     4. 시장조치 확인을 위한 T-1일 비교시총과 T일 시가기준 비교시총  비교
@@ -1421,9 +1408,6 @@ var getBacktestResult = function(req, res) {
                                                 ,   v_firstHistObj
                                             ); 
 
-if( ["20180102", "20180103" ].includes( rows[i].F12506 )  ) {
-//    console.log( "rows[i].F12506", rows[i].F12506, v_dailyJongmokObj[ rows[i].F12506 ], v_dailyObj[ rows[i].F12506 ] );
-}
 
                                             /*************************************************************************************************************
                                             *   T일이 리밸런싱일자 인 경우
@@ -1443,9 +1427,6 @@ if( ["20180102", "20180103" ].includes( rows[i].F12506 )  ) {
                                                     ,   v_firstHistObj
                                                 );
 
-if( ["20190102", "20190103", "20190702", ].includes( rows[i].F12506 )  ) {
-    console.log( "rows[i].F12506", rows[i].F12506, v_dailyJongmokObj[ rows[i].F12506 ], v_dailyObj[ rows[i].F12506 ] );
-}
                                             }else{
 
 
@@ -1478,9 +1459,6 @@ if( ["20190102", "20190103", "20190702", ].includes( rows[i].F12506 )  ) {
                                                     }
                                                 }
 
-if( ["20180102", "20180103", "20180702", ].includes( rows[i].F12506 )  ) {
-//    console.log( "rows[i].F12506", rows[i].F12506, v_dailyJongmokObj[ rows[i].F12506 ], v_dailyObj[ rows[i].F12506 ] );
-} 
 
                                                 /* 지수 정보를 계산하여 설정한다. */
                                                 fn_set_index_rate(
@@ -1517,8 +1495,6 @@ if( ["20180102", "20180103", "20180702", ].includes( rows[i].F12506 )  ) {
 //                                            arrInsertDtl.push( v_dataItem  );
                                         }
                                     }
-
-// console.log( "arrInsertDtl",  arrInsertDtl );
                                 }
 
                                 callback(null, paramData);
