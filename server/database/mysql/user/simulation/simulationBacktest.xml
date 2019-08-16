@@ -764,7 +764,7 @@
                                         ON  (
                                                         tm_simul_portfolio.grp_cd   =   tm_simul_mast.grp_cd
                                                 AND     tm_simul_portfolio.scen_cd  =   tm_simul_mast.scen_cd
-                                        )
+                                            )
                                      WHERE  1 = 1
                                        AND  tm_simul_portfolio.grp_cd   =   #{grp_cd}
                                        AND  tm_simul_portfolio.scen_cd  =   #{scen_cd}
