@@ -229,7 +229,7 @@ export default {
         if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
             if( vm.paramData.grp_cd && vm.paramData.scen_cd  ) {
                 vm.fn_getBacktestResult( vm.paramData );
-            }else if( vm.paramData.subListObj && vm.paramData.subMastObj && vm.paramData.simulMastObj ){
+            }else if( vm.paramData.dailyJongmokObj && vm.paramData.dailyObj && vm.paramData.simulMastObj ){
                 vm.fn_convertData();
             }
         }
@@ -245,14 +245,14 @@ export default {
             var vm = this;
 
             vm.arrDayJisuList   =   [];
-			Object.keys( vm.paramData.subMastObj ).forEach( function( item, index, array ) {
-				vm.arrDayJisuList.push( Object.assign( { date : item }, vm.paramData.subMastObj[ item ] ) );
+			Object.keys( vm.paramData.dailyObj ).forEach( function( item, index, array ) {
+				vm.arrDayJisuList.push( Object.assign( { date : item }, vm.paramData.dailyObj[ item ] ) );
 			});
 
             vm.arrRebalanceList   =   [];
-			Object.keys( vm.paramData.subListObj ).forEach( function( item, index, array ) {
-				Object.keys( vm.paramData.subListObj[ item ] ).forEach( function( sub_item, sub_index, sub_array ) {
-					vm.arrRebalanceList.push( Object.assign( { date : item }, vm.paramData.subListObj[ item ][ sub_item ] ) );
+			Object.keys( vm.paramData.dailyJongmokObj ).forEach( function( item, index, array ) {
+				Object.keys( vm.paramData.dailyJongmokObj[ item ] ).forEach( function( sub_item, sub_index, sub_array ) {
+					vm.arrRebalanceList.push( Object.assign( { date : item }, vm.paramData.dailyJongmokObj[ item ][ sub_item ] ) );
 				});
 			});	
 

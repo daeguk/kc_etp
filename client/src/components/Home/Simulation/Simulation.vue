@@ -1450,8 +1450,8 @@ export default {
                         vm.scen_cd          =   response.data.scen_cd;          /* 시나리오 코드 */
                         vm.scen_order_no    =   response.data.scen_order_no;    /* 시나리오 정렬순번 */
 
-                        var subListObj      =   response.data.subListObj;
-                        var subMastObj      =   response.data.subMastObj;
+                        var dailyJongmokObj =   response.data.dailyJongmokObj;
+                        var dailyObj        =   response.data.dailyObj;
                         var simulMastObj    =   response.data.simulMastObj;
 
                         if( msg ) {
@@ -1464,7 +1464,14 @@ export default {
                             ) {
                                 if(vm.$refs.confirm2.val == 'Y') {
 
-                                    vm.$emit( "fn_showSimulation", { showSimulationId : 2, subListObj: subListObj, subMastObj: subMastObj, simulMastObj : simulMastObj } );
+                                    vm.$emit( "fn_showSimulation", 
+                                        { 
+                                                showSimulationId    :    2
+                                            ,   dailyJongmokObj     :   dailyJongmokObj
+                                            ,   dailyObj            :   dailyObj
+                                            ,   simulMastObj        :   simulMastObj 
+                                        }
+                                    );
 
                                     /* 시뮬레이션 마스터 정보를 조회한다. */
 //                                    vm.fn_getSimulMast( { grp_cd : vm.grp_cd, scen_cd : vm.scen_cd } );
