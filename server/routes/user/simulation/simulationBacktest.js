@@ -70,6 +70,7 @@ var saveBaicInfo = function(req, res) {
         var arrDeleteDtl                =   [];
         var divideList                  =   [];
 
+        var arrFirstHist                =   [];
         var simulPortfolio              =   {};
         var v_firstHistObj              =   {};         /* 백테스트 실행시 start_year 기준 직전 영업일 하루 데이터 정보 */
         var v_dailyJongmokObj           =   {};         /* 일자별 종목 데이터 */
@@ -834,14 +835,54 @@ var saveBaicInfo = function(req, res) {
                                     var v_before_F12506     =   "";         /* 직전 입회일자 */
                                     var v_first_F12506      =   "";         /* 최초 입회일자 */
                                     var v_first_record_yn   =   "N";        /* 최초 레코드 여부 */
+                                    var v_eventObj          =   {};         /* 이벤트 변동 발생여부 */
+
 
                                     if( rows.length > 0 ) {
+
                                         v_first_F12506  =   rows[0].F12506;
                                         v_prev_F12506   =   rows[0].F12506;
                                         v_before_F12506 =   rows[0].F12506;
-                                    }
+                                        
+                                        /* 최초 영업일이 존재하는 경우 */
+                                        if( arrFirstHist.length > 0 && arrFirstHist[0].F12506 ) {
+                                            v_prev_F12506   =   arrFirstHist[0].F12506;
+                                            v_before_F12506 =   arrFirstHist[0].F12506;
 
-                                    var subInx = 0;
+
+                                            if( !v_dailyObj[ arrFirstHist[0].F12506 ] || Object.keys( v_dailyObj[ arrFirstHist[0].F12506 ] ).length == 0  ) {
+                                                v_dailyObj[ arrFirstHist[0].F12506 ]    =   {};
+                                            }
+
+                                            /* 
+                                                (최초 레코드 기준 이전 영업일) 일자별로 종목들의 기초 데이터를 설정한다.
+                                                -   최초일은 종가 기준으로 계산
+                                                -   이후는 기준가 기준으로 계산
+                                                -   T 일이 리밸런싱일자 인지 설정
+                                            */
+                                            fn_set_dayilyJongmok( 
+                                                    {       
+                                                            F12506          :   arrFirstHist[0].F12506
+                                                        ,   first_oper_yn   :   "Y"
+                                                    }
+                                                ,   v_firstHistObj
+                                                ,   v_dailyObj
+                                                ,   simulPortfolio
+                                            );
+
+                                            /* (최초 레코드 기준 이전 영업일) 기준, 비교 시총 관련 정보를 조회한다. */
+                                            fn_set_siga_sum(
+                                                    {       
+                                                            F12506          :   arrFirstHist[0].F12506
+                                                        ,   v_before_F12506 :   arrFirstHist[0].F12506
+                                                        ,   first_oper_yn   :   "Y"
+                                                    }
+                                                ,   v_firstHistObj
+                                                ,   v_dailyObj
+                                            );
+                                        }
+                                    }                                    
+
                                     for( var i=0; i < rows.length; i++ ) {
 
                                         v_next_F12506   =   "";
@@ -912,6 +953,19 @@ var saveBaicInfo = function(req, res) {
                                                 ,   simulPortfolio
                                             );
 
+                                            /* 이벤트 변동 발생여부 */
+/*
+                                            v_eventObj    =   fn_get_event_check(
+                                                    {       
+                                                            F12506          :   rows[i].F12506
+                                                        ,   v_before_F12506 :   v_before_F12506
+                                                        ,   first_record_yn :   v_first_record_yn
+                                                    }
+                                                ,   v_dailyJongmokObj
+                                                ,   v_dailyObj
+                                                ,   v_firstHistObj
+                                            );                                            
+*/
                                             /* 기준, 비교 시총 관련 정보를 설정한다. */
                                             fn_set_siga_sum(
                                                     {       
@@ -922,6 +976,8 @@ var saveBaicInfo = function(req, res) {
                                                     }
                                                 ,   v_dailyJongmokObj
                                                 ,   v_dailyObj
+                                                ,   v_firstHistObj
+                                                ,   v_eventObj
                                             );
 
 
@@ -1005,7 +1061,6 @@ var saveBaicInfo = function(req, res) {
                                                 );
                                             }
 
-//                                             subInx++;
 
 //                                             /*
 //                                                 8. 지수 및 구성종목 정보 LOAD
@@ -1289,14 +1344,23 @@ var getBacktestResult = function(req, res) {
 
                                     var v_dailyJongmokObj   =   {};         /* 일자별 종목 데이터 */
                                     var v_dailyObj          =   {};         /* 일자별 결과 정보 */
+                                    var v_eventObj          =   {};         /* 이벤트 변동 발생여부 */
 
+
+
+                                    /*************************************************************************************************************
+                                    *   최초 레코드에 대한 일자를 설정한다.
+                                    **************************************************************************************************************/
                                     if( rows.length > 0 ) {
 
                                         v_first_F12506  =   rows[0].F12506;
                                         v_prev_F12506   =   rows[0].F12506;
                                         v_before_F12506 =   rows[0].F12506;
                                         
-                                        /* 최초 영업일이 존재하는 경우 */
+
+                                        /*************************************************************************************************************
+                                        *   최초 영업일을 설정한다.
+                                        **************************************************************************************************************/
                                         if( arrFirstHist.length > 0 && arrFirstHist[0].F12506 ) {
                                             v_prev_F12506   =   arrFirstHist[0].F12506;
                                             v_before_F12506 =   arrFirstHist[0].F12506;
@@ -1334,6 +1398,8 @@ var getBacktestResult = function(req, res) {
                                             );
                                         }
                                     }
+
+
 
                                     for( var i=0; i < rows.length; i++ ) {
 
@@ -1409,6 +1475,18 @@ var getBacktestResult = function(req, res) {
                                             ); 
 
 
+                                            /* 이벤트 변동 발생여부 */
+                                            v_eventObj    =   fn_get_event_check(
+                                                    {       
+                                                            F12506          :   rows[i].F12506
+                                                        ,   v_before_F12506 :   v_before_F12506
+                                                        ,   first_record_yn :   v_first_record_yn
+                                                    }
+                                                ,   v_dailyJongmokObj
+                                                ,   v_dailyObj
+                                                ,   v_firstHistObj
+                                            );
+
                                             /*************************************************************************************************************
                                             *   T일이 리밸런싱일자 인 경우
                                             **************************************************************************************************************/
@@ -1429,7 +1507,6 @@ var getBacktestResult = function(req, res) {
 
                                             }else{
 
-
                                                 /* 기준, 비교 시총 관련 정보를 설정한다. */
                                                 fn_set_siga_sum(
                                                         {       
@@ -1441,6 +1518,7 @@ var getBacktestResult = function(req, res) {
                                                     ,   v_dailyJongmokObj
                                                     ,   v_dailyObj
                                                     ,   v_firstHistObj
+                                                    ,   v_eventObj
                                                 );                                               
 
 
@@ -1492,7 +1570,7 @@ var getBacktestResult = function(req, res) {
                                             Object.assign( v_dataItem, v_mastItem );
 
 
-//                                            arrInsertDtl.push( v_dataItem  );
+//                                          arrInsertDtl.push( v_dataItem  );
                                         }
                                     }
                                 }
@@ -1514,6 +1592,9 @@ var getBacktestResult = function(req, res) {
                     function(msg, callback) {
 
                         try {
+
+                            callback(null, paramData);
+/*                            
                             stmt = mapper.getStatement('simulationBacktest', 'deleteTmSimulResult', paramData, format);
                             log.debug(stmt);
 
@@ -1528,7 +1609,7 @@ var getBacktestResult = function(req, res) {
 
                                 callback(null, paramData);
                             });
-
+*/
                         } catch (err) {
 
                             resultMsg.result = false;
@@ -2221,6 +2302,7 @@ var fn_set_siga_sum     =   function(
     ,   p_dailyJongmokObj
     ,   p_dailyObj
     ,   p_firstHistObj 
+    ,   p_eventObj
 ) {
     /* total 정보 */
     var totalInfo  =   {
@@ -2236,19 +2318,6 @@ var fn_set_siga_sum     =   function(
         ,   PREV_INDEX_RATE         :   p_dailyObj[ p_param.F12506 ].PREV_INDEX_RATE        /* (직전) 지수 */
         ,   RETURN_VAL              :   p_dailyObj[ p_param.F12506 ].RETURN_VAL             /* RETURN_VAL */
     };
-
-
-    /* 이벤트 변동 발생여부 */
-    var eventObj    =   fn_get_event_check(
-            {       
-                    F12506          :   p_param.F12506
-                ,   v_before_F12506 :   p_param.v_before_F12506
-                ,   first_record_yn :   p_param.v_first_record_yn
-            }
-        ,   p_dailyJongmokObj
-        ,   p_dailyObj
-        ,   p_firstHistObj
-    );
 
     for( var i = 0; i < Object.keys( p_dailyJongmokObj[ p_param.F12506 ] ).length; i++ ) {
 
@@ -2362,7 +2431,7 @@ var fn_set_siga_sum     =   function(
                     /*************************************************************************************************************
                     *   비교시가총액 변동이 발생한 경우
                     **************************************************************************************************************/
-                    if( eventObj.change_yn == "Y" ) {
+                    if( p_eventObj.change_yn == "Y" ) {
 
                         /*************************************************************************************************************
                         *   5. 종목별 지수적용비율 계산
@@ -2383,8 +2452,8 @@ var fn_set_siga_sum     =   function(
                                         ,   F15007_F16143       :   v_dataItem.F15007_F16143                                                    /* 기준가 * 상장주식수 */
                                     }
                                 ,   {       
-                                            tot_F15007_F16143   :   eventObj.tot_F15007_F16143
-                                        ,   prev_tot_F15028_C   :   eventObj.prev_tot_F15028_C
+                                            tot_F15007_F16143   :   p_eventObj.tot_F15007_F16143
+                                        ,   prev_tot_F15028_C   :   p_eventObj.prev_tot_F15028_C
                                     }
                             );
                         }
@@ -2538,9 +2607,12 @@ var fn_set_siga_sum     =   function(
     Object.assign( p_dailyObj[ p_param.F12506 ], totalInfo );
 
 
-    eventObj.tot_F15028_S               =   totalInfo.tot_F15028_S;
-    eventObj.prev_tot_F15028_S          =   totalInfo.prev_tot_F15028_S;
-    eventObj.prev_tot_F15028_C          =   totalInfo.prev_tot_F15028_C;
+    /* 최초 영업일이 아닌 경우 */
+    if( p_param.first_oper_yn    !=  "Y" ) {
+        p_eventObj.tot_F15028_S             =   totalInfo.tot_F15028_S;
+        p_eventObj.prev_tot_F15028_S        =   totalInfo.prev_tot_F15028_S;
+        p_eventObj.prev_tot_F15028_C        =   totalInfo.prev_tot_F15028_C;
+    }
 };
 
 
