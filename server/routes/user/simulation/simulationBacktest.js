@@ -1148,9 +1148,7 @@ var getBacktestResult = function(req, res) {
                                             var v_dataItem      =   result.dailyJongmokObj[ v_F12506 ][ v_dataKey ];
 
                                             Object.assign( v_dataItem, v_mastItem );
-
-
-                                         arrInsertDtl.push( v_dataItem  );
+                                            arrInsertDtl.push( v_dataItem  );
                                         }
                                     }
                                 }
@@ -1361,6 +1359,9 @@ var fn_get_simulation_data  =   function(
     var v_dailyObj          =   {};         /* 일자별 결과 정보 */
     var v_eventObj          =   {};         /* 이벤트 변동 발생여부 */
 
+    var v_arr_daily         =   [];         /* array 일자별 데이터 */
+    var v_arr_rebalance     =   [];         /* array rebalance 데이터 */
+
 
     try{
         if ( p_simul_hist_data && p_simul_hist_data.length > 0 ) {
@@ -1512,7 +1513,7 @@ var fn_get_simulation_data  =   function(
                         /*************************************************************************************************************
                         *   지수 정보를 계산하여 설정한다.
                         **************************************************************************************************************/
-                        fn_set_index_rate(
+                        var v_arr_rebalance_temp    =   fn_set_index_rate(
                                 {       
                                         rowInx          :   i                           /* 일자별 종목 레코드 인덱스 */
                                     ,   F12506          :   p_simul_hist_data[i].F12506 /* 입회일자 */
@@ -1524,6 +1525,8 @@ var fn_get_simulation_data  =   function(
                             ,   v_eventObj                                              /* 이벤트 변동 발생 정보 */
                             ,   p_firstHistObj                                          /* 최초 레코드 기준 이전 영업일 일자별 종목 데이터 */
                         );
+
+                        v_arr_rebalance.push( v_arr_rebalance_temp );
 
                     }else{
 
@@ -1579,8 +1582,10 @@ var fn_get_simulation_data  =   function(
                         );
                     }
 
+                    v_arr_daily.push( v_dailyJongmokObj[ p_simul_hist_data[i].F12506 ] );
+
                     /* 지수정보가 계산된 이후 최초 정보는 필요가 없어 초기화 처리함 */
-                    p_firstHistObj  =   {};
+                    p_firstHistObj  =   null;
                 }
             }
         }
@@ -1590,8 +1595,10 @@ var fn_get_simulation_data  =   function(
     }
 
     return  { 
-            dailyJongmokObj   :   v_dailyJongmokObj
-        ,   dailyObj          :   v_dailyObj
+            dailyJongmokObj     :   v_dailyJongmokObj
+        ,   dailyObj            :   v_dailyObj
+        ,   arr_daily           :   v_arr_daily
+        ,   arr_rebalance       :   v_arr_rebalance
     };
 
 
@@ -2020,7 +2027,7 @@ var fn_get_simulation_data  =   function(
             ,   prev_tot_F15028_S       :   p_dailyObj[ p_param.F12506 ].prev_tot_F15028_S      /* (직전) 기준 시가총액 */
             ,   prev_tot_F15028_C       :   p_dailyObj[ p_param.F12506 ].prev_tot_F15028_C      /* (직전) 비교 시가총액 */
             ,   INDEX_RATE              :   p_dailyObj[ p_param.F12506 ].INDEX_RATE             /* 지수 */
-            ,   PREV_INDEX_RATE         :   p_dailyObj[ p_param.F12506 ].PREV_INDEX_RATE        /* (직전) 지수 */
+            ,   PREV_INDEX_RATE         :   p_dailyObj[ p_param.F12506 ].INDEX_RATE             /* (직전) 지수 */
             ,   RETURN_VAL              :   p_dailyObj[ p_param.F12506 ].RETURN_VAL             /* RETURN_VAL */
         };
 
@@ -2237,7 +2244,7 @@ var fn_get_simulation_data  =   function(
                 totalInfo.prev_tot_F15028_C     =   p_dailyObj[ p_param.v_before_F12506 ].tot_F15028_C;
 
                 /* T-1 일 지수 */
-                totalInfo.PREV_INDEX_RATE       =   p_dailyObj[ p_param.v_before_F12506 ].PREV_INDEX_RATE;
+                totalInfo.PREV_INDEX_RATE       =   p_dailyObj[ p_param.v_before_F12506 ].INDEX_RATE;
 
 
                 p_dailyObj[ p_param.F12506 ].tot_F15028_S           =   totalInfo.tot_F15028_S;
@@ -2538,7 +2545,7 @@ var fn_get_simulation_data  =   function(
             totalInfo.prev_tot_F15028_C     =   p_dailyObj[ p_param.v_before_F12506 ].tot_F15028_C;
 
             /* T-1 일 지수 */
-            totalInfo.PREV_INDEX_RATE       =   p_dailyObj[ p_param.v_before_F12506 ].PREV_INDEX_RATE;
+            totalInfo.PREV_INDEX_RATE       =   p_dailyObj[ p_param.v_before_F12506 ].INDEX_RATE;
 
 
 
