@@ -780,6 +780,8 @@ var saveBaicInfo = function(req, res) {
                                     v_firstHistObj[ rows[i].F16013 ]    =   rows[i];
                                 }
 
+                                v_arrFirstHist  =   rows;
+
                                 callback(null, paramData);
                             });
 
@@ -907,7 +909,7 @@ var saveBaicInfo = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion, paramData);
+        console.log(expetion, paramData);
 
         resultMsg.result = false;
         resultMsg.msg = "[error] simulationBacktest.saveBaicInfo 오류가 발생하였습니다.";
@@ -1348,7 +1350,7 @@ var getBacktestResult = function(req, res) {
                 ], function(err) {
 
                     if (err) {
-                        log.error(err, stmt, paramData);
+                        console.log(err, stmt, paramData);
                         conn.rollback();
 
                     } else {
@@ -1562,7 +1564,7 @@ var fn_get_simulation_data  =   function(
                         /*************************************************************************************************************
                         *   지수 정보를 계산하여 설정한다.
                         **************************************************************************************************************/
-                        fn_set_index_rate(
+                        var v_arr_rebalance_temp    =   fn_set_index_rate(
                                 {       
                                         rowInx          :   i                           /* 일자별 종목 레코드 인덱스 */
                                     ,   F12506          :   p_simul_hist_data[i].F12506 /* 입회일자 */
@@ -1631,16 +1633,13 @@ var fn_get_simulation_data  =   function(
                         );
                     }
 
-                    v_arr_daily.push( v_dailyJongmokObj[ p_simul_hist_data[i].F12506 ] );
-
-                    /* 지수정보가 계산된 이후 최초 정보는 필요가 없어 초기화 처리함 */
-                    p_firstHistObj  =   null;
+                    v_arr_daily.push( v_dailyObj[ p_simul_hist_data[i].F12506 ] );
                 }
             }
         }
 
     }catch( e ) {
-        log.debug( "fn_get_simulation_data error", e );
+        console.log( "fn_get_simulation_data error", e );
     }
 
     return  { 
@@ -1905,7 +1904,7 @@ var fn_get_simulation_data  =   function(
             Object.assign( p_dailyObj[ p_param.F12506 ], totalInfo );
 
         }catch( e ) {
-            log.debug( "fn_get_simulation_data.fn_set_dayilyJongmok error ", e );
+            console.log( "fn_get_simulation_data.fn_set_dayilyJongmok error ", e );
         }
     }
 
@@ -1955,7 +1954,6 @@ var fn_get_simulation_data  =   function(
 
                 /* 최초인경우 */
                 if( p_param.first_record_yn == "Y" ) {
-
                     if( typeof p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ] != "undefined" ) {
                         /* 지수적용비율 = 직전 지수적용 비율 */
                         v_dataItem.TODAY_RATE               =   p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ].TODAY_RATE;
