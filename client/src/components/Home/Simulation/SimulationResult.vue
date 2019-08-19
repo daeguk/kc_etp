@@ -26,12 +26,19 @@
                         <button type="button" class="exceldown_btn"></button>
                     </span>
                 </h4>
+
                 <div class="simul_graph"></div>
+
+
                 <v-tabs v-model="activeTab" centered light>
                     <v-tabs-slider></v-tabs-slider>
                     <v-tab v-for="item in item" :key="item">{{ item }}</v-tab>
                 </v-tabs>
+
+
+
                 <v-tabs-items v-model="activeTab">
+
                     <!--리밸런싱내역 탭1-->
                     <v-tab-item>
                         <v-layout row wrap>
@@ -60,8 +67,8 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(row, prop, index) in arrDayJisuList" v-bind:key="index">
-                                                <td class="txt_left">{{ row.date    /* 일자 */ }}</td>
+                                            <tr v-for="row in arr_result_daily" v-bind:key="row">
+                                                <td class="txt_left">{{ row.date            /* 일자 */ }}</td>
                                                 <td class="txt_right">{{ row.INDEX_RATE     /* 지수 */ }}</td>
                                                 <td class="txt_right"></td>
                                                 <td class="txt_right">{{ row.RETURN_VAL     /* 결과 */ }} %</td>
@@ -75,6 +82,7 @@
                             </v-flex>
                         </v-layout>
                     </v-tab-item>
+
                     <!--일자별 지수 탭2-->
                     <v-tab-item>
                         <v-layout row wrap>
@@ -101,9 +109,9 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(row, prop, index) in this.arrRebalanceList" v-bind:key="index">
+                                            <tr v-for="row in arr_result_rebalance" v-bind:key="row">
                                                 <td class="txt_left">{{ row.date    /* 일자 */ }}</td>
-                                                <td>{{ prop.EVENT_FLAG    /* 일자 */ }}</td>
+                                                <td>{{ row.EVENT_FLAG    /* 일자 */ }}</td>
                                                 <td class="txt_left">삼성전자(005930)</td>
                                                 <td class="txt_right">30.0%</td>
                                                 <td class="txt_right">33.33%</td>
@@ -156,14 +164,17 @@
 
                     <!--분석정보1 탭4-->
                     <v-tab-item>분석정보1</v-tab-item>
+
                     <!--분석정보2 탭5-->
                     <v-tab-item>분석정보2</v-tab-item>
                 </v-tabs-items>
+
                 <v-card flat>
                     <div class="text-xs-center mt-3">
                         <v-btn depressed color="primary" @click.stop="">저장하기</v-btn>
                     </div>
                 </v-card>
+
             </v-card>
         </v-flex>
 
@@ -202,11 +213,8 @@ export default {
 
             ,   arr_show_error_message      :   []
 
-            ,   arrSubListObj               :   []
-            ,   arrDayJisuList              :   []      /* 일자별 지수 */
-            ,   arrRebalanceList            :   []      /* 리밸런싱 내역 */
-            ,   arrRebalanceList            :   []      /* 리밸런싱 내역 */
-            ,   simulMast                   :   {}      /* 시뮬레이션 설정 */
+            ,   arr_result_daily            :   []      /* array 일자별 지수 */
+            ,   arr_result_rebalance        :   []      /* array 리밸런스 */
         };
     },
 
@@ -227,37 +235,23 @@ export default {
 
         /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
         if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
+
+            /* grp_cd 와 scen_cd 가 존재하는 경우 DB 저장된 backtest 결과 조회 */
             if( vm.paramData.grp_cd && vm.paramData.scen_cd  ) {
                 vm.fn_getBacktestResult( vm.paramData );
-            }else if( vm.paramData.dailyJongmokObj && vm.paramData.dailyObj && vm.paramData.simulMastObj ){
-                vm.fn_convertData();
+            }
+            /* 화면으로 부터 결과정보를 받은 경우 */
+            else if( 
+                    ( vm.paramData.arr_daily && vm.paramData.arr_daily.length > 0 )
+                ||  ( vm.paramData.arr_rebalance && vm.paramData.arr_rebalance.length > 0 )
+            ){
+                vm.arr_result_daily     =   vm.paramData.arr_daily;
+                vm.arr_result_rebalance =   vm.paramData.arr_rebalance;
             }
         }
     },
 
     methods: {
-
-        /*
-         * 
-         * 2019-07-26  bkLove(촤병국)
-         */
-        fn_convertData : function() {
-            var vm = this;
-
-            vm.arrDayJisuList   =   [];
-			Object.keys( vm.paramData.dailyObj ).forEach( function( item, index, array ) {
-				vm.arrDayJisuList.push( Object.assign( { date : item }, vm.paramData.dailyObj[ item ] ) );
-			});
-
-            vm.arrRebalanceList   =   [];
-			Object.keys( vm.paramData.dailyJongmokObj ).forEach( function( item, index, array ) {
-				Object.keys( vm.paramData.dailyJongmokObj[ item ] ).forEach( function( sub_item, sub_index, sub_array ) {
-					vm.arrRebalanceList.push( Object.assign( { date : item }, vm.paramData.dailyJongmokObj[ item ][ sub_item ] ) );
-				});
-			});	
-
-            console.log( vm.arrRebalanceList );
-        },        
 
         /*
          * 진행 progress 를 보여준다.

@@ -725,7 +725,7 @@
 
                     td_kspjong_hist.F16013                              AS  F16013                  /* 단축코드 */
                 ,   td_kspjong_hist.F12506                              AS  F12506                  /* 입회일자 */
-                ,   td_kspjong_hist.F15001                              AS  F15001                  /* 현재가*/
+
                 ,   td_kspjong_hist.F30700                              AS  F30700                  /* 가중 수정 현재가 ( 당일 종가 ) - 종가 */
                 ,   td_kspjong_hist.F15007                              AS  F15007                  /* 기준가 ( 전일 종가 ) - 기준가 */
                 ,   td_kspjong_hist.F16143                              AS  F16143                  /* 상장주식수*/

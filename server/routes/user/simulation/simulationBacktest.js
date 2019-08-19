@@ -848,8 +848,8 @@ var saveBaicInfo = function(req, res) {
 //                                resultMsg.dailyJongmokObj   =   result.dailyJongmokObj;
 //                                resultMsg.dailyObj          =   result.dailyObj;
 
-                                resultMsg.arr_daily         =   v_resultSimulData.arr_daily;
-                                resultMsg.arr_rebalance     =   v_resultSimulData.arr_rebalance;
+                                resultMsg.arr_daily         =   [ ...v_resultSimulData.arr_daily];
+                                resultMsg.arr_rebalance     =   [ ...v_resultSimulData.arr_rebalance];
 
                                 resultMsg.simulMastObj      =   { 
                                         grp_cd                  :   paramData.grp_cd                /* 그룹코드(상위코드) */
@@ -1151,7 +1151,7 @@ var getBacktestResult = function(req, res) {
                                             var v_dataItem      =   v_resultSimulData.dailyJongmokObj[ v_F12506 ][ v_dataKey ];
 
                                             Object.assign( v_dataItem, v_mastItem );
-                                            arrInsertDtl.push( v_dataItem  );
+//                                            arrInsertDtl.push( v_dataItem  );
                                         }
                                     }
                                 }
@@ -1217,28 +1217,28 @@ var getBacktestResult = function(req, res) {
 
                         try {
 
-                            // callback(null, paramData);
+                            callback(null, paramData);
 
-                            var startTime2   =   new Date();
+                            // var startTime2   =   new Date();
 
-                            stmt = mapper.getStatement('simulationBacktest', 'deleteTmSimulResult', paramData, format);
-                            log.debug(stmt);
+                            // stmt = mapper.getStatement('simulationBacktest', 'deleteTmSimulResult', paramData, format);
+                            // log.debug(stmt);
 
-                            conn.query(stmt, function(err, rows) {
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest.deleteTmSimulResult Error while performing Query";
-                                    resultMsg.err = err;
+                            // conn.query(stmt, function(err, rows) {
+                            //     if (err) {
+                            //         resultMsg.result = false;
+                            //         resultMsg.msg = "[error] simulationBacktest.deleteTmSimulResult Error while performing Query";
+                            //         resultMsg.err = err;
 
-                                    return callback(resultMsg);
-                                }
+                            //         return callback(resultMsg);
+                            //     }
 
-                                var endTime2   =   new Date();
+                            //     var endTime2   =   new Date();
 
-                                log.debug( fn_show_diff_time( "시뮬레이션 DB 삭제시간", startTime2, endTime2 ) );
+                            //     log.debug( fn_show_diff_time( "시뮬레이션 DB 삭제시간", startTime2, endTime2 ) );
 
-                                callback(null, paramData);
-                            });
+                            //     callback(null, paramData);
+                            // });
 
                         } catch (err) {
 
@@ -1356,8 +1356,8 @@ var getBacktestResult = function(req, res) {
                         resultMsg.msg = "성공적으로 저장하였습니다.";
                         resultMsg.err = null;
 
-                        resultMsg.arr_daily         =   v_resultSimulData.arr_daily
-                        resultMsg.arr_rebalance     =   v_resultSimulData.arr_rebalance
+                        resultMsg.arr_daily         =   [ ...v_resultSimulData.arr_daily ];
+                        resultMsg.arr_rebalance     =   [ ...v_resultSimulData.arr_rebalance];
 
                         conn.commit();
 
@@ -1372,7 +1372,7 @@ var getBacktestResult = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion, paramData);
+        console.log(expetion, paramData);
 
         resultMsg.result = false;
         resultMsg.msg = "[error] simulationBacktest.runBacktest 오류가 발생하였습니다.";
@@ -1562,7 +1562,7 @@ var fn_get_simulation_data  =   function(
                         /*************************************************************************************************************
                         *   지수 정보를 계산하여 설정한다.
                         **************************************************************************************************************/
-                        var v_arr_rebalance_temp    =   fn_set_index_rate(
+                        fn_set_index_rate(
                                 {       
                                         rowInx          :   i                           /* 일자별 종목 레코드 인덱스 */
                                     ,   F12506          :   p_simul_hist_data[i].F12506 /* 입회일자 */
@@ -1575,7 +1575,7 @@ var fn_get_simulation_data  =   function(
                             ,   p_firstHistObj                                          /* 최초 레코드 기준 이전 영업일 일자별 종목 데이터 */
                         );
 
-                        v_arr_rebalance.push( v_arr_rebalance_temp );
+                        v_arr_rebalance.push( v_dailyJongmokObj[ p_simul_hist_data[i].F12506 ] );
 
                     }else{
 
@@ -1956,14 +1956,16 @@ var fn_get_simulation_data  =   function(
                 /* 최초인경우 */
                 if( p_param.first_record_yn == "Y" ) {
 
-                    /* 지수적용비율 = 직전 지수적용 비율 */
-                    v_dataItem.TODAY_RATE           =   p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ].TODAY_RATE;
+                    if( typeof p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ] != "undefined" ) {
+                        /* 지수적용비율 = 직전 지수적용 비율 */
+                        v_dataItem.TODAY_RATE               =   p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ].TODAY_RATE;
+                    }
                 }else{
 
                     /* 종목이 편입되기 전엔 krw 로 존재했다가 종목이 편입되게 되면 krw 항목이 없어지게 됨. */
                     if( typeof p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ] != "undefined" ) {
                         /* 지수적용비율 = 직전 지수적용 비율 */
-                        v_dataItem.TODAY_RATE           =   p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].TODAY_RATE;
+                        v_dataItem.TODAY_RATE               =   p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].TODAY_RATE;
                     }
                 }
 
@@ -2042,7 +2044,7 @@ var fn_get_simulation_data  =   function(
             }
 
         }catch( e ) {
-            log.debug( "fn_get_simulation_data.fn_get_event_check error ", e );
+            console.log( "fn_get_simulation_data.fn_get_event_check error ", e );
         }
 
         return  eventObj;
@@ -2394,7 +2396,7 @@ var fn_get_simulation_data  =   function(
             }
 
         }catch( e ) {
-            log.debug( "fn_get_simulation_data.fn_set_siga_sum error ", e );
+            console.log( "fn_get_simulation_data.fn_set_siga_sum error ", e );
         }
     };
 
@@ -2717,7 +2719,7 @@ var fn_get_simulation_data  =   function(
             Object.assign( p_dailyObj[ p_param.F12506 ], totalInfo );
 
         }catch( e ) {
-            log.debug( "fn_get_simulation_data.fn_set_index_rate error ", e );
+            console.log( "fn_get_simulation_data.fn_set_index_rate error ", e );
         }
     }
 
@@ -2905,7 +2907,7 @@ var fn_get_simulation_data  =   function(
             }
 
         }catch( e ) {
-            log.debug( "fn_get_simulation_data.fn_calc_data error ", e );
+            console.log( "fn_get_simulation_data.fn_calc_data error ", e );
         }
 
         return  v_calc;
@@ -2965,7 +2967,7 @@ function    fn_show_diff_time( p_title, p_startTime, p_endTime ) {
         showLog +=  "#########################################################\n";
 
     }catch( e ) {
-        log.debug( "fn_show_diff_time error ", e );
+        console.log( "fn_show_diff_time error ", e );
     }
     
     return showLog;

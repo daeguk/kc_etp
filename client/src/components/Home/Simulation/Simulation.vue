@@ -1450,9 +1450,8 @@ export default {
                         vm.scen_cd          =   response.data.scen_cd;          /* 시나리오 코드 */
                         vm.scen_order_no    =   response.data.scen_order_no;    /* 시나리오 정렬순번 */
 
-                        var dailyJongmokObj =   response.data.dailyJongmokObj;
-                        var dailyObj        =   response.data.dailyObj;
-                        var simulMastObj    =   response.data.simulMastObj;
+                        var arr_daily       =   response.data.arr_daily;
+                        var arr_rebalance   =   response.data.arr_rebalance;
 
                         if( msg ) {
                             if ( await vm.$refs.confirm2.open(
@@ -1467,9 +1466,8 @@ export default {
                                     vm.$emit( "fn_showSimulation", 
                                         { 
                                                 showSimulationId    :    2
-                                            ,   dailyJongmokObj     :   dailyJongmokObj
-                                            ,   dailyObj            :   dailyObj
-                                            ,   simulMastObj        :   simulMastObj 
+                                            ,   arr_daily           :   arr_daily
+                                            ,   arr_rebalance       :   arr_rebalance
                                         }
                                     );
 

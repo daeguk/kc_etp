@@ -143,9 +143,8 @@ export default {
                 ,   grp_cd              :   ""
                 ,   scen_cd             :   ""
 
-                ,   dailyJongmokObj     :   {}
-                ,   dailyObj            :   {}
-                ,   simulMastObj        :   {} 
+                ,   arr_daily           :   []
+                ,   arr_rebalance       :   [] 
             } 
         ) {
             var vm = this;
