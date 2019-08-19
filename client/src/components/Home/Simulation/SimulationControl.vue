@@ -143,8 +143,9 @@ export default {
                 ,   grp_cd              :   ""
                 ,   scen_cd             :   ""
 
+                ,   simul_mast          :   {}
                 ,   arr_daily           :   []
-                ,   arr_rebalance       :   [] 
+                ,   arr_rebalance       :   []
             } 
         ) {
             var vm = this;

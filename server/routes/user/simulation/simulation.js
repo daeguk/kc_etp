@@ -1174,6 +1174,103 @@ var getSimulPortfolio = function(req, res) {
     }
 }
 
+/*
+ * 시뮬레이션 공통코드 초기 데이터를 조회한다.
+ * 2019-07-26  bkLove(촤병국)
+ */
+var getInitData1 = function(req, res) {
+    try {
+        log.debug('simulation.getInitData 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation.getInitData  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = "[error] simulation.getInitData  req.body.data no data.";
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        resultMsg.arr_code_list                 =   [];
+        resultMsg.arrMsg                        =   [];
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+     
+        Promise.using(pool.connect(), conn => {
+
+            try {
+
+                stmt = mapper.getStatement('simulation', 'getInitData', paramData, format);
+                log.debug(stmt, paramData);
+
+                conn.query(stmt, function(err, rows) {
+
+                    if (err) {
+                        log.error(err, stmt, paramData);
+
+                        resultMsg.result = false;
+                        resultMsg.msg = "[error] simulation.getInitData Error while performing Query";
+                        resultMsg.err = err;
+                    }
+
+                    if( rows && rows.length > 0 ) {
+                        resultMsg.arr_code_list   =   rows;
+
+                        resultMsg.result = true;
+                        resultMsg.msg = "";                        
+                    }else{
+                        resultMsg.result = false;
+                        resultMsg.msg = "공통코드 데이터가 존재하지 않습니다.";
+                        resultMsg.err = "공통코드 데이터가 존재하지 않습니다.";
+                    }
+ 
+                    res.json(resultMsg);
+                    res.end();
+                });
+
+            } catch (err) {
+                log.error(err, stmt, paramData);
+
+                resultMsg.result = false;
+                resultMsg.msg = "[error] simulation.getInitData Error while performing Query";
+                resultMsg.err = err;
+                resultMsg.arr_code_list     =   [];
+
+                res.json(resultMsg);
+                res.end();
+            }
+        });
+
+    } catch (expetion) {
+
+        log.error(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = "[error] simulation.getInitData 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
+
+        resultMsg.arr_code_list     =   [];
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
 
 module.exports.getInitGrpCd = getInitGrpCd;
 module.exports.getNextScenName = getNextScenName;
@@ -1183,3 +1280,4 @@ module.exports.modifyGroup = modifyGroup;
 module.exports.getSimulList = getSimulList;
 module.exports.getSimulMast = getSimulMast;
 module.exports.getSimulPortfolio = getSimulPortfolio;
+module.exports.getInitData1 = getInitData1;

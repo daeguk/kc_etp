@@ -1452,6 +1452,7 @@ export default {
 
                         var arr_daily       =   response.data.arr_daily;
                         var arr_rebalance   =   response.data.arr_rebalance;
+                        var simulMastObj    =   response.data.simulMastObj;
 
                         if( msg ) {
                             if ( await vm.$refs.confirm2.open(
@@ -1468,6 +1469,7 @@ export default {
                                                 showSimulationId    :    2
                                             ,   arr_daily           :   arr_daily
                                             ,   arr_rebalance       :   arr_rebalance
+                                            ,   simul_mast          :   simulMastObj
                                         }
                                     );
 
