@@ -75,10 +75,11 @@ var saveBaicInfo = function(req, res) {
         var v_firstHistObj              =   {};         /* 백테스트 실행시 start_year 기준 직전 영업일 하루 데이터 정보 */
         var v_dailyJongmokObj           =   {};         /* 일자별 종목 데이터 */
         var v_dailyObj                  =   {};         /* 일자별 결과 정보 */
+        
+        var v_resultSimulData           =   {};
 
-        resultMsg.dailyJongmokObj       =   {};
-        resultMsg.dailyObj            =   {};
-        resultMsg.simulMastObj          =   {};
+        resultMsg.arr_daily             =   [];
+        resultMsg.arr_rebalance         =   [];
 
         Promise.using(pool.connect(), conn => {
 
@@ -832,7 +833,7 @@ var saveBaicInfo = function(req, res) {
                             /*************************************************************************************************************
                             *   시뮬레이션 이력정보로 백테스트 수행결과를 반환한다.
                             **************************************************************************************************************/
-                                var result  =   fn_get_simulation_data(
+                                v_resultSimulData   =   fn_get_simulation_data(
                                         rows                    /* 일자별 종목 이력 데이터 */
                                     ,   v_simulPortfolio        /* [tm_simul_portfolio] 기준 종목 데이터 */
                                     ,   v_firstHistObj          /* (최초 레코드 기준 이전 영업일) 종목 데이터 */
@@ -844,8 +845,11 @@ var saveBaicInfo = function(req, res) {
                                 log.debug( fn_show_diff_time( "시뮬레이션 script 계산결과", startTime1, endTime1 ) );
 
 
-                                resultMsg.dailyJongmokObj   =   result.dailyJongmokObj;
-                                resultMsg.dailyObj          =   result.dailyObj;
+//                                resultMsg.dailyJongmokObj   =   result.dailyJongmokObj;
+//                                resultMsg.dailyObj          =   result.dailyObj;
+
+                                resultMsg.arr_daily         =   v_resultSimulData.arr_daily;
+                                resultMsg.arr_rebalance     =   v_resultSimulData.arr_rebalance;
 
                                 resultMsg.simulMastObj      =   { 
                                         grp_cd                  :   paramData.grp_cd                /* 그룹코드(상위코드) */
@@ -888,9 +892,6 @@ var saveBaicInfo = function(req, res) {
                         resultMsg.grp_cd        =   paramData.grp_cd;               /* 그룹 코드 */
                         resultMsg.scen_cd       =   paramData.scen_cd;              /* 시나리오 코드 */
                         resultMsg.scen_order_no =   paramData.scen_order_no;        /* 시나리오 정렬순번 */
-
-                        resultMsg.dailyJongmokObj   =   v_dailyJongmokObj;
-                        resultMsg.dailyObj          =   v_dailyObj;
 
                         resultMsg.err           =   null;
 
@@ -1354,6 +1355,9 @@ var getBacktestResult = function(req, res) {
                         resultMsg.result = true;
                         resultMsg.msg = "성공적으로 저장하였습니다.";
                         resultMsg.err = null;
+
+                        resultMsg.arr_daily         =   v_resultSimulData.arr_daily
+                        resultMsg.arr_rebalance     =   v_resultSimulData.arr_rebalance
 
                         conn.commit();
 
