@@ -1721,6 +1721,8 @@ var fn_get_simulation_data  =   function(
         try{
 
         /* 1. 포트 폴리오를 기준으로 종목코드 할당 및 total 정보를 설정한다. */
+        log.debug(JSON.stringify(p_simulPortfolioObj));
+       
             for( var i = 0; i < Object.keys( p_simulPortfolioObj ).length; i++ ) {
                 var v_portKey     =   Object.keys( p_simulPortfolioObj )[i];
                 var v_portItem    =   Object.assign( {}, p_simulPortfolioObj[ v_portKey ] );
@@ -1790,29 +1792,41 @@ var fn_get_simulation_data  =   function(
                 *   비중설정방식 ( COM009 ) importance_method_cd  - 1:직접입력, 2:동일가중, 3-시총비중
                 *   -   2 : 동일 가중인 경우 ( 상장주식수를 1로 고정한다 )
                 **************************************************************************************************************/
+               
                 if( "2" == v_portItem.importance_method_cd ) {
                     p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].F16143 =   1;
+
+                    /* 시가기준 시총 = 상장주식수(p_param.F16143) * 종가(p_param.F30700) */
+                    p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].F15028_1    =     fn_calc_data( 
+                        "F15028_3"
+                        ,   { 
+                                    F15001  :   p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].F15001     /* 현재가 ( 당일 종가 ) - 종가 */
+                                ,   F16143  :   p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].F16143     /* 상장주식수 */
+                            } 
+                    );
+                        
+                } else {
+
+
+
+                    /* 시가기준 시총 = 상장주식수(p_param.F16143) * 종가(p_param.F30700) */
+                    p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].F15028_1    =     fn_calc_data( 
+                            "F15028_1"
+                        ,   { 
+                                    F30700  :   p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].F30700     /* 현재가 ( 당일 종가 ) - 종가 */
+                                ,   F16143  :   p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].F16143     /* 상장주식수 */
+                            } 
+                    );
+
+                    /* 시가기준 시총 = 상장주식수(p_param.F16143) * 기준가(p_param.F15007) */
+                    p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].F15028_2    =     fn_calc_data( 
+                            "F15028_2"
+                        ,   { 
+                                    F15007  :   p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].F15007     /* 기준가 ( 전일 종가 ) - 기준가 */
+                                ,   F16143  :   p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].F16143     /* 상장주식수 */
+                            } 
+                    );
                 }
-
-
-
-                /* 시가기준 시총 = 상장주식수(p_param.F16143) * 종가(p_param.F30700) */
-                p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].F15028_1    =     fn_calc_data( 
-                        "F15028_1"
-                    ,   { 
-                                F30700  :   p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].F30700     /* 현재가 ( 당일 종가 ) - 종가 */
-                            ,   F16143  :   p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].F16143     /* 상장주식수 */
-                        } 
-                );
-
-                /* 시가기준 시총 = 상장주식수(p_param.F16143) * 기준가(p_param.F15007) */
-                p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].F15028_2    =     fn_calc_data( 
-                        "F15028_2"
-                    ,   { 
-                                F15007  :   p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].F15007     /* 기준가 ( 전일 종가 ) - 기준가 */
-                            ,   F16143  :   p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].F16143     /* 상장주식수 */
-                        } 
-                );
 
 
             /* total 정보 설정 */
@@ -1906,6 +1920,7 @@ var fn_get_simulation_data  =   function(
 
         }catch( e ) {
             log.debug( "fn_get_simulation_data.fn_set_dayilyJongmok error ", e );
+           
         }
     }
 
@@ -2733,12 +2748,14 @@ var fn_get_simulation_data  =   function(
         ,   p_param={       
                     importance          :   0       /* 비중 */
                 ,   F15007              :   0       /* 기준가 ( 전일 종가 ) - 기준가 */
-                ,   F30700              :   0       /* 현재가 ( 당일 종가 ) - 종가 */
+                ,   F15001              :   0       /* 현재가 ( 당일 종가 ) - 종가 */
+                ,   F30700              :   0       /* 수정주가 현재가 ( 당일 종가 ) - 종가 */
                 ,   F16143              :   0       /* 상장주식수 */
                 ,   F15028              :   0       /* 시가기준 시총 */
                 ,   F15007_F16143       :   0       /* 기준가 * 상장주식수 */
                 ,   TODAY_RATE          :   0       /* 지수적용비율 */
                 ,   F15028_S            :   0       /* 기준 시가총액 */
+                
             }
         ,   p_totalInfo={ 
                     tot_F15028          :   0       /* 시가기준 시총 */
@@ -2775,6 +2792,11 @@ var fn_get_simulation_data  =   function(
                         /* 시가기준 시총 = 상장주식수(p_param.F16143) * 기준가(p_param.F15007) */
                 case    "F15028_2"    :
                             v_calc  =   Number( p_param.F16143 )  *  Number( p_param.F15007 );
+                            break;
+                
+                        /* 시가기준 시총 = 상장주식수(p_param.F16143) * 종가(p_param.F15001) */
+                case    "F15028_3"    :
+                            v_calc  =   Number( p_param.F16143 )  *  Number( p_param.F15001 );
                             break;
 
                         /* 기준가(p_param.F15007) * 상장주식수(p_param.F16143) */
