@@ -854,7 +854,7 @@ var saveBaicInfo = function(req, res) {
 
                                 console.log( fn_show_diff_time( "시뮬레이션 script 계산결과", startTime1, endTime1 ) );
 
-                                callback(null, paramData);
+                                callback(null);
                             });
 
                         } catch (err) {
@@ -870,7 +870,289 @@ var saveBaicInfo = function(req, res) {
                         }
                     },
 
-                    /* 14. (백테스트) tm_simul_result_daily 결과를 삭제한다. */
+                ], function(err) {
+
+                    if (err) {
+                        console.error(err, stmt, paramData);
+                        conn.rollback();
+
+                    } else {
+                        resultMsg.result        =   true;
+                        resultMsg.msg           =   "성공적으로 저장하였습니다.";
+
+
+                        resultMsg.arr_daily         =   [ ...v_resultSimulData.arr_daily];
+                        resultMsg.arr_rebalance     =   [ ...v_resultSimulData.arr_rebalance];
+
+                        resultMsg.simul_mast        =   { 
+                                grp_cd                  :   paramData.grp_cd                /* 그룹코드(상위코드) */
+                            ,   scen_cd                 :   paramData.scen_cd               /* 시나리오 코드 */
+
+                            ,   scen_name               :   paramData.scen_name             /* 시나리오명 */
+                            ,   start_year              :   paramData.start_year            /* 시작년도 */
+                            ,   rebalance_cycle_cd      :   paramData.rebalance_cycle_cd    /* 리밸런싱주기 (COM006) */
+                            ,   rebalance_date_cd       :   paramData.rebalance_date_cd     /* 리밸런싱일자 (COM007) */
+                            ,   init_invest_money       :   paramData.init_invest_money     /* 초기투자금액 */
+                            ,   bench_mark_cd           :   paramData.bench_mark_cd         /* 벤치마크 (COM008) */
+                            ,   importance_method_cd    :   paramData.importance_method_cd  /* 비중설정방식 (COM009) */
+                        };
+
+                        resultMsg.err           =   null;
+
+                        conn.commit();
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+
+                });
+            });
+        });
+
+    } catch (expetion) {
+
+        console.log(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = "[error] simulationBacktest.saveBaicInfo 오류가 발생하였습니다.";
+        resultMsg.err = expetion;
+
+        resultMsg.arr_daily             =   [];
+        resultMsg.arr_rebalance         =   [];
+        resultMsg.simul_mast            =   {};
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+
+
+/*************************************************************************************************************
+*   백테스트 결과 저장
+**************************************************************************************************************/
+
+
+/*
+ * 백테스트 결과를 저장한다.
+ * 2019-08-14  bkLove(촤병국)
+ */
+var saveBacktestResult = function(req, res) {
+    try {
+        log.debug('simulationBacktest.saveBacktestResult 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulationBacktest.saveBacktestResult  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = "[error] simulationBacktest.saveBacktestResult  req.body.data no data.";
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+ 
+        var arrInsertDtl                =   [];
+        var arrModifyDtl                =   [];
+        var arrDeleteDtl                =   [];
+        var divideList                  =   [];
+
+        var v_arrFirstHist              =   [];
+        var v_simulPortfolio            =   {};
+        var v_firstHistObj              =   {};         /* 백테스트 실행시 start_year 기준 직전 영업일 하루 데이터 정보 */
+        var v_dailyJongmokObj           =   {};         /* 일자별 종목 데이터 */
+        var v_dailyObj                  =   {};         /* 일자별 결과 정보 */
+        
+        var v_resultSimulData           =   {};
+
+        Promise.using(pool.connect(), conn => {
+
+            conn.beginTransaction(txerr => {
+
+                if (txerr) {
+                    return log.error(txerr);
+                }            
+
+                async.waterfall([
+
+                    /* 1. (백테스트) 시뮬레이션 할 기본정보를 조회한다. */
+                    function(callback) {
+
+                        try{
+
+                            if(  !paramData.grp_cd || !paramData.scen_cd  ) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "[백테스트] 기본 인자값 정보가 존재하지 않습니다.";
+                                resultMsg.err = "[백테스트] 기본 인자값 정보가 존재하지 않습니다.";
+
+                                callback(resultMsg, paramData);
+                            }
+                            else{
+                                stmt = mapper.getStatement('simulationBacktest', 'getSimulListByBacktest', paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulationBacktest.getSimulListByBacktest Error while performing Query";
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if ( !rows || rows.length == 0 || !rows[0].start_year ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[백테스트] 시뮬레이션 할 기본 데이터가 존재하지 않습니다.";
+                                        resultMsg.err = "[백테스트] 시뮬레이션 할 기본 데이터가 존재하지 않습니다.";
+
+                                        return callback(resultMsg);
+                                    }else{
+                                        paramData.start_year    =   rows[0].start_year;     /* 시작년도 */
+                                    }
+
+									for( var i in rows ) {
+										v_simulPortfolio[ rows[i].F16013 ]    =   rows[i];
+									}
+
+                                    callback(null, paramData);
+                                });
+                            }
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulationBacktest.getSimulListByBacktest Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 2. scen_cd 에 존재하면서 start_year 기준 직전 영업일 하루 데이터를 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            stmt = mapper.getStatement('simulationBacktest', 'getSimulHistListByBeforeDateScenCd', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulationBacktest.getSimulHistListByBeforeDateScenCd Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[백테스트] " + paramData.start_year + "0101 직전 영업일 정보가 존재하지 않습니다.";
+                                    resultMsg.err = "[백테스트] " + paramData.start_year + "0101 직전 영업일 정보가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                }
+
+
+                                /*************************************************************************************************************
+                                *   최초 레코드 기준 이전 영업일을 설정한다.
+                                **************************************************************************************************************/
+                                for( var i in rows ) {
+
+                                    if( !v_firstHistObj[ rows[0].F12506 ] || Object.keys( v_firstHistObj[ rows[0].F12506 ] ).length == 0  ) {
+                                        v_firstHistObj[ rows[0].F12506 ]    =   {};
+                                    }
+
+                                    v_firstHistObj[ rows[0].F12506 ][ rows[i].F16013 ]    =   rows[i];
+                                }
+
+                                v_arrFirstHist      =   rows;
+
+                                callback(null, paramData);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulationBacktest.getSimulHistListByBeforeDateScenCd Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 3. scen_cd 에 존재하면서 start_year 기준 이력 데이터를 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+                            stmt = mapper.getStatement('simulationBacktest', 'getSimulHistListByScenCd', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulationBacktest.getSimulHistListByBacktest Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0  ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[백테스트] 시뮬레이션 할 이력 데이터가 존재하지 않습니다.";
+                                    resultMsg.err = "[백테스트] 시뮬레이션 할 이력 데이터가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                }                            
+
+                                var startTime1   =   new Date();
+
+                            /*************************************************************************************************************
+                            *   시뮬레이션 이력정보로 백테스트 수행결과를 반환한다.
+                            **************************************************************************************************************/
+                                v_resultSimulData  =   fn_get_simulation_data(
+                                        rows                    /* 일자별 종목 이력 데이터 */
+                                    ,   v_simulPortfolio        /* [tm_simul_portfolio] 기준 종목 데이터 */
+                                    ,   v_firstHistObj          /* (최초 레코드 기준 이전 영업일) 종목 데이터 */
+                                    ,   v_arrFirstHist          /* (최초 레코드 기준 이전 영업일) array 데이터 */
+                                );
+
+                                var endTime1   =   new Date();
+
+                                console.log( fn_show_diff_time( "시뮬레이션 script 계산", startTime1, endTime1 ) );
+
+                                callback(null, paramData);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulationBacktest.getSimulHistListByScenCd Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 4. (백테스트) tm_simul_result_daily 결과를 삭제한다. */
                     function(msg, callback) {
 
                         var startTime   =   new Date();
@@ -908,7 +1190,7 @@ var saveBaicInfo = function(req, res) {
                         }
                     },
 
-                    /* 15. (백테스트) tm_simul_result_daily 결과를 저장한다. */
+                    /* 5. (백테스트) tm_simul_result_daily 결과를 저장한다. */
                     function(msg, callback) {
 
                         divideList  =   [];
@@ -1003,7 +1285,7 @@ var saveBaicInfo = function(req, res) {
 
                     },
 
-                    /* 16. (백테스트) tm_simul_result_rebalance 결과를 삭제한다. */
+                    /* 6. (백테스트) tm_simul_result_rebalance 결과를 삭제한다. */
                     function(msg, callback) {
 
                         var startTime   =   new Date();
@@ -1041,23 +1323,25 @@ var saveBaicInfo = function(req, res) {
                         }
                     },
 
-                    /* 15. (백테스트) tm_simul_result_rebalance 결과를 저장한다. */
+                    /* 7. (백테스트) tm_simul_result_rebalance 결과를 저장한다. */
                     function(msg, callback) {
 
                         divideList  =   [];
 
                         var arr_result_rebalance    =   [];
 
-                        v_resultSimulData.arr_rebalance.forEach( function( item, index, array ) {
+						if( v_resultSimulData.arr_rebalance && v_resultSimulData.arr_rebalance.length > 0 ) {
+							v_resultSimulData.arr_rebalance.forEach( function( item, index, array ) {
 
-                            Object.keys( array[ index ] ).forEach( function( key ) {
-                                var sub_item    =   array[ index ][ key ];
+								Object.keys( array[ index ] ).forEach( function( key ) {
+									var sub_item    =   array[ index ][ key ];
 
-                                arr_result_rebalance.push( sub_item );
-                            });
-                        });
+									arr_result_rebalance.push( sub_item );
+								});
+							});
+						}
 
-                        /* daily 건이 존재하는 경우 */
+                        
                         if( arr_result_rebalance && arr_result_rebalance.length > 0 ) {
 
                             var startTime   =   new Date();
@@ -1149,7 +1433,7 @@ var saveBaicInfo = function(req, res) {
 /*************************************************************************************
 *   추후 아래 삭제 및 저장 부분은 삭제 예정 START
 *************************************************************************************/
-                    /* 16. (백테스트) tm_simul_result 결과를 삭제한다. */
+                    /* 8. (백테스트) tm_simul_result 결과를 삭제한다. */
                     function(msg, callback) {
 
                         var startTime   =   new Date();
@@ -1186,7 +1470,7 @@ var saveBaicInfo = function(req, res) {
                         }
                     },
 
-                    /* 17. (백테스트) 시뮬레이션 결과를 저장한다. */
+                    /* 9. (백테스트) 시뮬레이션 결과를 저장한다. */
                     function(msg, callback) {
 
 
@@ -1308,230 +1592,6 @@ var saveBaicInfo = function(req, res) {
                 ], function(err) {
 
                     if (err) {
-                        console.error(err, stmt, paramData);
-                        conn.rollback();
-
-                    } else {
-                        resultMsg.result        =   true;
-                        resultMsg.msg           =   "성공적으로 저장하였습니다.";
-
-
-                        resultMsg.arr_daily         =   [ ...v_resultSimulData.arr_daily];
-                        resultMsg.arr_rebalance     =   [ ...v_resultSimulData.arr_rebalance];
-
-                        resultMsg.simul_mast        =   { 
-                                grp_cd                  :   paramData.grp_cd                /* 그룹코드(상위코드) */
-                            ,   scen_cd                 :   paramData.scen_cd               /* 시나리오 코드 */
-
-                            ,   scen_name               :   paramData.scen_name             /* 시나리오명 */
-                            ,   start_year              :   paramData.start_year            /* 시작년도 */
-                            ,   rebalance_cycle_cd      :   paramData.rebalance_cycle_cd    /* 리밸런싱주기 (COM006) */
-                            ,   rebalance_date_cd       :   paramData.rebalance_date_cd     /* 리밸런싱일자 (COM007) */
-                            ,   init_invest_money       :   paramData.init_invest_money     /* 초기투자금액 */
-                            ,   bench_mark_cd           :   paramData.bench_mark_cd         /* 벤치마크 (COM008) */
-                            ,   importance_method_cd    :   paramData.importance_method_cd  /* 비중설정방식 (COM009) */
-                        };
-
-
-                        resultMsg.err           =   null;
-
-                        conn.commit();
-                    }
-
-                    res.json(resultMsg);
-                    res.end();
-
-                });
-            });
-        });
-
-    } catch (expetion) {
-
-        console.log(expetion, paramData);
-
-        resultMsg.result = false;
-        resultMsg.msg = "[error] simulationBacktest.saveBaicInfo 오류가 발생하였습니다.";
-        resultMsg.err = expetion;
-
-        resultMsg.arr_daily             =   [];
-        resultMsg.arr_rebalance         =   [];
-        resultMsg.simul_mast            =   {};
-
-        res.json(resultMsg);
-        res.end();
-    }
-}
-
-
-
-/*************************************************************************************************************
-*   백테스트 결과 저장
-**************************************************************************************************************/
-
-
-/*
- * 백테스트 결과를 저장한다.
- * 2019-08-14  bkLove(촤병국)
- */
-var saveBacktestResult = function(req, res) {
-    try {
-        log.debug('simulationBacktest.saveBacktestResult 호출됨.');
-
-        var pool = req.app.get("pool");
-        var mapper = req.app.get("mapper");
-        var resultMsg = {};
-
-        /* 1. body.data 값이 있는지 체크 */
-        if (!req.body.data) {
-            log.error("[error] simulationBacktest.saveBacktestResult  req.body.data no data.", req.body.data);
-
-            resultMsg.result = false;
-            resultMsg.msg = "[error] simulationBacktest.saveBacktestResult  req.body.data no data.";
-
-            throw resultMsg;
-        }
-
-        var paramData = JSON.parse(JSON.stringify(req.body.data));
-
-        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
-        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
-        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
-        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
-        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
-
-
-        var format = { language: 'sql', indent: '' };
-        var stmt = "";
-
-
-
-        Promise.using(pool.connect(), conn => {
-
-            conn.beginTransaction(txerr => {
-
-                if (txerr) {
-                    return log.error(txerr);
-                }            
-
-                async.waterfall([
-
-                    /* 1. (백테스트) 시뮬레이션 할 기본정보가 존재하는지 체크한다. */
-                    function(callback) {
-
-                        try{
-
-                            if(  !paramData.grp_cd || !paramData.scen_cd  ) {
-                                resultMsg.result = false;
-                                resultMsg.msg = "[백테스트] 기본 인자값 정보가 존재하지 않습니다.";
-                                resultMsg.err = "[백테스트] 기본 인자값 정보가 존재하지 않습니다.";
-
-                                callback(resultMsg, paramData);
-                            }
-                            else{
-                                stmt = mapper.getStatement('simulationBacktest', 'getSimulListByBacktest', paramData, format);
-                                log.debug(stmt, paramData);
-
-                                conn.query(stmt, function(err, rows) {
-
-                                    if (err) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationBacktest.getSimulListByBacktest Error while performing Query";
-                                        resultMsg.err = err;
-
-                                        return callback(resultMsg);
-                                    }
-
-                                    if ( !rows || rows.length == 0 || !rows[0].start_year ) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = "[백테스트] 시뮬레이션 할 기본 데이터가 존재하지 않습니다.";
-                                        resultMsg.err = "[백테스트] 시뮬레이션 할 기본 데이터가 존재하지 않습니다.";
-
-                                        return callback(resultMsg);
-                                    }
-
-                                    callback(null, paramData);
-                                });
-                            }
-                        } catch (err) {
-
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.getSimulListByBacktest Error while performing Query";
-                            resultMsg.err = err;
-
-                            callback(resultMsg);
-                        }
-                    },
-
-
-                    /* 2. (백테스트) 시뮬레이션 tm_simul_result_daily 노출여부를 1 로 변경한다. */
-                    function(msg, callback) {
-
-                        try {
-                            paramData.show_yn   =   '1';
-                            stmt = mapper.getStatement('simulationBacktest', 'modifySimulResultDaily', paramData, format);
-                            log.debug(stmt);
-
-                            conn.query(stmt, function(err, rows) {
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest.modifySimulResultDaily Error while performing Query";
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                callback(null, paramData);
-                            });
-
-                        } catch (err) {
-
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.modifySimulResultDaily Error while performing Query";
-
-                            if( !resultMsg.err ) {
-                                resultMsg.err = err;
-                            }
-
-                            return callback(resultMsg);
-                        }
-                    },
-
-                    /* 3. (백테스트) 시뮬레이션 deleteTmSimulResultRebalance 노출여부를 1 로 변경한다. */
-                    function(msg, callback) {
-
-                        try {
-
-                            stmt = mapper.getStatement('simulationBacktest', 'modifySimulResultRebalance', paramData, format);
-                            log.debug(stmt);
-
-                            conn.query(stmt, function(err, rows) {
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest.modifySimulResultRebalance Error while performing Query";
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                callback(null, paramData);
-                            });
-
-                        } catch (err) {
-
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.modifySimulResultRebalance Error while performing Query";
-
-                            if( !resultMsg.err ) {
-                                resultMsg.err = err;
-                            }
-
-                            return callback(resultMsg);
-                        }
-                    },                    
-
-                ], function(err) {
-
-                    if (err) {
                         console.log(err, stmt, paramData);
                         conn.rollback();
 
@@ -1539,6 +1599,9 @@ var saveBacktestResult = function(req, res) {
                         resultMsg.result = true;
                         resultMsg.msg = "성공적으로 저장하였습니다.";
                         resultMsg.err = null;
+
+						resultMsg.grp_cd	=	paramData.grp_cd;
+						resultMsg.scen_cd	=	paramData.scen_cd;
 
                         conn.commit();
 
@@ -1563,12 +1626,6 @@ var saveBacktestResult = function(req, res) {
         res.end();
     }
 }
-
-
-
-
-
-
 
 
 
@@ -1626,7 +1683,7 @@ var getBacktestResult = function(req, res) {
 
                 async.waterfall([
 
-                    /* 1. (백테스트) 시뮬레이션 할 기본정보가 존재하는지 체크한다. */
+                    /* 1. (백테스트) 시뮬레이션 할 기본정보를 조회한다. */
                     function(callback) {
 
                         try{
@@ -1784,6 +1841,17 @@ var getBacktestResult = function(req, res) {
     }
 }
 
+
+
+
+
+
+
+
+
+/*************************************************************************************************************
+*   백테스트 모듈
+**************************************************************************************************************/
 
 /*
  *  시뮬레이션 이력정보로 백테스트 수행결과를 반환한다.

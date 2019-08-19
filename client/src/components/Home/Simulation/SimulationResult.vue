@@ -559,6 +559,9 @@ export default {
                         resolve( { result : false } );
                     }else{
 
+						var	v_grp_cd	=	response.data.grp_cd;
+						var	v_scen_cd	=	response.data.scen_cd;
+
                         if( msg ) {
                             if ( vm.$refs.confirm2.open(
                                     '확인',
@@ -567,9 +570,10 @@ export default {
                                     ,1
                                 )
                             ) {
-                                if(vm.$refs.confirm2.val == 'Y') {
-
-                                }
+								vm.fn_getBacktestResult( { 
+										grp_cd  : v_grp_cd
+									, 	scen_cd : v_scen_cd 
+								});
                             }
                         }                        
 
