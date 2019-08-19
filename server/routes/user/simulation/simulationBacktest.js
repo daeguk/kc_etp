@@ -968,6 +968,8 @@ var getBacktestResult = function(req, res) {
         var arrInsertDtl        =   [];
         var divideList          =   [];
 
+        var v_resultSimulData   =   {};
+
         resultMsg.dataList      =   [];
         Promise.using(pool.connect(), conn => {
 
@@ -1121,7 +1123,7 @@ var getBacktestResult = function(req, res) {
                             /*************************************************************************************************************
                             *   시뮬레이션 이력정보로 백테스트 수행결과를 반환한다.
                             **************************************************************************************************************/
-                                var result  =   fn_get_simulation_data(
+                                v_resultSimulData  =   fn_get_simulation_data(
                                         rows                    /* 일자별 종목 이력 데이터 */
                                     ,   v_simulPortfolio        /* [tm_simul_portfolio] 기준 종목 데이터 */
                                     ,   v_firstHistObj          /* (최초 레코드 기준 이전 영업일) 종목 데이터 */
@@ -1133,19 +1135,19 @@ var getBacktestResult = function(req, res) {
                                 log.debug( fn_show_diff_time( "시뮬레이션 script 계산", startTime1, endTime1 ) );
 
 
-                                if (    result 
-                                    &&  result.dailyJongmokObj 
-                                    &&  Object.keys( result.dailyJongmokObj ).length > 0 
+                                if (    v_resultSimulData 
+                                    &&  v_resultSimulData.dailyJongmokObj 
+                                    &&  Object.keys( v_resultSimulData.dailyJongmokObj ).length > 0 
                                 ) {
 
-                                    for( var i=0; i < Object.keys( result.dailyJongmokObj ).length; i++ ) {
-                                        var v_F12506        =   Object.keys( result.dailyJongmokObj )[i];
-                                        var v_subItem       =   result.dailyJongmokObj[ v_F12506 ];
-                                        var v_mastItem      =   result.dailyObj[ v_F12506 ];
+                                    for( var i=0; i < Object.keys( v_resultSimulData.dailyJongmokObj ).length; i++ ) {
+                                        var v_F12506        =   Object.keys( v_resultSimulData.dailyJongmokObj )[i];
+                                        var v_subItem       =   v_resultSimulData.dailyJongmokObj[ v_F12506 ];
+                                        var v_mastItem      =   v_resultSimulData.dailyObj[ v_F12506 ];
 
-                                        for( var j=0; j < Object.keys( result.dailyJongmokObj[ v_F12506 ] ).length; j++ ) {
-                                            var v_dataKey       =   Object.keys( result.dailyJongmokObj[ v_F12506 ] )[j];
-                                            var v_dataItem      =   result.dailyJongmokObj[ v_F12506 ][ v_dataKey ];
+                                        for( var j=0; j < Object.keys( v_resultSimulData.dailyJongmokObj[ v_F12506 ] ).length; j++ ) {
+                                            var v_dataKey       =   Object.keys( v_resultSimulData.dailyJongmokObj[ v_F12506 ] )[j];
+                                            var v_dataItem      =   v_resultSimulData.dailyJongmokObj[ v_F12506 ][ v_dataKey ];
 
                                             Object.assign( v_dataItem, v_mastItem );
                                             arrInsertDtl.push( v_dataItem  );
@@ -1165,6 +1167,49 @@ var getBacktestResult = function(req, res) {
                             callback(resultMsg);
                         }
                     },
+
+
+                    /* 3. (백테스트) 이미 존재하는 시뮬레이션 daily 결과를 삭제한다. */
+                    function(msg, callback) {
+
+                        try {
+
+                            // callback(null, paramData);
+
+                            var startTime2   =   new Date();
+
+                            stmt = mapper.getStatement('simulationBacktest', 'deleteTmSimulResultDaily', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulationBacktest.deleteTmSimulResultDaily Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                var endTime2   =   new Date();
+
+                                log.debug( fn_show_diff_time( "시뮬레이션 dayily DB 삭제시간", startTime2, endTime2 ) );
+
+                                callback(null, paramData);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulationBacktest.deleteTmSimulResultDaily Error while performing Query";
+
+                            if( !resultMsg.err ) {
+                                resultMsg.err = err;
+                            }
+
+                            return callback(resultMsg);
+                        }
+                    },
+
 
                     /* 3. (백테스트) 이미 존재하는 시뮬레이션 결과를 삭제한다. */
                     function(msg, callback) {
@@ -1297,7 +1342,7 @@ var getBacktestResult = function(req, res) {
                             callback(null, paramData);
                         }
 
-                    },                    
+                    },
 
                 ], function(err) {
 

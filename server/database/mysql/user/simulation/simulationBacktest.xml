@@ -928,6 +928,126 @@
          WHERE  1 = 1
            AND  tm_simul_result.grp_cd          =   #{grp_cd}       /* 그룹코드(상위코드) */
            AND  tm_simul_result.scen_cd         =   #{scen_cd}      /* 시나리오코드 */
+    </delete>
+
+
+
+    <!--
+    * [tm_simul_result_daily] 테이블에 저장한다.
+    * 2019-08-14  bkLove(촤병국)
+    -->
+    <insert     id="saveTmSimulResultDaily">
+    <![CDATA[
+        INSERT  INTO    
+        /* simulationBacktest.saveTmSimulResultDaily      [tm_simul_result_daily] 테이블에 저장한다. */
+        tm_simul_result_daily
+        (
+                grp_cd                          /*그룹코드(상위코드) */
+            ,   scen_cd                         /*시나리오코드 */
+            ,   F12506                          /*입회일자 */
+
+            ,   rebalancing                     /*리밸런싱 여부(Y,N)-COM010 */
+            ,   F15028_S                        /*기준시총 */
+            ,   F15028_C                        /*비교시총 */
+            ,   INDEX_RATE                      /*지수 */
+            ,   RETURN_VAL                      /*결과 */
+
+            ,   reg_id                          /*등록자 ID */
+            ,   reg_time                        /*등록시간 */
+        )
+        VALUES
+    ]]>
+        <foreach    collection="dataLists"   item="data"     separator="," >
+    <![CDATA[  
+        (                
+                #{data.grp_cd}                  /*그룹코드(상위코드) */
+            ,   #{data.scen_cd}                 /*시나리오코드 */
+            ,   #{data.F12506}                  /*입회일자 */
+
+            ,   #{data.rebalancing}             /*리밸런싱 여부(Y,N)-COM010 */
+            ,   #{data.F15028_S}                /*기준시총 */
+            ,   #{data.F15028_C}                /*비교시총 */
+            ,   #{data.INDEX_RATE}              /*지수 */
+            ,   #{data.RETURN_VAL}              /*결과 */
+
+            ,   #{user_id}                      /*등록자 ID */
+            ,   now()                           /*등록시간 */
+    ]]>
+        </foreach>            
+
+    </insert>
+
+    <!--
+    * [tm_simul_result_daily] 테이블을 삭제한다.
+    * 2019-08-14  bkLove(촤병국)
+    -->
+    <delete     id="deleteTmSimulResultDaily">
+        DELETE  /* simulationBacktest.deleteTmSimulResultDaily      [tm_simul_result_daily] 테이블을 삭제한다. */
+          FROM  tm_simul_result_daily
+         WHERE  1 = 1
+           AND  tm_simul_result_daily.grp_cd        =   #{grp_cd}       /* 그룹코드(상위코드) */
+           AND  tm_simul_result_daily.scen_cd       =   #{scen_cd}      /* 시나리오코드 */
+    </delete>
+
+
+
+    <!--
+    * [tm_simul_result_rebalance] 테이블에 저장한다.
+    * 2019-08-14  bkLove(촤병국)
+    -->
+    <insert     id="saveTmSimulResultRebalance">
+    <![CDATA[
+        INSERT  INTO    
+        /* simulationBacktest.saveTmSimulResultRebalance      [tm_simul_result_rebalance] 테이블에 저장한다. */
+        tm_simul_result_rebalance
+        (
+            ,   grp_cd                          /*그룹코드(상위코드) */
+            ,   scen_cd                         /*시나리오코드 */
+            ,   F12506                          /*입회일자 */
+            ,   F16013                          /*단축 코드(현금은 KRW로 처리) */
+
+            ,   BEFORE_RATE                     /*(직전)지수적용비율 */
+            ,   TODAY_RATE                      /*(당일)지수적용비율 */
+            ,   BEFORE_IMPORTANCE               /*(직전) 시가총액 비중 */
+            ,   TODAY_IMPORTANCE                /*(당일) 시가총액 비중 */
+            ,   EVENT_FLAG                      /*이벤트(비중조절, 종목편입)-COM011 */
+
+            ,   reg_id                          /*등록자 ID */
+            ,   reg_time                        /*등록시간 */
+        )
+        VALUES
+    ]]>
+        <foreach    collection="dataLists"   item="data"     separator="," >
+    <![CDATA[  
+        (                
+            ,   #{data.grp_cd}                  /*그룹코드(상위코드) */
+            ,   #{data.scen_cd}                 /*시나리오코드 */
+            ,   #{data.F12506}                  /*입회일자 */
+            ,   #{data.F16013}                  /*단축 코드(현금은 KRW로 처리) */
+
+            ,   #{data.BEFORE_RATE}             /*(직전)지수적용비율 */
+            ,   #{data.TODAY_RATE}              /*(당일)지수적용비율 */
+            ,   #{data.BEFORE_IMPORTANCE}       /*(직전) 시가총액 비중 */
+            ,   #{data.TODAY_IMPORTANCE}        /*(당일) 시가총액 비중 */
+            ,   #{data.EVENT_FLAG}              /*이벤트(비중조절, 종목편입)-COM011 */
+
+            ,   #{reg_id}                       /*등록자 ID */
+            ,   #{reg_time}                     /*등록시간 */     
+    ]]>
+        </foreach>            
+
+    </insert>
+
+    <!--
+    * [tm_simul_result_rebalance] 테이블을 삭제한다.
+    * 2019-08-14  bkLove(촤병국)
+    -->
+    <delete     id="deleteTmSimulResultRebalance">
+        DELETE  /* simulationBacktest.deleteTmSimulResultRebalance      [tm_simul_result_rebalance] 테이블을 삭제한다. */
+          FROM  tm_simul_result_rebalance
+         WHERE  1 = 1
+           AND  tm_simul_result_rebalance.grp_cd        =   #{grp_cd}       /* 그룹코드(상위코드) */
+           AND  tm_simul_result_rebalance.scen_cd       =   #{scen_cd}      /* 시나리오코드 */
     </delete>    
 
 </mapper>
