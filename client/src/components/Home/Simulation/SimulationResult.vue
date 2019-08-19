@@ -164,7 +164,7 @@
 
                 <v-card flat>
                     <div class="text-xs-center mt-3">
-                        <v-btn depressed color="primary" @click.stop="">저장하기</v-btn>
+                        <v-btn depressed color="primary" @click.stop="fn_saveBacktestResult()">저장하기</v-btn>
                     </div>
                 </v-card>
 
@@ -253,7 +253,6 @@ export default {
                         ||  ( vm.paramData.arr_rebalance && vm.paramData.arr_rebalance.length > 0 )
                     ){
 
-
                     /*************************************************************************************************************
                     *   시뮬레이션 마스터 정보
                     **************************************************************************************************************/
@@ -268,15 +267,15 @@ export default {
                         }else{
                             vm.simul_result_mast.rebalance_cnt      =   vm.paramData.arr_rebalance.length;
                         }
-
                         
+
                     /*************************************************************************************************************
                     *   array 일자별 지수 정보
                     **************************************************************************************************************/
                         vm.paramData.arr_daily.forEach( function( item, index, array ) {
                             item.fmt_F12506             =   util.formatDate( new String( item.F12506 ) );                                       /* 일자 */
                             item.fmt_INDEX_RATE         =   Math.round( item.INDEX_RATE * 100 ) / 100;                                          /* Index */
-                            item.fmt_balance            =   ( Math.round( ( item.init_invest_money * item.RETURN_VAL ) * 100 ) / 100 ) + " %" ; /* balance = 초기투자금액 * return_val */
+                            item.fmt_balance            =   ( Math.round( ( vm.simul_result_mast.init_invest_money * item.RETURN_VAL ) * 100 ) / 100 ) + " %" ; /* balance = 초기투자금액 * return_val */
                             item.fmt_RETURN_VAL         =   Math.round( item.RETURN_VAL * 100 ) / 100;                                          /* return_val */
 
                             vm.arr_result_daily.push( item );
@@ -304,8 +303,8 @@ export default {
 
                                 /* 변경후 */
                                 sub_item.fmt_TODAY_IMPORTANCE       =   (
-                                    !sub_item.TODAY_IMPORTANCE ?
-                                    0 : ( Math.round( sub_item.TODAY_IMPORTANCE * 100 ) / 100 )
+                                    !sub_item.AFTER_IMPORTANCE ?
+                                    0 : ( Math.round( sub_item.AFTER_IMPORTANCE * 100 ) / 100 )
                                 ) + " %";
 
                                 vm.arr_result_rebalance.push( sub_item );
@@ -359,7 +358,61 @@ export default {
 
                             resolve( { result : false } );
                         }else{
-                            vm.arr_grp_cd   =   response.data.dataList;
+
+                        /*************************************************************************************************************
+                        *   시뮬레이션 마스터 정보
+                        **************************************************************************************************************/
+
+                            vm.simul_result_mast        =   response.data.simul_result_mast;
+
+                            /* 리밸런싱 주기 */
+                            vm.simul_result_mast.fmt_rebalance  =   vm.fn_getCodeName( "COM012", vm.simul_result_mast.rebalance_cycle_cd + vm.simul_result_mast.rebalance_date_cd );
+
+                            /* 리밸런싱 횟수 */
+                            if( !vm.paramData.arr_rebalance || vm.paramData.arr_rebalance.length == 0 ) {
+                                vm.simul_result_mast.rebalance_cnt      =   0;
+                            }else{
+                                vm.simul_result_mast.rebalance_cnt      =   vm.paramData.arr_rebalance.length;
+                            }                            
+
+                        /*************************************************************************************************************
+                        *   array 일자별 지수 정보
+                        **************************************************************************************************************/
+                            response.data.arr_result_daily.forEach( function( item, index, array ) {
+                                item.fmt_F12506             =   util.formatDate( new String( item.F12506 ) );                                       /* 일자 */
+                                item.fmt_INDEX_RATE         =   Math.round( item.INDEX_RATE * 100 ) / 100;                                          /* Index */
+                                item.fmt_balance            =   ( Math.round( ( vm.simul_result_mast.init_invest_money * item.RETURN_VAL ) * 100 ) / 100 ) + " %" ; /* balance = 초기투자금액 * return_val */
+                                item.fmt_RETURN_VAL         =   Math.round( item.RETURN_VAL * 100 ) / 100;                                          /* return_val */
+
+                                vm.arr_result_daily.push( item );
+                            });
+
+
+                        /*************************************************************************************************************
+                        *   array 리밸런스 정보
+                        **************************************************************************************************************/
+                            response.data.arr_result_rebalance.forEach( function( sub_item, index, array ) {
+
+                                sub_item.fmt_F12506                 =   util.formatDate( new String( sub_item.F12506 ) );                       /* 일자 */
+                                sub_item.fmt_EVENT_FLAG             =   vm.fn_getCodeName( "COM011", sub_item.EVENT_FLAG );                     /* Event */
+
+                                sub_item.fmt_F16002                 =   sub_item.F16002 + " ( " + sub_item.F16013 + " )";                       /* 종목 */
+
+                                /* 변경전 */
+                                sub_item.fmt_BEFORE_IMPORTANCE      =   (
+                                    !sub_item.BEFORE_IMPORTANCE ?   
+                                    0 : ( Math.round( sub_item.BEFORE_IMPORTANCE * 100 ) / 100 ) 
+                                ) + " %";
+
+                                /* 변경후 */
+                                sub_item.fmt_TODAY_IMPORTANCE       =   (
+                                    !sub_item.AFTER_IMPORTANCE ?
+                                    0 : ( Math.round( sub_item.AFTER_IMPORTANCE * 100 ) / 100 )
+                                ) + " %";
+
+                                vm.arr_result_rebalance.push( sub_item );
+                            });
+
 
                             resolve( { result : true } );
                         }
@@ -390,7 +443,7 @@ export default {
          * 초기 설정 데이터를 조회한다.
          * 2019-07-26  bkLove(촤병국)
          */
-        fn_initData() {
+        async fn_initData() {
             var vm = this;
 
             /* COM011 - 이벤트 타입 ( 10-비중조절, 20- 종목편입 ) */
@@ -399,7 +452,7 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
-            return  new Promise(function(resolve, reject) {
+            return await new Promise(function(resolve, reject) {
 
                 vm.fn_showProgress( true );
 
@@ -410,7 +463,7 @@ export default {
                     vm.fn_showProgress( false );
 
                     if (response && response.data) {
-                        var arrMsg = ( response.data.arrMsg && response.data.arrMsg.length > 0 ? response.data.arrMsg : [] );
+                        var arrMsg = ( response.data.msg && response.data.msg.length > 0 ? response.data.msg : [] );
 
                         if (!response.data.result) {
                             if( arrMsg.length > 0 ) {
@@ -471,7 +524,69 @@ export default {
             }).catch( function(e1) {
                 console.log( e1 );
                 resolve( { result : false } );
-            });                
+            });
+        },
+
+        /*
+         * 백테스트 결과를 저장한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_saveBacktestResult : function() {
+            var vm = this;
+
+            vm.arr_show_error_message   =   [];
+
+            vm.fn_showProgress( true );
+
+            var paramData   =  {};
+
+            paramData   =   vm.simul_result_mast;
+
+            axios.post(Config.base_url + "/user/simulation/saveBacktestResult", {
+                data: paramData
+            }).then( function(response) {
+
+                vm.fn_showProgress( false );
+
+                if (response && response.data) {
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+
+                    if (!response.data.result) {
+                        if( !msg ) {
+                            vm.arr_show_error_message.push( msg );
+                        }
+
+                        resolve( { result : false } );
+                    }else{
+
+                        if( msg ) {
+                            if ( vm.$refs.confirm2.open(
+                                    '확인',
+                                    msg,
+                                    {}
+                                    ,1
+                                )
+                            ) {
+                                if(vm.$refs.confirm2.val == 'Y') {
+
+                                }
+                            }
+                        }                        
+
+                    }
+                }
+            }).catch(error => {
+
+                vm.fn_showProgress( false );
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '서버로 부터 응답을 받지 못하였습니다.',
+                        {}
+                        ,4
+                    )
+                ) {
+                }
+            });
         },
 
         /*
@@ -496,7 +611,7 @@ export default {
             }
 
             return  com_dtl_name;
-        }        
+        }   
     }
 };
 </script>
