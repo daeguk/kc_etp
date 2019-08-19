@@ -67,11 +67,11 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="row in arr_result_daily" v-bind:key="row">
-                                                <td class="txt_left">{{ row.date            /* 일자 */ }}</td>
-                                                <td class="txt_right">{{ row.INDEX_RATE     /* 지수 */ }}</td>
-                                                <td class="txt_right"></td>
-                                                <td class="txt_right">{{ row.RETURN_VAL     /* 결과 */ }} %</td>
+                                            <tr v-for="( row, index ) in  arr_result_daily" v-bind:key="row + '_' + index" >
+                                                <td class="txt_left">{{  row.fmt_F12506             /* 일자 */ }}</td>
+                                                <td class="txt_right">{{ row.fmt_INDEX_RATE         /* 지수 */ }}</td>
+                                                <td class="txt_right">{{ row.fmt_balance            /* balance */ }}</td>
+                                                <td class="txt_right">{{ row.fmt_RETURN_VAL         /* return */ }}</td>
                                                 <td class="txt_right"></td>
                                                 <td class="txt_right"></td>
                                                 <td class="txt_right"></td>
@@ -109,19 +109,12 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="row in arr_result_rebalance" v-bind:key="row">
-                                                <td class="txt_left">{{ row.date    /* 일자 */ }}</td>
-                                                <td>{{ row.EVENT_FLAG    /* 일자 */ }}</td>
-                                                <td class="txt_left">삼성전자(005930)</td>
-                                                <td class="txt_right">30.0%</td>
-                                                <td class="txt_right">33.33%</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="txt_left">20190701</td>
-                                                <td>비중조절</td>
-                                                <td class="txt_left">삼성전자(005930)</td>
-                                                <td class="txt_right">30.0%</td>
-                                                <td class="txt_right">33.33%</td>
+                                            <tr v-for="(row, index) in arr_result_rebalance" v-bind:key="(row + '_' + index)">
+                                                <td class="txt_left">{{ row.fmt_F12506              /* 일자 */ }}</td>
+                                                <td>{{ row.fmt_EVENT_FLAG                           /* EVENT */ }}</td>
+                                                <td class="txt_left">{{ row.fmt_F16002              /* 종목 */ }}</td>
+                                                <td class="txt_right">{{ row.fmt_BEFORE_IMPORTANCE  /* 변경전 */ }}</td>
+                                                <td class="txt_right">{{ row.fmt_TODAY_IMPORTANCE   /* 변경후 */ }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -138,26 +131,26 @@
                             </h6>
                             <v-layout>
                                 <v-flex xs2>시작년도</v-flex>
-                                <v-flex xs3>2018</v-flex>
+                                <v-flex xs3>{{  simul_result_mast.start_year  }}</v-flex>
                             </v-layout>
                             <v-layout>
                                 <v-flex xs2>주기</v-flex>
-                                <v-flex xs3>분기|첫 영업일</v-flex>
+                                <v-flex xs3>{{ simul_result_mast.fmt_rebalance }}</v-flex>
                             </v-layout>
                             <v-layout>
                                 <v-flex xs2>횟수</v-flex>
-                                <v-flex xs3>6회</v-flex>
+                                <v-flex xs3>{{ simul_result_mast.rebalance_cnt }} 회</v-flex>
                             </v-layout>
                             <h6>
                                 <span class="bullet"></span>선정방식
                             </h6>
                             <v-layout>
                                 <v-flex xs2>시가총액</v-flex>
-                                <v-flex xs3>2,000,000,000,000원 이상</v-flex>
+                                <v-flex xs3></v-flex>
                             </v-layout>
                             <v-layout>
                                 <v-flex xs2>거래량</v-flex>
-                                <v-flex xs3>3개월 평균 100만주 이상</v-flex>
+                                <v-flex xs3></v-flex>
                             </v-layout>
                         </div>
                     </v-tab-item>
@@ -193,6 +186,7 @@ import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
+import _ from "lodash";
 
 import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
 
@@ -213,8 +207,14 @@ export default {
 
             ,   arr_show_error_message      :   []
 
+                /* 공통코드 정보 */
+            ,   arr_code_list               :   []
+
+                /* 결과 정보 */
+            ,   simul_result_mast           :   {}
             ,   arr_result_daily            :   []      /* array 일자별 지수 */
             ,   arr_result_rebalance        :   []      /* array 리밸런스 */
+
         };
     },
 
@@ -233,22 +233,90 @@ export default {
     mounted() {
         var vm = this;
 
-        /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
-        if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
 
-            /* grp_cd 와 scen_cd 가 존재하는 경우 DB 저장된 backtest 결과 조회 */
-            if( vm.paramData.grp_cd && vm.paramData.scen_cd  ) {
-                vm.fn_getBacktestResult( vm.paramData );
+        /* 초기 설정 데이터를 조회한다. */
+        vm.fn_initData().then( async function(e) {
+
+            if( e && e.result ) {
+                
+                /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
+                if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
+
+                    /* grp_cd 와 scen_cd 가 존재하는 경우 DB 저장된 backtest 결과 조회 */
+                    if( vm.paramData.grp_cd && vm.paramData.scen_cd  ) {
+                        vm.fn_getBacktestResult( vm.paramData );
+                    }
+                    /* 화면으로 부터 결과정보를 받은 경우 */
+                    else if( 
+                            ( vm.paramData.simul_mast && Object.keys( vm.paramData.simul_mast ).length > 0 )
+                        ||  ( vm.paramData.arr_daily && vm.paramData.arr_daily.length > 0 )
+                        ||  ( vm.paramData.arr_rebalance && vm.paramData.arr_rebalance.length > 0 )
+                    ){
+
+
+                    /*************************************************************************************************************
+                    *   시뮬레이션 마스터 정보
+                    **************************************************************************************************************/
+                        vm.simul_result_mast                =   Object.assign( {}, vm.paramData.simul_mast );
+
+                        /* 리밸런싱 주기 */
+                        vm.simul_result_mast.fmt_rebalance  =   vm.fn_getCodeName( "COM012", vm.simul_result_mast.rebalance_cycle_cd + vm.simul_result_mast.rebalance_date_cd );
+
+                        /* 리밸런싱 횟수 */
+                        if( !vm.paramData.arr_rebalance || vm.paramData.arr_rebalance.length == 0 ) {
+                            vm.simul_result_mast.rebalance_cnt      =   0;
+                        }else{
+                            vm.simul_result_mast.rebalance_cnt      =   vm.paramData.arr_rebalance.length;
+                        }
+
+                        
+                    /*************************************************************************************************************
+                    *   array 일자별 지수 정보
+                    **************************************************************************************************************/
+                        vm.paramData.arr_daily.forEach( function( item, index, array ) {
+                            item.fmt_F12506             =   util.formatDate( new String( item.F12506 ) );                                       /* 일자 */
+                            item.fmt_INDEX_RATE         =   Math.round( item.INDEX_RATE * 100 ) / 100;                                          /* Index */
+                            item.fmt_balance            =   ( Math.round( ( item.init_invest_money * item.RETURN_VAL ) * 100 ) / 100 ) + " %" ; /* balance = 초기투자금액 * return_val */
+                            item.fmt_RETURN_VAL         =   Math.round( item.RETURN_VAL * 100 ) / 100;                                          /* return_val */
+
+                            vm.arr_result_daily.push( item );
+                        });
+
+
+                    /*************************************************************************************************************
+                    *   array 리밸런스 정보
+                    **************************************************************************************************************/
+                        vm.paramData.arr_rebalance.forEach( function( item, index, array ) {
+
+                            Object.keys( array[ index ] ).forEach( function( key ) {
+                                var sub_item                        =   array[ index ][ key ];
+
+                                sub_item.fmt_F12506                 =   util.formatDate( new String( sub_item.F12506 ) );                       /* 일자 */
+                                sub_item.fmt_EVENT_FLAG             =   vm.fn_getCodeName( "COM011", sub_item.EVENT_FLAG );                     /* Event */
+
+                                sub_item.fmt_F16002                 =   sub_item.F16002 + " ( " + sub_item.F16013 + " )";                       /* 종목 */
+
+                                /* 변경전 */
+                                sub_item.fmt_BEFORE_IMPORTANCE      =   (
+                                    !sub_item.BEFORE_IMPORTANCE ?   
+                                    0 : ( Math.round( sub_item.BEFORE_IMPORTANCE * 100 ) / 100 ) 
+                                ) + " %";
+
+                                /* 변경후 */
+                                sub_item.fmt_TODAY_IMPORTANCE       =   (
+                                    !sub_item.TODAY_IMPORTANCE ?
+                                    0 : ( Math.round( sub_item.TODAY_IMPORTANCE * 100 ) / 100 )
+                                ) + " %";
+
+                                vm.arr_result_rebalance.push( sub_item );
+                            });
+                        });
+
+                    }
+                }
+
             }
-            /* 화면으로 부터 결과정보를 받은 경우 */
-            else if( 
-                    ( vm.paramData.arr_daily && vm.paramData.arr_daily.length > 0 )
-                ||  ( vm.paramData.arr_rebalance && vm.paramData.arr_rebalance.length > 0 )
-            ){
-                vm.arr_result_daily     =   vm.paramData.arr_daily;
-                vm.arr_result_rebalance =   vm.paramData.arr_rebalance;
-            }
-        }
+        });
     },
 
     methods: {
@@ -317,6 +385,118 @@ export default {
                 resolve( { result : false } );
             });
         },
+
+        /*
+         * 초기 설정 데이터를 조회한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_initData() {
+            var vm = this;
+
+            /* COM011 - 이벤트 타입 ( 10-비중조절, 20- 종목편입 ) */
+            /* COM012 - 리밸런싱코드 기준 tm_date_manage 테이블 mapping */
+            var arrComMstCd = [ "COM011", "COM012" ];
+
+            vm.arr_show_error_message   =   [];
+
+            return  new Promise(function(resolve, reject) {
+
+                vm.fn_showProgress( true );
+
+                axios.post(Config.base_url + "/user/simulation/getInitData1", {
+                    data: {  arrComMstCd : arrComMstCd }
+                }).then( function(response) {
+
+                    vm.fn_showProgress( false );
+
+                    if (response && response.data) {
+                        var arrMsg = ( response.data.arrMsg && response.data.arrMsg.length > 0 ? response.data.arrMsg : [] );
+
+                        if (!response.data.result) {
+                            if( arrMsg.length > 0 ) {
+                                vm.arr_show_error_message.push( ...arrMsg );
+                            }
+
+                            resolve( { result : false } );
+                        }else{
+
+                            if( response.data.arr_code_list && response.data.arr_code_list.length > 0 ) {
+                                
+                                var com011_check    =   false;
+                                var com012_check    =   false;
+                                var existCheck = _.filter( response.data.arr_code_list, function(o) {
+
+                                    if ( o.com_mst_cd == "COM011" ) {
+                                        com011_check    =   true;
+                                    }
+
+                                    if ( o.com_mst_cd == "COM012" ) {
+                                        com012_check    =   true;
+                                    }
+                                });
+
+                                if( !com011_check ) {
+                                    arr_show_error_message.push( "공통코드 이벤트 타입 정보가 존재하지 않습니다." );
+                                    return  false;
+                                }
+
+                                if( !com012_check ) {
+                                    arr_show_error_message.push( "공통코드 리밸런싱 맵핑 정보가 존재하지 않습니다." );
+                                    return  false;
+                                }
+                                
+                                vm.arr_code_list    =   response.data.arr_code_list;
+                            }
+
+                            resolve( { result : true } );
+                        }
+                    }else{
+
+                        resolve( { result : false } );
+                    }
+                }).catch(error => {
+                    resolve( { result : false } );
+
+                    vm.fn_showProgress( false );
+                    if ( vm.$refs.confirm2.open(
+                            '확인',
+                            '서버로 부터 응답을 받지 못하였습니다.',
+                            {}
+                            ,4
+                        )
+                    ) {
+                    }
+                });
+
+            }).catch( function(e1) {
+                console.log( e1 );
+                resolve( { result : false } );
+            });                
+        },
+
+        /*
+        * 코드명 정보를 반환한다.
+        * 2019-07-26  bkLove(촤병국)
+        */
+        fn_getCodeName( p_com_mst_cd="", p_com_dtl_cd ) {
+            var vm = this;
+
+            var com_dtl_name = "";
+            if( vm.arr_code_list && vm.arr_code_list.length > 0  ) {
+                var existCheck = _.filter( vm.arr_code_list, function(o) {
+
+                    if ( o.com_mst_cd == p_com_mst_cd && o.com_dtl_cd == p_com_dtl_cd ) {
+                        return  o;
+                    }
+                });
+                
+                if( existCheck && existCheck.length == 1 ) {
+                    com_dtl_name    =   existCheck[0].com_dtl_name;
+                }
+            }
+
+            return  com_dtl_name;
+        }        
     }
 };
 </script>

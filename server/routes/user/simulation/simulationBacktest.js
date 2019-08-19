@@ -777,7 +777,11 @@ var saveBaicInfo = function(req, res) {
 
 
                                 for( var i in rows ) {
-                                    v_firstHistObj[ rows[i].F16013 ]    =   rows[i];
+                                    if( !v_firstHistObj[ rows[0].F12506 ] || Object.keys( v_firstHistObj[ rows[0].F12506 ] ).length == 0  ) {
+                                        v_firstHistObj[ rows[0].F12506 ]    =   {};
+                                    }
+
+                                    v_firstHistObj[ rows[0].F12506 ][ rows[i].F16013 ]    =   rows[i];
                                 }
 
                                 v_arrFirstHist  =   rows;
@@ -835,12 +839,15 @@ var saveBaicInfo = function(req, res) {
                             /*************************************************************************************************************
                             *   시뮬레이션 이력정보로 백테스트 수행결과를 반환한다.
                             **************************************************************************************************************/
+
                                 v_resultSimulData   =   fn_get_simulation_data(
                                         rows                    /* 일자별 종목 이력 데이터 */
                                     ,   v_simulPortfolio        /* [tm_simul_portfolio] 기준 종목 데이터 */
                                     ,   v_firstHistObj          /* (최초 레코드 기준 이전 영업일) 종목 데이터 */
                                     ,   v_arrFirstHist          /* (최초 레코드 기준 이전 영업일) array 데이터 */
                                 );
+
+                                
 
                                 var endTime1   =   new Date();
 
@@ -1429,7 +1436,7 @@ var fn_get_simulation_data  =   function(
                 **************************************************************************************************************/
                 if( p_arrFirstHist.length > 0 && p_arrFirstHist[0].F12506 ) {
                     v_prev_F12506   =   p_arrFirstHist[0].F12506;
-                    v_before_F12506 =   p_arrFirstHist[0].F12506;
+                    v_before_F12506 =   p_arrFirstHist[0].F12506;                   
 
 
                     if( !v_dailyObj[ p_arrFirstHist[0].F12506 ] || Object.keys( v_dailyObj[ p_arrFirstHist[0].F12506 ] ).length == 0  ) {
@@ -1449,6 +1456,7 @@ var fn_get_simulation_data  =   function(
                         ,   v_dailyObj                                              /* (최초 레코드 기준 이전 영업일) 일자별 정보 */
                         ,   p_simulPortfolio                                        /* [tm_simul_portfolio] 기준 종목 데이터 */
                     );
+                    
 
                     /*************************************************************************************************************
                     *   (최초 레코드 기준 이전 영업일) 기준, 비교 시총 관련 정보를 설정한다.
@@ -1633,6 +1641,10 @@ var fn_get_simulation_data  =   function(
                         );
                     }
 
+                    if( ["20180102", "20180103"].includes( p_simul_hist_data[i].F12506 ) ) {
+                        console.log( "p_simul_hist_data[i].F12506", p_simul_hist_data[i].F12506, "v_arr_daily", v_arr_daily );
+                    }
+
                     v_arr_daily.push( v_dailyObj[ p_simul_hist_data[i].F12506 ] );
                 }
             }
@@ -1719,18 +1731,19 @@ var fn_get_simulation_data  =   function(
 
         try{
 
+
         /* 1. 포트 폴리오를 기준으로 종목코드 할당 및 total 정보를 설정한다. */
-        log.debug(JSON.stringify(p_simulPortfolioObj));
-       
             for( var i = 0; i < Object.keys( p_simulPortfolioObj ).length; i++ ) {
                 var v_portKey     =   Object.keys( p_simulPortfolioObj )[i];
                 var v_portItem    =   Object.assign( {}, p_simulPortfolioObj[ v_portKey ] );
+
 
 
                 /*  일자별 이력에 존재하는 종목코드가 시뮬레이션 포트폴리오 종목에 존재하는 경우 
                     - 시뮬레이션 포트폴리오 정보를 일자별 종목코드에 할당
                 */
                 if( Object.keys( p_dailyJongmokObj[ p_param.F12506 ] ).includes( v_portKey ) ) {
+
                     v_portItem.F16013_exists_yn         =   "Y";                        /* 종목코드 존재여부 */
 
                     v_portItem.TODAY_RATE               =   0;
@@ -2533,7 +2546,7 @@ var fn_get_simulation_data  =   function(
 
 
                 /* 기준 시가총액 비중 = 기준 시가총액( p_param.F15028_S ) / 시가 기준시총 총액 ( p_totalInfo.tot_F15028_S )  */
-                v_dataItem.F15028_S_importance  =       fn_calc_data(
+                v_dataItem.BEFORE_IMPORTANCE    =       fn_calc_data(
                         "F15028_S_importance"
                     ,   {       
                                 F15028_S        :   v_dataItem.F15028_S                         /* 기준 시가총액 */
@@ -2547,11 +2560,11 @@ var fn_get_simulation_data  =   function(
                 /* 직전 기준 시가총액 비중 */
                 if(     typeof p_dailyJongmokObj[ p_param.v_before_F12506 ]                 == "undefined"
                     ||  typeof p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ]    == "undefined"
-                    ||  !p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].prev_F15028_S_importance
+                    ||  !p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].AFTER_IMPORTANCE
                  ) {
-                    v_dataItem.prev_F15028_S_importance     =   0;
+                    p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].AFTER_IMPORTANCE     =   0;
                 }else{
-                    v_dataItem.prev_F15028_S_importance     =    p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].prev_F15028_S_importance;
+                    p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].AFTER_IMPORTANCE     =    v_dataItem.BEFORE_IMPORTANCE;
                 }
 
 
