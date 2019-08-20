@@ -44,7 +44,9 @@
                         <v-layout row wrap>
                             <v-flex grow xs12>
                                 <v-card flat>
-                                    <table class="tbl_type ver10 mt-3">
+                                    <div class="table-box-wrap mar15">
+                                    <div class="table-box" style="max-height:250px;">
+                                    <table class="tbl_type ver10">
                                         <caption></caption>
                                         <colgroup>
                                             <col width="14%" />
@@ -78,6 +80,8 @@
                                             </tr>
                                         </tbody>
                                     </table>
+                                    </div>
+                                    </div>
                                 </v-card>
                             </v-flex>
                         </v-layout>
@@ -88,7 +92,9 @@
                         <v-layout row wrap>
                             <v-flex grow xs12>
                                 <v-card flat>
-                                    <table class="tbl_type ver10 mt-3">
+                                    <div class="table-box-wrap mar15">
+                                    <div class="table-box" style="max-height:250px;">
+                                    <table class="tbl_type ver10">
                                         <caption></caption>
                                         <colgroup>
                                             <col width="14%" />
@@ -118,6 +124,8 @@
                                             </tr>
                                         </tbody>
                                     </table>
+                                    </div>
+                                    </div>
                                 </v-card>
                             </v-flex>
                         </v-layout>
@@ -163,7 +171,7 @@
                 </v-tabs-items>
 
                 <v-card flat>
-                    <div class="text-xs-center mt-3">
+                    <div class="text-xs-center mt-1">
                         <v-btn depressed color="primary" @click.stop="fn_saveBacktestResult()">저장하기</v-btn>
                     </div>
                 </v-card>
