@@ -2157,6 +2157,9 @@ var fn_get_simulation_data  =   function(
             ,   TODAY_RATE              :   0               /* 지수적용비율 */
             ,   BEFORE_RATE             :   0               /* (직전) 지수적용비율 */
             ,   KRW_exists_yn           :   "N"             /* 현금 존재여부 */
+
+            ,   BEFORE_IMPORTANCE       :   0
+            ,   AFTER_INPORTANCE        :   0
         };
 
         /* total 정보 */
@@ -2294,6 +2297,9 @@ var fn_get_simulation_data  =   function(
                             } 
                     );
                 }
+
+                p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].BEFORE_IMPORTANCE   =   0;
+                p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].AFTER_IMPORTANCE    =   0;
 
 
             /* total 정보 설정 */
@@ -3160,38 +3166,6 @@ var fn_get_simulation_data  =   function(
                 }
 
 
-                /* 기준 시가총액 비중 = 기준 시가총액( p_param.F15028_S ) / 시가 기준시총 총액 ( p_totalInfo.tot_F15028_S )  */
-                v_dataItem.BEFORE_IMPORTANCE    =       fn_calc_data(
-                        "F15028_S_importance"
-                    ,   {       
-                                F15028_S        :   v_dataItem.F15028_S                         /* 기준 시가총액 */
-                        }
-                    ,   {
-                                tot_F15028_S    :   p_dailyObj[ p_param.F12506 ].tot_F15028_S   /* 시가 기준시총 총액 */
-                        }
-                );
-
-
-                /* 직전 기준 시가총액 비중 */
-                if(     typeof p_dailyJongmokObj[ p_param.v_before_F12506 ]                 != "undefined"
-                    &&  typeof p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ]    != "undefined"
-                 ) {
-                     if( p_param.first_record_yn == "Y" ) {
-                        if( !p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ].AFTER_IMPORTANCE ) {
-                            p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ].AFTER_IMPORTANCE         =   0;
-                        }else{
-                            p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ].AFTER_IMPORTANCE         =    v_dataItem.BEFORE_IMPORTANCE;
-                        }
-                     }else{
-                        if( !p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].AFTER_IMPORTANCE ) {
-                            p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].AFTER_IMPORTANCE     =   0;
-                        }else{
-                            p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].AFTER_IMPORTANCE     =    v_dataItem.BEFORE_IMPORTANCE;
-                        }
-                     }
-                }
-
-
                 /* 이벤트(비중조절, 종목편입)-COM011 ( 10-비중조절, 20-종목편입 ) */
                 v_dataItem.EVENT_FLAG           =   "";
 
@@ -3221,7 +3195,6 @@ var fn_get_simulation_data  =   function(
                     }
                 }
 
-
                 /* 상장일과 날짜가 같으면 20-종목편입으로 설정 */
                 if( v_dataItem.F16017 == p_param.F12506 ) {
                     v_dataItem.EVENT_FLAG   =   "20";       /* 10-종목편입 */
@@ -3235,6 +3208,41 @@ var fn_get_simulation_data  =   function(
                 totalInfo.tot_F15028_C       =      Number( totalInfo.tot_F15028_C )
                                                 +   Number( v_dataItem.F15028_C );
             }
+
+
+            for( var i = 0; i < Object.keys( p_dailyJongmokObj[ p_param.F12506 ] ).length; i++ ) {
+
+                var v_dataKey     =   Object.keys( p_dailyJongmokObj[ p_param.F12506 ] )[i];
+                var v_dataItem    =   p_dailyJongmokObj[ p_param.F12506 ][ v_dataKey ];
+
+
+                /* 기준 시가총액 비중 = 기준 시가총액( p_param.F15028_S ) / 시가 기준시총 총액 ( p_totalInfo.tot_F15028_S )  */
+                v_dataItem.BEFORE_IMPORTANCE    =       fn_calc_data(
+                        "F15028_S_importance"
+                    ,   {       
+                                F15028_S        :   v_dataItem.F15028_S                         /* 기준 시가총액 */
+                        }
+                    ,   {
+                                tot_F15028_S    :   totalInfo.tot_F15028_S                      /* 시가 기준시총 총액 */
+                        }
+                );
+
+
+                /* 직전 기준 시가총액 비중 */
+                if( p_param.first_record_yn == "Y" ) {
+                    if(     typeof p_firstHistObj[ p_param.v_before_F12506 ]                 != "undefined"
+                        &&  typeof p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ]    != "undefined"
+                    ) {
+                        p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ].AFTER_IMPORTANCE         =    v_dataItem.BEFORE_IMPORTANCE;
+                    }
+                }else{
+                    if(     typeof p_dailyJongmokObj[ p_param.v_before_F12506 ]                 != "undefined"
+                        &&  typeof p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ]    != "undefined"
+                    ) {
+                        p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].AFTER_IMPORTANCE      =    v_dataItem.BEFORE_IMPORTANCE;
+                    }
+                }
+            }            
 
 
             /* T-1 일 기준 시가총액 */
@@ -3365,6 +3373,7 @@ var fn_get_simulation_data  =   function(
             );
 
             Object.assign( p_dailyObj[ p_param.F12506 ], totalInfo );
+                
 
         }catch( e ) {
             console.log( "fn_get_simulation_data.fn_set_index_rate error ", e );
@@ -3506,7 +3515,7 @@ var fn_get_simulation_data  =   function(
                         /* 기준 시가총액 비중 = 기준 시가총액( p_param.F15028_S ) / 시가 기준시총 총액 ( p_totalInfo.tot_F15028_S )  */
                 case    "F15028_S_importance"    :
                             /* 분모가 0 인 경우 */
-                            if( !p_totalInfo.prev_tot_F15028_C || p_totalInfo.prev_tot_F15028_C == 0 ) {
+                            if( !p_totalInfo.tot_F15028_S || p_totalInfo.tot_F15028_S == 0 ) {
                                 v_calc  =   0;
                             }else{
                                 v_calc  =   Math.round( 

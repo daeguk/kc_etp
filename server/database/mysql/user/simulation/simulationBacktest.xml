@@ -1087,7 +1087,7 @@
                 ,   tm_simul_result_rebalance.EVENT_FLAG                        AS  EVENT_FLAG              /* 이벤트(비중조절, 종목편입)-COM011 */
                 
           FROM  tm_simul_result_rebalance
-          JOIN  td_kspjong_basic
+          LEFT  JOIN  td_kspjong_basic
             ON  (
                         tm_simul_result_rebalance.F16013    =   td_kspjong_basic.F16013
                 )

@@ -251,7 +251,58 @@ export default {
                             ( vm.paramData.simul_mast && Object.keys( vm.paramData.simul_mast ).length > 0 )
                         ||  ( vm.paramData.arr_daily && vm.paramData.arr_daily.length > 0 )
                         ||  ( vm.paramData.arr_rebalance && vm.paramData.arr_rebalance.length > 0 )
-                    ){
+                    ){                        
+
+                    /*************************************************************************************************************
+                    *   array 리밸런스 정보
+                    **************************************************************************************************************/
+                        var v_prev_F12506   =   "";
+                        var v_rebalance_cnt =   0;
+
+                        if( vm.paramData.arr_rebalance && vm.paramData.arr_rebalance.length > 0  ){
+
+                            v_prev_F12506   =   "";
+
+                            vm.paramData.arr_rebalance.forEach( function( item, index, array ) {
+
+                                Object.keys( array[ index ] ).forEach( function( key ) {
+                                    
+                                    var sub_item                        =   array[ index ][ key ];
+                                    
+                                    if( v_prev_F12506 != sub_item.F12506 ) {
+                                        v_rebalance_cnt++;
+                                    }
+
+                                    sub_item.fmt_F12506                 =   util.formatDate( new String( sub_item.F12506 ) );                       /* 일자 */
+                                    sub_item.fmt_EVENT_FLAG             =   vm.fn_getCodeName( "COM011", sub_item.EVENT_FLAG );                     /* Event */
+
+                                    sub_item.fmt_F16002                 =   sub_item.F16002 + " ( " + sub_item.F16013 + " )";                       /* 종목 */
+
+                                    /* 변경전 */
+                                    sub_item.fmt_BEFORE_IMPORTANCE      =   (
+                                        !sub_item.BEFORE_IMPORTANCE ?   
+                                        0 : ( Math.round( sub_item.BEFORE_IMPORTANCE * 100 ) / 100 ) 
+                                    ) + " %";
+
+                                    /* 변경후 */
+                                    sub_item.fmt_AFTER_IMPORTANCE       =   (
+                                        !sub_item.AFTER_IMPORTANCE ?
+                                        0 : ( Math.round( sub_item.AFTER_IMPORTANCE * 100 ) / 100 )
+                                    ) + " %";
+
+                                    vm.arr_result_rebalance.push( sub_item );
+
+                                    /* 이전 입회일자 설정 */
+                                    v_prev_F12506   =   sub_item.F12506;
+                                });
+                            });
+
+                            vm.arr_result_rebalance =   _.sortBy( vm.arr_result_rebalance, [
+                                function (item) { return item.F12506; },
+                                function (item) { return item.F16013; }
+                            ], ["asc", "asc"]);
+                        }
+
 
                     /*************************************************************************************************************
                     *   시뮬레이션 마스터 정보
@@ -262,12 +313,8 @@ export default {
                         vm.simul_result_mast.fmt_rebalance  =   vm.fn_getCodeName( "COM012", vm.simul_result_mast.rebalance_cycle_cd + vm.simul_result_mast.rebalance_date_cd );
 
                         /* 리밸런싱 횟수 */
-                        if( !vm.paramData.arr_rebalance || vm.paramData.arr_rebalance.length == 0 ) {
-                            vm.simul_result_mast.rebalance_cnt      =   0;
-                        }else{
-                            vm.simul_result_mast.rebalance_cnt      =   vm.paramData.arr_rebalance.length;
-                        }
-                        
+                        vm.simul_result_mast.rebalance_cnt  =   v_rebalance_cnt;
+
 
                     /*************************************************************************************************************
                     *   array 일자별 지수 정보
@@ -281,37 +328,7 @@ export default {
                             item.fmt_RETURN_VAL         =   Math.round( item.RETURN_VAL * 100 ) / 100;                                          /* return_val */
 
                             vm.arr_result_daily.push( item );
-                        });
-
-
-                    /*************************************************************************************************************
-                    *   array 리밸런스 정보
-                    **************************************************************************************************************/
-                        vm.paramData.arr_rebalance.forEach( function( item, index, array ) {
-
-                            Object.keys( array[ index ] ).forEach( function( key ) {
-                                var sub_item                        =   array[ index ][ key ];
-
-                                sub_item.fmt_F12506                 =   util.formatDate( new String( sub_item.F12506 ) );                       /* 일자 */
-                                sub_item.fmt_EVENT_FLAG             =   vm.fn_getCodeName( "COM011", sub_item.EVENT_FLAG );                     /* Event */
-
-                                sub_item.fmt_F16002                 =   sub_item.F16002 + " ( " + sub_item.F16013 + " )";                       /* 종목 */
-
-                                /* 변경전 */
-                                sub_item.fmt_BEFORE_IMPORTANCE      =   (
-                                    !sub_item.BEFORE_IMPORTANCE ?   
-                                    0 : ( Math.round( sub_item.BEFORE_IMPORTANCE * 100 ) / 100 ) 
-                                ) + " %";
-
-                                /* 변경후 */
-                                sub_item.fmt_AFTER_IMPORTANCE       =   (
-                                    !sub_item.AFTER_IMPORTANCE ?
-                                    0 : ( Math.round( sub_item.AFTER_IMPORTANCE * 100 ) / 100 )
-                                ) + " %";
-
-                                vm.arr_result_rebalance.push( sub_item );
-                            });
-                        });
+                        });                        
 
                     }
                 }
@@ -361,6 +378,53 @@ export default {
                             resolve( { result : false } );
                         }else{
 
+
+                        /*************************************************************************************************************
+                        *   array 리밸런스 정보
+                        **************************************************************************************************************/
+                            var v_prev_F12506   =   "";
+                            var v_rebalance_cnt =   0;
+
+                            if( response.data.arr_result_rebalance && response.data.arr_result_rebalance.length > 0  ){
+
+                                v_prev_F12506   =   "";
+
+                                response.data.arr_result_rebalance.forEach( function( sub_item, index, array ) {
+
+                                    if( v_prev_F12506 != sub_item.F12506 ) {
+                                        v_rebalance_cnt++;
+                                    }
+
+                                    sub_item.fmt_F12506                 =   util.formatDate( new String( sub_item.F12506 ) );                       /* 일자 */
+                                    sub_item.fmt_EVENT_FLAG             =   vm.fn_getCodeName( "COM011", sub_item.EVENT_FLAG );                     /* Event */
+
+                                    sub_item.fmt_F16002                 =   sub_item.F16002 + " ( " + sub_item.F16013 + " )";                       /* 종목 */
+
+                                    /* 변경전 */
+                                    sub_item.fmt_BEFORE_IMPORTANCE      =   (
+                                        !sub_item.BEFORE_IMPORTANCE ?   
+                                        0 : ( Math.round( sub_item.BEFORE_IMPORTANCE * 100 ) / 100 ) 
+                                    ) + " %";
+
+                                    /* 변경후 */
+                                    sub_item.fmt_AFTER_IMPORTANCE       =   (
+                                        !sub_item.AFTER_IMPORTANCE ?
+                                        0 : ( Math.round( sub_item.AFTER_IMPORTANCE * 100 ) / 100 )
+                                    ) + " %";
+
+                                    vm.arr_result_rebalance.push( sub_item );
+
+                                    /* 이전 입회일자 설정 */
+                                    v_prev_F12506   =   sub_item.F12506;
+                                });
+
+                                vm.arr_result_rebalance =   _.sortBy( vm.arr_result_rebalance, [
+                                    function (item) { return item.F12506; },
+                                    function (item) { return item.F16013; }
+                                ], ["asc", "asc"]);
+                            }
+
+
                         /*************************************************************************************************************
                         *   시뮬레이션 마스터 정보
                         **************************************************************************************************************/
@@ -371,11 +435,8 @@ export default {
                             vm.simul_result_mast.fmt_rebalance  =   vm.fn_getCodeName( "COM012", vm.simul_result_mast.rebalance_cycle_cd + vm.simul_result_mast.rebalance_date_cd );
 
                             /* 리밸런싱 횟수 */
-                            if( !vm.paramData.arr_rebalance || vm.paramData.arr_rebalance.length == 0 ) {
-                                vm.simul_result_mast.rebalance_cnt      =   0;
-                            }else{
-                                vm.simul_result_mast.rebalance_cnt      =   vm.paramData.arr_rebalance.length;
-                            }                            
+                            vm.simul_result_mast.rebalance_cnt      =   v_rebalance_cnt;
+
 
                         /*************************************************************************************************************
                         *   array 일자별 지수 정보
@@ -387,32 +448,6 @@ export default {
                                 item.fmt_RETURN_VAL         =   Math.round( item.RETURN_VAL * 100 ) / 100;                                          /* return_val */
 
                                 vm.arr_result_daily.push( item );
-                            });
-
-
-                        /*************************************************************************************************************
-                        *   array 리밸런스 정보
-                        **************************************************************************************************************/
-                            response.data.arr_result_rebalance.forEach( function( sub_item, index, array ) {
-
-                                sub_item.fmt_F12506                 =   util.formatDate( new String( sub_item.F12506 ) );                       /* 일자 */
-                                sub_item.fmt_EVENT_FLAG             =   vm.fn_getCodeName( "COM011", sub_item.EVENT_FLAG );                     /* Event */
-
-                                sub_item.fmt_F16002                 =   sub_item.F16002 + " ( " + sub_item.F16013 + " )";                       /* 종목 */
-
-                                /* 변경전 */
-                                sub_item.fmt_BEFORE_IMPORTANCE      =   (
-                                    !sub_item.BEFORE_IMPORTANCE ?   
-                                    0 : ( Math.round( sub_item.BEFORE_IMPORTANCE * 100 ) / 100 ) 
-                                ) + " %";
-
-                                /* 변경후 */
-                                sub_item.fmt_TODAY_IMPORTANCE       =   (
-                                    !sub_item.AFTER_IMPORTANCE ?
-                                    0 : ( Math.round( sub_item.AFTER_IMPORTANCE * 100 ) / 100 )
-                                ) + " %";
-
-                                vm.arr_result_rebalance.push( sub_item );
                             });
 
 
