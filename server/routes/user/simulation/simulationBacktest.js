@@ -2978,14 +2978,41 @@ var fn_get_simulation_data  =   function(
                             ,   { }
                             );    
                          
-                    } 
-                }
+                    }
+
+                    /* 직전 지수적용비율 */
+                    v_dataItem.BEFORE_RATE      =       v_dataItem.TODAY_RATE;                    
 
 
-                /* 직전 지수적용비율 */
-                v_dataItem.BEFORE_RATE      =       v_dataItem.TODAY_RATE;
+                    v_dataItem.EVENT_FLAG       =       "";
 
-                             
+                    /* 최초 레코드인 경우 */
+                    if( p_param.first_record_yn == "Y" ) {
+
+                        /* 직전 [기준 시가총액]과 다르면 10-비중조절 로 설정 */
+                        if( v_dataItem.F15028_S != p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ].F15028_S ) {
+                            v_dataItem.EVENT_FLAG       =   "10";       /* 10-비중조절 */
+                        }
+
+                        v_dataItem.BEFORE_RATE  =   p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ].TODAY_RATE;
+                    }else{
+
+                        /* 종목이 편입되기 전엔 krw 로 존재했다가 종목이 편입되게 되면 krw 항목이 없어지게 됨. */
+                        if( typeof p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ] != "undefined" ) {
+
+                            /* 직전 [기준 시가총액]과 다르면 10-비중조절 로 설정 */
+                            if( v_dataItem.F15028_S != p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].F15028_S ) {
+                                v_dataItem.EVENT_FLAG   =   "10";       /* 10-비중조절 */
+                            }
+                            
+                            // 동일가중은 위에서 계산됨
+                            if( [ "1", "3" ].includes( v_dataItem.importance_method_cd ) ) {
+                                v_dataItem.BEFORE_RATE  =   p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].TODAY_RATE;
+                            }
+                        }
+                    }
+
+                }            
                 
 
                 /* 기준 시가총액 누적 */
@@ -3026,6 +3053,41 @@ var fn_get_simulation_data  =   function(
                     //log.debug("비교시총:" + p_param.F12506 + "::" + totalInfo.tot_F15028_C);
                 }
             }  // end for
+
+
+            for( var i = 0; i < Object.keys( p_dailyJongmokObj[ p_param.F12506 ] ).length; i++ ) {
+
+                var v_dataKey     =   Object.keys( p_dailyJongmokObj[ p_param.F12506 ] )[i];
+                var v_dataItem    =   p_dailyJongmokObj[ p_param.F12506 ][ v_dataKey ];
+
+
+                /* 기준 시가총액 비중 = 기준 시가총액( p_param.F15028_S ) / 시가 기준시총 총액 ( p_totalInfo.tot_F15028_S )  */
+                v_dataItem.BEFORE_IMPORTANCE    =       fn_calc_data(
+                        "F15028_S_importance"
+                    ,   {       
+                                F15028_S        :   v_dataItem.F15028_S                         /* 기준 시가총액 */
+                        }
+                    ,   {
+                                tot_F15028_S    :   totalInfo.tot_F15028_S                      /* 시가 기준시총 총액 */
+                        }
+                );
+
+
+                /* 직전 기준 시가총액 비중 */
+                if( p_param.first_record_yn == "Y" ) {
+                    if(     typeof p_firstHistObj[ p_param.v_before_F12506 ]                 != "undefined"
+                        &&  typeof p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ]    != "undefined"
+                    ) {
+                        p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ].AFTER_IMPORTANCE         =    v_dataItem.BEFORE_IMPORTANCE;
+                    }
+                }else{
+                    if(     typeof p_dailyJongmokObj[ p_param.v_before_F12506 ]                 != "undefined"
+                        &&  typeof p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ]    != "undefined"
+                    ) {
+                        p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].AFTER_IMPORTANCE      =    v_dataItem.BEFORE_IMPORTANCE;
+                    }
+                }
+            }            
 
 
             /* [최초 영업일] 인 경우 종가 기준으로 계산하여 설정한다. */
@@ -3361,7 +3423,7 @@ var fn_get_simulation_data  =   function(
                         p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].AFTER_IMPORTANCE      =    v_dataItem.BEFORE_IMPORTANCE;
                     }
                 }
-            }            
+            }
 
 
             /* T-1 일 기준 시가총액 */
