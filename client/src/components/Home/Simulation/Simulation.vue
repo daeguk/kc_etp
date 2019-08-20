@@ -1454,34 +1454,15 @@ export default {
                         var arr_rebalance   =   response.data.arr_rebalance;
                         var simul_mast    	=   response.data.simul_mast;
 
-                        if( msg ) {
-                            if ( await vm.$refs.confirm2.open(
-                                    '확인',
-                                    msg,
-                                    {}
-                                    ,1
-                                )
-                            ) {
-                                if(vm.$refs.confirm2.val == 'Y') {
 
-                                    vm.$emit( "fn_showSimulation", 
-                                        { 
-                                                showSimulationId    :    2
-                                            ,   arr_daily           :   arr_daily
-                                            ,   arr_rebalance       :   arr_rebalance
-                                            ,   simul_mast          :   simul_mast
-                                        }
-                                    );
-
-                                    /* 시뮬레이션 마스터 정보를 조회한다. */
-//                                    vm.fn_getSimulMast( { grp_cd : vm.grp_cd, scen_cd : vm.scen_cd } );
-
-                                    /* 시뮬레이션 포트폴리오 정보를 조회한다. */
-//                                    vm.fn_getSimulPortfolio( { grp_cd : vm.grp_cd, scen_cd : vm.scen_cd } );
-
-                                }
+                        vm.$emit( "fn_showSimulation", 
+                            { 
+                                    showSimulationId    :    2
+                                ,   arr_daily           :   arr_daily
+                                ,   arr_rebalance       :   arr_rebalance
+                                ,   simul_mast          :   simul_mast
                             }
-                        }
+                        );
                     }
                 }
             }).catch(error => {
