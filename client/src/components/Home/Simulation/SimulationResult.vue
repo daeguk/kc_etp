@@ -39,53 +39,55 @@
 
                 <v-tabs-items v-model="activeTab">
 
+
                     <!--리밸런싱내역 탭1-->
                     <v-tab-item>
                         <v-layout row wrap>
                             <v-flex grow xs12>
                                 <v-card flat>
                                     <div class="table-box-wrap mar15">
-                                    <div class="table-box" style="max-height:250px;">
-                                    <table class="tbl_type ver10">
-                                        <caption></caption>
-                                        <colgroup>
-                                            <col width="14%" />
-                                            <col width="14%" />
-                                            <col width="14%" />
-                                            <col width="14%" />
-                                            <col width="14%" />
-                                            <col width="14%" />
-                                            <col width="14%" />
-                                        </colgroup>
-                                        <thead>
-                                            <tr >
-                                                <th class="txt_left">일자</th>
-                                                <th class="txt_right">Index</th>
-                                                <th class="txt_right">Balance</th>
-                                                <th class="txt_right">Return</th>
-                                                <th class="txt_right">BM(KOSPI200)</th>
-                                                <th class="txt_right">BM(1000환산)</th>
-                                                <th class="txt_right">BM return</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="( row, index ) in  arr_result_daily" v-bind:key="row + '_' + index" >
-                                                <td class="txt_left">{{  row.fmt_F12506             /* 일자 */ }}</td>
-                                                <td class="txt_right">{{ row.fmt_INDEX_RATE         /* 지수 */ }}</td>
-                                                <td class="txt_right">{{ row.fmt_balance            /* balance */ }}</td>
-                                                <td class="txt_right">{{ row.fmt_RETURN_VAL         /* return */ }}</td>
-                                                <td class="txt_right"></td>
-                                                <td class="txt_right"></td>
-                                                <td class="txt_right"></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    </div>
+                                        <div class="table-box" style="max-height:250px;">
+                                            <table class="tbl_type ver10">
+                                                <caption></caption>
+                                                <colgroup>
+                                                    <col width="14%" />
+                                                    <col width="14%" />
+                                                    <col width="14%" />
+                                                    <col width="14%" />
+                                                    <col width="14%" />
+                                                    <col width="14%" />
+                                                    <col width="14%" />
+                                                </colgroup>
+                                                <thead>
+                                                    <tr >
+                                                        <th class="txt_left">일자</th>
+                                                        <th class="txt_right">Index</th>
+                                                        <th class="txt_right">Balance</th>
+                                                        <th class="txt_right">Return</th>
+                                                        <th class="txt_right">BM(KOSPI200)</th>
+                                                        <th class="txt_right">BM(1000환산)</th>
+                                                        <th class="txt_right">BM return</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="( row, index ) in  arr_result_daily" v-bind:key="row + '_' + index" >
+                                                        <td class="txt_left">{{  row.fmt_F12506             /* 일자 */ }}</td>
+                                                        <td class="txt_right">{{ row.fmt_INDEX_RATE         /* 지수 */ }}</td>
+                                                        <td class="txt_right">{{ row.fmt_balance            /* balance */ }}</td>
+                                                        <td class="txt_right">{{ row.fmt_RETURN_VAL         /* return */ }}</td>
+                                                        <td class="txt_right"></td>
+                                                        <td class="txt_right"></td>
+                                                        <td class="txt_right"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </v-card>
                             </v-flex>
                         </v-layout>
                     </v-tab-item>
+
 
                     <!--일자별 지수 탭2-->
                     <v-tab-item>
@@ -93,43 +95,46 @@
                             <v-flex grow xs12>
                                 <v-card flat>
                                     <div class="table-box-wrap mar15">
-                                    <div class="table-box" style="max-height:250px;">
-                                    <table class="tbl_type ver10">
-                                        <caption></caption>
-                                        <colgroup>
-                                            <col width="14%" />
-                                            <col width="14%" />
-                                            <col width="14%" />
-                                            <col width="14%" />
-                                            <col width="14%" />
-                                            <col width="14%" />
-                                            <col width="14%" />
-                                        </colgroup>
-                                        <thead>
-                                            <tr>
-                                                <th class="txt_left">일자</th>
-                                                <th>Event</th>
-                                                <th class="txt_left">종목</th>
-                                                <th class="txt_right">변경전</th>
-                                                <th class="txt_right">변경후</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="(row, index) in arr_result_rebalance" v-bind:key="(row + '_' + index)">
-                                                <td class="txt_left">{{ row.fmt_F12506              /* 일자 */ }}</td>
-                                                <td>{{ row.fmt_EVENT_FLAG                           /* EVENT */ }}</td>
-                                                <td class="txt_left">{{ row.fmt_F16002              /* 종목 */ }}</td>
-                                                <td class="txt_right">{{ row.fmt_BEFORE_IMPORTANCE  /* 변경전 */ }}</td>
-                                                <td class="txt_right">{{ row.fmt_AFTER_IMPORTANCE   /* 변경후 */ }}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    </div>
+                                        <div class="table-box" style="max-height:250px;">
+                                            <table class="tbl_type ver10">
+                                                <caption></caption>
+
+                                                <colgroup>
+                                                    <col width="14%" />
+                                                    <col width="14%" />
+                                                    <col width="14%" />
+                                                    <col width="14%" />
+                                                    <col width="14%" />
+                                                </colgroup>
+
+                                                <thead>
+                                                                   
+                                                    <tr>
+                                                        <th class="txt_left">일자</th>
+                                                        <th>Event</th>
+                                                        <th class="txt_left">종목</th>
+                                                        <th class="txt_right">변경전</th>
+                                                        <th class="txt_right">변경후</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+    
+                                                    <tr v-for="(row, index) in arr_result_rebalance" v-bind:key="(row + '_' + index)">
+                                                        <td class="txt_left">{{ row.fmt_F12506              /* 일자 */ }}</td>
+                                                        <td>{{ row.fmt_EVENT_FLAG                           /* EVENT */ }}</td>
+                                                        <td class="txt_left">{{ row.fmt_F16002              /* 종목 */ }}</td>
+                                                        <td class="txt_right">{{ row.fmt_BEFORE_IMPORTANCE  /* 변경전 */ }}</td>
+                                                        <td class="txt_right">{{ row.fmt_AFTER_IMPORTANCE   /* 변경후 */ }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </v-card>
                             </v-flex>
                         </v-layout>
                     </v-tab-item>
+
 
                     <!--시뮬레이션 설정 탭3-->
                     <v-tab-item>
@@ -163,11 +168,15 @@
                         </div>
                     </v-tab-item>
 
+
                     <!--분석정보1 탭4-->
                     <v-tab-item>분석정보1</v-tab-item>
 
+
                     <!--분석정보2 탭5-->
                     <v-tab-item>분석정보2</v-tab-item>
+
+
                 </v-tabs-items>
 
                 <v-card flat>
@@ -246,7 +255,7 @@ export default {
         vm.fn_initData().then( async function(e) {
 
             if( e && e.result ) {
-                
+
                 /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
                 if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
 
@@ -332,8 +341,14 @@ export default {
                             item.fmt_INDEX_RATE         =   Math.round( item.INDEX_RATE * 100 ) / 100;                                          /* Index */
                             item.fmt_balance            =   ( 
                                 Math.round( ( vm.simul_result_mast.init_invest_money * item.RETURN_VAL ) * 100 ) / 100 
-                            ) + " %" ;                                                                                                          /* balance = 초기투자금액 * return_val */
-                            item.fmt_RETURN_VAL         =   Math.round( item.RETURN_VAL * 100 ) / 100;                                          /* return_val */
+                            );                                                                                                                  /* balance = 초기투자금액 * return_val */
+                            item.fmt_RETURN_VAL         =   (
+                                Math.round(
+                                    (
+                                        Math.round( item.RETURN_VAL * 10000 ) / 10000
+                                    ) * 100
+                                ) / 100
+                            ) + " %";                                                                                                           /* return_val */
 
                             vm.arr_result_daily.push( item );
                         });                        
@@ -452,8 +467,16 @@ export default {
                             response.data.arr_result_daily.forEach( function( item, index, array ) {
                                 item.fmt_F12506             =   util.formatDate( new String( item.F12506 ) );                                       /* 일자 */
                                 item.fmt_INDEX_RATE         =   Math.round( item.INDEX_RATE * 100 ) / 100;                                          /* Index */
-                                item.fmt_balance            =   ( Math.round( ( vm.simul_result_mast.init_invest_money * item.RETURN_VAL ) * 100 ) / 100 ) + " %" ; /* balance = 초기투자금액 * return_val */
-                                item.fmt_RETURN_VAL         =   Math.round( item.RETURN_VAL * 100 ) / 100;                                          /* return_val */
+                                item.fmt_balance            =   (
+                                    Math.round( ( vm.simul_result_mast.init_invest_money * item.RETURN_VAL ) * 100 ) / 100 
+                                );                                                                                                                  /* balance = 초기투자금액 * return_val */
+                                item.fmt_RETURN_VAL         =   (
+                                    Math.round(
+                                        (
+                                            Math.round( item.RETURN_VAL * 10000 ) / 10000
+                                        ) * 100
+                                    ) / 100
+                                 ) + " %";                                                                                                           /* return_val */
 
                                 vm.arr_result_daily.push( item );
                             });
