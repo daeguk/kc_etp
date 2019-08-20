@@ -27,7 +27,11 @@
                     </span>
                 </h4>
 
+
+            <!-- 그래프 영역-->
                 <div class="simul_graph"></div>
+
+
 
 
                 <v-tabs v-model="activeTab" centered light>
@@ -35,12 +39,10 @@
                     <v-tab v-for="item in item" :key="item">{{ item }}</v-tab>
                 </v-tabs>
 
-
-
                 <v-tabs-items v-model="activeTab">
 
 
-                    <!--리밸런싱내역 탭1-->
+            <!-- 일자별 지수 탭1-->
                     <v-tab-item>
                         <v-layout row wrap>
                             <v-flex grow xs12>
@@ -89,7 +91,7 @@
                     </v-tab-item>
 
 
-                    <!--일자별 지수 탭2-->
+            <!-- 리밸런싱 내역 탭2-->
                     <v-tab-item>
                         <v-layout row wrap>
                             <v-flex grow xs12>
@@ -136,7 +138,7 @@
                     </v-tab-item>
 
 
-                    <!--시뮬레이션 설정 탭3-->
+            <!--시뮬레이션 설정 탭3-->
                     <v-tab-item>
                         <div class="simul_setup">
                             <h6>
@@ -169,11 +171,11 @@
                     </v-tab-item>
 
 
-                    <!--분석정보1 탭4-->
+            <!--분석정보1 탭4-->
                     <v-tab-item>분석정보1</v-tab-item>
 
 
-                    <!--분석정보2 탭5-->
+            <!--분석정보2 탭5-->
                     <v-tab-item>분석정보2</v-tab-item>
 
 
