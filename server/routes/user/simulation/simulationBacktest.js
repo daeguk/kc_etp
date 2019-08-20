@@ -2032,7 +2032,7 @@ var fn_get_simulation_data  =   function(
                     *   -   1 : 직접입력 방식인 경우
                     *   -   3 : 시총비중인 경우 지수적용 비율을 1로 고정한다.
                     **************************************************************************************************************/
-                    if( [ "1", "3" ].includes( v_dailyObj[ p_simul_hist_data[i].F12506 ].importance_method_cd ) ) {
+                    if( [ "3" ].includes( v_dailyObj[ p_simul_hist_data[i].F12506 ].importance_method_cd ) ) {
 
                         /*************************************************************************************************************
                         *   T일이 리밸런싱일자 인 경우
@@ -2974,7 +2974,6 @@ var fn_get_simulation_data  =   function(
                             ,   {}
                         );
 
-
                         /* 비교 시가총액 = 종가(p_param.F30700) * 상장주식수(p_param.F16143) * 지수적용비율(p_param.TODAY_RATE) */
                         v_dataItem.F15028_C         =       fn_calc_data( 
                             "F15028_C"
@@ -3067,9 +3066,11 @@ var fn_get_simulation_data  =   function(
                 totalInfo.tot_F15028_C       =      Number( totalInfo.tot_F15028_C )
                                                 +   Number( v_dataItem.F15028_C );
                 
+                //log.debug("기준시가총액:" + p_param.F12506 + "::" + totalInfo.tot_F15028_S);
+                //log.debug("비교시총:" + p_param.F12506 + "::" + totalInfo.tot_F15028_C);
             }  // end for
 
-
+            
             for( var i = 0; i < Object.keys( p_dailyJongmokObj[ p_param.F12506 ] ).length; i++ ) {
 
                 var v_dataKey     =   Object.keys( p_dailyJongmokObj[ p_param.F12506 ] )[i];
@@ -3131,7 +3132,7 @@ var fn_get_simulation_data  =   function(
                 totalInfo.PREV_INDEX_RATE       =   p_dailyObj[ p_param.v_before_F12506 ].INDEX_RATE;
 
 
-                //log.debug("최초영업일외 기준시가 총액:" + p_param.F12506 + "::" + totalInfo.prev_tot_F15028_S);
+                log.debug("최초영업일외 기준시가 총액:" + p_param.F12506 + "::" + totalInfo.prev_tot_F15028_S);
 
                 p_dailyObj[ p_param.F12506 ].tot_F15028_S           =   totalInfo.tot_F15028_S;
                 p_dailyObj[ p_param.F12506 ].tot_F15028_C           =   totalInfo.tot_F15028_C;
@@ -3319,7 +3320,7 @@ var fn_get_simulation_data  =   function(
                             ,   {       
                                         tot_F15028  :   p_dailyObj[ p_param.F12506 ].tot_F15028         /* 시가기준 시총 */
                                 }
-                        );
+                        );                        
                     }
                     /*************************************************************************************************************
                     *   비중설정방식 ( COM009 ) importance_method_cd  - 1:직접입력, 2:동일가중, 3-시총비중
@@ -3345,6 +3346,7 @@ var fn_get_simulation_data  =   function(
                                 }
                             ,   {}
                         );
+                        
                     }
 
                     /*************************************************************************************************************
@@ -3363,6 +3365,7 @@ var fn_get_simulation_data  =   function(
                             }
                         ,   { }
                     );
+                    
                 }
 
 
@@ -3407,9 +3410,10 @@ var fn_get_simulation_data  =   function(
                 totalInfo.tot_F15028_S       =      Number( totalInfo.tot_F15028_S )
                                                 +   Number( v_dataItem.F15028_S );
 
+                
                 /* 비교 시가총액 누적 */
                 totalInfo.tot_F15028_C       =      Number( totalInfo.tot_F15028_C )
-                                                +   Number( v_dataItem.F15028_C );
+                                                +   Number( v_dataItem.F15028_C );                                                
             }
 
 
@@ -3451,6 +3455,7 @@ var fn_get_simulation_data  =   function(
             /* T-1 일 기준 시가총액 */
             totalInfo.prev_tot_F15028_S     =   p_dailyObj[ p_param.v_before_F12506 ].tot_F15028_S;
 
+            
             /* T-1 일 기준 비교총액 */
             totalInfo.prev_tot_F15028_C     =   p_dailyObj[ p_param.v_before_F12506 ].tot_F15028_C;
 
