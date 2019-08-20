@@ -2743,7 +2743,7 @@ var fn_get_simulation_data  =   function(
                                     v_dataItem.TODAY_RATE           =  p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].BEFORE_RATE;      
                                     v_dataItem.F15028_S             =  p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].F15028_S;
                                     
-                                    console.log("최초 레코드:" + "::" + v_dataItem.F15028_S);
+                                    // console.log("최초 레코드:" + "::" + v_dataItem.F15028_S);
                                     //log.debug("최초 레코드:" + "::" + p_param.F12506 + "::" +  v_dataItem.TODAY_RATE);
                                 } catch(e) {
                                     v_dataItem.TODAY_RATE = 0;
@@ -3129,8 +3129,8 @@ var fn_get_simulation_data  =   function(
             );
             
             if( p_param.first_oper_yn    ==  "Y" ) {
-                console.log(totalInfo.tot_F15028_C);
-                console.log(totalInfo.tot_F15028_S);
+//                console.log(totalInfo.tot_F15028_C);
+//                console.log(totalInfo.tot_F15028_S);
             }
             
             /* RETURN_VAL = ( 당일 지수(p_totalInfo.INDEX_RATE) - 전일 지수(p_totalInfo.BEFORE_INDEX_RATE) ) / 전일 지수(p_totalInfo.BEFORE_INDEX_RATE)  */
