@@ -2115,6 +2115,7 @@ var fn_get_simulation_data  =   function(
                             );
                         }              
                     } else {
+
                         /*************************************************************************************************************
                         *   기준, 비교 시총 관련 정보를 설정한다.
                         **************************************************************************************************************/
@@ -2130,6 +2131,10 @@ var fn_get_simulation_data  =   function(
                             ,   v_eventObj                                              /* 이벤트 변동 발생 정보 */
                             ,   p_firstHistObj                                          /* 최초 레코드 기준 이전 영업일 일자별 종목 데이터 */
                         );
+
+                        if( v_dailyObj[ p_simul_hist_data[i].F12506 ].rebalancing   ==   "1" ) {
+                            v_arr_rebalance.push( v_dailyJongmokObj[ p_simul_hist_data[i].F12506 ] );
+                        }                        
                     }
                     v_arr_daily.push( v_dailyObj[ p_simul_hist_data[i].F12506 ] );
                 }
