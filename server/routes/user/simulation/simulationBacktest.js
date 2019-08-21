@@ -3104,6 +3104,8 @@ var fn_get_simulation_data  =   function(
                                             tot_F15028      :   p_dailyObj[ p_param.F12506 ].tot_F15028_3      /* 시가기준 시총 */
                                     }
                             );
+
+                        v_dataItem.BEFORE_RATE          =   p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].TODAY_RATE;
                         
 
                     
@@ -3190,7 +3192,7 @@ var fn_get_simulation_data  =   function(
 
                                 try {
                                     /* 전일 지수 적용비율로 세팅*/
-                                    v_dataItem.TODAY_RATE           =  p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].BEFORE_RATE;      
+                                    v_dataItem.TODAY_RATE           =  p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].BEFORE_RATE;
                                     v_dataItem.F15028_S             =  p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].F15028_S;
                                     
                                     // console.log("최초 레코드:" + "::" + v_dataItem.F15028_S);
@@ -3198,6 +3200,9 @@ var fn_get_simulation_data  =   function(
                                 } catch(e) {
                                     v_dataItem.TODAY_RATE = 0;
                                 }
+
+
+                                v_dataItem.BEFORE_RATE              =  v_dataItem.TODAY_RATE;
 
                                 
                             }
@@ -3279,6 +3284,8 @@ var fn_get_simulation_data  =   function(
                                             }
                                         ,   {}
                                     );
+
+                                    v_dataItem.BEFORE_RATE              =  p_dailyJongmokObj[ p_param.v_before_F12506 ][v_dataKey].TODAY_RATE;
                                     //console.log(" p_param.before_F12506:"+  p_param.v_before_F12506);
                                     //console.log(" p_dailyObj[ p_param.before_F12506 ].F15028:"+  p_dailyObj[ p_param.v_before_F12506 ].F15028_3);
                                     //console.log(" p_dailyObj[ p_param.before_F12506 ].tot_F15028_3:"+  p_dailyObj[ p_param.v_before_F12506 ].tot_F15028_3);
@@ -3294,7 +3301,10 @@ var fn_get_simulation_data  =   function(
                                     /* 동일 가중은 리밸런싱에 구해진 지수적용비율을 다음 리밸런싱일까지 적용 */
                                     v_dataItem.TODAY_RATE           =  p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].BEFORE_RATE;
 
-                                    v_dataItem.F15028_S             =  p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].F15028_S
+                                    v_dataItem.F15028_S             =  p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].F15028_S;
+
+
+                                    v_dataItem.BEFORE_RATE          =  v_dataItem.TODAY_RATE;
 
                                     //log.debug("이벤트날이 아닌경우:" + "::" + JSON.stringify(p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ]));
                                     //log.debug("이벤트일이 아닌경우:" + "::" + p_param.F12506 + "::" +  v_dataItem.TODAY_RATE);
@@ -3335,6 +3345,8 @@ var fn_get_simulation_data  =   function(
                                             }
                                         ,   {}
                                     );
+
+                                    v_dataItem.BEFORE_RATE          =  p_firstHistObj[ p_param.v_before_F12506 ][v_dataKey].TODAY_RATE ;
                                     //log.debug("최초 레코드 리밸런싱:" + "::" + p_param.F12506 + "::" +  v_dataItem.TODAY_RATE);
                                     
                                 } catch(e) {
@@ -3369,6 +3381,8 @@ var fn_get_simulation_data  =   function(
                                             }
                                         ,   {}
                                     );
+
+                                    v_dataItem.BEFORE_RATE          =  p_dailyJongmokObj[ p_param.v_before_F12506 ][v_dataKey].TODAY_RATE ;
                                    
 
                                     //console.log("v_dataItem.F15028_S::" + v_dataItem.F15028_S);
@@ -3431,8 +3445,9 @@ var fn_get_simulation_data  =   function(
                         
                     }
 
-                    /* 직전 지수적용비율 */
-                    v_dataItem.BEFORE_RATE      =       v_dataItem.TODAY_RATE;                    
+
+
+//                    v_dataItem.BEFORE_RATE          =   p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].TODAY_RATE;
 
 
                     v_dataItem.EVENT_FLAG       =       "";
