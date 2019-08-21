@@ -188,7 +188,7 @@
                             <v-btn depressed color="primary" @click.stop="fn_saveBaicInfo()">백테스트 실행</v-btn>
                         </div>
 
-                        <MastPopup v-if="MastModalFlag" @selectedItem="fn_getSelectedItem" @closeMastModal="fn_closeMastModal" ></MastPopup>
+                        <MastPopup02 v-if="MastModalFlag" @selectedItem="fn_getSelectedItem" @closeMastModal="fn_closeMastModal" ></MastPopup02>
 
                     </v-card>
 
@@ -213,7 +213,7 @@ import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
 
-import MastPopup from "@/components/common/popup/MastPopup";
+import MastPopup02 from "@/components/common/popup/MastPopup02";
 import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
 
 var table01 = null;
@@ -287,7 +287,7 @@ export default {
     },
 
     components: {
-        MastPopup,
+        MastPopup02,
         ConfirmDialog        
     },    
 
