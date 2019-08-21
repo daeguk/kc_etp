@@ -382,6 +382,10 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
+            vm.arr_result_rebalance     =   [];
+            vm.simul_result_mast        =   {};
+            vm.arr_result_daily         =   [];
+
             return  new Promise(function(resolve, reject) {
 
                 vm.fn_showProgress( true );
