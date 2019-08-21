@@ -504,6 +504,55 @@ var getALLEtpList = function (req, res) {
 };
 
 
+/*
+* ETF, ETN 전체 종목 (발생사의 타입에 따라 처리 0001: ETF발행사, 0002: ETN 발행사)
+*/
+var getAllKspjongBasic = function (req, res) {
+    try {
+        log.debug('itemInfo=>getAllKspjongBasic 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        // var options = {id:'admin'};
+        
+        var options = { 
+            large_type : req.session.large_type,
+            jisu_cd: req.query.jisu_cd,
+            market_id: req.query.market_id,
+            type_cd : req.session.type_cd == null? '' : req.session.type_cd,
+            inst_cd : req.session.inst_cd == null? '' : req.session.inst_cd,
+            user_id : req.session.user_id == null? '' : req.session.user_id
+            
+        };
+
+        log.debug("options", JSON.stringify(options));
+
+        var stmt = mapper.getStatement('common.item', "getAllKspjongBasic", options, {language:'sql', indent: '  '});
+    
+
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                log.debug("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        log.debug("err=>", exception);
+    }
+};
+
+
 
 module.exports.insertFavorItem = insertFavorItem;
 module.exports.deleteFavorItem = deleteFavorItem;
@@ -513,3 +562,4 @@ module.exports.getETNList = getETNList;
 module.exports.getIndexList = getIndexList; 
 module.exports.getPublishEtpList = getPublishEtpList; 
 module.exports.getALLEtpList = getALLEtpList; 
+module.exports.getAllKspjongBasic = getAllKspjongBasic; 

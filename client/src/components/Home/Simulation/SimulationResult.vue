@@ -295,16 +295,19 @@ export default {
                                     sub_item.fmt_F12506                 =   util.formatDate( new String( sub_item.F12506 ) );                       /* 일자 */
                                     sub_item.fmt_EVENT_FLAG             =   vm.fn_getCodeName( "COM011", sub_item.EVENT_FLAG );                     /* Event */
 
-                                    sub_item.fmt_F16002                 =   sub_item.F16002 + " ( " + sub_item.F16013 + " )";                       /* 종목 */
+                                    sub_item.fmt_F16002                 =   (
+                                            (!sub_item.F16002 ? "현금" : sub_item.F16002 )  
+                                        + " ( " + sub_item.F16013 + " )"
+                                    );                                                                                                              /* 종목 */
 
                                     /* 변경전 */
-                                    sub_item.fmt_BEFORE_IMPORTANCE      =   (
+                                    sub_item.fmt_BEFORE_IMPORTANCE      =   util.formatNumber(
                                         !sub_item.BEFORE_IMPORTANCE ?   
                                         0 : ( Math.round( sub_item.BEFORE_IMPORTANCE * 100 ) / 100 ) 
                                     ) + " %";
 
                                     /* 변경후 */
-                                    sub_item.fmt_AFTER_IMPORTANCE       =   (
+                                    sub_item.fmt_AFTER_IMPORTANCE       =   util.formatNumber(
                                         !sub_item.AFTER_IMPORTANCE ?
                                         0 : ( Math.round( sub_item.AFTER_IMPORTANCE * 100 ) / 100 )
                                     ) + " %";
@@ -340,11 +343,13 @@ export default {
                     **************************************************************************************************************/
                         vm.paramData.arr_daily.forEach( function( item, index, array ) {
                             item.fmt_F12506             =   util.formatDate( new String( item.F12506 ) );                                       /* 일자 */
-                            item.fmt_INDEX_RATE         =   Math.round( item.INDEX_RATE * 100 ) / 100;                                          /* Index */
-                            item.fmt_balance            =   ( 
+                            item.fmt_INDEX_RATE         =   util.formatNumber(
+                                Math.round( item.INDEX_RATE * 100 ) / 100
+                        );                                                                                                                      /* Index */
+                            item.fmt_balance            =   util.formatNumber( 
                                 Math.round( ( vm.simul_result_mast.init_invest_money * item.RETURN_VAL ) * 100 ) / 100 
                             );                                                                                                                  /* balance = 초기투자금액 * return_val */
-                            item.fmt_RETURN_VAL         =   (
+                            item.fmt_RETURN_VAL         =   util.formatNumber(
                                 Math.round(
                                     (
                                         Math.round( item.RETURN_VAL * 10000 ) / 10000
@@ -381,6 +386,10 @@ export default {
             var vm = this;
 
             vm.arr_show_error_message   =   [];
+
+            vm.arr_result_rebalance     =   [];
+            vm.simul_result_mast        =   {};
+            vm.arr_result_daily         =   [];
 
             return  new Promise(function(resolve, reject) {
 
@@ -423,16 +432,19 @@ export default {
                                     sub_item.fmt_F12506                 =   util.formatDate( new String( sub_item.F12506 ) );                       /* 일자 */
                                     sub_item.fmt_EVENT_FLAG             =   vm.fn_getCodeName( "COM011", sub_item.EVENT_FLAG );                     /* Event */
 
-                                    sub_item.fmt_F16002                 =   sub_item.F16002 + " ( " + sub_item.F16013 + " )";                       /* 종목 */
+                                    sub_item.fmt_F16002                 =   (
+                                            (!sub_item.F16002 ? "현금" : sub_item.F16002 )  
+                                        + " ( " + sub_item.F16013 + " )"
+                                    );                                                                                                              /* 종목 */
 
                                     /* 변경전 */
-                                    sub_item.fmt_BEFORE_IMPORTANCE      =   (
+                                    sub_item.fmt_BEFORE_IMPORTANCE      =   util.formatNumber(
                                         !sub_item.BEFORE_IMPORTANCE ?   
                                         0 : ( Math.round( sub_item.BEFORE_IMPORTANCE * 100 ) / 100 ) 
                                     ) + " %";
 
                                     /* 변경후 */
-                                    sub_item.fmt_AFTER_IMPORTANCE       =   (
+                                    sub_item.fmt_AFTER_IMPORTANCE       =   util.formatNumber(
                                         !sub_item.AFTER_IMPORTANCE ?
                                         0 : ( Math.round( sub_item.AFTER_IMPORTANCE * 100 ) / 100 )
                                     ) + " %";
@@ -468,11 +480,13 @@ export default {
                         **************************************************************************************************************/
                             response.data.arr_result_daily.forEach( function( item, index, array ) {
                                 item.fmt_F12506             =   util.formatDate( new String( item.F12506 ) );                                       /* 일자 */
-                                item.fmt_INDEX_RATE         =   Math.round( item.INDEX_RATE * 100 ) / 100;                                          /* Index */
-                                item.fmt_balance            =   (
+                                item.fmt_INDEX_RATE         =   util.formatNumber(
+                                    Math.round( item.INDEX_RATE * 100 ) / 100
+                                );                                                                                                                  /* Index */
+                                item.fmt_balance            =   util.formatNumber(
                                     Math.round( ( vm.simul_result_mast.init_invest_money * item.RETURN_VAL ) * 100 ) / 100 
                                 );                                                                                                                  /* balance = 초기투자금액 * return_val */
-                                item.fmt_RETURN_VAL         =   (
+                                item.fmt_RETURN_VAL         =   util.formatNumber(
                                     Math.round(
                                         (
                                             Math.round( item.RETURN_VAL * 10000 ) / 10000

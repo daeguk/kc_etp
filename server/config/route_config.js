@@ -151,6 +151,7 @@ module.exports = {
         { file: './user/common/itemInfo', path: '/user/common/getIndexList', method: 'getIndexList', session: 'uncheck', type: 'get' },
         { file: './user/common/itemInfo', path: '/user/common/getPublishEtpList', method: 'getPublishEtpList', session: 'check', type: 'get' },
         { file: './user/common/itemInfo', path: '/user/common/getALLEtpList', method: 'getALLEtpList', session: 'check', type: 'get' },
+        { file: './user/common/itemInfo', path: '/user/common/getAllKspjongBasic', method: 'getAllKspjongBasic', session: 'check', type: 'get' },
 
 
         /* 고객지원 (수정하시 마세요. 고객지원은 uncheck 입니다.)*/
