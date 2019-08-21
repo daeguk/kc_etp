@@ -3279,6 +3279,7 @@ var fn_get_simulation_data  =   function(
 
                                 /* 전일 지수 적용비율로 세팅*/
                                 try {
+
                                     v_dataItem.TODAY_RATE           =       fn_calc_data( 
                                             "TODAY_RATE1"
                                             ,   {       
@@ -3295,12 +3296,13 @@ var fn_get_simulation_data  =   function(
                                     v_dataItem.F15028_S         =   fn_calc_data(
                                         "F15028_S_3"
                                         ,   {       
-                                                    F15001      :   p_dailyJongmokObj[ p_param.v_before_F12506 ][v_dataKey].F15001               /* 기준가 ( 전일 종가 ) - 기준가 */
+                                                    F15001      :   p_dailyJongmokObj[ p_param.v_before_F12506 ][v_dataKey].F15028_3               /* 기준가 ( 전일 종가 ) - 기준가 */
                                                 ,   F16143      :   v_dataItem.F16143               /* 상장주식수 */
                                                 ,   TODAY_RATE  :   v_dataItem.TODAY_RATE           /* 지수적용비율 */
                                             }
                                         ,   {}
                                     );
+                                   
 
                                     //console.log("v_dataItem.F15028_S::" + v_dataItem.F15028_S);
                                 } catch(e) {
@@ -3401,6 +3403,30 @@ var fn_get_simulation_data  =   function(
                 totalInfo.tot_F15028_S       =      Number( totalInfo.tot_F15028_S )
                                                 +   Number( v_dataItem.F15028_S );
 
+
+
+                                    // v_dataItem.TODAY_RATE           =       fn_calc_data( 
+                                    //         "TODAY_RATE1"
+                                    //         ,   {       
+                                    //                     importance      :   v_dataItem.importance                           /* 비중 */
+                                    //                 ,   F15028          :   p_dailyJongmokObj[ p_param.F12506 ][v_dataKey].F15028_3                               /* 시가기준 시총 */
+                                    //             }
+                                    //         ,   {       
+                                    //                     tot_F15028      :   p_dailyObj[ p_param.F12506 ].tot_F15028_3       /* 시가기준 시총 */
+                                    //             }
+                                    // );
+
+                                    // /* 기준 시가총액 = 전일현재가(p_param.F15001) * 상장주식수(p_param.F16143) * 지수적용비율(p_param.TODAY_RATE) */
+                                    // v_dataItem.F15028_S         =   fn_calc_data(
+                                    //     "F15028_S_3"
+                                    //     ,   {       
+                                    //                 F15001      :   p_dailyJongmokObj[ p_param.v_before_F12506 ][v_dataKey].F15001               /* 기준가 ( 전일 종가 ) - 기준가 */
+                                    //             ,   F16143      :   v_dataItem.F16143               /* 상장주식수 */
+                                    //             ,   TODAY_RATE  :   v_dataItem.TODAY_RATE           /* 지수적용비율 */
+                                    //         }
+                                    //     ,   {}
+                                    // );                                                
+
                 
                 if( ["2"].includes( v_dataItem.importance_method_cd ) ) {                            
                     if( p_dailyObj[ p_param.F12506 ].rebalancing    ==  "1" ) {
@@ -3408,7 +3434,7 @@ var fn_get_simulation_data  =   function(
                         if( p_param.first_record_yn != "Y" && i == Object.keys( p_dailyJongmokObj[ p_param.F12506 ] ).length - 1) {                            
                             // 전일 기준시가총액 * SUM(기준시가총액) / 전일 비교 시가총액 
                             //console.log(p_param.F12506 + "::" + Number(p_dailyObj[ p_param.v_before_F12506].tot_F15028_S) +"*"+ Number(totalInfo.tot_F15028_S) +"/"+  Number(p_dailyObj[ p_param.v_before_F12506].tot_F15028_C));
-                            totalInfo.tot_F15028_S =  Number(p_dailyObj[ p_param.v_before_F12506].tot_F15028_S) * Number(totalInfo.tot_F15028_S) /  Number(p_dailyObj[ p_param.v_before_F12506].tot_F15028_C);
+//                            totalInfo.tot_F15028_S =  Number(p_dailyObj[ p_param.v_before_F12506].tot_F15028_S) * Number(totalInfo.tot_F15028_S) /  Number(p_dailyObj[ p_param.v_before_F12506].tot_F15028_C);
                             //console.log(totalInfo.tot_F15028_S);
                             
                         }
@@ -3433,7 +3459,7 @@ var fn_get_simulation_data  =   function(
                 //log.debug("비교시총:" + p_param.F12506 + "::" + totalInfo.tot_F15028_C);
             }  // end for
 
-            
+
             for( var i = 0; i < Object.keys( p_dailyJongmokObj[ p_param.F12506 ] ).length; i++ ) {
 
                 var v_dataKey     =   Object.keys( p_dailyJongmokObj[ p_param.F12506 ] )[i];
@@ -3524,6 +3550,16 @@ var fn_get_simulation_data  =   function(
                             /* T일 기준 시가 총액 = T-1일 기준 시가총액 */
                             totalInfo.tot_F15028_S      =   p_dailyObj[ p_param.F12506 ].prev_tot_F15028_S;
                         }
+                    }else{
+                        totalInfo.tot_F15028_S      =   fn_calc_data(
+                                "tot_F15028_S"
+                            ,   {}
+                            ,   {       
+                                        tot_F15028_S        :   totalInfo.tot_F15028_S              /* 기준 시가총액 */
+                                    ,   prev_tot_F15028_S   :   totalInfo.prev_tot_F15028_S         /* 전일 기준 시가총액 */
+                                    ,   prev_tot_F15028_C   :   totalInfo.prev_tot_F15028_C         /* 전일 비교 시가총액 */
+                                }
+                        );     
                     }
                 }
                 /*************************************************************************************************************
@@ -3546,7 +3582,7 @@ var fn_get_simulation_data  =   function(
                                     ,   prev_tot_F15028_S   :   totalInfo.prev_tot_F15028_S         /* 전일 기준 시가총액 */
                                     ,   prev_tot_F15028_C   :   totalInfo.prev_tot_F15028_C         /* 전일 비교 시가총액 */
                                 }
-                        );     
+                        );
                     }
                     else{
                         totalInfo.tot_F15028_S      =   totalInfo.prev_tot_F15028_S;
