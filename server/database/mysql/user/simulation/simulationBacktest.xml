@@ -486,10 +486,10 @@
 
                                              LIMIT  1
                                         )   IS  NULL
-                                THEN    'N'
-                                ELSE    'Y'
+                                THEN    '0'
+                                ELSE    '1'
                         END
-                    )                                                   AS  rebanance_yn            /* 리밸런싱 여부 */
+                    )                                                   AS  rebalancing             /* 리밸런싱 여부 */
                 
             FROM  (
                     SELECT      td_kspjong_basic.F16013                 AS  F16013                  /* 단축코드 */
@@ -569,10 +569,10 @@
 
                                              LIMIT  1
                                         )   IS  NULL
-                                THEN    'N'
-                                ELSE    'Y'
+                                THEN    '0'
+                                ELSE    '1'
                         END
-                    )                                                   AS  rebanance_yn            /* 리밸런싱 여부 */
+                    )                                                   AS  rebalancing             /* 리밸런싱 여부 */
                 
             FROM  (
                     SELECT      td_kspjong_basic.F16013                 AS  F16013                  /* 단축코드 */
@@ -643,10 +643,10 @@
 
                                              LIMIT  1
                                         )   IS  NULL
-                                THEN    'N'
-                                ELSE    'Y'
+                                THEN    '0'
+                                ELSE    '1'
                         END
-                    )                                                   AS  rebanance_yn            /* 리밸런싱 여부 */
+                    )                                                   AS  rebalancing             /* 리밸런싱 여부 */
                 
             FROM  (
                     SELECT      td_kspjong_basic.F16013                 AS  F16013                  /* 단축코드 */
@@ -739,10 +739,10 @@
 
                                              LIMIT  1
                                         )   IS  NULL
-                                THEN    'N'
-                                ELSE    'Y'
+                                THEN    '0'
+                                ELSE    '1'
                         END
-                    )                                                   AS  rebanance_yn            /* 리밸런싱 여부 */
+                    )                                                   AS  rebalancing             /* 리밸런싱 여부 */
                 
             FROM    (
                         SELECT      td_kspjong_basic.F16013
