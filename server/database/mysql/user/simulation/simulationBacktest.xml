@@ -206,7 +206,7 @@
                             ,   #{scen_cd}                      AS  scen_cd         /* 시나리오코드 */
                             ,   #{prev_grp_cd}                  AS  prev_grp_cd     /* 그룹코드(상위코드)-변경전 */
                             ,   #{prev_scen_cd}                 AS  prev_scen_cd    /* 시나리오코드-변경전 */
-                            ,   #{data.F16316}                  AS  F16316          /* 구성종목코드 */
+                            ,   #{data.F16013}                  AS  F16013          /* 구성종목코드 */
 
                             ,   #{data.order_no}                AS  order_no        /* 정렬 순번 */
                             ,   #{data.importance}              AS  importance      /* 비중 */
@@ -229,7 +229,7 @@
                                     AND     tm_simul_portfolio.scen_cd          =   base.prev_scen_cd   /* 시나리오코드 */
                             </if>
 
-                                    AND     tm_simul_portfolio.F16316           =   base.F16316         /* 구성종목코드 */
+                                    AND     tm_simul_portfolio.F16013           =   base.F16013         /* 구성종목코드 */
                                     AND     tm_simul_portfolio.reg_id           =   #{user_id}          /* 등록자 ID */
                                 )
          WHERE  1 = 1
@@ -257,7 +257,7 @@
                                             ,   #{scen_cd}                      AS  scen_cd         /* 시나리오코드 */
                                             ,   #{prev_grp_cd}                  AS  prev_grp_cd     /* 그룹코드(상위코드)-변경전 */
                                             ,   #{prev_scen_cd}                 AS  prev_scen_cd    /* 시나리오코드-변경전 */
-                                            ,   #{data.F16316}                  AS  F16316          /* 구성종목코드 */
+                                            ,   #{data.F16013}                  AS  F16013          /* 구성종목코드 */
 
                                             ,   #{data.order_no}                AS  order_no        /* 정렬 순번 */
                                             ,   #{data.importance}              AS  importance      /* 비중 */
@@ -270,7 +270,7 @@
                                             1 = 1
                                     AND     tm_simul_portfolio.grp_cd           =   base.prev_grp_cd    /* 그룹코드(상위코드) */
                                     AND     tm_simul_portfolio.scen_cd          =   base.prev_scen_cd   /* 시나리오코드 */
-                                    AND     tm_simul_portfolio.F16316           =   base.F16316         /* 구성종목코드 */
+                                    AND     tm_simul_portfolio.F16013           =   base.F16013         /* 구성종목코드 */
                                 )
          WHERE  1 = 1
            AND  tm_simul_portfolio.grp_cd           =   #{prev_grp_cd}          /* 그룹코드(상위코드) */
@@ -292,7 +292,7 @@
         ( 
                 grp_cd                              /* 그룹코드(상위코드) */
             ,   scen_cd                             /* 시나리오코드 */
-            ,   F16316                              /* 구성종목코드 */
+            ,   F16013                              /* 구성종목코드 */
 
             ,   order_no                            /* 정렬 순번 */
             ,   importance                          /* 비중 */
@@ -310,7 +310,7 @@
         ( 
                 #{grp_cd}                           /* 그룹코드(상위코드) */
             ,   #{scen_cd}                          /* 시나리오코드 */
-            ,   #{data.F16316}                      /* 구성종목코드 */
+            ,   #{data.F16013}                      /* 구성종목코드 */
 
             ,   #{data.order_no}                    /* 정렬 순번 */
             ,   #{data.importance}                  /* 비중 */
@@ -343,7 +343,7 @@
                                         ,   #{scen_cd}                      AS  scen_cd         /* 시나리오코드 */
                                         ,   #{prev_grp_cd}                  AS  prev_grp_cd     /* 그룹코드(상위코드)-변경전 */
                                         ,   #{prev_scen_cd}                 AS  prev_scen_cd    /* 시나리오코드-변경전 */
-                                        ,   #{data.F16316}                  AS  F16316          /* 구성종목코드 */
+                                        ,   #{data.F16013}                  AS  F16013          /* 구성종목코드 */
 
                                         ,   #{data.order_no}                AS  order_no        /* 정렬 순번 */
                                         ,   #{data.importance}              AS  importance      /* 비중 */
@@ -357,14 +357,14 @@
 
                         AND     tm_simul_portfolio.grp_cd           =   base.prev_grp_cd    /* 그룹코드(상위코드) */
                         AND     tm_simul_portfolio.scen_cd          =   base.prev_scen_cd   /* 시나리오코드 */
-                        AND     tm_simul_portfolio.F16316           =   base.F16316         /* 구성종목코드 */
+                        AND     tm_simul_portfolio.F16013           =   base.F16013         /* 구성종목코드 */
 
                         AND     tm_simul_portfolio.reg_id           =   #{user_id}          /* 등록자 ID */
 
            SET      tm_simul_portfolio.grp_cd       =   base.grp_cd             /* 그룹코드(상위코드) */
                 ,   tm_simul_portfolio.scen_cd      =   base.scen_cd            /* 시나리오코드 */
 
-                ,   tm_simul_portfolio.F16316       =   base.F16316             /* 구성종목코드 */
+                ,   tm_simul_portfolio.F16013       =   base.F16013             /* 구성종목코드 */
                 ,   tm_simul_portfolio.order_no     =   base.order_no           /* 정렬 순번 */
                 ,   tm_simul_portfolio.importance   =   base.importance         /* 비중 */
                 ,   tm_simul_portfolio.jisu_rate    =   base.jisu_rate          /* 지수적용비율 */
@@ -390,7 +390,7 @@
                                         ,   #{scen_cd}                      AS  scen_cd         /* 시나리오코드 */
                                         ,   #{prev_grp_cd}                  AS  prev_grp_cd     /* 그룹코드(상위코드)-변경전 */
                                         ,   #{prev_scen_cd}                 AS  prev_scen_cd    /* 시나리오코드-변경전 */
-                                        ,   #{data.F16316}                  AS  F16316          /* 구성종목코드 */
+                                        ,   #{data.F16013}                  AS  F16013          /* 구성종목코드 */
 
                                         ,   #{data.order_no}                AS  order_no        /* 정렬 순번 */
                                         ,   #{data.importance}              AS  importance      /* 비중 */
@@ -403,7 +403,7 @@
 
                         AND     tm_simul_portfolio.grp_cd           =   base.prev_grp_cd    /* 그룹코드(상위코드) */
                         AND     tm_simul_portfolio.scen_cd          =   base.prev_scen_cd   /* 시나리오코드 */
-                        AND     tm_simul_portfolio.F16316           =   base.F16316         /* 구성종목코드 */
+                        AND     tm_simul_portfolio.F16013           =   base.F16013         /* 구성종목코드 */
 
                         AND     tm_simul_portfolio.reg_id           =   #{user_id}          /* 등록자 ID */
     </delete>
@@ -426,12 +426,21 @@
                 ,   base.bench_mark_cd                                  AS  bench_mark_cd           /* 벤치마크 (COM008) */
                 ,   base.importance_method_cd                           AS  importance_method_cd    /* 비중설정방식 (COM009) */
                         
-                ,   base.F16316                                         AS  F16316                  /* 구성종목코드 */       
+                ,   base.F16013                                         AS  F16013                  /* 구성종목코드 */       
                 ,   base.importance                                     AS  importance              /* 비중 */
-                
-                ,   td_kspjong_basic.F16013                             AS  F16013                  /* 단축코드 */
-                ,   td_kspjong_basic.F16002                             AS  F16002                  /* 종목명 */
-                ,   td_kspjong_basic.F16017                             AS  F16017                  /* 상장일 */
+
+                ,   IFNULL(
+                            td_kspjong_basic.F16013
+                        ,   td_etp_basic.F16013
+                    )                                                   AS  F16013                  /* 단축코드 */
+                ,   IFNULL(
+                            td_kspjong_basic.F16002   
+                        ,   td_etp_basic.F16002
+                    )                                                   AS  F16002                  /* 한글종목명 */
+                ,   IFNULL(
+                            td_kspjong_basic.F16017
+                        ,   td_etp_basic.F16017
+                    )                                                   AS  F16017                  /* 상장일 */                
                 
           FROM  (        
                 <foreach    collection="arr_portfolio"   item="data"     separator=" UNION ALL" >
@@ -446,7 +455,7 @@
                             ,   #{bench_mark_cd}                        AS  bench_mark_cd           /* 벤치마크 (COM008) */
                             ,   #{importance_method_cd}                 AS  importance_method_cd    /* 비중설정방식 (COM009) */
 
-                            ,   #{data.F16316}                          AS  F16316                  /* 구성종목코드 */
+                            ,   #{data.F16013}                          AS  F16013                  /* 구성종목코드 */
                             ,   #{data.importance}                      AS  importance              /* 비중 */
 
                     FROM  DUAL
@@ -454,8 +463,11 @@
                 </foreach>
                 )       base
 
-          JOIN  td_kspjong_basic
-            ON  (   base.F16316     =   td_kspjong_basic.F16012 )
+          LEFT  JOIN  td_kspjong_basic
+                  ON  (   base.F16013     =   td_kspjong_basic.F16013 )
+
+          LEFT  JOIN  td_etp_basic
+                  ON  (   base.F16013     =   td_etp_basic.F16013     )
            
          ORDER  BY  td_kspjong_basic.F16013    
 
@@ -492,32 +504,23 @@
                     )                                                   AS  rebalancing             /* 리밸런싱 여부 */
                 
             FROM  (
-                    SELECT      td_kspjong_basic.F16013                 AS  F16013                  /* 단축코드 */
-                            ,   (
-                                    SELECT  tm_code_dtl.com_val02
-                                      FROM  tm_code_dtl
-                                     WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
-                                       AND  tm_code_dtl.com_dtl_cd      =       base.rebalance_cycle_cd 
-                                                                            ||  IFNULL( base.rebalance_date_cd, '' )
-                                     LIMIT  1
-                                )                                       AS  GUBUN                   /* 구분 */
+                        <foreach    collection="arr_portfolio"   item="data"     separator=" UNION ALL" >
+                        <![CDATA[
+                            SELECT      #{rebalance_cycle_cd}           AS  rebalance_cycle_cd      /* 리밸런싱주기 (COM006) */
+                                    ,   #{rebalance_date_cd}            AS  rebalance_date_cd       /* 리밸런싱일자 (COM007) */
 
-                      FROM  (
-                            <foreach    collection="arr_portfolio"   item="data"     separator=" UNION ALL" >
-                            <![CDATA[
-                                SELECT      #{rebalance_cycle_cd}       AS  rebalance_cycle_cd      /* 리밸런싱주기 (COM006) */
-                                        ,   #{rebalance_date_cd}        AS  rebalance_date_cd       /* 리밸런싱일자 (COM007) */
-
-                                        ,   #{data.F16316}              AS  F16316                  /* 구성종목코드 */
-                                FROM  DUAL
-                            ]]>
-                            </foreach>
-                            )       base
-
-                      JOIN  td_kspjong_basic
-                        ON  (   
-                                base.F16316                 =   td_kspjong_basic.F16012  
-                            )
+                                    ,   #{data.F16013}                  AS  F16013                  /* 구성종목코드 */
+                                    ,   (
+                                            SELECT  tm_code_dtl.com_val02
+                                                FROM  tm_code_dtl
+                                                WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
+                                                AND  tm_code_dtl.com_dtl_cd      =       #{rebalance_cycle_cd}
+                                                                                    ||  IFNULL( #{rebalance_date_cd}, '' )
+                                                LIMIT  1
+                                        )                               AS  GUBUN                   /* 구분 */
+                              FROM  DUAL
+                        ]]>
+                        </foreach>
 
                 )     base
 
@@ -575,34 +578,24 @@
                     )                                                   AS  rebalancing             /* 리밸런싱 여부 */
                 
             FROM  (
-                    SELECT      td_kspjong_basic.F16013                 AS  F16013                  /* 단축코드 */
-                            ,   (
-                                    SELECT  tm_code_dtl.com_val02
-                                      FROM  tm_code_dtl
-                                     WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
-                                       AND  tm_code_dtl.com_dtl_cd      =   CONCAT(     base.rebalance_cycle_cd 
-                                                                                    ,   IFNULL( base.rebalance_date_cd, '' )
-                                                                            )
-                                     LIMIT  1
-                                )                                       AS  GUBUN                   /* 구분 */
+                    <foreach    collection="arr_portfolio"   item="data"     separator=" UNION ALL" >
+                    <![CDATA[              
+                        SELECT      #{rebalance_cycle_cd}               AS  rebalance_cycle_cd      /* 리밸런싱주기 (COM006) */
+                                ,   #{rebalance_date_cd}                AS  rebalance_date_cd       /* 리밸런싱일자 (COM007) */
+                                ,   (
+                                        SELECT  tm_code_dtl.com_val02
+                                          FROM  tm_code_dtl
+                                         WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
+                                           AND  tm_code_dtl.com_dtl_cd      =   CONCAT(     #{rebalance_cycle_cd}
+                                                                                        ,   IFNULL( #{rebalance_date_cd}, '' )
+                                                                                )
+                                         LIMIT  1
+                                    )                                   AS  GUBUN                   /* 구분 */                                        
 
-                      FROM  (
-                            <foreach    collection="arr_portfolio"   item="data"     separator=" UNION ALL" >
-                            <![CDATA[              
-                                SELECT      #{rebalance_cycle_cd}       AS  rebalance_cycle_cd      /* 리밸런싱주기 (COM006) */
-                                        ,   #{rebalance_date_cd}        AS  rebalance_date_cd       /* 리밸런싱일자 (COM007) */
-
-                                        ,   #{data.F16316}              AS  F16316                  /* 구성종목코드 */
-                                FROM  DUAL
-                            ]]>
-                            </foreach>
-                            )       base
-
-                      JOIN  td_kspjong_basic
-                        ON  (   
-                                base.F16316                 =   td_kspjong_basic.F16012  
-                            )
-
+                                ,   #{data.F16013}                      AS  F16013                  /* 구성종목코드 */
+                          FROM  DUAL
+                    ]]>
+                    </foreach>
                 )     base
 
           JOIN  td_kspjong_hist
@@ -648,46 +641,29 @@
                         END
                     )                                                   AS  rebalancing             /* 리밸런싱 여부 */
                 
-            FROM  (
-                    SELECT      td_kspjong_basic.F16013                 AS  F16013                  /* 단축코드 */
+          FROM  (
+                    SELECT      tm_simul_portfolio.F16013               AS  F16013                  /* 종목코드 */
+                            ,   tm_simul_mast.rebalance_cycle_cd        AS  rebalance_cycle_cd
+                            ,   tm_simul_mast.rebalance_date_cd         AS  rebalance_date_cd
                             ,   (
                                     SELECT  tm_code_dtl.com_val02
                                       FROM  tm_code_dtl
                                      WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
-                                       AND  tm_code_dtl.com_dtl_cd      =       base.rebalance_cycle_cd 
-                                                                            ||  IFNULL( base.rebalance_date_cd, '' )
-                                     LIMIT  1
+                                       AND  tm_code_dtl.com_dtl_cd      =   CONCAT(     tm_simul_mast.rebalance_cycle_cd 
+                                                                                    ,   IFNULL( tm_simul_mast.rebalance_date_cd, '' )
+                                                                            )
+                                        LIMIT  1
                                 )                                       AS  GUBUN                   /* 구분 */
 
-                      FROM  (
-                                    SELECT      tm_simul_portfolio.F16316           AS  F16316                  /* 종목코드 */
-                                            ,   tm_simul_mast.rebalance_cycle_cd    AS  rebalance_cycle_cd
-                                            ,   tm_simul_mast.rebalance_date_cd     AS  rebalance_date_cd
-                                            ,   (
-                                                    SELECT  tm_code_dtl.com_val02
-                                                      FROM  tm_code_dtl
-                                                     WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
-                                                       AND  tm_code_dtl.com_dtl_cd      =   CONCAT(     tm_simul_mast.rebalance_cycle_cd 
-                                                                                                    ,   IFNULL( tm_simul_mast.rebalance_date_cd, '' )
-                                                                                            )
-                                                     LIMIT  1
-                                                )                           AS  GUBUN                   /* 구분 */
-
-                                      FROM  tm_simul_portfolio
-                                      JOIN  tm_simul_mast
-                                        ON  (
-                                                        tm_simul_portfolio.grp_cd   =   tm_simul_mast.grp_cd
-                                                AND     tm_simul_portfolio.scen_cd  =   tm_simul_mast.scen_cd
-                                        )
-                                     WHERE  1 = 1
-                                       AND  tm_simul_portfolio.grp_cd   =   #{grp_cd}
-                                       AND  tm_simul_portfolio.scen_cd  =   #{scen_cd}
-                            )       base
-
-                      JOIN  td_kspjong_basic
-                        ON  (   
-                                base.F16316                 =   td_kspjong_basic.F16012  
+                      FROM  tm_simul_portfolio
+                      JOIN  tm_simul_mast
+                        ON  (
+                                        tm_simul_portfolio.grp_cd   =   tm_simul_mast.grp_cd
+                                AND     tm_simul_portfolio.scen_cd  =   tm_simul_mast.scen_cd
                             )
+                     WHERE  1 = 1
+                       AND  tm_simul_portfolio.grp_cd   =   #{grp_cd}
+                       AND  tm_simul_portfolio.scen_cd  =   #{scen_cd}
 
                 )     base
 
@@ -745,34 +721,26 @@
                     )                                                   AS  rebalancing             /* 리밸런싱 여부 */
                 
             FROM    (
-                        SELECT      td_kspjong_basic.F16013
-                                ,   base.GUBUN
-                          FROM  (
-                                    SELECT      tm_simul_portfolio.F16316   AS  F16316                  /* 종목코드 */
-                                            ,   (
-                                                    SELECT  tm_code_dtl.com_val02
-                                                      FROM  tm_code_dtl
-                                                     WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
-                                                       AND  tm_code_dtl.com_dtl_cd      =   CONCAT(     tm_simul_mast.rebalance_cycle_cd 
-                                                                                                    ,   IFNULL( tm_simul_mast.rebalance_date_cd, '' )
-                                                                                            )
-                                                     LIMIT  1
-                                                )                           AS  GUBUN                   /* 구분 */
+                        SELECT      tm_simul_portfolio.F16013           AS  F16013                  /* 종목코드 */
+                                ,   (
+                                        SELECT  tm_code_dtl.com_val02
+                                          FROM  tm_code_dtl
+                                         WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
+                                           AND  tm_code_dtl.com_dtl_cd      =   CONCAT(     tm_simul_mast.rebalance_cycle_cd 
+                                                                                        ,   IFNULL( tm_simul_mast.rebalance_date_cd, '' )
+                                                                                )
+                                         LIMIT  1
+                                    )                                   AS  GUBUN                   /* 구분 */
 
-                                      FROM  tm_simul_portfolio
-                                      JOIN  tm_simul_mast
-                                        ON  (
-                                                        tm_simul_portfolio.grp_cd   =   tm_simul_mast.grp_cd
-                                                AND     tm_simul_portfolio.scen_cd  =   tm_simul_mast.scen_cd
-                                            )
-                                     WHERE  1 = 1
-                                       AND  tm_simul_portfolio.grp_cd   =   #{grp_cd}
-                                       AND  tm_simul_portfolio.scen_cd  =   #{scen_cd}
-                                )       base
-                          JOIN  td_kspjong_basic
-                            ON  (   
-                                        base.F16316                 =   td_kspjong_basic.F16012
+                          FROM  tm_simul_portfolio
+                          JOIN  tm_simul_mast
+                            ON  (
+                                            tm_simul_portfolio.grp_cd   =   tm_simul_mast.grp_cd
+                                    AND     tm_simul_portfolio.scen_cd  =   tm_simul_mast.scen_cd
                                 )
+                         WHERE  1 = 1
+                           AND  tm_simul_portfolio.grp_cd   =   #{grp_cd}
+                           AND  tm_simul_portfolio.scen_cd  =   #{scen_cd}
                     )     base
             JOIN  td_kspjong_hist
               ON  (   
@@ -806,13 +774,22 @@
                 ,   tm_simul_mast.bench_mark_cd                         AS  bench_mark_cd               /* 벤치마크 (COM008) */
                 ,   tm_simul_mast.importance_method_cd                  AS  importance_method_cd        /* 비중설정방식 (COM009) */
                         
-                ,   tm_simul_portfolio.F16316                           AS  F16316                      /* 구성종목코드 */       
+                ,   tm_simul_portfolio.F16013                           AS  F16013                      /* 구성종목코드 */       
                 ,   tm_simul_portfolio.importance                       AS  importance                  /* 비중 */
                 ,   tm_simul_portfolio.jisu_rate                        AS  jisu_rate                   /* 지수적용비율 */
                 
-                ,   td_kspjong_basic.F16013                             AS  F16013                      /* 단축코드 */
-                ,   td_kspjong_basic.F16002                             AS  F16002                      /* 종목명 */
-                ,   td_kspjong_basic.F16017                             AS  F16017                      /* 상장일 */
+                ,   IFNULL(
+                            td_kspjong_basic.F16013
+                        ,   td_etp_basic.F16013
+                    )                                                   AS  F16013                      /* 단축코드 */
+                ,   IFNULL(
+                            td_kspjong_basic.F16002   
+                        ,   td_etp_basic.F16002
+                    )                                                   AS  F16002                      /* 한글종목명 */
+                ,   IFNULL(
+                            td_kspjong_basic.F16017
+                        ,   td_etp_basic.F16017
+                    )                                                   AS  F16017                      /* 상장일 */
                 
           FROM  tm_simul_mast
           JOIN  tm_simul_portfolio
@@ -823,7 +800,10 @@
                 )
 
           LEFT  JOIN    td_kspjong_basic
-                  ON    (   tm_simul_portfolio.F16316   =   td_kspjong_basic.F16012 )
+                  ON    (   tm_simul_portfolio.F16013   =   td_kspjong_basic.F16013 )
+
+          LEFT  JOIN    td_etp_basic
+                  ON    (   tm_simul_portfolio.F16013   =   td_etp_basic.F16013 )                  
         
          WHERE  1 = 1
            AND  tm_simul_mast.grp_cd        =   #{grp_cd}
@@ -1079,7 +1059,10 @@
                 ,   tm_simul_result_rebalance.F12506                            AS  F12506                  /* 입회일자 */
                 ,   tm_simul_result_rebalance.F16013                            AS  F16013                  /* 단축 코드(현금은 KRW로 처리) */
 
-                ,   td_kspjong_basic.F16002                                     AS  F16002                  /* 종목명 */
+                ,   IFNULL(
+                            td_kspjong_basic.F16002   
+                        ,   td_etp_basic.F16002
+                    )                                                           AS  F16002                  /* 한글종목명 */
                 ,   tm_simul_result_rebalance.BEFORE_RATE                       AS  BEFORE_RATE             /* (직전)지수적용비율 */
                 ,   tm_simul_result_rebalance.TODAY_RATE                        AS  TODAY_RATE              /* (당일)지수적용비율 */
                 ,   tm_simul_result_rebalance.BEFORE_IMPORTANCE                 AS  BEFORE_IMPORTANCE       /* (전) 시가총액 비중 */
@@ -1087,10 +1070,16 @@
                 ,   tm_simul_result_rebalance.EVENT_FLAG                        AS  EVENT_FLAG              /* 이벤트(비중조절, 종목편입)-COM011 */
                 
           FROM  tm_simul_result_rebalance
-          LEFT  JOIN  td_kspjong_basic
-            ON  (
-                        tm_simul_result_rebalance.F16013    =   td_kspjong_basic.F16013
-                )
+
+          LEFT  JOIN    td_kspjong_basic
+                  ON    (
+                            tm_simul_result_rebalance.F16013    =   td_kspjong_basic.F16013
+                        )
+
+          LEFT  JOIN    td_etp_basic
+                  ON    (
+                            tm_simul_result_rebalance.F16013    =   td_etp_basic.F16013
+                        )                
          WHERE  1 = 1
            AND  tm_simul_result_rebalance.grp_cd            =   #{grp_cd}       /* 그룹코드(상위코드) */
            AND  tm_simul_result_rebalance.scen_cd           =   #{scen_cd}      /* 시나리오코드 */

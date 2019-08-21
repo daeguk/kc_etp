@@ -469,21 +469,40 @@
 
                     tm_simul_portfolio.grp_cd                               AS  grp_cd                      /* 그룹코드(상위코드) */
                 ,   tm_simul_portfolio.scen_cd                              AS  scen_cd                     /* 시나리오코드  */
-                ,   tm_simul_portfolio.F16316                               AS  F16316                      /* 구성종목코드  */
+                ,   tm_simul_portfolio.F16013                               AS  F16013                      /* 구성종목코드  */
 
                 ,   tm_simul_portfolio.order_no                             AS  order_no                    /* 정렬 순번  */
                 ,   tm_simul_portfolio.importance                           AS  importance                  /* 비중  */
                 ,   tm_simul_portfolio.jisu_rate                            AS  jisu_rate                   /* 지수적용비율  */
 
-                ,   td_kspjong_basic.F16013                                 AS  F16013                      /* 단축코드 */
-                ,   td_kspjong_basic.F16002                                 AS  F16002                      /* 한글종목명 */
-                ,   td_kspjong_basic.F15028                                 AS  F15028                      /* 시가총액 */
-                ,   td_kspjong_basic.F16017                                 AS  F16017                      /* 상장일 */
-                ,   td_kspjong_basic.F16109                                 AS  F16109                      /* 유통주식수 */
+                ,   IFNULL(
+                            td_kspjong_basic.F16013
+                        ,   td_etp_basic.F16013
+                    )                                                       AS  F16013                      /* 단축코드 */
+                ,   IFNULL(
+                            td_kspjong_basic.F16002   
+                        ,   td_etp_basic.F16002
+                    )                                                       AS  F16002                      /* 한글종목명 */
+                ,   IFNULL(
+                            td_kspjong_basic.F15028
+                        ,   td_etp_basic.F15028
+                    )                                                       AS  F15028                      /* 시가총액 */
+                ,   IFNULL(
+                            td_kspjong_basic.F16017
+                        ,   td_etp_basic.F16017
+                    )                                                       AS  F16017                      /* 상장일 */
+                ,   IFNULL(
+                            td_kspjong_basic.F16109
+                        ,   td_etp_basic.F16109     
+                    )                                                       AS  F16109                      /* 유통주식수 */
 
           FROM  tm_simul_portfolio
-          JOIN  td_kspjong_basic
-            ON  tm_simul_portfolio.F16316       =   td_kspjong_basic.F16012
+
+          LEFT  JOIN  td_kspjong_basic
+                  ON  tm_simul_portfolio.F16013       =   td_kspjong_basic.F16013
+
+          LEFT  JOIN  td_etp_basic
+                  ON  tm_simul_portfolio.F16013       =   td_etp_basic.F16013
 
          WHERE  1 = 1
            AND  tm_simul_portfolio.grp_cd       =   #{grp_cd}       /* 그룹코드(상위코드) */
