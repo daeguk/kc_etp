@@ -295,7 +295,10 @@ export default {
                                     sub_item.fmt_F12506                 =   util.formatDate( new String( sub_item.F12506 ) );                       /* 일자 */
                                     sub_item.fmt_EVENT_FLAG             =   vm.fn_getCodeName( "COM011", sub_item.EVENT_FLAG );                     /* Event */
 
-                                    sub_item.fmt_F16002                 =   sub_item.F16002 + " ( " + sub_item.F16013 + " )";                       /* 종목 */
+                                    sub_item.fmt_F16002                 =   (
+                                            (!sub_item.F16002 ? "현금" : sub_item.F16002 )  
+                                        + " ( " + sub_item.F16013 + " )"
+                                    );                                                                                                              /* 종목 */
 
                                     /* 변경전 */
                                     sub_item.fmt_BEFORE_IMPORTANCE      =   (
@@ -427,7 +430,10 @@ export default {
                                     sub_item.fmt_F12506                 =   util.formatDate( new String( sub_item.F12506 ) );                       /* 일자 */
                                     sub_item.fmt_EVENT_FLAG             =   vm.fn_getCodeName( "COM011", sub_item.EVENT_FLAG );                     /* Event */
 
-                                    sub_item.fmt_F16002                 =   sub_item.F16002 + " ( " + sub_item.F16013 + " )";                       /* 종목 */
+                                    sub_item.fmt_F16002                 =   (
+                                            (!sub_item.F16002 ? "현금" : sub_item.F16002 )  
+                                        + " ( " + sub_item.F16013 + " )"
+                                    );                                                                                                              /* 종목 */
 
                                     /* 변경전 */
                                     sub_item.fmt_BEFORE_IMPORTANCE      =   (
