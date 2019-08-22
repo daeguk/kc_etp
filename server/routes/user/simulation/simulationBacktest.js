@@ -2358,8 +2358,7 @@ var fn_get_simulation_data  =   function(
                 /*************************************************************************************************************
                 *   비중설정방식 ( COM009 ) importance_method_cd  - 1:직접입력, 2:동일가중, 3-시총비중
                 *   -   2 : 동일 가중인 경우 ( 상장주식수를 1로 고정한다 )
-                **************************************************************************************************************/
-               
+                **************************************************************************************************************/             
                 if( "2" == v_portItem.importance_method_cd ) {
                     p_dailyJongmokObj[ p_param.F12506 ][ v_portKey ].F16143 =   1;
 
@@ -3418,12 +3417,6 @@ var fn_get_simulation_data  =   function(
             );
             
 
-            //log.debug("기준시가총액:" + p_param.F12506 + "::" + totalInfo.tot_F15028_S);
-            //log.debug("비교시총:" + p_param.F12506 + "::" + totalInfo.tot_F15028_C);
-            if( p_param.first_oper_yn    ==  "Y" ) {
-        //                console.log(totalInfo.tot_F15028_C);
-        //                console.log(totalInfo.tot_F15028_S);
-            }
             
             /* RETURN_VAL = ( 당일 지수(p_totalInfo.INDEX_RATE) - 전일 지수(p_totalInfo.BEFORE_INDEX_RATE) ) / 전일 지수(p_totalInfo.BEFORE_INDEX_RATE)  */
             totalInfo.RETURN_VAL    =   fn_calc_data(
@@ -3435,7 +3428,6 @@ var fn_get_simulation_data  =   function(
                     }
             );  
 
-            //log.debug("리턴 밸류:" + p_param.F12506 + "::" + totalInfo.RETURN_VAL);
             Object.assign( p_dailyObj[ p_param.F12506 ], totalInfo );
 
 
