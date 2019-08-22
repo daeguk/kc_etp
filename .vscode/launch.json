@@ -10,6 +10,13 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceFolder}\\server\\routes\\user\\simulation\\simulationBacktest.js"
-        }
+        },
+        {
+            "name": "Launch localhost",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}/client/src"
+        },
     ]
 }
