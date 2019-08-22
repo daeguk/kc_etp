@@ -188,7 +188,7 @@
                             <v-btn depressed color="primary" @click.stop="fn_saveBaicInfo()">백테스트 실행</v-btn>
                         </div>
 
-                        <MastPopup v-if="MastModalFlag" @selectedItem="fn_getSelectedItem" @closeMastModal="fn_closeMastModal" ></MastPopup>
+                        <MastPopup02 v-if="MastModalFlag" @selectedItem="fn_getSelectedItem" @closeMastModal="fn_closeMastModal" ></MastPopup02>
 
                     </v-card>
 
@@ -213,7 +213,7 @@ import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
 
-import MastPopup from "@/components/common/popup/MastPopup";
+import MastPopup02 from "@/components/common/popup/MastPopup02";
 import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
 
 var table01 = null;
@@ -287,7 +287,7 @@ export default {
     },
 
     components: {
-        MastPopup,
+        MastPopup02,
         ConfirmDialog        
     },    
 
@@ -358,7 +358,7 @@ export default {
         
 
         /* table tr 에서 자산찾기 버튼을 누르는 경우  */
-        $('#table01 tbody').on('click', "[name='btn_F16316_search']", function() {
+        $('#table01 tbody').on('click', "[name='btn_F16013_search']", function() {
             var tr          =   $(this).closest('tr');
             var rowIndex    =   tr.index();
 
@@ -368,14 +368,14 @@ export default {
 
 
         /* table tr 에서 종목코드, 비중  blur 시 오류 메시지 초기화  */
-        $('#table01 tbody').on('blur', "input[name='F16316'], input[name='importance']", function() {
+        $('#table01 tbody').on('blur', "input[name='F16013'], input[name='importance']", function() {
             var tr          =   $(this).closest('tr');
             var rowIndex    =   tr.index();
 
             vm.fn_resetErrorMessage();
 
             /* 종목코드인 경우에만 코드 검색 */
-            if( $(this).attr("name") == "F16316" ) {
+            if( $(this).attr("name") == "F16013" ) {
                 /* 종목코드를 검색한다. */
                 vm.fn_getJongmokData( rowIndex, $(this) ).then(function(e){
 
@@ -385,7 +385,7 @@ export default {
                         if( e.rowItem && Object.keys( e.rowItem ).length > 0 )  {
                             rowItem =   e.rowItem;
 
-                            tr.find( "td input[name=F16316]" ).val( rowItem.F16012 );               /* 종목코드 */
+                            tr.find( "td input[name=F16013]" ).val( rowItem.F16013 );               /* 종목코드 */
                             tr.find( "td:eq(2)" ).text( rowItem.F16002 );                           /* 종목명 */
 
                             tr.find( "td:eq(3)" ).text( util.formatInt( rowItem.F15028 ) );         /* 시가총액 */
@@ -401,7 +401,7 @@ export default {
 
 
         /* table tr 에서 종목코드 change 시 레코드 초기화   */
-        $('#table01 tbody').on('change', "input[name='F16316']", function() {
+        $('#table01 tbody').on('change', "input[name='F16013']", function() {
             var tr          =   $(this).closest('tr');
             var rowIndex    =   tr.index();
 
@@ -414,7 +414,7 @@ export default {
 
 
         /* table tr 에서 종목코드 엔터키 누를시   */
-        $('#table01 tbody').on('keypress', "input[name='F16316']", function(e) {
+        $('#table01 tbody').on('keypress', "input[name='F16013']", function(e) {
             var tr          =   $(this).closest('tr');
             var rowIndex    =   tr.index();
 
@@ -431,7 +431,7 @@ export default {
                         if( e.rowItem && Object.keys( e.rowItem ).length > 0 )  {
                             rowItem =   e.rowItem;
 
-                            tr.find( "td input[name=F16316]" ).val( rowItem.F16012 );               /* 종목코드 */
+                            tr.find( "td input[name=F16013]" ).val( rowItem.F16013 );               /* 종목코드 */
                             tr.find( "td:eq(2)" ).text( rowItem.F16002 );                           /* 종목명 */
 
                             tr.find( "td:eq(3)" ).text( util.formatInt( rowItem.F15028 ) );         /* 시가총액 */
@@ -527,7 +527,7 @@ export default {
                 var tr = $(this);
 
                 var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );            /* 첫번째 컬럼 */
-                var v_F16316        =   tr.find( "td input[name=F16316]" );             /* 종목코드 */
+                var v_F16013        =   tr.find( "td input[name=F16013]" );             /* 종목코드 */
 
                 var v_F15028        =   tr.find( "td:eq(3)" );                          /* 시가총액 */
                 var v_importance    =   tr.find( "td input[name=importance]" );         /* 비중 */
@@ -535,9 +535,9 @@ export default {
 
 
                 /* 종목코드가 존재하는 경우 */
-                if( typeof v_F16316.val() != "undefined" ) {
+                if( typeof v_F16013.val() != "undefined" ) {
 
-                    if( v_F16316.val() != "" ) {
+                    if( v_F16013.val() != "" ) {
                         result.push( { 
                                 F15028      :   0       /* 시가총액 */
                             ,   importance  :   0       /* 비중 */
@@ -564,14 +564,14 @@ export default {
                     var tr = $(this);
 
                     var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
-                    var v_F16316        =   tr.find( "td input[name=F16316]" );                 /* 종목코드 */
+                    var v_F16013        =   tr.find( "td input[name=F16013]" );                 /* 종목코드 */
 
                     var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
                     var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
 //                  var v_jisu_rate     =   tr.find( "td:eq(5)" );                              /* 지수적용비율 */
 
-                    if( typeof v_F16316.val() != "undefined" ) {
-                        if( v_F16316.val() != "" ) {
+                    if( typeof v_F16013.val() != "undefined" ) {
+                        if( v_F16013.val() != "" ) {
 
                             /* 동일가중인 경우 */
                             if( importance_method_cd == "2" ) {
@@ -616,14 +616,14 @@ export default {
                     var tr = $(this);
 
                     var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
-                    var v_F16316        =   tr.find( "td input[name=F16316]" );                 /* 종목코드 */
+                    var v_F16013        =   tr.find( "td input[name=F16013]" );                 /* 종목코드 */
 
                     var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
                     var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
 //                  var v_jisu_rate     =   tr.find( "td:eq(5)" );                              /* 지수적용비율 */
 
-                    if( typeof v_F16316.val() != "undefined" ) {
-                        if( v_F16316.val() != "" ) {
+                    if( typeof v_F16013.val() != "undefined" ) {
+                        if( v_F16013.val() != "" ) {
                             v_importance.val( result[v_inx].importance );                       /* 비중 */
 
                             v_inx++;
@@ -944,7 +944,7 @@ export default {
                 rowData = {
                         grp_cd      :   ""      /* 그룹코드(상위코드) */
                     ,   scen_cd     :   ""      /* 시나리오코드 */
-                    ,   F16316      :   ""      /* 구성종목코드 */
+                    ,   F16013      :   ""      /* 구성종목코드 */
                     
                     ,   F16002      :   ""      /* 종목명 */
                     ,   order_no    :   0       /* 정렬 순번 */
@@ -978,9 +978,9 @@ export default {
 
                                     /* 종목코드 */
                 trHtml      +=  `    <td class="td_in_input">`;
-                trHtml      +=  `        <input type="text"     name="F16316" class="txt_right wid150"  maxlength="15" value="` + rowData.F16316 + `" />`;
+                trHtml      +=  `        <input type="text"     name="F16013" class="txt_right wid150"  maxlength="15" value="` + rowData.F16013 + `" />`;
                 trHtml      +=  `        <span>`;
-                trHtml      +=  `            <button class="btn_icon v-icon material-icons"  name="btn_F16316_search" >search</button>`;
+                trHtml      +=  `            <button class="btn_icon v-icon material-icons"  name="btn_F16013_search" >search</button>`;
                 trHtml      +=  `        </span>`;
                 trHtml      +=  `    </td>`;
 
@@ -1011,7 +1011,7 @@ export default {
 
             var tr  =   table01.find( "tbody tr" ).eq( rowIndex );
 
-//          tr.find( "td input[name=F16316]" ).val( "" );       /* 종목코드 */
+//          tr.find( "td input[name=F16013]" ).val( "" );       /* 종목코드 */
             tr.find( "td:eq(2)" ).text( "" );                   /* 종목명 */
             tr.find( "td:eq(3)" ).text( "" );                   /* 시가총액 */
 
@@ -1040,18 +1040,18 @@ export default {
             /* v_total 에 값이 있는 경우 tr 들을 순회하지 않는다.  */
             if( !v_total || Object.keys( v_total ).length == 0 ) {
 
-                table01.find( "tbody tr input[name=F16316]" ).parents("tr").each( function( inx, rowItem ) {
+                table01.find( "tbody tr input[name=F16013]" ).parents("tr").each( function( inx, rowItem ) {
                     var tr = $(this);
 
                     var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
-                    var v_F16316        =   tr.find( "td input[name=F16316]" );                 /* 종목코드 */
+                    var v_F16013        =   tr.find( "td input[name=F16013]" );                 /* 종목코드 */
 
                     var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
                     var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
 //                  var v_jisu_rate     =   tr.find( "td:eq(5)" );                              /* 지수적용비율 */
 
-                    if( typeof v_F16316.val() != "undefined" ) {
-                        if( v_F16316.val() != "" ) {
+                    if( typeof v_F16013.val() != "undefined" ) {
+                        if( v_F16013.val() != "" ) {
                             total.F15028            =   Number( total.F15028 )  +  Number( util.NumtoStr( v_F15028.text() ) );                                          /* (합계) 시가총액 */
                             total.importance        =   Math.floor( ( total.importance * 100 )  +  ( Number( util.NumtoStr( v_importance.val() ) ) * 100 ) ) / 100;     /* (합계) 비중 */
 //                          total.jisu_rate         =   Math.floor( ( total.jisu_rate * 100 )   +  ( Number( util.NumtoStr( v_jisu_rate.text() ) ) * 100 ) ) / 100;     /* (합계) 지수적용비율 */
@@ -1117,7 +1117,7 @@ export default {
         fn_setMastRowData: function( rowIndex=0, rowItem, gubun ) {
             var vm = this;
 
-            var dataTrCnt   =   table01.find( "tbody tr input[name=F16316]" ).parents("tr").length;
+            var dataTrCnt   =   table01.find( "tbody tr input[name=F16013]" ).parents("tr").length;
             if( rowIndex > dataTrCnt-1 ) {
                 vm.fn_addRecords( dataTrCnt, 5 );
             }
@@ -1129,7 +1129,7 @@ export default {
             /* 한건씩 자산을 추가한다. */
                 tr  =   table01.find( "tbody tr" ).eq( rowIndex );
 
-                tr.find( "td input[name=F16316]" ).val( rowItem.F16012 );       /* 종목코드 */
+                tr.find( "td input[name=F16013]" ).val( rowItem.F16013 );       /* 종목코드 */
                 tr.find( "td:eq(2)" ).text( rowItem.F16002 );                   /* 종목명 */
 
 
@@ -1137,7 +1137,7 @@ export default {
 
             /* 선택된 종목의 구성정보를 조회한다. */
                 axios.post(Config.base_url + "/user/simulation/getJongmokInfo", {
-                    data: { "F16012" : rowItem.F16012 }
+                    data: { "F16013" : rowItem.F16013 }
                 }).then( function(response) {
 
                     vm.fn_showProgress( false );
@@ -1213,19 +1213,19 @@ export default {
                 var tr = $(this);
 
                 var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );            /* 첫번째 컬럼 */
-                var v_F16316        =   tr.find( "td input[name=F16316]" );             /* 종목코드 */
-                var v_F16316_nm     =   tr.find( "td:eq(2)" );                          /* 종목코드 명 */
+                var v_F16013        =   tr.find( "td input[name=F16013]" );             /* 종목코드 */
+                var v_F16013_nm     =   tr.find( "td:eq(2)" );                          /* 종목코드 명 */
 
                 var v_F15028        =   tr.find( "td:eq(3)" );                          /* 시가총액 */
                 var v_importance    =   tr.find( "td input[name=importance]" );         /* 비중 */
 //              var v_jisu_rate     =   tr.find( "td:eq(5)" ).text();                   /* 지수적용비율 */
 
-                if( typeof v_F16316.val() != "undefined" ) {
+                if( typeof v_F16013.val() != "undefined" ) {
 
-                    if( v_F16316.val() != "" ) {
+                    if( v_F16013.val() != "" ) {
 
                         /* 종목코드가 존재시 종목명이 없는 경우 ( 종목코드를 수정한 경우 종목명을 지움 ) */
-                        if( v_F16316_nm.text() == "" ) {
+                        if( v_F16013_nm.text() == "" ) {
                             vm.arr_show_error_message.push( "[포트폴리오] " + v_text0.text() + " 종목명이 존재하지 않습니다. 종목코드를 확인해 주세요." );
                         }
 
@@ -1248,7 +1248,7 @@ export default {
 //                      total.jisu_rate         =   Math.floor( ( total.jisu_rate * 100 )   +  ( Number( util.NumtoStr( v_jisu_rate.text() ) ) * 100 ) ) / 100;     /* (합계) 지수적용비율 */                        
 
                         vm.arr_portfolio.push({
-                                "F16316"        :   v_F16316.val()                          /* 종목코드 */
+                                "F16013"        :   v_F16013.val()                          /* 종목코드 */
                             ,   "importance"    :   util.NumtoStr( v_importance.val() )     /* 비중 */
 //                          ,   "jisu_rate"     :   util.NumtoStr( v_jisu_rate )            /* 지수적용비율 */
                             ,   "order_no"      :   rowIndex++                              /* 정렬 순번 */
@@ -1294,7 +1294,7 @@ export default {
 
                         v_text01    =   null;
                         v_text02    =   null;
-                        if( row1.F16316 == row2.F16316 ) {
+                        if( row1.F16013 == row2.F16013 ) {
                             tr1         =   $( "#table01 tbody > tr").eq( vm.arr_portfolio[i].trIndex );
                             tr2         =   $( "#table01 tbody > tr").eq( vm.arr_portfolio[j].trIndex );
 
@@ -1611,19 +1611,19 @@ export default {
 
             var vm = this;
 
-            $( table01.find( "tbody tr input[name=F16316]" ).parents("tr").get().reverse() ).each(function(inx){
+            $( table01.find( "tbody tr input[name=F16013]" ).parents("tr").get().reverse() ).each(function(inx){
                 var tr = $(this);
 
                 var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
-                var v_F16316        =   tr.find( "td input[name=F16316]" );                 /* 종목코드 */
+                var v_F16013        =   tr.find( "td input[name=F16013]" );                 /* 종목코드 */
 
                 var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
                 var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
 //              var v_jisu_rate     =   tr.find( "td:eq(5)" );                              /* 지수적용비율 */
 
-                if( typeof v_F16316 != "undefined" ) {
+                if( typeof v_F16013 != "undefined" ) {
                     $(this).remove();
-                }                
+                }
             });
         }
     }
