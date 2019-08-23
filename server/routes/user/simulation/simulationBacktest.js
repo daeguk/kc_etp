@@ -3395,7 +3395,7 @@ var fn_get_simulation_data  =   function(
                                 "TODAY_RATE1"
                             ,   {       
                                         importance      :   v_dataItem.importance                           /* 비중 */
-                                        ,   F15028          :    v_dataItem.F15028     /* 시가기준 시총 */
+                                        ,   F15028          :    v_dataItem.F15001     /* 시가기준 시총 */
                                     }
                                 ,   {       
                                             tot_F15028      :   p_dailyObj[ p_param.F12506 ].tot_F15001      /* 현재가총합 */
@@ -3469,7 +3469,7 @@ var fn_get_simulation_data  =   function(
                                             "TODAY_RATE1"
                                             ,   {       
                                                         importance      :   v_dataItem.importance                           /* 비중 */
-                                                    ,   F15028          :   p_firstHistObj[ p_param.v_before_F12506 ][v_dataKey].F15028_3                               /* 시가기준 시총 */
+                                                    ,   F15028          :   p_firstHistObj[ p_param.v_before_F12506 ][v_dataKey].F15001                               /* 시가기준 시총 */
                                                 }
                                             ,   {       
                                                         tot_F15028      :   p_dailyObj[ p_param.v_before_F12506 ].tot_F15001       /* 현재가 총합 */
@@ -3514,7 +3514,7 @@ var fn_get_simulation_data  =   function(
                                             "TODAY_RATE1"
                                             ,   {       
                                                         importance      :   v_dataItem.importance                           /* 비중 */
-                                                    ,   F15028          :   F15028                                          /* 시가기준 시총 */
+                                                    ,   F15028          :   p_dailyJongmokObj[ p_param.v_before_F12506 ][ v_dataKey ].F15001                                          /* 시가기준 시총 */
                                                 }
                                             ,   {       
                                                         tot_F15028      :   p_dailyObj[ p_param.v_before_F12506 ].tot_F15001       /* 현재가 총합 */
