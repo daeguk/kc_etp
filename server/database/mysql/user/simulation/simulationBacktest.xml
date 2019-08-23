@@ -455,7 +455,7 @@
                             td_kspjong_basic.F16017
                         ,   td_etp_basic.F16017
                     )                                                   AS  F16017                  /* 상장일 */                
-                
+                ,   '0'                                                 AS  IMPORT_YN               /* 시물레이션에 포함 여부*/
           FROM  (        
                 <foreach    collection="arr_portfolio"   item="data"     separator=" UNION ALL" >
                 <![CDATA[              
@@ -922,7 +922,7 @@
                             td_kspjong_basic.F16017
                         ,   td_etp_basic.F16017
                     )                                                   AS  F16017                      /* 상장일 */
-                
+                ,   '0'                                                 AS  IMPORT_YN               /* 시물레이션에 포함 여부*/
           FROM  tm_simul_mast
           JOIN  tm_simul_portfolio
             ON  (
