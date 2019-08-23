@@ -3538,7 +3538,7 @@ var fn_get_simulation_data  =   function(
                             
                                     
 if( ["20180702"].includes( p_param.F12506 ) ) {
-    console.log( "p_param.F12506", p_param.F12506, "v_dataKey", v_dataKey, "F15028", F15028, "F16143", v_dataItem.F16143, "TODAY_RATE", v_dataItem.TODAY_RATE, "tot_F15001", p_dailyObj[ p_param.v_before_F12506 ].tot_F15001, "\n\n" );
+    console.log( "p_param.F12506", p_param.F12506, "v_dataKey", v_dataKey, "F15028", F15028, "" "TODAY_RATE", v_dataItem.TODAY_RATE, "\n", "p_dailyObj", p_dailyObj[ p_param.F12506 ] , "\n\n" );
 }                                    
                             
                                 
