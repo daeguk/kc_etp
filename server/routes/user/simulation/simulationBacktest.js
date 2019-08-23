@@ -2897,6 +2897,11 @@ var fn_get_simulation_data  =   function(
                 }
             }
 
+
+if( [ "20171228", "20180102" ].includes( p_param.F12506 ) ) {
+    console.log( "p_param.F12506", p_param.F12506, "p_dailyJongmokObj[ p_param.F12506 ]", p_dailyJongmokObj[ p_param.F12506 ], "p_dailyObj", p_dailyObj );
+}            
+
         }catch( e ) {
             console.log( "fn_get_simulation_data.fn_get_event_check error ", e );
         }
