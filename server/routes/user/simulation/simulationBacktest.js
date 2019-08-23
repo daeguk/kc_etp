@@ -83,6 +83,7 @@ var saveBaicInfo = function(req, res) {
         resultMsg.arr_daily             =   [];
         resultMsg.arr_rebalance         =   [];
         resultMsg.simul_mast            =   {};
+        resultMsg.arr_bench_mark        =   [];
 
         Promise.using(pool.connect(), conn => {
 
@@ -913,7 +914,7 @@ var saveBaicInfo = function(req, res) {
 
                                 console.log( fn_show_diff_time( "시뮬레이션 script 계산결과", startTime1, endTime1 ) );
 
-                                callback(null);
+                                callback(null, paramData);
                             });
 
                         } catch (err) {
@@ -928,6 +929,50 @@ var saveBaicInfo = function(req, res) {
                             callback(resultMsg);
                         }
                     },
+
+                    /* 14. td_kspjong_hist 테이블 기준 td_index_hist 테이블에서 bench_mark 와 일치하는 정보를 조회한다.*/
+                    function(msg, callback) {
+
+                        try{
+
+                            if(     paramData.start_year
+                                &&  paramData.bench_mark_cd
+                                &&  paramData.bench_mark_cd != "0"
+                            ) {
+
+                                stmt = mapper.getStatement('simulationBacktest', 'getSimulBenchMarkForInsert', paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulationBacktest.getSimulBenchMarkForInsert Error while performing Query";
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if ( rows || rows.length > 0 ) {
+                                        fn_set_bench_mark( v_resultSimulData.arr_daily, rows );
+                                    }
+
+                                    callback(null);
+                                });
+                                
+                            }else{
+                                callback(null);
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulationBacktest.getSimulBenchMarkForInsert Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                
 
                 ], function(err) {
 
@@ -953,6 +998,8 @@ var saveBaicInfo = function(req, res) {
                             ,   rebalance_date_cd       :   paramData.rebalance_date_cd     /* 리밸런싱일자 (COM007) */
                             ,   init_invest_money       :   paramData.init_invest_money     /* 초기투자금액 */
                             ,   bench_mark_cd           :   paramData.bench_mark_cd         /* 벤치마크 (COM008) */
+                            ,   bench_index_cd          :   paramData.bench_index_cd        /* 벤치마크 인덱스 코드 */
+                            ,   bench_index_nm          :   paramData.bench_index_nm        /* 벤치마크 인덱스 코드명 */
                             ,   importance_method_cd    :   paramData.importance_method_cd  /* 비중설정방식 (COM009) */
                         };
 
@@ -1100,6 +1147,8 @@ var saveBacktestResult = function(req, res) {
                                             v_simul_mast.rebalance_date_cd      =   rows[0].rebalance_date_cd;      /* 리밸런싱일자 (COM007) */
                                             v_simul_mast.init_invest_money      =   rows[0].init_invest_money;      /* 초기투자금액 */
                                             v_simul_mast.bench_mark_cd          =   rows[0].bench_mark_cd;          /* 벤치마크 (COM008) */
+                                            v_simul_mast.bench_index_cd         =   rows[0].bench_index_cd          /* 벤치마크 인덱스 코드 */
+                                            v_simul_mast.bench_index_nm         =   rows[0].bench_index_nm          /* 벤치마크 인덱스 코드명 */                                            
                                             v_simul_mast.importance_method_cd   =   rows[0].importance_method_cd;   /* 비중설정방식 (COM009) */
                                         }                                        
 									}
@@ -1789,6 +1838,7 @@ var getBacktestResult = function(req, res) {
         resultMsg.arr_result_daily      =   [];
         resultMsg.arr_result_rebalance  =   [];
         resultMsg.simul_result_mast     =   {};
+        resultMsg.arr_bench_mark        =   [];
 
 
         Promise.using(pool.connect(), conn => {
@@ -1885,7 +1935,55 @@ var getBacktestResult = function(req, res) {
                         }
                     },
 
-                    /* 3. (백테스트) tm_simul_result_rebalance 테이블을 조회한다. */
+                    /* 3. tm_simul_result_daily 테이블 기준 td_index_hist 테이블에서 bench_mark 와 일치하는 정보를 조회한다.*/
+                    function(msg, callback) {
+
+                        try{
+
+                            if(     resultMsg.simul_result_mast 
+                                &&  resultMsg.simul_result_mast.bench_mark_cd
+                                &&  resultMsg.simul_result_mast.bench_mark_cd != "0"
+                                &&  resultMsg.simul_result_mast.bench_index_cd
+                            ) {
+                                paramData.start_year        =   resultMsg.simul_result_mast.start_year;
+                                paramData.bench_mark_cd     =   resultMsg.simul_result_mast.bench_mark_cd;
+                                paramData.bench_index_cd    =   resultMsg.simul_result_mast.bench_index_cd;
+
+                                stmt = mapper.getStatement('simulationBacktest', 'getSimulBenchMark', paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulationBacktest.getSimulBenchMark Error while performing Query";
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if ( rows || rows.length > 0 ) {
+                                        fn_set_bench_mark( resultMsg.arr_result_daily, rows );
+                                    }
+
+                                    callback(null, paramData);
+                                });
+                                
+                            }else{
+                                callback(null, paramData);
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulationBacktest.getSimulBenchMark Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 4. (백테스트) tm_simul_result_rebalance 테이블을 조회한다. */
                     function(msg, callback) {
 
                         try{
@@ -4200,6 +4298,65 @@ function    fn_show_diff_time( p_title, p_startTime, p_endTime ) {
         return zero + n;
     }
 
+}
+
+/*
+*   일자별 지수에 밴치마크 정보를 설정한다.
+*   2019-08-14  bkLove(촤병국)
+*/
+function    fn_set_bench_mark( p_arr_daily, p_arr_bench ) {
+
+    /* 소수점시 계산시 사용할 고정값 */
+    var numInfo     =   {
+            IMPORTANCE_FIX_NUM      :   100                     /* 비중  소수점 계산시 사용할 고정값 */
+        ,   IMPORTANCE_FIX_NUM1     :   10000                   /* 비중  소수점 계산시 사용할 고정값 */
+        ,   JISU_RATE_FIX_NUM       :   100000000000000000      /* 지수적용비율 소수점 계산시 사용할 고정값 */
+    };
+
+    if(     p_arr_daily && p_arr_daily.length > 0
+        &&  p_arr_bench && p_arr_bench.length > 0
+    ) {
+
+        if( p_arr_daily[0].F12506   >   p_arr_bench[0].F12506 ) {
+            p_arr_bench.shift();
+        }
+
+        var v_prev_index   =    0;
+        for( var i=0; i < p_arr_daily.length; i++ ) {
+
+            var v_daily         =   p_arr_daily[i];
+            var v_prev_daily    =   ( typeof p_arr_daily[ v_prev_index ] == "undefined"     ? {} : p_arr_daily[ v_prev_index ] );
+
+            var v_bm            =   ( typeof p_arr_bench[i] == "undefined"                  ? {} : p_arr_bench[i] );
+            var v_prev_bm       =   ( typeof p_arr_bench[ v_prev_index ] == "undefined"     ? {} : p_arr_bench[ v_prev_index ] );
+
+
+            v_daily.bm_data01       =   Number( v_bm.F15001 );
+
+            /* 최초인 경우 */
+            if( i == 0 ) {
+                v_daily.bm_1000_data    =   1000;
+                v_daily.bm_return_data  =   (
+                        Math.round(
+                            ( Number( v_daily.bm_data01 ) - Number( v_daily.bm_data01 ) ) / Number( v_daily.bm_data01 )
+                        ) *  numInfo.JISU_RATE_FIX_NUM
+                    /   numInfo.JISU_RATE_FIX_NUM
+                );
+            }else{
+                v_daily.bm_1000_data    =   Number( v_prev_daily.bm_1000_data ) * ( 
+                    Math.round( ( Number( v_daily.bm_data01 ) / Number( v_prev_daily.bm_data01 ) ) * numInfo.JISU_RATE_FIX_NUM ) / numInfo.JISU_RATE_FIX_NUM 
+                );
+                v_daily.bm_return_data  =   (
+                        Math.round( ( Number( v_daily.bm_data01 ) - Number( v_prev_daily.bm_data01 ) ) / Number( v_prev_daily.bm_data01 ) *  numInfo.JISU_RATE_FIX_NUM )
+                    /   numInfo.JISU_RATE_FIX_NUM
+                );
+            }
+
+            if( i > 0 ) {
+                v_prev_index    =   i;
+            }            
+        }
+    }
 }
 
 
