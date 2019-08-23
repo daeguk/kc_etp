@@ -120,7 +120,17 @@
                             <v-subheader class="subheader_r">벤치마크 설정</v-subheader>
                         </v-flex>
                         <v-flex xs2>
-                            <v-select :items="items3" placeholder="선택하세요" outline  @change="fn_resetErrorMessage();"></v-select>
+                            <v-select   :items="arr_bench_mark_cd" 
+                                        
+                                        item-text="com_dtl_name" 
+                                        item-value="com_dtl_cd"
+                                        
+                                        v-model="bench_mark_cd" 
+                                        placeholder="선택하세요" 
+                                        outline  
+                                        
+                                        @change="fn_resetErrorMessage();">
+                            </v-select>
                         </v-flex>
                     </v-layout>
                 </v-card>
