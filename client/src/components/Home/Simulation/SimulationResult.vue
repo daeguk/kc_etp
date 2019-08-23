@@ -66,7 +66,7 @@
                                                         <th class="txt_right">Index</th>
                                                         <th class="txt_right">Balance</th>
                                                         <th class="txt_right">Return</th>
-                                                        <th class="txt_right">BM(KOSPI200)</th>
+                                                        <th class="txt_right">{{ simul_result_mast.bench_index_nm }}</th>
                                                         <th class="txt_right">BM(1000환산)</th>
                                                         <th class="txt_right">BM return</th>
                                                     </tr>
@@ -77,9 +77,9 @@
                                                         <td class="txt_right">{{ row.fmt_INDEX_RATE         /* 지수 */ }}</td>
                                                         <td class="txt_right">{{ row.fmt_balance            /* balance */ }}</td>
                                                         <td class="txt_right">{{ row.fmt_RETURN_VAL         /* return */ }}</td>
-                                                        <td class="txt_right"></td>
-                                                        <td class="txt_right"></td>
-                                                        <td class="txt_right"></td>
+                                                        <td class="txt_right">{{ row.bm_data01              /* BM */ }}</td>
+                                                        <td class="txt_right">{{ row.fmt_bm_1000_data       /* BM(1000환산) */ }}</td>
+                                                        <td class="txt_right">{{ row.fmt_bm_return_data     /* BM(return) */ }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -337,6 +337,13 @@ export default {
                         /* 리밸런싱 횟수 */
                         vm.simul_result_mast.rebalance_cnt  =   v_rebalance_cnt;
 
+                        if( vm.simul_result_mast.bench_mark_cd == "0" ) {
+                            vm.simul_result_mast.bench_index_nm =   "BM";
+                        }else{
+                            vm.simul_result_mast.bench_index_nm =   "BM (" + vm.simul_result_mast.bench_index_nm + ")";
+                        }
+                        
+
 
                     /*************************************************************************************************************
                     *   array 일자별 지수 정보
@@ -345,7 +352,7 @@ export default {
                             item.fmt_F12506             =   util.formatDate( new String( item.F12506 ) );                                       /* 일자 */
                             item.fmt_INDEX_RATE         =   util.formatNumber(
                                 Math.round( item.INDEX_RATE * 100 ) / 100
-                        );                                                                                                                      /* Index */
+                            );                                                                                                                      /* Index */
                             item.fmt_balance            =   util.formatNumber( 
                                 Math.round( ( vm.simul_result_mast.init_invest_money * item.RETURN_VAL ) * 100 ) / 100 
                             );                                                                                                                  /* balance = 초기투자금액 * return_val */
@@ -356,6 +363,29 @@ export default {
                                     ) * 100
                                 ) / 100
                             ) + " %";                                                                                                           /* return_val */
+
+
+
+                            if( vm.simul_result_mast.bench_mark_cd != "0" ) {
+
+                                item.fmt_bm_1000_data       =   util.formatNumber(
+                                    Math.round(
+                                        (
+                                            Math.round( item.bm_1000_data * 10000 ) / 10000
+                                        ) * 100
+                                    ) / 100
+                                );                                                                                                                  /* bm(1000환산) */
+                                item.fmt_bm_return_data     =   util.formatNumber(
+                                    Math.round(
+                                        (
+                                            Math.round( item.bm_return_data * 10000 ) / 10000
+                                        ) * 100
+                                    ) / 100
+                                ) + " %";                                                                                                           /* bm(return) */
+                            }else{
+                                item.fmt_bm_1000_data       =   "";                                                                                 /* bm(1000환산) */
+                                item.fmt_bm_return_data     =   "";                                                                                 /* bm(return) */
+                            }
 
                             vm.arr_result_daily.push( item );
                         });                        
@@ -474,6 +504,12 @@ export default {
                             /* 리밸런싱 횟수 */
                             vm.simul_result_mast.rebalance_cnt      =   v_rebalance_cnt;
 
+                            if( vm.simul_result_mast.bench_mark_cd == "0" ) {
+                                vm.simul_result_mast.bench_index_nm =   "BM";
+                            }else{
+                                vm.simul_result_mast.bench_index_nm =   "BM (" + vm.simul_result_mast.bench_index_nm + ")";
+                            }
+
 
                         /*************************************************************************************************************
                         *   array 일자별 지수 정보
@@ -493,6 +529,28 @@ export default {
                                         ) * 100
                                     ) / 100
                                  ) + " %";                                                                                                           /* return_val */
+
+
+                                if( vm.simul_result_mast.bench_mark_cd != "0" ) {
+
+                                    item.fmt_bm_1000_data       =   util.formatNumber(
+                                        Math.round(
+                                            (
+                                                Math.round( item.bm_1000_data * 10000 ) / 10000
+                                            ) * 100
+                                        ) / 100
+                                    );                                                                                                              /* bm(1000환산) */
+                                    item.fmt_bm_return_data     =   util.formatNumber(
+                                        Math.round(
+                                            (
+                                                Math.round( item.bm_return_data * 10000 ) / 10000
+                                            ) * 100
+                                        ) / 100
+                                    ) + " %";                                                                                                       /* bm(return) */
+                                }else{
+                                    item.fmt_bm_1000_data       =   "";                                                                             /* bm(1000환산) */
+                                    item.fmt_bm_return_data     =   "";                                                                             /* bm(return) */
+                                }
 
                                 vm.arr_result_daily.push( item );
                             });
