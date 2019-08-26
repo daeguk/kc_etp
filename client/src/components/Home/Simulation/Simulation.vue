@@ -291,7 +291,9 @@ export default {
             ,   init_invest_money           :   1000000     /* 초기투자금액 */
             ,   bench_mark_cd               :   "0"         /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
             ,   importance_method_cd        :   "1"         /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
-            ,   bench_index_cd              :   ""          /* 벤치마크 인덱스 코드 */
+            ,   bench_index_cd01            :   ""          /* 벤치마크 인덱스 코드 ( F16013 ) */
+            ,   bench_index_cd02            :   ""          /* 벤치마크 인덱스 코드 ( large_type ) */
+            ,   bench_index_cd03            :   ""          /* 벤치마크 인덱스 코드 ( middle_type ) */
             ,   bench_index_nm              :   ""          /* 벤치마크 인덱스 코드명 */
 
             ,   arr_portfolio               :   []          /* 포트폴리오 설정 정보 */
@@ -1431,7 +1433,9 @@ export default {
                     });
                     
                     if( existCheck && existCheck.length == 1 ) {
-                        vm.bench_index_cd       =   existCheck[0].com_val01;
+                        vm.bench_index_cd01     =   existCheck[0].com_val01;        /* F16013 */
+                        vm.bench_index_cd02     =   existCheck[0].com_val02;        /* middle_type */
+                        vm.bench_index_cd03     =   existCheck[0].com_val03;        /* large_type */
                         vm.bench_index_nm       =   existCheck[0].com_dtl_name;
                     }
                 }
@@ -1454,7 +1458,9 @@ export default {
                     ,   "rebalance_date_cd"     :   vm.rebalance_date_cd        /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
                     ,   "init_invest_money"     :   vm.init_invest_money        /* 초기투자금액 */
                     ,   "bench_mark_cd"         :   vm.bench_mark_cd            /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
-                    ,   "bench_index_cd"        :   vm.bench_index_cd           /* 벤치마크 인덱스 코드 */
+                    ,   "bench_index_cd01"      :   vm.bench_index_cd01         /* 벤치마크 인덱스 코드 ( F16013 ) */
+                    ,   "bench_index_cd02"      :   vm.bench_index_cd02         /* 벤치마크 인덱스 코드 ( large_type ) */
+                    ,   "bench_index_cd03"      :   vm.bench_index_cd03         /* 벤치마크 인덱스 코드 ( middle_type ) */
                     ,   "bench_index_nm"        :   vm.bench_index_nm           /* 벤치마크 인덱스 코드명 */
                     ,   "importance_method_cd"  :   vm.importance_method_cd     /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
 

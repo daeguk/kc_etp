@@ -998,7 +998,9 @@ var saveBaicInfo = function(req, res) {
                             ,   rebalance_date_cd       :   paramData.rebalance_date_cd     /* 리밸런싱일자 (COM007) */
                             ,   init_invest_money       :   paramData.init_invest_money     /* 초기투자금액 */
                             ,   bench_mark_cd           :   paramData.bench_mark_cd         /* 벤치마크 (COM008) */
-                            ,   bench_index_cd          :   paramData.bench_index_cd        /* 벤치마크 인덱스 코드 */
+                            ,   bench_index_cd01        :   paramData.bench_index_cd01      /* 벤치마크 인덱스 코드 ( F16013 ) */
+                            ,   bench_index_cd02        :   paramData.bench_index_cd02      /* 벤치마크 인덱스 코드 ( large_type ) */
+                            ,   bench_index_cd03        :   paramData.bench_index_cd03      /* 벤치마크 인덱스 코드 ( middle_type ) */                            
                             ,   bench_index_nm          :   paramData.bench_index_nm        /* 벤치마크 인덱스 코드명 */
                             ,   importance_method_cd    :   paramData.importance_method_cd  /* 비중설정방식 (COM009) */
                         };
@@ -1942,12 +1944,16 @@ var getBacktestResult = function(req, res) {
 
                             if(     resultMsg.simul_result_mast 
                                 &&  resultMsg.simul_result_mast.bench_mark_cd
-                                &&  resultMsg.simul_result_mast.bench_mark_cd != "0"
-                                &&  resultMsg.simul_result_mast.bench_index_cd
+                                &&  resultMsg.simul_result_mast.bench_mark_cd       != "0"
+                                &&  resultMsg.simul_result_mast.bench_index_cd01
+                                &&  resultMsg.simul_result_mast.bench_index_cd02
+                                &&  resultMsg.simul_result_mast.bench_index_cd03
                             ) {
                                 paramData.start_year        =   resultMsg.simul_result_mast.start_year;
                                 paramData.bench_mark_cd     =   resultMsg.simul_result_mast.bench_mark_cd;
-                                paramData.bench_index_cd    =   resultMsg.simul_result_mast.bench_index_cd;
+                                paramData.bench_index_cd01  =   resultMsg.simul_result_mast.bench_index_cd01;   /* F16013 */
+                                paramData.bench_index_cd02  =   resultMsg.simul_result_mast.bench_index_cd02;   /* large_type */
+                                paramData.bench_index_cd03  =   resultMsg.simul_result_mast.bench_index_cd03;   /* middle_type */
 
                                 stmt = mapper.getStatement('simulationBacktest', 'getSimulBenchMark', paramData, format);
                                 log.debug(stmt, paramData);
@@ -3587,12 +3593,17 @@ var fn_get_simulation_data  =   function(
                     /* 최초 레코드인 경우 */
                     if( p_param.first_record_yn == "Y" ) {
 
-                        /* 직전 [기준 시가총액]과 다르면 10-비중조절 로 설정 */
-                        if( v_dataItem.F15028_S != p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ].F15028_S ) {
-                            v_dataItem.EVENT_FLAG       =   "10";       /* 10-비중조절 */
-                        }
+                        if( p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ] ) {
+                            /* 직전 [기준 시가총액]과 다르면 10-비중조절 로 설정 */
+                            if( v_dataItem.F15028_S != p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ].F15028_S ) {
+                                v_dataItem.EVENT_FLAG       =   "10";       /* 10-비중조절 */
+                            }
+                        
 
-                        v_dataItem.BEFORE_RATE  =   p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ].TODAY_RATE;
+                            v_dataItem.BEFORE_RATE  =   p_firstHistObj[ p_param.v_before_F12506 ][ v_dataKey ].TODAY_RATE;
+                        }else{
+                            v_dataItem.BEFORE_RATE  =   0;
+                        }
                     }else{
 
                         /* 종목이 편입되기 전엔 krw 로 존재했다가 종목이 편입되게 되면 krw 항목이 없어지게 됨. */

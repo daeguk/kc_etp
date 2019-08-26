@@ -430,7 +430,21 @@
                           FROM  tm_code_dtl
                          WHERE  tm_code_dtl.com_mst_cd      =   'COM008'
                            AND  tm_code_dtl.com_dtl_cd      =   base.bench_mark_cd
-                    )                                                   AS  bench_index_cd          /* 벤치마크 인덱스 코드 */
+                    )                                                   AS  bench_index_cd01        /* 벤치마크 인덱스 코드 ( F16013 ) */
+                ,   (
+
+                        SELECT  tm_code_dtl.com_val02
+                          FROM  tm_code_dtl
+                         WHERE  tm_code_dtl.com_mst_cd      =   'COM008'
+                           AND  tm_code_dtl.com_dtl_cd      =   base.bench_mark_cd
+                    )                                                   AS  bench_index_cd02        /* 벤치마크 인덱스 코드 ( large_type ) */
+                ,   (
+
+                        SELECT  tm_code_dtl.com_val03
+                          FROM  tm_code_dtl
+                         WHERE  tm_code_dtl.com_mst_cd      =   'COM008'
+                           AND  tm_code_dtl.com_dtl_cd      =   base.bench_mark_cd
+                    )                                                   AS  bench_index_cd03        /* 벤치마크 인덱스 코드( middle_type ) */
                 ,   (
 
                         SELECT  tm_code_dtl.com_dtl_name
@@ -895,7 +909,21 @@
                           FROM  tm_code_dtl
                          WHERE  tm_code_dtl.com_mst_cd      =   'COM008'
                            AND  tm_code_dtl.com_dtl_cd      =   tm_simul_mast.bench_mark_cd
-                    )                                                   AS  bench_index_cd              /* 벤치마크 인덱스 코드 */
+                    )                                                   AS  bench_index_cd01            /* 벤치마크 인덱스 코드 ( F16013 ) */
+                ,   (
+
+                        SELECT  tm_code_dtl.com_val02
+                          FROM  tm_code_dtl
+                         WHERE  tm_code_dtl.com_mst_cd      =   'COM008'
+                           AND  tm_code_dtl.com_dtl_cd      =   tm_simul_mast.bench_mark_cd
+                    )                                                   AS  bench_index_cd02            /* 벤치마크 인덱스 코드 ( large_type ) */
+                ,   (
+
+                        SELECT  tm_code_dtl.com_val03
+                          FROM  tm_code_dtl
+                         WHERE  tm_code_dtl.com_mst_cd      =   'COM008'
+                           AND  tm_code_dtl.com_dtl_cd      =   tm_simul_mast.bench_mark_cd
+                    )                                                   AS  bench_index_cd03            /* 벤치마크 인덱스 코드( middle_type ) */
                 ,   (
 
                         SELECT  tm_code_dtl.com_dtl_name
@@ -963,6 +991,7 @@
             ,   rebalancing                 /* 리밸런싱 여부(Y,N) */
             ,   F15007	                    /* 기준가 */
             ,   F30700	                    /* 종가 */
+            ,   F15001	                    /* 수정주가 */
             ,   F16143	                    /* 상장주식수 */
             ,   BEFORE_RATE                 /* (직전)지수적용비율 */
             ,   TODAY_RATE                  /* (당일)지수적용비율 */
@@ -990,6 +1019,7 @@
             ,   #{data.rebalancing}         /* 리밸런싱 여부(Y,N) */
             ,   #{data.F15007}	            /* 기준가 */
             ,   #{data.F30700}	            /* 종가 */
+            ,   #{data.F15001}	            /* 수정주가 */
             ,   #{data.F16143}	            /* 상장주식수 */
             ,   #{data.BEFORE_RATE}         /* (직전)지수적용비율 */
             ,   #{data.TODAY_RATE}          /* (당일)지수적용비율 */
@@ -1238,12 +1268,19 @@
           FROM  tm_simul_result_daily
           LEFT  JOIN    
                 (
-                    SELECT     F16013                                   AS  F16013          /* 단축코드 */
-                            ,  F12506                                   AS  F12506          /* 입회일자 */
+                    SELECT     td_index_hist.F16013                     AS  F16013          /* 단축코드 */
+                            ,  td_index_hist.F12506                     AS  F12506          /* 입회일자 */
 
-                            ,  F15001                                   AS  F15001          /* 현재가 */
+                            ,  td_index_hist.F15001                     AS  F15001          /* 현재가 */
                       FROM  td_index_hist
-                     WHERE  td_index_hist.F16013        =   #{bench_index_cd}
+                      JOIN  td_index_basic
+                        ON  (
+                                        td_index_hist.F16013    =   td_index_basic.F16013
+                                AND     td_index_hist.market_id =   td_index_basic.market_id
+                            )
+                     WHERE  td_index_basic.F16013       =   #{bench_index_cd01}
+                       AND  td_index_basic.large_type   =   #{bench_index_cd02}
+                       AND  td_index_basic.middle_type  =   #{bench_index_cd03}
 
                             /* start_year 이전 첫 영업일 이후 부터 시작 */
                        AND  td_index_hist.F12506        >=
@@ -1322,12 +1359,19 @@
                 )   td_kspjong_hist
           LEFT  JOIN    
                 (
-                    SELECT     F16013                                   AS  F16013          /* 단축코드 */
-                            ,  F12506                                   AS  F12506          /* 입회일자 */
+                    SELECT     td_index_hist.F16013                     AS  F16013          /* 단축코드 */
+                            ,  td_index_hist.F12506                     AS  F12506          /* 입회일자 */
 
-                            ,  F15001                                   AS  F15001          /* 현재가 */
+                            ,  td_index_hist.F15001                     AS  F15001          /* 현재가 */
                       FROM  td_index_hist
-                     WHERE  td_index_hist.F16013        =   #{bench_index_cd}
+                      JOIN  td_index_basic
+                        ON  (
+                                        td_index_hist.F16013    =   td_index_basic.F16013
+                                AND     td_index_hist.market_id =   td_index_basic.market_id
+                            )
+                     WHERE  td_index_basic.F16013       =   #{bench_index_cd01}
+                       AND  td_index_basic.large_type   =   #{bench_index_cd02}
+                       AND  td_index_basic.middle_type  =   #{bench_index_cd03}
 
                             /* start_year 이전 첫 영업일 이후 부터 시작 */
                        AND  td_index_hist.F12506        >=
@@ -1358,5 +1402,93 @@
     ]]>
     </select>    
 
+
+
+
+
+
+    <!--
+    *   start_year 기준 이전 첫 영업일 부터 이력 데이터를 조회한다.
+    *   2019-08-14  bkLove(촤병국)
+    -->
+    <select id="getSimulHistListByScenCd2">
+
+        SELECT      /* simulationBacktest.getSimulHistListByScenCd2  start_year 기준 이전 첫 영업일 부터 이력 데이터를 조회한다. */
+
+                    td_kspjong_hist.F16013                              AS  F16013                  /* 단축코드 */
+                ,   td_kspjong_hist.F12506                              AS  F12506                  /* 입회일자 */
+
+                ,   td_kspjong_hist.F30700                              AS  F30700                  /* 가중 수정 현재가 ( 당일 종가 ) - 종가 */
+                ,   td_kspjong_hist.F15007                              AS  F15007                  /* 기준가 ( 전일 종가 ) - 기준가 */
+                ,   td_kspjong_hist.F16143                              AS  F16143                  /* 상장주식수*/
+                ,   td_kspjong_hist.F15001                              AS  F15001                  /* 현재가 */
+                ,   (
+                        CASE    WHEN    (
+                                            SELECT  tm_date_manage.F12506
+                                              FROM  tm_date_manage
+                                             WHERE  tm_date_manage.F12506       =   td_kspjong_hist.F12506
+                                               AND  tm_date_manage.GUBUN        =   base.GUBUN
+
+                                             LIMIT  1
+                                        )   IS  NULL
+                                THEN    '0'
+                                ELSE    '1'
+                        END
+                    )                                                   AS  rebalancing             /* 리밸런싱 여부 */
+                
+          FROM  (
+                    SELECT      tm_simul_portfolio.F16013               AS  F16013                  /* 종목코드 */
+                            ,   (
+                                    SELECT  tm_code_dtl.com_val02
+                                      FROM  tm_code_dtl
+                                     WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
+                                       AND  tm_code_dtl.com_dtl_cd      =   CONCAT(     tm_simul_mast.rebalance_cycle_cd 
+                                                                                    ,   IFNULL( tm_simul_mast.rebalance_date_cd, '' )
+                                                                            )
+                                     LIMIT  1
+                                )                                       AS  GUBUN                   /* 구분 */
+
+                      FROM  tm_simul_portfolio
+                      JOIN  tm_simul_mast
+                        ON  (
+                                        tm_simul_portfolio.grp_cd   =   tm_simul_mast.grp_cd
+                                AND     tm_simul_portfolio.scen_cd  =   tm_simul_mast.scen_cd
+                            )
+                     WHERE  1 = 1
+                       AND  tm_simul_portfolio.grp_cd   =   #{grp_cd}
+                       AND  tm_simul_portfolio.scen_cd  =   #{scen_cd}
+                )     base
+          JOIN  td_kspjong_hist
+            ON  (   
+                <![CDATA[
+                            base.F16013                 =   td_kspjong_hist.F16013
+
+                            /* start_year 이전 첫 영업일 이후 부터 시작 */
+                    AND     td_kspjong_hist.F12506      >=
+                            (
+                                SELECT  MAX( td_kspjong_hist.F12506 )
+                                  FROM  td_kspjong_hist
+                                  JOIN  tm_simul_portfolio
+                                    ON  td_kspjong_hist.F16013      =   tm_simul_portfolio.F16013
+                                 WHERE  1 = 1
+                                   AND  tm_simul_portfolio.scen_cd  =   #{scen_cd}
+                                   AND  tm_simul_portfolio.grp_Cd   =   #{grp_cd}
+
+                                   AND  td_kspjong_hist.F12506      <   CONCAT( #{start_year}, '0101' )         /* 입회일자 이전 */
+                                   AND  td_kspjong_hist.F12506      >=  DATE_FORMAT( 
+                                                                                DATE_SUB( 
+                                                                                        CONCAT( #{start_year}, '0101' )
+                                                                                    ,   INTERVAL 2 WEEK
+                                                                                )
+                                                                            ,   '%Y%m%d' 
+                                                                        )                                       /* start_year 기준 3 달 전부터 시작  */
+                            )
+                ]]>
+                )
+
+         ORDER  BY      td_kspjong_hist.F12506          /* 입회일자 */
+                    ,   td_kspjong_hist.F16013          /* 단축코드 */
+
+    </select>
 
 </mapper>
