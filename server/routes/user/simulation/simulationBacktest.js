@@ -4476,19 +4476,17 @@ function    fn_set_bench_mark( p_arr_daily, p_arr_bench ) {
             if( i == 0 ) {
                 v_daily.bm_1000_data    =   1000;
                 v_daily.bm_return_data  =   (
-                        Math.round(
-                            ( Number( v_daily.bm_data01 ) - Number( v_daily.bm_data01 ) ) / Number( v_daily.bm_data01 )
-                        ) *  numInfo.JISU_RATE_FIX_NUM
-                    /   numInfo.JISU_RATE_FIX_NUM
-                );
+                    ( Number( v_daily.bm_data01 ) - Number( v_daily.bm_data01 ) ) / Number( v_daily.bm_data01 )
+                ).toFixed(17);
             }else{
-                v_daily.bm_1000_data    =   Number( v_prev_daily.bm_1000_data ) * ( 
-                    Math.round( ( Number( v_daily.bm_data01 ) / Number( v_prev_daily.bm_data01 ) ) * numInfo.JISU_RATE_FIX_NUM ) / numInfo.JISU_RATE_FIX_NUM 
-                );
+                v_daily.bm_1000_data    =   (
+                        Number( v_prev_daily.bm_1000_data ) *
+                        ( Number( v_daily.bm_data01 ) / Number( v_prev_daily.bm_data01 ) )
+                ).toFixed(17);
+
                 v_daily.bm_return_data  =   (
-                        Math.round( ( Number( v_daily.bm_data01 ) - Number( v_prev_daily.bm_data01 ) ) / Number( v_prev_daily.bm_data01 ) *  numInfo.JISU_RATE_FIX_NUM )
-                    /   numInfo.JISU_RATE_FIX_NUM
-                );
+                        ( Number( v_daily.bm_data01 ) - Number( v_prev_daily.bm_data01 ) ) / Number( v_prev_daily.bm_data01 )
+                ).toFixed(17);
             }
 
             if( i > 0 ) {

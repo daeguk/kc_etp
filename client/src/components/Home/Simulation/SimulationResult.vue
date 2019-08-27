@@ -303,13 +303,13 @@ export default {
                                     /* 변경전 */
                                     sub_item.fmt_BEFORE_IMPORTANCE      =   util.formatNumber(
                                         !sub_item.BEFORE_IMPORTANCE ?   
-                                        0 : ( Math.round( sub_item.BEFORE_IMPORTANCE * 100 ) / 100 ) 
+                                        0 : ( sub_item.BEFORE_IMPORTANCE * 100 )
                                     ) + " %";
 
                                     /* 변경후 */
                                     sub_item.fmt_AFTER_IMPORTANCE       =   util.formatNumber(
                                         !sub_item.AFTER_IMPORTANCE ?
-                                        0 : ( Math.round( sub_item.AFTER_IMPORTANCE * 100 ) / 100 )
+                                        0 : ( sub_item.AFTER_IMPORTANCE * 100 )
                                     ) + " %";
 
                                     vm.arr_result_rebalance.push( sub_item );
@@ -351,17 +351,13 @@ export default {
                         vm.paramData.arr_daily.forEach( function( item, index, array ) {
                             item.fmt_F12506             =   util.formatDate( new String( item.F12506 ) );                                       /* 일자 */
                             item.fmt_INDEX_RATE         =   util.formatNumber(
-                                Math.round( item.INDEX_RATE * 100 ) / 100
+                                item.INDEX_RATE
                             );                                                                                                                      /* Index */
                             item.fmt_balance            =   util.formatNumber( 
-                                Math.round( ( vm.simul_result_mast.init_invest_money * item.RETURN_VAL ) * 100 ) / 100 
+                                ( vm.simul_result_mast.init_invest_money * item.RETURN_VAL )
                             );                                                                                                                  /* balance = 초기투자금액 * return_val */
                             item.fmt_RETURN_VAL         =   util.formatNumber(
-                                Math.round(
-                                    (
-                                        Math.round( item.RETURN_VAL * 10000 ) / 10000
-                                    ) * 100
-                                ) / 100
+                                item.RETURN_VAL * 100
                             ) + " %";                                                                                                           /* return_val */
 
 
@@ -369,18 +365,10 @@ export default {
                             if( vm.simul_result_mast.bench_mark_cd != "0" ) {
 
                                 item.fmt_bm_1000_data       =   util.formatNumber(
-                                    Math.round(
-                                        (
-                                            Math.round( item.bm_1000_data * 10000 ) / 10000
-                                        ) * 100
-                                    ) / 100
+                                    item.bm_1000_data
                                 );                                                                                                                  /* bm(1000환산) */
                                 item.fmt_bm_return_data     =   util.formatNumber(
-                                    Math.round(
-                                        (
-                                            Math.round( item.bm_return_data * 10000 ) / 10000
-                                        ) * 100
-                                    ) / 100
+                                    item.bm_return_data * 100
                                 ) + " %";                                                                                                           /* bm(return) */
                             }else{
                                 item.fmt_bm_1000_data       =   "";                                                                                 /* bm(1000환산) */
@@ -470,13 +458,13 @@ export default {
                                     /* 변경전 */
                                     sub_item.fmt_BEFORE_IMPORTANCE      =   util.formatNumber(
                                         !sub_item.BEFORE_IMPORTANCE ?   
-                                        0 : ( Math.round( sub_item.BEFORE_IMPORTANCE * 100 ) / 100 ) 
+                                        0 : ( sub_item.BEFORE_IMPORTANCE * 100 )
                                     ) + " %";
 
                                     /* 변경후 */
                                     sub_item.fmt_AFTER_IMPORTANCE       =   util.formatNumber(
                                         !sub_item.AFTER_IMPORTANCE ?
-                                        0 : ( Math.round( sub_item.AFTER_IMPORTANCE * 100 ) / 100 )
+                                        0 : ( sub_item.AFTER_IMPORTANCE * 100 )
                                     ) + " %";
 
                                     vm.arr_result_rebalance.push( sub_item );
@@ -517,35 +505,23 @@ export default {
                             response.data.arr_result_daily.forEach( function( item, index, array ) {
                                 item.fmt_F12506             =   util.formatDate( new String( item.F12506 ) );                                       /* 일자 */
                                 item.fmt_INDEX_RATE         =   util.formatNumber(
-                                    Math.round( item.INDEX_RATE * 100 ) / 100
+                                    item.INDEX_RATE
                                 );                                                                                                                  /* Index */
                                 item.fmt_balance            =   util.formatNumber(
-                                    Math.round( ( vm.simul_result_mast.init_invest_money * item.RETURN_VAL ) * 100 ) / 100 
+                                    ( vm.simul_result_mast.init_invest_money * item.RETURN_VAL )
                                 );                                                                                                                  /* balance = 초기투자금액 * return_val */
                                 item.fmt_RETURN_VAL         =   util.formatNumber(
-                                    Math.round(
-                                        (
-                                            Math.round( item.RETURN_VAL * 10000 ) / 10000
-                                        ) * 100
-                                    ) / 100
+                                    item.RETURN_VAL * 100
                                  ) + " %";                                                                                                           /* return_val */
 
 
                                 if( vm.simul_result_mast.bench_mark_cd != "0" ) {
 
                                     item.fmt_bm_1000_data       =   util.formatNumber(
-                                        Math.round(
-                                            (
-                                                Math.round( item.bm_1000_data * 10000 ) / 10000
-                                            ) * 100
-                                        ) / 100
+                                        item.bm_1000_data
                                     );                                                                                                              /* bm(1000환산) */
                                     item.fmt_bm_return_data     =   util.formatNumber(
-                                        Math.round(
-                                            (
-                                                Math.round( item.bm_return_data * 10000 ) / 10000
-                                            ) * 100
-                                        ) / 100
+                                        item.bm_return_data * 100
                                     ) + " %";                                                                                                       /* bm(return) */
                                 }else{
                                     item.fmt_bm_1000_data       =   "";                                                                             /* bm(1000환산) */
