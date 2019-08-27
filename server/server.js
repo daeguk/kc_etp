@@ -156,3 +156,5 @@ var server = http.createServer(app).listen(app.get('port'), function(req, res) {
 
 });
 
+server.timeout = 350000;
+
