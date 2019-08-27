@@ -26,4 +26,5 @@ module.exports = {
     sampleDownFolder : "D:/koscom_etp/kc_etp/etc/sampleDown",
     pdfmodify_nas_path: "D:/koscom_etp/kc_etp/pdfmodify/",
     logger : logger,
+    python_path: '',
 }
