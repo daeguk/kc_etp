@@ -16,6 +16,22 @@ var bodyParser = require('body-parser'),
     fs = require('fs');
     // errorHandler = require('errorhandler');
 
+let {PythonShell} = require('python-shell')
+
+var options = {
+  mode: 'text',
+  pythonPath: '',
+  pythonOptions: ['-u'],
+  scriptPath: '',
+  args: ['value1', 'value2', 'value3']
+};
+
+PythonShell.run('./python/test.py', options, function (err, results) {
+  if (err) throw err;
+  console.log('results: %j', results);
+});
+
+
 // 에러 핸들러 모듈 사용 
 // express-error-handler 못 가져옴 (이유를 모르겠슴)
 var expressErrorHandler = require('express-error-handler');

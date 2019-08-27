@@ -90,6 +90,7 @@ ol, ul{padding:0 !important;}
 .text_color_blue{color:#5e870b}
 .txt_left{text-align:left;}
 .txt_right{text-align:right;}
+.marb15{margin-bottom:15px !important;}
 
 .text-xs-center{text-align: center;}
 .v-badge__badge{height: 18px !important; width: 18px !important; font-size: 12px !important;}
@@ -175,7 +176,7 @@ button:focus { outline: none; }
 
 .text_S{font-size: 12px !important; font-weight: 400; }
 .align_r{text-align: right;}
-.pop_btn_w{border-top:1px solid #dddddd !important; padding:5px 0 10px 0;}
+.pop_btn_w{border-top:0px solid #dddddd !important; padding:5px 0 10px 0;}
 .pop_bot_h{height:20px;}
 
 
@@ -951,7 +952,9 @@ input[type='file']{
 .width_fix2{width:350px !important; background:#ffffff;}
 
 .pdfmody_acttd{ background-color:#f7f7f7 !important;}
-.pdf_context .pdf_coment{padding:40px 0 !important; font-size: 16px; font-weight:400;}
+.pdf_context .pdf_coment{padding:35px 0 0 !important; font-size: 16px; font-weight:400;}
+.pdf_context .pdf_coment2{padding:15px 0 0 !important; font-size: 16px; font-weight:400;}
+.pdf_context .pdf_coment3{padding:25px 0 !important; font-size: 14px; font-weight:400; color:#ff4366;}
 .pdf_context p{font-weight: 600; font-size: 22px;}
 .pdf_context .pdfmody_btn{margin-left:220px; font-weight: 400; font-size: 18px;margin-top:10px;}
 .pdf_context .pdfmody_btn .v-expansion-panel{box-shadow: none;}
@@ -961,7 +964,7 @@ input[type='file']{
 .pdfm_title{font-size:18px; font-weight: 600; padding-left:24px; padding-top:0px;}
 .pdfm_title span{font-size:14px; font-weight:400}
 
-
+.listset_pop.ver2 .dataTables_wrapper .dataTables_scroll{margin-bottom:15px;}
 
 /*말풍선*/
 
