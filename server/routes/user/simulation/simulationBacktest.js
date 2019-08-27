@@ -977,7 +977,7 @@ var saveBaicInfo = function(req, res) {
                 ], function(err) {
 
                     if (err) {
-                        console.error(err, stmt, paramData);
+                        log.error(err, stmt, paramData);
                         conn.rollback();
 
                     } else {
@@ -1761,7 +1761,7 @@ var saveBacktestResult = function(req, res) {
                 ], function(err) {
 
                     if (err) {
-                        console.log(err, stmt, paramData);
+                        log.err(err, stmt, paramData);
                         conn.rollback();
 
                     } else {
@@ -2048,7 +2048,7 @@ var getBacktestResult = function(req, res) {
 
     } catch (expetion) {
 
-        console.log(expetion, paramData);
+        log.error(expetion, paramData);
 
         resultMsg.result = false;
         resultMsg.msg = "[error] simulationBacktest.runBacktest 오류가 발생하였습니다.";
