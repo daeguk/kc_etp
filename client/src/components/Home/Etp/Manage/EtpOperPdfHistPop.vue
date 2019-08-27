@@ -1,9 +1,11 @@
 <template>
     <v-container>
         <v-flex>
-            <v-dialog v-model="showDialog" persistent  max-width="1100"  >
-                <v-card class="mx-auto" height="400">
-                    <v-card flat class="listset_pop">
+            <v-dialog v-model="showDialog" persistent  max-width="1100" max-height="8
+            
+            00" >
+                <v-card class="mx-auto" >
+                    <v-card flat class="listset_pop ver2">
                         <h5>
                             <v-card-title ma-0>
                                 PDF수정 내역<v-spacer></v-spacer>
@@ -213,7 +215,7 @@ export default {
                                             "info": false,   // control table information display field
                                             "stateSave": true,  //restore table state on page reload,
                                             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                                            "scrollY": ( items.length >= 5 ? '15vh' : '' ),
+                                            "scrollY": ( items.length >= 12 ? '27vh' : '' ),
                                             select: {
                                                 style:    'single',
                                                 selector: 'td:first-child'

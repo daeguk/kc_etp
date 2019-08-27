@@ -194,7 +194,6 @@
                             </div>
                         </v-card>
                     </v-card>
-                    <v-divider></v-divider>
 
                     <v-card-actions>
                         <v-spacer></v-spacer>
@@ -265,10 +264,15 @@
                                     <br>신속한 작업을 위해 내역을 제출하신 후 코스콤 담당자와 통화해주세요
                                 </b>
                             </div>
-                            <div class="pdf_coment text-xs-center">
-                                신일식 과장 02-767-8747
+                            <div class="pdf_coment2 text-xs-center">
+                                오춘교 과장 02-767-8735
                                 <br>이형준 과장 02-767-8750
-                                <br>오춘교 대리 02-767-8735
+                            </div>
+                            <div class="pdf_coment3 text-xs-center">
+                                -주의사항-
+                                <br>본 변경내용은 장중투자지표(iNAV) 산출에만 반영됩니다.
+                                <br>기타업무(설정환매, 정보단말 PDF조회 등)에 반영을 위해
+                                <br>사무관리사에 PDF변경내역을 통지하시기 바랍니다.
                             </div>
                             <p class="text-xs-center">
                                 <v-btn dark depressed color="primary" @click="fn_close">닫기</v-btn>
