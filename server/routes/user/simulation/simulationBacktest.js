@@ -977,7 +977,7 @@ var saveBaicInfo = function(req, res) {
                 ], function(err) {
 
                     if (err) {
-                        console.error(err, stmt, paramData);
+                        log.error(err, stmt, paramData);
                         conn.rollback();
 
                     } else {
@@ -1761,7 +1761,7 @@ var saveBacktestResult = function(req, res) {
                 ], function(err) {
 
                     if (err) {
-                        console.log(err, stmt, paramData);
+                        log.err(err, stmt, paramData);
                         conn.rollback();
 
                     } else {
@@ -2048,7 +2048,7 @@ var getBacktestResult = function(req, res) {
 
     } catch (expetion) {
 
-        console.log(expetion, paramData);
+        log.error(expetion, paramData);
 
         resultMsg.result = false;
         resultMsg.msg = "[error] simulationBacktest.runBacktest 오류가 발생하였습니다.";
@@ -3225,8 +3225,8 @@ var fn_get_simulation_data  =   function(
                             ,   TODAY_RATE      :   v_dataItem.TODAY_RATE               /* 지수적용비율 */
                         }
                     ,   { }
-                );               
-                
+                );
+
 
                 /* 기준 시가총액 누적 */
                 totalInfo.tot_F15028_S       =      Number( totalInfo.tot_F15028_S )
@@ -4476,19 +4476,17 @@ function    fn_set_bench_mark( p_arr_daily, p_arr_bench ) {
             if( i == 0 ) {
                 v_daily.bm_1000_data    =   1000;
                 v_daily.bm_return_data  =   (
-                        Math.round(
-                            ( Number( v_daily.bm_data01 ) - Number( v_daily.bm_data01 ) ) / Number( v_daily.bm_data01 )
-                        ) *  numInfo.JISU_RATE_FIX_NUM
-                    /   numInfo.JISU_RATE_FIX_NUM
-                );
+                    ( Number( v_daily.bm_data01 ) - Number( v_daily.bm_data01 ) ) / Number( v_daily.bm_data01 )
+                ).toFixed(17);
             }else{
-                v_daily.bm_1000_data    =   Number( v_prev_daily.bm_1000_data ) * ( 
-                    Math.round( ( Number( v_daily.bm_data01 ) / Number( v_prev_daily.bm_data01 ) ) * numInfo.JISU_RATE_FIX_NUM ) / numInfo.JISU_RATE_FIX_NUM 
-                );
+                v_daily.bm_1000_data    =   (
+                        Number( v_prev_daily.bm_1000_data ) *
+                        ( Number( v_daily.bm_data01 ) / Number( v_prev_daily.bm_data01 ) )
+                ).toFixed(17);
+
                 v_daily.bm_return_data  =   (
-                        Math.round( ( Number( v_daily.bm_data01 ) - Number( v_prev_daily.bm_data01 ) ) / Number( v_prev_daily.bm_data01 ) *  numInfo.JISU_RATE_FIX_NUM )
-                    /   numInfo.JISU_RATE_FIX_NUM
-                );
+                        ( Number( v_daily.bm_data01 ) - Number( v_prev_daily.bm_data01 ) ) / Number( v_prev_daily.bm_data01 )
+                ).toFixed(17);
             }
 
             if( i > 0 ) {
