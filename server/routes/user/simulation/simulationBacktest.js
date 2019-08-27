@@ -3225,8 +3225,8 @@ var fn_get_simulation_data  =   function(
                             ,   TODAY_RATE      :   v_dataItem.TODAY_RATE               /* 지수적용비율 */
                         }
                     ,   { }
-                );               
-                
+                );
+
 
                 /* 기준 시가총액 누적 */
                 totalInfo.tot_F15028_S       =      Number( totalInfo.tot_F15028_S )
