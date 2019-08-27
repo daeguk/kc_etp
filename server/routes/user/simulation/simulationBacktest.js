@@ -1761,7 +1761,7 @@ var saveBacktestResult = function(req, res) {
                 ], function(err) {
 
                     if (err) {
-                        log.err(err, stmt, paramData);
+                        log.error(err, stmt, paramData);
                         conn.rollback();
 
                     } else {
