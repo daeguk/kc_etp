@@ -3644,7 +3644,7 @@ var fn_get_simulation_data  =   function(
                     if( p_param.first_record_yn != "Y" && i == Object.keys( p_dailyJongmokObj[ p_param.F12506 ] ).length - 1) {                            
                         // 전일 기준시가총액 * SUM(기준시가총액) / 전일 비교 시가총액 
                         //console.log(p_param.F12506 + "::" + Number(p_dailyObj[ p_param.v_before_F12506].tot_F15028_S) +"*"+ Number(totalInfo.tot_F15028_S) +"/"+  Number(p_dailyObj[ p_param.v_before_F12506].tot_F15028_C));
-                        totalInfo.tot_F15028_S =  Number(p_dailyObj[ p_param.v_before_F12506].tot_F15028_S) * Number(totalInfo.tot_F15028_S) /  Number(p_dailyObj[ p_param.v_before_F12506].tot_F15028_C);
+                        totalInfo.tot_F15028_S =  (Number(p_dailyObj[ p_param.v_before_F12506].tot_F15028_S) * Number(totalInfo.tot_F15028_S) /  Number(p_dailyObj[ p_param.v_before_F12506].tot_F15028_C)).toFixed(17);
                         //console.log(totalInfo.tot_F15028_S);
                             
                     }
@@ -4235,9 +4235,7 @@ var fn_get_simulation_data  =   function(
                             if( !p_param.F15028 || p_param.F15028 == 0 ) {
                                 v_calc  =   0;
                             }else{
-                                v_calc  =   Math.round( 
-                                    ( ( Number( p_param.importance ) * Number( p_totalInfo.tot_F15028 ) ) / p_param.F15028 ) * numInfo.JISU_RATE_FIX_NUM
-                                ) / numInfo.JISU_RATE_FIX_NUM;
+                                v_calc  =   ((Number( p_param.importance ) * Number( p_totalInfo.tot_F15028 ) ) / p_param.F15028).toFixed(17);
                             }
                             if (isNaN(v_calc)) v_calc = 0;
                             break;
@@ -4248,15 +4246,10 @@ var fn_get_simulation_data  =   function(
                             if( !p_param.F15028 || p_param.F15028 == 0 ) {
                                 v_calc  =   0;
                             }else{
-                                v_calc  =   Math.round(
-                                    (
-                                            Math.round(
-                                                    ( ( Number( p_param.F30700 ) * Number( p_param.F16143 ) * Number( p_param.TODAY_RATE ) ) / Number( p_totalInfo.prev_tot_F15028_C ) ) 
-                                                *   numInfo.JISU_RATE_FIX_NUM
-                                            )   /   numInfo.JISU_RATE_FIX_NUM
+                                v_calc  = 
+                                    ((( ( Number( p_param.F30700 ) * Number( p_param.F16143 ) * Number( p_param.TODAY_RATE ) ) / Number( p_totalInfo.prev_tot_F15028_C ) ) 
                                         *   Number( p_totalInfo.tot_F15007_F16143 )
-                                    )   /   Number( p_param.F15007_F16143 ) * numInfo.JISU_RATE_FIX_NUM
-                                ) / numInfo.JISU_RATE_FIX_NUM;
+                                    )   /   Number( p_param.F15007_F16143)).toFixed(17);
                             }
                             if (isNaN(v_calc)) v_calc = 0;
                             break;
@@ -4279,12 +4272,7 @@ var fn_get_simulation_data  =   function(
                             if( !p_totalInfo.prev_tot_F15028_C || p_totalInfo.prev_tot_F15028_C == 0 ) {
                                 v_calc  =   0;
                             }else{
-                                v_calc  =   Math.round( 
-                                    (       
-                                            ( Number( p_totalInfo.prev_tot_F15028_S ) * Number( p_totalInfo.tot_F15028_S ) ) 
-                                        /   p_totalInfo.prev_tot_F15028_C 
-                                    )   *   numInfo.JISU_RATE_FIX_NUM
-                                ) / numInfo.JISU_RATE_FIX_NUM;
+                                v_calc  =   (( Number( p_totalInfo.prev_tot_F15028_S ) * Number( p_totalInfo.tot_F15028_S ) ) /   p_totalInfo.prev_tot_F15028_C).toFixed(17);
                             }
                             if (isNaN(v_calc)) v_calc = 0;
                             break;
@@ -4295,35 +4283,31 @@ var fn_get_simulation_data  =   function(
                             if( !p_totalInfo.tot_F15028_S || p_totalInfo.tot_F15028_S == 0 ) {
                                 v_calc  =   0;
                             }else{
-                                v_calc  =   Math.round( 
-                                    (       
-                                            ( Number( p_param.F15028_S ) / Number( p_totalInfo.tot_F15028_S ) ) 
-                                    )   *   numInfo.JISU_RATE_FIX_NUM
-                                ) / numInfo.JISU_RATE_FIX_NUM;
+                                v_calc  =    (Number( p_param.F15028_S ) / Number( p_totalInfo.tot_F15028_S )).toFixed(17) 
                             }
                             if (isNaN(v_calc)) v_calc = 0;
                             break;
 
                         /* 기준 시가총액 = 종가(p_param.F30700) * 상장주식수(p_param.F16143) * 지수적용비율(p_param.TODAY_RATE) */
                 case    "F15028_S_1"    :
-                            v_calc  =   Number( p_param.F30700 )  *  Number( p_param.F16143 ) * Number( p_param.TODAY_RATE );
+                            v_calc  =   (Number( p_param.F30700 )  *  Number( p_param.F16143 ) * Number( p_param.TODAY_RATE )).toFixed(17);
                             if (isNaN(v_calc)) v_calc = 0;
                             break;            
 
                         /* 기준 시가총액 = 기준가(p_param.F15007) * 상장주식수(p_param.F16143) * 지수적용비율(p_param.TODAY_RATE) */
                 case    "F15028_S_2"    :
-                            v_calc  =   Number( p_param.F15007 )  *  Number( p_param.F16143 ) * Number( p_param.TODAY_RATE );
+                            v_calc  =   (Number( p_param.F15007 )  *  Number( p_param.F16143 ) * Number( p_param.TODAY_RATE )).toFixed(17);
                             if (isNaN(v_calc)) v_calc = 0;
                             break;
 
                         /* 기준 시가총액 = 수정기준가(p_param.F15001) * 상장주식수(p_param.F16143) * 지수적용비율(p_param.TODAY_RATE) */
                 case    "F15028_S_3"    :
-                            v_calc  =   Number( p_param.F15001 )  *  Number( p_param.F16143 ) * Number( p_param.TODAY_RATE );
+                            v_calc  =   (Number( p_param.F15001 )  *  Number( p_param.F16143 ) * Number( p_param.TODAY_RATE )).toFixed(17);
                             if (isNaN(v_calc)) v_calc = 0;
                             break;                           
                         /* 비교 시가총액 = 종가(p_param.F30700) * 상장주식수(p_param.F16143) * 지수적용비율(p_param.TODAY_RATE) */
                 case    "F15028_C"    :
-                            v_calc  =   Number( p_param.F30700 )  *  Number( p_param.F16143 ) *  Number( p_param.TODAY_RATE );
+                            v_calc  =   (Number( p_param.F30700 )  *  Number( p_param.F16143 ) *  Number( p_param.TODAY_RATE )).toFixed(17);
                             if (isNaN(v_calc)) v_calc = 0;
                             break;
 
@@ -4334,11 +4318,7 @@ var fn_get_simulation_data  =   function(
                             if( !p_totalInfo.tot_F15028_S || p_totalInfo.tot_F15028_S == 0 ) {
                                 v_calc  =   0;
                             }else{
-                                v_calc  =   (
-                                    Math.round(
-                                        ( Number( p_totalInfo.tot_F15028_C ) / Number( p_totalInfo.tot_F15028_S ) ) * numInfo.JISU_RATE_FIX_NUM
-                                    ) / numInfo.JISU_RATE_FIX_NUM
-                                ) * 1000;
+                                v_calc  =   (Number( p_totalInfo.tot_F15028_C ) / Number( p_totalInfo.tot_F15028_S )  * 1000).toFixed(17);
                             }
                             if (isNaN(v_calc)) v_calc = 0;
                             break;
@@ -4350,12 +4330,7 @@ var fn_get_simulation_data  =   function(
                             if( !p_totalInfo.BEFORE_INDEX_RATE || p_totalInfo.BEFORE_INDEX_RATE == 0 ) {
                                 v_calc  =   0;
                             }else{
-                                v_calc  =   Math.round(
-                                    (       
-                                            ( Number( p_totalInfo.INDEX_RATE ) - Number( p_totalInfo.BEFORE_INDEX_RATE ) ) 
-                                        /   Number( p_totalInfo.BEFORE_INDEX_RATE ) 
-                                    )  * numInfo.JISU_RATE_FIX_NUM
-                                ) / numInfo.JISU_RATE_FIX_NUM;
+                                v_calc  =   ((Number( p_totalInfo.INDEX_RATE ) - Number( p_totalInfo.BEFORE_INDEX_RATE ) ) /   Number( p_totalInfo.BEFORE_INDEX_RATE )).toFixed(17);
                             }
                             if (isNaN(v_calc)) v_calc = 0;
                             break;
