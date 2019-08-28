@@ -8,11 +8,6 @@
                         PORTFOLIO SIMULATION |
                         <span   class="grey--text">KOSPI, KOSDAQ, ETF를 이용해 포트폴리오를 구성하고 백테스트를 수행합니다.</span>
                     </h3>
-                    <div class="warning_box"    v-if="arr_show_error_message != null && arr_show_error_message.length > 0">
-                        <span v-for="(item, index) in arr_show_error_message" :key="index">
-                            <v-icon color="#ff4366">error_outline</v-icon> {{item}} <br>
-                        </span>
-                    </div>
                 </v-card-title>
 
 
@@ -194,7 +189,13 @@
                             </tbody>
                         </table>
 
-                        <div class="text-xs-center mt-3">
+                        <div class="warning_box"    v-if="arr_show_error_message != null && arr_show_error_message.length > 0">
+                            <span v-for="(item, index) in arr_show_error_message" :key="index">
+                                <v-icon color="#ff4366">error_outline</v-icon> {{item}} <br>
+                            </span>
+                        </div> 
+
+                        <div class="text-xs-center mt-3">                                                    
                             <v-btn depressed color="primary" @click.stop="fn_saveBaicInfo()">백테스트 실행</v-btn>
                         </div>
 
@@ -383,30 +384,32 @@ export default {
             var tr          =   $(this).closest('tr');
             var rowIndex    =   tr.index();
 
-            vm.fn_resetErrorMessage();
+            if( $(this).val() != '' ) {
+                vm.fn_resetErrorMessage();
 
-            /* 종목코드인 경우에만 코드 검색 */
-            if( $(this).attr("name") == "F16013" ) {
-                /* 종목코드를 검색한다. */
-                vm.fn_getJongmokData( rowIndex, $(this) ).then(function(e){
+                /* 종목코드인 경우에만 코드 검색 */
+                if( $(this).attr("name") == "F16013" ) {
+                    /* 종목코드를 검색한다. */
+                    vm.fn_getJongmokData( rowIndex, $(this) ).then(function(e){
 
-                    if( e && e.result ) {
-                        
-                        var rowItem;
-                        if( e.rowItem && Object.keys( e.rowItem ).length > 0 )  {
-                            rowItem =   e.rowItem;
+                        if( e && e.result ) {
+                            
+                            var rowItem;
+                            if( e.rowItem && Object.keys( e.rowItem ).length > 0 )  {
+                                rowItem =   e.rowItem;
 
-                            tr.find( "td input[name=F16013]" ).val( rowItem.F16013 );               /* 종목코드 */
-                            tr.find( "td:eq(2)" ).text( rowItem.F16002 );                           /* 종목명 */
+                                tr.find( "td input[name=F16013]" ).val( rowItem.F16013 );               /* 종목코드 */
+                                tr.find( "td:eq(2)" ).text( rowItem.F16002 );                           /* 종목명 */
 
-                            tr.find( "td:eq(3)" ).text( util.formatInt( rowItem.F15028 ) );         /* 시가총액 */
-    //                      tr.find( "td:eq(5)" ).text( rowIndex / 100 );                           /* 지수적용비율 */
+                                tr.find( "td:eq(3)" ).text( util.formatInt( rowItem.F15028 ) );         /* 시가총액 */
+        //                      tr.find( "td:eq(5)" ).text( rowIndex / 100 );                           /* 지수적용비율 */
 
-                            /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
-                            vm.fn_setImportanceMethodCd( vm.importance_method_cd );
+                                /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
+                                vm.fn_setImportanceMethodCd( vm.importance_method_cd );
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         });
 
