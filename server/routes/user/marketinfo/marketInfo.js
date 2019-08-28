@@ -501,6 +501,41 @@ try {
 };
 
 /*
+* ETP INTRA 조회(TODAY)
+*/
+var getEtpIntraToday = function(req, res) {
+  log.debug('marketInfo 모듈 안에 있는 getEtpIntraToday 호출됨.');
+
+  var options = {
+    F16013 : req.query.F16013,
+  };
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('common.item', 'getEtpIntraToday', options, {language:'sql', indent: '  '});
+    log.debug(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    log.error("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+
+/*
 * ETP Multi INTRA 조회
 */
 var getEtpMultiIntra = function(req, res) {
@@ -1351,6 +1386,7 @@ module.exports.getEtpBasic = getEtpBasic;
 module.exports.getEtpAnal = getEtpAnal;
 module.exports.getEtpNavAnal = getEtpNavAnal;
 module.exports.getEtpIntra = getEtpIntra;
+module.exports.getEtpIntraToday = getEtpIntraToday;
 module.exports.getEtpMultiIntra = getEtpMultiIntra;
 module.exports.getEtpMultiHist = getEtpMultiHist;
 module.exports.getEtpMultiHist1 = getEtpMultiHist1;

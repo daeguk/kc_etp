@@ -232,6 +232,7 @@
         FROM td_etp_basic A
         WHERE A.F16013 = #{F16013}
     </select>
+
     <select id="getEtpIntra">
         SELECT DATE_FORMAT(F20044, "%Y.%m.%d") as F20044, 
           concat(substr(lpad(F20004,8, '0'), 1, 2), ':',substr(lpad(F20004,8, '0'), 3, 2), ':',substr(lpad(F20004,8, '0'), 5, 2)) AS F20004
@@ -239,6 +240,16 @@
         FROM td_etp_intra
         WHERE F16013 = #{F16013}
         ORDER BY F20044 desc, F20004 desc LIMIT 100
+    </select>
+
+    <select id="getEtpIntraToday">
+        SELECT DATE_FORMAT(F20044, "%Y.%m.%d") as F20044, 
+          concat(substr(lpad(F20004,8, '0'), 1, 2), ':',substr(lpad(F20004,8, '0'), 3, 2), ':',substr(lpad(F20004,8, '0'), 5, 2)) AS F20004
+		       ,F20008, F20041, F40544, F40545, F33294, F15301, F15302, F15303, F30818
+        FROM td_etp_intra
+        WHERE F16013 = #{F16013}
+        AND F20044 = (SELECT MAX(F12506) FROM td_etp_basic)
+        ORDER BY F20044 desc, F20004 desc
     </select>
 
     <select id="getEtpMultiIntra">
