@@ -36,6 +36,7 @@ import _ from "lodash";
 import Config from '@/js/config.js'
 var etf_grid = null;
 export default {
+  props : [ "searchData" ],
   data () {
     return {
       search: '',
@@ -51,6 +52,11 @@ export default {
   beforeDestroy() {},
   mounted: function() {
     var vm = this;
+
+	if( vm.searchData ) {
+		vm.search = vm.searchData;
+	}
+
     vm.getEtfList();
     $('.selectAll').on('click', function () {
         if ($(this).is( ":checked" )) {
@@ -115,7 +121,9 @@ export default {
         }
       });
       etf_grid.clear().draw();
-      etf_grid.rows.add(filterData).draw();           
+      etf_grid.rows.add(filterData).draw();
+
+	  vm.$emit( "fn_searchData", vm.search );
     }
   }
 }

@@ -36,7 +36,7 @@ import _ from "lodash";
 import Config from '@/js/config.js'
 var kosdaq_grid = null;
 export default {
-  props: [ "results" ],
+  props: [ "results", "searchData" ],
   data () {
     return {
       search: '',
@@ -52,6 +52,11 @@ export default {
   beforeDestroy() {},
   mounted: function() {
     var vm = this;
+
+	if( vm.searchData ) {
+		vm.search = vm.searchData;
+	}
+
     vm.getKosdaqList();
     $('.selectAll').on('click', function () {
         if ($(this).is( ":checked" )) {
@@ -116,7 +121,9 @@ export default {
         }
       });
       kosdaq_grid.clear().draw();
-      kosdaq_grid.rows.add(filterData).draw();           
+      kosdaq_grid.rows.add(filterData).draw();      
+
+	  vm.$emit( "fn_searchData", vm.search );     
     }
   }
 }

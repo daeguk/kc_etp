@@ -37,7 +37,7 @@ import Config from '@/js/config.js'
 var kospi_grid = null;
 export default {
 
-  props: [ "results" ],
+  props: [ "results", "searchData" ],
   data () {
     return {
       search: '',
@@ -53,6 +53,11 @@ export default {
   beforeDestroy() {},
   mounted: function() {
     var vm = this;
+
+	if( vm.searchData ) {
+		vm.search = vm.searchData;
+	}
+
     vm.getKospiList();
 
     $('.selectAll').on('click', function () {
@@ -120,7 +125,9 @@ export default {
         }
       });
       kospi_grid.clear().draw();
-      kospi_grid.rows.add(filterData).draw();           
+      kospi_grid.rows.add(filterData).draw();   
+
+	  vm.$emit( "fn_searchData", vm.search );        
     }
   }
 }

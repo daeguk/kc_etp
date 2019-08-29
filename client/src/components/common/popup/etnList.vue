@@ -35,6 +35,7 @@ import _ from "lodash";
 import Config from '@/js/config.js'
 var etn_grid = null;
 export default {
+  props : [ "searchData" ],
   data () {
     return {
       search: '',
@@ -50,6 +51,11 @@ export default {
   beforeDestroy() {},
   mounted: function() {
     var vm = this;
+
+	if( vm.searchData ) {
+		vm.search = vm.searchData;
+	}
+
     vm.getEtnList();
     $('.selectAll').on('click', function () {
       if ($(this).is( ":checked" )) {
@@ -116,7 +122,9 @@ export default {
         }
       });
       etn_grid.clear().draw();
-      etn_grid.rows.add(filterData).draw();           
+      etn_grid.rows.add(filterData).draw();      
+
+	  vm.$emit( "fn_searchData", vm.search );     
     }
   } 
 }

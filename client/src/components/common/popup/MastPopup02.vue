@@ -29,20 +29,32 @@
                     <v-tab-item>
                       <kospiList    v-if="activeTab == 0 && kospiList.length > 0"
                                     :results="kospiList" 
+									:searchData="searchData"
 
-                                    @selectedItem="getSelectedItem" ></kospiList>
+                                    @selectedItem="getSelectedItem"
+									@fn_searchData="fn_searchData" ></kospiList>
                     </v-tab-item>
                     <v-tab-item>
                       <kosdaqList   v-if="activeTab == 1 && kosdaqList.length > 0"
                                     :results="kosdaqList" 
+									:searchData="searchData"
                       
-                                    @selectedItem="getSelectedItem" ></kosdaqList>
+                                    @selectedItem="getSelectedItem"
+									@fn_searchData="fn_searchData" ></kosdaqList>
                     </v-tab-item>
                     <v-tab-item>
-                      <etfList @selectedItem="getSelectedItem"></etfList>
+                      <etfList 	v-if="activeTab == 2"
+					  			:searchData="searchData"
+
+					  			@selectedItem="getSelectedItem"
+					  			@fn_searchData="fn_searchData"></etfList>
                     </v-tab-item>
                     <v-tab-item>
-                      <etnList @selectedItem="getSelectedItem"></etnList>
+                      <etnList 	v-if="activeTab == 3"
+					  			:searchData="searchData"
+
+					  			@selectedItem="getSelectedItem"
+					  			@fn_searchData="fn_searchData"></etnList>
                     </v-tab-item>
                     </v-tabs-items>
                 </v-flex>
@@ -94,6 +106,7 @@ export default {
 
         ,   kospiList : []
         ,   kosdaqList : []
+		,	searchData : ""
     };
   },
   components: {
@@ -196,6 +209,12 @@ export default {
             resolve( { result : false } );
         });
     },    
+
+	fn_searchData( p_search ) {
+		var vm = this;
+
+		vm.searchData = p_search;
+	}
   }
 }
 </script>
