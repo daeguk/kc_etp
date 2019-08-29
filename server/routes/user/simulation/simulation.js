@@ -444,12 +444,20 @@ var getJongmokInfo = function(req, res) {
                         resultMsg.err = err;
                     }
                     
-                    if (rows && rows.length == 1) {
-                        resultMsg.jongmokInfo = rows[0];
+                    if (rows ) {
+						if( rows.length == 1) {
+							resultMsg.jongmokInfo = rows[0];
 
-                        resultMsg.result = true;
-                        resultMsg.msg = "";
-                    }
+							resultMsg.result = true;
+							resultMsg.msg = "";
+						}else if( rows.length > 1 ) {
+							resultMsg.result = false;
+							resultMsg.msg = "데이터가 2건 이상 존재합니다.";
+						}
+                    }else{
+						resultMsg.result = false;
+						resultMsg.msg = "데이터가 존재하지 않습니다.";
+					}
 
                     res.json(resultMsg);
                     res.end();

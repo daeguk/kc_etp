@@ -561,7 +561,7 @@ export default {
                         total.length++;         /* 총건수 */
 
                         total.F15028            =   Number( total.F15028 )  +  Number( util.NumtoStr( v_F15028.text() ) );                                          /* (합계) 시가총액 */
-//                      total.importance        =   Math.floor( ( total.importance * 100 )  +  ( Number( util.NumtoStr( v_importance.val() ) ) * 100 ) ) / 100;     /* (합계) 비중 */
+                        total.importance        =   Math.floor( ( total.importance * 100 )  +  ( Number( util.NumtoStr( v_importance.val() ) ) * 100 ) ) / 100;     /* (합계) 비중 */
 //                      total.jisu_rate         =   Math.floor( ( total.jisu_rate * 100 )   +  ( Number( util.NumtoStr( v_jisu_rate.text() ) ) * 100 ) ) / 100;     /* (합계) 지수적용비율 */
                     }
                 }
@@ -570,6 +570,9 @@ export default {
 
             /*  레코드별 비중정보를 구한다. */
             if( [ "2", "3"].includes( importance_method_cd ) ) {
+
+				 total.importance		=	0;
+
                 var same_rate           =   Math.floor( parseFloat( total.same_rate_sum / total.length ) * 100 ) / 100;     /* 동일 가중 비율 */
                 var v_temp_importance   =   0;
                 var v_inx               =   0;
@@ -1151,7 +1154,7 @@ export default {
 
             /* 선택된 종목의 구성정보를 조회한다. */
                 axios.post(Config.base_url + "/user/simulation/getJongmokInfo", {
-                    data: { "F16013" : rowItem.F16013 }
+                    data: { "searchCode" : rowItem.F16013 }
                 }).then( function(response) {
 
                     vm.fn_showProgress( false );
