@@ -716,14 +716,14 @@ var saveBaicInfo = function(req, res) {
 
                         try{
 
-                            stmt = mapper.getStatement('simulationBacktest', 'getSimulListByBacktestInsert', paramData, format);
+                            stmt = mapper.getStatement('simulationBacktest', 'getSimulListByBacktest', paramData, format);
                             log.debug(stmt, paramData);
 
                             conn.query(stmt, function(err, rows) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest.getSimulListByBacktestInsert Error while performing Query";
+                                    resultMsg.msg = "[error] simulationBacktest.getSimulListByBacktest Error while performing Query";
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -762,7 +762,7 @@ var saveBaicInfo = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.getSimulListByBacktestInsert Error while performing Query";
+                            resultMsg.msg = "[error] simulationBacktest.getSimulListByBacktest Error while performing Query";
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -774,14 +774,14 @@ var saveBaicInfo = function(req, res) {
 
                         try{
 
-                            stmt = mapper.getStatement('simulationBacktest', 'getRebalanceDateForInsert', paramData, format);
+                            stmt = mapper.getStatement('simulationBacktest', 'getRebalanceDateByScenCd', paramData, format);
                             log.debug(stmt, paramData);
 
                             conn.query(stmt, function(err, rows) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest.getRebalanceDateForInsert Error while performing Query";
+                                    resultMsg.msg = "[error] simulationBacktest.getRebalanceDateByScenCd Error while performing Query";
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -804,7 +804,7 @@ var saveBaicInfo = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.getRebalanceDateForInsert Error while performing Query";
+                            resultMsg.msg = "[error] simulationBacktest.getRebalanceDateByScenCd Error while performing Query";
                             resultMsg.err = err;
 
                             callback(resultMsg);
