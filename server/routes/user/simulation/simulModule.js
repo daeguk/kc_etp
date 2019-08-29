@@ -696,13 +696,12 @@ var	fn_set_today_rate =	function(
                     var     v_startDate         =   v_rebalanceDate.prev_rebalance_F12506   ? v_rebalanceDate.prev_rebalance_F12506 : p_param.v_first_F12506;
                     var     v_endDate           =   v_rebalanceDate.rebalance_F12506        ? v_rebalanceDate.rebalance_F12506      : p_param.F12506;
 
-
+// console.log( "p_param.F12506", p_param.F12506, "v_dataKey", v_dataKey, "v_dataItem.F16017", v_dataItem.F16017, "v_startDate", v_startDate, "v_endDate", v_endDate, "v_rebalanceDate.prev_rebalance_F12506", v_rebalanceDate.prev_rebalance_F12506 );
                     if( !v_rebalanceDate.prev_rebalance_F12506 ) {
-
-                        if( v_dataItem.EVENT_FLAG != "20" ) {
-                            if( Number( v_dataItem.F16017 ) <= Number( v_startDate ) || ( Number( v_dataItem.F16017 ) >= Number( v_startDate ) && Number( v_dataItem.F16017 ) <= Number( v_endDate ) ) ) {
-                                v_dataItem.EVENT_FLAG   =   "20";       /* 20-종목편입 */
-                            }
+// console.log( "#1 p_param.F12506", p_param.F12506, "v_dataKey", v_dataKey );
+                        if( Number( v_dataItem.F16017 ) <= Number( v_startDate ) || ( Number( v_dataItem.F16017 ) >= Number( v_startDate ) && Number( v_dataItem.F16017 ) <= Number( v_endDate ) ) ) {
+// console.log( "#2 p_param.F12506", p_param.F12506, "v_dataKey", v_dataKey );
+                            v_dataItem.EVENT_FLAG   =   "20";       /* 20-종목편입 */
                         }
 
                     }else{

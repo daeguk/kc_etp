@@ -2274,6 +2274,8 @@ var	fn_get_simulation_data2  =   function(
                 }
 
 
+    /**************************************************/
+
                 if( v_dailyJongmokObj && Object.keys( v_dailyJongmokObj ).length > 0 ) {
 
                     v_prev_jongmok      =   {};
@@ -2283,6 +2285,7 @@ var	fn_get_simulation_data2  =   function(
                     v_prev_index        =   0;
 
 
+                /* 첫날을 제외한 리밸런싱의 전후 날짜를 설정한다. */
                     var prev_rebalance_F12506    =   "";
                     for( var i=0; i < p_arrRebalanceDate.length; i++ ) {
 
@@ -2290,13 +2293,22 @@ var	fn_get_simulation_data2  =   function(
                             v_rebalanceObj[ p_arrRebalanceDate[i].F12506 ]      =   {};
                         }
                      
+
                         v_rebalanceObj[ p_arrRebalanceDate[i].F12506 ].prev_rebalance_F12506    =   prev_rebalance_F12506;
-                        v_rebalanceObj[ p_arrRebalanceDate[i].F12506 ].rebalance_F12506         =   p_arrRebalanceDate[i].F12506;
+
+                        /* 마지막인 경우에는 최종일까지로 설정 */
+                        if( i == p_arrRebalanceDate.length - 1 ) {
+                            v_rebalanceObj[ p_arrRebalanceDate[i].F12506 ].rebalance_F12506         =   p_arrRebalanceDate[i].F12506;
+                        }else{
+                            v_rebalanceObj[ p_arrRebalanceDate[i].F12506 ].rebalance_F12506         =   p_arrRebalanceDate[i].prev_F12506;
+                        }
 
                         prev_rebalance_F12506   =   p_arrRebalanceDate[i].F12506;
                     }
                     
                     
+
+
                     var v_rebalance_cnt = 0;
                     for( var i=0;i < Object.keys( v_dailyJongmokObj ).length; i++ ) {
 
