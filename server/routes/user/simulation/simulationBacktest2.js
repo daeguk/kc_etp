@@ -2297,7 +2297,7 @@ var	fn_get_simulation_data2  =   function(
                     }
                     
                     
-                    var v_idx = 0;
+                    var v_rebalance_cnt = 0;
                     for( var i=0;i < Object.keys( v_dailyJongmokObj ).length; i++ ) {
 
                         var v_F12506        =   Object.keys( v_dailyJongmokObj )[i];
@@ -2371,8 +2371,19 @@ var	fn_get_simulation_data2  =   function(
                                         ,   v_rebalanceObj
                                     );
 
-                                    v_arr_rebalance.push( v_jongmok );
+                                    var v_jongmok_temp  =   Object.assign( {}, v_jongmok );
 
+                                    /* 첫 리밸런싱인 경우 전날 비중은 노출 */
+                                    if( v_rebalance_cnt == 0 ) {
+                                        for( var j=0; j < Object.keys( v_jongmok_temp ).length; j++ ) {
+                                            var v_key = Object.keys( v_jongmok_temp )[j];
+                                            v_jongmok_temp[ v_key ].BEFORE_IMPORTANCE =   "";
+                                        }
+                                    }
+
+                                    v_arr_rebalance.push( v_jongmok_temp );
+
+                                    v_rebalance_cnt++;
                                 }else{
 
                                     /* 이벤트 변동여부 체크 */

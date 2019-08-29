@@ -292,25 +292,8 @@ export default {
                                         v_rebalance_cnt++;
                                     }
 
-                                    sub_item.fmt_F12506                 =   util.formatDate( new String( sub_item.F12506 ) );                       /* 일자 */
-                                    sub_item.fmt_EVENT_FLAG             =   vm.fn_getCodeName( "COM011", sub_item.EVENT_FLAG );                     /* Event */
-
-                                    sub_item.fmt_F16002                 =   (
-                                            (!sub_item.F16002 ? "현금" : sub_item.F16002 )  
-                                        + " ( " + sub_item.F16013 + " )"
-                                    );                                                                                                              /* 종목 */
-
-                                    /* 변경전 */
-                                    sub_item.fmt_BEFORE_IMPORTANCE      =   util.formatNumber(
-                                        !sub_item.BEFORE_IMPORTANCE ?   
-                                        0 : ( sub_item.BEFORE_IMPORTANCE * 100 )
-                                    ) + " %";
-
-                                    /* 변경후 */
-                                    sub_item.fmt_AFTER_IMPORTANCE       =   util.formatNumber(
-                                        !sub_item.AFTER_IMPORTANCE ?
-                                        0 : ( sub_item.AFTER_IMPORTANCE * 100 )
-                                    ) + " %";
+                                    /* 구분에 맞게 레코드를 설정한다. */
+                                    vm.fn_set_record_data( "rebalance", sub_item );
 
                                     vm.arr_result_rebalance.push( sub_item );
 
@@ -331,17 +314,11 @@ export default {
                     **************************************************************************************************************/
                         vm.simul_result_mast                =   Object.assign( {}, vm.paramData.simul_mast );
 
-                        /* 리밸런싱 주기 */
-                        vm.simul_result_mast.fmt_rebalance  =   vm.fn_getCodeName( "COM012", vm.simul_result_mast.rebalance_cycle_cd + vm.simul_result_mast.rebalance_date_cd );
+                        /* 구분에 맞게 레코드를 설정한다. */
+                        vm.fn_set_record_data( "mast", vm.simul_result_mast );
 
                         /* 리밸런싱 횟수 */
                         vm.simul_result_mast.rebalance_cnt  =   v_rebalance_cnt;
-
-                        if( vm.simul_result_mast.bench_mark_cd == "0" ) {
-                            vm.simul_result_mast.bench_index_nm =   "BM";
-                        }else{
-                            vm.simul_result_mast.bench_index_nm =   "BM (" + vm.simul_result_mast.bench_index_nm + ")";
-                        }
                         
 
 
@@ -349,17 +326,9 @@ export default {
                     *   array 일자별 지수 정보
                     **************************************************************************************************************/
                         vm.paramData.arr_daily.forEach( function( item, index, array ) {
-                            item.fmt_F12506             =   util.formatDate( new String( item.F12506 ) );                                       /* 일자 */
-                            item.fmt_INDEX_RATE         =   util.formatNumber(
-                                item.INDEX_RATE
-                            );                                                                                                                      /* Index */
 
-                            item.fmt_balance            =   ( typeof item.balance == "undefined"  ? "0" : Number( item.balance ).toFixed(3) );
-                            item.fmt_RETURN_VAL         =   util.formatNumber(
-                                item.RETURN_VAL * 100
-                            ) + " %";                                                                                                           /* return_val */
-
-
+                            /* 구분에 맞게 레코드를 설정한다. */
+                            vm.fn_set_record_data( "daily", item );
 
                             if( vm.simul_result_mast.bench_mark_cd != "0" ) {
 
@@ -446,25 +415,8 @@ export default {
                                         v_rebalance_cnt++;
                                     }
 
-                                    sub_item.fmt_F12506                 =   util.formatDate( new String( sub_item.F12506 ) );                       /* 일자 */
-                                    sub_item.fmt_EVENT_FLAG             =   vm.fn_getCodeName( "COM011", sub_item.EVENT_FLAG );                     /* Event */
-
-                                    sub_item.fmt_F16002                 =   (
-                                            (!sub_item.F16002 ? "현금" : sub_item.F16002 )  
-                                        + " ( " + sub_item.F16013 + " )"
-                                    );                                                                                                              /* 종목 */
-
-                                    /* 변경전 */
-                                    sub_item.fmt_BEFORE_IMPORTANCE      =   util.formatNumber(
-                                        !sub_item.BEFORE_IMPORTANCE ?   
-                                        0 : ( sub_item.BEFORE_IMPORTANCE * 100 )
-                                    ) + " %";
-
-                                    /* 변경후 */
-                                    sub_item.fmt_AFTER_IMPORTANCE       =   util.formatNumber(
-                                        !sub_item.AFTER_IMPORTANCE ?
-                                        0 : ( sub_item.AFTER_IMPORTANCE * 100 )
-                                    ) + " %";
+                                    /* 구분에 맞게 레코드를 설정한다. */
+                                    vm.fn_set_record_data( "rebalance", sub_item );
 
                                     vm.arr_result_rebalance.push( sub_item );
 
@@ -485,32 +437,21 @@ export default {
 
                             vm.simul_result_mast        =   response.data.simul_result_mast;
 
-                            /* 리밸런싱 주기 */
-                            vm.simul_result_mast.fmt_rebalance  =   vm.fn_getCodeName( "COM012", vm.simul_result_mast.rebalance_cycle_cd + vm.simul_result_mast.rebalance_date_cd );
+                            /* 구분에 맞게 레코드를 설정한다. */
+                            vm.fn_set_record_data( "mast", vm.simul_result_mast );
 
                             /* 리밸런싱 횟수 */
                             vm.simul_result_mast.rebalance_cnt      =   v_rebalance_cnt;
 
-                            if( vm.simul_result_mast.bench_mark_cd == "0" ) {
-                                vm.simul_result_mast.bench_index_nm =   "BM";
-                            }else{
-                                vm.simul_result_mast.bench_index_nm =   "BM (" + vm.simul_result_mast.bench_index_nm + ")";
-                            }
 
 
                         /*************************************************************************************************************
                         *   array 일자별 지수 정보
                         **************************************************************************************************************/
                             response.data.arr_result_daily.forEach( function( item, index, array ) {
-                                item.fmt_F12506             =   util.formatDate( new String( item.F12506 ) );                                       /* 일자 */
-                                item.fmt_INDEX_RATE         =   util.formatNumber(
-                                    item.INDEX_RATE
-                                );                                                                                                                  /* Index */
-                                item.fmt_balance            =   ( typeof item.balance == "undefined"  ? "0" : Number( item.balance ).toFixed(3) );
-                                item.fmt_RETURN_VAL         =   util.formatNumber(
-                                    item.RETURN_VAL * 100
-                                 ) + " %";                                                                                                           /* return_val */
 
+                                /* 구분에 맞게 레코드를 설정한다. */
+                                vm.fn_set_record_data( "daily", item );
 
                                 if( vm.simul_result_mast.bench_mark_cd != "0" ) {
 
@@ -730,7 +671,75 @@ export default {
             }
 
             return  com_dtl_name;
-        }   
+        },
+
+        /*
+        * 구분에 맞게 레코드를 설정한다.
+        * 2019-07-26  bkLove(촤병국)
+        */
+        fn_set_record_data( p_gubun="", p_item_obj={} ) {
+
+            var vm = this;
+
+            if( p_gubun != "" && Object.keys( p_item_obj ).length > 0 ) {
+
+                switch( p_gubun ) {
+
+                            /* rebalance 내역 설정 */
+                    case    "rebalance"  :
+
+                            p_item_obj.fmt_F12506               =   util.formatDate( new String( p_item_obj.F12506 ) );         /* 일자 */
+                            p_item_obj.fmt_EVENT_FLAG           =   vm.fn_getCodeName( "COM011", p_item_obj.EVENT_FLAG );       /* Event */
+
+                            p_item_obj.fmt_F16002               =   (
+                                    (!p_item_obj.F16002 ? "현금" : p_item_obj.F16002 )  
+                                + " ( " + p_item_obj.F16013 + " )"
+                            );                                                                                                  /* 종목 */
+
+                            /* 변경전 */
+                            p_item_obj.fmt_BEFORE_IMPORTANCE    =   (
+                                !p_item_obj.BEFORE_IMPORTANCE ? 
+                                "-" : util.formatNumber( p_item_obj.BEFORE_IMPORTANCE * 100 ) + " %"
+                            );
+
+                            /* 변경후 */
+                            p_item_obj.fmt_AFTER_IMPORTANCE     =   (
+                                !p_item_obj.AFTER_IMPORTANCE ? 
+                                "-" : util.formatNumber( p_item_obj.AFTER_IMPORTANCE * 100 ) + " %"
+                            );                        
+
+                            break;
+
+                            /* 시물레이션 설정 및 마스터 정보 */
+                    case    "mast"  :
+
+                            /* 리밸런싱 주기 */
+                            p_item_obj.fmt_rebalance            =   vm.fn_getCodeName( "COM012", p_item_obj.rebalance_cycle_cd + p_item_obj.rebalance_date_cd );
+
+                            if( p_item_obj.bench_mark_cd == "0" ) {
+                                p_item_obj.bench_index_nm       =   "BM";
+                            }else{
+                                p_item_obj.bench_index_nm       =   "BM (" + p_item_obj.bench_index_nm + ")";
+                            }                        
+
+                            break;
+
+                            /* 일자별 지수 설정 */
+                    case    "daily"  :
+
+                            p_item_obj.fmt_F12506             =   util.formatDate( new String( p_item_obj.F12506 ) );           /* 일자 */
+                            p_item_obj.fmt_INDEX_RATE         =   util.formatNumber(
+                                p_item_obj.INDEX_RATE
+                            );                                                                                                  /* Index */
+                            p_item_obj.fmt_balance            =   ( typeof p_item_obj.balance == "undefined"  ? "0" : Number( p_item_obj.balance ).toFixed(3) );
+                            p_item_obj.fmt_RETURN_VAL         =   util.formatNumber(
+                                p_item_obj.RETURN_VAL * 100
+                            ) + " %";                                                                                           /* return_val */
+
+                            break;
+                }
+            }
+        }
     }
 };
 </script>
