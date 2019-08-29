@@ -698,13 +698,13 @@ export default {
 
                             /* 변경전 */
                             p_item_obj.fmt_BEFORE_IMPORTANCE    =   (
-                                !p_item_obj.BEFORE_IMPORTANCE ? 
+                                p_item_obj.BEFORE_IMPORTANCE == "-1" ? 
                                 "-" : util.formatNumber( p_item_obj.BEFORE_IMPORTANCE * 100 ) + " %"
                             );
 
                             /* 변경후 */
                             p_item_obj.fmt_AFTER_IMPORTANCE     =   (
-                                !p_item_obj.AFTER_IMPORTANCE ? 
+                                !p_item_obj.AFTER_IMPORTANCE == "-1" ? 
                                 "-" : util.formatNumber( p_item_obj.AFTER_IMPORTANCE * 100 ) + " %"
                             );                        
 

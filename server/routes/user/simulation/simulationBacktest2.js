@@ -2377,7 +2377,7 @@ var	fn_get_simulation_data2  =   function(
                                     if( v_rebalance_cnt == 0 ) {
                                         for( var j=0; j < Object.keys( v_jongmok_temp ).length; j++ ) {
                                             var v_key = Object.keys( v_jongmok_temp )[j];
-                                            v_jongmok_temp[ v_key ].BEFORE_IMPORTANCE =   "";
+                                            v_jongmok_temp[ v_key ].BEFORE_IMPORTANCE =   "-1";
                                         }
                                     }
 
