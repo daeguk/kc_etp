@@ -4,7 +4,7 @@
       <v-flex xs12>
         <v-card flat>
           <v-dialog v-model="dialog" persistent max-width="500">                                   
-            <v-card flat height="740">
+            <v-card flat  max-height="775">
               <h5>
                 <v-card-title class="pb-0">
                   자산추가
