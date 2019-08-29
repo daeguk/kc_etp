@@ -2065,12 +2065,12 @@ function    fn_set_balance( p_arr_daily, p_simul_mast ) {
 
             /* 최초인 경우 */
             if( i == 0 ) {
-                v_daily.balance  =   0;
+                v_daily.balance  =   p_simul_mast.init_invest_money;
             }else{
-                /* balance = ( 당일 지수 - 전일 지수 ) / 전일 지수 */
+                /* balance = 전일 balance * ( 당일 지수 / 전일 지수 ) */
                 v_daily.balance  =   (
-                    ( Number( v_daily.INDEX_RATE ) - Number( v_prev_daily.INDEX_RATE ) ) / Number( v_prev_daily.INDEX_RATE )
-                ).toFixed(17);
+                    Number( v_prev_daily.balance ) * ( Number( v_daily.INDEX_RATE.toFixed(2) ) / Number( v_prev_daily.INDEX_RATE.toFixed(2) ) )
+                ).toFixed(3);
             }
 
             if( i > 0 ) {
