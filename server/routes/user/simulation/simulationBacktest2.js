@@ -2065,10 +2065,11 @@ function    fn_set_balance( p_arr_daily, p_simul_mast ) {
 
             /* 최초인 경우 */
             if( i == 0 ) {
-                v_daily.balance  =   Number( p_simul_mast.init_invest_money );
+                v_daily.balance  =   0;
             }else{
+                /* balance = ( 당일 지수 - 전일 지수 ) / 전일 지수 */
                 v_daily.balance  =   (
-                    ( Number( v_daily.INDEX_RATE ) / Number( v_prev_daily.INDEX_RATE ) ) * Number( v_prev_daily.balance )
+                    ( Number( v_daily.INDEX_RATE ) - Number( v_prev_daily.INDEX_RATE ) ) / Number( v_prev_daily.INDEX_RATE )
                 ).toFixed(17);
             }
 
@@ -2112,16 +2113,18 @@ function    fn_set_bench_mark( p_arr_daily, p_arr_bench ) {
             if( i == 0 ) {
                 v_daily.bm_1000_data    =   1000;
                 v_daily.bm_return_data  =   (
-                    ( Number( v_daily.bm_data01 ) - Number( v_daily.bm_data01 ) ) / Number( v_daily.bm_data01 )
+                    ( Number( v_daily.bm_1000_data ) - Number( v_daily.bm_1000_data ) ) / Number( v_daily.bm_1000_data )
                 ).toFixed(17);
             }else{
+                /* 1000 단위환산 = 전일 단위환산 * ( 당일지수 / 전일 지수 ) */
                 v_daily.bm_1000_data    =   (
                         Number( v_prev_daily.bm_1000_data ) *
                         ( Number( v_daily.bm_data01 ) / Number( v_prev_daily.bm_data01 ) )
                 ).toFixed(17);
 
+                /* return = ( 당일 단위환산 - 전일 단위환산 ) / 전일 단위환산 */
                 v_daily.bm_return_data  =   (
-                        ( Number( v_daily.bm_data01 ) - Number( v_prev_daily.bm_data01 ) ) / Number( v_prev_daily.bm_data01 )
+                        ( Number( v_daily.bm_1000_data ) - Number( v_prev_daily.bm_1000_data ) ) / Number( v_prev_daily.bm_1000_data )
                 ).toFixed(17);
             }
 
@@ -2315,23 +2318,40 @@ var	fn_get_simulation_data2  =   function(
 //     console.log( "v_F12506", v_F12506, "v_daily.tot_F15028_3", v_daily.tot_F15028_3 );
 // }
 
-                        /*************************************************************************************************************
-                        *   비중설정방식 ( COM009 ) importance_method_cd  - 1:직접입력, 2:동일가중, 3-시총비중
-                        *   -   1 : 직접입력 방식인 경우
-                        *   -   3 : 시총비중인 경우 지수적용 비율을 1로 고정한다.
-                        **************************************************************************************************************/
-                        if( [ "1", "3" ].includes( p_simul_mast.importance_method_cd ) ) {
 
-                            try{
+                        try{
 
-                                if( v_daily.rebalancing   ==   "1" ) {
-                                    v_prev_rebalancing_F12506   =   v_F12506;
-                                }
+                            if( v_daily.rebalancing   ==   "1" ) {
+                                v_prev_rebalancing_F12506   =   v_F12506;
+                            }
 
 
-                                var v_change_yn  =   "N";
+                            var v_change_yn  =   "N";
 
-                                if(  v_first_record_yn == "Y" ) {
+                            if(  v_first_record_yn == "Y" ) {
+
+                                simulModule.fn_set_today_rate(
+                                        {       
+                                                F12506                      :   v_F12506                        /* 입회일자 */
+                                            ,   v_before_F12506             :   v_before_F12506
+                                            ,   v_first_F12506              :   v_first_F12506
+                                            ,   first_record_yn             :   v_first_record_yn               /* 최초 레코드 여부 */
+                                            ,   case_gubun                  :   "case1"
+                                            ,   v_change_yn                 :   "N"
+                                            ,   p_prev_rebalancing_F12506   :   v_prev_rebalancing_F12506
+                                        }
+                                    ,   p_simul_mast                                                /* 시뮬레이션 기본 마스터 정보 */
+                                    ,   v_jongmok                                                   /* 현재 종목 */
+                                    ,   v_prev_jongmok                                              /* 이전 종목 */
+                                    ,   v_daily                                                     /* 현재 daily */
+                                    ,   v_prev_daily                                                /* 이전 daily */
+                                    ,   v_rebalanceObj
+                                );
+
+                            }else{
+
+                                /*  리밸런싱인 경우 종목별 지수적용비율을 재산정 */
+                                if( v_daily.rebalancing     ==  "1" ) {
 
                                     simulModule.fn_set_today_rate(
                                             {       
@@ -2339,7 +2359,7 @@ var	fn_get_simulation_data2  =   function(
                                                 ,   v_before_F12506             :   v_before_F12506
                                                 ,   v_first_F12506              :   v_first_F12506
                                                 ,   first_record_yn             :   v_first_record_yn               /* 최초 레코드 여부 */
-                                                ,   case_gubun                  :   "case1"
+                                                ,   case_gubun                  :   "case2"
                                                 ,   v_change_yn                 :   "N"
                                                 ,   p_prev_rebalancing_F12506   :   v_prev_rebalancing_F12506
                                             }
@@ -2351,95 +2371,33 @@ var	fn_get_simulation_data2  =   function(
                                         ,   v_rebalanceObj
                                     );
 
+                                    v_arr_rebalance.push( v_jongmok );
+
                                 }else{
 
-                                    /*  리밸런싱인 경우 종목별 지수적용비율을 재산정 */
-                                    if( v_daily.rebalancing     ==  "1" ) {
+                                    /* 이벤트 변동여부 체크 */
+                                    v_change_yn     =   simulModule.fn_get_event_check(
+                                            {       
+                                                    F12506          :   v_F12506                        /* 입회일자 */
+                                                ,   v_before_F12506 :   v_before_F12506
+                                                ,   first_record_yn :   v_first_record_yn               /* 최초 레코드 여부 */
+                                            }
+                                        ,   p_simul_mast                                                /* 시뮬레이션 기본 마스터 정보 */
+                                        ,   v_jongmok                                                   /* 현재 종목 */
+                                        ,   v_prev_jongmok                                              /* 이전 종목 */
+                                        ,   v_daily                                                     /* 현재 daily */
+                                        ,   v_prev_daily                                                /* 이전 daily */
+                                    );
 
-                                        simulModule.fn_set_today_rate(
-                                                {       
-                                                        F12506                      :   v_F12506                        /* 입회일자 */
-                                                    ,   v_before_F12506             :   v_before_F12506
-                                                    ,   v_first_F12506              :   v_first_F12506
-                                                    ,   first_record_yn             :   v_first_record_yn               /* 최초 레코드 여부 */
-                                                    ,   case_gubun                  :   "case2"
-                                                    ,   v_change_yn                 :   "N"
-                                                    ,   p_prev_rebalancing_F12506   :   v_prev_rebalancing_F12506
-                                                }
-                                            ,   p_simul_mast                                                /* 시뮬레이션 기본 마스터 정보 */
-                                            ,   v_jongmok                                                   /* 현재 종목 */
-                                            ,   v_prev_jongmok                                              /* 이전 종목 */
-                                            ,   v_daily                                                     /* 현재 daily */
-                                            ,   v_prev_daily                                                /* 이전 daily */
-                                            ,   v_rebalanceObj
-                                        );
-
-                                        v_arr_rebalance.push( v_jongmok );
-
-                                    }else{
-
-                                        /* 이벤트 변동여부 체크 */
-                                        v_change_yn     =   simulModule.fn_get_event_check(
-                                                {       
-                                                        F12506          :   v_F12506                        /* 입회일자 */
-                                                    ,   v_before_F12506 :   v_before_F12506
-                                                    ,   first_record_yn :   v_first_record_yn               /* 최초 레코드 여부 */
-                                                }
-                                            ,   p_simul_mast                                                /* 시뮬레이션 기본 마스터 정보 */
-                                            ,   v_jongmok                                                   /* 현재 종목 */
-                                            ,   v_prev_jongmok                                              /* 이전 종목 */
-                                            ,   v_daily                                                     /* 현재 daily */
-                                            ,   v_prev_daily                                                /* 이전 daily */
-                                        );
-
-                                        simulModule.fn_set_today_rate(
-                                                {       
-                                                        F12506                      :   v_F12506                        /* 입회일자 */
-                                                    ,   v_before_F12506             :   v_before_F12506
-                                                    ,   v_first_F12506              :   v_first_F12506
-                                                    ,   first_record_yn             :   v_first_record_yn               /* 최초 레코드 여부 */
-                                                    ,   case_gubun                  :   "case3"
-                                                    ,   v_change_yn                 :   v_change_yn
-                                                    ,   p_prev_rebalancing_F12506   :   v_prev_rebalancing_F12506
-                                                }
-                                            ,   p_simul_mast                                                /* 시뮬레이션 기본 마스터 정보 */
-                                            ,   v_jongmok                                                   /* 현재 종목 */
-                                            ,   v_prev_jongmok                                              /* 이전 종목 */
-                                            ,   v_daily                                                     /* 현재 daily */
-                                            ,   v_prev_daily                                                /* 이전 daily */
-                                            ,   v_rebalanceObj
-                                        );
-                                    }
-
-                                }
-
-                            }catch( e ) {
-                                console.log( "error ", e );
-                            }
-                        }
-
-
-                        /*************************************************************************************************************
-                        *   비중설정방식 ( COM009 ) importance_method_cd  - 1:직접입력, 2:동일가중, 3-시총비중
-                        *   -   2 : 동일가중
-                        **************************************************************************************************************/
-                        else if( [ "2" ].includes( p_simul_mast.importance_method_cd ) ) {
-
-                            try{
-
-                                if( v_daily.rebalancing   ==   "1" ) {
-                                    v_prev_rebalancing_F12506   =   v_F12506;
-                                }
-
-
-                                if(  v_first_record_yn == "Y" ) {
-
-                                    simulModule.fn_set_today_rate02(
+                                    simulModule.fn_set_today_rate(
                                             {       
                                                     F12506                      :   v_F12506                        /* 입회일자 */
                                                 ,   v_before_F12506             :   v_before_F12506
                                                 ,   v_first_F12506              :   v_first_F12506
                                                 ,   first_record_yn             :   v_first_record_yn               /* 최초 레코드 여부 */
+                                                ,   case_gubun                  :   "case3"
+                                                ,   v_change_yn                 :   v_change_yn
+                                                ,   p_prev_rebalancing_F12506   :   v_prev_rebalancing_F12506
                                             }
                                         ,   p_simul_mast                                                /* 시뮬레이션 기본 마스터 정보 */
                                         ,   v_jongmok                                                   /* 현재 종목 */
@@ -2447,59 +2405,13 @@ var	fn_get_simulation_data2  =   function(
                                         ,   v_daily                                                     /* 현재 daily */
                                         ,   v_prev_daily                                                /* 이전 daily */
                                         ,   v_rebalanceObj
-                                        ,   p_simulPortfolio
                                     );
-
-                                }else{
-
-                                    if( v_daily.rebalancing     ==  "1" ) {
-
-                                        simulModule.fn_set_today_rate02(
-                                                {       
-                                                        F12506                      :   v_F12506                        /* 입회일자 */
-                                                    ,   v_before_F12506             :   v_before_F12506
-                                                    ,   v_first_F12506              :   v_first_F12506
-                                                    ,   first_record_yn             :   v_first_record_yn               /* 최초 레코드 여부 */
-                                                    ,   p_idx                       :   v_idx
-                                                }
-                                            ,   p_simul_mast                                                /* 시뮬레이션 기본 마스터 정보 */
-                                            ,   v_jongmok                                                   /* 현재 종목 */
-                                            ,   v_prev_jongmok                                              /* 이전 종목 */
-                                            ,   v_daily                                                     /* 현재 daily */
-                                            ,   v_prev_daily                                                /* 이전 daily */
-                                            ,   v_rebalanceObj
-                                            ,   p_simulPortfolio
-                                        );
-
-                                        v_idx++;
-
-                                        v_arr_rebalance.push( v_jongmok );
-
-                                    }else{
-
-                                        simulModule.fn_set_today_rate02(
-                                                {       
-                                                        F12506                      :   v_F12506                        /* 입회일자 */
-                                                    ,   v_before_F12506             :   v_before_F12506
-                                                    ,   v_first_F12506              :   v_first_F12506
-                                                    ,   first_record_yn             :   v_first_record_yn               /* 최초 레코드 여부 */
-                                                }
-                                            ,   p_simul_mast                                                /* 시뮬레이션 기본 마스터 정보 */
-                                            ,   v_jongmok                                                   /* 현재 종목 */
-                                            ,   v_prev_jongmok                                              /* 이전 종목 */
-                                            ,   v_daily                                                     /* 현재 daily */
-                                            ,   v_prev_daily                                                /* 이전 daily */
-                                            ,   v_rebalanceObj
-                                            ,   p_simulPortfolio
-                                        );
-                                    }
-
                                 }
 
-                            }catch( e ) {
-                                console.log( "error ", e );
                             }
 
+                        }catch( e ) {
+                            console.log( "error ", e );
                         }
 
                         v_arr_daily.push( v_daily );

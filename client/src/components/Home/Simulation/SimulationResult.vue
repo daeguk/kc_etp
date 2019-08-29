@@ -353,9 +353,8 @@ export default {
                             item.fmt_INDEX_RATE         =   util.formatNumber(
                                 item.INDEX_RATE
                             );                                                                                                                      /* Index */
-                            item.fmt_balance            =   util.formatNumber( 
-                                item.balance
-                            );                                                                                                                  /* balance = 초기투자금액 * return_val */
+
+                            item.fmt_balance            =   ( typeof item.balance == "undefined"  ? "0" : Number( item.balance ).toFixed(3) );
                             item.fmt_RETURN_VAL         =   util.formatNumber(
                                 item.RETURN_VAL * 100
                             ) + " %";                                                                                                           /* return_val */
@@ -507,9 +506,7 @@ export default {
                                 item.fmt_INDEX_RATE         =   util.formatNumber(
                                     item.INDEX_RATE
                                 );                                                                                                                  /* Index */
-                                item.fmt_balance            =   util.formatNumber(
-                                    item.balance
-                                );                                                                                                                  /* balance = 초기투자금액 * return_val */
+                                item.fmt_balance            =   ( typeof item.balance == "undefined"  ? "0" : Number( item.balance ).toFixed(3) );
                                 item.fmt_RETURN_VAL         =   util.formatNumber(
                                     item.RETURN_VAL * 100
                                  ) + " %";                                                                                                           /* return_val */
