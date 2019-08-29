@@ -94,7 +94,7 @@ export default {
       getEtpIntra: function() {
         var vm = this;
 
-        axios.get(Config.base_url + "/user/marketinfo/getEtpIntra", {
+        axios.get(Config.base_url + "/user/marketinfo/getEtpIntraToday", {
           params: vm.etpBasic
         }).then(function(response) {
           // console.log(response);

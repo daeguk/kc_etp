@@ -354,7 +354,7 @@ export default {
                                 item.INDEX_RATE
                             );                                                                                                                      /* Index */
                             item.fmt_balance            =   util.formatNumber( 
-                                ( vm.simul_result_mast.init_invest_money * item.RETURN_VAL )
+                                item.balance
                             );                                                                                                                  /* balance = 초기투자금액 * return_val */
                             item.fmt_RETURN_VAL         =   util.formatNumber(
                                 item.RETURN_VAL * 100
@@ -508,7 +508,7 @@ export default {
                                     item.INDEX_RATE
                                 );                                                                                                                  /* Index */
                                 item.fmt_balance            =   util.formatNumber(
-                                    ( vm.simul_result_mast.init_invest_money * item.RETURN_VAL )
+                                    item.balance
                                 );                                                                                                                  /* balance = 초기투자금액 * return_val */
                                 item.fmt_RETURN_VAL         =   util.formatNumber(
                                     item.RETURN_VAL * 100

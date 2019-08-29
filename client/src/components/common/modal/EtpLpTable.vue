@@ -87,7 +87,7 @@ export default {
       // console.log("getIndexIntra : " + rinfo.seq);
       var vm = this;
 
-      axios.get(Config.base_url + "/user/marketinfo/getEtpIntra", {
+      axios.get(Config.base_url + "/user/marketinfo/getEtpIntraToday", {
         params: vm.etpInfo
       }).then(function(response) {
         // console.log(response);

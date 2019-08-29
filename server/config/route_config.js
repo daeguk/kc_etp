@@ -124,6 +124,7 @@ module.exports = {
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpAnal', method: 'getEtpAnal', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpNavAnal', method: 'getEtpNavAnal', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpIntra', method: 'getEtpIntra', session: 'uncheck', type: 'get' },
+        { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpIntraToday', method: 'getEtpIntraToday', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpMultiIntra', method: 'getEtpMultiIntra', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpMultiHist', method: 'getEtpMultiHist', session: 'uncheck', type: 'get' },
         { file: './user/marketinfo/marketInfo', path: '/user/marketinfo/getEtpMultiHist1', method: 'getEtpMultiHist1', session: 'uncheck', type: 'get' },
@@ -169,9 +170,13 @@ module.exports = {
         { file: './user/simulation/simulation', path: '/user/simulation/getSimulPortfolio'  , method: 'getSimulPortfolio'   , session: 'check', type: 'post' },     // 포트폴리오 정보 조회
         { file: './user/simulation/simulation', path: '/user/simulation/getInitData1'       , method: 'getInitData1'        , session: 'check', type: 'post' },     // 공통코드 초기 데이터 조회        
 
-        { file: './user/simulation/simulationBacktest', path: '/user/simulation/saveBaicInfo'       , method: 'saveBaicInfo'        , session: 'check', type: 'post' },     // 기본정보 저장
-        { file: './user/simulation/simulationBacktest', path: '/user/simulation/saveBacktestResult' , method: 'saveBacktestResult'  , session: 'check', type: 'post' },     // 백테스트 결과 저장
-        { file: './user/simulation/simulationBacktest', path: '/user/simulation/getBacktestResult'  , method: 'getBacktestResult'   , session: 'check', type: 'post' },     // 백테스트 결과 조회
+        { file: './user/simulation/simulationBacktest2', path: '/user/simulation/saveBaicInfo'       , method: 'saveBaicInfo'        , session: 'check', type: 'post' },     // 기본정보 저장
+        { file: './user/simulation/simulationBacktest2', path: '/user/simulation/saveBacktestResult' , method: 'saveBacktestResult'  , session: 'check', type: 'post' },     // 백테스트 결과 저장
+        { file: './user/simulation/simulationBacktest2', path: '/user/simulation/getBacktestResult'  , method: 'getBacktestResult'   , session: 'check', type: 'post' },     // 백테스트 결과 조회
+
+        // { file: './user/simulation/simulationBacktest', path: '/user/simulation/saveBaicInfo'       , method: 'saveBaicInfo'        , session: 'check', type: 'post' },     // 기본정보 저장
+        // { file: './user/simulation/simulationBacktest', path: '/user/simulation/saveBacktestResult' , method: 'saveBacktestResult'  , session: 'check', type: 'post' },     // 백테스트 결과 저장
+        // { file: './user/simulation/simulationBacktest', path: '/user/simulation/getBacktestResult'  , method: 'getBacktestResult'   , session: 'check', type: 'post' },     // 백테스트 결과 조회
 
 
         //풀 테스트 

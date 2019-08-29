@@ -19,6 +19,8 @@ var multer = require('multer');
 var xlsx = require('xlsx');
 var fs = require('fs');
 
+var simulModule = require('./simulationBacktestModule');
+
 var log = config.logger;
 
 var limit = {
@@ -984,10 +986,6 @@ var saveBaicInfo = function(req, res) {
                         resultMsg.result        =   true;
                         resultMsg.msg           =   "성공적으로 저장하였습니다.";
 
-
-                        resultMsg.arr_daily         =   [ ...v_resultSimulData.arr_daily];
-                        resultMsg.arr_rebalance     =   [ ...v_resultSimulData.arr_rebalance];
-
                         resultMsg.simul_mast        =   { 
                                 grp_cd                  :   paramData.grp_cd                /* 그룹코드(상위코드) */
                             ,   scen_cd                 :   paramData.scen_cd               /* 시나리오 코드 */
@@ -1004,6 +1002,11 @@ var saveBaicInfo = function(req, res) {
                             ,   bench_index_nm          :   paramData.bench_index_nm        /* 벤치마크 인덱스 코드명 */
                             ,   importance_method_cd    :   paramData.importance_method_cd  /* 비중설정방식 (COM009) */
                         };
+
+                        fn_set_balance( v_resultSimulData.arr_daily, resultMsg.simul_mast );
+
+                        resultMsg.arr_daily         =   [ ...v_resultSimulData.arr_daily] ;
+                        resultMsg.arr_rebalance     =   [ ...v_resultSimulData.arr_rebalance];                        
 
                         resultMsg.err           =   null;
 
@@ -1149,8 +1152,10 @@ var saveBacktestResult = function(req, res) {
                                             v_simul_mast.rebalance_date_cd      =   rows[0].rebalance_date_cd;      /* 리밸런싱일자 (COM007) */
                                             v_simul_mast.init_invest_money      =   rows[0].init_invest_money;      /* 초기투자금액 */
                                             v_simul_mast.bench_mark_cd          =   rows[0].bench_mark_cd;          /* 벤치마크 (COM008) */
-                                            v_simul_mast.bench_index_cd         =   rows[0].bench_index_cd          /* 벤치마크 인덱스 코드 */
-                                            v_simul_mast.bench_index_nm         =   rows[0].bench_index_nm          /* 벤치마크 인덱스 코드명 */                                            
+                                            v_simul_mast.bench_index_cd01       =   rows[0].bench_index_cd01      /* 벤치마크 인덱스 코드 ( F16013 ) */
+                                            v_simul_mast.bench_index_cd02       =   rows[0].bench_index_cd02      /* 벤치마크 인덱스 코드 ( large_type ) */
+                                            v_simul_mast.bench_index_cd03       =   rows[0].bench_index_cd03      /* 벤치마크 인덱스 코드 ( middle_type ) */
+                                            v_simul_mast.bench_index_nm         =   rows[0].bench_index_nm        /* 벤치마크 인덱스 코드명 */
                                             v_simul_mast.importance_method_cd   =   rows[0].importance_method_cd;   /* 비중설정방식 (COM009) */
                                         }                                        
 									}
@@ -1761,7 +1766,7 @@ var saveBacktestResult = function(req, res) {
                 ], function(err) {
 
                     if (err) {
-                        log.err(err, stmt, paramData);
+                        log.error(err, stmt, paramData);
                         conn.rollback();
 
                     } else {
@@ -1922,6 +1927,8 @@ var getBacktestResult = function(req, res) {
 
                                 if ( rows || rows.length > 0 ) {
                                     resultMsg.arr_result_daily      =   rows;
+
+                                    fn_set_balance( resultMsg.arr_result_daily, resultMsg.simul_result_mast );                                    
                                 }
 
                                 callback(null, paramData);
@@ -4437,6 +4444,36 @@ function    fn_show_diff_time( p_title, p_startTime, p_endTime ) {
         return zero + n;
     }
 
+}
+
+/*
+*   일자별 지수에 밴치마크 정보를 설정한다.
+*   2019-08-14  bkLove(촤병국)
+*/
+function    fn_set_balance( p_arr_daily, p_simul_mast ) {
+
+    if(     p_arr_daily && p_arr_daily.length > 0 ) {
+
+        var v_prev_index   =    0;
+        for( var i=0; i < p_arr_daily.length; i++ ) {
+
+            var v_daily         =   p_arr_daily[i];
+            var v_prev_daily    =   ( typeof p_arr_daily[ v_prev_index ] == "undefined"     ? {} : p_arr_daily[ v_prev_index ] );
+
+            /* 최초인 경우 */
+            if( i == 0 ) {
+                v_daily.balance  =   Number( p_simul_mast.init_invest_money );
+            }else{
+                v_daily.balance  =   (
+                    ( Number( v_daily.INDEX_RATE ) / Number( v_prev_daily.INDEX_RATE ) ) * Number( v_prev_daily.balance )
+                ).toFixed(17);
+            }
+
+            if( i > 0 ) {
+                v_prev_index    =   i;
+            }            
+        }
+    }
 }
 
 /*
