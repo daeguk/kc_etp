@@ -2388,11 +2388,6 @@ var	fn_get_simulation_data2  =   function(
                                         for( var j=0; j < Object.keys( v_jongmok_temp ).length; j++ ) {
                                             var v_key = Object.keys( v_jongmok_temp )[j];
 
-                                            /* 첫 리밸런싱인 경우 KRW 를 제외한 종목은 종목편입으로 처리 */
-                                            if( v_key != "KRW" && !v_jongmok_temp[ v_key ].EVENT_FLAG ) {
-                                                v_jongmok_temp[ v_key ].EVENT_FLAG  =   "20";
-                                            }
-
                                             /* 첫 리밸런싱인 경우 전날 비중은 "-" 로 노출 */
                                             v_jongmok_temp[ v_key ].BEFORE_IMPORTANCE =   "-1";
                                         }
