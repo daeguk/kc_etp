@@ -835,53 +835,38 @@
     *   scen_cd 에 존재하는 리밸런싱 일자를 조회한다.
     *   2019-08-14  bkLove(촤병국)
     -->
+    
     <select id="getRebalanceDateByScenCd">
     <![CDATA[
-        SELECT      /* simulationBacktest.getRebalanceDateByScenCd     scen_cd 에 존재하는 리밸런싱 일자를 조회한다. */
-                    MAX( tm_date_manage.F12506 )                AS  prev_F12506
-                ,   base.F12506                                 AS  F12506
+        SELECT  /* simulationBacktest.getRebalanceDateByScenCd     scen_cd 에 존재하는 리밸런싱 일자를 조회한다. */
+                tm_date_manage.F12506
           FROM  tm_date_manage
           JOIN  (
-                    SELECT  tm_date_manage.F12506
-                      FROM  tm_date_manage
-                      JOIN  (
-                                SELECT      tm_simul_mast.start_year
-                                        ,   tm_simul_mast.rebalance_cycle_cd
-                                        ,   tm_simul_mast.rebalance_date_cd
-                                  FROM  tm_simul_mast
-                                 WHERE  tm_simul_mast.grp_cd    =   #{grp_cd}
-                                   AND  tm_simul_mast.scen_cd   =   #{scen_cd}
-                            )   tm_simul_mast
-                     WHERE  1 = 1
-                       AND  tm_date_manage.F12506       >=  CONCAT( #{start_year}, '0101' )
-                       AND  tm_date_manage.F12506       <=  DATE_FORMAT( NOW(), '%Y%m%d' )
-                       AND  tm_date_manage.gubun        =   
-                            IFNULL(
-                                    (
-                                        SELECT  tm_code_dtl.com_val02
-                                          FROM  tm_code_dtl
-                                         WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
-                                           AND  tm_code_dtl.com_dtl_cd      =   CONCAT( 
-                                                                                        tm_simul_mast.rebalance_cycle_cd
-                                                                                    ,   tm_simul_mast.rebalance_date_cd 
-                                                                                )
-                                         LIMIT  1
-                                    )
-                                ,   ''
-                            )
-                )       base
-            ON  tm_date_manage.F12506 < base.F12506
+                    SELECT      tm_simul_mast.start_year
+                            ,   tm_simul_mast.rebalance_cycle_cd
+                            ,   tm_simul_mast.rebalance_date_cd
+                      FROM  tm_simul_mast
+                     WHERE  tm_simul_mast.grp_cd    =   #{grp_cd}
+                       AND  tm_simul_mast.scen_cd   =   #{scen_cd}
+                )   tm_simul_mast
          WHERE  1 = 1
+           AND  tm_date_manage.F12506       >=  CONCAT( #{start_year}, '0101' )
            AND  tm_date_manage.F12506       <=  DATE_FORMAT( NOW(), '%Y%m%d' )
-           AND  tm_date_manage.GUBUN        =   '10'
-           AND  tm_date_manage.F12506       >=  DATE_FORMAT( 
-                                                        DATE_SUB( 
-                                                                CONCAT( #{start_year}, '0101' )
-                                                            ,   INTERVAL 2 WEEK
-                                                        )
-                                                    ,   '%Y%m%d' 
-                                                )
-         GROUP  BY  base.F12506
+           AND  tm_date_manage.gubun        =   
+                IFNULL(
+                        (
+                            SELECT  tm_code_dtl.com_val02
+                              FROM  tm_code_dtl
+                             WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
+                               AND  tm_code_dtl.com_dtl_cd      =   CONCAT( 
+                                                                            tm_simul_mast.rebalance_cycle_cd
+                                                                        ,   tm_simul_mast.rebalance_date_cd 
+                                                                    )
+                             LIMIT  1
+                        )
+                    ,   ''
+                )
+
          ORDER  BY  tm_date_manage.F12506
     ]]>
     </select>    
