@@ -1499,6 +1499,7 @@ var saveEtpOperPdfModify = function(req, res) {
         var arrAllDtl = [];
         var arrInsertDtl = [];
         var arrModifyDtl = [];
+        var ip = "";
         
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
@@ -1508,6 +1509,9 @@ var saveEtpOperPdfModify = function(req, res) {
             resultMsg.msg = "[error] etpOper.saveEtpOperPdfModify  req.body.data no data.";
 
             throw resultMsg;
+        }else {
+          ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress;
+          log.debug("IP : " + ip);
         }
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
@@ -1518,6 +1522,7 @@ var saveEtpOperPdfModify = function(req, res) {
         paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+        paramData.reg_ip = ip;
         console.log("paramData.............");
         console.log(paramData.allDataList[0].data);
 
