@@ -2069,7 +2069,7 @@ function    fn_set_balance( p_arr_daily, p_simul_mast ) {
             }else{
                 /* balance = 전일 balance * ( 당일 지수 / 전일 지수 ) */
                 v_daily.balance  =   (
-                    Number( v_prev_daily.balance ) * ( Number( v_daily.INDEX_RATE.toFixed(2) ) / Number( v_prev_daily.INDEX_RATE.toFixed(2) ) )
+                    Number( v_prev_daily.balance ) * ( Number( v_daily.INDEX_RATE ).toFixed(2) / Number( v_prev_daily.INDEX_RATE ).toFixed(2) )
                 ).toFixed(3);
             }
 
@@ -2287,25 +2287,24 @@ var	fn_get_simulation_data2  =   function(
 
                 /* 첫날을 제외한 리밸런싱의 전후 날짜를 설정한다. */
                     var prev_rebalance_F12506    =   "";
+
+                    v_rebalanceObj.chg_jongmok  =   {};         /* 첫 리밸런싱 종목을 기준으로 변경되는 정보 ( 종목편입 인지 확인 ) */
                     for( var i=0; i < p_arrRebalanceDate.length; i++ ) {
 
                         if( !v_rebalanceObj[ p_arrRebalanceDate[i].F12506 ] || Object.keys( v_rebalanceObj[ p_arrRebalanceDate[i].F12506 ] ).length == 0  ) {
                             v_rebalanceObj[ p_arrRebalanceDate[i].F12506 ]      =   {};
                         }
-                     
 
                         v_rebalanceObj[ p_arrRebalanceDate[i].F12506 ].prev_rebalance_F12506    =   prev_rebalance_F12506;
+                        v_rebalanceObj[ p_arrRebalanceDate[i].F12506 ].rebalance_F12506         =   p_arrRebalanceDate[i].F12506;
 
-                        /* 마지막인 경우에는 최종일까지로 설정 */
-                        if( i == p_arrRebalanceDate.length - 1 ) {
-                            v_rebalanceObj[ p_arrRebalanceDate[i].F12506 ].rebalance_F12506         =   p_arrRebalanceDate[i].F12506;
-                        }else{
-                            v_rebalanceObj[ p_arrRebalanceDate[i].F12506 ].rebalance_F12506         =   p_arrRebalanceDate[i].prev_F12506;
-                        }
+                        v_rebalanceObj[ p_arrRebalanceDate[i].F12506 ].org_jongmok              =   {};     /* 원본 종목정보 */
+                        v_rebalanceObj[ p_arrRebalanceDate[i].F12506 ].add_jongmok              =   {};     /* 종목편입 */
+                        v_rebalanceObj[ p_arrRebalanceDate[i].F12506 ].sub_jongmok              =   {};     /* 종목편출 */
+                        v_rebalanceObj[ p_arrRebalanceDate[i].F12506 ].imp_jongmok              =   {};     /* 비중조절 종목 */
 
                         prev_rebalance_F12506   =   p_arrRebalanceDate[i].F12506;
                     }
-                    
                     
 
 
@@ -2353,6 +2352,7 @@ var	fn_get_simulation_data2  =   function(
                                             ,   p_prev_rebalancing_F12506   :   v_prev_rebalancing_F12506
                                         }
                                     ,   p_simul_mast                                                /* 시뮬레이션 기본 마스터 정보 */
+                                    ,   p_simulPortfolio                                            /* [tm_simul_portfolio] 기준 종목 데이터 */
                                     ,   v_jongmok                                                   /* 현재 종목 */
                                     ,   v_prev_jongmok                                              /* 이전 종목 */
                                     ,   v_daily                                                     /* 현재 daily */
@@ -2376,6 +2376,7 @@ var	fn_get_simulation_data2  =   function(
                                                 ,   p_prev_rebalancing_F12506   :   v_prev_rebalancing_F12506
                                             }
                                         ,   p_simul_mast                                                /* 시뮬레이션 기본 마스터 정보 */
+                                        ,   p_simulPortfolio                                            /* [tm_simul_portfolio] 기준 종목 데이터 */
                                         ,   v_jongmok                                                   /* 현재 종목 */
                                         ,   v_prev_jongmok                                              /* 이전 종목 */
                                         ,   v_daily                                                     /* 현재 daily */
@@ -2383,17 +2384,110 @@ var	fn_get_simulation_data2  =   function(
                                         ,   v_rebalanceObj
                                     );
 
-                                    var v_jongmok_temp  =   Object.assign( {}, v_jongmok );
-                                    if( v_rebalance_cnt == 0 ) {
-                                        for( var j=0; j < Object.keys( v_jongmok_temp ).length; j++ ) {
-                                            var v_key = Object.keys( v_jongmok_temp )[j];
+                                    var v_rebalanceDate     =   v_rebalanceObj[ v_F12506 ];
+                                    var v_jongmok_temp      =   Object.assign( {}, v_jongmok );
+                                    var v_prev_jongmok_temp =   Object.assign( {}, v_prev_jongmok );
 
-                                            /* 첫 리밸런싱인 경우 전날 비중은 "-" 로 노출 */
-                                            v_jongmok_temp[ v_key ].BEFORE_IMPORTANCE =   "-1";
+
+                                    /* 첫 리밸런싱인 경우 */
+                                    if( v_rebalance_cnt == 0 ) {
+
+                                    /* 현재 종목기준으로 검색 */
+                                        for( var j=0; j < Object.keys( v_jongmok_temp ).length; j++ ) {
+                                            var v_key       =   Object.keys( v_jongmok_temp )[j];
+                                            var v_tempItem  =   Object.assign( {}, v_jongmok_temp[ v_key ] );
+
+
+                                            if( v_tempItem.IMPORT_YN == "1" ) {
+
+                                                /* 리밸런싱 변경 정보에 값이 없는 경우 - 종목편입 */
+                                                if( !v_rebalanceObj.chg_jongmok[ v_key ] || typeof v_rebalanceObj.chg_jongmok[ v_key ] == "undefined" ) {
+
+                                                    v_tempItem.BEFORE_IMPORTANCE =   "-1";
+
+                                                    v_rebalanceObj.chg_jongmok[ v_key ]     =   v_tempItem;     /* 리밸런싱 변경정보 */
+                                                    v_rebalanceDate.add_jongmok[ v_key ]    =   v_tempItem;     /* 리밸런싱별 종목정보 */
+                                                }
+                                            }
                                         }
+
+                                        /* 포트폴리오 종목의 갯수와 다른 경우 KRW 편입 */
+                                        if( Object.keys( v_rebalanceObj.chg_jongmok ).length > 0 ) {
+                                            if( Object.keys( v_rebalanceObj.chg_jongmok ).length != Object.keys( p_simulPortfolio ).length ) {
+                                                if( v_jongmok_temp[ "KRW" ] && typeof v_jongmok_temp[ "KRW" ] != "undefined" ) {
+
+                                                    v_jongmok_temp[ "KRW" ].BEFORE_IMPORTANCE =   "-1";
+
+                                                    v_rebalanceObj.chg_jongmok[ "KRW" ]     =    v_jongmok_temp[ "KRW" ];
+                                                    v_rebalanceDate.add_jongmok[ "KRW" ]    =    v_jongmok_temp[ "KRW" ];
+                                                }
+                                            }
+                                        }
+                                    }else{
+
+
+                                    /* 현재 종목기준으로 검색 */
+                                        for( var j=0; j < Object.keys( v_jongmok_temp ).length; j++ ) {
+                                            var v_key       =   Object.keys( v_jongmok_temp )[j];
+                                            var v_tempItem  =   Object.assign( {}, v_jongmok_temp[ v_key ] );
+
+
+                                            if( v_tempItem.IMPORT_YN == "1" ) {
+
+                                                /* 리밸런싱 변경 정보에 값이 없는 경우 - 종목편입 */
+                                                if( !v_rebalanceObj.chg_jongmok[ v_key ] || typeof v_rebalanceObj.chg_jongmok[ v_key ] == "undefined" ) {
+                                                    
+//                                                    v_tempItem.BEFORE_IMPORTANCE =   "-1";
+
+                                                    v_rebalanceObj.chg_jongmok[ v_key ]     =   v_tempItem;     /* 리밸런싱 변경정보 */
+                                                    v_rebalanceDate.add_jongmok[ v_key ]    =   v_tempItem;     /* 리밸런싱별 종목정보 */
+                                                }
+                                            }
+                                        }
+
+                                        /* 포트폴리오 종목의 갯수와 다른 경우 KRW 편입 */
+                                        if( Object.keys( v_rebalanceObj.chg_jongmok ).length > 0 ) {
+                                            if( Object.keys( v_rebalanceObj.chg_jongmok ).length != Object.keys( p_simulPortfolio ).length ) {
+                                                if( v_jongmok_temp[ "KRW" ] && typeof v_jongmok_temp[ "KRW" ] != "undefined" ) {
+
+//                                                    v_jongmok_temp[ "KRW" ].BEFORE_IMPORTANCE =   "-1";
+
+                                                    v_rebalanceObj.chg_jongmok[ "KRW" ]     =    v_jongmok_temp[ "KRW" ];
+                                                    v_rebalanceDate.add_jongmok[ "KRW" ]    =    v_jongmok_temp[ "KRW" ];
+                                                }
+                                            }
+                                        }                                        
+
+
+                                    /* 리밸런싱 변경정보 기준으로 검색 */
+                                        for( var j=0; j < Object.keys( v_rebalanceObj.chg_jongmok ).length; j++ ) {
+                                            var v_key       =   Object.keys( v_rebalanceObj.chg_jongmok )[j];
+                                            var v_tempItem  =   Object.assign( {}, v_rebalanceObj.chg_jongmok[ v_key ] );
+
+
+                                            /* 리밸런싱 변경 정보에는 존재하나 현재종목에는 존재하지 않는 경우 종목편출 */
+                                            if( !v_jongmok_temp[ v_key ] || typeof v_jongmok_temp[ v_key ] == "undefined" ) {
+
+                                                v_tempItem.F12506                       =   v_F12506;       /* 일자를 삭제하는 일자로 수정 */
+                                                
+                                                if( !v_prev_jongmok_temp[ v_key ] || typeof v_prev_jongmok_temp[ v_key ] == "undefined" ) {
+//                                                    v_tempItem.BEFORE_IMPORTANCE        =   "-1";
+                                                }else{
+                                                    v_tempItem.BEFORE_IMPORTANCE        =   v_prev_jongmok_temp[ v_key ].BEFORE_IMPORTANCE;
+                                                }
+
+                                                v_tempItem.AFTER_IMPORTANCE             =   "0";
+
+                                                v_rebalanceDate.sub_jongmok[ v_key ]    =   v_tempItem;
+
+                                                delete v_rebalanceObj.chg_jongmok[ v_key ];
+                                            }
+                                        }
+
                                     }
 
-                                    v_arr_rebalance.push( v_jongmok_temp );
+
+//                                    v_arr_rebalance.push( v_jongmok_temp );
 
                                     v_rebalance_cnt++;
                                 }else{
@@ -2406,6 +2500,7 @@ var	fn_get_simulation_data2  =   function(
                                                 ,   first_record_yn :   v_first_record_yn               /* 최초 레코드 여부 */
                                             }
                                         ,   p_simul_mast                                                /* 시뮬레이션 기본 마스터 정보 */
+                                        ,   p_simulPortfolio                                            /* [tm_simul_portfolio] 기준 종목 데이터 */
                                         ,   v_jongmok                                                   /* 현재 종목 */
                                         ,   v_prev_jongmok                                              /* 이전 종목 */
                                         ,   v_daily                                                     /* 현재 daily */
@@ -2423,6 +2518,7 @@ var	fn_get_simulation_data2  =   function(
                                                 ,   p_prev_rebalancing_F12506   :   v_prev_rebalancing_F12506
                                             }
                                         ,   p_simul_mast                                                /* 시뮬레이션 기본 마스터 정보 */
+                                        ,   p_simulPortfolio                                            /* [tm_simul_portfolio] 기준 종목 데이터 */
                                         ,   v_jongmok                                                   /* 현재 종목 */
                                         ,   v_prev_jongmok                                              /* 이전 종목 */
                                         ,   v_daily                                                     /* 현재 daily */
@@ -2441,6 +2537,92 @@ var	fn_get_simulation_data2  =   function(
 
                         if( i > 0 ) {
                             v_prev_index    =   i;
+                        }
+                    }
+
+
+                    var not_jongmok =   [];     /* 종목편입되지 않는 종목 */
+                    for( var j=0; j < Object.keys( v_rebalanceObj ).length; j++ ) {
+
+                        var v_key       =   Object.keys( v_rebalanceObj )[j];
+                        var v_item      =   v_rebalanceObj[ v_key ];
+                        
+
+                        if( v_key != "chg_jongmok" ) {
+
+                        /* 종목편입 종목 */
+                            if( typeof v_item.add_jongmok != "undefined" && Object.keys( v_item.add_jongmok ).length > 0 ) {
+
+                                not_jongmok = Object.keys( v_item.org_jongmok ).filter( x => !Object.keys( v_item.add_jongmok ).includes(x) );
+                                not_jongmok = not_jongmok.filter( x => !Object.keys( v_item.add_jongmok ).includes(x) );
+
+                                for( var k=0; k < Object.keys( v_item.add_jongmok ).length; k++ ) {
+                                    var v_sub_key   =   Object.keys( v_item.add_jongmok )[k];
+                                    var v_sub_item  =   v_item.add_jongmok[ v_sub_key ];
+
+                                    v_sub_item.EVENT_FLAG           =   "20";
+                                    v_sub_item.rebalance_import_yn  =   "1";
+                                }
+
+                                v_arr_rebalance.push( v_item.add_jongmok );
+                            }
+
+                        /* 종목편출 종목 */
+                            if( typeof v_item.sub_jongmok != "undefined" && Object.keys( v_item.sub_jongmok ).length > 0 ) {
+
+                                for( var k=0; k < Object.keys( v_item.sub_jongmok ).length; k++ ) {
+                                    var v_sub_key   =   Object.keys( v_item.sub_jongmok )[k];
+                                    var v_sub_item  =   v_item.sub_jongmok[ v_sub_key ];
+
+                                    v_sub_item.EVENT_FLAG           =   "30";
+                                    v_sub_item.rebalance_import_yn  =   "1";
+                                }
+
+                                v_arr_rebalance.push( v_item.sub_jongmok );
+                            }
+
+                        /* 비중조절 종목 */
+                            if( typeof v_item.imp_jongmok != "undefined" && Object.keys( v_item.imp_jongmok ).length > 0 ) {
+
+                                not_jongmok = not_jongmok.filter( x => !Object.keys( v_item.imp_jongmok ).includes(x) );
+
+                                if( typeof v_item.add_jongmok != "undefined" && Object.keys( v_item.add_jongmok ).length > 0  ) {
+                                    for( var k=0; k < Object.keys( v_item.imp_jongmok ).length; k++ ) {
+                                        var   v_imp_key   =   Object.keys( v_item.imp_jongmok )[k];
+
+                                        v_item.imp_jongmok[ v_imp_key ].rebalance_import_yn =   "1";
+                                        if( typeof v_item.add_jongmok[ v_imp_key ] != "undefined" ) {
+                                            delete v_item.imp_jongmok[ v_imp_key ];
+                                        }
+                                    }
+                                }
+
+                                if( Object.keys( v_item.imp_jongmok ).length > 0 ) {
+                                    v_arr_rebalance.push( v_item.imp_jongmok );
+                                }
+                            }
+
+                        /* 종목편입 이전 종목 */
+                            if( not_jongmok && not_jongmok.length > 0 ) {
+
+                                var not_jongmok_obj =   {};
+                                for( var k=0; k < not_jongmok.length; k++ ) {
+                                    var   v_key   =   not_jongmok[k];
+
+                                    if( v_item.org_jongmok[ v_key ] != "undefined" ) {
+                                        if( j==0 ) {
+                                            v_item.org_jongmok[ v_key ].BEFORE_IMPORTANCE   =   "-1";
+                                        }
+
+                                        not_jongmok_obj[ v_key ]    =   v_item.org_jongmok[ v_key ];
+                                        not_jongmok_obj[ v_key ].rebalance_import_yn    =   "0";
+                                    }
+                                }
+
+                                if( Object.keys( not_jongmok_obj ).length > 0 ) {
+                                    v_arr_rebalance.push( not_jongmok_obj );
+                                }
+                            }                            
                         }
                     }
                 }

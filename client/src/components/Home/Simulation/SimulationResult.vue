@@ -121,7 +121,7 @@
                                                 </thead>
                                                 <tbody>
     
-                                                    <tr v-for="(row, index) in arr_result_rebalance" v-bind:key="(row + '_' + index)">
+                                                    <tr v-for="(row, index) in fn_sort_arr_result_rebalance" v-bind:key="(row + '_' + index)">
                                                         <td class="txt_left">{{ row.fmt_F12506              /* 일자 */ }}</td>
                                                         <td>{{ row.fmt_EVENT_FLAG                           /* EVENT */ }}</td>
                                                         <td class="txt_left">{{ row.fmt_F16002              /* 종목 */ }}</td>
@@ -246,7 +246,15 @@ export default {
     },
 
     computed: {
+        fn_sort_arr_result_rebalance : function() {
+            var vm = this;
 
+            return _.orderBy( vm.arr_result_rebalance, [
+                "F12506",
+                "rebalance_import_yn",
+                "F16013",
+            ], ["asc", "desc", "asc"]);
+        }
     },
 
     mounted() {
@@ -286,7 +294,7 @@ export default {
 
                                 Object.keys( array[ index ] ).forEach( function( key ) {
                                     
-                                    var sub_item                        =   array[ index ][ key ];
+                                    var sub_item    =   array[ index ][ key ];
                                     
                                     if( v_prev_F12506 != sub_item.F12506 ) {
                                         v_rebalance_cnt++;
@@ -301,11 +309,6 @@ export default {
                                     v_prev_F12506   =   sub_item.F12506;
                                 });
                             });
-
-                            vm.arr_result_rebalance =   _.sortBy( vm.arr_result_rebalance, [
-                                function (item) { return item.F12506; },
-                                function (item) { return item.F16013; }
-                            ], ["asc", "asc"]);
                         }
 
 
@@ -423,11 +426,6 @@ export default {
                                     /* 이전 입회일자 설정 */
                                     v_prev_F12506   =   sub_item.F12506;
                                 });
-
-                                vm.arr_result_rebalance =   _.sortBy( vm.arr_result_rebalance, [
-                                    function (item) { return item.F12506; },
-                                    function (item) { return item.F16013; }
-                                ], ["asc", "asc"]);
                             }
 
 
@@ -704,7 +702,7 @@ export default {
 
                             /* 변경후 */
                             p_item_obj.fmt_AFTER_IMPORTANCE     =   (
-                                !p_item_obj.AFTER_IMPORTANCE == "-1" ? 
+                                p_item_obj.AFTER_IMPORTANCE == "-1" ? 
                                 "-" : util.formatNumber( p_item_obj.AFTER_IMPORTANCE * 100 ) + " %"
                             );                        
 
