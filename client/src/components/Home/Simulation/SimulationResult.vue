@@ -172,7 +172,9 @@
 
 
             <!--분석정보1 탭4-->
-                    <v-tab-item>분석정보1</v-tab-item>
+                    <v-tab-item >분석정보1
+                        <v-btn depressed color="primary" @click.stop="fn_analyzeTimeserise()">분석</v-btn>
+                    </v-tab-item>
 
 
             <!--분석정보2 탭5-->
@@ -739,6 +741,27 @@ export default {
                             break;
                 }
             }
+        },
+        fn_analyzeTimeserise() {
+            var vm = this;
+            vm.fn_showProgress( true );
+
+            var paramData   =  {};
+            axios.post(Config.base_url + "/user/simulation/getAnalyze_timeseries", {
+                data: paramData
+            }).then( function(response) {
+
+                vm.fn_showProgress( false );               
+
+            }).catch(error => {
+                vm.fn_showProgress( false );
+                vm.$refs.confirm2.open(
+                        '확인',
+                        '서버로 부터 응답을 받지 못하였습니다.',
+                        {}
+                        ,4
+                )
+            });
         }
     }
 };
