@@ -77,7 +77,7 @@
                                                         <td class="txt_right">{{ row.fmt_INDEX_RATE         /* 지수 */ }}</td>
                                                         <td class="txt_right">{{ row.fmt_balance            /* balance */ }}</td>
                                                         <td class="txt_right">{{ row.fmt_RETURN_VAL         /* return */ }}</td>
-                                                        <td class="txt_right">{{ row.bm_data01              /* BM */ }}</td>
+                                                        <td class="txt_right">{{ row.fmt_bm_data01          /* BM */ }}</td>
                                                         <td class="txt_right">{{ row.fmt_bm_1000_data       /* BM(1000환산) */ }}</td>
                                                         <td class="txt_right">{{ row.fmt_bm_return_data     /* BM(return) */ }}</td>
                                                     </tr>
@@ -727,12 +727,13 @@ export default {
                             /* 일자별 지수 설정 */
                     case    "daily"  :
 
-                            p_item_obj.fmt_F12506             =   util.formatDate( new String( p_item_obj.F12506 ) );           /* 일자 */
-                            p_item_obj.fmt_INDEX_RATE         =   util.formatNumber(
+                            p_item_obj.fmt_F12506               =   util.formatDate( new String( p_item_obj.F12506 ) );           /* 일자 */
+                            p_item_obj.fmt_INDEX_RATE           =   util.formatNumber(
                                 p_item_obj.INDEX_RATE
-                            );                                                                                                  /* Index */
-                            p_item_obj.fmt_balance            =   ( typeof p_item_obj.balance == "undefined"  ? "0" : Number( p_item_obj.balance ).toFixed(3) );
-                            p_item_obj.fmt_RETURN_VAL         =   util.formatNumber(
+                            );
+                            p_item_obj.fmt_balance              =   util.formatNumber( ( typeof p_item_obj.balance == "undefined"  ? "0" : Number( p_item_obj.balance ).toFixed(3) ) );
+                            p_item_obj.fmt_bm_data01            =   util.formatNumber( ( typeof p_item_obj.bm_data01 == "undefined"  ? "0" : Number( p_item_obj.bm_data01 ).toFixed(2) ) );
+                            p_item_obj.fmt_RETURN_VAL           =   util.formatNumber(
                                 p_item_obj.RETURN_VAL * 100
                             ) + " %";                                                                                           /* return_val */
 
