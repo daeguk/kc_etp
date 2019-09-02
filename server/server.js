@@ -33,21 +33,7 @@ var config = require('./config/config');
 // 모듈로 분리한 설정 파일 불러오기
 var cron = require('./config/cron_scheduler');
 
-// PYTHON SAMPLE
-let {PythonShell} = require('python-shell')
 
-var options = {
-  mode: 'text',
-  pythonPath: config.python_path,
-  pythonOptions: ['-u'],
-  scriptPath: '',
-  args: ['value1', 'value2', 'value3']
-};
-
-PythonShell.run('./python/test.py', options, function (err, results) {
-  if (err) throw err;
-  console.log('results: %j', results);
-});
 
 // 모듈로 분리한 데이터베이스 파일 불러오기
 //var mydb = require('./database/mysql_con');

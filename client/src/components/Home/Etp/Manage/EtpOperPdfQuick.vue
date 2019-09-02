@@ -28,11 +28,11 @@
                                     <v-list-tile :class="( toggle.togglePdfEmergencyPop ? 'border_b select' : 'border_b' )" @click.stop="fn_showDetailPdf(6)">
                                         <v-list-tile-avatar>
                                             <!--말풍선 추가---->
-                                            <div class="text-xs-center">
+                                            <!--div class="text-xs-center">
                                                 <v-menu v-model="showPdfTooltip" :nudge-width="200" offset-x left class="arrow_menu">
-                                                    <template v-slot:activator="{ on }">
+                                                    <template v-slot:activator="{ on }"-->
                                                         <div :class="( toggle.togglePdfEmergencyPop ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon5"></span></div>
-                                                    </template>
+                                                    <!--/template>
                                                     
                                                     <v-layout>
                                                         <v-flex >
