@@ -360,8 +360,9 @@ export default {
 
         /* table tr 에서 추가 버튼을 누르는 경우 */
         $('#table01 tbody').on('click', "[name='btn_asset']", function() {
-            var tr          =   $(this).closest('tr');
-            var rowIndex    =   tr.index();
+            var tbody      	=   $(this).closest('tbody');
+			var trLastIndex =   tbody.find( "tr.sum").index();
+            var rowIndex	=   tbody.find( "tr:eq(" + ( trLastIndex -1 ) + ")" ).index();
 
             vm.fn_resetErrorMessage();
             vm.fn_addRecords( rowIndex+1, 5 );
