@@ -2413,6 +2413,7 @@ var	fn_get_simulation_data2  =   function(
 
                                         /* 포트폴리오 종목의 갯수와 다른 경우 KRW 편입 */
                                         if( Object.keys( v_rebalanceObj.chg_jongmok ).length > 0 ) {
+
                                             if( Object.keys( v_rebalanceObj.chg_jongmok ).length != Object.keys( p_simulPortfolio ).length ) {
                                                 if( v_jongmok_temp[ "KRW" ] && typeof v_jongmok_temp[ "KRW" ] != "undefined" ) {
 
@@ -2424,7 +2425,6 @@ var	fn_get_simulation_data2  =   function(
                                             }
                                         }
                                     }else{
-
 
                                     /* 현재 종목기준으로 검색 */
                                         for( var j=0; j < Object.keys( v_jongmok_temp ).length; j++ ) {
@@ -2447,13 +2447,17 @@ var	fn_get_simulation_data2  =   function(
 
                                         /* 포트폴리오 종목의 갯수와 다른 경우 KRW 편입 */
                                         if( Object.keys( v_rebalanceObj.chg_jongmok ).length > 0 ) {
-                                            if( Object.keys( v_rebalanceObj.chg_jongmok ).length != Object.keys( p_simulPortfolio ).length ) {
-                                                if( v_jongmok_temp[ "KRW" ] && typeof v_jongmok_temp[ "KRW" ] != "undefined" ) {
 
-//                                                    v_jongmok_temp[ "KRW" ].BEFORE_IMPORTANCE =   "-1";
+                                            /* 리밸런싱 변경정보에 KRW 가 존재하지 않는 경우 KRW 편입 */
+                                            if( !v_rebalanceObj.chg_jongmok[ "KRW" ] || typeof v_rebalanceObj.chg_jongmok[ "KRW" ] == "undefined" ) {
+                                                if( Object.keys( v_rebalanceObj.chg_jongmok ).length != Object.keys( p_simulPortfolio ).length ) {
+                                                    if( v_jongmok_temp[ "KRW" ] && typeof v_jongmok_temp[ "KRW" ] != "undefined" ) {
 
-                                                    v_rebalanceObj.chg_jongmok[ "KRW" ]     =    v_jongmok_temp[ "KRW" ];
-                                                    v_rebalanceDate.add_jongmok[ "KRW" ]    =    v_jongmok_temp[ "KRW" ];
+    //                                                    v_jongmok_temp[ "KRW" ].BEFORE_IMPORTANCE =   "-1";
+
+                                                        v_rebalanceObj.chg_jongmok[ "KRW" ]     =    v_jongmok_temp[ "KRW" ];
+                                                        v_rebalanceDate.add_jongmok[ "KRW" ]    =    v_jongmok_temp[ "KRW" ];
+                                                    }
                                                 }
                                             }
                                         }                                        
@@ -2483,7 +2487,6 @@ var	fn_get_simulation_data2  =   function(
                                                 delete v_rebalanceObj.chg_jongmok[ v_key ];
                                             }
                                         }
-
                                     }
 
 
@@ -2542,88 +2545,101 @@ var	fn_get_simulation_data2  =   function(
 
 
                     var not_jongmok =   [];     /* 종목편입되지 않는 종목 */
-                    for( var j=0; j < Object.keys( v_rebalanceObj ).length; j++ ) {
+                    try{
+                        for( var j=0; j < Object.keys( v_rebalanceObj ).length; j++ ) {
 
-                        var v_key       =   Object.keys( v_rebalanceObj )[j];
-                        var v_item      =   v_rebalanceObj[ v_key ];
-                        
+                            var v_key       =   Object.keys( v_rebalanceObj )[j];
+                            var v_item      =   v_rebalanceObj[ v_key ];
+                            
 
-                        if( v_key != "chg_jongmok" ) {
+                            if( v_key != "chg_jongmok" ) {
 
-                        /* 종목편입 종목 */
-                            if( typeof v_item.add_jongmok != "undefined" && Object.keys( v_item.add_jongmok ).length > 0 ) {
+                            /* 종목편입 종목 */
+                                if( typeof v_item.add_jongmok != "undefined" && Object.keys( v_item.add_jongmok ).length > 0 ) {
 
-                                not_jongmok = Object.keys( v_item.org_jongmok ).filter( x => !Object.keys( v_item.add_jongmok ).includes(x) );
-                                not_jongmok = not_jongmok.filter( x => !Object.keys( v_item.add_jongmok ).includes(x) );
+                                    /* 종목편입 되지 않은 종목 = 원래종목 - 추가로 편입된 종목 */
+                                    not_jongmok = Object.keys( v_item.org_jongmok ).filter( x => !Object.keys( v_item.add_jongmok ).includes(x) );
+                                    not_jongmok = not_jongmok.filter( x => !Object.keys( v_item.add_jongmok ).includes(x) );
 
-                                for( var k=0; k < Object.keys( v_item.add_jongmok ).length; k++ ) {
-                                    var v_sub_key   =   Object.keys( v_item.add_jongmok )[k];
-                                    var v_sub_item  =   v_item.add_jongmok[ v_sub_key ];
+                                    for( var k=0; k < Object.keys( v_item.add_jongmok ).length; k++ ) {
+                                        var v_sub_key   =   Object.keys( v_item.add_jongmok )[k];
+                                        var v_sub_item  =   v_item.add_jongmok[ v_sub_key ];
 
-                                    v_sub_item.EVENT_FLAG           =   "20";
-                                    v_sub_item.rebalance_import_yn  =   "1";
+                                        v_sub_item.EVENT_FLAG           =   "20";
+                                        v_sub_item.rebalance_import_yn  =   "1";
+                                    }
+
+                                    v_arr_rebalance.push( v_item.add_jongmok );
                                 }
 
-                                v_arr_rebalance.push( v_item.add_jongmok );
-                            }
+                            /* 종목편출 종목 */
+                                if( typeof v_item.sub_jongmok != "undefined" && Object.keys( v_item.sub_jongmok ).length > 0 ) {
 
-                        /* 종목편출 종목 */
-                            if( typeof v_item.sub_jongmok != "undefined" && Object.keys( v_item.sub_jongmok ).length > 0 ) {
+                                    for( var k=0; k < Object.keys( v_item.sub_jongmok ).length; k++ ) {
+                                        var v_sub_key   =   Object.keys( v_item.sub_jongmok )[k];
+                                        var v_sub_item  =   v_item.sub_jongmok[ v_sub_key ];
 
-                                for( var k=0; k < Object.keys( v_item.sub_jongmok ).length; k++ ) {
-                                    var v_sub_key   =   Object.keys( v_item.sub_jongmok )[k];
-                                    var v_sub_item  =   v_item.sub_jongmok[ v_sub_key ];
+                                        v_sub_item.EVENT_FLAG           =   "30";
+                                        v_sub_item.rebalance_import_yn  =   "1";
+                                    }
 
-                                    v_sub_item.EVENT_FLAG           =   "30";
-                                    v_sub_item.rebalance_import_yn  =   "1";
+                                    v_arr_rebalance.push( v_item.sub_jongmok );
                                 }
 
-                                v_arr_rebalance.push( v_item.sub_jongmok );
-                            }
+                            /* 비중조절 종목 */
+                                if( typeof v_item.imp_jongmok != "undefined" && Object.keys( v_item.imp_jongmok ).length > 0 ) {
 
-                        /* 비중조절 종목 */
-                            if( typeof v_item.imp_jongmok != "undefined" && Object.keys( v_item.imp_jongmok ).length > 0 ) {
+                                    /* 종목편입 되지 않은 종목 = ( 원래종목 - 추가로 편입된 종목 ) - 비중조절 종목 */
+                                    not_jongmok = not_jongmok.filter( x => !Object.keys( v_item.imp_jongmok ).includes(x) );
 
-                                not_jongmok = not_jongmok.filter( x => !Object.keys( v_item.imp_jongmok ).includes(x) );
 
-                                if( typeof v_item.add_jongmok != "undefined" && Object.keys( v_item.add_jongmok ).length > 0  ) {
+                                    /* 비중조절인 경우 종목으로 편입되어 있는지 체크여부 는 "1" 로 설정 */
                                     for( var k=0; k < Object.keys( v_item.imp_jongmok ).length; k++ ) {
                                         var   v_imp_key   =   Object.keys( v_item.imp_jongmok )[k];
-
                                         v_item.imp_jongmok[ v_imp_key ].rebalance_import_yn =   "1";
-                                        if( typeof v_item.add_jongmok[ v_imp_key ] != "undefined" ) {
-                                            delete v_item.imp_jongmok[ v_imp_key ];
+                                    }                                    
+
+                                    if( typeof v_item.add_jongmok != "undefined" && Object.keys( v_item.add_jongmok ).length > 0  ) {
+                                        for( var k=0; k < Object.keys( v_item.imp_jongmok ).length; k++ ) {
+                                            var   v_imp_key   =   Object.keys( v_item.imp_jongmok )[k];
+
+                                            if( typeof v_item.add_jongmok[ v_imp_key ] != "undefined" ) {
+                                                delete v_item.imp_jongmok[ v_imp_key ];
+                                            }
                                         }
+                                    }
+
+                                    if( Object.keys( v_item.imp_jongmok ).length > 0 ) {
+                                        v_arr_rebalance.push( v_item.imp_jongmok );
                                     }
                                 }
 
-                                if( Object.keys( v_item.imp_jongmok ).length > 0 ) {
-                                    v_arr_rebalance.push( v_item.imp_jongmok );
-                                }
+                            /* 종목편입 되지 않은 종목 */
+                                if( not_jongmok && not_jongmok.length > 0 ) {
+
+                                    var not_jongmok_obj =   {};
+                                    for( var k=0; k < not_jongmok.length; k++ ) {
+                                        var   v_key   =   not_jongmok[k];
+
+                                        if( v_item.org_jongmok[ v_key ] != "undefined" ) {
+                                            if( j==0 ) {
+                                                v_item.org_jongmok[ v_key ].BEFORE_IMPORTANCE   =   "-1";
+                                            }
+
+                                            not_jongmok_obj[ v_key ]    =   v_item.org_jongmok[ v_key ];
+                                            not_jongmok_obj[ v_key ].rebalance_import_yn    =   "0";
+                                        }
+                                    }
+
+                                    if( Object.keys( not_jongmok_obj ).length > 0 ) {
+                                        v_arr_rebalance.push( not_jongmok_obj );
+                                    }
+                                }                            
                             }
-
-                        /* 종목편입 이전 종목 */
-                            if( not_jongmok && not_jongmok.length > 0 ) {
-
-                                var not_jongmok_obj =   {};
-                                for( var k=0; k < not_jongmok.length; k++ ) {
-                                    var   v_key   =   not_jongmok[k];
-
-                                    if( v_item.org_jongmok[ v_key ] != "undefined" ) {
-                                        if( j==0 ) {
-                                            v_item.org_jongmok[ v_key ].BEFORE_IMPORTANCE   =   "-1";
-                                        }
-
-                                        not_jongmok_obj[ v_key ]    =   v_item.org_jongmok[ v_key ];
-                                        not_jongmok_obj[ v_key ].rebalance_import_yn    =   "0";
-                                    }
-                                }
-
-                                if( Object.keys( not_jongmok_obj ).length > 0 ) {
-                                    v_arr_rebalance.push( not_jongmok_obj );
-                                }
-                            }                            
                         }
+                        
+                    }catch(e) {
+                        console.log( "error", e );
                     }
                 }
 			}
