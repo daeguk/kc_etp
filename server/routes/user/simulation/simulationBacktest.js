@@ -21,6 +21,7 @@ var fs = require('fs');
 
 
 var simulModule = require('./simulModule');
+var simulAnalyze = require('./analyzeTimeserise');
 
 
 var log = config.logger;
@@ -69,19 +70,6 @@ var saveBaicInfo = function(req, res) {
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
-        var arrInsertDtl                =   [];
-        var arrModifyDtl                =   [];
-        var arrDeleteDtl                =   [];
-        var divideList                  =   [];
-
-        var v_simul_mast                =   {};
-        var v_arrFirstHist              =   [];
-        var v_simulPortfolio            =   {};
-        var v_firstHistObj              =   {};         /* 백테스트 실행시 start_year 기준 직전 영업일 하루 데이터 정보 */
-        var v_dailyJongmokObj           =   {};         /* 일자별 종목 데이터 */
-        var v_dailyObj                  =   {};         /* 일자별 결과 정보 */
-        var v_arrRebalanceDate          =   {};         /* 리밸런스 일자 */
-        
         var v_resultSimulData           =   {};
 
         resultMsg.arr_daily             =   [];
@@ -103,7 +91,8 @@ var saveBaicInfo = function(req, res) {
                     function(callback) {
 
                         try{
-                            var exist_yn   =   "Y";
+                            var msg         =   {};
+                            var exist_yn    =   "Y";
 
                             /* 기존에 등록된 prev_scen_cd 가 없는 경우 ( 신규 건 ) */
                             if( typeof paramData.prev_scen_cd == "undefined" || paramData.prev_scen_cd == "" ) {
@@ -137,7 +126,7 @@ var saveBaicInfo = function(req, res) {
                                     return callback(resultMsg);                                    
                                 }
 
-                                callback(null, paramData);
+                                callback(null, msg);
                             });
 
                         } catch (err) {
@@ -154,6 +143,11 @@ var saveBaicInfo = function(req, res) {
                     function(msg, callback) {
 
                         try{
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
                             var exist_cnt   =   1;
 
                             paramData.grp_yn            =   "0";                                    /* 그룹여부(1-그룹) */
@@ -188,11 +182,11 @@ var saveBaicInfo = function(req, res) {
                                         return callback(resultMsg);                                    
                                     }
 
-                                    callback(null, paramData);
+                                    callback(null, msg);
                                 });
 
                             }else{
-                                callback(null, paramData);
+                                callback(null, msg);
                             }
 
                         } catch (err) {
@@ -210,11 +204,15 @@ var saveBaicInfo = function(req, res) {
 
                         try{
 
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
                             /* modify 상태이고 상위그룹이 변경되지 않는 경우 기존 scen_cd 사용 */
                             if(     paramData.status        ==  "modify"
                                 &&  paramData.prev_grp_cd   ==  paramData.grp_cd  ) {
 
-                                    callback(null, paramData);
+                                    callback(null, msg);
 
                             }else{
 
@@ -237,7 +235,7 @@ var saveBaicInfo = function(req, res) {
                                         paramData.scen_cd = rows[0].scen_cd;
                                     }
 
-                                    callback(null, paramData);
+                                    callback(null, msg);
                                 });
 
                             }
@@ -257,19 +255,23 @@ var saveBaicInfo = function(req, res) {
 
                         try{
 
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
+
                             if( !paramData.grp_cd  ) {
                                 resultMsg.result = false;
                                 resultMsg.msg = "[error] simulation.getScenOrderNo  'grp_cd' 가 존재하지 않습니다.";
                                 resultMsg.err = "[error] simulation.getScenOrderNo Error while performing Query";
 
-                                callback( resultMsg, paramData)
+                                callback( resultMsg, msg);
 
                             }else if( !paramData.scen_cd  ) {
                                 resultMsg.result = false;
                                 resultMsg.msg = "[error] simulation.getScenOrderNo  'scen_cd' 가 존재하지 않습니다.";
                                 resultMsg.err = "[error] simulation.getScenOrderNo Error while performing Query";
 
-                                callback( resultMsg, paramData)
+                                callback( resultMsg, msg);
 
                             }else{
 
@@ -294,11 +296,11 @@ var saveBaicInfo = function(req, res) {
                                             paramData.scen_order_no     =   rows[0].scen_order_no;
                                         }
 
-                                        callback(null, paramData);
+                                        callback(null, msg);
                                     });
 
                                 }else{
-                                    callback(null, paramData);
+                                    callback(null, msg);
                                 }
                             }
 
@@ -318,6 +320,11 @@ var saveBaicInfo = function(req, res) {
                         var queryId =   "saveTmSimulMast";            
 
                         try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
+
                             if( paramData.status  ==  "modify" ) {
                                 queryId =   "modifyTmSimulMast";
                             }                            
@@ -340,9 +347,9 @@ var saveBaicInfo = function(req, res) {
                                     resultMsg.msg = "[error] simulationBacktest." + queryId + " Error while performing Query";
                                     resultMsg.err = err;
 
-                                    callback(resultMsg, paramData);
+                                    callback(resultMsg, msg);
                                 }else{
-                                    callback(null, paramData);
+                                    callback(null, msg);
                                 }
                                 
                             });
@@ -361,8 +368,10 @@ var saveBaicInfo = function(req, res) {
                     function( msg, callback) {
 
                         try {
-                            arrInsertDtl = [];
-                            arrModifyDtl = [];
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             /* 포트폴리오 설정 건이 존재하는 경우 */
                             if( paramData.arr_portfolio && paramData.arr_portfolio.length > 0  ){
@@ -380,6 +389,9 @@ var saveBaicInfo = function(req, res) {
                                     }
 
                                     if (rows && rows.length > 0) {
+                                        var arrInsertDtl = [];
+                                        var arrModifyDtl = [];
+
                                         for (var i in rows) {
                                             if (rows[i].dtl_status == "insert") {
                                                 arrInsertDtl.push(rows[i]);
@@ -387,13 +399,16 @@ var saveBaicInfo = function(req, res) {
                                                 arrModifyDtl.push(rows[i]);
                                             }
                                         }
+
+                                        msg.arrInsertDtl    =   arrInsertDtl;
+                                        msg.arrModifyDtl    =   arrModifyDtl;
                                     }
 
-                                    callback(null, paramData);
+                                    callback(null, msg);
                                 });
                             
                             }else{
-                                callback(null, paramData);
+                                callback(null, msg);
                             }
 
                         } catch (err) {
@@ -409,7 +424,9 @@ var saveBaicInfo = function(req, res) {
                     function( msg, callback) {
 
                         try {
-                            arrDeleteDtl = [];
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             /* 수정인 경우 */
                             if( paramData.status  ==  "modify" ) {
@@ -430,21 +447,25 @@ var saveBaicInfo = function(req, res) {
                                         }
 
                                         if (rows && rows.length > 0) {
+                                            var arrDeleteDtl = [];
+
                                             for (var i in rows) {
                                                 if (rows[i].dtl_status == "delete") {
                                                     arrDeleteDtl.push(rows[i]);
                                                 }
                                             }
+
+                                            msg.arrDeleteDtl    =   arrDeleteDtl;
                                         }
 
-                                        callback(null, paramData);
+                                        callback(null, msg);
                                     })
                                 }else{
-                                    callback(null, paramData);
+                                    callback(null, msg);
                                 }
 
                             }else{
-                                callback(null, paramData);
+                                callback(null, "");
                             }
 
                         } catch (err) {
@@ -459,11 +480,15 @@ var saveBaicInfo = function(req, res) {
                     /* 8. 시뮬레이션 포트폴리오 정보를 저장한다. ( insert 건 ) */
                     function( msg, callback) {
 
-                        divideList  =   [];
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
 
                         /* 등록건이 존재하는 경우 */
-                        if( arrInsertDtl && arrInsertDtl.length > 0 ) {
-                            async.forEachOfLimit( arrInsertDtl, 1, function(subList, i, innerCallback) {
+                        if( msg.arrInsertDtl && msg.arrInsertDtl.length > 0 ) {
+
+                            var divideList  =   [];
+                            async.forEachOfLimit( msg.arrInsertDtl, 1, function(subList, i, innerCallback) {
 
                                 async.waterfall([
 
@@ -473,10 +498,10 @@ var saveBaicInfo = function(req, res) {
                                         innerCallback(null, paramData);
                                     },
 
-                                    function(msg, innerCallback) {
+                                    function(sub_msg, innerCallback) {
 
                                         var divide_size = ( limit && limit.divide_size ? limit.divide_size : 1 );
-                                        if( divideList && ( divideList.length == divide_size || i == arrInsertDtl.length-1 ) ) {
+                                        if( divideList && ( divideList.length == divide_size || i == msg.arrInsertDtl.length-1 ) ) {
                                             try {
                                                 paramData.arr_portfolio =   divideList;
                                                 stmt = mapper.getStatement('simulationBacktest', 'saveTmSimulPortfolio', paramData, format);
@@ -494,7 +519,7 @@ var saveBaicInfo = function(req, res) {
                                                     innerCallback(null);
                                                 });
 
-                                                divideList  =   [];                                                        
+                                                divideList  =   [];
 
                                             } catch (err) {
 
@@ -533,22 +558,27 @@ var saveBaicInfo = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-                                callback(null, paramData);
+                                delete msg.arrInsertDtl;
+                                callback(null, msg);
                             });
 
                         }else{
-                            callback(null, paramData);
+                            callback(null, msg);
                         }
                     },
 
                     /* 9. 시뮬레이션 포트폴리오 정보를 저장한다. ( modify 건 ) */
                     function( msg, callback) {
 
-                        divideList  =   [];
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
 
                         /* 수정건이 존재하는 경우 */
-                        if( arrModifyDtl && arrModifyDtl.length > 0 ) {
-                            async.forEachOfLimit( arrModifyDtl, 1, function(subList, i, innerCallback) {
+                        if( msg.arrModifyDtl && msg.arrModifyDtl.length > 0 ) {
+
+                            var divideList  =   [];
+                            async.forEachOfLimit( msg.arrModifyDtl, 1, function(subList, i, innerCallback) {
 
                                 async.waterfall([
 
@@ -558,10 +588,10 @@ var saveBaicInfo = function(req, res) {
                                         innerCallback(null, paramData);
                                     },
 
-                                    function(msg, innerCallback) {
+                                    function(sub_msg, innerCallback) {
 
                                         var divide_size = ( limit && limit.divide_size ? limit.divide_size : 1 );
-                                        if( divideList && ( divideList.length == divide_size || i == arrModifyDtl.length-1 ) ) {
+                                        if( divideList && ( divideList.length == divide_size || i == msg.arrModifyDtl.length-1 ) ) {
                                             try {
                                                 paramData.arr_portfolio =   divideList;
                                                 stmt = mapper.getStatement('simulationBacktest', 'modifyTmSimulPortfolio', paramData, format);
@@ -579,7 +609,7 @@ var saveBaicInfo = function(req, res) {
                                                     innerCallback(null);
                                                 });
 
-                                                divideList  =   [];                                                        
+                                                divideList  =   [];
 
                                             } catch (err) {
 
@@ -618,22 +648,28 @@ var saveBaicInfo = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-                                callback(null, paramData);
+                                delete  msg.arrModifyDtl;
+
+                                callback(null, msg);
                             });
 
                         }else{
-                            callback(null, paramData);
+                            callback(null, msg);
                         }
                     },
 
                     /* 10. 시뮬레이션 포트폴리오 정보를 저장한다. ( delete 건 ) */
                     function( msg, callback) {
 
-                        divideList  =   [];
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
 
                         /* 삭제건이 존재하는 경우 */
-                        if( arrDeleteDtl && arrDeleteDtl.length > 0 ) {
-                            async.forEachOfLimit( arrDeleteDtl, 1, function(subList, i, innerCallback) {
+                        if( msg.arrDeleteDtl && msg.arrDeleteDtl.length > 0 ) {
+
+                            var divideList  =   [];
+                            async.forEachOfLimit( msg.arrDeleteDtl, 1, function(subList, i, innerCallback) {
 
                                 async.waterfall([
 
@@ -643,10 +679,10 @@ var saveBaicInfo = function(req, res) {
                                         innerCallback(null, paramData);
                                     },
 
-                                    function(msg, innerCallback) {
+                                    function(sub_msg, innerCallback) {
 
                                         var divide_size = ( limit && limit.divide_size ? limit.divide_size : 1 );
-                                        if( divideList && ( divideList.length == divide_size || i == arrDeleteDtl.length-1 ) ) {
+                                        if( divideList && ( divideList.length == divide_size || i == msg.arrDeleteDtl.length-1 ) ) {
                                             try {
                                                 paramData.arr_portfolio =   divideList;
                                                 stmt = mapper.getStatement('simulationBacktest', 'deleteTmSimulPortfolio', paramData, format);
@@ -664,7 +700,7 @@ var saveBaicInfo = function(req, res) {
                                                     innerCallback(null);
                                                 });
 
-                                                divideList  =   [];                                                        
+                                                divideList  =   [];
 
                                             } catch (err) {
 
@@ -703,11 +739,13 @@ var saveBaicInfo = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-                                callback(null, paramData);
+                                delete msg.arrDeleteDtl;
+
+                                callback(null, msg);
                             });
 
                         }else{
-                            callback(null, paramData);
+                            callback(null, msg);
                         }
                     },
 
@@ -715,6 +753,10 @@ var saveBaicInfo = function(req, res) {
                     function(msg, callback) {
 
                         try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             stmt = mapper.getStatement('simulationBacktest', 'getSimulListByBacktest', paramData, format);
                             log.debug(stmt, paramData);
@@ -739,8 +781,10 @@ var saveBaicInfo = function(req, res) {
                                 }
 
 
+                                var v_simul_mast                            =   {};
+                                var v_simulPortfolio                        =   {};
                                 for( var i in rows ) {
-                                    v_simulPortfolio[ rows[i].F16013 ]    =   rows[i];
+                                    v_simulPortfolio[ rows[i].F16013 ]      =   rows[i];
 
                                     /* 마스터 정보 설정 */
                                     if( i == 0 ) {
@@ -752,11 +796,18 @@ var saveBaicInfo = function(req, res) {
                                         v_simul_mast.rebalance_date_cd      =   rows[0].rebalance_date_cd;      /* 리밸런싱일자 (COM007) */
                                         v_simul_mast.init_invest_money      =   rows[0].init_invest_money;      /* 초기투자금액 */
                                         v_simul_mast.bench_mark_cd          =   rows[0].bench_mark_cd;          /* 벤치마크 (COM008) */
+                                        v_simul_mast.bench_index_cd01       =   rows[0].bench_index_cd01;       /* 벤치마크 인덱스 코드 ( F16013 ) */
+                                        v_simul_mast.bench_index_cd02       =   rows[0].bench_index_cd02;       /* 벤치마크 인덱스 코드 ( large_type ) */
+                                        v_simul_mast.bench_index_cd03       =   rows[0].bench_index_cd03;       /* 벤치마크 인덱스 코드 ( middle_type ) */
+                                        v_simul_mast.bench_index_nm         =   rows[0].bench_index_nm;         /* 벤치마크 인덱스 코드명 */                                        
                                         v_simul_mast.importance_method_cd   =   rows[0].importance_method_cd;   /* 비중설정방식 (COM009) */
                                     }
                                 }                                
 
-                                callback(null, paramData);
+                                msg.v_simul_mast  =   v_simul_mast;
+                                msg.v_simulPortfolio  =   v_simulPortfolio;
+
+                                callback( null, msg );
                             });
 
                         } catch (err) {
@@ -773,6 +824,10 @@ var saveBaicInfo = function(req, res) {
                     function(msg, callback) {
 
                         try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             stmt = mapper.getStatement('simulationBacktest', 'getRebalanceDateByScenCd', paramData, format);
                             log.debug(stmt, paramData);
@@ -796,9 +851,9 @@ var saveBaicInfo = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-                                v_arrRebalanceDate  =   rows;
+                                msg.v_arrRebalanceDate  =   rows;
 
-                                callback(null, paramData);
+                                callback( null, msg );
                             });
 
                         } catch (err) {
@@ -815,6 +870,10 @@ var saveBaicInfo = function(req, res) {
                     function(msg, callback) {
 
                         try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             stmt = mapper.getStatement('simulationBacktest', 'getSimulHistListByScenCd2', paramData, format);
                             log.debug(stmt, paramData);
@@ -837,27 +896,22 @@ var saveBaicInfo = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-
-                                var startTime1   =   new Date();
-
                             /*************************************************************************************************************
                             *   시뮬레이션 이력정보로 백테스트 수행결과를 반환한다.
                             **************************************************************************************************************/
 
                                 v_resultSimulData   =   fn_get_simulation_data(
-                                        v_simul_mast            /* 시뮬레이션 기본 마스터 정보 */
+                                        msg.v_simul_mast        /* 시뮬레이션 기본 마스터 정보 */
                                     ,   rows                    /* 일자별 종목 이력 데이터 */
-                                    ,   v_arrRebalanceDate      /* 리밸런싱 일자 정보 */
-                                    ,   v_simulPortfolio        /* [tm_simul_portfolio] 기준 종목 데이터 */
+                                    ,   msg.v_arrRebalanceDate  /* 리밸런싱 일자 정보 */
+                                    ,   msg.v_simulPortfolio    /* [tm_simul_portfolio] 기준 종목 데이터 */
                                 );
 
-                                
+                                delete msg.v_simul_mast;
+                                delete msg.v_arrRebalanceDate;
+                                delete msg.v_simulPortfolio;
 
-                                var endTime1   =   new Date();
-
-                                console.log( fn_show_diff_time( "시뮬레이션 script 계산결과", startTime1, endTime1 ) );
-
-                                callback(null, paramData);
+                                callback( null, msg );
                             });
 
                         } catch (err) {
@@ -877,6 +931,10 @@ var saveBaicInfo = function(req, res) {
                     function(msg, callback) {
 
                         try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
 
                             if(     paramData.start_year
                                 &&  paramData.bench_mark_cd
@@ -920,10 +978,15 @@ var saveBaicInfo = function(req, res) {
                 ], function(err) {
 
                     if (err) {
-                        console.error(err, stmt, paramData);
+                        log.debug(err, stmt, paramData);
                         conn.rollback();
 
                     } else {
+
+                        /* 분석 정보 처리 */
+                        var analyzeList = simulAnalyze.getAnalyze_timeseries(v_resultSimulData.arr_daily);
+
+
                         resultMsg.result        =   true;
                         resultMsg.msg           =   "성공적으로 저장하였습니다.";
 
@@ -963,7 +1026,7 @@ var saveBaicInfo = function(req, res) {
 
     } catch (expetion) {
 
-        console.log(expetion, paramData);
+        log.debug(expetion, paramData);
 
         resultMsg.result = false;
         resultMsg.msg = "[error] simulationBacktest.saveBaicInfo 오류가 발생하였습니다.";
@@ -1018,20 +1081,7 @@ var saveBacktestResult = function(req, res) {
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";
- 
-        var arrInsertDtl                =   [];
-        var arrModifyDtl                =   [];
-        var arrDeleteDtl                =   [];
-        var divideList                  =   [];
 
-        var v_simul_mast                =   {};
-        var v_arrFirstHist              =   [];
-        var v_simulPortfolio            =   {};
-        var v_firstHistObj              =   {};         /* 백테스트 실행시 start_year 기준 직전 영업일 하루 데이터 정보 */
-        var v_dailyJongmokObj           =   {};         /* 일자별 종목 데이터 */
-        var v_dailyObj                  =   {};         /* 일자별 결과 정보 */
-        var v_arrRebalanceDate          =   {};         /* 리밸런스 일자 */
-        
         var v_resultSimulData           =   {};
 
         Promise.using(pool.connect(), conn => {
@@ -1047,16 +1097,19 @@ var saveBacktestResult = function(req, res) {
                     /* 1. (백테스트) 시뮬레이션 할 기본정보를 조회한다. */
                     function(callback) {
 
-                        try{
+                        try{                           
 
                             if(  !paramData.grp_cd || !paramData.scen_cd  ) {
                                 resultMsg.result = false;
                                 resultMsg.msg = "[백테스트] 기본 인자값 정보가 존재하지 않습니다.";
                                 resultMsg.err = "[백테스트] 기본 인자값 정보가 존재하지 않습니다.";
 
-                                callback(resultMsg, paramData);
+                                callback(resultMsg, "");
                             }
                             else{
+
+                                var msg = {};
+
                                 stmt = mapper.getStatement('simulationBacktest', 'getSimulListByBacktest', paramData, format);
                                 log.debug(stmt, paramData);
 
@@ -1080,6 +1133,9 @@ var saveBacktestResult = function(req, res) {
                                         paramData.start_year    =   rows[0].start_year;     /* 시작년도 */
                                     }
 
+
+                                    var v_simul_mast                            =   {};
+                                    var v_simulPortfolio                        =   {};
 									for( var i in rows ) {
 										v_simulPortfolio[ rows[i].F16013 ]    =   rows[i];
 
@@ -1093,15 +1149,18 @@ var saveBacktestResult = function(req, res) {
                                             v_simul_mast.rebalance_date_cd      =   rows[0].rebalance_date_cd;      /* 리밸런싱일자 (COM007) */
                                             v_simul_mast.init_invest_money      =   rows[0].init_invest_money;      /* 초기투자금액 */
                                             v_simul_mast.bench_mark_cd          =   rows[0].bench_mark_cd;          /* 벤치마크 (COM008) */
-                                            v_simul_mast.bench_index_cd01       =   rows[0].bench_index_cd01      /* 벤치마크 인덱스 코드 ( F16013 ) */
-                                            v_simul_mast.bench_index_cd02       =   rows[0].bench_index_cd02      /* 벤치마크 인덱스 코드 ( large_type ) */
-                                            v_simul_mast.bench_index_cd03       =   rows[0].bench_index_cd03      /* 벤치마크 인덱스 코드 ( middle_type ) */
-                                            v_simul_mast.bench_index_nm         =   rows[0].bench_index_nm        /* 벤치마크 인덱스 코드명 */
+                                            v_simul_mast.bench_index_cd01       =   rows[0].bench_index_cd01;       /* 벤치마크 인덱스 코드 ( F16013 ) */
+                                            v_simul_mast.bench_index_cd02       =   rows[0].bench_index_cd02;       /* 벤치마크 인덱스 코드 ( large_type ) */
+                                            v_simul_mast.bench_index_cd03       =   rows[0].bench_index_cd03;       /* 벤치마크 인덱스 코드 ( middle_type ) */
+                                            v_simul_mast.bench_index_nm         =   rows[0].bench_index_nm;         /* 벤치마크 인덱스 코드명 */
                                             v_simul_mast.importance_method_cd   =   rows[0].importance_method_cd;   /* 비중설정방식 (COM009) */
                                         }                                        
 									}
 
-                                    callback(null, paramData);
+                                    msg.v_simul_mast  =   v_simul_mast;
+                                    msg.v_simulPortfolio  =   v_simulPortfolio;
+
+                                    callback( null, msg );
                                 });
                             }
                         } catch (err) {
@@ -1118,6 +1177,10 @@ var saveBacktestResult = function(req, res) {
                     function(msg, callback) {
 
                         try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             stmt = mapper.getStatement('simulationBacktest', 'getRebalanceDateByScenCd', paramData, format);
                             log.debug(stmt, paramData);
@@ -1141,9 +1204,9 @@ var saveBacktestResult = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-                                v_arrRebalanceDate  =   rows;
+                                msg.v_arrRebalanceDate  =   rows;
 
-                                callback(null, paramData);
+                                callback( null, msg );
                             });
 
                         } catch (err) {
@@ -1160,6 +1223,10 @@ var saveBacktestResult = function(req, res) {
                     function(msg, callback) {
 
                         try{
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+                            
                             stmt = mapper.getStatement('simulationBacktest', 'getSimulHistListByScenCd2', paramData, format);
                             log.debug(stmt, paramData);
 
@@ -1181,23 +1248,22 @@ var saveBacktestResult = function(req, res) {
                                     return callback(resultMsg);
                                 }                            
 
-                                var startTime1   =   new Date();
 
                             /*************************************************************************************************************
                             *   시뮬레이션 이력정보로 백테스트 수행결과를 반환한다.
                             **************************************************************************************************************/
-                                v_resultSimulData  =   fn_get_simulation_data(
-                                        v_simul_mast            /* 시뮬레이션 기본 마스터 정보 */
+                                v_resultSimulData   =   fn_get_simulation_data(
+                                        msg.v_simul_mast        /* 시뮬레이션 기본 마스터 정보 */
                                     ,   rows                    /* 일자별 종목 이력 데이터 */
-                                    ,   v_arrRebalanceDate      /* 리밸런싱 일자 정보 */
-                                    ,   v_simulPortfolio        /* [tm_simul_portfolio] 기준 종목 데이터 */
+                                    ,   msg.v_arrRebalanceDate  /* 리밸런싱 일자 정보 */
+                                    ,   msg.v_simulPortfolio    /* [tm_simul_portfolio] 기준 종목 데이터 */
                                 );
 
-                                var endTime1   =   new Date();
+                                delete msg.v_simul_mast;
+                                delete msg.v_arrRebalanceDate;
+                                delete msg.v_arrRebalanceDate;
 
-                                console.log( fn_show_diff_time( "시뮬레이션 script 계산", startTime1, endTime1 ) );
-
-                                callback(null, paramData);
+                                callback(null, msg);
                             });
 
                         } catch (err) {
@@ -1213,9 +1279,11 @@ var saveBacktestResult = function(req, res) {
                     /* 4. (백테스트) tm_simul_result_daily 결과를 삭제한다. */
                     function(msg, callback) {
 
-                        var startTime   =   new Date();
-
                         try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
 
                             stmt = mapper.getStatement('simulationBacktest', 'deleteTmSimulResultDaily', paramData, format);
                             log.debug(stmt);
@@ -1229,16 +1297,13 @@ var saveBacktestResult = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-                                callback(null, paramData);
+                                callback(null, msg);
                             });
 
                         } catch (err) {
 
                             resultMsg.result = false;
                             resultMsg.msg = "[error] simulationBacktest.deleteTmSimulResultDaily Error while performing Query";
-
-                            var endTime   =   new Date();
-                            console.log( fn_show_diff_time( "tm_simul_result_daily DB 삭제시간", startTime, endTime ) );
 
                             if( !resultMsg.err ) {
                                 resultMsg.err = err;
@@ -1251,13 +1316,14 @@ var saveBacktestResult = function(req, res) {
                     /* 5. (백테스트) tm_simul_result_daily 결과를 저장한다. */
                     function(msg, callback) {
 
-                        divideList  =   [];
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }                        
 
                         /* daily 건이 존재하는 경우 */
                         if( v_resultSimulData.arr_daily && v_resultSimulData.arr_daily.length > 0 ) {
 
-                            var startTime   =   new Date();
-
+                            var divideList  =   [];
                             async.forEachOfLimit( v_resultSimulData.arr_daily, 1, function(subList, i, innerCallback) {
 
                                 async.waterfall([
@@ -1271,7 +1337,7 @@ var saveBacktestResult = function(req, res) {
                                         innerCallback(null, paramData);
                                     },
 
-                                    function(msg, innerCallback) {
+                                    function(sub_msg, innerCallback) {
 
                                         var divide_size = ( limit && limit.result_dive_size ? limit.result_dive_size : 1 );
                                         if( divideList && ( divideList.length == divide_size || i == v_resultSimulData.arr_daily.length-1 ) ) {
@@ -1292,7 +1358,7 @@ var saveBacktestResult = function(req, res) {
                                                     innerCallback(null);
                                                 });
 
-                                                divideList  =   [];                                                        
+                                                divideList  =   [];
 
                                             } catch (err) {
 
@@ -1331,14 +1397,13 @@ var saveBacktestResult = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-                                var endTime   =   new Date();
-                                console.log( fn_show_diff_time( "tm_simul_result_daily DB 등록시간 ( 총 건수: " + v_resultSimulData.arr_daily.length + " 건 )", startTime, endTime ) );
+                                delete  v_resultSimulData.arr_daily;
 
-                                callback(null, paramData);
+                                callback(null, msg);
                             });
 
                         }else{
-                            callback(null, paramData);
+                            callback(null, msg);
                         }
 
                     },
@@ -1346,9 +1411,11 @@ var saveBacktestResult = function(req, res) {
                     /* 6. (백테스트) tm_simul_result_rebalance 결과를 삭제한다. */
                     function(msg, callback) {
 
-                        var startTime   =   new Date();
-
                         try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
 
                             stmt = mapper.getStatement('simulationBacktest', 'deleteTmSimulResultRebalance', paramData, format);
                             log.debug(stmt);
@@ -1362,16 +1429,13 @@ var saveBacktestResult = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-                                callback(null, paramData);
+                                callback(null, msg);
                             });
 
                         } catch (err) {
 
                             resultMsg.result = false;
                             resultMsg.msg = "[error] simulationBacktest.deleteTmSimulResultRebalance Error while performing Query";
-
-                            var endTime   =   new Date();
-                            console.log( fn_show_diff_time( "tm_simul_result_rebalance DB 삭제시간", startTime, endTime ) );
 
                             if( !resultMsg.err ) {
                                 resultMsg.err = err;
@@ -1384,7 +1448,9 @@ var saveBacktestResult = function(req, res) {
                     /* 7. (백테스트) tm_simul_result_rebalance 결과를 저장한다. */
                     function(msg, callback) {
 
-                        divideList  =   [];
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
 
                         var arr_result_rebalance    =   [];
 
@@ -1402,8 +1468,7 @@ var saveBacktestResult = function(req, res) {
                         
                         if( arr_result_rebalance && arr_result_rebalance.length > 0 ) {
 
-                            var startTime   =   new Date();
-
+                            var divideList  =   [];
                             async.forEachOfLimit( arr_result_rebalance, 1, function(subList, i, innerCallback) {
 
                                 async.waterfall([
@@ -1415,7 +1480,7 @@ var saveBacktestResult = function(req, res) {
                                         innerCallback(null, paramData);
                                     },
 
-                                    function(msg, innerCallback) {
+                                    function(sub_msg, innerCallback) {
 
                                         var divide_size = ( limit && limit.result_dive_size ? limit.result_dive_size : 1 );
                                         if( divideList && ( divideList.length == divide_size || i == arr_result_rebalance.length-1 ) ) {
@@ -1436,7 +1501,7 @@ var saveBacktestResult = function(req, res) {
                                                     innerCallback(null);
                                                 });
 
-                                                divideList  =   [];                                                        
+                                                divideList  =   [];
 
                                             } catch (err) {
 
@@ -1475,14 +1540,14 @@ var saveBacktestResult = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-                                var endTime   =   new Date();
-                                console.log( fn_show_diff_time( "tm_simul_result_rebalance DB 등록시간 ( 총 건수: " + arr_result_rebalance.length + " 건 )", startTime, endTime ) );
+                                delete  v_resultSimulData.arr_rebalance;
+                                arr_result_rebalance    =   [];
 
-                                callback(null, paramData);
+                                callback(null, msg);
                             });
 
                         }else{
-                            callback(null, paramData);
+                            callback(null, msg);
                         }
 
                     },                    
@@ -1494,8 +1559,11 @@ var saveBacktestResult = function(req, res) {
                     /* 8. (백테스트) tm_simul_result 결과를 삭제한다. */
                     function(msg, callback) {
 
-                        var startTime   =   new Date();
                         try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
 
                             stmt = mapper.getStatement('simulationBacktest', 'deleteTmSimulResult', paramData, format);
                             log.debug(stmt);
@@ -1509,16 +1577,13 @@ var saveBacktestResult = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-                                callback(null, paramData);
+                                callback(null, msg);
                             });
 
                         } catch (err) {
 
                             resultMsg.result = false;
                             resultMsg.msg = "[error] simulationBacktest.deleteTmSimulResult Error while performing Query";
-
-                            var endTime   =   new Date();
-                            console.log( fn_show_diff_time( "tm_simul_result DB 삭제시간", startTime, endTime ) );
 
                             if( !resultMsg.err ) {
                                 resultMsg.err = err;
@@ -1531,6 +1596,12 @@ var saveBacktestResult = function(req, res) {
                     /* 9. (백테스트) 시뮬레이션 결과를 저장한다. */
                     function(msg, callback) {
 
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
+
+
+                        var arrInsertDtl    =   [];
 
                         /* tm_simul_result 테이블에 저장하기 위한 변수 설정 */
                         if (    v_resultSimulData 
@@ -1554,13 +1625,10 @@ var saveBacktestResult = function(req, res) {
                         }
 
 
-                        divideList  =   [];
-
                         /* 등록건이 존재하는 경우 */
                         if( arrInsertDtl && arrInsertDtl.length > 0 ) {
 
-                            var startTime   =   new Date();
-
+                            var divideList  =   [];
                             async.forEachOfLimit( arrInsertDtl, 1, function(subList, i, innerCallback) {
 
                                 async.waterfall([
@@ -1571,7 +1639,7 @@ var saveBacktestResult = function(req, res) {
                                         innerCallback(null, paramData);
                                     },
 
-                                    function(msg, innerCallback) {
+                                    function(sub_msg, innerCallback) {
 
                                         var divide_size = ( limit && limit.result_dive_size ? limit.result_dive_size : 1 );
                                         if( divideList && ( divideList.length == divide_size || i == arrInsertDtl.length-1 ) ) {
@@ -1592,7 +1660,7 @@ var saveBacktestResult = function(req, res) {
                                                     innerCallback(null);
                                                 });
 
-                                                divideList  =   [];                                                        
+                                                divideList  =   [];
 
                                             } catch (err) {
 
@@ -1631,14 +1699,14 @@ var saveBacktestResult = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-                                var endTime   =   new Date();
-                                console.log( fn_show_diff_time( "시뮬레이션 DB 등록시간 ( 총 건수: " + arrInsertDtl.length + " 건 )", startTime, endTime ) );
+                                delete  v_resultSimulData.dailyJongmokObj;
+                                arrInsertDtl    =   [];
 
-                                callback(null, paramData);
+                                callback(null, msg);
                             });
 
                         }else{
-                            callback(null, paramData);
+                            callback(null, msg);
                         }
 
                     },
@@ -1650,7 +1718,7 @@ var saveBacktestResult = function(req, res) {
                 ], function(err) {
 
                     if (err) {
-                        console.log(err, stmt, paramData);
+                        log.debug(err, stmt, paramData);
                         conn.rollback();
 
                     } else {
@@ -1674,7 +1742,7 @@ var saveBacktestResult = function(req, res) {
 
     } catch (expetion) {
 
-        console.log(expetion, paramData);
+        log.debug(expetion, paramData);
 
         resultMsg.result = false;
         resultMsg.msg = "[error] simulationBacktest.saveBacktestResult 오류가 발생하였습니다.";
@@ -1918,7 +1986,7 @@ var getBacktestResult = function(req, res) {
                 ], function(err) {
 
                     if (err) {
-                        console.log(err, stmt, paramData);
+                        log.debug(err, stmt, paramData);
                         conn.rollback();
 
                     } else {
@@ -1939,7 +2007,7 @@ var getBacktestResult = function(req, res) {
 
     } catch (expetion) {
 
-        console.log(expetion, paramData);
+        log.debug(expetion, paramData);
 
         resultMsg.result = false;
         resultMsg.msg = "[error] simulationBacktest.runBacktest 오류가 발생하였습니다.";
@@ -1952,101 +2020,6 @@ var getBacktestResult = function(req, res) {
         res.json(resultMsg);
         res.end();
     }
-}
-
-
-/*
-* 경과된 시간정보를 시분초로 보여준다.
-* 2019-08-14  bkLove(촤병국)
-*/
-function    fn_show_diff_time( p_title, p_startTime, p_endTime ) {
-
-    var showLog     =   "";
-
-    try{
-        var delta       =   ( p_endTime.getTime() - p_startTime.getTime() ) / 1000;
-
-        /* 시 정보 */
-        var hours       =   Math.floor( delta / 3600 ) % 24; 
-        delta -= hours * 3600;
-
-        /* 분 정보 */
-        var minutes     =   Math.floor( delta / 60) % 60;
-        delta -= minutes * 60;
-
-        /* 초 정보 */
-        var seconds     =   Math.floor( delta % 60 );
-        delta -= seconds;
-
-        /* mili second 정보 */
-        var delta       =   ( Math.round( delta * 1000 ) / 1000 ) * 1000;
-
-
-        showLog +=  "\n#########################################################\n";
-        showLog +=  "* " + p_title + "\n";
-        showLog +=  "---------------------------------------------------------\n";
-        showLog +=  "start_time = ["  +   dateToStr( p_startTime )      +   "]\n";
-        showLog +=  "end_time   = ["  +   dateToStr( p_endTime )        +   "]\n";
-        showLog +=  "run_time   = [";
-
-        /* 시간 차이가 없는 경우 */
-        if( ( p_endTime.getTime() - p_startTime.getTime() ) <= 0 ){
-            showLog +=  "00:00:00";
-        }
-
-        else {
-            showLog     +=      lpad( hours, 2 ) 
-                +   ":"     +   lpad( minutes, 2 )
-                +   ":"     +   lpad( seconds, 2 )
-
-                +   "."     +   lpad( delta, 3 )
-                +   " sec";
-        }
-
-        showLog +=  "]\n";
-        showLog +=  "#########################################################\n";
-
-    }catch( e ) {
-        console.log( "fn_show_diff_time error ", e );
-    }
-    
-    return showLog;
-
-
-    /*
-    * date 를 날짜형식으로 반환한다.
-    * 2019-08-14  bkLove(촤병국)
-    */
-    function    dateToStr( p_date ) {
-        var strDate     =
-                        lpad( p_date.getFullYear()   , 4) 
-            +   '-' +   lpad( p_date.getMonth() + 1  , 2) 
-            +   '-' +   lpad( p_date.getDate()       , 2) 
-            
-            +   ' ' +   lpad( p_date.getHours()      , 2 ) 
-            +   ':' +   lpad( p_date.getMinutes()    , 2 ) 
-            +   ':' +   lpad( p_date.getSeconds()    , 2 );
-
-        return  strDate;
-    }
-
-    /*
-    * left padd 하여 반환한다.
-    * 2019-08-14  bkLove(촤병국)
-    */
-    function lpad( n, digits ) {
-        var zero = '';
-        n = n.toString();
-
-        if ( n.length < digits ) {
-            for (i = 0; i < digits - n.length; i++) {
-                zero += '0';
-            }
-        }
-
-        return zero + n;
-    }
-
 }
 
 /*
@@ -2108,7 +2081,8 @@ function    fn_set_bench_mark( p_arr_daily, p_arr_bench ) {
 
 
             v_daily.bm_data01       =   Number( v_bm.F15001 );
-
+            v_daily.F15175          =   Number(v_bm.F15175);
+            v_daily.KOSPI_F15001    =   Number(v_bm.KOSPI_F15001);
             /* 최초인 경우 */
             if( i == 0 ) {
                 v_daily.bm_1000_data    =   1000;
@@ -2158,7 +2132,6 @@ var	fn_get_simulation_data  =   function(
 
 		var v_dailyJongmokObj           =   {};         /* 일자별 종목 데이터 */
 		var v_dailyObj                  =   {};         /* 일자별 결과 정보 */
-		var v_eventObj                  =   {};         /* 이벤트 변동 발생여부 */
 
 		var v_arr_daily                 =   [];         /* array 일자별 데이터 */
 		var v_arr_rebalance             =   [];         /* array rebalance 데이터 */
@@ -2326,7 +2299,7 @@ var	fn_get_simulation_data  =   function(
 
 
 // if( [ "20171228" ].includes( v_F12506 ) ) {
-//     console.log( "v_F12506", v_F12506, "v_daily.tot_F15028_3", v_daily.tot_F15028_3 );
+//     log.debug( "v_F12506", v_F12506, "v_daily.tot_F15028_3", v_daily.tot_F15028_3 );
 // }
 
 
@@ -2533,7 +2506,7 @@ var	fn_get_simulation_data  =   function(
                             }
 
                         }catch( e ) {
-                            console.log( "error ", e );
+                            log.debug( "error ", e );
                         }
 
                         v_arr_daily.push( v_daily );
@@ -2639,13 +2612,12 @@ var	fn_get_simulation_data  =   function(
                         }
                         
                     }catch(e) {
-                        console.log( "error", e );
+                        log.debug( "error", e );
                     }
                 }
-			}
-
+			}            
 		}catch( e ) {
-			console.log( "fn_get_simulation_data error", e );
+			log.debug( "fn_get_simulation_data error", e );
 		}
 
 		return  { 
