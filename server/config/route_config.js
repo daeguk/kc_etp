@@ -170,9 +170,9 @@ module.exports = {
         { file: './user/simulation/simulation', path: '/user/simulation/getSimulPortfolio'  , method: 'getSimulPortfolio'   , session: 'check', type: 'post' },     // 포트폴리오 정보 조회
         { file: './user/simulation/simulation', path: '/user/simulation/getInitData1'       , method: 'getInitData1'        , session: 'check', type: 'post' },     // 공통코드 초기 데이터 조회        
 
-        { file: './user/simulation/simulationBacktest2', path: '/user/simulation/saveBaicInfo'       , method: 'saveBaicInfo'        , session: 'check', type: 'post' },     // 기본정보 저장
-        { file: './user/simulation/simulationBacktest2', path: '/user/simulation/saveBacktestResult' , method: 'saveBacktestResult'  , session: 'check', type: 'post' },     // 백테스트 결과 저장
-        { file: './user/simulation/simulationBacktest2', path: '/user/simulation/getBacktestResult'  , method: 'getBacktestResult'   , session: 'check', type: 'post' },     // 백테스트 결과 조회
+        { file: './user/simulation/simulationBacktest', path: '/user/simulation/saveBaicInfo'       , method: 'saveBaicInfo'        , session: 'check', type: 'post' },     // 기본정보 저장
+        { file: './user/simulation/simulationBacktest', path: '/user/simulation/saveBacktestResult' , method: 'saveBacktestResult'  , session: 'check', type: 'post' },     // 백테스트 결과 저장
+        { file: './user/simulation/simulationBacktest', path: '/user/simulation/getBacktestResult'  , method: 'getBacktestResult'   , session: 'check', type: 'post' },     // 백테스트 결과 조회
 
         { file: './user/simulation/analyzeTimeserise', path: '/user/simulation/getAnalyze_timeseries'  , method: 'getAnalyze_timeseries'   , session: 'check', type: 'post' },     // 백테스트 결과 조회
 
