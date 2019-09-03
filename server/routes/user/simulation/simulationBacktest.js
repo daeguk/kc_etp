@@ -883,14 +883,14 @@ var saveBaicInfo = function(req, res) {
                                 &&  paramData.bench_mark_cd != "0"
                             ) {
 
-                                stmt = mapper.getStatement('simulationBacktest', 'getSimulBenchMarkForInsert', paramData, format);
+                                stmt = mapper.getStatement('simulationBacktest', 'getSimulBenchMark', paramData, format);
                                 log.debug(stmt, paramData);
 
                                 conn.query(stmt, function(err, rows) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationBacktest.getSimulBenchMarkForInsert Error while performing Query";
+                                        resultMsg.msg = "[error] simulationBacktest.getSimulBenchMark Error while performing Query";
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -910,7 +910,7 @@ var saveBaicInfo = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.getSimulBenchMarkForInsert Error while performing Query";
+                            resultMsg.msg = "[error] simulationBacktest.getSimulBenchMark Error while performing Query";
                             resultMsg.err = err;
 
                             callback(resultMsg);
