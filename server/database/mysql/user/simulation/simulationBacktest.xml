@@ -1310,7 +1310,7 @@
                                 ELSE    '1'
                         END
                     )                                                   AS  rebalancing             /* 리밸런싱 여부 */
-                
+                , td_cd_hist.F15175 									AS  F15175						 /* CD 수익률*/
           FROM  (
                     SELECT      tm_simul_portfolio.F16013               AS  F16013                  /* 종목코드 */
                             ,   (
@@ -1360,7 +1360,10 @@
                             )
                 ]]>
                 )
-
+        LEFT JOIN td_cd_hist
+      	   ON (
+                 td_cd_hist.F12506 = td_kspjong_hist.F12506
+              )
          ORDER  BY      td_kspjong_hist.F12506          /* 입회일자 */
                     ,   td_kspjong_hist.F16013          /* 단축코드 */
 
