@@ -172,8 +172,34 @@
 
 
             <!--분석정보1 탭4-->
-                    <v-tab-item >분석정보1
-                        <v-btn depressed color="primary" @click.stop="fn_analyzeTimeserise()">분석</v-btn>
+                    <v-tab-item >
+                        <v-card flat>
+                                    <div class="table-box-wrap mar15">
+                                        <div class="table-box" style="max-height:250px;">
+                                            <table class="tbl_type ver10">
+                                                <colgroup>
+                                                    <col width="33%"/>
+                                                    <col width="33%"/>
+                                                    <col width="33%"/>
+                                                </colgroup>
+                                                <thead>
+                                                    <tr>
+                                                        <th class="txt_left">분석지표</th>
+                                                        <th class="txt_right">백테스트</th>
+                                                        <th class="txt_right">BM(KOSPI200)</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="txt_left">CAGR</td>
+                                                        <td class="txt_right">999.9999%</td>
+                                                        <td class="txt_right">999.9999%</td>
+                                                    </tr>
+                                             </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </v-card>
                     </v-tab-item>
 
 
