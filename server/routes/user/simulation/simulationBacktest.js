@@ -844,7 +844,7 @@ var saveBaicInfo = function(req, res) {
                             *   시뮬레이션 이력정보로 백테스트 수행결과를 반환한다.
                             **************************************************************************************************************/
 
-                                v_resultSimulData   =   fn_get_simulation_data2(
+                                v_resultSimulData   =   fn_get_simulation_data(
                                         v_simul_mast            /* 시뮬레이션 기본 마스터 정보 */
                                     ,   rows                    /* 일자별 종목 이력 데이터 */
                                     ,   v_arrRebalanceDate      /* 리밸런싱 일자 정보 */
@@ -1186,7 +1186,7 @@ var saveBacktestResult = function(req, res) {
                             /*************************************************************************************************************
                             *   시뮬레이션 이력정보로 백테스트 수행결과를 반환한다.
                             **************************************************************************************************************/
-                                v_resultSimulData  =   fn_get_simulation_data2(
+                                v_resultSimulData  =   fn_get_simulation_data(
                                         v_simul_mast            /* 시뮬레이션 기본 마스터 정보 */
                                     ,   rows                    /* 일자별 종목 이력 데이터 */
                                     ,   v_arrRebalanceDate      /* 리밸런싱 일자 정보 */
@@ -2141,7 +2141,7 @@ function    fn_set_bench_mark( p_arr_daily, p_arr_bench ) {
 *  시뮬레이션 이력정보로 백테스트 수행결과를 반환한다.
 *  2019-08-14  bkLove(촤병국)
 */
-var	fn_get_simulation_data2  =   function( 
+var	fn_get_simulation_data  =   function( 
 			p_simul_mast                /* 시뮬레이션 기본 마스터 정보 */
 		,   p_simul_hist_data           /* 일자별 종목 이력 데이터 */
 		,   p_arrRebalanceDate          /* 리밸런싱 일자 정보 */
