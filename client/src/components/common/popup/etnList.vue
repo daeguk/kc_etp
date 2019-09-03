@@ -55,7 +55,7 @@ export default {
 	vm.$EventBus.$on('fn_etnFilterData', data => {
 		vm.search = data;
 		vm.filterData();
-	});		  
+	});
   },
   beforeDestroy() {
   },
