@@ -174,32 +174,40 @@
             <!--분석정보1 탭4-->
                     <v-tab-item >
                         <v-card flat>
-                                    <div class="table-box-wrap mar15">
-                                        <div class="table-box" style="max-height:250px;">
-                                            <table class="tbl_type ver10">
-                                                <colgroup>
-                                                    <col width="33%"/>
-                                                    <col width="33%"/>
-                                                    <col width="33%"/>
-                                                </colgroup>
-                                                <thead>
-                                                    <tr>
-                                                        <th class="txt_left">분석지표</th>
-                                                        <th class="txt_right">백테스트</th>
-                                                        <th class="txt_right">BM(KOSPI200)</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td class="txt_left">CAGR</td>
-                                                        <td class="txt_right">999.9999%</td>
-                                                        <td class="txt_right">999.9999%</td>
-                                                    </tr>
-                                             </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </v-card>
+                            <div class="table-box-wrap mar15">
+                                <div class="table-box" style="max-height:250px;">
+                                    <table class="tbl_type ver10">
+                                        <colgroup>
+                                            <col width="33%"/>
+                                            <col width="33%"/>
+                                            <col width="33%"/>
+                                        </colgroup>
+                                        <thead>
+                                            <tr>
+                                                <th class="txt_left">분석지표</th>
+                                                <th class="txt_right">백테스트</th>
+                                                <th class="txt_right">BM(KOSPI200)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="( row, index ) in  arr_analyze" v-bind:key="row + '_' + index" >
+                                                <td class="txt_left">
+                                                    {{ row.anal_title          /* 분석지표 */ }}
+                                                </td>
+                                                <td class="txt_right">
+                                                    <p v-if="row.backtest01" v-html="row.backtest01" />
+                                                    {{ row.backtest           /* 백테스트 */ }}
+                                                </td>
+                                                <td class="txt_right">
+                                                    <p v-if="row.benchmark01"  v-html="row.benchmark01" />
+                                                    {{ row.benchmark          /* 벤치마크 */ }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </v-card>
                     </v-tab-item>
 
 
@@ -261,6 +269,8 @@ export default {
             ,   simul_result_mast           :   {}
             ,   arr_result_daily            :   []      /* array 일자별 지수 */
             ,   arr_result_rebalance        :   []      /* array 리밸런스 */
+            ,   arr_analyze_temp            :   []      /* 분석정보#1 */
+            ,   arr_analyze                 :   []      /* 분석정보#1 */
 
         };
     },
@@ -306,6 +316,7 @@ export default {
                             ( vm.paramData.simul_mast && Object.keys( vm.paramData.simul_mast ).length > 0 )
                         ||  ( vm.paramData.arr_daily && vm.paramData.arr_daily.length > 0 )
                         ||  ( vm.paramData.arr_rebalance && vm.paramData.arr_rebalance.length > 0 )
+                        ||  ( vm.paramData.analyzeList && vm.paramData.analyzeList.length > 0 )
                     ){                        
 
                     /*************************************************************************************************************
@@ -375,8 +386,15 @@ export default {
                             }
 
                             vm.arr_result_daily.push( item );
-                        });                        
+                        });
 
+
+                        try{
+                            vm.arr_analyze_temp     =   JSON.parse( vm.paramData.analyzeList );
+                            vm.fn_setAnal01();
+                        }catch( e ) {
+                            console.log( "analyzeList 파싱 중 오류가 발생되었습ㄴ디ㅏ.", e );
+                        }
                     }
                 }
 
@@ -495,6 +513,16 @@ export default {
                                 vm.arr_result_daily.push( item );
                             });
 
+
+                        /*************************************************************************************************************
+                        *   분석정보 #1
+                        **************************************************************************************************************/
+                            try{
+                                vm.arr_analyze_temp     =   JSON.parse( response.data.analyzeList );
+                                vm.fn_setAnal01();
+                            }catch( e ) {
+                                console.log( "analyzeList 파싱 중 오류가 발생되었습ㄴ디ㅏ.", e );
+                            }                            
 
                             resolve( { result : true } );
                         }
@@ -787,6 +815,256 @@ export default {
                         ,4
                 )
             });
+        },
+
+        /*
+        * 분석정보를 설정한다.
+        * 2019-07-26  bkLove(촤병국)
+        */
+        fn_setAnal01() {
+
+            var vm = this;
+
+            if( vm.arr_analyze_temp &&  Object.keys( vm.arr_analyze_temp ).length > 0  ) {
+                var v_anal      =   {};
+                var v_anal01    =   {};
+                
+                /* 정수처리 */
+                v_anal                  =   vm.fn_getFindJson( "final_balance" );
+                v_anal.anal_title       =   "Final Balance";
+                v_anal.backtest         =   parseInt( Number( v_anal.backtest )  );
+                v_anal.benchmark        =   parseInt( Number( v_anal.benchmark ) );
+                vm.arr_analyze.push( v_anal );
+
+                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "cagr" );
+                v_anal.anal_title       =   "CAGR";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.benchmark ) * 100 ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /*  수익률 ( 연도 )
+                    %처리. 100곱한후 소수점 6째자리에서 반올림 
+                */
+                v_anal                  =   vm.fn_getFindJson( "best_y", "rtn" );
+                v_anal01                =   vm.fn_getFindJson( "best_y", "year" );
+                v_anal.anal_title       =   "Best Year";
+                v_anal.backtest01       =   v_anal01.backtest;
+                v_anal.benchmark01      =   v_anal01.benchmark;
+                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /*  수익률 ( 연도 )
+                    %처리. 100곱한후 소수점 6째자리에서 반올림 
+                */
+                v_anal                  =   vm.fn_getFindJson( "worst_y", "rtn" );
+                v_anal01                =   vm.fn_getFindJson( "worst_y", "year" );
+                v_anal.anal_title       =   "Worst Year";
+                v_anal.backtest01       =   v_anal01.backtest;
+                v_anal.benchmark01      =   v_anal01.benchmark;
+                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.benchmark ) * 100 ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "mdd" );
+                v_anal.anal_title       =   "MDD";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.benchmark ) * 100 ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "sharpe_rto" );
+                v_anal.anal_title       =   "Sharpe Ratio";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.benchmark ) ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "sortino_rto" );
+                v_anal.anal_title       =   "Sortino Ratio";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.benchmark ) ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "vs_market", "corr" );
+                v_anal.anal_title       =   "Market Correlation";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.benchmark ) ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "arith_mean" );
+                v_anal.anal_title       =   "Arithmetic Mean (daily)";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "annlzd_arith_mean" );
+                v_anal.anal_title       =   "Arithmetic Mean (annualized)";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "geo_mean" );
+                v_anal.anal_title       =   "Geometric Mean (daily)";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "stdev" );
+                v_anal.anal_title       =   "Volatility (daily)";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "annlzd_stdev" );
+                v_anal.anal_title       =   "Volatility (annualized)";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "down_dev" );
+                v_anal.anal_title       =   "Downside Deviation (daily)";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "vs_market", "beta" );
+                v_anal.anal_title       =   "Beta(vs market)";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.benchmark ) ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "vs_market", "alpha" );
+                v_anal.anal_title       =   "Alpha(vs market, annualized)";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "vs_market", "r2" );
+                v_anal.anal_title       =   "R2(vs market)";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "vs_benchmark", "beta" );
+                v_anal.anal_title       =   "Beta(vs benchmark)";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.benchmark ) ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "vs_benchmark", "alpha" );
+                v_anal.anal_title       =   "Alpha(vs benchmark, annualized)";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "vs_benchmark", "r2" );
+                v_anal.anal_title       =   "R2(vs benchmark)";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "skewness" );
+                v_anal.anal_title       =   "Skewness";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.benchmark ) ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "kurtosis" );
+                v_anal.anal_title       =   "Excess Kurtosis";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.benchmark ) ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "hist_var" );
+                v_anal.anal_title       =   "Historical VaR(5%)";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "anal_var" );
+                v_anal.anal_title       =   "Analytical VaR(5%)";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+
+                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
+                v_anal                  =   vm.fn_getFindJson( "c_var" );
+                v_anal.anal_title       =   "Conditional VaR(5%)";
+                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                vm.arr_analyze.push( v_anal );
+            }
+        },
+
+        /*
+        * key 에 일치하는 JSON 정보를 추출한다.
+        * 2019-07-26  bkLove(촤병국)
+        */
+        fn_getFindJson( p_strKey="", p_subKey="" ) {
+
+            var vm = this;
+            var returnJson  =   {
+                    backtest    :   ""
+                ,   benchmark   :   ""
+            };
+
+            if( p_strKey != "" && vm.arr_analyze_temp &&  Object.keys( vm.arr_analyze_temp ).length > 0 ) {
+
+                if( p_subKey != "" ) {
+                    if(     typeof vm.arr_analyze_temp[ "backtest" ]                        !=  "undefined"
+                        &&  typeof vm.arr_analyze_temp[ "backtest" ][ p_strKey ]            !=  "undefined" 
+                        &&  typeof vm.arr_analyze_temp[ "backtest" ][ p_strKey ][p_subKey]  !=  "undefined" 
+                    ) {
+                        returnJson.backtest     =   vm.arr_analyze_temp[ "backtest" ][ p_strKey ][p_subKey];
+                    }
+
+
+                    if(     typeof vm.arr_analyze_temp[ "benchmark" ]                       !=  "undefined"
+                        &&  typeof vm.arr_analyze_temp[ "benchmark" ][ p_strKey ]           !=  "undefined" 
+                        &&  typeof vm.arr_analyze_temp[ "benchmark" ][ p_strKey ][p_subKey]  !=  "undefined" 
+                    ) {
+                        returnJson.benchmark    =   vm.arr_analyze_temp[ "benchmark" ][ p_strKey ][p_subKey];
+                    } 
+
+                }else{
+
+                    if(     typeof vm.arr_analyze_temp[ "backtest" ]                !=  "undefined"
+                        &&  typeof vm.arr_analyze_temp[ "backtest" ][ p_strKey ]    !=  "undefined" 
+                    ) {
+                        returnJson.backtest     =   vm.arr_analyze_temp[ "backtest" ][ p_strKey ];
+                    }
+
+
+                    if(     typeof vm.arr_analyze_temp[ "benchmark" ]               !=  "undefined"
+                        &&  typeof vm.arr_analyze_temp[ "benchmark" ][ p_strKey ]   !=  "undefined" 
+                    ) {
+                        returnJson.benchmark    =   vm.arr_analyze_temp[ "benchmark" ][ p_strKey ];
+                    }
+                }
+            }
+
+            return  returnJson;
+
         }
     }
 };

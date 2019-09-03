@@ -869,6 +869,7 @@
             ,   BEFORE_IMPORTANCE               /*(전) 시가총액 비중 */
             ,   AFTER_IMPORTANCE                /*(후) 시가총액 비중 */
             ,   EVENT_FLAG                      /*이벤트(비중조절, 종목편입)-COM011 */
+            ,   rebalance_import_yn             /* 리밸런싱 당일 종목편입 여부(1-편입,0-미 편입) */
 
             ,   reg_id                          /*등록자 ID */
             ,   reg_time                        /*등록시간 */
@@ -890,6 +891,10 @@
             ,   #{data.BEFORE_IMPORTANCE}       /*(전) 시가총액 비중 */
             ,   #{data.AFTER_IMPORTANCE}        /*(후) 시가총액 비중 */
             ,   #{data.EVENT_FLAG}              /* 이벤트(비중조절, 종목편입)-COM011 */
+            ,   IFNULL(
+                        #{data.rebalance_import_yn}
+                    ,   '0'
+                )                               /* 리밸런싱 당일 종목편입 여부(1-편입,0-미 편입) */
 
             ,   #{user_id}                      /*등록자 ID */
             ,   now()                           /*등록시간 */
@@ -936,6 +941,7 @@
                 ,   tm_simul_result_rebalance.BEFORE_IMPORTANCE                 AS  BEFORE_IMPORTANCE       /* (전) 시가총액 비중 */
                 ,   tm_simul_result_rebalance.AFTER_IMPORTANCE                  AS  AFTER_IMPORTANCE        /* (후) 시가총액 비중 */
                 ,   tm_simul_result_rebalance.EVENT_FLAG                        AS  EVENT_FLAG              /* 이벤트(비중조절, 종목편입)-COM011 */
+                ,   tm_simul_result_rebalance.rebalance_import_yn               AS  rebalance_import_yn     /* 리밸런싱 당일 종목편입 여부(1-편입,0-미 편입) */
                 
           FROM  tm_simul_result_rebalance
 
@@ -1014,12 +1020,12 @@
 
                 )       td_index_hist
 
-                ON  (   tm_simul_result_daily.F12506    =   td_index_hist.F12506    )
-        LEFT JOIN td_cd_hist
-      	   ON (
-                 td_cd_hist.F12506 = tm_simul_result_daily.F12506
-              )
-        LEFT  JOIN    
+                  ON    (   tm_simul_result_daily.F12506    =   td_index_hist.F12506    )
+          LEFT  JOIN    td_cd_hist
+      	          ON    (
+                            td_cd_hist.F12506   =   tm_simul_result_daily.F12506
+                        )
+          LEFT  JOIN  
                 (
                     SELECT     td_index_hist.F16013                     AS  F16013          /* 단축코드 */
                             ,  td_index_hist.F12506                     AS  F12506          /* 입회일자 */
@@ -1031,9 +1037,9 @@
                                         td_index_hist.F16013    =   td_index_basic.F16013
                                 AND     td_index_hist.market_id =   td_index_basic.market_id
                             )
-                     WHERE  td_index_basic.F16013       =   '1'
-                       AND  td_index_basic.large_type   =   'KRX'
-                       AND  td_index_basic.middle_type  =   'KSP'
+                     WHERE  td_index_basic.F16013       =   #{bench_index_cd01}
+                       AND  td_index_basic.large_type   =   #{bench_index_cd02}
+                       AND  td_index_basic.middle_type  =   #{bench_index_cd03}
 
                             /* start_year 이전 첫 영업일 이후 부터 시작 */
                        AND  td_index_hist.F12506        >=
@@ -1043,13 +1049,13 @@
                                   JOIN  tm_simul_portfolio
                                     ON  td_kspjong_hist.F16013      =   tm_simul_portfolio.F16013
                                  WHERE  1 = 1
-                                   AND  tm_simul_portfolio.scen_cd  =   '0000100003'
-                                   AND  tm_simul_portfolio.grp_Cd   =   '*'
+                                   AND  tm_simul_portfolio.scen_cd  =   #{scen_cd}
+                                   AND  tm_simul_portfolio.grp_Cd   =   #{grp_cd}
 
-                                   AND  td_kspjong_hist.F12506      <   CONCAT( '2018', '0101' )         /* 입회일자 이전 */
+                                   AND  td_kspjong_hist.F12506      <   CONCAT( #{start_year}, '0101' )         /* 입회일자 이전 */
                                    AND  td_kspjong_hist.F12506      >=  DATE_FORMAT( 
                                                                                     DATE_SUB( 
-                                                                                            CONCAT( '2018', '0101' )
+                                                                                            CONCAT( #{start_year}, '0101' )
                                                                                         ,   INTERVAL 2 WEEK
                                                                                     )
                                                                                 ,   '%Y%m%d' 
@@ -1060,7 +1066,7 @@
 
                 )       td_kospi_hist
 
-                ON  (   tm_simul_result_daily.F12506    =   td_kospi_hist.F12506    )
+                  ON    (   tm_simul_result_daily.F12506    =   td_kospi_hist.F12506    )
     ]]>
     </select>
 
