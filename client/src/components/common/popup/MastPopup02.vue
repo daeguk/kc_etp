@@ -4,7 +4,7 @@
       <v-flex xs12>
         <v-card flat>
           <v-dialog v-model="dialog" persistent max-width="500">                                   
-            <v-card flat  max-height="775">
+            <v-card flat  height="775">
               <h5>
                 <v-card-title class="pb-0">
                   자산추가
@@ -23,38 +23,34 @@
                     <v-tab v-for="tab of tabs"  :key="tab.id"   @click="fn_pageMove(tab.id)">
                         {{ tab.name }}
                     </v-tab>
-                </v-tabs>                  
+                </v-tabs>                
+
+				<v-card-title >
+					<v-text-field class="pt-0" v-model="search" v-on:keyup="fn_filterData" append-icon="search" label="Search" single-line hide-details></v-text-field>
+				</v-card-title>
 
                   <v-tabs-items v-model="activeTab">
                     <v-tab-item>
                       <kospiList    v-if="activeTab == 0 && kospiList.length > 0"
                                     :results="kospiList" 
-									:searchData="searchData"
 
-                                    @selectedItem="getSelectedItem"
-									@fn_searchData="fn_searchData" ></kospiList>
+                                    @selectedItem="getSelectedItem"></kospiList>
                     </v-tab-item>
                     <v-tab-item>
                       <kosdaqList   v-if="activeTab == 1 && kosdaqList.length > 0"
                                     :results="kosdaqList" 
-									:searchData="searchData"
                       
-                                    @selectedItem="getSelectedItem"
-									@fn_searchData="fn_searchData" ></kosdaqList>
+                                    @selectedItem="getSelectedItem"></kosdaqList>
                     </v-tab-item>
                     <v-tab-item>
-                      <etfList 	v-if="activeTab == 2"
-					  			:searchData="searchData"
+                      <etfList 		v-if="activeTab == 2"
 
-					  			@selectedItem="getSelectedItem"
-					  			@fn_searchData="fn_searchData"></etfList>
+					  				@selectedItem="getSelectedItem"></etfList>
                     </v-tab-item>
                     <v-tab-item>
-                      <etnList 	v-if="activeTab == 3"
-					  			:searchData="searchData"
+                      <etnList 		v-if="activeTab == 3"
 
-					  			@selectedItem="getSelectedItem"
-					  			@fn_searchData="fn_searchData"></etnList>
+					  				@selectedItem="getSelectedItem"></etnList>
                     </v-tab-item>
                     </v-tabs-items>
                 </v-flex>
@@ -106,7 +102,8 @@ export default {
 
         ,   kospiList : []
         ,   kosdaqList : []
-		,	searchData : ""
+
+		,	search		: ""
     };
   },
   components: {
@@ -149,6 +146,7 @@ export default {
         var vm = this;
 
         vm.activeTab    =   tab_id;
+		vm.fn_filterData();
     },
 
     fn_showMessageBox: function(title, msg, option, gubun) {
@@ -210,10 +208,25 @@ export default {
         });
     },    
 
-	fn_searchData( p_search ) {
+	fn_filterData() {
 		var vm = this;
 
-		vm.searchData = p_search;
+        /* KOSPI */
+		if( vm.activeTab == 0 && vm.kospiList.length > 0 ) {
+        	vm.$EventBus.$emit('fn_kospiFilterData', vm.search);
+		}
+        /* KOSDAQ */
+        else if( vm.activeTab == 1 && vm.kosdaqList.length > 0 ){
+			vm.$EventBus.$emit('fn_kosdaqFilterData', vm.search);
+		}
+        /* ETF */
+        else if( vm.activeTab == 2 ){
+			vm.$EventBus.$emit('fn_etfFilterData', vm.search);
+		}
+        /* ETN */
+        else if( vm.activeTab == 3 ){
+			vm.$EventBus.$emit('fn_etnFilterData', vm.search);
+		}
 	}
   }
 }

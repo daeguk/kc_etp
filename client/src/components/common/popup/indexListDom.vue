@@ -1,8 +1,11 @@
 <template>
 <v-card flat>
+
+<!-- 
   <v-card-title>
     <v-text-field class="pt-0" v-model="search" v-on:keyup="filterData" append-icon="search" label="Search" single-line hide-details></v-text-field>
   </v-card-title>   
+-->
   <v-card flat>
     <table id="jisu_grid" class="tbl_type" style="width:100%">
       <colgroup>
@@ -43,7 +46,14 @@ export default {
   }, 
   components: {},
   computed: {},
-  created: function() {},
+  created: function() {
+    var vm = this;
+
+	vm.$EventBus.$on('fn_indexListDomFilterData', data => {
+		vm.search = data;
+		vm.filterData();
+	});      
+  },
   beforeDestroy() {},
   mounted: function() {
     var vm = this;
@@ -104,18 +114,29 @@ export default {
     },
     filterData: function() {
       var vm = this;
-      var filterData = _.filter(vm.results, function(o) { 
-          var nmIdx = o.F16002.indexOf(vm.search);
-          var cdIdx = o.F16013.indexOf(vm.search);
-          if (nmIdx > -1 || cdIdx > -1) {
-              return true; 
-          } else {
-              return false;
-          }
-      });
 
-      jisu_grid.clear().draw();
-      jisu_grid.rows.add(filterData).draw();           
+		var delay = (function(){
+			var timer = 0;
+			return function(callback, ms){
+				clearTimeout (timer);
+				timer = setTimeout(callback, ms);
+			};
+		})();      
+
+        delay(function(){
+            var filterData = _.filter(vm.results, function(o) { 
+                var nmIdx = o.F16002.indexOf(vm.search);
+                var cdIdx = o.F16013.indexOf(vm.search);
+                if (nmIdx > -1 || cdIdx > -1) {
+                    return true; 
+                } else {
+                    return false;
+                }
+            });
+
+            jisu_grid.clear().draw();
+            jisu_grid.rows.add(filterData).draw();   
+        }, 1000 );
     },
   }
 }
