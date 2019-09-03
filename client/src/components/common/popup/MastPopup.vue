@@ -4,7 +4,7 @@
       <v-flex xs12>
         <v-card flat>
           <v-dialog v-model="dialog" persistent max-width="500">                                   
-            <v-card flat>
+            <v-card flat height="775">
               <h5>
                 <v-card-title class="pb-0">
                   비교자산추가
@@ -16,25 +16,31 @@
               </h5>
               <v-layout row wrap>
                 <v-flex xs12>
-                  <v-tabs grow fixed-tabs light v-model="tab">
-                    <v-tabs-slider ></v-tabs-slider>
-                    <v-tab
-                        v-for="item in items"
-                        :key="item"
-                    >{{ item }}</v-tab>
-                  </v-tabs>
-                  <v-tabs-items v-model="tab">
+
+                    <v-tabs v-model="activeTab" grow fixed-tabs light>
+                        <v-tabs-slider></v-tabs-slider>
+
+                        <v-tab v-for="tab of tabs"  :key="tab.id"   @click="fn_pageMove(tab.id)">
+                            {{ tab.name }}
+                        </v-tab>
+                    </v-tabs>                      
+
+				<v-card-title >
+					<v-text-field class="pt-0" v-model="search" v-on:keyup="fn_filterData" append-icon="search" label="Search" single-line hide-details></v-text-field>
+				</v-card-title>
+
+                  <v-tabs-items v-model="activeTab">
                     <v-tab-item>
-                      <etfList @selectedItem="getSelectedItem"></etfList>
+                      <etfList      v-if="activeTab == 0"    @selectedItem="getSelectedItem"></etfList>
                     </v-tab-item>
                     <v-tab-item>
-                      <etnList @selectedItem="getSelectedItem"></etnList>
+                      <etnList      v-if="activeTab == 1"    @selectedItem="getSelectedItem"></etnList>
                     </v-tab-item>
                     <v-tab-item>
-                      <indexListDom @selectedItem="getSelectedItem"></indexListDom>
+                      <indexListDom v-if="activeTab == 2"   @selectedItem="getSelectedItem"></indexListDom>
                     </v-tab-item>
                     <v-tab-item>
-                      <indexListAll @selectedItem="getSelectedItem"></indexListAll>
+                      <indexListAll v-if="activeTab == 3"   @selectedItem="getSelectedItem"></indexListAll>
                     </v-tab-item>
                     </v-tabs-items>
                 </v-flex>
@@ -57,9 +63,16 @@ export default {
   props: [],
   data() {
     return {
-        tab: null,
-        items: ["ETF", "ETN", "INDEX(국내)", "INDEX(전체)"],
-        dialog: false
+            activeTab: 0
+        ,   tabs: [
+                { id: 0, name: "ETF"            },
+                { id: 1, name: "ETN"            },
+                { id: 2, name: "INDEX(국내)"     },
+                { id: 3, name: "INDEX(전체)"     },
+            ],
+        dialog: false,
+
+        search		: ""
     };
   },
   components: {
@@ -86,7 +99,35 @@ export default {
     closeModal: function() {
       this.dialog = false;
       this.$emit("closeMastModal");
-    }
+    },
+
+    fn_pageMove( tab_id ) {
+        var vm = this;
+
+        vm.activeTab    =   tab_id;
+		vm.fn_filterData();
+    },
+
+	fn_filterData() {
+		var vm = this;
+
+        /* ETF */
+		if( vm.activeTab == 0 ) {
+        	vm.$EventBus.$emit('fn_etfFilterData', vm.search);
+		}
+        /* ETN */
+        else if( vm.activeTab == 1 ){
+			vm.$EventBus.$emit('fn_etnFilterData', vm.search);
+		}
+        /* INDEX(국내) */
+        else if( vm.activeTab == 2 ){
+			vm.$EventBus.$emit('fn_indexListDomFilterData', vm.search);
+		}
+        /* INDEX(전체) */
+        else if( vm.activeTab == 3 ){
+			vm.$EventBus.$emit('fn_indexListAllFilterData', vm.search);
+		}
+	}    
   }
 }
 </script>

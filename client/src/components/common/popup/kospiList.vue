@@ -1,9 +1,11 @@
 <template>
 
 <v-card flat>
+<!-- 
   <v-card-title >
     <v-text-field class="pt-0" v-model="search" v-on:keyup="filterData" append-icon="search" label="Search" single-line hide-details></v-text-field>
-  </v-card-title>                       
+  </v-card-title>
+-->
  <v-card flat>
   <table id="kospi_grid" class="tbl_type" style="width:100%;">
     <colgroup>
@@ -37,7 +39,7 @@ import Config from '@/js/config.js'
 var kospi_grid = null;
 export default {
 
-  props: [ "results", "searchData" ],
+  props: [ "results" ],
   data () {
     return {
       search: '',
@@ -49,14 +51,18 @@ export default {
   computed: {
       
   },
-  created: function() {},
-  beforeDestroy() {},
-  mounted: function() {
+  created: function() {
     var vm = this;
 
-	if( vm.searchData ) {
-		vm.search = vm.searchData;
-	}
+	vm.$EventBus.$on('fn_kospiFilterData', data => {
+		vm.search = data;
+		vm.filterData();
+	});		  
+  },
+  beforeDestroy() {
+  },
+  mounted: function() {
+    var vm = this;
 
     vm.getKospiList();
 
@@ -114,21 +120,31 @@ export default {
     filterData: function() {
       var vm = this;
       vm.search = vm.search.toUpperCase();
-      var filterData = _.filter(vm.results, function(o) { 
-        var nmIdx = o.F16002.indexOf(vm.search);
-        var cdIdx = o.F16013.indexOf(vm.search);
-        var cdIdx1 = o.F16012.indexOf(vm.search);
-        if (nmIdx > -1 || cdIdx > -1 || cdIdx > -1) {
-            return true; 
-        } else {
-            return false;
-        }
-      });
-      kospi_grid.clear().draw();
-      kospi_grid.rows.add(filterData).draw();   
 
-	  vm.$emit( "fn_searchData", vm.search );        
-    }
+		var delay = (function(){
+			var timer = 0;
+			return function(callback, ms){
+				clearTimeout (timer);
+				timer = setTimeout(callback, ms);
+			};
+		})();
+
+        delay(function(){
+			var filterData = _.filter(vm.results, function(o) { 
+				var nmIdx = o.F16002.indexOf(vm.search);
+				var cdIdx = o.F16013.indexOf(vm.search);
+				var cdIdx1 = o.F16012.indexOf(vm.search);
+				if (nmIdx > -1 || cdIdx > -1 || cdIdx > -1) {
+					return true; 
+				} else {
+					return false;
+				}
+			});
+			kospi_grid.clear().draw();
+			kospi_grid.rows.add(filterData).draw();
+
+	  	}, 1000 );			
+	}
   }
 }
 </script>
