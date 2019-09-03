@@ -182,9 +182,8 @@ var	fn_set_dayilyJongmok =	function(
         ,   rebalance_date_cd       :   ""              /* 리밸런싱일자 (COM007) */
         ,   init_invest_money       :   0               /* 초기투자금액 */
         ,   bench_mark_cd           :   ""              /* 벤치마크 (COM008) */
-        ,   importance_method_cd    :   ""              /* 비중설정방식 (COM009) */
-
-        ,   rebalancing             :   "0"             /* 리밸런싱에 포함되는지 체크 */
+        ,   importance_method_cd    :   ""              /* 비중설정방식 (COM009) */        
+        ,   rebalancing             :   "0"             /* 리밸런싱에 포함되는지 체크 */        
     };
 
 
@@ -357,7 +356,7 @@ var	fn_set_dayilyJongmok =	function(
                 totalInfo.rebalance_date_cd         =   v_portItem.rebalance_date_cd;                       /* 리밸런싱일자 (COM007) */
                 totalInfo.init_invest_money         =   v_portItem.init_invest_money;                       /* 초기투자금액 */
                 totalInfo.bench_mark_cd             =   v_portItem.bench_mark_cd;                           /* 벤치마크 (COM008) */
-                totalInfo.importance_method_cd      =   v_portItem.importance_method_cd;                    /* 비중설정방식 (COM009) */
+                totalInfo.importance_method_cd      =   v_portItem.importance_method_cd;                    /* 비중설정방식 (COM009) */                
             }
         }
 

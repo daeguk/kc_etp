@@ -21,6 +21,7 @@ var fs = require('fs');
 
 
 var simulModule = require('./simulModule');
+var simulAnalyze = require('./analyzeTimeserise');
 
 
 var log = config.logger;
@@ -924,6 +925,11 @@ var saveBaicInfo = function(req, res) {
                         conn.rollback();
 
                     } else {
+
+                        /* 분석 정보 처리 */
+                        var analyzeList = simulAnalyze.getAnalyze_timeseries(v_resultSimulData.arr_daily);
+
+
                         resultMsg.result        =   true;
                         resultMsg.msg           =   "성공적으로 저장하였습니다.";
 
@@ -2108,7 +2114,8 @@ function    fn_set_bench_mark( p_arr_daily, p_arr_bench ) {
 
 
             v_daily.bm_data01       =   Number( v_bm.F15001 );
-
+            v_daily.F15175          =   Number(v_bm.F15175);
+            v_daily.KOSPI_F15001    =   Number(v_bm.KOSPI_F15001);
             /* 최초인 경우 */
             if( i == 0 ) {
                 v_daily.bm_1000_data    =   1000;
@@ -2642,8 +2649,7 @@ var	fn_get_simulation_data  =   function(
                         console.log( "error", e );
                     }
                 }
-			}
-
+			}            
 		}catch( e ) {
 			console.log( "fn_get_simulation_data error", e );
 		}
