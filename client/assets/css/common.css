@@ -1018,3 +1018,8 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .margin_n{margin:0 !important;}
 .more_menu_w li{display:block; padding:10px 15px; background:#ffffff; cursor: pointer;}
 .mar15{margin-top:15px !important;}
+
+.simul_port_w .insize{width:160px;}
+.simul_port_w .intxt{vertical-align: text-bottom;  padding-top:6px; padding-left:3px; padding-right:5px;}
+.simul_port_w .insize .v-messages{display:none;}
+.simul_port_w .insize .v-text-field__details{display: none;}

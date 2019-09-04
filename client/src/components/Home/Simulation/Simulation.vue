@@ -155,6 +155,23 @@
                             </div>
                         </v-flex>
                     </v-layout>
+                     <v-layout row mt-3 class="simul_port_w">
+                        <v-flex class="intxt">리밸런싱 내역조정: </v-flex>
+                        <v-flex class="insize">
+                            <v-select   :items="arr_start_year" 
+                            
+                                        item-text="text" 
+                                        item-value="value"  
+
+                                        @change="fn_resetErrorMessage();"
+                                        
+                                        v-model="start_year" 
+                                        placeholder="선택하세요" 
+                                        outline>
+                            </v-select>
+                            
+                        </v-flex>
+                    </v-layout>
 
 
                     <v-card flat class="pt-3">
@@ -195,7 +212,8 @@
                             </span>
                         </div> 
 
-                        <div class="text-xs-center mt-3">                                                    
+                        <div class="text-xs-center mt-3"> 
+                            <v-btn depressed outline color="primary" @click="">리밸런싱 내역조정</v-btn>                                                   
                             <v-btn depressed color="primary" @click.stop="fn_saveBaicInfo()">백테스트 실행</v-btn>
                         </div>
 
