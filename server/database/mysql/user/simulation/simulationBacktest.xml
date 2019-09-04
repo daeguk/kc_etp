@@ -1037,9 +1037,9 @@
                                         td_index_hist.F16013    =   td_index_basic.F16013
                                 AND     td_index_hist.market_id =   td_index_basic.market_id
                             )
-                     WHERE  td_index_basic.F16013       =   #{bench_index_cd01}
-                       AND  td_index_basic.large_type   =   #{bench_index_cd02}
-                       AND  td_index_basic.middle_type  =   #{bench_index_cd03}
+                     WHERE  td_index_basic.F16013       =   '1'
+                       AND  td_index_basic.large_type   =   'KRX'
+                       AND  td_index_basic.middle_type  =   'KSP'
 
                             /* start_year 이전 첫 영업일 이후 부터 시작 */
                        AND  td_index_hist.F12506        >=

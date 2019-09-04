@@ -937,36 +937,30 @@ var saveBaicInfo = function(req, res) {
                                 msg = {};
                             }                            
 
-                            if(     paramData.start_year
-                                &&  paramData.bench_mark_cd
-                                &&  paramData.bench_mark_cd != "0"
-                            ) {
+                           
 
-                                stmt = mapper.getStatement('simulationBacktest', 'getSimulBenchMark', paramData, format);
-                                log.debug(stmt, paramData);
+                            stmt = mapper.getStatement('simulationBacktest', 'getSimulBenchMark', paramData, format);
+                            log.debug(stmt, paramData);
 
-                                conn.query(stmt, function(err, rows) {
+                            conn.query(stmt, function(err, rows) {
 
-                                    if (err) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationBacktest.getSimulBenchMark Error while performing Query";
-                                        resultMsg.err = err;
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulationBacktest.getSimulBenchMark Error while performing Query";
+                                    resultMsg.err = err;
 
-                                        return callback(resultMsg);
-                                    }
+                                    return callback(resultMsg);
+                                }
 
-                                    if ( rows || rows.length > 0 ) {
-                                        /* 일자별 지수에 밴치마크 정보를 설정한다. */
-                                        fn_set_bench_mark( v_resultSimulData.arr_daily, rows );
-                                    }
+                                if ( rows || rows.length > 0 ) {
+                                    /* 일자별 지수에 밴치마크 정보를 설정한다. */
+                                    fn_set_bench_mark( v_resultSimulData.arr_daily, rows );
+                                }
 
-                                    callback(null, msg);
-                                });
-                                
-                            }else{
                                 callback(null, msg);
-                            }
-
+                            });
+                                
+                            
                         } catch (err) {
 
                             resultMsg.result = false;
