@@ -40,7 +40,7 @@ var getAnalyze_timeseries = async function(arr_daily) {
 
         /* 파일에 write 한다. */
         console.log( "####### 1) 파일 write START" );
-        fs.writeFile(fileName, JSON.stringify(analyzeList), 'utf8', async function(error) {
+        fs.writeFile(fileName, JSON.stringify(analyzeList), 'utf8', function(error) {
             if (error) {
                 log.debug( "파일 write 중 오류가 발생되었습니다.", error );
                 resolve( { result : false } );

@@ -466,7 +466,7 @@ var saveBaicInfo = function(req, res) {
                                 }
 
                             }else{
-                                callback(null, "");
+                                callback(null, msg);
                             }
 
                         } catch (err) {
@@ -485,6 +485,8 @@ var saveBaicInfo = function(req, res) {
                             msg = {};
                         }
 
+
+console.log( "msg.arrInsertDtl", msg.arrInsertDtl.length );
                         /* 등록건이 존재하는 경우 */
                         if( msg.arrInsertDtl && msg.arrInsertDtl.length > 0 ) {
 
