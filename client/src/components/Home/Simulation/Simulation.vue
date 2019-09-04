@@ -168,8 +168,10 @@
                                         v-model="start_year" 
                                         placeholder="선택하세요" 
                                         outline>
-                            </v-select>
-                            
+                                        </v-select>
+                                </span>
+                                <span><button type='button'  class="exceldown_btn" @click.stop="fn_downExcel"></button></span>
+                            </div>
                         </v-flex>
                     </v-layout>
 
