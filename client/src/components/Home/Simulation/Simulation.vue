@@ -89,7 +89,7 @@
                                         :value="item.com_dtl_cd"
                                         :disabled="disabled_rebalance_cd[index]"
 
-                                        @change="fn_resetErrorMessage();"
+                                        @change="fn_resetErrorMessage();fn_getRebalanceDate();"
 
                                         color="primary"
                                     ></v-radio>
@@ -135,8 +135,8 @@
                     <h4>포트폴리오 설정</h4>
                     <v-layout row>
                         <v-flex xs12>
-                            <div class="left_w">
-                                <span class="intext">비중설정방식:</span>
+                            <div class="right_btn">
+                                <span>비중설정방식:</span>
                                 <span class="toggle2">
 
                                     <v-btn-toggle   v-model="importance_method_cd"  class="toggle_01" >
@@ -153,9 +153,12 @@
 
                                 </span>
                             </div>
-                            <div  class="right_w">
-                                <span class="intext">리밸런싱 날짜:</span>
-                                <span> <v-select   :items="arr_start_year" 
+                        </v-flex>
+                    </v-layout>
+                     <v-layout row mt-3 class="simul_port_w">
+                        <v-flex class="intxt">리밸런싱 내역조정: </v-flex>
+                        <v-flex class="insize">
+                            <v-select   :items="arr_start_year" 
                             
                                         item-text="text" 
                                         item-value="value"  
@@ -165,11 +168,12 @@
                                         v-model="start_year" 
                                         placeholder="선택하세요" 
                                         outline>
-                                        </v-select>
-                                </span>
-                            </div>
+                            </v-select>
+                            
                         </v-flex>
                     </v-layout>
+
+
                     <v-card flat class="pt-3">
                         <table class="tbl_type ver10"   id="table01">
                             <caption>헤더 고정 테이블</caption>
@@ -208,7 +212,7 @@
                             </span>
                         </div> 
 
-                        <div class="text-xs-center mt-3"> 
+                        <div class="text-xs-center mt-3">
                             <v-btn depressed outline color="primary" @click="">리밸런싱 내역조정</v-btn>                                                   
                             <v-btn depressed color="primary" @click.stop="fn_saveBaicInfo()">백테스트 실행</v-btn>
                         </div>
@@ -1582,6 +1586,9 @@ export default {
 
                             /* 리밸런싱주기 선택시 v-radio 의 disabled 정보를 다시 셋팅한다. */
                             vm.fn_resetRebalanceDateCd();
+
+                            /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                            vm.fn_getRebalanceDate();
                         }
                     }
                 }
@@ -1680,6 +1687,90 @@ export default {
                     $(this).remove();
                 }
             });
+        },
+
+        /*
+         * 화면에서 select 된 리밸런싱 일자를 조회한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        async fn_getRebalanceDate() {
+            var vm = this;
+
+            vm.arr_show_error_message   =   [];
+
+            if( !vm.start_year ) {
+                vm.arr_show_error_message.push( "[조건설정] 시작년도를 선택해 주세요." );
+            }
+
+            if( !vm.rebalance_cycle_cd ) {
+                vm.arr_show_error_message.push( "[조건설정] 리밸런싱주기를 선택해 주세요." );
+            }
+
+            if( !vm.rebalance_date_cd ) {
+                vm.arr_show_error_message.push( "[조건설정] 리밸런싱 일자를 선택해 주세요." );
+            }           
+
+            if( vm.arr_show_error_message && vm.arr_show_error_message.length > 0  ) {
+                return  false;
+            }
+
+
+            return  await new Promise(function(resolve, reject) {
+
+                vm.fn_showProgress( true );
+                axios.post(Config.base_url + "/user/simulation/getRebalanceDate", {
+                    data: {     
+                            "start_year"            :   vm.start_year 
+                        ,   "rebalance_cycle_cd"    :   vm.rebalance_cycle_cd
+                        ,   "rebalance_date_cd"     :   vm.rebalance_date_cd
+                    }
+                }).then( function(response) {
+
+                    vm.fn_showProgress( false );
+
+                    if (response && response.data) {
+                        var msg = ( response.data.msg ? response.data.msg : "" );
+
+                        if (!response.data.result) {
+                            if( msg ) {
+                                vm.arr_show_error_message.push( msg );
+                            }
+
+                            resolve( { result : false } );
+                        }else{
+                            var dataList = response.data.dataList;
+                            resolve( { result : true, dataList : dataList } );
+                        }
+
+                    }else{
+                        resolve( { result : false } );
+                    }
+
+                }).catch(error => {
+                    resolve( { result : false } );
+
+                    vm.fn_showProgress( false );
+                    if ( vm.$refs.confirm2.open(
+                            '확인',
+                            '서버로 부터 응답을 받지 못하였습니다.',
+                            {}
+                            ,4
+                        )
+                    ) {
+                    }
+                });
+
+            }).catch( function(e1) {
+                console.log( e1 );
+            });
+        },        
+
+        /*
+         * 포트폴리오 엑셀을 업로드 한다.
+         * 2019-07-26  bkLove(촤병국)
+         */    
+        fn_uploadPortfolio() {
+
         }
     }
 };
