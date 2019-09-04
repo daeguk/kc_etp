@@ -135,8 +135,8 @@
                     <h4>포트폴리오 설정</h4>
                     <v-layout row>
                         <v-flex xs12>
-                            <div class="right_btn">
-                                <span>비중설정방식:</span>
+                            <div class="left_w">
+                                <span class="intext">비중설정방식:</span>
                                 <span class="toggle2">
 
                                     <v-btn-toggle   v-model="importance_method_cd"  class="toggle_01" >
@@ -153,12 +153,9 @@
 
                                 </span>
                             </div>
-                        </v-flex>
-                    </v-layout>
-                     <v-layout row mt-3 class="simul_port_w">
-                        <v-flex class="intxt">리밸런싱 내역조정: </v-flex>
-                        <v-flex class="insize">
-                            <v-select   :items="arr_start_year" 
+                            <div  class="right_w">
+                                <span class="intext">리밸런싱 날짜:</span>
+                                <span> <v-select   :items="arr_start_year" 
                             
                                         item-text="text" 
                                         item-value="value"  
@@ -168,12 +165,11 @@
                                         v-model="start_year" 
                                         placeholder="선택하세요" 
                                         outline>
-                            </v-select>
-                            
+                                        </v-select>
+                                </span>
+                            </div>
                         </v-flex>
                     </v-layout>
-
-
                     <v-card flat class="pt-3">
                         <table class="tbl_type ver10"   id="table01">
                             <caption>헤더 고정 테이블</caption>
