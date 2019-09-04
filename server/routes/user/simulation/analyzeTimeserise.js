@@ -38,7 +38,7 @@ var getAnalyze_timeseries = function(arr_daily) {
     
     fs.writeFile(fileName, JSON.stringify(analyzeList), 'utf8', function(error) {
         if (error) {
-            console.log(error)
+            log.debug(error)
         } else {
           var options = {
             mode: 'text',
@@ -50,7 +50,8 @@ var getAnalyze_timeseries = function(arr_daily) {
               
           PythonShell.run('./python/analyze_timeseries.py', options, function (err, results) {
               if (err) throw err;
-              console.log('results: %j', results);        
+              log.debug('results: %j', results);        
+              fs.unlinkSync(fileName);
               return results;
           });
         }
