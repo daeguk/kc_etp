@@ -76,6 +76,7 @@ var saveBaicInfo = function(req, res) {
         resultMsg.arr_rebalance         =   [];
         resultMsg.simul_mast            =   {};
         resultMsg.arr_bench_mark        =   [];
+        resultMsg.analyzeList           =   [];
 
         Promise.using(pool.connect(), conn => {
 
@@ -465,7 +466,7 @@ var saveBaicInfo = function(req, res) {
                                 }
 
                             }else{
-                                callback(null, "");
+                                callback(null, msg);
                             }
 
                         } catch (err) {
@@ -955,14 +956,15 @@ var saveBaicInfo = function(req, res) {
                                     }
 
                                     if ( rows || rows.length > 0 ) {
+                                        /* 일자별 지수에 밴치마크 정보를 설정한다. */
                                         fn_set_bench_mark( v_resultSimulData.arr_daily, rows );
                                     }
 
-                                    callback(null);
+                                    callback(null, msg);
                                 });
                                 
                             }else{
-                                callback(null);
+                                callback(null, msg);
                             }
 
                         } catch (err) {
@@ -973,7 +975,53 @@ var saveBaicInfo = function(req, res) {
 
                             callback(resultMsg);
                         }
-                    },                
+                    },
+
+                    /* 15. 파이선을 통해 분석정보를 가져온다.*/
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
+
+                            /* 파이선을 통해 분석정보를 가져온다. */
+                            if( v_resultSimulData.arr_daily && v_resultSimulData.arr_daily.length > 0 ) {
+
+                                log.debug( "분석정보 #1 조회 from 파이선 START");
+                                simulAnalyze.getAnalyze_timeseries(v_resultSimulData.arr_daily).then( function(e) {
+                                    if( e && e.result ) {
+                                        if( e.results && e.results.length > 0 ) {
+                                            resultMsg.analyzeList   =   e.results;
+                                        }
+                                        callback(null);
+                                    }else{
+
+                                        stmt    =   "";
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
+                                        resultMsg.err = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
+
+                                        return callback(resultMsg);
+
+                                    }
+                                });
+                                log.debug( "분석정보 #1 조회 from 파이선 END");
+
+                            }else{
+                                callback(null);
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
 
                 ], function(err) {
 
@@ -982,10 +1030,6 @@ var saveBaicInfo = function(req, res) {
                         conn.rollback();
 
                     } else {
-
-                        /* 분석 정보 처리 */
-                        var analyzeList = simulAnalyze.getAnalyze_timeseries(v_resultSimulData.arr_daily);
-
 
                         resultMsg.result        =   true;
                         resultMsg.msg           =   "성공적으로 저장하였습니다.";
@@ -1007,6 +1051,7 @@ var saveBaicInfo = function(req, res) {
                             ,   importance_method_cd    :   paramData.importance_method_cd  /* 비중설정방식 (COM009) */
                         };
 
+                        /* 일자별 지수에 balance 정보를 설정한다. */
                         fn_set_balance( v_resultSimulData.arr_daily, resultMsg.simul_mast );
 
                         resultMsg.arr_daily         =   [ ...v_resultSimulData.arr_daily];
@@ -1035,6 +1080,7 @@ var saveBaicInfo = function(req, res) {
         resultMsg.arr_daily             =   [];
         resultMsg.arr_rebalance         =   [];
         resultMsg.simul_mast            =   {};
+        resultMsg.analyzeList           =   [];
 
         res.json(resultMsg);
         res.end();
@@ -1798,6 +1844,7 @@ var getBacktestResult = function(req, res) {
         resultMsg.arr_result_rebalance  =   [];
         resultMsg.simul_result_mast     =   {};
         resultMsg.arr_bench_mark        =   [];
+        resultMsg.analyzeList           =   [];
 
 
         Promise.using(pool.connect(), conn => {
@@ -1880,6 +1927,7 @@ var getBacktestResult = function(req, res) {
                                 if ( rows || rows.length > 0 ) {
                                     resultMsg.arr_result_daily      =   rows;
 
+                                    /* 일자별 지수에 balance 정보를 설정한다. */
                                     fn_set_balance( resultMsg.arr_result_daily, resultMsg.simul_result_mast );
                                 }
 
@@ -1928,6 +1976,7 @@ var getBacktestResult = function(req, res) {
                                     }
 
                                     if ( rows || rows.length > 0 ) {
+                                        /* 일자별 지수에 밴치마크 정보를 설정한다. */
                                         fn_set_bench_mark( resultMsg.arr_result_daily, rows );
                                     }
 
@@ -1980,7 +2029,54 @@ var getBacktestResult = function(req, res) {
 
                             callback(resultMsg);
                         }
-                    },                    
+                    },
+                    
+
+                    /* 5. 파이선을 통해 분석정보를 가져온다.*/
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
+
+                            /* 파이선을 통해 분석정보를 가져온다. */
+                            if( resultMsg.arr_result_daily && resultMsg.arr_result_daily.length > 0 ) {
+
+                                log.debug( "분석정보 #1 조회 from 파이선 START");
+                                simulAnalyze.getAnalyze_timeseries(resultMsg.arr_result_daily).then( function(e) {
+                                    if( e && e.result ) {
+                                        if( e.results && e.results.length > 0 ) {
+                                            resultMsg.analyzeList   =   e.results;
+                                        }
+                                        callback(null);
+                                    }else{
+
+                                        stmt    =   "";
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
+                                        resultMsg.err = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
+
+                                        return callback(resultMsg);
+
+                                    }
+                                });
+                                log.debug( "분석정보 #1 조회 from 파이선 END");
+
+                            }else{
+                                callback(null);
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
 
 
                 ], function(err) {
@@ -2016,6 +2112,7 @@ var getBacktestResult = function(req, res) {
         resultMsg.arr_result_daily      =   [];
         resultMsg.arr_result_rebalance  =   [];
         resultMsg.simul_result_mast     =   {};
+        resultMsg.analyzeList           =   [];
 
         res.json(resultMsg);
         res.end();
@@ -2023,7 +2120,7 @@ var getBacktestResult = function(req, res) {
 }
 
 /*
-*   일자별 지수에 밴치마크 정보를 설정한다.
+*   일자별 지수에 balance 정보를 설정한다.
 *   2019-08-14  bkLove(촤병국)
 */
 function    fn_set_balance( p_arr_daily, p_simul_mast ) {

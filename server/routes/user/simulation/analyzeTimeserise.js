@@ -16,7 +16,7 @@ var fs = require('fs');
 var {PythonShell} = require('python-shell')
 
 
-var getAnalyze_timeseries = function(arr_daily) {
+var getAnalyze_timeseries = async function(arr_daily) {
 
     var analyzeList = [];
 
@@ -36,25 +36,52 @@ var getAnalyze_timeseries = function(arr_daily) {
 
     var fileName = dir+"/timeserise_"+curDate+".json";
     
-    fs.writeFile(fileName, JSON.stringify(analyzeList), 'utf8', function(error) {
-        if (error) {
-            log.debug(error)
-        } else {
-          var options = {
-            mode: 'text',
-            pythonPath: config.python_path,
-            pythonOptions: ['-u'],
-            scriptPath: '',
-            args: [fileName]
-          };
-              
-          PythonShell.run('./python/analyze_timeseries.py', options, function (err, results) {
-              if (err) throw err;
-              log.debug('results: %j', results);        
-              fs.unlinkSync(fileName);
-              return results;
-          });
-        }
+    return await new Promise(function(resolve, reject) {
+
+        /* 파일에 write 한다. */
+        console.log( "####### 1) 파일 write START" );
+        fs.writeFile(fileName, JSON.stringify(analyzeList), 'utf8', function(error) {
+            if (error) {
+                log.debug( "파일 write 중 오류가 발생되었습니다.", error );
+                resolve( { result : false } );
+            } else {
+                console.log( "####### 2) 파일 write END" );
+                resolve( { result : true } );
+            }
+        });
+
+    }).then( async function(e) {
+
+        return  await new Promise( function(resolve1, reject1) {
+
+            /* 파일 write 후 파이선을 호출한다. */
+            if( e && e.result ) {
+                var options = {
+                    mode: 'text',
+                    pythonPath: config.python_path,
+                    pythonOptions: ['-u'],
+                    scriptPath: '',
+                    args: [fileName]
+                };
+                    
+                console.log("####### 3) 파이선 호출 START");
+                PythonShell.run('./python/analyze_timeseries.py', options, function (err, results) {
+                    if (err) {
+                        log.debug( "파이선 호출 중 오류가 발생되었습니다.", err );
+                        resolve1( { result : false } );
+                    }else{
+                        console.log('results: %j', results);
+                        console.log("####### 4) 파이선 호출 END");
+                        fs.unlinkSync(fileName);
+                        resolve1( { result : true, results : results } );
+                    }
+                });
+
+            }else{
+                log.debug( "파일 write 중 오류가 발생되었습니다.", e );
+                resolve1( { result : false } );
+            }
+        });
     });
 
     

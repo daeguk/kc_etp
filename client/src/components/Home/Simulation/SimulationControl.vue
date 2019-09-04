@@ -146,6 +146,7 @@ export default {
                 ,   simul_mast          :   {}
                 ,   arr_daily           :   []
                 ,   arr_rebalance       :   []
+                ,   analyzeList         :   []
             } 
         ) {
             var vm = this;
