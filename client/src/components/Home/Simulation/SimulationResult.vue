@@ -171,7 +171,7 @@
                     </v-tab-item>
 
 
-            <!--분석정보1 탭4-->
+            <!--분석정보 -->
                     <v-tab-item >
                         <v-card flat>
                             <div class="table-box-wrap mar15">
@@ -186,7 +186,7 @@
                                             <tr>
                                                 <th class="txt_left">분석지표</th>
                                                 <th class="txt_right">백테스트</th>
-                                                <th class="txt_right">BM(KOSPI200)</th>
+                                                <th class="txt_right">{{ simul_result_mast.bench_index_nm }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -209,11 +209,6 @@
                             </div>
                         </v-card>
                     </v-tab-item>
-
-
-            <!--분석정보2 탭5-->
-                    <v-tab-item>분석정보2</v-tab-item>
-
 
                 </v-tabs-items>
 
@@ -256,8 +251,7 @@ export default {
                     "일자별지수",
                     "리밸런싱내역",
                     "시뮬레이션 설정",
-                    "분석정보#1",
-                    "분석정보#2"
+                    "분석정보",
                 ]
 
             ,   arr_show_error_message      :   []
@@ -771,7 +765,7 @@ export default {
                             p_item_obj.fmt_rebalance            =   vm.fn_getCodeName( "COM012", p_item_obj.rebalance_cycle_cd + p_item_obj.rebalance_date_cd );
 
                             if( p_item_obj.bench_mark_cd == "0" ) {
-                                p_item_obj.bench_index_nm       =   "BM";
+                                p_item_obj.bench_index_nm       =   "BM (N/A)";
                             }else{
                                 p_item_obj.bench_index_nm       =   "BM (" + p_item_obj.bench_index_nm + ")";
                             }                        
