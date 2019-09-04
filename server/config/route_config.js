@@ -174,8 +174,6 @@ module.exports = {
         { file: './user/simulation/simulationBacktest', path: '/user/simulation/saveBacktestResult' , method: 'saveBacktestResult'  , session: 'check', type: 'post' },     // 백테스트 결과 저장
         { file: './user/simulation/simulationBacktest', path: '/user/simulation/getBacktestResult'  , method: 'getBacktestResult'   , session: 'check', type: 'post' },     // 백테스트 결과 조회
 
-        { file: './user/simulation/analyzeTimeserise', path: '/user/simulation/getAnalyze_timeseries'  , method: 'getAnalyze_timeseries'   , session: 'check', type: 'post' },     // 백테스트 결과 조회
-
         // { file: './user/simulation/simulationBacktest', path: '/user/simulation/saveBaicInfo'       , method: 'saveBaicInfo'        , session: 'check', type: 'post' },     // 기본정보 저장
         // { file: './user/simulation/simulationBacktest', path: '/user/simulation/saveBacktestResult' , method: 'saveBacktestResult'  , session: 'check', type: 'post' },     // 백테스트 결과 저장
         // { file: './user/simulation/simulationBacktest', path: '/user/simulation/getBacktestResult'  , method: 'getBacktestResult'   , session: 'check', type: 'post' },     // 백테스트 결과 조회
