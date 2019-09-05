@@ -826,15 +826,15 @@ export default {
                 /* 정수처리 */
                 v_anal                  =   vm.fn_getFindJson( "final_balance" );
                 v_anal.anal_title       =   "Final Balance";
-                v_anal.backtest         =   parseInt( Number( v_anal.backtest )  );
-                v_anal.benchmark        =   parseInt( Number( v_anal.benchmark ) );
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   parseInt( Number( v_anal.backtest )  ) : "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   parseInt( Number( v_anal.benchmark ) ) : "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "cagr" );
                 v_anal.anal_title       =   "CAGR";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.benchmark ) * 100 ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(6) : "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(6) : "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /*  수익률 ( 연도 )
@@ -843,10 +843,10 @@ export default {
                 v_anal                  =   vm.fn_getFindJson( "best_y", "rtn" );
                 v_anal01                =   vm.fn_getFindJson( "best_y", "year" );
                 v_anal.anal_title       =   "Best Year";
-                v_anal.backtest01       =   v_anal01.backtest;
-                v_anal.benchmark01      =   v_anal01.benchmark;
-                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.backtest01       =   ( v_anal01.backtest     != "N/A"    ?   v_anal01.backtest   : "N/A" );
+                v_anal.benchmark01      =   ( v_anal01.benchmark    != "N/A"    ?   v_anal01.benchmark  : "N/A" );
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(6) : "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(6) : "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /*  수익률 ( 연도 )
@@ -855,157 +855,157 @@ export default {
                 v_anal                  =   vm.fn_getFindJson( "worst_y", "rtn" );
                 v_anal01                =   vm.fn_getFindJson( "worst_y", "year" );
                 v_anal.anal_title       =   "Worst Year";
-                v_anal.backtest01       =   v_anal01.backtest;
-                v_anal.benchmark01      =   v_anal01.benchmark;
-                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.benchmark ) * 100 ).toFixed(6);
+                v_anal.backtest01       =   ( v_anal01.backtest     != "N/A"    ?   v_anal01.backtest   : "N/A" );
+                v_anal.benchmark01      =   ( v_anal01.benchmark    != "N/A"    ?   v_anal01.benchmark  : "N/A" );
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(6) : "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(6) : "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "mdd" );
                 v_anal.anal_title       =   "MDD";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.benchmark ) * 100 ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(6) : "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(6) : "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "sharpe_rto" );
                 v_anal.anal_title       =   "Sharpe Ratio";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.benchmark ) ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  ).toFixed(6) : "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) ).toFixed(6) : "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "sortino_rto" );
                 v_anal.anal_title       =   "Sortino Ratio";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.benchmark ) ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  ).toFixed(6) : "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) ).toFixed(6) : "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "vs_market", "corr" );
                 v_anal.anal_title       =   "Market Correlation";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.benchmark ) ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  ).toFixed(6) : "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) ).toFixed(6) : "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "arith_mean" );
                 v_anal.anal_title       =   "Arithmetic Mean (daily)";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(6) : "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(6) : "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "annlzd_arith_mean" );
                 v_anal.anal_title       =   "Arithmetic Mean (annualized)";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(6) : "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(6) : "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "geo_mean" );
                 v_anal.anal_title       =   "Geometric Mean (daily)";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(6): "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(6): "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "stdev" );
                 v_anal.anal_title       =   "Volatility (daily)";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(6): "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(6): "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "annlzd_stdev" );
                 v_anal.anal_title       =   "Volatility (annualized)";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(6): "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(6): "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "down_dev" );
                 v_anal.anal_title       =   "Downside Deviation (daily)";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(6): "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(6): "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "vs_market", "beta" );
                 v_anal.anal_title       =   "Beta(vs market)";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.benchmark ) ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  ).toFixed(6): "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) ).toFixed(6): "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "vs_market", "alpha" );
                 v_anal.anal_title       =   "Alpha(vs market, annualized)";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(6): "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(6): "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "vs_market", "r2" );
                 v_anal.anal_title       =   "R2(vs market)";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(6): "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(6): "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "vs_benchmark", "beta" );
                 v_anal.anal_title       =   "Beta(vs benchmark)";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.benchmark ) ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  ).toFixed(6): "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) ).toFixed(6): "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "vs_benchmark", "alpha" );
                 v_anal.anal_title       =   "Alpha(vs benchmark, annualized)";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(6): "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(6): "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "vs_benchmark", "r2" );
                 v_anal.anal_title       =   "R2(vs benchmark)";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(6): "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(6): "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "skewness" );
                 v_anal.anal_title       =   "Skewness";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.benchmark ) ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  ).toFixed(6): "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) ).toFixed(6): "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "kurtosis" );
                 v_anal.anal_title       =   "Excess Kurtosis";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.benchmark ) ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  ).toFixed(6): "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) ).toFixed(6): "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "hist_var" );
                 v_anal.anal_title       =   "Historical VaR(5%)";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(6): "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(6): "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "anal_var" );
                 v_anal.anal_title       =   "Analytical VaR(5%)";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(6): "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(6): "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "c_var" );
                 v_anal.anal_title       =   "Conditional VaR(5%)";
-                v_anal.backtest         =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
-                v_anal.benchmark        =   ( Number( v_anal.backtest )  * 100 ).toFixed(6);
+                v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(6): "N/A" );
+                v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(6): "N/A" );
                 vm.arr_analyze.push( v_anal );
             }
         },
@@ -1026,33 +1026,51 @@ export default {
 
                 if( p_subKey != "" ) {
                     if(     typeof vm.arr_analyze_temp[ "backtest" ]                        !=  "undefined"
+                        &&  vm.arr_analyze_temp[ "backtest" ]
                         &&  typeof vm.arr_analyze_temp[ "backtest" ][ p_strKey ]            !=  "undefined" 
+                        &&  vm.arr_analyze_temp[ "backtest" ][ p_strKey ]
                         &&  typeof vm.arr_analyze_temp[ "backtest" ][ p_strKey ][p_subKey]  !=  "undefined" 
+                        &&  vm.arr_analyze_temp[ "backtest" ][ p_strKey ][p_subKey]
                     ) {
                         returnJson.backtest     =   vm.arr_analyze_temp[ "backtest" ][ p_strKey ][p_subKey];
+                    }else{
+                        returnJson.backtest     =   "N/A";
                     }
 
 
                     if(     typeof vm.arr_analyze_temp[ "benchmark" ]                       !=  "undefined"
+                        &&  vm.arr_analyze_temp[ "benchmark" ]
                         &&  typeof vm.arr_analyze_temp[ "benchmark" ][ p_strKey ]           !=  "undefined" 
-                        &&  typeof vm.arr_analyze_temp[ "benchmark" ][ p_strKey ][p_subKey]  !=  "undefined" 
+                        &&  vm.arr_analyze_temp[ "benchmark" ][ p_strKey ]
+                        &&  typeof vm.arr_analyze_temp[ "benchmark" ][ p_strKey ][p_subKey] !=  "undefined" 
+                        &&  vm.arr_analyze_temp[ "benchmark" ][ p_strKey ][p_subKey]
                     ) {
                         returnJson.benchmark    =   vm.arr_analyze_temp[ "benchmark" ][ p_strKey ][p_subKey];
-                    } 
+                    }else{
+                        returnJson.benchmark    =   "N/A";
+                    }
 
                 }else{
 
                     if(     typeof vm.arr_analyze_temp[ "backtest" ]                !=  "undefined"
+                        &&  vm.arr_analyze_temp[ "backtest" ]
                         &&  typeof vm.arr_analyze_temp[ "backtest" ][ p_strKey ]    !=  "undefined" 
+                        &&  vm.arr_analyze_temp[ "backtest" ][ p_strKey ]
                     ) {
                         returnJson.backtest     =   vm.arr_analyze_temp[ "backtest" ][ p_strKey ];
+                    }else{
+                        returnJson.backtest     =   "N/A";
                     }
 
 
                     if(     typeof vm.arr_analyze_temp[ "benchmark" ]               !=  "undefined"
+                        &&  vm.arr_analyze_temp[ "benchmark" ]
                         &&  typeof vm.arr_analyze_temp[ "benchmark" ][ p_strKey ]   !=  "undefined" 
+                        &&  vm.arr_analyze_temp[ "benchmark" ][ p_strKey ]
                     ) {
                         returnJson.benchmark    =   vm.arr_analyze_temp[ "benchmark" ][ p_strKey ];
+                    }else{
+                        returnJson.benchmark    =   "N/A";
                     }
                 }
             }
