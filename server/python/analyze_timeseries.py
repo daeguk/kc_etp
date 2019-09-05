@@ -13,7 +13,10 @@ def set_data(mystr):
 
     # 데이터 값을 float로 변환
     df['backtest'] = df['backtest'].astype(float)
-    df['benchmark'] = df['benchmark'].astype(float)
+    
+    if 'benchmark' in df.columns:
+        df['benchmark'] = df['benchmark'].astype(float)
+    
     df['kospi'] = df['kospi'].astype(float)
     df['riskfree'] = df['riskfree'].astype(float) / 100
 
@@ -27,9 +30,11 @@ def set_data(mystr):
     # 날짜 count를 맞추기 위한 작업임
     df['prev'] = df['backtest'].shift(1)
     df['rtn'] = df['backtest'].pct_change()
-    df['bm_prev'] = df['benchmark'].shift(1)
-    df['bm_rtn'] = df['benchmark'].pct_change()
     df['kospi_rtn'] = df['kospi'].pct_change()
+
+    if 'benchmark' in df.columns:
+        df['bm_prev'] = df['benchmark'].shift(1)
+        df['bm_rtn'] = df['benchmark'].pct_change()
     
     df = df.iloc[1:]
     #df = df['2001-01':'2019-04']
@@ -336,6 +341,7 @@ if __name__ == '__main__':
     
     #json을 읽어서, 스트링으로 변환한다. 나중에 해당 스트링을 argv로 받을 예정
     filename = sys.argv[1]
+    #filename = 'emp_sample.json'
     in_str = open(filename).read()
     
     #배포시 아래로 변경

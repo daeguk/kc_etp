@@ -16,7 +16,7 @@ var fs = require('fs');
 var {PythonShell} = require('python-shell')
 
 
-var getAnalyze_timeseries = async function(arr_daily) {
+var getAnalyze_timeseries = async function(arr_daily, bench_mark_cd) {
 
     var analyzeList = [];
 
@@ -25,7 +25,9 @@ var getAnalyze_timeseries = async function(arr_daily) {
         analyzeObj.date = util.format('%s-%s-%s', item.F12506.substr(0, 4), item.F12506.substr(4, 2), item.F12506.substr(6, 2));
         analyzeObj.backtest = item.INDEX_RATE;
         analyzeObj.riskfree   = item.F15175;
-        analyzeObj.benchmark = item.bm_data01;
+        if (bench_mark_cd != '0') {
+            analyzeObj.benchmark = item.bm_data01;
+        }
         analyzeObj.kospi = item.KOSPI_F15001;
         analyzeList.push(analyzeObj);
     });
@@ -72,7 +74,7 @@ var getAnalyze_timeseries = async function(arr_daily) {
                     }else{
                         console.log('results: %j', results);
                         console.log("####### 4) 파이선 호출 END");
-                        fs.unlinkSync(fileName);
+                       // fs.unlinkSync(fileName);
                         resolve1( { result : true, results : results } );
                     }
                 });
