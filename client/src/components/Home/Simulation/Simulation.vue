@@ -89,7 +89,7 @@
                                         :value="item.com_dtl_cd"
                                         :disabled="disabled_rebalance_cd[index]"
 
-                                        @change="fn_resetErrorMessage();fn_getRebalanceDate();"
+                                        @change="fn_resetErrorMessage();"
 
                                         color="primary"
                                     ></v-radio>
@@ -153,7 +153,8 @@
 
                                 </span>
                             </div>
-                            <div  class="right_w">
+<!-- 
+                                <div  class="right_w">
                                 <span class="intext">리밸런싱 날짜:</span>
                                 <span> <v-select   :items="arr_start_year" 
                             
@@ -168,7 +169,8 @@
                                         </v-select>
                                 </span>
                                 <span><button type='button'  class="excelup_btn" @click.stop="fn_downExcel"></button></span>
-                            </div>
+                            </div> 
+-->
                         </v-flex>
                     </v-layout>
 
@@ -212,7 +214,10 @@
                         </div> 
 
                         <div class="text-xs-center mt-3">
-                            <v-btn depressed outline color="primary" @click="">리밸런싱 내역조정</v-btn>                                                   
+<!-- 
+                            <v-btn depressed outline color="primary" @click="">리밸런싱 내역조정</v-btn>                                                    
+-->
+
                             <v-btn depressed color="primary" @click.stop="fn_saveBaicInfo()">백테스트 실행</v-btn>
                         </div>
 
@@ -1587,7 +1592,7 @@ export default {
                             vm.fn_resetRebalanceDateCd();
 
                             /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
-                            vm.fn_getRebalanceDate();
+//                            vm.fn_getRebalanceDate();
                         }
                     }
                 }
