@@ -997,7 +997,7 @@ var saveBaicInfo = function(req, res) {
                                         resultMsg.msg = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
                                         resultMsg.err = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
 
-                                        return callback(resultMsg);
+                                        return callback(null);
 
                                     }
                                 });
@@ -1013,7 +1013,7 @@ var saveBaicInfo = function(req, res) {
                             resultMsg.msg = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
                             resultMsg.err = err;
 
-                            callback(resultMsg);
+                            callback(null);
                         }
                     },                    
 
