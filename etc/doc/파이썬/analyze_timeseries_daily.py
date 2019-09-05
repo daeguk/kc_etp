@@ -13,10 +13,10 @@ def set_data(mystr):
 
     # 데이터 값을 float로 변환
     df['backtest'] = df['backtest'].astype(float)
-    
+
     if 'benchmark' in df.columns:
         df['benchmark'] = df['benchmark'].astype(float)
-    
+
     df['kospi'] = df['kospi'].astype(float)
     df['riskfree'] = df['riskfree'].astype(float) / 100
 
@@ -24,7 +24,7 @@ def set_data(mystr):
     df.index = pd.to_datetime(df.index)
 
     # 월단위 데이터로 resampleing
-    df = df.resample(rule='M').last()
+    #month_idx = df.resample(rule='M').last()
 
     # 직전일의 가격을 'prev'에 저장. 지수값은 직전일부터 필요하고, 변동률은 당일부터 필요한데, 중복관리시 계산과정이 복잡해짐.
     # 날짜 count를 맞추기 위한 작업임
@@ -35,9 +35,10 @@ def set_data(mystr):
     if 'benchmark' in df.columns:
         df['bm_prev'] = df['benchmark'].shift(1)
         df['bm_rtn'] = df['benchmark'].pct_change()
-    
+
+    # 첫데이터는 날린다
     df = df.iloc[1:]
-    #df = df['2001-01':'2019-04']
+    #df = df['2001-01-01':'2019-04-30']
     
     return df
 
@@ -72,13 +73,15 @@ def analyze_data(df):
     
     result = init_result()
     
+    NUM_OF_DAYS = 252
+    
     # 1. Final Balance
     initial_balance = 1000000
     final_balance = initial_balance * df['backtest'].iloc[-1] / df['prev'].iloc[0]
     result['final_balance'] = final_balance
 
     # 2. CAGR (2000-12월 종가부터, 2019-04월 종가까지 기간을 잡는다.)
-    year = df['backtest'].count() / 12
+    year = df['backtest'].count() / NUM_OF_DAYS
     # 2000-12월 종가는 2001-1월의 전일가격을 사용
     CAGR = ( df.iloc[-1]['backtest'] / df.iloc[0]['prev'] )**(1/year) - 1
     result['cagr'] = CAGR
@@ -86,8 +89,8 @@ def analyze_data(df):
     # 3. Stdev (Annualized standard deviation of monthly returns)
     stdev = df['rtn'].std()
     result['stdev'] = stdev
-    # 연간화를 위해 루트12 를 곱한다.
-    annlzd_stdev = stdev*(12**0.5)
+    # 연간화를 위해 루트 NUM_OF_DAYS 를 곱한다.
+    annlzd_stdev = stdev*(NUM_OF_DAYS**0.5)
     result['annlzd_stdev'] = annlzd_stdev
     result['vol'] = stdev
     result['annlzd_vol'] = annlzd_stdev
@@ -97,7 +100,7 @@ def analyze_data(df):
     result['arith_mean'] = arith_mean
 
     # 5. Arithmetic Mean (annualized).
-    annualized_arith_mean = (1 + arith_mean) ** 12 - 1
+    annualized_arith_mean = (1 + arith_mean) ** NUM_OF_DAYS - 1
     result['annlzd_arith_mean'] = annualized_arith_mean
 
     # 6. Geometric Mean, scipy 의 gmean사용
@@ -109,7 +112,7 @@ def analyze_data(df):
     result['geo_mean'] = geo_mean
 
     # 7. Geometric Mean(annualized)
-    annualized_geo_mean = ( 1 + geo_mean) ** 12 - 1
+    annualized_geo_mean = ( 1 + geo_mean) ** NUM_OF_DAYS - 1
     result['annlzd_geo_mean'] = annualized_geo_mean
 
     # 8. Volatility (monthly) . 변동성은 표준편차를 의미
@@ -205,7 +208,7 @@ def analyze_data(df):
     # https://www.quantnews.com/performance-metrics-sharpe-ratio-sortino-ratio/
     # 15.1 Sharpe Ratio
     # denominator - month(12), day(252)
-    denominator = 12
+    denominator = NUM_OF_DAYS
     df['excess_rtn'] = df['rtn'] - df['riskfree']/denominator
     sharpe_rto = df['excess_rtn'].mean() /  df['excess_rtn'].std() * np.sqrt(denominator)
     result['sharpe_rto'] = sharpe_rto
@@ -240,7 +243,7 @@ def analyze_data(df):
     # 16.2 Alpha
     alpha = df['rtn'].mean() - beta*(df['kospi_rtn'].mean())
     #연환산
-    y_alpha = (1 + alpha) ** 12 - 1
+    y_alpha = (1 + alpha) ** NUM_OF_DAYS - 1
     result['vs_market']['alpha'] = y_alpha
 
     # 16.3 R squared 
@@ -253,7 +256,7 @@ def analyze_data(df):
     result['vs_market']['r2'] = r_squared
 
     # 1year momentum (bonus) 
-    momentum = np.prod(1+df['rtn'].tail(12).values) - 1
+    momentum = np.prod(1+df['rtn'].tail(NUM_OF_DAYS).values) - 1
 
     # 16.4 correlation
     # 비교를 위해 'rtn', 'mkt_rtn'만 새로운 dataframe 으로 copy
@@ -279,7 +282,7 @@ def analyze_data(df):
         # 17.2 Alpha
         alpha = df['rtn'].mean() - beta*(df['bm_rtn'].mean())
         #연환산
-        y_alpha = (1 + alpha) ** 12 - 1
+        y_alpha = (1 + alpha) ** NUM_OF_DAYS - 1
         result['vs_benchmark']['alpha'] = y_alpha
 
         # 17.3 R squared 
@@ -299,7 +302,7 @@ def analyze_data(df):
         result['vs_benchmark']['corr'] = corr
     
     return result
-    
+
 def show_result(rslt) :
     for key in rslt.keys() :
         print("Final Balance : " , int(rslt[key]['final_balance']))
@@ -335,13 +338,13 @@ def show_result(rslt) :
         print("Conditional VaR(5%) : ", round(rslt[key]['c_var']*100, 5),"%")
         print("="*50)
     
+    
 if __name__ == '__main__':
     
     rslt = dict.fromkeys(['backtest','benchmark'])
     
     #json을 읽어서, 스트링으로 변환한다. 나중에 해당 스트링을 argv로 받을 예정
     filename = sys.argv[1]
-    #filename = 'emp_sample.json'
     in_str = open(filename).read()
     
     #배포시 아래로 변경
@@ -356,6 +359,7 @@ if __name__ == '__main__':
         tm_data['rtn'] = tm_data['bm_rtn']
         tm_data['prev'] = tm_data['bm_prev']
         rslt['benchmark'] = analyze_data(tm_data)
-    #show_result(rslt)    
+    # data 확인용
+    #show_result(rslt)
     rslt_json = json.dumps(rslt)
     print(rslt_json)
