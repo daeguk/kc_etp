@@ -1000,20 +1000,17 @@
                             (
                                 SELECT  MAX( td_kspjong_hist.F12506 )
                                   FROM  td_kspjong_hist
-                                  JOIN  tm_simul_portfolio
-                                    ON  td_kspjong_hist.F16013      =   tm_simul_portfolio.F16013
                                  WHERE  1 = 1
-                                   AND  tm_simul_portfolio.scen_cd  =   #{scen_cd}
-                                   AND  tm_simul_portfolio.grp_Cd   =   #{grp_cd}
-
-                                   AND  td_kspjong_hist.F12506      <   CONCAT( #{start_year}, '0101' )         /* 입회일자 이전 */
+                                   AND  td_kspjong_hist.F16013      =   '005930' /* 삼성전자 단축키 고정 으로 사용(상장되지 않은 종목일 경우 영업일 NULL)*/
+                                   AND  td_kspjong_hist.F12506      <   CONCAT( '2018', '0101' )         /* 입회일자 이전 */
                                    AND  td_kspjong_hist.F12506      >=  DATE_FORMAT( 
-                                                                                    DATE_SUB( 
-                                                                                            CONCAT( #{start_year}, '0101' )
-                                                                                        ,   INTERVAL 2 WEEK
-                                                                                    )
-                                                                                ,   '%Y%m%d' 
-                                                                            )                                   /* start_year 기준 3 달 전부터 시작  */
+                                                                                DATE_SUB( 
+                                                                                        CONCAT( '2018', '0101' )
+                                                                                    ,   INTERVAL 2 WEEK
+                                                                                )
+                                                                            ,   '%Y%m%d' 
+                                                                        )                                       /* start_year 기준 3 달 전부터 시작  */
+                              
                             )
 
                      ORDER  BY  F12506
@@ -1131,12 +1128,8 @@
                             (
                                 SELECT  MAX( td_kspjong_hist.F12506 )
                                   FROM  td_kspjong_hist
-                                  JOIN  tm_simul_portfolio
-                                    ON  td_kspjong_hist.F16013      =   tm_simul_portfolio.F16013
                                  WHERE  1 = 1
-                                   AND  tm_simul_portfolio.scen_cd  =   #{scen_cd}
-                                   AND  tm_simul_portfolio.grp_Cd   =   #{grp_cd}
-
+                                   AND  td_kspjong_hist.F16013      =   '005930' /* 삼성전자 단축키 고정 으로 사용(상장되지 않은 종목일 경우 영업일 NULL)*/
                                    AND  td_kspjong_hist.F12506      <   CONCAT( #{start_year}, '0101' )         /* 입회일자 이전 */
                                    AND  td_kspjong_hist.F12506      >=  DATE_FORMAT( 
                                                                                 DATE_SUB( 
