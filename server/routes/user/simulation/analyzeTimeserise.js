@@ -37,6 +37,7 @@ var getAnalyze_timeseries = async function(arr_daily, bench_mark_cd) {
     !fs.existsSync(dir) && fs.mkdirSync(dir);
 
     var fileName = dir+"/timeserise_"+curDate+".json";
+    var jsonFileName = "timeserise_"+curDate+".json";
     
     return await new Promise(function(resolve, reject) {
 
@@ -75,7 +76,12 @@ var getAnalyze_timeseries = async function(arr_daily, bench_mark_cd) {
                         console.log('results: %j', results);
                         console.log("####### 4) 파이선 호출 END");
                        // fs.unlinkSync(fileName);
-                        resolve1( { result : true, results : results } );
+                        resolve1( { 
+                                result : true
+                            ,   jsonFileName : jsonFileName
+                            ,   inputData : JSON.stringify(analyzeList)
+                            ,   results : results 
+                        });
                     }
                 });
 
