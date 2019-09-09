@@ -22,14 +22,16 @@ var getAnalyze_timeseries = async function(arr_daily, bench_mark_cd) {
 
     arr_daily.forEach(function(item) {
         let analyzeObj = {};
-        analyzeObj.date = util.format('%s-%s-%s', item.F12506.substr(0, 4), item.F12506.substr(4, 2), item.F12506.substr(6, 2));
-        analyzeObj.backtest = item.INDEX_RATE;
-        analyzeObj.riskfree   = item.F15175;
-        if (bench_mark_cd != '0') {
-            analyzeObj.benchmark = item.bm_data01;
+        if (typeof item.F12506 != 'undefined') {
+            analyzeObj.date = util.format('%s-%s-%s', item.F12506.substr(0, 4), item.F12506.substr(4, 2), item.F12506.substr(6, 2));
+            analyzeObj.backtest = item.INDEX_RATE;
+            analyzeObj.riskfree   = item.F15175;
+            if (bench_mark_cd != '0') {
+                analyzeObj.benchmark = item.bm_data01;
+            }
+            analyzeObj.kospi = item.KOSPI_F15001;
+            analyzeList.push(analyzeObj);
         }
-        analyzeObj.kospi = item.KOSPI_F15001;
-        analyzeList.push(analyzeObj);
     });
 
     var curDate = new Date().getTime();
