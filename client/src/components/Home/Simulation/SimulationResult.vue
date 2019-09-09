@@ -174,6 +174,8 @@
             <!--분석정보 -->
                     <v-tab-item >
                         <v-card flat>
+
+<button type="button" class="exceldown_btn" id="jsonFileDownload" @click="fn_jsonFileDownload()" ></button>
                             <div class="table-box-wrap mar15">
                                 <div class="table-box" style="max-height:250px;">
                                     <table class="tbl_type ver10">
@@ -261,6 +263,7 @@ export default {
             ,   simul_result_mast           :   {}
             ,   arr_result_daily            :   []      /* array 일자별 지수 */
             ,   arr_result_rebalance        :   []      /* array 리밸런스 */
+            ,   arr_analyze_org             :   []      /* 분석정보 원본 */
             ,   arr_analyze_temp            :   []      /* 분석정보#1 */
             ,   arr_analyze                 :   []      /* 분석정보#1 */
 
@@ -382,7 +385,9 @@ export default {
 
 
                         try{
-                            vm.arr_analyze_temp     =   JSON.parse( vm.paramData.analyzeList );
+                            vm.arr_analyze_org      =   response.data.analyzeList;
+                            vm.arr_analyze_temp     =   JSON.parse( vm.arr_analyze_org );
+
                             vm.fn_setAnal01();
                         }catch( e ) {
                             console.log( "analyzeList 파싱 중 오류가 발생되었습ㄴ디ㅏ.", e );
@@ -510,7 +515,8 @@ export default {
                         *   분석정보 #1
                         **************************************************************************************************************/
                             try{
-                                vm.arr_analyze_temp     =   JSON.parse( response.data.analyzeList );
+                                vm.arr_analyze_org      =   response.data.analyzeList;
+                                vm.arr_analyze_temp     =   JSON.parse( vm.arr_analyze_org );
                                 vm.fn_setAnal01();
                             }catch( e ) {
                                 console.log( "analyzeList 파싱 중 오류가 발생되었습ㄴ디ㅏ.", e );
@@ -1112,6 +1118,26 @@ export default {
 
             return  returnJson;
 
+        },
+
+
+        /*
+        * json 원본을 다운로드 한다.
+        * 2019-07-26  bkLove(촤병국)
+        */        
+        fn_jsonFileDownload() {
+            var vm = this;
+
+            const data = vm.arr_analyze_org;
+
+            var fileURL = window.URL.createObjectURL( new Blob( [ data ], { type: 'text/plain'} ));
+            var fileLink = document.createElement('a');
+
+            fileLink.href = fileURL;
+            fileLink.setAttribute( 'download', 'anal.json' );
+            document.body.appendChild(fileLink);
+
+            fileLink.click();
         }
     }
 };
