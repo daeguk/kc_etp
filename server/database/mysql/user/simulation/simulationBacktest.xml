@@ -990,9 +990,9 @@
                                         td_index_hist.F16013    =   td_index_basic.F16013
                                 AND     td_index_hist.market_id =   td_index_basic.market_id
                             )
-                     WHERE  td_index_basic.F16013       =   #{bench_index_cd01}
-                       AND  td_index_basic.large_type   =   #{bench_index_cd02}
-                       AND  td_index_basic.middle_type  =   #{bench_index_cd03}
+                     WHERE  td_index_basic.F16013       =   '1'
+                       AND  td_index_basic.large_type   =   'KRX'
+                       AND  td_index_basic.middle_type  =   'KSP'
 
                             /* start_year 이전 첫 영업일 이후 부터 시작 */
                        AND  td_index_hist.F12506        >=
@@ -1014,11 +1014,11 @@
 
                      ORDER  BY  F12506
 
-                )       td_index_hist
+                )       td_kospi_hist
                
           LEFT  JOIN    td_cd_hist
       	          ON    (
-                            td_cd_hist.F12506   =   td_index_hist.F12506
+                            td_cd_hist.F12506   =   td_kospi_hist.F12506
                         )
           LEFT  JOIN  
                 (
@@ -1032,9 +1032,10 @@
                                         td_index_hist.F16013    =   td_index_basic.F16013
                                 AND     td_index_hist.market_id =   td_index_basic.market_id
                             )
-                     WHERE  td_index_basic.F16013       =   '1'
-                       AND  td_index_basic.large_type   =   'KRX'
-                       AND  td_index_basic.middle_type  =   'KSP'
+                     WHERE  td_index_basic.F16013       =   #{bench_index_cd01}
+                       AND  td_index_basic.large_type   =   #{bench_index_cd02}
+                       AND  td_index_basic.middle_type  =   #{bench_index_cd03}
+
 
                             /* start_year 이전 첫 영업일 이후 부터 시작 */
                        AND  td_index_hist.F12506        >=
@@ -1059,9 +1060,9 @@
 
                      ORDER  BY  F12506
 
-                )       td_kospi_hist
+                )       td_index_hist
 
-                  ON    (   td_kospi_hist.F12506    =   td_index_hist.F12506    )
+                  ON    (   td_index_hist.F12506    =   td_kospi_hist.F12506    )
     ]]>
     </select>
 
