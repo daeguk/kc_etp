@@ -1515,7 +1515,8 @@ export default {
                         var arr_rebalance   =   response.data.arr_rebalance;
                         var simul_mast    	=   response.data.simul_mast;
                         var analyzeList     =   response.data.analyzeList;
-
+                        var jsonFileName    =   response.data.jsonFileName;
+                        var inputData    =   response.data.inputData;       
 
                         vm.$emit( "fn_showSimulation", 
                             { 
@@ -1524,6 +1525,8 @@ export default {
                                 ,   arr_rebalance       :   arr_rebalance
                                 ,   simul_mast          :   simul_mast
                                 ,   analyzeList         :   analyzeList
+                                ,   jsonFileName        :   jsonFileName
+                                ,   inputData           :   inputData
                             }
                         );
                     }

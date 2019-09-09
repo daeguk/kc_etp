@@ -266,6 +266,8 @@ export default {
             ,   arr_analyze_org             :   []      /* 분석정보 원본 */
             ,   arr_analyze_temp            :   []      /* 분석정보#1 */
             ,   arr_analyze                 :   []      /* 분석정보#1 */
+            ,   inputData                   :   []
+            ,   jsonFileName                :   ""
 
         };
     },
@@ -312,6 +314,8 @@ export default {
                         ||  ( vm.paramData.arr_daily && vm.paramData.arr_daily.length > 0 )
                         ||  ( vm.paramData.arr_rebalance && vm.paramData.arr_rebalance.length > 0 )
                         ||  ( vm.paramData.analyzeList && vm.paramData.analyzeList.length > 0 )
+                        ||  ( vm.paramData.jsonFileName && vm.paramData.jsonFileName.length > 0 )
+                        ||  ( vm.paramData.inputData && vm.paramData.inputData.length > 0 )
                     ){                        
 
                     /*************************************************************************************************************
@@ -364,6 +368,8 @@ export default {
                     **************************************************************************************************************/
                         vm.paramData.arr_daily.forEach( function( item, index, array ) {
 
+                            item.bench_mark_cd      =   vm.simul_result_mast.bench_mark_cd;
+
                             /* 구분에 맞게 레코드를 설정한다. */
                             vm.fn_set_record_data( "daily", item );
 
@@ -384,14 +390,17 @@ export default {
                         });
 
 
-                        try{
-                            vm.arr_analyze_org      =   response.data.analyzeList;
-                            vm.arr_analyze_temp     =   JSON.parse( vm.arr_analyze_org );
+                        vm.inputData            =   vm.paramData.inputData;
+                        vm.jsonFileName         =   vm.paramData.jsonFileName;
 
-                            vm.fn_setAnal01();
+                        vm.arr_analyze_org      =   vm.paramData.analyzeList;
+                        try{
+                            vm.arr_analyze_temp =   JSON.parse( vm.arr_analyze_org );
                         }catch( e ) {
-                            console.log( "analyzeList 파싱 중 오류가 발생되었습ㄴ디ㅏ.", e );
+                            vm.arr_analyze_temp =   "";
+                            console.log( "analyzeList 파싱 중 오류가 발생되었습니다.", e );
                         }
+                        vm.fn_setAnal01();
                     }
                 }
 
@@ -491,6 +500,8 @@ export default {
                         **************************************************************************************************************/
                             response.data.arr_result_daily.forEach( function( item, index, array ) {
 
+                                item.bench_mark_cd      =   vm.simul_result_mast.bench_mark_cd;
+
                                 /* 구분에 맞게 레코드를 설정한다. */
                                 vm.fn_set_record_data( "daily", item );
 
@@ -514,13 +525,18 @@ export default {
                         /*************************************************************************************************************
                         *   분석정보 #1
                         **************************************************************************************************************/
+                            vm.inputData            =   response.data.inputData;
+                            vm.jsonFileName         =   response.data.jsonFileName;
+
+                            vm.arr_analyze_org      =   response.data.analyzeList;
+                                                    
                             try{
-                                vm.arr_analyze_org      =   response.data.analyzeList;
                                 vm.arr_analyze_temp     =   JSON.parse( vm.arr_analyze_org );
-                                vm.fn_setAnal01();
                             }catch( e ) {
-                                console.log( "analyzeList 파싱 중 오류가 발생되었습ㄴ디ㅏ.", e );
-                            }                            
+                                vm.arr_analyze_temp     =   "";
+                                console.log( "analyzeList 파싱 중 오류가 발생되었습니다.", e );
+                            }
+                            vm.fn_setAnal01();
 
                             resolve( { result : true } );
                         }
@@ -784,7 +800,12 @@ export default {
                                 p_item_obj.INDEX_RATE
                             );
                             p_item_obj.fmt_balance              =   util.formatNumber( ( typeof p_item_obj.balance == "undefined"  ? "0" : Number( p_item_obj.balance ).toFixed(3) ) );
-                            p_item_obj.fmt_bm_data01            =   util.formatNumber( ( typeof p_item_obj.bm_data01 == "undefined"  ? "0" : Number( p_item_obj.bm_data01 ).toFixed(2) ) );
+
+                            if( p_item_obj.bench_mark_cd == "0" ) {
+                                p_item_obj.fmt_bm_data01        =   "";
+                            }else{
+                                p_item_obj.fmt_bm_data01        =   util.formatNumber( ( typeof p_item_obj.bm_data01 == "undefined"  ? "0" : Number( p_item_obj.bm_data01 ).toFixed(2) ) );
+                            }
                             p_item_obj.fmt_RETURN_VAL           =   util.formatNumber(
                                 p_item_obj.RETURN_VAL * 100
                             ) + " %";                                                                                           /* return_val */
@@ -1128,13 +1149,13 @@ export default {
         fn_jsonFileDownload() {
             var vm = this;
 
-            const data = vm.arr_analyze_org;
+            const data = vm.inputData;
 
             var fileURL = window.URL.createObjectURL( new Blob( [ data ], { type: 'text/plain'} ));
             var fileLink = document.createElement('a');
 
             fileLink.href = fileURL;
-            fileLink.setAttribute( 'download', 'anal.json' );
+            fileLink.setAttribute( 'download',  vm.jsonFileName );
             document.body.appendChild(fileLink);
 
             fileLink.click();

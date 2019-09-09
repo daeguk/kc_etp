@@ -77,6 +77,8 @@ var saveBaicInfo = function(req, res) {
         resultMsg.simul_mast            =   {};
         resultMsg.arr_bench_mark        =   [];
         resultMsg.analyzeList           =   [];
+        resultMsg.jsonFileName          =   "";
+        resultMsg.inputData             =   [];        
 
         Promise.using(pool.connect(), conn => {
 
@@ -988,6 +990,8 @@ var saveBaicInfo = function(req, res) {
                                     if( e && e.result ) {
                                         if( e.results && e.results.length > 0 ) {
                                             resultMsg.analyzeList   =   e.results;
+                                            resultMsg.jsonFileName  =   e.jsonFileName;
+                                            resultMsg.inputData  =   e.inputData;                                            
                                         }
                                         callback(null);
                                     }else{
@@ -1075,6 +1079,8 @@ var saveBaicInfo = function(req, res) {
         resultMsg.arr_rebalance         =   [];
         resultMsg.simul_mast            =   {};
         resultMsg.analyzeList           =   [];
+        resultMsg.jsonFileName          =   "";
+        resultMsg.inputData             =   [];        
 
         res.json(resultMsg);
         res.end();
@@ -1194,7 +1200,7 @@ var saveBacktestResult = function(req, res) {
                                             v_simul_mast.bench_index_cd03       =   rows[0].bench_index_cd03;       /* 벤치마크 인덱스 코드 ( middle_type ) */
                                             v_simul_mast.bench_index_nm         =   rows[0].bench_index_nm;         /* 벤치마크 인덱스 코드명 */
                                             v_simul_mast.importance_method_cd   =   rows[0].importance_method_cd;   /* 비중설정방식 (COM009) */
-                                        }                                        
+                                        }                             
 									}
 
                                     msg.v_simul_mast  =   v_simul_mast;
@@ -1497,10 +1503,9 @@ var saveBacktestResult = function(req, res) {
 						if( v_resultSimulData.arr_rebalance && v_resultSimulData.arr_rebalance.length > 0 ) {
 							v_resultSimulData.arr_rebalance.forEach( function( item, index, array ) {
 
-								Object.keys( array[ index ] ).forEach( function( key ) {
-									var sub_item    =   array[ index ][ key ];
+								Object.keys(item).forEach( function( sub_item, sub_index, sub_array ) {
+									arr_result_rebalance.push( item[ sub_item ] );
 
-									arr_result_rebalance.push( sub_item );
 								});
 							});
 						}
@@ -1839,7 +1844,8 @@ var getBacktestResult = function(req, res) {
         resultMsg.simul_result_mast     =   {};
         resultMsg.arr_bench_mark        =   [];
         resultMsg.analyzeList           =   [];
-
+        resultMsg.jsonFileName          =   "";
+        resultMsg.inputData             =   [];
 
         Promise.using(pool.connect(), conn => {
 
@@ -1886,7 +1892,6 @@ var getBacktestResult = function(req, res) {
                                     }
                                     
                                     resultMsg.simul_result_mast =   rows[0];
-
                                     callback(null, paramData);
                                 });
                             }
@@ -2043,6 +2048,8 @@ var getBacktestResult = function(req, res) {
                                     if( e && e.result ) {
                                         if( e.results && e.results.length > 0 ) {
                                             resultMsg.analyzeList   =   e.results;
+                                            resultMsg.jsonFileName  =   e.jsonFileName;
+                                            resultMsg.inputData  =   e.inputData;
                                         }
                                         callback(null);
                                     }else{
@@ -2107,6 +2114,8 @@ var getBacktestResult = function(req, res) {
         resultMsg.arr_result_rebalance  =   [];
         resultMsg.simul_result_mast     =   {};
         resultMsg.analyzeList           =   [];
+        resultMsg.jsonFileName          =   "";
+        resultMsg.inputData             =   [];        
 
         res.json(resultMsg);
         res.end();
@@ -2664,7 +2673,7 @@ var	fn_get_simulation_data  =   function(
                                     }                                    
 
                                     if( typeof v_item.add_jongmok != "undefined" && Object.keys( v_item.add_jongmok ).length > 0  ) {
-                                        for( var k=0; k < Object.keys( v_item.imp_jongmok ).length; k++ ) {
+                                        for( var k=Object.keys( v_item.imp_jongmok ).length-1; k >= 0; k-- ) {
                                             var   v_imp_key   =   Object.keys( v_item.imp_jongmok )[k];
 
                                             if( typeof v_item.add_jongmok[ v_imp_key ] != "undefined" ) {
