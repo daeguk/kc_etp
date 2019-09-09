@@ -971,15 +971,14 @@
     <![CDATA[  
         SELECT      /* simulationBacktest.getSimulBenchMark     tm_simul_result_daily 테이블 기준 td_index_hist 테이블에서 bench_mark 와 일치하는 정보를 조회한다. */
 
-                    tm_simul_result_daily.F12506                        AS  F12506          /* 입회일자 */
+                    td_index_hist.F12506                        AS  F12506          /* 입회일자 */
                 ,   IFNULL( 
                             td_index_hist.F15001
                         ,   0
                     )                                                   AS  F15001          /* 현재가 */
                 , td_cd_hist.F15175 									AS  F15175						 /* CD 수익률*/ 
-                , td_kospi_hist.F15001                                  AS  KOSPI_F15001    /* 코스피 지수 */
-          FROM  tm_simul_result_daily
-          LEFT  JOIN    
+                , td_kospi_hist.F15001                                  AS  KOSPI_F15001    /* 코스피 지수 */        
+          FROM    
                 (
                     SELECT     td_index_hist.F16013                     AS  F16013          /* 단축코드 */
                             ,  td_index_hist.F12506                     AS  F12506          /* 입회일자 */
@@ -1002,10 +1001,10 @@
                                   FROM  td_kspjong_hist
                                  WHERE  1 = 1
                                    AND  td_kspjong_hist.F16013      =   '005930' /* 삼성전자 단축키 고정 으로 사용(상장되지 않은 종목일 경우 영업일 NULL)*/
-                                   AND  td_kspjong_hist.F12506      <   CONCAT( '2018', '0101' )         /* 입회일자 이전 */
+                                   AND  td_kspjong_hist.F12506      <   CONCAT( #{start_year}, '0101' )         /* 입회일자 이전 */
                                    AND  td_kspjong_hist.F12506      >=  DATE_FORMAT( 
                                                                                 DATE_SUB( 
-                                                                                        CONCAT( '2018', '0101' )
+                                                                                        CONCAT(#{start_year}, '0101' )
                                                                                     ,   INTERVAL 2 WEEK
                                                                                 )
                                                                             ,   '%Y%m%d' 
@@ -1016,11 +1015,10 @@
                      ORDER  BY  F12506
 
                 )       td_index_hist
-
-                  ON    (   tm_simul_result_daily.F12506    =   td_index_hist.F12506    )
+               
           LEFT  JOIN    td_cd_hist
       	          ON    (
-                            td_cd_hist.F12506   =   tm_simul_result_daily.F12506
+                            td_cd_hist.F12506   =   td_index_hist.F12506
                         )
           LEFT  JOIN  
                 (
@@ -1063,7 +1061,7 @@
 
                 )       td_kospi_hist
 
-                  ON    (   tm_simul_result_daily.F12506    =   td_kospi_hist.F12506    )
+                  ON    (   td_kospi_hist.F12506    =   td_index_hist.F12506    )
     ]]>
     </select>
 
