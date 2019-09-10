@@ -525,8 +525,8 @@ export default {
             }
 
 
-            /* 입력항목 선택시 리밸런싱일자별 포트폴리오 데이터를 동기화한다. */
-            vm.fn_setRebalancePortfolioObjFromTr( { p_gubun : "tr", p_obj : tr } );
+            /* html에 입력된 정보를 p_gubun 에 맞게 일자별 포트폴리오에 등록시킨다. */
+            vm.fn_setRebalancePortfolioObj( { p_gubun : "tr", p_obj : tr } );
 
             vm.fn_resetErrorMessage();
             vm.fn_setTotalRecord();
@@ -625,23 +625,16 @@ export default {
         fn_setImportanceMethodCd: function( importance_method_cd ) {
             var vm = this;
 
-            /* total 정보 */
-            var total   =   {
-                    length          :   0       /* 총건수 */
-                ,   same_rate_sum   :   100     /* 동일가중 합계 */
 
-                ,   F15028          :   0       /* (합계) 시가총액 */
-                ,   importance      :   0       /* (합계) 비중 */
-//              ,   jisu_rate       :   0       /* (합계) 지수적용 비율 */
-            };
-            var result  =   [];
-
+            var v_portfolioObj  =   {};
+            
 
             /* 계산할 항목에 대한 전체 정보를 구한다. */
             table01.find( "tbody tr" ).each( function( inx, rowItem ) {
                 var tr = $(this);
 
                 var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );            /* 첫번째 컬럼 */
+                var v_F16002        =   tr.find( "td:eq(2)" );                          /* 종목명 */
                 var v_F16013        =   tr.find( "td input[name=F16013]" );             /* 종목코드 */
                 var v_F15028        =   tr.find( "td:eq(3)" );                          /* 시가총액 */
                 var v_importance    =   tr.find( "td input[name=importance]" );         /* 비중 */
@@ -651,111 +644,235 @@ export default {
                 if( typeof v_F16013.val() != "undefined" ) {
 
                     if( v_F16013.val() != "" ) {
-                        result.push( { 
-                                F15028      :   0       /* 시가총액 */
-                            ,   importance  :   0       /* 비중 */
-                        } );
 
-                        total.length++;         /* 총건수 */
+                        var rowData     =   {
+                                "F16013"        :   v_F16013.val()                                  /* 종목코드 */
+                            ,   "F16002"        :   v_F16002.text()                                 /* 종목명 */
+                            ,   "F15028"        :   util.NumtoStr( v_F15028.text() )                /* 시가총액 */
+                            ,   "importance"    :   util.NumtoStr( v_importance.val() )             /* 비중 */
+                            ,   "order_no"      :   0                                               /* 정렬순번 */
+                            ,   "trIndex"       :   tr.index()                                      /* 테이블 레코드 순번 */
+                        };
 
-                        total.F15028            =   Number( total.F15028 )  +  Number( util.NumtoStr( v_F15028.text() ) );                                          /* (합계) 시가총액 */
-                        total.importance        =   Math.floor( ( total.importance * 100 )  +  ( Number( util.NumtoStr( v_importance.val() ) ) * 100 ) ) / 100;     /* (합계) 비중 */
+                        if( !v_portfolioObj[ vm.rebalance_date ] || Object.keys( v_portfolioObj[ vm.rebalance_date ] ).length == 0 ) {
+                            v_portfolioObj[ vm.rebalance_date ]   =   {};
+                        }                    
 
-
-
-                        /* 직접입력인 경우 */
-                        if( [ "1"].includes( importance_method_cd ) ) {
-
-                            /* 입력항목 선택시 리밸런싱일자별 포트폴리오 데이터를 동기화한다. */
-                            vm.fn_setRebalancePortfolioObjFromTr( { p_gubun : "tr", p_obj : tr } );
-                        }
+                        v_portfolioObj[ vm.rebalance_date ][ rowData.F16013 ]     =   Object.assign( {}, rowData );
                     }
                 }
             });
 
 
+            /* 비중 설정 방식에 따라 각 종목의 비중정보를 구한다. */
+            var v_returnObj =   vm.fn_calcImportance( importance_method_cd, v_portfolioObj );
+            var total       =   {};
+
+
+            /* 직접입력인 경우 */
+            if( [ "1"].includes( importance_method_cd ) ) {
+
+                /* html에 입력된 정보를 p_gubun 에 맞게 일자별 포트폴리오에 등록시킨다. */
+                vm.fn_setRebalancePortfolioObj( { p_gubun : "table" } );
+            }
             /*  레코드별 비중정보를 구한다. (동일가중, 시총비중) */
-            if( [ "2", "3"].includes( importance_method_cd ) ) {
+            else if( [ "2", "3"].includes( importance_method_cd ) ) {
 
-				 total.importance		=	0;
+                if( v_returnObj.resultListObj && typeof v_returnObj.resultListObj[ vm.rebalance_date ] != "undefined" && v_returnObj.resultListObj[ vm.rebalance_date ] ) {
 
-                var same_rate           =   Math.floor( parseFloat( total.same_rate_sum / total.length ) * 100 ) / 100;     /* 동일 가중 비율 */
-                var v_temp_importance   =   0;
-                var v_inx               =   0;
+                    var result  =   v_returnObj.resultListObj[ vm.rebalance_date ];
 
-                table01.find( "tbody tr" ).each( function( inx, rowItem ) {
-                    var tr = $(this);
+                    if( result && result.length > 0 ) {
 
-                    var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
-                    var v_F16013        =   tr.find( "td input[name=F16013]" );                 /* 종목코드 */
-                    var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
-                    var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
+                        /* 비중 정보를 tr 에 설정한다. */
+                        var v_inx   =   0;
+                        table01.find( "tbody tr" ).each( function( inx, rowItem ) {
+                            var tr = $(this);
 
-                    if( typeof v_F16013.val() != "undefined" ) {
-                        if( v_F16013.val() != "" ) {
+                            var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
+                            var v_F16013        =   tr.find( "td input[name=F16013]" );                 /* 종목코드 */
+                            var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
+                            var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
 
-                            /* 동일가중인 경우 */
-                            if( importance_method_cd == "2" ) {
-                                v_temp_importance   =   same_rate;
+                            if( typeof v_F16013.val() != "undefined" ) {
+                                if( v_F16013.val() != "" ) {
+                                    v_importance.val( result[v_inx].importance );                       /* 비중 */
+                                    v_inx++;
+                                }
                             }
-                            /* 시총비중인 경우 */
-                            else if( importance_method_cd == "3" ) {
-                                v_temp_importance   =   Math.floor( parseFloat( Number( util.NumtoStr( v_F15028.text() ) ) / total.F15028 ) * 100 * 100 ) / 100;
-                            }
+                        });
 
-                            total.importance            =   Math.floor( ( total.importance * 100 )  +  parseFloat( v_temp_importance * 100 ) ) / 100;                       /* (합계) 비중 */
+                        /* html에 입력된 정보를 p_gubun 에 맞게 일자별 포트폴리오에 등록시킨다. */
+                        vm.fn_setRebalancePortfolioObj( { p_gubun : "table" } );                        
 
-                            result[v_inx].F15028        =   Number( util.NumtoStr( v_F15028.text() ) );             /* 시가총액 */
-                            result[v_inx].importance    =   v_temp_importance;                                      /* 비중 */
-
-                            v_inx++;
-                        }
-                    }
-                });
-
-
-                /* 비중 합계가 100 이  아닌 경우 0.01 값을 더해 100 이 되면 중단 */
-                if( Math.floor( ( total.same_rate_sum - total.importance ) * 100 ) / 100 != 0 ) {
-
-                    for( var i in result ) {
-                        total.importance = Math.floor( ( total.importance * 100 ) +  parseFloat( 0.01 * 100 ) ) / 100 ;
-
-                        result[i].importance   =   Math.floor( ( result[i].importance * 100 ) +  parseFloat( 0.01 * 100 ) ) / 100;
-                        if( total.importance == total.same_rate_sum ) {
-                            break;
-                        }
+                        /* 모든 일자별 포트폴리오 정보를 v_returnObj 에 맞게 설정한다. */
+                        vm.fn_modifyAllRebalancePortfolioObj( importance_method_cd );
                     }
                 }
+            }
 
 
-                /* 비중 정보를 tr 에 설정한다. */
-                v_inx   =   0;
-                table01.find( "tbody tr" ).each( function( inx, rowItem ) {
-                    var tr = $(this);
-
-                    var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
-                    var v_F16013        =   tr.find( "td input[name=F16013]" );                 /* 종목코드 */
-                    var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
-                    var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
-
-                    if( typeof v_F16013.val() != "undefined" ) {
-                        if( v_F16013.val() != "" ) {
-                            v_importance.val( result[v_inx].importance );                       /* 비중 */
-
-
-                            /* 입력항목 선택시 리밸런싱일자별 포트폴리오 데이터를 동기화한다. */
-                            vm.fn_setRebalancePortfolioObjFromTr( { p_gubun : "tr", p_obj : tr } );
-
-                            v_inx++;
-                        }
-                    }
-                });
+            if( v_returnObj.totalObj && typeof v_returnObj.totalObj[ vm.rebalance_date ] != "undefined" && v_returnObj.totalObj[ vm.rebalance_date ] ) {
+                total   =   v_returnObj.totalObj[ vm.rebalance_date ];
             }
 
             vm.importance_method_cd =   importance_method_cd;
 
             /* total 레코드를 설정한다. */
             vm.fn_setTotalRecord( total );
+        },
+
+        /*
+         * 비중 설정 방식에 따라 각 종목의 비중정보를 구한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_calcImportance( p_importance_method_cd, p_portfolioObj ) {
+
+            var vm = this;
+
+            var totalObj        =   {};         /* total 정보 */
+            var resultListObj   =   {};         /* 결과정보 */
+            var resultObj       =   {};
+
+
+            if( p_portfolioObj && Object.keys( p_portfolioObj ).length > 0 ) {
+
+                for( var i=0; i < Object.keys( p_portfolioObj ).length; i++ ) {
+
+                    var v_key   =   Object.keys( p_portfolioObj )[i];
+                    var v_item  =   p_portfolioObj[ v_key ];
+
+                    if( v_item && Object.keys( v_item ).length > 0 ) {
+
+                        totalObj[ v_key ]       =       {
+                                length          :   0       /* 총건수 */
+                            ,   same_rate_sum   :   100     /* 동일가중 합계 */
+
+                            ,   F15028          :   0       /* (합계) 시가총액 */
+                            ,   importance      :   0       /* (합계) 비중 */
+                        };
+
+                        resultListObj[ v_key ]      =   [];
+                        resultObj[ v_key ]          =   {};
+
+                        for( var j=0; j < Object.keys( v_item ).length; j++ ) {
+
+                            var v_sub_key   =   Object.keys( v_item )[j];
+                            var v_sub_item  =   v_item[ v_sub_key ];
+
+                            totalObj[ v_key ].length++;                         /* 총건수 */
+
+                            totalObj[ v_key ].F15028            =   Number( totalObj[ v_key ].F15028 )  +  Number( v_sub_item.F15028 );         /* (합계) 시가총액 */
+                            totalObj[ v_key ].importance        =   Math.floor( 
+                                    ( totalObj[ v_key ].importance * 100 )  
+                                +   ( Number( v_sub_item.importance ) * 100 )
+                            ) / 100;                                                                                                            /* (합계) 비중 */
+
+
+                            resultListObj[ v_key ].push({
+                                    F16013      :   v_sub_item.F16013           /* 종목코드 */
+                                ,   F15028      :   v_sub_item.F15028           /* 시가총액 */
+                                ,   importance  :   v_sub_item.importance       /* 비중 */
+                            });
+
+
+                            if( !resultObj[ v_key ][ v_sub_item.F16013 ] || Object.keys( resultObj[ v_key ][ v_sub_item.F16013 ] ).length == 0 ) {
+                                resultObj[ v_key ][ v_sub_item.F16013 ]     =   {};
+                            }   
+
+                            resultObj[ v_key ][ v_sub_item.F16013 ].F15028      =   v_sub_item.F15028;
+                            resultObj[ v_key ][ v_sub_item.F16013 ].importance  =   v_sub_item.importance;
+                        }
+                    
+
+                        /*  레코드별 비중정보를 구한다. (동일가중, 시총비중) */
+                        if( [ "2", "3"].includes( p_importance_method_cd ) ) {
+
+                            var same_rate           =   0;      /* 동일 가중 비율 */
+                            var v_temp_importance   =   0;
+                            var v_inx               =   0; 
+
+
+
+                            totalObj[ v_key ].importance		=	0;
+
+                            same_rate           =   Math.floor( 
+                                parseFloat( totalObj[ v_key ].same_rate_sum / totalObj[ v_key ].length ) * 100 
+                            ) / 100;                                                                                        /* 동일 가중 비율 */
+                            v_temp_importance   =   0;
+                            v_inx               =   0;
+
+                            for( var j=0; j < Object.keys( v_item ).length; j++ ) {
+
+                                var v_sub_key   =   Object.keys( v_item )[j];
+                                var v_sub_item  =   v_item[ v_sub_key ];                            
+
+                                /* 동일가중인 경우 */
+                                if( p_importance_method_cd == "2" ) {
+                                    v_temp_importance       =   same_rate;
+                                }
+                                /* 시총비중인 경우 */
+                                else if( p_importance_method_cd == "3" ) {
+                                    v_temp_importance       =   Math.floor( 
+                                        parseFloat( Number( v_sub_item.F15028 ) / totalObj[ v_key ].F15028 ) * 100 * 100 
+                                    ) / 100;
+                                }
+
+                                totalObj[ v_key ].importance                =   Math.floor( 
+                                        ( totalObj[ v_key ].importance * 100 )  
+                                    +   parseFloat( v_temp_importance * 100 ) 
+                                ) / 100;                                                                            /* (합계) 비중 */
+
+                                resultListObj[ v_key ][v_inx].F16013        =   v_sub_item.F16013;                  /* 종목코드 */
+                                resultListObj[ v_key ][v_inx].F15028        =   Number( v_sub_item.F15028 );        /* 시가총액 */
+                                resultListObj[ v_key ][v_inx].importance    =   Number( v_temp_importance );        /* 비중 */
+
+
+
+                                if( !resultObj[ v_key ][ v_sub_item.F16013 ] || Object.keys( resultObj[ v_key ][ v_sub_item.F16013 ] ).length == 0 ) {
+                                    resultObj[ v_key ][ v_sub_item.F16013 ]     =   {};
+                                }
+
+                                resultObj[ v_key ][ v_sub_item.F16013 ].F15028      =   Number( v_sub_item.F15028 );        /* 시가총액 */
+                                resultObj[ v_key ][ v_sub_item.F16013 ].importance  =   Number( v_temp_importance );        /* 비중 */
+
+                                v_inx++;
+                            }
+                        }
+                    
+
+
+                        /* 비중 합계가 100 이  아닌 경우 0.01 값을 더해 100 이 되면 중단 */
+                        if( Math.floor( ( totalObj[ v_key ].same_rate_sum - totalObj[ v_key ].importance ) * 100 ) / 100 != 0 ) {
+
+                            for( var j in resultListObj[ v_key ] ) {
+
+                                totalObj[ v_key ].importance = Math.floor( 
+                                    ( totalObj[ v_key ].importance * 100 ) +  parseFloat( 0.01 * 100 ) 
+                                ) / 100 ;
+
+                                resultListObj[ v_key ][j].importance   =   Math.floor( 
+                                    ( resultListObj[ v_key ][j].importance * 100 ) +  parseFloat( 0.01 * 100 ) 
+                                ) / 100;
+
+
+                                resultObj[ v_key ][ resultListObj[ v_key ][j].F16013 ].importance  =   resultListObj[ v_key ][j].importance;    /* 비중 */
+
+                                if( totalObj[ v_key ].importance == totalObj[ v_key ].same_rate_sum ) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return  { 
+                    totalObj        :   totalObj
+                ,   resultListObj   :   resultListObj
+                ,   resultObj       :   resultObj
+            };            
+
         },
 
         /*
@@ -1355,7 +1472,7 @@ export default {
 							) / 100
 						);     /* (합계) 비중 */
 
-                        v_sub_item2.order_no    =   v_order_no++;
+                        v_sub_item2.order_no    =   ++v_order_no;
                     }
 
 					if( v_importance != 100 ) {
@@ -2115,19 +2232,19 @@ export default {
                     if( p_param.p_gubun == "first" ) {
                         v_fist_date     =   Object.keys( vm.rebalancePortfolioObj )[0];
                     }else if( p_param.p_gubun == "selected_rebalance_date" ) {
-                        v_fist_date     =   Object.keys( vm.rebalancePortfolioObj )[ vm.rebalance_date ];
+                        v_fist_date     =   vm.rebalance_date;
                     }
 
 
-                    if( v_fist_date != "" ) {
+                    if( typeof v_fist_date != "undefined" && v_fist_date != "" ) {
                         v_org_rebalance_obj =   vm.rebalancePortfolioObj[ v_fist_date ];
                     }
 
 
-                    if( v_fist_date != "" && Object.keys( v_org_rebalance_obj ).length > 0 ) {
+                    if( typeof v_fist_date != "undefined" && v_fist_date != "" && Object.keys( v_org_rebalance_obj ).length > 0 ) {
 
                         /* 첫 [리밸런싱 일자별 포트폴리오] 를 나머지 [리밸런싱 일자별 포트폴리오]에 복사  */
-                        for( var i=1; i < vm.arr_rebalance_date.length; i++ ) {
+                        for( var i=0; i < vm.arr_rebalance_date.length; i++ ) {
 
                             var date    =   vm.arr_rebalance_date[i].value;
 
@@ -2151,10 +2268,10 @@ export default {
         },
 
         /*
-         * tr 에 입력된 정보를 일자별 포트폴리오에 등록시킨다.
+         * html에 입력된 정보를 p_gubun 에 맞게 일자별 포트폴리오에 등록시킨다.
          * 2019-09-06  bkLove(촤병국)
          */
-        fn_setRebalancePortfolioObjFromTr( p_param = { p_gubun : "tr", p_obj : {} } ) {
+        fn_setRebalancePortfolioObj( p_param = { p_gubun : "tr", p_obj : {} } ) {
 
             var vm = this;
 
@@ -2187,7 +2304,79 @@ export default {
                         }
                     }
                 }
+                else if( p_param.p_gubun == "table" ) {
+
+                    table01.find( "tbody tr" ).each( function( inx, rowItem ) {
+                        var tr = $(this);
+
+                        var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
+                        var v_F16002        =   tr.find( "td:eq(2)" );                              /* 종목명 */
+                        var v_F16013        =   tr.find( "td input[name=F16013]" );                 /* 종목코드 */
+                        var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
+                        var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
+
+
+                        if( typeof v_F16013.val() != "undefined" ) {
+
+                            if( v_F16013.val() != "" ) {
+
+                                var rowData     =   {
+                                        "F16013"        :   v_F16013.val()                          /* 종목코드 */
+                                    ,   "F16002"        :   v_F16002.text()                         /* 종목명 */
+                                    ,   "F15028"        :   util.NumtoStr( v_F15028.text() )        /* 시가총액 */
+                                    ,   "importance"    :   util.NumtoStr( v_importance.val() )     /* 비중 */
+                                    ,   "order_no"      :   0                                       /* 정렬순번 */
+                                    ,   "trIndex"       :   tr.index()                              /* 테이블 레코드 순번 */
+                                };
+
+                                if( !vm.rebalancePortfolioObj[ vm.rebalance_date ] || Object.keys( vm.rebalancePortfolioObj[ vm.rebalance_date ] ).length == 0 ) {
+                                    vm.rebalancePortfolioObj[ vm.rebalance_date ]   =   {};
+                                }                    
+
+                                vm.rebalancePortfolioObj[ vm.rebalance_date ][ rowData.F16013 ]     =   Object.assign( {}, rowData );
+                            }
+                        }
+                    });
+                }
             }
+        },
+
+        /*
+         * 모든 일자별 포트폴리오 정보를 p_returnObj 에 맞게 설정한다.
+         * 2019-09-06  bkLove(촤병국)
+         */
+        fn_modifyAllRebalancePortfolioObj( importance_method_cd ) {
+
+            var vm = this;
+
+
+            if( vm.rebalancePortfolioObj && Object.keys( vm.rebalancePortfolioObj ).length > 0 ) {
+
+                var v_result            =   vm.fn_calcImportance( importance_method_cd, vm.rebalancePortfolioObj );          
+
+                if( v_result && v_result.resultObj && Object.keys( v_result.resultObj ).length > 0 ) {
+
+                    for( var i=0; i < Object.keys( vm.rebalancePortfolioObj ).length; i++ ) {
+
+                        var v_key           =   Object.keys( vm.rebalancePortfolioObj )[i];
+                        var v_item          =   vm.rebalancePortfolioObj[ v_key ];
+
+                        var v_returnItem    =   v_result.resultObj[ v_key ];
+
+                        if( v_returnItem && Object.keys( v_returnItem ).length > 0  ) {
+
+                            for( var j=0; j < Object.keys( v_item ).length; j++ ) {
+
+                                var v_sub_key   =   Object.keys( v_item )[j];
+                                var v_sub_item  =   v_item[ v_sub_key ];
+
+                                v_sub_item.importance	=   v_returnItem[ v_sub_item.F16013 ].importance;
+                            }
+                        }
+                    }
+                }
+            }
+console.log( "vm.rebalancePortfolioObj", vm.rebalancePortfolioObj );
         },
 
         /*
@@ -2534,11 +2723,18 @@ export default {
                             check   =   false;
                         }
 
+                        if( response.data.p_rebalance_file_yn ) {
+                            vm.change_rebalance_yn      =   response.data.p_rebalance_file_yn;
+                        }else{
+                            vm.change_rebalance_yn      =   "0";
+                        }
+
                         /* 엑셀을 업로드 하는 경우 [직접입력] 으로 강제 설정 */
                         vm.importance_method_cd =   "1";
 
                         /* 리밸런싱일별 포트폴리오 데이터 설정 */
                         if( response.data.rebalancePortfolioObj ) {
+
                             vm.rebalancePortfolioObj        =   response.data.rebalancePortfolioObj;
 
                             if( vm.arr_rebalance_date && vm.arr_rebalance_date.length > 0 ) {

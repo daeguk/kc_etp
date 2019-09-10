@@ -571,7 +571,8 @@ var uploadPortfolio = function(req, res) {
                                             }
                                         }
 
-                                        resultMsg.rebalancePortfolioObj   =   rebalancePortfolioObj;
+                                        resultMsg.rebalancePortfolioObj     =   rebalancePortfolioObj;
+                                        resultMsg.p_rebalance_file_yn       =   v_param.p_rebalance_file_yn;
 
 
                                         callback(null);
@@ -627,6 +628,7 @@ var uploadPortfolio = function(req, res) {
             resultMsg.err = expetion;
 
             resultMsg.rebalancePortfolioObj     =   {};
+            resultMsg.p_rebalance_file_yn       =   "0";
 
             res.json(resultMsg);
             res.end();
