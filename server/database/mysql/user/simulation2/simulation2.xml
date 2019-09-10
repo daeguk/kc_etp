@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="simulation2">
+
+    <!--
+    *   시뮬레이션 목록정보를 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getSimulList2">
+
+        SELECT  /* simulation.getSimulList2 시뮬레이션 목록정보를 조회한다. */
+
+                base.*
+          FROM  (
+
+                /* 시나리오 그룹만 추출 */
+                    SELECT      tm_simul_mast.scen_cd                                   AS  temp_order                  /* 시나리오 코드 */
+
+                            ,   tm_simul_mast.grp_cd                                    AS  grp_cd                      /* 그룹코드(상위코드) */
+                            ,   tm_simul_mast.scen_cd                                   AS  scen_cd                     /* 시나리오 코드 */
+
+                            ,   tm_simul_mast.scen_depth                                AS  scen_depth                  /* 시나리오 DEPTH */
+                            ,   tm_simul_mast.scen_order_no                             AS  scen_order_no               /* 시나리오 정렬 순번 */
+                            ,   tm_simul_mast.scen_name                                 AS  scen_name                   /* 시나리오명 */
+                            ,   tm_simul_mast.grp_yn                                    AS  grp_yn                      /* 그룹여부(1-그룹) */
+                            ,   tm_simul_mast.start_year                                AS  start_year                  /* 시작년도 */
+                            ,   tm_simul_mast.rebalance_cycle_cd                        AS  rebalance_cycle_cd          /* 리밸런싱주기 (COM006) */
+                            ,   tm_simul_mast.rebalance_date_cd                         AS  rebalance_date_cd           /* 리밸런싱일자 (COM007) */
+                            ,   tm_simul_mast.init_invest_money                         AS  init_invest_money           /* 초기투자금액 */
+                            ,   tm_simul_mast.bench_mark_cd                             AS  bench_mark_cd               /* 벤치마크 (COM008) */
+                            ,   tm_simul_mast.importance_method_cd                      AS  importance_method_cd        /* 비중설정방식 (COM009) */
+
+                            ,   DATE_FORMAT( tm_simul_mast.upd_time, '%Y.%m.%d' )       AS  fmt_upd_time                /* 수정일 */
+
+                      FROM  tm_simul_mast
+                     WHERE  1 = 1
+                       AND  tm_simul_mast.grp_yn          =   '1'
+
+                       AND  tm_simul_mast.reg_id          =   #{user_id}                 /* 등록자 ID */
+
+                    UNION   ALL
+
+                /* 시나리오만 추출 */
+                    SELECT      tm_simul_mast.grp_cd                                    AS  temp_order                  /* 그룹코드(상위코드) */
+
+                            ,   tm_simul_mast.grp_cd                                    AS  grp_cd                      /* 그룹코드(상위코드) */
+                            ,   tm_simul_mast.scen_cd                                   AS  scen_cd                     /* 시나리오 코드 */
+
+                            ,   tm_simul_mast.scen_depth                                AS  scen_depth                  /* 시나리오 DEPTH */
+                            ,   tm_simul_mast.scen_order_no                             AS  scen_order_no               /* 시나리오 정렬 순번 */
+                            ,   tm_simul_mast.scen_name                                 AS  scen_name                   /* 시나리오명 */
+                            ,   tm_simul_mast.grp_yn                                    AS  grp_yn                      /* 그룹여부(1-그룹) */
+                            ,   tm_simul_mast.start_year                                AS  start_year                  /* 시작년도 */
+                            ,   tm_simul_mast.rebalance_cycle_cd                        AS  rebalance_cycle_cd          /* 리밸런싱주기 (COM006) */
+                            ,   tm_simul_mast.rebalance_date_cd                         AS  rebalance_date_cd           /* 리밸런싱일자 (COM007) */
+                            ,   tm_simul_mast.init_invest_money                         AS  init_invest_money           /* 초기투자금액 */
+                            ,   tm_simul_mast.bench_mark_cd                             AS  bench_mark_cd               /* 벤치마크 (COM008) */
+                            ,   tm_simul_mast.importance_method_cd                      AS  importance_method_cd        /* 비중설정방식 (COM009) */
+
+                            ,   DATE_FORMAT( tm_simul_mast.upd_time, '%Y.%m.%d' )       AS  fmt_upd_time                /* 수정일 */
+
+                      FROM  tm_simul_mast
+                     WHERE  1 = 1
+                       AND  tm_simul_mast.grp_yn          =   '0'
+
+                       AND  tm_simul_mast.reg_id          =   #{user_id}                 /* 등록자 ID */
+
+                       AND  EXISTS
+                            (
+                                SELECT  1
+                                  FROM  tm_simul_portfolio2
+                                 WHERE  1 = 1
+                                   AND  tm_simul_portfolio2.grp_cd      =   tm_simul_mast.grp_cd
+                                   AND  tm_simul_portfolio2.scen_cd     =   tm_simul_mast.scen_cd
+                                   AND  tm_simul_portfolio2.reg_id      =   #{user_id}                 /* 등록자 ID */
+                                 LIMIT  1
+                            )                       
+
+                )   base
+
+            ORDER  BY       /* 상위그룹 '선택안함' 을 제일 먼저 노출되게 하고, 그룹코드는 역순으로 노출 */
+                            CASE    WHEN    base.temp_order     =   '*'
+                                    THEN    '1'
+                                    ELSE    base.temp_order
+                            END                     DESC
+
+                        ,   base.grp_cd             ASC     /* 그룹코드(상위코드) */
+
+                        ,   /* 상위그룹 '선택안함' 인 경우 정렬순번 역순 노출, 그룹코드는 정방향 노출 */
+                            CASE    WHEN    base.temp_order     =   '*'
+                                    THEN    -base.scen_order_no
+                                    ELSE    base.scen_order_no
+                            END                     ASC     /* 시나리오 정렬 순번 */
+    </select>
+
+    <!--
+    *   시뮬레이션 포트폴리오 정보를 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getSimulPortfolio2">
+        SELECT      /* simulation.getSimulPortfolio2 시뮬레이션 포트폴리오 정보를 조회한다. */
+
+                    tm_simul_portfolio2.grp_cd                             	AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   tm_simul_portfolio2.scen_cd                             AS  scen_cd                     /* 시나리오코드  */
+                ,   tm_simul_portfolio2.F16013                              AS  F16013                      /* 구성종목코드  */
+                ,   tm_simul_portfolio2.rebalance_date                      AS  rebalance_date              /* 리밸런싱 날짜 */
+                ,   tm_simul_portfolio2.order_no                            AS  order_no                    /* 정렬 순번  */
+                ,   tm_simul_portfolio2.importance                          AS  importance                  /* 비중  */
+                ,   tm_simul_portfolio2.jisu_rate                           AS  jisu_rate                   /* 지수적용비율  */
+
+                ,   IFNULL(
+                            td_kspjong_basic.F16013
+                        ,   td_etp_basic.F16013
+                    )                                                       AS  F16013                      /* 단축코드 */
+                ,   IFNULL(
+                            td_kspjong_basic.F16002   
+                        ,   td_etp_basic.F16002
+                    )                                                       AS  F16002                      /* 한글종목명 */
+                ,   IFNULL(
+                            td_kspjong_basic.F15028
+                        ,   td_etp_basic.F15028
+                    )                                                       AS  F15028                      /* 시가총액 */
+                ,   IFNULL(
+                            td_kspjong_basic.F16017
+                        ,   td_etp_basic.F16017
+                    )                                                       AS  F16017                      /* 상장일 */
+                ,   IFNULL(
+                            td_kspjong_basic.F16109
+                        ,   td_etp_basic.F16109     
+                    )                                                       AS  F16109                      /* 유통주식수 */
+
+          FROM  tm_simul_portfolio2
+
+          LEFT  JOIN  td_kspjong_basic
+                  ON  tm_simul_portfolio2.F16013       =   td_kspjong_basic.F16013
+
+          LEFT  JOIN  td_etp_basic
+                  ON  tm_simul_portfolio2.F16013       =   td_etp_basic.F16013
+
+         WHERE  1 = 1
+           AND  tm_simul_portfolio2.grp_cd       =   #{grp_cd}       /* 그룹코드(상위코드) */
+           AND  tm_simul_portfolio2.scen_cd      =   #{scen_cd}      /* 시나리오 코드 */
+
+           AND  tm_simul_portfolio2.reg_id       =   #{user_id}      /* 등록자 ID */
+
+         ORDER  BY      tm_simul_portfolio2.scen_cd
+                    ,   tm_simul_portfolio2.rebalance_date
+                    ,   tm_simul_portfolio2.order_no
+    </select>	
+
+    <!--
+    *   화면에서 select 된 리밸런싱 일자를 조회한다.
+    *   2019-08-14  bkLove(촤병국)
+    -->
+    <select id="getRebalanceDate">
+    <![CDATA[
+        SELECT  /* simulationBacktest.getRebalanceDate     화면에서 select 된 리밸런싱 일자를 조회한다. */
+                    DATE_FORMAT( tm_date_manage.F12506, '%Y.%m.%d' )        AS  fmt_F12506
+                ,   tm_date_manage.F12506                                   AS  F12506
+          FROM  tm_date_manage
+         WHERE  1 = 1
+           AND  tm_date_manage.F12506       >=  CONCAT( #{start_year}, '0101' )
+           AND  tm_date_manage.F12506       <=  DATE_FORMAT( NOW(), '%Y%m%d' )
+           AND  tm_date_manage.gubun        =   
+                IFNULL(
+                        (
+                            SELECT  tm_code_dtl.com_val02
+                              FROM  tm_code_dtl
+                             WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
+                               AND  tm_code_dtl.com_dtl_cd      =   CONCAT( 
+                                                                            #{rebalance_cycle_cd}
+                                                                        ,   #{rebalance_date_cd}
+                                                                    )
+                             LIMIT  1
+                        )
+                    ,   ''
+                )
+
+         ORDER  BY  tm_date_manage.F12506
+    ]]>
+    </select>    
+
+</mapper>

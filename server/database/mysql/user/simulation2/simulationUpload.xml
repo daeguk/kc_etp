@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="simulationUpload">
+
+    <!--
+    *   업로드한 종목 중 존재하지 않는 종목을 조회한다. ( 10개만 노출 )
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getJongmokNotExistCheckByUpload">
+    
+        SELECT  /* simulationUpload.getJongmokNotExistCheckByUpload  업로드한 종목 중 존재하지 않는 종목을 조회한다. ( 10개만 노출 ) */
+                base.*
+
+          FROM  (
+
+                /* 6자리 단축코드 조회 */
+                    (
+                        SELECT      base.date                                               AS  date            /* 엑셀에서 입력한 리밸런싱 일자 */
+                                ,   base.code                                               AS  code            /* 엑셀에서 입력한 종목코드 */
+                                ,   base.allocation                                         AS  allocation      /* 엑셀에서 입력한 비중 */
+                                ,   base.row_no                                             AS  row_no          /* 엑셀 행번호 */
+
+                                ,   IFNULL(
+                                            td_kspjong_basic.F12506
+                                        ,   td_etp_basic.F12506
+                                    )                                                       AS  F12506          /* 입회일 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F16012
+                                        ,   td_etp_basic.F16012
+                                    )                                                       AS  F16012          /* 국제표준코드 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F16013
+                                        ,   td_etp_basic.F16013
+                                    )                                                       AS  F16013          /* 단축코드 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F16002
+                                        ,   td_etp_basic.F16002
+                                    )                                                       AS  F16002          /* 한글종목명 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F15007
+                                        ,   td_etp_basic.F15007
+                                    )                                                       AS  F15007          /* 기준가 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F15001
+                                        ,   td_etp_basic.F15001
+                                    )                                                       AS  F15001          /* 현재가 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F15028
+                                        ,   td_etp_basic.F15028
+                                    )                                                       AS  F15028          /* 시가총액 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F16017
+                                        ,   td_etp_basic.F16017
+                                    )                                                       AS  F16017          /* 상장일 */
+
+                          FROM  (
+                            <foreach    collection="arrCodeList06"      item="data"     separator=" UNION ALL" >
+                                    SELECT      #{data.date}                                AS  date            /* 엑셀에서 입력한 리밸런싱 일자 */
+                                            ,   #{data.code}                                AS  code            /* 엑셀에서 입력한 종목코드 */
+                                            ,   #{data.allocation}                          AS  allocation      /* 엑셀에서 입력한 비중 */
+                                            ,   #{data.row_no}                              AS  row_no          /* 엑셀 행번호 */
+                                      FROM  dual
+                            </foreach>
+                                )       base
+                          LEFT  JOIN    td_kspjong_basic
+                                ON      (   td_kspjong_basic.F16013     =    base.code  )
+                                        
+                          LEFT  JOIN    td_etp_basic
+                                ON      (   td_etp_basic.F16013         =    base.code  )
+                                
+                         WHERE  1 = 1
+                        
+                           AND  base.code           >   ''
+                           AND  (
+                                        td_kspjong_basic.F12506                 IS  NULL
+                                    OR  (
+                                                    td_kspjong_basic.F12506     IS  NULL
+                                            AND     td_etp_basic.F12506         IS  NULL
+                                        )
+                                )
+
+                         LIMIT  10
+                    )
+                    
+                    UNION   ALL
+                    
+                /* 12 자리 국제표준코드 조회 */
+                    (
+                        SELECT      base.date                                               AS  date            /* 엑셀에서 입력한 리밸런싱 일자 */
+                                ,   base.code                                               AS  code            /* 엑셀에서 입력한 종목코드 */
+                                ,   base.allocation                                         AS  allocation      /* 엑셀에서 입력한 비중 */
+                                ,   base.row_no                                             AS  row_no          /* 엑셀 행번호 */
+
+                                ,   IFNULL(
+                                            td_kspjong_basic.F12506
+                                        ,   td_etp_basic.F12506
+                                    )                                                       AS  F12506          /* 입회일 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F16012
+                                        ,   td_etp_basic.F16012
+                                    )                                                       AS  F16012          /* 국제표준코드 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F16013
+                                        ,   td_etp_basic.F16013
+                                    )                                                       AS  F16013          /* 단축코드 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F16002
+                                        ,   td_etp_basic.F16002
+                                    )                                                       AS  F16002          /* 한글종목명 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F15007
+                                        ,   td_etp_basic.F15007
+                                    )                                                       AS  F15007          /* 기준가 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F15001
+                                        ,   td_etp_basic.F15001
+                                    )                                                       AS  F15001          /* 현재가 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F15028
+                                        ,   td_etp_basic.F15028
+                                    )                                                       AS  F15028          /* 시가총액 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F16017
+                                        ,   td_etp_basic.F16017
+                                    )                                                       AS  F16017          /* 상장일 */
+
+                          FROM  (
+                            <foreach    collection="arrCodeList12"      item="data"     separator=" UNION ALL" >
+                                    SELECT      #{data.date}                                AS  date            /* 엑셀에서 입력한 리밸런싱 일자 */
+                                            ,   #{data.code}                                AS  code            /* 엑셀에서 입력한 종목코드 */
+                                            ,   #{data.allocation}                          AS  allocation      /* 엑셀에서 입력한 비중 */
+                                            ,   #{data.row_no}                              AS  row_no          /* 엑셀 행번호 */
+                                      FROM  dual
+                            </foreach>
+                                )       base
+                          LEFT  JOIN    td_kspjong_basic
+                                ON      (   td_kspjong_basic.F16012     =    base.code   )
+                                        
+                          LEFT  JOIN    td_etp_basic
+                                ON      (   td_etp_basic.F16012         =    base.code   )
+                                
+                         WHERE  1 = 1
+                        
+                           AND  base.code           >   ''
+                           AND  (
+                                        td_kspjong_basic.F12506                 IS  NULL
+                                    OR  (
+                                                    td_kspjong_basic.F12506     IS  NULL
+                                            AND     td_etp_basic.F12506         IS  NULL
+                                        )
+                                )
+
+                         LIMIT  10
+                    )
+
+                )   base
+
+         WHERE  1 = 1
+
+         LIMIT  10
+
+    </select>
+
+    <!--
+    *   업로드한 종목 중 중복 존재하는 종목을 조회한다. ( 10개만 노출 )
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getJongmokDuplCheckByUpload">
+
+        SELECT  /* simulationUpload.getJongmokDuplCheckByUpload  업로드한 종목 중 중복 존재하는 종목을 조회한다. ( 10개만 노출 ) */
+                base.*
+
+          FROM  (
+
+                /* 6자리 단축코드 조회 */
+                    (
+                        SELECT      base.date                                               AS  date            /* 엑셀에서 입력한 리밸런싱 일자 */
+                                ,   base.code                                               AS  code            /* 엑셀에서 입력한 종목코드 */
+                                ,   MAX( base.row_no )                                      AS  row_no          /* 엑셀 행번호 */
+                          FROM  (
+                            <foreach    collection="arrCodeList06"      item="data"     separator=" UNION ALL" >
+                                    SELECT      #{data.date}                                AS  date            /* 엑셀에서 입력한 리밸런싱 일자 */
+                                            ,   #{data.code}                                AS  code            /* 엑셀에서 입력한 종목코드 */
+                                            ,   #{data.allocation}                          AS  allocation      /* 엑셀에서 입력한 비중 */
+                                            ,   #{data.row_no}                              AS  row_no          /* 엑셀 행번호 */
+                                      FROM  dual
+                            </foreach>
+                                )       base
+                          LEFT  JOIN    td_kspjong_basic
+                                ON      (   td_kspjong_basic.F16013     =    base.code  )
+                                        
+                          LEFT  JOIN    td_etp_basic
+                                ON      (   td_etp_basic.F16013         =    base.code  )
+                                
+                         WHERE  1 = 1
+                           AND  base.code           >   ''
+                        
+                         GROUP  BY      base.date
+                                    ,   base.code
+                        HAVING  COUNT(*) > 1
+
+                         LIMIT  10
+                    )
+                    
+                    UNION   ALL
+                    
+                /* 12 자리 국제표준코드 조회 */
+                    (
+                        SELECT      base.date                                               AS  date            /* 엑셀에서 입력한 리밸런싱 일자 */
+                                ,   base.code                                               AS  code            /* 엑셀에서 입력한 종목코드 */
+                                ,   MAX( base.row_no )                                      AS  row_no          /* 엑셀 행번호 */
+                         FROM  (
+                            <foreach    collection="arrCodeList12"      item="data"     separator=" UNION ALL" >
+                                    SELECT      #{data.date}                                AS  date            /* 엑셀에서 입력한 리밸런싱 일자 */
+                                            ,   #{data.code}                                AS  code            /* 엑셀에서 입력한 종목코드 */
+                                            ,   #{data.allocation}                          AS  allocation      /* 엑셀에서 입력한 비중 */
+                                            ,   #{data.row_no}                              AS  row_no          /* 엑셀 행번호 */
+                                      FROM  dual
+                            </foreach>
+                                )       base
+                          LEFT  JOIN    td_kspjong_basic
+                                ON      (   td_kspjong_basic.F16012     =    base.code   )
+                                        
+                          LEFT  JOIN    td_etp_basic
+                                ON      (   td_etp_basic.F16012         =    base.code   )
+                                
+                         WHERE  1 = 1
+                           AND  base.code           >   ''
+                        
+                         GROUP  BY      base.date
+                                    ,   base.code
+                        HAVING  COUNT(*) > 1
+
+                         LIMIT  10
+                    )
+
+                )   base
+
+         WHERE  1 = 1
+
+         LIMIT  10
+
+    </select>
+
+    <!--
+    *   업로드한 종목과 일치하는 정보를 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getJongmokByUpload">
+
+        SELECT  /* simulationUpload.getJongmokByUpload  업로드한 종목과 일치하는 정보를 조회한다. */
+                base.*
+
+          FROM  (
+
+                /* 6자리 단축코드 조회 */
+                    (
+                        SELECT      base.date                                               AS  date            /* 엑셀에서 입력한 리밸런싱 일자 */
+                                ,   base.code                                               AS  code            /* 엑셀에서 입력한 종목코드 */
+                                ,   base.allocation                                         AS  allocation      /* 엑셀에서 입력한 비중 */
+                                ,   base.row_no                                             AS  row_no          /* 엑셀 행번호 */
+
+                                ,   IFNULL(
+                                            td_kspjong_basic.F12506
+                                        ,   td_etp_basic.F12506
+                                    )                                                       AS  F12506          /* 입회일 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F16012
+                                        ,   td_etp_basic.F16012
+                                    )                                                       AS  F16012          /* 국제표준코드 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F16013
+                                        ,   td_etp_basic.F16013
+                                    )                                                       AS  F16013          /* 단축코드 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F16002
+                                        ,   td_etp_basic.F16002
+                                    )                                                       AS  F16002          /* 한글종목명 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F15007
+                                        ,   td_etp_basic.F15007
+                                    )                                                       AS  F15007          /* 기준가 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F15001
+                                        ,   td_etp_basic.F15001
+                                    )                                                       AS  F15001          /* 현재가 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F15028
+                                        ,   td_etp_basic.F15028
+                                    )                                                       AS  F15028          /* 시가총액 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F16017
+                                        ,   td_etp_basic.F16017
+                                    )                                                       AS  F16017          /* 상장일 */
+
+                          FROM  (
+                            <foreach    collection="arrCodeList06"      item="data"     separator=" UNION ALL" >
+                                    SELECT      #{data.date}                                AS  date            /* 엑셀에서 입력한 리밸런싱 일자 */
+                                            ,   #{data.code}                                AS  code            /* 엑셀에서 입력한 종목코드 */
+                                            ,   #{data.allocation}                          AS  allocation      /* 엑셀에서 입력한 비중 */
+                                            ,   #{data.row_no}                              AS  row_no          /* 엑셀 행번호 */
+                                      FROM  dual
+                            </foreach>
+                                )       base
+                          LEFT  JOIN    td_kspjong_basic
+                                ON      (   td_kspjong_basic.F16013     =    base.code  )
+                                        
+                          LEFT  JOIN    td_etp_basic
+                                ON      (   td_etp_basic.F16013         =    base.code  )
+                                
+                         WHERE  1 = 1
+                           AND  base.code           >   ''
+                    )
+                    
+                    UNION   ALL
+                    
+                /* 12 자리 국제표준코드 조회 */
+                    (
+                        SELECT      base.date                                               AS  date            /* 엑셀에서 입력한 리밸런싱 일자 */
+                                ,   base.code                                               AS  code            /* 엑셀에서 입력한 종목코드 */
+                                ,   base.allocation                                         AS  allocation      /* 엑셀에서 입력한 비중 */
+                                ,   base.row_no                                             AS  row_no          /* 엑셀 행번호 */
+
+                                ,   IFNULL(
+                                            td_kspjong_basic.F12506
+                                        ,   td_etp_basic.F12506
+                                    )                                                       AS  F12506          /* 입회일 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F16012
+                                        ,   td_etp_basic.F16012
+                                    )                                                       AS  F16012          /* 국제표준코드 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F16013
+                                        ,   td_etp_basic.F16013
+                                    )                                                       AS  F16013          /* 단축코드 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F16002
+                                        ,   td_etp_basic.F16002
+                                    )                                                       AS  F16002          /* 한글종목명 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F15007
+                                        ,   td_etp_basic.F15007
+                                    )                                                       AS  F15007          /* 기준가 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F15001
+                                        ,   td_etp_basic.F15001
+                                    )                                                       AS  F15001          /* 현재가 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F15028
+                                        ,   td_etp_basic.F15028
+                                    )                                                       AS  F15028          /* 시가총액 */
+                                ,   IFNULL(
+                                            td_kspjong_basic.F16017
+                                        ,   td_etp_basic.F16017
+                                    )                                                       AS  F16017          /* 상장일 */
+
+                          FROM  (
+                            <foreach    collection="arrCodeList12"      item="data"     separator=" UNION ALL" >
+                                    SELECT      #{data.date}                                AS  date            /* 엑셀에서 입력한 리밸런싱 일자 */
+                                            ,   #{data.code}                                AS  code            /* 엑셀에서 입력한 종목코드 */
+                                            ,   #{data.allocation}                          AS  allocation      /* 엑셀에서 입력한 비중 */
+                                            ,   #{data.row_no}                              AS  row_no          /* 엑셀 행번호 */
+                                      FROM  dual
+                            </foreach>
+                                )       base
+                          LEFT  JOIN    td_kspjong_basic
+                                ON      (   td_kspjong_basic.F16012     =    base.code   )
+                                        
+                          LEFT  JOIN    td_etp_basic
+                                ON      (   td_etp_basic.F16012         =    base.code   )
+                                
+                         WHERE  1 = 1
+                           AND  base.code           >   ''
+                    )
+
+                )   base
+
+         WHERE  1 = 1
+
+         ORDER  BY      base.date
+                    ,   base.F16013
+
+    </select>        
+
+</mapper>

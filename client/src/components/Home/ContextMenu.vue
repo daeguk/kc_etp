@@ -53,6 +53,7 @@ export default {
         {path: '/etp/manage', imagePath:'/assets/img/icons/icons8-investment-portfolio.svg', title: 'ETP 운용 관리', stitle: 'TP 운용 정보 조회'},
         {path: '/etp/register', imagePath:'/assets/img/icons/icons8-agreement-new-filled.svg', title: 'ETP 신규 등록', stitle: 'ETP 신규 정보 조회'},
         {path: '/simulation/simulationControl', imagePath:'/assets/img/icons/icons8-agreement-new-filled.svg', title: '시뮬레이션', stitle: '시뮬레이션 등록'},
+        {path: '/simulation2/simulationControl2', imagePath:'/assets/img/icons/icons8-agreement-new-filled.svg', title: '시뮬레이션2', stitle: '시뮬레이션 등록2'},
       ],
       menuList: [],
     };
@@ -95,6 +96,7 @@ export default {
     }
     if(tmp.indexOf("test@") !== -1) {
       this.menuList.push(this.allMenuList[6]);
+      this.menuList.push(this.allMenuList[7]);
     }
 },
   methods: {

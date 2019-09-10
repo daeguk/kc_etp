@@ -377,11 +377,11 @@
 
                             ,   DATE_FORMAT( tm_simul_mast.upd_time, '%Y.%m.%d' )       AS  fmt_upd_time                /* 수정일 */
 
-                    FROM  tm_simul_mast
-                   WHERE  1 = 1
-                     AND  tm_simul_mast.grp_yn          =   '1'
+                      FROM  tm_simul_mast
+                     WHERE  1 = 1
+                       AND  tm_simul_mast.grp_yn          =   '1'
 
-                     AND  tm_simul_mast.reg_id          =   #{user_id}                 /* 등록자 ID */
+                       AND  tm_simul_mast.reg_id          =   #{user_id}                 /* 등록자 ID */
 
                     UNION   ALL
 
@@ -404,11 +404,22 @@
 
                             ,   DATE_FORMAT( tm_simul_mast.upd_time, '%Y.%m.%d' )       AS  fmt_upd_time                /* 수정일 */
 
-                    FROM  tm_simul_mast
-                   WHERE  1 = 1
-                     AND  tm_simul_mast.grp_yn          =   '0'
+                      FROM  tm_simul_mast
+                     WHERE  1 = 1
+                       AND  tm_simul_mast.grp_yn          =   '0'
 
-                     AND  tm_simul_mast.reg_id          =   #{user_id}                 /* 등록자 ID */
+                       AND  tm_simul_mast.reg_id          =   #{user_id}                 /* 등록자 ID */
+
+                       AND  EXISTS
+                            (
+                                SELECT  1
+                                  FROM  tm_simul_portfolio
+                                 WHERE  1 = 1
+                                   AND  tm_simul_portfolio.grp_cd       =   tm_simul_mast.grp_cd
+                                   AND  tm_simul_portfolio.scen_cd      =   tm_simul_mast.scen_cd
+                                   AND  tm_simul_portfolio.reg_id       =   #{user_id}                 /* 등록자 ID */
+                                 LIMIT  1
+                            )
 
                 )   base
 
