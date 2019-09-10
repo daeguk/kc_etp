@@ -192,6 +192,12 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            <tr v-if="!arr_analyze || arr_analyze.length == 0" >
+                                                <td colspan="3" style="align:center">
+                                                    처리중 오류가 발생하였습니다.
+                                                </td>
+                                            </tr>
+
                                             <tr v-for="( row, index ) in  arr_analyze" v-bind:key="row + '_' + index" >
                                                 <td class="txt_left">
                                                     {{ row.anal_title          /* 분석지표 */ }}
@@ -395,9 +401,12 @@ export default {
 
                         vm.arr_analyze_org      =   vm.paramData.analyzeList;
                         try{
-                            vm.arr_analyze_temp =   JSON.parse( vm.arr_analyze_org );
+                            if( vm.arr_analyze_org ) {
+                                vm.arr_analyze_temp =   JSON.parse( vm.arr_analyze_org );
+                            }
                         }catch( e ) {
                             vm.arr_analyze_temp =   "";
+                            vm.arr_analyze.push( { anal_title : "처리중 오류가 발생하였습니다." }  );
                             console.log( "analyzeList 파싱 중 오류가 발생되었습니다.", e );
                         }
                         vm.fn_setAnal01();
@@ -531,7 +540,9 @@ export default {
                             vm.arr_analyze_org      =   response.data.analyzeList;
                                                     
                             try{
-                                vm.arr_analyze_temp     =   JSON.parse( vm.arr_analyze_org );
+                                if( vm.arr_analyze_org ) {                           
+                                    vm.arr_analyze_temp     =   JSON.parse( vm.arr_analyze_org );
+                                }
                             }catch( e ) {
                                 vm.arr_analyze_temp     =   "";
                                 console.log( "analyzeList 파싱 중 오류가 발생되었습니다.", e );
@@ -843,6 +854,8 @@ export default {
         fn_setAnal01() {
 
             var vm = this;
+
+            vm.arr_analyze  =   [];
 
             if( vm.arr_analyze_temp &&  Object.keys( vm.arr_analyze_temp ).length > 0  ) {
                 var v_anal      =   {};
