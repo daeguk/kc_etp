@@ -1320,7 +1320,7 @@ export default {
 
 
             /* 선택된 리밸런싱 일자에 속한 포트폴리오를 밸리데이션 체크한다. */
-            vm.fn_validationRebalanceDatePortfolio();
+            vm.fn_validationRebalanceDatePortfolio( { p_importance_total_check : 'Y' } );
 
         /**************/
             if( vm.arr_show_error_message && vm.arr_show_error_message.length > 0  ) {
@@ -1910,7 +1910,7 @@ export default {
                                     if( vm.old_rebalance_date != vm.rebalance_date ) {
 
                                         /* 선택된 리밸런싱 일자에 속한 포트폴리오를 밸리데이션 체크한다. */
-                                        var check = vm.fn_validationRebalanceDatePortfolio();
+                                        var check = vm.fn_validationRebalanceDatePortfolio( { p_importance_total_check : 'N' } );
 
                                         if( check ) {
                                             vm.old_rebalance_date   =   vm.rebalance_date;
@@ -2080,7 +2080,7 @@ export default {
             }
 
             /* 선택된 리밸런싱 일자에 속한 포트폴리오를 밸리데이션 체크한다. */
-            var check = vm.fn_validationRebalanceDatePortfolio();
+            var check = vm.fn_validationRebalanceDatePortfolio( { p_importance_total_check : 'Y' } );
 
         /**************/
             if( vm.arr_show_error_message && vm.arr_show_error_message.length > 0  ) {
@@ -2272,7 +2272,7 @@ export default {
          * 선택된 리밸런싱 일자에 속한 포트폴리오를 밸리데이션 체크한다.
          * 2019-07-26  bkLove(촤병국)
          */   
-        fn_validationRebalanceDatePortfolio() {
+        fn_validationRebalanceDatePortfolio( p_param={ p_importance_total_check : 'Y' } ) {
 
             var vm = this;
 
@@ -2346,7 +2346,7 @@ export default {
                 }
             });
 
-
+        
             if( !v_portfolio || v_portfolio.length == 0 ) {
                 vm.arr_show_error_message.push( "[포트폴리오] 종목코드가 한건 이상 존재해야 합니다." );
                 return  false;
@@ -2394,10 +2394,13 @@ export default {
             }            
 
 
-            /* 포트폴리오 1건 이상 입력한 경우에는 비중의 합은 100 이 되어야 함.  */
-            if( v_portfolio.length > 0 && total.importance != 100 ) {
-                vm.arr_show_error_message.push( "[포트폴리오] 비중의 합은 100 이 되어야 합니다." );
-                return  false;
+            if( p_param.p_importance_total_check == "Y" ) {
+                
+                /* 포트폴리오 1건 이상 입력한 경우에는 비중의 합은 100 이 되어야 함.  */
+                if( v_portfolio.length > 0 && total.importance != 100 ) {
+                    vm.arr_show_error_message.push( "[포트폴리오] 비중의 합은 100 이 되어야 합니다." );
+                    return  false;
+                }
             }
 
             return  true;
