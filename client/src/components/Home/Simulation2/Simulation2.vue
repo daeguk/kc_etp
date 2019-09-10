@@ -627,6 +627,12 @@ export default {
 
 
             var v_portfolioObj  =   {};
+
+            if(     typeof vm.rebalancePortfolioObj[ vm.rebalance_date ] != "undefined" 
+                &&  vm.rebalancePortfolioObj[ vm.rebalance_date ]
+            ) {
+                vm.rebalancePortfolioObj[ vm.rebalance_date ]     =   {};
+            }
             
 
             /* 계산할 항목에 대한 전체 정보를 구한다. */
