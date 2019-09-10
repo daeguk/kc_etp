@@ -628,7 +628,9 @@ export default {
 
             var v_portfolioObj  =   {};
 
-            if(     typeof vm.rebalancePortfolioObj[ vm.rebalance_date ] != "undefined" 
+            if(     rebalancePortfolioObj
+                &&  vm.rebalance_date
+                &&  typeof vm.rebalancePortfolioObj[ vm.rebalance_date ] != "undefined" 
                 &&  vm.rebalancePortfolioObj[ vm.rebalance_date ]
             ) {
                 vm.rebalancePortfolioObj[ vm.rebalance_date ]     =   {};
