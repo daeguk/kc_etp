@@ -1697,8 +1697,8 @@ export default {
                                                         vm.rebalancePortfolioObj    =   {};
                                                         vm.rebalancePortfolioObj[ vm.rebalance_date ]   =   Object.assign( {}, v_org_rebalance_obj );
 
-                                                        /* [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
-                                                        vm.fn_copyFirstDateTorebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
+                                                        /* 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
+                                                        vm.fn_copySelectedDateTorebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
                                                     }
                                                 });
                                             }
@@ -1769,8 +1769,8 @@ export default {
                                                         vm.rebalancePortfolioObj    =   {};
                                                         vm.rebalancePortfolioObj[ vm.rebalance_date ]   =   Object.assign( {}, v_org_rebalance_obj );
 
-                                                        /* [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
-                                                        vm.fn_copyFirstDateTorebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
+                                                        /* 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
+                                                        vm.fn_copySelectedDateTorebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
                                                     }
                                                 });
                                                                                             
@@ -1857,8 +1857,8 @@ export default {
                                                         vm.rebalancePortfolioObj    =   {};
                                                         vm.rebalancePortfolioObj[ vm.rebalance_date ]   =   Object.assign( {}, v_org_rebalance_obj );
 
-                                                        /* [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
-                                                        vm.fn_copyFirstDateTorebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
+                                                        /* 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
+                                                        vm.fn_copySelectedDateTorebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
                                                     }
                                                 });                                        
                                             }
@@ -2088,8 +2088,8 @@ export default {
             }
 
             if( check ) {
-                /* [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
-                vm.fn_copyFirstDateTorebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
+                /* 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
+                vm.fn_copySelectedDateTorebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
 
                 vm.change_rebalance_yn  =   "1";
             }
@@ -2097,10 +2097,10 @@ export default {
 
 
         /*
-         * [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다.
+         * 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다.
          * 2019-09-06  bkLove(촤병국)
          */
-        fn_copyFirstDateTorebalanceAll( p_param={ p_gubun : "first", p_exist_data_skip_yn : "Y"  } ) {
+        fn_copySelectedDateTorebalanceAll( p_param={ p_gubun : "first", p_exist_data_skip_yn : "Y"  } ) {
 
             var vm = this;
 
@@ -2533,6 +2533,9 @@ export default {
 
                             check   =   false;
                         }
+
+                        /* 엑셀을 업로드 하는 경우 [직접입력] 으로 강제 설정 */
+                        vm.importance_method_cd =   "1";
 
                         /* 리밸런싱일별 포트폴리오 데이터 설정 */
                         if( response.data.rebalancePortfolioObj ) {
