@@ -2534,6 +2534,21 @@ export default {
                         /* 리밸런싱일별 포트폴리오 데이터 설정 */
                         if( response.data.rebalancePortfolioObj ) {
                             vm.rebalancePortfolioObj        =   response.data.rebalancePortfolioObj;
+
+                            if( vm.arr_rebalance_date && vm.arr_rebalance_date.length > 0 ) {
+
+                                /* 현재 리밸런싱 일자가 맨 처음 리밸런싱 일자와 다른 경우 맨처음 리밸런싱 일자로 설정 */
+                                if( vm.rebalance_date != vm.arr_rebalance_date[0].value ) {
+
+                                    vm.old_rebalance_date   =   vm.rebalance_date;
+
+                                    vm.rebalance_date       =   vm.arr_rebalance_date[0].value;
+                                
+                                    /* 선택된 리밸런싱 일자에 속한 포트폴리오를 노출한다. */
+                                    vm.fn_showRebalanceDatePortfolio();
+                                }
+                            }
+
                             check   =   true;
                         }
 
