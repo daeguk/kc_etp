@@ -409,84 +409,6 @@
     </delete>
 
 
-    <!--
-    *   scen_cd 에 존재하면서 start_year 기준 직전 영업일 하루 데이터를 조회한다.
-    *   2019-08-14  bkLove(촤병국)
-    -->
-    <select id="getSimulHistListByBeforeDateScenCd">
-    
-        SELECT      /* simulationBacktest.getSimulHistListByBeforeDateScenCd    scen_cd 에 존재하면서 start_year 기준 직전 영업일 하루 데이터를 조회한다. */
-
-                    td_kspjong_hist.F16013                              AS  F16013                  /* 단축코드 */
-                ,   td_kspjong_hist.F12506                              AS  F12506                  /* 입회일자 */
-                ,   td_kspjong_hist.F15001                              AS  F15001                  /* 현재가*/
-                ,   td_kspjong_hist.F30700                              AS  F30700                  /* 가중 수정 주가 현재가 ( 당일 종가 ) - 종가 */
-                ,   td_kspjong_hist.F15007                              AS  F15007                  /* 기준가 ( 전일 종가 ) - 기준가 */
-                ,   td_kspjong_hist.F16143                              AS  F16143                  /* 상장주식수*/
-                ,   td_kspjong_hist.F15001                              AS  F15001                  /* 현재가 */
-                ,   (
-                        CASE    WHEN    (
-                                            SELECT  tm_date_manage.F12506
-                                              FROM  tm_date_manage
-                                             WHERE  tm_date_manage.F12506       =   td_kspjong_hist.F12506
-                                               AND  tm_date_manage.GUBUN        =   base.GUBUN
-
-                                             LIMIT  1
-                                        )   IS  NULL
-                                THEN    '0'
-                                ELSE    '1'
-                        END
-                    )                                                   AS  rebalancing             /* 리밸런싱 여부 */
-                
-          FROM  (
-                    SELECT      tm_simul_portfolio.F16013               AS  F16013                  /* 종목코드 */
-                            ,   tm_simul_mast.rebalance_cycle_cd        AS  rebalance_cycle_cd
-                            ,   tm_simul_mast.rebalance_date_cd         AS  rebalance_date_cd
-                            ,   (
-                                    SELECT  tm_code_dtl.com_val02
-                                      FROM  tm_code_dtl
-                                     WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
-                                       AND  tm_code_dtl.com_dtl_cd      =   CONCAT(     tm_simul_mast.rebalance_cycle_cd 
-                                                                                    ,   IFNULL( tm_simul_mast.rebalance_date_cd, '' )
-                                                                            )
-                                        LIMIT  1
-                                )                                       AS  GUBUN                   /* 구분 */
-
-                      FROM  tm_simul_portfolio
-                      JOIN  tm_simul_mast
-                        ON  (
-                                        tm_simul_portfolio.grp_cd   =   tm_simul_mast.grp_cd
-                                AND     tm_simul_portfolio.scen_cd  =   tm_simul_mast.scen_cd
-                            )
-                     WHERE  1 = 1
-                       AND  tm_simul_portfolio.grp_cd   =   #{grp_cd}
-                       AND  tm_simul_portfolio.scen_cd  =   #{scen_cd}
-
-                )     base
-
-          JOIN  td_kspjong_hist
-            ON  (   
-                            base.F16013                 =   td_kspjong_hist.F16013
-                    AND     td_kspjong_hist.F12506      =
-                            (
-                            <![CDATA[
-                                SELECT  MAX( td_kspjong_hist.F12506 )
-                                  FROM  td_kspjong_hist
-                                 WHERE  1 = 1
-                                   AND  base.F16013                 =   td_kspjong_hist.F16013
-                                   AND  td_kspjong_hist.F12506      <   CONCAT( #{start_year}, '0101' )         /* 입회일자 이전 */
-                                   AND  td_kspjong_hist.F12506      >=  DATE_FORMAT( 
-                                                                                    DATE_SUB( 
-                                                                                            CONCAT( #{start_year}, '0101' )
-                                                                                        ,   INTERVAL 2 WEEK
-                                                                                    )
-                                                                                ,   '%Y%m%d' 
-                                                                            )                                   /* start_year 기준 3 달 전부터 시작  */
-                            ]]>
-                            )
-                )
-
-    </select>
 
     <!--
     *   scen_cd 에 존재하면서 start_year 기준 이력 데이터를 조회한다.
@@ -995,23 +917,8 @@
                        AND  td_index_basic.middle_type  =   'KSP'
 
                             /* start_year 이전 첫 영업일 이후 부터 시작 */
-                       AND  td_index_hist.F12506        >=
-                            (
-                                SELECT  MAX( td_kspjong_hist.F12506 )
-                                  FROM  td_kspjong_hist
-                                 WHERE  1 = 1
-                                   AND  td_kspjong_hist.F16013      =   '005930' /* 삼성전자 단축키 고정 으로 사용(상장되지 않은 종목일 경우 영업일 NULL)*/
-                                   AND  td_kspjong_hist.F12506      <   CONCAT( #{start_year}, '0101' )         /* 입회일자 이전 */
-                                   AND  td_kspjong_hist.F12506      >=  DATE_FORMAT( 
-                                                                                DATE_SUB( 
-                                                                                        CONCAT(#{start_year}, '0101' )
-                                                                                    ,   INTERVAL 2 WEEK
-                                                                                )
-                                                                            ,   '%Y%m%d' 
-                                                                        )                                       /* start_year 기준 3 달 전부터 시작  */
-                              
-                            )
-
+                       AND  td_index_hist.F12506        >= CONCAT( #{start_year}, '0101' )
+                           
                      ORDER  BY  F12506
 
                 )       td_kospi_hist
@@ -1038,26 +945,8 @@
 
 
                             /* start_year 이전 첫 영업일 이후 부터 시작 */
-                       AND  td_index_hist.F12506        >=
-                            (
-                                SELECT  MAX( td_kspjong_hist.F12506 )
-                                  FROM  td_kspjong_hist
-                                  JOIN  tm_simul_portfolio
-                                    ON  td_kspjong_hist.F16013      =   tm_simul_portfolio.F16013
-                                 WHERE  1 = 1
-                                   AND  tm_simul_portfolio.scen_cd  =   #{scen_cd}
-                                   AND  tm_simul_portfolio.grp_Cd   =   #{grp_cd}
-
-                                   AND  td_kspjong_hist.F12506      <   CONCAT( #{start_year}, '0101' )         /* 입회일자 이전 */
-                                   AND  td_kspjong_hist.F12506      >=  DATE_FORMAT( 
-                                                                                    DATE_SUB( 
-                                                                                            CONCAT( #{start_year}, '0101' )
-                                                                                        ,   INTERVAL 2 WEEK
-                                                                                    )
-                                                                                ,   '%Y%m%d' 
-                                                                            )                                   /* start_year 기준 3 달 전부터 시작  */
-                            )
-
+                       AND  td_index_hist.F12506        >= CONCAT( #{start_year}, '0101' )
+                            
                      ORDER  BY  F12506
 
                 )       td_index_hist
@@ -1123,21 +1012,8 @@
                             base.F16013                 =   td_kspjong_hist.F16013
 
                             /* start_year 이전 첫 영업일 이후 부터 시작 */
-                    AND     td_kspjong_hist.F12506      >=
-                            (
-                                SELECT  MAX( td_kspjong_hist.F12506 )
-                                  FROM  td_kspjong_hist
-                                 WHERE  1 = 1
-                                   AND  td_kspjong_hist.F16013      =   '005930' /* 삼성전자 단축키 고정 으로 사용(상장되지 않은 종목일 경우 영업일 NULL)*/
-                                   AND  td_kspjong_hist.F12506      <   CONCAT( #{start_year}, '0101' )         /* 입회일자 이전 */
-                                   AND  td_kspjong_hist.F12506      >=  DATE_FORMAT( 
-                                                                                DATE_SUB( 
-                                                                                        CONCAT( #{start_year}, '0101' )
-                                                                                    ,   INTERVAL 2 WEEK
-                                                                                )
-                                                                            ,   '%Y%m%d' 
-                                                                        )                                       /* start_year 기준 3 달 전부터 시작  */
-                            )
+                    AND     td_kspjong_hist.F12506      >= CONCAT( #{start_year}, '0101' )  
+                           
                 ]]>
                 )        
          ORDER  BY      td_kspjong_hist.F12506          /* 입회일자 */
