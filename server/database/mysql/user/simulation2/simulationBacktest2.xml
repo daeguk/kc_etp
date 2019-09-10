@@ -341,7 +341,8 @@
 
         SELECT      /* simulationBacktest.getSimulHistListByScenCd3  start_year 기준 이전 첫 영업일 부터 이력 데이터를 조회한다. */
 
-                    td_kspjong_hist.F16013                              AS  F16013                  /* 단축코드 */
+                    base.rebalance_date                                 AS  rebalance_date          /* 리밸런싱 날짜 */
+                ,   td_kspjong_hist.F16013                              AS  F16013                  /* 단축코드 */
                 ,   td_kspjong_hist.F12506                              AS  F12506                  /* 입회일자 */
 
                 ,   td_kspjong_hist.F30700                              AS  F30700                  /* 가중 수정 현재가 ( 당일 종가 ) - 종가 */
@@ -362,7 +363,8 @@
                         END
                     )                                                   AS  rebalancing             /* 리밸런싱 여부 */                
           FROM  (
-                    SELECT      tm_simul_portfolio2.F16013               AS  F16013                  /* 종목코드 */
+                    SELECT      tm_simul_portfolio2.rebalance_date      AS  rebalance_date          /* 리밸런싱 날짜 */
+                            ,   tm_simul_portfolio2.F16013              AS  F16013                  /* 종목코드 */
                             ,   (
                                     SELECT  tm_code_dtl.com_val02
                                       FROM  tm_code_dtl
@@ -407,6 +409,7 @@
                 ]]>
                 )        
          ORDER  BY      td_kspjong_hist.F12506          /* 입회일자 */
+                    ,   base.rebalance_date             /* 리밸런싱 날짜 */
                     ,   td_kspjong_hist.F16013          /* 단축코드 */
 
     </select>	
