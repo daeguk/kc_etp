@@ -70,10 +70,10 @@ app.all("*", function (req, res, next) {
 // app.options('*', cors());
 
 // body-parser를 이용해 application/x-www-form-urlencoded 파싱
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: false }))
 
 // body-parser를 이용해 application/json 파싱
-app.use(bodyParser.json())
+app.use(bodyParser.json( {limit: '10mb', extended: true}, ))
 
 // cookie-parser 설정
 app.use(cookieParser());
