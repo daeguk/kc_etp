@@ -223,6 +223,8 @@ var uploadPortfolio = function(req, res) {
                     }
                 }
 
+                deleteFile(reqParam);
+
                 resultMsg.record_Check = v_param.p_record_check;
                 resultMsg.result = false;
 
