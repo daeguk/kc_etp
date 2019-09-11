@@ -54,16 +54,18 @@
                     </v-tab-item>
                     </v-tabs-items>
                 </v-flex>
+
+                <v-flex>
+                    <ConfirmDialog ref="confirm2"></ConfirmDialog>
+                    <ProgressBar ref="progress2"></ProgressBar>
+                </v-flex>
+                
               </v-layout>
             </v-card>   
           </v-dialog>
         </v-card>
-      </v-flex>
-
-        <v-flex>
-            <ConfirmDialog ref="confirm2"></ConfirmDialog>
-            <ProgressBar ref="progress2"></ProgressBar>
-        </v-flex>      
+        
+      </v-flex>   
     </v-layout>
 </v-container>
 </template>
