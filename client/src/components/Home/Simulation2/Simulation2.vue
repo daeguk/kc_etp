@@ -770,11 +770,10 @@ export default {
 
                             totalObj[ v_key ].length++;                         /* 총건수 */
 
-                            totalObj[ v_key ].F15028            =   Number( totalObj[ v_key ].F15028 )  +  Number( v_sub_item.F15028 );         /* (합계) 시가총액 */
-                            totalObj[ v_key ].importance        =   Math.floor( 
-                                    ( totalObj[ v_key ].importance * 100 )  
-                                +   ( Number( v_sub_item.importance ) * 100 )
-                            ) / 100;                                                                                                            /* (합계) 비중 */
+                            totalObj[ v_key ].F15028            =   Number( totalObj[ v_key ].F15028 )  +  Number( v_sub_item.F15028 );     /* (합계) 시가총액 */
+                            totalObj[ v_key ].importance        =   Number (
+                                ( Number( totalObj[ v_key ].importance ) + Number( v_sub_item.importance ) ).toFixed(2)
+                            );                                                                                                              /* (합계) 비중 */
 
 
                             resultListObj[ v_key ].push({
@@ -804,9 +803,9 @@ export default {
 
                             totalObj[ v_key ].importance		=	0;
 
-                            same_rate           =   Math.floor( 
-                                parseFloat( totalObj[ v_key ].same_rate_sum / totalObj[ v_key ].length ) * 100 
-                            ) / 100;                                                                                        /* 동일 가중 비율 */
+                            same_rate           =   Number(
+                                ( Number( totalObj[ v_key ].same_rate_sum ) / Number( totalObj[ v_key ].length ) ).toFixed(2)
+                            );                                                                                      /* 동일 가중 비율 */
                             v_temp_importance   =   0;
                             v_inx               =   0;
 
@@ -821,15 +820,14 @@ export default {
                                 }
                                 /* 시총비중인 경우 */
                                 else if( p_importance_method_cd == "3" ) {
-                                    v_temp_importance       =   Math.floor( 
-                                        parseFloat( Number( v_sub_item.F15028 ) / totalObj[ v_key ].F15028 ) * 100 * 100 
-                                    ) / 100;
+                                    v_temp_importance       =   Number(
+                                        ( ( Number( v_sub_item.F15028 ) / Number( totalObj[ v_key ].F15028 ) ) * 100 ).toFixed(2)
+                                    );
                                 }
 
-                                totalObj[ v_key ].importance                =   Math.floor( 
-                                        ( totalObj[ v_key ].importance * 100 )  
-                                    +   parseFloat( v_temp_importance * 100 ) 
-                                ) / 100;                                                                            /* (합계) 비중 */
+                                totalObj[ v_key ].importance                =   Number( 
+                                    ( Number( totalObj[ v_key ].importance ) +   Number( v_temp_importance ) ).toFixed(2)
+                                );                                                                                  /* (합계) 비중 */
 
                                 resultListObj[ v_key ][v_inx].F16013        =   v_sub_item.F16013;                  /* 종목코드 */
                                 resultListObj[ v_key ][v_inx].F15028        =   Number( v_sub_item.F15028 );        /* 시가총액 */
@@ -851,22 +849,22 @@ export default {
 
 
                         /* 비중 합계가 100 이  아닌 경우 0.01 값을 더해 100 이 되면 중단 */
-                        if( Math.floor( ( totalObj[ v_key ].same_rate_sum - totalObj[ v_key ].importance ) * 100 ) / 100 != 0 ) {
+                        if( Number( ( Number( totalObj[ v_key ].same_rate_sum ) - Number( totalObj[ v_key ].importance ) ).toFixed(2) ) != 0 ) {
 
                             for( var j in resultListObj[ v_key ] ) {
 
-                                totalObj[ v_key ].importance = Math.floor( 
-                                    ( totalObj[ v_key ].importance * 100 ) +  parseFloat( 0.01 * 100 ) 
-                                ) / 100 ;
+                                totalObj[ v_key ].importance    =   Number(
+                                    ( Number( totalObj[ v_key ].importance ) +  Number( 0.01 ) ).toFixed(2)
+                                );
 
-                                resultListObj[ v_key ][j].importance   =   Math.floor( 
-                                    ( resultListObj[ v_key ][j].importance * 100 ) +  parseFloat( 0.01 * 100 ) 
-                                ) / 100;
+                                resultListObj[ v_key ][j].importance   =   ( 
+                                    ( Number( resultListObj[ v_key ][j].importance ) +  Number( 0.01 ) ).toFixed(2)
+                                );
 
 
-                                resultObj[ v_key ][ resultListObj[ v_key ][j].F16013 ].importance  =   resultListObj[ v_key ][j].importance;    /* 비중 */
+                                resultObj[ v_key ][ resultListObj[ v_key ][j].F16013 ].importance  =   Number( resultListObj[ v_key ][j].importance );      /* 비중 */
 
-                                if( totalObj[ v_key ].importance == totalObj[ v_key ].same_rate_sum ) {
+                                if( Number( totalObj[ v_key ].importance ) == Number( totalObj[ v_key ].same_rate_sum ) ) {
                                     break;
                                 }
                             }
