@@ -53,7 +53,10 @@ export default {
 		vm.filterData();
 	});
   },
-  beforeDestroy() {},
+  beforeDestroy() {
+      var vm = this;
+      vm.$EventBus.$off('fn_indexListAllFilterData');
+  },
   mounted: function() {
     var vm = this;
     vm.getInfoIndexList();

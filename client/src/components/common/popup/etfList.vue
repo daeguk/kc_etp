@@ -59,6 +59,8 @@ export default {
 	});		  
   },
   beforeDestroy() {
+      var vm = this;
+      vm.$EventBus.$off('fn_etfFilterData');
   },
   mounted: function() {
     var vm = this;

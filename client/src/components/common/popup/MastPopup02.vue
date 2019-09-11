@@ -31,24 +31,24 @@
 
                   <v-tabs-items v-model="activeTab">
                     <v-tab-item>
-                      <kospiList    v-if="activeTab == 0 && kospiList.length > 0"
+                      <kospiList    v-if="showTab == 0"
                                     :results="kospiList" 
 
                                     @selectedItem="getSelectedItem"></kospiList>
                     </v-tab-item>
                     <v-tab-item>
-                      <kosdaqList   v-if="activeTab == 1 && kosdaqList.length > 0"
+                      <kosdaqList   v-if="showTab == 1"
                                     :results="kosdaqList" 
                       
                                     @selectedItem="getSelectedItem"></kosdaqList>
                     </v-tab-item>
                     <v-tab-item>
-                      <etfList 		v-if="activeTab == 2"
+                      <etfList 		v-if="showTab == 2"
 
 					  				@selectedItem="getSelectedItem"></etfList>
                     </v-tab-item>
                     <v-tab-item>
-                      <etnList 		v-if="activeTab == 3"
+                      <etnList 		v-if="showTab == 3"
 
 					  				@selectedItem="getSelectedItem"></etnList>
                     </v-tab-item>
@@ -106,6 +106,7 @@ export default {
         ,   kosdaqList : []
 
 		,	search		: ""
+        ,   showTab     :   0
     };
   },
   components: {
@@ -123,9 +124,13 @@ export default {
   beforeDestroy() {
   },
   mounted: function() {
+    var vm = this;
+
     this.dialog = true;
 
-    this.fn_getAllKspjongBasic();
+    this.fn_getAllKspjongBasic().then( function(e) {
+        vm.fn_pageMove( 0 );
+    });
   },
   methods: {
     getSelectedItem: function(sel_items, gubun) {
@@ -148,6 +153,19 @@ export default {
         var vm = this;
 
         vm.activeTab    =   tab_id;
+
+        if( vm.activeTab == 0 && vm.kospiList.length > 0 ) {
+            vm.showTab = 0;
+        }else if( vm.activeTab == 1 && vm.kosdaqList.length > 0 ) {
+            vm.showTab = 1;
+        }else if( vm.activeTab == 2 ) {
+            vm.showTab = 2;
+        }else if( vm.activeTab == 3 ) {
+            vm.showTab = 3;
+        }else{
+            vm.showTab = -1;
+        }
+
 		vm.fn_filterData();
     },
 
@@ -213,22 +231,25 @@ export default {
 	fn_filterData() {
 		var vm = this;
 
-        /* KOSPI */
-		if( vm.activeTab == 0 && vm.kospiList.length > 0 ) {
-        	vm.$EventBus.$emit('fn_kospiFilterData', vm.search);
-		}
-        /* KOSDAQ */
-        else if( vm.activeTab == 1 && vm.kosdaqList.length > 0 ){
-			vm.$EventBus.$emit('fn_kosdaqFilterData', vm.search);
-		}
-        /* ETF */
-        else if( vm.activeTab == 2 ){
-			vm.$EventBus.$emit('fn_etfFilterData', vm.search);
-		}
-        /* ETN */
-        else if( vm.activeTab == 3 ){
-			vm.$EventBus.$emit('fn_etnFilterData', vm.search);
-		}
+        vm.$nextTick( function(e) {
+
+            /* KOSPI */
+            if( vm.showTab == 0 ) {
+                vm.$EventBus.$emit('fn_kospiFilterData', vm.search);
+            }
+            /* KOSDAQ */
+            else if( vm.showTab == 1 ){
+                vm.$EventBus.$emit('fn_kosdaqFilterData', vm.search);
+            }
+            /* ETF */
+            else if( vm.showTab == 2 ){
+                vm.$EventBus.$emit('fn_etfFilterData', vm.search);
+            }
+            /* ETN */
+            else if( vm.showTab == 3 ){
+                vm.$EventBus.$emit('fn_etnFilterData', vm.search);
+            }
+        });
 	}
   }
 }
