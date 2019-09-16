@@ -77,7 +77,7 @@ var getAnalyze_timeseries = async function(arr_daily, bench_mark_cd) {
                     }else{
                         console.log('results: %j', results);
                         console.log("####### 4) 파이선 호출 END");
-                       // fs.unlinkSync(fileName);
+                        fs.unlinkSync(fileName);
                         resolve1( { 
                                 result : true
                             ,   jsonFileName : jsonFileName
