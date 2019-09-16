@@ -2232,7 +2232,7 @@ function    fn_set_balance( p_arr_daily, p_simul_mast ) {
             }else{
                 /* balance = 전일 balance * ( 당일 지수 / 전일 지수 ) */
                 v_daily.balance  =   (
-                    Number( v_prev_daily.balance ) * ( Number( v_daily.INDEX_RATE ).toFixed(2) / Number( v_prev_daily.INDEX_RATE ).toFixed(2) )
+                    Number( v_prev_daily.balance ) * ( Number( Number( v_daily.INDEX_RATE ).toFixed(2) ) / Number( Number( v_prev_daily.INDEX_RATE ).toFixed(2) ) )
                 ).toFixed(3);
             }
 
