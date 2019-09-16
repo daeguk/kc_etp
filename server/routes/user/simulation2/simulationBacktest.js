@@ -1282,14 +1282,14 @@ var saveBacktestResult2 = function(req, res) {
                                 msg = {};
                             }
 
-                            stmt = mapper.getStatement('simulationBacktest', 'getRebalanceDateByScenCd', paramData, format);
+                            stmt = mapper.getStatement('simulationBacktest2', 'getRebalanceDateByScenCd', paramData, format);
                             log.debug(stmt, paramData);
 
                             conn.query(stmt, function(err, rows) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest.getRebalanceDateByScenCd Error while performing Query";
+                                    resultMsg.msg = "[error] simulationBacktest2.getRebalanceDateByScenCd Error while performing Query";
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -1336,7 +1336,7 @@ var saveBacktestResult2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.getRebalanceDateByScenCd Error while performing Query";
+                            resultMsg.msg = "[error] simulationBacktest2.getRebalanceDateByScenCd Error while performing Query";
                             resultMsg.err = err;
 
                             callback(resultMsg);
