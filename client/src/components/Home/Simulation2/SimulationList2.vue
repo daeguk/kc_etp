@@ -91,7 +91,7 @@
                             <!-- 버튼 영역 -->
                             <td class="txt_left">
                                 <button name="btn1" class="btn_icon v-icon material-icons"  >inbox</button>
-                                <button name="btn2" class="btn_icon v-icon material-icons"  v-if="item.grp_yn == '0'" >equalizer</button>
+                                <button name="btn2" class="btn_icon v-icon material-icons"  v-if="item.grp_yn == '0' && item.result_daily_yn == '1'" >equalizer</button>
 
                                 <v-menu bottom left>
                                     <template v-slot:activator="{ on }">

@@ -32,6 +32,7 @@
                             ,   tm_simul_mast.importance_method_cd                      AS  importance_method_cd        /* 비중설정방식 (COM009) */
 
                             ,   DATE_FORMAT( tm_simul_mast.upd_time, '%Y.%m.%d' )       AS  fmt_upd_time                /* 수정일 */
+                            ,   '0'                                                     AS  result_daily_yn             /* result_daily 존재여부 */                            
 
                       FROM  tm_simul_mast
                      WHERE  1 = 1
@@ -59,6 +60,17 @@
                             ,   tm_simul_mast.importance_method_cd                      AS  importance_method_cd        /* 비중설정방식 (COM009) */
 
                             ,   DATE_FORMAT( tm_simul_mast.upd_time, '%Y.%m.%d' )       AS  fmt_upd_time                /* 수정일 */
+                            ,   IFNULL(
+                                        (
+                                            SELECT  '1'
+                                              FROM  tm_simul_result_daily
+                                             WHERE  1 = 1
+                                               AND  tm_simul_result_daily.grp_cd        =   tm_simul_mast.grp_cd
+                                               AND  tm_simul_result_daily.scen_cd       =   tm_simul_mast.scen_cd
+                                             LIMIT  1
+                                        )
+                                    ,   '0'
+                                )                                                       AS  result_daily_yn             /* result_daily 존재여부 */
 
                       FROM  tm_simul_mast
                      WHERE  1 = 1
