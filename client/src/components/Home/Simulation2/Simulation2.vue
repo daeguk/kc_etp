@@ -2239,6 +2239,11 @@ export default {
         fn_changeRebalance() {
             var vm = this;
 
+            if( vm.change_rebalance_yn == "1" ) {
+                alert(1);
+                return  false;
+            }
+
             if( vm.change_rebalance_yn != "1" ) {
                 vm.change_rebalance_yn      =   "0";
             }
