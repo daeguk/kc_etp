@@ -613,7 +613,7 @@ export default {
                             if( e1 && e1.result ) {
 
                                 /* 시뮬레이션 마스터 정보를 조회한다. */
-                                vm.fn_getSimulMast( vm.paramData );
+                                vm.fn_getSimulMast( vm.paramData, p_param );
                             }
                         });
                     }
@@ -627,7 +627,15 @@ export default {
                 /* 초기 설정 데이터를 조회한다. */
                 vm.fn_initData().then( function(e) {
                     
-                    if( e && e.result ) {                
+                    if( e && e.result ) {
+
+                        if( p_param.confirmYn == "Y" ) {
+                            vm.change_rebalance_yn      =   "0";
+                            vm.p_rebalance_file_yn      =   "0";
+                            vm.rebalance_cycle_cd       =   "1";
+                            vm.rebalance_date_cd        =   "1";
+                            vm.rebalancePortfolioObj    =   {};
+                        }
 
                         if( !vm.rebalance_date_cd ) {
                             vm.rebalance_date_cd        =   "1";
@@ -1645,7 +1653,7 @@ export default {
          * 시뮬레이션 마스터 정보를 조회한다.
          * 2019-07-26  bkLove(촤병국)
          */
-        fn_getSimulMast( v_paramData ) {
+        fn_getSimulMast( v_paramData, p_param={ confirmYn : "N" } ) {
             var vm = this;
 
             vm.arr_show_error_message   =   [];
@@ -1684,12 +1692,24 @@ export default {
                             vm.importance_method_cd     =   mastInfo.importance_method_cd;  /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
 
 
+
+                            if( p_param.confirmYn == "Y" ) {
+                                vm.change_rebalance_yn      =   "0";
+                                vm.p_rebalance_file_yn      =   "0";
+                                vm.rebalance_cycle_cd       =   "1";
+                                vm.rebalance_date_cd        =   "1";
+                                vm.rebalancePortfolioObj    =   {};                           
+                            }                            
+
+
                             /* 리밸런싱 주기가 없는 경우 - 리밸런싱 일자가 포함된 샘플파일 유무를 1 로 간주 */
                             if( vm.rebalance_cycle_cd == "" ) {
 
                                 vm.p_rebalance_file_yn      =   "1";
 
-                                vm.rebalance_date_cd        =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+                                if( p_param.confirmYn == "N" ) {
+                                    vm.rebalance_date_cd    =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+                                }
 
                                 vm.old_start_year           =   mastInfo.start_year;
                                 vm.old_rebalance_cycle_cd   =   mastInfo.rebalance_cycle_cd;
@@ -1708,11 +1728,12 @@ export default {
 
                             }else{
 
-
                                 /* old_value 값과 비교하여 리밸런싱이 변경되었는지 체크한다. */
                                 vm.fn_checkRebalance( 'rebalance_cycle_cd').then( function(e){
 
-                                    vm.rebalance_date_cd        =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+                                    if( p_param.confirmYn == "N" ) {
+                                        vm.rebalance_date_cd    =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+                                    }
 
                                     vm.old_start_year           =   mastInfo.start_year;
                                     vm.old_rebalance_cycle_cd   =   mastInfo.rebalance_cycle_cd;
@@ -1720,6 +1741,7 @@ export default {
 
                                     /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
                                     vm.fn_getRebalanceDate().then( function(e1){
+
                                         if( e1 && e1.result ) {
 
                                             vm.old_rebalance_date    =   vm.rebalance_date;
@@ -1776,12 +1798,14 @@ export default {
                         }
                     }else{
 
-                        vm.rebalancePortfolioObj    =   response.data.rebalancePortfolioObj;
+                        if( vm.rebalance_cycle_cd == "" ) {
+                            vm.rebalancePortfolioObj    =   response.data.rebalancePortfolioObj;
+                        }
 
                         var v_rebalancePortfolio    =   response.data.rebalancePortfolioObj[ vm.rebalance_date ];
 
                         /* 선택된 리밸런싱일자에 포트폴리오가 존재하는 경우 */
-                        if( typeof v_rebalancePortfolio != "undefied" && Object.keys( v_rebalancePortfolio ).length > 0 ) {
+                        if( typeof v_rebalancePortfolio != "undefined" && Object.keys( v_rebalancePortfolio ).length > 0 ) {
 
                             var dataList    =   [];
 
@@ -2254,7 +2278,6 @@ export default {
             var vm = this;
 
             if( vm.change_rebalance_yn == "1" ) {
-                alert(1);
                 return  false;
             }
 
@@ -2698,7 +2721,7 @@ console.log( "#1 total.importance", total.importance );
                         vm.fn_initRecords();
 
                         /* 선택된 리밸런싱일자에 포트폴리오가 존재하는 경우 */
-                        if( typeof v_rebalancePortfolio != "undefied" && Object.keys( v_rebalancePortfolio ).length > 0 ) {
+                        if( typeof v_rebalancePortfolio != "undefined" && Object.keys( v_rebalancePortfolio ).length > 0 ) {
 
                             var dataList    =   [];
 
