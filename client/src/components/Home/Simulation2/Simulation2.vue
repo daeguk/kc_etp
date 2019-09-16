@@ -2415,24 +2415,19 @@ console.log( "vm.rebalancePortfolioObj", vm.rebalancePortfolioObj );
                 vm.arr_show_error_message.push( "초기 데이터 [상위그룹] 정보가 존재하지 않습니다." );
             }            
 
-debugger;
-            /* 리밸런싱 일자가 포함된 샘플파일이 아닌 경우에만 체크 */
-            if( vm.p_rebalance_file_yn == "0" ) {
+            /* 초기설정 시작년도 array */
+            if( !vm.arr_start_year || vm.arr_start_year.length == 0 ) {
+                vm.arr_show_error_message.push( "초기 데이터 [시작년도] 값이 존재하지 않습니다." );
+            }
 
-                /* 초기설정 시작년도 array */
-                if( !vm.arr_start_year || vm.arr_start_year.length == 0 ) {
-                    vm.arr_show_error_message.push( "초기 데이터 [시작년도] 값이 존재하지 않습니다." );
-                }
+            /* 초기설정 리밸런싱주기 array */
+            if( !vm.arr_rebalance_cycle_cd || vm.arr_rebalance_cycle_cd.length == 0 ) {
+                vm.arr_show_error_message.push( "초기 데이터 [리밸런싱주기] 값이 존재하지 않습니다." );
+            }
 
-                /* 초기설정 리밸런싱주기 array */
-                if( !vm.arr_rebalance_cycle_cd || vm.arr_rebalance_cycle_cd.length == 0 ) {
-                    vm.arr_show_error_message.push( "초기 데이터 [리밸런싱주기] 값이 존재하지 않습니다." );
-                }
-
-                /* 초기설정 리밸런싱일자 array */
-                if( !vm.arr_rebalance_date_cd || vm.arr_rebalance_date_cd.length == 0 ) {
-                    vm.arr_show_error_message.push( "초기 데이터 [리밸런싱일자] 값이 존재하지 않습니다." );
-                }
+            /* 초기설정 리밸런싱일자 array */
+            if( !vm.arr_rebalance_date_cd || vm.arr_rebalance_date_cd.length == 0 ) {
+                vm.arr_show_error_message.push( "초기 데이터 [리밸런싱일자] 값이 존재하지 않습니다." );
             }
 
             /* 초기설정 벤치마크 array */
@@ -2457,16 +2452,20 @@ debugger;
             }
 
 
-            if( !vm.start_year ) {
-                vm.arr_show_error_message.push( "[조건설정] 시작년도를 선택해 주세요." );
-            }
+            /* 리밸런싱 일자가 포함된 샘플파일이 아닌 경우에만 체크 */
+            if( vm.p_rebalance_file_yn == "0" ) {
+                
+                if( !vm.start_year ) {
+                    vm.arr_show_error_message.push( "[조건설정] 시작년도를 선택해 주세요." );
+                }
 
-            if( !vm.rebalance_cycle_cd ) {
-                vm.arr_show_error_message.push( "[조건설정] 리밸런싱주기를 선택해 주세요." );
-            }
+                if( !vm.rebalance_cycle_cd ) {
+                    vm.arr_show_error_message.push( "[조건설정] 리밸런싱주기를 선택해 주세요." );
+                }
 
-            if( !vm.rebalance_date_cd ) {
-                vm.arr_show_error_message.push( "[조건설정] 리밸런싱 일자를 선택해 주세요." );
+                if( !vm.rebalance_date_cd ) {
+                    vm.arr_show_error_message.push( "[조건설정] 리밸런싱 일자를 선택해 주세요." );
+                }
             }
 
             try{
