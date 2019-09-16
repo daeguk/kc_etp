@@ -2760,5 +2760,5 @@ var	fn_get_simulation_data  =   function(
 
 
 
-module.exports.saveBaicInfo2 = saveBaicInfo2;
-module.exports.saveBacktestResult2 = saveBacktestResult2;
+//module.exports.saveBaicInfo2 = saveBaicInfo2;
+//module.exports.saveBacktestResult2 = saveBacktestResult2;
