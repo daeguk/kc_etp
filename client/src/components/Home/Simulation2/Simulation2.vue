@@ -1602,29 +1602,43 @@ export default {
                         }
                     }else{
 
-                        vm.prev_grp_cd      =   response.data.grp_cd;           /* 그룹 코드 */
-                        vm.prev_scen_cd     =   response.data.scen_cd;          /* 시나리오 코드 */
-                        vm.scen_cd          =   response.data.scen_cd;          /* 시나리오 코드 */
-                        vm.scen_order_no    =   response.data.scen_order_no;    /* 시나리오 정렬순번 */
-
-                        var arr_daily       =   response.data.arr_daily;
-                        var arr_rebalance   =   response.data.arr_rebalance;
+                        // var arr_daily       =   response.data.arr_daily;
+                        // var arr_rebalance   =   response.data.arr_rebalance;
                         var simul_mast    	=   response.data.simul_mast;
-                        var analyzeList     =   response.data.analyzeList;
-                        var jsonFileName    =   response.data.jsonFileName;
-                        var inputData       =   response.data.inputData;
+                        // var analyzeList     =   response.data.analyzeList;
+                        // var jsonFileName    =   response.data.jsonFileName;
+                        // var inputData       =   response.data.inputData;
 
-                        vm.$emit( "fn_showSimulation", 
-                            { 
-                                    showSimulationId    :    2
-                                ,   arr_daily           :   arr_daily
-                                ,   arr_rebalance       :   arr_rebalance
-                                ,   simul_mast          :   simul_mast
-                                ,   analyzeList         :   analyzeList
-                                ,   jsonFileName        :   jsonFileName
-                                ,   inputData           :   inputData
-                            }
-                        );
+                        if( simul_mast ) {
+                            vm.prev_grp_cd      =   simul_mast.grp_cd;           /* 그룹 코드 */
+                            vm.prev_scen_cd     =   simul_mast.scen_cd;          /* 시나리오 코드 */
+                            vm.scen_cd          =   simul_mast.scen_cd;          /* 시나리오 코드 */
+                            vm.scen_order_no    =   simul_mast.scen_order_no;    /* 시나리오 정렬순번 */
+
+                            vm.$emit( "fn_showSimulation", 
+                                { 
+                                        showSimulationId    :    2
+                                    ,   grp_cd              :   simul_mast.grp_cd
+                                    ,   scen_cd             :   simul_mast.scen_cd
+                                }
+                            );
+
+                        }
+/*                        
+                        else{
+                            vm.$emit( "fn_showSimulation", 
+                                { 
+                                        showSimulationId    :    2
+                                    ,   arr_daily           :   arr_daily
+                                    ,   arr_rebalance       :   arr_rebalance
+                                    ,   simul_mast          :   simul_mast
+                                    ,   analyzeList         :   analyzeList
+                                    ,   jsonFileName        :   jsonFileName
+                                    ,   inputData           :   inputData
+                                }
+                            );
+                        }
+*/                        
                     }
                 }
             }).catch(error => {

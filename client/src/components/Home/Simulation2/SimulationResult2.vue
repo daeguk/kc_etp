@@ -310,107 +310,7 @@ export default {
                 /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
                 if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
 
-                    /* grp_cd 와 scen_cd 가 존재하는 경우 DB 저장된 backtest 결과 조회 */
-                    if( vm.paramData.grp_cd && vm.paramData.scen_cd  ) {
-                        vm.fn_getBacktestResult( vm.paramData );
-                    }
-                    /* 화면으로 부터 결과정보를 받은 경우 */
-                    else if( 
-                            ( vm.paramData.simul_mast && Object.keys( vm.paramData.simul_mast ).length > 0 )
-                        ||  ( vm.paramData.arr_daily && vm.paramData.arr_daily.length > 0 )
-                        ||  ( vm.paramData.arr_rebalance && vm.paramData.arr_rebalance.length > 0 )
-                        ||  ( vm.paramData.analyzeList && vm.paramData.analyzeList.length > 0 )
-                        ||  ( vm.paramData.jsonFileName && vm.paramData.jsonFileName.length > 0 )
-                        ||  ( vm.paramData.inputData && vm.paramData.inputData.length > 0 )
-                    ){                        
-
-                    /*************************************************************************************************************
-                    *   array 리밸런스 정보
-                    **************************************************************************************************************/
-                        var v_prev_F12506   =   "";
-                        var v_rebalance_cnt =   0;
-
-                        if( vm.paramData.arr_rebalance && vm.paramData.arr_rebalance.length > 0  ){
-
-                            v_prev_F12506   =   "";
-
-                            vm.paramData.arr_rebalance.forEach( function( item, index, array ) {
-
-                                Object.keys( array[ index ] ).forEach( function( key ) {
-                                    
-                                    var sub_item    =   array[ index ][ key ];
-                                    
-                                    if( v_prev_F12506 != sub_item.F12506 ) {
-                                        v_rebalance_cnt++;
-                                    }
-
-                                    /* 구분에 맞게 레코드를 설정한다. */
-                                    vm.fn_set_record_data( "rebalance", sub_item );
-
-                                    vm.arr_result_rebalance.push( sub_item );
-
-                                    /* 이전 입회일자 설정 */
-                                    v_prev_F12506   =   sub_item.F12506;
-                                });
-                            });
-                        }
-
-
-                    /*************************************************************************************************************
-                    *   시뮬레이션 마스터 정보
-                    **************************************************************************************************************/
-                        vm.simul_result_mast                =   Object.assign( {}, vm.paramData.simul_mast );
-
-                        /* 구분에 맞게 레코드를 설정한다. */
-                        vm.fn_set_record_data( "mast", vm.simul_result_mast );
-
-                        /* 리밸런싱 횟수 */
-                        vm.simul_result_mast.rebalance_cnt  =   v_rebalance_cnt;
-                        
-
-
-                    /*************************************************************************************************************
-                    *   array 일자별 지수 정보
-                    **************************************************************************************************************/
-                        vm.paramData.arr_daily.forEach( function( item, index, array ) {
-
-                            item.bench_mark_cd      =   vm.simul_result_mast.bench_mark_cd;
-
-                            /* 구분에 맞게 레코드를 설정한다. */
-                            vm.fn_set_record_data( "daily", item );
-
-                            if( vm.simul_result_mast.bench_mark_cd != "0" ) {
-
-                                item.fmt_bm_1000_data       =   util.formatNumber(
-                                    item.bm_1000_data
-                                );                                                                                                                  /* bm(1000환산) */
-                                item.fmt_bm_return_data     =   util.formatNumber(
-                                    item.bm_return_data * 100
-                                ) + " %";                                                                                                           /* bm(return) */
-                            }else{
-                                item.fmt_bm_1000_data       =   "";                                                                                 /* bm(1000환산) */
-                                item.fmt_bm_return_data     =   "";                                                                                 /* bm(return) */
-                            }
-
-                            vm.arr_result_daily.push( item );
-                        });
-
-
-                        vm.inputData            =   vm.paramData.inputData;
-                        vm.jsonFileName         =   vm.paramData.jsonFileName;
-
-                        vm.arr_analyze_org      =   vm.paramData.analyzeList;
-                        try{
-                            if( vm.arr_analyze_org ) {
-                                vm.arr_analyze_temp =   JSON.parse( vm.arr_analyze_org );
-                            }
-                        }catch( e ) {
-                            vm.arr_analyze_temp =   "";
-                            vm.arr_analyze.push( { anal_title : "처리중 오류가 발생하였습니다." }  );
-                            console.log( "analyzeList 파싱 중 오류가 발생되었습니다.", e );
-                        }
-                        vm.fn_setAnal01();
-                    }
+                    vm.fn_getBacktestResult( vm.paramData );
                 }
 
             }
@@ -538,7 +438,7 @@ export default {
                             vm.jsonFileName         =   response.data.jsonFileName;
 
                             vm.arr_analyze_org      =   response.data.analyzeList;
-                                                    
+
                             try{
                                 if( vm.arr_analyze_org ) {                           
                                     vm.arr_analyze_temp     =   JSON.parse( vm.arr_analyze_org );
