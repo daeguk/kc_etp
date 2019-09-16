@@ -9,7 +9,7 @@
                    
                      <span class="btn_r">
                      <v-btn small flat icon>
-                          <v-icon v-on:click="">refresh</v-icon>
+                          <v-icon v-on:click="fn_initSimul( { confirmYn : 'Y' } )">refresh</v-icon>
                     </v-btn>
                     </span>
                      </h3>
@@ -360,66 +360,8 @@ export default {
 
         table01 =   $( "#table01" );
 
-        /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
-        if(     vm.paramData && Object.keys( vm.paramData ).length > 0 
-            &&  vm.paramData.grp_cd && vm.paramData.scen_cd 
-        ) {
-
-            /* 상위 그룹 정보 및 초기 데이터가 설정된 이후 상세정보 설정되도록 함. */
-            
-            /* 상위 그룹정보를 조회한다. */
-            vm.fn_initGrpCd().then( async function(e) {
-
-                if( e && e.result ) {
-
-                    /* 초기 설정 데이터를 조회한다. */
-                    await vm.fn_initData().then( async function(e1) {
-
-                        if( e1 && e1.result ) {
-
-                            /* 시뮬레이션 마스터 정보를 조회한다. */
-                            vm.fn_getSimulMast( vm.paramData );
-                        }
-                    });
-                }
-            });
-
-        }else{
-
-            /* 상위 그룹정보를 조회한다. */
-            vm.fn_initGrpCd();
-
-            /* 초기 설정 데이터를 조회한다. */
-            vm.fn_initData().then( function(e) {
-                
-                if( e && e.result ) {                
-
-                    if( !vm.rebalance_date_cd ) {
-                        vm.rebalance_date_cd        =   "1";
-
-                        vm.old_start_year           =   vm.start_year;
-                        vm.old_rebalance_cycle_cd   =   vm.rebalance_cycle_cd;
-                        vm.old_rebalance_date_cd    =   vm.rebalance_date_cd;
-
-                        /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
-                        vm.fn_getRebalanceDate().then( function(e1){
-                            if( e1 && e1.result ) {
-                                vm.old_rebalance_date    =   vm.rebalance_date;
-                            }
-                        });
-                    }
-                }
-            });
-
-            /* next 시나리오명을 조회한다. */
-            vm.fn_getNextScenName();
-
-            /* 최초 5개의 레코드를 노출한다. */
-            vm.fn_addRecords( 0, 5 );
-
-            /* total 레코드를 설정한다. */
-            vm.fn_setTotalRecord();
-        }
+        /* 시뮬레이션을 초기화한다. */
+        vm.fn_initSimul( { confirmYn : "N" } );
 
 
         /* table tr 에서 추가 버튼을 누르는 경우 */
@@ -620,6 +562,99 @@ export default {
             var vm = this;
 
             vm.arr_show_error_message   =   [];
+        },
+
+        /*
+         * 시뮬레이션을 초기화한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        async fn_initSimul( p_param ) {
+
+            var vm = this;
+
+            if( p_param ) {
+                if( "undefined" == p_param.confirmYn ) {
+                    p_param.confirmYn   =   "N";
+                }
+            }
+
+
+            if( p_param.confirmYn == "Y" ) {
+
+                if( await vm.$refs.confirm2.open(
+                            '[시뮬레이션]',
+                            '입력된 내용이 모두 초기화 됩니다. 그래도 진행하시겠습니까?',
+                            {}
+                        ,   2
+                    )
+                ) {
+                    if( "Y" != vm.$refs.confirm2.val ) {
+                        return  false;
+                    }
+                }
+            }
+
+            /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
+            if(     vm.paramData && Object.keys( vm.paramData ).length > 0 
+                &&  vm.paramData.grp_cd && vm.paramData.scen_cd 
+            ) {
+
+                /* 상위 그룹 정보 및 초기 데이터가 설정된 이후 상세정보 설정되도록 함. */
+                
+                /* 상위 그룹정보를 조회한다. */
+                vm.fn_initGrpCd().then( async function(e) {
+
+                    if( e && e.result ) {
+
+                        /* 초기 설정 데이터를 조회한다. */
+                        await vm.fn_initData().then( async function(e1) {
+
+                            if( e1 && e1.result ) {
+
+                                /* 시뮬레이션 마스터 정보를 조회한다. */
+                                vm.fn_getSimulMast( vm.paramData );
+                            }
+                        });
+                    }
+                });
+
+            }else{
+
+                /* 상위 그룹정보를 조회한다. */
+                vm.fn_initGrpCd();
+
+                /* 초기 설정 데이터를 조회한다. */
+                vm.fn_initData().then( function(e) {
+                    
+                    if( e && e.result ) {                
+
+                        if( !vm.rebalance_date_cd ) {
+                            vm.rebalance_date_cd        =   "1";
+
+                            vm.old_start_year           =   vm.start_year;
+                            vm.old_rebalance_cycle_cd   =   vm.rebalance_cycle_cd;
+                            vm.old_rebalance_date_cd    =   vm.rebalance_date_cd;
+
+                            /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                            vm.fn_getRebalanceDate().then( function(e1){
+                                if( e1 && e1.result ) {
+                                    vm.old_rebalance_date    =   vm.rebalance_date;
+                                }
+                            });
+                        }
+                    }
+                });
+
+                /* next 시나리오명을 조회한다. */
+                vm.fn_getNextScenName();
+
+                /* 최초 5개의 레코드를 노출한다. */
+                vm.fn_addRecords( 0, 5 );
+
+                /* total 레코드를 설정한다. */
+                vm.fn_setTotalRecord();
+            }
+
         },
 
         /*
@@ -2454,7 +2489,7 @@ console.log( "vm.rebalancePortfolioObj", vm.rebalancePortfolioObj );
 
             /* 리밸런싱 일자가 포함된 샘플파일이 아닌 경우에만 체크 */
             if( vm.p_rebalance_file_yn == "0" ) {
-                
+
                 if( !vm.start_year ) {
                     vm.arr_show_error_message.push( "[조건설정] 시작년도를 선택해 주세요." );
                 }
