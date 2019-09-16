@@ -87,6 +87,8 @@ var uploadPortfolio = function(req, res) {
         var rebalancePortfolioObj       =   {};
 
         resultMsg.errorList             =   [];
+        resultMsg.arr_rebalance_date    =   [];
+        resultMsg.p_rebalance_file_yn   =   "0";
 
         try {
             reqParam.org_file_name = req.file.originalname;
@@ -102,9 +104,11 @@ var uploadPortfolio = function(req, res) {
 
             fn_sizeCheck( req.file, "file", resultMsg );
 
+
             var arrCodeList06           =   [];     /* 단축코드 array */
             var arrCodeList12           =   [];     /* 국제표준코드 array */
             var arrExcelRebalanceDate   =   [];     /* 엑셀에서 업로드한 일자정보 */
+
 
             var v_param = {
                     p_count_check       :   true    /* 엑셀 건수 체크 */
@@ -239,7 +243,8 @@ var uploadPortfolio = function(req, res) {
 
                 deleteFile(reqParam);
 
-                resultMsg.record_Check = v_param.p_record_check;
+                resultMsg.record_Check          =   v_param.p_record_check;
+                resultMsg.p_rebalance_file_yn   =   v_param.p_rebalance_file_yn;
                 resultMsg.result = false;
 
                 res.json(resultMsg);
@@ -394,9 +399,11 @@ console.log( "arrExcelRebalanceDate", arrExcelRebalanceDate );
 
                                             /* 리밸런싱 샘플 파일인 경우 리밸런싱 일자를 조회한다. */
                                             if( v_param.p_rebalance_file_yn == "1" ) {
-                                                msg.rebalanceDateList       =   rows;
+                                                for( var i=0; i < rows.length; i++ ) {
+                                                    resultMsg.arr_rebalance_date.push( { "text" : rows[i].fmt_F12506, "value" : rows[i].F12506 } );
+                                                }
                                             }else{
-                                                msg.rebalanceDateList.push( rows[0] );
+                                                resultMsg.arr_rebalance_date.push( { "text" : rows[0].fmt_F12506, "value" : rows[0].F12506 } );
                                             }
                                         }
 
@@ -432,8 +439,8 @@ console.log( "arrExcelRebalanceDate", arrExcelRebalanceDate );
                                 }
 
                                 var first_rebalance_date    =   "";
-                                if( msg.rebalanceDateList && msg.rebalanceDateList.length > 0 ) {
-                                    first_rebalance_date    =   msg.rebalanceDateList[0].F12506;
+                                if( resultMsg.arr_rebalance_date && resultMsg.arr_rebalance_date.length > 0 ) {
+                                    first_rebalance_date    =   resultMsg.arr_rebalance_date[0].F12506;
                                 }
 
                                 for( var i=0; i < dataLists.length; i++) {
@@ -652,6 +659,8 @@ console.log( "arrExcelRebalanceDate", arrExcelRebalanceDate );
                                         resultMsg.rebalancePortfolioObj     =   rebalancePortfolioObj;
                                         resultMsg.p_rebalance_file_yn       =   v_param.p_rebalance_file_yn;
 
+console.log( "resultMsg.rebalancePortfolioObj", resultMsg.rebalancePortfolioObj );
+console.log( "resultMsg.p_rebalance_file_yn", resultMsg.p_rebalance_file_yn );
 
                                         callback(null);
 
@@ -680,6 +689,10 @@ console.log( "arrExcelRebalanceDate", arrExcelRebalanceDate );
                         deleteFile(reqParam);
 
                         if (err) {
+                            resultMsg.rebalancePortfolioObj     =   {};
+                            resultMsg.p_rebalance_file_yn       =   "0";
+                            resultMsg.arr_rebalance_date        =   [];
+
                             log.error(err, reqParam);
                         } else {
                             resultMsg.result = true;
@@ -707,6 +720,7 @@ console.log( "arrExcelRebalanceDate", arrExcelRebalanceDate );
 
             resultMsg.rebalancePortfolioObj     =   {};
             resultMsg.p_rebalance_file_yn       =   "0";
+            resultMsg.arr_rebalance_date        =   [];
 
             res.json(resultMsg);
             res.end();

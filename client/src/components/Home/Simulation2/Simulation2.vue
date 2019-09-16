@@ -178,7 +178,10 @@
                                     </v-select>
                                 </span>
                                 <span>
-                                    <button type='button'  class="excelup_btn" @click.stop="fn_fileClick();"></button>
+
+                                <!-- 엑셀 업로드 -->
+                                    <button type='button'  class="excelup_btn" @click.stop="fn_fileClick();" v-if='p_rebalance_file_yn == "0"'></button>
+
                                     <input type="file" name="portfolioFile" ref="portfolioFile" style="display:none;">
                                 </span>
                             </div>
@@ -323,6 +326,7 @@ export default {
             ,   bench_index_cd02            :   ""          /* 벤치마크 인덱스 코드 ( large_type ) */
             ,   bench_index_cd03            :   ""          /* 벤치마크 인덱스 코드 ( middle_type ) */
             ,   bench_index_nm              :   ""          /* 벤치마크 인덱스 코드명 */
+            ,   p_rebalance_file_yn         :   "0"         /* 리밸런싱 일자가 포함된 샘플파일 유무 */
 
             ,   arr_portfolio               :   []          /* 포트폴리오 설정 정보 */
             ,   arr_rebalance_date          :   []          /* 리밸런싱 일자 */
@@ -2411,19 +2415,24 @@ console.log( "vm.rebalancePortfolioObj", vm.rebalancePortfolioObj );
                 vm.arr_show_error_message.push( "초기 데이터 [상위그룹] 정보가 존재하지 않습니다." );
             }            
 
-            /* 초기설정 시작년도 array */
-            if( !vm.arr_start_year || vm.arr_start_year.length == 0 ) {
-                vm.arr_show_error_message.push( "초기 데이터 [시작년도] 값이 존재하지 않습니다." );
-            }
+debugger;
+            /* 리밸런싱 일자가 포함된 샘플파일이 아닌 경우에만 체크 */
+            if( vm.p_rebalance_file_yn == "0" ) {
 
-            /* 초기설정 리밸런싱주기 array */
-            if( !vm.arr_rebalance_cycle_cd || vm.arr_rebalance_cycle_cd.length == 0 ) {
-                vm.arr_show_error_message.push( "초기 데이터 [리밸런싱주기] 값이 존재하지 않습니다." );
-            }
+                /* 초기설정 시작년도 array */
+                if( !vm.arr_start_year || vm.arr_start_year.length == 0 ) {
+                    vm.arr_show_error_message.push( "초기 데이터 [시작년도] 값이 존재하지 않습니다." );
+                }
 
-            /* 초기설정 리밸런싱일자 array */
-            if( !vm.arr_rebalance_date_cd || vm.arr_rebalance_date_cd.length == 0 ) {
-                vm.arr_show_error_message.push( "초기 데이터 [리밸런싱일자] 값이 존재하지 않습니다." );
+                /* 초기설정 리밸런싱주기 array */
+                if( !vm.arr_rebalance_cycle_cd || vm.arr_rebalance_cycle_cd.length == 0 ) {
+                    vm.arr_show_error_message.push( "초기 데이터 [리밸런싱주기] 값이 존재하지 않습니다." );
+                }
+
+                /* 초기설정 리밸런싱일자 array */
+                if( !vm.arr_rebalance_date_cd || vm.arr_rebalance_date_cd.length == 0 ) {
+                    vm.arr_show_error_message.push( "초기 데이터 [리밸런싱일자] 값이 존재하지 않습니다." );
+                }
             }
 
             /* 초기설정 벤치마크 array */
@@ -2740,37 +2749,52 @@ console.log( "vm.rebalancePortfolioObj", vm.rebalancePortfolioObj );
                             check   =   false;
                         }
 
-                        if( response.data.p_rebalance_file_yn ) {
-                            vm.change_rebalance_yn      =   response.data.p_rebalance_file_yn;
-                            vm.rebalance_cycle_cd       =   "";
-                            vm.rebalance_date_cd        =   "";
-                        }else{
-                            vm.change_rebalance_yn      =   "0";
-                        }
 
-                        /* 엑셀을 업로드 하는 경우 [직접입력] 으로 강제 설정 */
-                        vm.importance_method_cd =   "1";
+                        if( check ) {
 
-                        /* 리밸런싱일별 포트폴리오 데이터 설정 */
-                        if( response.data.rebalancePortfolioObj ) {
+                            /* 리밸런싱 일자가 포함된 샘플파일인 경우 */
+                            if( response.data.p_rebalance_file_yn ) {
+                                vm.change_rebalance_yn      =   response.data.p_rebalance_file_yn;
 
-                            vm.rebalancePortfolioObj        =   response.data.rebalancePortfolioObj;
+                                vm.p_rebalance_file_yn      =   response.data.p_rebalance_file_yn;
+                                vm.rebalance_cycle_cd       =   "";
+                                vm.rebalance_date_cd        =   "";
 
-                            if( vm.arr_rebalance_date && vm.arr_rebalance_date.length > 0 ) {
-
-                                /* 현재 리밸런싱 일자가 맨 처음 리밸런싱 일자와 다른 경우 맨처음 리밸런싱 일자로 설정 */
-                                if( vm.rebalance_date != vm.arr_rebalance_date[0].value ) {
-
-                                    vm.old_rebalance_date   =   vm.rebalance_date;
-
-                                    vm.rebalance_date       =   vm.arr_rebalance_date[0].value;
-                                
-                                    /* 선택된 리밸런싱 일자에 속한 포트폴리오를 노출한다. */
-                                    vm.fn_showRebalanceDatePortfolio();
+                                /* 콤보박스에 노출할 리밸런싱 날짜를 설정한다. */
+                                if( response.data.arr_rebalance_date && response.data.arr_rebalance_date.length > 0 ) {
+                                    vm.arr_rebalance_date       =   response.data.arr_rebalance_date;
                                 }
+
+                            }else{
+                                vm.change_rebalance_yn      =   "0";
                             }
 
-                            check   =   true;
+
+                            /* 엑셀을 업로드 하는 경우 [직접입력] 으로 강제 설정 */
+                            vm.importance_method_cd =   "1";
+
+
+                            /* 리밸런싱일별 포트폴리오 데이터 설정 */
+                            if( response.data.rebalancePortfolioObj ) {
+
+                                vm.rebalancePortfolioObj        =   response.data.rebalancePortfolioObj;
+
+                                if( vm.arr_rebalance_date && vm.arr_rebalance_date.length > 0 ) {
+
+                                    /* 현재 리밸런싱 일자가 맨 처음 리밸런싱 일자와 다른 경우 맨처음 리밸런싱 일자로 설정 */
+                                    if( vm.rebalance_date != vm.arr_rebalance_date[0].value ) {
+
+                                        vm.old_rebalance_date   =   vm.rebalance_date;
+
+                                        vm.rebalance_date       =   vm.arr_rebalance_date[0].value;
+                                    
+                                        /* 선택된 리밸런싱 일자에 속한 포트폴리오를 노출한다. */
+                                        vm.fn_showRebalanceDatePortfolio();
+                                    }
+                                }
+
+                                check   =   true;
+                            }
                         }
 
                     }else{
