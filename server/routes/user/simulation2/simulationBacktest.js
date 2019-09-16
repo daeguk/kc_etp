@@ -1990,6 +1990,12 @@ var getBacktestResult2 = function(req, res) {
                                     }
                                     
                                     resultMsg.simul_result_mast =   rows[0];
+                                    
+                                    paramData.bench_mark_cd = rows[0].bench_mark_cd;
+                                    paramData.bench_index_cd01 = rows[0].bench_index_cd01;
+                                    paramData.bench_index_cd02 = rows[0].bench_index_cd02;
+                                    paramData.bench_index_cd03 = rows[0].bench_index_cd03;
+                                    
                                     callback(null, paramData);
                                 });
                             }
@@ -2024,6 +2030,8 @@ var getBacktestResult2 = function(req, res) {
                                 if ( rows || rows.length > 0 ) {
                                     resultMsg.arr_result_daily      =   rows;
 
+                                    paramData.first_date = rows[0].F12506;
+
                                     /* 일자별 지수에 balance 정보를 설정한다. */
                                     fn_set_balance( resultMsg.arr_result_daily, resultMsg.simul_result_mast );
                                 }
@@ -2046,20 +2054,8 @@ var getBacktestResult2 = function(req, res) {
 
                         try{
 
-                            if(     resultMsg.simul_result_mast 
-                                &&  resultMsg.simul_result_mast.bench_mark_cd
-                                &&  resultMsg.simul_result_mast.bench_mark_cd       != "0"
-                                &&  resultMsg.simul_result_mast.bench_index_cd01
-                                &&  resultMsg.simul_result_mast.bench_index_cd02
-                                &&  resultMsg.simul_result_mast.bench_index_cd03
-                            ) {
-                                paramData.start_year        =   resultMsg.simul_result_mast.start_year;
-                                paramData.bench_mark_cd     =   resultMsg.simul_result_mast.bench_mark_cd;
-                                paramData.bench_index_cd01  =   resultMsg.simul_result_mast.bench_index_cd01;   /* F16013 */
-                                paramData.bench_index_cd02  =   resultMsg.simul_result_mast.bench_index_cd02;   /* large_type */
-                                paramData.bench_index_cd03  =   resultMsg.simul_result_mast.bench_index_cd03;   /* middle_type */
-
-                                stmt = mapper.getStatement('simulationBacktest', 'getSimulBenchMark', paramData, format);
+                           
+                                stmt = mapper.getStatement('simulationBacktest2', 'getSimulBenchMark', paramData, format);
                                 log.debug(stmt, paramData);
 
                                 conn.query(stmt, function(err, rows) {
@@ -2080,10 +2076,7 @@ var getBacktestResult2 = function(req, res) {
                                     callback(null, paramData);
                                 });
                                 
-                            }else{
-                                callback(null, paramData);
-                            }
-
+                           
                         } catch (err) {
 
                             resultMsg.result = false;
