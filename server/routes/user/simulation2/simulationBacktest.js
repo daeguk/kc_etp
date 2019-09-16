@@ -2271,25 +2271,36 @@ function    fn_set_bench_mark( p_arr_daily, p_arr_bench ) {
 
 
             v_daily.bm_data01       =   Number( v_bm.F15001 );
-            v_daily.F15175          =   Number(v_bm.F15175);
-            v_daily.KOSPI_F15001    =   Number(v_bm.KOSPI_F15001);
+            v_daily.F15175          =   Number( v_bm.F15175 );
+            v_daily.KOSPI_F15001    =   Number( v_bm.KOSPI_F15001 );
+
+
             /* 최초인 경우 */
             if( i == 0 ) {
+
                 v_daily.bm_1000_data    =   1000;
-                v_daily.bm_return_data  =   (
-                    ( Number( v_daily.bm_1000_data ) - Number( v_daily.bm_1000_data ) ) / Number( v_daily.bm_1000_data )
-                ).toFixed(17);
+                v_daily.bm_return_data  =   Number(
+                    (
+                        ( Number( v_daily.bm_1000_data ) - Number( v_daily.bm_1000_data ) ) / Number( v_daily.bm_1000_data )
+                    ).toFixed(17)
+                );
+
             }else{
+
                 /* 1000 단위환산 = 전일 단위환산 * ( 당일지수 / 전일 지수 ) */
-                v_daily.bm_1000_data    =   (
-                        Number( v_prev_daily.bm_1000_data ) *
-                        ( Number( v_daily.bm_data01 ) / Number( v_prev_daily.bm_data01 ) )
-                ).toFixed(17);
+                v_daily.bm_1000_data    =   Number(
+                    (
+                            Number( v_prev_daily.bm_1000_data ) *
+                            ( Number( v_daily.bm_data01 ) / Number( v_prev_daily.bm_data01 ) )
+                    ).toFixed(17)
+                );
 
                 /* return = ( 당일 단위환산 - 전일 단위환산 ) / 전일 단위환산 */
-                v_daily.bm_return_data  =   (
-                        ( Number( v_daily.bm_1000_data ) - Number( v_prev_daily.bm_1000_data ) ) / Number( v_prev_daily.bm_1000_data )
-                ).toFixed(17);
+                v_daily.bm_return_data  =   Number(
+                    (
+                            ( Number( v_daily.bm_1000_data ) - Number( v_prev_daily.bm_1000_data ) ) / Number( v_prev_daily.bm_1000_data )
+                    ).toFixed(17)
+                );
             }
 
             if( i > 0 ) {
