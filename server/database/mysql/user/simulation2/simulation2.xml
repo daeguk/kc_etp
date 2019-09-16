@@ -179,6 +179,30 @@
 
          ORDER  BY  tm_date_manage.F12506
     ]]>
+    </select>
+
+    <!--
+    *   scen_cd 와 일치하는  업로드된 리밸런싱 일자를 조회한다.
+    *   2019-08-14  bkLove(촤병국)
+    -->
+    <select id="getRebalanceDateUploadByScenCd">
+    <![CDATA[
+
+        SELECT      /* simulationBacktest.getRebalanceDateUploadByScenCd     scen_cd 와 일치하는  업로드된 리밸런싱 일자를 조회한다. */
+
+                    DATE_FORMAT( tm_simul_portfolio2.rebalance_date, '%Y.%m.%d' )   AS  fmt_F12506
+                ,   tm_simul_portfolio2.rebalance_date                              AS  F12506
+
+          FROM  tm_simul_portfolio2
+
+         WHERE  1 = 1
+
+           AND  tm_simul_portfolio2.grp_cd      =   #{grp_cd}
+           AND  tm_simul_portfolio2.scen_cd     =   #{scen_cd}
+
+         GROUP  BY  tm_simul_portfolio2.rebalance_date
+         ORDER  BY  tm_simul_portfolio2.rebalance_date
+    ]]>
     </select>    
 
 </mapper>

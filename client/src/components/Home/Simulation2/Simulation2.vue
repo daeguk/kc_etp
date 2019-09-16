@@ -407,9 +407,7 @@ export default {
 
                                 tr.find( "td input[name=F16013]" ).val( rowItem.F16013 );               /* 종목코드 */
                                 tr.find( "td:eq(2)" ).text( rowItem.F16002 );                           /* 종목명 */
-
                                 tr.find( "td:eq(3)" ).text( util.formatInt( rowItem.F15028 ) );         /* 시가총액 */
-        //                      tr.find( "td:eq(5)" ).text( rowIndex / 100 );                           /* 지수적용비율 */
 
                                 /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
                                 vm.fn_setImportanceMethodCd( vm.importance_method_cd );
@@ -579,6 +577,7 @@ export default {
             }
 
 
+
             if( p_param.confirmYn == "Y" ) {
 
                 if( await vm.$refs.confirm2.open(
@@ -593,6 +592,8 @@ export default {
                     }
                 }
             }
+
+
 
             /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
             if(     vm.paramData && Object.keys( vm.paramData ).length > 0 
@@ -1682,30 +1683,31 @@ export default {
                             vm.importance_method_cd     =   mastInfo.importance_method_cd;  /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
 
 
+                            /* 리밸런싱 주기가 없는 경우 - 리밸런싱 일자가 포함된 샘플파일 유무를 1 로 간주 */
                             if( vm.rebalance_cycle_cd == "" ) {
-
-                            }else{
-
-                                /* old_value 값과 비교하여 리밸런싱이 변경되었는지 체크한다. */
-                                vm.fn_checkRebalance( 'rebalance_cycle_cd').then( function(e){
-
-                                    vm.rebalance_date_cd        =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
-
-                                    vm.old_start_year           =   mastInfo.start_year;
-                                    vm.old_rebalance_cycle_cd   =   mastInfo.rebalance_cycle_cd;
-                                    vm.old_rebalance_date_cd    =   mastInfo.rebalance_date_cd;
-
-                                    /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
-                                    vm.fn_getRebalanceDate().then( function(e1){
-                                        if( e1 && e1.result ) {
-                                            vm.old_rebalance_date    =   vm.rebalance_date;
-
-                                            /* 시뮬레이션 포트폴리오 정보를 조회한다. */
-                                            vm.fn_getSimulPortfolio( vm.paramData );
-                                        }
-                                    });
-                                });
+                                vm.p_rebalance_file_yn  =   "1";
                             }
+
+
+                            /* old_value 값과 비교하여 리밸런싱이 변경되었는지 체크한다. */
+                            vm.fn_checkRebalance( 'rebalance_cycle_cd').then( function(e){
+
+                                vm.rebalance_date_cd        =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+
+                                vm.old_start_year           =   mastInfo.start_year;
+                                vm.old_rebalance_cycle_cd   =   mastInfo.rebalance_cycle_cd;
+                                vm.old_rebalance_date_cd    =   mastInfo.rebalance_date_cd;
+
+                                /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                                vm.fn_getRebalanceDate().then( function(e1){
+                                    if( e1 && e1.result ) {
+                                        vm.old_rebalance_date    =   vm.rebalance_date;
+
+                                        /* 시뮬레이션 포트폴리오 정보를 조회한다. */
+                                        vm.fn_getSimulPortfolio( vm.paramData );
+                                    }
+                                });
+                            });
                         }
                     }
                 }
@@ -2157,73 +2159,63 @@ export default {
             vm.arr_show_error_message   =   [];
             vm.arr_rebalance_date       =   [];
 
-
-            await vm.$nextTick( function(){
-
-                if( !vm.start_year ) {
-                    return  false;
-                }
-
-                if( !vm.rebalance_cycle_cd ) {
-                    return  false;
-                }
-
-                if( !vm.rebalance_date_cd ) {
-                    return  false;
-                }
-            });
-
-
             return  await new Promise(function(resolve, reject) {
 
-                vm.fn_showProgress( true );
-                axios.post(Config.base_url + "/user/simulation2/getRebalanceDate", {
-                    data: {     
-                            "start_year"            :   vm.start_year 
-                        ,   "rebalance_cycle_cd"    :   vm.rebalance_cycle_cd
-                        ,   "rebalance_date_cd"     :   vm.rebalance_date_cd
-                    }
-                }).then( function(response) {
+                vm.$nextTick( function(){
+                    
+                    vm.fn_showProgress( true );
+                    axios.post(Config.base_url + "/user/simulation2/getRebalanceDate", {
+                        data: { 
+                                "grp_cd"                :   vm.grp_cd
+                            ,   "scen_cd"               :   vm.scen_cd
 
-                    vm.fn_showProgress( false );
+                            ,   "start_year"            :   vm.start_year 
+                            ,   "rebalance_cycle_cd"    :   vm.rebalance_cycle_cd
+                            ,   "rebalance_date_cd"     :   vm.rebalance_date_cd
+                        }
+                    }).then( function(response) {
 
-                    if (response && response.data) {
-                        var msg = ( response.data.msg ? response.data.msg : "" );
+                        vm.fn_showProgress( false );
 
-                        if (!response.data.result) {
-                            if( msg ) {
-                                vm.arr_show_error_message.push( msg );
+                        if (response && response.data) {
+                            var msg = ( response.data.msg ? response.data.msg : "" );
+
+                            if (!response.data.result) {
+                                if( msg ) {
+                                    vm.arr_show_error_message.push( msg );
+                                }
+
+                                resolve( { result : false } );
+                            }else{
+                                var dataList = response.data.dataList;
+
+                                if( dataList && dataList.length > 0 ) {
+                                    vm.rebalance_date   =   dataList[0].value;
+                                }
+
+                                vm.arr_rebalance_date   =   dataList;
+
+                                resolve( { result : true, dataList : dataList } );
                             }
 
-                            resolve( { result : false } );
                         }else{
-                            var dataList = response.data.dataList;
-
-                            if( dataList && dataList.length > 0 ) {
-                                vm.rebalance_date   =   dataList[0].value;
-                            }
-
-                            vm.arr_rebalance_date   =   dataList;
-
-                            resolve( { result : true, dataList : dataList } );
+                            resolve( { result : false } );
                         }
 
-                    }else{
+                    }).catch(error => {
                         resolve( { result : false } );
-                    }
 
-                }).catch(error => {
-                    resolve( { result : false } );
+                        vm.fn_showProgress( false );
+                        if ( vm.$refs.confirm2.open(
+                                '확인',
+                                '서버로 부터 응답을 받지 못하였습니다.',
+                                {}
+                                ,4
+                            )
+                        ) {
+                        }
+                    });
 
-                    vm.fn_showProgress( false );
-                    if ( vm.$refs.confirm2.open(
-                            '확인',
-                            '서버로 부터 응답을 받지 못하였습니다.',
-                            {}
-                            ,4
-                        )
-                    ) {
-                    }
                 });
 
             }).catch( function(e1) {

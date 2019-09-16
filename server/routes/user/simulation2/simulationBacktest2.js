@@ -847,20 +847,43 @@ var saveBaicInfo2 = function(req, res) {
                     /* 12. 저장시 입력했던 정보로 리밸런싱 일자를 조회한다. */
                     function(msg, callback) {
 
+                        var nameSpaceId =   "simulationBacktest";
+                        var queryId     =   "getRebalanceDateByScenCd";
+
                         try{
 
                             if( !msg || Object.keys( msg ).length == 0 ) {
                                 msg = {};
                             }
 
-                            stmt = mapper.getStatement('simulationBacktest', 'getRebalanceDateByScenCd', paramData, format);
+
+console.log( "paramData.rebalance_cycle_cd", paramData.rebalance_cycle_cd );
+
+                            /* 리밸런싱 주기가 없는 경우 scen_cd 와 일치하는  업로드된 리밸런싱 일자를 조회한다. */
+                            if( paramData.rebalance_cycle_cd == "" ) {
+
+                                nameSpaceId =   "simulation2";
+                                queryId     =   "getRebalanceDateUploadByScenCd";
+
+console.log( "nameSpaceId", nameSpaceId, "queryId", queryId, "paramData.grp_cd", paramData.grp_cd, "paramData.scen_cd", paramData.scen_cd );
+
+                                if( !paramData.grp_cd || !paramData.scen_cd )  {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] " + nameSpaceId + "." + queryId + " grp_cd 또는 scen_cd 가 존재하지 않습니다.";
+                                    resultMsg.err = "[error] " + nameSpaceId + "." + queryId + " grp_cd 또는 scen_cd 가 존재하지 않습니다.";
+
+                                    callback( resultMsg );
+                                }
+                            }
+
+                            stmt = mapper.getStatement( nameSpaceId, queryId, paramData, format);
                             log.debug(stmt, paramData);
 
                             conn.query(stmt, function(err, rows) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest.getRebalanceDateByScenCd Error while performing Query";
+                                    resultMsg.msg = "[error] " + nameSpaceId + "." + queryId + " Error while performing Query";
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -883,7 +906,7 @@ var saveBaicInfo2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.getRebalanceDateByScenCd Error while performing Query";
+                            resultMsg.msg = "[error] " + nameSpaceId + "." + queryId + " Error while performing Query";
                             resultMsg.err = err;
 
                             callback(resultMsg);
