@@ -67,15 +67,14 @@ var saveBaicInfo2 = function(req, res) {
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
-        // var v_resultSimulData           =   {};
+        var v_resultSimulData           =   {};
 
-        // resultMsg.arr_daily             =   [];
-        // resultMsg.arr_rebalance         =   [];
+        resultMsg.arr_daily             =   [];
+        resultMsg.arr_rebalance         =   [];
         resultMsg.simul_mast            =   {};
-        // resultMsg.arr_bench_mark        =   [];
-        // resultMsg.analyzeList           =   [];
-        // resultMsg.jsonFileName          =   "";
-        // resultMsg.inputData             =   [];        
+        resultMsg.analyzeList           =   [];
+        resultMsg.jsonFileName          =   "";
+        resultMsg.inputData             =   [];        
 
         Promise.using(pool.connect(), conn => {
 
@@ -840,6 +839,241 @@ var saveBaicInfo2 = function(req, res) {
                         }
                     },
 
+                    /* 12. 저장시 입력했던 정보로 리밸런싱 일자를 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulationBacktest2', 'getRebalanceDateByScenCd', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulationBacktest.getRebalanceDateByScenCd Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[백테스트] 리밸런싱 일자 정보가 존재하지 않습니다.";
+                                    resultMsg.err = "[백테스트] 리밸런싱 일자 정보가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                } else {
+                                    /*=================================== 
+                                    * 1. 포트 폴리오를 리밸런싱일별로 Array화 한다,
+                                      2. 이력 데이터를 조회할 파라메터 생성
+                                    ======================================*/
+
+                                    var v_simulPortfolioList = [];
+                                    var firstRebalenceDate = "";
+
+                                    rows.forEach(function(item, index) {
+                                        
+                                        if (index == 0) firstRebalenceDate = item.F12506;
+                                        var simulPortfolio = _.filter(msg.v_simulPortfolio, {'rebalance_date': item.F12506});
+                                        var simulPortfolioObj = [];
+
+                                        simulPortfolio.forEach(function(portfolio) {
+                                            simulPortfolioObj[ portfolio.F16013 ] = portfolio;
+                                        });
+
+                                        v_simulPortfolioList[item.F12506] = simulPortfolioObj;
+                                    });
+                                }
+
+                                msg.v_arrRebalanceDate  =   rows;
+                                msg.v_simulPortfolioList =  v_simulPortfolioList;
+                                msg.v_simulPortfolio = v_simulPortfolioList[firstRebalenceDate]; // 첫 리밸런싱 까지 포트 폴리오로 사용
+                                msg.firstRebalenceDate = firstRebalenceDate; // 첫리밸런싱 일자
+                                callback( null, msg );
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulationBacktest.getRebalanceDateByScenCd Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 13. (백테스트) 백테스트 실행시 이력정보를 조회한다. */
+                    function(msg, callback) {
+                        var temp_kspjong_hist = [];
+                        var kspjong_hist = [];
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulationBacktest2', 'getSimulHistListByScenCd3', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulationBacktest2.getSimulHistListByScenCd3 Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0  ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[백테스트] 시뮬레이션 할 이력 데이터가 존재하지 않습니다.";
+                                    resultMsg.err = "[백테스트] 시뮬레이션 할 이력 데이터가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                } else {
+                                    paramData.first_date = rows[0].F12506;
+                                    temp_kspjong_hist = rows;
+                                    
+
+                                    kspjong_hist = fn_history_filter(
+                                        temp_kspjong_hist /*DB에서 조회된 종목별 히스토리*/
+                                        , msg.v_simulPortfolio  /* 시작일 포트롤리오 */
+                                        , msg.v_simulPortfolioList /* 리밸런싱일별 포트 폴리오*/    
+                                    );
+                 
+                                }
+
+                            /*************************************************************************************************************
+                            *   시뮬레이션 이력정보로 백테스트 수행결과를 반환한다.
+                            **************************************************************************************************************/
+
+                                v_resultSimulData   =   fn_get_simulation_data(
+                                        msg.v_simul_mast        /* 시뮬레이션 기본 마스터 정보 */
+                                    ,   kspjong_hist                    /* 일자별 종목 이력 데이터 */
+                                    ,   msg.v_arrRebalanceDate  /* 리밸런싱 일자 정보 */
+                                    ,   msg.v_simulPortfolio    /* [tm_simul_portfolio] 기준 종목 데이터 */
+                                    ,   msg.v_simulPortfolioList /*리밸런싱 날짜별 포트 폴리오*/
+                                );
+
+                                delete msg.v_simul_mast;
+                                delete msg.v_arrRebalanceDate;
+                                delete msg.v_simulPortfolio;
+                                delete msg.v_simulPortfolioList;
+
+                                callback( null, msg );
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulationBacktest2.getSimulHistListByScenCd2 Error while performing Query";
+                            resultMsg.err = err;
+
+                            resultMsg.dailyJongmokObj   =   {};
+                            resultMsg.dailyObj          =   {};
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 14. td_kspjong_hist 테이블 기준 td_index_hist 테이블에서 bench_mark 와 일치하는 정보를 조회한다.*/
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
+
+                           
+
+                            stmt = mapper.getStatement('simulationBacktest2', 'getSimulBenchMark', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulationBacktest.getSimulBenchMark Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( rows || rows.length > 0 ) {
+                                    /* 일자별 지수에 밴치마크 정보를 설정한다. */
+                                    fn_set_bench_mark( v_resultSimulData.arr_daily, rows );
+                                }
+
+                                callback(null, msg);
+                            });
+                                
+                            
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulationBacktest.getSimulBenchMark Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 15. 파이선을 통해 분석정보를 가져온다.*/
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
+
+                            /* 파이선을 통해 분석정보를 가져온다. */
+                            if( v_resultSimulData.arr_daily && v_resultSimulData.arr_daily.length > 0 ) {
+
+                                log.debug( "분석정보 #1 조회 from 파이선 START");
+                                simulAnalyze.getAnalyze_timeseries(v_resultSimulData.arr_daily, paramData.bench_mark_cd).then( function(e) {
+                                    if( e && e.result ) {
+                                        if( e.results && e.results.length > 0 ) {
+                                            resultMsg.analyzeList   =   e.results;
+                                            resultMsg.jsonFileName  =   e.jsonFileName;
+                                            resultMsg.inputData  =   e.inputData;                                            
+                                        }
+                                        callback(null);
+                                    }else{
+
+                                        stmt    =   "";
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
+                                        resultMsg.err = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
+
+                                        return callback(null);
+
+                                    }
+                                });
+                                log.debug( "분석정보 #1 조회 from 파이선 END");
+
+                            }else{
+                                callback(null);
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
+                            resultMsg.err = err;
+
+                            callback(null);
+                        }
+                    },                    
+
                 ], function(err) {
 
                     if (err) {
@@ -869,10 +1103,10 @@ var saveBaicInfo2 = function(req, res) {
                         };
 
                         /* 일자별 지수에 balance 정보를 설정한다. */
-                        // fn_set_balance( v_resultSimulData.arr_daily, resultMsg.simul_mast );
+                        fn_set_balance( v_resultSimulData.arr_daily, resultMsg.simul_mast );
 
-                        // resultMsg.arr_daily         =   [ ...v_resultSimulData.arr_daily];
-                        // resultMsg.arr_rebalance     =   [ ...v_resultSimulData.arr_rebalance];                        
+                        resultMsg.arr_daily         =   [ ...v_resultSimulData.arr_daily];
+                        resultMsg.arr_rebalance     =   [ ...v_resultSimulData.arr_rebalance];
 
                         resultMsg.err           =   null;
 
@@ -894,12 +1128,12 @@ var saveBaicInfo2 = function(req, res) {
         resultMsg.msg = "[error] simulationBacktest.saveBaicInfo2 오류가 발생하였습니다.";
         resultMsg.err = expetion;
 
-        // resultMsg.arr_daily             =   [];
-        // resultMsg.arr_rebalance         =   [];
+        resultMsg.arr_daily             =   [];
+        resultMsg.arr_rebalance         =   [];
         resultMsg.simul_mast            =   {};
-        // resultMsg.analyzeList           =   [];
-        // resultMsg.jsonFileName          =   "";
-        // resultMsg.inputData             =   [];        
+        resultMsg.analyzeList           =   [];
+        resultMsg.jsonFileName          =   "";
+        resultMsg.inputData             =   [];
 
         res.json(resultMsg);
         res.end();
@@ -1792,7 +2026,7 @@ var getBacktestResult2 = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-                                if ( rows || rows.length > 0 ) {
+                                if ( rows && rows.length > 0 ) {
                                     resultMsg.arr_result_daily      =   rows;
 
                                     paramData.first_date = rows[0].F12506;
@@ -1833,7 +2067,7 @@ var getBacktestResult2 = function(req, res) {
                                         return callback(resultMsg);
                                     }
 
-                                    if ( rows || rows.length > 0 ) {
+                                    if ( rows && rows.length > 0 ) {
                                         /* 일자별 지수에 밴치마크 정보를 설정한다. */
                                         fn_set_bench_mark( resultMsg.arr_result_daily, rows );
                                     }
@@ -1869,7 +2103,7 @@ var getBacktestResult2 = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-                                if ( rows || rows.length > 0 ) {
+                                if ( rows && rows.length > 0 ) {
                                     resultMsg.arr_result_rebalance      =   rows;
                                 }
 

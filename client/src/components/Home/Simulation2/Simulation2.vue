@@ -703,12 +703,12 @@ export default {
                     if( v_F16013.val() != "" ) {
 
                         var rowData     =   {
-                                "F16013"        :   v_F16013.val()                                  /* 종목코드 */
-                            ,   "F16002"        :   v_F16002.text()                                 /* 종목명 */
-                            ,   "F15028"        :   util.NumtoStr( v_F15028.text() )                /* 시가총액 */
-                            ,   "importance"    :   util.NumtoStr( v_importance.val() )             /* 비중 */
-                            ,   "order_no"      :   0                                               /* 정렬순번 */
-                            ,   "trIndex"       :   tr.index()                                      /* 테이블 레코드 순번 */
+                                "F16013"        :   v_F16013.val()                                                      /* 종목코드 */
+                            ,   "F16002"        :   v_F16002.text()                                                     /* 종목명 */
+                            ,   "F15028"        :   util.NumtoStr( v_F15028.text() )                                    /* 시가총액 */
+                            ,   "importance"    :   Number( Number( util.NumtoStr( v_importance.val() ) ).toFixed(2) )  /* 비중 */
+                            ,   "order_no"      :   0                                                                   /* 정렬순번 */
+                            ,   "trIndex"       :   tr.index()                                                          /* 테이블 레코드 순번 */
                         };
 
                         if( !v_portfolioObj[ vm.rebalance_date ] || Object.keys( v_portfolioObj[ vm.rebalance_date ] ).length == 0 ) {
@@ -1518,14 +1518,13 @@ export default {
                         var v_sub_key2  =   Object.keys( v_sub_item )[j];
                         var v_sub_item2 =   v_sub_item[ v_sub_key2 ];
 
-						v_sub_item2.importance	=	Number( v_sub_item2.importance );
+						v_sub_item2.importance	=	Number( v_sub_item2.importance ).toFixed(2);
 
-						v_importance   	=   (
-							Math.floor( 
-									( v_importance * 100 )
-								+  	( v_sub_item2.importance * 100 )
-							) / 100
-						);     /* (합계) 비중 */
+						v_importance   	=   Number(
+                            Number(
+                                Number( Number( v_importance ).toFixed(2) )  +  Number( v_sub_item2.importance )
+                            ).toFixed(2)
+                         );                     /* (합계) 비중 */
 
                         v_sub_item2.order_no    =   ++v_order_no;
                     }
@@ -1602,43 +1601,31 @@ export default {
                         }
                     }else{
 
-                        // var arr_daily       =   response.data.arr_daily;
-                        // var arr_rebalance   =   response.data.arr_rebalance;
+                        var arr_daily       =   response.data.arr_daily;
+                        var arr_rebalance   =   response.data.arr_rebalance;
                         var simul_mast    	=   response.data.simul_mast;
-                        // var analyzeList     =   response.data.analyzeList;
-                        // var jsonFileName    =   response.data.jsonFileName;
-                        // var inputData       =   response.data.inputData;
+                        var analyzeList     =   response.data.analyzeList;
+                        var jsonFileName    =   response.data.jsonFileName;
+                        var inputData       =   response.data.inputData;
 
                         if( simul_mast ) {
                             vm.prev_grp_cd      =   simul_mast.grp_cd;           /* 그룹 코드 */
                             vm.prev_scen_cd     =   simul_mast.scen_cd;          /* 시나리오 코드 */
                             vm.scen_cd          =   simul_mast.scen_cd;          /* 시나리오 코드 */
                             vm.scen_order_no    =   simul_mast.scen_order_no;    /* 시나리오 정렬순번 */
-
-                            vm.$emit( "fn_showSimulation", 
-                                { 
-                                        showSimulationId    :    2
-                                    ,   grp_cd              :   simul_mast.grp_cd
-                                    ,   scen_cd             :   simul_mast.scen_cd
-                                }
-                            );
-
                         }
-/*                        
-                        else{
-                            vm.$emit( "fn_showSimulation", 
-                                { 
-                                        showSimulationId    :    2
-                                    ,   arr_daily           :   arr_daily
-                                    ,   arr_rebalance       :   arr_rebalance
-                                    ,   simul_mast          :   simul_mast
-                                    ,   analyzeList         :   analyzeList
-                                    ,   jsonFileName        :   jsonFileName
-                                    ,   inputData           :   inputData
-                                }
-                            );
-                        }
-*/                        
+
+                        vm.$emit( "fn_showSimulation", 
+                            { 
+                                    showSimulationId    :    2
+                                ,   arr_daily           :   arr_daily
+                                ,   arr_rebalance       :   arr_rebalance
+                                ,   simul_mast          :   simul_mast
+                                ,   analyzeList         :   analyzeList
+                                ,   jsonFileName        :   jsonFileName
+                                ,   inputData           :   inputData
+                            }
+                        );
                     }
                 }
             }).catch(error => {
@@ -1699,12 +1686,8 @@ export default {
 
                             /* 리밸런싱 주기가 없는 경우 - 리밸런싱 일자가 포함된 샘플파일 유무를 1 로 간주 */
                             if( vm.rebalance_cycle_cd == "" ) {
-                                vm.p_rebalance_file_yn  =   "1";
-                            }
 
-
-                            /* old_value 값과 비교하여 리밸런싱이 변경되었는지 체크한다. */
-                            vm.fn_checkRebalance( 'rebalance_cycle_cd').then( function(e){
+                                vm.p_rebalance_file_yn      =   "1";
 
                                 vm.rebalance_date_cd        =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
 
@@ -1715,13 +1698,38 @@ export default {
                                 /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
                                 vm.fn_getRebalanceDate().then( function(e1){
                                     if( e1 && e1.result ) {
+
                                         vm.old_rebalance_date    =   vm.rebalance_date;
 
                                         /* 시뮬레이션 포트폴리오 정보를 조회한다. */
                                         vm.fn_getSimulPortfolio( vm.paramData );
                                     }
                                 });
-                            });
+
+                            }else{
+
+
+                                /* old_value 값과 비교하여 리밸런싱이 변경되었는지 체크한다. */
+                                vm.fn_checkRebalance( 'rebalance_cycle_cd').then( function(e){
+
+                                    vm.rebalance_date_cd        =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+
+                                    vm.old_start_year           =   mastInfo.start_year;
+                                    vm.old_rebalance_cycle_cd   =   mastInfo.rebalance_cycle_cd;
+                                    vm.old_rebalance_date_cd    =   mastInfo.rebalance_date_cd;
+
+                                    /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                                    vm.fn_getRebalanceDate().then( function(e1){
+                                        if( e1 && e1.result ) {
+
+                                            vm.old_rebalance_date    =   vm.rebalance_date;
+
+                                            /* 시뮬레이션 포트폴리오 정보를 조회한다. */
+                                            vm.fn_getSimulPortfolio( vm.paramData );
+                                        }
+                                    });
+                                });
+                            }
                         }
                     }
                 }
@@ -2584,15 +2592,20 @@ console.log( "vm.rebalancePortfolioObj", vm.rebalancePortfolioObj );
 
                         total.length++;         /* 총건수 */
                         total.F15028            =   Number( total.F15028 )  +  Number( util.NumtoStr( v_F15028.text() ) );                                          /* (합계) 시가총액 */
-                        total.importance        =   Math.floor( ( total.importance * 100 )  +  ( Number( util.NumtoStr( v_importance.val() ) ) * 100 ) ) / 100;     /* (합계) 비중 */
 
+                        total.importance        =   Number(
+                            Number(
+                                Number( Number( total.importance ).toFixed(2) )  +  Number( Number( util.NumtoStr( v_importance.val() ) ).toFixed(2) )
+                            ).toFixed(2)
+                         );                     /* (합계) 비중 */
+console.log( "#1 total.importance", total.importance );
                         v_portfolio.push({
-                                "F16013"        :   v_F16013.val()                          /* 종목코드 */
-                            ,   "F16002"        :   v_F16013_nm.text()                      /* 종목명 */
-                            ,   "F15028"        :   util.NumtoStr( v_F15028.text() )        /* 시가총액 */                                
-                            ,   "importance"    :   util.NumtoStr( v_importance.val() )     /* 비중 */
-                            ,   "order_no"      :   rowIndex++                              /* 정렬 순번 */
-                            ,   "trIndex"       :   inx                                     /* 테이블 레코드 순번 */
+                                "F16013"        :   v_F16013.val()                                                          /* 종목코드 */
+                            ,   "F16002"        :   v_F16013_nm.text()                                                      /* 종목명 */
+                            ,   "F15028"        :   util.NumtoStr( v_F15028.text() )                                        /* 시가총액 */                                
+                            ,   "importance"    :   Number( Number( util.NumtoStr( v_importance.val() ) ).toFixed(2) )      /* 비중 */
+                            ,   "order_no"      :   rowIndex++                                                              /* 정렬 순번 */
+                            ,   "trIndex"       :   inx                                                                     /* 테이블 레코드 순번 */
                         });
 
                     }else{
@@ -2655,7 +2668,7 @@ console.log( "vm.rebalancePortfolioObj", vm.rebalancePortfolioObj );
 
 
             if( p_param.p_importance_total_check == "Y" ) {
-                
+
                 /* 포트폴리오 1건 이상 입력한 경우에는 비중의 합은 100 이 되어야 함.  */
                 if( v_portfolio.length > 0 && total.importance != 100 ) {
                     vm.arr_show_error_message.push( "[포트폴리오] 비중의 합은 100 이 되어야 합니다." );
