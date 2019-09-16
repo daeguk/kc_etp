@@ -4,6 +4,102 @@
 <mapper namespace="simulationBacktest2">
 
     <!--
+    * [tm_simul_mast] 테이블에 저장한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <insert     id="saveTmSimulMast2">
+    <![CDATA[
+        INSERT  INTO    
+        /* simulationBacktest.saveTmSimulMast2      [tm_simul_mast] 테이블에 저장한다. */
+        tm_simul_mast 
+        ( 
+                grp_cd                              /* 그룹코드(상위코드) */
+            ,   scen_cd                             /* 시나리오 코드 */
+
+            ,   scen_depth                          /* 시나리오 DEPTH */
+            ,   scen_order_no                       /* 시나리오 정렬 순번 */
+            ,   scen_name                           /* 시나리오명 */
+            ,   grp_yn                              /* 그룹여부(1-그룹) */
+            ,   start_year                          /* 시작년도 */
+            ,   rebalance_cycle_cd                  /* 리밸런싱주기 (COM006) */
+            ,   rebalance_date_cd                   /* 리밸런싱일자 (COM007) */
+            ,   init_invest_money                   /* 초기투자금액 */
+            ,   bench_mark_cd                       /* 벤치마크 (COM008) */
+            ,   importance_method_cd                /* 비중설정방식 (COM009) */
+            ,   upload_rebalance_yn                 /* 엑셀업로드시 rebalance 날짜가 존재하는지 여부 ( 1 - 존재, 0 - 미존재 ) */
+
+            ,   reg_id                              /* 등록자 ID */
+            ,   reg_time                            /* 등록시간 */
+            ,   upd_id                              /* 수정자 ID */
+            ,   upd_time                            /* 수정시간 */
+        )
+        VALUES    
+        ( 
+                #{grp_cd}                           /* 그룹코드(상위코드) */
+            ,   #{scen_cd}                          /* 시나리오 코드 */
+
+            ,   #{scen_depth}                       /* 시나리오 DEPTH */
+            ,   #{scen_order_no}                    /* 시나리오 정렬 순번 */
+            ,   #{scen_name}                        /* 시나리오명 */
+            ,   #{grp_yn}                           /* 그룹여부(1-그룹) */
+            ,   #{start_year}                       /* 시작년도 */
+            ,   #{rebalance_cycle_cd}               /* 리밸런싱주기 (COM006) */
+            ,   #{rebalance_date_cd}                /* 리밸런싱일자 (COM007) */
+            ,   #{init_invest_money}                /* 초기투자금액 */
+            ,   #{bench_mark_cd}                    /* 벤치마크 (COM008) */
+            ,   #{importance_method_cd}             /* 비중설정방식 (COM009) */
+            ,   IFNULL(
+                        #{upload_rebalance_yn}
+                    ,   '0'
+                )                                   /* 엑셀업로드시 rebalance 날짜가 존재하는지 여부 ( 1 - 존재, 0 - 미존재 ) */
+
+            ,   #{user_id}                          /* 등록자 ID */
+            ,   now()                               /* 등록시간 */
+            ,   #{user_id}                          /* 수정자 ID */
+            ,   now()                               /* 수정시간 */
+        )
+    ]]>
+    </insert>
+
+    <!--
+    * [tm_simul_mast] 테이블을 수정한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <update     id="modifyTmSimulMast2">
+    <![CDATA[
+        UPDATE      /* simulationBacktest.modifyTmSimulMast2      [tm_simul_mast] 테이블을 수정한다. */
+                    tm_simul_mast
+
+           SET      grp_cd                  =   #{grp_cd}                       /* 그룹코드(상위코드) */
+                ,   scen_cd                 =   #{scen_cd}                      /* 시나리오 코드 */
+
+                ,   scen_depth              =   #{scen_depth}                   /* 시나리오 DEPTH */
+                ,   scen_order_no           =   #{scen_order_no}                /* 시나리오 정렬 순번 */
+                ,   scen_name               =   #{scen_name}                    /* 시나리오명 */
+                ,   grp_yn                  =   #{grp_yn}                       /* 그룹여부(1-그룹) */
+                ,   start_year              =   #{start_year}                   /* 시작년도 */
+                ,   rebalance_cycle_cd      =   #{rebalance_cycle_cd}           /* 리밸런싱주기 (COM006) */
+                ,   rebalance_date_cd       =   #{rebalance_date_cd}            /* 리밸런싱일자 (COM007) */
+                ,   init_invest_money       =   #{init_invest_money}            /* 초기투자금액 */
+                ,   bench_mark_cd           =   #{bench_mark_cd}                /* 벤치마크 (COM008) */
+                ,   importance_method_cd    =   #{importance_method_cd}         /* 비중설정방식 (COM009) */
+                ,   upload_rebalance_yn     =   IFNULL(
+                            #{upload_rebalance_yn}
+                        ,   '0'
+                    )                                                           /* 엑셀업로드시 rebalance 날짜가 존재하는지 여부 ( 1 - 존재, 0 - 미존재 ) */
+
+                ,   upd_id                  =   #{user_id}                      /* 수정자 ID */
+                ,   upd_time                =   now()                           /* 수정시간 */                
+
+         WHERE  1 = 1
+           AND  grp_cd                      =   #{prev_grp_cd}                  /* 그룹코드(상위코드) - 변경전 */
+           AND  scen_cd                     =   #{prev_scen_cd}                 /* 시나리오 코드 - 변경전 */
+
+           AND  reg_id                      =   #{user_id}                      /* 등록자 ID */
+    ]]>
+    </update>
+
+    <!--
     *   입력할 값을 기준으로 tm_simul_portfolio 와 비교하여 insert, modify 대상 추출
     *   2019-07-26  bkLove(촤병국)
     -->

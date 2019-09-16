@@ -445,7 +445,7 @@ export default {
 
                 vm.fn_showProgress( true );
 
-                axios.post(Config.base_url + "/user/simulation/getBacktestResult", {
+                axios.post(Config.base_url + "/user/simulation/getBacktestResult2", {
                     data: v_param
                 }).then( function(response) {
 

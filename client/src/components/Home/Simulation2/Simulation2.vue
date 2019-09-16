@@ -58,7 +58,9 @@
 
                                         @change="fn_resetErrorMessage();fn_checkRebalance( 'start_year');"
                                         
-                                        v-model="start_year" 
+                                        v-model="start_year"
+                                        :disabled="rebalance_cycle_cd == ''"
+
                                         placeholder="선택하세요" 
                                         outline>
                             </v-select>
@@ -78,6 +80,8 @@
                                         @change="fn_resetErrorMessage();fn_checkRebalance( 'rebalance_cycle_cd');"
                                         
                                         v-model="rebalance_cycle_cd"
+                                        :disabled="rebalance_cycle_cd == ''"
+
                                         placeholder="선택하세요" 
                                         outline>
                             </v-select>
@@ -85,14 +89,14 @@
                         <v-flex xs8 row class="checkbox_w pl-2">
                             <v-layout row wrap class="light--text">
 
-                                <v-radio-group  v-model="rebalance_date_cd" row :ref="'rebalance_date_cd'">
+                                <v-radio-group  v-model="rebalance_date_cd" row >
                                     <v-radio
                                         v-for="(item, index) in arr_rebalance_date_cd"
 
                                         :key="'rebalance_date_cd_' + index"
                                         :label="item.com_dtl_name"
                                         :value="item.com_dtl_cd"
-                                        :disabled="disabled_rebalance_cd[index]"
+                                        :disabled="rebalance_cycle_cd == '' ||  disabled_rebalance_cd[index]"
 
                                         @change="fn_resetErrorMessage();fn_checkRebalance( 'rebalance_date_cd');"
 
@@ -1521,7 +1525,7 @@ export default {
 
             vm.fn_showProgress( true );
 
-            axios.post(Config.base_url + "/user/simulation2/saveBaicInfo2", {
+            axios.post(Config.base_url + "/user/simulation/saveBaicInfo2", {
                 data: { 
                         
                         "prev_grp_cd"           :   vm.prev_grp_cd              /* 그룹 코드 (변경전) */
@@ -1568,7 +1572,7 @@ export default {
                         var simul_mast    	=   response.data.simul_mast;
                         var analyzeList     =   response.data.analyzeList;
                         var jsonFileName    =   response.data.jsonFileName;
-                        var inputData    =   response.data.inputData;    
+                        var inputData       =   response.data.inputData;
 
                         vm.$emit( "fn_showSimulation", 
                             { 
@@ -1638,29 +1642,31 @@ export default {
                             vm.bench_mark_cd            =   mastInfo.bench_mark_cd;         /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
                             vm.importance_method_cd     =   mastInfo.importance_method_cd;  /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
 
-                            if( !vm.rebalance_cycle_cd ) {
-                                vm.rebalance_cycle_cd   =   "1";
-                            }
 
-                            /* old_value 값과 비교하여 리밸런싱이 변경되었는지 체크한다. */
-                            vm.fn_checkRebalance( 'rebalance_cycle_cd').then( function(e){
+                            if( vm.rebalance_cycle_cd == "" ) {
 
-                                vm.rebalance_date_cd        =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+                            }else{
 
-                                vm.old_start_year           =   mastInfo.start_year;
-                                vm.old_rebalance_cycle_cd   =   mastInfo.rebalance_cycle_cd;
-                                vm.old_rebalance_date_cd    =   mastInfo.rebalance_date_cd;
+                                /* old_value 값과 비교하여 리밸런싱이 변경되었는지 체크한다. */
+                                vm.fn_checkRebalance( 'rebalance_cycle_cd').then( function(e){
 
-                                /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
-                                vm.fn_getRebalanceDate().then( function(e1){
-                                    if( e1 && e1.result ) {
-                                        vm.old_rebalance_date    =   vm.rebalance_date;
+                                    vm.rebalance_date_cd        =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
 
-                                        /* 시뮬레이션 포트폴리오 정보를 조회한다. */
-                                        vm.fn_getSimulPortfolio( vm.paramData );
-                                    }
+                                    vm.old_start_year           =   mastInfo.start_year;
+                                    vm.old_rebalance_cycle_cd   =   mastInfo.rebalance_cycle_cd;
+                                    vm.old_rebalance_date_cd    =   mastInfo.rebalance_date_cd;
+
+                                    /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                                    vm.fn_getRebalanceDate().then( function(e1){
+                                        if( e1 && e1.result ) {
+                                            vm.old_rebalance_date    =   vm.rebalance_date;
+
+                                            /* 시뮬레이션 포트폴리오 정보를 조회한다. */
+                                            vm.fn_getSimulPortfolio( vm.paramData );
+                                        }
+                                    });
                                 });
-                            });
+                            }
                         }
                     }
                 }
@@ -2736,6 +2742,8 @@ console.log( "vm.rebalancePortfolioObj", vm.rebalancePortfolioObj );
 
                         if( response.data.p_rebalance_file_yn ) {
                             vm.change_rebalance_yn      =   response.data.p_rebalance_file_yn;
+                            vm.rebalance_cycle_cd       =   "";
+                            vm.rebalance_date_cd        =   "";
                         }else{
                             vm.change_rebalance_yn      =   "0";
                         }

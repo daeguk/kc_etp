@@ -240,11 +240,106 @@ var uploadPortfolio = function(req, res) {
 
                     async.waterfall([
 
-                        /* 1. 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                        /* 1. 리밸런싱 샘플 파일인 경우 업로드한 리밸런싱 날짜 중 영업일에 존재하지 않는 일자를 조회한다. */
                         function( callback ) {
 
+                            /* 리밸런싱 샘플 파일인 경우 */
+                            if( v_param.p_rebalance_file_yn == "1" ) {
+
+                                try {
+                                    var msg         =   {};
+
+                                    reqParam.rebalance_cycle_cd     =   "0";        /* 리밸런싱 주기 */
+                                    reqParam.rebalance_date_cd      =   "0";        /* 리밸런싱 일자 코드 */
+                                    reqParam.arrExcelRebalanceDate  =   dataLists;
+
+                                    stmt = mapper.getStatement('simulationUpload', 'getRebalanceDateNotExistCheckByUpload', reqParam, format);
+                                    log.debug(stmt, reqParam);
+
+                                    conn.query(stmt, function(err, rows) {
+                                        try {
+
+                                            resultMsg.result = true;
+                                            resultMsg.msg = "";                    
+
+                                            if (err) {
+                                                log.error(err, stmt, paramData);
+
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] simulationUpload.getRebalanceDateNotExistCheckByUpload Error while performing Query";
+                                                resultMsg.err = err;
+                                            }
+                                            else if (rows && rows.length > 0) {
+
+                                                for( var i=0 ; i < rows.length; i++ ) {
+                                                    var dateCheck = null;
+
+                                                    dateCheck   =   dataLists.filter( function( item, index, array ) {
+                                                        return  String( item.date ) == rows[i].F12506;
+                                                    });
+
+                                                    if( !dateCheck || dateCheck.length == 0 ) {
+                                                        resultMsg.errorList.push( { 
+                                                                result  :   false
+                                                            ,   msg     :   "리밸런싱 일 ( " + rows[i].F12506 + " ) 에 최소 한건의 데이터는 존재해야 합니다"  
+                                                        });
+                                                    }
+
+                                                    /* 10 개 까지만 결과정보에 보관한다. */
+                                                    if( resultMsg.errorList.length == 10  ) {
+                                                        break;
+                                                    }
+                                                }
+                                                
+
+                                                if( resultMsg.errorList && resultMsg.errorList.length > 0 ) {
+                                                    resultMsg.result = false;
+                                                    
+                                                    return  callback(resultMsg);
+                                                }
+
+                                            }
+
+                                            callback(null, msg);
+
+                                        } catch (err) {
+
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] simulationUpload.getRebalanceDateNotExistCheckByUpload Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return  callback(resultMsg);
+                                        }
+
+                                    });
+
+                                } catch (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulationUpload.getRebalanceDateNotExistCheckByUpload Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    callback(resultMsg);
+                                }
+
+                            }else{
+                                callback(null, msg);
+                            }
+                        },
+
+                        /* 1. 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                        function( msg, callback ) {
+
                             try {
-                                var msg         =   {};
+                                
+                                if( !msg || Object.keys( msg ).length == 0 ) {
+                                    msg = {};
+                                }
+
+                                /* 리밸런싱 샘플 파일인 경우 리밸런싱 일자를 조회한다. */
+                                if( v_param.p_rebalance_file_yn == "1" ) {
+                                    reqParam.rebalance_cycle_cd     =   "0";        /* 리밸런싱 주기 */
+                                    reqParam.rebalance_date_cd      =   "0";        /* 리밸런싱 일자 코드 */
+                                }
 
                                 stmt = mapper.getStatement('simulation2', 'getRebalanceDate', reqParam, format);
                                 log.debug(stmt, reqParam);
@@ -344,7 +439,7 @@ var uploadPortfolio = function(req, res) {
 
                                 callback(resultMsg);
                             }
-                        },                
+                        },                        
 
                         /* 2. 업로드한 종목 중 존재하지 않는 종목을 조회한다. ( 10개만 노출 ) */
                         function( msg, callback) {

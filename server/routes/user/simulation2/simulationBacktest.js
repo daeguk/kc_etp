@@ -2059,7 +2059,7 @@ var getBacktestResult2 = function(req, res) {
                                 paramData.bench_index_cd02  =   resultMsg.simul_result_mast.bench_index_cd02;   /* large_type */
                                 paramData.bench_index_cd03  =   resultMsg.simul_result_mast.bench_index_cd03;   /* middle_type */
 
-                                stmt = mapper.getStatement('simulationBacktest2', 'getSimulBenchMark', paramData, format);
+                                stmt = mapper.getStatement('simulationBacktest', 'getSimulBenchMark', paramData, format);
                                 log.debug(stmt, paramData);
 
                                 conn.query(stmt, function(err, rows) {
