@@ -2,12 +2,17 @@
     <v-layout row wrap class="content_margin etp_new">
         <v-flex grow>
             <v-card flat>
-
-                <v-card-title primary-title>
-                    <h3 class="headline" pb-0>
+                <v-card-title primary-title >
+                    <h3 class="headline w100" pb-0 >
                         PORTFOLIO SIMULATION |
                         <span   class="grey--text">KOSPI, KOSDAQ, ETF를 이용해 포트폴리오를 구성하고 백테스트를 수행합니다.</span>
-                    </h3>
+                   
+                     <span class="btn_r">
+                     <v-btn small flat icon>
+                          <v-icon v-on:click="">refresh</v-icon>
+                    </v-btn>
+                    </span>
+                     </h3>
                 </v-card-title>
 
 
