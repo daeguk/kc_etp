@@ -102,8 +102,9 @@ var uploadPortfolio = function(req, res) {
 
             fn_sizeCheck( req.file, "file", resultMsg );
 
-            var arrCodeList06       =   [];         /* 단축코드 array */
-            var arrCodeList12       =   [];         /* 국제표준코드 array */
+            var arrCodeList06           =   [];     /* 단축코드 array */
+            var arrCodeList12           =   [];     /* 국제표준코드 array */
+            var arrExcelRebalanceDate   =   [];     /* 엑셀에서 업로드한 일자정보 */
 
             var v_param = {
                     p_count_check       :   true    /* 엑셀 건수 체크 */
@@ -154,12 +155,25 @@ var uploadPortfolio = function(req, res) {
                     fn_excel_record_check( v_param, dataLists[0] );
                 }else{
 
+                    var dateCheck   =   [];
                     for (var i = 0; i < dataLists.length-1; i++) {
                         var data = dataLists[i];
 
                         /* 엑셀 레코드 밸리데이션을 수행한다. */
                         v_param.p_index         =   i;
                         fn_excel_record_check( v_param, data );
+
+
+                        if( v_param.p_rebalance_file_yn == "1" ) {
+
+                            dateCheck   =   arrExcelRebalanceDate.filter( function( item, index, array ) {
+                                return  item.date == String( dataLists[i].date );
+                            });
+
+                            if( !dateCheck || dateCheck.length == 0 ) {
+                                arrExcelRebalanceDate.push( { date : dataLists[i].date } );
+                            }                            
+                        }
 
                         for (var j = i+1; j < dataLists.length; j++) {
                             var data2 = dataLists[j];
@@ -251,8 +265,12 @@ var uploadPortfolio = function(req, res) {
 
                                     reqParam.rebalance_cycle_cd     =   "0";        /* 리밸런싱 주기 */
                                     reqParam.rebalance_date_cd      =   "0";        /* 리밸런싱 일자 코드 */
-                                    reqParam.arrExcelRebalanceDate  =   dataLists;
 
+                                    if( !arrExcelRebalanceDate || arrExcelRebalanceDate.length == 0 ) {
+                                        arrExcelRebalanceDate.push( { date : "" } );
+                                    }
+                                    reqParam.arrExcelRebalanceDate  =   arrExcelRebalanceDate;
+console.log( "arrExcelRebalanceDate", arrExcelRebalanceDate );
                                     stmt = mapper.getStatement('simulationUpload', 'getRebalanceDateNotExistCheckByUpload', reqParam, format);
                                     log.debug(stmt, reqParam);
 
@@ -263,7 +281,7 @@ var uploadPortfolio = function(req, res) {
                                             resultMsg.msg = "";                    
 
                                             if (err) {
-                                                log.error(err, stmt, paramData);
+                                                log.error(err, stmt, reqParam);
 
                                                 resultMsg.result = false;
                                                 resultMsg.msg = "[error] simulationUpload.getRebalanceDateNotExistCheckByUpload Error while performing Query";
@@ -272,18 +290,20 @@ var uploadPortfolio = function(req, res) {
                                             else if (rows && rows.length > 0) {
 
                                                 for( var i=0 ; i < rows.length; i++ ) {
-                                                    var dateCheck = null;
 
-                                                    dateCheck   =   dataLists.filter( function( item, index, array ) {
-                                                        return  String( item.date ) == rows[i].F12506;
-                                                    });
-
-                                                    if( !dateCheck || dateCheck.length == 0 ) {
+                                                    if( rows[i].date_check == "check1" ) {
                                                         resultMsg.errorList.push( { 
                                                                 result  :   false
-                                                            ,   msg     :   "리밸런싱 일 ( " + rows[i].F12506 + " ) 에 최소 한건의 데이터는 존재해야 합니다"  
+                                                            ,   msg     :   "시작년도 이전 날짜 ( " + rows[i].F12506 + " )  가 존재합니다."
                                                         });
                                                     }
+
+                                                    if( rows[i].date_check == "check2" ) {
+                                                        resultMsg.errorList.push( { 
+                                                                result  :   false
+                                                            ,   msg     :   "현재일 이후 날짜 ( " + rows[i].F12506 + " )  가 존재합니다."
+                                                        });
+                                                    }                                                    
 
                                                     /* 10 개 까지만 결과정보에 보관한다. */
                                                     if( resultMsg.errorList.length == 10  ) {
@@ -326,8 +346,11 @@ var uploadPortfolio = function(req, res) {
                             }
                         },
 
-                        /* 1. 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                        /* 2. 화면에서 select 된 리밸런싱 일자를 조회한다. */
                         function( msg, callback ) {
+
+                            var nameSpaceId     =   "simulation2";
+                            var queryId         =   "getRebalanceDate";
 
                             try {
                                 
@@ -335,13 +358,23 @@ var uploadPortfolio = function(req, res) {
                                     msg = {};
                                 }
 
+
                                 /* 리밸런싱 샘플 파일인 경우 리밸런싱 일자를 조회한다. */
                                 if( v_param.p_rebalance_file_yn == "1" ) {
+
                                     reqParam.rebalance_cycle_cd     =   "0";        /* 리밸런싱 주기 */
                                     reqParam.rebalance_date_cd      =   "0";        /* 리밸런싱 일자 코드 */
+                                    reqParam.arrExcelRebalanceDate  =   dataLists;
+
+                                    nameSpaceId     =   "simulationUpload";
+                                    queryId         =   "getRebalanceDateByUpload";
                                 }
 
-                                stmt = mapper.getStatement('simulation2', 'getRebalanceDate', reqParam, format);
+                                if( !reqParam.arrExcelRebalanceDate || reqParam.arrExcelRebalanceDate.length == 0 ) {
+                                    reqParam.arrExcelRebalanceDate.push( { date : "" } );
+                                }
+
+                                stmt = mapper.getStatement( nameSpaceId, queryId, reqParam, format);
                                 log.debug(stmt, reqParam);
 
                                 conn.query(stmt, function(err, rows) {
@@ -351,72 +384,20 @@ var uploadPortfolio = function(req, res) {
                                         resultMsg.msg = "";                    
 
                                         if (err) {
-                                            log.error(err, stmt, paramData);
+                                            log.error(err, stmt, reqParam);
 
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] simulation2.getRebalanceDate Error while performing Query";
+                                            resultMsg.msg = "[error] " + nameSpaceId +"." + queryId + " Error while performing Query";
                                             resultMsg.err = err;
                                         }
                                         else if (rows && rows.length > 0) {
 
                                             /* 리밸런싱 샘플 파일인 경우 리밸런싱 일자를 조회한다. */
                                             if( v_param.p_rebalance_file_yn == "1" ) {
-
-                                                for( var i=0 ; i < rows.length; i++ ) {
-                                                    var dateCheck = null;
-
-                                                    dateCheck   =   dataLists.filter( function( item, index, array ) {
-                                                        return  String( item.date ) == rows[i].F12506;
-                                                    });
-
-                                                    if( !dateCheck || dateCheck.length == 0 ) {
-                                                        resultMsg.errorList.push( { 
-                                                                result  :   false
-                                                            ,   msg     :   "리밸런싱 일 ( " + rows[i].F12506 + " ) 에 최소 한건의 데이터는 존재해야 합니다"  
-                                                        });
-                                                    }
-
-                                                    /* 10 개 까지만 결과정보에 보관한다. */
-                                                    if( resultMsg.errorList.length == 10  ) {
-                                                        break;
-                                                    }                                                    
-                                                }
-
-                                                if( resultMsg.errorList && resultMsg.errorList.length > 0 ) {
-                                                    resultMsg.result = false;
-                                                    
-                                                    return  callback(resultMsg);
-                                                }
-
-                                                for( var i=0 ; i < dataLists.length; i++ ) {
-                                                    var dateCheck = null;
-                                                    
-                                                    dateCheck   =   rows.filter( function( item, index, array ) {
-                                                        return  item.F12506 == String( dataLists[i].date );
-                                                    });
-
-                                                    if( !dateCheck || dateCheck.length == 0 ) {
-                                                        resultMsg.errorList.push( { 
-                                                                result  :   false
-                                                            ,   msg     :   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] DATE 컬럼에 리밸런싱 일과 다른 날자 (" + dataLists[i].date + ")가 존재합니다."
-                                                        });    
-                                                    }
-
-                                                    /* 10 개 까지만 결과정보에 보관한다. */
-                                                    if( resultMsg.errorList.length == 10  ) {
-                                                        break;
-                                                    }                                                    
-                                                }
-
-                                                if( resultMsg.errorList && resultMsg.errorList.length > 0 ) {
-                                                    resultMsg.result = false;
-                                                    
-                                                    return  callback(resultMsg);
-                                                }
-
+                                                msg.rebalanceDateList       =   rows;
+                                            }else{
+                                                msg.rebalanceDateList.push( rows[0] );
                                             }
-
-                                            msg.rebalanceDateList       =   rows;
                                         }
 
                                         callback(null, msg);
@@ -424,7 +405,7 @@ var uploadPortfolio = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulation2.getRebalanceDate Error while performing Query";
+                                        resultMsg.msg = "[error] " + nameSpaceId +"." + queryId + " Error while performing Query";
                                         resultMsg.err = err;
 
                                         return  callback(resultMsg);
@@ -434,14 +415,14 @@ var uploadPortfolio = function(req, res) {
 
                             } catch (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] simulation2.getRebalanceDate Error while performing Query";
+                                resultMsg.msg = "[error] " + nameSpaceId +"." + queryId + " Error while performing Query";
                                 resultMsg.err = err;
 
                                 callback(resultMsg);
                             }
                         },                        
 
-                        /* 2. 업로드한 종목 중 존재하지 않는 종목을 조회한다. ( 10개만 노출 ) */
+                        /* 3. 업로드한 종목 중 존재하지 않는 종목을 조회한다. ( 10개만 노출 ) */
                         function( msg, callback) {
 
                             try {
@@ -553,7 +534,7 @@ var uploadPortfolio = function(req, res) {
                             }
                         },
 
-                        /* 3. 업로드한 종목 중 존재하지 않는 종목을 조회한다. ( 10개만 노출 ) */
+                        /* 4. 업로드한 종목 중 존재하지 않는 종목을 조회한다. ( 10개만 노출 ) */
                         function( msg, callback ) {
 
                             try {
@@ -619,7 +600,7 @@ var uploadPortfolio = function(req, res) {
                             }
                         },
 
-                        /* 4. 업로드한 종목과 일치하는 정보를 조회한다. */
+                        /* 5. 업로드한 종목과 일치하는 정보를 조회한다. */
                         function( msg, callback ) {
 
                             try {
