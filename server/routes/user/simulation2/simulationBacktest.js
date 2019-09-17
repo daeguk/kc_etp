@@ -313,8 +313,6 @@ var saveBaicInfo2 = function(req, res) {
                         }
                     },
 
-
-
                     /* 5. modify 인 경우 tm_simul_mast 를 조회한다. */
                     function( msg, callback) {
 
@@ -499,13 +497,7 @@ var saveBaicInfo2 = function(req, res) {
                         }
                     },
 
-
-
-
-
-
-
-                    /* 5. 입력할 값을 기준으로 tm_simul_portfolio 와 비교하여 insert, modify 대상을 추출한다.  */
+                    /* 8. 입력할 값을 기준으로 tm_simul_portfolio 와 비교하여 insert, modify 대상을 추출한다.  */
                     function( msg, callback) {
 
                         try {
@@ -588,7 +580,7 @@ var saveBaicInfo2 = function(req, res) {
                         }
                     },
 
-                    /* 6. 시뮬레이션 기본 정보를 저장한다. */
+                    /* 9. 시뮬레이션 기본 정보를 저장한다. */
                     function( msg, callback) {
 
                         var queryId =   "saveTmSimulMast2";            
@@ -615,23 +607,26 @@ var saveBaicInfo2 = function(req, res) {
                                 var v_diff_simul_mast       =   _.xorWith( msg.v_org_simul_mast, msg.v_input_simul_mast, _.isEqual );
                                 var v_diff_simul_portfolio  =   _.xorWith( msg.v_org_simul_portfolio, msg.v_input_portfolio, _.isEqual );
 
-console.log( "#######################################################################################################" );
+
+                                log.debug( "#######################################################################################################" );
+                                
                                 /* simul_mast 정보가 다른 경우 tm_simul_mast 의 serial_no 에 1 증가 */
                                 if( v_diff_simul_mast && v_diff_simul_mast.length > 0 ) {
                                     paramData.serial_no     =   msg.now_serial_no + 1;
-console.log( "simul_mast 변경됨 >>> 변경전 serial_no", msg.now_serial_no, "변경후 serial_no",  paramData.serial_no );
+                                    log.debug( "simul_mast 변경됨 >>> 변경전 serial_no", msg.now_serial_no, "변경후 serial_no",  paramData.serial_no );
                                 }
                                 /* simul_portfolio 정보가 다른 경우 tm_simul_mast 의 serial_no 에 1 증가 */
                                 else if( v_diff_simul_portfolio && v_diff_simul_portfolio.length > 0 ) {
                                     paramData.serial_no     =   msg.now_serial_no + 1;
-console.log( "simul_portfolio 변경됨 >>> 변경전 serial_no", msg.now_serial_no, "변경후 serial_no",  paramData.serial_no );
+                                    log.debug( "simul_portfolio 변경됨 >>> 변경전 serial_no", msg.now_serial_no, "변경후 serial_no",  paramData.serial_no );
                                 }
                                 /* simul_mast 와 simul_portfolio 모두 변경된 정보가 없는 경우 현재 serial_no 로 유지 */
                                 else{
-console.log( "simul_mast, simul_portfolio 변경없음 >>> serial_no", msg.now_serial_no );
+                                    log.debug( "simul_mast, simul_portfolio 변경없음 >>> serial_no", msg.now_serial_no );
                                     paramData.serial_no     =   msg.now_serial_no;
                                 }
-console.log( "#######################################################################################################" );
+
+                                log.debug( "#######################################################################################################" );
                             }
 
                             stmt = mapper.getStatement('simulationBacktest2', queryId, paramData, format);
@@ -669,7 +664,7 @@ console.log( "##################################################################
                         }
                     },
 
-                    /* 7. tm_simul_portfolio 을 기준으로 입력할 값과 비교하여 delete 대상을 추출한다.  */
+                    /* 10. tm_simul_portfolio 을 기준으로 입력할 값과 비교하여 delete 대상을 추출한다.  */
                     function( msg, callback) {
 
                         try {
@@ -726,7 +721,7 @@ console.log( "##################################################################
                         }
                     },                    
 
-                    /* 8. 시뮬레이션 포트폴리오 정보를 저장한다. ( insert 건 ) */
+                    /* 11. 시뮬레이션 포트폴리오 정보를 저장한다. ( insert 건 ) */
                     function( msg, callback) {
 
                         if( !msg || Object.keys( msg ).length == 0 ) {
@@ -816,7 +811,7 @@ console.log( "##################################################################
                         }
                     },
 
-                    /* 9. 시뮬레이션 포트폴리오 정보를 저장한다. ( modify 건 ) */
+                    /* 12. 시뮬레이션 포트폴리오 정보를 저장한다. ( modify 건 ) */
                     function( msg, callback) {
 
                         if( !msg || Object.keys( msg ).length == 0 ) {
@@ -907,7 +902,7 @@ console.log( "##################################################################
                         }
                     },
 
-                    /* 10. 시뮬레이션 포트폴리오 정보를 저장한다. ( delete 건 ) */
+                    /* 13. 시뮬레이션 포트폴리오 정보를 저장한다. ( delete 건 ) */
                     function( msg, callback) {
 
                         if( !msg || Object.keys( msg ).length == 0 ) {
@@ -998,7 +993,7 @@ console.log( "##################################################################
                         }
                     },
 
-                    /* 11. 저장시 입력했던 정보로 백테스트 기본정보를 조회한다. */
+                    /* 14. 저장시 입력했던 정보로 백테스트 기본정보를 조회한다. */
                     function(msg, callback) {
 
                         try{
@@ -1037,6 +1032,7 @@ console.log( "##################################################################
 
                                     /* 마스터 정보 설정 */
                                     if( i == 0 ) {
+
                                         v_simul_mast.grp_cd                 =   rows[0].grp_cd;                 /* 그룹코드(상위코드) */
                                         v_simul_mast.scen_cd                =   rows[0].scen_cd;                /* 시나리오 코드 */
 
@@ -1053,8 +1049,8 @@ console.log( "##################################################################
                                     }
                                 }                                
 
-                                msg.v_simul_mast  =   v_simul_mast;
-                                msg.v_simulPortfolio  =   v_simulPortfolio;
+                                msg.v_simul_mast        =   v_simul_mast;
+                                msg.v_simulPortfolio    =   v_simulPortfolio;
 
                                 callback( null, msg );
                             });
@@ -1069,7 +1065,7 @@ console.log( "##################################################################
                         }
                     },
 
-                    /* 12. 저장시 입력했던 정보로 리밸런싱 일자를 조회한다. */
+                    /* 15. 저장시 입력했던 정보로 리밸런싱 일자를 조회한다. */
                     function(msg, callback) {
 
                         try{
@@ -1138,7 +1134,7 @@ console.log( "##################################################################
                         }
                     },                    
 
-                    /* 13. (백테스트) 백테스트 실행시 이력정보를 조회한다. */
+                    /* 16. (백테스트) 백테스트 실행시 이력정보를 조회한다. */
                     function(msg, callback) {
                         var temp_kspjong_hist = [];
                         var kspjong_hist = [];
@@ -1213,7 +1209,7 @@ console.log( "##################################################################
                         }
                     },
 
-                    /* 14. td_kspjong_hist 테이블 기준 td_index_hist 테이블에서 bench_mark 와 일치하는 정보를 조회한다.*/
+                    /* 17. td_kspjong_hist 테이블 기준 td_index_hist 테이블에서 bench_mark 와 일치하는 정보를 조회한다.*/
                     function(msg, callback) {
 
                         try{
@@ -1256,7 +1252,7 @@ console.log( "##################################################################
                         }
                     },
 
-                    /* 15. 파이선을 통해 분석정보를 가져온다.*/
+                    /* 18. 파이선을 통해 분석정보를 가져온다.*/
                     function(msg, callback) {
 
                         try{
@@ -1491,6 +1487,10 @@ var saveBacktestResult2 = function(req, res) {
 
                                     if( v_simul_mast ) {
                                         paramData.serial_no     =   v_simul_mast.serial_no;                         /* 변경 순번 */
+
+log.debug( "#######################################################################################################" );
+log.debug( "simul_mast  serial_no", paramData.serial_no );
+log.debug( "#######################################################################################################" );
                                     }
 
                                     msg.v_simul_mast            =   v_simul_mast;
