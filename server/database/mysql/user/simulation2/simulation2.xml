@@ -107,6 +107,62 @@
     </select>
 
     <!--
+    *    현재 serialNo 를 구한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getSerialNo">
+
+        SELECT      /* simulation2.getSerialNo  현재 serialNo 를 구한다. */
+                    IFNULL(
+                            MAX( tm_simul_mast.serial_no )
+                        ,   0
+                    )                                                       AS  serial_no
+
+          FROM  tm_simul_mast
+
+         WHERE  1 = 1
+           AND  tm_simul_mast.grp_cd            =   #{grp_cd}         /* 그룹코드(상위코드) */
+           AND  tm_simul_mast.scen_cd           =   #{scen_cd}        /* 시나리오코드 */
+
+    </select>
+
+    <!--
+    *   시뮬레이션 마스터 정보를 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getSimulMast2">
+
+        SELECT      /* simulation2.getSimulList2 시뮬레이션 마스터 정보를 조회한다. */
+
+                    tm_simul_mast.grp_cd                                    AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   tm_simul_mast.scen_cd                                   AS  scen_cd                     /* 시나리오 코드 */
+
+                ,   tm_simul_mast.scen_depth                                AS  scen_depth                  /* 시나리오 DEPTH */
+                ,   tm_simul_mast.scen_order_no                             AS  scen_order_no               /* 시나리오 정렬 순번 */
+                ,   tm_simul_mast.scen_name                                 AS  scen_name                   /* 시나리오명 */
+                ,   tm_simul_mast.grp_yn                                    AS  grp_yn                      /* 그룹여부(1-그룹) */
+
+                ,   tm_simul_mast.start_year                                AS  start_year                  /* 시작년도 */
+                ,   tm_simul_mast.rebalance_cycle_cd                        AS  rebalance_cycle_cd          /* 리밸런싱주기 (COM006) */
+                ,   tm_simul_mast.rebalance_date_cd                         AS  rebalance_date_cd           /* 리밸런싱일자 (COM007) */
+                ,   tm_simul_mast.init_invest_money                         AS  init_invest_money           /* 초기투자금액 */
+                ,   tm_simul_mast.bench_mark_cd                             AS  bench_mark_cd               /* 벤치마크 (COM008) */
+                ,   tm_simul_mast.importance_method_cd                      AS  importance_method_cd        /* 비중설정방식 (COM009) */
+
+                ,   tm_simul_mast.serial_no                                 AS  serial_no                   /* 변경 순번 */
+
+          FROM  tm_simul_mast
+         WHERE  1 = 1
+           AND  tm_simul_mast.grp_cd            =   #{grp_cd}       /* 그룹코드(상위코드) */
+           AND  tm_simul_mast.scen_cd           =   #{scen_cd}      /* 시나리오 코드 */
+
+           AND  tm_simul_mast.reg_id            =   #{user_id}      /* 등록자 ID */
+
+         ORDER  BY      tm_simul_mast.scen_cd
+                    ,   tm_simul_mast.scen_order_no
+    </select>
+
+    <!--
     *   시뮬레이션 포트폴리오 정보를 조회한다.
     *   2019-07-26  bkLove(촤병국)
     -->
@@ -159,7 +215,32 @@
          ORDER  BY      tm_simul_portfolio2.scen_cd
                     ,   tm_simul_portfolio2.rebalance_date
                     ,   tm_simul_portfolio2.order_no
-    </select>	
+    </select>
+
+    <!--
+    *   시뮬레이션 포트폴리오 정보를 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getSimulPortfolio3">
+        SELECT      /* simulation.getSimulPortfolio3 시뮬레이션 포트폴리오 정보를 조회한다. */
+
+                    tm_simul_portfolio2.grp_cd                             	AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   tm_simul_portfolio2.scen_cd                             AS  scen_cd                     /* 시나리오코드  */
+
+                ,   tm_simul_portfolio2.F16013                              AS  F16013                      /* 구성종목코드  */
+                ,   tm_simul_portfolio2.rebalance_date                      AS  rebalance_date              /* 리밸런싱 날짜 */
+                ,   tm_simul_portfolio2.importance                          AS  importance                  /* 비중  */
+
+          FROM  tm_simul_portfolio2
+
+         WHERE  1 = 1
+           AND  tm_simul_portfolio2.grp_cd       =   #{grp_cd}       /* 그룹코드(상위코드) */
+           AND  tm_simul_portfolio2.scen_cd      =   #{scen_cd}      /* 시나리오 코드 */
+
+         ORDER  BY      tm_simul_portfolio2.scen_cd
+                    ,   tm_simul_portfolio2.rebalance_date
+                    ,   tm_simul_portfolio2.order_no
+    </select>    
 
     <!--
     *   화면에서 select 된 리밸런싱 일자를 조회한다.

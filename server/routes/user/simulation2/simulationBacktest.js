@@ -311,43 +311,179 @@ var saveBaicInfo2 = function(req, res) {
 
                             callback(resultMsg);
                         }
-                    },                    
+                    },
 
-                    /* 5. 시뮬레이션 기본 정보를 저장한다. */
+
+
+                    /* 5. modify 인 경우 tm_simul_mast 를 조회한다. */
                     function( msg, callback) {
 
-                        var queryId =   "saveTmSimulMast";            
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
+
+
+                        if( paramData.status  ==  "modify" ) {
+
+                            try{
+
+                                stmt = mapper.getStatement('simulation2', 'getSimulMast2', paramData, format);
+                                log.debug(stmt);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulation2.getSimulMast2 Error while performing Query";
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if ( !rows || rows.length != 1 ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulation2.getSimulMast2 Error while performing Query";
+                                        resultMsg.err = err;
+
+                                        callback(resultMsg, msg);
+                                    }else{
+
+                                        /* simul_mast 정보가 변동되었는지 체크하기 위해 v_simul_mast 에 보관 */
+                                        msg.v_org_simul_mast    =   [];
+                                        msg.v_org_simul_mast.push({
+                                                start_year              :   rows[0].start_year                      /* 시작년도 */
+                                            ,   rebalance_cycle_cd      :   rows[0].rebalance_cycle_cd              /* 리밸런싱주기 (COM006) */
+                                            ,   rebalance_date_cd       :   rows[0].rebalance_date_cd               /* 리밸런싱일자 (COM007) */
+                                            ,   init_invest_money       :   rows[0].init_invest_money               /* 초기투자금액 */
+                                            ,   bench_mark_cd           :   rows[0].bench_mark_cd                   /* 벤치마크 (COM008) */
+                                            ,   importance_method_cd    :   rows[0].importance_method_cd            /* 비중설정방식 (COM009) */
+                                        });
+
+                                        msg.v_input_simul_mast  =   [];
+                                        msg.v_input_simul_mast.push({
+                                                start_year              :   paramData.start_year                    /* 시작년도 */
+                                            ,   rebalance_cycle_cd      :   paramData.rebalance_cycle_cd            /* 리밸런싱주기 (COM006) */
+                                            ,   rebalance_date_cd       :   paramData.rebalance_date_cd             /* 리밸런싱일자 (COM007) */
+                                            ,   init_invest_money       :   paramData.init_invest_money             /* 초기투자금액 */
+                                            ,   bench_mark_cd           :   paramData.bench_mark_cd                 /* 벤치마크 (COM008) */
+                                            ,   importance_method_cd    :   paramData.importance_method_cd          /* 비중설정방식 (COM009) */
+                                        });
+
+                                        callback(null, msg);
+                                    }
+                                    
+                                });
+
+                            } catch (err) {
+
+                                resultMsg.result = false;
+                                resultMsg.msg = "[error] simulation2.getSimulMast2 Error while performing Query";
+                                resultMsg.err = err;
+
+                                callback(resultMsg);
+                            }
+
+                        }else{
+                            callback(null, msg);
+                        }
+                    },
+
+                    /* 6. modify 인 경우 tm_simul_portfolio2 를 조회한다. */
+                    function( msg, callback) {
+
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
+
+
+                        if( paramData.status  ==  "modify" ) {
+
+                            try{
+
+                                stmt = mapper.getStatement('simulation2', 'getSimulPortfolio3', paramData, format);
+                                log.debug(stmt);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulation2.getSimulPortfolio3 Error while performing Query";
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if ( !rows || rows.length == 0 ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulation2.getSimulPortfolio3 Error while performing Query";
+                                        resultMsg.err = err;
+
+                                        callback(resultMsg, msg);
+                                    }else{
+
+                                        msg.v_org_simul_portfolio    =  [];
+
+                                        /* simul_portfolio 정보가 변동되었는지 체크하기 위해 v_simul_mast 에 보관 */
+                                        for( var i=0; i < rows.length; i++ ) {
+
+                                            msg.v_org_simul_portfolio.push({
+                                                    F16013              :   rows[i].F16013                          /* 구성종목코드  */
+                                                ,   rebalance_date      :   rows[i].rebalance_date                  /* 리밸런싱 날짜 */
+                                                ,   importance          :   rows[i].importance                      /* 비중  */
+                                            });
+                                        }
+
+                                        callback(null, msg);
+                                    }
+                                    
+                                });
+
+                            } catch (err) {
+
+                                resultMsg.result = false;
+                                resultMsg.msg = "[error] simulation2.getSimulPortfolio2 Error while performing Query";
+                                resultMsg.err = err;
+
+                                callback(resultMsg);
+                            }
+
+                        }else{
+                            callback(null, msg);
+                        }
+                    },
+
+                    /* 7. 현재 serialNo 를 구한다.  */
+                    function( msg, callback) {
 
                         try{
 
                             if( !msg || Object.keys( msg ).length == 0 ) {
                                 msg = {};
-                            }                            
+                            }
 
-                            if( paramData.status  ==  "modify" ) {
-                                queryId =   "modifyTmSimulMast";
-                            }                            
-
-                            stmt = mapper.getStatement('simulationBacktest', queryId, paramData, format);
+                            stmt = mapper.getStatement('simulation2', 'getSerialNo', paramData, format);
                             log.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest." + queryId + " Error while performing Query";
+                                    resultMsg.msg = "[error] simulation2.getSerialNo Error while performing Query";
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
                                 }
 
-                                if ( !rows || rows.length == 0 ) {
+                                if ( !rows || rows.length != 1 ) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest." + queryId + " Error while performing Query";
+                                    resultMsg.msg = "[error] simulation2.getSerialNo Error while performing Query";
                                     resultMsg.err = err;
 
                                     callback(resultMsg, msg);
                                 }else{
+
+                                    msg.now_serial_no       =   Number( rows[0].serial_no );
+
                                     callback(null, msg);
                                 }
                                 
@@ -356,14 +492,20 @@ var saveBaicInfo2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest." + queryId + " Error while performing Query";
+                            resultMsg.msg = "[error] simulation2.getSerialNo Error while performing Query";
                             resultMsg.err = err;
 
                             callback(resultMsg);
                         }
                     },
 
-                    /* 6. 입력할 값을 기준으로 tm_simul_portfolio 와 비교하여 insert, modify 대상을 추출한다.  */
+
+
+
+
+
+
+                    /* 5. 입력할 값을 기준으로 tm_simul_portfolio 와 비교하여 insert, modify 대상을 추출한다.  */
                     function( msg, callback) {
 
                         try {
@@ -375,7 +517,8 @@ var saveBaicInfo2 = function(req, res) {
 
                             if( paramData.rebalancePortfolioObj && Object.keys( paramData.rebalancePortfolioObj ).length > 0 ) {
 
-                                msg.arr_portfolio   =   [];
+                                msg.arr_portfolio       =   [];
+                                msg.v_input_portfolio   =   [];
                                 for( var i=0; i < Object.keys( paramData.rebalancePortfolioObj ).length; i++ ) {
                                     var v_key       =   Object.keys( paramData.rebalancePortfolioObj )[i];
                                     var v_sub_item  =   paramData.rebalancePortfolioObj[ v_key ];
@@ -387,6 +530,12 @@ var saveBaicInfo2 = function(req, res) {
 
                                         v_sub_item2.rebalance_date  =   v_key;
                                         msg.arr_portfolio.push( v_sub_item2 );
+
+                                        msg.v_input_portfolio.push({
+                                                F16013              :   v_sub_item2.F16013                  /* 구성종목코드  */
+                                            ,   rebalance_date      :   v_sub_item2.rebalance_date          /* 리밸런싱 날짜 */
+                                            ,   importance          :   v_sub_item2.importance              /* 비중  */
+                                        })
                                     }
                                 }
                             }                               
@@ -436,6 +585,84 @@ var saveBaicInfo2 = function(req, res) {
                             resultMsg.err = err;
 
                             return callback(resultMsg);
+                        }
+                    },
+
+                    /* 6. 시뮬레이션 기본 정보를 저장한다. */
+                    function( msg, callback) {
+
+                        var queryId =   "saveTmSimulMast";            
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
+
+
+                            if( paramData.status  ==  "insert" ) {
+
+                                paramData.serial_no     =   msg.now_serial_no + 1;
+
+                            }else if( paramData.status  ==  "modify" ) {
+
+                                queryId =   "modifyTmSimulMast";
+
+                                paramData.serial_no     =   msg.now_serial_no + 1;
+
+
+                                /* DB 에 존재하는 정보와 입력한 정보가 다른지 체크  */
+                                var v_diff_simul_mast       =   _.xorWith( msg.v_org_simul_mast, msg.v_input_simul_mast, _.isEqual );
+                                var v_diff_simul_portfolio  =   _.xorWith( msg.v_org_simul_portfolio, msg.v_input_portfolio, _.isEqual );
+
+
+                                /* simul_mast 정보가 다른 경우 tm_simul_mast 의 serial_no 에 1 증가 */
+                                if( v_diff_simul_mast && v_diff_simul_mast.length > 0 ) {
+                                    paramData.serial_no     =   msg.now_serial_no + 1;
+                                }
+                                /* simul_portfolio 정보가 다른 경우 tm_simul_mast 의 serial_no 에 1 증가 */
+                                else if( v_diff_simul_portfolio && v_diff_simul_portfolio.length > 0 ) {
+                                    paramData.serial_no     =   msg.now_serial_no + 1;
+                                }
+                                /* simul_mast 와 simul_portfolio 모두 변경된 정보가 없는 경우 현재 serial_no 로 유지 */
+                                else{
+                                    paramData.serial_no     =   msg.now_serial_no;
+                                }
+                            }
+
+
+                            stmt = mapper.getStatement('simulationBacktest', queryId, paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulationBacktest." + queryId + " Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulationBacktest." + queryId + " Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    callback(resultMsg, msg);
+                                }else{
+                                    callback(null, msg);
+                                }
+                                
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulationBacktest." + queryId + " Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
                         }
                     },
 

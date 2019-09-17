@@ -167,26 +167,6 @@
     ]]>
     </update>
 
-    <!--
-    *   다음 serialNo 를 구한다.
-    *   2019-07-26  bkLove(촤병국)
-    -->
-    <select id="getNextSerialNo">
-
-        SELECT      /* simulation2.getNextSerialNo  다음 serialNo 를 구한다. */
-                    IFNULL(
-                            MAX( tm_simul_mast.serial_no )
-                        ,   0
-                    ) + 1
-
-          FROM  tm_simul_mast
-
-         WHERE  1 = 1
-           AND  tm_simul_result_mast.grp_cd         =   #{grp_cd}         /* 그룹코드(상위코드) */
-           AND  tm_simul_result_mast.scen_cd        =   #{scen_cd}        /* 시나리오코드 */
-
-    </select>
-
 
     <!--
     *   입력할 값을 기준으로 tm_simul_portfolio 와 비교하여 insert, modify 대상 추출
@@ -669,7 +649,7 @@
           
             
          ORDER  BY      td_kspjong_hist.F12506          /* 입회일자 */
-                        ,   td_kspjong_hist.F16013          /* 단축코드 */
+                    ,   td_kspjong_hist.F16013          /* 단축코드 */
     </select>
 
 </mapper>
