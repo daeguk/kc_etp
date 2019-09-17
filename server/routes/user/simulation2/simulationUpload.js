@@ -301,11 +301,16 @@ var uploadPortfolio = function(req, res) {
                                                             ,   msg     :   "2000 년도 이전 날짜 ( " + rows[i].F12506 + " )  가 존재합니다."
                                                         });
                                                     }
-
-                                                    if( rows[i].date_check == "check2" ) {
+                                                    else if( rows[i].date_check == "check2" ) {
                                                         resultMsg.errorList.push( { 
                                                                 result  :   false
                                                             ,   msg     :   "현재일 이후 날짜 ( " + rows[i].F12506 + " )  가 존재합니다."
+                                                        });
+                                                    }
+                                                    else if( rows[i].date_check == "1" ) {
+                                                        resultMsg.errorList.push( { 
+                                                                result  :   false
+                                                            ,   msg     :   "영업일에 포함되지 않은 일자 ( " + rows[i].F12506 + " )  가 존재합니다."
                                                         });
                                                     }                                                    
 
@@ -405,6 +410,7 @@ var uploadPortfolio = function(req, res) {
                                                 resultMsg.arr_rebalance_date.push( { "text" : rows[0].fmt_F12506, "value" : rows[0].F12506 } );
                                             }
                                         }
+console.log( "resultMsg.arr_rebalance_date", resultMsg.arr_rebalance_date );
 
                                         callback(null, msg);
 
