@@ -32,7 +32,8 @@
                             ,   tm_simul_mast.importance_method_cd                      AS  importance_method_cd        /* 비중설정방식 (COM009) */
 
                             ,   DATE_FORMAT( tm_simul_mast.upd_time, '%Y.%m.%d' )       AS  fmt_upd_time                /* 수정일 */
-                            ,   '0'                                                     AS  result_daily_yn             /* result_daily 존재여부 */                            
+                            ,   '0'                                                     AS  result_daily_yn             /* result_daily 존재여부 */
+                            ,   '0'                                                     AS  simul_change_yn             /* simul_mast 와 simul_portfolio 둘다 변동여부 */
 
                       FROM  tm_simul_mast
                      WHERE  1 = 1
@@ -71,6 +72,20 @@
                                         )
                                     ,   '0'
                                 )                                                       AS  result_daily_yn             /* result_daily 존재여부 */
+                            ,   IFNULL(
+                                        (
+                                            SELECT  CASE    WHEN    IFNULL( tm_simul_mast.serial_no, 0 )    =   IFNULL( MAX( tm_simul_result_mast.serial_no ), 0 )
+                                                            THEN    '0'
+                                                            ELSE    '1'
+                                                    END
+                                              FROM  tm_simul_result_mast
+                                             WHERE  1 = 1
+                                               AND  tm_simul_result_mast.grp_cd         =   tm_simul_mast.grp_cd
+                                               AND  tm_simul_result_mast.scen_cd        =   tm_simul_mast.scen_cd
+                                             LIMIT  1
+                                        )
+                                    ,   '0'
+                                )                                                       AS  simul_change_yn             /* simul_mast 와 simul_portfolio 둘다 변동여부 */
 
                       FROM  tm_simul_mast
                      WHERE  1 = 1

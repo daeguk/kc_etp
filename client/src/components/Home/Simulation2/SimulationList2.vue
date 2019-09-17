@@ -85,7 +85,7 @@
                             <!-- Last modified -->
                             <td>
                                 {{ item.fmt_upd_time }}
-                                <input  type="hidden"   name="strParam"    :value="JSON.stringify( { 'grp_cd' : item.grp_cd, 'scen_cd' : item.scen_cd, 'scen_name' : item.scen_name, 'grp_yn' : item.grp_yn } )" />
+                                <input  type="hidden"   name="strParam"    :value="JSON.stringify( { 'grp_cd' : item.grp_cd, 'scen_cd' : item.scen_cd, 'scen_name' : item.scen_name, 'grp_yn' : item.grp_yn, 'simul_change_yn' : item.simul_change_yn } )" />
                             </td>
 
                             <!-- 버튼 영역 -->
@@ -178,7 +178,7 @@ export default {
 
 
         /* table tr 에서 버튼 클릭시  */
-        $('#table01 tbody').on('click', "button[name=btn1], button[name=btn2]", function() {
+        $('#table01 tbody').on('click', "button[name=btn1], button[name=btn2]", async function() {
             var tr          =   $(this).closest('tr');
             var rowIndex    =   tr.index();
 
@@ -222,10 +222,26 @@ export default {
                                 return  false;
                             }
 
+                            if( v_jsonParam.simul_change_yn == "1" ) {
 
-                            /* 결과화면을 보여준다. */
-                            v_jsonParam.showSimulationId        =   2;
-                            vm.$emit( "fn_showSimulation", v_jsonParam );
+                                if ( await vm.$refs.confirm2.open(
+                                        '확인',
+                                        '이미 저장된 시뮬레이션 정보와 현재 시뮬레이션 정보가 변동이 발생되었습니다. 시뮬레이션 화면으로 이동합니다.',
+                                        {}
+                                        ,1
+                                    )
+                                ) {
+                                    /* 수정정보를 보여준다. */
+                                    v_jsonParam.showSimulationId        =   1;
+                                    vm.fn_showSimulation( v_jsonParam );
+                                }
+
+                            }else{
+
+                                /* 결과화면을 보여준다. */
+                                v_jsonParam.showSimulationId        =   2;
+                                vm.$emit( "fn_showSimulation", v_jsonParam );
+                            }
 
                             break;
                 
