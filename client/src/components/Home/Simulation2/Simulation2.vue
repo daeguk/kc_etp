@@ -2632,7 +2632,6 @@ export default {
                                 Number( Number( total.importance ).toFixed(2) )  +  Number( Number( util.NumtoStr( v_importance.val() ) ).toFixed(2) )
                             ).toFixed(2)
                          );                     /* (합계) 비중 */
-console.log( "#1 total.importance", total.importance );
 
                         v_portfolio.push({
                                 "F16013"        :   v_F16013.val()                                                          /* 종목코드 */
