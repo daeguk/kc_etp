@@ -101,7 +101,7 @@ var saveBaicInfo2 = function(req, res) {
                             }
 
                             stmt = mapper.getStatement('simulation', 'getExistScenName', paramData, format);
-                            log.debug(stmt, paramData);
+                            log.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -157,7 +157,7 @@ var saveBaicInfo2 = function(req, res) {
                                 &&  paramData.prev_grp_cd   !=  paramData.grp_cd ) {
 
                                 stmt = mapper.getStatement('simulationBacktest', 'getExistSubCnt', paramData, format);
-                                log.debug(stmt, paramData);
+                                log.debug(stmt);
 
                                 conn.query(stmt, function(err, rows) {
 
@@ -218,7 +218,7 @@ var saveBaicInfo2 = function(req, res) {
                                 paramData.init_incre_grp_cd     =   initGrpInfo.INIT_INCRE_GRP_CD;      /* 그룹인 경우 시나리오 코드는 해당값 단위로 증가 */
 
                                 stmt = mapper.getStatement('simulationBacktest', "getScenCd1", paramData, format);
-                                log.debug(stmt, paramData);
+                                log.debug(stmt);
 
                                 conn.query(stmt, function(err, rows) {
 
@@ -279,7 +279,7 @@ var saveBaicInfo2 = function(req, res) {
                                     ||  paramData.prev_grp_cd   !=  paramData.grp_cd  ) {
 
                                     stmt = mapper.getStatement('simulation', 'getScenOrderNo', paramData, format);
-                                    log.debug(stmt, paramData);
+                                    log.debug(stmt);
 
                                     conn.query(stmt, function(err, rows) {
 
@@ -329,7 +329,7 @@ var saveBaicInfo2 = function(req, res) {
                             }                            
 
                             stmt = mapper.getStatement('simulationBacktest', queryId, paramData, format);
-                            log.debug(stmt, paramData);
+                            log.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -395,7 +395,7 @@ var saveBaicInfo2 = function(req, res) {
                             if( msg.arr_portfolio && msg.arr_portfolio.length > 0  ){
                                 paramData.arr_portfolio =   msg.arr_portfolio;
                                 stmt = mapper.getStatement('simulationBacktest2', 'getTmSimulPortfolioExistCheck11', paramData, { language: 'sql', indent: '  ' });
-//                              log.debug(stmt, paramData);
+//                              log.debug(stmt);
 
                                 conn.query(stmt, function(err, rows) {
 
@@ -453,7 +453,7 @@ var saveBaicInfo2 = function(req, res) {
                                 /* 포트폴리오 설정 건이 존재하는 경우 */
                                 if( paramData.arr_portfolio && paramData.arr_portfolio.length > 0  ){
                                     stmt = mapper.getStatement('simulationBacktest2', 'getTmSimulPortfolioExistCheck22', paramData, { language: 'sql', indent: '  ' });
-                                    log.debug(stmt, paramData);
+//                                  log.debug(stmt);
 
                                     conn.query(stmt, function(err, rows) {
 
@@ -778,7 +778,7 @@ var saveBaicInfo2 = function(req, res) {
                             }
 
                             stmt = mapper.getStatement('simulationBacktest2', 'getSimulListByBacktest2', paramData, format);
-                            log.debug(stmt, paramData);
+                            log.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -849,7 +849,7 @@ var saveBaicInfo2 = function(req, res) {
                             }
 
                             stmt = mapper.getStatement('simulationBacktest2', 'getRebalanceDateByScenCd', paramData, format);
-                            log.debug(stmt, paramData);
+                            log.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -919,7 +919,7 @@ var saveBaicInfo2 = function(req, res) {
                             }
 
                             stmt = mapper.getStatement('simulationBacktest2', 'getSimulHistListByScenCd3', paramData, format);
-                            log.debug(stmt, paramData);
+                            log.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -995,7 +995,7 @@ var saveBaicInfo2 = function(req, res) {
                            
 
                             stmt = mapper.getStatement('simulationBacktest2', 'getSimulBenchMark', paramData, format);
-                            log.debug(stmt, paramData);
+                            log.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
 

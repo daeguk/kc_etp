@@ -1524,6 +1524,10 @@ export default {
             }
 
 
+            /* 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
+            vm.fn_copySelectedDateToRebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
+
+
             /* 선택된 리밸런싱 일자에 속한 포트폴리오를 밸리데이션 체크한다. */
             vm.fn_validationRebalanceDatePortfolio( { p_importance_total_check : 'Y' } );
 
@@ -1928,7 +1932,7 @@ export default {
                                                         vm.rebalancePortfolioObj[ vm.rebalance_date ]   =   Object.assign( {}, v_org_rebalance_obj );
 
                                                         /* 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
-                                                        vm.fn_copySelectedDateTorebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
+                                                        vm.fn_copySelectedDateToRebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
                                                     }
                                                 });
                                             }
@@ -2000,7 +2004,7 @@ export default {
                                                         vm.rebalancePortfolioObj[ vm.rebalance_date ]   =   Object.assign( {}, v_org_rebalance_obj );
 
                                                         /* 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
-                                                        vm.fn_copySelectedDateTorebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
+                                                        vm.fn_copySelectedDateToRebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
                                                     }
                                                 });
                                                                                             
@@ -2088,7 +2092,7 @@ export default {
                                                         vm.rebalancePortfolioObj[ vm.rebalance_date ]   =   Object.assign( {}, v_org_rebalance_obj );
 
                                                         /* 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
-                                                        vm.fn_copySelectedDateTorebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
+                                                        vm.fn_copySelectedDateToRebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
                                                     }
                                                 });                                        
                                             }
@@ -2313,7 +2317,7 @@ export default {
 
             if( check ) {
                 /* 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
-                vm.fn_copySelectedDateTorebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
+                vm.fn_copySelectedDateToRebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
 
                 vm.change_rebalance_yn  =   "1";
             }
@@ -2324,7 +2328,7 @@ export default {
          * 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다.
          * 2019-09-06  bkLove(촤병국)
          */
-        fn_copySelectedDateTorebalanceAll( p_param={ p_gubun : "first", p_exist_data_skip_yn : "Y"  } ) {
+        fn_copySelectedDateToRebalanceAll( p_param={ p_gubun : "first", p_exist_data_skip_yn : "Y"  } ) {
 
             var vm = this;
 
@@ -2483,7 +2487,6 @@ export default {
                     }
                 }
             }
-console.log( "vm.rebalancePortfolioObj", vm.rebalancePortfolioObj );
         },
 
         /*
