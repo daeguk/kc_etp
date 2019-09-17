@@ -2844,8 +2844,13 @@ export default {
 
                         if( check ) {
 
+                            /* 시작년도가 존재하는 경우 - 시작년도 재설정 */
+                            if( response.data.p_start_year ) {
+                                vm.start_year       =   response.data.p_start_year;
+                            }
+
                             /* 리밸런싱 일자가 포함된 샘플파일인 경우 */
-                            if( response.data.p_rebalance_file_yn ) {
+                            if( response.data.p_rebalance_file_yn == "1" ) {
                                 vm.change_rebalance_yn      =   response.data.p_rebalance_file_yn;
 
                                 vm.p_rebalance_file_yn      =   response.data.p_rebalance_file_yn;

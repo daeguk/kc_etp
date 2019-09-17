@@ -14,6 +14,7 @@ var Promise = require("bluebird");
 // var multer = require('multer');
 // var xlsx = require('xlsx');
 var async = require('async');
+var _ = require("lodash");
 
 var multer = require('multer');
 var xlsx = require('xlsx');
@@ -89,6 +90,7 @@ var uploadPortfolio = function(req, res) {
         resultMsg.errorList             =   [];
         resultMsg.arr_rebalance_date    =   [];
         resultMsg.p_rebalance_file_yn   =   "0";
+        resultMsg.p_start_year          =   "";
 
         try {
             reqParam.org_file_name = req.file.originalname;
@@ -377,10 +379,10 @@ var uploadPortfolio = function(req, res) {
 
                                     nameSpaceId     =   "simulationUpload";
                                     queryId         =   "getRebalanceDateByUpload";
-                                }
 
-                                if( !reqParam.arrExcelRebalanceDate || reqParam.arrExcelRebalanceDate.length == 0 ) {
-                                    reqParam.arrExcelRebalanceDate.push( { date : "" } );
+                                    if( !reqParam.arrExcelRebalanceDate || reqParam.arrExcelRebalanceDate.length == 0 ) {
+                                        reqParam.arrExcelRebalanceDate.push( { date : "" } );
+                                    }                                    
                                 }
 
                                 stmt = mapper.getStatement( nameSpaceId, queryId, reqParam, format);
@@ -410,7 +412,21 @@ var uploadPortfolio = function(req, res) {
                                                 resultMsg.arr_rebalance_date.push( { "text" : rows[0].fmt_F12506, "value" : rows[0].F12506 } );
                                             }
                                         }
-console.log( "resultMsg.arr_rebalance_date", resultMsg.arr_rebalance_date );
+
+
+                                        /* 엑셀 업로드를 통해 start_year 년도 추출 */
+                                        if( resultMsg.arr_rebalance_date && resultMsg.arr_rebalance_date.length > 0 ) {
+
+                                            var v_min_obj   =   _.minBy( resultMsg.arr_rebalance_date, function(o){
+                                                return  o.value
+                                            });
+
+                                            if( v_min_obj && Object.keys( v_min_obj ).length > 0 ) {
+                                                if( v_min_obj.value && v_min_obj.value.length > 4 ) {
+                                                    msg.p_start_year    =   v_min_obj.value.substring( 0, 4 );
+                                                }
+                                            }
+                                        }
 
                                         callback(null, msg);
 
@@ -445,7 +461,7 @@ console.log( "resultMsg.arr_rebalance_date", resultMsg.arr_rebalance_date );
 
                                 var first_rebalance_date    =   "";
                                 if( resultMsg.arr_rebalance_date && resultMsg.arr_rebalance_date.length > 0 ) {
-                                    first_rebalance_date    =   resultMsg.arr_rebalance_date[0].F12506;
+                                    first_rebalance_date    =   resultMsg.arr_rebalance_date[0].value;
                                 }
 
                                 for( var i=0; i < dataLists.length; i++) {
@@ -663,9 +679,8 @@ console.log( "resultMsg.arr_rebalance_date", resultMsg.arr_rebalance_date );
 
                                         resultMsg.rebalancePortfolioObj     =   rebalancePortfolioObj;
                                         resultMsg.p_rebalance_file_yn       =   v_param.p_rebalance_file_yn;
-
-console.log( "resultMsg.p_rebalance_file_yn", resultMsg.p_rebalance_file_yn );
-
+                                        resultMsg.p_start_year              =   msg.p_start_year;
+console.log( "######## resultMsg.p_start_year", resultMsg.p_start_year );
                                         callback(null);
 
                                     } catch (err) {

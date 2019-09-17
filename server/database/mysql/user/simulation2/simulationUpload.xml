@@ -88,7 +88,7 @@
             ON  (   base.date               =   tm_date_manage.F12506   )
 
          WHERE  1 = 1
-           AND  tm_date_manage.F12506       >=  CONCAT( #{start_year}, '0101' )
+           AND  tm_date_manage.F12506       >=  CONCAT( '2000', '0101' )
            AND  tm_date_manage.F12506       <=  DATE_FORMAT( NOW(), '%Y%m%d' )
 
            AND  base.date                   >   ''
