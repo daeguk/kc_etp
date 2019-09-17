@@ -1254,11 +1254,17 @@ var saveBacktestResult2 = function(req, res) {
                                             v_simul_mast.bench_index_cd03       =   rows[0].bench_index_cd03;       /* 벤치마크 인덱스 코드 ( middle_type ) */
                                             v_simul_mast.bench_index_nm         =   rows[0].bench_index_nm;         /* 벤치마크 인덱스 코드명 */
                                             v_simul_mast.importance_method_cd   =   rows[0].importance_method_cd;   /* 비중설정방식 (COM009) */
+
+                                            v_simul_mast.serial_no              =   rows[0].serial_no               /* 변경 순번 */
                                         }                             
 									}
 
-                                    msg.v_simul_mast  =   v_simul_mast;
-                                    msg.v_simulPortfolio  =   v_simulPortfolio;
+                                    if( v_simul_mast ) {
+                                        paramData.serial_no     =   v_simul_mast.serial_no;                         /* 변경 순번 */
+                                    }
+
+                                    msg.v_simul_mast            =   v_simul_mast;
+                                    msg.v_simulPortfolio        =   v_simulPortfolio;
 
                                     callback( null, msg );
                                 });
@@ -1325,10 +1331,10 @@ var saveBacktestResult2 = function(req, res) {
                                    });
                                }
 
-                               msg.v_arrRebalanceDate  =   rows;
-                               msg.v_simulPortfolioList =  v_simulPortfolioList;
-                               msg.v_simulPortfolio = v_simulPortfolioList[firstRebalenceDate]; // 첫 리밸런싱 까지 포트 폴리오로 사용
-                               msg.firstRebalenceDate = firstRebalenceDate; // 첫리밸런싱 일자
+                                msg.v_arrRebalanceDate      =   rows;
+                                msg.v_simulPortfolioList    =   v_simulPortfolioList;
+                                msg.v_simulPortfolio        =   v_simulPortfolioList[firstRebalenceDate];   //  첫 리밸런싱 까지 포트 폴리오로 사용
+                                msg.firstRebalenceDate      =   firstRebalenceDate;                         //  첫리밸런싱 일자
 
                                 callback( null, msg );
                             });
@@ -1341,9 +1347,98 @@ var saveBacktestResult2 = function(req, res) {
 
                             callback(resultMsg);
                         }
-                    },                        
+                    },
 
-                    /* 3. scen_cd 에 존재하면서 start_year 기준 이력 데이터를 조회한다. */
+                    /* 3. 입력할 값을 기준으로 tm_simul_result_mast 와 비교하여 insert, modify 대상 추출 */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulationBacktest2', 'getTmSimulResultMastCheck', paramData, { language: 'sql', indent: '  ' });
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[error] simulationBacktest2.getTmSimulResultMastCheck Error while performing Query";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if (rows && rows.length == 1) {
+
+                                    msg.simul_result_mast_status    =   rows[0].dtl_status
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulationBacktest2.getTmSimulResultMastCheck Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 4. [tm_simul_result_mast] 테이블에 등록 또는 수정한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            if( msg.simul_result_mast_status ) {
+
+                                var queryId     =   "";
+
+                                if( msg.simul_result_mast_status == "insert" ) {
+                                    queryId     =   "saveTmSimulResultMast";
+                                }else if( msg.simul_result_mast_status == "modify" ) {
+                                    queryId     =   "modifyTmSimulResultMast";
+                                }
+
+                                stmt = mapper.getStatement('simulationBacktest2', queryId, paramData, { language: 'sql', indent: '  ' });
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulationBacktest2." + queryId + " Error while performing Query";
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    callback(null, msg);
+                                });
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulationBacktest2." + queryId + " Error while performing Query";
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 5. scen_cd 에 존재하면서 start_year 기준 이력 데이터를 조회한다. */
                     function(msg, callback) {
                         var temp_kspjong_hist = [];
                         var kspjong_hist = [];
@@ -1413,7 +1508,7 @@ var saveBacktestResult2 = function(req, res) {
                         }
                     },
 
-                    /* 4. (백테스트) tm_simul_result_daily 결과를 삭제한다. */
+                    /* 6. (백테스트) tm_simul_result_daily 결과를 삭제한다. */
                     function(msg, callback) {
 
                         try {
@@ -1450,7 +1545,7 @@ var saveBacktestResult2 = function(req, res) {
                         }
                     },
 
-                    /* 5. (백테스트) tm_simul_result_daily 결과를 저장한다. */
+                    /* 7. (백테스트) tm_simul_result_daily 결과를 저장한다. */
                     function(msg, callback) {
 
                         if( !msg || Object.keys( msg ).length == 0 ) {
@@ -1545,7 +1640,7 @@ var saveBacktestResult2 = function(req, res) {
 
                     },
 
-                    /* 6. (백테스트) tm_simul_result_rebalance 결과를 삭제한다. */
+                    /* 8. (백테스트) tm_simul_result_rebalance 결과를 삭제한다. */
                     function(msg, callback) {
 
                         try {
@@ -1582,7 +1677,7 @@ var saveBacktestResult2 = function(req, res) {
                         }
                     },
 
-                    /* 7. (백테스트) tm_simul_result_rebalance 결과를 저장한다. */
+                    /* 9. (백테스트) tm_simul_result_rebalance 결과를 저장한다. */
                     function(msg, callback) {
 
                         if( !msg || Object.keys( msg ).length == 0 ) {
@@ -1692,7 +1787,7 @@ var saveBacktestResult2 = function(req, res) {
 /*************************************************************************************
 *   추후 아래 삭제 및 저장 부분은 삭제 예정 START
 *************************************************************************************/
-                    /* 8. (백테스트) tm_simul_result 결과를 삭제한다. */
+                    /* 10. (백테스트) tm_simul_result 결과를 삭제한다. */
                     function(msg, callback) {
 
                         try {
@@ -1729,7 +1824,7 @@ var saveBacktestResult2 = function(req, res) {
                         }
                     },
 
-                    /* 9. (백테스트) 시뮬레이션 결과를 저장한다. */
+                    /* 11. (백테스트) 시뮬레이션 결과를 저장한다. */
                     function(msg, callback) {
 
                         if( !msg || Object.keys( msg ).length == 0 ) {
