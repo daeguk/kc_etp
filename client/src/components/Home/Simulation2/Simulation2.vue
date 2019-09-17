@@ -885,8 +885,8 @@ export default {
 
                             totalObj[ v_key ].importance		=	0;
 
-                            same_rate           =   Number(
-                                ( Number( totalObj[ v_key ].same_rate_sum ) / Number( totalObj[ v_key ].length ) ).toFixed(2)
+                            same_rate           =   (
+                                Math.floor( ( Number( totalObj[ v_key ].same_rate_sum ) / Number( totalObj[ v_key ].length ) ) * 100 ) / 100
                             );                                                                                      /* 동일 가중 비율 */
                             v_temp_importance   =   0;
                             v_inx               =   0;
@@ -927,7 +927,6 @@ export default {
                                 v_inx++;
                             }
                         }
-                    
 
 
                         /* 비중 합계가 100 이  아닌 경우 0.01 값을 더해 100 이 되면 중단 */
@@ -2634,6 +2633,7 @@ export default {
                             ).toFixed(2)
                          );                     /* (합계) 비중 */
 console.log( "#1 total.importance", total.importance );
+
                         v_portfolio.push({
                                 "F16013"        :   v_F16013.val()                                                          /* 종목코드 */
                             ,   "F16002"        :   v_F16013_nm.text()                                                      /* 종목명 */

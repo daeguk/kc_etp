@@ -490,7 +490,11 @@
                     )                                                   AS  F16017                      /* 상장일 */
                 ,   '0'                                                 AS  IMPORT_YN                   /* 시물레이션에 포함 여부*/
                 ,   tm_simul_portfolio.rebalance_date                   AS  rebalance_date              /* 리밸런싱 날짜 */
-                ,   tm_simul_mast.serial_no                             AS  serial_no                   /* 변경 순번 */
+
+                ,   IFNULL(
+                            tm_simul_mast.serial_no
+                        ,   0
+                    )                                                   AS  serial_no                   /* 변경 순번 */
 
           FROM  tm_simul_mast
           JOIN  tm_simul_portfolio2 as tm_simul_portfolio

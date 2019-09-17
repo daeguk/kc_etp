@@ -591,7 +591,7 @@ var saveBaicInfo2 = function(req, res) {
                     /* 6. 시뮬레이션 기본 정보를 저장한다. */
                     function( msg, callback) {
 
-                        var queryId =   "saveTmSimulMast";            
+                        var queryId =   "saveTmSimulMast2";            
 
                         try{
 
@@ -606,7 +606,7 @@ var saveBaicInfo2 = function(req, res) {
 
                             }else if( paramData.status  ==  "modify" ) {
 
-                                queryId =   "modifyTmSimulMast";
+                                queryId =   "modifyTmSimulMast2";
 
                                 paramData.serial_no     =   msg.now_serial_no + 1;
 
@@ -615,30 +615,33 @@ var saveBaicInfo2 = function(req, res) {
                                 var v_diff_simul_mast       =   _.xorWith( msg.v_org_simul_mast, msg.v_input_simul_mast, _.isEqual );
                                 var v_diff_simul_portfolio  =   _.xorWith( msg.v_org_simul_portfolio, msg.v_input_portfolio, _.isEqual );
 
-
+console.log( "#######################################################################################################" );
                                 /* simul_mast 정보가 다른 경우 tm_simul_mast 의 serial_no 에 1 증가 */
                                 if( v_diff_simul_mast && v_diff_simul_mast.length > 0 ) {
                                     paramData.serial_no     =   msg.now_serial_no + 1;
+console.log( "simul_mast 변경됨 >>> 변경전 serial_no", msg.now_serial_no, "변경후 serial_no",  paramData.serial_no );
                                 }
                                 /* simul_portfolio 정보가 다른 경우 tm_simul_mast 의 serial_no 에 1 증가 */
                                 else if( v_diff_simul_portfolio && v_diff_simul_portfolio.length > 0 ) {
                                     paramData.serial_no     =   msg.now_serial_no + 1;
+console.log( "simul_portfolio 변경됨 >>> 변경전 serial_no", msg.now_serial_no, "변경후 serial_no",  paramData.serial_no );
                                 }
                                 /* simul_mast 와 simul_portfolio 모두 변경된 정보가 없는 경우 현재 serial_no 로 유지 */
                                 else{
+console.log( "simul_mast, simul_portfolio 변경없음 >>> serial_no", msg.now_serial_no );
                                     paramData.serial_no     =   msg.now_serial_no;
                                 }
+console.log( "#######################################################################################################" );
                             }
 
-
-                            stmt = mapper.getStatement('simulationBacktest', queryId, paramData, format);
+                            stmt = mapper.getStatement('simulationBacktest2', queryId, paramData, format);
                             log.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest." + queryId + " Error while performing Query";
+                                    resultMsg.msg = "[error] simulationBacktest2." + queryId + " Error while performing Query";
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -646,7 +649,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                 if ( !rows || rows.length == 0 ) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest." + queryId + " Error while performing Query";
+                                    resultMsg.msg = "[error] simulationBacktest2." + queryId + " Error while performing Query";
                                     resultMsg.err = err;
 
                                     callback(resultMsg, msg);
@@ -659,7 +662,7 @@ var saveBaicInfo2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest." + queryId + " Error while performing Query";
+                            resultMsg.msg = "[error] simulationBacktest2." + queryId + " Error while performing Query";
                             resultMsg.err = err;
 
                             callback(resultMsg);
