@@ -34,6 +34,7 @@
                             ,   DATE_FORMAT( tm_simul_mast.upd_time, '%Y.%m.%d' )       AS  fmt_upd_time                /* 수정일 */
                             ,   '0'                                                     AS  result_daily_yn             /* result_daily 존재여부 */
                             ,   '0'                                                     AS  simul_change_yn             /* simul_mast 와 simul_portfolio 둘다 변동여부 */
+                            ,   NULL                                                    AS  INDEX_RATE                  /* index */
 
                       FROM  tm_simul_mast
                      WHERE  1 = 1
@@ -87,11 +88,29 @@
                                     ,   '0'
                                 )                                                       AS  simul_change_yn             /* simul_mast 와 simul_portfolio 둘다 변동여부 */
 
+                            ,   (
+                                    SELECT  MAX( tm_simul_result_daily.INDEX_RATE )
+                                      FROM  tm_simul_result_daily
+                                     WHERE  1 = 1
+
+                                       AND  tm_simul_result_daily.grp_cd    =   tm_simul_mast.grp_cd
+                                       AND  tm_simul_result_daily.scen_cd   =   tm_simul_mast.scen_cd
+
+                                       AND  tm_simul_result_daily.F12506    =   
+                                            (
+                                                SELECT  MAX( tm_simul_result_daily.F12506 )
+                                                  FROM  tm_simul_result_daily  
+                                                 WHERE  1 = 1
+                                                   AND  tm_simul_result_daily.grp_cd            =   tm_simul_mast.grp_cd
+                                                   AND  tm_simul_result_daily.scen_cd           =   tm_simul_mast.scen_cd   
+                                            )
+                                )                                                       AS  INDEX_RATE                  /* index */
+
                       FROM  tm_simul_mast
                      WHERE  1 = 1
                        AND  tm_simul_mast.grp_yn          =   '0'
 
-                       AND  tm_simul_mast.reg_id          =   #{user_id}                 /* 등록자 ID */
+                       AND  tm_simul_mast.reg_id          =   #{user_id}                /* 등록자 ID */
 
                        AND  EXISTS
                             (

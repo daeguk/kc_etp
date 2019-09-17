@@ -23,8 +23,8 @@
                     </span>
                     <span class="margin_t1">
                         <v-btn  v-if="['insert'].includes( status )"    depressed small outline color="primary" @click="fn_modifyGroup( 'insert' )">추가</v-btn>
-                        <v-btn  v-if="['modify'].includes( status )"              depressed small outline color="primary" @click="fn_modifyGroup( 'modify' )">수정</v-btn>
-                        <v-btn  v-if="['modify'].includes( status )"              depressed small outline color="primary" @click="fn_modifyGroup( 'delete' )">삭제</v-btn>
+                        <v-btn  v-if="['modify'].includes( status )"    depressed small outline color="primary" @click="fn_modifyGroup( 'modify' )">수정</v-btn>
+                        <v-btn  v-if="['modify'].includes( status )"    depressed small outline color="primary" @click="fn_modifyGroup( 'delete' )">삭제</v-btn>
                     </span>
                 </div>
             </v-card>
@@ -34,17 +34,19 @@
             <div class="table-box" style="max-height:690px;">
                 <table  id="table01" class="tbl_type ver10">
                     <caption></caption>
+                    
                     <colgroup>
-                        <col width="40%" />
                         <col width="28%" />
-                        <col width="20%" />
+                        <col width="24%" />
+                        <col width="36%" />
                         <col width="12%" />
                     </colgroup>
+
                     <thead>
                         <tr>
                             <th class="txt_left">Name</th>
                             <th class="txt_right">Index</th>
-                            <th>Last modifired</th>
+                            <th class="txt_right">Last modifired</th>
                             <th class="txt_right"></th>
                         </tr>
                     </thead>
@@ -73,13 +75,7 @@
 
                             <!-- Index -->
                             <td class="txt_right">
-                                <div v-if="item.grp_yn == '0'">
-<!--
-                                    2,076.93
-                                    <br />
-                                    <span class="text_S text_blue">0.47%</span>
--->
-                                </div>
+                                {{ fn_formatNumber( item.INDEX_RATE ) }}
                             </td>
 
                             <!-- Last modified -->
@@ -481,6 +477,16 @@ export default {
                 vm.$emit( "fn_showSimulation", v_jsonParam );
             }
         },
+
+        /*
+         * formatNumber 를 수행한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_formatNumber( p_param ) {
+            var vm = this;
+
+            return  p_param ? util.formatNumber( p_param ) : "";
+        }
 
     }    
 };
