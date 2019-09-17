@@ -215,7 +215,7 @@ var uploadPortfolio = function(req, res) {
                         if( i == dataLists.length-2 ) {
                             /* 마지막 레코드에 row_no 추가 */
                             data = dataLists[i+1];
-                            data.row_no = i + v_param.p_startIndex;
+                            data.row_no = i + v_param.p_startIndex + 1;
                         }                        
                     }
                 }
@@ -275,7 +275,6 @@ var uploadPortfolio = function(req, res) {
                                         arrExcelRebalanceDate.push( { date : "" } );
                                     }
                                     reqParam.arrExcelRebalanceDate  =   arrExcelRebalanceDate;
-console.log( "arrExcelRebalanceDate", arrExcelRebalanceDate );
                                     stmt = mapper.getStatement('simulationUpload', 'getRebalanceDateNotExistCheckByUpload', reqParam, format);
                                     log.debug(stmt, reqParam);
 
@@ -299,7 +298,7 @@ console.log( "arrExcelRebalanceDate", arrExcelRebalanceDate );
                                                     if( rows[i].date_check == "check1" ) {
                                                         resultMsg.errorList.push( { 
                                                                 result  :   false
-                                                            ,   msg     :   "시작년도 이전 날짜 ( " + rows[i].F12506 + " )  가 존재합니다."
+                                                            ,   msg     :   "2000 년도 이전 날짜 ( " + rows[i].F12506 + " )  가 존재합니다."
                                                         });
                                                     }
 
@@ -659,7 +658,6 @@ console.log( "arrExcelRebalanceDate", arrExcelRebalanceDate );
                                         resultMsg.rebalancePortfolioObj     =   rebalancePortfolioObj;
                                         resultMsg.p_rebalance_file_yn       =   v_param.p_rebalance_file_yn;
 
-console.log( "resultMsg.rebalancePortfolioObj", resultMsg.rebalancePortfolioObj );
 console.log( "resultMsg.p_rebalance_file_yn", resultMsg.p_rebalance_file_yn );
 
                                         callback(null);

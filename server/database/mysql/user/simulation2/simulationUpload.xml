@@ -14,7 +14,7 @@
                     DATE_FORMAT( base.date, '%Y.%m.%d' )                    AS  fmt_F12506
                 ,   base.date                                               AS  F12506
 
-                ,   CASE    WHEN    base.date   <   CONCAT( #{start_year}, '0101' )
+                ,   CASE    WHEN    base.date   <   CONCAT( '2000', '0101' )
                             THEN    'check1'
                             WHEN     base.date  >   DATE_FORMAT( NOW(), '%Y%m%d' )
                             THEN    'check2'
