@@ -705,10 +705,10 @@ export default {
                                     ,1
                                 )
                             ) {
-								vm.fn_getBacktestResult( { 
-										grp_cd  : v_grp_cd
-									, 	scen_cd : v_scen_cd 
-								});
+								// vm.fn_getBacktestResult( { 
+								// 		grp_cd  : v_grp_cd
+								// 	, 	scen_cd : v_scen_cd 
+								// });
                             }
                         }                        
 
