@@ -22,7 +22,7 @@
                         <v-text-field   v-model="scen_name" outline class="wid200 text_in01"  maxlegnth="50"    ref="scen_name"></v-text-field>
                     </span>
                     <span class="margin_t1">
-                        <v-btn  v-if="['insert', 'modify'].includes( status )"    depressed small outline color="primary" @click="fn_modifyGroup( 'insert' )">추가</v-btn>
+                        <v-btn  v-if="['insert'].includes( status )"    depressed small outline color="primary" @click="fn_modifyGroup( 'insert' )">추가</v-btn>
                         <v-btn  v-if="['modify'].includes( status )"              depressed small outline color="primary" @click="fn_modifyGroup( 'modify' )">수정</v-btn>
                         <v-btn  v-if="['modify'].includes( status )"              depressed small outline color="primary" @click="fn_modifyGroup( 'delete' )">삭제</v-btn>
                     </span>
