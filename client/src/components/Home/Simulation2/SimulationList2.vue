@@ -77,9 +77,10 @@
                             <td class="txt_right">
                                 {{ fn_formatNumber( item.INDEX_RATE ) }}
                                 <br />
-                                <div  v-if='item.RETURN_VAL != null && typeof item.RETURN_VAL != "undefined"'>
-                                    <span :class='Number( item.RETURN_VAL ) > 0 ? "text_S text_red" : "text_S text_blue" '>
-                                        {{ fn_formatNumber( Number( item.RETURN_VAL ) * 100 ) + " %" }}
+                                <div  v-if='fn_formatNumber( item.INDEX_RATE ) != null && fn_formatNumber( item.INDEX_RATE ) != ""'>
+                                    <span :class='Number( fn_formatNumber( ( ( Number( item.INDEX_RATE ) / 1000 ) - 1 ) * 100 ) ) > 0 ? "text_S text_red" : "text_S text_blue" '>
+                                        {{ fn_formatNumber( 1000 - Number( item.INDEX_RATE ) ) }} 
+                                        ( {{ fn_formatNumber( ( ( Number( item.INDEX_RATE ) / 1000 ) - 1 ) * 100 ) + " %" }} )
                                     </span>
                                 </div>
                             </td>
@@ -495,7 +496,7 @@ export default {
             var vm = this;
 
             return  p_param ? util.formatNumber( p_param ) : "";
-        }
+        },
 
     }    
 };
