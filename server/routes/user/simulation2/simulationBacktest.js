@@ -497,90 +497,7 @@ var saveBaicInfo2 = function(req, res) {
                         }
                     },
 
-                    /* 8. 입력할 값을 기준으로 tm_simul_portfolio 와 비교하여 insert, modify 대상을 추출한다.  */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-
-                            if( paramData.rebalancePortfolioObj && Object.keys( paramData.rebalancePortfolioObj ).length > 0 ) {
-
-                                msg.arr_portfolio       =   [];
-                                msg.v_input_portfolio   =   [];
-                                for( var i=0; i < Object.keys( paramData.rebalancePortfolioObj ).length; i++ ) {
-                                    var v_key       =   Object.keys( paramData.rebalancePortfolioObj )[i];
-                                    var v_sub_item  =   paramData.rebalancePortfolioObj[ v_key ];
-
-                                    var v_order_no  =   0;
-                                    for( var j=0; j < Object.keys( v_sub_item ).length; j++ ) {
-                                        var v_sub_key2  =   Object.keys( v_sub_item )[j];
-                                        var v_sub_item2 =   v_sub_item[ v_sub_key2 ];
-
-                                        v_sub_item2.rebalance_date  =   v_key;
-                                        msg.arr_portfolio.push( v_sub_item2 );
-
-                                        msg.v_input_portfolio.push({
-                                                F16013              :   v_sub_item2.F16013                  /* 구성종목코드  */
-                                            ,   rebalance_date      :   v_sub_item2.rebalance_date          /* 리밸런싱 날짜 */
-                                            ,   importance          :   v_sub_item2.importance              /* 비중  */
-                                        })
-                                    }
-                                }
-                            }                               
-
-                            /* 포트폴리오 설정 건이 존재하는 경우 */
-                            if( msg.arr_portfolio && msg.arr_portfolio.length > 0  ){
-                                paramData.arr_portfolio =   msg.arr_portfolio;
-                                stmt = mapper.getStatement('simulationBacktest2', 'getTmSimulPortfolioExistCheck11', paramData, { language: 'sql', indent: '  ' });
-//                              log.debug(stmt);
-
-                                conn.query(stmt, function(err, rows) {
-
-                                    if (err) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationBacktest2.getTmSimulPortfolioExistCheck11 Error while performing Query";
-                                        resultMsg.err = err;
-
-                                        return callback(resultMsg);
-                                    }
-
-                                    if (rows && rows.length > 0) {
-                                        var arrInsertDtl = [];
-                                        var arrModifyDtl = [];
-
-                                        for (var i in rows) {
-                                            if (rows[i].dtl_status == "insert") {
-                                                arrInsertDtl.push(rows[i]);
-                                            } else if (rows[i].dtl_status == "modify") {
-                                                arrModifyDtl.push(rows[i]);
-                                            }
-                                        }
-
-                                        msg.arrInsertDtl    =   arrInsertDtl;
-                                        msg.arrModifyDtl    =   arrModifyDtl;
-                                    }
-
-                                    callback(null, msg);
-                                });
-                            
-                            }else{
-                                callback(null, msg);
-                            }
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest2.getTmSimulPortfolioExistCheck11 Error while performing Query";
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },
-
-                    /* 9. 시뮬레이션 기본 정보를 저장한다. */
+                    /* 8. 시뮬레이션 기본 정보를 저장한다. */
                     function( msg, callback) {
 
                         var queryId =   "saveTmSimulMast2";            
@@ -664,10 +581,11 @@ var saveBaicInfo2 = function(req, res) {
                         }
                     },
 
-                    /* 10. tm_simul_portfolio 을 기준으로 입력할 값과 비교하여 delete 대상을 추출한다.  */
+                    /* 9. 수정일 경우 이미 등록된 tm_simul_portfolio 를 삭제한다.  */
                     function( msg, callback) {
 
                         try {
+
                             if( !msg || Object.keys( msg ).length == 0 ) {
                                 msg = {};
                             }
@@ -675,38 +593,21 @@ var saveBaicInfo2 = function(req, res) {
                             /* 수정인 경우 */
                             if( paramData.status  ==  "modify" ) {
 
-                                /* 포트폴리오 설정 건이 존재하는 경우 */
-                                if( paramData.arr_portfolio && paramData.arr_portfolio.length > 0  ){
-                                    stmt = mapper.getStatement('simulationBacktest2', 'getTmSimulPortfolioExistCheck22', paramData, { language: 'sql', indent: '  ' });
-//                                  log.debug(stmt);
+                                stmt = mapper.getStatement('simulationBacktest2', "deleteTmSimulPortfolio2", paramData, format);
+                                log.debug(stmt);
 
-                                    conn.query(stmt, function(err, rows) {
+                                conn.query(stmt, function(err, rows) {
 
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] simulationBacktest2.getTmSimulPortfolioExistCheck22 Error while performing Query";
-                                            resultMsg.err = err;
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "[error] simulationBacktest2.deleteTmSimulPortfolio2 Error while performing Query";
+                                        resultMsg.err = err;
 
-                                            return callback(resultMsg);
-                                        }
+                                        return callback(resultMsg);
+                                    }
 
-                                        if (rows && rows.length > 0) {
-                                            var arrDeleteDtl = [];
-
-                                            for (var i in rows) {
-                                                if (rows[i].dtl_status == "delete") {
-                                                    arrDeleteDtl.push(rows[i]);
-                                                }
-                                            }
-
-                                            msg.arrDeleteDtl    =   arrDeleteDtl;
-                                        }
-
-                                        callback(null, msg);
-                                    })
-                                }else{
                                     callback(null, msg);
-                                }
+                                });
 
                             }else{
                                 callback(null, msg);
@@ -714,286 +615,140 @@ var saveBaicInfo2 = function(req, res) {
 
                         } catch (err) {
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest2.getTmSimulPortfolioExistCheck22 Error while performing Query";
+                            resultMsg.msg = "[error] simulationBacktest2.deleteTmSimulPortfolio2 Error while performing Query";
                             resultMsg.err = err;
 
                             return callback(resultMsg);
                         }
-                    },                    
+                    },
 
-                    /* 11. 시뮬레이션 포트폴리오 정보를 저장한다. ( insert 건 ) */
+                    /* 10. tm_simul_portfolio 에 저장한다. */
                     function( msg, callback) {
 
-                        if( !msg || Object.keys( msg ).length == 0 ) {
-                            msg = {};
-                        }
+                        try {
 
-                        /* 등록건이 존재하는 경우 */
-                        if( msg.arrInsertDtl && msg.arrInsertDtl.length > 0 ) {
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
-                            var divideList  =   [];
-                            async.forEachOfLimit( msg.arrInsertDtl, 1, function(subList, i, innerCallback) {
 
-                                async.waterfall([
+                            if( paramData.rebalancePortfolioObj && Object.keys( paramData.rebalancePortfolioObj ).length > 0 ) {
 
-                                    function(innerCallback) {
-                                        divideList.push( subList );
-                                        
-                                        innerCallback(null, paramData);
-                                    },
+                                msg.arr_portfolio       =   [];
+                                msg.v_input_portfolio   =   [];
+                                for( var i=0; i < Object.keys( paramData.rebalancePortfolioObj ).length; i++ ) {
+                                    var v_key       =   Object.keys( paramData.rebalancePortfolioObj )[i];
+                                    var v_sub_item  =   paramData.rebalancePortfolioObj[ v_key ];
 
-                                    function(sub_msg, innerCallback) {
+                                    var v_order_no  =   0;
+                                    for( var j=0; j < Object.keys( v_sub_item ).length; j++ ) {
+                                        var v_sub_key2  =   Object.keys( v_sub_item )[j];
+                                        var v_sub_item2 =   v_sub_item[ v_sub_key2 ];
 
-                                        var divide_size = ( limit && limit.divide_size ? limit.divide_size : 1 );
-                                        if( divideList && ( divideList.length == divide_size || i == msg.arrInsertDtl.length-1 ) ) {
-                                            try {
-                                                paramData.arr_portfolio =   divideList;
-                                                stmt = mapper.getStatement('simulationBacktest2', 'saveTmSimulPortfolio2', paramData, format);
-                                                log.debug(stmt);
+                                        v_sub_item2.rebalance_date  =   v_key;
+                                        msg.arr_portfolio.push( v_sub_item2 );
 
-                                                conn.query(stmt, function(err, rows) {
-                                                    if (err) {
-                                                        resultMsg.result = false;
-                                                        resultMsg.msg = "[error] simulationBacktest2.saveTmSimulPortfolio2 Error while performing Query";
+                                        msg.v_input_portfolio.push({
+                                                F16013              :   v_sub_item2.F16013                  /* 구성종목코드  */
+                                            ,   rebalance_date      :   v_sub_item2.rebalance_date          /* 리밸런싱 날짜 */
+                                            ,   importance          :   v_sub_item2.importance              /* 비중  */
+                                        })
+                                    }
+                                }
+                            }                               
+
+                            /* 포트폴리오 설정 건이 존재하는 경우 */
+                            if( msg.arr_portfolio && msg.arr_portfolio.length > 0  ){
+                                
+                                var divideList  =   [];
+                                async.forEachOfLimit( msg.arr_portfolio, 1, function(subList, i, innerCallback) {
+
+                                    async.waterfall([
+
+                                        function(innerCallback) {
+                                            divideList.push( subList );
+                                            
+                                            innerCallback(null, paramData);
+                                        },
+
+                                        function(sub_msg, innerCallback) {
+
+                                            var divide_size = ( limit && limit.divide_size ? limit.divide_size : 1 );
+                                            if( divideList && ( divideList.length == divide_size || i == msg.arr_portfolio.length-1 ) ) {
+                                                try {
+                                                    paramData.arr_portfolio =   divideList;
+                                                    stmt = mapper.getStatement('simulationBacktest2', 'saveTmSimulPortfolio2', paramData, format);
+//                                                  log.debug(stmt);
+
+                                                    conn.query(stmt, function(err, rows) {
+                                                        if (err) {
+                                                            resultMsg.result = false;
+                                                            resultMsg.msg = "[error] simulationBacktest2.saveTmSimulPortfolio2 Error while performing Query";
+                                                            resultMsg.err = err;
+
+                                                            return innerCallback(resultMsg);
+                                                        }
+
+                                                        innerCallback(null);
+                                                    });
+
+                                                    divideList  =   [];
+
+                                                } catch (err) {
+
+                                                    resultMsg.result = false;
+                                                    resultMsg.msg = "[error] simulationBacktest2.saveTmSimulPortfolio2 Error while performing Query";
+
+                                                    if( !resultMsg.err ) {
                                                         resultMsg.err = err;
-
-                                                        return innerCallback(resultMsg);
                                                     }
 
-                                                    innerCallback(null);
-                                                });
-
-                                                divideList  =   [];
-
-                                            } catch (err) {
-
-                                                resultMsg.result = false;
-                                                resultMsg.msg = "[error] simulationBacktest2.saveTmSimulPortfolio2 Error while performing Query";
-
-                                                if( !resultMsg.err ) {
-                                                    resultMsg.err = err;
+                                                    return innerCallback(resultMsg);
                                                 }
 
-                                                return innerCallback(resultMsg);
+                                            }else{
+                                                innerCallback(null);
+                                            }
+                                        }
+
+                                    ], function(err) {
+
+                                        if( err ) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] simulationBacktest2.saveTmSimulPortfolio2 Error while performing Query";
+                                            if( !resultMsg.err ) {
+                                                resultMsg.err = err;
                                             }
 
-                                        }else{
-                                            innerCallback(null);
-                                        }
-                                    }
-
-                                ], function(err) {
-
-                                    if( err ) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationBacktest2.saveTmSimulPortfolio2 Error while performing Query";
-                                        if( !resultMsg.err ) {
-                                            resultMsg.err = err;
+                                            return innerCallback(resultMsg);
                                         }
 
-                                        return innerCallback(resultMsg);
+                                        innerCallback(null);
+                                    });                                            
+
+                                }, function(err) {
+                                    if (err) {
+                                        return callback(resultMsg);
                                     }
 
-                                    innerCallback(null);
-                                });                                            
-
-                            }, function(err) {
-                                if (err) {
-                                    return callback(resultMsg);
-                                }
-
-                                delete msg.arrInsertDtl;
+                                    delete msg.arrInsertDtl;
+                                    callback(null, msg);
+                                });                                
+                            
+                            }else{
                                 callback(null, msg);
-                            });
+                            }
 
-                        }else{
-                            callback(null, msg);
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = "[error] simulationBacktest2.getTmSimulPortfolioExistCheck11 Error while performing Query";
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
                         }
                     },
 
-                    /* 12. 시뮬레이션 포트폴리오 정보를 저장한다. ( modify 건 ) */
-                    function( msg, callback) {
-
-                        if( !msg || Object.keys( msg ).length == 0 ) {
-                            msg = {};
-                        }
-
-                        /* 수정건이 존재하는 경우 */
-                        if( msg.arrModifyDtl && msg.arrModifyDtl.length > 0 ) {
-
-                            var divideList  =   [];
-                            async.forEachOfLimit( msg.arrModifyDtl, 1, function(subList, i, innerCallback) {
-
-                                async.waterfall([
-
-                                    function(innerCallback) {
-                                        divideList.push( subList );
-                                        
-                                        innerCallback(null, paramData);
-                                    },
-
-                                    function(sub_msg, innerCallback) {
-
-                                        var divide_size = ( limit && limit.divide_size ? limit.divide_size : 1 );
-                                        if( divideList && ( divideList.length == divide_size || i == msg.arrModifyDtl.length-1 ) ) {
-                                            try {
-                                                paramData.arr_portfolio =   divideList;
-                                                stmt = mapper.getStatement('simulationBacktest2', 'modifyTmSimulPortfolio2', paramData, format);
-                                                log.debug(stmt);
-
-                                                conn.query(stmt, function(err, rows) {
-                                                    if (err) {
-                                                        resultMsg.result = false;
-                                                        resultMsg.msg = "[error] simulationBacktest2.modifyTmSimulPortfolio2 Error while performing Query";
-                                                        resultMsg.err = err;
-
-                                                        return innerCallback(resultMsg);
-                                                    }
-
-                                                    innerCallback(null);
-                                                });
-
-                                                divideList  =   [];
-
-                                            } catch (err) {
-
-                                                resultMsg.result = false;
-                                                resultMsg.msg = "[error] simulationBacktest2.modifyTmSimulPortfolio2 Error while performing Query";
-
-                                                if( !resultMsg.err ) {
-                                                    resultMsg.err = err;
-                                                }
-
-                                                return innerCallback(resultMsg);
-                                            }
-
-                                        }else{
-                                            innerCallback(null);
-                                        }
-                                    }
-
-                                ], function(err) {
-
-                                    if( err ) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationBacktest2.modifyTmSimulPortfolio2 Error while performing Query";
-                                        if( !resultMsg.err ) {
-                                            resultMsg.err = err;
-                                        }
-
-                                        return innerCallback(resultMsg);
-                                    }
-
-                                    innerCallback(null);
-                                });                                            
-
-                            }, function(err) {
-                                if (err) {
-                                    return callback(resultMsg);
-                                }
-
-                                delete  msg.arrModifyDtl;
-
-                                callback(null, msg);
-                            });
-
-                        }else{
-                            callback(null, msg);
-                        }
-                    },
-
-                    /* 13. 시뮬레이션 포트폴리오 정보를 저장한다. ( delete 건 ) */
-                    function( msg, callback) {
-
-                        if( !msg || Object.keys( msg ).length == 0 ) {
-                            msg = {};
-                        }
-
-                        /* 삭제건이 존재하는 경우 */
-                        if( msg.arrDeleteDtl && msg.arrDeleteDtl.length > 0 ) {
-
-                            var divideList  =   [];
-                            async.forEachOfLimit( msg.arrDeleteDtl, 1, function(subList, i, innerCallback) {
-
-                                async.waterfall([
-
-                                    function(innerCallback) {
-                                        divideList.push( subList );
-                                        
-                                        innerCallback(null, paramData);
-                                    },
-
-                                    function(sub_msg, innerCallback) {
-
-                                        var divide_size = ( limit && limit.divide_size ? limit.divide_size : 1 );
-                                        if( divideList && ( divideList.length == divide_size || i == msg.arrDeleteDtl.length-1 ) ) {
-                                            try {
-                                                paramData.arr_portfolio =   divideList;
-                                                stmt = mapper.getStatement('simulationBacktest2', 'deleteTmSimulPortfolio2', paramData, format);
-                                                log.debug(stmt);
-
-                                                conn.query(stmt, function(err, rows) {
-                                                    if (err) {
-                                                        resultMsg.result = false;
-                                                        resultMsg.msg = "[error] simulationBacktest2.deleteTmSimulPortfolio2 Error while performing Query";
-                                                        resultMsg.err = err;
-
-                                                        return innerCallback(resultMsg);
-                                                    }
-
-                                                    innerCallback(null);
-                                                });
-
-                                                divideList  =   [];
-
-                                            } catch (err) {
-
-                                                resultMsg.result = false;
-                                                resultMsg.msg = "[error] simulationBacktest2.deleteTmSimulPortfolio2 Error while performing Query";
-
-                                                if( !resultMsg.err ) {
-                                                    resultMsg.err = err;
-                                                }
-
-                                                return innerCallback(resultMsg);
-                                            }
-
-                                        }else{
-                                            innerCallback(null);
-                                        }
-                                    }
-
-                                ], function(err) {
-
-                                    if( err ) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationBacktest2.deleteTmSimulPortfolio2 Error while performing Query";
-                                        if( !resultMsg.err ) {
-                                            resultMsg.err = err;
-                                        }
-
-                                        return innerCallback(resultMsg);
-                                    }
-
-                                    innerCallback(null);
-                                });                                            
-
-                            }, function(err) {
-                                if (err) {
-                                    return callback(resultMsg);
-                                }
-
-                                delete msg.arrDeleteDtl;
-
-                                callback(null, msg);
-                            });
-
-                        }else{
-                            callback(null, msg);
-                        }
-                    },
-
-                    /* 14. 저장시 입력했던 정보로 백테스트 기본정보를 조회한다. */
+                    /* 11. 저장시 입력했던 정보로 백테스트 기본정보를 조회한다. */
                     function(msg, callback) {
 
                         try{
@@ -1065,7 +820,7 @@ var saveBaicInfo2 = function(req, res) {
                         }
                     },
 
-                    /* 15. 저장시 입력했던 정보로 리밸런싱 일자를 조회한다. */
+                    /* 12. 저장시 입력했던 정보로 리밸런싱 일자를 조회한다. */
                     function(msg, callback) {
 
                         try{
@@ -1134,7 +889,7 @@ var saveBaicInfo2 = function(req, res) {
                         }
                     },                    
 
-                    /* 16. (백테스트) 백테스트 실행시 이력정보를 조회한다. */
+                    /* 13. (백테스트) 백테스트 실행시 이력정보를 조회한다. */
                     function(msg, callback) {
                         var temp_kspjong_hist = [];
                         var kspjong_hist = [];
@@ -1209,7 +964,7 @@ var saveBaicInfo2 = function(req, res) {
                         }
                     },
 
-                    /* 17. td_kspjong_hist 테이블 기준 td_index_hist 테이블에서 bench_mark 와 일치하는 정보를 조회한다.*/
+                    /* 14. td_kspjong_hist 테이블 기준 td_index_hist 테이블에서 bench_mark 와 일치하는 정보를 조회한다.*/
                     function(msg, callback) {
 
                         try{
@@ -1252,7 +1007,7 @@ var saveBaicInfo2 = function(req, res) {
                         }
                     },
 
-                    /* 18. 파이선을 통해 분석정보를 가져온다.*/
+                    /* 15. 파이선을 통해 분석정보를 가져온다.*/
                     function(msg, callback) {
 
                         try{

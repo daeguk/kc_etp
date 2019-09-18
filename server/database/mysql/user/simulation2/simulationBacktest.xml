@@ -167,111 +167,6 @@
     ]]>
     </update>
 
-
-    <!--
-    *   입력할 값을 기준으로 tm_simul_portfolio 와 비교하여 insert, modify 대상 추출
-    *   2019-07-26  bkLove(촤병국)
-    -->
-    <select id="getTmSimulPortfolioExistCheck11">
-
-        SELECT      /* simulationBacktest.getTmSimulPortfolioExistCheck11  입력할 값을 기준으로 tm_simul_portfolio 와 비교하여 insert, modify 대상 추출 */
-                    CASE    WHEN    tm_simul_portfolio2.scen_cd  IS  NULL
-                            THEN    'insert'
-                            ELSE    'modify'
-                    END                                         AS  dtl_status   /* 상세 상태 */
-                ,   base.*
-
-          FROM  (        
-                <foreach    collection="arr_portfolio"   item="data"     separator=" UNION ALL" >
-                <![CDATA[              
-                    SELECT      #{grp_cd}                       AS  grp_cd          /* 그룹코드(상위코드) */
-                            ,   #{scen_cd}                      AS  scen_cd         /* 시나리오코드 */
-                            ,   #{prev_grp_cd}                  AS  prev_grp_cd     /* 그룹코드(상위코드)-변경전 */
-                            ,   #{prev_scen_cd}                 AS  prev_scen_cd    /* 시나리오코드-변경전 */
-
-                            ,   #{data.rebalance_date}          AS  rebalance_date  /* 리밸런싱 날짜 */
-                            ,   #{data.F16013}                  AS  F16013          /* 구성종목코드 */
-
-                            ,   #{data.order_no}                AS  order_no        /* 정렬 순번 */
-                            ,   #{data.importance}              AS  importance      /* 비중 */
-                            ,   0                               AS  jisu_rate       /* 지수적용비율 */
-                    FROM  DUAL
-                ]]>
-                </foreach>
-                )       base
-
-          LEFT  OUTER   JOIN    tm_simul_portfolio2
-                          ON    (
-                                            1 = 1
-                            <if test= 'status != null  and  status == "insert" ' >
-                                    AND     tm_simul_portfolio2.grp_cd           =   base.grp_cd         /* 그룹코드(상위코드) */
-                                    AND     tm_simul_portfolio2.scen_cd          =   base.scen_cd        /* 시나리오코드 */
-                                    AND     tm_simul_portfolio2.rebalance_date   =   base.rebalance_date /* 리밸런싱 날짜 */
-                            </if>
-
-                            <if test= 'status != null  and  status == "modify" ' >
-                                    AND     tm_simul_portfolio2.grp_cd           =   base.prev_grp_cd    /* 그룹코드(상위코드) */
-                                    AND     tm_simul_portfolio2.scen_cd          =   base.prev_scen_cd   /* 시나리오코드 */
-                                    AND     tm_simul_portfolio2.rebalance_date   =   base.rebalance_date /* 리밸런싱 날짜 */
-                            </if>
-
-                                    AND     tm_simul_portfolio2.F16013           =   base.F16013         /* 구성종목코드 */
-                                    AND     tm_simul_portfolio2.reg_id           =   #{user_id}          /* 등록자 ID */
-                                    AND     tm_simul_portfolio2.rebalance_date   =   base.rebalance_date /* 리밸런싱 날짜 */
-                                )
-         WHERE  1 = 1
-
-    </select>
-
-
-    <!--
-    *   tm_simul_portfolio 을 기준으로 입력할 값과 비교하여 delete 대상 추출
-    *   2019-07-26  bkLove(촤병국)
-    -->
-    <select id="getTmSimulPortfolioExistCheck22">
-
-        SELECT      /* simulationBacktest.getTmSimulPortfolioExistCheck22  tm_simul_portfolio 을 기준으로 입력할 값과 비교하여 delete 대상 추출 */
-                    CASE    WHEN    base.scen_cd    IS  NULL
-                            THEN    'delete'
-                    END                                         AS  dtl_status   /* 상세 상태 */
-                ,   tm_simul_portfolio2.*
-
-          FROM  tm_simul_portfolio2
-
-          LEFT  OUTER   JOIN    (
-                                <foreach    collection="arr_portfolio"   item="data"     separator=" UNION ALL" >
-                                <![CDATA[              
-                                    SELECT      #{grp_cd}                       AS  grp_cd          /* 그룹코드(상위코드) */
-                                            ,   #{scen_cd}                      AS  scen_cd         /* 시나리오코드 */
-                                            ,   #{prev_grp_cd}                  AS  prev_grp_cd     /* 그룹코드(상위코드)-변경전 */
-                                            ,   #{prev_scen_cd}                 AS  prev_scen_cd    /* 시나리오코드-변경전 */
-
-                                            ,   #{data.rebalance_date}          AS  rebalance_date  /* 리밸런싱 날짜 */
-                                            ,   #{data.F16013}                  AS  F16013          /* 구성종목코드 */
-
-                                            ,   #{data.order_no}                AS  order_no        /* 정렬 순번 */
-                                            ,   #{data.importance}              AS  importance      /* 비중 */
-                                            ,   0                               AS  jisu_rate       /* 지수적용비율 */
-                                    FROM  DUAL
-                                ]]>
-                                </foreach>
-                                )       base
-                          ON    (
-                                            1 = 1
-                                    AND     tm_simul_portfolio2.grp_cd           =   base.prev_grp_cd    /* 그룹코드(상위코드) */
-                                    AND     tm_simul_portfolio2.scen_cd          =   base.prev_scen_cd   /* 시나리오코드 */
-                                    AND     tm_simul_portfolio2.F16013           =   base.F16013         /* 구성종목코드 */
-                                    AND     tm_simul_portfolio2.rebalance_date   =   base.rebalance_date /* 리밸런싱 날짜 */
-                                )
-         WHERE  1 = 1
-           AND  tm_simul_portfolio2.grp_cd           =   #{prev_grp_cd}          /* 그룹코드(상위코드) */
-           AND  tm_simul_portfolio2.scen_cd          =   #{prev_scen_cd}         /* 시나리오코드 */
-
-           AND  tm_simul_portfolio2.reg_id           =   #{user_id}              /* 등록자 ID */
-
-    </select>	
-
-
     <!--
     * [tm_simul_portfolio] 테이블에 저장한다.
     * 2019-07-26  bkLove(촤병국)
@@ -322,92 +217,21 @@
 
 
     <!--
-    * [tm_simul_portfolio] 테이블을 수정한다.
-    * 2019-07-26  bkLove(촤병국)
-    -->
-    <update     id="modifyTmSimulPortfolio2">
-
-        UPDATE  /* simulationBacktest.modifyTmSimulPortfolio2      [tm_simul_portfolio] 테이블을 수정한다. */
-        
-                tm_simul_portfolio2
-        
-         INNER  JOIN    (
-                            <foreach    collection="arr_portfolio"   item="data"     separator=" UNION ALL" >
-                            <![CDATA[              
-                                SELECT      #{grp_cd}                       AS  grp_cd          /* 그룹코드(상위코드) */
-                                        ,   #{scen_cd}                      AS  scen_cd         /* 시나리오코드 */
-                                        ,   #{prev_grp_cd}                  AS  prev_grp_cd     /* 그룹코드(상위코드)-변경전 */
-                                        ,   #{prev_scen_cd}                 AS  prev_scen_cd    /* 시나리오코드-변경전 */
-
-                                        ,   #{data.F16013}                  AS  F16013          /* 구성종목코드 */
-                                        ,   #{data.rebalance_date}          AS  rebalance_date  /* 리밸런싱 날짜 */
-
-                                        ,   #{data.order_no}                AS  order_no        /* 정렬 순번 */
-                                        ,   #{data.importance}              AS  importance      /* 비중 */
-                                        ,   0                               AS  jisu_rate       /* 지수적용비율 */
-                                FROM  DUAL
-                            ]]>
-                            </foreach>
-                        )       base
-                        
-                  ON            1 = 1
-
-                        AND     tm_simul_portfolio2.grp_cd           =   base.prev_grp_cd    /* 그룹코드(상위코드) */
-                        AND     tm_simul_portfolio2.scen_cd          =   base.prev_scen_cd   /* 시나리오코드 */
-                        AND     tm_simul_portfolio2.F16013           =   base.F16013         /* 구성종목코드 */
-                        AND     tm_simul_portfolio2.rebalance_date   =   base.rebalance_date /* 리밸런싱 날짜 */
-
-                        AND     tm_simul_portfolio2.reg_id           =   #{user_id}          /* 등록자 ID */
-
-           SET      tm_simul_portfolio2.grp_cd          =   base.grp_cd             /* 그룹코드(상위코드) */
-                ,   tm_simul_portfolio2.scen_cd         =   base.scen_cd            /* 시나리오코드 */
-
-                ,   tm_simul_portfolio2.F16013          =   base.F16013             /* 구성종목코드 */
-                ,   tm_simul_portfolio2.rebalance_date  =   base.rebalance_date     /* 리밸런싱 날짜 */
-                ,   tm_simul_portfolio2.order_no        =   base.order_no           /* 정렬 순번 */
-                ,   tm_simul_portfolio2.importance      =   base.importance         /* 비중 */
-                ,   tm_simul_portfolio2.jisu_rate       =   base.jisu_rate          /* 지수적용비율 */
-
-                ,   tm_simul_portfolio2.upd_id          =   #{user_id}              /* 수정자 ID */
-                ,   tm_simul_portfolio2.upd_time        =   now()                   /* 수정시간 */
-
-    </update>	
-
-
-    <!--
     * [tm_simul_portfolio] 테이블을 삭제한다.
     * 2019-07-26  bkLove(촤병국)
     -->
     <delete     id="deleteTmSimulPortfolio2">
+    <![CDATA[
         DELETE  /* simulationBacktest.deleteTmSimulPortfolio2      [tm_simul_portfolio] 테이블을 삭제한다. */
+
           FROM  tm_simul_portfolio2
-         USING  tm_simul_portfolio2
 
-         INNER  JOIN    (
-                            <foreach    collection="arr_portfolio"   item="data"     separator=" UNION ALL" >
-                            <![CDATA[              
-                                SELECT      #{grp_cd}                       AS  grp_cd          /* 그룹코드(상위코드) */
-                                        ,   #{scen_cd}                      AS  scen_cd         /* 시나리오코드 */
-                                        ,   #{prev_grp_cd}                  AS  prev_grp_cd     /* 그룹코드(상위코드)-변경전 */
-                                        ,   #{prev_scen_cd}                 AS  prev_scen_cd    /* 시나리오코드-변경전 */
-                                        ,   #{data.F16013}                  AS  F16013          /* 구성종목코드 */
-                                        ,   #{data.rebalance_date}          AS  rebalance_date  /* 리밸런싱 날짜 */
+         WHERE  1 = 1
 
-                                        ,   #{data.order_no}                AS  order_no        /* 정렬 순번 */
-                                        ,   #{data.importance}              AS  importance      /* 비중 */
-                                        ,   0                               AS  jisu_rate       /* 지수적용비율 */
-                                FROM  DUAL
-                            ]]>
-                            </foreach>
-                        )       base
-                  ON            1 = 1
-
-                        AND     tm_simul_portfolio2.grp_cd           =   base.prev_grp_cd    /* 그룹코드(상위코드) */
-                        AND     tm_simul_portfolio2.scen_cd          =   base.prev_scen_cd   /* 시나리오코드 */
-                        AND     tm_simul_portfolio2.F16013           =   base.F16013         /* 구성종목코드 */
-                        AND     tm_simul_portfolio2.rebalance_date   =   base.rebalance_date /* 리밸런싱 날짜 */
-
-                        AND     tm_simul_portfolio2.reg_id           =   #{user_id}          /* 등록자 ID */
+           AND     tm_simul_portfolio2.grp_cd           =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND     tm_simul_portfolio2.scen_cd          =   #{scen_cd}          /* 시나리오코드 */
+           AND     tm_simul_portfolio2.reg_id           =   #{user_id}          /* 등록자 ID */
+    ]]>
     </delete>	
 
     <!--
