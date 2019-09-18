@@ -100,6 +100,8 @@ export default {
 // console.log("selectedItem ..............");
 // console.log(sel_items);
       this.$emit("selectedItem", sel_items, gubun);
+      this.dialog = false;
+      this.$emit("closeMastModal");
     },
     closeModal: function() {
       this.dialog = false;

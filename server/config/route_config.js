@@ -35,6 +35,7 @@ module.exports = {
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpBasic', method: 'getEtpBasic', session: 'uncheck', type: 'post' },
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpPerformance', method: 'getEtpPerformance', session: 'check', type: 'post' },
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpWeightList', method: 'getEtpWeightList', session: 'uncheck', type: 'get' },
+        { file: './user/etp/etpDetail', path: '/user/etp/getEtpMultiFactor', method: 'getEtpMultiFactor', session: 'uncheck', type: 'get' },
 
         { file: './user/etp/etpOper', path: '/user/etp/getEtpOperInfo', method: 'getEtpOperInfo', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getEtpOperIndex', method: 'getEtpOperIndex', session: 'check', type: 'post' },
