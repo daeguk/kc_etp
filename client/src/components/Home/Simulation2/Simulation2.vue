@@ -59,7 +59,6 @@
                                         @change="fn_resetErrorMessage();fn_checkRebalance( 'start_year');"
                                         
                                         v-model="start_year"
-                                        :disabled="rebalance_cycle_cd == ''"
 
                                         placeholder="선택하세요" 
                                         outline>
@@ -328,6 +327,7 @@ export default {
             ,   bench_index_cd03            :   ""          /* 벤치마크 인덱스 코드 ( middle_type ) */
             ,   bench_index_nm              :   ""          /* 벤치마크 인덱스 코드명 */
             ,   p_rebalance_file_yn         :   "0"         /* 리밸런싱 일자가 포함된 샘플파일 유무 */
+            ,   excel_start_year            :   ""          /* 리밸런싱 파일인 경우 넘겨받은 엑셀 start_year */
 
             ,   arr_portfolio               :   []          /* 포트폴리오 설정 정보 */
             ,   arr_rebalance_date          :   []          /* 리밸런싱 일자 */
@@ -590,6 +590,7 @@ export default {
 					vm.bench_index_cd03            	=   "";         /* 벤치마크 인덱스 코드 ( middle_type ) */
 					vm.bench_index_nm              	=   "";         /* 벤치마크 인덱스 코드명 */
 					vm.p_rebalance_file_yn         	=   "0";        /* 리밸런싱 일자가 포함된 샘플파일 유무 */
+                    vm.excel_start_year             =   ""          /* 리밸런싱 파일인 경우 넘겨받은 엑셀 start_year */
 
 					vm.arr_portfolio               	=   [];         /* 포트폴리오 설정 정보 */
 					vm.arr_rebalance_date          	=   [];         /* 리밸런싱 일자 */
@@ -1955,60 +1956,86 @@ export default {
                                 /* 시작년도 */
                         case    "start_year"    :
 
-                                vm.$nextTick( function(){
+                                vm.$nextTick( async function(){
 
-                                    if( vm.old_start_year != vm.start_year ) {
+                                    /* 리밸린싱 엑셀 파일이 업로드된 경우 */
+                                    if( vm.rebalance_cycle_cd == "" ) {
 
-                                        /*
-                                        *  리밸런싱 주기를 변경하는지 체크
-                                        *  ( 두번째 [리밸런싱 일자별 포트폴리오] 의 값이 한건 이상 존재시 [리밸런싱 일자별 포트폴리오]에 값이 존재하는 것으로 간주 )
-                                        */
-                                        vm.fn_confirmRebalance().then( function(e) {
-            
-                                            /* 초기화를 선택한 경우 */
-                                            if( e && e.confirm == "Y" ) {
-                                                vm.old_start_year           =   vm.start_year;
+                                        if( vm.old_start_year != vm.start_year ) {
 
-                                                /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
-                                                vm.fn_getRebalanceDate().then( function(e) {
-                                                    if( e && e.result ) {
-                                                        vm.old_rebalance_date       =   vm.rebalance_date;
+                                            if( Number( vm.excel_start_year ) > Number( vm.start_year ) ) {
 
-                                                        var v_fist_Date             =   Object.keys( vm.rebalancePortfolioObj )[0];
-                                                        var v_org_rebalance_obj     =   vm.rebalancePortfolioObj[ v_fist_Date ];
-
-                                                        vm.rebalancePortfolioObj    =   {};
-                                                        vm.rebalancePortfolioObj[ vm.rebalance_date ]   =   Object.assign( {}, v_org_rebalance_obj );
-
-                                                        /* 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
-                                                        vm.fn_copySelectedDateToRebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
-                                                    }
-                                                });
+                                                if( await vm.$refs.confirm2.open(
+                                                            '[시뮬레이션]',
+                                                            vm.excel_start_year + " 년도 이후로만 선택해 주세요.",
+                                                            {}
+                                                        ,   1
+                                                    )
+                                                ) {
+                                                    vm.start_year       =   vm.old_start_year;
+                                                    return  false;
+                                                }
                                             }
-                                            /* 초기화를 선택 하지 않은 경우 */
-                                            else if( e && e.confirm == "N" ) {
-                                                vm.start_year               =   vm.old_start_year;
-                                            }
-                                            else{
-                                                vm.old_start_year           =   vm.start_year;
 
-                                                /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
-                                                vm.fn_getRebalanceDate().then( function(e) {
-                                                    if( e && e.result ) {
-                                                        vm.old_rebalance_date    =   vm.rebalance_date;
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }else{       
-                                        vm.old_start_year                   =   vm.start_year;
+                                            vm.old_start_year   =   vm.start_year;
+                                        }
 
-                                        /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
-                                        vm.fn_getRebalanceDate().then( function(e) {
-                                            if( e && e.result ) {
-                                                vm.old_rebalance_date    =   vm.rebalance_date;
-                                            }
-                                        });
+                                    }else{
+
+                                        if( vm.old_start_year != vm.start_year ) {
+
+                                            /*
+                                            *  리밸런싱 주기를 변경하는지 체크
+                                            *  ( 두번째 [리밸런싱 일자별 포트폴리오] 의 값이 한건 이상 존재시 [리밸런싱 일자별 포트폴리오]에 값이 존재하는 것으로 간주 )
+                                            */
+                                            vm.fn_confirmRebalance().then( function(e) {
+                
+                                                /* 초기화를 선택한 경우 */
+                                                if( e && e.confirm == "Y" ) {
+                                                    vm.old_start_year           =   vm.start_year;
+
+                                                    /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                                                    vm.fn_getRebalanceDate().then( function(e) {
+                                                        if( e && e.result ) {
+                                                            vm.old_rebalance_date       =   vm.rebalance_date;
+
+                                                            var v_fist_Date             =   Object.keys( vm.rebalancePortfolioObj )[0];
+                                                            var v_org_rebalance_obj     =   vm.rebalancePortfolioObj[ v_fist_Date ];
+
+                                                            vm.rebalancePortfolioObj    =   {};
+                                                            vm.rebalancePortfolioObj[ vm.rebalance_date ]   =   Object.assign( {}, v_org_rebalance_obj );
+
+                                                            /* 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
+                                                            vm.fn_copySelectedDateToRebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
+                                                        }
+                                                    });
+                                                }
+                                                /* 초기화를 선택 하지 않은 경우 */
+                                                else if( e && e.confirm == "N" ) {
+                                                    vm.start_year               =   vm.old_start_year;
+                                                }
+                                                else{
+                                                    vm.old_start_year           =   vm.start_year;
+
+                                                    /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                                                    vm.fn_getRebalanceDate().then( function(e) {
+                                                        if( e && e.result ) {
+                                                            vm.old_rebalance_date    =   vm.rebalance_date;
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        }else{       
+                                            vm.old_start_year                   =   vm.start_year;
+
+                                            /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                                            vm.fn_getRebalanceDate().then( function(e) {
+                                                if( e && e.result ) {
+                                                    vm.old_rebalance_date    =   vm.rebalance_date;
+                                                }
+                                            });
+                                        }                                        
+
                                     }
                                 });
 
@@ -2903,7 +2930,9 @@ export default {
 
                             /* 시작년도가 존재하는 경우 - 시작년도 재설정 */
                             if( response.data.p_start_year ) {
+                                vm.old_start_year   =   response.data.p_start_year;
                                 vm.start_year       =   response.data.p_start_year;
+                                vm.excel_start_year =   response.data.p_start_year;
                             }
 
                             /* 리밸런싱 일자가 포함된 샘플파일인 경우 */
