@@ -256,6 +256,7 @@ import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
+import _ from "lodash";
 
 import MastPopup02 from "@/components/common/popup/MastPopup02";
 import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
@@ -427,8 +428,8 @@ export default {
             vm.fn_resetErrorMessage();
             vm.fn_resetRecords( rowIndex );
 
-            /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
-            vm.fn_setImportanceMethodCd( vm.importance_method_cd );
+            // /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
+            // vm.fn_setImportanceMethodCd( vm.importance_method_cd );
         });
 
 
@@ -1557,20 +1558,60 @@ export default {
                     v_order_no  	=   0;
 					v_importance	=	0;
 
-                    for( var j=0; j < Object.keys( v_sub_item ).length; j++ ) {
 
-                        var v_sub_key2  =   Object.keys( v_sub_item )[j];
-                        var v_sub_item2 =   v_sub_item[ v_sub_key2 ];
+                    /* 종목이 2개 이상인 경우 trIndex 순으로 정렬하여 order_no 설정 */
+                    if(  Object.keys( v_sub_item ).length > 1 ) {
 
-						v_sub_item2.importance	=	Number( v_sub_item2.importance ).toFixed(2);
+                        var arrKey    =   [];
+                        var tempKey;
 
-						v_importance   	=   Number(
-                            Number(
-                                Number( Number( v_importance ).toFixed(2) )  +  Number( v_sub_item2.importance )
-                            ).toFixed(2)
-                         );                     /* (합계) 비중 */
+                        for( var j=0; j < Object.keys( v_sub_item ).length; j++ ) {
+                            arrKey.push( Object.keys( v_sub_item )[j] );
+                        }
 
-                        v_sub_item2.order_no    =   ++v_order_no;
+                        for( var j=0; j < arrKey.length-1; j++ ) {
+                            for( var k=j; k < arrKey.length; k++ ) {
+                                if( v_sub_item[ arrKey[j] ].trIndex > v_sub_item[ arrKey[k] ].trIndex ) {
+                                    tempKey     =   arrKey[j];
+                                    arrKey[j]   =   arrKey[k];
+                                    arrKey[k]   =   tempKey;
+                                }
+                            }
+                        }                   
+
+                        for( var j=0; j < arrKey.length; j++ ) {
+                            var v_sub_key2  =   arrKey[j];
+                            var v_sub_item2 =   v_sub_item[ v_sub_key2 ];
+                            
+                            v_sub_item2.importance	=	Number( v_sub_item2.importance ).toFixed(2);
+
+                            v_importance   	=   Number(
+                                Number(
+                                    Number( Number( v_importance ).toFixed(2) )  +  Number( v_sub_item2.importance )
+                                ).toFixed(2)
+                            );                     /* (합계) 비중 */
+
+                            v_sub_item2.order_no    =   ++v_order_no;
+                        }
+
+                    }
+                    /* 종목이 1개 인 경우 */
+                    else{
+
+                        for( var j=0; j < Object.keys( v_sub_item ).length; j++ ) {
+                            var v_sub_key2  =   Object.keys( v_sub_item )[j];
+                            var v_sub_item2 =   v_sub_item[ v_sub_key2 ];
+                            
+                            v_sub_item2.importance	=	Number( v_sub_item2.importance ).toFixed(2);
+
+                            v_importance   	=   Number(
+                                Number(
+                                    Number( Number( v_importance ).toFixed(2) )  +  Number( v_sub_item2.importance )
+                                ).toFixed(2)
+                            );                     /* (합계) 비중 */
+
+                            v_sub_item2.order_no    =   ++v_order_no;
+                        }
                     }
 
 					if( v_importance != 100 ) {
@@ -1605,6 +1646,7 @@ export default {
                     }
                 }
             }
+
 
             vm.fn_showProgress( true );
 
@@ -2749,6 +2791,13 @@ export default {
 
                                 dataList.push( v_rebalancePortfolio[ v_key ] );
                             }
+                            
+                            /* trIndex 순으로 정렬하여 노출 */
+                            dataList    =   _.orderBy(
+                                    dataList
+                                ,   [ "trIndex" ]
+                                ,   [ "asc" ]
+                            );
 
                             /* 건수가 0 인 경우 레코드 5개는 추가한다. */
                             var cnt = ( Math.ceil( dataList.length / 5 ) == 0 ? 1 : Math.ceil( dataList.length / 5 ) ) * 5;                  
