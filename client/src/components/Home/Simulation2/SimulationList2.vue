@@ -222,14 +222,17 @@ export default {
 
                                 if ( await vm.$refs.confirm2.open(
                                         '확인',
-                                        '이미 저장된 시뮬레이션 정보와 현재 시뮬레이션 정보가 변동이 발생되었습니다. 시뮬레이션 화면으로 이동합니다.',
+                                        '시뮬레이션 결과와 시나리오 정보가 변동이 발생되었습니다. 시나리오 화면으로 이동하시겠습니까?',
                                         {}
-                                        ,1
+                                        ,2
                                     )
                                 ) {
-                                    /* 수정정보를 보여준다. */
-                                    v_jsonParam.showSimulationId        =   1;
-                                    vm.fn_showSimulation( v_jsonParam );
+
+                                    if( "Y" == vm.$refs.confirm2.val ) {
+                                        /* 수정정보를 보여준다. */
+                                        v_jsonParam.showSimulationId        =   1;
+                                        vm.fn_showSimulation( v_jsonParam );
+                                    }
                                 }
 
                             }else{
