@@ -597,6 +597,14 @@ export default {
 					vm.rebalance_date              	=   "";         /* 리밸런싱 일자 */
 					vm.rebalancePortfolioObj       	=   {};         /* 리밸런싱일별 포트폴리오 */
 
+
+                    var arr_temp = [...vm.arr_rebalance_cycle_cd];
+
+                    vm.arr_rebalance_cycle_cd   =   [];
+
+                    vm.disabled_rebalance_cd    =   vm.arr_rebalance_disabled_check[ vm.rebalance_cycle_cd ];
+                    vm.arr_rebalance_cycle_cd   =   [ ...arr_temp ];                    
+
 					vm.old_start_year              	=   "";
 					vm.old_rebalance_cycle_cd      	=   "";
 					vm.old_rebalance_date_cd       	=   "";
