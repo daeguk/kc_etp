@@ -110,6 +110,7 @@ var uploadPortfolio = function(req, res) {
             var arrCodeList06           =   [];     /* 단축코드 array */
             var arrCodeList12           =   [];     /* 국제표준코드 array */
             var arrExcelRebalanceDate   =   [];     /* 엑셀에서 업로드한 일자정보 */
+            var arrExcelJongmok         =   [];     /* 엑셀에서 업로드한 종목정보 */
 
 
             var v_param = {
@@ -161,7 +162,8 @@ var uploadPortfolio = function(req, res) {
                     fn_excel_record_check( v_param, dataLists[0] );
                 }else{
 
-                    var dateCheck   =   [];
+                    var dateCheck       =   [];
+                    var jongmokCheck    =   [];
                     for (var i = 0; i < dataLists.length-1; i++) {
                         var data = dataLists[i];
 
@@ -170,16 +172,32 @@ var uploadPortfolio = function(req, res) {
                         fn_excel_record_check( v_param, data );
 
 
+                        /* 리밸런싱 날자가 존재하는 엑셀 파일인 경우 */
                         if( v_param.p_rebalance_file_yn == "1" ) {
 
+                            /* 리밸런싱 날짜 */
                             dateCheck   =   arrExcelRebalanceDate.filter( function( item, index, array ) {
-                                return  item.date == String( dataLists[i].date );
+                                return  item.date == String( data.date );
                             });
 
                             if( !dateCheck || dateCheck.length == 0 ) {
-                                arrExcelRebalanceDate.push( { date : dataLists[i].date } );
-                            }                            
+                                arrExcelRebalanceDate.push( { date : data.date } );
+                            }
                         }
+
+
+                        /* 종목코드 */
+                        jongmokCheck    =   arrExcelJongmok.filter( function( item, index, array ) {
+                            return  item.code == String( data.code );
+                        });
+
+                        if( !jongmokCheck || jongmokCheck.length == 0 ) {
+                            arrExcelJongmok.push( { 
+                                    code    :   data.code
+                                ,   row_no  :   i + v_param.p_startIndex  
+                            });
+                        }
+                        
 
                         for (var j = i+1; j < dataLists.length; j++) {
                             var data2 = dataLists[j];
@@ -214,11 +232,39 @@ var uploadPortfolio = function(req, res) {
 
                         data.row_no = i + v_param.p_startIndex;
 
+                        /* 마지막 전 인덱스인 경우 */
                         if( i == dataLists.length-2 ) {
+
                             /* 마지막 레코드에 row_no 추가 */
-                            data = dataLists[i+1];
-                            data.row_no = i + v_param.p_startIndex + 1;
-                        }                        
+                            data        =   dataLists[i+1];
+                            data.row_no =   i + v_param.p_startIndex + 1;
+
+
+                            /* 리밸런싱 날자가 존재하는 엑셀 파일인 경우 */
+                            if( v_param.p_rebalance_file_yn == "1" ) {
+
+                                /* 리밸런싱 날짜 */
+                                dateCheck   =   arrExcelRebalanceDate.filter( function( item, index, array ) {
+                                    return  item.date == String( data.date );
+                                });
+
+                                if( !dateCheck || dateCheck.length == 0 ) {
+                                    arrExcelRebalanceDate.push( { date : data.date } );
+                                }                            
+                            }
+
+                            /* 종목코드 */
+                            jongmokCheck    =   arrExcelJongmok.filter( function( item, index, array ) {
+                                return  item.code == String( data.code );
+                            });
+
+                            if( !jongmokCheck || jongmokCheck.length == 0 ) {
+                                arrExcelJongmok.push( { 
+                                        code    :   data.code
+                                    ,   row_no  :   i + v_param.p_startIndex + 1 
+                                });
+                            }
+                        }
                     }
                 }
             }
@@ -261,7 +307,7 @@ var uploadPortfolio = function(req, res) {
 
                     async.waterfall([
 
-                        /* 1. tm_date_manage 를 조회한다. */
+                        /* 1. tm_date_manage 를 조회하여 리밸런싱 일자가 존재하는 경우 일자를 체크한다. */
                         function( callback ) {
 
                             try {
@@ -299,7 +345,7 @@ var uploadPortfolio = function(req, res) {
 
                                             resultMsg.result = false;
                                             resultMsg.msg = "[error] simulation2.getRebalanceDate 일자 기본정보가 없습니다.";
-                                            resultMsg.err = err;
+                                            resultMsg.err = "[error] simulation2.getRebalanceDate 일자 기본정보가 없습니다.";
 
                                             return callback(resultMsg);
                                         }
@@ -442,8 +488,7 @@ var uploadPortfolio = function(req, res) {
                             }
                         },
 
-
-                        /* 3. 업로드한 종목 중 존재하지 않는 종목을 조회한다. ( 10개만 노출 ) */
+                        /* 2. kspjong_basic 을 조회하여 종목이 존재하는지 체크한다. */
                         function( msg, callback) {
 
                             try {
@@ -452,53 +497,9 @@ var uploadPortfolio = function(req, res) {
                                     msg = {};
                                 }
 
-                                var first_rebalance_date    =   "";
-                                if( resultMsg.arr_rebalance_date && resultMsg.arr_rebalance_date.length > 0 ) {
-                                    first_rebalance_date    =   resultMsg.arr_rebalance_date[0].value;
-                                }
+                                msg.arrExcelJongmokNotExist =   [];
 
-                                for( var i=0; i < dataLists.length; i++) {
-                                    var data = dataLists[i];
-                                    
-                                    if( !data.date )        data.date       =   "";
-                                    if( !data.code )        data.code       =   "";
-                                    if( !data.allocation )  data.allocation =   -1;
-                                    if( !data.row_no )      data.row_no     =   -1;
-
-                                    /* 리밸런싱 샘플 파일이 아닌 경우 최초 리밸런싱일자를 date 에 넣어준다. */
-                                    if( v_param.p_rebalance_file_yn != "1" ) {
-                                        data.date       =   first_rebalance_date;
-                                    }                              
-
-                                    if( data.code.length == 6  ){
-                                        arrCodeList06.push( data );
-                                    }else if( data.code.length == 12 ) {
-                                        arrCodeList12.push( data );
-                                    }
-                                }
-
-                                if( arrCodeList06.length == 0 ) {
-                                    arrCodeList06.push({
-                                            date        :   ""
-                                        ,   code        :   ""
-                                        ,   allocation  :   -1
-                                        ,   row_no      :   -1
-                                    });
-                                }
-
-                                if( arrCodeList12.length == 0 ) {
-                                    arrCodeList12.push({
-                                            date        :   ""
-                                        ,   code        :   ""
-                                        ,   allocation  :   -1
-                                        ,   row_no      :   -1
-                                    });
-                                }
-
-                                reqParam.arrCodeList06  =   arrCodeList06;
-                                reqParam.arrCodeList12  =   arrCodeList12;
-
-                                stmt = mapper.getStatement('simulationUpload', 'getJongmokNotExistCheckByUpload', reqParam, format);
+                                stmt = mapper.getStatement('simulation2', 'getKspjongBasic', reqParam, format);
                                 log.debug(stmt, reqParam);
 
                                 conn.query(stmt, function(err, rows) {
@@ -506,40 +507,113 @@ var uploadPortfolio = function(req, res) {
                                     try {
 
                                         if (err) {
+                                            log.error(err, stmt, reqParam);
+
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] simulationUpload.getJongmokNotExistCheckByUpload Error while performing Query";
+                                            resultMsg.msg = "[error] simulation2.getKspjongBasic Error while performing Query";
                                             resultMsg.err = err;
 
                                             return callback(resultMsg);
                                         }
+                                        else if ( !rows || rows.length == 0 )  {
 
-                                        if( rows && rows.length > 0 ) {
+                                            log.error(stmt, reqParam);
 
-                                            for( var i=0 ; i < rows.length; i++ ) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] simulation2.getKspjongBasic 종목 기본정보가 없습니다.";
+                                            resultMsg.err = "[error] simulation2.getKspjongBasic 종목 기본정보가 없습니다.";
+
+                                            return callback(resultMsg);
+                                        }
+
+
+                                    /**********************************************************************************************
+                                     * kspjong_basic 에 존재하는지 체크 START
+                                     **********************************************************************************************/
+                                        for( var i=0 ; i < arrExcelJongmok.length; i++ ) {
+
+                                            var filterData  =   _.filter( rows, function(o) {
+
+                                                /* 단축코드 */
+                                                if( arrExcelJongmok[i].code.length == 6 ) {
+                                                    return  o.F16013 == arrExcelJongmok[i].code;
+                                                }
+                                                /* 국제표준코드 */
+                                                else{
+                                                    return  o.F16012 == arrExcelJongmok[i].code;
+                                                }
+                                            });
+
+
+                                            /* 일치하는 코드가 없는 경우 */
+                                            if( !filterData || filterData.length == 0 ) {                                                
+                                                msg.arrExcelJongmokNotExist.push( arrExcelJongmok[i] );
+                                            }
+                                            /* kspjong_basic 에 코드가 중복존재하는 경우 */
+                                            else if( filterData && filterData.length > 1 ){
                                                 resultMsg.errorList.push( { 
                                                         result  :   false
-                                                    ,   msg     :   "[" + rows[i].row_no + " 행] CODE 컬럼 값 (" + rows[i].code + ") 이 존재하지 않습니다."
+                                                    ,   msg     :   "[" + arrExcelJongmok[i].row_no + " 행] CODE 컬럼 값 (" + arrExcelJongmok[i].code + ") 이 중복 존재합니다."
                                                 });
-
-                                                /* 10 개 까지만 결과정보에 보관한다. */
-                                                if( resultMsg.errorList.length == 10  ) {
-                                                    break;
-                                                }                                                
                                             }
 
-                                            if( resultMsg.errorList && resultMsg.errorList.length > 0 ) {
-                                                resultMsg.result = false;
-                                                
-                                                return  callback(resultMsg);
+                                            /* 10 개 까지만 결과정보에 보관한다. */
+                                            if( resultMsg.errorList.length == 10  ) {
+                                                break;
+                                            }                                                
+                                        }
+                                    /**********************************************************************************************
+                                     * kspjong_basic 에 존재하는지 체크 END
+                                     **********************************************************************************************/
+
+                                        if( resultMsg.errorList && resultMsg.errorList.length > 0 ) {
+                                            resultMsg.result = false;
+                                            
+                                            return  callback(resultMsg);
+                                        }
+
+
+                                        var first_rebalance_date    =   "";
+                                        if( resultMsg.arr_rebalance_date && resultMsg.arr_rebalance_date.length > 0 ) {
+                                            first_rebalance_date    =   resultMsg.arr_rebalance_date[0].value;
+                                        }
+
+                                        /* kspjong_basic 과 일치하는 코드에 대해 데이터 설정 */
+                                        for (var i = 0; i < dataLists.length; i++) {
+
+                                            var data        =   dataLists[i];
+
+                                            /* 리밸런싱 샘플 파일이 아닌 경우 최초 리밸런싱일자를 date 에 넣어준다. */
+                                            if( v_param.p_rebalance_file_yn != "1" ) {
+                                                data.date       =   first_rebalance_date;
+                                            }
+
+                                            var filterData  =   _.filter( rows, function(o) {
+
+                                                /* 단축코드 */
+                                                if( data.code.length == 6 ) {
+                                                    return  o.F16013 == data.code;
+                                                }
+                                                /* 국제표준코드 */
+                                                else{
+                                                    return  o.F16012 == data.code;
+                                                }
+                                            });
+
+                                            if( filterData && filterData.length == 1 ) {
+                                                data.F16013     =   filterData[0].F16013;       /* 단축코드 */
+                                                data.F16002     =   filterData[0].F16002;       /* 종목명 */
+                                                data.F15028     =   filterData[0].F15028;       /* 시가총액 */
                                             }
                                         }
+
 
                                         callback(null, msg);
 
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationUpload.getJongmokNotExistCheckByUpload Error while performing Query";
+                                        resultMsg.msg = "[error] simulation2.getKspjongBasic Error while performing Query";
                                         resultMsg.err = err;
 
                                         return  callback(resultMsg);
@@ -548,15 +622,15 @@ var uploadPortfolio = function(req, res) {
 
                             } catch (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] simulationUpload.getJongmokNotExistCheckByUpload Error while performing Query";
+                                resultMsg.msg = "[error] simulation2.getKspjongBasic Error while performing Query";
                                 resultMsg.err = err;
 
                                 callback(resultMsg);
                             }
                         },
 
-                        /* 4. 업로드한 종목 중 존재하지 않는 종목을 조회한다. ( 10개만 노출 ) */
-                        function( msg, callback ) {
+                        /* 3. kspjong_basic 에 존재하지 않을시 etp_basic 을 조회하여 종목이 존재하는지 체크한다. */
+                        function( msg, callback) {
 
                             try {
 
@@ -564,64 +638,139 @@ var uploadPortfolio = function(req, res) {
                                     msg = {};
                                 }
 
-                                stmt = mapper.getStatement('simulationUpload', 'getJongmokDuplCheckByUpload', reqParam, format);
-                                log.debug(stmt, reqParam);
+                                
+                                /* kspjong_basic 에 존재하지 않는 종목이 존재하는 경우 */
+                                if( msg.arrExcelJongmokNotExist && msg.arrExcelJongmokNotExist.length > 0 ) {
 
-                                conn.query(stmt, function(err, rows) {
-                                    try {
+                                    stmt = mapper.getStatement('simulation2', 'getEtpBasic', reqParam, format);
+                                    log.debug(stmt, reqParam);
 
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] simulationUpload.getJongmokDuplCheckByUpload Error while performing Query";
-                                            resultMsg.err = err;
+                                    conn.query(stmt, function(err, rows) {
 
-                                            return callback(resultMsg);
-                                        }
+                                        try {
 
-                                        if( rows && rows.length > 0 ) {
+                                            if (err) {
+                                                log.error(err, stmt, reqParam);
 
-                                            for( var i=0 ; i < rows.length; i++ ) {
-                                                resultMsg.errorList.push( { 
-                                                        result  :   false
-                                                    ,   msg     :   "[" + rows[i].row_no + " 행] CODE 컬럼 값 (" + rows[i].code + ") 이 중복 존재합니다."
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] simulation2.getEtpBasic Error while performing Query";
+                                                resultMsg.err = err;
+
+                                                return callback(resultMsg);
+                                            }
+                                            else if ( !rows || rows.length == 0 )  {
+
+                                                log.error(stmt, reqParam);
+
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "[error] simulation2.getEtpBasic 종목 기본정보가 없습니다.";
+                                                resultMsg.err = "[error] simulation2.getEtpBasic 종목 기본정보가 없습니다.";
+
+                                                return callback(resultMsg);
+                                            }
+
+
+                                        /**********************************************************************************************
+                                         * ept_basic 에 존재하는지 체크 START
+                                         **********************************************************************************************/
+                                            for( var i=0 ; i < msg.arrExcelJongmokNotExist.length; i++ ) {
+
+                                                var filterData  =   _.filter( rows, function(o) {
+
+                                                    /* 단축코드 */
+                                                    if( msg.arrExcelJongmokNotExist[i].code.length == 6 ) {
+                                                        return  o.F16013 == msg.arrExcelJongmokNotExist[i].code;
+                                                    }
+                                                    /* 국제표준코드 */
+                                                    else{
+                                                        return  o.F16012 == msg.arrExcelJongmokNotExist[i].code;
+                                                    }
                                                 });
+
+
+                                                /* 일치하는 코드가 없는 경우 */
+                                                if( !filterData || filterData.length == 0 ) {
+                                                    resultMsg.errorList.push( { 
+                                                            result  :   false
+                                                        ,   msg     :   "[" + msg.arrExcelJongmokNotExist[i].row_no + " 행] CODE 컬럼 값 (" + msg.arrExcelJongmokNotExist[i].code + ") 이 존재하지 않습니다."
+                                                    });                                                    
+                                                }
+                                                /* etp_basic 에 코드가 중복존재하는 경우 */
+                                                else if( filterData && filterData.length > 1 ){
+                                                    resultMsg.errorList.push( { 
+                                                            result  :   false
+                                                        ,   msg     :   "[" + msg.arrExcelJongmokNotExist[i].row_no + " 행] CODE 컬럼 값 (" + msg.arrExcelJongmokNotExist[i].code + ") 이 중복 존재합니다."
+                                                    });
+                                                }
 
                                                 /* 10 개 까지만 결과정보에 보관한다. */
                                                 if( resultMsg.errorList.length == 10  ) {
                                                     break;
-                                                }                                                
+                                                }
                                             }
+                                        /**********************************************************************************************
+                                         * ept_basic 에 존재하는지 체크 END
+                                         **********************************************************************************************/
 
                                             if( resultMsg.errorList && resultMsg.errorList.length > 0 ) {
                                                 resultMsg.result = false;
                                                 
                                                 return  callback(resultMsg);
                                             }
-                                        }
 
-                                        callback(null, msg);
 
-                                    } catch (err) {
+                                            /* ept_basic 과 일치하는 코드에 대해 데이터 설정 */
+                                            for (var i = 0; i < dataLists.length; i++) {
 
-                                        resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationUpload.getJongmokDuplCheckByUpload Error while performing Query";
-                                        resultMsg.err = err;
+                                                var data    =   dataLists[i];
 
-                                        return  callback(resultMsg);
-                                    }
+                                                var filterData  =   _.filter( rows, function(o) {
 
-                                });
+                                                    /* 단축코드 */
+                                                    if( data.code.length == 6 ) {
+                                                        return  o.F16013 == data.code;
+                                                    }
+                                                    /* 국제표준코드 */
+                                                    else{
+                                                        return  o.F16012 == data.code;
+                                                    }
+                                                });
+
+                                                if( filterData && filterData.length == 1 ) {
+                                                    data.F16013     =   filterData[0].F16013;       /* 단축코드 */
+                                                    data.F16002     =   filterData[0].F16002;       /* 종목명 */
+                                                    data.F15028     =   filterData[0].F15028;       /* 시가총액 */
+                                                }
+                                            }
+
+
+                                            callback(null, msg);
+
+                                        } catch (err) {
+
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] simulation2.getEtpBasic Error while performing Query";
+                                            resultMsg.err = err;
+
+                                            return  callback(resultMsg);
+                                        }                                    
+                                    });
+
+                                }else{
+
+                                    callback(null, msg);
+                                }
 
                             } catch (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] simulationUpload.getJongmokDuplCheckByUpload Error while performing Query";
+                                resultMsg.msg = "[error] simulation2.getEtpBasic Error while performing Query";
                                 resultMsg.err = err;
 
                                 callback(resultMsg);
                             }
                         },
 
-                        /* 5. 업로드한 종목과 일치하는 정보를 조회한다. */
+                        /* 4. 리밸런싱 일자별, 코드별로 포트폴리오 데이터를 설정한다. */
                         function( msg, callback ) {
 
                             try {
@@ -630,71 +779,60 @@ var uploadPortfolio = function(req, res) {
                                     msg = {};
                                 }
 
-                                stmt = mapper.getStatement('simulationUpload', 'getJongmokByUpload', reqParam, format);
-                                log.debug(stmt, reqParam);
 
-                                conn.query(stmt, function(err, rows) {
-                                    try {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] simulationUpload.getJongmokByUpload Error while performing Query";
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
+                                /* 일자, 엑셀 행번호 순으로 정렬 */
+                                dataLists  =   _.orderBy( dataLists, [ 'date', 'row_no' ] );
 
 
-                                        if ( rows && rows.length > 0 ) {
-                                            resultMsg.result = true;
+                            /**********************************************************************************************
+                             * 리밸런싱 일자별, 코드별로 포트폴리오 데이터 설정 START
+                             **********************************************************************************************/
+                                var v_order_no  =   0;
+                                for( var i=0; i < dataLists.length; i++ ) {
 
-                                            var v_order_no  =   0;
-                                            for( var i=0; i < rows.length; i++ ) {
-                                                if( !rebalancePortfolioObj[ rows[i].date ] || Object.keys( rebalancePortfolioObj[ rows[i].date ] ).length == 0  ) {
-                                                    rebalancePortfolioObj[ rows[i].date ]     =   {};
-                                                    v_order_no  =   0;
-                                                }
+                                    var data    =   dataLists[i];
 
-                                                if( !rebalancePortfolioObj[ rows[i].date ][ rows[i].F16013 ] || Object.keys( rebalancePortfolioObj[ rows[i].date ][ rows[i].F16013 ] ).length == 0  ) {
-                                                    rebalancePortfolioObj[ rows[i].date ][ rows[i].F16013 ]         =   {};
-                                                }
-
-                                                rebalancePortfolioObj[ rows[i].date ][ rows[i].F16013 ].F16013      =   rows[i].F16013;         /* 단축코드 */
-                                                rebalancePortfolioObj[ rows[i].date ][ rows[i].F16013 ].F16002      =   rows[i].F16002;         /* 종목명 */
-                                                rebalancePortfolioObj[ rows[i].date ][ rows[i].F16013 ].F15028      =   rows[i].F15028;         /* 시가총액 */
-                                                rebalancePortfolioObj[ rows[i].date ][ rows[i].F16013 ].importance  =   rows[i].allocation;     /* 엑셀에서 입력한 비중 */
-                                                rebalancePortfolioObj[ rows[i].date ][ rows[i].F16013 ].order_no    =   v_order_no;             /* 정렬순번 */
-                                                rebalancePortfolioObj[ rows[i].date ][ rows[i].F16013 ].trIndex     =   v_order_no;             /* 테이블 레코드 순번 */
-
-                                                v_order_no++;
-                                            }
-                                        }
-
-                                        resultMsg.rebalancePortfolioObj     =   rebalancePortfolioObj;
-                                        resultMsg.p_rebalance_file_yn       =   v_param.p_rebalance_file_yn;
-                                        resultMsg.p_start_year              =   msg.p_start_year;
-console.log( "######## resultMsg.p_start_year", resultMsg.p_start_year );
-                                        callback(null);
-
-                                    } catch (err) {
-
-                                        resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationUpload.getJongmokByUpload Error while performing Query";
-                                        resultMsg.err = err;
-
-                                        return  callback(resultMsg);
+                                    if( !rebalancePortfolioObj[ data.date ] || Object.keys( rebalancePortfolioObj[ data.date ] ).length == 0  ) {
+                                        rebalancePortfolioObj[ data.date ]                          =   {};
+                                        v_order_no  =   0;
                                     }
 
-                                });
+                                    if( !rebalancePortfolioObj[ data.date ][ data.F16013 ] || Object.keys( rebalancePortfolioObj[ data.date ][ data.F16013 ] ).length == 0  ) {
+                                        rebalancePortfolioObj[ data.date ][ data.F16013 ]           =   {};
+                                    }
+
+                                    rebalancePortfolioObj[ data.date ][ data.F16013 ].F16013        =   data.F16013;        /* 단축코드 */
+                                    rebalancePortfolioObj[ data.date ][ data.F16013 ].F16002        =   data.F16002;        /* 종목명 */
+                                    rebalancePortfolioObj[ data.date ][ data.F16013 ].F15028        =   data.F15028;        /* 시가총액 */
+                                    rebalancePortfolioObj[ data.date ][ data.F16013 ].importance    =   data.allocation;    /* 엑셀에서 입력한 비중 */
+
+                                    rebalancePortfolioObj[ data.date ][ data.F16013 ].order_no      =   v_order_no;         /* 정렬순번 */
+                                    rebalancePortfolioObj[ data.date ][ data.F16013 ].trIndex       =   v_order_no;         /* 테이블 레코드 순번 */
+
+                                    v_order_no++;
+                                }
+                            /**********************************************************************************************
+                             * 리밸런싱 일자별, 코드별로 포트폴리오 데이터 설정 END
+                             **********************************************************************************************/
+
+                                resultMsg.result = true;
+
+                                resultMsg.rebalancePortfolioObj     =   rebalancePortfolioObj;
+                                resultMsg.p_rebalance_file_yn       =   v_param.p_rebalance_file_yn;
+                                resultMsg.p_start_year              =   msg.p_start_year;
+
+                                console.log( "######## resultMsg.p_start_year", resultMsg.p_start_year );
+
+                                callback(null);
 
                             } catch (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] simulationUpload.getJongmokByUpload Error while performing Query";
+                                resultMsg.msg = "[error] 리밸런싱 일자별, 코드별로 포트폴리오 설정 후 오류가 발생하였습니다.";
                                 resultMsg.err = err;
 
                                 callback(resultMsg);
                             }
-                        }                            
+                        }
 
                     ], function(err) {
 
