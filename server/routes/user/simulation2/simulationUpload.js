@@ -261,131 +261,21 @@ var uploadPortfolio = function(req, res) {
 
                     async.waterfall([
 
-                        /* 1. 리밸런싱 샘플 파일인 경우 업로드한 리밸런싱 날짜 중 영업일에 존재하지 않는 일자를 조회한다. */
+                        /* 1. tm_date_manage 를 조회한다. */
                         function( callback ) {
-
-                            /* 리밸런싱 샘플 파일인 경우 */
-                            if( v_param.p_rebalance_file_yn == "1" ) {
-
-                                try {
-                                    var msg         =   {};
-
-                                    reqParam.rebalance_cycle_cd     =   "0";        /* 리밸런싱 주기 */
-                                    reqParam.rebalance_date_cd      =   "0";        /* 리밸런싱 일자 코드 */
-
-                                    if( !arrExcelRebalanceDate || arrExcelRebalanceDate.length == 0 ) {
-                                        arrExcelRebalanceDate.push( { date : "" } );
-                                    }
-                                    reqParam.arrExcelRebalanceDate  =   arrExcelRebalanceDate;
-                                    stmt = mapper.getStatement('simulationUpload', 'getRebalanceDateNotExistCheckByUpload', reqParam, format);
-                                    log.debug(stmt, reqParam);
-
-                                    conn.query(stmt, function(err, rows) {
-                                        try {
-
-                                            resultMsg.result = true;
-                                            resultMsg.msg = "";                    
-
-                                            if (err) {
-                                                log.error(err, stmt, reqParam);
-
-                                                resultMsg.result = false;
-                                                resultMsg.msg = "[error] simulationUpload.getRebalanceDateNotExistCheckByUpload Error while performing Query";
-                                                resultMsg.err = err;
-                                            }
-                                            else if (rows && rows.length > 0) {
-
-                                                for( var i=0 ; i < rows.length; i++ ) {
-
-                                                    if( rows[i].date_check == "check1" ) {
-                                                        resultMsg.errorList.push( { 
-                                                                result  :   false
-                                                            ,   msg     :   "2000 년도 이전 날짜 ( " + rows[i].F12506 + " )  가 존재합니다."
-                                                        });
-                                                    }
-                                                    else if( rows[i].date_check == "check2" ) {
-                                                        resultMsg.errorList.push( { 
-                                                                result  :   false
-                                                            ,   msg     :   "현재일 이후 날짜 ( " + rows[i].F12506 + " )  가 존재합니다."
-                                                        });
-                                                    }
-                                                    else if( rows[i].date_check == "1" ) {
-                                                        resultMsg.errorList.push( { 
-                                                                result  :   false
-                                                            ,   msg     :   "영업일에 포함되지 않은 일자 ( " + rows[i].F12506 + " )  가 존재합니다."
-                                                        });
-                                                    }                                                    
-
-                                                    /* 10 개 까지만 결과정보에 보관한다. */
-                                                    if( resultMsg.errorList.length == 10  ) {
-                                                        break;
-                                                    }
-                                                }
-                                                
-
-                                                if( resultMsg.errorList && resultMsg.errorList.length > 0 ) {
-                                                    resultMsg.result = false;
-                                                    
-                                                    return  callback(resultMsg);
-                                                }
-
-                                            }
-
-                                            callback(null, msg);
-
-                                        } catch (err) {
-
-                                            resultMsg.result = false;
-                                            resultMsg.msg = "[error] simulationUpload.getRebalanceDateNotExistCheckByUpload Error while performing Query";
-                                            resultMsg.err = err;
-
-                                            return  callback(resultMsg);
-                                        }
-
-                                    });
-
-                                } catch (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationUpload.getRebalanceDateNotExistCheckByUpload Error while performing Query";
-                                    resultMsg.err = err;
-
-                                    callback(resultMsg);
-                                }
-
-                            }else{
-                                callback(null, msg);
-                            }
-                        },
-
-                        /* 2. 화면에서 select 된 리밸런싱 일자를 조회한다. */
-                        function( msg, callback ) {
-
-                            var nameSpaceId     =   "simulation2";
-                            var queryId         =   "getRebalanceDate";
 
                             try {
                                 
-                                if( !msg || Object.keys( msg ).length == 0 ) {
-                                    msg = {};
-                                }
+                                var msg         =   {};
 
-
-                                /* 리밸런싱 샘플 파일인 경우 리밸런싱 일자를 조회한다. */
+                                /* 리밸런싱 샘플 파일인 경우 2000 년도 부터 영업일을 조회한다. */
                                 if( v_param.p_rebalance_file_yn == "1" ) {
-
+                                    reqParam.start_year             =   "2000";     /* 시작년도 */
                                     reqParam.rebalance_cycle_cd     =   "0";        /* 리밸런싱 주기 */
                                     reqParam.rebalance_date_cd      =   "0";        /* 리밸런싱 일자 코드 */
-                                    reqParam.arrExcelRebalanceDate  =   dataLists;
-
-                                    nameSpaceId     =   "simulationUpload";
-                                    queryId         =   "getRebalanceDateByUpload";
-
-                                    if( !reqParam.arrExcelRebalanceDate || reqParam.arrExcelRebalanceDate.length == 0 ) {
-                                        reqParam.arrExcelRebalanceDate.push( { date : "" } );
-                                    }                                    
                                 }
 
-                                stmt = mapper.getStatement( nameSpaceId, queryId, reqParam, format);
+                                stmt = mapper.getStatement( "simulation2", "getRebalanceDate", reqParam, format);
                                 log.debug(stmt, reqParam);
 
                                 conn.query(stmt, function(err, rows) {
@@ -398,20 +288,121 @@ var uploadPortfolio = function(req, res) {
                                             log.error(err, stmt, reqParam);
 
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] " + nameSpaceId +"." + queryId + " Error while performing Query";
+                                            resultMsg.msg = "[error] simulation2.getRebalanceDate Error while performing Query";
                                             resultMsg.err = err;
-                                        }
-                                        else if (rows && rows.length > 0) {
 
-                                            /* 리밸런싱 샘플 파일인 경우 리밸런싱 일자를 조회한다. */
-                                            if( v_param.p_rebalance_file_yn == "1" ) {
-                                                for( var i=0; i < rows.length; i++ ) {
-                                                    resultMsg.arr_rebalance_date.push( { "text" : rows[i].fmt_F12506, "value" : rows[i].F12506 } );
+                                            return callback(resultMsg);
+                                        }
+                                        else if ( !rows || rows.length == 0 )  {
+
+                                            log.error(err, stmt, reqParam);
+
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "[error] simulation2.getRebalanceDate 일자 기본정보가 없습니다.";
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+
+
+                                    /**********************************************************************************************
+                                     * 리밸런싱 일자가 포함된 파일인 경우 2000년 이전, 현재일자 이후, 영업일에 포함되는지 체크 START
+                                     **********************************************************************************************/
+                                        if( v_param.p_rebalance_file_yn == "1" ) {
+
+                                            var arrOrgDate  =   [];
+                                            for( var i=0 ; i < rows.length; i++ ) {
+                                                arrOrgDate.push({
+                                                    date    :   rows[i].F12506
+                                                })
+                                            }
+
+                                            var arrDiffDate =   _.differenceWith( arrExcelRebalanceDate, arrOrgDate, _.isEqual );
+
+                                            if( arrDiffDate && arrDiffDate.length > 0 ) {
+
+                                                for( var i=0 ; i < arrDiffDate.length; i++ ) {
+
+                                                    if( Number( arrDiffDate[i].date ) < 20000101 ) {
+                                                        resultMsg.errorList.push( { 
+                                                                result  :   false
+                                                            ,   msg     :   "2000 년도 이전 날짜 ( " + arrDiffDate[i].date + " )  가 존재합니다."
+                                                        });
+                                                    }
+                                                    else if( arrDiffDate[i].date > util.getTodayDate() ) {
+                                                        resultMsg.errorList.push( { 
+                                                                result  :   false
+                                                            ,   msg     :   "현재일 이후 날짜 ( " + arrDiffDate[i].date + " )  가 존재합니다."
+                                                        });
+                                                    }
+                                                    else{
+                                                        resultMsg.errorList.push( { 
+                                                                result  :   false
+                                                            ,   msg     :   "영업일에 포함되지 않은 일자 ( " + arrDiffDate[i].date + " )  가 존재합니다."
+                                                        });
+                                                    }                                                    
+
+                                                    /* 10 개 까지만 결과정보에 보관한다. */
+                                                    if( resultMsg.errorList.length == 10  ) {
+                                                        break;
+                                                    }
                                                 }
-                                            }else{
-                                                resultMsg.arr_rebalance_date.push( { "text" : rows[0].fmt_F12506, "value" : rows[0].F12506 } );
+                                            }
+                                            
+
+                                            if( resultMsg.errorList && resultMsg.errorList.length > 0 ) {
+                                                resultMsg.result = false;
+                                                
+                                                return  callback(resultMsg);
                                             }
                                         }
+                                    /**********************************************************************************************
+                                     * 리밸런싱 일자가 포함된 파일인 경우 2000년 이전, 현재일자 이후, 영업일에 포함되는지 체크 END
+                                     **********************************************************************************************/
+
+
+
+                                        /* 리밸런싱 샘플 파일인 경우 리밸런싱 일자 콤보에 노출할 정보 구성 */
+                                        if( v_param.p_rebalance_file_yn == "1" ) {
+
+                                            for( var i=0; i < rows.length; i++ ) {
+
+                                                var filterData  =   _.filter(  arrExcelRebalanceDate, function(o) {
+                                                    return  o.date  ==   rows[i].F12506
+                                                });
+
+
+                                                if( filterData && filterData.length > 0 ) {
+
+                                                    resultMsg.arr_rebalance_date.push( { 
+                                                            "text"  :   rows[i].fmt_F12506
+                                                        ,   "value" :   rows[i].F12506 
+                                                    });
+                                                }
+                                            }
+
+                                        }
+                                        /* 리밸런싱 일자가 없는 경우 최초일만 보관 */
+                                        else{
+
+                                            resultMsg.arr_rebalance_date.push( { 
+                                                    "text" : rows[0].fmt_F12506
+                                                ,   "value" : rows[0].F12506 
+                                            } );
+                                        }
+
+
+                                        log.debug( 
+                                                "\n"
+                                            ,   "#############################################################"
+                                            ,   "\n"
+                                            ,   "resultMsg.arr_rebalance_date"
+                                            ,   "\n"
+                                            ,   resultMsg.arr_rebalance_date
+                                            ,   "\n"
+                                            ,   "#############################################################" 
+                                        );
 
 
                                         /* 엑셀 업로드를 통해 start_year 년도 추출 */
@@ -426,14 +417,15 @@ var uploadPortfolio = function(req, res) {
                                                     msg.p_start_year    =   v_min_obj.value.substring( 0, 4 );
                                                 }
                                             }
-                                        }
+                                        }                                        
+
 
                                         callback(null, msg);
 
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] " + nameSpaceId +"." + queryId + " Error while performing Query";
+                                        resultMsg.msg = "[error] simulation2.getRebalanceDate Error while performing Query";
                                         resultMsg.err = err;
 
                                         return  callback(resultMsg);
@@ -443,12 +435,13 @@ var uploadPortfolio = function(req, res) {
 
                             } catch (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] " + nameSpaceId +"." + queryId + " Error while performing Query";
+                                resultMsg.msg = "[error] simulation2.getRebalanceDate Error while performing Query";
                                 resultMsg.err = err;
 
                                 callback(resultMsg);
                             }
-                        },                        
+                        },
+
 
                         /* 3. 업로드한 종목 중 존재하지 않는 종목을 조회한다. ( 10개만 노출 ) */
                         function( msg, callback) {
