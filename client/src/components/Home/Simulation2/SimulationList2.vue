@@ -76,6 +76,12 @@
                             <!-- Index -->
                             <td class="txt_right">
                                 {{ fn_formatNumber( item.INDEX_RATE ) }}
+                                <br />
+                                <div  v-if='item.RETURN_VAL != null && typeof item.RETURN_VAL != "undefined"'>
+                                    <span :class='Number( item.RETURN_VAL ) > 0 ? "text_S text_red" : "text_S text_blue" '>
+                                        {{ fn_formatNumber( Number( item.RETURN_VAL ) * 100 ) + " %" }}
+                                    </span>
+                                </div>
                             </td>
 
                             <!-- Last modified -->
