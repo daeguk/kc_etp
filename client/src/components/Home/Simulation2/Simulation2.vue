@@ -189,7 +189,7 @@
                     </v-layout>
 
 
-                    <v-card flat class="pt-3">
+                    <v-card flat class="pt-3" height="380">
                         <table class="tbl_type ver10"   id="table01">
                             <caption>헤더 고정 테이블</caption>
                             <colgroup>
