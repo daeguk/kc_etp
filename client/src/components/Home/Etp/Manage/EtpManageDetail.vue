@@ -1,149 +1,142 @@
 <template>
-
-    <div>
-
-        <!-- 지수 상세 팝업 -->
-        <v-dialog v-model="showIndexDetailDialog" persistent max-width="1400">
-            <IndexDetailInfo        v-if="showIndexDetailDialog" 
-            
-                                    :paramData="indexBasic" 
-                                    :showDialog="showIndexDetailDialog" 
-                                    :showView="false"
-                                    @fn_closePop="fn_close">
-            </IndexDetailInfo>
-        </v-dialog>
-
-        <v-layout row>
-            <v-flex xs12>
-                <v-card flat ma-3>
-                <!-- content내용 -->
-                    <div class="title01_w">
-                        <v-card-title primary-title>
-                            <div class="title_wrap01">
-                                <h3 class="headline mb-0">
-                                    {{this.etpBasic.F16002}}
-                                    <span class="grey--text">{{etpBasic.F16013}}</span>
-                                </h3>
-                                <!--div class="right_btn"  v-if="showEtpManageDetailDialog">
-                                    <v-layout align-right>
-                                        <v-flex xs12 sm4 text-xs-center>                                         
-                                            <div class="btn_r">
-                                                <v-btn icon  @click.stop="fn_close">
-                                                    <v-icon>close</v-icon>
-                                                </v-btn>
-                                            </div>
-                                        </v-flex>
-                                    </v-layout>
-                                </div-->
-                                <div class="right_btn"  v-if="!showEtpManageDetailDialog">
-                                    <v-layout align-right>
-                                        <v-flex xs12 sm4 text-xs-center>
-                                            <div class="btn_r">
-                                                <v-btn
-                                                    outline
-                                                    color="primary"
-                                                    small
-                                                    @click="fn_goBack()"
-                                                >목록으로 돌아가기</v-btn>
-                                            </div>
-                                        </v-flex>
-                                    </v-layout>
-                                </div>
+  <div>
+    <!-- 지수 상세 팝업 -->
+    <v-dialog v-model="showIndexDetailDialog" persistent max-width="1400">
+      <IndexDetailInfo        
+        v-if="showIndexDetailDialog" 
+        :paramData="indexBasic" 
+        :showDialog="showIndexDetailDialog" 
+        :showView="false"
+        @fn_closePop="fn_close">
+      </IndexDetailInfo>
+    </v-dialog>
+    <v-layout row>
+      <v-flex xs12>
+        <v-card flat ma-3>
+        <!-- content내용 -->
+          <div class="title01_w">
+            <v-card-title primary-title>
+              <div class="title_wrap01">
+                <h3 class="headline mb-0">
+                  {{this.etpBasic.F16002}}
+                  <span class="grey--text">{{etpBasic.F16013}}</span>
+                </h3>
+                <!--div class="right_btn"  v-if="showEtpManageDetailDialog">
+                    <v-layout align-right>
+                        <v-flex xs12 sm4 text-xs-center>                                         
+                            <div class="btn_r">
+                                <v-btn icon  @click.stop="fn_close">
+                                    <v-icon>close</v-icon>
+                                </v-btn>
                             </div>
-                        </v-card-title>
-                    </div>
-
-
-                    <div class="graph_01_w">
-
-                        <div class="sub_title_num">
-                            {{etpBasic.F15001}}
-                            <span v-if="etpBasic.F15472 <= 0" class="text_blue">{{etpBasic.F15472}}({{etpBasic.F15004}})%</span>
-                            <span v-else class="text_red">{{etpBasic.F15472}}({{etpBasic.F15004}})%</span>
-                            <p>Last Updated : {{etpBasic.fmt_F12506}}</p>
-                        </div>
-                        <div class="index_nums">
-                            <v-layout>
-                                <v-flex>
-                                        <ul>
-                                            <li>iNAV</li>
-                                            <li class="number">{{formatNumber(etpBasic.F15301)}}</li>
-                                            <li v-if="etpBasic.F30818 <= 0" class="number2 text_blue"> {{formatNumber(etpBasic.F30818)}}%</li>
-                                            <li v-else class="number2 text_red"> {{formatNumber(etpBasic.F30818)}}%</li>
-                                        </ul>
-                                </v-flex>
-                                <v-flex><ul>
-                                            <li>기초지수</li>
-                                            <li class="number">{{formatNumber(etpBasic.F15318)}}</li>
-                                            <li v-if="etpBasic.F30823 <= 0" class="number2 text_blue"> {{formatNumber(etpBasic.F30823)}}%</li>
-                                            <li v-else class="number2 text_red"> {{formatNumber(etpBasic.F30823)}}%</li>
-                                        </ul>
-                                </v-flex>
-                                <v-flex class="ver1">
-                                    <ul>
-                                            <li>시가총액</li>
-                                            <li class="number"> {{formatNumber(etpBasic.F15028 / 1000000000)}}십억</li>
-                                            <li></li>
-                                        </ul>
-                                </v-flex>
-                                <v-flex class="ver2">
-                                        <ul>
-                                            <li>거래량</li>
-                                            <li class="number">{{formatInt(etpBasic.F15015)}}주</li>
-                                            <li class="number2 text_green">AVG(3M):{{formatInt(etpBasic.F13510)}}</li>
-                                        </ul>
-                                </v-flex>
-                                <v-flex class="ver3">
-                                    <ul>
-                                            <li>거래대금</li>
-                                            <li class="number">{{formatNumber(etpBasic.F15023/10000000)}}억</li>
-                                            <li class="number2 text_green">AVG(3M):{{formatNumber(etpBasic.F13516/10000000)}}억</li>
-                                        </ul>
-                                </v-flex>
-                            </v-layout>
-                        </div>
-                    </div>
-                    <LineEtpMultiChart :etpBasic="etpBasic"></LineEtpMultiChart>
-                    <div class="tab2_w">
-                        <v-layout row wrap>
-                            <v-flex xs12>
-                                <v-tabs fixed-tabs light v-model="tab5" align-with-title>
-                                    <v-tabs-slider color="#1976d2"></v-tabs-slider>
-
-                                    <v-tab v-for="item in items5" :key="item">{{ item }}</v-tab>
-                                </v-tabs>
-
-                                <v-tabs-items v-model="tab5">
-                                    <v-tab-item>
-                                        <EtpManageDetailAnalysisTab     v-if="showEtpManageDetailDialogBySub"
-                                                                        :etpBasic="paramData"
-                                                                        @showMessageBox="showMessageBox">
-                                        </EtpManageDetailAnalysisTab>
-                                    </v-tab-item>
-                                    <v-tab-item>
-                                        <EtpManageDetailBasicInfoTab    v-if="showEtpManageDetailDialogBySub"
-
-                                                                        :paramData="paramData"
-                                                                        :etpBasic="etpBasic"
-                                                                        :indexBasic="indexBasic"
-                                                                        @showMessageBox="showMessageBox"
-                                                                        @showDetail="showDetail">
-                                        </EtpManageDetailBasicInfoTab>
-                                    </v-tab-item>
-                                </v-tabs-items>
-                            </v-flex>
-                        </v-layout>
-                    </div>
-                </v-card>
-            </v-flex>
-            <!--v-flex class="conWidth_right">
-                <ComFavorItemSub    @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
-            </v-flex-->
-            <ConfirmDialog ref="confirm"></ConfirmDialog>
-        </v-layout>
-    </div>
+                        </v-flex>
+                    </v-layout>
+                </div-->
+                <div class="right_btn"  v-if="!showEtpManageDetailDialog">
+                  <v-layout align-right>
+                    <v-flex xs12 sm4 text-xs-center>
+                      <div class="btn_r">
+                        <v-btn
+                            outline
+                            color="primary"
+                            small
+                            @click="fn_goBack()"
+                        >목록으로 돌아가기</v-btn>
+                      </div>
+                    </v-flex>
+                  </v-layout>
+                </div>
+              </div>
+            </v-card-title>
+          </div>
+          <div class="graph_01_w">
+            <div class="sub_title_num">
+              {{etpBasic.F15001}}
+              <span v-if="etpBasic.F15472 <= 0" class="text_blue">{{etpBasic.F15472}}({{etpBasic.F15004}})%</span>
+              <span v-else class="text_red">{{etpBasic.F15472}}({{etpBasic.F15004}})%</span>
+              <p>Last Updated : {{etpBasic.fmt_F12506}}</p>
+            </div>
+            <div class="index_nums">
+              <v-layout>
+                <v-flex>
+                  <ul>
+                    <li>iNAV</li>
+                    <li class="number">{{formatNumber(etpBasic.F15301)}}</li>
+                    <li v-if="etpBasic.F30818 <= 0" class="number2 text_blue"> {{formatNumber(etpBasic.F30818)}}%</li>
+                    <li v-else class="number2 text_red"> {{formatNumber(etpBasic.F30818)}}%</li>
+                  </ul>
+                </v-flex>
+                <v-flex>
+                  <ul>
+                    <li>기초지수</li>
+                    <li class="number">{{formatNumber(etpBasic.F15318)}}</li>
+                    <li v-if="etpBasic.F30823 <= 0" class="number2 text_blue"> {{formatNumber(etpBasic.F30823)}}%</li>
+                    <li v-else class="number2 text_red"> {{formatNumber(etpBasic.F30823)}}%</li>
+                  </ul>
+                </v-flex>
+                <v-flex class="ver1">
+                  <ul>
+                    <li>시가총액</li>
+                    <li class="number"> {{formatNumber(etpBasic.F15028 / 1000000000)}}십억</li>
+                    <li></li>
+                  </ul>
+                </v-flex>
+                <v-flex class="ver2">
+                  <ul>
+                    <li>거래량</li>
+                    <li class="number">{{formatInt(etpBasic.F15015)}}주</li>
+                    <li class="number2 text_green">AVG(3M):{{formatInt(etpBasic.F13510)}}</li>
+                  </ul>
+                </v-flex>
+                <v-flex class="ver3">
+                  <ul>
+                    <li>거래대금</li>
+                    <li class="number">{{formatNumber(etpBasic.F15023/10000000)}}억</li>
+                    <li class="number2 text_green">AVG(3M):{{formatNumber(etpBasic.F13516/10000000)}}억</li>
+                  </ul>
+                </v-flex>
+              </v-layout>
+            </div>
+          </div>
+          <LineEtpMultiChart :etpBasic="etpBasic"></LineEtpMultiChart>
+          <div class="tab2_w">
+            <v-layout row wrap>
+              <v-flex xs12>
+                <v-tabs fixed-tabs light v-model="tab5" align-with-title>
+                  <v-tabs-slider color="#1976d2"></v-tabs-slider>
+                  <v-tab v-for="item in items5" :key="item">{{ item }}</v-tab>
+                </v-tabs>
+                <v-tabs-items v-model="tab5">
+                  <v-tab-item>
+                    <EtpManageDetailAnalysisTab     
+                      v-if="showEtpManageDetailDialogBySub"
+                      :etpBasic="paramData"
+                      @showMessageBox="showMessageBox">
+                    </EtpManageDetailAnalysisTab>
+                  </v-tab-item>
+                  <v-tab-item>
+                    <EtpManageDetailBasicInfoTab    
+                      v-if="showEtpManageDetailDialogBySub"
+                      :paramData="paramData"
+                      :etpBasic="etpBasic"
+                      :indexBasic="indexBasic"
+                      @showMessageBox="showMessageBox"
+                      @showDetail="showDetail">
+                    </EtpManageDetailBasicInfoTab>
+                  </v-tab-item>
+                </v-tabs-items>
+              </v-flex>
+            </v-layout>
+          </div>
+        </v-card>
+      </v-flex>
+      <!--v-flex class="conWidth_right">
+          <ComFavorItemSub    @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
+      </v-flex-->
+      <ConfirmDialog ref="confirm"></ConfirmDialog>
+    </v-layout>
+  </div>
 </template>
-
 
 <script>
 //import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";

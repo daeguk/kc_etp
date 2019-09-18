@@ -67,10 +67,10 @@ export default {
   data() {
     return {
         loginDialog: true,
-        email: "",
-        password: "",
-        // email: "test@hanwha.com",
-        // password: "111aaa...",
+        // email: "",
+        // password: "",
+        email: "test@koscom.co.kr",
+        password: "111aaa...",
         status: 0,
     };
   },

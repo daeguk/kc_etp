@@ -876,5 +876,31 @@
         AND F12506 = (SELECT MAX(F12506) from td_etp_sector)
     </select>
 
+    <!--
+    * ETP MULTI FACTOR 정보를 조회한다.
+    * 2019-09-17  ThreeOn
+ELECT SUM(A.F34743 * B.SIZE) / SUM(A.F34743)
+FROM td_etfpdf_basic A, td_msci_factor B
+WHERE A.F16013 = '069500' 
+AND A.F12506 = '20190916' 
+AND A.F16316 = B.ISIN_CODE
+ORDER BY A.F34743 DESC;    
+    -->
+    <select id="getEtpMultiFactor">
+      SELECT SUM(A.F34743 * B.MOMENTUM) / SUM(A.F34743) AS MOMENTUM,
+        SUM(A.F34743 * B.SIZE) / SUM(A.F34743) AS SIZE,
+        SUM(A.F34743 * B.GROWTH) / SUM(A.F34743) AS GROWTH,
+        SUM(A.F34743 * B.LIQUIDITY) / SUM(A.F34743) AS LIQUIDITY,
+        SUM(A.F34743 * B.YIELD) / SUM(A.F34743) AS YIELD,
+        SUM(A.F34743 * B.QUALITY) / SUM(A.F34743) AS QUALITY,
+        SUM(A.F34743 * B.VOL) / SUM(A.F34743) AS VOL,
+        SUM(A.F34743 * B.VALUE) / SUM(A.F34743) AS VALUE
+       FROM td_etfpdf_basic A, td_msci_factor B
+      WHERE A.F16013 = #{F16013}
+      AND A.F16316 = B.ISIN_CODE
+      AND A.F12506 = (SELECT MAX(F12506) from td_etfpdf_basic)
+      AND B.TRADE_DATE = (SELECT MAX(TRADE_DATE) from td_msci_factor)
+    </select>
+
 
 </mapper>
