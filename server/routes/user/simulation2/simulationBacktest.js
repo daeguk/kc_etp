@@ -3041,7 +3041,7 @@ var	fn_get_simulation_data  =   function(
                                     for( var k=0; k < not_jongmok.length; k++ ) {
                                         var   v_key   =   not_jongmok[k];
 
-                                        if( v_item.org_jongmok[ v_key ] != "undefined" ) {
+                                        if( typeof v_item.org_jongmok[ v_key ] != "undefined" ) {
                                             if( j==0 ) {
                                                 v_item.org_jongmok[ v_key ].BEFORE_IMPORTANCE   =   "-1";
                                             }
