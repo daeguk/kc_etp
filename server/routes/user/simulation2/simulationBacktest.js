@@ -93,6 +93,8 @@ var saveBaicInfo2 = function(req, res) {
                             var msg         =   {};
                             var exist_yn    =   "Y";
 
+                            paramData.changeGrpCdYn  =   "0";
+
                             /* 기존에 등록된 prev_scen_cd 가 없는 경우 ( 신규 건 ) */
                             if( typeof paramData.prev_scen_cd == "undefined" || paramData.prev_scen_cd == "" ) {
                                 paramData.status    =   "insert";
@@ -156,6 +158,7 @@ var saveBaicInfo2 = function(req, res) {
                             if(     paramData.status        ==  "modify"
                                 &&  paramData.prev_grp_cd   !=  paramData.grp_cd ) {
 
+                                paramData.changeGrpCdYn  =   "1";
                                 stmt = mapper.getStatement('simulationBacktest', 'getExistSubCnt', paramData, format);
                                 log.debug(stmt);
 
@@ -324,9 +327,8 @@ var saveBaicInfo2 = function(req, res) {
                         if( paramData.status  ==  "modify" ) {
 
                             try{
-
                                 stmt = mapper.getStatement('simulation2', 'getSimulMast2', paramData, format);
-                                log.debug(stmt);
+                                log.debug(stmt, paramData);
 
                                 conn.query(stmt, function(err, rows) {
 

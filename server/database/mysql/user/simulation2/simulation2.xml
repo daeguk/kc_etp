@@ -166,7 +166,7 @@
     -->
     <select id="getSimulMast2">
 
-        SELECT      /* simulation2.getSimulList2 시뮬레이션 마스터 정보를 조회한다. */
+        SELECT      /* simulation2.getSimulMast2 시뮬레이션 마스터 정보를 조회한다. */
 
                     tm_simul_mast.grp_cd                                    AS  grp_cd                      /* 그룹코드(상위코드) */
                 ,   tm_simul_mast.scen_cd                                   AS  scen_cd                     /* 시나리오 코드 */
@@ -187,10 +187,18 @@
 
           FROM  tm_simul_mast
          WHERE  1 = 1
-           AND  tm_simul_mast.grp_cd            =   #{grp_cd}       /* 그룹코드(상위코드) */
-           AND  tm_simul_mast.scen_cd           =   #{scen_cd}      /* 시나리오 코드 */
 
-           AND  tm_simul_mast.reg_id            =   #{user_id}      /* 등록자 ID */
+        <if   test= ' changeGrpCdYn == "1" ' >
+           AND  tm_simul_mast.grp_cd        =   #{prev_grp_cd}      /* 그룹코드(상위코드) */
+           AND  tm_simul_mast.scen_cd       =   #{prev_scen_cd}     /* 시나리오코드 */
+        </if>
+
+        <if   test= ' changeGrpCdYn == "0" ' >
+           AND  tm_simul_mast.grp_cd        =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_mast.scen_cd       =   #{scen_cd}          /* 시나리오코드 */
+        </if>
+
+           AND  tm_simul_mast.reg_id        =   #{user_id}          /* 등록자 ID */
 
          ORDER  BY      tm_simul_mast.scen_cd
                     ,   tm_simul_mast.scen_order_no
@@ -268,8 +276,16 @@
           FROM  tm_simul_portfolio2
 
          WHERE  1 = 1
-           AND  tm_simul_portfolio2.grp_cd       =   #{grp_cd}       /* 그룹코드(상위코드) */
-           AND  tm_simul_portfolio2.scen_cd      =   #{scen_cd}      /* 시나리오 코드 */
+
+        <if   test= ' changeGrpCdYn == "1" ' >
+           AND  tm_simul_portfolio2.grp_cd        =   #{prev_grp_cd}      /* 그룹코드(상위코드) */
+           AND  tm_simul_portfolio2.scen_cd       =   #{prev_scen_cd}     /* 시나리오코드 */
+        </if>
+
+        <if   test= ' changeGrpCdYn == "0" ' >
+           AND  tm_simul_portfolio2.grp_cd        =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_portfolio2.scen_cd       =   #{scen_cd}          /* 시나리오코드 */
+        </if>           
 
          ORDER  BY      tm_simul_portfolio2.scen_cd
                     ,   tm_simul_portfolio2.rebalance_date
