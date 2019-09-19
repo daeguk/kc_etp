@@ -392,9 +392,11 @@ export default {
             var tr          =   $(this).closest('tr');
             var rowIndex    =   tr.index();
 
-            if( $(this).val() != '' ) {
-                vm.fn_resetErrorMessage();
+            vm.fn_resetErrorMessage();
+            vm.fn_resetRecords( rowIndex );            
 
+            if( $(this).val() != '' ) {
+                
                 /* 종목코드인 경우에만 코드 검색 */
                 if( $(this).attr("name") == "F16013" ) {
                     /* 종목코드를 검색한다. */
@@ -416,20 +418,20 @@ export default {
                         }
                     });
                 }
+            }else{
+                /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
+                vm.fn_setImportanceMethodCd( vm.importance_method_cd );                
             }
         });
 
 
         /* table tr 에서 종목코드 change 시 레코드 초기화   */
         $('#table01 tbody').on('change', "input[name='F16013']", function() {
-            var tr          =   $(this).closest('tr');
-            var rowIndex    =   tr.index();
+            // var tr          =   $(this).closest('tr');
+            // var rowIndex    =   tr.index();
 
-            vm.fn_resetErrorMessage();
-            vm.fn_resetRecords( rowIndex );
-
-            /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
-            vm.fn_setImportanceMethodCd( vm.importance_method_cd );
+            // vm.fn_resetErrorMessage();
+            // vm.fn_resetRecords( rowIndex );
         });
 
 
@@ -1347,7 +1349,6 @@ export default {
             tr.find( "td:eq(3)" ).text( "" );                   /* 시가총액 */
 
             tr.find( "td [name=importance]" ).val( "" );        /* 비중 */
-//          tr.find( "td:eq(5)" ).text( "" );                   /* 지수적용비율 */
         },
 
         /*
