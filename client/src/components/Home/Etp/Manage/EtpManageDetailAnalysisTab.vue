@@ -3,19 +3,6 @@
   <v-layout row wrap>
     <v-flex xs12 flat>
       <div class="indexinfo_box01">
-    <!--
-        <h4 class="mb-0">Fund Flows</h4>
-        <span>기간별 자금유입현황을 추정합니다.</span>
-        -->
-      </div>
-    </v-flex>
-    <v-flex xs12 flat>
-      <div class="indexinfo_box01">
-        <EtpMultiFactor :etpBasic="etpBasic"></EtpMultiFactor>
-      </div>
-    </v-flex>
-    <v-flex xs12 flat>
-      <div class="indexinfo_box01">
         <h4 class="mb-0">Performance</h4>
         <div class="graph_02_w">
           <EtpPerformColumnChart :itemLists="indexLists"></EtpPerformColumnChart>
@@ -103,6 +90,16 @@
         <BarEtpWeightChart :etpBasic="etpBasic"></BarEtpWeightChart>
       </div>
     </v-flex>
+    <v-flex xs12 flat>
+      <div class="indexinfo_box01">
+        <EtpFundFlow :etpBasic="etpBasic"></EtpFundFlow>
+      </div>
+    </v-flex>
+    <v-flex xs12 flat>
+      <div class="indexinfo_box01">
+        <EtpMultiFactor :etpBasic="etpBasic"></EtpMultiFactor>
+      </div>
+    </v-flex>
   </v-layout>
   </v-container>
 </template>
@@ -113,6 +110,7 @@ import TableEtpWeightChart from "@/components/common/chart/TableEtpWeightChart";
 import PieEtpWeightChart from "@/components/common/chart/PieEtpWeightChart";
 import BarEtpWeightChart from "@/components/common/chart/BarEtpWeightChart";
 import EtpPerformColumnChart from "@/components/common/chart/EtpPerformColumnChart";
+import EtpFundFlow from "@/components/Home/Etp/Manage/EtpFundFlow";
 import EtpMultiFactor from "@/components/Home/Etp/Manage/EtpMultiFactor";
 import MastPopup from "@/components/common/popup/MastPopup";
 import Config from "@/js/config.js";
@@ -168,6 +166,7 @@ export default {
     PieEtpWeightChart,
     BarEtpWeightChart,
     EtpPerformColumnChart,
+    EtpFundFlow,
     EtpMultiFactor,
     MastPopup,
   },

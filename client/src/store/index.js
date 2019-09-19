@@ -20,6 +20,8 @@ const store = new Vuex.Store({
     befDates: {
       bef1Week: "",
       bef1Month: "",
+      bef3Month: "",
+      bef6Month: "",
       befYtd: "",
       bef1Year: "",
       bef3Year: "",
@@ -49,6 +51,8 @@ const store = new Vuex.Store({
     [Constant.SET_BEF_DATES]: (state, payload) => {
       state.befDates.bef1Week = payload.bef1Week;
       state.befDates.bef1Month = payload.bef1Month;
+      state.befDates.bef3Month = payload.bef3Month;
+      state.befDates.bef6Month = payload.bef6Month;
       state.befDates.befYtd = payload.befYtd;
       state.befDates.bef1Year = payload.bef1Year;
       state.befDates.bef3Year = payload.bef3Year;

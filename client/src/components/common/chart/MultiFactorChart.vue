@@ -46,8 +46,8 @@ export default {
   },    
   watch: {
     'etpBasic.F16013': function() {
-      console.log("watch.........MultiFactorChart etpBasic.F16013: ");
-      console.log(this.etpBasic);
+      // console.log("watch.........MultiFactorChart etpBasic.F16013: ");
+      // console.log(this.etpBasic);
       this.drawInit();
       this.dataInit();
     },
@@ -55,8 +55,8 @@ export default {
   created: function() {
   },
   mounted: function() {
-    console.log("MultiFactorChart..........");
-    console.log("gubun : " + this.gubun);
+    // console.log("MultiFactorChart..........");
+    // console.log("gubun : " + this.gubun);
     this.canvas = document.getElementById(this.chartId);
     this.ctx = this.canvas.getContext('2d');
     // this.mrect = this.canvas.getBoundingClientRect();
@@ -92,7 +92,7 @@ export default {
     },
     getEtpMultiFactor: function() {
       var vm = this;
-      console.log("getEtpMultiFactor.............");
+      // console.log("getEtpMultiFactor.............");
       axios.get( Config.base_url + "/user/etp/getEtpMultiFactor", {
         params: vm.etpBasic
       }).then(function(response) {
@@ -135,49 +135,47 @@ export default {
       var tx = 0;
       var _hpos = 0;
 
-      console.log("drawChart.......");
-      console.log(this.mRes);
+      // console.log("drawChart.......");
+      // console.log(this.mRes);
       c.fillStyle = this.color2;
-
       _hpos = this.cY + 10;
       tx = this.calWidth(this.mRes.MOMENTUM);
       c.fillRect(this.cX, _hpos, tx, this.lineH);
-      c.fillStyle = this.color3;
 
+      c.fillStyle = this.color3;
       _hpos = _hpos + this.lineDH;
       tx = this.calWidth(this.mRes.SIZE);
       c.fillRect(this.cX, _hpos, tx, this.lineH);
-      c.fillStyle = this.color4;
 
+      c.fillStyle = this.color4;
       _hpos = _hpos + this.lineDH;
       tx = this.calWidth(this.mRes.GROWTH);
       c.fillRect(this.cX, _hpos, tx, this.lineH);
-      c.fillStyle = this.color5;
 
+      c.fillStyle = this.color5;
       _hpos = _hpos + this.lineDH;
       tx = this.calWidth(this.mRes.LIQUIDITY);
       c.fillRect(this.cX, _hpos, tx, this.lineH);
-      c.fillStyle = this.color6;
 
+      c.fillStyle = this.color6;
       _hpos = _hpos + this.lineDH;
       tx = this.calWidth(this.mRes.YIELD);
       c.fillRect(this.cX, _hpos, tx, this.lineH);
-      c.fillStyle = this.color7;
 
+      c.fillStyle = this.color7;
       _hpos = _hpos + this.lineDH;
       tx = this.calWidth(this.mRes.QUALITY);
       c.fillRect(this.cX, _hpos, tx, this.lineH);
-      c.fillStyle = this.color8;
 
+      c.fillStyle = this.color8;
       _hpos = _hpos + this.lineDH;
       tx = this.calWidth(this.mRes.VOL);
       c.fillRect(this.cX, _hpos, tx, this.lineH);
-      c.fillStyle = this.color9;
 
+      c.fillStyle = this.color9;
       _hpos = _hpos + this.lineDH;
       tx = this.calWidth(this.mRes.VALUE);
       c.fillRect(this.cX, _hpos, tx, this.lineH);
-      c.fillStyle = this.color10;
     },
     openMastModal: function() {
       this.$emit("openMastModal", this.gubun);

@@ -87,23 +87,16 @@ try {
 * INDEX 분석정보 조회
 */
 var getIndexAnal = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getIndexAnal 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getIndexAnal 호출됨.');
+  log.debug(req.query);
 
-  console.log(req.query);
-  /*
-  var options = {
-    F16013 : req.query.F16013,
-    market_id: req.query.market_id,
-  };
-  */
- var options = req.query;
+  var options = req.query;
   try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
-    console.log(options);
     var stmt = mapper.getStatement('common.item', 'getIndexAnal', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -115,7 +108,7 @@ var getIndexAnal = function(req, res) {
       });
     });
   } catch(exception) {
-    console.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -388,9 +381,9 @@ try {
 * ETP 분석정보 조회
 */
 var getEtpAnal = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getEtpAnal 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getEtpAnal 호출됨.');
 
-  console.log(req.query);
+  log.debug(req.query);
   /*
   var options = {
     F16013 : req.query.F16013,
@@ -402,9 +395,8 @@ try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
-    console.log(options);
     var stmt = mapper.getStatement('common.item', 'getEtpAnal', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -416,7 +408,7 @@ try {
       });
     });
   } catch(exception) {
-    console.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",
@@ -429,23 +421,16 @@ try {
 * ETP 분석정보 조회(NAV)
 */
 var getEtpNavAnal = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getEtpNavAnal 호출됨.');
+  log.debug('marketInfo 모듈 안에 있는 getEtpNavAnal 호출됨.');
+  log.debug(req.query);
+  var options = req.query;
 
-  console.log(req.query);
-  /*
-  var options = {
-    F16013 : req.query.F16013,
-    market_id: req.query.market_id,
-  };
-  */
- var options = req.query;
-try {
+  try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
-    console.log(options);
     var stmt = mapper.getStatement('common.item', 'getEtpNavAnal', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -457,7 +442,7 @@ try {
       });
     });
   } catch(exception) {
-    console.log("err=>", exception);
+    log.debug("err=>", exception);
     res.json({
       success: false,
       message: "Error while performing Query.",

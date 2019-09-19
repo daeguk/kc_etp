@@ -1047,6 +1047,7 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 
 .indexinfo_box01 .layout{margin-top:5px !important;}
 .multi_sub_tit{padding-left:5px;}
+.multi_sub_sub_tit{padding-left:5px; font-size:8px;}
 .multif_r .flex{width:300px;margin-left:5px;}
 .multif_w div{height:47px;padding-top:10px}
 .multif_w div span{line-height: 30px; display:inline-block; vertical-align: top; padding-left:5px;}
@@ -1054,4 +1055,5 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .multif_box1 span{padding-left:5px;}
 .multif_t_tit{text-align: center; margin-top:5px;}
 .multif_t_tit .m_title{font-weight:600 !important;text-align: center;}
+.multif_btn1{color:#85c406; cursor: pointer;}
 .multif_btn2{float:right;color:#85c406; cursor: pointer;}

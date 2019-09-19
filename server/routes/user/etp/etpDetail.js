@@ -416,7 +416,42 @@ var getEtpMultiFactor = function(req, res) {
   }
 }
 
+/* 
+ * ETP FundFlowRank 정보를 조회한다.
+ * 2019-09-17  ThreeOn
+ */
+var getEtpFundFlowRank = function(req, res) {
+  try {
+    log.debug('etpDetail.getEtpFundFlowRank 호출됨.');
+
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    // console.log(req.query);
+    var paramData = req.query;
+    var stmt = mapper.getStatement('etpDetail', 'getEtpFundFlowRank', paramData, { language: 'sql', indent: ' '});
+    log.debug(stmt, paramData);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt, function(err, rows) {
+        res.json({
+          success: true,
+          results: rows
+      });
+        res.end();
+      });
+    });
+  } catch (expetion) {
+    log.error(expetion, paramData);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+  }
+}
+
 module.exports.getEtpBasic = getEtpBasic;
 module.exports.getEtpPerformance = getEtpPerformance;
 module.exports.getEtpWeightList = getEtpWeightList;
 module.exports.getEtpMultiFactor = getEtpMultiFactor;
+module.exports.getEtpFundFlowRank = getEtpFundFlowRank;

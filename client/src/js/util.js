@@ -170,6 +170,30 @@ var util = {
 
       return myear + "" + mmonth + "" + mday;
     },
+    getBef3Month: function() {
+      var mdate = new Date();
+      mdate.setMonth(mdate.getMonth()-3);
+      var myear = mdate.getFullYear();
+      var mmonth = mdate.getMonth() + 1;
+      var mday = mdate.getDate();
+
+      if(mmonth < 10) mmonth = "0" + mmonth;
+      if(mday < 10) mday = "0" + mday;
+
+      return myear + "" + mmonth + "" + mday;
+    },
+    getBef6Month: function() {
+      var mdate = new Date();
+      mdate.setMonth(mdate.getMonth()-6);
+      var myear = mdate.getFullYear();
+      var mmonth = mdate.getMonth() + 1;
+      var mday = mdate.getDate();
+
+      if(mmonth < 10) mmonth = "0" + mmonth;
+      if(mday < 10) mday = "0" + mday;
+
+      return myear + "" + mmonth + "" + mday;
+    },
     getBefYtd: function() {
       var mdate = new Date();
       var myear = mdate.getFullYear();

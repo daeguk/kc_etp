@@ -31,6 +31,8 @@ export default {
 
       befDates.bef1Week = util.getBef1Week();
       befDates.bef1Month = util.getBef1Month();
+      befDates.bef3Month = util.getBef3Month();
+      befDates.bef6Month = util.getBef6Month();
       befDates.befYtd = util.getBefYtd();
       befDates.bef1Year = util.getBef1Year();
       befDates.bef3Year = util.getBef3Year();

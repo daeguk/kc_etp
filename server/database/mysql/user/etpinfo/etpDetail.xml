@@ -876,16 +876,6 @@
         AND F12506 = (SELECT MAX(F12506) from td_etp_sector)
     </select>
 
-    <!--
-    * ETP MULTI FACTOR 정보를 조회한다.
-    * 2019-09-17  ThreeOn
-ELECT SUM(A.F34743 * B.SIZE) / SUM(A.F34743)
-FROM td_etfpdf_basic A, td_msci_factor B
-WHERE A.F16013 = '069500' 
-AND A.F12506 = '20190916' 
-AND A.F16316 = B.ISIN_CODE
-ORDER BY A.F34743 DESC;    
-    -->
     <select id="getEtpMultiFactor">
       SELECT SUM(A.F34743 * B.MOMENTUM) / SUM(A.F34743) AS MOMENTUM,
         SUM(A.F34743 * B.SIZE) / SUM(A.F34743) AS SIZE,
@@ -900,6 +890,14 @@ ORDER BY A.F34743 DESC;
       AND A.F16316 = B.ISIN_CODE
       AND A.F12506 = (SELECT MAX(F12506) from td_etfpdf_basic)
       AND B.TRADE_DATE = (SELECT MAX(TRADE_DATE) from td_msci_factor)
+    </select>
+    <select id="getEtpFundFlowRank">
+      SELECT A.F16013, B.F16002, (A.F15301 *  (A.F33835 - A.F33836)) AS FLOW
+      FROM td_etp_hist A, td_etp_basic B
+      WHERE A.F12506 > #{befDate}
+      AND A.F16013 = B.F16013
+      GROUP BY A.F16013 
+      ORDER BY FLOW DESC, F16013 ASC
     </select>
 
 
