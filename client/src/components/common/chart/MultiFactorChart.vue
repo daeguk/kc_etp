@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div style="text-align:center;">
-      <span>{{etpBasic.F16002}}</span> 
-      <span v-if="gubun==1" @click="openMastModal" style="float:right;color:#69F0AE">[종목바꾸기]</span>
+    <div style="text-align:center; font-weight:600;padding-bottom:5px;">
+      <span class="m_title">{{etpBasic.F16002}}</span> 
+      <span v-if="gubun==1" @click="openMastModal" class="multif_btn2">[종목바꾸기]</span>
     </div>
     <span>Underweight</span><span style="float:right;">Overweight</span>
-    <div style="border: 1px solid #69F0AE;">
+    <div style="border: 1px solid #85c406;">
       <canvas :id=chartId :width=chart.width :height=chart.height>
       </canvas>
     </div>
@@ -24,7 +24,15 @@ export default {
       ctx:{},
       chart:{width:270, height:360},
       mRes: {},
-      color2: '#69F0AE',
+      color2: '#b9e0f7',
+      color3: '#72cdf4',
+      color4: '#1e99e8',
+      color5: '#0076be',
+      color6: '#dcddde',
+      color7: '#B6B8BA',
+      color8: '#7E8083',
+      color9: '#FBB040',
+      color10: '#F58025',
       cX: 0,  // Center X
       cY: 0,  // Center Y
       cW: 0,  // 차트 길이
@@ -134,34 +142,42 @@ export default {
       _hpos = this.cY + 10;
       tx = this.calWidth(this.mRes.MOMENTUM);
       c.fillRect(this.cX, _hpos, tx, this.lineH);
+      c.fillStyle = this.color3;
 
       _hpos = _hpos + this.lineDH;
       tx = this.calWidth(this.mRes.SIZE);
       c.fillRect(this.cX, _hpos, tx, this.lineH);
+      c.fillStyle = this.color4;
 
       _hpos = _hpos + this.lineDH;
       tx = this.calWidth(this.mRes.GROWTH);
       c.fillRect(this.cX, _hpos, tx, this.lineH);
+      c.fillStyle = this.color5;
 
       _hpos = _hpos + this.lineDH;
       tx = this.calWidth(this.mRes.LIQUIDITY);
       c.fillRect(this.cX, _hpos, tx, this.lineH);
+      c.fillStyle = this.color6;
 
       _hpos = _hpos + this.lineDH;
       tx = this.calWidth(this.mRes.YIELD);
       c.fillRect(this.cX, _hpos, tx, this.lineH);
+      c.fillStyle = this.color7;
 
       _hpos = _hpos + this.lineDH;
       tx = this.calWidth(this.mRes.QUALITY);
       c.fillRect(this.cX, _hpos, tx, this.lineH);
+      c.fillStyle = this.color8;
 
       _hpos = _hpos + this.lineDH;
       tx = this.calWidth(this.mRes.VOL);
       c.fillRect(this.cX, _hpos, tx, this.lineH);
+      c.fillStyle = this.color9;
 
       _hpos = _hpos + this.lineDH;
       tx = this.calWidth(this.mRes.VALUE);
       c.fillRect(this.cX, _hpos, tx, this.lineH);
+      c.fillStyle = this.color10;
     },
     openMastModal: function() {
       this.$emit("openMastModal", this.gubun);
