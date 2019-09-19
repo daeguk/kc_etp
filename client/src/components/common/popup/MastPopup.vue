@@ -31,16 +31,16 @@
 
                   <v-tabs-items v-model="activeTab">
                     <v-tab-item>
-                      <etfList      v-if="activeTab == 0"    @selectedItem="getSelectedItem"></etfList>
+                      <etfList      v-if="showTab == 0"    @selectedItem="getSelectedItem"></etfList>
                     </v-tab-item>
                     <v-tab-item>
-                      <etnList      v-if="activeTab == 1"    @selectedItem="getSelectedItem"></etnList>
+                      <etnList      v-if="showTab == 1"    @selectedItem="getSelectedItem"></etnList>
                     </v-tab-item>
                     <v-tab-item>
-                      <indexListDom v-if="activeTab == 2"   @selectedItem="getSelectedItem"></indexListDom>
+                      <indexListDom v-if="showTab == 2"   @selectedItem="getSelectedItem"></indexListDom>
                     </v-tab-item>
                     <v-tab-item>
-                      <indexListAll v-if="activeTab == 3"   @selectedItem="getSelectedItem"></indexListAll>
+                      <indexListAll v-if="showTab == 3"   @selectedItem="getSelectedItem"></indexListAll>
                     </v-tab-item>
                     </v-tabs-items>
                 </v-flex>
@@ -69,10 +69,11 @@ export default {
                 { id: 1, name: "ETN"            },
                 { id: 2, name: "INDEX(국내)"     },
                 { id: 3, name: "INDEX(전체)"     },
-            ],
-        dialog: false,
+            ]
+        ,   dialog: false
 
-        search		: ""
+        ,   search		: ""
+        ,   showTab     :   0
     };
   },
   components: {
@@ -87,7 +88,11 @@ export default {
   beforeDestroy() {
   },
   mounted: function() {
+    var vm = this;
+
     this.dialog = true;
+
+    vm.fn_pageMove( 0 );
   },
   methods: {
     getSelectedItem: function(sel_items, gubun) {
@@ -95,6 +100,8 @@ export default {
 // console.log("selectedItem ..............");
 // console.log(sel_items);
       this.$emit("selectedItem", sel_items, gubun);
+      this.dialog = false;
+      this.$emit("closeMastModal");
     },
     closeModal: function() {
       this.dialog = false;
@@ -105,28 +112,44 @@ export default {
         var vm = this;
 
         vm.activeTab    =   tab_id;
+
+        if( vm.activeTab == 0  ) {
+            vm.showTab = 0;
+        }else if( vm.activeTab == 1 ) {
+            vm.showTab = 1;
+        }else if( vm.activeTab == 2 ) {
+            vm.showTab = 2;
+        }else if( vm.activeTab == 3 ) {
+            vm.showTab = 3;
+        }else{
+            vm.showTab = -1;
+        }
+
 		vm.fn_filterData();
     },
 
 	fn_filterData() {
 		var vm = this;
 
-        /* ETF */
-		if( vm.activeTab == 0 ) {
-        	vm.$EventBus.$emit('fn_etfFilterData', vm.search);
-		}
-        /* ETN */
-        else if( vm.activeTab == 1 ){
-			vm.$EventBus.$emit('fn_etnFilterData', vm.search);
-		}
-        /* INDEX(국내) */
-        else if( vm.activeTab == 2 ){
-			vm.$EventBus.$emit('fn_indexListDomFilterData', vm.search);
-		}
-        /* INDEX(전체) */
-        else if( vm.activeTab == 3 ){
-			vm.$EventBus.$emit('fn_indexListAllFilterData', vm.search);
-		}
+        vm.$nextTick( function(e) {
+
+            /* ETF */
+            if( vm.activeTab == 0 ) {
+                vm.$EventBus.$emit('fn_etfFilterData', vm.search);
+            }
+            /* ETN */
+            else if( vm.activeTab == 1 ){
+                vm.$EventBus.$emit('fn_etnFilterData', vm.search);
+            }
+            /* INDEX(국내) */
+            else if( vm.activeTab == 2 ){
+                vm.$EventBus.$emit('fn_indexListDomFilterData', vm.search);
+            }
+            /* INDEX(전체) */
+            else if( vm.activeTab == 3 ){
+                vm.$EventBus.$emit('fn_indexListAllFilterData', vm.search);
+            }
+        });
 	}    
   }
 }

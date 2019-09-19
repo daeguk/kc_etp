@@ -94,8 +94,7 @@ module.exports = class {
 
         // 시뮬레이션2 정보
         ibatisMapper.createMapper(['./database/mysql/user/simulation2/simulation2.xml']);
-        ibatisMapper.createMapper(['./database/mysql/user/simulation2/simulationBacktest2.xml']);
-        ibatisMapper.createMapper(['./database/mysql/user/simulation2/simulationUpload.xml']);        
+        ibatisMapper.createMapper(['./database/mysql/user/simulation2/simulationBacktest.xml']);
 
         // 시뮬레이션 정보
         ibatisMapper.createMapper(['./database/mysql/user/simulation/simulation.xml']);

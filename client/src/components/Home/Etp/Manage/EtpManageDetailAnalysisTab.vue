@@ -3,6 +3,19 @@
   <v-layout row wrap>
     <v-flex xs12 flat>
       <div class="indexinfo_box01">
+    <!--
+        <h4 class="mb-0">Fund Flows</h4>
+        <span>기간별 자금유입현황을 추정합니다.</span>
+        -->
+      </div>
+    </v-flex>
+    <v-flex xs12 flat>
+      <div class="indexinfo_box01">
+        <EtpMultiFactor :etpBasic="etpBasic"></EtpMultiFactor>
+      </div>
+    </v-flex>
+    <v-flex xs12 flat>
+      <div class="indexinfo_box01">
         <h4 class="mb-0">Performance</h4>
         <div class="graph_02_w">
           <EtpPerformColumnChart :itemLists="indexLists"></EtpPerformColumnChart>
@@ -100,6 +113,7 @@ import TableEtpWeightChart from "@/components/common/chart/TableEtpWeightChart";
 import PieEtpWeightChart from "@/components/common/chart/PieEtpWeightChart";
 import BarEtpWeightChart from "@/components/common/chart/BarEtpWeightChart";
 import EtpPerformColumnChart from "@/components/common/chart/EtpPerformColumnChart";
+import EtpMultiFactor from "@/components/Home/Etp/Manage/EtpMultiFactor";
 import MastPopup from "@/components/common/popup/MastPopup";
 import Config from "@/js/config.js";
 import util from "@/js/util.js";
@@ -124,6 +138,10 @@ export default {
         'perform_bar04.png', 
         'perform_bar05.png'],
       barImgPath: [],
+      etpBasic1: {},
+      etpBasic1flag: false,
+      etpBasic2: {},
+      etpBasic2flag: false,
     };
   },
   watch: {
@@ -140,8 +158,8 @@ export default {
       }
     },
     'indexLists': function() {
-      console.log("indexLists...... watch");
-      console.log(this.indexLists);
+      // console.log("indexLists...... watch");
+      // console.log(this.indexLists);
     }
   },
   components: {
@@ -150,6 +168,7 @@ export default {
     PieEtpWeightChart,
     BarEtpWeightChart,
     EtpPerformColumnChart,
+    EtpMultiFactor,
     MastPopup,
   },
   created: function() {
@@ -166,25 +185,25 @@ export default {
   },
   methods: {
     init: function() {
-      console.log("EtpManageDetailAnaysisTab.................");
-      console.log(this.etpBasic);
+      // console.log("EtpManageDetailAnaysisTab.................");
+      // console.log(this.etpBasic);
       this.indexBasic.F16013 = this.etpBasic.F16257;
       this.indexBasic.market_id = "M" + util.pad(this.etpBasic.F34239, 3);
-      console.log(this.indexBasic);
+      // console.log(this.indexBasic);
       this.getEtpNavAnal(this.etpBasic);
       this.getEtpWeightList();
     },
     openWeightModal: function() {
-      console.log("openWeightModal One............");
+      // console.log("openWeightModal One............");
       this.WeightModalFlag = true;
     },
     closeWeightModal: function() {
-      console.log("closeWeightModal One............");
+      // console.log("closeWeightModal One............");
       this.WeightModalFlag = false;
     },
     getEtpWeightList: function() {
       var vm = this;
-      console.log("getEtpWeightList");
+      // console.log("getEtpWeightList");
       axios.get( Config.base_url + "/user/etp/getEtpWeightList", {
         params: vm.etpBasic
       }).then(function(response) {
@@ -197,7 +216,7 @@ export default {
       });
     },
     openMastModal: function() {  
-      console.log("openMastModal..........");
+      // console.log("openMastModal..........");
       this.MastModalFlag = true; 
     },         
     closeMastModal: function() { 
@@ -214,6 +233,14 @@ export default {
         }
       }
     },
+    getMsciFactorItem1: function(items, gubun) {
+      if(gubun == 1) {
+        this.etpBasic1 = items[0];
+        this.etpBasic1flag = true;
+      }else {
+        alert("ETF 종목만 선택할 수 있습니다.");
+      }
+    },
     deleteItem: function(item, index) {
       this.indexLists.splice(index, 1);
     },
@@ -221,7 +248,7 @@ export default {
       var vm = this;
       // vm.indexLists = [];          
       if(item.F16013 == undefined) item.F16013 = item.F16013;
-      console.log("getEtpAnal");
+      // console.log("getEtpAnal");
       axios.get(Config.base_url + "/user/marketinfo/getEtpAnal", {
         params: {
           F16013: item.F16013,
@@ -234,7 +261,7 @@ export default {
           bef10Year: vm.befDates.bef10Year,
         }
       }).then(function(response) {
-        console.log(response);
+        // console.log(response);
         if(response.data.success == false) {
           alert("해당 종목이 없습니다");
         } else {
@@ -274,7 +301,7 @@ export default {
     getEtpNavAnal: function(item) {
       var vm = this;
       // vm.indexLists = [];          
-      console.log("getEtpAnal");
+      // console.log("getEtpAnal");
       axios.get(Config.base_url + "/user/marketinfo/getEtpAnal", {
         params: {
           F16013: item.F16013,
@@ -287,7 +314,7 @@ export default {
           bef10Year: vm.befDates.bef10Year,
         }
       }).then(function(response) {
-        console.log(response);
+        // console.log(response);
         if(response.data.success == false) {
           alert("해당 종목이 없습니다");
         } else {

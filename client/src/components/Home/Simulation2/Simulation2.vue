@@ -2,12 +2,17 @@
     <v-layout row wrap class="content_margin etp_new">
         <v-flex grow>
             <v-card flat>
-
-                <v-card-title primary-title>
-                    <h3 class="headline" pb-0>
+                <v-card-title primary-title >
+                    <h3 class="headline w100" pb-0 >
                         PORTFOLIO SIMULATION |
                         <span   class="grey--text">KOSPI, KOSDAQ, ETF를 이용해 포트폴리오를 구성하고 백테스트를 수행합니다.</span>
-                    </h3>
+                   
+                     <span class="btn_r">
+                     <v-btn small flat icon>
+                          <v-icon v-on:click="fn_refresh()">refresh</v-icon>
+                    </v-btn>
+                    </span>
+                     </h3>
                 </v-card-title>
 
 
@@ -53,7 +58,8 @@
 
                                         @change="fn_resetErrorMessage();fn_checkRebalance( 'start_year');"
                                         
-                                        v-model="start_year" 
+                                        v-model="start_year"
+
                                         placeholder="선택하세요" 
                                         outline>
                             </v-select>
@@ -73,6 +79,8 @@
                                         @change="fn_resetErrorMessage();fn_checkRebalance( 'rebalance_cycle_cd');"
                                         
                                         v-model="rebalance_cycle_cd"
+                                        :disabled="rebalance_cycle_cd == ''"
+
                                         placeholder="선택하세요" 
                                         outline>
                             </v-select>
@@ -80,14 +88,14 @@
                         <v-flex xs8 row class="checkbox_w pl-2">
                             <v-layout row wrap class="light--text">
 
-                                <v-radio-group  v-model="rebalance_date_cd" row :ref="'rebalance_date_cd'">
+                                <v-radio-group  v-model="rebalance_date_cd" row >
                                     <v-radio
                                         v-for="(item, index) in arr_rebalance_date_cd"
 
                                         :key="'rebalance_date_cd_' + index"
                                         :label="item.com_dtl_name"
                                         :value="item.com_dtl_cd"
-                                        :disabled="disabled_rebalance_cd[index]"
+                                        :disabled="rebalance_cycle_cd == '' ||  disabled_rebalance_cd[index]"
 
                                         @change="fn_resetErrorMessage();fn_checkRebalance( 'rebalance_date_cd');"
 
@@ -169,7 +177,10 @@
                                     </v-select>
                                 </span>
                                 <span>
-                                    <button type='button'  class="excelup_btn" @click.stop="fn_fileClick();"></button>
+
+                                <!-- 엑셀 업로드 -->
+                                    <button type='button'  class="excelup_btn" @click.stop="fn_fileClick();" v-if='p_rebalance_file_yn == "0"'></button>
+
                                     <input type="file" name="portfolioFile" ref="portfolioFile" style="display:none;">
                                 </span>
                             </div>
@@ -177,7 +188,7 @@
                     </v-layout>
 
 
-                    <v-card flat class="pt-3">
+                    <v-card flat class="pt-3" height="380">
                         <table class="tbl_type ver10"   id="table01">
                             <caption>헤더 고정 테이블</caption>
                             <colgroup>
@@ -244,6 +255,7 @@ import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
+import _ from "lodash";
 
 import MastPopup02 from "@/components/common/popup/MastPopup02";
 import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
@@ -314,6 +326,8 @@ export default {
             ,   bench_index_cd02            :   ""          /* 벤치마크 인덱스 코드 ( large_type ) */
             ,   bench_index_cd03            :   ""          /* 벤치마크 인덱스 코드 ( middle_type ) */
             ,   bench_index_nm              :   ""          /* 벤치마크 인덱스 코드명 */
+            ,   p_rebalance_file_yn         :   "0"         /* 리밸런싱 일자가 포함된 샘플파일 유무 */
+            ,   excel_start_year            :   ""          /* 리밸런싱 파일인 경우 넘겨받은 엑셀 start_year */
 
             ,   arr_portfolio               :   []          /* 포트폴리오 설정 정보 */
             ,   arr_rebalance_date          :   []          /* 리밸런싱 일자 */
@@ -347,66 +361,8 @@ export default {
 
         table01 =   $( "#table01" );
 
-        /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
-        if(     vm.paramData && Object.keys( vm.paramData ).length > 0 
-            &&  vm.paramData.grp_cd && vm.paramData.scen_cd 
-        ) {
-
-            /* 상위 그룹 정보 및 초기 데이터가 설정된 이후 상세정보 설정되도록 함. */
-            
-            /* 상위 그룹정보를 조회한다. */
-            vm.fn_initGrpCd().then( async function(e) {
-
-                if( e && e.result ) {
-
-                    /* 초기 설정 데이터를 조회한다. */
-                    await vm.fn_initData().then( async function(e1) {
-
-                        if( e1 && e1.result ) {
-
-                            /* 시뮬레이션 마스터 정보를 조회한다. */
-                            vm.fn_getSimulMast( vm.paramData );
-                        }
-                    });
-                }
-            });
-
-        }else{
-
-            /* 상위 그룹정보를 조회한다. */
-            vm.fn_initGrpCd();
-
-            /* 초기 설정 데이터를 조회한다. */
-            vm.fn_initData().then( function(e) {
-                
-                if( e && e.result ) {                
-
-                    if( !vm.rebalance_date_cd ) {
-                        vm.rebalance_date_cd        =   "1";
-
-                        vm.old_start_year           =   vm.start_year;
-                        vm.old_rebalance_cycle_cd   =   vm.rebalance_cycle_cd;
-                        vm.old_rebalance_date_cd    =   vm.rebalance_date_cd;
-
-                        /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
-                        vm.fn_getRebalanceDate().then( function(e1){
-                            if( e1 && e1.result ) {
-                                vm.old_rebalance_date    =   vm.rebalance_date;
-                            }
-                        });
-                    }
-                }
-            });
-
-            /* next 시나리오명을 조회한다. */
-            vm.fn_getNextScenName();
-
-            /* 최초 5개의 레코드를 노출한다. */
-            vm.fn_addRecords( 0, 5 );
-
-            /* total 레코드를 설정한다. */
-            vm.fn_setTotalRecord();
-        }
+        /* 초기 시뮬레이션을 조회한다. */
+        vm.fn_getInitSimul();
 
 
         /* table tr 에서 추가 버튼을 누르는 경우 */
@@ -452,9 +408,7 @@ export default {
 
                                 tr.find( "td input[name=F16013]" ).val( rowItem.F16013 );               /* 종목코드 */
                                 tr.find( "td:eq(2)" ).text( rowItem.F16002 );                           /* 종목명 */
-
                                 tr.find( "td:eq(3)" ).text( util.formatInt( rowItem.F15028 ) );         /* 시가총액 */
-        //                      tr.find( "td:eq(5)" ).text( rowIndex / 100 );                           /* 지수적용비율 */
 
                                 /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
                                 vm.fn_setImportanceMethodCd( vm.importance_method_cd );
@@ -610,6 +564,144 @@ export default {
         },
 
         /*
+         * 초기화를 수행한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        async fn_refresh() {
+
+			var vm = this;
+
+			if( await vm.$refs.confirm2.open(
+						'[시뮬레이션]',
+						'입력된 내용이 모두 초기화 됩니다. 그래도 진행하시겠습니까?',
+						{}
+					,   2
+				)
+			) {
+				if( "Y" == vm.$refs.confirm2.val ) {
+					vm.start_year             		=	"2000";   	/* 시작년도 */
+					vm.rebalance_cycle_cd          	=  	"1";        /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
+					vm.rebalance_date_cd           	=   "1";        /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+					vm.init_invest_money           	=   1000000;    /* 초기투자금액 */
+					vm.bench_mark_cd               	=   "0";        /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
+					vm.importance_method_cd        	=   "1";        /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
+					vm.bench_index_cd01            	=   "";         /* 벤치마크 인덱스 코드 ( F16013 ) */
+					vm.bench_index_cd02            	=   "";         /* 벤치마크 인덱스 코드 ( large_type ) */
+					vm.bench_index_cd03            	=   "";         /* 벤치마크 인덱스 코드 ( middle_type ) */
+					vm.bench_index_nm              	=   "";         /* 벤치마크 인덱스 코드명 */
+					vm.p_rebalance_file_yn         	=   "0";        /* 리밸런싱 일자가 포함된 샘플파일 유무 */
+                    vm.excel_start_year             =   ""          /* 리밸런싱 파일인 경우 넘겨받은 엑셀 start_year */
+
+					vm.arr_portfolio               	=   [];         /* 포트폴리오 설정 정보 */
+					vm.arr_rebalance_date          	=   [];         /* 리밸런싱 일자 */
+					vm.arr_rebalance_portfolio     	=   [];         /* 리밸런싱별 포트폴리오 */
+					vm.change_rebalance_yn         	=   "0";        /* 리밸런싱 내역조정 여부 */
+					vm.rebalance_date              	=   "";         /* 리밸런싱 일자 */
+					vm.rebalancePortfolioObj       	=   {};         /* 리밸런싱일별 포트폴리오 */
+
+
+                    var arr_temp = [...vm.arr_rebalance_cycle_cd];
+
+                    vm.arr_rebalance_cycle_cd   =   [];
+
+                    vm.disabled_rebalance_cd    =   vm.arr_rebalance_disabled_check[ vm.rebalance_cycle_cd ];
+                    vm.arr_rebalance_cycle_cd   =   [ ...arr_temp ];                    
+
+					vm.old_start_year              	=   "";
+					vm.old_rebalance_cycle_cd      	=   "";
+					vm.old_rebalance_date_cd       	=   "";
+					vm.old_rebalance_date          	=   "";
+
+					/* 레코드를 초기화 한다. */
+					vm.fn_initRecords();
+
+					/* 최초 5개의 레코드를 노출한다. */
+					vm.fn_addRecords( 0, 5 );
+
+					/* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+					vm.fn_getRebalanceDate().then( function(e1){
+						if( e1 && e1.result ) {
+							vm.old_rebalance_date    =   vm.rebalance_date;
+						}
+					});
+				}
+			}
+
+		},
+
+
+        /*
+         * 초기 시뮬레이션을 조회한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        async fn_getInitSimul() {
+
+            var vm = this;
+
+			/* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
+			if(     vm.paramData && Object.keys( vm.paramData ).length > 0 
+				&&  vm.paramData.grp_cd && vm.paramData.scen_cd 
+			) {
+
+				/* 상위 그룹 정보 및 초기 데이터가 설정된 이후 상세정보 설정되도록 함. */
+				
+				/* 상위 그룹정보를 조회한다. */
+				vm.fn_initGrpCd().then( async function(e) {
+
+					if( e && e.result ) {
+
+						/* 초기 설정 데이터를 조회한다. */
+						await vm.fn_initData().then( async function(e1) {
+
+							if( e1 && e1.result ) {
+
+								/* 시뮬레이션 마스터 정보를 조회한다. */
+								vm.fn_getSimulMast( vm.paramData );
+							}
+						});
+					}
+				});
+
+			}else{
+
+				/* 상위 그룹정보를 조회한다. */
+				vm.fn_initGrpCd();
+
+				/* 초기 설정 데이터를 조회한다. */
+				vm.fn_initData().then( function(e) {
+					
+					if( e && e.result ) {
+
+						if( !vm.rebalance_date_cd ) {
+							vm.rebalance_date_cd        =   "1";
+
+							vm.old_start_year           =   vm.start_year;
+							vm.old_rebalance_cycle_cd   =   vm.rebalance_cycle_cd;
+							vm.old_rebalance_date_cd    =   vm.rebalance_date_cd;
+
+							/* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+							vm.fn_getRebalanceDate().then( function(e1){
+								if( e1 && e1.result ) {
+									vm.old_rebalance_date    =   vm.rebalance_date;
+								}
+							});
+						}
+					}
+				});
+
+				/* next 시나리오명을 조회한다. */
+				vm.fn_getNextScenName();
+
+				/* 최초 5개의 레코드를 노출한다. */
+				vm.fn_addRecords( 0, 5 );
+
+				/* total 레코드를 설정한다. */
+				vm.fn_setTotalRecord();
+			}
+
+        },
+
+        /*
          * 진행 progress 를 보여준다.
          * 2019-07-26  bkLove(촤병국)
          */
@@ -654,12 +746,12 @@ export default {
                     if( v_F16013.val() != "" ) {
 
                         var rowData     =   {
-                                "F16013"        :   v_F16013.val()                                  /* 종목코드 */
-                            ,   "F16002"        :   v_F16002.text()                                 /* 종목명 */
-                            ,   "F15028"        :   util.NumtoStr( v_F15028.text() )                /* 시가총액 */
-                            ,   "importance"    :   util.NumtoStr( v_importance.val() )             /* 비중 */
-                            ,   "order_no"      :   0                                               /* 정렬순번 */
-                            ,   "trIndex"       :   tr.index()                                      /* 테이블 레코드 순번 */
+                                "F16013"        :   v_F16013.val()                                                      /* 종목코드 */
+                            ,   "F16002"        :   v_F16002.text()                                                     /* 종목명 */
+                            ,   "F15028"        :   util.NumtoStr( v_F15028.text() )                                    /* 시가총액 */
+                            ,   "importance"    :   Number( Number( util.NumtoStr( v_importance.val() ) ).toFixed(2) )  /* 비중 */
+                            ,   "order_no"      :   0                                                                   /* 정렬순번 */
+                            ,   "trIndex"       :   tr.index()                                                          /* 테이블 레코드 순번 */
                         };
 
                         if( !v_portfolioObj[ vm.rebalance_date ] || Object.keys( v_portfolioObj[ vm.rebalance_date ] ).length == 0 ) {
@@ -803,8 +895,8 @@ export default {
 
                             totalObj[ v_key ].importance		=	0;
 
-                            same_rate           =   Number(
-                                ( Number( totalObj[ v_key ].same_rate_sum ) / Number( totalObj[ v_key ].length ) ).toFixed(2)
+                            same_rate           =   (
+                                Math.floor( ( Number( totalObj[ v_key ].same_rate_sum ) / Number( totalObj[ v_key ].length ) ) * 100 ) / 100
                             );                                                                                      /* 동일 가중 비율 */
                             v_temp_importance   =   0;
                             v_inx               =   0;
@@ -845,7 +937,6 @@ export default {
                                 v_inx++;
                             }
                         }
-                    
 
 
                         /* 비중 합계가 100 이  아닌 경우 0.01 값을 더해 100 이 되면 중단 */
@@ -1442,6 +1533,10 @@ export default {
             }
 
 
+            /* 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
+            vm.fn_copySelectedDateToRebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
+
+
             /* 선택된 리밸런싱 일자에 속한 포트폴리오를 밸리데이션 체크한다. */
             vm.fn_validationRebalanceDatePortfolio( { p_importance_total_check : 'Y' } );
 
@@ -1464,21 +1559,60 @@ export default {
                     v_order_no  	=   0;
 					v_importance	=	0;
 
-                    for( var j=0; j < Object.keys( v_sub_item ).length; j++ ) {
 
-                        var v_sub_key2  =   Object.keys( v_sub_item )[j];
-                        var v_sub_item2 =   v_sub_item[ v_sub_key2 ];
+                    /* 종목이 2개 이상인 경우 trIndex 순으로 정렬하여 order_no 설정 */
+                    if(  Object.keys( v_sub_item ).length > 1 ) {
 
-						v_sub_item2.importance	=	Number( v_sub_item2.importance );
+                        var arrKey    =   [];
+                        var tempKey;
 
-						v_importance   	=   (
-							Math.floor( 
-									( v_importance * 100 )
-								+  	( v_sub_item2.importance * 100 )
-							) / 100
-						);     /* (합계) 비중 */
+                        for( var j=0; j < Object.keys( v_sub_item ).length; j++ ) {
+                            arrKey.push( Object.keys( v_sub_item )[j] );
+                        }
 
-                        v_sub_item2.order_no    =   ++v_order_no;
+                        for( var j=0; j < arrKey.length-1; j++ ) {
+                            for( var k=j; k < arrKey.length; k++ ) {
+                                if( v_sub_item[ arrKey[j] ].trIndex > v_sub_item[ arrKey[k] ].trIndex ) {
+                                    tempKey     =   arrKey[j];
+                                    arrKey[j]   =   arrKey[k];
+                                    arrKey[k]   =   tempKey;
+                                }
+                            }
+                        }                   
+
+                        for( var j=0; j < arrKey.length; j++ ) {
+                            var v_sub_key2  =   arrKey[j];
+                            var v_sub_item2 =   v_sub_item[ v_sub_key2 ];
+                            
+                            v_sub_item2.importance	=	Number( v_sub_item2.importance ).toFixed(2);
+
+                            v_importance   	=   Number(
+                                Number(
+                                    Number( Number( v_importance ).toFixed(2) )  +  Number( v_sub_item2.importance )
+                                ).toFixed(2)
+                            );                     /* (합계) 비중 */
+
+                            v_sub_item2.order_no    =   ++v_order_no;
+                        }
+
+                    }
+                    /* 종목이 1개 인 경우 */
+                    else{
+
+                        for( var j=0; j < Object.keys( v_sub_item ).length; j++ ) {
+                            var v_sub_key2  =   Object.keys( v_sub_item )[j];
+                            var v_sub_item2 =   v_sub_item[ v_sub_key2 ];
+                            
+                            v_sub_item2.importance	=	Number( v_sub_item2.importance ).toFixed(2);
+
+                            v_importance   	=   Number(
+                                Number(
+                                    Number( Number( v_importance ).toFixed(2) )  +  Number( v_sub_item2.importance )
+                                ).toFixed(2)
+                            );                     /* (합계) 비중 */
+
+                            v_sub_item2.order_no    =   ++v_order_no;
+                        }
                     }
 
 					if( v_importance != 100 ) {
@@ -1514,9 +1648,10 @@ export default {
                 }
             }
 
+
             vm.fn_showProgress( true );
 
-            axios.post(Config.base_url + "/user/simulation2/saveBaicInfo2", {
+            axios.post(Config.base_url + "/user/simulation/saveBaicInfo2", {
                 data: { 
                         
                         "prev_grp_cd"           :   vm.prev_grp_cd              /* 그룹 코드 (변경전) */
@@ -1553,17 +1688,19 @@ export default {
                         }
                     }else{
 
-                        vm.prev_grp_cd      =   response.data.grp_cd;           /* 그룹 코드 */
-                        vm.prev_scen_cd     =   response.data.scen_cd;          /* 시나리오 코드 */
-                        vm.scen_cd          =   response.data.scen_cd;          /* 시나리오 코드 */
-                        vm.scen_order_no    =   response.data.scen_order_no;    /* 시나리오 정렬순번 */
-
                         var arr_daily       =   response.data.arr_daily;
                         var arr_rebalance   =   response.data.arr_rebalance;
                         var simul_mast    	=   response.data.simul_mast;
                         var analyzeList     =   response.data.analyzeList;
                         var jsonFileName    =   response.data.jsonFileName;
-                        var inputData    =   response.data.inputData;    
+                        var inputData       =   response.data.inputData;
+
+                        if( simul_mast ) {
+                            vm.prev_grp_cd      =   simul_mast.grp_cd;           /* 그룹 코드 */
+                            vm.prev_scen_cd     =   simul_mast.scen_cd;          /* 시나리오 코드 */
+                            vm.scen_cd          =   simul_mast.scen_cd;          /* 시나리오 코드 */
+                            vm.scen_order_no    =   simul_mast.scen_order_no;    /* 시나리오 정렬순번 */
+                        }
 
                         vm.$emit( "fn_showSimulation", 
                             { 
@@ -1633,14 +1770,13 @@ export default {
                             vm.bench_mark_cd            =   mastInfo.bench_mark_cd;         /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
                             vm.importance_method_cd     =   mastInfo.importance_method_cd;  /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
 
-                            if( !vm.rebalance_cycle_cd ) {
-                                vm.rebalance_cycle_cd   =   "1";
-                            }
 
-                            /* old_value 값과 비교하여 리밸런싱이 변경되었는지 체크한다. */
-                            vm.fn_checkRebalance( 'rebalance_cycle_cd').then( function(e){
+                            /* 리밸런싱 주기가 없는 경우 - 리밸런싱 일자가 포함된 샘플파일 유무를 1 로 간주 */
+                            if( vm.rebalance_cycle_cd == "" ) {
 
-                                vm.rebalance_date_cd        =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+                                vm.p_rebalance_file_yn      =   "1";
+
+                                vm.rebalance_date_cd    =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
 
                                 vm.old_start_year           =   mastInfo.start_year;
                                 vm.old_rebalance_cycle_cd   =   mastInfo.rebalance_cycle_cd;
@@ -1649,13 +1785,38 @@ export default {
                                 /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
                                 vm.fn_getRebalanceDate().then( function(e1){
                                     if( e1 && e1.result ) {
+
                                         vm.old_rebalance_date    =   vm.rebalance_date;
 
                                         /* 시뮬레이션 포트폴리오 정보를 조회한다. */
                                         vm.fn_getSimulPortfolio( vm.paramData );
                                     }
                                 });
-                            });
+
+                            }else{
+
+                                /* old_value 값과 비교하여 리밸런싱이 변경되었는지 체크한다. */
+                                vm.fn_checkRebalance( 'rebalance_cycle_cd').then( function(e){
+
+                                    vm.rebalance_date_cd    =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+
+                                    vm.old_start_year           =   mastInfo.start_year;
+                                    vm.old_rebalance_cycle_cd   =   mastInfo.rebalance_cycle_cd;
+                                    vm.old_rebalance_date_cd    =   mastInfo.rebalance_date_cd;
+
+                                    /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                                    vm.fn_getRebalanceDate().then( function(e1){
+
+                                        if( e1 && e1.result ) {
+
+                                            vm.old_rebalance_date    =   vm.rebalance_date;
+
+                                            /* 시뮬레이션 포트폴리오 정보를 조회한다. */
+                                            vm.fn_getSimulPortfolio( vm.paramData );
+                                        }
+                                    });
+                                });
+                            }
                         }
                     }
                 }
@@ -1707,7 +1868,7 @@ export default {
                         var v_rebalancePortfolio    =   response.data.rebalancePortfolioObj[ vm.rebalance_date ];
 
                         /* 선택된 리밸런싱일자에 포트폴리오가 존재하는 경우 */
-                        if( typeof v_rebalancePortfolio != "undefied" && Object.keys( v_rebalancePortfolio ).length > 0 ) {
+                        if( typeof v_rebalancePortfolio != "undefined" && Object.keys( v_rebalancePortfolio ).length > 0 ) {
 
                             var dataList    =   [];
 
@@ -1795,60 +1956,86 @@ export default {
                                 /* 시작년도 */
                         case    "start_year"    :
 
-                                vm.$nextTick( function(){
+                                vm.$nextTick( async function(){
 
-                                    if( vm.old_start_year != vm.start_year ) {
+                                    /* 리밸린싱 엑셀 파일이 업로드된 경우 */
+                                    if( vm.rebalance_cycle_cd == "" ) {
 
-                                        /*
-                                        *  리밸런싱 주기를 변경하는지 체크
-                                        *  ( 두번째 [리밸런싱 일자별 포트폴리오] 의 값이 한건 이상 존재시 [리밸런싱 일자별 포트폴리오]에 값이 존재하는 것으로 간주 )
-                                        */
-                                        vm.fn_confirmRebalance().then( function(e) {
-            
-                                            /* 초기화를 선택한 경우 */
-                                            if( e && e.confirm == "Y" ) {
-                                                vm.old_start_year           =   vm.start_year;
+                                        if( vm.old_start_year != vm.start_year ) {
 
-                                                /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
-                                                vm.fn_getRebalanceDate().then( function(e) {
-                                                    if( e && e.result ) {
-                                                        vm.old_rebalance_date       =   vm.rebalance_date;
+                                            if( Number( vm.excel_start_year ) > Number( vm.start_year ) ) {
 
-                                                        var v_fist_Date             =   Object.keys( vm.rebalancePortfolioObj )[0];
-                                                        var v_org_rebalance_obj     =   vm.rebalancePortfolioObj[ v_fist_Date ];
-
-                                                        vm.rebalancePortfolioObj    =   {};
-                                                        vm.rebalancePortfolioObj[ vm.rebalance_date ]   =   Object.assign( {}, v_org_rebalance_obj );
-
-                                                        /* 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
-                                                        vm.fn_copySelectedDateTorebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
-                                                    }
-                                                });
+                                                if( await vm.$refs.confirm2.open(
+                                                            '[시뮬레이션]',
+                                                            vm.excel_start_year + " 년도 이후로만 선택해 주세요.",
+                                                            {}
+                                                        ,   1
+                                                    )
+                                                ) {
+                                                    vm.start_year       =   vm.old_start_year;
+                                                    return  false;
+                                                }
                                             }
-                                            /* 초기화를 선택 하지 않은 경우 */
-                                            else if( e && e.confirm == "N" ) {
-                                                vm.start_year               =   vm.old_start_year;
-                                            }
-                                            else{
-                                                vm.old_start_year           =   vm.start_year;
 
-                                                /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
-                                                vm.fn_getRebalanceDate().then( function(e) {
-                                                    if( e && e.result ) {
-                                                        vm.old_rebalance_date    =   vm.rebalance_date;
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }else{       
-                                        vm.old_start_year                   =   vm.start_year;
+                                            vm.old_start_year   =   vm.start_year;
+                                        }
 
-                                        /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
-                                        vm.fn_getRebalanceDate().then( function(e) {
-                                            if( e && e.result ) {
-                                                vm.old_rebalance_date    =   vm.rebalance_date;
-                                            }
-                                        });
+                                    }else{
+
+                                        if( vm.old_start_year != vm.start_year ) {
+
+                                            /*
+                                            *  리밸런싱 주기를 변경하는지 체크
+                                            *  ( 두번째 [리밸런싱 일자별 포트폴리오] 의 값이 한건 이상 존재시 [리밸런싱 일자별 포트폴리오]에 값이 존재하는 것으로 간주 )
+                                            */
+                                            vm.fn_confirmRebalance().then( function(e) {
+                
+                                                /* 초기화를 선택한 경우 */
+                                                if( e && e.confirm == "Y" ) {
+                                                    vm.old_start_year           =   vm.start_year;
+
+                                                    /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                                                    vm.fn_getRebalanceDate().then( function(e) {
+                                                        if( e && e.result ) {
+                                                            vm.old_rebalance_date       =   vm.rebalance_date;
+
+                                                            var v_fist_Date             =   Object.keys( vm.rebalancePortfolioObj )[0];
+                                                            var v_org_rebalance_obj     =   vm.rebalancePortfolioObj[ v_fist_Date ];
+
+                                                            vm.rebalancePortfolioObj    =   {};
+                                                            vm.rebalancePortfolioObj[ vm.rebalance_date ]   =   Object.assign( {}, v_org_rebalance_obj );
+
+                                                            /* 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
+                                                            vm.fn_copySelectedDateToRebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
+                                                        }
+                                                    });
+                                                }
+                                                /* 초기화를 선택 하지 않은 경우 */
+                                                else if( e && e.confirm == "N" ) {
+                                                    vm.start_year               =   vm.old_start_year;
+                                                }
+                                                else{
+                                                    vm.old_start_year           =   vm.start_year;
+
+                                                    /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                                                    vm.fn_getRebalanceDate().then( function(e) {
+                                                        if( e && e.result ) {
+                                                            vm.old_rebalance_date    =   vm.rebalance_date;
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        }else{       
+                                            vm.old_start_year                   =   vm.start_year;
+
+                                            /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                                            vm.fn_getRebalanceDate().then( function(e) {
+                                                if( e && e.result ) {
+                                                    vm.old_rebalance_date    =   vm.rebalance_date;
+                                                }
+                                            });
+                                        }                                        
+
                                     }
                                 });
 
@@ -1893,7 +2080,7 @@ export default {
                                                         vm.rebalancePortfolioObj[ vm.rebalance_date ]   =   Object.assign( {}, v_org_rebalance_obj );
 
                                                         /* 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
-                                                        vm.fn_copySelectedDateTorebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
+                                                        vm.fn_copySelectedDateToRebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
                                                     }
                                                 });
                                                                                             
@@ -1981,7 +2168,7 @@ export default {
                                                         vm.rebalancePortfolioObj[ vm.rebalance_date ]   =   Object.assign( {}, v_org_rebalance_obj );
 
                                                         /* 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
-                                                        vm.fn_copySelectedDateTorebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
+                                                        vm.fn_copySelectedDateToRebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
                                                     }
                                                 });                                        
                                             }
@@ -2107,73 +2294,63 @@ export default {
             vm.arr_show_error_message   =   [];
             vm.arr_rebalance_date       =   [];
 
-
-            await vm.$nextTick( function(){
-
-                if( !vm.start_year ) {
-                    return  false;
-                }
-
-                if( !vm.rebalance_cycle_cd ) {
-                    return  false;
-                }
-
-                if( !vm.rebalance_date_cd ) {
-                    return  false;
-                }
-            });
-
-
             return  await new Promise(function(resolve, reject) {
 
-                vm.fn_showProgress( true );
-                axios.post(Config.base_url + "/user/simulation2/getRebalanceDate", {
-                    data: {     
-                            "start_year"            :   vm.start_year 
-                        ,   "rebalance_cycle_cd"    :   vm.rebalance_cycle_cd
-                        ,   "rebalance_date_cd"     :   vm.rebalance_date_cd
-                    }
-                }).then( function(response) {
+                vm.$nextTick( function(){
+                    
+                    vm.fn_showProgress( true );
+                    axios.post(Config.base_url + "/user/simulation2/getRebalanceDate", {
+                        data: { 
+                                "grp_cd"                :   vm.grp_cd
+                            ,   "scen_cd"               :   vm.scen_cd
 
-                    vm.fn_showProgress( false );
+                            ,   "start_year"            :   vm.start_year 
+                            ,   "rebalance_cycle_cd"    :   vm.rebalance_cycle_cd
+                            ,   "rebalance_date_cd"     :   vm.rebalance_date_cd
+                        }
+                    }).then( function(response) {
 
-                    if (response && response.data) {
-                        var msg = ( response.data.msg ? response.data.msg : "" );
+                        vm.fn_showProgress( false );
 
-                        if (!response.data.result) {
-                            if( msg ) {
-                                vm.arr_show_error_message.push( msg );
+                        if (response && response.data) {
+                            var msg = ( response.data.msg ? response.data.msg : "" );
+
+                            if (!response.data.result) {
+                                if( msg ) {
+                                    vm.arr_show_error_message.push( msg );
+                                }
+
+                                resolve( { result : false } );
+                            }else{
+                                var dataList = response.data.dataList;
+
+                                if( dataList && dataList.length > 0 ) {
+                                    vm.rebalance_date   =   dataList[0].value;
+                                }
+
+                                vm.arr_rebalance_date   =   dataList;
+
+                                resolve( { result : true, dataList : dataList } );
                             }
 
-                            resolve( { result : false } );
                         }else{
-                            var dataList = response.data.dataList;
-
-                            if( dataList && dataList.length > 0 ) {
-                                vm.rebalance_date   =   dataList[0].value;
-                            }
-
-                            vm.arr_rebalance_date   =   dataList;
-
-                            resolve( { result : true, dataList : dataList } );
+                            resolve( { result : false } );
                         }
 
-                    }else{
+                    }).catch(error => {
                         resolve( { result : false } );
-                    }
 
-                }).catch(error => {
-                    resolve( { result : false } );
+                        vm.fn_showProgress( false );
+                        if ( vm.$refs.confirm2.open(
+                                '확인',
+                                '서버로 부터 응답을 받지 못하였습니다.',
+                                {}
+                                ,4
+                            )
+                        ) {
+                        }
+                    });
 
-                    vm.fn_showProgress( false );
-                    if ( vm.$refs.confirm2.open(
-                            '확인',
-                            '서버로 부터 응답을 받지 못하였습니다.',
-                            {}
-                            ,4
-                        )
-                    ) {
-                    }
                 });
 
             }).catch( function(e1) {
@@ -2188,6 +2365,10 @@ export default {
          */
         fn_changeRebalance() {
             var vm = this;
+
+            if( vm.change_rebalance_yn == "1" ) {
+                return  false;
+            }
 
             if( vm.change_rebalance_yn != "1" ) {
                 vm.change_rebalance_yn      =   "0";
@@ -2212,7 +2393,7 @@ export default {
 
             if( check ) {
                 /* 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
-                vm.fn_copySelectedDateTorebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
+                vm.fn_copySelectedDateToRebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
 
                 vm.change_rebalance_yn  =   "1";
             }
@@ -2223,7 +2404,7 @@ export default {
          * 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다.
          * 2019-09-06  bkLove(촤병국)
          */
-        fn_copySelectedDateTorebalanceAll( p_param={ p_gubun : "first", p_exist_data_skip_yn : "Y"  } ) {
+        fn_copySelectedDateToRebalanceAll( p_param={ p_gubun : "first", p_exist_data_skip_yn : "Y"  } ) {
 
             var vm = this;
 
@@ -2382,7 +2563,6 @@ export default {
                     }
                 }
             }
-console.log( "vm.rebalancePortfolioObj", vm.rebalancePortfolioObj );
         },
 
         /*
@@ -2437,16 +2617,20 @@ console.log( "vm.rebalancePortfolioObj", vm.rebalancePortfolioObj );
             }
 
 
-            if( !vm.start_year ) {
-                vm.arr_show_error_message.push( "[조건설정] 시작년도를 선택해 주세요." );
-            }
+            /* 리밸런싱 일자가 포함된 샘플파일이 아닌 경우에만 체크 */
+            if( vm.p_rebalance_file_yn == "0" ) {
 
-            if( !vm.rebalance_cycle_cd ) {
-                vm.arr_show_error_message.push( "[조건설정] 리밸런싱주기를 선택해 주세요." );
-            }
+                if( !vm.start_year ) {
+                    vm.arr_show_error_message.push( "[조건설정] 시작년도를 선택해 주세요." );
+                }
 
-            if( !vm.rebalance_date_cd ) {
-                vm.arr_show_error_message.push( "[조건설정] 리밸런싱 일자를 선택해 주세요." );
+                if( !vm.rebalance_cycle_cd ) {
+                    vm.arr_show_error_message.push( "[조건설정] 리밸런싱주기를 선택해 주세요." );
+                }
+
+                if( !vm.rebalance_date_cd ) {
+                    vm.arr_show_error_message.push( "[조건설정] 리밸런싱 일자를 선택해 주세요." );
+                }
             }
 
             try{
@@ -2519,15 +2703,20 @@ console.log( "vm.rebalancePortfolioObj", vm.rebalancePortfolioObj );
 
                         total.length++;         /* 총건수 */
                         total.F15028            =   Number( total.F15028 )  +  Number( util.NumtoStr( v_F15028.text() ) );                                          /* (합계) 시가총액 */
-                        total.importance        =   Math.floor( ( total.importance * 100 )  +  ( Number( util.NumtoStr( v_importance.val() ) ) * 100 ) ) / 100;     /* (합계) 비중 */
+
+                        total.importance        =   Number(
+                            Number(
+                                Number( Number( total.importance ).toFixed(2) )  +  Number( Number( util.NumtoStr( v_importance.val() ) ).toFixed(2) )
+                            ).toFixed(2)
+                         );                     /* (합계) 비중 */
 
                         v_portfolio.push({
-                                "F16013"        :   v_F16013.val()                          /* 종목코드 */
-                            ,   "F16002"        :   v_F16013_nm.text()                      /* 종목명 */
-                            ,   "F15028"        :   util.NumtoStr( v_F15028.text() )        /* 시가총액 */                                
-                            ,   "importance"    :   util.NumtoStr( v_importance.val() )     /* 비중 */
-                            ,   "order_no"      :   rowIndex++                              /* 정렬 순번 */
-                            ,   "trIndex"       :   inx                                     /* 테이블 레코드 순번 */
+                                "F16013"        :   v_F16013.val()                                                          /* 종목코드 */
+                            ,   "F16002"        :   v_F16013_nm.text()                                                      /* 종목명 */
+                            ,   "F15028"        :   util.NumtoStr( v_F15028.text() )                                        /* 시가총액 */                                
+                            ,   "importance"    :   Number( Number( util.NumtoStr( v_importance.val() ) ).toFixed(2) )      /* 비중 */
+                            ,   "order_no"      :   rowIndex++                                                              /* 정렬 순번 */
+                            ,   "trIndex"       :   inx                                                                     /* 테이블 레코드 순번 */
                         });
 
                     }else{
@@ -2590,7 +2779,7 @@ console.log( "vm.rebalancePortfolioObj", vm.rebalancePortfolioObj );
 
 
             if( p_param.p_importance_total_check == "Y" ) {
-                
+
                 /* 포트폴리오 1건 이상 입력한 경우에는 비중의 합은 100 이 되어야 함.  */
                 if( v_portfolio.length > 0 && total.importance != 100 ) {
                     vm.arr_show_error_message.push( "[포트폴리오] 비중의 합은 100 이 되어야 합니다." );
@@ -2620,7 +2809,7 @@ console.log( "vm.rebalancePortfolioObj", vm.rebalancePortfolioObj );
                         vm.fn_initRecords();
 
                         /* 선택된 리밸런싱일자에 포트폴리오가 존재하는 경우 */
-                        if( typeof v_rebalancePortfolio != "undefied" && Object.keys( v_rebalancePortfolio ).length > 0 ) {
+                        if( typeof v_rebalancePortfolio != "undefined" && Object.keys( v_rebalancePortfolio ).length > 0 ) {
 
                             var dataList    =   [];
 
@@ -2629,6 +2818,13 @@ console.log( "vm.rebalancePortfolioObj", vm.rebalancePortfolioObj );
 
                                 dataList.push( v_rebalancePortfolio[ v_key ] );
                             }
+                            
+                            /* trIndex 순으로 정렬하여 노출 */
+                            dataList    =   _.orderBy(
+                                    dataList
+                                ,   [ "trIndex" ]
+                                ,   [ "asc" ]
+                            );
 
                             /* 건수가 0 인 경우 레코드 5개는 추가한다. */
                             var cnt = ( Math.ceil( dataList.length / 5 ) == 0 ? 1 : Math.ceil( dataList.length / 5 ) ) * 5;                  
@@ -2729,35 +2925,59 @@ console.log( "vm.rebalancePortfolioObj", vm.rebalancePortfolioObj );
                             check   =   false;
                         }
 
-                        if( response.data.p_rebalance_file_yn ) {
-                            vm.change_rebalance_yn      =   response.data.p_rebalance_file_yn;
-                        }else{
-                            vm.change_rebalance_yn      =   "0";
-                        }
 
-                        /* 엑셀을 업로드 하는 경우 [직접입력] 으로 강제 설정 */
-                        vm.importance_method_cd =   "1";
+                        if( check ) {
 
-                        /* 리밸런싱일별 포트폴리오 데이터 설정 */
-                        if( response.data.rebalancePortfolioObj ) {
-
-                            vm.rebalancePortfolioObj        =   response.data.rebalancePortfolioObj;
-
-                            if( vm.arr_rebalance_date && vm.arr_rebalance_date.length > 0 ) {
-
-                                /* 현재 리밸런싱 일자가 맨 처음 리밸런싱 일자와 다른 경우 맨처음 리밸런싱 일자로 설정 */
-                                if( vm.rebalance_date != vm.arr_rebalance_date[0].value ) {
-
-                                    vm.old_rebalance_date   =   vm.rebalance_date;
-
-                                    vm.rebalance_date       =   vm.arr_rebalance_date[0].value;
-                                
-                                    /* 선택된 리밸런싱 일자에 속한 포트폴리오를 노출한다. */
-                                    vm.fn_showRebalanceDatePortfolio();
-                                }
+                            /* 시작년도가 존재하는 경우 - 시작년도 재설정 */
+                            if( response.data.p_start_year ) {
+                                vm.old_start_year   =   response.data.p_start_year;
+                                vm.start_year       =   response.data.p_start_year;
+                                vm.excel_start_year =   response.data.p_start_year;
                             }
 
-                            check   =   true;
+                            /* 리밸런싱 일자가 포함된 샘플파일인 경우 */
+                            if( response.data.p_rebalance_file_yn == "1" ) {
+                                vm.change_rebalance_yn      =   response.data.p_rebalance_file_yn;
+
+                                vm.p_rebalance_file_yn      =   response.data.p_rebalance_file_yn;
+                                vm.rebalance_cycle_cd       =   "";
+                                vm.rebalance_date_cd        =   "";
+
+                                /* 콤보박스에 노출할 리밸런싱 날짜를 설정한다. */
+                                if( response.data.arr_rebalance_date && response.data.arr_rebalance_date.length > 0 ) {
+                                    vm.arr_rebalance_date       =   response.data.arr_rebalance_date;
+                                }
+
+                            }else{
+                                vm.change_rebalance_yn      =   "0";
+                            }
+
+
+                            /* 엑셀을 업로드 하는 경우 [직접입력] 으로 강제 설정 */
+                            vm.importance_method_cd =   "1";
+
+
+                            /* 리밸런싱일별 포트폴리오 데이터 설정 */
+                            if( response.data.rebalancePortfolioObj ) {
+
+                                vm.rebalancePortfolioObj        =   response.data.rebalancePortfolioObj;
+
+                                if( vm.arr_rebalance_date && vm.arr_rebalance_date.length > 0 ) {
+
+                                    /* 현재 리밸런싱 일자가 맨 처음 리밸런싱 일자와 다른 경우 맨처음 리밸런싱 일자로 설정 */
+                                    if( vm.rebalance_date != vm.arr_rebalance_date[0].value ) {
+
+                                        vm.old_rebalance_date   =   vm.rebalance_date;
+
+                                        vm.rebalance_date       =   vm.arr_rebalance_date[0].value;
+                                    
+                                        /* 선택된 리밸런싱 일자에 속한 포트폴리오를 노출한다. */
+                                        vm.fn_showRebalanceDatePortfolio();
+                                    }
+                                }
+
+                                check   =   true;
+                            }
                         }
 
                     }else{

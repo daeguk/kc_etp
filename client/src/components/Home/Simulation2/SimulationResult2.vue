@@ -445,7 +445,7 @@ export default {
 
                 vm.fn_showProgress( true );
 
-                axios.post(Config.base_url + "/user/simulation/getBacktestResult", {
+                axios.post(Config.base_url + "/user/simulation/getBacktestResult2", {
                     data: v_param
                 }).then( function(response) {
 
@@ -538,7 +538,7 @@ export default {
                             vm.jsonFileName         =   response.data.jsonFileName;
 
                             vm.arr_analyze_org      =   response.data.analyzeList;
-                                                    
+
                             try{
                                 if( vm.arr_analyze_org ) {                           
                                     vm.arr_analyze_temp     =   JSON.parse( vm.arr_analyze_org );
@@ -705,10 +705,10 @@ export default {
                                     ,1
                                 )
                             ) {
-								vm.fn_getBacktestResult( { 
-										grp_cd  : v_grp_cd
-									, 	scen_cd : v_scen_cd 
-								});
+								// vm.fn_getBacktestResult( { 
+								// 		grp_cd  : v_grp_cd
+								// 	, 	scen_cd : v_scen_cd 
+								// });
                             }
                         }                        
 

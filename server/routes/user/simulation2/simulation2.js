@@ -68,8 +68,21 @@ var getRebalanceDate = function(req, res) {
      
         Promise.using(pool.connect(), conn => {
 
+            /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+            var queryId     =   "getRebalanceDate";
+
             try {
-                stmt = mapper.getStatement('simulation2', 'getRebalanceDate', paramData, format);
+
+                if( paramData.rebalance_cycle_cd == "" ) {
+
+                    queryId     =   "getRebalanceDateUploadByScenCd";
+
+                    if( !paramData.grp_cd || !paramData.scen_cd )  {
+                        throw   "grp_cd 또는 scen_cd 가 존재하지 않습니다.";
+                    }
+                }
+
+                stmt = mapper.getStatement('simulation2', queryId, paramData, format);
                 log.debug(stmt, paramData);
 
                 conn.query(stmt, function(err, rows) {
@@ -81,7 +94,7 @@ var getRebalanceDate = function(req, res) {
                         log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] simulation2.getRebalanceDate Error while performing Query";
+                        resultMsg.msg = "[error] simulation2." + queryId +" Error while performing Query";
                         resultMsg.err = err;
                     }
                     else if (rows && rows.length > 0) {
@@ -98,7 +111,7 @@ var getRebalanceDate = function(req, res) {
                 log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
-                resultMsg.msg = "[error] simulation2.getRebalanceDate Error while performing Query";
+                resultMsg.msg = "[error] simulation2." + queryId + " Error while performing Query";
                 resultMsg.err = err;
 
                 res.json(resultMsg);
@@ -111,7 +124,7 @@ var getRebalanceDate = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] simulation.getRebalanceDate 오류가 발생하였습니다.";
+        resultMsg.msg = "[error] simulation2." + queryId + " 오류가 발생하였습니다.";
         resultMsg.err = expetion;
 
         resultMsg.dataList  =   [];
@@ -210,14 +223,13 @@ var getSimulList2 = function(req, res) {
     }
 }
 
-
 /*
  * 시뮬레이션 포트폴리오 정보를 조회한다.
  * 2019-07-26  bkLove(촤병국)
  */
 var getSimulPortfolio2 = function(req, res) {
     try {
-        log.debug('simulation.getSimulPortfolio2 호출됨.');
+        log.debug('simulation2.getSimulPortfolio2 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -225,10 +237,10 @@ var getSimulPortfolio2 = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] simulation.getSimulPortfolio2  req.body.data no data.", req.body.data);
+            log.error("[error] simulation2.getSimulPortfolio2  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] simulation.getSimulPortfolio2  req.body.data no data.";
+            resultMsg.msg = "[error] simulation2.getSimulPortfolio2  req.body.data no data.";
 
             throw resultMsg;
         }
@@ -319,7 +331,7 @@ var getSimulPortfolio2 = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] simulation.getSimulPortfolio2 오류가 발생하였습니다.";
+        resultMsg.msg = "[error] simulation2.getSimulPortfolio2 오류가 발생하였습니다.";
         resultMsg.err = expetion;
 
         resultMsg.rebalancePortfolioObj  =   [];
