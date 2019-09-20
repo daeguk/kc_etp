@@ -392,11 +392,9 @@ export default {
             var tr          =   $(this).closest('tr');
             var rowIndex    =   tr.index();
 
-            vm.fn_resetErrorMessage();
-            vm.fn_resetRecords( rowIndex );            
-
             if( $(this).val() != '' ) {
-                
+                vm.fn_resetErrorMessage();
+
                 /* 종목코드인 경우에만 코드 검색 */
                 if( $(this).attr("name") == "F16013" ) {
                     /* 종목코드를 검색한다. */
@@ -419,6 +417,8 @@ export default {
                     });
                 }
             }else{
+                vm.fn_resetRecords( rowIndex );
+
                 /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
                 vm.fn_setImportanceMethodCd( vm.importance_method_cd );                
             }
@@ -427,11 +427,11 @@ export default {
 
         /* table tr 에서 종목코드 change 시 레코드 초기화   */
         $('#table01 tbody').on('change', "input[name='F16013']", function() {
-            // var tr          =   $(this).closest('tr');
-            // var rowIndex    =   tr.index();
+            var tr          =   $(this).closest('tr');
+            var rowIndex    =   tr.index();
 
-            // vm.fn_resetErrorMessage();
-            // vm.fn_resetRecords( rowIndex );
+            vm.fn_resetErrorMessage();
+            vm.fn_resetRecords( rowIndex );
         });
 
 
