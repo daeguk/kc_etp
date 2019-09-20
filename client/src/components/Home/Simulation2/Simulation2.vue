@@ -228,7 +228,7 @@
 
                         <div class="text-xs-center mt-3">
                             <v-btn depressed outline color="primary" @click.stop="fn_changeRebalance()">리밸런싱 내역조정</v-btn>                                                   
-                            <v-btn depressed color="primary" @click.stop="fn_saveBaicInfo()">백테스트 실행</v-btn>
+                            <v-btn depressed color="primary" @click.stop="fn_runBacktestWithSaveBasicInfo()">백테스트 실행</v-btn>
                         </div>
 
                         <MastPopup02 v-if="MastModalFlag" @selectedItem="fn_getSelectedItem" @closeMastModal="fn_closeMastModal" ></MastPopup02>
@@ -1516,10 +1516,10 @@ export default {
         },
 
         /*
-         * 시뮬레이션 기본정보를 저장한다.
+         * 기본정보 저장과 함께 백테스트 실행을 수행한다.
          * 2019-07-26  bkLove(촤병국)
          */
-        fn_saveBaicInfo() {
+        fn_runBacktestWithSaveBasicInfo() {
             var vm = this;
 
             vm.arr_show_error_message   =   [];
@@ -1651,7 +1651,7 @@ export default {
 
             vm.fn_showProgress( true );
 
-            axios.post(Config.base_url + "/user/simulation/saveBaicInfo2", {
+            axios.post(Config.base_url + "/user/simulation2/runBacktestWithSaveBasicInfo", {
                 data: { 
                         
                         "prev_grp_cd"           :   vm.prev_grp_cd              /* 그룹 코드 (변경전) */
