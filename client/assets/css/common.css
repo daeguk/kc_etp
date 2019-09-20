@@ -1028,11 +1028,13 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 
 
 
+
 /*.simul_port_w .insize{width:160px;}
 .simul_port_w .intxt{vertical-align: text-bottom;  padding-top:6px; padding-left:3px; padding-right:5px;}
 .simul_port_w .insize .v-messages{display:none;}
 .simul_port_w .insize .v-text-field__details{display: none;}*/
 
+.simul_del_btn{line-height: 19px !important;}
 .simu_btn_r{float: right;}
 .register_wrap .left_w{float: left;}
 .register_wrap .left_w span.intext{ padding-right:5px; display:inline-block; vertical-align: middle}
