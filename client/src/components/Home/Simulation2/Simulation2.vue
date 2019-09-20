@@ -417,7 +417,6 @@ export default {
                     });
                 }
             }else{
-                vm.fn_resetRecords( rowIndex );
 
                 /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
                 vm.fn_setImportanceMethodCd( vm.importance_method_cd );                
