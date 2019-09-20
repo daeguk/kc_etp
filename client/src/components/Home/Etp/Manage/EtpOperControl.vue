@@ -208,7 +208,8 @@ export default {
             FaverClassName: '',
             pdfData : {},
             indexBasic : {},
-            faverSize : 760,
+            // faverSize : 760,
+            faverSize : 985,
             reloadYn : false,
             toggle : {
                 togglePdfEmergencyPop : false,
@@ -315,7 +316,7 @@ export default {
 
             if (gubun == '1') {
                 this.paramData = paramData;
-                this.faverSize = 1081;
+                // this.faverSize = 1081;
 
                 if( this.activeTab != 2 ) {                
                     this.showIndexDetailDialog = false;
@@ -351,7 +352,7 @@ export default {
             } else if (gubun == '2') { 
                 this.paramData = paramData;
                 this.showEtpDetailDialog = false;
-                this.faverSize = 760;
+                // this.faverSize = 760;
 
                 if (this.showIndexDetailDialog) {
                     this.$EventBus.$off('changeEtpAnalysisInfo', paramData);

@@ -1028,11 +1028,13 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 
 
 
+
 /*.simul_port_w .insize{width:160px;}
 .simul_port_w .intxt{vertical-align: text-bottom;  padding-top:6px; padding-left:3px; padding-right:5px;}
 .simul_port_w .insize .v-messages{display:none;}
 .simul_port_w .insize .v-text-field__details{display: none;}*/
 
+.simul_del_btn{line-height: 19px !important;}
 .simu_btn_r{float: right;}
 .register_wrap .left_w{float: left;}
 .register_wrap .left_w span.intext{ padding-right:5px; display:inline-block; vertical-align: middle}
@@ -1057,3 +1059,5 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .multif_t_tit .m_title{font-weight:600 !important;text-align: center;}
 .multif_btn1{color:#85c406; cursor: pointer;}
 .multif_btn2{float:right;color:#85c406; cursor: pointer;}
+.fundf_w img{vertical-align: text-bottom;}
+.font_b{font-weight:600; vertical-align: middle;}

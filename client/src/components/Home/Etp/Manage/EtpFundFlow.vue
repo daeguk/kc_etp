@@ -1,7 +1,7 @@
 <template>
   <div>
     <h4 class="mb-0">Fund Flows</h4>
-    <span class="multi_sub_tit">기간별 자금 유입현황을 추정합니다.</span><br>
+    <span class="multi_sub_tit">기간별 자금 유입현황을 추정합니다.</span>
     <span class="multi_sub_sub_tit">*단위 : 억원</span>
     <v-layout>
       <v-flex xs6 class="fundf_w">

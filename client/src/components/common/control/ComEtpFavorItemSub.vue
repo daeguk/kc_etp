@@ -1,80 +1,74 @@
 <template>
-    <v-container>
-        <v-list class="pt-0" dense>
-            <v-list-tile-content class="rightmenu_con2">
-                <v-layout class="w100">
-                    <v-flex xs12>
-                       <v-card>
-                            <v-card-title class="con_r_ta_serch">
-                                    <v-text-field v-model="search" v-on:keyup="filterAllData(1)" append-icon="search" label="Search" single-line hide-details></v-text-field>
-                                    <button type='button' id='btn_all_faver' v-on:click="filterAllData(2)" :class='allFaverClass'>star</button>
-                            </v-card-title>    
-                       </v-card>
-                                
-                                <v-tabs v-model="activeTab" centered grow>
-                                    <v-tabs-slider ></v-tabs-slider>
-
-                                    <v-tab v-for="item in kindTabs" :key="item">{{ item }}</v-tab>
-                                </v-tabs>
-                                
-                                <v-tabs-items v-model="activeTab">
-                                <v-tab-item>
-                                    <!-- etf 리스트 영역 -->
-                                    <v-layout row >
-                                        
-                                        <v-flex xs12>
-                                            <v-card flat>
-                                               
-                                                <table id="publish_etp_table" class="tbl_type ver2" style="width:100%">
-                                                    <colgroup>
-                                                        <col width="3%">
-                                                        <col width="70%">
-                                                        <col width="27%">
-                                                    </colgroup>
-                                                    <thead>
-                                                        <tr>
-                                                            <th></th>
-                                                            <th>종목명</th>
-                                                            <th>현재가</th>
-                                                        </tr>
-                                                    </thead>  
-                                                </table>
-                                            </v-card>
-                                        </v-flex>
-                                    </v-layout>
-                                </v-tab-item>
-                                <v-tab-item>
-                                    <!--ETN 리스트 영역 -->
-                                    <v-layout row>
-                                        <v-flex xs12>
-                                            <v-card flat>                                                
-                                                <table id="all_etp_table" class="tbl_type ver2" style="width:100%">
-                                                    <colgroup>
-                                                        <col width="3%">
-                                                        <col width="70%">
-                                                        <col width="27%">
-                                                    </colgroup>
-                                                    <thead>
-                                                        <tr>
-                                                            <th></th>
-                                                            <th>종목명</th>
-                                                            <th>현재가</th>
-                                                        </tr>
-                                                    </thead>  
-                                                </table>
-                                            </v-card>
-                                        </v-flex>
-                                    </v-layout>
-                                </v-tab-item>
-                                
-                                </v-tabs-items>
-                                
-                    </v-flex>
-                </v-layout>
-            </v-list-tile-content>
-        </v-list>
-        <ProgressBar ref="progress"></ProgressBar>
-    </v-container>
+  <v-container>
+    <v-list class="pt-0" dense>
+      <v-list-tile-content class="rightmenu_con2">
+        <v-layout class="w100">
+          <v-flex xs12>
+            <v-card>
+              <v-card-title class="con_r_ta_serch">
+                <v-text-field v-model="search" v-on:keyup="filterAllData(1)" append-icon="search" label="Search" single-line hide-details></v-text-field>
+                <button type='button' id='btn_all_faver' v-on:click="filterAllData(2)" :class='allFaverClass'>star</button>
+              </v-card-title>    
+            </v-card>
+            <v-tabs v-model="activeTab" centered grow>
+                <v-tabs-slider ></v-tabs-slider>
+                <v-tab v-for="item in kindTabs" :key="item">{{ item }}</v-tab>
+            </v-tabs>
+            
+            <v-tabs-items v-model="activeTab">
+            <v-tab-item>
+              <!-- etf 리스트 영역 -->
+              <v-layout row >
+                <v-flex xs12>
+                  <v-card flat>
+                    <table id="publish_etp_table" class="tbl_type ver2" style="width:100%;height:100%">
+                      <colgroup>
+                        <col width="3%">
+                        <col width="70%">
+                        <col width="27%">
+                      </colgroup>
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th>종목명</th>
+                          <th>현재가</th>
+                        </tr>
+                      </thead>  
+                    </table>
+                  </v-card>
+                </v-flex>
+              </v-layout>
+            </v-tab-item>
+            <v-tab-item>
+              <!--ETN 리스트 영역 -->
+              <v-layout row>
+                <v-flex xs12>
+                  <v-card flat>                                                
+                    <table id="all_etp_table" class="tbl_type ver2" style="width:100%">
+                      <colgroup>
+                        <col width="3%">
+                        <col width="70%">
+                        <col width="27%">
+                      </colgroup>
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th>종목명</th>
+                          <th>현재가</th>
+                        </tr>
+                      </thead>  
+                    </table>
+                  </v-card>
+                </v-flex>
+              </v-layout>
+            </v-tab-item>
+            </v-tabs-items>
+          </v-flex>
+        </v-layout>
+      </v-list-tile-content>
+    </v-list>
+    <ProgressBar ref="progress"></ProgressBar>
+  </v-container>
 </template>
 
 

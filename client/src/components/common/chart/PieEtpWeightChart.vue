@@ -58,6 +58,7 @@ export default {
         for(var i = 0; i < this.disCnt; i++) {
           this.weights[i] = Number(this.etpWeight[i].PERCNT);
           this.sumWeight += this.weights[i];
+          if(this.sumWeight > 100) this.sumWeight = 100.00;
           // console.log("this.weights : " + this.weights[i] + " sum : " + this.sumWeight);
         }
         var spos = 0.0;
