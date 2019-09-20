@@ -32,7 +32,7 @@ var getStatusList = function(req, res) {
             log.error("[error] indexSelectList.getStatusList  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] indexSelectList.getStatusList  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -75,7 +75,7 @@ var getStatusList = function(req, res) {
                 log.error("[error] indexSelectList.getStatusList Error while performing Query.", err, stmt, paramData);
 
                 resultMsg.result = false;
-                resultMsg.msg = "[error] indexSelectList.getStatusList Error while performing Query";
+                resultMsg.msg = config.MSG.error01;
 
                 res.json(resultMsg);
                 res.end();
@@ -86,7 +86,7 @@ var getStatusList = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] indexSelectList.getStatusList 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
 
         res.json(resultMsg);
         res.end();
@@ -154,7 +154,7 @@ var getIndexSelectList = function(req, res) {
                 log.error("[error] indexSelectList.getIndexSelectList Error while performing Query.", err, stmt, paramData);
 
                 resultMsg.result = false;
-                resultMsg.msg = "[error] indexSelectList.getIndexSelectList Error while performing Query";
+                resultMsg.msg = config.MSG.error01;
 
                 res.json(resultMsg);
                 res.end();
@@ -165,7 +165,7 @@ var getIndexSelectList = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] indexSelectList.getIndexSelectList 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
 
         res.json(resultMsg);
         res.end();

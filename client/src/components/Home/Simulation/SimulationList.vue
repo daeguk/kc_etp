@@ -98,9 +98,9 @@
                                         <button name="btn3" class="btn_icon v-icon material-icons" v-on="on" >more_horiz</button>
                                     </template>
                                     <ul class="more_menu_w">
-                                        <li @click="">menu1</li>
-                                        <li @click="">menu2</li>
-                                        <li @click="">menu3</li>
+                                        <li @click=""><v-icon small class="simul_del_btn">clear</v-icon>삭제</li>
+                                        <!--li @click="">menu2</li>
+                                        <li @click="">menu3</li-->
                                     </ul>
                                 </v-menu>             
                             </td>

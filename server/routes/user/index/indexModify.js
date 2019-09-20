@@ -72,7 +72,7 @@ var getRegistedJisuData = function(req, res) {
 
                             if (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] indexModify.getJisuMast Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -89,7 +89,7 @@ var getRegistedJisuData = function(req, res) {
                     } catch (err) {
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] indexModify.getJisuMast Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
 
                         return callback(resultMsg);
@@ -108,7 +108,7 @@ var getRegistedJisuData = function(req, res) {
 
                             if (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -125,7 +125,7 @@ var getRegistedJisuData = function(req, res) {
                     } catch (err) {
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
 
                         return callback(resultMsg);
@@ -144,7 +144,7 @@ var getRegistedJisuData = function(req, res) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] indexModify.getJisuShareReq Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -200,7 +200,7 @@ var getRegistedJisuData = function(req, res) {
                             } catch (err) {
 
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] indexModify.getJisuShareReq Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -210,7 +210,7 @@ var getRegistedJisuData = function(req, res) {
                     } catch (err) {
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] indexModify.getJisuShareReq Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
 
                         return callback(resultMsg);
@@ -238,7 +238,7 @@ var getRegistedJisuData = function(req, res) {
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
-            resultMsg.msg = "[error] indexModify.getRegistedJisuData 오류가 발생하였습니다.";
+            resultMsg.msg = config.MSG.error01;
 
             resultMsg.jisuDataList = [];
             resultMsg.jisuInfo = {};
@@ -431,7 +431,7 @@ var modifyJisu = function(req, res) {
 
                                                 if (err) {
                                                     resultMsg.result = false;
-                                                    resultMsg.msg = "[error] indexModify.getJisuMast Error while performing Query";
+                                                    resultMsg.msg = config.MSG.error01;
                                                     resultMsg.err = err;
 
                                                     return callback(resultMsg);
@@ -473,7 +473,7 @@ var modifyJisu = function(req, res) {
                                             } catch (err) {
 
                                                 resultMsg.result = false;
-                                                resultMsg.msg = "[error] indexModify.getJisuMast Error while performing Query";
+                                                resultMsg.msg = config.MSG.error01;
                                                 resultMsg.err = err;
 
                                                 return callback(resultMsg);
@@ -484,7 +484,7 @@ var modifyJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexModify.getJisuMast Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -508,7 +508,7 @@ var modifyJisu = function(req, res) {
 
                                                 if (err) {
                                                     resultMsg.result = false;
-                                                    resultMsg.msg = "[error] indexRegister.saveTmJisuFile Error while performing Query";
+                                                    resultMsg.msg = config.MSG.error01;
                                                     resultMsg.err = err;
 
                                                     return callback(resultMsg);
@@ -526,7 +526,7 @@ var modifyJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexRegister.saveTmJisuFile Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -549,7 +549,7 @@ var modifyJisu = function(req, res) {
 
                                                 if (err) {
                                                     resultMsg.result = false;
-                                                    resultMsg.msg = "[error] indexModify.getJisuFile Error while performing Query";
+                                                    resultMsg.msg = config.MSG.error01;
                                                     resultMsg.err = err;
 
                                                     return callback(resultMsg);
@@ -568,7 +568,7 @@ var modifyJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexModify.getJisuFile Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -616,7 +616,7 @@ var modifyJisu = function(req, res) {
 
                                             if (err) {
                                                 resultMsg.result = false;
-                                                resultMsg.msg = "[error] indexModify.modifyJisuMast Error while performing Query";
+                                                resultMsg.msg = config.MSG.error01;
                                                 resultMsg.err = err;
 
                                                 return callback(resultMsg);
@@ -628,7 +628,7 @@ var modifyJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexModify.modifyJisuMast Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -646,7 +646,7 @@ var modifyJisu = function(req, res) {
 
                                             if (err) {
                                                 resultMsg.result = false;
-                                                resultMsg.msg = "[error] indexModify.getJisuShareReqForDelete Error while performing Query";
+                                                resultMsg.msg = config.MSG.error01;
                                                 resultMsg.err = err;
 
                                                 return callback(resultMsg);
@@ -663,7 +663,7 @@ var modifyJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexModify.getJisuShareReqForDelete Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -683,7 +683,7 @@ var modifyJisu = function(req, res) {
 
                                                 if (err) {
                                                     resultMsg.result = false;
-                                                    resultMsg.msg = "[error] indexModify.deleteJisuShareReqList Error while performing Query";
+                                                    resultMsg.msg = config.MSG.error01;
                                                     resultMsg.err = err;
 
                                                     return callback(resultMsg);
@@ -702,7 +702,7 @@ var modifyJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexModify.deleteJisuShareReqList Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -721,7 +721,7 @@ var modifyJisu = function(req, res) {
 
                                                 if (err) {
                                                     resultMsg.result = false;
-                                                    resultMsg.msg = "[error] indexModify.getJisuShareReqForInsert Error while performing Query";
+                                                    resultMsg.msg = config.MSG.error01;
                                                     resultMsg.err = err;
 
                                                     return callback(resultMsg);
@@ -741,7 +741,7 @@ var modifyJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexModify.getJisuShareReqForInsert Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -762,7 +762,7 @@ var modifyJisu = function(req, res) {
 
                                                 if (err) {
                                                     resultMsg.result = false;
-                                                    resultMsg.msg = "[error] indexModify.insertJisuShareReqList Error while performing Query";
+                                                    resultMsg.msg = config.MSG.error01;
                                                     resultMsg.err = err;
 
                                                     return callback(resultMsg);
@@ -780,7 +780,7 @@ var modifyJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexModify.insertJisuShareReqList Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -799,7 +799,7 @@ var modifyJisu = function(req, res) {
 
                                                 if (err) {
                                                     resultMsg.result = false;
-                                                    resultMsg.msg = "[error] indexModify.getJisuShareReqForUpdate Error while performing Query";
+                                                    resultMsg.msg = config.MSG.error01;
                                                     resultMsg.err = err;
 
                                                     return callback(resultMsg);
@@ -819,7 +819,7 @@ var modifyJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexModify.getJisuShareReqForUpdate Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -839,7 +839,7 @@ var modifyJisu = function(req, res) {
 
                                                 if (err) {
                                                     resultMsg.result = false;
-                                                    resultMsg.msg = "[error] indexModify.updateJisuShareReqList Error while performing Query";
+                                                    resultMsg.msg = config.MSG.error01;
                                                     resultMsg.err = err;
 
                                                     return callback(resultMsg);
@@ -858,7 +858,7 @@ var modifyJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexModify.updateJisuShareReqList Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -878,7 +878,7 @@ var modifyJisu = function(req, res) {
 
                                                 if (err) {
                                                     resultMsg.result = false;
-                                                    resultMsg.msg = "[error] indexModify.deleteJisuUpload Error while performing Query";
+                                                    resultMsg.msg = config.MSG.error01;
                                                     resultMsg.err = err;
 
                                                     return callback(resultMsg);
@@ -899,7 +899,7 @@ var modifyJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexModify.deleteJisuUpload Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -922,7 +922,7 @@ var modifyJisu = function(req, res) {
 
                                                 if (err) {
                                                     resultMsg.result = false;
-                                                    resultMsg.msg = "[error] indexRegister.getTmJisuTempUploadCnt Error while performing Query";
+                                                    resultMsg.msg = config.MSG.error01;
                                                     resultMsg.err = err;
 
                                                     return callback(resultMsg);
@@ -943,7 +943,7 @@ var modifyJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexRegister.getTmJisuTempUploadCnt Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -965,7 +965,7 @@ var modifyJisu = function(req, res) {
 
                                                     if (err) {
                                                         resultMsg.result = false;
-                                                        resultMsg.msg = "[error] indexRegister.getHistNoByTmJisuUploadHist Error while performing Query";
+                                                        resultMsg.msg = config.MSG.error01;
                                                         resultMsg.err = err;
 
                                                         return callback(resultMsg);
@@ -987,7 +987,7 @@ var modifyJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexRegister.getHistNoByTmJisuUploadHist Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -1012,7 +1012,7 @@ var modifyJisu = function(req, res) {
 
                                                         if (err) {
                                                             resultMsg.result = false;
-                                                            resultMsg.msg = "[error] indexRegister.saveTmJisuUploadHist Error while performing Query";
+                                                            resultMsg.msg = config.MSG.error01;
                                                             resultMsg.err = err;
 
                                                             return callback(resultMsg);
@@ -1035,7 +1035,7 @@ var modifyJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexRegister.saveTmJisuUploadHist Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -1095,7 +1095,7 @@ var modifyJisu = function(req, res) {
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
-            resultMsg.msg = "[error] indexModify.modifyJisu 오류가 발생하였습니다.";
+            resultMsg.msg = config.MSG.error01;
             resultMsg.err = expetion;
         }
 
@@ -1176,7 +1176,7 @@ var deleteJisu = function(req, res) {
                                         try {
                                             if (err) {
                                                 resultMsg.result = false;
-                                                resultMsg.msg = "[error] indexModify.getJisuMast Error while performing Query";
+                                                resultMsg.msg = config.MSG.error01;
                                                 resultMsg.err = err;
 
                                                 return callback(resultMsg);
@@ -1208,7 +1208,7 @@ var deleteJisu = function(req, res) {
                                         } catch (err) {
 
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexModify.getJisuMast Error while performing Query";
+                                            resultMsg.msg = config.MSG.error01;
                                             resultMsg.err = err;
 
                                             return callback(resultMsg);
@@ -1222,7 +1222,7 @@ var deleteJisu = function(req, res) {
                             } catch (err) {
 
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] indexModify.getJisuMast Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -1245,7 +1245,7 @@ var deleteJisu = function(req, res) {
 
                                         if (err) {
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexModify.getJisuFile Error while performing Query";
+                                            resultMsg.msg = config.MSG.error01;
                                             resultMsg.err = err;
 
                                             return callback(resultMsg);
@@ -1265,7 +1265,7 @@ var deleteJisu = function(req, res) {
                             } catch (err) {
 
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] indexModify.getJisuFile Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -1333,7 +1333,7 @@ var deleteJisu = function(req, res) {
 
                                             if (err) {
                                                 resultMsg.result = false;
-                                                resultMsg.msg = "[error] indexModify.deleteJisuFile Error while performing Query";
+                                                resultMsg.msg = config.MSG.error01;
                                                 resultMsg.err = err;
 
                                                 return callback(resultMsg);
@@ -1353,7 +1353,7 @@ var deleteJisu = function(req, res) {
                             } catch (err) {
 
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] indexModify.deleteJisuFile Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -1376,7 +1376,7 @@ var deleteJisu = function(req, res) {
 
                                         if (err) {
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexModify.getJisuFile Error while performing Query";
+                                            resultMsg.msg = config.MSG.error01;
                                             resultMsg.err = err;
 
                                             return callback(resultMsg);
@@ -1396,7 +1396,7 @@ var deleteJisu = function(req, res) {
                             } catch (err) {
 
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] indexModify.getJisuFile Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -1463,7 +1463,7 @@ var deleteJisu = function(req, res) {
 
                                             if (err) {
                                                 resultMsg.result = false;
-                                                resultMsg.msg = "[error] indexModify.deleteJisuFile Error while performing Query";
+                                                resultMsg.msg = config.MSG.error01;
                                                 resultMsg.err = err;
 
                                                 return callback(resultMsg);
@@ -1483,7 +1483,7 @@ var deleteJisu = function(req, res) {
                             } catch (err) {
 
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] indexModify.deleteJisuFile Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -1505,7 +1505,7 @@ var deleteJisu = function(req, res) {
 
                                         if (err) {
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexModify.getJisuTempUploadCnt Error while performing Query";
+                                            resultMsg.msg = config.MSG.error01;
                                             resultMsg.err = err;
 
                                             return callback(resultMsg);
@@ -1525,7 +1525,7 @@ var deleteJisu = function(req, res) {
                             } catch (err) {
 
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] indexModify.getJisuTempUploadCnt Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -1549,7 +1549,7 @@ var deleteJisu = function(req, res) {
 
                                             if (err) {
                                                 resultMsg.result = false;
-                                                resultMsg.msg = "[error] indexModify.deleteJisuTempUpload Error while performing Query";
+                                                resultMsg.msg = config.MSG.error01;
                                                 resultMsg.err = err;
 
                                                 return callback(resultMsg);
@@ -1566,7 +1566,7 @@ var deleteJisu = function(req, res) {
                             } catch (err) {
 
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] indexModify.deleteJisuTempUpload Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -1584,7 +1584,7 @@ var deleteJisu = function(req, res) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexModify.getJisuUploadCnt Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -1600,7 +1600,7 @@ var deleteJisu = function(req, res) {
                             } catch (err) {
 
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] indexModify.getJisuUploadCnt Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -1620,7 +1620,7 @@ var deleteJisu = function(req, res) {
 
                                         if (err) {
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexModify.deleteJisuUpload Error while performing Query";
+                                            resultMsg.msg = config.MSG.error01;
                                             resultMsg.err = err;
 
                                             return callback(resultMsg);
@@ -1635,7 +1635,7 @@ var deleteJisu = function(req, res) {
                             } catch (err) {
 
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] indexModify.deleteJisuUpload Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -1653,7 +1653,7 @@ var deleteJisu = function(req, res) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexModify.getJisuShareReqCnt Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -1669,7 +1669,7 @@ var deleteJisu = function(req, res) {
                             } catch (err) {
 
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] indexModify.getJisuShareReqCnt Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -1689,7 +1689,7 @@ var deleteJisu = function(req, res) {
 
                                         if (err) {
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexModify.deleteJisuShareReq Error while performing Query";
+                                            resultMsg.msg = config.MSG.error01;
                                             resultMsg.err = err;
 
                                             return callback(resultMsg);
@@ -1704,7 +1704,7 @@ var deleteJisu = function(req, res) {
                             } catch (err) {
 
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] indexModify.deleteJisuShareReq Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -1723,7 +1723,7 @@ var deleteJisu = function(req, res) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexModify.getJisuMastCnt Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -1739,7 +1739,7 @@ var deleteJisu = function(req, res) {
                             } catch (err) {
 
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] indexModify.getJisuMastCnt Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -1759,7 +1759,7 @@ var deleteJisu = function(req, res) {
 
                                         if (err) {
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexModify.deleteJisuMast Error while performing Query";
+                                            resultMsg.msg = config.MSG.error01;
                                             resultMsg.err = err;
 
                                             return callback(resultMsg);
@@ -1774,7 +1774,7 @@ var deleteJisu = function(req, res) {
                             } catch (err) {
 
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] indexModify.deleteJisuMast Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -1807,7 +1807,7 @@ var deleteJisu = function(req, res) {
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
-            resultMsg.msg = "[error] indexModify.deleteJisu 오류가 발생하였습니다.";
+            resultMsg.msg = config.MSG.error01;
             resultMsg.err = expetion;
         }
 

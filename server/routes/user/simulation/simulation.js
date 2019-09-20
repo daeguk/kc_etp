@@ -47,7 +47,7 @@ var getInitGrpCd = function(req, res) {
             log.error("[error] simulation.getInitGrpCd  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] simulation.getInitGrpCd  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -81,7 +81,7 @@ var getInitGrpCd = function(req, res) {
                         log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] simulation.getInitGrpCd Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
                     }
                     else if (rows && rows.length > 0) {
@@ -102,7 +102,7 @@ var getInitGrpCd = function(req, res) {
                 log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
-                resultMsg.msg = "[error] simulation.getInitGrpCd Error while performing Query";
+                resultMsg.msg = config.MSG.error01;
                 resultMsg.err = err;
 
                 res.json(resultMsg);
@@ -115,7 +115,7 @@ var getInitGrpCd = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] simulation.getInitGrpCd 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.dataList  =   [];
@@ -142,7 +142,7 @@ var getNextScenName = function(req, res) {
             log.error("[error] simulation.getNextScenName  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] simulation.getNextScenName  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -172,7 +172,7 @@ var getNextScenName = function(req, res) {
                         log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] simulation.getNextScenName Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
                     }
                     
@@ -191,7 +191,7 @@ var getNextScenName = function(req, res) {
                 log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
-                resultMsg.msg = "[error] simulation.getNextScenName Error while performing Query";
+                resultMsg.msg = config.MSG.error01;
                 resultMsg.err = err;
 
                 res.json(resultMsg);
@@ -204,7 +204,7 @@ var getNextScenName = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] simulation.getNextScenName 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.scen_name  =   "";
@@ -231,7 +231,7 @@ var getInitData = function(req, res) {
             log.error("[error] simulation.getInitData  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] simulation.getInitData  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -276,7 +276,7 @@ var getInitData = function(req, res) {
                         log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] simulation.getInitData Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
                     }
 
@@ -367,7 +367,7 @@ var getInitData = function(req, res) {
                 log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
-                resultMsg.msg = "[error] simulation.getInitData Error while performing Query";
+                resultMsg.msg = config.MSG.error01;
                 resultMsg.err = err;
 
                 res.json(resultMsg);
@@ -380,7 +380,7 @@ var getInitData = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] simulation.getInitData 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.arr_start_year                =   [];     /* 초기설정 시작년도 array */
@@ -411,7 +411,7 @@ var getJongmokInfo = function(req, res) {
             log.error("[error] simulation.getJongmokInfo  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] simulation.getJongmokInfo  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -440,7 +440,7 @@ var getJongmokInfo = function(req, res) {
                         log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] etpOper.getKspjongBasic Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
                     }
                     
@@ -467,7 +467,7 @@ var getJongmokInfo = function(req, res) {
                 log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
-                resultMsg.msg = "[error] simulation.getJongmokInfo Error while performing Query";
+                resultMsg.msg = config.MSG.error01;
                 resultMsg.err = err;
 
                 resultMsg.jongmokInfo   =   {};
@@ -482,7 +482,7 @@ var getJongmokInfo = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] simulation.getJongmokInfo 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.jongmokInfo   =   {};
@@ -510,7 +510,7 @@ var modifyGroup = function(req, res) {
             log.error("[error] simulation.modifyGroup  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] simulation.modifyGroup  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -560,7 +560,7 @@ var modifyGroup = function(req, res) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulation.getExistCodeCheckByGroup Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -591,7 +591,7 @@ var modifyGroup = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulation.getExistCodeCheckByGroup Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -624,7 +624,7 @@ var modifyGroup = function(req, res) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulation.getExistScenName Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -637,7 +637,7 @@ var modifyGroup = function(req, res) {
                                     if( exist_yn == "Y" ) {
                                         resultMsg.result = false;
                                         resultMsg.msg   = "시나리오 그룹명이 이미 존재합니다.";
-                                        resultMsg.err   = "[error] simulation.getExistScenName Error while performing Query";
+                                        resultMsg.err   = config.MSG.error01;
 
                                         return callback(resultMsg);                                    
                                     }
@@ -649,7 +649,7 @@ var modifyGroup = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulation.getExistScenName Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -679,7 +679,7 @@ var modifyGroup = function(req, res) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulation.getExistSubCntByGroup Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -692,7 +692,7 @@ var modifyGroup = function(req, res) {
                                     if( exist_cnt > 0 ) {
                                         resultMsg.result    =   false;
                                         resultMsg.msg       =   "시나리오가 한건 이상  존재합니다.";
-                                        resultMsg.err       =   "[error] simulation.getExistSubCntByGroup Error while performing Query";
+                                        resultMsg.err       =   "시나리오가 한건 이상  존재합니다.";
 
                                         return callback(resultMsg);                                    
                                     }
@@ -704,7 +704,7 @@ var modifyGroup = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulation.getExistSubCntByGroup Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -737,7 +737,7 @@ var modifyGroup = function(req, res) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulation.getScenCdByGroup Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -754,7 +754,7 @@ var modifyGroup = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulation.getScenCdByGroup Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -768,14 +768,14 @@ var modifyGroup = function(req, res) {
 
                             if( !paramData.grp_cd  ) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] simulation.getScenOrderNo  'grp_cd' 가 존재하지 않습니다.";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = "[error] simulation.getScenOrderNo Error while performing Query";
 
                                 callback( resultMsg, paramData)
 
                             }else if( !paramData.scen_cd  ) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] simulation.getScenOrderNo  'scen_cd' 가 존재하지 않습니다.";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = "[error] simulation.getScenOrderNo Error while performing Query";
 
                                 callback( resultMsg, paramData)
@@ -796,7 +796,7 @@ var modifyGroup = function(req, res) {
 
                                         if (err) {
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] simulation.getScenOrderNo Error while performing Query";
+                                            resultMsg.msg = config.MSG.error01;
                                             resultMsg.err = err;
 
                                             return callback(resultMsg);
@@ -814,7 +814,7 @@ var modifyGroup = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulation.getScenOrderNo Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -847,7 +847,7 @@ var modifyGroup = function(req, res) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulation." + queryId + " Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -855,7 +855,7 @@ var modifyGroup = function(req, res) {
 
                                 if ( !rows || rows.length == 0 ) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulation." + queryId + " Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     callback(resultMsg, paramData);
@@ -868,7 +868,7 @@ var modifyGroup = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulation." + queryId + " Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -906,7 +906,7 @@ var modifyGroup = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] simulation.modifyGroup 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         res.json(resultMsg);
@@ -931,7 +931,7 @@ var getSimulList = function(req, res) {
             log.error("[error] simulation.getSimulList  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] simulation.getSimulList  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -961,7 +961,7 @@ var getSimulList = function(req, res) {
                         log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] simulation.getSimulList Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
                     }
                     
@@ -980,7 +980,7 @@ var getSimulList = function(req, res) {
                 log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
-                resultMsg.msg = "[error] simulation.getSimulList Error while performing Query";
+                resultMsg.msg = config.MSG.error01;
                 resultMsg.err = err;
 
                 res.json(resultMsg);
@@ -993,7 +993,7 @@ var getSimulList = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] simulation.getSimulList 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.dataList      =   [];
@@ -1020,7 +1020,7 @@ var getSimulMast = function(req, res) {
             log.error("[error] simulation.getSimulMast  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] simulation.getSimulMast  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -1050,7 +1050,7 @@ var getSimulMast = function(req, res) {
                         log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] simulation.getSimulMast Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
                     }
                     
@@ -1069,7 +1069,7 @@ var getSimulMast = function(req, res) {
                 log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
-                resultMsg.msg = "[error] simulation.getSimulMast Error while performing Query";
+                resultMsg.msg = config.MSG.error01;
                 resultMsg.err = err;
 
                 res.json(resultMsg);
@@ -1082,7 +1082,7 @@ var getSimulMast = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] simulation.getSimulMast 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.mastInfo  =   {};
@@ -1109,7 +1109,7 @@ var getSimulPortfolio = function(req, res) {
             log.error("[error] simulation.getSimulPortfolio  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] simulation.getSimulPortfolio  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -1139,7 +1139,7 @@ var getSimulPortfolio = function(req, res) {
                         log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] simulation.getSimulPortfolio Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
                     }
                     
@@ -1159,7 +1159,7 @@ var getSimulPortfolio = function(req, res) {
                 log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
-                resultMsg.msg = "[error] simulation.getSimulPortfolio Error while performing Query";
+                resultMsg.msg = config.MSG.error01;
                 resultMsg.err = err;
 
                 res.json(resultMsg);
@@ -1172,7 +1172,7 @@ var getSimulPortfolio = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] simulation.getSimulPortfolio 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.dataList  =   [];
@@ -1199,7 +1199,7 @@ var getInitData1 = function(req, res) {
             log.error("[error] simulation.getInitData  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] simulation.getInitData  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -1232,7 +1232,7 @@ var getInitData1 = function(req, res) {
                         log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] simulation.getInitData Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
                     }
 
@@ -1255,7 +1255,7 @@ var getInitData1 = function(req, res) {
                 log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
-                resultMsg.msg = "[error] simulation.getInitData Error while performing Query";
+                resultMsg.msg = config.MSG.error01;
                 resultMsg.err = err;
                 resultMsg.arr_code_list     =   [];
 
@@ -1269,7 +1269,7 @@ var getInitData1 = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] simulation.getInitData 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.arr_code_list     =   [];

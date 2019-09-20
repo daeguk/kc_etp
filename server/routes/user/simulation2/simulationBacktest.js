@@ -51,7 +51,7 @@ var saveBaicInfo2 = function(req, res) {
             log.error("[error] simulationBacktest.saveBaicInfo2  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] simulationBacktest.saveBaicInfo2  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -109,7 +109,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulation.getExistScenName Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -121,8 +121,8 @@ var saveBaicInfo2 = function(req, res) {
 
                                 if( exist_yn == "Y" ) {
                                     resultMsg.result = false;
-                                    resultMsg.msg   = "시나리오명이 이미 존재합니다.";
-                                    resultMsg.err   = "[error] simulation.getExistScenName Error while performing Query";
+                                    resultMsg.msg   = config.MSG.error01;
+                                    resultMsg.err   = "시나리오명이 이미 존재합니다.";
 
                                     return callback(resultMsg);                                    
                                 }
@@ -133,7 +133,7 @@ var saveBaicInfo2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.getExistScenName Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -166,7 +166,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationBacktest.getExistSubCnt Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -179,7 +179,7 @@ var saveBaicInfo2 = function(req, res) {
                                     if( exist_cnt > 0 ) {
                                         resultMsg.result    =   false;
                                         resultMsg.msg       =   "변경 전 상위그룹에 시나리오가 한건 이상  존재합니다.";
-                                        resultMsg.err       =   "[error] simulationBacktest.getExistSubCnt Error while performing Query";
+                                        resultMsg.err       =   "변경 전 상위그룹에 시나리오가 한건 이상  존재합니다.";
 
                                         return callback(resultMsg);                                    
                                     }
@@ -194,7 +194,7 @@ var saveBaicInfo2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.getExistSubCnt Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -227,7 +227,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationBacktest.getScenCd1 Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -245,7 +245,7 @@ var saveBaicInfo2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.getScenCd1 Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -263,15 +263,15 @@ var saveBaicInfo2 = function(req, res) {
 
                             if( !paramData.grp_cd  ) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] simulation.getScenOrderNo  'grp_cd' 가 존재하지 않습니다.";
-                                resultMsg.err = "[error] simulation.getScenOrderNo Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = config.MSG.error01;
 
                                 callback( resultMsg, msg);
 
                             }else if( !paramData.scen_cd  ) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] simulation.getScenOrderNo  'scen_cd' 가 존재하지 않습니다.";
-                                resultMsg.err = "[error] simulation.getScenOrderNo Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = config.MSG.error01;
 
                                 callback( resultMsg, msg);
 
@@ -288,7 +288,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                         if (err) {
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] simulation.getScenOrderNo Error while performing Query";
+                                            resultMsg.msg = config.MSG.error01;
                                             resultMsg.err = err;
 
                                             return callback(resultMsg);
@@ -309,7 +309,7 @@ var saveBaicInfo2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulation.getScenOrderNo Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -334,7 +334,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulation2.getSimulMast2 Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -342,7 +342,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                     if ( !rows || rows.length != 1 ) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulation2.getSimulMast2 Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         callback(resultMsg, msg);
@@ -377,7 +377,7 @@ var saveBaicInfo2 = function(req, res) {
                             } catch (err) {
 
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] simulation2.getSimulMast2 Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 callback(resultMsg);
@@ -407,7 +407,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulation2.getSimulPortfolio3 Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -415,7 +415,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                     if ( !rows || rows.length == 0 ) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulation2.getSimulPortfolio3 Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         callback(resultMsg, msg);
@@ -441,7 +441,7 @@ var saveBaicInfo2 = function(req, res) {
                             } catch (err) {
 
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] simulation2.getSimulPortfolio2 Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 callback(resultMsg);
@@ -468,7 +468,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulation2.getSerialNo Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -476,7 +476,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                 if ( !rows || rows.length != 1 ) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulation2.getSerialNo Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     callback(resultMsg, msg);
@@ -492,7 +492,7 @@ var saveBaicInfo2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulation2.getSerialNo Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -555,7 +555,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest2." + queryId + " Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -563,7 +563,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                 if ( !rows || rows.length == 0 ) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest2." + queryId + " Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     callback(resultMsg, msg);
@@ -576,7 +576,7 @@ var saveBaicInfo2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest2." + queryId + " Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -602,7 +602,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulation2.deleteTmSimulPortfolio2 Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -617,7 +617,7 @@ var saveBaicInfo2 = function(req, res) {
 
                         } catch (err) {
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulation2.deleteTmSimulPortfolio2 Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             return callback(resultMsg);
@@ -685,7 +685,7 @@ var saveBaicInfo2 = function(req, res) {
                                                     conn.query(stmt, function(err, rows) {
                                                         if (err) {
                                                             resultMsg.result = false;
-                                                            resultMsg.msg = "[error] simulation2.saveTmSimulPortfolio2 Error while performing Query";
+                                                            resultMsg.msg = config.MSG.error01;
                                                             resultMsg.err = err;
 
                                                             return innerCallback(resultMsg);
@@ -699,7 +699,7 @@ var saveBaicInfo2 = function(req, res) {
                                                 } catch (err) {
 
                                                     resultMsg.result = false;
-                                                    resultMsg.msg = "[error] simulation2.saveTmSimulPortfolio2 Error while performing Query";
+                                                    resultMsg.msg = config.MSG.error01;
 
                                                     if( !resultMsg.err ) {
                                                         resultMsg.err = err;
@@ -717,7 +717,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                         if( err ) {
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] simulation2.saveTmSimulPortfolio2 Error while performing Query";
+                                            resultMsg.msg = config.MSG.error01;
                                             if( !resultMsg.err ) {
                                                 resultMsg.err = err;
                                             }
@@ -743,7 +743,7 @@ var saveBaicInfo2 = function(req, res) {
 
                         } catch (err) {
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulation2.saveTmSimulPortfolio2 Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             return callback(resultMsg);
@@ -766,7 +766,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest2.getSimulListByBacktest2 Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -815,7 +815,7 @@ var saveBaicInfo2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest2.getSimulListByBacktest2 Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -838,7 +838,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest.getRebalanceDateByScenCd Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -884,7 +884,7 @@ var saveBaicInfo2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.getRebalanceDateByScenCd Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -908,7 +908,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest2.getSimulHistListByScenCd3 Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -956,7 +956,7 @@ var saveBaicInfo2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest2.getSimulHistListByScenCd2 Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             resultMsg.dailyJongmokObj   =   {};
@@ -984,7 +984,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest.getSimulBenchMark Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -1002,7 +1002,7 @@ var saveBaicInfo2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.getSimulBenchMark Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -1034,7 +1034,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                         stmt    =   "";
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
 
                                         return callback(null);
@@ -1050,7 +1050,7 @@ var saveBaicInfo2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(null);
@@ -1108,7 +1108,7 @@ var saveBaicInfo2 = function(req, res) {
         log.debug(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] simulationBacktest.saveBaicInfo2 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.arr_daily             =   [];
@@ -1148,7 +1148,7 @@ var saveBacktestResult2 = function(req, res) {
             log.error("[error] simulationBacktest.saveBacktestResult2  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] simulationBacktest.saveBacktestResult2  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -1200,7 +1200,7 @@ var saveBacktestResult2 = function(req, res) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationBacktest2.getSimulListByBacktest2 Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -1260,7 +1260,7 @@ var saveBacktestResult2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest2.getSimulListByBacktest2 Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -1283,7 +1283,7 @@ var saveBacktestResult2 = function(req, res) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest2.getRebalanceDateByScenCd Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -1292,7 +1292,7 @@ var saveBacktestResult2 = function(req, res) {
 
                                 if ( !rows || rows.length == 0 ) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[백테스트] 리밸런싱 일자 정보가 존재하지 않습니다.";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = "[백테스트] 리밸런싱 일자 정보가 존재하지 않습니다.";
 
                                     return callback(resultMsg);
@@ -1330,7 +1330,7 @@ var saveBacktestResult2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest2.getRebalanceDateByScenCd Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -1353,7 +1353,7 @@ var saveBacktestResult2 = function(req, res) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest2.getTmSimulResultMastCheck Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -1370,7 +1370,7 @@ var saveBacktestResult2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest2.getTmSimulResultMastCheck Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -1403,7 +1403,7 @@ var saveBacktestResult2 = function(req, res) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationBacktest2." + queryId + " Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -1419,7 +1419,7 @@ var saveBacktestResult2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest2." + queryId + " Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -1442,7 +1442,7 @@ var saveBacktestResult2 = function(req, res) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest2.getSimulHistListByScenCd3 Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -1489,7 +1489,7 @@ var saveBacktestResult2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest2.getSimulHistListByScenCd3 Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -1511,7 +1511,7 @@ var saveBacktestResult2 = function(req, res) {
                             conn.query(stmt, function(err, rows) {
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest.deleteTmSimulResultDaily Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -1523,7 +1523,7 @@ var saveBacktestResult2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.deleteTmSimulResultDaily Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
 
                             if( !resultMsg.err ) {
                                 resultMsg.err = err;
@@ -1569,7 +1569,7 @@ var saveBacktestResult2 = function(req, res) {
                                                 conn.query(stmt, function(err, rows) {
                                                     if (err) {
                                                         resultMsg.result = false;
-                                                        resultMsg.msg = "[error] simulationBacktest.saveTmSimulResultDaily Error while performing Query";
+                                                        resultMsg.msg = config.MSG.error01;
                                                         resultMsg.err = err;
 
                                                         return innerCallback(resultMsg);
@@ -1583,7 +1583,7 @@ var saveBacktestResult2 = function(req, res) {
                                             } catch (err) {
 
                                                 resultMsg.result = false;
-                                                resultMsg.msg = "[error] simulationBacktest.saveTmSimulResultDaily Error while performing Query";
+                                                resultMsg.msg = config.MSG.error01;
 
                                                 if( !resultMsg.err ) {
                                                     resultMsg.err = err;
@@ -1601,7 +1601,7 @@ var saveBacktestResult2 = function(req, res) {
 
                                     if( err ) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationBacktest.saveTmSimulResultDaily Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         if( !resultMsg.err ) {
                                             resultMsg.err = err;
                                         }
@@ -1643,7 +1643,7 @@ var saveBacktestResult2 = function(req, res) {
                             conn.query(stmt, function(err, rows) {
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest.deleteTmSimulResultRebalance Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -1655,7 +1655,7 @@ var saveBacktestResult2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.deleteTmSimulResultRebalance Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
 
                             if( !resultMsg.err ) {
                                 resultMsg.err = err;
@@ -1711,7 +1711,7 @@ var saveBacktestResult2 = function(req, res) {
                                                 conn.query(stmt, function(err, rows) {
                                                     if (err) {
                                                         resultMsg.result = false;
-                                                        resultMsg.msg = "[error] simulationBacktest.saveTmSimulResultRebalance Error while performing Query";
+                                                        resultMsg.msg = config.MSG.error01;
                                                         resultMsg.err = err;
 
                                                         return innerCallback(resultMsg);
@@ -1725,7 +1725,7 @@ var saveBacktestResult2 = function(req, res) {
                                             } catch (err) {
 
                                                 resultMsg.result = false;
-                                                resultMsg.msg = "[error] simulationBacktest.saveTmSimulResultRebalance Error while performing Query";
+                                                resultMsg.msg = config.MSG.error01;
 
                                                 if( !resultMsg.err ) {
                                                     resultMsg.err = err;
@@ -1743,7 +1743,7 @@ var saveBacktestResult2 = function(req, res) {
 
                                     if( err ) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationBacktest.saveTmSimulResultRebalance Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         if( !resultMsg.err ) {
                                             resultMsg.err = err;
                                         }
@@ -1964,7 +1964,7 @@ var saveBacktestResult2 = function(req, res) {
         log.debug(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] simulationBacktest.saveBacktestResult2 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         res.json(resultMsg);
@@ -2001,7 +2001,7 @@ var getBacktestResult2 = function(req, res) {
             log.error("[error] simulationBacktest.runBacktest  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] simulationBacktest.runBacktest  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -2057,7 +2057,7 @@ var getBacktestResult2 = function(req, res) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationBacktest.getSimulListByBacktest Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -2084,7 +2084,7 @@ var getBacktestResult2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.getSimulListByBacktest Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -2103,7 +2103,7 @@ var getBacktestResult2 = function(req, res) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest.getSimulResultDaily Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -2124,7 +2124,7 @@ var getBacktestResult2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.getSimulResultDaily Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -2136,33 +2136,32 @@ var getBacktestResult2 = function(req, res) {
 
                         try{
 
-                           
-                                stmt = mapper.getStatement('simulationBacktest2', 'getSimulBenchMark', paramData, format);
-                                log.debug(stmt, paramData);
+                            stmt = mapper.getStatement('simulationBacktest2', 'getSimulBenchMark', paramData, format);
+                            log.debug(stmt, paramData);
 
-                                conn.query(stmt, function(err, rows) {
+                            conn.query(stmt, function(err, rows) {
 
-                                    if (err) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationBacktest.getSimulBenchMark Error while performing Query";
-                                        resultMsg.err = err;
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
 
-                                        return callback(resultMsg);
-                                    }
+                                    return callback(resultMsg);
+                                }
 
-                                    if ( rows && rows.length > 0 ) {
-                                        /* 일자별 지수에 밴치마크 정보를 설정한다. */
-                                        fn_set_bench_mark( resultMsg.arr_result_daily, rows );
-                                    }
+                                if ( rows && rows.length > 0 ) {
+                                    /* 일자별 지수에 밴치마크 정보를 설정한다. */
+                                    fn_set_bench_mark( resultMsg.arr_result_daily, rows );
+                                }
 
-                                    callback(null, paramData);
-                                });
+                                callback(null, paramData);
+                            });
                                 
                            
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.getSimulBenchMark Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -2180,7 +2179,7 @@ var getBacktestResult2 = function(req, res) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] simulationBacktest.getSimulResultRebalance Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -2196,7 +2195,7 @@ var getBacktestResult2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.getSimulResultRebalance Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -2229,7 +2228,7 @@ var getBacktestResult2 = function(req, res) {
 
                                         stmt    =   "";
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
 
                                         return callback(null);
@@ -2280,7 +2279,7 @@ var getBacktestResult2 = function(req, res) {
         log.debug(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] simulationBacktest.runBacktest 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.arr_result_daily      =   [];
