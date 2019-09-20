@@ -68,7 +68,7 @@ export default {
 
       c.beginPath();
       c.arc(cX, cY, rad, 0, Math.PI*2);
-      c.fillStyle = "#00E676";
+      c.fillStyle = "#85c406";
       c.fill(); 
       c.closePath();
       c.fillStyle = "#FFFFFF";
