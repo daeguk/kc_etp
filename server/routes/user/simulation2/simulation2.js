@@ -1070,15 +1070,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                     }
 
                                     delete msg.arrInsertDtl;
-
-                                    /* 백테스트를 수행한다. */
-                                    simulationBacktest.runBacktest( req, res, resultMsg, msg, paramData ).then( function(e) {
-                                        if( e && e.result ) {
-                                            callback(null);
-                                        }
-                                    }).catch( function(expetion){
-                                        callback(null);
-                                    });
+                                    callback(null);
                                 });                                
                             
                             }
@@ -1107,9 +1099,24 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         conn.commit();
                     }
 
-                    res.json(resultMsg);
-                    res.end();
 
+                    if( resultMsg.result ) {
+
+                        /* 백테스트를 수행한다. */
+                        simulationBacktest.runBacktest( req, res, resultMsg, paramData ).then( function(e) {
+                            if( e && e.result ) {
+                                res.json(resultMsg);
+                                res.end();
+                            }
+                        }).catch( function(expetion){
+                            res.json(resultMsg);
+                            res.end();
+                        });
+
+                    }else{
+                        res.json(resultMsg);
+                        res.end();                        
+                    }
                 });
             });
         });

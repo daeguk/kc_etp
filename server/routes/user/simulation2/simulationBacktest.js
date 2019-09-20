@@ -38,7 +38,7 @@ var initGrpInfo         =   {
  * 백테스트를 수행한다.
  * 2019-05-20  bkLove(촤병국)
  */
-var runBacktest = async function(req, res, resultMsg, msg, paramData) {
+var runBacktest = async function(req, res, resultMsg, paramData) {
 
     return await new Promise(function(resolve, reject) {
 
@@ -69,10 +69,7 @@ var runBacktest = async function(req, res, resultMsg, msg, paramData) {
                     function(callback) {
 
                         try{
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
+                            var msg = {};
 
                             stmt = mapper.getStatement('simulationBacktest2', 'getSimulListByBacktest2', paramData, format);
                             log.debug(stmt);
