@@ -1878,6 +1878,13 @@ export default {
                                 dataList.push( v_rebalancePortfolio[ v_key ] );
                             }
 
+                            /* trIndex 순으로 정렬하여 노출 */
+                            dataList    =   _.orderBy(
+                                    dataList
+                                ,   [ "trIndex" ]
+                                ,   [ "asc" ]
+                            );
+
                             /* 건수가 0 인 경우 레코드 5개는 추가한다. */
                             var cnt = ( Math.ceil( dataList.length / 5 ) == 0 ? 1 : Math.ceil( dataList.length / 5 ) ) * 5;                  
 
