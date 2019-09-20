@@ -43,7 +43,7 @@
               <td class="txt_right">{{index+1}}</td>
               <td class="txt_right">{{item.F16002}}</td>
               <td class="txt_right">{{item.F16013}}</td>
-              <td class="txt_right">{{Math.floor(item.FLOW)}}</td>
+              <td class="txt_right">{{formatInt(Math.floor(item.FLOW))}}</td>
             </tr>
           </tbody>
         </table>
@@ -89,6 +89,9 @@ export default {
       var vm = this;
       vm.$emit("closeRankModal");
       vm.dialog = false;
+    },
+    formatInt:function(num) {
+        return util.formatInt(num);
     },
   } 
 };

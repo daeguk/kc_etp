@@ -19,14 +19,14 @@ var util = {
     formatInt: function(num) {
       if (num != null && typeof num !== 'undefined') {
           if (isNaN(num)) {
-            return "0.00"              
+            return "0"              
           } else {
             num = Number(num).toFixed(0);
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
           }
           
       } else {
-          return "0.00" 
+          return "0" 
       }
     },
     /* 천단위 콤마 처리 */
