@@ -13,6 +13,10 @@ log4js.configure({
 
 const logger = log4js.getLogger('output');
 
+const MSG  =   {
+    error01 :   "처리 중 오류가 발생하였습니다."
+};
+
 module.exports = {
     // runenv: "dev",
     runenv: "prod",
@@ -27,4 +31,5 @@ module.exports = {
     pdfmodify_nas_path: "/nas3/nfs_data2/checkapi/pdfmodify/",
     logger : logger,
     python_path: '/home/sinfo/anaconda3/bin/python',
+    MSG : MSG
 }
