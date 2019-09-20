@@ -60,7 +60,7 @@ var getEtpRegisterView = function(req, res) {
                     conn.query(stmt, function( err, rows ) {
                         if( err ) {
                             resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] ";
+                            resultMsg.msg       =   config.MSG.error01;
                             resultMsg.err       =   err;
 
                             return callback( resultMsg );
@@ -81,7 +81,7 @@ var getEtpRegisterView = function(req, res) {
                     conn.query(stmt, function( err, rows ) {
                         if( err ) {
                             resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] ";
+                            resultMsg.msg       =   config.MSG.error01;
                             resultMsg.err       =   err;
 
                             return callback( resultMsg );
@@ -103,7 +103,7 @@ var getEtpRegisterView = function(req, res) {
                     conn.query(stmt, function( err, rows ) {
                         if( err ) {
                             resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] ";
+                            resultMsg.msg       =   config.MSG.error01;
                             resultMsg.err       =   err;
 
                             return callback( resultMsg );
@@ -125,7 +125,7 @@ var getEtpRegisterView = function(req, res) {
                     conn.query(stmt, function( err, rows ) {
                         if( err ) {
                             resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] ";
+                            resultMsg.msg       =   config.MSG.error01;
                             resultMsg.err       =   err;
 
                             return callback( resultMsg );
@@ -147,7 +147,7 @@ var getEtpRegisterView = function(req, res) {
                     conn.query(stmt, function( err, rows ) {
                         if( err ) {
                             resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] ";
+                            resultMsg.msg       =   config.MSG.error01;
                             resultMsg.err       =   err;
 
                             return callback( resultMsg );
@@ -169,7 +169,7 @@ var getEtpRegisterView = function(req, res) {
                     conn.query(stmt, function( err, rows ) {
                         if( err ) {
                             resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] ";
+                            resultMsg.msg       =   config.MSG.error01;
                             resultMsg.err       =   err;
 
                             return callback( resultMsg );
@@ -191,7 +191,7 @@ var getEtpRegisterView = function(req, res) {
                     conn.query(stmt, function( err, rows ) {
                         if( err ) {
                             resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] ";
+                            resultMsg.msg       =   config.MSG.error01;
                             resultMsg.err       =   err;
 
                             return callback( resultMsg );
@@ -213,7 +213,7 @@ var getEtpRegisterView = function(req, res) {
                     conn.query(stmt, function( err, rows ) {
                         if( err ) {
                             resultMsg.result    =   false;
-                            resultMsg.msg       =   "[error] ";
+                            resultMsg.msg       =   config.MSG.error01;
                             resultMsg.err       =   err;
 
                             return callback( resultMsg );
@@ -235,7 +235,7 @@ var getEtpRegisterView = function(req, res) {
                         conn.query(stmt, function( err, rows ) {
                             if( err ) {
                                 resultMsg.result    =   false;
-                                resultMsg.msg       =   "[error] ";
+                                resultMsg.msg       =   config.MSG.error01;
                                 resultMsg.err       =   err;
 
                                 return callback( resultMsg );
@@ -286,7 +286,7 @@ var getEtpRegisterView = function(req, res) {
 
         if( resultMsg && !resultMsg.msg ) {
             resultMsg.result    =   false;
-            resultMsg.msg       =   "[error] 오류가 발생하였습니다.";
+            resultMsg.msg       =   config.MSG.error01;
             resultMsg.err       =   exception;
         }
 

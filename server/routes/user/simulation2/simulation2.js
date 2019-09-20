@@ -47,7 +47,7 @@ var getRebalanceDate = function(req, res) {
             log.error("[error] simulation.getRebalanceDate  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] simulation.getRebalanceDate  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -94,7 +94,7 @@ var getRebalanceDate = function(req, res) {
                         log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] simulation2." + queryId +" Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
                     }
                     else if (rows && rows.length > 0) {
@@ -111,7 +111,7 @@ var getRebalanceDate = function(req, res) {
                 log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
-                resultMsg.msg = "[error] simulation2." + queryId + " Error while performing Query";
+                resultMsg.msg = config.MSG.error01;
                 resultMsg.err = err;
 
                 res.json(resultMsg);
@@ -124,7 +124,7 @@ var getRebalanceDate = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] simulation2." + queryId + " 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.dataList  =   [];
@@ -151,7 +151,7 @@ var getSimulList2 = function(req, res) {
             log.error("[error] simulation.getSimulList2  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] simulation.getSimulList2  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -181,7 +181,7 @@ var getSimulList2 = function(req, res) {
                         log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] simulation2.getSimulList2 Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
                     }
                     
@@ -200,7 +200,7 @@ var getSimulList2 = function(req, res) {
                 log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
-                resultMsg.msg = "[error] simulation2.getSimulList2 Error while performing Query";
+                resultMsg.msg = config.MSG.error01;
                 resultMsg.err = err;
 
                 res.json(resultMsg);
@@ -213,7 +213,7 @@ var getSimulList2 = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] simulation.getSimulList2 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.dataList      =   [];
@@ -240,7 +240,7 @@ var getSimulPortfolio2 = function(req, res) {
             log.error("[error] simulation2.getSimulPortfolio2  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] simulation2.getSimulPortfolio2  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -274,7 +274,7 @@ var getSimulPortfolio2 = function(req, res) {
                         log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] simulation2.getSimulPortfolio2 Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
                     }
                     
@@ -318,7 +318,7 @@ var getSimulPortfolio2 = function(req, res) {
                 log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
-                resultMsg.msg = "[error] simulation2.getSimulPortfolio2 Error while performing Query";
+                resultMsg.msg = config.MSG.error01;
                 resultMsg.err = err;
 
                 res.json(resultMsg);
@@ -331,7 +331,7 @@ var getSimulPortfolio2 = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] simulation2.getSimulPortfolio2 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.rebalancePortfolioObj  =   [];

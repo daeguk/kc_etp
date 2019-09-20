@@ -9,6 +9,10 @@ var sms = require('../../../util/sms');
 var Promise = require("bluebird");
 var log = config.logger;
 
+var MSG  =   {
+    error01 :   "처리중 오류가 발생하였습니다."
+};
+
 /*
  * 고객지원 정보를 저장한다.
  * 2019-05-03  bkLove(촤병국)
@@ -26,7 +30,7 @@ var saveCustSupport = function(req, res) {
             log.error("[error] custSupport.saveCustSupport  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] custSupport.saveCustSupport  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -60,7 +64,7 @@ var saveCustSupport = function(req, res) {
                         log.error(err, paramData);
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] custSupport.saveCustSupport Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
                     }
 
@@ -80,7 +84,7 @@ var saveCustSupport = function(req, res) {
                 log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
-                resultMsg.msg = "[error] custSupport.saveCustSupport Error while performing Query";
+                resultMsg.msg = config.MSG.error01;
                 resultMsg.err = err;
 
                 res.json(resultMsg);
@@ -94,7 +98,7 @@ var saveCustSupport = function(req, res) {
 
         if (resultMsg && !resultMsg.msg) {
             resultMsg.result = false;
-            resultMsg.msg = "[error] custSupport.saveCustSupport 오류가 발생하였습니다.";
+            resultMsg.msg = config.MSG.error01;
             resultMsg.err = expetion;
         }
 

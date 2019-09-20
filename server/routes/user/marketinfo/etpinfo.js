@@ -35,7 +35,7 @@ var getEtpList = function(req, res) {
             log.error("[error] etpinfo.getEtpList  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] etpinfo.getEtpList  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -79,7 +79,7 @@ var getEtpList = function(req, res) {
 
                     if (err) {
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] etpinfo.getIndexInfoByCodeDtl Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
 
                         return callback(resultMsg);
@@ -140,7 +140,7 @@ var getEtpList = function(req, res) {
 
                         if (err) {
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] etpinfo.getJisuListByEtpRepresent Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             return inner_callback(resultMsg);
@@ -241,7 +241,7 @@ var getEtpList = function(req, res) {
 
                     if (err) {
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] etpinfo.getJisuListByCtgCode Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
 
                         return callback(resultMsg);
@@ -293,7 +293,7 @@ var getEtpList = function(req, res) {
 
                         if (err) {
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] etpinfo.getEtpListByJisu Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             return inner_callback(resultMsg);
@@ -415,7 +415,7 @@ var getEtpList = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] etpinfo.getEtpList 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.etpLists = [];

@@ -34,7 +34,7 @@ var getEtpBasic = function(req, res) {
             log.error("[error] etpDetail.getEtpBasic  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] etpDetail.getEtpBasic  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -67,7 +67,7 @@ var getEtpBasic = function(req, res) {
                         try{
                             if (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] etpDetail.getEtpBasic Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -82,7 +82,7 @@ var getEtpBasic = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] etpDetail.getEtpBasic Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             callback(resultMsg);
@@ -100,7 +100,7 @@ var getEtpBasic = function(req, res) {
 
                         if (err) {
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] etpDetail.getIndexBasicByEtpJisuCd Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             return callback(resultMsg);
@@ -135,7 +135,7 @@ var getEtpBasic = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] etpDetail.getEtpBasic 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.etpBasic = {};
@@ -163,7 +163,7 @@ var getEtpPerformance = function(req, res) {
             log.error("[error] etpDetail.getEtpPerformance  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] etpDetail.getEtpPerformance  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -199,7 +199,7 @@ var getEtpPerformance = function(req, res) {
 
                             if (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] etpDetail.getEtpPerformance Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 return callback(resultMsg);
@@ -216,7 +216,7 @@ var getEtpPerformance = function(req, res) {
                         log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] etpDetail.getEtpPerformance Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
 
                         callback(resultMsg);
@@ -240,7 +240,7 @@ var getEtpPerformance = function(req, res) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] etpDetail.getEtpPerformanceByEtp Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -263,7 +263,7 @@ var getEtpPerformance = function(req, res) {
                         log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] etpDetail.getEtpPerformanceByEtp Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
 
                         callback(resultMsg);
@@ -287,7 +287,7 @@ var getEtpPerformance = function(req, res) {
 
                                 if (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] etpDetail.getEtpPerformanceByIndex Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     return callback(resultMsg);
@@ -310,7 +310,7 @@ var getEtpPerformance = function(req, res) {
                         log.error(err, stmt, paramData);
 
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] etpDetail.getEtpPerformanceByIndex Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
 
                         callback(resultMsg);
@@ -339,7 +339,7 @@ var getEtpPerformance = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] etpDetail.getEtpPerformance 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.etpPerformanceList = [];

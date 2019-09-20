@@ -1200,7 +1200,7 @@ var saveBacktestResult2 = function(req, res) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationBacktest2.getSimulListByBacktest2 Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -1523,7 +1523,7 @@ var saveBacktestResult2 = function(req, res) {
                         } catch (err) {
 
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest.deleteTmSimulResultDaily Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
 
                             if( !resultMsg.err ) {
                                 resultMsg.err = err;
@@ -2228,7 +2228,7 @@ var getBacktestResult2 = function(req, res) {
 
                                         stmt    =   "";
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
 
                                         return callback(null);

@@ -86,7 +86,7 @@ var getJisuDuplCheck = function(req, res) {
 
                 res.json({
                     success: false,
-                    message: "[error] indexRegister.getJisuDuplCheck Error while performing Query.",
+                    message: config.MSG.error01,
                     result: result
                 });
                 res.end();
@@ -98,7 +98,7 @@ var getJisuDuplCheck = function(req, res) {
 
         res.json({
             success: false,
-            message: "[error] indexRegister.getJisuDuplCheck Error while performing Query",
+            message: config.MSG.error01,
             result: false
         });
         res.end();
@@ -182,7 +182,7 @@ var getDomainInst = function(req, res) {
                 log.error("[error] indexRegister.getDomainInst Error while performing Query.", err, paramData);
                 res.json({
                     success: false,
-                    message: "[error] indexRegister.getDomainInst Error while performing Query.",                    
+                    message: config.MSG.error01,                    
                     dataList: []
                 });
                 res.end();
@@ -194,7 +194,7 @@ var getDomainInst = function(req, res) {
 
         res.json({
             success: false,
-            message: "[error] indexRegister.getDomainInst Error while performing Query.",
+            message: config.MSG.error01,
             result: result
         });
         res.end();
@@ -446,7 +446,7 @@ var fileuploadSingle = function(req, res) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexRegister.saveTmJisuFile Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -489,7 +489,7 @@ var fileuploadSingle = function(req, res) {
                                                         conn.query(stmt, function(err, rows) {
                                                             if (err) {
                                                                 resultMsg.result = false;
-                                                                resultMsg.msg = "[error] indexRegister.saveTmJisuTempUpload Error while performing Query";
+                                                                resultMsg.msg = config.MSG.error01;
                                                                 resultMsg.err = err;
 
                                                                 return innerCallback(resultMsg);
@@ -502,7 +502,7 @@ var fileuploadSingle = function(req, res) {
                                                     } catch (err) {
 
                                                         resultMsg.result = false;
-                                                        resultMsg.msg = "[error] indexRegister.saveTmJisuTempUpload Error while performing Query";
+                                                        resultMsg.msg = config.MSG.error01;
                                                         resultMsg.err = err;
 
                                                         return innerCallback(resultMsg);
@@ -517,7 +517,7 @@ var fileuploadSingle = function(req, res) {
 
                                             if( err ) {
                                                 resultMsg.result = false;
-                                                resultMsg.msg = "[error] indexRegister.saveTmJisuTempUpload Error while performing Query";
+                                                resultMsg.msg = config.MSG.error01;
                                                 resultMsg.err = err;
 
                                                 return innerCallback(resultMsg);
@@ -550,7 +550,7 @@ var fileuploadSingle = function(req, res) {
 
                                             if (err) {
                                                 resultMsg.result = false;
-                                                resultMsg.msg = "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
+                                                resultMsg.msg = config.MSG.error01;
                                                 resultMsg.err = err;
 
                                                 return callback(resultMsg);
@@ -567,7 +567,7 @@ var fileuploadSingle = function(req, res) {
                                         } catch (err) {
 
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
+                                            resultMsg.msg = config.MSG.error01;
                                             resultMsg.err = err;
 
                                             callback(resultMsg);
@@ -577,7 +577,7 @@ var fileuploadSingle = function(req, res) {
 
                                 } catch (err) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "[error] indexRegister.getTmJisuTempUpload Error while performing Query";
+                                    resultMsg.msg = config.MSG.error01;
                                     resultMsg.err = err;
 
                                     callback(resultMsg);
@@ -748,7 +748,7 @@ var registerJisu = function(req, res) {
 
                                             if (err) {
                                                 resultMsg.result = false;
-                                                resultMsg.msg = "[error] indexRegister.getJisuDuplCheck Error while performing Query";
+                                                resultMsg.msg = config.MSG.error01;
                                                 resultMsg.err = err;
 
                                                 return callback(resultMsg);
@@ -771,7 +771,7 @@ var registerJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexRegister.getJisuDuplCheck Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -798,7 +798,7 @@ var registerJisu = function(req, res) {
 
                                                 if (err) {
                                                     resultMsg.result = false;
-                                                    resultMsg.msg = "[error] indexRegister.saveTmJisuFile Error while performing Query";
+                                                    resultMsg.msg = config.MSG.error01;
                                                     resultMsg.err = err;
 
                                                     return callback(resultMsg);
@@ -812,7 +812,7 @@ var registerJisu = function(req, res) {
                                         } catch (err) {
 
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexRegister.saveTmJisuFile Error while performing Query";
+                                            resultMsg.msg = config.MSG.error01;
                                             resultMsg.err = err;
 
                                             return callback(resultMsg);
@@ -836,7 +836,7 @@ var registerJisu = function(req, res) {
 
                                             if (err) {
                                                 resultMsg.result = false;
-                                                resultMsg.msg = "[error] indexRegister.saveTmJisuMast Error while performing Query";
+                                                resultMsg.msg = config.MSG.error01;
                                                 resultMsg.err = err;
 
                                                 return callback(resultMsg);
@@ -852,7 +852,7 @@ var registerJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexRegister.saveTmJisuMast Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -875,7 +875,7 @@ var registerJisu = function(req, res) {
 
                                                 if (err) {
                                                     resultMsg.result = false;
-                                                    resultMsg.msg = "[error] indexRegister.saveTmJisuShareReq Error while performing Query";
+                                                    resultMsg.msg = config.MSG.error01;
                                                     resultMsg.err = err;
 
                                                     return callback(resultMsg);
@@ -886,7 +886,7 @@ var registerJisu = function(req, res) {
                                         } catch (err) {
 
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexRegister.saveTmJisuShareReq Error while performing Query";
+                                            resultMsg.msg = config.MSG.error01;
                                             resultMsg.err = err;
 
                                             return callback(resultMsg);
@@ -912,7 +912,7 @@ var registerJisu = function(req, res) {
 
                                             if (err) {
                                                 resultMsg.result = false;
-                                                resultMsg.msg = "[error] indexRegister.getTmJisuTempUploadCnt Error while performing Query";
+                                                resultMsg.msg = config.MSG.error01;
                                                 resultMsg.err = err;
 
                                                 return callback(resultMsg);
@@ -929,7 +929,7 @@ var registerJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexRegister.getTmJisuTempUploadCnt Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -949,7 +949,7 @@ var registerJisu = function(req, res) {
 
                                                 if (err) {
                                                     resultMsg.result = false;
-                                                    resultMsg.msg = "[error] indexRegister.getHistNoByTmJisuUploadHist Error while performing Query";
+                                                    resultMsg.msg = config.MSG.error01;
                                                     resultMsg.err = err;
 
                                                     return callback(resultMsg);
@@ -965,7 +965,7 @@ var registerJisu = function(req, res) {
                                         } catch (err) {
 
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] indexRegister.getHistNoByTmJisuUploadHist Error while performing Query";
+                                            resultMsg.msg = config.MSG.error01;
                                             resultMsg.err = err;
 
                                             return callback(resultMsg);
@@ -991,7 +991,7 @@ var registerJisu = function(req, res) {
 
                                                     if (err) {
                                                         resultMsg.result = false;
-                                                        resultMsg.msg = "[error] indexRegister.saveTmJisuUploadHist Error while performing Query";
+                                                        resultMsg.msg = config.MSG.error01;
                                                         resultMsg.err = err;
 
                                                         return callback(resultMsg);
@@ -1010,7 +1010,7 @@ var registerJisu = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] indexRegister.saveTmJisuUploadHist Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -1065,7 +1065,7 @@ var registerJisu = function(req, res) {
 
         resultMsg.result = false;
         if ( !resultMsg.msg ) {
-            resultMsg.msg = "[error] indexRegister.registerJisu 오류가 발생하였습니다.";
+            resultMsg.msg = config.MSG.error01;
         }
         resultMsg.err = expetion;
 

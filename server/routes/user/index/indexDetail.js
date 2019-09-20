@@ -34,7 +34,7 @@ var getIndexJongmokList = function(req, res) {
             log.error("[error] indexDetail.getIndexJongmokList  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] indexDetail.getIndexJongmokList  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -62,7 +62,7 @@ var getIndexJongmokList = function(req, res) {
 
                     if (err) {
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] indexDetail.getIndexJongmokList Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
                     }
 
@@ -81,7 +81,7 @@ var getIndexJongmokList = function(req, res) {
                 log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
-                resultMsg.msg = "[error] etpDetail.getIndexJongmokList Error while performing Query";
+                resultMsg.msg = config.MSG.error01;
                 resultMsg.err = err;
 
                 res.json(resultMsg);
@@ -94,7 +94,7 @@ var getIndexJongmokList = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] indexDetail.getIndexJongmokList 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.dataList = [];
@@ -125,7 +125,7 @@ var getIndexDetailList = function(req, res) {
             log.error("[error] indexDetail.getIndexDetailList  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] indexDetail.getIndexDetailList  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -157,7 +157,7 @@ var getIndexDetailList = function(req, res) {
 
                         if (err) {
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] indexDetail.getIndexBasicDetail Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             return callback(resultMsg);
@@ -182,7 +182,7 @@ var getIndexDetailList = function(req, res) {
 
                         if (err) {
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] indexDetail.getIndexDetailList Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             return callback(resultMsg);
@@ -217,7 +217,7 @@ var getIndexDetailList = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] indexDetail.getIndexDetailList 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.indexBasic = {};
@@ -250,7 +250,7 @@ var getIndexFixList = function(req, res) {
             log.error("[error] indexDetail.getIndexFixList  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] indexDetail.getIndexFixList  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -282,7 +282,7 @@ var getIndexFixList = function(req, res) {
 
                         if (err) {
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] indexDetail.getIndexFixData Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             return callback(resultMsg);
@@ -306,7 +306,7 @@ var getIndexFixList = function(req, res) {
 
                         if (err) {
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] indexDetail.getIndexFixJongmokInoutList Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             return callback(resultMsg);
@@ -330,7 +330,7 @@ var getIndexFixList = function(req, res) {
 
                         if (err) {
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] indexDetail.getIndexFixModifyList Error while performing Query";
+                            resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
                             return callback(resultMsg);
@@ -365,7 +365,7 @@ var getIndexFixList = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] indexDetail.getIndexFixList 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.indexFixData = {};
@@ -400,7 +400,7 @@ var getIndexList = function(req, res) {
             log.error("[error] indexDetail.getIndexList  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
-            resultMsg.msg = "[error] indexDetail.getIndexList  req.body.data no data.";
+            resultMsg.msg = config.MSG.error01;
 
             throw resultMsg;
         }
@@ -430,7 +430,7 @@ var getIndexList = function(req, res) {
 
                     if (err) {
                         resultMsg.result = false;
-                        resultMsg.msg = "[error] indexDetail.getIndexList Error while performing Query";
+                        resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
 
                         return callback(resultMsg);
@@ -450,7 +450,7 @@ var getIndexList = function(req, res) {
                 log.error(err, stmt, paramData);
 
                 resultMsg.result = false;
-                resultMsg.msg = "[error] etpDetail.getIndexList Error while performing Query";
+                resultMsg.msg = config.MSG.error01;
                 resultMsg.err = err;
 
                 res.json(resultMsg);
@@ -463,7 +463,7 @@ var getIndexList = function(req, res) {
         log.error(expetion, paramData);
 
         resultMsg.result = false;
-        resultMsg.msg = "[error] indexDetail.getIndexList 오류가 발생하였습니다.";
+        resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
         resultMsg.dataList = [];

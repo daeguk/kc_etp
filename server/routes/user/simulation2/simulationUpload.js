@@ -334,7 +334,7 @@ var uploadPortfolio = function(req, res) {
                                             log.error(err, stmt, reqParam);
 
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] simulation2.getRebalanceDate Error while performing Query";
+                                            resultMsg.msg = config.MSG.error01;
                                             resultMsg.err = err;
 
                                             return callback(resultMsg);
@@ -344,7 +344,7 @@ var uploadPortfolio = function(req, res) {
                                             log.error(err, stmt, reqParam);
 
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] simulation2.getRebalanceDate 일자 기본정보가 없습니다.";
+                                            resultMsg.msg = config.MSG.error01;
                                             resultMsg.err = "[error] simulation2.getRebalanceDate 일자 기본정보가 없습니다.";
 
                                             return callback(resultMsg);
@@ -471,7 +471,7 @@ var uploadPortfolio = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulation2.getRebalanceDate Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return  callback(resultMsg);
@@ -481,7 +481,7 @@ var uploadPortfolio = function(req, res) {
 
                             } catch (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] simulation2.getRebalanceDate Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 callback(resultMsg);
@@ -510,7 +510,7 @@ var uploadPortfolio = function(req, res) {
                                             log.error(err, stmt, reqParam);
 
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] simulation2.getKspjongBasic Error while performing Query";
+                                            resultMsg.msg = config.MSG.error01;
                                             resultMsg.err = err;
 
                                             return callback(resultMsg);
@@ -520,7 +520,7 @@ var uploadPortfolio = function(req, res) {
                                             log.error(stmt, reqParam);
 
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] simulation2.getKspjongBasic 종목 기본정보가 없습니다.";
+                                            resultMsg.msg = config.MSG.error01;
                                             resultMsg.err = "[error] simulation2.getKspjongBasic 종목 기본정보가 없습니다.";
 
                                             return callback(resultMsg);
@@ -613,7 +613,7 @@ var uploadPortfolio = function(req, res) {
                                     } catch (err) {
 
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulation2.getKspjongBasic Error while performing Query";
+                                        resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = err;
 
                                         return  callback(resultMsg);
@@ -622,7 +622,7 @@ var uploadPortfolio = function(req, res) {
 
                             } catch (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] simulation2.getKspjongBasic Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 callback(resultMsg);
@@ -653,7 +653,7 @@ var uploadPortfolio = function(req, res) {
                                                 log.error(err, stmt, reqParam);
 
                                                 resultMsg.result = false;
-                                                resultMsg.msg = "[error] simulation2.getEtpBasic Error while performing Query";
+                                                resultMsg.msg = config.MSG.error01;
                                                 resultMsg.err = err;
 
                                                 return callback(resultMsg);
@@ -663,7 +663,7 @@ var uploadPortfolio = function(req, res) {
                                                 log.error(stmt, reqParam);
 
                                                 resultMsg.result = false;
-                                                resultMsg.msg = "[error] simulation2.getEtpBasic 종목 기본정보가 없습니다.";
+                                                resultMsg.msg = config.MSG.error01;
                                                 resultMsg.err = "[error] simulation2.getEtpBasic 종목 기본정보가 없습니다.";
 
                                                 return callback(resultMsg);
@@ -749,7 +749,7 @@ var uploadPortfolio = function(req, res) {
                                         } catch (err) {
 
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] simulation2.getEtpBasic Error while performing Query";
+                                            resultMsg.msg = config.MSG.error01;
                                             resultMsg.err = err;
 
                                             return  callback(resultMsg);
@@ -763,7 +763,7 @@ var uploadPortfolio = function(req, res) {
 
                             } catch (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] simulation2.getEtpBasic Error while performing Query";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 callback(resultMsg);
@@ -827,7 +827,7 @@ var uploadPortfolio = function(req, res) {
 
                             } catch (err) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "[error] 리밸런싱 일자별, 코드별로 포트폴리오 설정 후 오류가 발생하였습니다.";
+                                resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
 
                                 callback(resultMsg);
@@ -864,7 +864,7 @@ var uploadPortfolio = function(req, res) {
 
             resultMsg.result = false;
             if( !resultMsg.msg ) {
-                resultMsg.msg = "[error] portfolio 파일 업로드 중 오류가 발생하였습니다.";
+                resultMsg.msg = config.MSG.error01;
             }
             resultMsg.err = expetion;
 
