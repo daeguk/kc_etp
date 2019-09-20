@@ -1103,13 +1103,13 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                     if( resultMsg.result ) {
 
                         /* 백테스트를 수행한다. */
-                        simulationBacktest.runBacktest( req, res, resultMsg, paramData ).then( function(e) {
+                        resultMsg   =   simulationBacktest.runBacktest( req, res, paramData ).then( function(e) {
                             if( e && e.result ) {
-                                res.json(resultMsg);
+                                res.json(e.resultMsg);
                                 res.end();
                             }
                         }).catch( function(expetion){
-                            res.json(resultMsg);
+                            res.json(expetion.resultMsg);
                             res.end();
                         });
 

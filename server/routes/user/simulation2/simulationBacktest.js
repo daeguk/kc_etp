@@ -38,7 +38,7 @@ var initGrpInfo         =   {
  * 백테스트를 수행한다.
  * 2019-05-20  bkLove(촤병국)
  */
-var runBacktest = async function(req, res, resultMsg, paramData) {
+var runBacktest = async function(req, res, paramData) {
 
     return await new Promise(function(resolve, reject) {
 
@@ -47,7 +47,9 @@ var runBacktest = async function(req, res, resultMsg, paramData) {
 
             var pool = req.app.get("pool");
             var mapper = req.app.get("mapper");
-            
+            var resultMsg = {};
+
+
             var format = { language: 'sql', indent: '' };
             var stmt = "";
 
@@ -403,7 +405,10 @@ var runBacktest = async function(req, res, resultMsg, paramData) {
 
                         resultMsg.err           =   null;
 
-                        resolve( { result : true } );
+                        resolve( { 
+                                result : true
+                            ,   resultMsg : resultMsg 
+                        });                        
 
                     }
 
@@ -412,8 +417,6 @@ var runBacktest = async function(req, res, resultMsg, paramData) {
 
 
         } catch (expetion) {
-
-            resolve( { result : true } );
 
             log.debug(expetion, paramData);
 
@@ -427,11 +430,14 @@ var runBacktest = async function(req, res, resultMsg, paramData) {
             resultMsg.analyzeList           =   [];
             resultMsg.jsonFileName          =   "";
             resultMsg.inputData             =   [];
+
+            resolve( { 
+                    result : false
+                ,   resultMsg : resultMsg 
+            });
         }
 
     }).catch( function(expetion){
-
-        resolve( { result : true } );
 
         log.debug(expetion, paramData);
 
@@ -444,7 +450,12 @@ var runBacktest = async function(req, res, resultMsg, paramData) {
         resultMsg.simul_mast            =   {};
         resultMsg.analyzeList           =   [];
         resultMsg.jsonFileName          =   "";
-        resultMsg.inputData             =   [];        
+        resultMsg.inputData             =   [];
+
+        resolve( { 
+                result : false
+            ,   resultMsg : resultMsg 
+        });
     });
 }
 
