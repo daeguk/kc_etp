@@ -285,12 +285,88 @@
         <if   test= ' changeGrpCdYn == "0" ' >
            AND  tm_simul_portfolio2.grp_cd        =   #{grp_cd}           /* 그룹코드(상위코드) */
            AND  tm_simul_portfolio2.scen_cd       =   #{scen_cd}          /* 시나리오코드 */
-        </if>           
+        </if>
 
          ORDER  BY      tm_simul_portfolio2.scen_cd
                     ,   tm_simul_portfolio2.rebalance_date
                     ,   tm_simul_portfolio2.order_no
-    </select>    
+    </select>
+
+    <!--
+    * [tm_simul_portfolio] 테이블에 저장한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <insert     id="saveTmSimulPortfolio2">
+    <![CDATA[
+        INSERT  INTO    
+        /* simulation2.saveTmSimulPortfolio2      [tm_simul_portfolio] 테이블에 저장한다. */
+        tm_simul_portfolio2
+        ( 
+                grp_cd                              /* 그룹코드(상위코드) */
+            ,   scen_cd                             /* 시나리오코드 */
+            ,   F16013                              /* 구성종목코드 */
+            ,   rebalance_date                      /* 리밸런싱 날짜 */
+
+            ,   order_no                            /* 정렬 순번 */
+            ,   importance                          /* 비중 */
+            ,   jisu_rate                           /* 지수적용비율 */
+
+            ,   reg_id                              /* 등록자 ID */
+            ,   reg_time                            /* 등록시간 */
+            ,   upd_id                              /* 수정자 ID */
+            ,   upd_time                            /* 수정시간 */
+        )
+    ]]>
+        VALUES
+        <foreach    collection="arr_portfolio"   item="data"     separator="," >
+    <![CDATA[  
+        ( 
+                #{grp_cd}                           /* 그룹코드(상위코드) */
+            ,   #{scen_cd}                          /* 시나리오코드 */
+            ,   #{data.F16013}                      /* 구성종목코드 */
+            ,   #{data.rebalance_date}              /* 리밸런싱 날짜 */
+
+            ,   #{data.order_no}                    /* 정렬 순번 */
+            ,   #{data.importance}                  /* 비중 */
+            ,   0                                   /* 지수적용비율 */
+
+            ,   #{user_id}                          /* 등록자 ID */
+            ,   now()                               /* 등록시간 */
+            ,   #{user_id}                          /* 수정자 ID */
+            ,   now()                               /* 수정시간 */
+        )
+    ]]>
+        </foreach>
+
+    </insert>	
+
+
+    <!--
+    * [tm_simul_portfolio] 테이블을 삭제한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <delete     id="deleteTmSimulPortfolio2">
+    <![CDATA[
+        DELETE  /* simulation2.deleteTmSimulPortfolio2      [tm_simul_portfolio] 테이블을 삭제한다. */
+
+          FROM  tm_simul_portfolio2
+
+         WHERE  1 = 1
+
+           AND     tm_simul_portfolio2.reg_id           =   #{user_id}          /* 등록자 ID */
+    ]]>
+
+        <if   test= ' changeGrpCdYn == "1" ' >
+           AND  tm_simul_portfolio2.grp_cd              =   #{prev_grp_cd}      /* 그룹코드(상위코드) */
+           AND  tm_simul_portfolio2.scen_cd             =   #{prev_scen_cd}     /* 시나리오코드 */
+        </if>
+
+        <if   test= ' changeGrpCdYn == "0" ' >
+           AND  tm_simul_portfolio2.grp_cd              =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_portfolio2.scen_cd             =   #{scen_cd}          /* 시나리오코드 */
+        </if>
+
+    </delete>    
 
     <!--
     *   화면에서 select 된 리밸런싱 일자를 조회한다.

@@ -4,18 +4,18 @@
     <span class="multi_sub_tit">기간별 자금 유입현황을 추정합니다.</span>
     <span class="multi_sub_sub_tit">*단위 : 억원</span>
     <v-layout>
-      <v-flex xs6>
+      <v-flex xs6 class="fundf_w">
         <img :src="barImg">
-        <span>1주</span>
+        <span class="font_b">1주</span>
         <span @click="openRankModal(0)" class="multif_btn1">[전체순위보기]</span>
         <FundFlowChart v-if="chartLoadFlag1"
           chartId="FundFlowChart1" :etpBasic="etpBasic"
           :sitem="sitem[0]" :eitem="eitem[0]" :citem="citem[0]" 
           :rank="rank[0]" :num="num[0]"></FundFlowChart>
       </v-flex>
-      <v-flex xs6>
+      <v-flex xs6 class="fundf_w">
         <img :src="barImg">
-        <span>1개월</span>
+        <span class="font_b">1개월</span>
         <span @click="openRankModal(1)" class="multif_btn1">[전체순위보기]</span>
         <FundFlowChart v-if="chartLoadFlag2"
           chartId="FundFlowChart2" :etpBasic="etpBasic"
@@ -24,18 +24,18 @@
       </v-flex>
     </v-layout>
     <v-layout>
-      <v-flex xs6>
+      <v-flex xs6 class="fundf_w">
         <img :src="barImg">
-        <span>3개월</span>
+        <span class="font_b">3개월</span>
         <span @click="openRankModal(2)" class="multif_btn1">[전체순위보기]</span>
         <FundFlowChart v-if="chartLoadFlag3"
           chartId="FundFlowChart3" :etpBasic="etpBasic"
           :sitem="sitem[2]" :eitem="eitem[2]" :citem="citem[2]" 
           :rank="rank[2]" :num="num[2]"></FundFlowChart>
       </v-flex>
-      <v-flex xs6>
+      <v-flex xs6 class="fundf_w">
         <img :src="barImg">
-        <span>6개월</span>
+        <span class="font_b">6개월</span>
         <span @click="openRankModal(3)" class="multif_btn1">[전체순위보기]</span>
         <FundFlowChart v-if="chartLoadFlag4"
           chartId="FundFlowChart4" :etpBasic="etpBasic"
@@ -59,7 +59,7 @@ export default {
 
   data() {
     return {
-      barImg: "/assets/img/perform_bar05.png",
+      barImg: "/assets/img/perform_bar01.png",
       bef1Week: 0,
       bef1Month: 0,
       bef3Month: 0,

@@ -595,14 +595,14 @@ var saveBaicInfo2 = function(req, res) {
                             /* 수정인 경우 */
                             if( paramData.status  ==  "modify" ) {
 
-                                stmt = mapper.getStatement('simulationBacktest2', "deleteTmSimulPortfolio2", paramData, format);
+                                stmt = mapper.getStatement('simulation2', "deleteTmSimulPortfolio2", paramData, format);
                                 log.debug(stmt);
 
                                 conn.query(stmt, function(err, rows) {
 
                                     if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "[error] simulationBacktest2.deleteTmSimulPortfolio2 Error while performing Query";
+                                        resultMsg.msg = "[error] simulation2.deleteTmSimulPortfolio2 Error while performing Query";
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
@@ -617,7 +617,7 @@ var saveBaicInfo2 = function(req, res) {
 
                         } catch (err) {
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest2.deleteTmSimulPortfolio2 Error while performing Query";
+                            resultMsg.msg = "[error] simulation2.deleteTmSimulPortfolio2 Error while performing Query";
                             resultMsg.err = err;
 
                             return callback(resultMsg);
@@ -679,13 +679,13 @@ var saveBaicInfo2 = function(req, res) {
                                             if( divideList && ( divideList.length == divide_size || i == msg.arr_portfolio.length-1 ) ) {
                                                 try {
                                                     paramData.arr_portfolio =   divideList;
-                                                    stmt = mapper.getStatement('simulationBacktest2', 'saveTmSimulPortfolio2', paramData, format);
+                                                    stmt = mapper.getStatement('simulation2', 'saveTmSimulPortfolio2', paramData, format);
 //                                                  log.debug(stmt);
 
                                                     conn.query(stmt, function(err, rows) {
                                                         if (err) {
                                                             resultMsg.result = false;
-                                                            resultMsg.msg = "[error] simulationBacktest2.saveTmSimulPortfolio2 Error while performing Query";
+                                                            resultMsg.msg = "[error] simulation2.saveTmSimulPortfolio2 Error while performing Query";
                                                             resultMsg.err = err;
 
                                                             return innerCallback(resultMsg);
@@ -699,7 +699,7 @@ var saveBaicInfo2 = function(req, res) {
                                                 } catch (err) {
 
                                                     resultMsg.result = false;
-                                                    resultMsg.msg = "[error] simulationBacktest2.saveTmSimulPortfolio2 Error while performing Query";
+                                                    resultMsg.msg = "[error] simulation2.saveTmSimulPortfolio2 Error while performing Query";
 
                                                     if( !resultMsg.err ) {
                                                         resultMsg.err = err;
@@ -717,7 +717,7 @@ var saveBaicInfo2 = function(req, res) {
 
                                         if( err ) {
                                             resultMsg.result = false;
-                                            resultMsg.msg = "[error] simulationBacktest2.saveTmSimulPortfolio2 Error while performing Query";
+                                            resultMsg.msg = "[error] simulation2.saveTmSimulPortfolio2 Error while performing Query";
                                             if( !resultMsg.err ) {
                                                 resultMsg.err = err;
                                             }
@@ -743,7 +743,7 @@ var saveBaicInfo2 = function(req, res) {
 
                         } catch (err) {
                             resultMsg.result = false;
-                            resultMsg.msg = "[error] simulationBacktest2.getTmSimulPortfolioExistCheck11 Error while performing Query";
+                            resultMsg.msg = "[error] simulation2.saveTmSimulPortfolio2 Error while performing Query";
                             resultMsg.err = err;
 
                             return callback(resultMsg);

@@ -416,6 +416,10 @@ export default {
                         }
                     });
                 }
+            }else{
+
+                /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
+                vm.fn_setImportanceMethodCd( vm.importance_method_cd );                
             }
         });
 
@@ -427,9 +431,6 @@ export default {
 
             vm.fn_resetErrorMessage();
             vm.fn_resetRecords( rowIndex );
-
-            /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
-            vm.fn_setImportanceMethodCd( vm.importance_method_cd );
         });
 
 
@@ -1347,7 +1348,6 @@ export default {
             tr.find( "td:eq(3)" ).text( "" );                   /* 시가총액 */
 
             tr.find( "td [name=importance]" ).val( "" );        /* 비중 */
-//          tr.find( "td:eq(5)" ).text( "" );                   /* 지수적용비율 */
         },
 
         /*
@@ -1877,6 +1877,13 @@ export default {
 
                                 dataList.push( v_rebalancePortfolio[ v_key ] );
                             }
+
+                            /* trIndex 순으로 정렬하여 노출 */
+                            dataList    =   _.orderBy(
+                                    dataList
+                                ,   [ "trIndex" ]
+                                ,   [ "asc" ]
+                            );
 
                             /* 건수가 0 인 경우 레코드 5개는 추가한다. */
                             var cnt = ( Math.ceil( dataList.length / 5 ) == 0 ? 1 : Math.ceil( dataList.length / 5 ) ) * 5;                  
