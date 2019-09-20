@@ -110,7 +110,9 @@ export default {
         fn_pageMove( tab_id ) {
             var vm = this;
 
-            vm.paramData    =   {};
+            if( tab_id == 0 ) {
+                vm.paramData    =   {};
+            }
 
             vm.activeTab            =   tab_id;
             vm.showSimulationId     =   0;
@@ -153,6 +155,17 @@ export default {
 
             vm.paramData    =   v_param;
 
+            if( v_param.simul_mast ) {
+
+                if( v_param.simul_mast.grp_cd ) {
+                    vm.paramData.grp_cd     =   v_param.simul_mast.grp_cd;
+                }
+
+                if( v_param.simul_mast.scen_cd ) {
+                    vm.paramData.scen_cd    =   v_param.simul_mast.scen_cd;
+                }                
+            }            
+
             switch( v_param.showSimulationId ) {
 
                         /* 시뮬레이션 등록 수정 화면 */
@@ -163,8 +176,9 @@ export default {
 
                         /* 시뮬레이션 결과 */
                 case    2:
-                        vm.activeTab            =   0;
+                        vm.activeTab            =   1;
                         vm.showSimulationId     =   2;
+
                         break;
             }
         }
