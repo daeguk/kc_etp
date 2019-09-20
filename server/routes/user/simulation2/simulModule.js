@@ -86,14 +86,14 @@ var	fn_set_importDate	=	    function(
                     if (Number(p_param.F12506) >= Number(JongmokImportDateList[ v_portKey ].history_start_date)) {
                         JongmokImportDateList[ v_portKey ].IMPORT_YN = 1;
                         JongmokImportDateList[ v_portKey ].startDate = p_param.F12506;
-                        console.log(v_portKey+"::"+p_param.F12506);
+                        //console.log(v_portKey+"::"+p_param.F12506);
                     } 
                 } else {
 
                     if (Number(v_portItem.start_year + '0101') >= Number(JongmokImportDateList[ v_portKey ].history_start_date)) {
                         JongmokImportDateList[ v_portKey ].IMPORT_YN = 1;
                         JongmokImportDateList[ v_portKey ].startDate = p_param.F12506;
-                        console.log(v_portKey+"::"+p_param.F12506);
+                        //console.log(v_portKey+"::"+p_param.F12506);
                     } else if  (Number(p_param.F12506) >= Number(JongmokImportDateList[ v_portKey ].history_start_date)) {                        
                         var import_cnt = 0;     
                         // 리밸런싱 날짜 인지 확인 
@@ -107,7 +107,7 @@ var	fn_set_importDate	=	    function(
                         if (import_cnt > 0) {                                
                             JongmokImportDateList[ v_portKey ].IMPORT_YN = 1;
                             JongmokImportDateList[ v_portKey ].startDate = p_param.F12506;
-                            console.log(v_portKey+"::"+p_param.F12506);
+                            //console.log(v_portKey+"::"+p_param.F12506);
                         }
                     }
                 }
