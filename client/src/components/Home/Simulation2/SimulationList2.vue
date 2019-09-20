@@ -96,14 +96,14 @@
                                 <button name="btn1" class="btn_icon v-icon material-icons"  >inbox</button>
                                 <button name="btn2" class="btn_icon v-icon material-icons"  v-if="item.grp_yn == '0' && item.result_daily_yn == '1'" >equalizer</button>
 
-                                <v-menu bottom left>
+                                <v-menu bottom left v-if="item.grp_yn == '0'" >
                                     <template v-slot:activator="{ on }">
                                         <button name="btn3" class="btn_icon v-icon material-icons" v-on="on" >more_horiz</button>
                                     </template>
                                     <ul class="more_menu_w">
-                                        <li @click="">menu1</li>
-                                        <li @click="">menu2</li>
-                                        <li @click="">menu3</li>
+                                        <li @click="fn_simul_delete( { grp_cd : item.grp_cd, scen_cd : item.scen_cd } )"><v-icon small class="simul_del_btn">clear</v-icon>삭제</li>
+                                        <!--li @click="">menu2</li>
+                                        <li @click="">menu3</li-->
                                     </ul>
                                 </v-menu>             
                             </td>
@@ -250,9 +250,9 @@ export default {
                             }
 
                             break;
-                
+
             }
-        });        
+        });
     },
 
     methods: {
@@ -283,6 +283,8 @@ export default {
          */
         fn_showCreateGroup : function() {
             var vm = this;
+
+            vm.arr_show_error_message   =   [];
 
             vm.status           =   'insert';
             vm.showCreateGroup  =   'Y'
@@ -497,6 +499,79 @@ export default {
 
             return  p_param ? util.formatNumber( p_param ) : "";
         },
+
+        /*
+         * 시뮬레이션을 삭제한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        async fn_simul_delete( p_param ) {
+
+            var vm = this;
+
+            vm.arr_show_error_message   =   [];
+
+
+            if( !p_param.grp_cd || !p_param.scen_cd  ) {
+                vm.arr_show_error_message.push( "그룹코드 또는 시나리오 코드가 존재하지 않습니다." );
+                return  false;
+            }            
+
+            if( await vm.$refs.confirm2.open(
+                        '[시나리오]',
+                        '시나리오 정보가 모두 삭제됩니다. 삭제하시겠습니까?',
+                        {}
+                    ,   2
+                )
+            ) {
+                if( "Y" != vm.$refs.confirm2.val ) {
+                    return  false;
+                }
+            }
+
+            vm.fn_showProgress( true );
+
+            axios.post(Config.base_url + "/user/simulation2/deleteAllSimul", {
+                data: p_param
+            }).then( async function(response) {
+
+                vm.fn_showProgress( false );
+
+                if (response && response.data) {
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.arr_show_error_message.push( msg );
+                        }
+                    }else{
+
+                        if( msg ) {
+                            if ( vm.$refs.confirm2.open(
+                                    '확인',
+                                    msg,
+                                    {}
+                                    ,1
+                                )
+                            ) {
+                                /* 시뮬레이션 목록정보를 조회한다. */
+                                vm.fn_getSimulList();
+                            }
+                        }
+                    }
+                }
+            }).catch(error => {
+
+                vm.fn_showProgress( false );
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '서버로 부터 응답을 받지 못하였습니다.',
+                        {}
+                        ,4
+                    )
+                ) {
+                }
+            });
+        }
 
     }    
 };

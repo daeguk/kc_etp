@@ -366,7 +366,7 @@
            AND  tm_simul_portfolio2.scen_cd             =   #{scen_cd}          /* 시나리오코드 */
         </if>
 
-    </delete>    
+    </delete>
 
     <!--
     *   화면에서 select 된 리밸런싱 일자를 조회한다.
@@ -459,6 +459,74 @@
           FROM  td_etp_basic
          WHERE  1 = 1
     ]]>
-    </select>    
+    </select>
+
+    <!--
+    * [tm_simul_result_rebalance] 테이블을 삭제한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <delete     id="deleteSimulResultRebalance">
+    <![CDATA[
+        DELETE  /* simulation2.deleteSimulResultRebalance      [tm_simul_result_rebalance] 테이블을 삭제한다. */
+
+          FROM  tm_simul_result_rebalance
+
+         WHERE  1 = 1
+
+           AND  tm_simul_result_rebalance.grp_cd            =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_result_rebalance.scen_cd           =   #{scen_cd}          /* 시나리오코드 */
+    ]]>
+    </delete>
+
+    <!--
+    * [tm_simul_result_daily] 테이블을 삭제한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <delete     id="deleteSimulResultDaily">
+    <![CDATA[
+        DELETE  /* simulation2.deleteSimulResultDaily      [tm_simul_result_daily] 테이블을 삭제한다. */
+
+          FROM  tm_simul_result_daily
+
+         WHERE  1 = 1
+
+           AND  tm_simul_result_daily.grp_cd                =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_result_daily.scen_cd               =   #{scen_cd}          /* 시나리오코드 */
+    ]]>
+    </delete>
+
+    <!--
+    * [tm_simul_result_mast] 테이블을 삭제한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <delete     id="deleteSimulResultMast">
+    <![CDATA[
+        DELETE  /* simulation2.deleteSimulResultMast        [tm_simul_result_mast] 테이블을 삭제한다. */
+
+          FROM  tm_simul_result_mast
+
+         WHERE  1 = 1
+
+           AND  tm_simul_result_mast.grp_cd                 =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_result_mast.scen_cd                =   #{scen_cd}          /* 시나리오코드 */
+    ]]>
+    </delete>
+
+    <!--
+    * [tm_simul_mast] 테이블을 삭제한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <delete     id="deleteSimulMast">
+    <![CDATA[
+        DELETE  /* simulation2.deleteSimulMast          [tm_simul_mast] 테이블을 삭제한다. */
+
+          FROM  tm_simul_mast
+
+         WHERE  1 = 1
+
+           AND  tm_simul_mast.grp_cd                        =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_mast.scen_cd                       =   #{scen_cd}          /* 시나리오코드 */
+    ]]>
+    </delete>    
 
 </mapper>

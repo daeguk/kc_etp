@@ -343,6 +343,289 @@ var getSimulPortfolio2 = function(req, res) {
 
 
 
+/*
+ * 시뮬레이션 정보를 삭제한다.
+ * 2019-05-20  bkLove(촤병국)
+ */
+var deleteAllSimul = function(req, res) {
+    try {
+        log.debug('simulation2.deleteAllSimul 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+        
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation2.deleteAllSimul  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        Promise.using(pool.connect(), conn => {
+
+            conn.beginTransaction(txerr => {
+
+                if (txerr) {
+                    return log.error(txerr);
+                }
+
+                async.waterfall([
+
+                    /* 1. simul_mast 가 이미 삭제되었는지 체크한다. */
+                    function(callback) {
+
+                        try{
+                            var msg         =   {};
+
+                            paramData.changeGrpCdYn     =   "0";
+                            stmt = mapper.getStatement('simulation2', 'getSimulMast2', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                /* 이미 삭제된 경우 */
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "이미 삭제된 상태입니다.";
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 2. tm_simul_result_rebalance 를 삭제한다. */
+                    function(msg, callback) {
+
+                        try{
+                            var msg         =   {};
+
+                            stmt = mapper.getStatement('simulation2', 'deleteSimulResultRebalance', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 3. tm_simul_result_daily 를 삭제한다. */
+                    function(msg, callback) {
+
+                        try{
+                            var msg         =   {};
+
+                            stmt = mapper.getStatement('simulation2', 'deleteSimulResultDaily', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 4. tm_simul_result_mast 를 삭제한다. */
+                    function(msg, callback) {
+
+                        try{
+                            var msg         =   {};
+
+                            stmt = mapper.getStatement('simulation2', 'deleteSimulResultMast', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 5. tm_simul_portfolio2 를 삭제한다. */
+                    function(msg, callback) {
+
+                        try{
+                            var msg         =   {};
+
+                            stmt = mapper.getStatement('simulation2', 'deleteTmSimulPortfolio2', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 6. tm_simul_mast 를 삭제한다. */
+                    function(msg, callback) {
+
+                        try{
+                            var msg         =   {};
+
+                            stmt = mapper.getStatement('simulation2', 'deleteSimulMast', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                ], function(err) {
+
+                    if (err) {
+                        log.debug(err, stmt, paramData);
+                        conn.rollback();
+
+                    } else {
+
+                        resultMsg.result        =   true;
+                        resultMsg.msg           =   "성공적으로 삭제하였습니다.";
+                        resultMsg.err           =   null;
+
+                        conn.commit();
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+
+                });
+            });
+        });
+
+    } catch (expetion) {
+
+        log.debug(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+
+
 module.exports.getRebalanceDate = getRebalanceDate;
 module.exports.getSimulList2 = getSimulList2;
 module.exports.getSimulPortfolio2 = getSimulPortfolio2;
+module.exports.deleteAllSimul = deleteAllSimul;
