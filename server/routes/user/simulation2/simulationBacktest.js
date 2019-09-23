@@ -242,17 +242,17 @@ var runBacktest = async function(req, res, paramData) {
                                     
 
                                     kspjong_hist = fn_history_filter(
-                                        temp_kspjong_hist /*DB에서 조회된 종목별 히스토리*/
-                                        , msg.v_simulPortfolio  /* 시작일 포트롤리오 */
-                                        , msg.v_simulPortfolioList /* 리밸런싱일별 포트 폴리오*/    
+                                            temp_kspjong_hist           /*DB에서 조회된 종목별 히스토리*/
+                                        ,   msg.v_simulPortfolio        /* 시작일 포트롤리오 */
+                                        ,   msg.v_simulPortfolioList    /* 리밸런싱일별 포트 폴리오*/    
                                     );
                     
                                 }
 
-                            /*************************************************************************************************************
-                            *   시뮬레이션 이력정보로 백테스트 수행결과를 반환한다.
-                            **************************************************************************************************************/
 
+                        /*************************************************************************************************************
+                        *   시뮬레이션 이력정보로 백테스트 수행
+                        **************************************************************************************************************/
                                 v_resultSimulData   =   fn_get_simulation_data(
                                         msg.v_simul_mast        /* 시뮬레이션 기본 마스터 정보 */
                                     ,   kspjong_hist                    /* 일자별 종목 이력 데이터 */
@@ -663,7 +663,7 @@ var saveBacktestResult2 = function(req, res) {
                             });
 
                         }catch( e ) {
-                            
+
                             log.debug( e, paramData );
 
                             resultMsg.result = false;
@@ -1565,9 +1565,9 @@ var	fn_get_simulation_data  =   function(
 * 2019-09-09  daeguk
 */
 var fn_history_filter   = function(
-    temp_kspjong_hist /*DB에서 조회된 종목별 히스토리*/
-    , v_simulPortfolio  /* 시작일 포트롤리오 */
-    , v_simulPortfolioList /* 리밸런싱일별 포트 폴리오*/    
+        temp_kspjong_hist       /*DB에서 조회된 종목별 히스토리*/
+    ,   v_simulPortfolio        /* 시작일 포트롤리오 */
+    ,   v_simulPortfolioList    /* 리밸런싱일별 포트 폴리오*/    
 ) {
     var kspjong_hist = [];
     let simulPortfolio = v_simulPortfolio;
@@ -1596,15 +1596,16 @@ var fn_history_filter   = function(
 /* 리밸런싱 날짜별 종목 편입 편출 여부 체크
    2019-09-16 daeguk
 */
-var fn_set_rebalanceDate_history = function(v_rebalance_cnt, /* 리밸런싱 횟수 */
-    v_F12506, /* 현재날짜*/
-    v_rebalanceObj, /* 리밸런싱 정보 */ 
-    v_jongmok, /* 현재종목 */
-    v_prev_jongmok, /* 이전종목*/
-    v_key, /* 종목키*/
-    JongmokImportDateList, /* 종목별 투입 일자 리스트 */
-    p_simulPortfolio /* 포트폴리오 */
-    ) {
+var fn_set_rebalanceDate_history = function(
+        v_rebalance_cnt         /* 리밸런싱 횟수 */
+    ,   v_F12506                /* 현재날짜*/
+    ,   v_rebalanceObj          /* 리밸런싱 정보 */ 
+    ,   v_jongmok               /* 현재종목 */
+    ,   v_prev_jongmok          /* 이전종목*/
+    ,   v_key                   /* 종목키*/
+    ,   JongmokImportDateList   /* 종목별 투입 일자 리스트 */
+    ,   p_simulPortfolio        /* 포트폴리오 */
+) {
     
     var v_rebalanceDate     =   v_rebalanceObj[ v_F12506 ];
     var v_jongmok_temp      =   Object.assign( {}, v_jongmok );
