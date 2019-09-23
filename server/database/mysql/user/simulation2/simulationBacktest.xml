@@ -107,7 +107,16 @@
                             THEN    'insert'
                             ELSE    'modify'
                     END                                                                 AS  dtl_status      /* 상태 */
-                ,   base.*
+                ,   IFNULL(
+                            (
+                                SELECT  tm_simul_mast.serial_no
+                                  FROM  tm_simul_mast
+                                 WHERE  1 = 1
+                                   AND  tm_simul_mast.grp_cd        =   base.grp_cd
+                                   AND  tm_simul_mast.scen_cd       =   base.scen_cd
+                            )
+                        ,   0
+                    )                                                                   AS  serial_no       /* 변경 순번 */
 
           FROM  (        
                     SELECT      #{grp_cd}                                               AS  grp_cd          /* 그룹코드(상위코드) */

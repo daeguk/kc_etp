@@ -1089,27 +1089,54 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                     if (err) {
                         log.debug(err, stmt, paramData);
                         conn.rollback();
-
                     } else {
-
                         resultMsg.result        =   true;
-                        resultMsg.msg           =   "성공적으로 저장하였습니다.";
-                        resultMsg.err           =   null;
-
                         conn.commit();
                     }
 
 
                     if( resultMsg.result ) {
 
-                        /* 백테스트를 수행한다. */
-                        resultMsg   =   simulationBacktest.runBacktest( req, res, paramData ).then( function(e) {
-                            res.json(e.resultMsg);
-                            res.end();
-                        }).catch( function(expetion){
-                            res.json(expetion.resultMsg);
-                            res.end();
-                        });
+                        try{
+
+                            /* 백테스트를 수행한다. */
+                            simulationBacktest.runBacktest( req, res, paramData ).then( function(e) {
+
+                                if( e && e.resultMsg ) {
+                                    resultMsg   =   e.resultMsg;
+
+                                    if( e.resultMsg.result ) {
+                                        e.resultMsg.msg = "성공적으로 저장하였습니다.";
+                                        e.resultMsg.err = null;
+                                    }
+                                }
+
+                                res.json(resultMsg);
+                                res.end();
+
+                            }).catch( function(expetion){
+
+                                log.debug( expetion, paramData );
+
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = expetion;
+
+                                res.json( resultMsg );
+                                res.end();
+                            });
+
+                        }catch( e ) {
+
+                            log.debug( e, paramData );
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = expetion;
+
+                            res.json(resultMsg);
+                            res.end();                            
+                        }
 
                     }else{
                         res.json(resultMsg);
