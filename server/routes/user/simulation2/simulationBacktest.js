@@ -645,6 +645,10 @@ var saveBacktestResult2 = function(req, res) {
 
                                     resultMsg.grp_cd	=	paramData.grp_cd;
                                     resultMsg.scen_cd	=	paramData.scen_cd;
+                                }else{
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = config.MSG.error01;
                                 }
 
                                 res.json(resultMsg);

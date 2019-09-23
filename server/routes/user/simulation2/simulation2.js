@@ -1109,6 +1109,10 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                         e.resultMsg.msg = "성공적으로 저장하였습니다.";
                                         e.resultMsg.err = null;
                                     }
+                                }else{
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = config.MSG.error01;
                                 }
 
                                 res.json(resultMsg);
