@@ -107,16 +107,6 @@
                             THEN    'insert'
                             ELSE    'modify'
                     END                                                                 AS  dtl_status      /* 상태 */
-                ,   IFNULL(
-                            (
-                                SELECT  tm_simul_mast.serial_no
-                                  FROM  tm_simul_mast
-                                 WHERE  1 = 1
-                                   AND  tm_simul_mast.grp_cd        =   base.grp_cd
-                                   AND  tm_simul_mast.scen_cd       =   base.scen_cd
-                            )
-                        ,   0
-                    )                                                                   AS  serial_no       /* 변경 순번 */
 
           FROM  (        
                     SELECT      #{grp_cd}                                               AS  grp_cd          /* 그룹코드(상위코드) */
@@ -202,6 +192,7 @@
                     tm_simul_mast.grp_cd                                AS  grp_cd                      /* 그룹코드(상위코드) */
                 ,   tm_simul_mast.scen_cd                               AS  scen_cd                     /* 시나리오 코드 */
 
+                ,   tm_simul_mast.scen_name                             AS  scen_name                   /* 시나리오 명 */
                 ,   tm_simul_mast.start_year                            AS  start_year                  /* 시작년도 */
                 ,   tm_simul_mast.rebalance_cycle_cd                    AS  rebalance_cycle_cd          /* 리밸런싱주기 (COM006) */
                 ,   tm_simul_mast.rebalance_date_cd                     AS  rebalance_date_cd           /* 리밸런싱일자 (COM007) */

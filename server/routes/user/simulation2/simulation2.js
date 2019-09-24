@@ -1099,6 +1099,8 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
 
                         try{
 
+                            paramData.moduleId      =   "runBacktestWithSaveBasicInfo";
+
                             /* 백테스트를 수행한다. */
                             simulationBacktest.runBacktest( req, res, paramData ).then( function(e) {
 
