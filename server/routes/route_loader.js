@@ -35,7 +35,7 @@ route_loader.sessionCheckRegister = function(app) {
                     세션 정보 처리[개발시 사용];
                     ============================
                 */
-               req.session.user_id = "test@hanwha.com";
+/*               req.session.user_id = "test@hanwha.com";
                req.session.inst_cd = "03068";
                req.session.type_cd = "0001";
                req.session.large_type = "FNGUIDE";
@@ -43,7 +43,7 @@ route_loader.sessionCheckRegister = function(app) {
 //               req.session.krx_cd = '56'; // ETN 상품이 존재하는 운용사 ( 하나금융투자증권 )
 //               req.session.krx_cd = '2'; // ETN 상품이 존재하는 운용사 ( 신한금융투자증권 ) 
                req.session.save();
-               log.debug("loginkey : " + req.session.user_id);
+               log.debug("loginkey : " + req.session.user_id);*/
                 /*===================================*/
 
 				if(req.session.user_id) {
@@ -52,8 +52,10 @@ route_loader.sessionCheckRegister = function(app) {
 				}else {
 					log.debug("session FAIL......." + req.path);
 					var error = new Error('session error');
-					error.status = 404;
-					next(error);
+					error.status = 900;
+					res.json(error);				
+                	res.end();
+					//next(error);
 				}
 			});
 		}
