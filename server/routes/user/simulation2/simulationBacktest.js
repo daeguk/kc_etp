@@ -550,7 +550,7 @@ var saveBacktestResult2 = function(req, res) {
 
                                 if (rows && rows.length == 1) {
                                     msg.simul_result_mast_status    =   rows[0].dtl_status;
-                                    msg.serino_no                   =   rows[0].serino_no;
+                                    msg.serial_no                   =   rows[0].serial_no;
                                 }
 
                                 callback(null, msg);
@@ -575,7 +575,8 @@ var saveBacktestResult2 = function(req, res) {
                                 msg = {};
                             }
 
-                            if( msg.simul_result_mast_status && msg.serino_no != null ) {
+
+                            if( msg.simul_result_mast_status && msg.serial_no != null ) {
 
                                 var queryId     =   "";
 
@@ -585,7 +586,7 @@ var saveBacktestResult2 = function(req, res) {
                                     queryId     =   "modifyTmSimulResultMast";
                                 }
 
-                                paramData.serino_no     =   msg.serino_no;
+                                paramData.serial_no     =   msg.serial_no;
                                 stmt = mapper.getStatement('simulationBacktest2', queryId, paramData, { language: 'sql', indent: '  ' });
                                 log.debug(stmt, paramData);
 
