@@ -321,7 +321,7 @@ var uploadPortfolio = function(req, res) {
                                     reqParam.rebalance_date_cd      =   "0";        /* 리밸런싱 일자 코드 */
                                 }
 
-                                stmt = mapper.getStatement( "simulation2", "getRebalanceDate", reqParam, format);
+                                stmt = mapper.getStatement( "simulation", "getRebalanceDate", reqParam, format);
                                 log.debug(stmt, reqParam);
 
                                 conn.query(stmt, function(err, rows) {
@@ -345,7 +345,7 @@ var uploadPortfolio = function(req, res) {
 
                                             resultMsg.result = false;
                                             resultMsg.msg = config.MSG.error01;
-                                            resultMsg.err = "[error] simulation2.getRebalanceDate 일자 기본정보가 없습니다.";
+                                            resultMsg.err = "[error] simulation.getRebalanceDate 일자 기본정보가 없습니다.";
 
                                             return callback(resultMsg);
                                         }
@@ -499,7 +499,7 @@ var uploadPortfolio = function(req, res) {
 
                                 msg.arrExcelJongmokNotExist =   [];
 
-                                stmt = mapper.getStatement('simulation2', 'getKspjongBasic', reqParam, format);
+                                stmt = mapper.getStatement('simulation', 'getKspjongBasic', reqParam, format);
                                 log.debug(stmt, reqParam);
 
                                 conn.query(stmt, function(err, rows) {
@@ -521,7 +521,7 @@ var uploadPortfolio = function(req, res) {
 
                                             resultMsg.result = false;
                                             resultMsg.msg = config.MSG.error01;
-                                            resultMsg.err = "[error] simulation2.getKspjongBasic 종목 기본정보가 없습니다.";
+                                            resultMsg.err = "[error] simulation.getKspjongBasic 종목 기본정보가 없습니다.";
 
                                             return callback(resultMsg);
                                         }
@@ -642,7 +642,7 @@ var uploadPortfolio = function(req, res) {
                                 /* kspjong_basic 에 존재하지 않는 종목이 존재하는 경우 */
                                 if( msg.arrExcelJongmokNotExist && msg.arrExcelJongmokNotExist.length > 0 ) {
 
-                                    stmt = mapper.getStatement('simulation2', 'getEtpBasic', reqParam, format);
+                                    stmt = mapper.getStatement('simulation', 'getEtpBasic', reqParam, format);
                                     log.debug(stmt, reqParam);
 
                                     conn.query(stmt, function(err, rows) {
@@ -664,7 +664,7 @@ var uploadPortfolio = function(req, res) {
 
                                                 resultMsg.result = false;
                                                 resultMsg.msg = config.MSG.error01;
-                                                resultMsg.err = "[error] simulation2.getEtpBasic 종목 기본정보가 없습니다.";
+                                                resultMsg.err = "[error] simulation.getEtpBasic 종목 기본정보가 없습니다.";
 
                                                 return callback(resultMsg);
                                             }

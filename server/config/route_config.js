@@ -161,33 +161,23 @@ module.exports = {
 
 
         /* 시뮬레이션 관련 */
-        { file: './user/simulation/simulation', path: '/user/simulation/getInitGrpCd'       , method: 'getInitGrpCd'        , session: 'check', type: 'post' },     // 상위 그룹정보 조회
-        { file: './user/simulation/simulation', path: '/user/simulation/getNextScenName'    , method: 'getNextScenName'     , session: 'check', type: 'post' },     // next 시나리오명을 조회한다.
-        { file: './user/simulation/simulation', path: '/user/simulation/getInitData'        , method: 'getInitData'         , session: 'check', type: 'post' },     // 공통코드 초기 데이터 조회
-        { file: './user/simulation/simulation', path: '/user/simulation/getJongmokInfo'     , method: 'getJongmokInfo'      , session: 'check', type: 'post' },     // 선택된 종목의 구성정보 조회
-        { file: './user/simulation/simulation', path: '/user/simulation/modifyGroup'        , method: 'modifyGroup'         , session: 'check', type: 'post' },     // 그룹정보 수정
-        { file: './user/simulation/simulation', path: '/user/simulation/getSimulList'       , method: 'getSimulList'        , session: 'check', type: 'post' },     // 목록정보 조회
-        { file: './user/simulation/simulation', path: '/user/simulation/getSimulMast'       , method: 'getSimulMast'        , session: 'check', type: 'post' },     // 마스터 정보 조회
-        { file: './user/simulation/simulation', path: '/user/simulation/getSimulPortfolio'  , method: 'getSimulPortfolio'   , session: 'check', type: 'post' },     // 포트폴리오 정보 조회
-        { file: './user/simulation/simulation', path: '/user/simulation/getInitData1'       , method: 'getInitData1'        , session: 'check', type: 'post' },     // 공통코드 초기 데이터 조회
+        { file: './user/simulation/simulation'          , path: '/user/simulation/getInitGrpCd'                 , method: 'getInitGrpCd'                    , session: 'check', type: 'post' },     // 상위 그룹정보 조회
+        { file: './user/simulation/simulation'          , path: '/user/simulation/getNextScenName'              , method: 'getNextScenName'                 , session: 'check', type: 'post' },     // next 시나리오명을 조회한다.
+        { file: './user/simulation/simulation'          , path: '/user/simulation/getInitData'                  , method: 'getInitData'                     , session: 'check', type: 'post' },     // 공통코드 초기 데이터 조회
+        { file: './user/simulation/simulation'          , path: '/user/simulation/getJongmokInfo'               , method: 'getJongmokInfo'                  , session: 'check', type: 'post' },     // 선택된 종목의 구성정보 조회
+        { file: './user/simulation/simulation'          , path: '/user/simulation/modifyGroup'                  , method: 'modifyGroup'                     , session: 'check', type: 'post' },     // 그룹정보 수정
+        { file: './user/simulation/simulation'          , path: '/user/simulation/getSimulMast'                 , method: 'getSimulMast'                    , session: 'check', type: 'post' },     // 마스터 정보 조회
+        { file: './user/simulation/simulation'          , path: '/user/simulation/getInitData1'                 , method: 'getInitData1'                    , session: 'check', type: 'post' },     // 공통코드 초기 데이터 조회        
+        { file: './user/simulation/simulation'          , path: '/user/simulation/getSimulPortfolio'            , method: 'getSimulPortfolio'               , session: 'check', type: 'post' },     // 포트폴리오 정보 조회
+        { file: './user/simulation/simulation'          , path: '/user/simulation/getRebalanceDate'             , method: 'getRebalanceDate'                , session: 'check', type: 'post' },     // 화면에서 select 된 리밸런싱 일자 조회
+        { file: './user/simulation/simulation'          , path: '/user/simulation/getSimulList'                 , method: 'getSimulList'                    , session: 'check', type: 'post' },     // 목록정보 조회
+        { file: './user/simulation/simulation'          , path: '/user/simulation/deleteAllSimul'               , method: 'deleteAllSimul'                  , session: 'check', type: 'post' },     // 시뮬레이션 정보 삭제
+        { file: './user/simulation/simulation'          , path: '/user/simulation/runBacktestWithSaveBasicInfo' , method: 'runBacktestWithSaveBasicInfo'    , session: 'check', type: 'post' },     // 기본정보 저장과 함께 백테스트 실행
 
-        { file: './user/simulation/simulationBacktest', path: '/user/simulation/saveBaicInfo'       , method: 'saveBaicInfo'        , session: 'check', type: 'post' },     // 기본정보 저장
-        { file: './user/simulation/simulationBacktest', path: '/user/simulation/saveBacktestResult' , method: 'saveBacktestResult'  , session: 'check', type: 'post' },     // 백테스트 결과 저장
-        { file: './user/simulation/simulationBacktest', path: '/user/simulation/getBacktestResult'  , method: 'getBacktestResult'   , session: 'check', type: 'post' },     // 백테스트 결과 조회
+        { file: './user/simulation/simulationBacktest'  , path: '/user/simulation/saveBacktestResult'           , method: 'saveBacktestResult'              , session: 'check', type: 'post' },     // 백테스트 결과 저장
+        { file: './user/simulation/simulationBacktest'  , path: '/user/simulation/getBacktestResult'            , method: 'getBacktestResult'               , session: 'check', type: 'post' },     // 백테스트 결과 조회
 
-        
-        /* 시뮬레이션2 관련 */
-        { file: './user/simulation2/simulation2', path: '/user/simulation2/getSimulPortfolio2' , method: 'getSimulPortfolio2'  , session: 'check', type: 'post' },     // 포트폴리오 정보 조회
-        { file: './user/simulation2/simulation2', path: '/user/simulation2/getRebalanceDate'   , method: 'getRebalanceDate'    , session: 'check', type: 'post' },     // 화면에서 select 된 리밸런싱 일자 조회
-        { file: './user/simulation2/simulation2', path: '/user/simulation2/getSimulList2'      , method: 'getSimulList2'       , session: 'check', type: 'post' },     // 목록정보 조회
-        { file: './user/simulation2/simulation2', path: '/user/simulation2/deleteAllSimul'     , method: 'deleteAllSimul'      , session: 'check', type: 'post' },     // 시뮬레이션 정보 삭제
-        { file: './user/simulation2/simulation2', path: '/user/simulation2/runBacktestWithSaveBasicInfo'     , method: 'runBacktestWithSaveBasicInfo'      , session: 'check', type: 'post' },     // 기본정보 저장과 함께 백테스트 실행
-
-        { file: './user/simulation2/simulationBacktest', path: '/user/simulation/runBacktest'        , method: 'runBacktest'       , session: 'check', type: 'post' },     // 백테스트 수행
-        { file: './user/simulation2/simulationBacktest', path: '/user/simulation/saveBacktestResult2', method: 'saveBacktestResult2' , session: 'check', type: 'post' },     // 백테스트 결과 저장
-        { file: './user/simulation2/simulationBacktest', path: '/user/simulation/getBacktestResult2' , method: 'getBacktestResult2'  , session: 'check', type: 'post' },     // 백테스트 결과 조회
-
-        { file: './user/simulation2/simulationUpload'    , path: '/user/simulation2/uploadPortfolio'  , method: 'uploadPortfolio'     , session: 'check', type: 'post' },     // 포트폴리오 업로드
+        { file: './user/simulation/simulationUpload'    , path: '/user/simulation/uploadPortfolio'              , method: 'uploadPortfolio'                 , session: 'check', type: 'post' },     // 포트폴리오 업로드
 
 
         //풀 테스트 

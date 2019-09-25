@@ -22,9 +22,9 @@
                         <v-text-field   v-model="scen_name" outline class="wid200 text_in01"  maxlegnth="50"    ref="scen_name"></v-text-field>
                     </span>
                     <span class="margin_t1">
-                        <v-btn  v-if="['insert', 'modify'].includes( status )"    depressed small outline color="primary" @click="fn_modifyGroup( 'insert' )">추가</v-btn>
-                        <v-btn  v-if="['modify'].includes( status )"              depressed small outline color="primary" @click="fn_modifyGroup( 'modify' )">수정</v-btn>
-                        <v-btn  v-if="['modify'].includes( status )"              depressed small outline color="primary" @click="fn_modifyGroup( 'delete' )">삭제</v-btn>
+                        <v-btn  v-if="['insert'].includes( status )"    depressed small outline color="primary" @click="fn_modifyGroup( 'insert' )">추가</v-btn>
+                        <v-btn  v-if="['modify'].includes( status )"    depressed small outline color="primary" @click="fn_modifyGroup( 'modify' )">수정</v-btn>
+                        <v-btn  v-if="['modify'].includes( status )"    depressed small outline color="primary" @click="fn_modifyGroup( 'delete' )">삭제</v-btn>
                     </span>
                 </div>
             </v-card>
@@ -34,17 +34,19 @@
             <div class="table-box" style="max-height:690px;">
                 <table  id="table01" class="tbl_type ver10">
                     <caption></caption>
+                    
                     <colgroup>
-                        <col width="40%" />
                         <col width="28%" />
-                        <col width="20%" />
+                        <col width="24%" />
+                        <col width="36%" />
                         <col width="12%" />
                     </colgroup>
+
                     <thead>
                         <tr>
                             <th class="txt_left">Name</th>
                             <th class="txt_right">Index</th>
-                            <th>Last modifired</th>
+                            <th class="txt_right">Last modifired</th>
                             <th class="txt_right"></th>
                         </tr>
                     </thead>
@@ -73,32 +75,33 @@
 
                             <!-- Index -->
                             <td class="txt_right">
-                                <div v-if="item.grp_yn == '0'">
-<!--
-                                    2,076.93
-                                    <br />
-                                    <span class="text_S text_blue">0.47%</span>
--->
+                                {{ fn_formatNumber( item.INDEX_RATE ) }}
+                                <br />
+                                <div  v-if='fn_formatNumber( item.INDEX_RATE ) != null && fn_formatNumber( item.INDEX_RATE ) != ""'>
+                                    <span :class='Number( fn_formatNumber( ( ( Number( item.INDEX_RATE ) / 1000 ) - 1 ) * 100 ) ) > 0 ? "text_S text_red" : "text_S text_blue" '>
+                                        {{ fn_formatNumber( 1000 - Number( item.INDEX_RATE ) ) }} 
+                                        ( {{ fn_formatNumber( ( ( Number( item.INDEX_RATE ) / 1000 ) - 1 ) * 100 ) + " %" }} )
+                                    </span>
                                 </div>
                             </td>
 
                             <!-- Last modified -->
                             <td>
                                 {{ item.fmt_upd_time }}
-                                <input  type="hidden"   name="strParam"    :value="JSON.stringify( { 'grp_cd' : item.grp_cd, 'scen_cd' : item.scen_cd, 'scen_name' : item.scen_name, 'grp_yn' : item.grp_yn } )" />
+                                <input  type="hidden"   name="strParam"    :value="JSON.stringify( { 'grp_cd' : item.grp_cd, 'scen_cd' : item.scen_cd, 'scen_name' : item.scen_name, 'grp_yn' : item.grp_yn, 'simul_change_yn' : item.simul_change_yn } )" />
                             </td>
 
                             <!-- 버튼 영역 -->
                             <td class="txt_left">
                                 <button name="btn1" class="btn_icon v-icon material-icons"  >inbox</button>
-                                <button name="btn2" class="btn_icon v-icon material-icons"  v-if="item.grp_yn == '0'" >equalizer</button>
+                                <button name="btn2" class="btn_icon v-icon material-icons"  v-if="item.grp_yn == '0' && item.result_daily_yn == '1'" >equalizer</button>
 
-                                <v-menu bottom left>
+                                <v-menu bottom left v-if="item.grp_yn == '0'" >
                                     <template v-slot:activator="{ on }">
                                         <button name="btn3" class="btn_icon v-icon material-icons" v-on="on" >more_horiz</button>
                                     </template>
                                     <ul class="more_menu_w">
-                                        <li @click=""><v-icon small class="simul_del_btn">clear</v-icon>삭제</li>
+                                        <li @click="fn_simul_delete( { grp_cd : item.grp_cd, scen_cd : item.scen_cd } )"><v-icon small class="simul_del_btn">clear</v-icon>삭제</li>
                                         <!--li @click="">menu2</li>
                                         <li @click="">menu3</li-->
                                     </ul>
@@ -178,7 +181,7 @@ export default {
 
 
         /* table tr 에서 버튼 클릭시  */
-        $('#table01 tbody').on('click', "button[name=btn1], button[name=btn2]", function() {
+        $('#table01 tbody').on('click', "button[name=btn1], button[name=btn2]", async function() {
             var tr          =   $(this).closest('tr');
             var rowIndex    =   tr.index();
 
@@ -222,15 +225,34 @@ export default {
                                 return  false;
                             }
 
+                            if( v_jsonParam.simul_change_yn == "1" ) {
 
-                            /* 결과화면을 보여준다. */
-                            v_jsonParam.showSimulationId        =   2;
-                            vm.$emit( "fn_showSimulation", v_jsonParam );
+                                if ( await vm.$refs.confirm2.open(
+                                        '확인',
+                                        '시뮬레이션 결과와 시나리오 정보가 변동이 발생되었습니다. 시나리오 화면으로 이동하시겠습니까?',
+                                        {}
+                                        ,2
+                                    )
+                                ) {
+
+                                    if( "Y" == vm.$refs.confirm2.val ) {
+                                        /* 수정정보를 보여준다. */
+                                        v_jsonParam.showSimulationId        =   1;
+                                        vm.fn_showSimulation( v_jsonParam );
+                                    }
+                                }
+
+                            }else{
+
+                                /* 결과화면을 보여준다. */
+                                v_jsonParam.showSimulationId        =   2;
+                                vm.$emit( "fn_showSimulation", v_jsonParam );
+                            }
 
                             break;
-                
+
             }
-        });        
+        });
     },
 
     methods: {
@@ -261,6 +283,8 @@ export default {
          */
         fn_showCreateGroup : function() {
             var vm = this;
+
+            vm.arr_show_error_message   =   [];
 
             vm.status           =   'insert';
             vm.showCreateGroup  =   'Y'
@@ -465,6 +489,89 @@ export default {
                 vm.$emit( "fn_showSimulation", v_jsonParam );
             }
         },
+
+        /*
+         * formatNumber 를 수행한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_formatNumber( p_param ) {
+            var vm = this;
+
+            return  p_param ? util.formatNumber( p_param ) : "";
+        },
+
+        /*
+         * 시뮬레이션을 삭제한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        async fn_simul_delete( p_param ) {
+
+            var vm = this;
+
+            vm.arr_show_error_message   =   [];
+
+
+            if( !p_param.grp_cd || !p_param.scen_cd  ) {
+                vm.arr_show_error_message.push( "그룹코드 또는 시나리오 코드가 존재하지 않습니다." );
+                return  false;
+            }            
+
+            if( await vm.$refs.confirm2.open(
+                        '[시나리오]',
+                        '시나리오 정보가 모두 삭제됩니다. 삭제하시겠습니까?',
+                        {}
+                    ,   2
+                )
+            ) {
+                if( "Y" != vm.$refs.confirm2.val ) {
+                    return  false;
+                }
+            }
+
+            vm.fn_showProgress( true );
+
+            axios.post(Config.base_url + "/user/simulation/deleteAllSimul", {
+                data: p_param
+            }).then( async function(response) {
+
+                vm.fn_showProgress( false );
+
+                if (response && response.data) {
+                    var msg = ( response.data.msg ? response.data.msg : "" );
+
+                    if (!response.data.result) {
+                        if( msg ) {
+                            vm.arr_show_error_message.push( msg );
+                        }
+                    }else{
+
+                        if( msg ) {
+                            if ( vm.$refs.confirm2.open(
+                                    '확인',
+                                    msg,
+                                    {}
+                                    ,1
+                                )
+                            ) {
+                                /* 시뮬레이션 목록정보를 조회한다. */
+                                vm.fn_getSimulList();
+                            }
+                        }
+                    }
+                }
+            }).catch(error => {
+
+                vm.fn_showProgress( false );
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        '서버로 부터 응답을 받지 못하였습니다.',
+                        {}
+                        ,4
+                    )
+                ) {
+                }
+            });
+        }
 
     }    
 };

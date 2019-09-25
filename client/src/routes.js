@@ -40,13 +40,6 @@ import  Simulation          from '@/components/Home/Simulation/Simulation.vue'
 import  SimulationResult    from '@/components/Home/Simulation/SimulationResult.vue'
 
 
-// simulation2
-import  SimulationControl2   from '@/components/Home/Simulation2/SimulationControl2.vue'
-import  SimulationList2      from '@/components/Home/Simulation2/SimulationList2.vue'
-import  Simulation2          from '@/components/Home/Simulation2/Simulation2.vue'
-import  SimulationResult2    from '@/components/Home/Simulation2/SimulationResult2.vue'
-
-
 // 관리자
 export const routes = [
   { path : '/',
@@ -199,33 +192,6 @@ export const routes = [
               requiresAuth: false,
             },
         },
-        
-/**** 시뮬레이션 2 START *******************/
-        {   path : 'simulation2/simulationControl2',
-            component: SimulationControl2,
-            meta: {
-              requiresAuth: false,
-            },
-        },        
-        {   path : 'simulation2/simulationList2',
-            component: SimulationList2,
-            meta: {
-              requiresAuth: false,
-            },
-        },
-        {   path : 'simulation2/simulation2',
-            component: Simulation2,
-            meta: {
-              requiresAuth: false,
-            },
-        },
-        {   path : 'simulation2/simulationResult2',
-            component: SimulationResult2,
-            meta: {
-              requiresAuth: false,
-            },
-        },
-/**** 시뮬레이션 2 END *******************/
 
     ]
   }

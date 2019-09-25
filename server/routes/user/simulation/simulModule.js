@@ -3,6 +3,8 @@
  *
  * @date 2019-08-14
  * @author bkLove(최병국)
+ *  수정일 2018-09-06  daeguk  
+ *  -수정내용: 리밸런싱일별로 포트 폴리오 입력시 처리 과정 추가 및 오류 수정
  */
 
 
@@ -16,7 +18,6 @@ var log = config.logger;
 
 /*************************************************************************************************************
 **************************************************************************************************************/
-
 /*
 * 종목이 포함 되어야 하는 날짜를 구한다. 
 * 2019-08-14  bkLove(촤병국)
@@ -32,6 +33,7 @@ var	fn_set_importDate	=	    function(
         ,   p_arrRebalanceDate                  /* 리밸런싱 일자 */
         ,   p_jongmok                           /* 현재 종목 */
         ,   p_simulPortfolioObj                 /* [tm_simul_portfolio] 기준 종목 데이터 */
+        ,   JongmokImportDateList               /* 종목별 편입일자*/
     ) {
 
 
@@ -47,63 +49,71 @@ var	fn_set_importDate	=	    function(
                 ====================================================================*/
 
             // 종목이 포함 되는 최초 날짜 체크 
-            if (typeof v_portItem.history_start_date == "undefined") {
-                p_simulPortfolioObj[ v_portKey ].index = -1;
+            if (typeof JongmokImportDateList[ v_portKey ] == "undefined") {
+                /* 초기화 */
+                JongmokImportDateList[v_portKey] = {
+                    'index': -1,                    /* 전후 리밸런싱 날짜를 찾기 위해 p_arrRebalanceDate index 저장 */
+                    'history_start_date': '',       /* 종목 이력 첫 날짜 */
+                    'IMPORT_YN' : '0',              /* 종목 편입 여부 */
+                    'startDate' : ''                /* 종목 편입 일자 */
+                }
+                
+                JongmokImportDateList[ v_portKey ].index = -1;
 
                 if( Object.keys( p_jongmok ).includes( v_portKey ) ) {
-                    p_simulPortfolioObj[ v_portKey ].history_start_date = p_param.F12506;
+                    JongmokImportDateList[ v_portKey ].history_start_date = p_param.F12506;
                 } else {
-                    p_simulPortfolioObj[ v_portKey ].history_start_date = "0";
+                    JongmokImportDateList[ v_portKey ].history_start_date = "0";
                 }
             } else {
-                if (p_simulPortfolioObj[ v_portKey ].history_start_date == "0") {
+                if (JongmokImportDateList[ v_portKey ].history_start_date == "0") {
                     if( Object.keys( p_jongmok ).includes( v_portKey ) ) {
-                        p_simulPortfolioObj[ v_portKey ].history_start_date = p_param.F12506;
+                        JongmokImportDateList[ v_portKey ].history_start_date = p_param.F12506;
                     } else {
-                        p_simulPortfolioObj[ v_portKey ].history_start_date = "0";
+                        JongmokImportDateList[ v_portKey ].history_start_date = "0";
                     }
                 }
             }
 
-            p_simulPortfolioObj[ v_portKey ].rebalance_F12506   =   0;
+            JongmokImportDateList[ v_portKey ].rebalance_F12506   =   0;
             
             /* 종목 포함 여부 체크 
                 - 검색된 첫날 보다 늦을 경우 다음 리밸런싱일에 포함 시킨다. 
             */
-            if (v_portItem.IMPORT_YN == 0 && p_simulPortfolioObj[ v_portKey ].history_start_date != "0") {
+            if (JongmokImportDateList[ v_portKey ].IMPORT_YN == 0 && JongmokImportDateList[ v_portKey ].history_start_date != "0") {
                 // 시작일 보다 검색된 첫날이 적거나 같으면 시뮬레이션 종목을 편입
                 if (p_param.first_record_yn == "Y") {                    
-                    if (Number(p_param.F12506) >= Number(p_simulPortfolioObj[ v_portKey ].history_start_date)) {
-                        p_simulPortfolioObj[ v_portKey ].IMPORT_YN = 1;
-                        p_simulPortfolioObj[ v_portKey ].startDate = p_param.F12506;
-                        console.log(v_portKey+"::"+p_param.F12506);
+                    if (Number(p_param.F12506) >= Number(JongmokImportDateList[ v_portKey ].history_start_date)) {
+                        JongmokImportDateList[ v_portKey ].IMPORT_YN = 1;
+                        JongmokImportDateList[ v_portKey ].startDate = p_param.F12506;
+                        //console.log(v_portKey+"::"+p_param.F12506);
                     } 
                 } else {
 
-                    if (Number(v_portItem.start_year + '0101') >= Number(p_simulPortfolioObj[ v_portKey ].history_start_date)) {
-                        p_simulPortfolioObj[ v_portKey ].IMPORT_YN = 1;
-                        p_simulPortfolioObj[ v_portKey ].startDate = p_param.F12506;
-                        console.log(v_portKey+"::"+p_param.F12506);
-                    } else if  (Number(p_param.F12506) >= Number(p_simulPortfolioObj[ v_portKey ].history_start_date)) {                        
+                    if (Number(v_portItem.start_year + '0101') >= Number(JongmokImportDateList[ v_portKey ].history_start_date)) {
+                        JongmokImportDateList[ v_portKey ].IMPORT_YN = 1;
+                        JongmokImportDateList[ v_portKey ].startDate = p_param.F12506;
+                        //console.log(v_portKey+"::"+p_param.F12506);
+                    } else if  (Number(p_param.F12506) >= Number(JongmokImportDateList[ v_portKey ].history_start_date)) {                        
                         var import_cnt = 0;     
                         // 리밸런싱 날짜 인지 확인 
                         p_arrRebalanceDate.forEach(function(rebalanceDate, index) {
                             if (Number(p_param.F12506) == Number(rebalanceDate.F12506)) {
                                 import_cnt += 1;                                    
-                                p_simulPortfolioObj[ v_portKey ].index = index;
+                                JongmokImportDateList[ v_portKey ].index = index;
                             }
                         });
 
                         if (import_cnt > 0) {                                
-                            p_simulPortfolioObj[ v_portKey ].IMPORT_YN = 1;
-                            p_simulPortfolioObj[ v_portKey ].startDate = p_param.F12506;
-                            console.log(v_portKey+"::"+p_param.F12506);
+                            JongmokImportDateList[ v_portKey ].IMPORT_YN = 1;
+                            JongmokImportDateList[ v_portKey ].startDate = p_param.F12506;
+                            //console.log(v_portKey+"::"+p_param.F12506);
                         }
                     }
                 }
             } 
 
-            v_portItem    =   Object.assign( {}, p_simulPortfolioObj[ v_portKey ] );
+            //v_portItem    =   Object.assign( {}, p_simulPortfolioObj[ v_portKey ] );
         }
 
     }catch(e) {
@@ -132,6 +142,7 @@ var	fn_set_dayilyJongmok =	function(
     ,   p_jongmok                           /* 현재 종목 */
     ,   p_dailyObj                          /* 일자별 정보 */
     ,   p_simulPortfolioObj                 /* [tm_simul_portfolio] 기준 종목 데이터 */
+    ,   JongmokImportDateList               /* 종목별 편입일자*/
 ) {
 
     /* 소수점시 계산시 사용할 고정값 */
@@ -209,7 +220,7 @@ var	fn_set_dayilyJongmok =	function(
             */
             //if(Object.keys( p_jongmok ).includes( v_portKey ) ) {
 
-            if (v_portItem.IMPORT_YN == "1" && Number(v_portItem.startDate) <= Number(p_param.F12506)) {
+            if (JongmokImportDateList[v_portKey].IMPORT_YN == "1" && Number(JongmokImportDateList[v_portKey].startDate) <= Number(p_param.F12506)) {
 
                 if(Object.keys( p_jongmok ).includes( v_portKey ) ) {
                     v_portItem.F16013_exists_yn         =   "Y";                        /* 종목코드 존재여부 */
@@ -235,7 +246,6 @@ var	fn_set_dayilyJongmok =	function(
                     v_portItem.TODAY_RATE               =   0;
                     v_portItem.BEFORE_RATE              =   0;
                     v_portItem.rebalancing              =   "0";
-
                     p_jongmok[ v_portKey ]              =   Object.assign( {},  v_portItem );
                 }
 
@@ -269,8 +279,7 @@ var	fn_set_dayilyJongmok =	function(
                 v_portItem.F16013_exists_yn         =   "N";                                                /* 종목코드 존재여부 */
                 v_portItem.TODAY_RATE               =   0;
                 v_portItem.BEFORE_RATE              =   0;
-                v_portItem.rebalancing              =   "0";
-
+                v_portItem.rebalancing              =   "0";                
                 p_jongmok[ v_portKey ]              =   Object.assign( {},  v_portItem );
             }
 
@@ -816,7 +825,7 @@ var	fn_set_today_rate =	function(
                 )
             );
 
-
+        if (typeof p_prev_jongmok[ v_dataKey ] != 'undefined') {
             /* 기준 시가총액 비중 = 기준 시가총액( p_param.F15028_S ) / 시가 기준시총 총액 ( p_totalInfo.tot_F15028_S )  */
             v_dataItem.BEFORE_IMPORTANCE        =       Number(
                 fn_calc_data(
@@ -829,6 +838,7 @@ var	fn_set_today_rate =	function(
                         }
                 )
             );
+        } 
 
 // if( [ "20180126", "20180702" ].includes( p_param.F12506 ) ) {
 //     console.log( "prev p_param.F12506", p_param.F12506, "v_dataKey", v_dataKey,  "prev.F15028_1_TODAY_RATE", p_prev_jongmok[ v_dataKey ].F15028_1_TODAY_RATE, "prev.tot_F15028_1_TODAY_RATE", p_prev_daily.tot_F15028_1_TODAY_RATE, "v_dataItem.BEFORE_IMPORTANCE", v_dataItem.BEFORE_IMPORTANCE, "\n"  );

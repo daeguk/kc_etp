@@ -198,7 +198,7 @@
                                                 </td>
                                             </tr>
 
-                                            <tr v-for="( row, index ) in  arr_analyze" v-bind:key="row + '_' + index">
+                                            <tr v-for="( row, index ) in  arr_analyze" v-bind:key="row + '_' + index" >
                                                 <td class="txt_left">
                                                     {{ row.anal_title          /* 분석지표 */ }}
                                                 </td>
@@ -400,13 +400,13 @@ export default {
                         vm.jsonFileName         =   vm.paramData.jsonFileName;
 
                         vm.arr_analyze_org      =   vm.paramData.analyzeList;
-
                         try{
                             if( vm.arr_analyze_org ) {
                                 vm.arr_analyze_temp =   JSON.parse( vm.arr_analyze_org );
                             }
                         }catch( e ) {
                             vm.arr_analyze_temp =   "";
+                            vm.arr_analyze.push( { anal_title : "처리중 오류가 발생하였습니다." }  );
                             console.log( "analyzeList 파싱 중 오류가 발생되었습니다.", e );
                         }
                         vm.fn_setAnal01();
@@ -540,7 +540,7 @@ export default {
                             vm.arr_analyze_org      =   response.data.analyzeList;
 
                             try{
-                                if( vm.arr_analyze_org ) {
+                                if( vm.arr_analyze_org ) {                           
                                     vm.arr_analyze_temp     =   JSON.parse( vm.arr_analyze_org );
                                 }
                             }catch( e ) {
@@ -705,10 +705,10 @@ export default {
                                     ,1
                                 )
                             ) {
-								vm.fn_getBacktestResult( { 
-										grp_cd  : v_grp_cd
-									, 	scen_cd : v_scen_cd 
-								});
+								// vm.fn_getBacktestResult( { 
+								// 		grp_cd  : v_grp_cd
+								// 	, 	scen_cd : v_scen_cd 
+								// });
                             }
                         }                        
 
@@ -854,6 +854,8 @@ export default {
         fn_setAnal01() {
 
             var vm = this;
+
+            vm.arr_analyze  =   [];
 
             if( vm.arr_analyze_temp &&  Object.keys( vm.arr_analyze_temp ).length > 0  ) {
                 var v_anal      =   {};

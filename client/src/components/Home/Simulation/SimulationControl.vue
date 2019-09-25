@@ -110,7 +110,20 @@ export default {
         fn_pageMove( tab_id ) {
             var vm = this;
 
-            vm.paramData    =   {};
+            if( tab_id == 0 ) {
+                vm.paramData    =   {};
+            }else{
+                if( vm.paramData.simul_mast ) {
+
+                    if( vm.paramData.simul_mast.grp_cd ) {
+                        vm.paramData.grp_cd     =   vm.paramData.simul_mast.grp_cd;
+                    }
+
+                    if( vm.paramData.simul_mast.scen_cd ) {
+                        vm.paramData.scen_cd    =   vm.paramData.simul_mast.scen_cd;
+                    }                
+                }                    
+            }
 
             vm.activeTab            =   tab_id;
             vm.showSimulationId     =   0;
@@ -151,20 +164,22 @@ export default {
         ) {
             var vm = this;
 
-            vm.paramData    =   v_param;
+            vm.paramData    =   v_param;        
 
             switch( v_param.showSimulationId ) {
 
                         /* 시뮬레이션 등록 수정 화면 */
                 case    1:
+
                         vm.activeTab            =   1;
                         vm.showSimulationId     =   0;
                         break;
 
                         /* 시뮬레이션 결과 */
                 case    2:
-                        vm.activeTab            =   0;
+                        vm.activeTab            =   1;
                         vm.showSimulationId     =   2;
+
                         break;
             }
         }
