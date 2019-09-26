@@ -389,6 +389,89 @@ var util = {
         var wb = excel.utils.book_new();
         excel.utils.book_append_sheet(wb, dataWS, excelInfo.sheetNm );
         excel.writeFile( wb, excelInfo.excelFileNm + "_"+ vm.getToday() +  ".xlsx" );
-    }
+    },
+
+    /*
+    *  axios 를 수행한다.
+    *  2019-09-25  bkLove(촤병국)
+    */
+    axiosCall( p_param={ url : "", method: "", data : {}, headers : {}, useKeyDataYn : "" }, p_callback={}, p_error_callback={} ) {
+
+        try{
+
+            if( p_param ) {
+
+                if( !p_param.url ) {
+                    p_param.url             =   "";
+                }
+
+                if( !p_param.method ) {
+                    p_param.method          =   "post";
+                }
+
+                if( !p_param.data ) {
+                    p_param.data            =   {};
+                }
+
+                if( !p_param.headers ) {
+                    p_param.headers         =   {};
+                }
+
+                if( !p_param.useKeyDataYn ) {
+                    p_param.useKeyDataYn    =   "Y";
+                }
+            }
+
+
+            var axiosParam              =   {};
+
+            axiosParam.url              =   p_param.url;
+            axiosParam.method           =   p_param.method;
+
+            /* data key 사용 유무 */
+            if( p_param.useKeyDataYn == "Y" ) {
+                axiosParam.data         =   {};
+                axiosParam.data.data    =   p_param.data;
+            }else{
+                axiosParam.data         =   p_param.data;
+            }
+
+            /* headers 가 존재하는 경우 */
+            if( Object.keys( p_param.headers ).length > 0 ) {
+                axiosParam.headers      =   p_param.headers;
+            }
+
+            axios( axiosParam ).then( function(response) {
+
+                /* 세션이 만료된 경우 */
+                if(     response 
+                    &&  response.data 
+                    &&  response.data.success == -1
+                ) {
+                    if( p_error_callback && typeof p_error_callback == "function" ) {
+                        var msg     =   ( response.data.message ? response.data.message : "처리 중 오류가 발생하였습니다." );
+                        p_error_callback( msg );
+                    }
+                    return  false;
+                }
+
+                if( p_callback && typeof p_callback == "function" ) {
+                    p_callback(response);
+                }
+
+            }).catch(error => {
+                console.log( "[error] axiosCall", error );
+
+                if( p_error_callback && typeof p_error_callback == "function" ) {
+                    error = "서버로 부터 응답을 받지 못하였습니다.";
+                    p_error_callback(error);
+                }
+            });
+            
+        }catch(ex) {
+            console.log( "[error] axiosCall", ex );
+        }
+    },
+
 }  
   export default util
