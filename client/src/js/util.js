@@ -395,30 +395,30 @@ var util = {
     *  axios 를 수행한다.
     *  2019-09-25  bkLove(촤병국)
     */
-    axiosCall( p_param={ url : "", method: "", data : {}, headers : {}, useKeyDataYn : "" }, p_callback={}, p_error_callback={} ) {
+    axiosCall( p_param={ url : "", method: "", data : {}, headers : {}, paramKey : "" }, p_callback={}, p_error_callback={} ) {
 
         try{
 
             if( p_param ) {
 
-                if( !p_param.url ) {
+                if( typeof p_param.url == "undefined" || !p_param.url ) {
                     p_param.url             =   "";
                 }
 
-                if( !p_param.method ) {
+                if( typeof p_param.method == "undefined" || !p_param.method ) {
                     p_param.method          =   "post";
                 }
 
-                if( !p_param.data ) {
+                if( typeof p_param.paramKey == "undefined" ) {
+                    p_param.paramKey        =   "data";
+                }
+
+                if( typeof p_param.data == "undefined"     || !p_param.data ) {
                     p_param.data            =   {};
                 }
 
-                if( !p_param.headers ) {
+                if( typeof p_param.headers == "undefined" || !p_param.headers ) {
                     p_param.headers         =   {};
-                }
-
-                if( !p_param.useKeyDataYn ) {
-                    p_param.useKeyDataYn    =   "Y";
                 }
             }
 
@@ -427,13 +427,21 @@ var util = {
 
             axiosParam.url              =   p_param.url;
             axiosParam.method           =   p_param.method;
+            axiosParam.data             =   {};
 
-            /* data key 사용 유무 */
-            if( p_param.useKeyDataYn == "Y" ) {
-                axiosParam.data         =   {};
-                axiosParam.data.data    =   p_param.data;
-            }else{
-                axiosParam.data         =   p_param.data;
+            switch( p_param.paramKey ) {
+
+                case    ""          :
+                        axiosParam.data         =   p_param.data;
+                        break;                
+
+                case    "data"      :
+                        axiosParam.data.data    =   p_param.data;
+                        break;
+
+                case    "params"    :
+                        axiosParam.params       =   p_param.data;
+                        break;
             }
 
             /* headers 가 존재하는 경우 */
