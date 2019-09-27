@@ -39,7 +39,7 @@ route_loader.sessionCheckRegister = function(app) {
                req.session.inst_cd = "03068";
                req.session.type_cd = "0001";
                req.session.large_type = "FNGUIDE";
-               req.session.krx_cd = '410220'; //거래소 ETP 발행사 코드
+               req.session.krx_cd = '3020'; //거래소 ETP 발행사 코드
 //               req.session.krx_cd = '56'; // ETN 상품이 존재하는 운용사 ( 하나금융투자증권 )
 //               req.session.krx_cd = '2'; // ETN 상품이 존재하는 운용사 ( 신한금융투자증권 ) 
                req.session.save();
