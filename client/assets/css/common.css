@@ -348,8 +348,9 @@ caption {
     position: relative;
     margin:0px 10px 0px 10px;
     padding-bottom:10px;
-/*width:509px;*/
-padding-top: 29px;
+    max-width: 1380px;
+    /*width:509px;*/
+    padding-top: 29px;
 }
 .table-box-wrap .table-box {
 overflow: auto;
