@@ -1028,7 +1028,8 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .more_menu_w li{display:block; padding:10px 15px; background:#ffffff; cursor: pointer;}
 .mar15{margin-top:15px !important;}
 
-
+.btn_only_r{width: 100%; height: 25px;}
+.btn_only_r .btn_rr{ display:inline-block; float: right; margin-right: 15px;}
 
 
 /*.simul_port_w .insize{width:160px;}
