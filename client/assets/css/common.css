@@ -307,7 +307,8 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type tbody tr.selected{background:#edf3f6 !important;}
 .tbl_type .in_select{padding-top:0px !important;}
 
-.tbl_type.ver2{width:290px !important;}
+.tbl_type.ver2{width:290px !important; height: auto !important;}
+.tbl_type.ver2 tr{height: 47px;}
 :-ms-fullscreen, :root .tbl_type.ver2{width:280px !important;}
 :-ms-fullscreen, :root .tbl_type.ver2 td .td_ellipsis{width:132px; overflow: hidden;  white-space: nowrap; text-overflow: ellipsis;}
 .tbl_type.ver2 td.line2 span{ display: inline-block; font-weight: 400;padding-left:0px;}

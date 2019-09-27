@@ -35,8 +35,8 @@ route_loader.sessionCheckRegister = function(app) {
                     세션 정보 처리[개발시 사용];
                     ============================
                 */
-               req.session.user_id = "test@hanwha.com";
-               req.session.inst_cd = "03068";
+               req.session.user_id = "test@samsung.com";
+               req.session.inst_cd = "03890";
                req.session.type_cd = "0001";
                req.session.large_type = "FNGUIDE";
                req.session.krx_cd = '3020'; //거래소 ETP 발행사 코드
