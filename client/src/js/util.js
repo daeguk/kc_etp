@@ -427,15 +427,16 @@ var util = {
 
             axiosParam.url              =   p_param.url;
             axiosParam.method           =   p_param.method;
-            axiosParam.data             =   {};
 
             switch( p_param.paramKey ) {
 
                 case    ""          :
+                        axiosParam.data         =   {};
                         axiosParam.data         =   p_param.data;
                         break;                
 
                 case    "data"      :
+                        axiosParam.data         =   {};
                         axiosParam.data.data    =   p_param.data;
                         break;
 
