@@ -20,6 +20,7 @@ export default {
       grad:{},
       mrect:{},
       crect:{x1:80, y1:60, x2:1000, y2:360},
+      color1:["#B0BEC5","#455A64","#FFA726","#4FC3F7"],
       dataArr: [],
       chartDataPosArr: [],
       chartDataHPosArr: [],
@@ -71,7 +72,7 @@ export default {
         c.strokeStyle = "#37474F";
         c.lineWidth = 1;
         // c.moveTo(this.crect.x1, this.crect.y1);
-        // c.lineTo(this.crect.x1, this.crect.y2);
+        // c.lineTo(this.crect.x2, this.crect.y1);
         c.moveTo(this.crect.x1, this.crect.y2);
         c.lineTo(this.crect.x2, this.crect.y2);
         c.stroke();
@@ -86,6 +87,31 @@ export default {
         }
         c.stroke();
 
+        // 차트 범례
+        var fy1 = this.crect.y1-20;
+        var fx1 = this.crect.x1 + 40;
+        c.fillStyle = this.color1[0];
+        c.fillRect(fx1, fy1-2, 60, 12);
+        c.textBaseline = "top";
+        c.textAlign = "center";
+        c.font = '12px  Roboto, sans-serif, Noto-Sans';
+        c.fillText("매도호가", fx1 + 100, fy1);
+
+        fx1 = fx1 + 160;
+        c.fillStyle = this.color1[1];
+        c.fillRect(fx1, fy1-2, 60, 12);
+        c.fillText("매도호가", fx1+100, fy1);
+
+        fx1 = fx1 + 160;
+        c.fillStyle = this.color1[2];
+        c.fillRect(fx1, fy1-2, 60, 12);
+        c.fillText("iNav", fx1+90, fy1);
+
+        // 현재가 필요하면, td_etp_hoga_intra 에 F15001(현재가)를 쌓자.
+        // fx1 = fx1 + 140;
+        // c.fillStyle = this.color1[3];
+        // c.fillRect(fx1, fy1-2, 60, 12);
+        // c.fillText("현재가", fx1+90, fy1);
         // 차트 골격 저장
         var vm = this;
         this.init_chart_image = c.getImageData(this.crect.x1-1, this.crect.y1-2, this.crect.x2+1, this.crect.y2);
@@ -94,7 +120,7 @@ export default {
       getEtpIntra: function() {
         var vm = this;
 
-        axios.get(Config.base_url + "/user/marketinfo/getEtpIntraToday", {
+        axios.get(Config.base_url + "/user/marketinfo/getEtpHogaIntraToday", {
           params: vm.etpBasic
         }).then(function(response) {
           // console.log(response);
@@ -110,7 +136,8 @@ export default {
         var c = this.ctx;
         var vm = this;
         var _dnum = idata.length;
-        var val = 0, val1 = 0, val2 = 0;
+        var val = 0, val1 = 0, val2 = 0, val3 = 0;
+        var bval1 = 0, bval2 = 0;  // 이전값. 매도/매수 호가 0 일때 대체.
         var maxVal = 0, minVal = 0, diffVal = 0;
         var stepVal = 0;
         var _wpos = 0, _hpos = 0;
@@ -121,22 +148,28 @@ export default {
           var sdata = {};
           var tval1, tval2;
 
-          val = item.F20008; val1 = item.F40544; val2 = item.F40545;
-          val = Number(val); val1 = Number(val1); val2 = Number(val2);
+          // val = item.F20008; val1 = item.F40544; val2 = item.F40545;
+          val = item.F15301; val1 = item.F40544; val2 = item.F40545; val3 = item.F20008;
+          val = Number(val); val1 = Number(val1); val2 = Number(val2); val3 = Number(val3);
 
-          tval1 = numutil.getMaxArr([val, val1, val2]);
-          tval2 = numutil.getMinArr([val, val1, val2]);
+          tval1 = numutil.getMaxArr([val, val1, val2, val3]);
+          tval2 = numutil.getMinArr([val, val1, val2, val3]);
           if(index == 0) {
             maxVal = tval1;
             minVal = tval2;
+            bval1 = val1;
+            bval2 = val2;
           }else {
             if(maxVal < tval1) maxVal = tval1;
             else if(minVal > tval2) minVal = tval2;
+            if(val1 == 0) val1 = bval1;
+            if(val2 == 0) val2 = bval2;
           }
           sdata.dd = item.F20044;
-          sdata.tt = item.F20004;
-          sdata.vv = val; sdata.vv1 = tval1;  sdata.vv2 = tval2;
+          sdata.tt = item.F20104;
+          sdata.vv = val; sdata.vv1 = val1; sdata.vv2 = val2; sdata.vv3 = val3;
           vm.sArr.push(sdata);
+          bval1 = val1; bval2 = val2;
         });
         // console.log("maxval : " + maxVal + " minVal : " + minVal);
 
@@ -167,34 +200,10 @@ export default {
 
         c.clearRect(0, vm.crect.y1-6, vm.chart.width, vm.chart.height-vm.crect.y1+6);
 
-        // iNav 그리기
-        c.beginPath();
-        c.strokeStyle = "#FFA726";
-        c.lineWidth = 1;
-        c.setLineDash([]);
-        vm.sArr.forEach(function(item, index) {
-          // console.log("draw_sintra... : " + index);
-          // console.log(item);
-          // _dnum - 1 : 오른쪽 마지막 픽셀 표현
-          _wpos = index / (_dnum-1) * vm.wlen + vm.crect.x1;
-          _hpos = vm.crect.y1 + (vm.hlen - ((item.vv - minVal) / diffVal * vm.hlen)) ;
-          vm.chartDataPosArr[index] = _wpos;
-          vm.chartDataHPosArr[index] = _hpos;
-
-          if(index == 0) {
-            c.moveTo(_wpos, _hpos);
-          }else {
-            c.lineTo(_wpos, _hpos);
-          }
-          // console.log("_wpos : " + _wpos + " _hpos : " + _hpos);
-        });
-        c.putImageData(vm.init_chart_image, vm.crect.x1-1, vm.crect.y1-2);
-        c.stroke();
-
         // 매도호가 그리기
         c.beginPath();
-        c.strokeStyle = "#B0BEC5";
-        c.lineWidth = 1;
+        c.strokeStyle = vm.color1[0];
+        c.lineWidth = 2;
         c.setLineDash([]);
         vm.sArr.forEach(function(item, index) {
           // console.log("draw_sintra... : " + index);
@@ -212,13 +221,13 @@ export default {
           }
           // console.log("_wpos : " + _wpos + " _hpos : " + _hpos);
         });
-        // c.putImageData(vm.init_chart_image, vm.crect.x1-1, vm.crect.y1-2);
+        c.putImageData(vm.init_chart_image, vm.crect.x1-1, vm.crect.y1-2);
         c.stroke();
 
         // 매수호가 그리기
         c.beginPath();
-        c.strokeStyle = "#455A64";
-        c.lineWidth = 1;
+        c.strokeStyle = vm.color1[1];
+        c.lineWidth = 2;
         c.setLineDash([]);
         vm.sArr.forEach(function(item, index) {
           // console.log("draw_sintra... : " + index);
@@ -239,6 +248,51 @@ export default {
         // c.putImageData(vm.init_chart_image, vm.crect.x1-1, vm.crect.y1-2);
         c.stroke();
 
+        // iNav 그리기
+        c.beginPath();
+        c.strokeStyle = vm.color1[2];
+        c.lineWidth = 2;
+        c.setLineDash([]);
+        vm.sArr.forEach(function(item, index) {
+          // console.log("draw_sintra... : " + index);
+          // console.log(item);
+          // _dnum - 1 : 오른쪽 마지막 픽셀 표현
+          _wpos = index / (_dnum-1) * vm.wlen + vm.crect.x1;
+          _hpos = vm.crect.y1 + (vm.hlen - ((item.vv - minVal) / diffVal * vm.hlen)) ;
+          vm.chartDataPosArr[index] = _wpos;
+          vm.chartDataHPosArr[index] = _hpos;
+
+          if(index == 0) {
+            c.moveTo(_wpos, _hpos);
+          }else {
+            c.lineTo(_wpos, _hpos);
+          }
+          // console.log("_wpos : " + _wpos + " _hpos : " + _hpos);
+        });
+        c.stroke();
+
+        // 현재가 그리기
+        c.beginPath();
+        c.strokeStyle = vm.color1[3];
+        c.lineWidth = 2;
+        c.setLineDash([]);
+        vm.sArr.forEach(function(item, index) {
+          // console.log("draw_sintra... : " + index);
+          // console.log(item);
+          // _dnum - 1 : 오른쪽 마지막 픽셀 표현
+          _wpos = index / (_dnum-1) * vm.wlen + vm.crect.x1;
+          _hpos = vm.crect.y1 + (vm.hlen - ((item.vv3 - minVal) / diffVal * vm.hlen)) ;
+          vm.chartDataPosArr[index] = _wpos;
+          vm.chartDataHPosArr[index] = _hpos;
+
+          if(index == 0) {
+            c.moveTo(_wpos, _hpos);
+          }else {
+            c.lineTo(_wpos, _hpos);
+          }
+          // console.log("_wpos : " + _wpos + " _hpos : " + _hpos);
+        });
+        // c.stroke();
 
         //Y-Axis 그리기
         c.fillStyle = "#424242";

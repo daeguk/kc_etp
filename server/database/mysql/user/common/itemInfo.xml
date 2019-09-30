@@ -252,6 +252,16 @@
         ORDER BY F20044 desc, F20004 desc
     </select>
 
+    <select id="getEtpHogaIntraToday">
+        SELECT DATE_FORMAT(F20044, "%Y.%m.%d") as F20044, 
+          concat(substr(lpad(F20104,8, '0'), 1, 2), ':',substr(lpad(F20104,8, '0'), 3, 2), ':',substr(lpad(F20104,8, '0'), 5, 2)) AS F20104
+		       ,F20008, F40544, F40545, F15301
+        FROM td_etp_hoga_intra
+        WHERE F16013 = #{F16013}
+        AND F20044 = (SELECT MAX(F12506) FROM td_etp_basic)
+        ORDER BY F20044 desc, F20104 desc
+    </select>
+
     <select id="getEtpMultiIntra">
         SELECT concat(substr(lpad(A.F20004,8, '0'), 1, 2), ':',substr(lpad(A.F20004,8, '0'), 3, 2), ':',substr(lpad(A.F20004,8, '0'), 5, 2)) AS F20004
                ,DATE_FORMAT(B.F20044, "%Y.%m.%d") as F20044
