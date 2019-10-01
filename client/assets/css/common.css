@@ -357,6 +357,10 @@ caption {
     /*width:509px;*/
     padding-top: 29px;
 }
+.table-box-wrap.v2 {
+    margin-right:0px !important;
+    margin-left:0px !important;
+}
 .table-box-wrap .table-box {
 overflow: auto;
 overflow-x: hidden;

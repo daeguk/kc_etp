@@ -191,7 +191,7 @@
                     <v-layout row>
                         <v-flex>
                         <v-card flat>
-                        <div class="table-box-wrap mar15">
+                        <div class="table-box-wrap v2 mar15">
                           <div class="table-box" style="max-height:380px;">
                             <table class="tbl_type ver10" id="table01">
                             <caption>헤더 고정 테이블</caption>
