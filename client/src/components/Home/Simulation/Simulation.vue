@@ -12,6 +12,11 @@
                           <v-icon v-on:click="fn_refresh()">refresh</v-icon>
                     </v-btn>
                     </span>
+                    <span class="btn_r">
+                     <v-btn small flat icon>
+                          <v-icon v-on:click="">reply</v-icon>
+                    </v-btn>
+                    </span>
                      </h3>
                 </v-card-title>
 
