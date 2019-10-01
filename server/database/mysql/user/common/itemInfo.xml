@@ -255,7 +255,7 @@
     <select id="getEtpHogaIntraToday">
         SELECT DATE_FORMAT(F20044, "%Y.%m.%d") as F20044, 
           concat(substr(lpad(F20104,8, '0'), 1, 2), ':',substr(lpad(F20104,8, '0'), 3, 2), ':',substr(lpad(F20104,8, '0'), 5, 2)) AS F20104
-		       ,F20008, F40544, F40545, F15301
+		       ,F15001, F40544, F40545, F15301, F30818, F20041, F33294
         FROM td_etp_hoga_intra
         WHERE F16013 = #{F16013}
         AND F20044 = (SELECT MAX(F12506) FROM td_etp_basic)

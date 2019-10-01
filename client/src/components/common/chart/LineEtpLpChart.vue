@@ -270,7 +270,7 @@ export default {
           // console.log("_wpos : " + _wpos + " _hpos : " + _hpos);
         });
         c.stroke();
-
+/*
         // 현재가 그리기
         c.beginPath();
         c.strokeStyle = vm.color1[3];
@@ -293,6 +293,7 @@ export default {
           // console.log("_wpos : " + _wpos + " _hpos : " + _hpos);
         });
         // c.stroke();
+        */
 
         //Y-Axis 그리기
         c.fillStyle = "#424242";
