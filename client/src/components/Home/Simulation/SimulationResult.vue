@@ -72,7 +72,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr v-for="( row, index ) in  arr_result_daily" v-bind:key="row + '_' + index" >
+                                                    <tr v-for="( row, index ) in  fn_sort_arr_result_daily" v-bind:key="row + '_' + index" >
                                                         <td class="txt_left">{{  row.fmt_F12506             /* 일자 */ }}</td>
                                                         <td class="txt_right">{{ row.fmt_INDEX_RATE         /* 지수 */ }}</td>
                                                         <td class="txt_right">{{ row.fmt_balance            /* balance */ }}</td>
@@ -287,6 +287,23 @@ export default {
     },
 
     computed: {
+
+        /*
+         * 일자별 지수를 정력한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_sort_arr_result_daily : function() {
+            var vm = this;
+
+            return _.orderBy( vm.arr_result_daily, [
+                "F12506"
+            ], ["desc"]);
+        },
+
+        /*
+         * 리밸런싱 내역을 정렬한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
         fn_sort_arr_result_rebalance : function() {
             var vm = this;
 
@@ -445,132 +462,260 @@ export default {
 
                 vm.fn_showProgress( true );
 
-                axios.post(Config.base_url + "/user/simulation/getBacktestResult", {
-                    data: v_param
-                }).then( function(response) {
-
-                    vm.fn_showProgress( false );
-
-                    if (response && response.data) {
-                        var msg = ( response.data.msg ? response.data.msg : "" );
-
-                        if (!response.data.result) {
-                            if( msg ) {
-                                vm.arr_show_error_message.push( msg );
-                            }
-
-                            resolve( { result : false } );
-                        }else{
-
-
-                        /*************************************************************************************************************
-                        *   array 리밸런스 정보
-                        **************************************************************************************************************/
-                            var v_prev_F12506   =   "";
-                            var v_rebalance_cnt =   0;
-
-                            if( response.data.arr_result_rebalance && response.data.arr_result_rebalance.length > 0  ){
-
-                                v_prev_F12506   =   "";
-
-                                response.data.arr_result_rebalance.forEach( function( sub_item, index, array ) {
-
-                                    if( v_prev_F12506 != sub_item.F12506 ) {
-                                        v_rebalance_cnt++;
-                                    }
-
-                                    /* 구분에 맞게 레코드를 설정한다. */
-                                    vm.fn_set_record_data( "rebalance", sub_item );
-
-                                    vm.arr_result_rebalance.push( sub_item );
-
-                                    /* 이전 입회일자 설정 */
-                                    v_prev_F12506   =   sub_item.F12506;
-                                });
-                            }
-
-
-                        /*************************************************************************************************************
-                        *   시뮬레이션 마스터 정보
-                        **************************************************************************************************************/
-
-                            vm.simul_result_mast        =   response.data.simul_result_mast;
-
-                            /* 구분에 맞게 레코드를 설정한다. */
-                            vm.fn_set_record_data( "mast", vm.simul_result_mast );
-
-                            /* 리밸런싱 횟수 */
-                            vm.simul_result_mast.rebalance_cnt      =   v_rebalance_cnt;
-
-
-
-                        /*************************************************************************************************************
-                        *   array 일자별 지수 정보
-                        **************************************************************************************************************/
-                            response.data.arr_result_daily.forEach( function( item, index, array ) {
-
-                                item.bench_mark_cd      =   vm.simul_result_mast.bench_mark_cd;
-
-                                /* 구분에 맞게 레코드를 설정한다. */
-                                vm.fn_set_record_data( "daily", item );
-
-                                if( vm.simul_result_mast.bench_mark_cd != "0" ) {
-
-                                    item.fmt_bm_1000_data       =   util.formatNumber(
-                                        item.bm_1000_data
-                                    );                                                                                                              /* bm(1000환산) */
-                                    item.fmt_bm_return_data     =   util.formatNumber(
-                                        item.bm_return_data * 100
-                                    ) + " %";                                                                                                       /* bm(return) */
-                                }else{
-                                    item.fmt_bm_1000_data       =   "";                                                                             /* bm(1000환산) */
-                                    item.fmt_bm_return_data     =   "";                                                                             /* bm(return) */
-                                }
-
-                                vm.arr_result_daily.push( item );
-                            });
-
-
-                        /*************************************************************************************************************
-                        *   분석정보 #1
-                        **************************************************************************************************************/
-                            vm.inputData            =   response.data.inputData;
-                            vm.jsonFileName         =   response.data.jsonFileName;
-
-                            vm.arr_analyze_org      =   response.data.analyzeList;
+                util.axiosCall(
+                        {
+                                "url"       :   Config.base_url + "/user/simulation/getBacktestResult"
+                            ,   "data"      :   v_param
+                            ,   "method"    :   "post"
+                        }
+                    ,   function(response) {
+                            vm.fn_showProgress( false );
 
                             try{
-                                if( vm.arr_analyze_org ) {                           
-                                    vm.arr_analyze_temp     =   JSON.parse( vm.arr_analyze_org );
+
+                                if (response && response.data) {
+                                    var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                    if (!response.data.result) {
+                                        if( msg ) {
+                                            vm.arr_show_error_message.push( msg );
+                                        }
+
+                                        resolve( { result : false } );
+                                    }else{
+
+
+                                    /*************************************************************************************************************
+                                    *   array 리밸런스 정보
+                                    **************************************************************************************************************/
+                                        var v_prev_F12506   =   "";
+                                        var v_rebalance_cnt =   0;
+
+                                        if( response.data.arr_result_rebalance && response.data.arr_result_rebalance.length > 0  ){
+
+                                            v_prev_F12506   =   "";
+
+                                            response.data.arr_result_rebalance.forEach( function( sub_item, index, array ) {
+
+                                                if( v_prev_F12506 != sub_item.F12506 ) {
+                                                    v_rebalance_cnt++;
+                                                }
+
+                                                /* 구분에 맞게 레코드를 설정한다. */
+                                                vm.fn_set_record_data( "rebalance", sub_item );
+
+                                                vm.arr_result_rebalance.push( sub_item );
+
+                                                /* 이전 입회일자 설정 */
+                                                v_prev_F12506   =   sub_item.F12506;
+                                            });
+                                        }
+
+
+                                    /*************************************************************************************************************
+                                    *   시뮬레이션 마스터 정보
+                                    **************************************************************************************************************/
+
+                                        vm.simul_result_mast        =   response.data.simul_result_mast;
+
+                                        /* 구분에 맞게 레코드를 설정한다. */
+                                        vm.fn_set_record_data( "mast", vm.simul_result_mast );
+
+                                        /* 리밸런싱 횟수 */
+                                        vm.simul_result_mast.rebalance_cnt      =   v_rebalance_cnt;
+
+
+
+                                    /*************************************************************************************************************
+                                    *   array 일자별 지수 정보
+                                    **************************************************************************************************************/
+                                        response.data.arr_result_daily.forEach( function( item, index, array ) {
+
+                                            item.bench_mark_cd      =   vm.simul_result_mast.bench_mark_cd;
+
+                                            /* 구분에 맞게 레코드를 설정한다. */
+                                            vm.fn_set_record_data( "daily", item );
+
+                                            if( vm.simul_result_mast.bench_mark_cd != "0" ) {
+
+                                                item.fmt_bm_1000_data       =   util.formatNumber(
+                                                    item.bm_1000_data
+                                                );                                                                                                              /* bm(1000환산) */
+                                                item.fmt_bm_return_data     =   util.formatNumber(
+                                                    item.bm_return_data * 100
+                                                ) + " %";                                                                                                       /* bm(return) */
+                                            }else{
+                                                item.fmt_bm_1000_data       =   "";                                                                             /* bm(1000환산) */
+                                                item.fmt_bm_return_data     =   "";                                                                             /* bm(return) */
+                                            }
+
+                                            vm.arr_result_daily.push( item );
+                                        });
+
+
+                                    /*************************************************************************************************************
+                                    *   분석정보 #1
+                                    **************************************************************************************************************/
+                                        vm.inputData            =   response.data.inputData;
+                                        vm.jsonFileName         =   response.data.jsonFileName;
+
+                                        vm.arr_analyze_org      =   response.data.analyzeList;
+
+                                        try{
+                                            if( vm.arr_analyze_org ) {                           
+                                                vm.arr_analyze_temp     =   JSON.parse( vm.arr_analyze_org );
+                                            }
+                                        }catch( e ) {
+                                            vm.arr_analyze_temp     =   "";
+                                            console.log( "analyzeList 파싱 중 오류가 발생되었습니다.", e );
+                                        }
+                                        vm.fn_setAnal01();
+
+                                        resolve( { result : true } );
+                                    }
+                                }else{
+                                    resolve( { result : false } );
                                 }
-                            }catch( e ) {
-                                vm.arr_analyze_temp     =   "";
-                                console.log( "analyzeList 파싱 중 오류가 발생되었습니다.", e );
+
+                            }catch(ex) {
+                                resolve( { result : false } );
+                                console.log( "error", ex );
                             }
-                            vm.fn_setAnal01();
-
-                            resolve( { result : true } );
                         }
-                    }else{
-                        resolve( { result : false } );
-                    }
-                }).catch(error => {
-                    resolve( { result : false } );
+                    ,   function(error) {
+                            resolve( { result : false } );
 
-                    vm.fn_showProgress( false );
-                    if ( vm.$refs.confirm2.open(
-                            '확인',
-                            '서버로 부터 응답을 받지 못하였습니다.',
-                            {}
-                            ,4
-                        )
-                    ) {
-                    }
-                });
+                            vm.fn_showProgress( false );
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                );
+
+
+            //     axios.post(Config.base_url + "/user/simulation/getBacktestResult", {
+            //         data: v_param
+            //     }).then( function(response) {
+
+            //         vm.fn_showProgress( false );
+
+            //         if (response && response.data) {
+            //             var msg = ( response.data.msg ? response.data.msg : "" );
+
+            //             if (!response.data.result) {
+            //                 if( msg ) {
+            //                     vm.arr_show_error_message.push( msg );
+            //                 }
+
+            //                 resolve( { result : false } );
+            //             }else{
+
+
+            //             /*************************************************************************************************************
+            //             *   array 리밸런스 정보
+            //             **************************************************************************************************************/
+            //                 var v_prev_F12506   =   "";
+            //                 var v_rebalance_cnt =   0;
+
+            //                 if( response.data.arr_result_rebalance && response.data.arr_result_rebalance.length > 0  ){
+
+            //                     v_prev_F12506   =   "";
+
+            //                     response.data.arr_result_rebalance.forEach( function( sub_item, index, array ) {
+
+            //                         if( v_prev_F12506 != sub_item.F12506 ) {
+            //                             v_rebalance_cnt++;
+            //                         }
+
+            //                         /* 구분에 맞게 레코드를 설정한다. */
+            //                         vm.fn_set_record_data( "rebalance", sub_item );
+
+            //                         vm.arr_result_rebalance.push( sub_item );
+
+            //                         /* 이전 입회일자 설정 */
+            //                         v_prev_F12506   =   sub_item.F12506;
+            //                     });
+            //                 }
+
+
+            //             /*************************************************************************************************************
+            //             *   시뮬레이션 마스터 정보
+            //             **************************************************************************************************************/
+
+            //                 vm.simul_result_mast        =   response.data.simul_result_mast;
+
+            //                 /* 구분에 맞게 레코드를 설정한다. */
+            //                 vm.fn_set_record_data( "mast", vm.simul_result_mast );
+
+            //                 /* 리밸런싱 횟수 */
+            //                 vm.simul_result_mast.rebalance_cnt      =   v_rebalance_cnt;
+
+
+
+            //             /*************************************************************************************************************
+            //             *   array 일자별 지수 정보
+            //             **************************************************************************************************************/
+            //                 response.data.arr_result_daily.forEach( function( item, index, array ) {
+
+            //                     item.bench_mark_cd      =   vm.simul_result_mast.bench_mark_cd;
+
+            //                     /* 구분에 맞게 레코드를 설정한다. */
+            //                     vm.fn_set_record_data( "daily", item );
+
+            //                     if( vm.simul_result_mast.bench_mark_cd != "0" ) {
+
+            //                         item.fmt_bm_1000_data       =   util.formatNumber(
+            //                             item.bm_1000_data
+            //                         );                                                                                                              /* bm(1000환산) */
+            //                         item.fmt_bm_return_data     =   util.formatNumber(
+            //                             item.bm_return_data * 100
+            //                         ) + " %";                                                                                                       /* bm(return) */
+            //                     }else{
+            //                         item.fmt_bm_1000_data       =   "";                                                                             /* bm(1000환산) */
+            //                         item.fmt_bm_return_data     =   "";                                                                             /* bm(return) */
+            //                     }
+
+            //                     vm.arr_result_daily.push( item );
+            //                 });
+
+
+            //             /*************************************************************************************************************
+            //             *   분석정보 #1
+            //             **************************************************************************************************************/
+            //                 vm.inputData            =   response.data.inputData;
+            //                 vm.jsonFileName         =   response.data.jsonFileName;
+
+            //                 vm.arr_analyze_org      =   response.data.analyzeList;
+
+            //                 try{
+            //                     if( vm.arr_analyze_org ) {                           
+            //                         vm.arr_analyze_temp     =   JSON.parse( vm.arr_analyze_org );
+            //                     }
+            //                 }catch( e ) {
+            //                     vm.arr_analyze_temp     =   "";
+            //                     console.log( "analyzeList 파싱 중 오류가 발생되었습니다.", e );
+            //                 }
+            //                 vm.fn_setAnal01();
+
+            //                 resolve( { result : true } );
+            //             }
+            //         }else{
+            //             resolve( { result : false } );
+            //         }
+            //     }).catch(error => {
+            //         resolve( { result : false } );
+
+            //         vm.fn_showProgress( false );
+            //         if ( vm.$refs.confirm2.open(
+            //                 '확인',
+            //                 '서버로 부터 응답을 받지 못하였습니다.',
+            //                 {}
+            //                 ,4
+            //             )
+            //         ) {
+            //         }
+            //     });
 
             }).catch( function(e1) {
                 console.log( e1 );
-                resolve( { result : false } );
             });
         },
 
@@ -591,70 +736,140 @@ export default {
 
                 vm.fn_showProgress( true );
 
-                axios.post(Config.base_url + "/user/simulation/getInitData1", {
-                    data: {  arrComMstCd : arrComMstCd }
-                }).then( function(response) {
-
-                    vm.fn_showProgress( false );
-
-                    if (response && response.data) {
-                        var arrMsg = ( response.data.msg && response.data.msg.length > 0 ? response.data.msg : [] );
-
-                        if (!response.data.result) {
-                            if( arrMsg.length > 0 ) {
-                                vm.arr_show_error_message.push( ...arrMsg );
-                            }
-
-                            resolve( { result : false } );
-                        }else{
-
-                            if( response.data.arr_code_list && response.data.arr_code_list.length > 0 ) {
-                                
-                                var com011_check    =   false;
-                                var com012_check    =   false;
-                                var existCheck = _.filter( response.data.arr_code_list, function(o) {
-
-                                    if ( o.com_mst_cd == "COM011" ) {
-                                        com011_check    =   true;
-                                    }
-
-                                    if ( o.com_mst_cd == "COM012" ) {
-                                        com012_check    =   true;
-                                    }
-                                });
-
-                                if( !com011_check ) {
-                                    arr_show_error_message.push( "공통코드 이벤트 타입 정보가 존재하지 않습니다." );
-                                    return  false;
-                                }
-
-                                if( !com012_check ) {
-                                    arr_show_error_message.push( "공통코드 리밸런싱 맵핑 정보가 존재하지 않습니다." );
-                                    return  false;
-                                }
-                                
-                                vm.arr_code_list    =   response.data.arr_code_list;
-                            }
-
-                            resolve( { result : true } );
+                util.axiosCall(
+                        {
+                                "url"       :   Config.base_url + "/user/simulation/getInitData1"
+                            ,   "data"      :   {  arrComMstCd : arrComMstCd }
+                            ,   "method"    :   "post"
                         }
-                    }else{
+                    ,   function(response) {
+                            vm.fn_showProgress( false );
 
-                        resolve( { result : false } );
-                    }
-                }).catch(error => {
-                    resolve( { result : false } );
+                            try{
 
-                    vm.fn_showProgress( false );
-                    if ( vm.$refs.confirm2.open(
-                            '확인',
-                            '서버로 부터 응답을 받지 못하였습니다.',
-                            {}
-                            ,4
-                        )
-                    ) {
-                    }
-                });
+                                if (response && response.data) {
+                                    var arrMsg = ( response.data.msg && response.data.msg.length > 0 ? response.data.msg : [] );
+
+                                    if (!response.data.result) {
+                                        if( arrMsg.length > 0 ) {
+                                            vm.arr_show_error_message.push( ...arrMsg );
+                                        }
+
+                                        resolve( { result : false } );
+                                    }else{
+
+                                        if( response.data.arr_code_list && response.data.arr_code_list.length > 0 ) {
+                                            
+                                            var com011_check    =   false;
+                                            var com012_check    =   false;
+                                            var existCheck = _.filter( response.data.arr_code_list, function(o) {
+
+                                                if ( o.com_mst_cd == "COM011" ) {
+                                                    com011_check    =   true;
+                                                }
+
+                                                if ( o.com_mst_cd == "COM012" ) {
+                                                    com012_check    =   true;
+                                                }
+                                            });
+
+                                            if( !com011_check ) {
+                                                arr_show_error_message.push( "공통코드 이벤트 타입 정보가 존재하지 않습니다." );
+                                                return  false;
+                                            }
+
+                                            if( !com012_check ) {
+                                                arr_show_error_message.push( "공통코드 리밸런싱 맵핑 정보가 존재하지 않습니다." );
+                                                return  false;
+                                            }
+                                            
+                                            vm.arr_code_list    =   response.data.arr_code_list;
+                                        }
+
+                                        resolve( { result : true } );
+                                    }
+                                }else{
+
+                                    resolve( { result : false } );
+                                }
+
+                            }catch(ex) {
+                                resolve( { result : false } );
+                                console.log( "error", ex );
+                            }
+                        }
+                    ,   function(error) {
+                            resolve( { result : false } );
+
+                            vm.fn_showProgress( false );
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                );
+
+                // axios.post(Config.base_url + "/user/simulation/getInitData1", {
+                //     data: {  arrComMstCd : arrComMstCd }
+                // }).then( function(response) {
+
+                //     vm.fn_showProgress( false );
+
+                //     if (response && response.data) {
+                //         var arrMsg = ( response.data.msg && response.data.msg.length > 0 ? response.data.msg : [] );
+
+                //         if (!response.data.result) {
+                //             if( arrMsg.length > 0 ) {
+                //                 vm.arr_show_error_message.push( ...arrMsg );
+                //             }
+
+                //             resolve( { result : false } );
+                //         }else{
+
+                //             if( response.data.arr_code_list && response.data.arr_code_list.length > 0 ) {
+                                
+                //                 var com011_check    =   false;
+                //                 var com012_check    =   false;
+                //                 var existCheck = _.filter( response.data.arr_code_list, function(o) {
+
+                //                     if ( o.com_mst_cd == "COM011" ) {
+                //                         com011_check    =   true;
+                //                     }
+
+                //                     if ( o.com_mst_cd == "COM012" ) {
+                //                         com012_check    =   true;
+                //                     }
+                //                 });
+
+                //                 if( !com011_check ) {
+                //                     arr_show_error_message.push( "공통코드 이벤트 타입 정보가 존재하지 않습니다." );
+                //                     return  false;
+                //                 }
+
+                //                 if( !com012_check ) {
+                //                     arr_show_error_message.push( "공통코드 리밸런싱 맵핑 정보가 존재하지 않습니다." );
+                //                     return  false;
+                //                 }
+                                
+                //                 vm.arr_code_list    =   response.data.arr_code_list;
+                //             }
+
+                //             resolve( { result : true } );
+                //         }
+                //     }else{
+
+                //         resolve( { result : false } );
+                //     }
+                // }).catch(error => {
+                //     resolve( { result : false } );
+
+                //     vm.fn_showProgress( false );
+                //     if ( vm.$refs.confirm2.open(
+                //             '확인',
+                //             '서버로 부터 응답을 받지 못하였습니다.',
+                //             {}
+                //             ,4
+                //         )
+                //     ) {
+                //     }
+                // });
 
             }).catch( function(e1) {
                 console.log( e1 );
@@ -677,55 +892,106 @@ export default {
 
             paramData   =   vm.simul_result_mast;
 
-            axios.post(Config.base_url + "/user/simulation/saveBacktestResult", {
-                data: paramData
-            }).then( function(response) {
-
-                vm.fn_showProgress( false );
-
-                if (response && response.data) {
-                    var msg = ( response.data.msg ? response.data.msg : "" );
-
-                    if (!response.data.result) {
-                        if( !msg ) {
-                            vm.arr_show_error_message.push( msg );
-                        }
-
-                        resolve( { result : false } );
-                    }else{
-
-						var	v_grp_cd	=	response.data.grp_cd;
-						var	v_scen_cd	=	response.data.scen_cd;
-
-                        if( msg ) {
-                            if ( vm.$refs.confirm2.open(
-                                    '확인',
-                                    msg,
-                                    {}
-                                    ,1
-                                )
-                            ) {
-								// vm.fn_getBacktestResult( { 
-								// 		grp_cd  : v_grp_cd
-								// 	, 	scen_cd : v_scen_cd 
-								// });
-                            }
-                        }                        
-
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/simulation/saveBacktestResult"
+                        ,   "data"      :   paramData
+                        ,   "method"    :   "post"
                     }
-                }
-            }).catch(error => {
+                ,   function(response) {
+                        vm.fn_showProgress( false );
 
-                vm.fn_showProgress( false );
-                if ( vm.$refs.confirm2.open(
-                        '확인',
-                        '서버로 부터 응답을 받지 못하였습니다.',
-                        {}
-                        ,4
-                    )
-                ) {
-                }
-            });
+                        try{
+
+                            if (response && response.data) {
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                if (!response.data.result) {
+                                    if( !msg ) {
+                                        vm.arr_show_error_message.push( msg );
+                                    }
+                                }else{
+
+                                    var	v_grp_cd	=	response.data.grp_cd;
+                                    var	v_scen_cd	=	response.data.scen_cd;
+
+                                    if( msg ) {
+                                        if ( vm.$refs.confirm2.open(
+                                                '확인',
+                                                msg,
+                                                {}
+                                                ,1
+                                            )
+                                        ) {
+                                            // vm.fn_getBacktestResult( { 
+                                            // 		grp_cd  : v_grp_cd
+                                            // 	, 	scen_cd : v_scen_cd 
+                                            // });
+                                        }
+                                    }                        
+
+                                }
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+                        vm.fn_showProgress( false );
+                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                    }
+            );
+
+            // axios.post(Config.base_url + "/user/simulation/saveBacktestResult", {
+            //     data: paramData
+            // }).then( function(response) {
+
+            //     vm.fn_showProgress( false );
+
+            //     if (response && response.data) {
+            //         var msg = ( response.data.msg ? response.data.msg : "" );
+
+            //         if (!response.data.result) {
+            //             if( !msg ) {
+            //                 vm.arr_show_error_message.push( msg );
+            //             }
+
+            //             resolve( { result : false } );
+            //         }else{
+
+			// 			var	v_grp_cd	=	response.data.grp_cd;
+			// 			var	v_scen_cd	=	response.data.scen_cd;
+
+            //             if( msg ) {
+            //                 if ( vm.$refs.confirm2.open(
+            //                         '확인',
+            //                         msg,
+            //                         {}
+            //                         ,1
+            //                     )
+            //                 ) {
+			// 					// vm.fn_getBacktestResult( { 
+			// 					// 		grp_cd  : v_grp_cd
+			// 					// 	, 	scen_cd : v_scen_cd 
+			// 					// });
+            //                 }
+            //             }                        
+
+            //         }
+            //     }
+            // }).catch(error => {
+
+            //     vm.fn_showProgress( false );
+            //     if ( vm.$refs.confirm2.open(
+            //             '확인',
+            //             '서버로 부터 응답을 받지 못하였습니다.',
+            //             {}
+            //             ,4
+            //         )
+            //     ) {
+            //     }
+            // });
         },
 
         /*
@@ -824,27 +1090,6 @@ export default {
                             break;
                 }
             }
-        },
-        fn_analyzeTimeserise() {
-            var vm = this;
-            vm.fn_showProgress( true );
-
-            var paramData   =  {};
-            axios.post(Config.base_url + "/user/simulation/getAnalyze_timeseries", {
-                data: paramData
-            }).then( function(response) {
-
-                vm.fn_showProgress( false );               
-
-            }).catch(error => {
-                vm.fn_showProgress( false );
-                vm.$refs.confirm2.open(
-                        '확인',
-                        '서버로 부터 응답을 받지 못하였습니다.',
-                        {}
-                        ,4
-                )
-            });
         },
 
         /*

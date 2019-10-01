@@ -301,35 +301,64 @@ export default {
 
             vm.fn_showProgress( true );
 
-            axios.post(Config.base_url + "/user/simulation/getSimulList", {
-                data: {}
-            }).then( function(response) {
-
-                vm.fn_showProgress( false );
-
-                if (response && response.data) {
-                    var msg = ( response.data.msg ? response.data.msg : "" );
-
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.arr_show_error_message.push( msg );
-                        }
-                    }else{
-                        vm.arr_simul_list   =   response.data.dataList;
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/simulation/getSimulList"
+                        ,   "data"      :   {}
+                        ,   "method"    :   "post"
                     }
-                }
-            }).catch(error => {
+                ,   function(response) {
+                        vm.fn_showProgress( false );
 
-                vm.fn_showProgress( false );
-                if ( vm.$refs.confirm2.open(
-                        '확인',
-                        '서버로 부터 응답을 받지 못하였습니다.',
-                        {}
-                        ,4
-                    )
-                ) {
-                }
-            });
+                        if (response && response.data) {
+                            var msg = ( response.data.msg ? response.data.msg : "" );
+
+                            if (!response.data.result) {
+                                if( msg ) {
+                                    vm.arr_show_error_message.push( msg );
+                                }
+                            }else{
+                                vm.arr_simul_list   =   response.data.dataList;
+                            }
+                        }
+                    }
+                ,   function(error) {
+                        vm.fn_showProgress( false );
+
+                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {
+                        }
+                    }
+            );
+
+            // axios.post(Config.base_url + "/user/simulation/getSimulList", {
+            //     data: {}
+            // }).then( function(response) {
+
+            //     vm.fn_showProgress( false );
+
+            //     if (response && response.data) {
+            //         var msg = ( response.data.msg ? response.data.msg : "" );
+
+            //         if (!response.data.result) {
+            //             if( msg ) {
+            //                 vm.arr_show_error_message.push( msg );
+            //             }
+            //         }else{
+            //             vm.arr_simul_list   =   response.data.dataList;
+            //         }
+            //     }
+            // }).catch(error => {
+
+            //     vm.fn_showProgress( false );
+            //     if ( vm.$refs.confirm2.open(
+            //             '확인',
+            //             '서버로 부터 응답을 받지 못하였습니다.',
+            //             {}
+            //             ,4
+            //         )
+            //     ) {
+            //     }
+            // });
         },
 
         /*
@@ -404,56 +433,109 @@ export default {
 
             vm.fn_showProgress( true );
 
-            axios.post(Config.base_url + "/user/simulation/modifyGroup", {
-                data: param
-            }).then( async function(response) {
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/simulation/modifyGroup"
+                        ,   "data"      :   param
+                        ,   "method"    :   "post"
+                    }
+                ,   async function(response) {
+                        vm.fn_showProgress( false );
 
-                vm.fn_showProgress( false );
+                        try{
+                            if (response && response.data) {
+                                var msg = ( response.data.msg ? response.data.msg : "" );
 
-                if (response && response.data) {
-                    var msg = ( response.data.msg ? response.data.msg : "" );
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.arr_show_error_message.push( msg );
+                                    }
+                                }else{
 
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.arr_show_error_message.push( msg );
-                        }
-                    }else{
+                                    if( msg ) {
+                                        if ( await vm.$refs.confirm2.open(
+                                                '확인',
+                                                msg,
+                                                {}
+                                                ,1
+                                            )
+                                        ) {
+                                            vm.grp_cd           =   "";         /* 선택한 그룹코드 */
+                                            vm.scen_cd          =   "";         /* 선택한 시나리오 코드 */
+                                            vm.scen_name        =   "";         /* 그룹명 */
 
-                        if( msg ) {
-                            if ( await vm.$refs.confirm2.open(
-                                    '확인',
-                                    msg,
-                                    {}
-                                    ,1
-                                )
-                            ) {
-                                vm.grp_cd           =   "";         /* 선택한 그룹코드 */
-                                vm.scen_cd          =   "";         /* 선택한 시나리오 코드 */
-                                vm.scen_name        =   "";         /* 그룹명 */
+                                            vm.status           =   "insert";
 
-                                vm.status           =   "insert";
+                                            /* 정상적으로 수정된 경우 create group 영역을 보이지 않게 한다. */
+                                            vm.showCreateGroup  =   'N';
 
-                                /* 정상적으로 수정된 경우 create group 영역을 보이지 않게 한다. */
-                                vm.showCreateGroup  =   'N';
-
-                                /* 시뮬레이션 목록정보를 조회한다. */
-                                vm.fn_getSimulList();
+                                            /* 시뮬레이션 목록정보를 조회한다. */
+                                            vm.fn_getSimulList();
+                                        }
+                                    }
+                                }
                             }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
                         }
                     }
-                }
-            }).catch(error => {
+                ,   function(error) {
+                        vm.fn_showProgress( false );
+                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                    }
+            );            
 
-                vm.fn_showProgress( false );
-                if ( vm.$refs.confirm2.open(
-                        '확인',
-                        '서버로 부터 응답을 받지 못하였습니다.',
-                        {}
-                        ,4
-                    )
-                ) {
-                }
-            });
+            // axios.post(Config.base_url + "/user/simulation/modifyGroup", {
+            //     data: param
+            // }).then( async function(response) {
+
+            //     vm.fn_showProgress( false );
+
+            //     if (response && response.data) {
+            //         var msg = ( response.data.msg ? response.data.msg : "" );
+
+            //         if (!response.data.result) {
+            //             if( msg ) {
+            //                 vm.arr_show_error_message.push( msg );
+            //             }
+            //         }else{
+
+            //             if( msg ) {
+            //                 if ( await vm.$refs.confirm2.open(
+            //                         '확인',
+            //                         msg,
+            //                         {}
+            //                         ,1
+            //                     )
+            //                 ) {
+            //                     vm.grp_cd           =   "";         /* 선택한 그룹코드 */
+            //                     vm.scen_cd          =   "";         /* 선택한 시나리오 코드 */
+            //                     vm.scen_name        =   "";         /* 그룹명 */
+
+            //                     vm.status           =   "insert";
+
+            //                     /* 정상적으로 수정된 경우 create group 영역을 보이지 않게 한다. */
+            //                     vm.showCreateGroup  =   'N';
+
+            //                     /* 시뮬레이션 목록정보를 조회한다. */
+            //                     vm.fn_getSimulList();
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }).catch(error => {
+
+            //     vm.fn_showProgress( false );
+            //     if ( vm.$refs.confirm2.open(
+            //             '확인',
+            //             '서버로 부터 응답을 받지 못하였습니다.',
+            //             {}
+            //             ,4
+            //         )
+            //     ) {
+            //     }
+            // });
         },
 
         /*
@@ -530,47 +612,92 @@ export default {
 
             vm.fn_showProgress( true );
 
-            axios.post(Config.base_url + "/user/simulation/deleteAllSimul", {
-                data: p_param
-            }).then( async function(response) {
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/simulation/deleteAllSimul"
+                        ,   "data"      :   p_param
+                        ,   "method"    :   "post"
+                    }
+                ,   async function(response) {
+                        vm.fn_showProgress( false );
 
-                vm.fn_showProgress( false );
+                        try{
 
-                if (response && response.data) {
-                    var msg = ( response.data.msg ? response.data.msg : "" );
+                            if (response && response.data) {
+                                var msg = ( response.data.msg ? response.data.msg : "" );
 
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.arr_show_error_message.push( msg );
-                        }
-                    }else{
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.arr_show_error_message.push( msg );
+                                    }
+                                }else{
 
-                        if( msg ) {
-                            if ( vm.$refs.confirm2.open(
-                                    '확인',
-                                    msg,
-                                    {}
-                                    ,1
-                                )
-                            ) {
-                                /* 시뮬레이션 목록정보를 조회한다. */
-                                vm.fn_getSimulList();
+                                    if( msg ) {
+                                        if ( vm.$refs.confirm2.open(
+                                                '확인',
+                                                msg,
+                                                {}
+                                                ,1
+                                            )
+                                        ) {
+                                            /* 시뮬레이션 목록정보를 조회한다. */
+                                            vm.fn_getSimulList();
+                                        }
+                                    }
+                                }
                             }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
                         }
                     }
-                }
-            }).catch(error => {
+                ,   function(error) {
+                        vm.fn_showProgress( false );
+                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                    }
+            );
 
-                vm.fn_showProgress( false );
-                if ( vm.$refs.confirm2.open(
-                        '확인',
-                        '서버로 부터 응답을 받지 못하였습니다.',
-                        {}
-                        ,4
-                    )
-                ) {
-                }
-            });
+            // axios.post(Config.base_url + "/user/simulation/deleteAllSimul", {
+            //     data: p_param
+            // }).then( async function(response) {
+
+            //     vm.fn_showProgress( false );
+
+            //     if (response && response.data) {
+            //         var msg = ( response.data.msg ? response.data.msg : "" );
+
+            //         if (!response.data.result) {
+            //             if( msg ) {
+            //                 vm.arr_show_error_message.push( msg );
+            //             }
+            //         }else{
+
+            //             if( msg ) {
+            //                 if ( vm.$refs.confirm2.open(
+            //                         '확인',
+            //                         msg,
+            //                         {}
+            //                         ,1
+            //                     )
+            //                 ) {
+            //                     /* 시뮬레이션 목록정보를 조회한다. */
+            //                     vm.fn_getSimulList();
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }).catch(error => {
+
+            //     vm.fn_showProgress( false );
+            //     if ( vm.$refs.confirm2.open(
+            //             '확인',
+            //             '서버로 부터 응답을 받지 못하였습니다.',
+            //             {}
+            //             ,4
+            //         )
+            //     ) {
+            //     }
+            // });
         }
 
     }    

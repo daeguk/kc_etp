@@ -395,7 +395,7 @@ var util = {
     *  axios 를 수행한다.
     *  2019-09-25  bkLove(촤병국)
     */
-    axiosCall( p_param={ url : "", method: "", data : {}, headers : {}, paramKey : "" }, p_callback={}, p_error_callback={} ) {
+    axiosCall( p_param={ url : "", method: "", data : {}, headers : {}, paramKey : "", responseType : "" }, p_callback={}, p_error_callback={} ) {
 
         try{
 
@@ -420,6 +420,10 @@ var util = {
                 if( typeof p_param.headers == "undefined" || !p_param.headers ) {
                     p_param.headers         =   {};
                 }
+
+                if( typeof p_param.responseType == "undefined" || !p_param.responseType ) {
+                    p_param.responseType    =   "";
+                }                
             }
 
 
@@ -427,6 +431,10 @@ var util = {
 
             axiosParam.url              =   p_param.url;
             axiosParam.method           =   p_param.method;
+
+            if( p_param.responseType != "" ) {
+                axiosParam.responseType =   p_param.responseType;
+            }
 
             switch( p_param.paramKey ) {
 

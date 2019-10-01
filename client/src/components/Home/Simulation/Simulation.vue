@@ -60,7 +60,6 @@
                                         
                                         v-model="start_year"
 
-                                        placeholder="선택하세요" 
                                         outline>
                             </v-select>
                         </v-flex>
@@ -81,7 +80,6 @@
                                         v-model="rebalance_cycle_cd"
                                         :disabled="rebalance_cycle_cd == ''"
 
-                                        placeholder="선택하세요" 
                                         outline>
                             </v-select>
                         </v-flex>
@@ -129,7 +127,6 @@
                                         item-value="com_dtl_cd"
                                         
                                         v-model="bench_mark_cd" 
-                                        placeholder="선택하세요" 
                                         outline  
                                         
                                         @change="fn_resetErrorMessage();">
@@ -172,7 +169,6 @@
                                         @change="fn_resetErrorMessage();fn_checkRebalance( 'rebalance_date');"
                                         
                                         v-model="rebalance_date" 
-                                        placeholder="선택하세요" 
                                         outline>
                                     </v-select>
                                 </span>
@@ -336,10 +332,11 @@ export default {
             ,   rebalance_date              :   ""          /* 리밸런싱 일자 */
             ,   rebalancePortfolioObj       :   {}          /* 리밸런싱일별 포트폴리오 */
 
-            ,   old_start_year              :   ""
-            ,   old_rebalance_cycle_cd      :   ""
+            ,   old_start_year              :   "2000"
+            ,   old_rebalance_cycle_cd      :   "1"
             ,   old_rebalance_date_cd       :   ""
             ,   old_rebalance_date          :   ""
+            ,   detail_init_yn              :   "N"
 
             ,   limit : {
                     max_size : 1                            /* 파일 사이즈 (Mb) */
@@ -608,9 +605,9 @@ export default {
                     vm.disabled_rebalance_cd    =   vm.arr_rebalance_disabled_check[ vm.rebalance_cycle_cd ];
                     vm.arr_rebalance_cycle_cd   =   [ ...arr_temp ];                    
 
-					vm.old_start_year              	=   "";
-					vm.old_rebalance_cycle_cd      	=   "";
-					vm.old_rebalance_date_cd       	=   "";
+					vm.old_start_year              	=   "2000";
+					vm.old_rebalance_cycle_cd      	=   "1";
+					vm.old_rebalance_date_cd       	=   "1";
 					vm.old_rebalance_date          	=   "";
 
 					/* 레코드를 초기화 한다. */
@@ -643,6 +640,8 @@ export default {
 			if(     vm.paramData && Object.keys( vm.paramData ).length > 0 
 				&&  vm.paramData.grp_cd && vm.paramData.scen_cd 
 			) {
+
+                vm.detail_init_yn   =   "Y";
 
 				/* 상위 그룹 정보 및 초기 데이터가 설정된 이후 상세정보 설정되도록 함. */
 				
@@ -985,46 +984,90 @@ export default {
             return  await new Promise(function(resolve, reject) {
 
                 vm.fn_showProgress( true );
-                axios.post(Config.base_url + "/user/simulation/getInitGrpCd", {
-                    data: {}
-                }).then( function(response) {
 
-                    vm.fn_showProgress( false );
-
-                    if (response && response.data) {
-                        var msg = ( response.data.msg ? response.data.msg : "" );
-
-                        if (!response.data.result) {
-                            if( msg ) {
-                                vm.arr_show_error_message.push( msg );
-                            }
-
-                            resolve( { result : false } );
-                        }else{
-                            vm.arr_grp_cd   =   response.data.dataList;                       
-
-                            resolve( { result : true } );
+                util.axiosCall(
+                        {
+                                "url"       :   Config.base_url + "/user/simulation/getInitGrpCd"
+                            ,   "data"      :   {}
+                            ,   "method"    :   "post"
                         }
-                    }else{
-                        resolve( { result : false } );
-                    }
-                }).catch(error => {
-                    resolve( { result : false } );
+                    ,   function(response) {
+                            vm.fn_showProgress( false );
 
-                    vm.fn_showProgress( false );
-                    if ( vm.$refs.confirm2.open(
-                            '확인',
-                            '서버로 부터 응답을 받지 못하였습니다.',
-                            {}
-                            ,4
-                        )
-                    ) {
-                    }
-                });
+                            try{
+
+                                if (response && response.data) {
+                                    var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                    if (!response.data.result) {
+                                        if( msg ) {
+                                            vm.arr_show_error_message.push( msg );
+                                        }
+
+                                        resolve( { result : false } );
+                                    }else{
+                                        vm.arr_grp_cd   =   response.data.dataList;                       
+
+                                        resolve( { result : true } );
+                                    }
+                                }else{
+                                    resolve( { result : false } );
+                                }
+
+                            }catch(ex) {
+                                resolve( { result : false } );
+                                console.log( "error", ex );
+                            }
+                        }
+                    ,   function(error) {
+                            resolve( { result : false } );
+
+                            vm.fn_showProgress( false );
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                );
+
+
+                // axios.post(Config.base_url + "/user/simulation/getInitGrpCd", {
+                //     data: {}
+                // }).then( function(response) {
+
+                //     vm.fn_showProgress( false );
+
+                //     if (response && response.data) {
+                //         var msg = ( response.data.msg ? response.data.msg : "" );
+
+                //         if (!response.data.result) {
+                //             if( msg ) {
+                //                 vm.arr_show_error_message.push( msg );
+                //             }
+
+                //             resolve( { result : false } );
+                //         }else{
+                //             vm.arr_grp_cd   =   response.data.dataList;                       
+
+                //             resolve( { result : true } );
+                //         }
+                //     }else{
+                //         resolve( { result : false } );
+                //     }
+                // }).catch(error => {
+                //     resolve( { result : false } );
+
+                //     vm.fn_showProgress( false );
+                //     if ( vm.$refs.confirm2.open(
+                //             '확인',
+                //             '서버로 부터 응답을 받지 못하였습니다.',
+                //             {}
+                //             ,4
+                //         )
+                //     ) {
+                //     }
+                // });
 
             }).catch( function(e1) {
                 console.log( e1 );
-                resolve( { result : false } );
+//                resolve( { result : false } );
             });
         },
 
@@ -1067,73 +1110,142 @@ export default {
 
                 vm.fn_showProgress( true );
 
-                axios.post( Config.base_url + "/user/etp/getJongmokData", {
-                    data: { "searchCode" : v_obj.val() }
-                }).then(async function(response) {
-                    console.log(response);
+                util.axiosCall(
+                        {
+                                "url"       :   Config.base_url + "/user/etp/getJongmokData"
+                            ,   "data"      :   { "searchCode" : v_obj.val() }
+                            ,   "method"    :   "post"
+                        }
+                    ,   async function(response) {
+                            vm.fn_showProgress( false );
 
-                    vm.fn_showProgress( false );
+                            try{
+                                if (response.data) {
+                                    var msg = ( response.data.msg ? response.data.msg : "" );
+                                    if (!response.data.result) {
+                                        if( msg ) {
+                                            if (await vm.$refs.confirm2.open(
+                                                    '확인',
+                                                    msg,
+                                                    {}
+                                                    ,1
+                                                )
+                                            ) {
+                                                resolve( { result : false } );
+                                            }
+                                        }
+                                    }else{
+                                        var dataList = response.data.dataList;
 
-                    if (response.data) {
-                        var msg = ( response.data.msg ? response.data.msg : "" );
-                        if (!response.data.result) {
-                            if( msg ) {
-                                if (await vm.$refs.confirm2.open(
-                                        '확인',
-                                        msg,
-                                        {}
-                                        ,1
-                                    )
-                                ) {
-                                    resolve( { result : false } );
+                                        if ( !dataList || dataList.length == 0 ) {
+                                            if (await vm.$refs.confirm2.open(
+                                                    '확인',
+                                                    '종목코드(' + v_obj.val() + ')가 존재하지 않습니다.',
+                                                    {}
+                                                    ,1
+                                                )
+                                            ) {
+                                                resolve( { result : false } );
+                                            }
+                                        }
+                                        else if ( dataList.length > 1 ) {
+                                            if (await vm.$refs.confirm2.open(
+                                                    '확인',
+                                                    '종목코드(' + v_obj.val() + ')가 여러건 존재합니다.',
+                                                    {}
+                                                    ,1
+                                                )
+                                            ) {
+                                                resolve( { result : false } );
+                                            }
+                                        
+                                        }else if(  dataList.length == 1 ) {
+                                            resolve( { result : true, rowItem : dataList[0] } );
+                                        }
+                                    }
                                 }
-                            }
-                        }else{
-                            var dataList = response.data.dataList;
 
-                            if ( !dataList || dataList.length == 0 ) {
-                                if (await vm.$refs.confirm2.open(
-                                        '확인',
-                                        '종목코드(' + v_obj.val() + ')가 존재하지 않습니다.',
-                                        {}
-                                        ,1
-                                    )
-                                ) {
-                                    resolve( { result : false } );
-                                }
-                            }
-                            else if ( dataList.length > 1 ) {
-                                if (await vm.$refs.confirm2.open(
-                                        '확인',
-                                        '종목코드(' + v_obj.val() + ')가 여러건 존재합니다.',
-                                        {}
-                                        ,1
-                                    )
-                                ) {
-                                    resolve( { result : false } );
-                                }
-                            
-                            }else if(  dataList.length == 1 ) {
-                                resolve( { result : true, rowItem : dataList[0] } );
+                            }catch(ex) {
+                                resolve( { result : false } );
+                                console.log( "error", ex );
                             }
                         }
-                    }
-                }).catch(error => {
-                    resolve( { result : false } );
+                    ,   function(error) {
+                            resolve( { result : false } );
 
-                    vm.fn_showProgress( false );
-                    if ( vm.$refs.confirm2.open(
-                            '확인',
-                            '서버로 부터 응답을 받지 못하였습니다.',
-                            {}
-                            ,4
-                        )
-                    ) {
-                    }
-                });
+                            vm.fn_showProgress( false );
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                );
+
+                // axios.post( Config.base_url + "/user/etp/getJongmokData", {
+                //     data: { "searchCode" : v_obj.val() }
+                // }).then(async function(response) {
+                //     console.log(response);
+
+                //     vm.fn_showProgress( false );
+
+                //     if (response.data) {
+                //         var msg = ( response.data.msg ? response.data.msg : "" );
+                //         if (!response.data.result) {
+                //             if( msg ) {
+                //                 if (await vm.$refs.confirm2.open(
+                //                         '확인',
+                //                         msg,
+                //                         {}
+                //                         ,1
+                //                     )
+                //                 ) {
+                //                     resolve( { result : false } );
+                //                 }
+                //             }
+                //         }else{
+                //             var dataList = response.data.dataList;
+
+                //             if ( !dataList || dataList.length == 0 ) {
+                //                 if (await vm.$refs.confirm2.open(
+                //                         '확인',
+                //                         '종목코드(' + v_obj.val() + ')가 존재하지 않습니다.',
+                //                         {}
+                //                         ,1
+                //                     )
+                //                 ) {
+                //                     resolve( { result : false } );
+                //                 }
+                //             }
+                //             else if ( dataList.length > 1 ) {
+                //                 if (await vm.$refs.confirm2.open(
+                //                         '확인',
+                //                         '종목코드(' + v_obj.val() + ')가 여러건 존재합니다.',
+                //                         {}
+                //                         ,1
+                //                     )
+                //                 ) {
+                //                     resolve( { result : false } );
+                //                 }
+                            
+                //             }else if(  dataList.length == 1 ) {
+                //                 resolve( { result : true, rowItem : dataList[0] } );
+                //             }
+                //         }
+                //     }
+                // }).catch(error => {
+                //     resolve( { result : false } );
+
+                //     vm.fn_showProgress( false );
+                //     if ( vm.$refs.confirm2.open(
+                //             '확인',
+                //             '서버로 부터 응답을 받지 못하였습니다.',
+                //             {}
+                //             ,4
+                //         )
+                //     ) {
+                //     }
+                // });
+
             }).catch( function(e1) {
                 console.log( e1 );
-                resolve( { result : false } );
+                // resolve( { result : false } );
             });
         },
 
@@ -1148,34 +1260,66 @@ export default {
 
             vm.fn_showProgress( true );
 
-            axios.post(Config.base_url + "/user/simulation/getNextScenName", {
-                data: {}
-            }).then( function(response) {
-
-                vm.fn_showProgress( false );
-
-                if (response && response.data) {
-                    var msg = ( response.data.msg ? response.data.msg : "" );
-
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.arr_show_error_message.push( msg );
-                        }
-                    }else{
-                        vm.scen_name   =   response.data.scen_name;
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/simulation/getNextScenName"
+                        ,   "data"      :   {}
+                        ,   "method"    :   "post"
                     }
-                }
-            }).catch(error => {
-                vm.fn_showProgress( false );
-                if ( vm.$refs.confirm2.open(
-                        '확인',
-                        '서버로 부터 응답을 받지 못하였습니다.',
-                        {}
-                        ,4
-                    )
-                ) {
-                }
-            });
+                ,   function(response) {
+                        vm.fn_showProgress( false );
+
+                        try{
+                            if (response && response.data) {
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.arr_show_error_message.push( msg );
+                                    }
+                                }else{
+                                    vm.scen_name   =   response.data.scen_name;
+                                }
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+                        vm.fn_showProgress( false );
+                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                    }
+            );            
+
+            // axios.post(Config.base_url + "/user/simulation/getNextScenName", {
+            //     data: {}
+            // }).then( function(response) {
+
+            //     vm.fn_showProgress( false );
+
+            //     if (response && response.data) {
+            //         var msg = ( response.data.msg ? response.data.msg : "" );
+
+            //         if (!response.data.result) {
+            //             if( msg ) {
+            //                 vm.arr_show_error_message.push( msg );
+            //             }
+            //         }else{
+            //             vm.scen_name   =   response.data.scen_name;
+            //         }
+            //     }
+            // }).catch(error => {
+            //     vm.fn_showProgress( false );
+            //     if ( vm.$refs.confirm2.open(
+            //             '확인',
+            //             '서버로 부터 응답을 받지 못하였습니다.',
+            //             {}
+            //             ,4
+            //         )
+            //     ) {
+            //     }
+            // });
         },
 
         /*
@@ -1197,71 +1341,139 @@ export default {
 
                 vm.fn_showProgress( true );
 
-                axios.post(Config.base_url + "/user/simulation/getInitData", {
-                    data: { arrComMstCd : arrComMstCd }
-                }).then( function(response) {
-
-                    vm.fn_showProgress( false );
-
-                    if (response && response.data) {
-                        var arrMsg = ( response.data.arrMsg && response.data.arrMsg.length > 0 ? response.data.arrMsg : [] );
-
-                        if (!response.data.result) {
-                            if( arrMsg.length > 0 ) {
-                                vm.arr_show_error_message.push( ...arrMsg );
-                            }
-
-                            resolve( { result : false } );
-                        }else{
-
-                            /* 초기설정 시작년도 array */
-                            if( response.data.arr_start_year && response.data.arr_start_year.length > 0 ) {
-                                vm.arr_start_year   =   response.data.arr_start_year;
-                            }
-
-                            /* 초기설정 리밸런싱주기 array */
-                            if( response.data.arr_rebalance_cycle_cd && response.data.arr_rebalance_cycle_cd.length > 0 ) {
-                                vm.arr_rebalance_cycle_cd   =   response.data.arr_rebalance_cycle_cd;
-                            }
-
-                            /* 초기설정 리밸런싱일자 array */
-                            if( response.data.arr_rebalance_date_cd && response.data.arr_rebalance_date_cd.length > 0 ) {
-                                vm.arr_rebalance_date_cd   =   response.data.arr_rebalance_date_cd;
-                            }
-
-                            /* 초기설정 벤치마크 array */
-                            if( response.data.arr_bench_mark_cd && response.data.arr_bench_mark_cd.length > 0 ) {
-                                vm.arr_bench_mark_cd   =   response.data.arr_bench_mark_cd;
-                            }
-
-                            /* 초기설정 비중설정방식 array */
-                            if( response.data.arr_importance_method_cd && response.data.arr_importance_method_cd.length > 0 ) {
-                                vm.arr_importance_method_cd   =   response.data.arr_importance_method_cd;
-                            }
-
-                            resolve( { result : true } );
+                util.axiosCall(
+                        {
+                                "url"       :   Config.base_url + "/user/simulation/getInitData"
+                            ,   "data"      :   { arrComMstCd : arrComMstCd }
+                            ,   "method"    :   "post"
                         }
-                    }else{
+                    ,   function(response) {
+                            vm.fn_showProgress( false );
 
-                        resolve( { result : false } );
-                    }
-                }).catch(error => {
-                    resolve( { result : false } );
+                            try{
+                                if (response && response.data) {
+                                    var arrMsg = ( response.data.arrMsg && response.data.arrMsg.length > 0 ? response.data.arrMsg : [] );
 
-                    vm.fn_showProgress( false );
-                    if ( vm.$refs.confirm2.open(
-                            '확인',
-                            '서버로 부터 응답을 받지 못하였습니다.',
-                            {}
-                            ,4
-                        )
-                    ) {
-                    }
-                });
+                                    if (!response.data.result) {
+                                        if( arrMsg.length > 0 ) {
+                                            vm.arr_show_error_message.push( ...arrMsg );
+                                        }
+
+                                        resolve( { result : false } );
+                                    }else{
+
+                                        /* 초기설정 시작년도 array */
+                                        if( response.data.arr_start_year && response.data.arr_start_year.length > 0 ) {
+                                            vm.arr_start_year   =   response.data.arr_start_year;
+                                        }
+
+                                        /* 초기설정 리밸런싱주기 array */
+                                        if( response.data.arr_rebalance_cycle_cd && response.data.arr_rebalance_cycle_cd.length > 0 ) {
+                                            vm.arr_rebalance_cycle_cd   =   response.data.arr_rebalance_cycle_cd;
+                                        }
+
+                                        /* 초기설정 리밸런싱일자 array */
+                                        if( response.data.arr_rebalance_date_cd && response.data.arr_rebalance_date_cd.length > 0 ) {
+                                            vm.arr_rebalance_date_cd   =   response.data.arr_rebalance_date_cd;
+                                        }
+
+                                        /* 초기설정 벤치마크 array */
+                                        if( response.data.arr_bench_mark_cd && response.data.arr_bench_mark_cd.length > 0 ) {
+                                            vm.arr_bench_mark_cd   =   response.data.arr_bench_mark_cd;
+                                        }
+
+                                        /* 초기설정 비중설정방식 array */
+                                        if( response.data.arr_importance_method_cd && response.data.arr_importance_method_cd.length > 0 ) {
+                                            vm.arr_importance_method_cd   =   response.data.arr_importance_method_cd;
+                                        }
+
+                                        resolve( { result : true } );
+                                    }
+                                }else{
+
+                                    resolve( { result : false } );
+                                }
+
+                            }catch(ex) {
+                                resolve( { result : false } );
+                                console.log( "error", ex );
+                            }
+                        }
+                    ,   function(error) {
+                            resolve( { result : false } );
+
+                            vm.fn_showProgress( false );
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                );
+
+
+
+                // axios.post(Config.base_url + "/user/simulation/getInitData", {
+                //     data: { arrComMstCd : arrComMstCd }
+                // }).then( function(response) {
+
+                //     vm.fn_showProgress( false );
+
+                //     if (response && response.data) {
+                //         var arrMsg = ( response.data.arrMsg && response.data.arrMsg.length > 0 ? response.data.arrMsg : [] );
+
+                //         if (!response.data.result) {
+                //             if( arrMsg.length > 0 ) {
+                //                 vm.arr_show_error_message.push( ...arrMsg );
+                //             }
+
+                //             resolve( { result : false } );
+                //         }else{
+
+                //             /* 초기설정 시작년도 array */
+                //             if( response.data.arr_start_year && response.data.arr_start_year.length > 0 ) {
+                //                 vm.arr_start_year   =   response.data.arr_start_year;
+                //             }
+
+                //             /* 초기설정 리밸런싱주기 array */
+                //             if( response.data.arr_rebalance_cycle_cd && response.data.arr_rebalance_cycle_cd.length > 0 ) {
+                //                 vm.arr_rebalance_cycle_cd   =   response.data.arr_rebalance_cycle_cd;
+                //             }
+
+                //             /* 초기설정 리밸런싱일자 array */
+                //             if( response.data.arr_rebalance_date_cd && response.data.arr_rebalance_date_cd.length > 0 ) {
+                //                 vm.arr_rebalance_date_cd   =   response.data.arr_rebalance_date_cd;
+                //             }
+
+                //             /* 초기설정 벤치마크 array */
+                //             if( response.data.arr_bench_mark_cd && response.data.arr_bench_mark_cd.length > 0 ) {
+                //                 vm.arr_bench_mark_cd   =   response.data.arr_bench_mark_cd;
+                //             }
+
+                //             /* 초기설정 비중설정방식 array */
+                //             if( response.data.arr_importance_method_cd && response.data.arr_importance_method_cd.length > 0 ) {
+                //                 vm.arr_importance_method_cd   =   response.data.arr_importance_method_cd;
+                //             }
+
+                //             resolve( { result : true } );
+                //         }
+                //     }else{
+
+                //         resolve( { result : false } );
+                //     }
+                // }).catch(error => {
+                //     resolve( { result : false } );
+
+                //     vm.fn_showProgress( false );
+                //     if ( vm.$refs.confirm2.open(
+                //             '확인',
+                //             '서버로 부터 응답을 받지 못하였습니다.',
+                //             {}
+                //             ,4
+                //         )
+                //     ) {
+                //     }
+                // });
 
             }).catch( function(e1) {
                 console.log( e1 );
-                resolve( { result : false } );
+                // resolve( { result : false } );
             });                
         },
 
@@ -1464,54 +1676,102 @@ export default {
                 vm.fn_showProgress( true );
 
             /* 선택된 종목의 구성정보를 조회한다. */
-                axios.post(Config.base_url + "/user/simulation/getJongmokInfo", {
-                    data: { "searchCode" : rowItem.F16013 }
-                }).then( function(response) {
-
-                    vm.fn_showProgress( false );
-
-                    if (response && response.data) {
-                        var msg = ( response.data.msg ? response.data.msg : "" );
-
-                        if (!response.data.result) {
-                            if( msg ) {
-                                vm.arr_show_error_message.push( msg );
-                            }
-
-                            resolve( { result : false } );
-                        }else{
-                            var jongmokInfo = response.data.jongmokInfo;
-                            
-                            if( !jongmokInfo || Object.keys( jongmokInfo ).length == 0 ) {
-                                jongmokInfo =   {};
-                            }
-
-                            tr.find( "td:eq(3)" ).text( util.formatInt( jongmokInfo.F15028 ) );     /* 시가총액 */
-
-                            resolve( { result : true } );
+                util.axiosCall(
+                        {
+                                "url"       :   Config.base_url + "/user/simulation/getJongmokInfo"
+                            ,   "data"      :   { "searchCode" : rowItem.F16013 }
+                            ,   "method"    :   "post"
                         }
+                    ,   function(response) {
+                            vm.fn_showProgress( false );
 
-                    }else{
-                        resolve( { result : false } );
-                    }
+                            try{
+                                if (response && response.data) {
+                                    var msg = ( response.data.msg ? response.data.msg : "" );
 
-                }).catch(error => {
-                    resolve( { result : false } );
+                                    if (!response.data.result) {
+                                        if( msg ) {
+                                            vm.arr_show_error_message.push( msg );
+                                        }
 
-                    vm.fn_showProgress( false );
-                    if ( vm.$refs.confirm2.open(
-                            '확인',
-                            '서버로 부터 응답을 받지 못하였습니다.',
-                            {}
-                            ,4
-                        )
-                    ) {
-                    }
-                });
+                                        resolve( { result : false } );
+                                    }else{
+                                        var jongmokInfo = response.data.jongmokInfo;
+                                        
+                                        if( !jongmokInfo || Object.keys( jongmokInfo ).length == 0 ) {
+                                            jongmokInfo =   {};
+                                        }
+
+                                        tr.find( "td:eq(3)" ).text( util.formatInt( jongmokInfo.F15028 ) );     /* 시가총액 */
+
+                                        resolve( { result : true } );
+                                    }
+
+                                }else{
+                                    resolve( { result : false } );
+                                }
+
+                            }catch(ex) {
+                                resolve( { result : false } );
+                                console.log( "error", ex );
+                            }
+                        }
+                    ,   function(error) {
+                            resolve( { result : false } );
+
+                            vm.fn_showProgress( false );
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                );
+
+                // axios.post(Config.base_url + "/user/simulation/getJongmokInfo", {
+                //     data: { "searchCode" : rowItem.F16013 }
+                // }).then( function(response) {
+
+                //     vm.fn_showProgress( false );
+
+                //     if (response && response.data) {
+                //         var msg = ( response.data.msg ? response.data.msg : "" );
+
+                //         if (!response.data.result) {
+                //             if( msg ) {
+                //                 vm.arr_show_error_message.push( msg );
+                //             }
+
+                //             resolve( { result : false } );
+                //         }else{
+                //             var jongmokInfo = response.data.jongmokInfo;
+                            
+                //             if( !jongmokInfo || Object.keys( jongmokInfo ).length == 0 ) {
+                //                 jongmokInfo =   {};
+                //             }
+
+                //             tr.find( "td:eq(3)" ).text( util.formatInt( jongmokInfo.F15028 ) );     /* 시가총액 */
+
+                //             resolve( { result : true } );
+                //         }
+
+                //     }else{
+                //         resolve( { result : false } );
+                //     }
+
+                // }).catch(error => {
+                //     resolve( { result : false } );
+
+                //     vm.fn_showProgress( false );
+                //     if ( vm.$refs.confirm2.open(
+                //             '확인',
+                //             '서버로 부터 응답을 받지 못하였습니다.',
+                //             {}
+                //             ,4
+                //         )
+                //     ) {
+                //     }
+                // });
 
             }).catch( function(e1) {
                 console.log( e1 );
-                resolve( { result : false } );
+//                resolve( { result : false } );
             });
         },
 
@@ -1651,81 +1911,159 @@ export default {
 
             vm.fn_showProgress( true );
 
-            axios.post(Config.base_url + "/user/simulation/runBacktestWithSaveBasicInfo", {
-                data: { 
-                        
-                        "prev_grp_cd"           :   vm.prev_grp_cd              /* 그룹 코드 (변경전) */
-                    ,   "prev_scen_cd"          :   vm.prev_scen_cd             /* 시나리오 코드 (변경전) */
-                    ,   "scen_cd"               :   vm.scen_cd                  /* 시나리오 코드 */
-                    ,   "scen_order_no"         :   vm.scen_order_no            /* 시나리오 정렬순번 */
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/simulation/runBacktestWithSaveBasicInfo"
+                        ,   "data"      :   {
+                                    "prev_grp_cd"           :   vm.prev_grp_cd              /* 그룹 코드 (변경전) */
+                                ,   "prev_scen_cd"          :   vm.prev_scen_cd             /* 시나리오 코드 (변경전) */
+                                ,   "scen_cd"               :   vm.scen_cd                  /* 시나리오 코드 */
+                                ,   "scen_order_no"         :   vm.scen_order_no            /* 시나리오 정렬순번 */
 
-                    ,   "grp_cd"                :   vm.grp_cd                   /* 상위 그룹코드 */
-                    ,   "scen_name"             :   vm.scen_name                /* 시나리오명 */
-                    ,   "start_year"            :   vm.start_year               /* 시작년도 */
-                    ,   "rebalance_cycle_cd"    :   vm.rebalance_cycle_cd       /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
-                    ,   "rebalance_date_cd"     :   vm.rebalance_date_cd        /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
-                    ,   "init_invest_money"     :   vm.init_invest_money        /* 초기투자금액 */
-                    ,   "bench_mark_cd"         :   vm.bench_mark_cd            /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
-                    ,   "bench_index_cd01"      :   vm.bench_index_cd01         /* 벤치마크 인덱스 코드 ( F16013 ) */
-                    ,   "bench_index_cd02"      :   vm.bench_index_cd02         /* 벤치마크 인덱스 코드 ( large_type ) */
-                    ,   "bench_index_cd03"      :   vm.bench_index_cd03         /* 벤치마크 인덱스 코드 ( middle_type ) */
-                    ,   "bench_index_nm"        :   vm.bench_index_nm           /* 벤치마크 인덱스 코드명 */
-                    ,   "importance_method_cd"  :   vm.importance_method_cd     /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
+                                ,   "grp_cd"                :   vm.grp_cd                   /* 상위 그룹코드 */
+                                ,   "scen_name"             :   vm.scen_name                /* 시나리오명 */
+                                ,   "start_year"            :   vm.start_year               /* 시작년도 */
+                                ,   "rebalance_cycle_cd"    :   vm.rebalance_cycle_cd       /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
+                                ,   "rebalance_date_cd"     :   vm.rebalance_date_cd        /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+                                ,   "init_invest_money"     :   vm.init_invest_money        /* 초기투자금액 */
+                                ,   "bench_mark_cd"         :   vm.bench_mark_cd            /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
+                                ,   "bench_index_cd01"      :   vm.bench_index_cd01         /* 벤치마크 인덱스 코드 ( F16013 ) */
+                                ,   "bench_index_cd02"      :   vm.bench_index_cd02         /* 벤치마크 인덱스 코드 ( large_type ) */
+                                ,   "bench_index_cd03"      :   vm.bench_index_cd03         /* 벤치마크 인덱스 코드 ( middle_type ) */
+                                ,   "bench_index_nm"        :   vm.bench_index_nm           /* 벤치마크 인덱스 코드명 */
+                                ,   "importance_method_cd"  :   vm.importance_method_cd     /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
 
-                    ,   "rebalancePortfolioObj" :   vm.rebalancePortfolioObj    /* 포트폴리오 설정 정보 */
-                }
-            }).then( async function(response) {
-
-                vm.fn_showProgress( false );
-
-                if (response && response.data) {
-                    var msg = ( response.data.msg ? response.data.msg : "" );
-
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.arr_show_error_message.push( msg );
-                            return  false;
-                        }
-                    }else{
-
-                        var arr_daily       =   response.data.arr_daily;
-                        var arr_rebalance   =   response.data.arr_rebalance;
-                        var simul_mast    	=   response.data.simul_mast;
-                        var analyzeList     =   response.data.analyzeList;
-                        var jsonFileName    =   response.data.jsonFileName;
-                        var inputData       =   response.data.inputData;
-
-                        if( simul_mast ) {
-                            vm.prev_grp_cd      =   simul_mast.grp_cd;           /* 그룹 코드 */
-                            vm.prev_scen_cd     =   simul_mast.scen_cd;          /* 시나리오 코드 */
-                            vm.scen_cd          =   simul_mast.scen_cd;          /* 시나리오 코드 */
-                            vm.scen_order_no    =   simul_mast.scen_order_no;    /* 시나리오 정렬순번 */
-                        }
-
-                        vm.$emit( "fn_showSimulation", 
-                            { 
-                                    showSimulationId    :    2
-                                ,   arr_daily           :   arr_daily
-                                ,   arr_rebalance       :   arr_rebalance
-                                ,   simul_mast          :   simul_mast
-                                ,   analyzeList         :   analyzeList
-                                ,   jsonFileName        :   jsonFileName
-                                ,   inputData           :   inputData
+                                ,   "rebalancePortfolioObj" :   vm.rebalancePortfolioObj    /* 포트폴리오 설정 정보 */
                             }
-                        );
+                        ,   "method"    :   "post"
                     }
-                }
-            }).catch(error => {
-                vm.fn_showProgress( false );
-                if ( vm.$refs.confirm2.open(
-                        '확인',
-                        '서버로 부터 응답을 받지 못하였습니다.',
-                        {}
-                        ,4
-                    )
-                ) {
-                }
-            });
+                ,   function(response) {
+                        vm.fn_showProgress( false );
+
+                        try{
+                            if (response && response.data) {
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.arr_show_error_message.push( msg );
+                                        return  false;
+                                    }
+                                }else{
+
+                                    var arr_daily       =   response.data.arr_daily;
+                                    var arr_rebalance   =   response.data.arr_rebalance;
+                                    var simul_mast    	=   response.data.simul_mast;
+                                    var analyzeList     =   response.data.analyzeList;
+                                    var jsonFileName    =   response.data.jsonFileName;
+                                    var inputData       =   response.data.inputData;
+
+                                    if( simul_mast ) {
+                                        vm.prev_grp_cd      =   simul_mast.grp_cd;           /* 그룹 코드 */
+                                        vm.prev_scen_cd     =   simul_mast.scen_cd;          /* 시나리오 코드 */
+                                        vm.scen_cd          =   simul_mast.scen_cd;          /* 시나리오 코드 */
+                                        vm.scen_order_no    =   simul_mast.scen_order_no;    /* 시나리오 정렬순번 */
+                                    }
+
+                                    vm.$emit( "fn_showSimulation", 
+                                        { 
+                                                showSimulationId    :    2
+                                            ,   arr_daily           :   arr_daily
+                                            ,   arr_rebalance       :   arr_rebalance
+                                            ,   simul_mast          :   simul_mast
+                                            ,   analyzeList         :   analyzeList
+                                            ,   jsonFileName        :   jsonFileName
+                                            ,   inputData           :   inputData
+                                        }
+                                    );
+                                }
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+                        vm.fn_showProgress( false );
+                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                    }
+            );
+
+            // axios.post(Config.base_url + "/user/simulation/runBacktestWithSaveBasicInfo", {
+            //     data: { 
+                        
+            //             "prev_grp_cd"           :   vm.prev_grp_cd              /* 그룹 코드 (변경전) */
+            //         ,   "prev_scen_cd"          :   vm.prev_scen_cd             /* 시나리오 코드 (변경전) */
+            //         ,   "scen_cd"               :   vm.scen_cd                  /* 시나리오 코드 */
+            //         ,   "scen_order_no"         :   vm.scen_order_no            /* 시나리오 정렬순번 */
+
+            //         ,   "grp_cd"                :   vm.grp_cd                   /* 상위 그룹코드 */
+            //         ,   "scen_name"             :   vm.scen_name                /* 시나리오명 */
+            //         ,   "start_year"            :   vm.start_year               /* 시작년도 */
+            //         ,   "rebalance_cycle_cd"    :   vm.rebalance_cycle_cd       /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
+            //         ,   "rebalance_date_cd"     :   vm.rebalance_date_cd        /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+            //         ,   "init_invest_money"     :   vm.init_invest_money        /* 초기투자금액 */
+            //         ,   "bench_mark_cd"         :   vm.bench_mark_cd            /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
+            //         ,   "bench_index_cd01"      :   vm.bench_index_cd01         /* 벤치마크 인덱스 코드 ( F16013 ) */
+            //         ,   "bench_index_cd02"      :   vm.bench_index_cd02         /* 벤치마크 인덱스 코드 ( large_type ) */
+            //         ,   "bench_index_cd03"      :   vm.bench_index_cd03         /* 벤치마크 인덱스 코드 ( middle_type ) */
+            //         ,   "bench_index_nm"        :   vm.bench_index_nm           /* 벤치마크 인덱스 코드명 */
+            //         ,   "importance_method_cd"  :   vm.importance_method_cd     /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
+
+            //         ,   "rebalancePortfolioObj" :   vm.rebalancePortfolioObj    /* 포트폴리오 설정 정보 */
+            //     }
+            // }).then( async function(response) {
+
+            //     vm.fn_showProgress( false );
+
+            //     if (response && response.data) {
+            //         var msg = ( response.data.msg ? response.data.msg : "" );
+
+            //         if (!response.data.result) {
+            //             if( msg ) {
+            //                 vm.arr_show_error_message.push( msg );
+            //                 return  false;
+            //             }
+            //         }else{
+
+            //             var arr_daily       =   response.data.arr_daily;
+            //             var arr_rebalance   =   response.data.arr_rebalance;
+            //             var simul_mast    	=   response.data.simul_mast;
+            //             var analyzeList     =   response.data.analyzeList;
+            //             var jsonFileName    =   response.data.jsonFileName;
+            //             var inputData       =   response.data.inputData;
+
+            //             if( simul_mast ) {
+            //                 vm.prev_grp_cd      =   simul_mast.grp_cd;           /* 그룹 코드 */
+            //                 vm.prev_scen_cd     =   simul_mast.scen_cd;          /* 시나리오 코드 */
+            //                 vm.scen_cd          =   simul_mast.scen_cd;          /* 시나리오 코드 */
+            //                 vm.scen_order_no    =   simul_mast.scen_order_no;    /* 시나리오 정렬순번 */
+            //             }
+
+            //             vm.$emit( "fn_showSimulation", 
+            //                 { 
+            //                         showSimulationId    :    2
+            //                     ,   arr_daily           :   arr_daily
+            //                     ,   arr_rebalance       :   arr_rebalance
+            //                     ,   simul_mast          :   simul_mast
+            //                     ,   analyzeList         :   analyzeList
+            //                     ,   jsonFileName        :   jsonFileName
+            //                     ,   inputData           :   inputData
+            //                 }
+            //             );
+            //         }
+            //     }
+            // }).catch(error => {
+            //     vm.fn_showProgress( false );
+            //     if ( vm.$refs.confirm2.open(
+            //             '확인',
+            //             '서버로 부터 응답을 받지 못하였습니다.',
+            //             {}
+            //             ,4
+            //         )
+            //     ) {
+            //     }
+            // });
         },
 
         /*
@@ -1739,99 +2077,195 @@ export default {
 
             vm.fn_showProgress( true );
 
-            axios.post(Config.base_url + "/user/simulation/getSimulMast", {
-                data: v_paramData
-            }).then( function(response) {
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/simulation/getSimulMast"
+                        ,   "data"      :   v_paramData
+                        ,   "method"    :   "post"
+                    }
+                ,   function(response) {
+                        vm.fn_showProgress( false );
 
-                vm.fn_showProgress( false );
+                        try{
+                            if (response && response.data) {
+                                var msg = ( response.data.msg ? response.data.msg : "" );
 
-                if (response && response.data) {
-                    var msg = ( response.data.msg ? response.data.msg : "" );
-
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.arr_show_error_message.push( msg );
-                        }
-                    }else{
-                        var mastInfo = response.data.mastInfo;
-
-                        if( mastInfo && Object.keys( mastInfo ).length > 0 ) {
-                            vm.prev_grp_cd              =   mastInfo.grp_cd;                /* 상위 그룹코드 (변경전) */
-                            vm.prev_scen_cd             =   mastInfo.scen_cd;               /* 시나리오 코드 (변경전) */
-
-                            vm.scen_cd                  =   mastInfo.scen_cd;               /* 시나리오 코드 */
-                            vm.scen_order_no            =   mastInfo.scen_order_no;         /* 시나리오 정렬순번 */
-
-                            vm.grp_cd                   =   mastInfo.grp_cd;                /* 상위 그룹코드 */
-                            vm.scen_name                =   mastInfo.scen_name;             /* 시나리오명 */
-                            vm.start_year               =   mastInfo.start_year;            /* 시작년도 */
-                            vm.rebalance_cycle_cd       =   mastInfo.rebalance_cycle_cd;    /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
-                            vm.init_invest_money        =   mastInfo.init_invest_money;     /* 초기투자금액 */
-                            vm.bench_mark_cd            =   mastInfo.bench_mark_cd;         /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
-                            vm.importance_method_cd     =   mastInfo.importance_method_cd;  /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
-
-
-                            /* 리밸런싱 주기가 없는 경우 - 리밸런싱 일자가 포함된 샘플파일 유무를 1 로 간주 */
-                            if( vm.rebalance_cycle_cd == "" ) {
-
-                                vm.p_rebalance_file_yn      =   "1";
-
-                                vm.rebalance_date_cd    =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
-
-                                vm.old_start_year           =   mastInfo.start_year;
-                                vm.old_rebalance_cycle_cd   =   mastInfo.rebalance_cycle_cd;
-                                vm.old_rebalance_date_cd    =   mastInfo.rebalance_date_cd;
-
-                                /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
-                                vm.fn_getRebalanceDate().then( function(e1){
-                                    if( e1 && e1.result ) {
-
-                                        vm.old_rebalance_date    =   vm.rebalance_date;
-
-                                        /* 시뮬레이션 포트폴리오 정보를 조회한다. */
-                                        vm.fn_getSimulPortfolio( vm.paramData );
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.arr_show_error_message.push( msg );
                                     }
-                                });
+                                }else{
+                                    var mastInfo = response.data.mastInfo;
 
-                            }else{
+                                    if( mastInfo && Object.keys( mastInfo ).length > 0 ) {
+                                        vm.prev_grp_cd              =   mastInfo.grp_cd;                /* 상위 그룹코드 (변경전) */
+                                        vm.prev_scen_cd             =   mastInfo.scen_cd;               /* 시나리오 코드 (변경전) */
 
-                                /* old_value 값과 비교하여 리밸런싱이 변경되었는지 체크한다. */
-                                vm.fn_checkRebalance( 'rebalance_cycle_cd').then( function(e){
+                                        vm.scen_cd                  =   mastInfo.scen_cd;               /* 시나리오 코드 */
+                                        vm.scen_order_no            =   mastInfo.scen_order_no;         /* 시나리오 정렬순번 */
 
-                                    vm.rebalance_date_cd    =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+                                        vm.grp_cd                   =   mastInfo.grp_cd;                /* 상위 그룹코드 */
+                                        vm.scen_name                =   mastInfo.scen_name;             /* 시나리오명 */
+                                        vm.start_year               =   mastInfo.start_year;            /* 시작년도 */
+                                        vm.rebalance_cycle_cd       =   mastInfo.rebalance_cycle_cd;    /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
+                                        vm.init_invest_money        =   mastInfo.init_invest_money;     /* 초기투자금액 */
+                                        vm.bench_mark_cd            =   mastInfo.bench_mark_cd;         /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
+                                        vm.importance_method_cd     =   mastInfo.importance_method_cd;  /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
 
-                                    vm.old_start_year           =   mastInfo.start_year;
-                                    vm.old_rebalance_cycle_cd   =   mastInfo.rebalance_cycle_cd;
-                                    vm.old_rebalance_date_cd    =   mastInfo.rebalance_date_cd;
 
-                                    /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
-                                    vm.fn_getRebalanceDate().then( function(e1){
+                                        /* 리밸런싱 주기가 없는 경우 - 리밸런싱 일자가 포함된 샘플파일 유무를 1 로 간주 */
+                                        if( vm.rebalance_cycle_cd == "" ) {
 
-                                        if( e1 && e1.result ) {
+                                            vm.p_rebalance_file_yn      =   "1";
 
-                                            vm.old_rebalance_date    =   vm.rebalance_date;
+                                            vm.rebalance_date_cd    =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
 
-                                            /* 시뮬레이션 포트폴리오 정보를 조회한다. */
-                                            vm.fn_getSimulPortfolio( vm.paramData );
+                                            vm.old_start_year           =   mastInfo.start_year;
+                                            vm.old_rebalance_cycle_cd   =   mastInfo.rebalance_cycle_cd;
+                                            vm.old_rebalance_date_cd    =   mastInfo.rebalance_date_cd;
+
+                                            /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                                            vm.fn_getRebalanceDate().then( function(e1){
+                                                if( e1 && e1.result ) {
+
+                                                    vm.old_rebalance_date    =   vm.rebalance_date;
+
+                                                    /* 시뮬레이션 포트폴리오 정보를 조회한다. */
+                                                    vm.fn_getSimulPortfolio( vm.paramData );
+                                                }
+                                            });
+
+                                        }else{
+
+                                            vm.old_start_year           =   mastInfo.start_year;
+                                            vm.old_rebalance_cycle_cd   =   mastInfo.rebalance_cycle_cd;
+                                            vm.old_rebalance_date_cd    =   mastInfo.rebalance_date_cd;
+
+                                            /* old_value 값과 비교하여 리밸런싱이 변경되었는지 체크한다. */
+                                            vm.fn_checkRebalance( 'rebalance_cycle_cd').then( function(e){
+
+                                                vm.rebalance_date_cd    =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+
+                                                /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                                                vm.fn_getRebalanceDate().then( function(e1){
+
+                                                    if( e1 && e1.result ) {
+
+                                                        vm.old_rebalance_date    =   vm.rebalance_date;
+
+                                                        /* 시뮬레이션 포트폴리오 정보를 조회한다. */
+                                                        vm.fn_getSimulPortfolio( vm.paramData );
+                                                    }
+                                                });
+                                            });
                                         }
-                                    });
-                                });
+                                    }
+                                }
                             }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
                         }
                     }
-                }
-            }).catch(error => {
-                console.log( error );
-                vm.fn_showProgress( false );
-                if ( vm.$refs.confirm2.open(
-                        '확인',
-                        '서버로 부터 응답을 받지 못하였습니다.',
-                        {}
-                        ,4
-                    )
-                ) {
-                }
-            });
+                ,   function(error) {
+                        vm.fn_showProgress( false );
+                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                    }
+            );
+
+            // axios.post(Config.base_url + "/user/simulation/getSimulMast", {
+            //     data: v_paramData
+            // }).then( function(response) {
+
+            //     vm.fn_showProgress( false );
+
+            //     if (response && response.data) {
+            //         var msg = ( response.data.msg ? response.data.msg : "" );
+
+            //         if (!response.data.result) {
+            //             if( msg ) {
+            //                 vm.arr_show_error_message.push( msg );
+            //             }
+            //         }else{
+            //             var mastInfo = response.data.mastInfo;
+
+            //             if( mastInfo && Object.keys( mastInfo ).length > 0 ) {
+            //                 vm.prev_grp_cd              =   mastInfo.grp_cd;                /* 상위 그룹코드 (변경전) */
+            //                 vm.prev_scen_cd             =   mastInfo.scen_cd;               /* 시나리오 코드 (변경전) */
+
+            //                 vm.scen_cd                  =   mastInfo.scen_cd;               /* 시나리오 코드 */
+            //                 vm.scen_order_no            =   mastInfo.scen_order_no;         /* 시나리오 정렬순번 */
+
+            //                 vm.grp_cd                   =   mastInfo.grp_cd;                /* 상위 그룹코드 */
+            //                 vm.scen_name                =   mastInfo.scen_name;             /* 시나리오명 */
+            //                 vm.start_year               =   mastInfo.start_year;            /* 시작년도 */
+            //                 vm.rebalance_cycle_cd       =   mastInfo.rebalance_cycle_cd;    /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
+            //                 vm.init_invest_money        =   mastInfo.init_invest_money;     /* 초기투자금액 */
+            //                 vm.bench_mark_cd            =   mastInfo.bench_mark_cd;         /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
+            //                 vm.importance_method_cd     =   mastInfo.importance_method_cd;  /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
+
+
+            //                 /* 리밸런싱 주기가 없는 경우 - 리밸런싱 일자가 포함된 샘플파일 유무를 1 로 간주 */
+            //                 if( vm.rebalance_cycle_cd == "" ) {
+
+            //                     vm.p_rebalance_file_yn      =   "1";
+
+            //                     vm.rebalance_date_cd    =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+
+            //                     vm.old_start_year           =   mastInfo.start_year;
+            //                     vm.old_rebalance_cycle_cd   =   mastInfo.rebalance_cycle_cd;
+            //                     vm.old_rebalance_date_cd    =   mastInfo.rebalance_date_cd;
+
+            //                     /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+            //                     vm.fn_getRebalanceDate().then( function(e1){
+            //                         if( e1 && e1.result ) {
+
+            //                             vm.old_rebalance_date    =   vm.rebalance_date;
+
+            //                             /* 시뮬레이션 포트폴리오 정보를 조회한다. */
+            //                             vm.fn_getSimulPortfolio( vm.paramData );
+            //                         }
+            //                     });
+
+            //                 }else{
+
+            //                     vm.old_start_year           =   mastInfo.start_year;
+            //                     vm.old_rebalance_cycle_cd   =   mastInfo.rebalance_cycle_cd;
+            //                     vm.old_rebalance_date_cd    =   mastInfo.rebalance_date_cd;
+
+            //                     /* old_value 값과 비교하여 리밸런싱이 변경되었는지 체크한다. */
+            //                     vm.fn_checkRebalance( 'rebalance_cycle_cd').then( function(e){
+
+            //                         vm.rebalance_date_cd    =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+
+            //                         /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+            //                         vm.fn_getRebalanceDate().then( function(e1){
+
+            //                             if( e1 && e1.result ) {
+
+            //                                 vm.old_rebalance_date    =   vm.rebalance_date;
+
+            //                                 /* 시뮬레이션 포트폴리오 정보를 조회한다. */
+            //                                 vm.fn_getSimulPortfolio( vm.paramData );
+            //                             }
+            //                         });
+            //                     });
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }).catch(error => {
+            //     console.log( error );
+            //     vm.fn_showProgress( false );
+            //     if ( vm.$refs.confirm2.open(
+            //             '확인',
+            //             '서버로 부터 응답을 받지 못하였습니다.',
+            //             {}
+            //             ,4
+            //         )
+            //     ) {
+            //     }
+            // });
         },
 
         /*
@@ -1845,75 +2279,151 @@ export default {
 
             vm.fn_showProgress( true );
 
-            axios.post(Config.base_url + "/user/simulation/getSimulPortfolio", {
-                data: v_paramData
-            }).then( function(response) {
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/simulation/getSimulPortfolio"
+                        ,   "data"      :   v_paramData
+                        ,   "method"    :   "post"
+                    }
+                ,   function(response) {
+                        vm.fn_showProgress( false );
 
-                vm.fn_showProgress( false );
+                        try{
+                            vm.detail_init_yn   =   "N";
 
-                /* 레코드를 초기화 한다. */
-                vm.fn_initRecords();
+                            /* 레코드를 초기화 한다. */
+                            vm.fn_initRecords();
 
-                if (response && response.data) {
-                    var msg = ( response.data.msg ? response.data.msg : "" );
+                            if (response && response.data) {
+                                var msg = ( response.data.msg ? response.data.msg : "" );
 
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.arr_show_error_message.push( msg );
-                        }
-                    }else{
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.arr_show_error_message.push( msg );
+                                    }
+                                }else{
 
-                        vm.rebalancePortfolioObj    =   response.data.rebalancePortfolioObj;
+                                    vm.rebalancePortfolioObj    =   response.data.rebalancePortfolioObj;
 
-                        var v_rebalancePortfolio    =   response.data.rebalancePortfolioObj[ vm.rebalance_date ];
+                                    var v_rebalancePortfolio    =   response.data.rebalancePortfolioObj[ vm.rebalance_date ];
 
-                        /* 선택된 리밸런싱일자에 포트폴리오가 존재하는 경우 */
-                        if( typeof v_rebalancePortfolio != "undefined" && Object.keys( v_rebalancePortfolio ).length > 0 ) {
+                                    /* 선택된 리밸런싱일자에 포트폴리오가 존재하는 경우 */
+                                    if( typeof v_rebalancePortfolio != "undefined" && Object.keys( v_rebalancePortfolio ).length > 0 ) {
 
-                            var dataList    =   [];
+                                        var dataList    =   [];
 
-                            for( var i=0; i < Object.keys( v_rebalancePortfolio ).length; i++ ) {
-                                var v_key   =   Object.keys( v_rebalancePortfolio )[i];
+                                        for( var i=0; i < Object.keys( v_rebalancePortfolio ).length; i++ ) {
+                                            var v_key   =   Object.keys( v_rebalancePortfolio )[i];
 
-                                dataList.push( v_rebalancePortfolio[ v_key ] );
+                                            dataList.push( v_rebalancePortfolio[ v_key ] );
+                                        }
+
+                                        /* trIndex 순으로 정렬하여 노출 */
+                                        dataList    =   _.orderBy(
+                                                dataList
+                                            ,   [ "trIndex" ]
+                                            ,   [ "asc" ]
+                                        );
+
+                                        /* 건수가 0 인 경우 레코드 5개는 추가한다. */
+                                        var cnt = ( Math.ceil( dataList.length / 5 ) == 0 ? 1 : Math.ceil( dataList.length / 5 ) ) * 5;                  
+
+                                        /* 레코드를 추가한다. */
+                                        vm.fn_addRecords( 0, cnt, dataList );
+
+                                        /* total 레코드를 설정한다. */
+                                        vm.fn_setTotalRecord();
+                                    }
+                                    /* 선택된 리밸런싱일자에 포트폴리오가 존재하지 않는 경우 */
+                                    else{
+                                        /* 최초 5개의 레코드를 노출한다. */
+                                        vm.fn_addRecords( 0, 5 );
+                                    }
+
+                                }
                             }
 
-                            /* trIndex 순으로 정렬하여 노출 */
-                            dataList    =   _.orderBy(
-                                    dataList
-                                ,   [ "trIndex" ]
-                                ,   [ "asc" ]
-                            );
-
-                            /* 건수가 0 인 경우 레코드 5개는 추가한다. */
-                            var cnt = ( Math.ceil( dataList.length / 5 ) == 0 ? 1 : Math.ceil( dataList.length / 5 ) ) * 5;                  
-
-                            /* 레코드를 추가한다. */
-                            vm.fn_addRecords( 0, cnt, dataList );
-
-                            /* total 레코드를 설정한다. */
-                            vm.fn_setTotalRecord();
+                        }catch(ex) {
+                            console.log( "error", ex );
                         }
-                        /* 선택된 리밸런싱일자에 포트폴리오가 존재하지 않는 경우 */
-                        else{
-                            /* 최초 5개의 레코드를 노출한다. */
-                            vm.fn_addRecords( 0, 5 );
-                        }
-
                     }
-                }
+                ,   function(error) {
+                        vm.fn_showProgress( false );
+                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                    }
+            );
 
-            }).catch(error => {
-                vm.fn_showProgress( false );
-                if ( vm.$refs.confirm2.open(
-                        '확인',
-                        '서버로 부터 응답을 받지 못하였습니다.',
-                        {}
-                        ,4
-                    )
-                ) {
-                }
-            });
+            // axios.post(Config.base_url + "/user/simulation/getSimulPortfolio", {
+            //     data: v_paramData
+            // }).then( function(response) {
+
+            //     vm.fn_showProgress( false );
+
+            //     vm.detail_init_yn   =   "N";
+
+            //     /* 레코드를 초기화 한다. */
+            //     vm.fn_initRecords();
+
+            //     if (response && response.data) {
+            //         var msg = ( response.data.msg ? response.data.msg : "" );
+
+            //         if (!response.data.result) {
+            //             if( msg ) {
+            //                 vm.arr_show_error_message.push( msg );
+            //             }
+            //         }else{
+
+            //             vm.rebalancePortfolioObj    =   response.data.rebalancePortfolioObj;
+
+            //             var v_rebalancePortfolio    =   response.data.rebalancePortfolioObj[ vm.rebalance_date ];
+
+            //             /* 선택된 리밸런싱일자에 포트폴리오가 존재하는 경우 */
+            //             if( typeof v_rebalancePortfolio != "undefined" && Object.keys( v_rebalancePortfolio ).length > 0 ) {
+
+            //                 var dataList    =   [];
+
+            //                 for( var i=0; i < Object.keys( v_rebalancePortfolio ).length; i++ ) {
+            //                     var v_key   =   Object.keys( v_rebalancePortfolio )[i];
+
+            //                     dataList.push( v_rebalancePortfolio[ v_key ] );
+            //                 }
+
+            //                 /* trIndex 순으로 정렬하여 노출 */
+            //                 dataList    =   _.orderBy(
+            //                         dataList
+            //                     ,   [ "trIndex" ]
+            //                     ,   [ "asc" ]
+            //                 );
+
+            //                 /* 건수가 0 인 경우 레코드 5개는 추가한다. */
+            //                 var cnt = ( Math.ceil( dataList.length / 5 ) == 0 ? 1 : Math.ceil( dataList.length / 5 ) ) * 5;                  
+
+            //                 /* 레코드를 추가한다. */
+            //                 vm.fn_addRecords( 0, cnt, dataList );
+
+            //                 /* total 레코드를 설정한다. */
+            //                 vm.fn_setTotalRecord();
+            //             }
+            //             /* 선택된 리밸런싱일자에 포트폴리오가 존재하지 않는 경우 */
+            //             else{
+            //                 /* 최초 5개의 레코드를 노출한다. */
+            //                 vm.fn_addRecords( 0, 5 );
+            //             }
+
+            //         }
+            //     }
+
+            // }).catch(error => {
+            //     vm.fn_showProgress( false );
+            //     if ( vm.$refs.confirm2.open(
+            //             '확인',
+            //             '서버로 부터 응답을 받지 못하였습니다.',
+            //             {}
+            //             ,4
+            //         )
+            //     ) {
+            //     }
+            // });
         },
 
         /*
@@ -2035,12 +2545,14 @@ export default {
                                         }else{       
                                             vm.old_start_year                   =   vm.start_year;
 
-                                            /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
-                                            vm.fn_getRebalanceDate().then( function(e) {
-                                                if( e && e.result ) {
-                                                    vm.old_rebalance_date    =   vm.rebalance_date;
-                                                }
-                                            });
+                                            if( vm.detail_init_yn == "N" ) {
+                                                /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                                                vm.fn_getRebalanceDate().then( function(e) {
+                                                    if( e && e.result ) {
+                                                        vm.old_rebalance_date    =   vm.rebalance_date;
+                                                    }
+                                                });
+                                            }
                                         }                                        
 
                                     }
@@ -2125,21 +2637,24 @@ export default {
 
                                         vm.rebalance_date_cd       =   "1";
 
-                                        /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
-                                        vm.fn_getRebalanceDate().then( function(e1) {
-                                            if( e1 && e1.result ) {
-                                                vm.old_rebalance_date    =   vm.rebalance_date;
+                                        if( vm.detail_init_yn == "N" ) {
 
-												var v_fist_Date             =   Object.keys( vm.rebalancePortfolioObj )[0];
-												var v_org_rebalance_obj     =   vm.rebalancePortfolioObj[ v_fist_Date ];
+                                            /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                                            vm.fn_getRebalanceDate().then( function(e1) {
+                                                if( e1 && e1.result ) {
+                                                    vm.old_rebalance_date    =   vm.rebalance_date;
 
-												vm.rebalancePortfolioObj    =   {};
-												vm.rebalancePortfolioObj[ vm.rebalance_date ]   =   Object.assign( {}, v_org_rebalance_obj );
+                                                    var v_fist_Date             =   Object.keys( vm.rebalancePortfolioObj )[0];
+                                                    var v_org_rebalance_obj     =   vm.rebalancePortfolioObj[ v_fist_Date ];
 
-                                                /* old_value 값과 비교하여 리밸런싱이 변경되었는지 체크한다. */
-                                                vm.fn_checkRebalance( 'rebalance_date_cd' );
-                                            }
-                                        })
+                                                    vm.rebalancePortfolioObj    =   {};
+                                                    vm.rebalancePortfolioObj[ vm.rebalance_date ]   =   Object.assign( {}, v_org_rebalance_obj );
+
+                                                    /* old_value 값과 비교하여 리밸런싱이 변경되었는지 체크한다. */
+                                                    vm.fn_checkRebalance( 'rebalance_date_cd' );
+                                                }
+                                            });
+                                        }
                                     }
                                 });
 
@@ -2203,18 +2718,21 @@ export default {
                                     }else{
                                         vm.old_rebalance_date_cd    =   vm.rebalance_date_cd;
 
-                                        /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
-                                        vm.fn_getRebalanceDate().then( function(e) {
-                                            if( e && e.result ) {
-                                                vm.old_rebalance_date    =   vm.rebalance_date;
+                                        if( vm.detail_init_yn == "N" ) {
 
-												var v_fist_Date             =   Object.keys( vm.rebalancePortfolioObj )[0];
-												var v_org_rebalance_obj     =   vm.rebalancePortfolioObj[ v_fist_Date ];
+                                            /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
+                                            vm.fn_getRebalanceDate().then( function(e) {
+                                                if( e && e.result ) {
+                                                    vm.old_rebalance_date    =   vm.rebalance_date;
 
-												vm.rebalancePortfolioObj    =   {};
-												vm.rebalancePortfolioObj[ vm.rebalance_date ]   =   Object.assign( {}, v_org_rebalance_obj );
-                                            }
-                                        });
+                                                    var v_fist_Date             =   Object.keys( vm.rebalancePortfolioObj )[0];
+                                                    var v_org_rebalance_obj     =   vm.rebalancePortfolioObj[ v_fist_Date ];
+
+                                                    vm.rebalancePortfolioObj    =   {};
+                                                    vm.rebalancePortfolioObj[ vm.rebalance_date ]   =   Object.assign( {}, v_org_rebalance_obj );
+                                                }
+                                            });
+                                        }
                                     }
                                 });
 
@@ -2306,57 +2824,113 @@ export default {
                 vm.$nextTick( function(){
                     
                     vm.fn_showProgress( true );
-                    axios.post(Config.base_url + "/user/simulation/getRebalanceDate", {
-                        data: { 
-                                "grp_cd"                :   vm.grp_cd
-                            ,   "scen_cd"               :   vm.scen_cd
 
-                            ,   "start_year"            :   vm.start_year 
-                            ,   "rebalance_cycle_cd"    :   vm.rebalance_cycle_cd
-                            ,   "rebalance_date_cd"     :   vm.rebalance_date_cd
-                        }
-                    }).then( function(response) {
+                    util.axiosCall(
+                            {
+                                    "url"       :   Config.base_url + "/user/simulation/getRebalanceDate"
+                                ,   "data"      :   {
+                                            "grp_cd"                :   vm.grp_cd
+                                        ,   "scen_cd"               :   vm.scen_cd
 
-                        vm.fn_showProgress( false );
-
-                        if (response && response.data) {
-                            var msg = ( response.data.msg ? response.data.msg : "" );
-
-                            if (!response.data.result) {
-                                if( msg ) {
-                                    vm.arr_show_error_message.push( msg );
-                                }
-
-                                resolve( { result : false } );
-                            }else{
-                                var dataList = response.data.dataList;
-
-                                if( dataList && dataList.length > 0 ) {
-                                    vm.rebalance_date   =   dataList[0].value;
-                                }
-
-                                vm.arr_rebalance_date   =   dataList;
-
-                                resolve( { result : true, dataList : dataList } );
+                                        ,   "start_year"            :   vm.start_year 
+                                        ,   "rebalance_cycle_cd"    :   vm.rebalance_cycle_cd
+                                        ,   "rebalance_date_cd"     :   vm.rebalance_date_cd
+                                    }
+                                ,   "method"    :   "post"
                             }
+                        ,   function(response) {
+                                vm.fn_showProgress( false );
 
-                        }else{
-                            resolve( { result : false } );
-                        }
+                                try{
+                                    if (response && response.data) {
+                                        var msg = ( response.data.msg ? response.data.msg : "" );
 
-                    }).catch(error => {
-                        resolve( { result : false } );
+                                        if (!response.data.result) {
+                                            if( msg ) {
+                                                vm.arr_show_error_message.push( msg );
+                                            }
 
-                        vm.fn_showProgress( false );
-                        if ( vm.$refs.confirm2.open(
-                                '확인',
-                                '서버로 부터 응답을 받지 못하였습니다.',
-                                {}
-                                ,4
-                            )
-                        ) {
-                        }
-                    });
+                                            resolve( { result : false } );
+                                        }else{
+                                            var dataList = response.data.dataList;
+
+                                            if( dataList && dataList.length > 0 ) {
+                                                vm.rebalance_date   =   dataList[0].value;
+                                            }
+
+                                            vm.arr_rebalance_date   =   dataList;
+
+                                            resolve( { result : true, dataList : dataList } );
+                                        }
+
+                                    }else{
+                                        resolve( { result : false } );
+                                    }
+
+                                }catch(ex) {
+                                    resolve( { result : false } );
+                                    console.log( "error", ex );
+                                }
+                            }
+                        ,   function(error) {
+                                resolve( { result : false } );
+
+                                vm.fn_showProgress( false );
+                                if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            }
+                    );
+
+                    // axios.post(Config.base_url + "/user/simulation/getRebalanceDate", {
+                    //     data: { 
+                    //             "grp_cd"                :   vm.grp_cd
+                    //         ,   "scen_cd"               :   vm.scen_cd
+
+                    //         ,   "start_year"            :   vm.start_year 
+                    //         ,   "rebalance_cycle_cd"    :   vm.rebalance_cycle_cd
+                    //         ,   "rebalance_date_cd"     :   vm.rebalance_date_cd
+                    //     }
+                    // }).then( function(response) {
+
+                    //     vm.fn_showProgress( false );
+
+                    //     if (response && response.data) {
+                    //         var msg = ( response.data.msg ? response.data.msg : "" );
+
+                    //         if (!response.data.result) {
+                    //             if( msg ) {
+                    //                 vm.arr_show_error_message.push( msg );
+                    //             }
+
+                    //             resolve( { result : false } );
+                    //         }else{
+                    //             var dataList = response.data.dataList;
+
+                    //             if( dataList && dataList.length > 0 ) {
+                    //                 vm.rebalance_date   =   dataList[0].value;
+                    //             }
+
+                    //             vm.arr_rebalance_date   =   dataList;
+
+                    //             resolve( { result : true, dataList : dataList } );
+                    //         }
+
+                    //     }else{
+                    //         resolve( { result : false } );
+                    //     }
+
+                    // }).catch(error => {
+                    //     resolve( { result : false } );
+
+                    //     vm.fn_showProgress( false );
+                    //     if ( vm.$refs.confirm2.open(
+                    //             '확인',
+                    //             '서버로 부터 응답을 받지 못하였습니다.',
+                    //             {}
+                    //             ,4
+                    //         )
+                    //     ) {
+                    //     }
+                    // });
 
                 });
 
@@ -2890,127 +3464,251 @@ export default {
                 formData.append("files", file);
 
                 vm.fn_showProgress( true );
-                axios.post(
-                    Config.base_url + "/user/simulation/uploadPortfolio",
-                    formData,
-                    {
-                        headers: {
-                            "Content-Type": "multipart/form-data"
+
+
+                util.axiosCall(
+                        {
+                                "url"           :   Config.base_url + "/user/simulation/uploadPortfolio"
+                            ,   "data"          :   formData
+                            ,   "method"        :   "post"
+                            ,   "paramKey"      :   ""
+                            ,   "headers"       :   {   "Content-Type": "multipart/form-data"   }
                         }
-                    }
-                ).then( async function(response) {
-                    console.log( response );
+                    ,   async function(response) {
+                            vm.fn_showProgress( false );
 
-                    vm.fn_showProgress( false );
+                            try{
 
-                    if( response.data ) {
+                                if( response.data ) {
 
-                        if( !response.data.result ) {
-                            var errorList = [];
-                            if( !response.data.record_check ) {
+                                    if( !response.data.result ) {
+                                        var errorList = [];
+                                        if( !response.data.record_check ) {
 
-                                if( response.data.errorList && response.data.errorList.length > 0 ) {
-                                    errorList    =   response.data.errorList;
+                                            if( response.data.errorList && response.data.errorList.length > 0 ) {
+                                                errorList    =   response.data.errorList;
 
-                                    for( var i=0; i < errorList.length; i++ ) {
-                                        if( !errorList[i].result && errorList[i].msg ) {
-                                            vm.arr_show_error_message.push( errorList[i].msg );
+                                                for( var i=0; i < errorList.length; i++ ) {
+                                                    if( !errorList[i].result && errorList[i].msg ) {
+                                                        vm.arr_show_error_message.push( errorList[i].msg );
+                                                    }
+                                                }
+                                            }
+                                        }else{
+                                            if( await vm.$refs.confirm2.open(
+                                                        ''
+                                                    ,   response.data.msg
+                                                    ,   {}
+                                                    ,   1
+                                                )
+                                            ) {
+                                            }
+                                        }
+
+                                        check   =   false;
+                                    }
+
+
+                                    if( check ) {
+
+                                        /* 시작년도가 존재하는 경우 - 시작년도 재설정 */
+                                        if( response.data.p_start_year ) {
+                                            vm.old_start_year   =   response.data.p_start_year;
+                                            vm.start_year       =   response.data.p_start_year;
+                                            vm.excel_start_year =   response.data.p_start_year;
+                                        }
+
+                                        /* 리밸런싱 일자가 포함된 샘플파일인 경우 */
+                                        if( response.data.p_rebalance_file_yn == "1" ) {
+                                            vm.change_rebalance_yn      =   response.data.p_rebalance_file_yn;
+
+                                            vm.p_rebalance_file_yn      =   response.data.p_rebalance_file_yn;
+                                            vm.rebalance_cycle_cd       =   "";
+                                            vm.rebalance_date_cd        =   "";
+
+                                            /* 콤보박스에 노출할 리밸런싱 날짜를 설정한다. */
+                                            if( response.data.arr_rebalance_date && response.data.arr_rebalance_date.length > 0 ) {
+                                                vm.arr_rebalance_date       =   response.data.arr_rebalance_date;
+                                            }
+
+                                        }else{
+                                            vm.change_rebalance_yn      =   "0";
+                                        }
+
+
+                                        /* 엑셀을 업로드 하는 경우 [직접입력] 으로 강제 설정 */
+                                        vm.importance_method_cd =   "1";
+
+
+                                        /* 리밸런싱일별 포트폴리오 데이터 설정 */
+                                        if( response.data.rebalancePortfolioObj ) {
+
+                                            vm.rebalancePortfolioObj        =   response.data.rebalancePortfolioObj;
+
+                                            if( vm.arr_rebalance_date && vm.arr_rebalance_date.length > 0 ) {
+
+                                                /* 현재 리밸런싱 일자가 맨 처음 리밸런싱 일자와 다른 경우 맨처음 리밸런싱 일자로 설정 */
+                                                if( vm.rebalance_date != vm.arr_rebalance_date[0].value ) {
+
+                                                    vm.old_rebalance_date   =   vm.rebalance_date;
+
+                                                    vm.rebalance_date       =   vm.arr_rebalance_date[0].value;
+                                                
+                                                    /* 선택된 리밸런싱 일자에 속한 포트폴리오를 노출한다. */
+                                                    vm.fn_showRebalanceDatePortfolio();
+                                                }
+                                            }
+
+                                            check   =   true;
                                         }
                                     }
-                                }
-                            }else{
-                                if( await vm.$refs.confirm2.open(
-                                            ''
-                                        ,   response.data.msg
-                                        ,   {}
-                                        ,   1
-                                    )
-                                ) {
-                                }
-                            }
 
-                            check   =   false;
+                                }else{
+                                    check = false;
+                                }
+
+
+                                if( check ) {
+                                    resolve( { result : true } );
+                                }else{
+                                    resolve( { result : false } );
+                                }
+
+                            }catch(ex) {
+                                resolve( { result : false } );
+                                console.log( "error", ex );
+                            }
                         }
+                    ,   function(error) {
+                            resolve( { result : false } );
+
+                            vm.fn_showProgress( false );
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                );
 
 
-                        if( check ) {
+                // axios.post(
+                //     Config.base_url + "/user/simulation/uploadPortfolio",
+                //     formData,
+                //     {
+                //         headers: {
+                //             "Content-Type": "multipart/form-data"
+                //         }
+                //     }
+                // ).then( async function(response) {
+                //     console.log( response );
 
-                            /* 시작년도가 존재하는 경우 - 시작년도 재설정 */
-                            if( response.data.p_start_year ) {
-                                vm.old_start_year   =   response.data.p_start_year;
-                                vm.start_year       =   response.data.p_start_year;
-                                vm.excel_start_year =   response.data.p_start_year;
-                            }
+                //     vm.fn_showProgress( false );
 
-                            /* 리밸런싱 일자가 포함된 샘플파일인 경우 */
-                            if( response.data.p_rebalance_file_yn == "1" ) {
-                                vm.change_rebalance_yn      =   response.data.p_rebalance_file_yn;
+                //     if( response.data ) {
 
-                                vm.p_rebalance_file_yn      =   response.data.p_rebalance_file_yn;
-                                vm.rebalance_cycle_cd       =   "";
-                                vm.rebalance_date_cd        =   "";
+                //         if( !response.data.result ) {
+                //             var errorList = [];
+                //             if( !response.data.record_check ) {
 
-                                /* 콤보박스에 노출할 리밸런싱 날짜를 설정한다. */
-                                if( response.data.arr_rebalance_date && response.data.arr_rebalance_date.length > 0 ) {
-                                    vm.arr_rebalance_date       =   response.data.arr_rebalance_date;
-                                }
+                //                 if( response.data.errorList && response.data.errorList.length > 0 ) {
+                //                     errorList    =   response.data.errorList;
 
-                            }else{
-                                vm.change_rebalance_yn      =   "0";
-                            }
+                //                     for( var i=0; i < errorList.length; i++ ) {
+                //                         if( !errorList[i].result && errorList[i].msg ) {
+                //                             vm.arr_show_error_message.push( errorList[i].msg );
+                //                         }
+                //                     }
+                //                 }
+                //             }else{
+                //                 if( await vm.$refs.confirm2.open(
+                //                             ''
+                //                         ,   response.data.msg
+                //                         ,   {}
+                //                         ,   1
+                //                     )
+                //                 ) {
+                //                 }
+                //             }
+
+                //             check   =   false;
+                //         }
 
 
-                            /* 엑셀을 업로드 하는 경우 [직접입력] 으로 강제 설정 */
-                            vm.importance_method_cd =   "1";
+                //         if( check ) {
+
+                //             /* 시작년도가 존재하는 경우 - 시작년도 재설정 */
+                //             if( response.data.p_start_year ) {
+                //                 vm.old_start_year   =   response.data.p_start_year;
+                //                 vm.start_year       =   response.data.p_start_year;
+                //                 vm.excel_start_year =   response.data.p_start_year;
+                //             }
+
+                //             /* 리밸런싱 일자가 포함된 샘플파일인 경우 */
+                //             if( response.data.p_rebalance_file_yn == "1" ) {
+                //                 vm.change_rebalance_yn      =   response.data.p_rebalance_file_yn;
+
+                //                 vm.p_rebalance_file_yn      =   response.data.p_rebalance_file_yn;
+                //                 vm.rebalance_cycle_cd       =   "";
+                //                 vm.rebalance_date_cd        =   "";
+
+                //                 /* 콤보박스에 노출할 리밸런싱 날짜를 설정한다. */
+                //                 if( response.data.arr_rebalance_date && response.data.arr_rebalance_date.length > 0 ) {
+                //                     vm.arr_rebalance_date       =   response.data.arr_rebalance_date;
+                //                 }
+
+                //             }else{
+                //                 vm.change_rebalance_yn      =   "0";
+                //             }
 
 
-                            /* 리밸런싱일별 포트폴리오 데이터 설정 */
-                            if( response.data.rebalancePortfolioObj ) {
+                //             /* 엑셀을 업로드 하는 경우 [직접입력] 으로 강제 설정 */
+                //             vm.importance_method_cd =   "1";
 
-                                vm.rebalancePortfolioObj        =   response.data.rebalancePortfolioObj;
 
-                                if( vm.arr_rebalance_date && vm.arr_rebalance_date.length > 0 ) {
+                //             /* 리밸런싱일별 포트폴리오 데이터 설정 */
+                //             if( response.data.rebalancePortfolioObj ) {
 
-                                    /* 현재 리밸런싱 일자가 맨 처음 리밸런싱 일자와 다른 경우 맨처음 리밸런싱 일자로 설정 */
-                                    if( vm.rebalance_date != vm.arr_rebalance_date[0].value ) {
+                //                 vm.rebalancePortfolioObj        =   response.data.rebalancePortfolioObj;
 
-                                        vm.old_rebalance_date   =   vm.rebalance_date;
+                //                 if( vm.arr_rebalance_date && vm.arr_rebalance_date.length > 0 ) {
 
-                                        vm.rebalance_date       =   vm.arr_rebalance_date[0].value;
+                //                     /* 현재 리밸런싱 일자가 맨 처음 리밸런싱 일자와 다른 경우 맨처음 리밸런싱 일자로 설정 */
+                //                     if( vm.rebalance_date != vm.arr_rebalance_date[0].value ) {
+
+                //                         vm.old_rebalance_date   =   vm.rebalance_date;
+
+                //                         vm.rebalance_date       =   vm.arr_rebalance_date[0].value;
                                     
-                                        /* 선택된 리밸런싱 일자에 속한 포트폴리오를 노출한다. */
-                                        vm.fn_showRebalanceDatePortfolio();
-                                    }
-                                }
+                //                         /* 선택된 리밸런싱 일자에 속한 포트폴리오를 노출한다. */
+                //                         vm.fn_showRebalanceDatePortfolio();
+                //                     }
+                //                 }
 
-                                check   =   true;
-                            }
-                        }
+                //                 check   =   true;
+                //             }
+                //         }
 
-                    }else{
-                        check = false;
-                    }
+                //     }else{
+                //         check = false;
+                //     }
 
 
-                    if( check ) {
-                        resolve( { result : true } );
-                    }else{
-                        resolve( { result : false } );
-                    }
+                //     if( check ) {
+                //         resolve( { result : true } );
+                //     }else{
+                //         resolve( { result : false } );
+                //     }
 
-                }).catch(error => {
-                    resolve( { result : false } );
+                // }).catch(error => {
+                //     resolve( { result : false } );
 
-                    vm.fn_showProgress( false );
-                    if ( vm.$refs.confirm2.open(
-                            '확인',
-                            '서버로 부터 응답을 받지 못하였습니다.',
-                            {}
-                            ,4
-                        )
-                    ) {
-                    }
-                });
+                //     vm.fn_showProgress( false );
+                //     if ( vm.$refs.confirm2.open(
+                //             '확인',
+                //             '서버로 부터 응답을 받지 못하였습니다.',
+                //             {}
+                //             ,4
+                //         )
+                //     ) {
+                //     }
+                // });
 
             }).catch( function(e1) {
                 console.log( e1 );
