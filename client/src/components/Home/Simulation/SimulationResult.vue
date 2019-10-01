@@ -25,6 +25,11 @@
                     <span class="excel_btn">
                         <button type="button" class="exceldown_btn"></button>
                     </span>
+                    <span class="btn_r">
+                         <v-btn small flat icon>
+                          <v-icon v-on:click="">reply</v-icon>
+                         </v-btn>
+                        </span>
                 </h4>
 
 
