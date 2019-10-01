@@ -100,7 +100,7 @@ export default {
         fx1 = fx1 + 160;
         c.fillStyle = this.color1[1];
         c.fillRect(fx1, fy1-2, 60, 12);
-        c.fillText("매도호가", fx1+100, fy1);
+        c.fillText("매수호가", fx1+100, fy1);
 
         fx1 = fx1 + 160;
         c.fillStyle = this.color1[2];
