@@ -33,26 +33,26 @@
                 <tr>
                   <th style="width:10%" class="txt_center">일자</th>
                   <th style="width:10%" class="txt_center">시간</th>
-                  <th style="width:10%" class="txt_center">iNav</th>
-                  <th style="width:10%" class="txt_center">NAV.chg</th>
-                  <th style="width:10%" class="txt_center">현재가</th>
-                  <th style="width:10%" class="txt_center">등락율</th>
-                  <th style="width:10%" class="txt_center">LP매도호가</th>
-                  <th style="width:10%" class="txt_center">LP매수호가</th>
-                  <th style="width:10%" class="txt_center">LP스프레드</th>
+                  <th style="width:10%" class="txt_right">iNav</th>
+                  <th style="width:10%" class="txt_right">NAV.chg</th>
+                  <th style="width:10%" class="txt_right">현재가</th>
+                  <th style="width:10%" class="txt_right">등락율</th>
+                  <th style="width:10%" class="txt_right">LP매도호가</th>
+                  <th style="width:10%" class="txt_right">LP매수호가</th>
+                  <th style="width:10%" class="txt_right">LP스프레드</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(item, index) in intra_data" :key="index">
-                  <td class="txt_right">{{item.F20044}}</td>
-                  <td class="txt_right">{{item.F20104}}</td>
+                <tr v-for="(item, index) in fn_convert_intra_data" :key="index">
+                  <td class="txt_center">{{item.F20044}}</td>
+                  <td class="txt_center">{{item.F20104}}</td>
                   <td class="txt_right">{{item.F15301}}</td>
                   <td class="txt_right">{{item.F30818}} %</td>
                   <td class="txt_right">{{item.F15001}}</td>
                   <td class="txt_right">{{item.F20041}} %</td>
                   <td class="txt_right">{{item.F40544}}</td>
                   <td class="txt_right">{{item.F40545}}</td>
-                  <td class="txt_right">{{item.F33294}} %</td>
+                  <td class="txt_right" :style='Number( item.F33294 ) > 1 ? "color:red" : ""'>{{item.F33294}} %</td>
                 </tr>
               </tbody>
             </table>
@@ -78,7 +78,19 @@ export default {
     };
   },
   computed: {
-      
+
+      fn_convert_intra_data : function() {
+          var vm = this;
+
+          vm.intra_data.forEach( function( item, index, array ) {
+              item.F15301   =   util.formatInt( item.F15301 );      //  iNAV
+              item.F15001   =   util.formatInt( item.F15001 );      //  현재가
+              item.F40544   =   util.formatInt( item.F40544 );      //  LP매도호가
+              item.F40545   =   util.formatInt( item.F40545 );      //  LP매수호가
+          });
+
+          return    vm.intra_data;
+      }
   },
   mounted: function() {
     this.getEtpIntra();

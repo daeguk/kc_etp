@@ -25,7 +25,7 @@
       <div class="graph_01_w">
         <div class="sub_title_num">
           {{formatInt(etpInfo.F15001)}}
-          <span :style="etpInfo.F15472_Style">{{formatInt(etpInfo.F15472)}}({{etpInfo.F15004}})%</span>
+          <span :style="etpInfo.F15472_Style">{{formatInt(etpInfo.F15472)}}({{etpInfo.F15004}}%)</span>
           <!--
           <span>{{etpInfo.F15472}}({{etpInfo.F15004}})%</span>
           -->
