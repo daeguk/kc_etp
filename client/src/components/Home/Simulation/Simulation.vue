@@ -1,6 +1,6 @@
 <template>
     <v-layout row wrap class="content_margin etp_new">
-        <v-flex grow>
+        <v-flex grow xs12>
             <v-card flat>
                 <v-card-title primary-title >
                     <h3 class="headline w100" pb-0 >
@@ -188,9 +188,12 @@
                         </v-flex>
                     </v-layout>
 
-
-                    <v-card flat class="pt-3" height="380">
-                        <table class="tbl_type ver10"   id="table01">
+                    <v-layout row>
+                        <v-flex>
+                        <v-card flat>
+                        <div class="table-box-wrap mar15">
+                          <div class="table-box" style="max-height:380px;">
+                            <table class="tbl_type ver10" id="table01">
                             <caption>헤더 고정 테이블</caption>
                             <colgroup>
                                 <col width="10%" />
@@ -220,22 +223,22 @@
                                 </tr>
                             </tbody>
                         </table>
-
+                         </div>
+                        </div>
                         <div class="warning_box"    v-if="arr_show_error_message != null && arr_show_error_message.length > 0">
                             <span v-for="(item, index) in arr_show_error_message" :key="index">
                                 <v-icon color="#ff4366">error_outline</v-icon> {{item}} <br>
                             </span>
                         </div> 
-
                         <div class="text-xs-center mt-3">
                             <v-btn depressed outline color="primary" @click="fn_changeRebalance()">리밸런싱 내역조정</v-btn>                                                   
                             <v-btn depressed color="primary" @click.stop="fn_runBacktestWithSaveBasicInfo()">백테스트 실행</v-btn>
                         </div>
 
                         <MastPopup02 v-if="MastModalFlag" @selectedItem="fn_getSelectedItem" @closeMastModal="fn_closeMastModal" ></MastPopup02>
-
                     </v-card>
-
+                        </v-flex>
+                </v-layout>
                 </v-card>
 
             </v-card>

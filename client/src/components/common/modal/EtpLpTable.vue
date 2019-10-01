@@ -1,15 +1,8 @@
 <template>
-  <v-container>
     <v-layout row wrap>
       <v-flex grow xs12 mt-2>
         <v-card flat>
-          <v-card-title primary-title>
-            <v-layout>
-            <v-flex xs2>
-              <span style="font-size:16px">일중 스프레드 현황</span>
-            </v-flex>
-            </v-layout>
-          </v-card-title>
+          <h4> 일중 스프레드 현황</h4>
 
           <div class="table-box-wrap">
           <!--
@@ -62,7 +55,6 @@
       </v-flex>
       <!---테이블1 end -->
     </v-layout>
-  </v-container>
 </template>
 
 <script>
