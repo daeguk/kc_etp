@@ -37,7 +37,8 @@
 
                             :paramData  =   "paramData"
 
-                            @fn_showProgress="fn_showProgress">
+                            @fn_showProgress="fn_showProgress"
+                            @fn_showSimulation="fn_showSimulation">
         </SimulationResult>        
 
 
@@ -168,9 +169,14 @@ export default {
 
             switch( v_param.showSimulationId ) {
 
+                        /* 시뮬레이션 목록 화면 */
+                case    0:
+                        vm.activeTab            =   0;
+                        vm.showSimulationId     =   0;
+                        break;
+
                         /* 시뮬레이션 등록 수정 화면 */
                 case    1:
-
                         vm.activeTab            =   1;
                         vm.showSimulationId     =   0;
                         break;
@@ -179,7 +185,6 @@ export default {
                 case    2:
                         vm.activeTab            =   1;
                         vm.showSimulationId     =   2;
-
                         break;
             }
         }

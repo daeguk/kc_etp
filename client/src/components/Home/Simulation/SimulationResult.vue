@@ -26,10 +26,10 @@
                         <button type="button" class="exceldown_btn"></button>
                     </span>
                     <span class="btn_r">
-                         <v-btn small flat icon>
-                          <v-icon v-on:click="">reply</v-icon>
-                         </v-btn>
-                        </span>
+                        <v-btn small flat icon v-on:click="fn_goSimulMod()">
+                            <v-icon>reply</v-icon>
+                        </v-btn>
+                    </span>
                 </h4>
 
 
@@ -53,7 +53,7 @@
                             <v-flex grow xs12>
                                 <v-card flat>
                                     <div class="table-box-wrap mar15">
-                                        <div class="table-box" style="max-height:250px;">
+                                        <div class="table-box" style="max-height:710px;">
                                             <table class="tbl_type ver10">
                                                 <caption></caption>
                                                 <colgroup>
@@ -102,7 +102,7 @@
                             <v-flex grow xs12>
                                 <v-card flat>
                                     <div class="table-box-wrap mar15">
-                                        <div class="table-box" style="max-height:250px;">
+                                        <div class="table-box" style="max-height:710px;">
                                             <table class="tbl_type ver10">
                                                 <caption></caption>
 
@@ -183,7 +183,7 @@
                             <span class="btn_rr"><button type="button" class="exceldown_btn" id="jsonFileDownload" @click="fn_jsonFileDownload()" ></button></span>
                         </div>
                             <div class="table-box-wrap mar15">
-                                <div class="table-box" style="max-height:250px;">
+                                <div class="table-box" style="max-height:710px;">
                                     <table class="tbl_type ver10">
                                         <colgroup>
                                             <col width="33%"/>
@@ -317,7 +317,7 @@ export default {
                 "F12506",
                 "rebalance_import_yn",
                 "F16013",
-            ], ["asc", "desc", "asc"]);
+            ], ["desc", "desc", "asc"]);
         }
     },
 
@@ -1423,8 +1423,40 @@ export default {
             document.body.appendChild(fileLink);
 
             fileLink.click();
-        }
+        },
+
+        /*
+         * 시뮬레이션 기본 정보 수정화면으로 이동한다.
+         * 2019-09-06  bkLove(촤병국)
+         */
+        fn_goSimulMod: function() {
+            var vm = this;
+
+            var p_param     =   {
+                    showSimulationId    :   1
+                ,   grp_cd              :   null
+                ,   scen_cd             :   null
+            };
+
+            if( vm.paramData.grp_cd && vm.paramData.scen_cd  ) {
+                p_param.grp_cd      =   vm.paramData.grp_cd; 
+                p_param.scen_cd     =   vm.paramData.scen_cd;
+            }
+            /* 화면으로 부터 결과정보를 받은 경우 */
+            else if( vm.paramData.simul_mast && Object.keys( vm.paramData.simul_mast ).length > 0 ) {
+                p_param.grp_cd      =   vm.paramData.simul_mast.grp_cd; 
+                p_param.scen_cd     =   vm.paramData.simul_mast.scen_cd;
+            }
+
+            if( p_param.grp_cd == null || p_param.scen_cd == null ) {
+                console.log( "시뮬레이션 기본정보가 존재하지 않습니다." );
+                return  false;
+            }
+
+            vm.$emit( "fn_showSimulation", p_param );
+        }            
     }
+    
 };
 </script>
 

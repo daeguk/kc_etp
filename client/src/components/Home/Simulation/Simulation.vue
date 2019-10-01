@@ -8,13 +8,13 @@
                         <span   class="grey--text">KOSPI, KOSDAQ, ETF를 이용해 포트폴리오를 구성하고 백테스트를 수행합니다.</span>
                    
                      <span class="btn_r">
-                     <v-btn small flat icon>
-                          <v-icon v-on:click="fn_refresh()">refresh</v-icon>
+                     <v-btn small flat icon v-on:click="fn_refresh()">
+                        <v-icon >refresh</v-icon>
                     </v-btn>
                     </span>
                     <span class="btn_r">
-                     <v-btn small flat icon>
-                          <v-icon v-on:click="">reply</v-icon>
+                     <v-btn small flat icon v-on:click="fn_goList()">
+                        <v-icon >reply</v-icon>
                     </v-btn>
                     </span>
                      </h3>
@@ -157,7 +157,7 @@
                                                 
                                                 flat
 
-                                                @click.stop="fn_setImportanceMethodCd( item.com_dtl_cd )"
+                                                @click.stop="fn_setImportanceMethodCdEvent( item.com_dtl_cd )"
                                         >{{ item.com_dtl_name }}</v-btn>
                                     </v-btn-toggle>
 
@@ -228,7 +228,7 @@
                         </div> 
 
                         <div class="text-xs-center mt-3">
-                            <v-btn depressed outline color="primary" @click.stop="fn_changeRebalance()">리밸런싱 내역조정</v-btn>                                                   
+                            <v-btn depressed outline color="primary" @click="fn_changeRebalance()">리밸런싱 내역조정</v-btn>                                                   
                             <v-btn depressed color="primary" @click.stop="fn_runBacktestWithSaveBasicInfo()">백테스트 실행</v-btn>
                         </div>
 
@@ -413,7 +413,9 @@ export default {
                                 tr.find( "td:eq(3)" ).text( util.formatInt( rowItem.F15028 ) );         /* 시가총액 */
 
                                 /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
-                                vm.fn_setImportanceMethodCd( vm.importance_method_cd );
+                                vm.fn_setImportanceMethodCd( vm.importance_method_cd ).then( function(e1){
+                                    vm.fn_setTotalRecord();
+                                });
                             }
                         }
                     });
@@ -421,7 +423,9 @@ export default {
             }else{
 
                 /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
-                vm.fn_setImportanceMethodCd( vm.importance_method_cd );                
+                vm.fn_setImportanceMethodCd( vm.importance_method_cd ).then( function(e1){
+                    vm.fn_setTotalRecord();
+                });                           
             }
         });
 
@@ -459,7 +463,9 @@ export default {
                             tr.find( "td:eq(3)" ).text( util.formatInt( rowItem.F15028 ) );         /* 시가총액 */
 
                             /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
-                            vm.fn_setImportanceMethodCd( vm.importance_method_cd );
+                            vm.fn_setImportanceMethodCd( vm.importance_method_cd ).then( function(e1){
+                                vm.fn_setTotalRecord();
+                            });                            
                         }
                     }
                 });
@@ -719,112 +725,132 @@ export default {
          * 비중설정방식 선택시 테이블의 비중정보를 설정한다.
          * 2019-07-26  bkLove(촤병국)
          */
-        fn_setImportanceMethodCd: function( importance_method_cd ) {
+        fn_setImportanceMethodCdEvent: function( importance_method_cd ) {
+            var vm = this;
+
+            /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
+            vm.fn_setImportanceMethodCd( importance_method_cd ).then( function(e1){
+                vm.fn_setTotalRecord();
+            });            
+        },
+
+        /*
+         * 비중설정방식 선택시 테이블의 비중정보를 설정한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        async fn_setImportanceMethodCd( importance_method_cd ) {
             var vm = this;
 
 
             var v_portfolioObj  =   {};
 
-            if(     vm.rebalancePortfolioObj
-                &&  vm.rebalance_date
-                &&  typeof vm.rebalancePortfolioObj[ vm.rebalance_date ] != "undefined" 
-                &&  vm.rebalancePortfolioObj[ vm.rebalance_date ]
-            ) {
-                vm.rebalancePortfolioObj[ vm.rebalance_date ]     =   {};
-            }
-            
 
-            /* 계산할 항목에 대한 전체 정보를 구한다. */
-            table01.find( "tbody tr" ).each( function( inx, rowItem ) {
-                var tr = $(this);
+            return  await new Promise(function(resolve, reject) {
 
-                var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );            /* 첫번째 컬럼 */
-                var v_F16002        =   tr.find( "td:eq(2)" );                          /* 종목명 */
-                var v_F16013        =   tr.find( "td input[name=F16013]" );             /* 종목코드 */
-                var v_F15028        =   tr.find( "td:eq(3)" );                          /* 시가총액 */
-                var v_importance    =   tr.find( "td input[name=importance]" );         /* 비중 */
-
-
-                /* 종목코드가 존재하는 경우 */
-                if( typeof v_F16013.val() != "undefined" ) {
-
-                    if( v_F16013.val() != "" ) {
-
-                        var rowData     =   {
-                                "F16013"        :   v_F16013.val()                                                      /* 종목코드 */
-                            ,   "F16002"        :   v_F16002.text()                                                     /* 종목명 */
-                            ,   "F15028"        :   util.NumtoStr( v_F15028.text() )                                    /* 시가총액 */
-                            ,   "importance"    :   Number( Number( util.NumtoStr( v_importance.val() ) ).toFixed(2) )  /* 비중 */
-                            ,   "order_no"      :   0                                                                   /* 정렬순번 */
-                            ,   "trIndex"       :   tr.index()                                                          /* 테이블 레코드 순번 */
-                        };
-
-                        if( !v_portfolioObj[ vm.rebalance_date ] || Object.keys( v_portfolioObj[ vm.rebalance_date ] ).length == 0 ) {
-                            v_portfolioObj[ vm.rebalance_date ]   =   {};
-                        }                    
-
-                        v_portfolioObj[ vm.rebalance_date ][ rowData.F16013 ]     =   Object.assign( {}, rowData );
-                    }
+                if(     vm.rebalancePortfolioObj
+                    &&  vm.rebalance_date
+                    &&  typeof vm.rebalancePortfolioObj[ vm.rebalance_date ] != "undefined" 
+                    &&  vm.rebalancePortfolioObj[ vm.rebalance_date ]
+                ) {
+                    vm.rebalancePortfolioObj[ vm.rebalance_date ]     =   {};
                 }
-            });
+                
+
+                /* 계산할 항목에 대한 전체 정보를 구한다. */
+                table01.find( "tbody tr" ).each( function( inx, rowItem ) {
+                    var tr = $(this);
+
+                    var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );            /* 첫번째 컬럼 */
+                    var v_F16002        =   tr.find( "td:eq(2)" );                          /* 종목명 */
+                    var v_F16013        =   tr.find( "td input[name=F16013]" );             /* 종목코드 */
+                    var v_F15028        =   tr.find( "td:eq(3)" );                          /* 시가총액 */
+                    var v_importance    =   tr.find( "td input[name=importance]" );         /* 비중 */
 
 
-            /* 비중 설정 방식에 따라 각 종목의 비중정보를 구한다. */
-            var v_returnObj =   vm.fn_calcImportance( importance_method_cd, v_portfolioObj );
-            var total       =   {};
+                    /* 종목코드가 존재하는 경우 */
+                    if( typeof v_F16013.val() != "undefined" ) {
+
+                        if( v_F16013.val() != "" ) {
+
+                            var rowData     =   {
+                                    "F16013"        :   v_F16013.val()                                                      /* 종목코드 */
+                                ,   "F16002"        :   v_F16002.text()                                                     /* 종목명 */
+                                ,   "F15028"        :   util.NumtoStr( v_F15028.text() )                                    /* 시가총액 */
+                                ,   "importance"    :   Number( Number( util.NumtoStr( v_importance.val() ) ).toFixed(2) )  /* 비중 */
+                                ,   "order_no"      :   0                                                                   /* 정렬순번 */
+                                ,   "trIndex"       :   tr.index()                                                          /* 테이블 레코드 순번 */
+                            };
+
+                            if( !v_portfolioObj[ vm.rebalance_date ] || Object.keys( v_portfolioObj[ vm.rebalance_date ] ).length == 0 ) {
+                                v_portfolioObj[ vm.rebalance_date ]   =   {};
+                            }                    
+
+                            v_portfolioObj[ vm.rebalance_date ][ rowData.F16013 ]     =   Object.assign( {}, rowData );
+                        }
+                    }
+                });
 
 
-            /* 직접입력인 경우 */
-            if( [ "1"].includes( importance_method_cd ) ) {
+                /* 비중 설정 방식에 따라 각 종목의 비중정보를 구한다. */
+                var v_returnObj =   vm.fn_calcImportance( importance_method_cd, v_portfolioObj );
+                var total       =   {};
 
-                /* html에 입력된 정보를 p_gubun 에 맞게 일자별 포트폴리오에 등록시킨다. */
-                vm.fn_setRebalancePortfolioObj( { p_gubun : "table" } );
-            }
-            /*  레코드별 비중정보를 구한다. (동일가중, 시총비중) */
-            else if( [ "2", "3"].includes( importance_method_cd ) ) {
 
-                if( v_returnObj.resultListObj && typeof v_returnObj.resultListObj[ vm.rebalance_date ] != "undefined" && v_returnObj.resultListObj[ vm.rebalance_date ] ) {
+                /* 직접입력인 경우 */
+                if( [ "1"].includes( importance_method_cd ) ) {
 
-                    var result  =   v_returnObj.resultListObj[ vm.rebalance_date ];
+                    /* html에 입력된 정보를 p_gubun 에 맞게 일자별 포트폴리오에 등록시킨다. */
+                    vm.fn_setRebalancePortfolioObj( { p_gubun : "table" } );
+                }
+                /*  레코드별 비중정보를 구한다. (동일가중, 시총비중) */
+                else if( [ "2", "3"].includes( importance_method_cd ) ) {
 
-                    if( result && result.length > 0 ) {
+                    if( v_returnObj.resultListObj && typeof v_returnObj.resultListObj[ vm.rebalance_date ] != "undefined" && v_returnObj.resultListObj[ vm.rebalance_date ] ) {
 
-                        /* 비중 정보를 tr 에 설정한다. */
-                        var v_inx   =   0;
-                        table01.find( "tbody tr" ).each( function( inx, rowItem ) {
-                            var tr = $(this);
+                        var result  =   v_returnObj.resultListObj[ vm.rebalance_date ];
 
-                            var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
-                            var v_F16013        =   tr.find( "td input[name=F16013]" );                 /* 종목코드 */
-                            var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
-                            var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
+                        if( result && result.length > 0 ) {
 
-                            if( typeof v_F16013.val() != "undefined" ) {
-                                if( v_F16013.val() != "" ) {
-                                    v_importance.val( result[v_inx].importance );                       /* 비중 */
-                                    v_inx++;
+                            /* 비중 정보를 tr 에 설정한다. */
+                            var v_inx   =   0;
+                            table01.find( "tbody tr" ).each( function( inx, rowItem ) {
+                                var tr = $(this);
+
+                                var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
+                                var v_F16013        =   tr.find( "td input[name=F16013]" );                 /* 종목코드 */
+                                var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
+                                var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
+
+                                if( typeof v_F16013.val() != "undefined" ) {
+                                    if( v_F16013.val() != "" ) {
+                                        v_importance.val( result[v_inx].importance );                       /* 비중 */
+                                        v_inx++;
+                                    }
                                 }
-                            }
-                        });
+                            });
 
-                        /* html에 입력된 정보를 p_gubun 에 맞게 일자별 포트폴리오에 등록시킨다. */
-                        vm.fn_setRebalancePortfolioObj( { p_gubun : "table" } );                        
+                            /* html에 입력된 정보를 p_gubun 에 맞게 일자별 포트폴리오에 등록시킨다. */
+                            vm.fn_setRebalancePortfolioObj( { p_gubun : "table" } );                        
 
-                        /* 모든 일자별 포트폴리오 정보를 v_returnObj 에 맞게 설정한다. */
-                        vm.fn_modifyAllRebalancePortfolioObj( importance_method_cd );
+                            /* 모든 일자별 포트폴리오 정보를 v_returnObj 에 맞게 설정한다. */
+                            vm.fn_modifyAllRebalancePortfolioObj( importance_method_cd );
+                        }
                     }
                 }
-            }
 
 
-            if( v_returnObj.totalObj && typeof v_returnObj.totalObj[ vm.rebalance_date ] != "undefined" && v_returnObj.totalObj[ vm.rebalance_date ] ) {
-                total   =   v_returnObj.totalObj[ vm.rebalance_date ];
-            }
+                if( v_returnObj.totalObj && typeof v_returnObj.totalObj[ vm.rebalance_date ] != "undefined" && v_returnObj.totalObj[ vm.rebalance_date ] ) {
+                    total   =   v_returnObj.totalObj[ vm.rebalance_date ];
+                }
 
-            vm.importance_method_cd =   importance_method_cd;
+                vm.importance_method_cd =   importance_method_cd;
 
-            /* total 레코드를 설정한다. */
-            vm.fn_setTotalRecord( total );
+                resolve( { result : true } );
+
+            }).catch( function(e1) {
+
+                console.log( e1 );
+            });
         },
 
         /*
@@ -1605,6 +1631,7 @@ export default {
                 });
             }
 
+
             /* tr 에 합계를 설정한다.  */
             total   =   Object.assign( total, v_total );
             table01.find( "tbody tr:last" ).each( function( inx, rowItem ) {
@@ -1652,7 +1679,9 @@ export default {
             }
 
             /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
-            vm.fn_setImportanceMethodCd( vm.importance_method_cd );
+            vm.fn_setImportanceMethodCd( vm.importance_method_cd ).then( function(e1){
+                vm.fn_setTotalRecord();
+            });            
         },
 
         /*
@@ -1804,6 +1833,12 @@ export default {
 
             /* 선택된 리밸런싱 일자에 속한 포트폴리오를 밸리데이션 체크한다. */
             vm.fn_validationRebalanceDatePortfolio( { p_importance_total_check : 'Y' } );
+
+
+            /* 리밸런싱 내역조정 버튼 필수 체크 */
+            if( vm.change_rebalance_yn ==  "0" ) {
+                vm.arr_show_error_message.push( "리밸런싱 내역조정을 한 후 백테스트 진행하세요." );
+            }
 
         /**************/
             if( vm.arr_show_error_message && vm.arr_show_error_message.length > 0  ) {
@@ -2117,6 +2152,7 @@ export default {
                                         vm.bench_mark_cd            =   mastInfo.bench_mark_cd;         /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
                                         vm.importance_method_cd     =   mastInfo.importance_method_cd;  /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
 
+                                        vm.change_rebalance_yn      =   "1";                            /* 수정인 경우 리밸런싱 일자 콤보박스는 보이도록 수정 */
 
                                         /* 리밸런싱 주기가 없는 경우 - 리밸런싱 일자가 포함된 샘플파일 유무를 1 로 간주 */
                                         if( vm.rebalance_cycle_cd == "" ) {
@@ -2500,6 +2536,7 @@ export default {
                                             }
 
                                             vm.old_start_year   =   vm.start_year;
+                                            vm.change_rebalance_yn  =   "0";
                                         }
 
                                     }else{
@@ -2515,6 +2552,7 @@ export default {
                                                 /* 초기화를 선택한 경우 */
                                                 if( e && e.confirm == "Y" ) {
                                                     vm.old_start_year           =   vm.start_year;
+                                                    vm.change_rebalance_yn      =   "0";
 
                                                     /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
                                                     vm.fn_getRebalanceDate().then( function(e) {
@@ -2538,6 +2576,7 @@ export default {
                                                 }
                                                 else{
                                                     vm.old_start_year           =   vm.start_year;
+                                                    vm.change_rebalance_yn      =   "0";
 
                                                     /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
                                                     vm.fn_getRebalanceDate().then( function(e) {
@@ -2589,6 +2628,7 @@ export default {
                                             if( e && e.confirm == "Y" ) {
 
                                                 vm.old_rebalance_cycle_cd   =   vm.rebalance_cycle_cd;
+                                                vm.change_rebalance_yn      =   "0";
 
                                                 vm.rebalance_date_cd    =   "1";
 
@@ -2616,6 +2656,7 @@ export default {
                                                 vm.rebalance_date_cd        =   vm.old_rebalance_date_cd;
                                             }else{
                                                 vm.old_rebalance_cycle_cd   =   vm.rebalance_cycle_cd;
+                                                vm.change_rebalance_yn      =   "0";
 
                                                 vm.rebalance_date_cd       =   "1";
 
@@ -2682,6 +2723,7 @@ export default {
                                             if( e && e.confirm == "Y" ) {
 
                                                 vm.old_rebalance_date_cd    =   vm.rebalance_date_cd;
+                                                vm.change_rebalance_yn      =   "0";
 
                                                 /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
                                                 vm.fn_getRebalanceDate().then( function(e) {
@@ -2704,6 +2746,7 @@ export default {
                                                 vm.rebalance_date_cd        =   vm.old_rebalance_date_cd;
                                             }else{
                                                 vm.old_rebalance_date_cd    =   vm.rebalance_date_cd;
+                                                vm.change_rebalance_yn      =   "0";
 
                                                 /* 화면에서 select 된 리밸런싱 일자를 조회한다. */
                                                 vm.fn_getRebalanceDate().then( function(e) {
@@ -2952,14 +2995,13 @@ export default {
         fn_changeRebalance() {
             var vm = this;
 
-            if( vm.change_rebalance_yn == "1" ) {
-                return  false;
-            }
+            // if( vm.change_rebalance_yn == "1" ) {
+            //     return  false;
+            // }
 
-            if( vm.change_rebalance_yn != "1" ) {
-                vm.change_rebalance_yn      =   "0";
-            }
-
+            // if( vm.change_rebalance_yn != "1" ) {
+            //     vm.change_rebalance_yn      =   "0";
+            // }
 
             /* 마스트 정보를 밸리데이션 체크한다. */
             vm.fn_validationSimulMast();
@@ -2981,7 +3023,7 @@ export default {
                 /* 구분에 맞게 선택된 [리밸런싱 일자별 포트폴리오] 데이터를 기준으로 나머지 [리밸런싱의 일자별 포트폴리오] 에 복사한다. */
                 vm.fn_copySelectedDateToRebalanceAll( { p_gubun : "first", p_exist_data_skip_yn : "Y"  } );
 
-                vm.change_rebalance_yn  =   "1";
+               vm.change_rebalance_yn  =   "1";
             }
         },
 
@@ -3015,6 +3057,8 @@ export default {
 
 
                     if( typeof v_fist_date != "undefined" && v_fist_date != "" && Object.keys( v_org_rebalance_obj ).length > 0 ) {
+
+console.log( "# fn_copySelectedDateToRebalanceAll  v_fist_date", v_fist_date, "v_org_rebalance_obj", v_org_rebalance_obj, "vm.arr_rebalance_date", vm.arr_rebalance_date );
 
                         /* 첫 [리밸런싱 일자별 포트폴리오] 를 나머지 [리밸런싱 일자별 포트폴리오]에 복사  */
                         for( var i=0; i < vm.arr_rebalance_date.length; i++ ) {
@@ -3840,7 +3884,18 @@ export default {
          */
         fn_fileClick: function() {
             this.$refs.portfolioFile.click();
-        },        
+        },
+
+
+        /*
+         * 목록조회 화면으로 이동한다.
+         * 2019-09-06  bkLove(촤병국)
+         */
+        fn_goList: function() {
+            var vm = this;
+
+            vm.$emit( "fn_showSimulation", { showSimulationId : 0 } );
+        }
     }
 };
 </script>
