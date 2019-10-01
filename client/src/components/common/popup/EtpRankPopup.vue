@@ -22,7 +22,7 @@
         </v-card-title>
       </div>
       <div class="table-box-wrap">
-        <div class="table-box">
+        <div ref="table1" class="table-box" style="max-height:800px;">
         <table class="tbl_type ver8">
           <colgroup>
             <col width="10%">
@@ -40,10 +40,10 @@
           </thead>
           <tbody>
             <tr v-for="(item, index) in itemList" :key="index">
-              <td class="txt_right">{{index+1}}</td>
-              <td class="txt_right">{{item.F16002}}</td>
-              <td class="txt_right">{{item.F16013}}</td>
-              <td class="txt_right">{{formatInt(Math.floor(item.FLOW))}}</td>
+              <td class="txt_right"><span :class="{text_hightlight:(item.F16013==curCode)}">{{index+1}}</span></td>
+              <td class="txt_right"><span :class="{text_hightlight:(item.F16013==curCode)}">{{item.F16002}}</span></td>
+              <td class="txt_right"><span :class="{text_hightlight:(item.F16013==curCode)}">{{item.F16013}}</span></td>
+              <td class="txt_right"><span :class="{text_hightlight:(item.F16013==curCode)}">{{formatInt(Math.floor(item.FLOW))}}</span></td>
             </tr>
           </tbody>
         </table>
@@ -59,7 +59,7 @@ import Config from "@/js/config.js";
 import util from "@/js/util.js";
 
 export default {
-  props: ['gubun', 'itemList'],
+  props: ['gubun', 'itemList', 'curCode', 'rank'],
   data() {
     return {
         dialog: false, 
@@ -74,15 +74,21 @@ export default {
   beforeDestroy() {
   },
   mounted: function() {
+    var vm = this;
     this.dialog = true;
     if(this.gubun == 0) this.title = "1주";
     else if(this.gubun == 1) this.title = "1개월";
     else if(this.gubun == 2) this.title = "3개월";
     else if(this.gubun == 3) this.title = "6개월";
     this.title = this.title + " 자금유입 순위";
-
     // console.log("EtpRankPopup......");
     // console.log(this.itemList);
+  },
+  updated() {
+    var factor = 26;
+    if(this.rank < 100) factor = 15;
+    this.$refs.table1.scrollTop = (this.rank - 1) * factor;
+    // console.log(this.$refs.table1.scrollTop);
   },
   methods: {
     closeModal: function() {
@@ -96,3 +102,9 @@ export default {
   } 
 };
 </script>
+
+<style scoped>
+.text_hightlight {
+  background-color: yellow;
+}
+</style>
