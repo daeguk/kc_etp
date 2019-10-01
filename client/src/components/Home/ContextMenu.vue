@@ -93,7 +93,7 @@ export default {
     }else {
 
     }
-    if(tmp.indexOf("test@") !== -1) {
+    if(tmp.indexOf("test@") !== -1 || tmp.indexOf("test_etn@") !== -1) {
       this.menuList.push(this.allMenuList[6]);
     }
 },

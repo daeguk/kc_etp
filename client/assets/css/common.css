@@ -858,6 +858,8 @@ input[type='file']{
 .oper_list_icon.select span.icon7{background-position:-44px -296px;}
 .oper_list_icon span.icon8{background-position:6px -346px;}
 .oper_list_icon.select span.icon8{background-position:-44px -346px;}
+.oper_list_icon span.icon9{background-position:3px -397px;}
+.oper_list_icon.select span.icon9{background-position:-47px -397px;}
 
 
 .exceldown_btn{background: url(../img/exceldown_btn.png)no-repeat; width:26px; height:29px; display:inline-block; vertical-align: bottom; margin-right: 5px;}
@@ -868,6 +870,9 @@ input[type='file']{
 
 .calcu_icon{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat 7px -345px; display:inline-block;}
 .calcu_icon:hover{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat -43px -345px; display:inline-block;}
+.lpchart_icon{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat 2px -445px; display:inline-block;}
+.lpchart_icon:hover{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat -48px -445px; display:inline-block;}
+
 
 
 .ETPInavpop1 .theme--light.v-list{background: #fff;}
@@ -1028,7 +1033,8 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .more_menu_w li{display:block; padding:10px 15px; background:#ffffff; cursor: pointer;}
 .mar15{margin-top:15px !important;}
 
-
+.btn_only_r{width: 100%; height: 25px;}
+.btn_only_r .btn_rr{ display:inline-block; float: right; margin-right: 15px;}
 
 
 /*.simul_port_w .insize{width:160px;}
@@ -1036,7 +1042,7 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .simul_port_w .insize .v-messages{display:none;}
 .simul_port_w .insize .v-text-field__details{display: none;}*/
 
-.simul_del_btn{line-height: 19px !important;}
+.simul_del_btn{line-height: 19px !important; color:#9797ac !important; font-size: 24px !important;}
 .simu_btn_r{float: right;}
 .register_wrap .left_w{float: left;}
 .register_wrap .left_w span.intext{ padding-right:5px; display:inline-block; vertical-align: middle}

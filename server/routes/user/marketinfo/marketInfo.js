@@ -176,7 +176,7 @@ try {
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('common.item', 'getIndexListAnalByType', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    // console.log(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
@@ -273,7 +273,7 @@ try {
 * INDEX HIST TERM 조회
 */
 var getIndexHist1 = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getIndexHist1 호출됨.');
+  // console.log('marketInfo 모듈 안에 있는 getIndexHist1 호출됨.');
 
   var options = {
     F16013 : req.query.F16013,
@@ -499,6 +499,41 @@ try {
     var mapper = req.app.get("mapper");
     
     var stmt = mapper.getStatement('common.item', 'getEtpIntraToday', options, {language:'sql', indent: '  '});
+    log.debug(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({
+            success: true,
+            results: rows
+        });
+        res.end();
+      });
+    });
+  } catch(exception) {
+    log.error("err=>", exception);
+    res.json({
+      success: false,
+      message: "Error while performing Query.",
+    });
+    res.end();
+}
+};
+
+/*
+* ETP HOGA INTRA 조회(TODAY)
+*/
+var getEtpHogaIntraToday = function(req, res) {
+  log.debug('marketInfo 모듈 안에 있는 getEtpHogaIntraToday 호출됨.');
+
+  var options = {
+    F16013 : req.query.F16013,
+  };
+try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    
+    var stmt = mapper.getStatement('common.item', 'getEtpHogaIntraToday', options, {language:'sql', indent: '  '});
     log.debug(stmt);
 
     Promise.using(pool.connect(), conn => {
@@ -1278,7 +1313,7 @@ var getMarketIndexList = function (req, res) {
 * ETP AVG 값 조회(HIST)
 */
 var getEtpHistAvg = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getEtpHistAvg 호출됨.');
+  // console.log('marketInfo 모듈 안에 있는 getEtpHistAvg 호출됨.');
 
   // console.log(req.query);
   // var options = {
@@ -1292,13 +1327,13 @@ try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
-    console.log(options);
+    // console.log(options);
     var stmt = mapper.getStatement('common.item', 'getEtpHistAvg', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    // console.log(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
-        console.log(rows);
+        // console.log(rows);
         res.json({
             success: true,
             results: rows
@@ -1319,7 +1354,7 @@ try {
 * ETP AVG 값 조회(INTRA)
 */
 var getEtpIntraAvg = function(req, res) {
-  console.log('marketInfo 모듈 안에 있는 getEtpIntraAvg 호출됨.');
+  // console.log('marketInfo 모듈 안에 있는 getEtpIntraAvg 호출됨.');
 
   // console.log(req.query);
   // var options = {
@@ -1333,13 +1368,13 @@ try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     
-    console.log(options);
+    // console.log(options);
     var stmt = mapper.getStatement('common.item', 'getEtpIntraAvg', options, {language:'sql', indent: '  '});
-    console.log(stmt);
+    // console.log(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
-        console.log(rows);
+        // console.log(rows);
         res.json({
             success: true,
             results: rows
@@ -1372,6 +1407,7 @@ module.exports.getEtpAnal = getEtpAnal;
 module.exports.getEtpNavAnal = getEtpNavAnal;
 module.exports.getEtpIntra = getEtpIntra;
 module.exports.getEtpIntraToday = getEtpIntraToday;
+module.exports.getEtpHogaIntraToday = getEtpHogaIntraToday;
 module.exports.getEtpMultiIntra = getEtpMultiIntra;
 module.exports.getEtpMultiHist = getEtpMultiHist;
 module.exports.getEtpMultiHist1 = getEtpMultiHist1;

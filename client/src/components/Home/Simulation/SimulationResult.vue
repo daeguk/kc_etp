@@ -174,8 +174,9 @@
             <!--분석정보 -->
                     <v-tab-item >
                         <v-card flat>
-
-<button type="button" class="exceldown_btn" id="jsonFileDownload" @click="fn_jsonFileDownload()" ></button>
+                        <div class="btn_only_r">
+                            <span class="btn_rr"><button type="button" class="exceldown_btn" id="jsonFileDownload" @click="fn_jsonFileDownload()" ></button></span>
+                        </div>
                             <div class="table-box-wrap mar15">
                                 <div class="table-box" style="max-height:250px;">
                                     <table class="tbl_type ver10">

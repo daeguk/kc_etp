@@ -982,7 +982,7 @@ export default {
                                     }
 //                                    graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnInav", "btnContent" : "visibility", "btnSpanContent" : "투자지표" } );
                                 }else if( vm.stateInfo.pageState === 'lpspread' ) {
-                                        graphContent    +=  '<div class="tooltip"><button type="button" id="btnSpread" name="btnSpread" class="calcu_icon"></button><span class="tooltiptext" style="width:70px;">LP차트</span></div>';
+                                        graphContent    +=  '<div class="tooltip"><button type="button" id="btnSpread" name="btnSpread" class="lpchart_icon"></button><span class="tooltiptext" style="width:70px;">LP차트</span></div>';
                                 }
                                 
                                 /* ETF 상세정보 */

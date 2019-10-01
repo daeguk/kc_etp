@@ -101,7 +101,7 @@
                                         <button name="btn3" class="btn_icon v-icon material-icons" v-on="on" >more_horiz</button>
                                     </template>
                                     <ul class="more_menu_w">
-                                        <li @click="fn_simul_delete( { grp_cd : item.grp_cd, scen_cd : item.scen_cd } )"><v-icon small class="simul_del_btn">clear</v-icon>삭제</li>
+                                        <li @click="fn_simul_delete( { grp_cd : item.grp_cd, scen_cd : item.scen_cd } )"><v-icon class="simul_del_btn">delete_forever</v-icon>삭제</li>
                                         <!--li @click="">menu2</li>
                                         <li @click="">menu3</li-->
                                     </ul>
