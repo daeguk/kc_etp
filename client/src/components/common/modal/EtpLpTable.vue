@@ -12,7 +12,10 @@
           </v-card-title>
 
           <div class="table-box-wrap">
+          <!--
             <div class="table-box" style="max-height:1000px;">
+            -->
+            <div class="table-box">
             <table class="tbl_type ver8">
               <caption> 헤더 고정 테이블</caption>
               <colgroup>
@@ -42,10 +45,10 @@
               <tbody>
                 <tr v-for="(item, index) in intra_data" :key="index">
                   <td class="txt_right">{{item.F20044}}</td>
-                  <td class="txt_right">{{item.F20004}}</td>
+                  <td class="txt_right">{{item.F20104}}</td>
                   <td class="txt_right">{{item.F15301}}</td>
                   <td class="txt_right">{{item.F30818}} %</td>
-                  <td class="txt_right">{{item.F20008}}</td>
+                  <td class="txt_right">{{item.F15001}}</td>
                   <td class="txt_right">{{item.F20041}} %</td>
                   <td class="txt_right">{{item.F40544}}</td>
                   <td class="txt_right">{{item.F40545}}</td>
@@ -87,7 +90,7 @@ export default {
       // console.log("getIndexIntra : " + rinfo.seq);
       var vm = this;
 
-      axios.get(Config.base_url + "/user/marketinfo/getEtpIntraToday", {
+      axios.get(Config.base_url + "/user/marketinfo/getEtpHogaIntraToday", {
         params: vm.etpInfo
       }).then(function(response) {
         // console.log(response);
