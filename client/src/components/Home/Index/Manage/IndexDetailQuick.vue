@@ -269,27 +269,46 @@ export default {
             console.log( "ComIndexJongmok.vue -> fn_getIndexDetailList" );
             
             vm.$emit("showProgress", true);
-            axios.post(Config.base_url + "/user/index/getIndexDetailList", {
-                data:  rowData
-            }).then(response => {
 
-                if (response && response.data) {
-
-                    var indexBasic = response.data.indexBasic;
-                    if( indexBasic ) {
-                        vm.indexBasic   =  indexBasic;
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/getIndexDetailList"
+                        ,   "data"      :   rowData
+                        ,   "method"    :   "post"
                     }
+                ,   function(response) {
 
-                    var indexDetailList =   response.data.indexDetailList;
+                        try{
 
-                    vm.form.jisuSearchYn    =   "Y";
-                    vm.$emit( "fn_getIndexDetailList", vm.indexBasic, indexDetailList, vm.form );
-                }
-                vm.$emit("showProgress", false);
-            }).catch(error => {
-                vm.$emit( "showProgress", false );
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
-            });
+                            if (response && response.data) {
+
+                                var indexBasic = response.data.indexBasic;
+                                if( indexBasic ) {
+                                    vm.indexBasic   =  indexBasic;
+                                }
+
+                                var indexDetailList =   response.data.indexDetailList;
+
+                                vm.form.jisuSearchYn    =   "Y";
+                                vm.$emit( "fn_getIndexDetailList", vm.indexBasic, indexDetailList, vm.form );
+                            }
+                            vm.$emit("showProgress", false);
+
+                        }catch(ex) {
+                            vm.$emit("showProgress", false);
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+
+                        vm.$emit( "showProgress", false );
+                        
+                        if( error ) {
+                            vm.$emit("showMessageBox", '확인',error,{},4);
+                        }
+                    }
+            );
+
         },        
 
 
@@ -309,32 +328,49 @@ export default {
             }
 
             vm.$emit( "showProgress", true ); 
-            axios.post(Config.base_url + "/user/index/getIndexJongmokList", {
-                data: {
-                    searchData : vm.form.jongmokSearch
-                }
-            }).then(response => {
 
-                vm.$emit( "showProgress", false ); 
-                if (response && response.data) {
-                    var jongmokDataList = response.data.dataList;
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/getIndexJongmokList"
+                        ,   "data"      :   {
+                                searchData : vm.form.jongmokSearch
+                            }
+                        ,   "method"    :   "post"
+                    }
+                ,   function(response) {
 
-                    var msg = ( response.data.msg ? response.data.msg : "" );
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.$emit("showMessageBox", '확인', msg,{},1);
-                            return  false;
+                        try{
+
+                            vm.$emit( "showProgress", false ); 
+                            if (response && response.data) {
+                                var jongmokDataList = response.data.dataList;
+
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.$emit("showMessageBox", '확인', msg,{},1);
+                                        return  false;
+                                    }
+                                }
+
+                                vm.form.jisuSearchYn =   "N";
+                                vm.$emit( "fn_getIndexJongmokList", jongmokDataList, vm.form );
+                            }
+
+                        }catch(ex) {
+                            vm.$emit( "showProgress", false ); 
+                            console.log( "error", ex );
                         }
                     }
+                ,   function(error) {
 
-                    vm.form.jisuSearchYn =   "N";
-                    vm.$emit( "fn_getIndexJongmokList", jongmokDataList, vm.form );
-                }
-               
-            }).catch(error => {
-                vm.$emit( "showProgress", false ); 
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
-            });
+                        vm.$emit( "showProgress", false );
+                        
+                        if( error ) {
+                            vm.$emit("showMessageBox", '확인',error,{},4);
+                        }
+                    }
+            );
             
         },
 
@@ -350,36 +386,53 @@ export default {
             console.log( "ComIndexJongmok.vue -> fn_getIndexListByFirst" );
 
             vm.$emit( "showProgress", true ); 
-            axios.post(Config.base_url + "/user/index/getIndexList", {
-                data: {
-                    firstYn : 'Y'
-                }
-            }).then(response => {
 
-                vm.$emit( "showProgress", false ); 
-                if (response && response.data) {
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/getIndexList"
+                        ,   "data"      :   {
+                                firstYn : 'Y'
+                            }
+                        ,   "method"    :   "post"
+                    }
+                ,   function(response) {
 
-                    var msg = ( response.data.msg ? response.data.msg : "" );
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.$emit("showMessageBox", '확인', msg,{},1);
-                            return  false;
+                        try{
+
+                            vm.$emit( "showProgress", false ); 
+                            if (response && response.data) {
+
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.$emit("showMessageBox", '확인', msg,{},1);
+                                        return  false;
+                                    }
+                                }
+
+                                var indexDataList = response.data.dataList;
+                                if( indexDataList && indexDataList.length == 1 ) {
+                                    var rowData = indexDataList[0];
+
+                                    vm.form.jisuSearchYn =   "Y";
+                                    vm.fn_getIndexDetailList( rowData, vm.form );
+                                }
+                            }
+
+                        }catch(ex) {
+                            vm.$emit( "showProgress", false ); 
+                            console.log( "error", ex );
                         }
                     }
+                ,   function(error) {
 
-                    var indexDataList = response.data.dataList;
-                    if( indexDataList && indexDataList.length == 1 ) {
-                        var rowData = indexDataList[0];
-
-                        vm.form.jisuSearchYn =   "Y";
-                        vm.fn_getIndexDetailList( rowData, vm.form );
+                        vm.$emit( "showProgress", false );
+                        
+                        if( error ) {
+                            vm.$emit("showMessageBox", '확인',error,{},4);
+                        }
                     }
-                }
-                
-            }).catch(error => {
-                vm.$emit( "showProgress", false ); 
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);             
-            });
+            );
             
         },
 
@@ -399,33 +452,50 @@ export default {
             }
 
             vm.$emit( "showProgress", true ); 
-            axios.post(Config.base_url + "/user/index/getIndexList", {
-                data: {
-                    searchData : vm.form.jisuSearch
-                }
-            }).then(response => {
 
-                vm.$emit( "showProgress", false ); 
-                if (response && response.data) {
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/getIndexList"
+                        ,   "data"      :   {
+                                searchData : vm.form.jisuSearch
+                            }
+                        ,   "method"    :   "post"
+                    }
+                ,   function(response) {
 
-                    var msg = ( response.data.msg ? response.data.msg : "" );
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.$emit("showMessageBox", '확인', msg,{},1);
-                            return  false;
+                        try{
+
+                            vm.$emit( "showProgress", false ); 
+                            if (response && response.data) {
+
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.$emit("showMessageBox", '확인', msg,{},1);
+                                        return  false;
+                                    }
+                                }
+
+                                vm.indexDataList = response.data.dataList;
+
+                                jisuTable.clear().draw();
+                                jisuTable.rows.add( vm.indexDataList ).draw();                    
+                            }
+
+                        }catch(ex) {
+                            vm.$emit( "showProgress", false ); 
+                            console.log( "error", ex );
                         }
                     }
+                ,   function(error) {
 
-                    vm.indexDataList = response.data.dataList;
-
-                    jisuTable.clear().draw();
-                    jisuTable.rows.add( vm.indexDataList ).draw();                    
-                }
-                
-            }).catch(error => {
-                vm.$emit( "showProgress", false ); 
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);             
-            });
+                        vm.$emit( "showProgress", false );
+                        
+                        if( error ) {
+                            vm.$emit("showMessageBox", '확인',error,{},4);
+                        }
+                    }
+            );
            
         },
 

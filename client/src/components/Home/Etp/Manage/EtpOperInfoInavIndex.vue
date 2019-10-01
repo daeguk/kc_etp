@@ -287,62 +287,81 @@ export default {
             util.processing(vm.$refs.progress, true);
             console.log( "EtpOperInfoInavIndex.vue -> getiNavIndexData" );
 
-            axios.get( Config.base_url + "/user/etp/getiNavIndexData", {
-                params: {
-                    //F16012 : 'KR7261110001',
-                    F16012 : F16012,
-                }
-            }).then(async function(response) {
 
-                if (response.data.success) {
-                    vm.etpBasic = response.data.etpBasic;
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/etp/getiNavIndexData"
+                        ,   "data"      :   {
+                                //F16012 : 'KR7261110001',
+                                F16012 : F16012,
+                            }
+                        ,   "method"    :   "get"
+                        ,   "paramKey"  :   "params"
+                    }
+                ,   async function(response) {
 
-                    // 전일 Nav
-                    vm.F03329 = vm.formatNumber(vm.etpBasic.F03329);
-                    // 추적수익률
-                    vm.F15302 = vm.formatNumber(vm.etpBasic.F15302);
-                    // 기준가
-                    vm.F15007 = vm.formatNumber(vm.etpBasic.F15318 - vm.etpBasic.F15319);
-                    // 매매기준율
-                    vm.F30819 = vm.formatNumber(vm.etpBasic.F30819);
-                    // 장전 기준윻
-                    vm.F30824 = vm.formatNumber(vm.etpBasic.F30824);
-                    
-                    // 기초 지수 현재가
-                    vm.F15318 = vm.formatNumber(vm.etpBasic.F15318);
-                    //기초지수 등락률 
-                    vm.F30823 = vm.formatDigit(vm.etpBasic.F30823, 5);
-                    // 전일ETP기초지수등락율
-                    vm.F34374 = vm.formatNumber(vm.etpBasic.F34374);
-                    // 예상배당수익률 : 배당율
-                    vm.F18101 = vm.etpBasic.F18101;
-                    // ETP 배율 
-                    vm.F18453 = vm.etpBasic.F18453;
-                    // 변동률 
-                    vm.F15004 = (vm.NtoS(vm.F30819) / vm.NtoS(vm.F30824)-1) * 100;
-                    vm.F15004 = vm.formatDigit(vm.F15004, 5);
-                    // (ETP계산유형: F, A, K, I)매매기준율 /장전 매매 기준율
-                    vm.F15004_1 = vm.formatDigit(vm.etpBasic.F30819 / vm.etpBasic.F30824, 5);
-                    // (ETP계산유형: T)(매매기준율 - 장전 매매 기준율)/ 장전매매기준율
-                    vm.F15004_2 = vm.formatDigit((vm.etpBasic.F30819 - vm.etpBasic.F30824) / vm.etpBasic.F30824, 5);
-                    // 예상배당 수익률
-                    vm.F18101 = vm.formatNumber(vm.etpBasic.F18101);
-                    // 환율 보정 계수 
-                    vm.F33128 =  vm.formatNumber(vm.etpBasic.F33128);
-                    // INav 계산결과
-                    vm.iNav = vm.formatNumber(0);    
-                    // INav 계산결과 율
-                    vm.iNavRate = vm.formatNumber(0);    
-                    
-                    vm.indexInavCal();
-                } else {
-                    util.processing(vm.$refs.progress, false);                
-                }
-            }).catch(error => {
-                console.log(error);
-                util.processing(vm.$refs.progress, false);   
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);             
-            });
+                        try{
+
+                            if (response.data.success) {
+                                vm.etpBasic = response.data.etpBasic;
+
+                                // 전일 Nav
+                                vm.F03329 = vm.formatNumber(vm.etpBasic.F03329);
+                                // 추적수익률
+                                vm.F15302 = vm.formatNumber(vm.etpBasic.F15302);
+                                // 기준가
+                                vm.F15007 = vm.formatNumber(vm.etpBasic.F15318 - vm.etpBasic.F15319);
+                                // 매매기준율
+                                vm.F30819 = vm.formatNumber(vm.etpBasic.F30819);
+                                // 장전 기준윻
+                                vm.F30824 = vm.formatNumber(vm.etpBasic.F30824);
+                                
+                                // 기초 지수 현재가
+                                vm.F15318 = vm.formatNumber(vm.etpBasic.F15318);
+                                //기초지수 등락률 
+                                vm.F30823 = vm.formatDigit(vm.etpBasic.F30823, 5);
+                                // 전일ETP기초지수등락율
+                                vm.F34374 = vm.formatNumber(vm.etpBasic.F34374);
+                                // 예상배당수익률 : 배당율
+                                vm.F18101 = vm.etpBasic.F18101;
+                                // ETP 배율 
+                                vm.F18453 = vm.etpBasic.F18453;
+                                // 변동률 
+                                vm.F15004 = (vm.NtoS(vm.F30819) / vm.NtoS(vm.F30824)-1) * 100;
+                                vm.F15004 = vm.formatDigit(vm.F15004, 5);
+                                // (ETP계산유형: F, A, K, I)매매기준율 /장전 매매 기준율
+                                vm.F15004_1 = vm.formatDigit(vm.etpBasic.F30819 / vm.etpBasic.F30824, 5);
+                                // (ETP계산유형: T)(매매기준율 - 장전 매매 기준율)/ 장전매매기준율
+                                vm.F15004_2 = vm.formatDigit((vm.etpBasic.F30819 - vm.etpBasic.F30824) / vm.etpBasic.F30824, 5);
+                                // 예상배당 수익률
+                                vm.F18101 = vm.formatNumber(vm.etpBasic.F18101);
+                                // 환율 보정 계수 
+                                vm.F33128 =  vm.formatNumber(vm.etpBasic.F33128);
+                                // INav 계산결과
+                                vm.iNav = vm.formatNumber(0);    
+                                // INav 계산결과 율
+                                vm.iNavRate = vm.formatNumber(0);    
+                                
+                                vm.indexInavCal();
+                            } else {
+                                util.processing(vm.$refs.progress, false);
+                            }
+
+                        }catch(ex) {
+                            util.processing(vm.$refs.progress, false);
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+
+                        util.processing(vm.$refs.progress, false);
+
+                        if( error ) {
+                            vm.$emit("showMessageBox", '확인', error ,{},4);
+                        }                            
+                    }
+            );            
+
         },
         indexInavCal : function() {
             var vm = this;

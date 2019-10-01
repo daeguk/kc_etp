@@ -125,43 +125,58 @@ export default {
             vm.indexList    =   [];
 
             vm.$emit( "fn_showProgress", true );
-            axios.post( url, {
-                data: {
-                    arrOverseaMarketList    :   vm.arrOverseaMarketList
-                }
-            }).then(function(response) {
-                // console.log(response);
 
-                vm.$emit( "fn_showProgress", false );
-                vm.result_cnt = 0;
-                if (response.data) {
+            util.axiosCall(
+                    {
+                            "url"       :   url
+                        ,   "data"      :   {   
+                                arrOverseaMarketList    :   vm.arrOverseaMarketList 
+                            }
+                        ,   "method"    :   "post"
+                    }
+                ,   function(response) {
 
-                    var msg = ( response.data.msg ? response.data.msg : "" );
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.$emit("showMessageBox", '확인', msg,{},1);
-                            return  false;
+                        try{
+
+                            vm.$emit( "fn_showProgress", false );
+
+                            vm.result_cnt = 0;
+                            if (response.data) {
+
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.$emit("showMessageBox", '확인', msg,{},1);
+                                        return  false;
+                                    }
+                                }
+
+                                var dataList = response.data.dataList;
+
+                                if( dataList && dataList.length > 0 ) {
+                                    tableOperIndex.rows.add( dataList ).draw();
+
+                                    vm.indexBasic   =   dataList[0];
+
+                                    vm.fmt_F12506   =   dataList[0].fmt_F12506;
+                                    vm.result_cnt   =   util.formatInt( dataList.length );
+
+                                    vm.indexList    =   dataList;
+                                }
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
                         }
                     }
+                ,   function(error) {
+                        vm.$emit( "fn_showProgress", false );
 
-                    var dataList = response.data.dataList;
-
-                    if( dataList && dataList.length > 0 ) {
-                        tableOperIndex.rows.add( dataList ).draw();
-
-                        vm.indexBasic   =   dataList[0];
-
-                        vm.fmt_F12506   =   dataList[0].fmt_F12506;
-                        vm.result_cnt   =   util.formatInt( dataList.length );
-
-                        vm.indexList    =   dataList;
+                        if( error ) {
+                            vm.$emit("showMessageBox", '확인', error ,{},4);
+                        }
                     }
-                }
-
-            }).catch(error => {
-                vm.$emit( "fn_showProgress", false );
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
-            });
+            );
         },
 
         fn_setEtpOperIndexOversea : function( paramData ) {

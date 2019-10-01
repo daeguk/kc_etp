@@ -164,58 +164,77 @@ export default {
         getIndexSummaryInfo: function() {
             var vm = this;
             util.processing(vm.$refs.progress, true);
-            axios
-                .post(Config.base_url + "/user/index/getIndexSummaryInfo", {
-                    params: {}
-                })
-                .then(function(response) {
-                    // console.log(response);
-                    if (response.data.success == false) {
-                        vm.$root.$confirm.open('', '지수정보가 없습니다.', {}, 1);
-                    } else {
-                        if(response.data.results1[0]) {
-                            console.log(response.data.results1);
-                            console.log(response.data.results1[0].F16002);
 
-                            vm.cardItem1.name = response.data.results1[0].F16002;
-                            vm.chartItem1.code = response.data.results1[0].F16013;
-
-                            
-                            //debugger;
-                            vm.chartItem1.market_id = response.data.results1[0].market_id;
-
-                            vm.cardItem1.subTitle =
-                                response.data.results1[0].F16002;
-                            vm.cardItem1.close_idx =
-                                response.data.results1[0].F15001;
-                            vm.cardItem1.fluc_idx =
-                                response.data.results1[0].F15472;
-                            vm.cardItem1.fluc_rate =
-                                response.data.results1[0].F15004;
-                        }
-
-                        if(response.data.results2[0]) {
-                            vm.cardItem2.name = response.data.results2[0].F16002;
-                            vm.chartItem2.code = response.data.results2[0].F16013;
-                            vm.chartItem2.market_id = response.data.results2[0].MARKET_ID;
-                            vm.cardItem2.subTitle =
-                                response.data.results2[0].F16002;
-                            vm.cardItem2.close_idx =
-                                response.data.results2[0].F15001;
-                            vm.cardItem2.fluc_idx =
-                                response.data.results2[0].F15472;
-                            vm.cardItem2.fluc_rate =
-                                response.data.results2[0].F15004;
-                        }
-                        
-                        vm.$EventBus.$emit("getIndexSummaryHist", "loading");
-                        
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/getIndexSummaryInfo"
+                        ,   "data"      :   {}
+                        ,   "method"    :   "post"
+                        ,   "paramKey"  :   "params"
                     }
-                    util.processing(vm.$refs.progress, false);
-                }).catch(error => {
-                    util.processing(vm.$refs.progress, false);
-                    vm.$root.$confirm.open('확인','서버로 부터 응답을 받지 못하였습니다.',{},4);             
-                });
+                ,   function(response) {
+
+                        try{
+
+                            if (response.data.success == false) {
+                                vm.$root.$confirm.open('', '지수정보가 없습니다.', {}, 1);
+                            } else {
+                                if(response.data.results1[0]) {
+                                    console.log(response.data.results1);
+                                    console.log(response.data.results1[0].F16002);
+
+                                    vm.cardItem1.name = response.data.results1[0].F16002;
+                                    vm.chartItem1.code = response.data.results1[0].F16013;
+
+                                    
+                                    //debugger;
+                                    vm.chartItem1.market_id = response.data.results1[0].market_id;
+
+                                    vm.cardItem1.subTitle =
+                                        response.data.results1[0].F16002;
+                                    vm.cardItem1.close_idx =
+                                        response.data.results1[0].F15001;
+                                    vm.cardItem1.fluc_idx =
+                                        response.data.results1[0].F15472;
+                                    vm.cardItem1.fluc_rate =
+                                        response.data.results1[0].F15004;
+                                }
+
+                                if(response.data.results2[0]) {
+                                    vm.cardItem2.name = response.data.results2[0].F16002;
+                                    vm.chartItem2.code = response.data.results2[0].F16013;
+                                    vm.chartItem2.market_id = response.data.results2[0].MARKET_ID;
+                                    vm.cardItem2.subTitle =
+                                        response.data.results2[0].F16002;
+                                    vm.cardItem2.close_idx =
+                                        response.data.results2[0].F15001;
+                                    vm.cardItem2.fluc_idx =
+                                        response.data.results2[0].F15472;
+                                    vm.cardItem2.fluc_rate =
+                                        response.data.results2[0].F15004;
+                                }
+                                
+                                vm.$EventBus.$emit("getIndexSummaryHist", "loading");
+                                
+                            }
+                            util.processing(vm.$refs.progress, false);
+
+                        }catch(ex) {
+                            util.processing(vm.$refs.progress, false);
+
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+
+                        util.processing(vm.$refs.progress, false);
+
+                        if ( error ) {
+                            vm.$root.$confirm.open('확인', error,{},4);
+                        }
+                    }
+            ); 
+
         }, 
         showMessageBox: function(title, msg, option, gubun) {
             this.$root.$confirm.open(title,msg, option, gubun);

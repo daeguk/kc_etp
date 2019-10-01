@@ -136,6 +136,7 @@
                 <EtpOperInfoInavIndex   v-if="showEtpOperIndexInavCalcPop"
 
                                         :paramData = "paramData"
+                                        @showMessageBox="showMessageBox"
                                         @fn_close = "fn_close">
                 </EtpOperInfoInavIndex>
             </v-dialog>

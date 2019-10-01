@@ -194,7 +194,8 @@ export default {
         // X Axis 데이터
         var stepX = Math.floor(_dnum / 5);
         for(var i=0; i < 5; i++) {
-          vm.xAxisDd[i] = vm.sArr[stepX*i].dd;
+//          vm.xAxisDd[i] = vm.sArr[stepX*i].dd;
+          vm.xAxisDd[i] = "";
           vm.xAxisTt[i] = vm.sArr[stepX*i].tt;
         }
 
@@ -312,8 +313,8 @@ export default {
         
         for(var i=0; i < 5; i++) {
           // console.log("xAxis : " + vm.xAxisDd[i] + " " + vm.xAxisTt[i]);
-          c.fillText(vm.xAxisDd[i], vm.crect.x1 + 35 + (vm.crect.x2-vm.crect.x1) / 5 * i, vm.crect.y2+10);
-          c.fillText(vm.xAxisTt[i], vm.crect.x1 + 35 + (vm.crect.x2-vm.crect.x1) / 5 * i, vm.crect.y2+25);
+          //c.fillText(vm.xAxisDd[i], vm.crect.x1 + 35 + (vm.crect.x2-vm.crect.x1) / 5 * i, vm.crect.y2);
+          c.fillText(vm.xAxisTt[i], vm.crect.x1 + 35 + (vm.crect.x2-vm.crect.x1) / 5 * i, vm.crect.y2+15);
         }
 
         this.draw_chart_image = c.getImageData(this.crect.x1, this.crect.y1-10, this.crect.x2, this.crect.y2);
@@ -381,11 +382,11 @@ export default {
         c.fillStyle = "black";
         c.textAlign = "right";
         c.font = '11px Roboto, sans-serif, Noto-Sans';
-        c.fillText(item.dd, twpos+tt_wlen, hpos+31);
-        c.fillText(item.tt, twpos+tt_wlen, hpos+43);
-        c.fillText("Sell : " + item.vv1, twpos+tt_wlen, hpos+55);
-        c.fillText("iNav : " + item.vv, twpos+tt_wlen, hpos+67);
-        c.fillText("Buy : " + item.vv2, twpos+tt_wlen, hpos+79);
+//        c.fillText(item.dd, twpos+tt_wlen, hpos+31);
+        c.fillText(item.tt, twpos+tt_wlen, hpos+33);
+        c.fillText("Sell : " + item.vv1, twpos+tt_wlen, hpos+45);
+        c.fillText("iNav : " + item.vv, twpos+tt_wlen, hpos+57);
+        c.fillText("Buy : " + item.vv2, twpos+tt_wlen, hpos+69);
         // 포인트 원 그리기
         if((wpos - this.crect.x1) > 5) {   // Y-Axis 침범 방지
 

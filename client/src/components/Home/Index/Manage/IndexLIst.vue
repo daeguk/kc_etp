@@ -146,32 +146,47 @@ export default {
     methods: {
         getInfoIndexList: function() {
             console.log("getInfoIndexList");
+
+            var vm = this;
             
             util.processing(this.$refs.progress, true);
-            axios.get(Config.base_url + "/user/index/getInfoIndexList", {
-                    params: {
-                    }
-                }).then(response => {
-                    // console.log(response);
-                    if (response.data.success == false) {
-                        this.$refs.confirm.open('', '관리지수 목록이 없습니다', {}, 1);
-                    } else {
-                        
-                        var items = response.data.results;  
-                        
-                        //console.log("response=" + JSON.stringify(items));
-                        this.results = items;
-                        this.list_cnt = this.results.length;
 
-                        table.clear().draw();
-                        table.rows.add(this.results).draw();
-                        
-                    }                    
-                    util.processing(this.$refs.progress, false);
-                }).catch(error => {
-                    util.processing(this.$refs.progress, false);
-                    this.$refs.confirm.open('', '서버로 부터 응답을 받지 못하였습니다.', {}, 1);
-                });
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/getInfoIndexList"
+                        ,   "data"      :   {
+                            }
+                        ,   "method"    :   "get"
+                        ,   "paramKey"  :   "params"
+                    }
+                ,   function(response) {
+                        // console.log(response);
+                        if (response.data.success == false) {
+                            vm.$refs.confirm.open('', '관리지수 목록이 없습니다', {}, 1);
+                        } else {
+                            
+                            var items = response.data.results;  
+                            
+                            //console.log("response=" + JSON.stringify(items));
+                            vm.results = items;
+                            vm.list_cnt = vm.results.length;
+
+                            table.clear().draw();
+                            table.rows.add(vm.results).draw();
+                            
+                        }                    
+                        util.processing(vm.$refs.progress, false);
+                    }
+                ,   function(error) {
+
+                        util.processing(vm.$refs.progress, false);
+
+                        if( error ) {
+                            vm.$refs.confirm.open('', error, {}, 1);
+                        }
+                    }
+            );
+
         }, 
         getReplace: function(text) {
             if (text) {

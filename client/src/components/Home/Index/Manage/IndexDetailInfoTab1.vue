@@ -92,6 +92,7 @@
 
 <script>
 import Config from '@/js/config.js';
+import util       from "@/js/util.js";  
 
 export default {
     props: ["basicData"],
@@ -158,24 +159,44 @@ export default {
         getIndexBaseInfo: function() {
             var vm = this;
             console.log("getIndexBaseInfo");
-            
-            axios.get(Config.base_url + "/user/index/getIndexBaseInfo", {
-                    params: {
-                        jisu_cd : vm.param.jisu_cd,
-                        market_id : vm.param.market_id,
-                        large_type : vm.param.large_type
+
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/getIndexBaseInfo"
+                        ,   "data"      :   {
+                                jisu_cd : vm.param.jisu_cd,
+                                market_id : vm.param.market_id,
+                                large_type : vm.param.large_type
+                            }
+                        ,   "method"    :   "get"
+                        ,   "paramKey"  :   "params"
                     }
-            }).then(response => {
-                // console.log(response);
-                if (response.data.success == false) {
-                    alert("지수정보가 없습니다.");
-                } else {
-                    var items = response.data.results;
-                    vm.index_item = items[0];
-                    console.log("response=" + JSON.stringify(vm.index_item));
-                    //this.list_cnt = this.results.length;
-                }
-            });
+                ,   function(response) {
+
+                        try{
+
+                            // console.log(response);
+                            if (response.data.success == false) {
+                                vm.$emit("showMessageBox", '확인', "지수정보가 없습니다." ,{},1 );
+                            } else {
+                                var items = response.data.results;
+                                vm.index_item = items[0];
+                                console.log("response=" + JSON.stringify(vm.index_item));
+                                //this.list_cnt = this.results.length;
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+
+                        if( error ) {
+                            vm.$emit("showMessageBox", '확인', error ,{},4 );
+                        }
+                    }
+            );
+
 
         },   
         getIndexInEtpInfo: function() {

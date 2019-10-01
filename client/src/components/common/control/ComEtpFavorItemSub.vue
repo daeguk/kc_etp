@@ -68,6 +68,7 @@
       </v-list-tile-content>
     </v-list>
     <ProgressBar ref="progress"></ProgressBar>
+    <ConfirmDialog ref="confirm2"></ConfirmDialog>
   </v-container>
 </template>
 
@@ -81,6 +82,7 @@ import _ from "lodash";
 import Config from "@/js/config.js";
 import util       from "@/js/util.js";
 import ProgressBar from "@/components/common/ProgressBar.vue";
+import ConfirmDialog                from "@/components/common/ConfirmDialog.vue";
 
 var publish_etp_table = null;
 var all_etp_table = null;
@@ -109,7 +111,8 @@ export default {
         };
     },
     components: {
-        ProgressBar : ProgressBar
+        ProgressBar : ProgressBar,
+        ConfirmDialog: ConfirmDialog
     },
     computed: {
         
@@ -335,17 +338,37 @@ export default {
                 market_id = data.MARKET_ID;
             }
 
-            axios.post(Config.base_url + "/user/common/deleteFavorItem", {
-                params: {
-                    gubun : data.GUBUN,
-                    jisu_cd : jisu_cd,
-                    market_id : market_id
-                }
-            }).then(function(response) {
-                if (response.data.success == false) {
-                    vm.$emit("showMessageBox", '확인','삭제 중 오류가 발생했습니다.',{},1);
-                } 
-            });
+
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/common/deleteFavorItem"
+                        ,   "data"      :   {
+                                gubun       :   data.GUBUN,
+                                jisu_cd     :   jisu_cd,
+                                market_id   :   market_id
+                            }
+                        ,   "method"    :   "post"
+                        ,   "paramKey"  :   "params"
+                    }
+                ,   function(response) {
+
+                        try{
+
+                            if (response.data.success == false) {
+                                if ( vm.$refs.confirm2.open( '확인', '삭제 중 오류가 발생했습니다.', {}, 1 ) ) {}
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+
+                        if( error ) {
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                    }
+            );
 
         },
         /* 관심 종목 추가 */
@@ -383,15 +406,34 @@ export default {
             }    
 
 
-            axios.post(Config.base_url + "/user/common/insertFavorItem", {
-                    params: {
-                        addFavorItems : addFavorItems
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/common/insertFavorItem"
+                        ,   "data"      :   {
+                                addFavorItems   :   addFavorItems
+                            }
+                        ,   "method"    :   "post"
+                        ,   "paramKey"  :   "params"
                     }
-            }).then(function(response) {
-                if (response.data.success == false) {
-                    vm.$emit("showMessageBox", '확인','저장 중 오류가 발생했습니다.',{},4);
-                } 
-            });
+                ,   function(response) {
+
+                        try{
+
+                            if (response.data.success == false) {
+                                if ( vm.$refs.confirm2.open( '확인', '처리 중 오류가 발생했습니다.', {}, 1 ) ) {}
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+
+                        if( error ) {
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                    }
+            );
 
         },
         /* 종목팝업 show */
@@ -404,66 +446,105 @@ export default {
 
         /* 전체 종목 etn 종목리스트 */
         getPublicEtpList: function() {
+            var vm = this;
             util.processing(this.$refs.progress, true);
             // console.log("etn_grid");
-            axios.get(Config.base_url + "/user/common/getPublishEtpList", {
-                params: {
-                }
-            }).then(response => {
-                if( this.$refs.progress ) {
-                    util.processing(this.$refs.progress, false);
-                }
-                
-                // console.log(response);
-                if (response.data.success == false) {
-                    this.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
-                } else {
-                    var items = response.data.results;
-                    this.pubList = items;
-                    publish_etp_table.clear().draw();
-                    publish_etp_table.rows.add(items).draw();
-                                        
-                }
 
-            }).catch(error => {
-                if( this.$refs.progress ) {
-                    util.processing(this.$refs.progress, false);
-                }
-                this.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
-            });
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/common/getPublishEtpList"
+                        ,   "data"      :   {}
+                        ,   "method"    :   "get"
+                        ,   "paramKey"  :   "params"
+                    }
+                ,   function(response) {
+
+                        try{
+
+                            if( vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }
+                            
+                            // console.log(response);
+                            if (response.data.success == false) {
+                                if ( vm.$refs.confirm2.open( '확인', '종목정보가 없습니다.', {}, 1 ) ) {}
+                            } else {
+                                var items = response.data.results;
+                                vm.pubList = items;
+                                publish_etp_table.clear().draw();
+                                publish_etp_table.rows.add(items).draw();
+                                                    
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+
+                        if( vm.$refs.progress ) {
+                            util.processing(vm.$refs.progress, false);
+                        }                    
+
+                        if( error ) {
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                    }
+            );
+
         }, 
 
         /* 전체 종목 etf 종목리스트 */
         getALLEtpList: function() {
+
+            var vm = this;
+
             // console.log("etn_grid");
             util.processing(this.$refs.progress, true);
-            axios.get(Config.base_url + "/user/common/getALLEtpList", {
-                params: {
-                }
-            }).then(response => {
 
-                if( this.$refs.progress ) {
-                    util.processing(this.$refs.progress, false);
-                }
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/common/getALLEtpList"
+                        ,   "data"      :   {}
+                        ,   "method"    :   "get"
+                        ,   "paramKey"  :   "params"
+                    }
+                ,   function(response) {
 
-                // console.log(response);
-                if (response.data.success == false) {
-                    this.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
-                } else {
-                    var items = response.data.results;
-                    this.allList = items;
+                        try{
 
-                    all_etp_table.clear().draw();
-                    all_etp_table.rows.add(items).draw();
-            
-                }
-                
-            }).catch(error => {
-                if( this.$refs.progress ) {
-                    util.processing(this.$refs.progress, false);
-                }
-                this.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
-            });
+                            if( vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }
+                            
+                            // console.log(response);
+                            if (response.data.success == false) {
+                                if ( vm.$refs.confirm2.open( '확인', '종목정보가 없습니다.', {}, 1 ) ) {}
+                            } else {
+                                var items = response.data.results;
+                                vm.allList = items;
+
+                                all_etp_table.clear().draw();
+                                all_etp_table.rows.add(items).draw();
+                        
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+
+                        if( vm.$refs.progress ) {
+                            util.processing(vm.$refs.progress, false);
+                        }                    
+
+                        if( error ) {
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                    }
+            );
+
         }, 
 
         

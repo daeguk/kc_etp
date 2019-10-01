@@ -28,6 +28,11 @@
 
         </v-dialog>
 
+    <v-flex>
+        <ProgressBar ref="progress"></ProgressBar>
+        <ConfirmDialog ref="confirm2"></ConfirmDialog>
+    </v-flex>           
+
     </v-container>
 </template>
 
@@ -37,8 +42,13 @@
 import $      from 'jquery'
 import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
+import util       from "@/js/util.js";
 
 import Config from '@/js/config.js';
+import ConfirmDialog                from "@/components/common/ConfirmDialog.vue";
+
+import ProgressBar from "@/components/common/ProgressBar.vue";
+
 
 var tableIndexErrorList = null;
 
@@ -55,7 +65,10 @@ export default {
                         +   new Date().getDate(),            
         };
     },
-    components : {},
+    components : {
+        ProgressBar: ProgressBar,
+        ConfirmDialog: ConfirmDialog        
+    },
     mounted () {
 
         var vm = this;
@@ -101,26 +114,45 @@ export default {
 
             var vm = this;
 
-            axios.post(Config.base_url + "/user/etp/getEtpOperIndexError", {
-                data:  vm.paramData
-            }).then(response => {
+            util.processing(vm.$refs.progress, true);
 
-                if (response && response.data) {
-
-                    var indexBasic = response.data.indexBasic;
-                    if( indexBasic ) {
-                        vm.indexBasic   =  indexBasic;
-                    }                    
-
-                    var dataList =   response.data.dataList;
-
-                    if( dataList ) {
-                        tableIndexErrorList.clear().draw();
-                        tableIndexErrorList.rows.add( dataList ).draw();
-                        tableIndexErrorList.draw();
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/etp/getEtpOperIndexError"
+                        ,   "data"      :   vm.paramData
+                        ,   "method"    :   "post"
                     }
-                }
-            });            
+                ,   function(response) {
+                        util.processing(vm.$refs.progress, false);
+
+                        try{
+
+                            if (response && response.data) {
+
+                                var indexBasic = response.data.indexBasic;
+                                if( indexBasic ) {
+                                    vm.indexBasic   =  indexBasic;
+                                }                    
+
+                                var dataList =   response.data.dataList;
+
+                                if( dataList ) {
+                                    tableIndexErrorList.clear().draw();
+                                    tableIndexErrorList.rows.add( dataList ).draw();
+                                    tableIndexErrorList.draw();
+                                }
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+                        util.processing(vm.$refs.progress, false);
+                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                    }
+            );            
+
         },
 
         fn_closePop() {

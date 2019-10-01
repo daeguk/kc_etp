@@ -33,7 +33,7 @@ module.exports = {
         { file: './user/etp/etpregister', path: '/user/etp/updateEtpRegister', method: 'updateEtpRegister', session: 'check', type: 'post' },
 
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpBasic', method: 'getEtpBasic', session: 'uncheck', type: 'post' },
-        { file: './user/etp/etpDetail', path: '/user/etp/getEtpPerformance', method: 'getEtpPerformance', session: 'check', type: 'post' },
+//      { file: './user/etp/etpDetail', path: '/user/etp/getEtpPerformance', method: 'getEtpPerformance', session: 'check', type: 'post' },
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpWeightList', method: 'getEtpWeightList', session: 'uncheck', type: 'get' },
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpMultiFactor', method: 'getEtpMultiFactor', session: 'uncheck', type: 'get' },
         { file: './user/etp/etpDetail', path: '/user/etp/getEtpFundFlowRank', method: 'getEtpFundFlowRank', session: 'uncheck', type: 'get' },
@@ -42,7 +42,7 @@ module.exports = {
         { file: './user/etp/etpOper', path: '/user/etp/getEtpOperIndex', method: 'getEtpOperIndex', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getEtpOperIndexOversea', method: 'getEtpOperIndexOversea', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getEtpOperIndexError', method: 'getEtpOperIndexError', session: 'check', type: 'post' },
-        { file: './user/etp/etpOper', path: '/user/etp/getEtpOperPdf', method: 'getEtpOperPdf', session: 'uncheck', type: 'post' },
+        { file: './user/etp/etpOper', path: '/user/etp/getEtpOperPdf', method: 'getEtpOperPdf', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getEtpOperPdfByRateTitle', method: 'getEtpOperPdfByRateTitle', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getEtpOperPdfByRate', method: 'getEtpOperPdfByRate', session: 'check', type: 'post' },
         { file: './user/etp/etpOper', path: '/user/etp/getEtpOperPdfModify', method: 'getEtpOperPdfModify', session: 'check', type: 'post' },
@@ -90,8 +90,8 @@ module.exports = {
         { file: './user/index/indexDetail', path: '/user/index/getIndexDetailList', method: 'getIndexDetailList', session: 'check', type: 'post' },
         { file: './user/index/indexDetail', path: '/user/index/getIndexFixList', method: 'getIndexFixList', session: 'check', type: 'post' },
 
-        { file: './user/index/indexmanage', path: '/user/index/getIndexVueTableTestList', method: 'getIndexVueTableTestList', session: 'uncheck', type: 'get' },
-        { file: './user/index/indexmanage', path: '/user/index/getIndexToastGridTestList', method: 'getIndexToastGridTestList', session: 'uncheck', type: 'get' },
+//        { file: './user/index/indexmanage', path: '/user/index/getIndexVueTableTestList', method: 'getIndexVueTableTestList', session: 'uncheck', type: 'get' },
+//        { file: './user/index/indexmanage', path: '/user/index/getIndexToastGridTestList', method: 'getIndexToastGridTestList', session: 'uncheck', type: 'get' },
 
         { file: './user/index/indexRegister', path: '/user/index/getJisuDuplCheck', method: 'getJisuDuplCheck', session: 'check', type: 'post' },
         { file: './user/index/indexRegister', path: '/user/index/getDomainInst', method: 'getDomainInst', session: 'check', type: 'post' },

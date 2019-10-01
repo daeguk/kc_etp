@@ -318,53 +318,68 @@ export default {
 
             vm.$emit( "fn_showProgress", true );
 
-            axios.post(Config.base_url + "/user/etp/getEtpOperInfo", {
-                data: {
-                    F34241 : vm.stateInfo.gubun
-                }
-            }).then(function(response) {
-                console.log(response);
 
-                vm.$emit( "fn_showProgress", false );
-                if (response.data) {
-                    var dataList = response.data.dataList;
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/etp/getEtpOperInfo"
+                        ,   "data"      :   {
+                                F34241  :   vm.stateInfo.gubun
+                            }
+                        ,   "method"    :   "post"
+                    }
+                ,   function(response) {
 
-                    vm.result_cnt   =   0;
+                        vm.$emit( "fn_showProgress", false );
 
-                    var msg = ( response.data.msg ? response.data.msg : "" );
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.showMessageBox('확인', msg,{},1);
-                            return  false;
+                        try{
+
+                            if (response.data) {
+                                var dataList = response.data.dataList;
+
+                                vm.result_cnt   =   0;
+
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.showMessageBox('확인', msg,{},1);
+                                        return  false;
+                                    }
+                                }
+
+                                if( dataList && dataList.length > 0 ) {
+
+                                    if( vm.stateInfo.pageState == "performance" ) {
+                                        table02.rows.add( dataList ).draw();
+
+                                        vm.etpBasic     =   table02.rows().data()[0];
+                                    }else{
+                                        table01.rows.add( dataList ).draw();
+
+                                        vm.etpBasic     =   table01.rows().data()[0];
+                                    }
+
+            //                        vm.etpBasic     =   dataList[0];
+                                    vm.fmt_F12506   =   vm.etpBasic.fmt_F12506;
+                                    vm.result_cnt   =   util.formatInt( dataList.length );
+
+                                    vm.$emit( "fn_setFirstData", vm.etpBasic );
+                                }
+                                
+                                vm.$emit( "fn_setStateInfo", vm.stateInfo );
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
                         }
                     }
+                ,   function(error) {
+                        vm.$emit( "fn_showProgress", false );
 
-                    if( dataList && dataList.length > 0 ) {
-
-                        if( vm.stateInfo.pageState == "performance" ) {
-                            table02.rows.add( dataList ).draw();
-
-                            vm.etpBasic     =   table02.rows().data()[0];
-                        }else{
-                            table01.rows.add( dataList ).draw();
-
-                            vm.etpBasic     =   table01.rows().data()[0];
-                        }
-
-//                        vm.etpBasic     =   dataList[0];
-                        vm.fmt_F12506   =   vm.etpBasic.fmt_F12506;
-                        vm.result_cnt   =   util.formatInt( dataList.length );
-
-                        vm.$emit( "fn_setFirstData", vm.etpBasic );
+                        if( error ) {
+                            vm.$emit("showMessageBox", '확인', error ,{},4);
+                        }                        
                     }
-                    
-                    vm.$emit( "fn_setStateInfo", vm.stateInfo );
-                }
-
-            }).catch(error => {
-                vm.$emit( "fn_showProgress", false );
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
-            });
+            );
         },
 
         /*

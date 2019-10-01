@@ -143,6 +143,8 @@ export default {
             var vm = this;
 
             vm.editYn = false;
+            vm.refreshYn = false;
+
             vm.$nextTick().then( () => {
                 vm.refreshYn = true;
                 vm.$EventBus.$emit( "indexRegisterMain_registration_call", "clear" );
@@ -154,7 +156,9 @@ export default {
         },
 
         fn_showProgress: function(visible) {
-            util.processing(this.$refs.progress, visible);
+            if( this.$refs && this.$refs.progress ) {
+                util.processing(this.$refs.progress, visible);
+            }
         }
     }
 };

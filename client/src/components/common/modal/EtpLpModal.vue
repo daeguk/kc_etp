@@ -25,7 +25,7 @@
       <div class="graph_01_w">
         <div class="sub_title_num">
           {{formatInt(etpInfo.F15001)}}
-          <span :style="etpInfo.F15472_Style">{{formatInt(etpInfo.F15472)}}({{etpInfo.F15004}})%</span>
+          <span :style="etpInfo.F15472_Style">{{formatInt(etpInfo.F15472)}}({{etpInfo.F15004}}%)</span>
           <!--
           <span>{{etpInfo.F15472}}({{etpInfo.F15004}})%</span>
           -->
@@ -36,41 +36,41 @@
             <v-flex>
               <ul>
                 <li>스프레드평균</li>
-                <li>{{etpInfo.avgF33294}}%</li>
+                <li class="number">{{etpInfo.avgF33294}}%</li>
               </ul>
             </v-flex>
             <v-flex>
               <ul>
                 <li>iNav</li>
-                <li> {{formatInt(etpInfo.F15602)}}</li>
-                <li style="font-size:11px;"> <span :style="etpInfo.F30818_Style">{{etpInfo.F30818}}%</span></li>
+                <li class="number"> {{formatInt(etpInfo.F15602)}}</li>
+                <li class="number2"> <span :style="etpInfo.F30818_Style">{{etpInfo.F30818}}%</span></li>
               </ul>
             </v-flex>
             <v-flex>
               <ul>
                 <li>기초지수</li>
-                <li> {{parseFloat(etpInfo.F15318).toFixed(2)}}</li>
-                <li style="font-size:11px;"> <span :style="etpInfo.F30823_Style">{{etpInfo.F30823}}%</span></li>
+                <li class="number"> {{parseFloat(etpInfo.F15318).toFixed(2)}}</li>
+                <li class="number2"> <span :style="etpInfo.F30823_Style">{{etpInfo.F30823}}%</span></li>
               </ul>
             </v-flex>
             <v-flex>
               <ul>
                 <li>시가총액</li>
-                <li> {{formatInt(etpInfo.F15028/1000000000)}}십억</li>
+                <li class="number"> {{formatInt(etpInfo.F15028/1000000000)}}십억</li>
               </ul>
             </v-flex>
             <v-flex>
               <ul>
                 <li>거래량</li>
-                <li>{{formatInt(etpInfo.F15015)}} 주</li>
-                <li style="font-size:11px;">AVG(3M) {{formatInt(etpInfo.avgF15015)}}</li>
+                <li class="number">{{formatInt(etpInfo.F15015)}} 주</li>
+                <li  class="number2 text_green">AVG(3M) {{formatInt(etpInfo.avgF15015)}}</li>
               </ul>
             </v-flex>
-            <v-flex>
+            <v-flex class="ver3">
               <ul>
                 <li>거래대금</li>
-                <li>{{formatInt(etpInfo.F15023/1000)}} 천</li>
-                <li style="font-size:11px;">AVG(3M) {{formatInt(etpInfo.avgF15023/1000)}}</li>
+                <li class="number">{{formatInt(etpInfo.F15023/1000)}} 천</li>
+                <li class="number2 text_green">AVG(3M) {{formatInt(etpInfo.avgF15023/1000)}}</li>
               </ul>
             </v-flex>
           </v-layout>

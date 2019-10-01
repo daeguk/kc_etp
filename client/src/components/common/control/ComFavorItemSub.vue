@@ -101,6 +101,7 @@
                 <!--자산추가 팝업 end -->
             </v-list-tile-content>
             <ProgressBar ref="progress"></ProgressBar>
+            <ConfirmDialog ref="confirm2"></ConfirmDialog>
         </v-list>
 
     </v-container>
@@ -116,6 +117,7 @@ import _ from "lodash";
 import Config from "@/js/config.js";
 import util       from "@/js/util.js";
 import ProgressBar from "@/components/common/ProgressBar.vue";
+import ConfirmDialog                from "@/components/common/ConfirmDialog.vue";
 
 var etf_table = null;
 var etn_table = null;
@@ -150,7 +152,8 @@ export default {
         };
     },
     components: {
-        ProgressBar : ProgressBar
+        ProgressBar : ProgressBar,
+        ConfirmDialog: ConfirmDialog
     },
     computed: {
         
@@ -481,17 +484,38 @@ export default {
                 market_id = data.MARKET_ID;
             }
 
-            axios.post(Config.base_url + "/user/common/deleteFavorItem", {
-                params: {
-                    gubun : data.GUBUN,
-                    jisu_cd : jisu_cd,
-                    market_id : market_id
-                }
-            }).then(function(response) {
-                if (response.data.success == false) {
-                    vm.$emit("showMessageBox", '확인','삭제 중 오류가 발생했습니다.',{},1);
-                } 
-            });
+
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/common/deleteFavorItem"
+                        ,   "data"      :   {
+                                gubun       :   data.GUBUN,
+                                jisu_cd     :   jisu_cd,
+                                market_id   :   market_id
+                            }
+                        ,   "method"    :   "post"
+                        ,   "paramKey"  :   "params"
+                    }
+                ,   function(response) {
+
+                        try{
+
+                            if (response.data.success == false) {
+                                if ( vm.$refs.confirm2.open( '확인', '삭제 중 오류가 발생했습니다.', {}, 1 ) ) {}
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+
+                        if( error ) {
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                    }
+            );            
+
 
         },
         /* 관심 종목 추가 gubun 1: etf또는 etn 2: index*/
@@ -527,15 +551,35 @@ export default {
             }    
 
 
-            axios.post(Config.base_url + "/user/common/insertFavorItem", {
-                    params: {
-                        addFavorItems : addFavorItems
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/common/insertFavorItem"
+                        ,   "data"      :   {
+                                addFavorItems   :   addFavorItems
+                            }
+                        ,   "method"    :   "post"
+                        ,   "paramKey"  :   "params"
                     }
-            }).then(function(response) {
-                if (response.data.success == false) {
-                    vm.$emit("showMessageBox", '확인','저장 중 오류가 발생했습니다.',{},4);
-                } 
-            });
+                ,   function(response) {
+
+                        try{
+
+                            if (response.data.success == false) {
+                                if ( vm.$refs.confirm2.open( '확인', '처리 중 오류가 발생했습니다.', {}, 1 ) ) {}
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+
+                        if( error ) {
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                    }
+            );
+
 
         },
         /* 종목팝업 show */

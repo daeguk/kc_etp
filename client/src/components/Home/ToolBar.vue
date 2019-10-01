@@ -48,6 +48,7 @@ import UserInfo          from './UserInfo.vue';
 import Config       from "@/js/config.js";
 import Constant     from '@/store/store_constant.js';
 import tool       from "@/js/common/tool/tool.js";
+import util       from "@/js/util.js";      
 
 export default {
   data() {
@@ -138,29 +139,50 @@ export default {
                 }                
             }
 
-            axios.post(Config.base_url+'/user/etc/saveCustSupport', {
-                "data" : { contents : vm.contents },
-            }).then( async function(response) {
-                // tool.smsSend(1, "고객지원 접수되었습니다. : " + vm.contents);
 
-                var resultData = response.data;
-
-                if( resultData.msg ) {
-                    if( vm.$root.$confirm.open(
-                                ''
-                            ,   resultData.msg
-                            ,   {}
-                            ,   1
-                        )
-                    ) {
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/etc/saveCustSupport"
+                        ,   "data"      :   { contents : vm.contents }
+                        ,   "method"    :   "post"
                     }
-                }
+                ,   function(response) {
 
-                if( resultData.result ) {
-                    vm.contents     =   "";
-                    vm.csDialog     =   false;
-                }
-            });
+                        try{
+
+                            var resultData = response.data;
+
+                            if( resultData.msg ) {
+                                if( vm.$root.$confirm.open(
+                                            ''
+                                        ,   resultData.msg
+                                        ,   {}
+                                        ,   1
+                                    )
+                                ) {
+                                }
+
+                                if( !resultData.result ) {
+                                    return  false;
+                                }
+                            }
+
+                            if( resultData.result ) {
+                                vm.contents     =   "";
+                                vm.csDialog     =   false;
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+
+                        if( error ) {
+                            if ( vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                    }
+            );
         }
     }
 }  
